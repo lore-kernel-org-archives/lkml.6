@@ -1,105 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751758AbeFBRzH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 13:55:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53030 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750831AbeFBRzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 13:55:06 -0400
-Date: Sat, 2 Jun 2018 13:53:58 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Subject: Re: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean
- where convenient
-Message-ID: <20180602175358.wfdlx6dvnxypspya@madcap2.tricolour.ca>
-References: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
- <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com>
- <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca>
- <CAHC9VhTABDT0FKb=vY4G06aY9Ky+NctArCRo8-iUQF6=eWKy1g@mail.gmail.com>
+        id S1751854AbeFBRzL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 13:55:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33390 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751293AbeFBRzJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 13:55:09 -0400
+Date: Sat, 2 Jun 2018 19:55:08 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Dave Airlie <airlied@gmail.com>
+Subject: Re: Linux 4.17-rc7
+Message-ID: <20180602175508.GC14870@amd>
+References: <CA+55aFwUqz9z1Rf4Wwr29W7DeKxQ67qKEW5xty+JPyCY3aNQ=A@mail.gmail.com>
+ <20180530111715.GA19410@amd>
+ <CAPj87rOuoTM_EHDHkPrA_RE=2=az8jS+Xdcqgh1emBg4oEoRiA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uXxzq0nDebZQVNAZ"
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhTABDT0FKb=vY4G06aY9Ky+NctArCRo8-iUQF6=eWKy1g@mail.gmail.com>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <CAPj87rOuoTM_EHDHkPrA_RE=2=az8jS+Xdcqgh1emBg4oEoRiA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-01 18:15, Paul Moore wrote:
-> On Thu, May 31, 2018 at 12:38 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-05-31 11:48, Paul Moore wrote:
-> >> On Thu, May 31, 2018 at 11:13 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> >> > Most uses of audit_enabled don't care about the distinction between
-> >> > AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
-> >> > more sense and is easier to read. Most uses of audit_enabled treat it as
-> >> > a boolean, so switch the remaining AUDIT_OFF usage to simply use
-> >> > audit_enabled as a boolean where applicable.
-> >> >
-> >> > See: https://github.com/linux-audit/audit-kernel/issues/86
-> >> >
-> >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> >> > ---
-> >> >  drivers/tty/tty_audit.c      | 2 +-
-> >> >  include/net/xfrm.h           | 2 +-
-> >> >  kernel/audit.c               | 8 ++++----
-> >> >  net/netfilter/xt_AUDIT.c     | 2 +-
-> >> >  net/netlabel/netlabel_user.c | 2 +-
-> >> >  5 files changed, 8 insertions(+), 8 deletions(-)
+
+--uXxzq0nDebZQVNAZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> On 30 May 2018 at 12:17, Pavel Machek <pavel@ucw.cz> wrote:
+> >> The bulk of it is really pretty trivial one-liners, and nothing looks
+> >> particularly scary. Let's see how next week looks, but if nothing real=
+ly
+> >> happens I suspect we can make do without an rc8.
 > >>
-> >> I'm not sure I like this idea.  Yes, technically this change is
-> >> functionally equivalent but I worry that this will increase the chance
-> >> that non-audit folks will mistake audit_enabled as a true/false value
-> >> when it is not.  It might work now, but I worry about some subtle
-> >> problem in the future.
+> >> Shortlog appended as usual. Go out and test.
 > >
-> > Would you prefer a patch to change the majority (18) of uses of
-> > audit_enabled to be of the form "audit_enabled == AUDIT_OFF" (or
-> > "audit_enabled != AUDIT_OFF")?
+> > Any chance to still get in this one?
 > >
-> > I prefer the approach in this patch because it makes the code smaller
-> > and significantly easier to read, but either way, I'd like all uses to
-> > be consistent so that it is easier to read all the code similarly.
+> > https://github.com/freedesktop/drm-misc/commit/2bc5ff0bdc00d81d719dad74=
+589317a260d583ed
 > >
-> >> If you are bothered by the comparison to 0 (magic numbers), you could
-> >> move the AUDIT_OFF/AUDIT_ON/AUDIT_LOCKED definitions into
-> >> include/linux/audit.h and convert the "audit_enabled == 0" to
-> >> "audit_enabled == AUDIT_OFF".
-> >
-> > I'd be fine doing that if you really dislike this patch's approach.
-> 
-> Like I said, I'm don't really care for the boolean-like approach of
-> this first patch.
+> > ...it fixes display on Nokia N900, and display is rather important for
+> > cellphone.
+>=20
+> The pull request was sent to Dave just yesterday:
+> https://lists.freedesktop.org/archives/dri-devel/2018-May/178606.html
 
-That doesn't really address the original issue though.
+Still nothing in the mainline. If there's no -rc8, time is running out
+:-(.
 
-Without any elaboration, I am not able to guess why you don't like this
-or what possible future subtleties would cause a problem.  Is there a
-past example somewhere else that brings up this concern?
-Can you explain the problem with "non-audit folks will mistake
-audit_enabled as a true/false value when it is not"?  Other subsystems
-should not care about the distinction between locked and not.
+									Pavel
 
-While I realize people change their opinions given a broader context,
-and the origninal reply was ambiguous, I went ahead with this patch
-based on your "Sounds good." from:
-	https://www.redhat.com/archives/linux-audit/2018-April/msg00089.html
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Would you accept a patch that defines a function by the same name as the
-global variable that returns a boolean (and localizes and renames the
-existing global with a "__" prefix?  I'm not willing to offer a patch to
-make the existing boolean usage harder to read to bring it all into
-similar usage.
+--uXxzq0nDebZQVNAZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> paul moore
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-- RGB
+iEYEARECAAYFAlsS2fwACgkQMOfwapXb+vIVXwCfR9vDCLJo/qtAVbHkE91Qtv3t
+jO4AoIKcj5HsxfAMofWHDMj0sXiywmef
+=m0lk
+-----END PGP SIGNATURE-----
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+--uXxzq0nDebZQVNAZ--
