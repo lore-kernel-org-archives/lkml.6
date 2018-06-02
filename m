@@ -1,76 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeFBAZE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 20:25:04 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:38654 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeFBAZA (ORCPT
+        id S1751369AbeFBAro (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 20:47:44 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41656 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751129AbeFBArk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 20:25:00 -0400
-X-Google-Smtp-Source: ADUXVKKmPkmsuzBS8UcOaifnuwYVtsdsHFrpUZiH/QBK1ONxHvDOAG0cPUzYfPD6WK0E/ndY9A2WA9xcAg3AcnxJe08=
+        Fri, 1 Jun 2018 20:47:40 -0400
+X-Google-Smtp-Source: ADUXVKKyZ4ynlBEsVXPTIZHuqwRpVNXHt4toVJUpJKwxXCcdqCIFqdOz1d3dVmPA8VC5QKuBZbg4jA==
+Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+        <bcm-kernel-feedback-list@broadcom.com>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+ <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+ <20180531162556.GA955@rob-hp-laptop>
+ <a354f3d1-051d-8b68-e6b3-ce7a739c10c9@broadcom.com>
+ <CAL_Jsq+YX01CwCycqeu5mxTUiWtnG3HKPJP5mvJO2OHcPF6v6g@mail.gmail.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <fc69e9e4-c223-512f-e76c-d9f1062d9d35@broadcom.com>
+Date: Fri, 1 Jun 2018 17:47:34 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1527576797-5738-1-git-send-email-wanpengli@tencent.com>
- <20180529142324.GA7819@flask> <20180529143102.GC7819@flask> <e85689ac-25be-a0ca-7618-51a918896ca4@redhat.com>
-In-Reply-To: <e85689ac-25be-a0ca-7618-51a918896ca4@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Sat, 2 Jun 2018 08:24:36 +0800
-Message-ID: <CANRm+Cyc-0WQd3tBZhbcRqQsPwmYsfZ=GNYVvfyetb8U1SCUdA@mail.gmail.com>
-Subject: Re: [PATCH] KVM: VMX: Optimize tscdeadline timer latency
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krcmar <rkrcmar@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_Jsq+YX01CwCycqeu5mxTUiWtnG3HKPJP5mvJO2OHcPF6v6g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w520PBCV013379
 
-On Wed, 30 May 2018 at 01:08, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 29/05/2018 16:31, Radim Krčmář wrote:
-> > 2018-05-29 16:23+0200, Radim Krčmář:
-> >> 2018-05-29 14:53+0800, Wanpeng Li:
-> >>> From: Wanpeng Li <wanpengli@tencent.com>
-> >>>
-> >>> 'Commit d0659d946be0 ("KVM: x86: add option to advance tscdeadline
-> >>> hrtimer expiration")' advances the tscdeadline (the timer is emulated
-> >>> by hrtimer) expiration in order that the latency which is incurred
-> >>> by hypervisor (apic_timer_fn -> vmentry) can be avoided. This patch
-> >>> adds the advance tscdeadline expiration support to which the tscdeadline
-> >>> timer is emulated by VMX preemption timer to reduce the hypervisor
-> >>> lantency (handle_preemption_timer -> vmentry). clockevents infrastruture
-> >>> can program minimum delay if hrtimer feeds a expiration in the past,
-> >>> we set delta_tsc to 1(which will be converted to 0 before vmentry)
-> >>> which can lead to an immediately vmexit when delta_tsc is not bigger
-> >>> than advance ns.
-> >>>
-> >>> This patch can reduce ~63% latency (~4450 cycles to ~1660 cycles on
-> >>> a haswell desktop) for kvm-unit-tests/tscdeadline_latency when testing
-> >>> busy waits.
-> >>>
-> >>> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> >>> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> >>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> >>> ---
-> >>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> >>> @@ -12444,6 +12444,12 @@ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
-> >>>     tscl = rdtsc();
-> >>>     guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
-> >>>     delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
-> >>> +   lapic_timer_advance_cycles = nsec_to_cycles(vcpu, lapic_timer_advance_ns);
-> >>> +   if (delta_tsc > lapic_timer_advance_cycles)
-> >>> +           delta_tsc -= lapic_timer_advance_cycles;
-> >>> +   else
-> >>> +           delta_tsc = 1;
-> >>
-> >> Why don't we just "return 1" to say that the timer has expired?
-> >
-> > This case might be rare, so setting delta_tsc = 0 would be safer.
->
-> Queued with this change.  Indeed this case matches vmx_arm_hv_timer so
 
-The patch description should also be updated in kvm/queue I think.
 
-Regards,
-Wanpeng Li
+On 6/1/2018 12:02 PM, Rob Herring wrote:
+> On Fri, Jun 1, 2018 at 12:56 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+>> Hi Rob,
+>>
+>> On 5/31/2018 9:25 AM, Rob Herring wrote:
+>>>
+>>> On Fri, May 25, 2018 at 09:45:16AM -0700, Ray Jui wrote:
+>>>>
+>>>> Update and add Stingray clock definitions and tables so they match the
+>>>> binding document and the latest ASIC datasheet
+>>>>
+>>>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>>> ---
+>>>>    drivers/clk/bcm/clk-sr.c           | 135
+>>>> ++++++++++++++++++++++++++++++++-----
+>>>>    include/dt-bindings/clock/bcm-sr.h |  24 +++++--
+>>>
+>>>
+>>> This goes in the 1st patch.
+>>
+>>
+>> Please help to confirm. You want 1st patch and 2nd patch to be combined into
+>> a single patch?
+> 
+> No. include/dt-bindings/* is part of the DT binding, so it goes with
+> patch 1. The driver in patch 2.
+> 
+> Rob
+> 
+
+Okay got it. Thanks!
