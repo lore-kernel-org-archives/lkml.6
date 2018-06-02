@@ -1,96 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751135AbeFBE3E (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 00:29:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60324 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750750AbeFBE3B (ORCPT
+        id S1751399AbeFBEbU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 00:31:20 -0400
+Received: from mail-io0-f174.google.com ([209.85.223.174]:36733 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750821AbeFBEbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 00:29:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E22E606DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: linux-pci@vger.kernel.org, timur@codeaurora.org, ryan@finnie.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, stable@vger.kernel.org,
-        Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        esc.storagedev@microsemi.com (open list:HEWLETT-PACKARD SMART ARRAY
-        RAID DRIVER (hpsa)),
-        linux-scsi@vger.kernel.org (open list:HEWLETT-PACKARD SMART ARRAY RAID
-        DRIVER (hpsa)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V5] scsi: hpsa: disable device during shutdown
-Date: Sat,  2 Jun 2018 00:28:53 -0400
-Message-Id: <1527913733-16492-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Sat, 2 Jun 2018 00:31:18 -0400
+X-Google-Smtp-Source: ADUXVKLmgHW24o3MPdao8DqnicVNRehST+KKSatdSd6gOZOtLwrBFvlEGilS+OeLVpC49qEAyMNuFw==
+Subject: Re: INFO: task hung in blk_queue_enter
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Bart.VanAssche@wdc.com, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
+        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
+        martin.petersen@oracle.com, dan.j.williams@intel.com, hch@lst.de,
+        oleksandr@natalenko.name, martin@lichtvoll.de, hare@suse.com,
+        syzkaller-bugs@googlegroups.com, ross.zwisler@linux.intel.com,
+        keith.busch@intel.com, linux-ext4@vger.kernel.org
+References: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
+ <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
+ <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
+ <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
+ <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
+ <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp>
+ <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp>
+ <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
+ <20180601234946.GA655@ming.t460p>
+ <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk>
+ <20180602023622.GA2306@ming.t460p>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <f43465cf-e2f1-807f-d283-89033c056b5b@kernel.dk>
+Date: Fri, 1 Jun 2018 22:31:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <20180602023622.GA2306@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'Commit cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during
-shutdown")' has been added to kernel to shutdown pending PCIe port
-service interrupts during reboot so that a newly started kexec kernel
-wouldn't observe pending interrupts.
+On 6/1/18 8:36 PM, Ming Lei wrote:
+>> clear the bit when we need to, potentially even adding a debug check to
+>> blk_queue_enter_live() that complains if the ref was not already
+>> elevated. Though that would be expensive, compared to the percpu inc
+>> now. Not saying the bit is necessarily the best way forward, but I do
+>> like it a LOT more than adding an argument to generic_make_request.
+> 
+> We may introduce generic_make_request_with_ref() for blk_queue_split(),
+> what do you think of the following patch?
 
-pcie_port_device_remove() is disabling the root port and switches by
-calling pci_disable_device() after all PCIe service drivers are shutdown.
+Functionally it'll work as well.
 
-This has been found to cause crashes on HP DL360 Gen9 machines during
-reboot due to hpsa driver not clearing the bus master bit during the
-shutdown procedure by calling pci_disable_device().
+> In DM or MD, there is the following use case:
+> 
+> 1) bio comes from fs, then one clone is made from this bio
+> 
+> 2) the cloned bio is submitted via generic_make_request() from
+> another context, such as wq.
+> 
+> 3) then the flag of BIO_QUEUE_ENTERED is inherited and causes
+> the queue usage counter isn't held.
 
-Disable device as part of the shutdown sequence.
+We don't copy flags on a clone.
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199779
-Fixes: cc27b735ad3a ("PCI/portdrv: Turn off PCIe services during shutdown")
-Cc: stable@vger.kernel.org
-Reported-by: Ryan Finnie <ryan@finnie.org>
-Tested-by: Don Brace <don.brace@microsemi.com>
-Acked-by: Don Brace <don.brace@microsemi.com>
----
- drivers/scsi/hpsa.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 3a9eca1..b92f86a 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -8869,7 +8869,7 @@ static void hpsa_disable_rld_caching(struct ctlr_info *h)
- 	kfree(options);
- }
- 
--static void hpsa_shutdown(struct pci_dev *pdev)
-+static void __hpsa_shutdown(struct pci_dev *pdev)
- {
- 	struct ctlr_info *h;
- 
-@@ -8884,6 +8884,12 @@ static void hpsa_shutdown(struct pci_dev *pdev)
- 	hpsa_disable_interrupt_mode(h);		/* pci_init 2 */
- }
- 
-+static void hpsa_shutdown(struct pci_dev *pdev)
-+{
-+	__hpsa_shutdown(pdev);
-+	pci_disable_device(pdev);
-+}
-+
- static void hpsa_free_device_info(struct ctlr_info *h)
- {
- 	int i;
-@@ -8927,7 +8933,7 @@ static void hpsa_remove_one(struct pci_dev *pdev)
- 		scsi_remove_host(h->scsi_host);		/* init_one 8 */
- 	/* includes hpsa_free_irqs - init_one 4 */
- 	/* includes hpsa_disable_interrupt_mode - pci_init 2 */
--	hpsa_shutdown(pdev);
-+	__hpsa_shutdown(pdev);
- 
- 	hpsa_free_device_info(h);		/* scan */
- 
 -- 
-2.7.4
+Jens Axboe
