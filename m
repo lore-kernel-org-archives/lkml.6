@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeFBMo6 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:44:58 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42760 "EHLO
+        id S1751934AbeFBMpF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:45:05 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42756 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751613AbeFBMoa (ORCPT
+        with ESMTP id S1751611AbeFBMoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 2 Jun 2018 08:44:30 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6F47B1A8603
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 4E25D1A85F0
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -32,9 +32,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH for 4.18 09/16] powerpc: Add syscall detection for restartable sequences
-Date: Sat,  2 Jun 2018 08:44:01 -0400
-Message-Id: <20180602124408.8430-10-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 08/16] powerpc: Add support for restartable sequences
+Date: Sat,  2 Jun 2018 08:44:00 -0400
+Message-Id: <20180602124408.8430-9-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
 References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
@@ -44,13 +44,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Boqun Feng <boqun.feng@gmail.com>
 
-Syscalls are not allowed inside restartable sequences, so add a call to
-rseq_syscall() at the very beginning of system call exiting path for
-CONFIG_DEBUG_RSEQ=y kernel. This could help us to detect whether there
-is a syscall issued inside restartable sequences.
+Call the rseq_handle_notify_resume() function on return to userspace if
+TIF_NOTIFY_RESUME thread flag is set.
 
-[ Tested on 64-bit powerpc kernel by Mathieu Desnoyers. Still needs to
-  be tested on 32-bit powerpc kernel. ]
+Perform fixup on the pre-signal when a signal is delivered on top of a
+restartable sequence critical section.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -61,46 +59,42 @@ CC: Peter Zijlstra <peterz@infradead.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: linuxppc-dev@lists.ozlabs.org
 ---
- arch/powerpc/kernel/entry_32.S | 7 +++++++
- arch/powerpc/kernel/entry_64.S | 8 ++++++++
- 2 files changed, 15 insertions(+)
+ arch/powerpc/Kconfig         | 1 +
+ arch/powerpc/kernel/signal.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index eb8d01bae8c6..973577f2141c 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -365,6 +365,13 @@ syscall_dotrace_cont:
- 	blrl			/* Call handler */
- 	.globl	ret_from_syscall
- ret_from_syscall:
-+#ifdef CONFIG_DEBUG_RSEQ
-+	/* Check whether the syscall is issued inside a restartable sequence */
-+	stw	r3,GPR3(r1)
-+	addi    r3,r1,STACK_FRAME_OVERHEAD
-+	bl      rseq_syscall
-+	lwz	r3,GPR3(r1)
-+#endif
- 	mr	r6,r3
- 	CURRENT_THREAD_INFO(r12, r1)
- 	/* disable interrupts so current_thread_info()->flags can't change */
-diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-index 51695608c68b..1c374387656a 100644
---- a/arch/powerpc/kernel/entry_64.S
-+++ b/arch/powerpc/kernel/entry_64.S
-@@ -184,6 +184,14 @@ system_call:			/* label this so stack traces look sane */
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c32a181a7cbb..ed21a777e8c6 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -223,6 +223,7 @@ config PPC
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_VIRT_CPU_ACCOUNTING
+ 	select HAVE_IRQ_TIME_ACCOUNTING
++	select HAVE_RSEQ
+ 	select IRQ_DOMAIN
+ 	select IRQ_FORCED_THREADING
+ 	select MODULES_USE_ELF_RELA
+diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+index 61db86ecd318..d3bb3aaaf5ac 100644
+--- a/arch/powerpc/kernel/signal.c
++++ b/arch/powerpc/kernel/signal.c
+@@ -133,6 +133,8 @@ static void do_signal(struct task_struct *tsk)
+ 	/* Re-enable the breakpoints for the signal stack */
+ 	thread_change_pc(tsk, tsk->thread.regs);
  
- .Lsyscall_exit:
- 	std	r3,RESULT(r1)
++	rseq_signal_deliver(tsk->thread.regs);
 +
-+#ifdef CONFIG_DEBUG_RSEQ
-+	/* Check whether the syscall is issued inside a restartable sequence */
-+	addi    r3,r1,STACK_FRAME_OVERHEAD
-+	bl      rseq_syscall
-+	ld	r3,RESULT(r1)
-+#endif
-+
- 	CURRENT_THREAD_INFO(r12, r1)
+ 	if (is32) {
+         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+ 			ret = handle_rt_signal32(&ksig, oldset, tsk);
+@@ -164,6 +166,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
+ 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
+ 		clear_thread_flag(TIF_NOTIFY_RESUME);
+ 		tracehook_notify_resume(regs);
++		rseq_handle_notify_resume(regs);
+ 	}
  
- 	ld	r8,_MSR(r1)
+ 	user_enter();
 -- 
 2.11.0
