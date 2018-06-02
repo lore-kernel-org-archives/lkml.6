@@ -1,141 +1,349 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751266AbeFBAFx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 20:05:53 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38213 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeFBAFu (ORCPT
+        id S1751336AbeFBAJn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 20:09:43 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45168 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750974AbeFBAJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 20:05:50 -0400
-X-Google-Smtp-Source: ADUXVKLjErJqwTkTNqeTmLmwvvaf1MSCkm17VP1ewezBZyJIizVqa3dCElSp8sgy4IqDb3jHa/sNNw==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: robh+dt@kernel.org, frowand.list@gmail.com
-Cc: linux-arm-msm@vger.kernel.org, bgoswami@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v2] of: platform: stop accessing invalid dev in of_platform_device_destroy
-Date: Sat,  2 Jun 2018 01:03:43 +0100
-Message-Id: <20180602000343.20045-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        Fri, 1 Jun 2018 20:09:42 -0400
+Subject: Re: [PATCH] docs/admin-guide/mm: add high level concepts overview
+To: Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20180529113725.GB13092@rapoport-lnx>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <285dd950-0b25-dba3-60b6-ceac6075fb48@infradead.org>
+Date: Fri, 1 Jun 2018 17:09:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180529113725.GB13092@rapoport-lnx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Immediately after the platform_device_unregister() the device will be cleaned up.
-Accessing the freed pointer immediately after that will crash the system.
+On 05/29/2018 04:37 AM, Mike Rapoport wrote:
+> Hi,
+> 
+> From 2d3ec7ea101a66b1535d5bec4acfc1e0f737fd53 Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Date: Tue, 29 May 2018 14:12:39 +0300
+> Subject: [PATCH] docs/admin-guide/mm: add high level concepts overview
+> 
+> The are terms that seem obvious to the mm developers, but may be somewhat
 
-Found this bug when kernel is built with CONFIG_PAGE_POISONING and testing
-loading/unloading audio drivers in a loop on Qcom platforms.
+  There are [or: These are]
 
-Fix this by removing accessing the dev pointer.
-Below is the carsh trace:
+> obscure for, say, less involved readers.
+> 
+> The concepts overview can be seen as an "extended glossary" that introduces
+> such terms to the readers of the kernel documentation.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> ---
+>  Documentation/admin-guide/mm/concepts.rst | 222 ++++++++++++++++++++++++++++++
+>  Documentation/admin-guide/mm/index.rst    |   5 +
+>  2 files changed, 227 insertions(+)
+>  create mode 100644 Documentation/admin-guide/mm/concepts.rst
+> 
+> diff --git a/Documentation/admin-guide/mm/concepts.rst b/Documentation/admin-guide/mm/concepts.rst
+> new file mode 100644
+> index 0000000..291699c
+> --- /dev/null
+> +++ b/Documentation/admin-guide/mm/concepts.rst
+> @@ -0,0 +1,222 @@
+> +.. _mm_concepts:
+> +
+> +=================
+> +Concepts overview
+> +=================
+> +
+> +The memory management in Linux is complex system that evolved over the
 
-Unable to handle kernel paging request at virtual address 6b6b6b6b6b6c03
-Mem abort info:
-  ESR = 0x96000021
-  Exception class = DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-Data abort info:
-  ISV = 0, ISS = 0x00000021
-  CM = 0, WnR = 0
-[006b6b6b6b6b6c03] address between user and kernel address ranges
-Internal error: Oops: 96000021 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 2 PID: 1784 Comm: sh Tainted: G        W         4.17.0-rc7-02230-ge3a63a7ef641-dirty #204
-Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-pstate: 80000005 (Nzcv daif -PAN -UAO)
-pc : clear_bit+0x18/0x2c
-lr : of_platform_device_destroy+0x64/0xb8
-sp : ffff00000c9c3930
-x29: ffff00000c9c3930 x28: ffff80003d39b200
-x27: ffff000008bb1000 x26: 0000000000000040
-x25: 0000000000000124 x24: ffff80003a9a3080
-x23: 0000000000000060 x22: ffff00000939f518
-x21: ffff80003aa79e98 x20: ffff80003aa3dae0
-x19: ffff80003aa3c890 x18: ffff800009feb794
-x17: 0000000000000000 x16: 0000000000000000
-x15: ffff800009feb790 x14: 0000000000000000
-x13: ffff80003a058778 x12: ffff80003a058728
-x11: ffff80003a058750 x10: 0000000000000000
-x9 : 0000000000000006 x8 : ffff80003a825988
-x7 : bbbbbbbbbbbbbbbb x6 : 0000000000000001
-x5 : 0000000000000000 x4 : 0000000000000001
-x3 : 0000000000000008 x2 : 0000000000000001
-x1 : 6b6b6b6b6b6b6c03 x0 : 0000000000000000
-Process sh (pid: 1784, stack limit = 0x        (ptrval))
-Call trace:
- clear_bit+0x18/0x2c
- q6afe_remove+0x20/0x38
- apr_device_remove+0x30/0x70
- device_release_driver_internal+0x170/0x208
- device_release_driver+0x14/0x20
- bus_remove_device+0xcc/0x150
- device_del+0x10c/0x310
- device_unregister+0x1c/0x70
- apr_remove_device+0xc/0x18
- device_for_each_child+0x50/0x80
- apr_remove+0x18/0x20
- rpmsg_dev_remove+0x38/0x68
- device_release_driver_internal+0x170/0x208
- device_release_driver+0x14/0x20
- bus_remove_device+0xcc/0x150
- device_del+0x10c/0x310
- device_unregister+0x1c/0x70
- qcom_smd_remove_device+0xc/0x18
- device_for_each_child+0x50/0x80
- qcom_smd_unregister_edge+0x3c/0x70
- smd_subdev_remove+0x18/0x28
- rproc_stop+0x48/0xd8
- rproc_shutdown+0x60/0xe8
- state_store+0xbc/0xf8
- dev_attr_store+0x18/0x28
- sysfs_kf_write+0x3c/0x50
- kernfs_fop_write+0x118/0x1e0
- __vfs_write+0x18/0x110
- vfs_write+0xa4/0x1a8
- ksys_write+0x48/0xb0
- sys_write+0xc/0x18
- el0_svc_naked+0x30/0x34
-Code: d2800022 8b400c21 f9800031 9ac32043 (c85f7c22)
+                                  is a complex
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
-Changes since v1:
-- fixed issue while reprobing.
+> +years and included more and more functionality to support variety of
 
- drivers/of/platform.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+                                                     support a variety of
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index c00d81dfac0b..84c5c899187b 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -529,10 +529,13 @@ arch_initcall_sync(of_platform_default_populate_init);
- 
- int of_platform_device_destroy(struct device *dev, void *data)
- {
-+	struct device_node *np;
-+
- 	/* Do not touch devices not populated from the device tree */
- 	if (!dev->of_node || !of_node_check_flag(dev->of_node, OF_POPULATED))
- 		return 0;
- 
-+	np = dev->of_node;
- 	/* Recurse for any nodes that were treated as busses */
- 	if (of_node_check_flag(dev->of_node, OF_POPULATED_BUS))
- 		device_for_each_child(dev, NULL, of_platform_device_destroy);
-@@ -544,8 +547,8 @@ int of_platform_device_destroy(struct device *dev, void *data)
- 		amba_device_unregister(to_amba_device(dev));
- #endif
- 
--	of_node_clear_flag(dev->of_node, OF_POPULATED);
--	of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
-+	of_node_clear_flag(np, OF_POPULATED);
-+	of_node_clear_flag(np, OF_POPULATED_BUS);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(of_platform_device_destroy);
+> +systems from MMU-less microcontrollers to supercomputers. The memory
+> +management for systems without MMU is called ``nommu`` and it
+
+                          without an MMU
+
+> +definitely deserves a dedicated document, which hopefully will be
+> +eventually written. Yet, although some of the concepts are the same,
+> +here we assume that MMU is available and CPU can translate a virtual
+
+                  that an MMU           and a CPU
+
+> +address to a physical address.
+> +
+> +.. contents:: :local:
+> +
+> +Virtual Memory Primer
+> +=====================
+> +
+> +The physical memory in a computer system is a limited resource and
+> +even for systems that support memory hotplug there is a hard limit on
+> +the amount of memory that can be installed. The physical memory is not
+> +necessary contiguous, it might be accessible as a set of distinct
+
+Change comma to semi-colon or period (and if latter, s/it/It/).
+
+> +address ranges. Besides, different CPU architectures, and even
+> +different implementations of the same architecture have different view
+
+                                                                     views of
+
+> +how these address ranges defined.
+> +
+> +All this makes dealing directly with physical memory quite complex and
+> +to avoid this complexity a concept of virtual memory was developed.
+> +
+> +The virtual memory abstracts the details of physical memory from the
+
+       virtual memory {system, implementation} abstracts
+
+> +application software, allows to keep only needed information in the
+
+               software, allowing the VM to keep only needed information in the
+
+> +physical memory (demand paging) and provides a mechanism for the
+> +protection and controlled sharing of data between processes.
+> +
+> +With virtual memory, each and every memory access uses a virtual
+> +address. When the CPU decodes the an instruction that reads (or
+> +writes) from (or to) the system memory, it translates the `virtual`
+> +address encoded in that instruction to a `physical` address that the
+> +memory controller can understand.
+> +
+> +The physical system memory is divided into page frames, or pages. The
+> +size of each page is architecture specific. Some architectures allow
+> +selection of the page size from several supported values; this
+> +selection is performed at the kernel build time by setting an
+> +appropriate kernel configuration option.
+> +
+> +Each physical memory page can be mapped as one or more virtual
+> +pages. These mappings are described by page tables that allow
+> +translation from virtual address used by programs to real address in
+
+               from a virtual address                to {a, the} real address in
+
+> +the physical memory. The page tables organized hierarchically.
+
+                                 tables are organized
+
+> +
+> +The tables at the lowest level of the hierarchy contain physical
+> +addresses of actual pages used by the software. The tables at higher
+> +levels contain physical addresses of the pages belonging to the lower
+> +levels. The pointer to the top level page table resides in a
+> +register. When the CPU performs the address translation, it uses this
+> +register to access the top level page table. The high bits of the
+> +virtual address are used to index an entry in the top level page
+> +table. That entry is then used to access the next level in the
+> +hierarchy with the next bits of the virtual address as the index to
+> +that level page table. The lowest bits in the virtual address define
+> +the offset inside the actual page.
+> +
+> +Huge Pages
+> +==========
+> +
+> +The address translation requires several memory accesses and memory
+> +accesses are slow relatively to CPU speed. To avoid spending precious
+> +processor cycles on the address translation, CPUs maintain a cache of
+> +such translations called Translation Lookaside Buffer (or
+> +TLB). Usually TLB is pretty scarce resource and applications with
+> +large memory working set will experience performance hit because of
+> +TLB misses.
+> +
+> +Many modern CPU architectures allow mapping of the memory pages
+> +directly by the higher levels in the page table. For instance, on x86,
+> +it is possible to map 2M and even 1G pages using entries in the second
+> +and the third level page tables. In Linux such pages are called
+> +`huge`. Usage of huge pages significantly reduces pressure on TLB,
+> +improves TLB hit-rate and thus improves overall system performance.
+> +
+> +There are two mechanisms in Linux that enable mapping of the physical
+> +memory with the huge pages. The first one is `HugeTLB filesystem`, or
+> +hugetlbfs. It is a pseudo filesystem that uses RAM as its backing
+> +store. For the files created in this filesystem the data resides in
+> +the memory and mapped using huge pages. The hugetlbfs is described at
+> +:ref:`Documentation/admin-guide/mm/hugetlbpage.rst <hugetlbpage>`.
+> +
+> +Another, more recent, mechanism that enables use of the huge pages is
+> +called `Transparent HugePages`, or THP. Unlike the hugetlbfs that
+> +requires users and/or system administrators to configure what parts of
+> +the system memory should and can be mapped by the huge pages, THP
+> +manages such mappings transparently to the user and hence the
+> +name. See
+> +:ref:`Documentation/admin-guide/mm/transhuge.rst <admin_guide_transhuge>`
+> +for more details about THP.
+> +
+> +Zones
+> +=====
+> +
+> +Often hardware poses restrictions on how different physical memory
+> +ranges can be accessed. In some cases, devices cannot perform DMA to
+> +all the addressable memory. In other cases, the size of the physical
+> +memory exceeds the maximal addressable size of virtual memory and
+> +special actions are required to access portions of the memory. Linux
+> +groups memory pages into `zones` according to their possible
+> +usage. For example, ZONE_DMA will contain memory that can be used by
+> +devices for DMA, ZONE_HIGHMEM will contain memory that is not
+> +permanently mapped into kernel's address space and ZONE_NORMAL will
+> +contain normally addressed pages.
+> +
+> +The actual layout of the memory zones is hardware dependent as not all
+> +architectures define all zones, and requirements for DMA are different
+> +for different platforms.
+> +
+> +Nodes
+> +=====
+> +
+> +Many multi-processor machines are NUMA - Non-Uniform Memory Access -
+> +systems. In such systems the memory is arranged into banks that have
+> +different access latency depending on the "distance" from the
+> +processor. Each bank is referred as `node` and for each node Linux
+
+                        is referred to as a `node`
+
+> +constructs an independent memory management subsystem. A node has it's
+
+                                                                     its
+
+> +own set of zones, lists of free and used pages and various statistics
+> +counters. You can find more details about NUMA in
+> +:ref:`Documentation/vm/numa.rst <numa>` and in
+> +:ref:`Documentation/admin-guide/mm/numa_memory_policy.rst <numa_memory_policy>`.
+> +
+> +Page cache
+> +==========
+> +
+> +The physical memory is volatile and the common case for getting data
+> +into the memory is to read it from files. Whenever a file is read, the
+> +data is put into the `page cache` to avoid expensive disk access on
+> +the subsequent reads. Similarly, when one writes to a file, the data
+> +is placed in the page cache and eventually gets into the backing
+> +storage device. The written pages are marked as `dirty` and when Linux
+> +decides to reuse them for other purposes, it makes sure to synchronize
+> +the file contents on the device with the updated data.
+> +
+> +Anonymous Memory
+> +================
+> +
+> +The `anonymous memory` or `anonymous mappings` represent memory that
+> +is not backed by a filesystem. Such mappings are implicitly created
+> +for program's stack and heap or by explicit calls to mmap(2) system
+> +call. Usually, the anonymous mappings only define virtual memory areas
+> +that the program is allowed to access. The read accesses will result
+> +in creation of a page table entry that references a special physical
+> +page filled with zeroes. When the program performs a write, regular
+
+                                                        write, a regular
+
+> +physical page will be allocated to hold the written data. The page
+> +will be marked dirty and if the kernel will decide to repurpose it,
+> +the dirty page will be swapped out.
+> +
+> +Reclaim
+> +=======
+> +
+> +Throughout the system lifetime, a physical page can be used for storing
+> +different types of data. It can be kernel internal data structures,
+> +DMA'able buffers for device drivers use, data read from a filesystem,
+> +memory allocated by user space processes etc.
+> +
+> +Depending on the page usage it is treated differently by the Linux
+> +memory management. The pages that can be freed at any time, either
+> +because they cache the data available elsewhere, for instance, on a
+> +hard disk, or because they can be swapped out, again, to the hard
+> +disk, are called `reclaimable`. The most notable categories of the
+> +reclaimable pages are page cache and anonymous memory.
+> +
+> +In most cases, the pages holding internal kernel data and used as DMA
+> +buffers cannot be repurposed, and they remain pinned until freed by
+> +their user. Such pages are called `unreclaimable`. However, in certain
+> +circumstances, even pages occupied with kernel data structures can be
+> +reclaimed. For instance, in-memory caches of filesystem metadata can
+> +be re-read from the storage device and therefore it is possible to
+> +discard them from the main memory when system is under memory
+> +pressure.
+> +
+> +The process of freeing the reclaimable physical memory pages and
+> +repurposing them is called (surprise!) `reclaim`. Linux can reclaim
+> +pages either asynchronously or synchronously, depending on the state
+> +of the system. When system is not loaded, most of the memory is free
+
+                  When {the, a} system
+
+> +and allocation request will be satisfied immediately from the free
+
+                  requests
+or
+   and an allocation request
+
+> +pages supply. As the load increases, the amount of the free pages goes
+> +down and when it reaches a certain threshold (high watermark), an
+> +allocation request will awaken the ``kswapd`` daemon. It will
+> +asynchronously scan memory pages and either just free them if the data
+> +they contain is available elsewhere, or evict to the backing storage
+> +device (remember those dirty pages?). As memory usage increases even
+> +more and reaches another threshold - min watermark - an allocation
+> +will trigger the `direct reclaim`. In this case allocation is stalled
+
+s/the//
+
+> +until enough memory pages are reclaimed to satisfy the request.
+> +
+> +Compaction
+> +==========
+> +
+> +As the system runs, tasks allocate and free the memory and it becomes
+> +fragmented. Although with virtual memory it is possible to present
+> +scattered physical pages as virtually contiguous range, sometimes it is
+> +necessary to allocate large physically contiguous memory areas. Such
+> +need may arise, for instance, when a device driver requires large
+
+                                                      requires a large
+
+> +buffer for DMA, or when THP allocates a huge page. Memory `compaction`
+> +addresses the fragmentation issue. This mechanism moves occupied pages
+> +from the lower part of a memory zone to free pages in the upper part
+> +of the zone. When a compaction scan is finished free pages are grouped
+> +together at the beginning of the zone and allocations of large
+> +physically contiguous areas become possible.
+> +
+> +Like reclaim, the compaction may happen asynchronously in ``kcompactd``
+
+                                                          in the
+
+> +daemon or synchronously as a result of memory allocation request.
+
+                                       of a memory allocation request.
+
+> +
+> +OOM killer
+> +==========
+> +
+> +It may happen, that on a loaded machine memory will be exhausted. When
+
+no comma.
+
+> +the kernel detects that the system runs out of memory (OOM) it invokes
+> +`OOM killer`. Its mission is simple: all it has to do is to select a
+> +task to sacrifice for the sake of the overall system health. The
+> +selected task is killed in a hope that after it exits enough memory
+> +will be freed to continue normal operation.
+
+
+thanks for doing this overview.
+
 -- 
-2.16.2
+~Randy
