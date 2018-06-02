@@ -1,182 +1,284 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751194AbeFBOze (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 10:55:34 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44065 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeFBOzc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 10:55:32 -0400
-X-Google-Smtp-Source: ADUXVKK4NaGT8Pcqu/54mjQ2pBau6BvBaCI/PyFkOCHeRA3japP9jHgvW84+FWZXW68aV2tD35AawJxZruKvOoKh4Ao=
-MIME-Version: 1.0
-In-Reply-To: <20180530111602.GB17450@bombadil.infradead.org>
-References: <20180529143126.GA19698@jordon-HP-15-Notebook-PC>
- <20180529145055.GA15148@bombadil.infradead.org> <CAFqt6zaxt=wXjvKV0qA+OwU1iUyoBdW2cJSLFqXupVWRpKdqEA@mail.gmail.com>
- <20180529173445.GD15148@bombadil.infradead.org> <CAFqt6zZCX7Ai2w9dV3OvUn=V4Z02H=+FBirjHT3QSU1Fuz+uLQ@mail.gmail.com>
- <20180530111602.GB17450@bombadil.infradead.org>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Sat, 2 Jun 2018 20:25:29 +0530
-Message-ID: <CAFqt6zbGyDktxBe0t4W-G8bicA4P8-vDm6fOk+kTod7SHoxvZA@mail.gmail.com>
-Subject: Re: [PATCH] mm: Change return type to vm_fault_t
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, zi.yan@cs.rutgers.edu,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, riel@redhat.com,
-        pasha.tatashin@oracle.com, jschoenh@amazon.de,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        David Rientjes <rientjes@google.com>, tglx@linutronix.de,
-        Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>,
-        yang.s@alibaba-inc.com, Minchan Kim <minchan@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751501AbeFBO7k (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 10:59:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750796AbeFBO7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 10:59:38 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, Borislav Petkov <bp@suse.de>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [GIT PULL 0/4] perf/urgent fixes
+Date: Sat,  2 Jun 2018 11:59:23 -0300
+Message-Id: <20180602145927.23307-1-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 4:46 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Wed, May 30, 2018 at 09:10:47AM +0530, Souptick Joarder wrote:
->> On Tue, May 29, 2018 at 11:04 PM, Matthew Wilcox <willy@infradead.org> wrote:
->> > I see:
->> >
->> > mm/gup.c:817:15: warning: invalid assignment: |=
->> > mm/gup.c:817:15:    left side has type int
->> > mm/gup.c:817:15:    right side has type restricted vm_fault_t
->> >
->> > are you building with 'c=2' or 'C=2'?
->>
->> Building with C=2.
->> Do I need to enable any separate FLAG ?
->
-> Nope.  Here's what I have:
->
-> willy@bobo:~/kernel/souptick$ make C=2 mm/gup.o
->   CHK     include/config/kernel.release
->   CHK     include/generated/uapi/linux/version.h
->   CHK     include/generated/utsrelease.h
->   CHECK   arch/x86/purgatory/purgatory.c
->   CHECK   arch/x86/purgatory/sha256.c
->   CHECK   arch/x86/purgatory/string.c
-> arch/x86/purgatory/../boot/string.c:134:6: warning: symbol 'simple_strtol' was not declared. Should it be static?
->   CHK     include/generated/bounds.h
->   CHK     include/generated/timeconst.h
->   CHK     include/generated/asm-offsets.h
->   CALL    scripts/checksyscalls.sh
->   DESCEND  objtool
->   CHECK   scripts/mod/empty.c
->   CHK     scripts/mod/devicetable-offsets.h
->   CHECK   mm/gup.c
-> mm/gup.c:817:15: warning: invalid assignment: |=
-> mm/gup.c:817:15:    left side has type int
-> mm/gup.c:817:15:    right side has type restricted vm_fault_t
->   CC      mm/gup.o
->
+Hi Ingo,
 
-Matthew,
+	Please consider pulling,
 
-Due to some unidentified error still not able to catch this warning
-in (X86_64 + sparse) compilation. It is constantly showing below error.
+- Arnaldo
 
-Documents/linux-4.17-rc7$ make C=2 -j4 mm/gup.o
+Test results at the end of this message, as usual.
 
-CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  DESCEND  objtool
-  CHK     include/generated/utsrelease.h
-  CHECK   scripts/mod/empty.c
-  CHK     scripts/mod/devicetable-offsets.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  CHECK   mm/gup.c
-mm/gup.c:394:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:439:9: error: undefined identifier '__COUNTER__'
-mm/gup.c:441:9: error: undefined identifier '__COUNTER__'
-mm/gup.c:443:9: error: undefined identifier '__COUNTER__'
-mm/gup.c:508:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:716:25: error: undefined identifier '__COUNTER__'
-mm/gup.c:826:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:863:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:865:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:882:25: error: undefined identifier '__COUNTER__'
-mm/gup.c:883:25: error: undefined identifier '__COUNTER__'
-mm/gup.c:920:25: error: undefined identifier '__COUNTER__'
-./include/linux/hugetlb.h:239:9: error: undefined identifier '__COUNTER__'
+The following changes since commit 6497bbc35ac5efce3bccd31d3719bae020282da6:
 
-But able to capture it in (powerpc + sparse) compilation.
-I will fix it in v2.
+  Merge tag 'perf-urgent-for-mingo-4.17-20180531' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-05-31 12:37:07 +0200)
 
-/Documents/linux-4.17-rc7$ make C=2 ARCH=powerpc
-CROSS_COMPILE=powerpc-linux-gnu- mm/gup.o
+are available in the Git repository at:
 
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  CHECK   scripts/mod/empty.c
-  CHK     scripts/mod/devicetable-offsets.h
-  CHECK   mm/gup.c
-./arch/powerpc/include/asm/book3s/64/pgtable.h:669:24: warning:
-restricted __be64 degrades to integer
-mm/gup.c:820:15: warning: incorrect type in assignment (different base types)
-mm/gup.c:820:15:    expected int [signed] major
-mm/gup.c:820:15:    got restricted vm_fault_t
-mm/gup.c:1247:24: warning: expression using sizeof bool
-mm/gup.c:1247:24: warning: expression using sizeof(void)
-mm/gup.c:1247:24: warning: expression using sizeof(void)
-./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20: warning:
-incorrect type in initializer (different base types)
-./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20:    expected
-unsigned long long [unsigned] [usertype] mask
-./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20:    got
-restricted __be64 [usertype] <noident>
-mm/gup.c:1735:6: warning: symbol 'gup_fast_permitted' was not
-declared. Should it be static?
-  CC      mm/gup.o
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180602
 
+for you to fetch changes up to 0b3a18387f3e5cdcfaaf884860a4688280d09c9d:
 
-Also Sparse is throwing below warning ->
+  perf tools intel-pt-decoder: Update insn.h from the kernel sources (2018-06-01 16:13:18 -0300)
 
-/Documents/linux-4.17-rc7$ make C=2 ARCH=powerpc
-CROSS_COMPILE=powerpc-linux-gnu- mm/hugetlb.o
+----------------------------------------------------------------
+perf/urgent fixes:
 
- CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  CHECK   scripts/mod/empty.c
-  CHK     scripts/mod/devicetable-offsets.h
-  CHECK   mm/hugetlb.c
-mm/hugetlb.c:3778:33: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3777:31: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3777:29: warning: incorrect type in assignment (different
-base types)
-mm/hugetlb.c:3777:29:    expected restricted vm_fault_t [assigned]
-[usertype] ret
-mm/hugetlb.c:3777:29:    got unsigned int
-mm/hugetlb.c:3895:33: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3894:32: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3894:56: warning: incorrect type in return expression
-(different base types)
-mm/hugetlb.c:3894:56:    expected restricted vm_fault_t
-mm/hugetlb.c:3894:56:    got unsigned int
+- Update prctl and cpufeatures.h tools/ copies with the kernel sources
+  originals, which makes 'perf trace' know about the new prctl options
+  for speculation control and silences the build warnings (Arnaldo Carvalho de Melo)
 
-Which is fixed by ->
+- Update insn.h in Intel-PT instruction decoder with its original from from the
+  kernel sources, to silence build warnings, no effect on the actual tools this
+  time around (Arnaldo Carvalho de Melo)
 
-"#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))"
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-in final vm_fault_t patch.
+----------------------------------------------------------------
+Arnaldo Carvalho de Melo (4):
+      perf trace beauty prctl: Default header_dir to cwd to work without parms
+      tools headers: Synchronize prctl.h ABI header
+      tools headers: Sync x86 cpufeatures.h with the kernel sources
+      perf tools intel-pt-decoder: Update insn.h from the kernel sources
 
-Does it looks good ?
+ tools/arch/x86/include/asm/cpufeatures.h | 20 ++++++++++++++------
+ tools/include/uapi/linux/prctl.h         | 12 ++++++++++++
+ tools/perf/trace/beauty/prctl_option.sh  |  2 +-
+ tools/perf/util/intel-pt-decoder/insn.h  | 18 ++++++++++++++++++
+ 4 files changed, 45 insertions(+), 7 deletions(-)
+
+Test results:
+
+The first ones are container (docker) based builds of tools/perf with
+and without libelf support.  Where clang is available, it is also used
+to build perf with/without libelf, and building with LIBCLANGLLVM=1
+(built-in clang) with gcc and clang when clang and its devel libraries
+are installed.
+
+The objtool and samples/bpf/ builds are disabled now that I'm switching from
+using the sources in a local volume to fetching them from a http server to
+build it inside the container, to make it easier to build in a container cluster.
+Those will come back later.
+
+Several are cross builds, the ones with -x-ARCH and the android one, and those
+may not have all the features built, due to lack of multi-arch devel packages,
+available and being used so far on just a few, like
+debian:experimental-x-{arm64,mipsel}.
+
+The 'perf test' one will perform a variety of tests exercising
+tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
+with a variety of command line event specifications to then intercept the
+sys_perf_event syscall to check that the perf_event_attr fields are set up as
+expected, among a variety of other unit tests.
+
+Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
+with a variety of feature sets, exercising the build with an incomplete set of
+features as well as with a complete one. It is planned to have it run on each
+of the containers mentioned above, using some container orchestration
+infrastructure. Get in contact if interested in helping having this in place.
+
+    # dm
+     1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+     2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
+     3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+     4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+     5 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
+     6 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
+     7 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+     8 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+     9 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+    10 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+    11 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
+    12 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
+    13 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
+    14 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
+    15 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+    16 debian:experimental           : Ok   gcc (Debian 7.3.0-19) 7.3.0
+    17 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 7.3.0-19) 7.3.0
+    18 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 7.3.0-19) 7.3.0
+    19 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 7.3.0-18) 7.3.0
+    20 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 7.3.0-19) 7.3.0
+    21 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+    22 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
+    23 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+    24 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+    25 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
+    26 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
+    27 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+    28 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+    29 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+    30 fedora:28                     : Ok   gcc (GCC) 8.1.1 20180502 (Red Hat 8.1.1-1)
+    31 fedora:rawhide                : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
+    32 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 6.4.0-r1 p1.3) 6.4.0
+    33 mageia:5                      : Ok   gcc (GCC) 4.9.2
+    34 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
+    35 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
+    36 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
+    37 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
+    38 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.1 20180323 [gcc-7-branch revision 258812]
+    39 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18.0.7)
+    40 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28.0.1)
+    41 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+    42 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
+    43 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.5-2017.10) 5.5.0
+    44 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    45 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    46 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    47 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    48 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    49 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    50 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+    51 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
+    52 ubuntu:17.04                  : Ok   gcc (Ubuntu 6.3.0-12ubuntu2) 6.3.0 20170406
+    53 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
+    54 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+  # 
+
+  # perf version
+  perf version 4.17.rc7.g0b3a18
+  # git log --oneline -1
+  0b3a18387f3e (HEAD -> perf/urgent, acme.korg/perf/urgent) perf tools intel-pt-decoder: Update insn.h from the kernel sources
+  # uname -a
+  Linux jouet 4.17.0-rc5 #21 SMP Mon May 14 15:35:35 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
+  # perf test
+   1: vmlinux symtab matches kallsyms                       : Ok
+   2: Detect openat syscall event                           : Ok
+   3: Detect openat syscall event on all cpus               : Ok
+   4: Read samples using the mmap interface                 : Ok
+   5: Test data source output                               : Ok
+   6: Parse event definition strings                        : Ok
+   7: Simple expression parser                              : Ok
+   8: PERF_RECORD_* events & perf_sample fields             : Ok
+   9: Parse perf pmu format                                 : Ok
+  10: DSO data read                                         : Ok
+  11: DSO data cache                                        : Ok
+  12: DSO data reopen                                       : Ok
+  13: Roundtrip evsel->name                                 : Ok
+  14: Parse sched tracepoints fields                        : Ok
+  15: syscalls:sys_enter_openat event fields                : Ok
+  16: Setup struct perf_event_attr                          : Ok
+  17: Match and link multiple hists                         : Ok
+  18: 'import perf' in python                               : Ok
+  19: Breakpoint overflow signal handler                    : Ok
+  20: Breakpoint overflow sampling                          : Ok
+  21: Breakpoint accounting                                 : Ok
+  22: Number of exit events of a simple workload            : Ok
+  23: Software clock events period values                   : Ok
+  24: Object code reading                                   : Ok
+  25: Sample parsing                                        : Ok
+  26: Use a dummy software event to keep tracking           : Ok
+  27: Parse with no sample_id_all bit set                   : Ok
+  28: Filter hist entries                                   : Ok
+  29: Lookup mmap thread                                    : Ok
+  30: Share thread mg                                       : Ok
+  31: Sort output of hist entries                           : Ok
+  32: Cumulate child hist entries                           : Ok
+  33: Track with sched_switch                               : Ok
+  34: Filter fds with revents mask in a fdarray             : Ok
+  35: Add fd to a fdarray, making it autogrow               : Ok
+  36: kmod_path__parse                                      : Ok
+  37: Thread map                                            : Ok
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : Ok
+  39: Session topology                                      : Ok
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+  41: Synthesize thread map                                 : Ok
+  42: Remove thread map                                     : Ok
+  43: Synthesize cpu map                                    : Ok
+  44: Synthesize stat config                                : Ok
+  45: Synthesize stat                                       : Ok
+  46: Synthesize stat round                                 : Ok
+  47: Synthesize attr update                                : Ok
+  48: Event times                                           : Ok
+  49: Read backward ring buffer                             : Ok
+  50: Print cpu map                                         : Ok
+  51: Probe SDT events                                      : Ok
+  52: is_printable_array                                    : Ok
+  53: Print bitmap                                          : Ok
+  54: perf hooks                                            : Ok
+  55: builtin clang support                                 : Skip (not compiled in)
+  56: unit_number__scnprintf                                : Ok
+  57: mem2node                                              : Ok
+  58: x86 rdpmc                                             : Ok
+  59: Convert perf time to TSC                              : Ok
+  60: DWARF unwind                                          : Ok
+  61: x86 instruction decoder - new instructions            : Ok
+  62: Use vfs_getname probe to get syscall args filenames   : Ok
+  63: Check open filename arg using perf trace + vfs_getname: Ok
+  64: probe libc's inet_pton & backtrace it with ping       : Ok
+  65: Add vfs_getname probe to get syscall args filenames   : Ok
+  #
+  
+  $ time make -C tools/perf build-test
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+  - tarpkg: ./tests/perf-targz-src-pkg .
+                make_no_newt_O: make NO_NEWT=1
+                   make_help_O: make help
+           make_no_backtrace_O: make NO_BACKTRACE=1
+            make_install_bin_O: make install-bin
+           make_no_libbionic_O: make NO_LIBBIONIC=1
+           make_no_libpython_O: make NO_LIBPYTHON=1
+                    make_doc_O: make doc
+             make_no_libnuma_O: make NO_LIBNUMA=1
+        make_with_babeltrace_O: make LIBBABELTRACE=1
+             make_no_libperl_O: make NO_LIBPERL=1
+         make_install_prefix_O: make install prefix=/tmp/krava
+           make_no_libunwind_O: make NO_LIBUNWIND=1
+                make_no_gtk2_O: make NO_GTK2=1
+            make_no_auxtrace_O: make NO_AUXTRACE=1
+         make_with_clangllvm_O: make LIBCLANGLLVM=1
+       make_util_pmu_bison_o_O: make util/pmu-bison.o
+                  make_debug_O: make DEBUG=1
+                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
+                 make_static_O: make LDFLAGS=-static
+              make_no_libelf_O: make NO_LIBELF=1
+             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
+               make_no_slang_O: make NO_SLANG=1
+                   make_tags_O: make tags
+                make_install_O: make install
+             make_util_map_o_O: make util/map.o
+              make_clean_all_O: make clean all
+                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
+              make_no_libbpf_O: make NO_LIBBPF=1
+   make_install_prefix_slash_O: make install prefix=/tmp/krava/
+                 make_perf_o_O: make perf.o
+                   make_pure_O: make
+  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
+            make_no_libaudit_O: make NO_LIBAUDIT=1
+            make_no_demangle_O: make NO_DEMANGLE=1
+  OK
+  make: Leaving directory '/home/acme/git/perf/tools/perf'
+  $
