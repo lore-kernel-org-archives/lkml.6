@@ -1,241 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751568AbeFBDak (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 23:30:40 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37982 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751005AbeFBD1w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 23:27:52 -0400
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Message-Id: <878b389293851359e53de186bf302ce52d95ad95.1527909627.git.fthain@telegraphics.com.au>
-In-Reply-To: <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
-References: <cover.1527909627.git.fthain@telegraphics.com.au>
-        <f32f4e3a0fd736152f768b7a00bfc731daba1629.1527909627.git.fthain@telegraphics.com.au>
-        <7ce9a8c3996506ae6f9ab16b3cf73c287e205a89.1527909627.git.fthain@telegraphics.com.au>
-        <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 04/11] macintosh/via-pmu: Enhance state machine with new
- 'uninitialized' state
-Date: Fri,  1 Jun 2018 23:27:51 -0400 (EDT)
+        id S1751000AbeFBDfq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 23:35:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750750AbeFBDfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 23:35:43 -0400
+X-Google-Smtp-Source: ADUXVKLCPxnuRgRujk1LR3bj3AF+gpXZ93qiacoiWReTIRp5Jx/957Zm4+YnDzO8eodnoIkFbys+eaz8JUDnwmneiRI=
+MIME-Version: 1.0
+References: <20180601082811.4c0d33ba@imladris.surriel.com> <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
+ <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
+ <1527882207.7898.86.camel@surriel.com> <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
+ <1527885324.7898.88.camel@surriel.com> <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
+ <20180601181327.367f0fe3@imladris.surriel.com>
+In-Reply-To: <20180601181327.367f0fe3@imladris.surriel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Fri, 1 Jun 2018 20:35:29 -0700
+X-Gmail-Original-Message-ID: <CALCETrXTLqcro4uu5f77EmeaDvNqGZNLpsk-w_BApRNmzvcz=Q@mail.gmail.com>
+Message-ID: <CALCETrXTLqcro4uu5f77EmeaDvNqGZNLpsk-w_BApRNmzvcz=Q@mail.gmail.com>
+Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
+To: riel@surriel.com
+Cc: Andrew Lutomirski <luto@kernel.org>, Mike Galbraith <efault@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>, songliubraving@fb.com,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 68k Macs, the via/vias pointer can't be used to determine whether
-the PMU driver has been initialized. For portability, add a new state
-to indicate that via_find_pmu() succeeded.
+On Fri, Jun 1, 2018 at 3:13 PM Rik van Riel <riel@surriel.com> wrote:
+>
+> On Fri, 1 Jun 2018 14:21:58 -0700
+> Andy Lutomirski <luto@kernel.org> wrote:
+>
+> > Hmm.  I wonder if there's a more clever data structure than a bitmap
+> > that we could be using here.  Each CPU only ever needs to be in one
+> > mm's cpumask, and each cpu only ever changes its own state in the
+> > bitmask.  And writes are much less common than reads for most
+> > workloads.
+>
+> It would be easy enough to add an mm_struct pointer to the
+> per-cpu tlbstate struct, and iterate over those.
+>
+> However, that would be an orthogonal change to optimizing
+> lazy TLB mode.
+>
+> Does the (untested) patch below make sense as a potential
+> improvement to the lazy TLB heuristic?
+>
+> ---8<---
+> Subject: x86,tlb: workload dependent per CPU lazy TLB switch
+>
+> Lazy TLB mode is a tradeoff between flushing the TLB and touching
+> the mm_cpumask(&init_mm) at context switch time, versus potentially
+> incurring a remote TLB flush IPI while in lazy TLB mode.
+>
+> Whether this pays off is likely to be workload dependent more than
+> anything else. However, the current heuristic keys off hardware type.
+>
+> This patch changes the lazy TLB mode heuristic to a dynamic, per-CPU
+> decision, dependent on whether we recently received a remote TLB
+> shootdown while in lazy TLB mode.
+>
+> This is a very simple heuristic. When a CPU receives a remote TLB
+> shootdown IPI while in lazy TLB mode, a counter in the same cache
+> line is set to 16. Every time we skip lazy TLB mode, the counter
+> is decremented.
+>
+> While the counter is zero (no recent TLB flush IPIs), allow lazy TLB mode.
 
-After via_find_pmu() executes, testing vias == NULL is equivalent to
-testing via == NULL. Replace these tests with pmu_state == uninitialized
-which is simpler and more consistent. No functional change.
+Hmm, cute.  That's not a bad idea at all.  It would be nice to get
+some kind of real benchmark on both PCID and !PCID.  If nothing else,
+I would expect the threshold (16 in your patch) to want to be lower on
+PCID systems.
 
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- drivers/macintosh/via-pmu.c | 44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
-index 087c3aa5233a..7fba3c88991d 100644
---- a/drivers/macintosh/via-pmu.c
-+++ b/drivers/macintosh/via-pmu.c
-@@ -114,6 +114,7 @@ static volatile unsigned char __iomem *via;
- #define CB1_INT		0x10		/* transition on CB1 input */
- 
- static volatile enum pmu_state {
-+	uninitialized = 0,
- 	idle,
- 	sending,
- 	intack,
-@@ -274,7 +275,7 @@ int __init find_via_pmu(void)
- 	u64 taddr;
- 	const u32 *reg;
- 
--	if (via != 0)
-+	if (pmu_state != uninitialized)
- 		return 1;
- 	vias = of_find_node_by_name(NULL, "via-pmu");
- 	if (vias == NULL)
-@@ -369,20 +370,19 @@ int __init find_via_pmu(void)
-  fail:
- 	of_node_put(vias);
- 	vias = NULL;
-+	pmu_state = uninitialized;
- 	return 0;
- }
- 
- #ifdef CONFIG_ADB
- static int pmu_probe(void)
- {
--	return vias == NULL? -ENODEV: 0;
-+	return pmu_state == uninitialized ? -ENODEV : 0;
- }
- 
- static int pmu_init(void)
- {
--	if (vias == NULL)
--		return -ENODEV;
--	return 0;
-+	return pmu_state == uninitialized ? -ENODEV : 0;
- }
- #endif /* CONFIG_ADB */
- 
-@@ -397,7 +397,7 @@ static int __init via_pmu_start(void)
- {
- 	unsigned int irq;
- 
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return -ENODEV;
- 
- 	batt_req.complete = 1;
-@@ -463,7 +463,7 @@ arch_initcall(via_pmu_start);
-  */
- static int __init via_pmu_dev_init(void)
- {
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return -ENODEV;
- 
- #ifdef CONFIG_PMAC_BACKLIGHT
-@@ -966,7 +966,7 @@ static int pmu_send_request(struct adb_request *req, int sync)
- {
- 	int i, ret;
- 
--	if ((vias == NULL) || (!pmu_fully_inited)) {
-+	if (pmu_state == uninitialized || !pmu_fully_inited) {
- 		req->complete = 1;
- 		return -ENXIO;
- 	}
-@@ -1060,7 +1060,7 @@ static int __pmu_adb_autopoll(int devs)
- 
- static int pmu_adb_autopoll(int devs)
- {
--	if ((vias == NULL) || (!pmu_fully_inited) || !pmu_has_adb)
-+	if (pmu_state == uninitialized || !pmu_fully_inited || !pmu_has_adb)
- 		return -ENXIO;
- 
- 	adb_dev_map = devs;
-@@ -1073,7 +1073,7 @@ static int pmu_adb_reset_bus(void)
- 	struct adb_request req;
- 	int save_autopoll = adb_dev_map;
- 
--	if ((vias == NULL) || (!pmu_fully_inited) || !pmu_has_adb)
-+	if (pmu_state == uninitialized || !pmu_fully_inited || !pmu_has_adb)
- 		return -ENXIO;
- 
- 	/* anyone got a better idea?? */
-@@ -1109,7 +1109,7 @@ pmu_request(struct adb_request *req, void (*done)(struct adb_request *),
- 	va_list list;
- 	int i;
- 
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return -ENXIO;
- 
- 	if (nbytes < 0 || nbytes > 32) {
-@@ -1134,7 +1134,7 @@ pmu_queue_request(struct adb_request *req)
- 	unsigned long flags;
- 	int nsend;
- 
--	if (via == NULL) {
-+	if (pmu_state == uninitialized) {
- 		req->complete = 1;
- 		return -ENXIO;
- 	}
-@@ -1247,7 +1247,7 @@ pmu_start(void)
- void
- pmu_poll(void)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	if (disable_poll)
- 		return;
-@@ -1257,7 +1257,7 @@ pmu_poll(void)
- void
- pmu_poll_adb(void)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	if (disable_poll)
- 		return;
-@@ -1272,7 +1272,7 @@ pmu_poll_adb(void)
- void
- pmu_wait_complete(struct adb_request *req)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	while((pmu_state != idle && pmu_state != locked) || !req->complete)
- 		via_pmu_interrupt(0, NULL);
-@@ -1288,7 +1288,7 @@ pmu_suspend(void)
- {
- 	unsigned long flags;
- 
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	
- 	spin_lock_irqsave(&pmu_lock, flags);
-@@ -1319,7 +1319,7 @@ pmu_resume(void)
- {
- 	unsigned long flags;
- 
--	if (!via || (pmu_suspended < 1))
-+	if (pmu_state == uninitialized || pmu_suspended < 1)
- 		return;
- 
- 	spin_lock_irqsave(&pmu_lock, flags);
-@@ -1681,7 +1681,7 @@ pmu_enable_irled(int on)
- {
- 	struct adb_request req;
- 
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return ;
- 	if (pmu_kind == PMU_KEYLARGO_BASED)
- 		return ;
-@@ -1696,7 +1696,7 @@ pmu_restart(void)
- {
- 	struct adb_request req;
- 
--	if (via == NULL)
-+	if (pmu_state == uninitialized)
- 		return;
- 
- 	local_irq_disable();
-@@ -1721,7 +1721,7 @@ pmu_shutdown(void)
- {
- 	struct adb_request req;
- 
--	if (via == NULL)
-+	if (pmu_state == uninitialized)
- 		return;
- 
- 	local_irq_disable();
-@@ -1749,7 +1749,7 @@ pmu_shutdown(void)
- int
- pmu_present(void)
- {
--	return via != 0;
-+	return pmu_state != uninitialized;
- }
- 
- #if defined(CONFIG_SUSPEND) && defined(CONFIG_PPC32)
-@@ -2415,7 +2415,7 @@ static struct miscdevice pmu_device = {
- 
- static int pmu_device_init(void)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return 0;
- 	if (misc_register(&pmu_device) < 0)
- 		printk(KERN_ERR "via-pmu: cannot register misc device.\n");
--- 
-2.16.1
+--Andy
