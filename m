@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752101AbeFBMqs (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:46:48 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42556 "EHLO
+        id S1751917AbeFBMqc (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:46:32 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42760 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751424AbeFBMoY (ORCPT
+        with ESMTP id S1751685AbeFBMof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 08:44:24 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 042FE1A85AB
+        Sat, 2 Jun 2018 08:44:35 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3BAD41A8664
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -28,10 +28,11 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 04/16] arm: Add syscall detection for restartable sequences
-Date: Sat,  2 Jun 2018 08:43:56 -0400
-Message-Id: <20180602124408.8430-5-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, linux-kselftest@vger.kernel.org
+Subject: [RFC PATCH for 4.18 14/16] rseq: selftests: Provide basic percpu ops test (v2)
+Date: Sat,  2 Jun 2018 08:44:06 -0400
+Message-Id: <20180602124408.8430-15-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
 References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
@@ -39,12 +40,12 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Syscalls are not allowed inside restartable sequences, so add a call to
-rseq_syscall() at the very beginning of system call exiting path for
-CONFIG_DEBUG_RSEQ=y kernel. This could help us to detect whether there
-is a syscall issued inside restartable sequences.
+"basic_percpu_ops_test" is a slightly more "realistic" variant,
+implementing a few simple per-cpu operations and testing their
+correctness.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Shuah Khan <shuahkh@osg.samsung.com>
 CC: Russell King <linux@arm.linux.org.uk>
 CC: Catalin Marinas <catalin.marinas@arm.com>
 CC: Will Deacon <will.deacon@arm.com>
@@ -57,6 +58,7 @@ CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
 CC: Chris Lameter <cl@linux.com>
 CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -64,84 +66,334 @@ CC: Josh Triplett <josh@joshtriplett.org>
 CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
 CC: Boqun Feng <boqun.feng@gmail.com>
+CC: linux-kselftest@vger.kernel.org
 CC: linux-api@vger.kernel.org
 ---
- arch/arm/kernel/entry-common.S | 25 +++++++++++++++++++------
- arch/arm/kernel/signal.c       |  7 +++++++
- 2 files changed, 26 insertions(+), 6 deletions(-)
+Changes since v1:
+- Use only rseq, remove use of cpu_opv system call.
+---
+ .../testing/selftests/rseq/basic_percpu_ops_test.c | 313 +++++++++++++++++++++
+ 1 file changed, 313 insertions(+)
+ create mode 100644 tools/testing/selftests/rseq/basic_percpu_ops_test.c
 
-diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 3c4f88701f22..b427ef8ec8c6 100644
---- a/arch/arm/kernel/entry-common.S
-+++ b/arch/arm/kernel/entry-common.S
-@@ -39,12 +39,13 @@ saved_pc	.req	lr
- 
- 	.section .entry.text,"ax",%progbits
- 	.align	5
--#if !(IS_ENABLED(CONFIG_TRACE_IRQFLAGS) || IS_ENABLED(CONFIG_CONTEXT_TRACKING))
-+#if !(IS_ENABLED(CONFIG_TRACE_IRQFLAGS) || IS_ENABLED(CONFIG_CONTEXT_TRACKING) || \
-+	IS_ENABLED(CONFIG_DEBUG_RSEQ))
- /*
-  * This is the fast syscall return path.  We do as little as possible here,
-  * such as avoiding writing r0 to the stack.  We only use this path if we
-- * have tracing and context tracking disabled - the overheads from those
-- * features make this path too inefficient.
-+ * have tracing, context tracking and rseq debug disabled - the overheads
-+ * from those features make this path too inefficient.
-  */
- ret_fast_syscall:
-  UNWIND(.fnstart	)
-@@ -71,14 +72,20 @@ fast_work_pending:
- 	/* fall through to work_pending */
- #else
- /*
-- * The "replacement" ret_fast_syscall for when tracing or context tracking
-- * is enabled.  As we will need to call out to some C functions, we save
-- * r0 first to avoid needing to save registers around each C function call.
-+ * The "replacement" ret_fast_syscall for when tracing, context tracking,
-+ * or rseq debug is enabled.  As we will need to call out to some C functions,
-+ * we save r0 first to avoid needing to save registers around each C function
-+ * call.
-  */
- ret_fast_syscall:
-  UNWIND(.fnstart	)
-  UNWIND(.cantunwind	)
- 	str	r0, [sp, #S_R0 + S_OFF]!	@ save returned r0
-+#if IS_ENABLED(CONFIG_DEBUG_RSEQ)
-+	/* do_rseq_syscall needs interrupts enabled. */
-+	mov	r0, sp				@ 'regs'
-+	bl	do_rseq_syscall
-+#endif
- 	disable_irq_notrace			@ disable interrupts
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
- 	cmp	r2, #TASK_SIZE
-@@ -113,6 +120,12 @@ ENDPROC(ret_fast_syscall)
-  */
- ENTRY(ret_to_user)
- ret_slow_syscall:
-+#if IS_ENABLED(CONFIG_DEBUG_RSEQ)
-+	/* do_rseq_syscall needs interrupts enabled. */
-+	enable_irq_notrace			@ enable interrupts
-+	mov	r0, sp				@ 'regs'
-+	bl	do_rseq_syscall
-+#endif
- 	disable_irq_notrace			@ disable interrupts
- ENTRY(ret_to_user_from_irq)
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index 5879ab3f53c1..f09e9d66d605 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -710,3 +710,10 @@ asmlinkage void addr_limit_check_failed(void)
- {
- 	addr_limit_user_check();
- }
+diff --git a/tools/testing/selftests/rseq/basic_percpu_ops_test.c b/tools/testing/selftests/rseq/basic_percpu_ops_test.c
+new file mode 100644
+index 000000000000..96ef27905879
+--- /dev/null
++++ b/tools/testing/selftests/rseq/basic_percpu_ops_test.c
+@@ -0,0 +1,313 @@
++// SPDX-License-Identifier: LGPL-2.1
++#define _GNU_SOURCE
++#include <assert.h>
++#include <pthread.h>
++#include <sched.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <stddef.h>
 +
-+#ifdef CONFIG_DEBUG_RSEQ
-+asmlinkage void do_rseq_syscall(struct pt_regs *regs)
++#include "rseq.h"
++
++#define ARRAY_SIZE(arr)	(sizeof(arr) / sizeof((arr)[0]))
++
++struct percpu_lock_entry {
++	intptr_t v;
++} __attribute__((aligned(128)));
++
++struct percpu_lock {
++	struct percpu_lock_entry c[CPU_SETSIZE];
++};
++
++struct test_data_entry {
++	intptr_t count;
++} __attribute__((aligned(128)));
++
++struct spinlock_test_data {
++	struct percpu_lock lock;
++	struct test_data_entry c[CPU_SETSIZE];
++	int reps;
++};
++
++struct percpu_list_node {
++	intptr_t data;
++	struct percpu_list_node *next;
++};
++
++struct percpu_list_entry {
++	struct percpu_list_node *head;
++} __attribute__((aligned(128)));
++
++struct percpu_list {
++	struct percpu_list_entry c[CPU_SETSIZE];
++};
++
++/* A simple percpu spinlock.  Returns the cpu lock was acquired on. */
++int rseq_this_cpu_lock(struct percpu_lock *lock)
 +{
-+	rseq_syscall(regs);
++	int cpu;
++
++	for (;;) {
++		int ret;
++
++		cpu = rseq_cpu_start();
++		ret = rseq_cmpeqv_storev(&lock->c[cpu].v,
++					 0, 1, cpu);
++		if (rseq_likely(!ret))
++			break;
++		/* Retry if comparison fails or rseq aborts. */
++	}
++	/*
++	 * Acquire semantic when taking lock after control dependency.
++	 * Matches rseq_smp_store_release().
++	 */
++	rseq_smp_acquire__after_ctrl_dep();
++	return cpu;
 +}
-+#endif
++
++void rseq_percpu_unlock(struct percpu_lock *lock, int cpu)
++{
++	assert(lock->c[cpu].v == 1);
++	/*
++	 * Release lock, with release semantic. Matches
++	 * rseq_smp_acquire__after_ctrl_dep().
++	 */
++	rseq_smp_store_release(&lock->c[cpu].v, 0);
++}
++
++void *test_percpu_spinlock_thread(void *arg)
++{
++	struct spinlock_test_data *data = arg;
++	int i, cpu;
++
++	if (rseq_register_current_thread()) {
++		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++	for (i = 0; i < data->reps; i++) {
++		cpu = rseq_this_cpu_lock(&data->lock);
++		data->c[cpu].count++;
++		rseq_percpu_unlock(&data->lock, cpu);
++	}
++	if (rseq_unregister_current_thread()) {
++		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++
++	return NULL;
++}
++
++/*
++ * A simple test which implements a sharded counter using a per-cpu
++ * lock.  Obviously real applications might prefer to simply use a
++ * per-cpu increment; however, this is reasonable for a test and the
++ * lock can be extended to synchronize more complicated operations.
++ */
++void test_percpu_spinlock(void)
++{
++	const int num_threads = 200;
++	int i;
++	uint64_t sum;
++	pthread_t test_threads[num_threads];
++	struct spinlock_test_data data;
++
++	memset(&data, 0, sizeof(data));
++	data.reps = 5000;
++
++	for (i = 0; i < num_threads; i++)
++		pthread_create(&test_threads[i], NULL,
++			       test_percpu_spinlock_thread, &data);
++
++	for (i = 0; i < num_threads; i++)
++		pthread_join(test_threads[i], NULL);
++
++	sum = 0;
++	for (i = 0; i < CPU_SETSIZE; i++)
++		sum += data.c[i].count;
++
++	assert(sum == (uint64_t)data.reps * num_threads);
++}
++
++void this_cpu_list_push(struct percpu_list *list,
++			struct percpu_list_node *node,
++			int *_cpu)
++{
++	int cpu;
++
++	for (;;) {
++		intptr_t *targetptr, newval, expect;
++		int ret;
++
++		cpu = rseq_cpu_start();
++		/* Load list->c[cpu].head with single-copy atomicity. */
++		expect = (intptr_t)RSEQ_READ_ONCE(list->c[cpu].head);
++		newval = (intptr_t)node;
++		targetptr = (intptr_t *)&list->c[cpu].head;
++		node->next = (struct percpu_list_node *)expect;
++		ret = rseq_cmpeqv_storev(targetptr, expect, newval, cpu);
++		if (rseq_likely(!ret))
++			break;
++		/* Retry if comparison fails or rseq aborts. */
++	}
++	if (_cpu)
++		*_cpu = cpu;
++}
++
++/*
++ * Unlike a traditional lock-less linked list; the availability of a
++ * rseq primitive allows us to implement pop without concerns over
++ * ABA-type races.
++ */
++struct percpu_list_node *this_cpu_list_pop(struct percpu_list *list,
++					   int *_cpu)
++{
++	for (;;) {
++		struct percpu_list_node *head;
++		intptr_t *targetptr, expectnot, *load;
++		off_t offset;
++		int ret, cpu;
++
++		cpu = rseq_cpu_start();
++		targetptr = (intptr_t *)&list->c[cpu].head;
++		expectnot = (intptr_t)NULL;
++		offset = offsetof(struct percpu_list_node, next);
++		load = (intptr_t *)&head;
++		ret = rseq_cmpnev_storeoffp_load(targetptr, expectnot,
++						 offset, load, cpu);
++		if (rseq_likely(!ret)) {
++			if (_cpu)
++				*_cpu = cpu;
++			return head;
++		}
++		if (ret > 0)
++			return NULL;
++		/* Retry if rseq aborts. */
++	}
++}
++
++/*
++ * __percpu_list_pop is not safe against concurrent accesses. Should
++ * only be used on lists that are not concurrently modified.
++ */
++struct percpu_list_node *__percpu_list_pop(struct percpu_list *list, int cpu)
++{
++	struct percpu_list_node *node;
++
++	node = list->c[cpu].head;
++	if (!node)
++		return NULL;
++	list->c[cpu].head = node->next;
++	return node;
++}
++
++void *test_percpu_list_thread(void *arg)
++{
++	int i;
++	struct percpu_list *list = (struct percpu_list *)arg;
++
++	if (rseq_register_current_thread()) {
++		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++
++	for (i = 0; i < 100000; i++) {
++		struct percpu_list_node *node;
++
++		node = this_cpu_list_pop(list, NULL);
++		sched_yield();  /* encourage shuffling */
++		if (node)
++			this_cpu_list_push(list, node, NULL);
++	}
++
++	if (rseq_unregister_current_thread()) {
++		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		abort();
++	}
++
++	return NULL;
++}
++
++/* Simultaneous modification to a per-cpu linked list from many threads.  */
++void test_percpu_list(void)
++{
++	int i, j;
++	uint64_t sum = 0, expected_sum = 0;
++	struct percpu_list list;
++	pthread_t test_threads[200];
++	cpu_set_t allowed_cpus;
++
++	memset(&list, 0, sizeof(list));
++
++	/* Generate list entries for every usable cpu. */
++	sched_getaffinity(0, sizeof(allowed_cpus), &allowed_cpus);
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++		for (j = 1; j <= 100; j++) {
++			struct percpu_list_node *node;
++
++			expected_sum += j;
++
++			node = malloc(sizeof(*node));
++			assert(node);
++			node->data = j;
++			node->next = list.c[i].head;
++			list.c[i].head = node;
++		}
++	}
++
++	for (i = 0; i < 200; i++)
++		pthread_create(&test_threads[i], NULL,
++		       test_percpu_list_thread, &list);
++
++	for (i = 0; i < 200; i++)
++		pthread_join(test_threads[i], NULL);
++
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		struct percpu_list_node *node;
++
++		if (!CPU_ISSET(i, &allowed_cpus))
++			continue;
++
++		while ((node = __percpu_list_pop(&list, i))) {
++			sum += node->data;
++			free(node);
++		}
++	}
++
++	/*
++	 * All entries should now be accounted for (unless some external
++	 * actor is interfering with our allowed affinity while this
++	 * test is running).
++	 */
++	assert(sum == expected_sum);
++}
++
++int main(int argc, char **argv)
++{
++	if (rseq_register_current_thread()) {
++		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		goto error;
++	}
++	printf("spinlock\n");
++	test_percpu_spinlock();
++	printf("percpu_list\n");
++	test_percpu_list();
++	if (rseq_unregister_current_thread()) {
++		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		goto error;
++	}
++	return 0;
++
++error:
++	return -1;
++}
++
 -- 
 2.11.0
