@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751849AbeFBL7k (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 07:59:40 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44674 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbeFBL7d (ORCPT
+        id S1751900AbeFBL7t (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 07:59:49 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:44227 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751780AbeFBL7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 07:59:33 -0400
-X-Google-Smtp-Source: ADUXVKL1vm+vCaCgBivxgqTVpOWOzIKm/rgsdJDqtnL0Twm3hE5GwfMB2EUPFU/0beJq8FxsyEidwg==
+        Sat, 2 Jun 2018 07:59:46 -0400
+X-Google-Smtp-Source: ADUXVKKTmvUo8hhtzgQLEu+vzl/YBme2V1OcigBqP7ssAfKP0sTu/CmUNKNF8IzYgQIpdHMxjPZzwA==
 From: ufo19890607@gmail.com
 To: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
         kirill.shutemov@linux.intel.com, aarcange@redhat.com,
@@ -16,8 +16,8 @@ To: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         yuzhoujian <yuzhoujian@didichuxing.com>
 Subject: [PATCH v7 2/2] Refactor part of the oom report in dump_header
-Date: Sat,  2 Jun 2018 19:58:52 +0800
-Message-Id: <1527940734-35161-2-git-send-email-ufo19890607@gmail.com>
+Date: Sat,  2 Jun 2018 19:58:54 +0800
+Message-Id: <1527940734-35161-4-git-send-email-ufo19890607@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1527940734-35161-1-git-send-email-ufo19890607@gmail.com>
 References: <1527940734-35161-1-git-send-email-ufo19890607@gmail.com>
