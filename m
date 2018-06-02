@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751827AbeFBMos (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:44:48 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42754 "EHLO
+        id S1751902AbeFBMo6 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:44:58 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42760 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751603AbeFBMoa (ORCPT
+        with ESMTP id S1751613AbeFBMoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 2 Jun 2018 08:44:30 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 26E451A85E2
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6F47B1A8603
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -28,10 +28,13 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 07/16] x86: Wire up restartable sequence system call
-Date: Sat,  2 Jun 2018 08:43:59 -0400
-Message-Id: <20180602124408.8430-8-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+Subject: [RFC PATCH for 4.18 09/16] powerpc: Add syscall detection for restartable sequences
+Date: Sat,  2 Jun 2018 08:44:01 -0400
+Message-Id: <20180602124408.8430-10-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
 References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
@@ -39,60 +42,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the rseq system call on x86 32/64.
+From: Boqun Feng <boqun.feng@gmail.com>
 
-This provides an ABI improving the speed of a user-space getcpu
-operation on x86 by removing the need to perform a function call, "lsl"
-instruction, or system call on the fast path, as well as improving the
-speed of user-space operations on per-cpu data.
+Syscalls are not allowed inside restartable sequences, so add a call to
+rseq_syscall() at the very beginning of system call exiting path for
+CONFIG_DEBUG_RSEQ=y kernel. This could help us to detect whether there
+is a syscall issued inside restartable sequences.
 
+[ Tested on 64-bit powerpc kernel by Mathieu Desnoyers. Still needs to
+  be tested on 32-bit powerpc kernel. ]
+
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Paul Turner <pjt@google.com>
-CC: Andrew Hunter <ahh@google.com>
+CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: Paul Mackerras <paulus@samba.org>
+CC: Michael Ellerman <mpe@ellerman.id.au>
 CC: Peter Zijlstra <peterz@infradead.org>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
+CC: linuxppc-dev@lists.ozlabs.org
 ---
- arch/x86/entry/syscalls/syscall_32.tbl | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl | 1 +
- 2 files changed, 2 insertions(+)
+ arch/powerpc/kernel/entry_32.S | 7 +++++++
+ arch/powerpc/kernel/entry_64.S | 8 ++++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index d6b27dab1b30..db346da64947 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -396,3 +396,4 @@
- 382	i386	pkey_free		sys_pkey_free			__ia32_sys_pkey_free
- 383	i386	statx			sys_statx			__ia32_sys_statx
- 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
-+385	i386	rseq			sys_rseq			__ia32_sys_rseq
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 4dfe42666d0c..41b082b125c3 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -341,6 +341,7 @@
- 330	common	pkey_alloc		__x64_sys_pkey_alloc
- 331	common	pkey_free		__x64_sys_pkey_free
- 332	common	statx			__x64_sys_statx
-+333	common	rseq			__x64_sys_rseq
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index eb8d01bae8c6..973577f2141c 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -365,6 +365,13 @@ syscall_dotrace_cont:
+ 	blrl			/* Call handler */
+ 	.globl	ret_from_syscall
+ ret_from_syscall:
++#ifdef CONFIG_DEBUG_RSEQ
++	/* Check whether the syscall is issued inside a restartable sequence */
++	stw	r3,GPR3(r1)
++	addi    r3,r1,STACK_FRAME_OVERHEAD
++	bl      rseq_syscall
++	lwz	r3,GPR3(r1)
++#endif
+ 	mr	r6,r3
+ 	CURRENT_THREAD_INFO(r12, r1)
+ 	/* disable interrupts so current_thread_info()->flags can't change */
+diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+index 51695608c68b..1c374387656a 100644
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -184,6 +184,14 @@ system_call:			/* label this so stack traces look sane */
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
+ .Lsyscall_exit:
+ 	std	r3,RESULT(r1)
++
++#ifdef CONFIG_DEBUG_RSEQ
++	/* Check whether the syscall is issued inside a restartable sequence */
++	addi    r3,r1,STACK_FRAME_OVERHEAD
++	bl      rseq_syscall
++	ld	r3,RESULT(r1)
++#endif
++
+ 	CURRENT_THREAD_INFO(r12, r1)
+ 
+ 	ld	r8,_MSR(r1)
 -- 
 2.11.0
