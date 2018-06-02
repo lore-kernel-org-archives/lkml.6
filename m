@@ -1,178 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751654AbeFBPkm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 11:40:42 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54462 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750913AbeFBPkk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 11:40:40 -0400
-X-Google-Smtp-Source: ADUXVKKr0zh2jEjflnhsBFfvC0yD9kBWvZ3E3xIROCWEj+I56ry5Vk0oOaB/YfiRd08oaoNwhJSrPDwBI1Dlqpnjn7I=
+        id S1751765AbeFBPpZ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 11:45:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750964AbeFBPpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 11:45:23 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20180602040434.GW30522@ZenIV.linux.org.uk>
+References: <20180602040434.GW30522@ZenIV.linux.org.uk> <20180601063928.GS30522@ZenIV.linux.org.uk> <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk> <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk> <20180601062654.GA32397@infradead.org> <7067.1527841663@warthog.procyon.org.uk> <20180602030913.GU30522@ZenIV.linux.org.uk> <20180602034255.GV30522@ZenIV.linux.org.uk>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH 30/32] vfs: Allow cloning of a mount tree with open(O_PATH|O_CLONE_MOUNT) [ver #8]
 MIME-Version: 1.0
-In-Reply-To: <20180530164922.31851-1-krzk@kernel.org>
-References: <20180530164922.31851-1-krzk@kernel.org>
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Date: Sat, 2 Jun 2018 21:09:58 +0530
-Message-ID: <CAGOxZ506T5swFOoBB0RcbHKa45nJvFRnAZETM505-mi03o6cjg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos: Add missing CPU clocks to secondary
- CPUs on Exynos542x
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <21803.1527954321.1@warthog.procyon.org.uk>
+Date: Sat, 02 Jun 2018 16:45:21 +0100
+Message-ID: <21804.1527954321@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+Al Viro <viro@ZenIV.linux.org.uk> wrote:
 
-On Wed, May 30, 2018 at 10:19 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Secondary CPUs should have the same information in DeviceTree as booting
-> CPU from both correctness point of view and for possible hotplug
-> scenarios.
->
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/boot/dts/exynos5420-cpus.dtsi | 6 ++++++
->  arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 +++++++-
->  2 files changed, 13 insertions(+), 1 deletion(-)
+> TBH, I would probably prefer separate mount_setattr(2) for that kind
+> of work, with something like
+> 	int mount_setattr(int dirfd, const char *path, int flags, int attr)
+> *not* opening any files.
+> flags:
+> 	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+I would call these MOUNT_SETATTR_* rather than AT_*.
 
-Tested on exynos5800 peach-pi, so feel free to add
+> attr:
+> 	MOUNT_SETATTR_DEV		(1<<0)
+> 	MOUNT_SETATTR_NODEV		(1<<0)|(1<<1)
+> 	MOUNT_SETATTR_EXEC		(1<<2)
+> 	MOUNT_SETATTR_NOEXEC		(1<<2)|(1<<3)
+> 	MOUNT_SETATTR_SUID		(1<<4)
+> 	MOUNT_SETATTR_NOSUID		(1<<4)|(1<<5)
+> 	MOUNT_SETATTR_RW		(1<<6)
+> 	MOUNT_SETATTR_RO		(1<<6)|(1<<7)
+> 	MOUNT_SETATTR_RELATIME		(1<<8)
+> 	MOUNT_SETATTR_NOATIME		(1<<8)|(1<<9)
+> 	MOUNT_SETATTR_NODIRATIME	(1<<8)|(2<<9)
+> 	MOUNT_SETATTR_STRICTATIME	(1<<8)|(3<<9)
+> 	MOUNT_SETATTR_PRIVATE		(1<<11)
+> 	MOUNT_SETATTR_SHARED		(1<<11)|(1<<12)
+> 	MOUNT_SETATTR_SLAVE		(1<<11)|(2<<12)
+> 	MOUNT_SETATTR_UNBINDABLE	(1<<11)|(3<<12)
 
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+So, I like this generally, some notes though:
 
->
-> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> index a8e449471304..0ee6e92a3c29 100644
-> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-> @@ -38,6 +38,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x1>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -49,6 +50,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x2>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -60,6 +62,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x3>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -83,6 +86,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x101>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -94,6 +98,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x102>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -105,6 +110,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x103>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> index 7c130a00d1a8..e4a5857c135f 100644
-> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-> @@ -37,6 +37,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x101>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -48,6 +49,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x102>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -59,6 +61,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a7";
->                         reg = <0x103>;
-> +                       clocks = <&clock CLK_KFC_CLK>;
->                         clock-frequency = <1000000000>;
->                         cci-control-port = <&cci_control0>;
->                         operating-points-v2 = <&cluster_a7_opp_table>;
-> @@ -69,8 +72,8 @@
->                 cpu4: cpu@0 {
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
-> -                       clocks = <&clock CLK_ARM_CLK>;
->                         reg = <0x0>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -82,6 +85,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x1>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -93,6 +97,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x2>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> @@ -104,6 +109,7 @@
->                         device_type = "cpu";
->                         compatible = "arm,cortex-a15";
->                         reg = <0x3>;
-> +                       clocks = <&clock CLK_ARM_CLK>;
->                         clock-frequency = <1800000000>;
->                         cci-control-port = <&cci_control1>;
->                         operating-points-v2 = <&cluster_a15_opp_table>;
-> --
-> 2.14.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I wonder if this should be two separate parameters, a mask and the settings?
+I'm not sure that's worth it since some of the mask bits would cover multiple
+settings.
 
+Also, should NODIRATIME be separate from the other *ATIME flags?  I do also
+like treating some of these settings as enumerations rather than a set of
+bits.
 
+I would make the prototype:
 
--- 
-Regards,
-Alim
+	int mount_setattr(int dirfd, const char *path,
+			  unsigned int flags, unsigned int attr,
+			  void *reserved5);
+
+Further, do we want to say you can either change the propagation type *or*
+reconfigure the mountpoint restrictions, but not both at the same time?
+
+> With either openat() used as in this series, or explicit
+> 	int open_tree(int dirfd, const char *path, int flags)
+
+Maybe open_mount(), grab_mount() or pick_mount()?
+
+I wonder if fsopen()/fspick() should be create_fs()/open_fs()...
+
+> returning a descriptor, with flags being
+> 	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE, AT_CLONE
+> with AT_RECURSIVE without AT_CLONE being an error.
+
+You also need an O_CLOEXEC equivalent.
+
+I would make it:
+
+	OPEN_TREE_CLOEXEC		0x00000001
+	OPEN_TREE_EMPTY_PATH		0x00000002
+	OPEN_TREE_FOLLOW_SYMLINK	0x00000004
+	OPEN_TREE_NO_AUTOMOUNT		0x00000008
+	OPEN_TREE_CLONE			0x00000010
+	OPEN_TREE_RECURSIVE		0x00000020
+
+adding the follow-symlinks so that you don't grab a symlink target by
+accident.  (Can you actually mount on top of a symlink?)
+
+> Hell, might even add AT_UMOUNT for "open root and detach, to be dissolved on
+> close", incompatible with AT_CLONE.
+
+Cute.  Guess you could do:
+
+	fd = open_mount(..., OPEN_TREE_DETACH);
+	mount_setattr(fd, "",
+		      MOUNT_SETATTR_EMPTY_PATH,
+		      MOUNT_SETATTR_NOSUID, NULL);
+	move_mount(fd, "", ...);
+
+David
