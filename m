@@ -1,50 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751885AbeFBO1o (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 10:27:44 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44387 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751821AbeFBO1l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 10:27:41 -0400
-X-Google-Smtp-Source: ADUXVKJh9moGew8otStseu189sEUOuZRv2UUf9/uMikHH9OElXucvE6fc9PhS19sfL0M7WxGOcbr0g==
-From: Sankalp Negi <sankalpnegi2310@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        neil@brown.name, sankalpnegi2310@gmail.com
-Subject: [PATCH v2 5/5] staging: mt7621-spi: Fix Coding style issues reported by checkpatch.pl.
-Date: Sat,  2 Jun 2018 19:56:05 +0530
-Message-Id: <20180602142605.6846-6-sankalpnegi2310@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180602142605.6846-1-sankalpnegi2310@gmail.com>
-References: <20180601091553.GA5821@kroah.com>
- <20180602142605.6846-1-sankalpnegi2310@gmail.com>
+        id S1751454AbeFBOaM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 10:30:12 -0400
+Received: from vern.gendns.com ([206.190.152.46]:58428 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750827AbeFBOaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 10:30:10 -0400
+Subject: Re: [PATCH] clk: Return void from debug_init op
+To: sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>, Sekhar Nori <nsekhar@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20180602050643.87253-1-sboyd@kernel.org>
+From: David Lechner <david@lechnology.com>
+Message-ID: <35a797de-35ec-ce65-64c4-8d2137b55c53@lechnology.com>
+Date: Sat, 2 Jun 2018 09:29:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180602050643.87253-1-sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch fixes following checkpatch.pl issue:
-WARNING : braces {} are not necessary for single statement blocks
+On 06/02/2018 12:06 AM, sboyd@kernel.org wrote:
+> From: Stephen Boyd <sboyd@kernel.org>
+> 
+> We only have two users of the debug_init hook, and we recently stopped
+> caring about the return value from that op. Finish that off by changing
+> the clk_op to return void instead of int because it doesn't matter if
+> debugfs fails or not.
+> 
+> Cc: Eric Anholt <eric@anholt.net>
+> Cc: David Lechner <david@lechnology.com>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Signed-off-by: Sankalp Negi <sankalpnegi2310@gmail.com>
----
- drivers/staging/mt7621-spi/spi-mt7621.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/mt7621-spi/spi-mt7621.c b/drivers/staging/mt7621-spi/spi-mt7621.c
-index 472f72479162..cf5b5d7c3cf9 100644
---- a/drivers/staging/mt7621-spi/spi-mt7621.c
-+++ b/drivers/staging/mt7621-spi/spi-mt7621.c
-@@ -165,9 +165,8 @@ static inline int mt7621_spi_wait_till_ready(struct spi_device *spi)
- 		u32 status;
- 
- 		status = mt7621_spi_read(rs, MT7621_SPI_TRANS);
--		if ((status & SPITRANS_BUSY) == 0) {
-+		if ((status & SPITRANS_BUSY) == 0)
- 			return 0;
--		}
- 		cpu_relax();
- 		udelay(1);
- 	}
--- 
-2.11.0
+Acked-by: David Lechner <david@lechnology.com>
