@@ -1,48 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751378AbeFBFlo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 01:41:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38580 "EHLO mx2.suse.de"
+        id S1751476AbeFBFmD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 01:42:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750750AbeFBFll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 01:41:41 -0400
-Date: Fri, 1 Jun 2018 22:41:31 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        tgraf@suug.ch, manfred@colorfullife.com, mhocko@kernel.org,
-        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 2/5] lib/rhashtable: guarantee initial hashtable
- allocation
-Message-ID: <20180602054131.ta7ligrfwbgvemfv@linux-r8p5>
-References: <20180601160125.30031-1-dave@stgolabs.net>
- <20180601160125.30031-3-dave@stgolabs.net>
- <20180602044150.xpazuhpxbwt37xmu@gondor.apana.org.au>
+        id S1750812AbeFBFmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 01:42:01 -0400
+Subject: [PATCH v1 0/2] PCI: shpchp: Minor fixes
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Mario.Limonciello@dell.com, Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lukas Wunner <lukas@wunner.de>
+Date: Sat, 02 Jun 2018 00:41:59 -0500
+Message-ID: <152791788214.257724.13044360353832574147.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180602044150.xpazuhpxbwt37xmu@gondor.apana.org.au>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 02 Jun 2018, Herbert Xu wrote:
->>  	tbl = bucket_table_alloc(ht, size, GFP_KERNEL);
->> -	if (tbl == NULL)
->> -		return -ENOMEM;
->> +	if (unlikely(tbl == NULL)) {
->> +		size = min_t(u16, ht->p.min_size, HASH_MIN_SIZE);
->
->You mean max_t?
+An AMD POGO check in shpchp incorrectly included any device with device ID
+0x7458, no matter what the vendor.
 
-Not really. I considered some of the users to set quite a large min_size
-(such as 1024 buckets). The min() makes sense to me in that it's the smallest
-possible value. If memory later becomes available and the hashtable is resized
-to a more appropriate value, couldn't any issues regarding collisions not be dealt
-with organically? And we've agreed that allocating a tiny table is the
-least of our problems.
+Also, use pci_info() instead of dbg() for messages related to OSHP.
+They're important enough that they should appear in dmesg.
 
-Thanks,
-Davidlohr
+I intend to include these along with Mika's shpchp updates.
+
+---
+
+Bjorn Helgaas (2):
+      PCI: shpchp: Use dev_printk() for OSHP-related messages
+      PCI: shpchp: Fix AMD POGO identification
+
+
+ drivers/pci/hotplug/acpi_pcihp.c  |   13 ++++++-------
+ drivers/pci/hotplug/shpchp_ctrl.c |    8 ++++----
+ 2 files changed, 10 insertions(+), 11 deletions(-)
