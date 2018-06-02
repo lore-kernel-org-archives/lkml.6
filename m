@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751721AbeFBKju (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 06:39:50 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38679 "EHLO
+        id S1752158AbeFBKkE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 06:40:04 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38676 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751845AbeFBKh2 (ORCPT
+        with ESMTP id S1751827AbeFBKh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 06:37:28 -0400
-X-Google-Smtp-Source: ADUXVKI37hSr7z0+1rESk8BwTYoM6oCNo+dPnzCty5VAe9KQYyLWuanakCqe/a+TBiqb7JKPhme42g==
+        Sat, 2 Jun 2018 06:37:26 -0400
+X-Google-Smtp-Source: ADUXVKK/ymf7pz/I0nPrr2mgQBuAO4uLUK57mClllj1jviYhx9wY46wuNNuHtJZbPt6buxViPjpgog==
 From: Christian Brauner <christian@brauner.io>
 To: linux-kernel@vger.kernel.org
 Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
@@ -15,9 +15,9 @@ Cc: ebiederm@xmission.com, gregkh@linuxfoundation.org, mingo@kernel.org,
         peterz@infradead.org, sds@tycho.nsa.gov, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, oleg@redhat.com,
         Christian Brauner <christian@brauner.io>
-Subject: [PATCH v3 15/17] signal: make legacy_queue() return bool
-Date: Sat,  2 Jun 2018 12:36:51 +0200
-Message-Id: <20180602103653.18181-16-christian@brauner.io>
+Subject: [PATCH v3 14/17] signal: make wants_signal() return bool
+Date: Sat,  2 Jun 2018 12:36:50 +0200
+Message-Id: <20180602103653.18181-15-christian@brauner.io>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180602103653.18181-1-christian@brauner.io>
 References: <20180602103653.18181-1-christian@brauner.io>
@@ -25,7 +25,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-legacy_queue() already behaves like a boolean function. Let's actually
+wants_signal() already behaves like a boolean function. Let's actually
 declare it as such too.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
@@ -37,21 +37,38 @@ v1->v2:
 v0->v1:
 * patch added
 ---
- kernel/signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/signal.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/signal.c b/kernel/signal.c
-index 3a12d3b25584..50255b6a3124 100644
+index 100f2cb29fd8..3a12d3b25584 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -972,7 +972,7 @@ static void complete_signal(int sig, struct task_struct *p, int group)
- 	return;
+@@ -879,16 +879,20 @@ static bool prepare_signal(int sig, struct task_struct *p, bool force)
+  * as soon as they're available, so putting the signal on the shared queue
+  * will be equivalent to sending it to one such thread.
+  */
+-static inline int wants_signal(int sig, struct task_struct *p)
++static inline bool wants_signal(int sig, struct task_struct *p)
+ {
+ 	if (sigismember(&p->blocked, sig))
+-		return 0;
++		return false;
++
+ 	if (p->flags & PF_EXITING)
+-		return 0;
++		return false;
++
+ 	if (sig == SIGKILL)
+-		return 1;
++		return true;
++
+ 	if (task_is_stopped_or_traced(p))
+-		return 0;
++		return false;
++
+ 	return task_curr(p) || !signal_pending(p);
  }
  
--static inline int legacy_queue(struct sigpending *signals, int sig)
-+static inline bool legacy_queue(struct sigpending *signals, int sig)
- {
- 	return (sig < SIGRTMIN) && sigismember(&signals->signal, sig);
- }
 -- 
 2.17.0
