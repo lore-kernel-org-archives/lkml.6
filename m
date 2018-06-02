@@ -1,281 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751783AbeFBA5P (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 20:57:15 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:46016 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751267AbeFBA4g (ORCPT
+        id S1751343AbeFBBAB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 21:00:01 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:48784 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750927AbeFBBAA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 20:56:36 -0400
-X-Google-Smtp-Source: ADUXVKIsgmTeYAijv69eY6U/xCPeB+S0HkoGFuKA//g9a7w1HOXRAMjAtYaOfORAw8m8bGDlY5ZM2g==
-Subject: Re: INFO: task hung in blk_queue_enter
-From: Jens Axboe <axboe@kernel.dk>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Bart.VanAssche@wdc.com, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
-        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
-        martin.petersen@oracle.com, dan.j.williams@intel.com, hch@lst.de,
-        oleksandr@natalenko.name, martin@lichtvoll.de, hare@suse.com,
-        syzkaller-bugs@googlegroups.com, ross.zwisler@linux.intel.com,
-        keith.busch@intel.com, linux-ext4@vger.kernel.org
-References: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
- <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
- <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
- <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
- <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
- <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp>
- <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp>
- <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
- <20180601234946.GA655@ming.t460p>
- <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk>
-Message-ID: <ed1b74b2-4446-a2f1-5196-86478bb3694a@kernel.dk>
-Date: Fri, 1 Jun 2018 18:56:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 1 Jun 2018 21:00:00 -0400
+Date: Fri, 1 Jun 2018 17:59:48 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>
+Subject: Re: linux-next: manual merge of the nvdimm tree with the xfs tree
+Message-ID: <20180602005948.GH7825@magnolia>
+References: <20180601185846.1c5b7d0a@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601185846.1c5b7d0a@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8911 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806020009
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/1/18 6:49 PM, Jens Axboe wrote:
-> On 6/1/18 5:49 PM, Ming Lei wrote:
->> On Fri, Jun 01, 2018 at 11:52:45AM -0600, Jens Axboe wrote:
->>> On 6/1/18 4:10 AM, Tetsuo Handa wrote:
->>>> Tetsuo Handa wrote:
->>>>> Since sum of percpu_count did not change after percpu_ref_kill(), this is
->>>>> not a race condition while folding percpu counter values into atomic counter
->>>>> value. That is, for some reason, someone who is responsible for calling
->>>>> percpu_ref_put(&q->q_usage_counter) (presumably via blk_queue_exit()) is
->>>>> unable to call percpu_ref_put().
->>>>> But I don't know how to find someone who is failing to call percpu_ref_put()...
->>>>
->>>> I found the someone. It was already there in the backtrace...
->>>>
->>>> ----------------------------------------
->>>> [   62.065852] a.out           D    0  4414   4337 0x00000000
->>>> [   62.067677] Call Trace:
->>>> [   62.068545]  __schedule+0x40b/0x860
->>>> [   62.069726]  schedule+0x31/0x80
->>>> [   62.070796]  schedule_timeout+0x1c1/0x3c0
->>>> [   62.072159]  ? __next_timer_interrupt+0xd0/0xd0
->>>> [   62.073670]  blk_queue_enter+0x218/0x520
->>>> [   62.074985]  ? remove_wait_queue+0x70/0x70
->>>> [   62.076361]  generic_make_request+0x3d/0x540
->>>> [   62.077785]  ? __bio_clone_fast+0x6b/0x80
->>>> [   62.079147]  ? bio_clone_fast+0x2c/0x70
->>>> [   62.080456]  blk_queue_split+0x29b/0x560
->>>> [   62.081772]  ? blk_queue_split+0x29b/0x560
->>>> [   62.083162]  blk_mq_make_request+0x7c/0x430
->>>> [   62.084562]  generic_make_request+0x276/0x540
->>>> [   62.086034]  submit_bio+0x6e/0x140
->>>> [   62.087185]  ? submit_bio+0x6e/0x140
->>>> [   62.088384]  ? guard_bio_eod+0x9d/0x1d0
->>>> [   62.089681]  do_mpage_readpage+0x328/0x730
->>>> [   62.091045]  ? __add_to_page_cache_locked+0x12e/0x1a0
->>>> [   62.092726]  mpage_readpages+0x120/0x190
->>>> [   62.094034]  ? check_disk_change+0x70/0x70
->>>> [   62.095454]  ? check_disk_change+0x70/0x70
->>>> [   62.096849]  ? alloc_pages_current+0x65/0xd0
->>>> [   62.098277]  blkdev_readpages+0x18/0x20
->>>> [   62.099568]  __do_page_cache_readahead+0x298/0x360
->>>> [   62.101157]  ondemand_readahead+0x1f6/0x490
->>>> [   62.102546]  ? ondemand_readahead+0x1f6/0x490
->>>> [   62.103995]  page_cache_sync_readahead+0x29/0x40
->>>> [   62.105539]  generic_file_read_iter+0x7d0/0x9d0
->>>> [   62.107067]  ? futex_wait+0x221/0x240
->>>> [   62.108303]  ? trace_hardirqs_on+0xd/0x10
->>>> [   62.109654]  blkdev_read_iter+0x30/0x40
->>>> [   62.110954]  generic_file_splice_read+0xc5/0x140
->>>> [   62.112538]  do_splice_to+0x74/0x90
->>>> [   62.113726]  splice_direct_to_actor+0xa4/0x1f0
->>>> [   62.115209]  ? generic_pipe_buf_nosteal+0x10/0x10
->>>> [   62.116773]  do_splice_direct+0x8a/0xb0
->>>> [   62.118056]  do_sendfile+0x1aa/0x390
->>>> [   62.119255]  __x64_sys_sendfile64+0x4e/0xc0
->>>> [   62.120666]  do_syscall_64+0x6e/0x210
->>>> [   62.121909]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>>> ----------------------------------------
->>>>
->>>> The someone is blk_queue_split() from blk_mq_make_request() who depends on an
->>>> assumption that blk_queue_enter() from recursively called generic_make_request()
->>>> does not get blocked due to percpu_ref_tryget_live(&q->q_usage_counter) failure.
->>>>
->>>> ----------------------------------------
->>>> generic_make_request(struct bio *bio) {
->>>>   if (blk_queue_enter(q, flags) < 0) { /* <= percpu_ref_tryget_live() succeeds. */
->>>>     if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
->>>>       bio_wouldblock_error(bio);
->>>>     else
->>>>       bio_io_error(bio);
->>>>     return ret;
->>>>   }
->>>> (...snipped...)
->>>>   ret = q->make_request_fn(q, bio);
->>>> (...snipped...)
->>>>   if (q)
->>>>     blk_queue_exit(q);
->>>> }
->>>> ----------------------------------------
->>>>
->>>> where q->make_request_fn == blk_mq_make_request which does
->>>>
->>>> ----------------------------------------
->>>> blk_mq_make_request(struct request_queue *q, struct bio *bio) {
->>>>    blk_queue_split(q, &bio);
->>>> }
->>>>
->>>> blk_queue_split(struct request_queue *q, struct bio **bio) {
->>>>   generic_make_request(*bio); /* <= percpu_ref_tryget_live() fails and waits until atomic_read(&q->mq_freeze_depth) becomes 0. */
->>>> }
->>>> ----------------------------------------
->>>>
->>>> and meanwhile atomic_inc_return(&q->mq_freeze_depth) and
->>>> percpu_ref_kill() are called by	blk_freeze_queue_start()...
->>>>
->>>> Now, it is up to you about how to fix this race problem.
->>>
->>> Ahh, nicely spotted! One idea would be the one below. For this case,
->>> we're recursing, so we can either do a non-block queue enter, or we
->>> can just do a live enter.
->>>
->>> diff --git a/block/blk-core.c b/block/blk-core.c
->>> index 85909b431eb0..7de12e0dcc3d 100644
->>> --- a/block/blk-core.c
->>> +++ b/block/blk-core.c
->>> @@ -2392,7 +2392,9 @@ blk_qc_t generic_make_request(struct bio *bio)
->>>  
->>>  	if (bio->bi_opf & REQ_NOWAIT)
->>>  		flags = BLK_MQ_REQ_NOWAIT;
->>> -	if (blk_queue_enter(q, flags) < 0) {
->>> +	if (bio->bi_opf & REQ_QUEUE_ENTERED)
->>> +		blk_queue_enter_live(q);
->>> +	else if (blk_queue_enter(q, flags) < 0) {
->>>  		if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
->>>  			bio_wouldblock_error(bio);
->>>  		else
->>> diff --git a/block/blk-merge.c b/block/blk-merge.c
->>> index 782940c65d8a..e1063e8f7eda 100644
->>> --- a/block/blk-merge.c
->>> +++ b/block/blk-merge.c
->>> @@ -210,6 +210,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
->>>  		/* there isn't chance to merge the splitted bio */
->>>  		split->bi_opf |= REQ_NOMERGE;
->>>  
->>> +		/*
->>> +		 * Since we're recursing into make_request here, ensure
->>> +		 * that we mark this bio as already having entered the queue.
->>> +		 * If not, and the queue is going away, we can get stuck
->>> +		 * forever on waiting for the queue reference to drop. But
->>> +		 * that will never happen, as we're already holding a
->>> +		 * reference to it.
->>> +		 */
->>> +		(*bio)->bi_opf |= REQ_QUEUE_ENTERED;
->>> +
->>>  		bio_chain(split, *bio);
->>>  		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
->>>  		generic_make_request(*bio);
->>> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
->>> index 17b18b91ebac..a6bc789b83e7 100644
->>> --- a/include/linux/blk_types.h
->>> +++ b/include/linux/blk_types.h
->>> @@ -282,6 +282,8 @@ enum req_flag_bits {
->>>  	/* command specific flags for REQ_OP_WRITE_ZEROES: */
->>>  	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
->>>  
->>> +	__REQ_QUEUE_ENTERED,	/* queue already entered for this request */
->>> +
->>>  	/* for driver use */
->>>  	__REQ_DRV,
->>>  
->>> @@ -302,9 +304,8 @@ enum req_flag_bits {
->>>  #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
->>>  #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
->>>  #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
->>> -
->>>  #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
->>> -
->>> +#define REQ_QUEUE_ENTERED	(1ULL << __REQ_QUEUE_ENTERED)
->>>  #define REQ_DRV			(1ULL << __REQ_DRV)
->>>  
->>>  #define REQ_FAILFAST_MASK \
->>
->> bio clone inherits .bi_opf, so this way may not work for cloned bio.
->>
->> Given most of bio_split() is run in .make_request_fn(), holding the
->> queue ref may not be needed in case of bio splitting, so another
->> candidate fix might be to introduce one extra parameter of
->> 'need_queue_ref' to generic_make_request().
+On Fri, Jun 01, 2018 at 06:58:46PM +1000, Stephen Rothwell wrote:
+> Hi Dan,
 > 
-> I did consider that, but that's pretty silly for a corner case and you'd
-> have to change a crap ton of calls to it. I think it'd be cleaner to
-> clear the bit when we need to, potentially even adding a debug check to
-> blk_queue_enter_live() that complains if the ref was not already
-> elevated. Though that would be expensive, compared to the percpu inc
-> now. Not saying the bit is necessarily the best way forward, but I do
-> like it a LOT more than adding an argument to generic_make_request.
+> Today's linux-next merge of the nvdimm tree got a conflict in:
 > 
-> It should have been a bio flag to begin with, that better captures the
-> scope and also avoids clones inheriting anything they shouldn't. It's
-> also not applicable to a request.
+>   drivers/dax/super.c
+> 
+> between commits:
+> 
+>   ba23cba9b3bd ("fs: allow per-device dax status checking for filesystems")
+>   80660f20252d ("dax: change bdev_dax_supported() to support boolean returns")
+> 
+> from the xfs tree and commit:
+> 
+>   e76384884344 ("mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_OPS")
+> 
+> from the nvdimm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> diff --cc drivers/dax/super.c
+> index 1d7bd96511f0,88672b6f6252..000000000000
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@@ -80,11 -80,13 +80,12 @@@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev)
+>    * This is a library function for filesystems to check if the block device
+>    * can be mounted with dax option.
+>    *
+>  - * Return: negative errno if unsupported, 0 if supported.
+>  + * Return: true if supported, false if unsupported
+>    */
+>  -int __bdev_dax_supported(struct super_block *sb, int blocksize)
+>  +bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+>   {
+>  -	struct block_device *bdev = sb->s_bdev;
+>   	struct dax_device *dax_dev;
+> + 	bool dax_enabled = false;
+>   	pgoff_t pgoff;
+>   	int err, id;
+>   	void *kaddr;
+> @@@ -134,15 -135,22 +135,22 @@@
+>   		 * on being able to do (page_address(pfn_to_page())).
+>   		 */
+>   		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
+> + 		dax_enabled = true;
+>   	} else if (pfn_t_devmap(pfn)) {
+> - 		/* pass */;
+> - 	} else {
+> + 		struct dev_pagemap *pgmap;
+> + 
+> + 		pgmap = get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
+> + 		if (pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX)
+> + 			dax_enabled = true;
+> + 		put_dev_pagemap(pgmap);
+> + 	}
+> + 
+> + 	if (!dax_enabled) {
+>  -		pr_debug("VFS (%s): error: dax support not enabled\n",
+>  -				sb->s_id);
+>  +		pr_debug("%s: error: dax support not enabled\n",
+>  +				bdevname(bdev, buf));
+> - 		return false;
+> + 		return -EOPNOTSUPP;
 
-A little too much inheritance from the previous patch, better version
-below.
+Hang on a sec, the changes in the xfs tree make this function return a
+boolean (true for dax-is-supported, false for dax-not-supported), but
+this change partially reverts the boolean return values.
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 85909b431eb0..71cb228d7374 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2392,7 +2392,9 @@ blk_qc_t generic_make_request(struct bio *bio)
- 
- 	if (bio->bi_opf & REQ_NOWAIT)
- 		flags = BLK_MQ_REQ_NOWAIT;
--	if (blk_queue_enter(q, flags) < 0) {
-+	if (bio_flagged(bio, BIO_QUEUE_ENTERED))
-+		blk_queue_enter_live(q);
-+	else if (blk_queue_enter(q, flags) < 0) {
- 		if (!blk_queue_dying(q) && (bio->bi_opf & REQ_NOWAIT))
- 			bio_wouldblock_error(bio);
- 		else
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 782940c65d8a..481dc02668f9 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -210,6 +210,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
- 		/* there isn't chance to merge the splitted bio */
- 		split->bi_opf |= REQ_NOMERGE;
- 
-+		/*
-+		 * Since we're recursing into make_request here, ensure
-+		 * that we mark this bio as already having entered the queue.
-+		 * If not, and the queue is going away, we can get stuck
-+		 * forever on waiting for the queue reference to drop. But
-+		 * that will never happen, as we're already holding a
-+		 * reference to it.
-+		 */
-+		bio_set_flag(*bio, BIO_QUEUE_ENTERED);
-+
- 		bio_chain(split, *bio);
- 		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
- 		generic_make_request(*bio);
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 17b18b91ebac..1602bf4ab4cd 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -186,6 +186,8 @@ struct bio {
- 				 * throttling rules. Don't do it again. */
- #define BIO_TRACE_COMPLETION 10	/* bio_endio() should trace the final completion
- 				 * of this bio. */
-+#define BIO_QUEUE_ENTERED 11	/* can use blk_queue_enter_live() */
-+
- /* See BVEC_POOL_OFFSET below before adding new flags */
- 
- /*
+>   	}
+> - 
+> - 	return true;
+> + 	return 0;
 
--- 
-Jens Axboe
+The merge should retain the 'return false' above and the 'return true'
+here... or possibly just return dax_enabled:
+
+if (!dax_enabled) {
+	pr_debug(...);
+	pr_debug(...);
+}
+
+return dax_enabled;
+
+--D
+
+>   }
+>   EXPORT_SYMBOL_GPL(__bdev_dax_supported);
+>   #endif
