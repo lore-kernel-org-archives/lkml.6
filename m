@@ -1,93 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751799AbeFBRnN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 13:43:13 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33049 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeFBRnJ (ORCPT
+        id S1751833AbeFBRpq (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 13:45:46 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44510 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751469AbeFBRpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 13:43:09 -0400
-Date: Sat, 2 Jun 2018 19:43:07 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, timur@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jonathan Corbet <corbet@lwn.net>, Bjorn Helgaas <bhelgaas@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Christoffer Dall <cdall@linaro.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: Add pci=safemode option
-Message-ID: <20180602174307.GB14870@amd>
-References: <1527650389-31575-1-git-send-email-okaya@codeaurora.org>
- <20180530043103.GA19734@kroah.com>
- <6c317ed8-cca3-8862-5f3b-12cf14e4d53b@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="24zk1gE8NUlDmwG9"
-Content-Disposition: inline
-In-Reply-To: <6c317ed8-cca3-8862-5f3b-12cf14e4d53b@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 2 Jun 2018 13:45:45 -0400
+X-Google-Smtp-Source: ADUXVKJUe6JBmPWGq4ungX6LNZSriqJK2MRHWzwISxyDEyKVRPkmb3ylmr4sHpMydLcInHz9WKVNOQ==
+From: Kent Overstreet <kent.overstreet@gmail.com>
+To: axboe@kernel.dk, dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        snitzer@redhat.com
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Subject: [PATCH] dm-crypt: fix warning in shutdown path
+Date: Sat,  2 Jun 2018 13:45:04 -0400
+Message-Id: <20180602174504.1847-1-kent.overstreet@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The counter for the number of allocated pages includes pages in the
+mempool's reserve, so checking that the number of allocated pages is 0
+needs to happen after we exit the mempool.
 
---24zk1gE8NUlDmwG9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+---
+ drivers/md/dm-crypt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Hi!
-
-> > And you should explain what exactly in PCI is "optional".  Who defines
-> > this and where is that list and what can go wrong if those options are
-> > not enabled?
->=20
-> Bjorn and I discussed the need for such a "safe" mode feature when you
-> want to bring up PCI for a platform. You want to turn off everything as
-> a starter and just stick to bare minimum.
->=20
-> I can add a few words describing them. The goal of this option is to keep
-> base PCI features with MSI only. Things like PME, AER, ASPM, Extended
-> Tags, LTR, Relaxed Ordering, SRIOV are all considered optional. safemode
-> is certainly not intended for production environments.=20
->=20
-> I can taint the kernel as a suggestion.
-
-I don't think tainting is required. even modern platforms should work
-in the safe mode.
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---24zk1gE8NUlDmwG9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEUEARECAAYFAlsS1ysACgkQMOfwapXb+vLNGACgvXxEN0Xsaay3KFmc9pcELqNp
-yN4Al2Wb+Hsizgq51WxdnORdI/5DhSY=
-=BqMv
------END PGP SIGNATURE-----
-
---24zk1gE8NUlDmwG9--
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index eaf6b279ac..9a000aa955 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2221,14 +2221,14 @@ static void crypt_dtr(struct dm_target *ti)
+ 
+ 	bioset_exit(&cc->bs);
+ 
+-	if (mempool_initialized(&cc->page_pool))
+-		WARN_ON(percpu_counter_sum(&cc->n_allocated_pages) != 0);
+-	percpu_counter_destroy(&cc->n_allocated_pages);
+-
+ 	mempool_exit(&cc->page_pool);
+ 	mempool_exit(&cc->req_pool);
+ 	mempool_exit(&cc->tag_pool);
+ 
++	if (cc->n_allocated_pages.counters)
++		WARN_ON(percpu_counter_sum(&cc->n_allocated_pages) != 0);
++	percpu_counter_destroy(&cc->n_allocated_pages);
++
+ 	if (cc->iv_gen_ops && cc->iv_gen_ops->dtr)
+ 		cc->iv_gen_ops->dtr(cc);
+ 
+-- 
+2.17.1
