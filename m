@@ -1,91 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751470AbeFBJix (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 05:38:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60568 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750821AbeFBJiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 05:38:52 -0400
-Date: Sat, 2 Jun 2018 10:38:48 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Subject: Re: linux-next-20180601: build error in
- arch/arm64/kvm/hyp/hyp-entry.S
-Message-ID: <20180602093846.hgc2zu52hp66ylrz@armageddon.cambridge.arm.com>
-References: <457305318.78169.1527883507093@email.1und1.de>
- <20180601212619.6trmvqrgmbczekkt@armageddon.cambridge.arm.com>
- <86h8mla92t.wl-marc.zyngier@arm.com>
+        id S1751671AbeFBJjg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 05:39:36 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45951 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751297AbeFBJjc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 05:39:32 -0400
+X-ME-Proxy: <xmx:02USW8CeVr7xH0_9RPhUo6_GSaFccf9XL8ju35bXC6FysUSCvNpTDQ>
+X-ME-Proxy: <xmx:02USW0GxQBbsl9hDMQwYbHFlA7KcuPqUr-VBEECDpQy_rwti9DszcQ>
+X-ME-Proxy: <xmx:02USWzfbWMZAvmTQwHEhIPqU0rwkQeHLvBX9PuY25pN8zxSjCEu7bw>
+X-ME-Proxy: <xmx:02USW6yU5AmbNr-NoX10wcNCCLCvo9bfwDSzKRWBedA8Kc8pOUsNYA>
+X-ME-Proxy: <xmx:02USWyfL_uz3nZO625SMKm514efmwdPDS2DKpMfWPMBnzj9ytgsxgw>
+X-ME-Proxy: <xmx:02USW2LEz0DUAVF4jtYakAzIpRM_hzZF2EB1VMcMk0AURMC3xG7BkA>
+X-ME-Sender: <xms:02USW2rbOgM4peAuhJP81l1eRCrilodXGEm3Q5fk0GNq1JcWMgEFuw>
+Date: Sat, 2 Jun 2018 12:39:28 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: Michal Kubecek <mkubecek@suse.cz>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Tom Herbert <tom@herbertland.com>, David Ahern <dsahern@gmail.com>
+Subject: Re: [PATCH net v2] ipv6: omit traffic class when calculating flow
+ hash
+Message-ID: <20180602093928.GA28635@splinter>
+References: <20180602080528.54B27A0C48@unicorn.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86h8mla92t.wl-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180602080528.54B27A0C48@unicorn.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 09:25:46AM +0100, Marc Zyngier wrote:
-> On Fri, 01 Jun 2018 22:26:19 +0100,
-> Catalin Marinas wrote:
-> > On Fri, Jun 01, 2018 at 10:05:07PM +0200, Stefan Wahren wrote:
-> > > i can't build todays linux-next-20180601 and get the following error message:
-> > > 
-> > > arch/arm64/kvm/hyp/hyp-entry.S: Assembler messages:
-> > > arch/arm64/kvm/hyp/hyp-entry.S:128: Error: constant expression required at operand 3 -- `bfi x0,x1,#VCPU_WORKAROUND_2_FLAG_SHIFT,#1'
-> > > 
-> > > Related commit:
-> > > arm64: KVM: Handle guest's ARCH_WORKAROUND_2 requests
-> > > 
-> > > Toolchain: gcc-linaro-7.2.1-2017.11-x86_64_aarch64-linux-gnu
-> > > Kernel config: arm64/defconfig
-> > 
-> > Thanks for reporting this.
-> > 
-> > I can hit this as well. It looks like an #ifndef __ASSEMBLY__ in the
-> > wrong place in arch/arm64/include/asm/kvm_asm.h. I can't tell whether it
-> > was caused by a merge conflict resolution or just some unfortunate
-> > interaction between the security fixes going via the arm64 tree and the
-> > other arm64 KVM patches.
+On Sat, Jun 02, 2018 at 09:40:34AM +0200, Michal Kubecek wrote:
+> Some of the code paths calculating flow hash for IPv6 use flowlabel member
+> of struct flowi6 which, despite its name, encodes both flow label and
+> traffic class. If traffic class changes within a TCP connection (as e.g.
+> ssh does), ECMP route can switch between path. It's also incosistent with
+> other code paths where ip6_flowlabel() (returning only flow label) is used
+> to feed the key.
 > 
-> The merge between 55e3748e8902 in the arm64 tree, and both
-> fa89d31c5306 and 46c4a30b0b16 in the kvmarm tree has resulted in a
-> slight mis-merge which I didn't spot yesterday. Apologies for not
-> realising this myself.
+> Use only flow label everywhere, including one place where hash key is set
+> using ip6_flowinfo().
 > 
-> Stephen, could you please add the following patchlet as a resolution
-> of the merge?
-> 
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index c5246d80b857..a169f3a88148 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -30,13 +30,13 @@
->  /* The hyp-stub will return this for any kvm_call_hyp() call */
->  #define ARM_EXCEPTION_HYP_GONE	  HVC_STUB_ERR
->  
-> +#define	VCPU_WORKAROUND_2_FLAG_SHIFT	0
-> +#define	VCPU_WORKAROUND_2_FLAG		(_AC(1, UL) << VCPU_WORKAROUND_2_FLAG_SHIFT)
-> +
->  #ifndef __ASSEMBLY__
->  
->  #include <linux/mm.h>
->  
-> -#define	VCPU_WORKAROUND_2_FLAG_SHIFT	0
-> -#define	VCPU_WORKAROUND_2_FLAG		(_AC(1, UL) << VCPU_WORKAROUND_2_FLAG_SHIFT)
-> -
->  /* Translate a kernel address of @sym into its equivalent linear mapping */
->  #define kvm_ksym_ref(sym)						\
->  	({								\
-> 
-> Catalin: Alternatively, you could add a patch on top of the arm64
-> branch, moving these two defines to the top of the file, avoiding the
-> conflict altogether.
+> Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
+> Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
+> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 
-I'll move them to the top of the file. Thanks for checking this.
-
--- 
-Catalin
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Tested-by: Ido Schimmel <idosch@mellanox.com>
