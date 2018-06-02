@@ -1,44 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751624AbeFBRch (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 13:32:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52616 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750892AbeFBRcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 13:32:35 -0400
-Date: Sat, 2 Jun 2018 12:32:33 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Jessica Yu <jeyu@kernel.org>
-Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: /proc/kallsyms shows undefined symbols for livepatch modules
-Message-ID: <20180602173209.merjb4o5a3wsdnbh@treble>
+        id S1751559AbeFBRnD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 13:43:03 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33022 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeFBRnC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 13:43:02 -0400
+Date: Sat, 2 Jun 2018 19:42:59 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: bhelgaas@google.com, alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, keith.busch@intel.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Check for PCIe downtraining conditions
+Message-ID: <20180602174259.GA14870@amd>
+References: <20180531150535.9684-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
 Content-Disposition: inline
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180531150535.9684-1-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jessica,
 
-I found a bug:
+--h31gzZEtNLTqOjlF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  [root@f25 ~]# modprobe livepatch-sample
-  [root@f25 ~]# grep ' u ' /proc/kallsyms
-  ffffffff81161080 u klp_enable_patch	[livepatch_sample]
-  ffffffff81a01800 u __fentry__	[livepatch_sample]
-  ffffffff81161250 u klp_unregister_patch	[livepatch_sample]
-  ffffffff81161870 u klp_register_patch	[livepatch_sample]
-  ffffffff8131f0b0 u seq_printf	[livepatch_sample]
+On Thu 2018-05-31 10:05:33, Alexandru Gagniuc wrote:
+> PCIe downtraining happens when both the device and PCIe port are
+> capable of a larger bus width or higher speed than negotiated.
+> Downtraining might be indicative of other problems in the system, and
+> identifying this from userspace is neither intuitive, nor straigh
+> forward.
+> Instead, check for such conditions on device probe, and print an
+> appropriate message.
+>=20
 
-Notice that livepatch modules' undefined symbols are showing up in
-/proc/kallsyms.  This can confuse klp_find_object_symbol() which can
-cause subtle bugs in livepatch.
+> +	if (dev_cur_width < max_link_width) {
+> +		/* Lanes might not be routed, so use info instead of warn. */
+> +		pci_info(dev, "PCIe downtrain: Port and device capable of x%d, but lin=
+k running at x%d",
+> +			 max_link_width, dev_cur_width);
+> +	}
 
-I stared at the module kallsyms code for a bit, but I don't see the bug.
-Maybe it has something to do with how we save the symbol table in
-copy_module_elf().  Any ideas?
+Would "warn" be right loglevel?
+									Pavel
+								=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
--- 
-Josh
+--h31gzZEtNLTqOjlF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsS1yMACgkQMOfwapXb+vLn9wCeLrJpI37mN9luuXqrNZ6OhyAH
+nz4AoLLXIXxQqAtoiW4dNmxIXCI70hEi
+=sEfL
+-----END PGP SIGNATURE-----
+
+--h31gzZEtNLTqOjlF--
