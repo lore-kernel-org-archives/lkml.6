@@ -1,56 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751819AbeFBQkI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 12:40:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33755 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750964AbeFBQkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 12:40:06 -0400
-Date: Sat, 2 Jun 2018 10:40:05 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= <amade@asmblr.net>,
-        "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
-Subject: [GIT PULL] VFIO fix for v4.17
-Message-ID: <20180602104005.018ba72c@w520.home>
+        id S1751876AbeFBQoJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 12:44:09 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:34536 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751495AbeFBQoI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 12:44:08 -0400
+X-Google-Smtp-Source: ADUXVKI/K0DLQxKgJHPEt4wT52EAchn6/ijQwcWMsHH0b5JHQLxwL9xN1aVhmUnlI0o3sYyOmUxd8zuLpM6IGi2mIj0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180601115329.27807-1-mhocko@kernel.org>
+In-Reply-To: <20180601115329.27807-1-mhocko@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 2 Jun 2018 09:43:56 -0700
+Message-ID: <CA+55aFwaYEn8rA=-8hi1v8wWiLGJJsvkuEvBOxgvnmfUBfg4Vg@mail.gmail.com>
+Subject: Re: [PATCH] mm: kvmalloc does not fallback to vmalloc for
+ incompatible gfp flags
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, tom@quantonium.net,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Jun 1, 2018 at 4:53 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> for more context. Linus has pointed out [1] that our (well mine)
+> insisting on GFP_KERNEL compatible gfp flags for kvmalloc* can actually
+> lead to a worse code because people will work around the restriction.
+> So this patch allows kvmalloc to be more permissive and silently skip
+> vmalloc path for incompatible gfp flags.
 
-Sorry for the last minute pull request, a bisection has just identified
-the commit reverted below as introducing a bad page state issue for
-vfio users.  Please pull for v4.17.  Thanks,
+Ack.
 
-Alex
+> This will not help my original
+> plan to enforce people to think about GFP_NOFS usage more deeply but
+> I can live with that obviously...
 
-The following changes since commit 0512e0134582ef85dee77d51aae77dcd1edec495:
+Is it NOFS in particular you care about? The only reason for that
+should be the whole "don't recurse", and I think the naming is
+historical and slightly odd.
 
-  Merge tag 'xfs-4.17-fixes-3' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux (2018-05-31 16:23:07 -0500)
+It was historically just about allocations that were in the writeout
+path for a block layer or filesystem - and the name made sense in that
+context. These days, I think it's just shorthand for "you can do
+simple direct reclaim from the mm itself, but you can't  block or call
+anything else".
 
-are available in the Git repository at:
+So I think the name and the semantics are a bit unclear, but it's
+obviously still useful.
 
-  git://github.com/awilliam/linux-vfio.git tags/vfio-v4.17
+It's entirely possible that direct reclaim should never do any of the
+more complicated callback cases anyway, but we'd still need the whole
+"don't wait for the complex case" logic to avoid deadlocks.
 
-for you to fetch changes up to 89c29def6b0101fff66a3d74d0178b844f88d732:
-
-  Revert "vfio/type1: Improve memory pinning process for raw PFN mapping" (2018-06-02 08:41:44 -0600)
-
-----------------------------------------------------------------
-VFIO fix v4.17
-
- - Revert a pfn page mapping optimization identified as introducing
-   a bad page state regression (Alex Williamson)
-
-----------------------------------------------------------------
-Alex Williamson (1):
-      Revert "vfio/type1: Improve memory pinning process for raw PFN mapping"
-
- drivers/vfio/vfio_iommu_type1.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+           Linus
