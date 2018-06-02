@@ -1,65 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeFBD2u (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 23:28:50 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38052 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751250AbeFBD1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 23:27:53 -0400
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Message-Id: <73507a3e9444da17c222cf74df41842ce30d15ee.1527909627.git.fthain@telegraphics.com.au>
-In-Reply-To: <166b4c3a7347fe27f12bda86d50533cd01ee11b9.1527909627.git.fthain@telegraphics.com.au>
-References: <cover.1527909627.git.fthain@telegraphics.com.au>
-        <f32f4e3a0fd736152f768b7a00bfc731daba1629.1527909627.git.fthain@telegraphics.com.au>
-        <7ce9a8c3996506ae6f9ab16b3cf73c287e205a89.1527909627.git.fthain@telegraphics.com.au>
-        <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
-        <878b389293851359e53de186bf302ce52d95ad95.1527909627.git.fthain@telegraphics.com.au>
-        <adba0545c06cd6c67e26c433990d036b0d7e968c.1527909627.git.fthain@telegraphics.com.au>
-        <166b4c3a7347fe27f12bda86d50533cd01ee11b9.1527909627.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 07/11] macintosh/via-pmu: Make CONFIG_PPC_PMAC Kconfig deps
- explicit
-Date: Fri,  1 Jun 2018 23:27:51 -0400 (EDT)
+        id S1752022AbeFBDaH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 23:30:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44272 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751877AbeFBDaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Jun 2018 23:30:03 -0400
+Date: Sat, 2 Jun 2018 11:29:42 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Sterba <dsterba@suse.cz>, Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, Coly Li <colyli@suse.de>,
+        Filipe Manana <fdmanana@gmail.com>
+Subject: Re: [RESEND PATCH V5 00/33] block: support multipage bvec
+Message-ID: <20180602032941.GB2306@ming.t460p>
+References: <20180525034621.31147-1-ming.lei@redhat.com>
+ <20180525045306.GB8740@kmo-pixel>
+ <8aa4276d-c0bc-3266-aa53-bf08a2e5ab5c@kernel.dk>
+ <20180527072332.GA18240@ming.t460p>
+ <cc266632-497c-6849-e291-4f042c8d987a@kernel.dk>
+ <20180601083557.GA30694@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601083557.GA30694@infradead.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At present, CONFIG_ADB_PMU depends on CONFIG_PPC_PMAC. When this gets
-relaxed to CONFIG_PPC_PMAC || CONFIG_MAC, those Kconfig symbols with
-implicit deps on PPC_PMAC will need explicit deps. Add them now.
-No functional change.
+On Fri, Jun 01, 2018 at 01:35:57AM -0700, Christoph Hellwig wrote:
+> On Sun, May 27, 2018 at 07:44:52PM -0600, Jens Axboe wrote:
+> > Yes, we discussed exactly this, which is why I'm surprised you went
+> > ahead with the same approach. I told you I don't like tree wide renames,
+> > if they can be avoided. I'd rather suffer some pain wrt page vs segments
+> > naming, and then later do a rename (if it bothers us) once the dust has
+> > settled on the interesting part of the changes.
+> > 
+> > I'm very well away of our current naming and what it signifies.  With
+> > #1, you are really splitting hairs, imho. Find a decent name for
+> > multiple segment. Chunk?
+> 
+> vec?
+> 
+> bio_for_each_segment (page)
+> bio_for_each_vec (whole bvec)
 
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- drivers/macintosh/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+IMO, either vec or chunk should be fine, but one thing is that
+there isn't obvious difference between segment and vec/chunk,
+especially the difference is much less obvious than between page
+and vec/chunk/segment.
 
-diff --git a/drivers/macintosh/Kconfig b/drivers/macintosh/Kconfig
-index 9c6452b38c36..26abae4c899d 100644
---- a/drivers/macintosh/Kconfig
-+++ b/drivers/macintosh/Kconfig
-@@ -79,7 +79,7 @@ config ADB_PMU
- 
- config ADB_PMU_LED
- 	bool "Support for the Power/iBook front LED"
--	depends on ADB_PMU
-+	depends on PPC_PMAC && ADB_PMU
- 	select NEW_LEDS
- 	select LEDS_CLASS
- 	help
-@@ -122,7 +122,7 @@ config PMAC_MEDIABAY
- 
- config PMAC_BACKLIGHT
- 	bool "Backlight control for LCD screens"
--	depends on ADB_PMU && FB = y && (BROKEN || !PPC64)
-+	depends on PPC_PMAC && ADB_PMU && FB = y && (BROKEN || !PPC64)
- 	select FB_BACKLIGHT
- 	help
- 	  Say Y here to enable Macintosh specific extensions of the generic
--- 
-2.16.1
+That is why I tried to suggest to introduce bio_for_each_page_*
+before.
+
+Thanks,
+Ming
