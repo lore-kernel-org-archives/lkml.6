@@ -1,46 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeFBWW3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 18:22:29 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:34728 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751342AbeFBWW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 18:22:28 -0400
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org,
-        Julia Lawall <julia.lawall@lip6.fr>, sil2review@lists.osadl.org
-Subject: [PATCH] power: reset: zx-reboot: put device node in zx_reboot_probe()
-Date: Sun,  3 Jun 2018 01:22:05 +0300
-Message-Id: <1527978125-29850-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
+        id S1752064AbeFBW2G (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 18:28:06 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:17168 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751753AbeFBW2F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 18:28:05 -0400
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sun, 03 Jun 2018 00:28:03 +0200
+X-ME-IP: 90.55.202.35
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v8] ASoC: pxa: switch to new ac97 bus support
+References: <20180602192930.17846-1-robert.jarzmik@free.fr>
+X-URL: http://belgarath.falguerolles.org/
+Date: Sun, 03 Jun 2018 00:27:58 +0200
+In-Reply-To: <20180602192930.17846-1-robert.jarzmik@free.fr> (Robert Jarzmik's
+        message of "Sat, 2 Jun 2018 21:29:30 +0200")
+Message-ID: <87fu24su1d.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zx_reboot_probe() increments refcnt of zx296702-pcu device node by
-of_find_compatible_node() and leaves it undecremented on both
-successful and error paths.
+Robert Jarzmik <robert.jarzmik@free.fr> writes:
 
-Found by Linux Driver Verification project (linuxtesting.org).
+> Switch to the new ac97 bus support in sound/ac97 instead of the legacy
+> snd_ac97 one.
+> +	codecs_pdata = pdata ? pdata->codecs_pdata : NULL;
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
----
- drivers/power/reset/zx-reboot.c | 1 +
- 1 file changed, 1 insertion(+)
+It's a shame my automated build and test system didn't catch that : it should
+have been pdata->codec_pdata and not pdata->codecs_pdata.
 
-diff --git a/drivers/power/reset/zx-reboot.c b/drivers/power/reset/zx-reboot.c
-index c03e96e6a041..186901c96c01 100644
---- a/drivers/power/reset/zx-reboot.c
-+++ b/drivers/power/reset/zx-reboot.c
-@@ -51,6 +51,7 @@ static int zx_reboot_probe(struct platform_device *pdev)
- 
- 	np = of_find_compatible_node(NULL, NULL, "zte,zx296702-pcu");
- 	pcu_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!pcu_base) {
- 		iounmap(base);
- 		WARN(1, "failed to map pcu_base address");
--- 
-2.7.4
+Given that this slipped in, please don't apply this until I find out why my
+builder lives in utopia.
+
+Cheers.
+
+--
+Robert
