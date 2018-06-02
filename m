@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeFBMpF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 08:45:05 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42756 "EHLO
+        id S1751865AbeFBMoz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 08:44:55 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42798 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeFBMoa (ORCPT
+        with ESMTP id S1751622AbeFBMoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 2 Jun 2018 08:44:30 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 4E25D1A85F0
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8C8F21A8613
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -32,9 +32,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH for 4.18 08/16] powerpc: Add support for restartable sequences
-Date: Sat,  2 Jun 2018 08:44:00 -0400
-Message-Id: <20180602124408.8430-9-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 10/16] powerpc: Wire up restartable sequences system call
+Date: Sat,  2 Jun 2018 08:44:02 -0400
+Message-Id: <20180602124408.8430-11-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
 References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com>
@@ -44,11 +44,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Boqun Feng <boqun.feng@gmail.com>
 
-Call the rseq_handle_notify_resume() function on return to userspace if
-TIF_NOTIFY_RESUME thread flag is set.
+Wire up the rseq system call on powerpc.
 
-Perform fixup on the pre-signal when a signal is delivered on top of a
-restartable sequence critical section.
+This provides an ABI improving the speed of a user-space getcpu
+operation on powerpc by skipping the getcpu system call on the fast
+path, as well as improving the speed of user-space operations on per-cpu
+data compared to using load-reservation/store-conditional atomics.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -59,42 +60,43 @@ CC: Peter Zijlstra <peterz@infradead.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: linuxppc-dev@lists.ozlabs.org
 ---
- arch/powerpc/Kconfig         | 1 +
- arch/powerpc/kernel/signal.c | 3 +++
- 2 files changed, 4 insertions(+)
+ arch/powerpc/include/asm/systbl.h      | 1 +
+ arch/powerpc/include/asm/unistd.h      | 2 +-
+ arch/powerpc/include/uapi/asm/unistd.h | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index c32a181a7cbb..ed21a777e8c6 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -223,6 +223,7 @@ config PPC
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_VIRT_CPU_ACCOUNTING
- 	select HAVE_IRQ_TIME_ACCOUNTING
-+	select HAVE_RSEQ
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
- 	select MODULES_USE_ELF_RELA
-diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-index 61db86ecd318..d3bb3aaaf5ac 100644
---- a/arch/powerpc/kernel/signal.c
-+++ b/arch/powerpc/kernel/signal.c
-@@ -133,6 +133,8 @@ static void do_signal(struct task_struct *tsk)
- 	/* Re-enable the breakpoints for the signal stack */
- 	thread_change_pc(tsk, tsk->thread.regs);
+diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
+index d61f9c96d916..45d4d37495fd 100644
+--- a/arch/powerpc/include/asm/systbl.h
++++ b/arch/powerpc/include/asm/systbl.h
+@@ -392,3 +392,4 @@ SYSCALL(statx)
+ SYSCALL(pkey_alloc)
+ SYSCALL(pkey_free)
+ SYSCALL(pkey_mprotect)
++SYSCALL(rseq)
+diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
+index daf1ba97a00c..1e9708632dce 100644
+--- a/arch/powerpc/include/asm/unistd.h
++++ b/arch/powerpc/include/asm/unistd.h
+@@ -12,7 +12,7 @@
+ #include <uapi/asm/unistd.h>
  
-+	rseq_signal_deliver(tsk->thread.regs);
-+
- 	if (is32) {
-         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
- 			ret = handle_rt_signal32(&ksig, oldset, tsk);
-@@ -164,6 +166,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
- 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
- 		clear_thread_flag(TIF_NOTIFY_RESUME);
- 		tracehook_notify_resume(regs);
-+		rseq_handle_notify_resume(regs);
- 	}
  
- 	user_enter();
+-#define NR_syscalls		387
++#define NR_syscalls		388
+ 
+ #define __NR__exit __NR_exit
+ 
+diff --git a/arch/powerpc/include/uapi/asm/unistd.h b/arch/powerpc/include/uapi/asm/unistd.h
+index 389c36fd8299..ac5ba55066dd 100644
+--- a/arch/powerpc/include/uapi/asm/unistd.h
++++ b/arch/powerpc/include/uapi/asm/unistd.h
+@@ -398,5 +398,6 @@
+ #define __NR_pkey_alloc		384
+ #define __NR_pkey_free		385
+ #define __NR_pkey_mprotect	386
++#define __NR_rseq		387
+ 
+ #endif /* _UAPI_ASM_POWERPC_UNISTD_H_ */
 -- 
 2.11.0
