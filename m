@@ -1,77 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeFBVfS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 17:35:18 -0400
-Received: from www.zeus03.de ([194.117.254.33]:48762 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751436AbeFBVfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 17:35:16 -0400
-X-UD-Smtp-Session: l3s3148p1@65zQea9tpqwgAwDPW+NQAAId4P/+oMhl
-Date: Sat, 2 Jun 2018 23:35:13 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Juergen Fitschen <me@jue.yt>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2,3/3] i2c: at91: added slave mode support
-Message-ID: <20180602213513.qv45gaq2kogagju3@katana>
-References: <c9b749fca8e684aa47ead9a5d9e68751326f63cb.1510247114.git.me@jue.yt>
+        id S1751993AbeFBWCa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 18:02:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49022 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751436AbeFBWC2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 18:02:28 -0400
+Date: Sat, 2 Jun 2018 15:01:36 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: viro@zeniv.linux.org.uk, hughd@google.com, akpm@linux-foundation.org,
+        mhocko@suse.com, ross.zwisler@linux.intel.com, zi.yan@cs.rutgers.edu,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        gregkh@linuxfoundation.org, mark.rutland@arm.com, riel@redhat.com,
+        pasha.tatashin@oracle.com, jschoenh@amazon.de,
+        kstewart@linuxfoundation.org, rientjes@google.com, tglx@linutronix.de,
+        peterz@infradead.org, mgorman@suse.de, yang.s@alibaba-inc.com,
+        minchan@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: Change return type int to vm_fault_t for fault
+ handlers
+Message-ID: <20180602220136.GA14810@bombadil.infradead.org>
+References: <20180602200407.GA15200@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="63zfksmmzk62fyot"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c9b749fca8e684aa47ead9a5d9e68751326f63cb.1510247114.git.me@jue.yt>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180602200407.GA15200@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jun 03, 2018 at 01:34:07AM +0530, Souptick Joarder wrote:
+> @@ -3570,9 +3571,8 @@ static int hugetlb_cow(struct mm_struct *mm, struct vm_area_struct *vma,
+>  			return 0;
+>  		}
+>  
+> -		ret = (PTR_ERR(new_page) == -ENOMEM) ?
+> -			VM_FAULT_OOM : VM_FAULT_SIGBUS;
+> -		goto out_release_old;
+> +		ret = vmf_error(PTR_ERR(new_page));
+> +			goto out_release_old;
+>  	}
+>  
+>  	/*
 
---63zfksmmzk62fyot
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Something weird happened to the goto here?
 
-On Thu, Nov 09, 2017 at 06:22:29PM +0100, Juergen Fitschen wrote:
-> Slave mode driver is based on the concept of i2c-designware driver.
->=20
-> Signed-off-by: Juergen Fitschen <me@jue.yt>
+> +static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+> +			struct vm_area_struct *vma,
+> +			struct address_space *mapping, pgoff_t idx,
+> +			unsigned long address, pte_t *ptep, unsigned int flags)
+>  {
+>  	struct hstate *h = hstate_vma(vma);
+> -	int ret = VM_FAULT_SIGBUS;
+> -	int anon_rmap = 0;
+> +	vm_fault_t ret = VM_FAULT_SIGBUS;
+> +	int anon_rmap = 0, err;
+>  	unsigned long size;
+>  	struct page *page;
+>  	pte_t new_pte;
+> @@ -3742,11 +3743,8 @@ static int hugetlb_no_page(struct mm_struct *mm, struct vm_area_struct *vma,
+>  
+>  		page = alloc_huge_page(vma, address, 0);
+>  		if (IS_ERR(page)) {
+> -			ret = PTR_ERR(page);
+> -			if (ret == -ENOMEM)
+> -				ret = VM_FAULT_OOM;
+> -			else
+> -				ret = VM_FAULT_SIGBUS;
+> +			err = PTR_ERR(page);
+> +			ret = vmf_error(err);
+>  			goto out;
+>  		}
+>  		clear_huge_page(page, address, pages_per_huge_page(h));
 
-I lost the original mail where Ludovic said:
+Not sure why you bother with the 'int err' in this function when just
+above you were happy to do
 
-"I tested it quickly on a sama5d2 xplained board: I used an i2c-gpio
-master and the eeprom driver. It works pretty well. I tried to increase
-the size of the eeprom by adding:
-+ { "slave-24c64", 65536 / 8 },"
+			ret = vmf_error(PTR_ERR(page));
 
-That won't work. The comment at the beginning of the file says:
+With those fixed,
 
- * ... It is prepared to simulate bigger EEPROMs with an internal 16 bit
- * pointer, yet implementation is deferred until the need actually arises.
-
-So,  no EEPROMs > 256 byte for now.
-
-BTW maybe I asked already and forgot: is this IP core capable of being
-master and slave on the same bus?
-
-
---63zfksmmzk62fyot
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsTDYcACgkQFA3kzBSg
-KbaTyxAAnRbYK+fUJpqqsPELVgFhv+jt6NY/e+YeWCiZza5s1mfYxeSBtCdzctIt
-PRN1KaMNbo8FvtNQ0q8JgBSVaE8YTr1iEWPiAkxtw85KblbuNXTp+1emfaubF4wd
-GHOTeIwm0WrpsHVv/OVl5SEnks3HMnijUwVv6hnEHypNOXqm/UzNsEfnXuzoIblx
-R96mnmfJjRjFOUNY3Jb60A9YrKRKWDmwKUlCmET4Yeu4fRVXsamEkS/j6+aCXwAU
-TAWit/2MZXZZVXndMtGapki0V8mbY86qMzk/v+mVu8Kq9KMKL2ika2pipOKpGNbT
-48gCSYRiwIkfqvFEPdoxVZU8fRb9wehF+SEVVi8eoMrxh7bhq3uANvhBx0W4HGTn
-VsDvgpetWZYtm5GYtsK2e726e7L9SgZOEo53ogtuuSttD/rjWwivn3jdDUbLYCnG
-wAePQ4FM6uHnDOMFqrBbdOoK3qLdvzS1hCfS8NiypK9kXweHdZMFB0TtZUZIi57G
-KJfubOHdrYVEwZd9RhPNzuPBULIsSvQaog82omBzljXa0c1p3RidS6BQxC5SdUPF
-9Nk63WtSuR37DMAmZOc6ewnsWfZ/lSwsN34kiVnpC4ByAfum60sisNU4broqgqIi
-DysspsJtZHXYAIjgHX9AAZD4/ZfGGT/ZdIoXMAOv3b9QcXZrAxI=
-=Pud/
------END PGP SIGNATURE-----
-
---63zfksmmzk62fyot--
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
