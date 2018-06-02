@@ -1,57 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751297AbeFBNsd (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 09:48:33 -0400
-Received: from mail-io0-f177.google.com ([209.85.223.177]:37076 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeFBNsa (ORCPT
+        id S1751670AbeFBNsz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 09:48:55 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:37424 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751503AbeFBNsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 09:48:30 -0400
-X-Google-Smtp-Source: ADUXVKJdIiRY7xwewfMtHCaysPn681ms2ikKImyJoqU455cK+DLQDlORjOa4HBDNyAqfJhOAB9DUsw==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: INFO: task hung in blk_queue_enter
-From: Jens Axboe <axboe@kernel.dk>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <20180602045353.GA20257@ming.t460p>
-Date: Sat, 2 Jun 2018 07:48:26 -0600
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Bart.VanAssche@wdc.com, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
-        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
-        martin.petersen@oracle.com, dan.j.williams@intel.com, hch@lst.de,
-        oleksandr@natalenko.name, martin@lichtvoll.de, hare@suse.com,
-        syzkaller-bugs@googlegroups.com, ross.zwisler@linux.intel.com,
-        keith.busch@intel.com, linux-ext4@vger.kernel.org
-Message-Id: <0B5A5D8D-BA17-45C2-BCF7-609CDCF1A8DB@kernel.dk>
-References: <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com> <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com> <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp> <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp> <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp> <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk> <20180601234946.GA655@ming.t460p> <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk> <20180602023622.GA2306@ming.t460p> <f43465cf-e2f1-807f-d283-89033c056b5b@kernel.dk> <20180602045353.GA20257@ming.t460p>
-To: Ming Lei <ming.lei@redhat.com>
+        Sat, 2 Jun 2018 09:48:53 -0400
+X-Google-Smtp-Source: ADUXVKLRI18RT4TLCEL3CPu03OPeQ+tHuI516pxYE4gmOBh7T2zdJOD7F3gOQNL3S//zekbmGLJVYPDjDmsIU4tO+fY=
+MIME-Version: 1.0
+In-Reply-To: <1439344955.9677.1526991935718@email.1und1.de>
+References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com> <1439344955.9677.1526991935718@email.1und1.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 2 Jun 2018 10:48:52 -0300
+Message-ID: <CAOMZO5BVhjwGpJ22qBihKcjWyvBkzNPU0cNtNY9HToLLEkYByA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Michael Trimarchi <michael@amarulasolutions.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>, Anson Huang <Anson.Huang@nxp.com>,
+        Matteo Lisi <matteo.lisi@engicam.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w52DmgoS001001
 
+Hi Stefan,
 
-> On Jun 1, 2018, at 10:54 PM, Ming Lei <ming.lei@redhat.com> wrote:
-> 
->> On Fri, Jun 01, 2018 at 10:31:13PM -0600, Jens Axboe wrote:
->> On 6/1/18 8:36 PM, Ming Lei wrote:
->>>> clear the bit when we need to, potentially even adding a debug check to
->>>> blk_queue_enter_live() that complains if the ref was not already
->>>> elevated. Though that would be expensive, compared to the percpu inc
->>>> now. Not saying the bit is necessarily the best way forward, but I do
->>>> like it a LOT more than adding an argument to generic_make_request.
->>> 
->>> We may introduce generic_make_request_with_ref() for blk_queue_split(),
->>> what do you think of the following patch?
->> 
->> Functionally it'll work as well.
-> 
-> If you are fine with this one, I'm glad to prepare for a normal one,
-> so that we can save one precious bio flag, and the total number is
-> just 13.
+On Tue, May 22, 2018 at 9:25 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-We’ve never had much issue with bio specific flags, I prefer that approach to a wrapper around generic_make_request(). 
+>> --- a/include/dt-bindings/clock/imx6ul-clock.h
+>> +++ b/include/dt-bindings/clock/imx6ul-clock.h
+>> @@ -242,20 +242,25 @@
+>>  #define IMX6UL_CLK_CKO2_PODF         229
+>>  #define IMX6UL_CLK_CKO2                      230
+>>  #define IMX6UL_CLK_CKO                       231
+>> +#define IMX6UL_CLK_GPIO1             232
+>> +#define IMX6UL_CLK_GPIO2             233
+>> +#define IMX6UL_CLK_GPIO3             234
+>> +#define IMX6UL_CLK_GPIO4             235
+>> +#define IMX6UL_CLK_GPIO5             236
+>
+> this change looks like a breakage of devicetree ABI. You are changing the mean of the existing clock IDs on i.MX6ULL, which probably regress the combination of older DTBs with newer kernel.
+
+Good point! I will send a fix for f5a4670de96678 ("clk: imx: Add new
+clo01 and clo2 controlled
+by CCOSR") which did the same reordering.
+
+Thanks
