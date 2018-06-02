@@ -1,22 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751813AbeFBO7t (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 10:59:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42542 "EHLO mail.kernel.org"
+        id S1751853AbeFBO7x (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 10:59:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751508AbeFBO7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 10:59:41 -0400
+        id S1751769AbeFBO7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 10:59:49 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>, Borislav Petkov <bp@suse.de>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 1/4] perf trace beauty prctl: Default header_dir to cwd to work without parms
-Date: Sat,  2 Jun 2018 11:59:24 -0300
-Message-Id: <20180602145927.23307-2-acme@kernel.org>
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 3/4] tools headers: Sync x86 cpufeatures.h with the kernel sources
+Date: Sat,  2 Jun 2018 11:59:26 -0300
+Message-Id: <20180602145927.23307-4-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180602145927.23307-1-acme@kernel.org>
 References: <20180602145927.23307-1-acme@kernel.org>
@@ -26,94 +29,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Useful when checking the effects of header synchs for the files it uses
-as a input to generate string tables, in retrospect this is how it
-should've been done from day 1, not requiring the header_dir to be set
-on the Makefile, will change everything later, so that the only parm,
-common to all generators will be $(srctree) and $(beauty_outdir).
+To pick up changes found in these csets:
 
-So, to see what it generates, just call it without any parameters:
+ 11fb0683493b x86/speculation: Add virtualized speculative store bypass disable support
+ d1035d971829 x86/cpufeatures: Add FEATURE_ZEN
+ 52817587e706 x86/cpufeatures: Disentangle SSBD enumeration
+ 7eb8956a7fec x86/cpufeatures: Disentangle MSR_SPEC_CTRL enumeration from IBRS
+ e7c587da1252 x86/speculation: Use synthetic bits for IBRS/IBPB/STIBP
+ 9f65fb29374e x86/bugs: Rename _RDS to _SSBD
+ 764f3c21588a x86/bugs/AMD: Add support to disable RDS on Fam[15,16,17]h if requested
+ 24f7fc83b920 x86/bugs: Provide boot parameters for the spec_store_bypass_disable mitigation
+ 0cc5fa00b0a8 x86/cpufeatures: Add X86_FEATURE_RDS
+ c456442cd3a5 x86/bugs: Expose /sys/../spec_store_bypass
 
-  $ tools/perf/trace/beauty/prctl_option.sh
-  static const char *prctl_options[] = {
-	  [1] = "SET_PDEATHSIG",
-	  [2] = "GET_PDEATHSIG",
-	  [3] = "GET_DUMPABLE",
-	  [4] = "SET_DUMPABLE",
-	  [5] = "GET_UNALIGN",
-	  [6] = "SET_UNALIGN",
-	  [7] = "GET_KEEPCAPS",
-	  [8] = "SET_KEEPCAPS",
-	  [9] = "GET_FPEMU",
-	  [10] = "SET_FPEMU",
-	  [11] = "GET_FPEXC",
-	  [12] = "SET_FPEXC",
-	  [13] = "GET_TIMING",
-	  [14] = "SET_TIMING",
-	  [15] = "SET_NAME",
-	  [16] = "GET_NAME",
-	  [19] = "GET_ENDIAN",
-	  [20] = "SET_ENDIAN",
-	  [21] = "GET_SECCOMP",
-	  [22] = "SET_SECCOMP",
-	  [25] = "GET_TSC",
-	  [26] = "SET_TSC",
-	  [27] = "GET_SECUREBITS",
-	  [28] = "SET_SECUREBITS",
-	  [29] = "SET_TIMERSLACK",
-	  [30] = "GET_TIMERSLACK",
-	  [35] = "SET_MM",
-	  [36] = "SET_CHILD_SUBREAPER",
-	  [37] = "GET_CHILD_SUBREAPER",
-	  [38] = "SET_NO_NEW_PRIVS",
-	  [39] = "GET_NO_NEW_PRIVS",
-	  [40] = "GET_TID_ADDRESS",
-	  [41] = "SET_THP_DISABLE",
-	  [42] = "GET_THP_DISABLE",
-	  [45] = "SET_FP_MODE",
-	  [46] = "GET_FP_MODE",
-  };
-  static const char *prctl_set_mm_options[] = {
-	  [1] = "START_CODE",
-	  [2] = "END_CODE",
-	  [3] = "START_DATA",
-	  [4] = "END_DATA",
-	  [5] = "START_STACK",
-	  [6] = "START_BRK",
-	  [7] = "BRK",
-	  [8] = "ARG_START",
-	  [9] = "ARG_END",
-	  [10] = "ENV_START",
-	  [11] = "ENV_END",
-	  [12] = "AUXV",
-	  [13] = "EXE_FILE",
-	  [14] = "MAP",
-	  [15] = "MAP_SIZE",
-  };
-  $
+The usage of this file in tools doesn't use the newly added X86_FEATURE_
+defines:
+
+  CC       /tmp/build/perf/bench/mem-memcpy-x86-64-asm.o
+  CC       /tmp/build/perf/bench/mem-memset-x86-64-asm.o
+  LD       /tmp/build/perf/bench/perf-in.o
+  LD       /tmp/build/perf/perf-in.o
+
+Silencing this perf build warning:
+
+  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-qtotspuztydjttxi7k6mec6h@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-mrwyauyov8c7s048abg26khg@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/prctl_option.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/arch/x86/include/asm/cpufeatures.h | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/trace/beauty/prctl_option.sh b/tools/perf/trace/beauty/prctl_option.sh
-index 0be4138fbe71..f24722146ebe 100755
---- a/tools/perf/trace/beauty/prctl_option.sh
-+++ b/tools/perf/trace/beauty/prctl_option.sh
-@@ -1,6 +1,6 @@
- #!/bin/sh
+diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+index 578793e97431..fb00a2fca990 100644
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -198,7 +198,6 @@
+ #define X86_FEATURE_CAT_L2		( 7*32+ 5) /* Cache Allocation Technology L2 */
+ #define X86_FEATURE_CDP_L3		( 7*32+ 6) /* Code and Data Prioritization L3 */
+ #define X86_FEATURE_INVPCID_SINGLE	( 7*32+ 7) /* Effectively INVPCID && CR4.PCIDE=1 */
+-
+ #define X86_FEATURE_HW_PSTATE		( 7*32+ 8) /* AMD HW-PState */
+ #define X86_FEATURE_PROC_FEEDBACK	( 7*32+ 9) /* AMD ProcFeedbackInterface */
+ #define X86_FEATURE_SME			( 7*32+10) /* AMD Secure Memory Encryption */
+@@ -207,13 +206,19 @@
+ #define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* "" AMD Retpoline mitigation for Spectre variant 2 */
+ #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
+ #define X86_FEATURE_CDP_L2		( 7*32+15) /* Code and Data Prioritization L2 */
+-
++#define X86_FEATURE_MSR_SPEC_CTRL	( 7*32+16) /* "" MSR SPEC_CTRL is implemented */
++#define X86_FEATURE_SSBD		( 7*32+17) /* Speculative Store Bypass Disable */
+ #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
+ #define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* "" Fill RSB on context switches */
+ #define X86_FEATURE_SEV			( 7*32+20) /* AMD Secure Encrypted Virtualization */
+-
+ #define X86_FEATURE_USE_IBPB		( 7*32+21) /* "" Indirect Branch Prediction Barrier enabled */
+ #define X86_FEATURE_USE_IBRS_FW		( 7*32+22) /* "" Use IBRS during runtime firmware calls */
++#define X86_FEATURE_SPEC_STORE_BYPASS_DISABLE	( 7*32+23) /* "" Disable Speculative Store Bypass. */
++#define X86_FEATURE_LS_CFG_SSBD		( 7*32+24)  /* "" AMD SSBD implementation via LS_CFG MSR */
++#define X86_FEATURE_IBRS		( 7*32+25) /* Indirect Branch Restricted Speculation */
++#define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
++#define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
  
--header_dir=$1
-+[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+@@ -274,9 +279,10 @@
+ #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
+ #define X86_FEATURE_IRPERF		(13*32+ 1) /* Instructions Retired Count */
+ #define X86_FEATURE_XSAVEERPTR		(13*32+ 2) /* Always save/restore FP error pointers */
+-#define X86_FEATURE_IBPB		(13*32+12) /* Indirect Branch Prediction Barrier */
+-#define X86_FEATURE_IBRS		(13*32+14) /* Indirect Branch Restricted Speculation */
+-#define X86_FEATURE_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_AMD_IBPB		(13*32+12) /* "" Indirect Branch Prediction Barrier */
++#define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
++#define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
++#define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
  
- printf "static const char *prctl_options[] = {\n"
- regex='^#define[[:space:]]+PR_([GS]ET\w+)[[:space:]]*([[:xdigit:]]+).*'
+ /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
+ #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
+@@ -334,6 +340,7 @@
+ #define X86_FEATURE_SPEC_CTRL		(18*32+26) /* "" Speculation Control (IBRS + IBPB) */
+ #define X86_FEATURE_INTEL_STIBP		(18*32+27) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ARCH_CAPABILITIES	(18*32+29) /* IA32_ARCH_CAPABILITIES MSR (Intel) */
++#define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+ 
+ /*
+  * BUG word(s)
+@@ -363,5 +370,6 @@
+ #define X86_BUG_CPU_MELTDOWN		X86_BUG(14) /* CPU is affected by meltdown attack and needs kernel page table isolation */
+ #define X86_BUG_SPECTRE_V1		X86_BUG(15) /* CPU is affected by Spectre variant 1 attack with conditional branches */
+ #define X86_BUG_SPECTRE_V2		X86_BUG(16) /* CPU is affected by Spectre variant 2 attack with indirect branches */
++#define X86_BUG_SPEC_STORE_BYPASS	X86_BUG(17) /* CPU is affected by speculative store bypass attack */
+ 
+ #endif /* _ASM_X86_CPUFEATURES_H */
 -- 
 2.14.3
