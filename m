@@ -1,91 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751498AbeFBP1x (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 11:27:53 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34519 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeFBP1v (ORCPT
+        id S1751654AbeFBPkm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 11:40:42 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54462 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeFBPkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 11:27:51 -0400
-X-Google-Smtp-Source: ADUXVKJATshII/xjWDPsJYwM1DiUV+52fciFAwNXrMvWSPRsa53z6zyFK2jx4lPTrknoxnQPBM4yzA==
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-omap@vger.kernel.org,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Sat, 2 Jun 2018 11:40:40 -0400
+X-Google-Smtp-Source: ADUXVKKr0zh2jEjflnhsBFfvC0yD9kBWvZ3E3xIROCWEj+I56ry5Vk0oOaB/YfiRd08oaoNwhJSrPDwBI1Dlqpnjn7I=
+MIME-Version: 1.0
+In-Reply-To: <20180530164922.31851-1-krzk@kernel.org>
+References: <20180530164922.31851-1-krzk@kernel.org>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Date: Sat, 2 Jun 2018 21:09:58 +0530
+Message-ID: <CAGOxZ506T5swFOoBB0RcbHKa45nJvFRnAZETM505-mi03o6cjg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: exynos: Add missing CPU clocks to secondary
+ CPUs on Exynos542x
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v2] DMA: OMAP: fix OMAP1510 incorrect residue_granularity
-Date: Sat,  2 Jun 2018 17:27:19 +0200
-Message-Id: <20180602152719.28464-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.1
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 0198d7bb8a0c ("ASoC: omap-mcbsp: Convert to use the sdma-pcm
-instead of omap-pcm") resulted in broken audio playback on OMAP1510
-(discovered on Amstrad Delta).
+Hi Krzysztof,
 
-When running on OMAP1510, omap-pcm used to obtain DMA offset from
-snd_dmaengine_pcm_pointer_no_residue() based on DMA interrupt triggered
-software calculations instead of snd_dmaengine_pcm_pointer() which
-depended on residue value calculated from omap_dma_get_src_pos().
-Similar code path is still available in now used
-sound/soc/soc-generic-dmaengine-pcm.c but it is not triggered.
+On Wed, May 30, 2018 at 10:19 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Secondary CPUs should have the same information in DeviceTree as booting
+> CPU from both correctness point of view and for possible hotplug
+> scenarios.
+>
+> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos5420-cpus.dtsi | 6 ++++++
+>  arch/arm/boot/dts/exynos5422-cpus.dtsi | 8 +++++++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
 
-It was verified already before that omap_get_dma_src_pos() from
-arch/arm/plat-omap/dma.c didn't work correctly for OMAP1510 - see
-commit 1bdd7419910c ("ASoC: OMAP: fix OMAP1510 broken PCM pointer
-callback") for details.  Apparently the same applies to its successor,
-omap_dma_get_src_pos() from drivers/dma/ti/omap-dma.c.
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-On the other hand, snd_dmaengine_pcm_pointer_no_residue() is described
-as depreciated and discouraged for use in new drivers because of its
-unreliable accuracy.  However, it seems the only working option for
-OPAM1510 now, as long as a software calculated residue is not
-implemented as OMAP1510 fallback in omap-dma.
+Tested on exynos5800 peach-pi, so feel free to add
 
-Using snd_dmaengine_pcm_pointer_no_residue() code path instead of
-snd_dmaengine_pcm_pointer() in sound/soc/soc-generic-dmaengine-pcm.c
-can be triggered in two ways:
-- by passing pcm->flags |= SND_DMAENGINE_PCM_FLAG_NO_RESIDUE from
-  sound/soc/omap/sdma-pcm.c,
-- by passing dma_caps.residue_granularity =
-  DMA_RESIDUE_GRANULARITY_DESCRIPTOR from DMA engine.
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Let's do the latter.
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-cpus.dtsi b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> index a8e449471304..0ee6e92a3c29 100644
+> --- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+> @@ -38,6 +38,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0x1>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+>                         operating-points-v2 = <&cluster_a15_opp_table>;
+> @@ -49,6 +50,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0x2>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+>                         operating-points-v2 = <&cluster_a15_opp_table>;
+> @@ -60,6 +62,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0x3>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+>                         operating-points-v2 = <&cluster_a15_opp_table>;
+> @@ -83,6 +86,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a7";
+>                         reg = <0x101>;
+> +                       clocks = <&clock CLK_KFC_CLK>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+>                         operating-points-v2 = <&cluster_a7_opp_table>;
+> @@ -94,6 +98,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a7";
+>                         reg = <0x102>;
+> +                       clocks = <&clock CLK_KFC_CLK>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+>                         operating-points-v2 = <&cluster_a7_opp_table>;
+> @@ -105,6 +110,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a7";
+>                         reg = <0x103>;
+> +                       clocks = <&clock CLK_KFC_CLK>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+>                         operating-points-v2 = <&cluster_a7_opp_table>;
+> diff --git a/arch/arm/boot/dts/exynos5422-cpus.dtsi b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> index 7c130a00d1a8..e4a5857c135f 100644
+> --- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+> @@ -37,6 +37,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a7";
+>                         reg = <0x101>;
+> +                       clocks = <&clock CLK_KFC_CLK>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+>                         operating-points-v2 = <&cluster_a7_opp_table>;
+> @@ -48,6 +49,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a7";
+>                         reg = <0x102>;
+> +                       clocks = <&clock CLK_KFC_CLK>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+>                         operating-points-v2 = <&cluster_a7_opp_table>;
+> @@ -59,6 +61,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a7";
+>                         reg = <0x103>;
+> +                       clocks = <&clock CLK_KFC_CLK>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+>                         operating-points-v2 = <&cluster_a7_opp_table>;
+> @@ -69,8 +72,8 @@
+>                 cpu4: cpu@0 {
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+> -                       clocks = <&clock CLK_ARM_CLK>;
+>                         reg = <0x0>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+>                         operating-points-v2 = <&cluster_a15_opp_table>;
+> @@ -82,6 +85,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0x1>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+>                         operating-points-v2 = <&cluster_a15_opp_table>;
+> @@ -93,6 +97,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0x2>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+>                         operating-points-v2 = <&cluster_a15_opp_table>;
+> @@ -104,6 +109,7 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0x3>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+>                         operating-points-v2 = <&cluster_a15_opp_table>;
+> --
+> 2.14.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Created and tested against next-20180531 tag from linux-next tree.
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-Changelog:
-v2: apply the patch against omap-dma.c moved to drivers/dma/ti/
 
- drivers/dma/ti/omap-dma.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
-index b73fb51fbc81..96b5096c26dd 100644
---- a/drivers/dma/ti/omap-dma.c
-+++ b/drivers/dma/ti/omap-dma.c
-@@ -1485,7 +1485,11 @@ static int omap_dma_probe(struct platform_device *pdev)
- 	od->ddev.src_addr_widths = OMAP_DMA_BUSWIDTHS;
- 	od->ddev.dst_addr_widths = OMAP_DMA_BUSWIDTHS;
- 	od->ddev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
--	od->ddev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
-+	if (__dma_omap15xx(od->plat->dma_attr))
-+		od->ddev.residue_granularity =
-+				DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
-+	else
-+		od->ddev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
- 	od->ddev.max_burst = SZ_16M - 1; /* CCEN: 24bit unsigned */
- 	od->ddev.dev = &pdev->dev;
- 	INIT_LIST_HEAD(&od->ddev.channels);
 -- 
-2.16.1
+Regards,
+Alim
