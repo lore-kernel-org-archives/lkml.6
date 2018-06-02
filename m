@@ -1,67 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752046AbeFBWQr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 18:16:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51886 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751436AbeFBWQq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 18:16:46 -0400
-Subject: Re: [PATCH] exec: binfmt_misc: update reference to documentation
-To: tomkpz@gmail.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180602201115.3426-1-tomKPZ@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <0ff0bc0a-7507-871e-5bf2-145c983e44a0@infradead.org>
-Date: Sat, 2 Jun 2018 15:16:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180602201115.3426-1-tomKPZ@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752028AbeFBWW3 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 18:22:29 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:34728 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751342AbeFBWW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 18:22:28 -0400
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org,
+        Julia Lawall <julia.lawall@lip6.fr>, sil2review@lists.osadl.org
+Subject: [PATCH] power: reset: zx-reboot: put device node in zx_reboot_probe()
+Date: Sun,  3 Jun 2018 01:22:05 +0300
+Message-Id: <1527978125-29850-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/02/2018 01:11 PM, tomkpz@gmail.com wrote:
-> From: tomKPZ <tomKPZ@gmail.com>
-> 
-> Documentation/binfmt_misc.txt was moved to
-> Documentation/admin-guide/binfmt-misc.rst in 9d85025b.  This change
-> updates a reference to the file.
+zx_reboot_probe() increments refcnt of zx296702-pcu device node by
+of_find_compatible_node() and leaves it undecremented on both
+successful and error paths.
 
-Please see Documentation/process/submitting-patches.rst, about Signed-off-by:
+Found by Linux Driver Verification project (linuxtesting.org).
 
-then you just add a line saying::
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+ drivers/power/reset/zx-reboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-	Signed-off-by: Random J Developer <random@developer.example.org>
-
-using your real name (sorry, no pseudonyms or anonymous contributions.)
-
-
-
-> ---
->  fs/binfmt_misc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index a41b48f82a70..5ad89b838c79 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -4,7 +4,8 @@
->   * Copyright (C) 1997 Richard Günther
->   *
->   * binfmt_misc detects binaries via a magic or filename extension and invokes
-> - * a specified wrapper. See Documentation/binfmt_misc.txt for more details.
-> + * a specified wrapper. See Documentation/admin-guide/binfmt-misc.rst for more
-> + * details.
->   */
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> 
-
-thanks,
+diff --git a/drivers/power/reset/zx-reboot.c b/drivers/power/reset/zx-reboot.c
+index c03e96e6a041..186901c96c01 100644
+--- a/drivers/power/reset/zx-reboot.c
++++ b/drivers/power/reset/zx-reboot.c
+@@ -51,6 +51,7 @@ static int zx_reboot_probe(struct platform_device *pdev)
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "zte,zx296702-pcu");
+ 	pcu_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	if (!pcu_base) {
+ 		iounmap(base);
+ 		WARN(1, "failed to map pcu_base address");
 -- 
-~Randy
+2.7.4
