@@ -1,56 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751814AbeFBUdn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 16:33:43 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:45437 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbeFBUdl (ORCPT
+        id S1751803AbeFBUjY (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 16:39:24 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46766 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbeFBUjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 16:33:41 -0400
-X-Google-Smtp-Source: ADUXVKJs75kCyhO+yrLOyf5EAVz3IZqMfkQ2H0mc1cPeUXaTeB7spTegKg/G47aCf1uJNzWZhC2fvA==
-Subject: Re: [PATCH net v2] ipv6: omit traffic class when calculating flow
- hash
-To: Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Tom Herbert <tom@herbertland.com>, Ido Schimmel <idosch@idosch.org>
-References: <20180602080528.54B27A0C48@unicorn.suse.cz>
-From: David Ahern <dsahern@gmail.com>
-Message-ID: <0d6c6732-ee1b-3533-fc06-f97c9a87eb1a@gmail.com>
-Date: Sat, 2 Jun 2018 14:33:38 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Sat, 2 Jun 2018 16:39:22 -0400
+X-Google-Smtp-Source: ADUXVKLohLAEn1tpV7AKjBIwJHO3VLxkplgrc5+7W8GX7izleOZ7OH1QrtVv6UEHPay0DzvHZwfBqEbmL+Kc/KV10WY=
 MIME-Version: 1.0
-In-Reply-To: <20180602080528.54B27A0C48@unicorn.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+ <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+ <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
+ <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com> <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Sat, 2 Jun 2018 22:39:20 +0200
+X-Google-Sender-Auth: Kd6V6bZaVtIYEEdRtWLwBm8AmGo
+Message-ID: <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+To: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/2/18 1:40 AM, Michal Kubecek wrote:
-> Some of the code paths calculating flow hash for IPv6 use flowlabel member
-> of struct flowi6 which, despite its name, encodes both flow label and
-> traffic class. If traffic class changes within a TCP connection (as e.g.
-> ssh does), ECMP route can switch between path. It's also incosistent with
-> other code paths where ip6_flowlabel() (returning only flow label) is used
-> to feed the key.
-> 
-> Use only flow label everywhere, including one place where hash key is set
-> using ip6_flowinfo().
-> 
-> Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-> Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-> ---
-> v2: introduce and use an inline helper as suggested by David Ahern
-> 
->  include/net/ipv6.h        | 5 +++++
->  net/core/flow_dissector.c | 2 +-
->  net/ipv6/route.c          | 4 ++--
->  3 files changed, 8 insertions(+), 3 deletions(-)
-> 
+On Fri, Jun 1, 2018 at 6:01 AM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, May 31, 2018 at 6:56 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-05-31 12:53 GMT+09:00 Kees Cook <keescook@chromium.org>:
+>>> On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
+>>>> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
 
-Acked-by: David Ahern <dsahern@gmail.com>
+>>>>> This has been triggered by the following commit:
+>>>>>
+>>>>>
+>>>>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
+>>>>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>>> Date:   Mon May 28 18:22:07 2018 +0900
+>>>>>
+>>>>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>>>>>
+>>>>>
+>>>>>
+>>>>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+>>>>> for COMPILE_TEST, which is now enabled.
+>
+> For the moment, can you add "depends on !COMPILE_TEST" to
+> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in your tree and I'll continue
+> to figure out what's happening?
+>
+
+I ran into the same thing indepently and bisected it (which led me to
+arrive at this thread).
+One additional bit of information I have is that this happens with all
+versions of
+gcc-7 for me, but not gcc-6.3 or older.
+
+Another finding was the particular instance I noticed:
+
+fs/ext4/inode.c: In function 'ext4_inode_csum':
+fs/ext4/inode.c:83:1: warning: the frame size of 1688 bytes is larger
+than 500 bytes [-Wframe-larger-than=]
+
+comes from inlining the same function multiple times; ext4_inode_csum()
+repeatedly calls ext4_chksum(), which has a struct on the stack. Apparently
+this normally only takes up stack space only once, but when initializing it
+to zero, each instance takes an additional two CRYPTO_MINALIGN bytes
+of stack space (the size of the locally defined structure).
+
+
+       Arnd
