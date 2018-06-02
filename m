@@ -1,75 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750981AbeFBEyc (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 00:54:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38090 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750748AbeFBEya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 00:54:30 -0400
-Date: Sat, 2 Jun 2018 12:54:02 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Bart.VanAssche@wdc.com, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
-        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
-        martin.petersen@oracle.com, dan.j.williams@intel.com, hch@lst.de,
-        oleksandr@natalenko.name, martin@lichtvoll.de, hare@suse.com,
-        syzkaller-bugs@googlegroups.com, ross.zwisler@linux.intel.com,
-        keith.busch@intel.com, linux-ext4@vger.kernel.org
-Subject: Re: INFO: task hung in blk_queue_enter
-Message-ID: <20180602045353.GA20257@ming.t460p>
-References: <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
- <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
- <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
- <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp>
- <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp>
- <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
- <20180601234946.GA655@ming.t460p>
- <95c419d8-7f19-f9c0-a53f-3d381fe93176@kernel.dk>
- <20180602023622.GA2306@ming.t460p>
- <f43465cf-e2f1-807f-d283-89033c056b5b@kernel.dk>
+        id S1751291AbeFBFDb (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 01:03:31 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:58492 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750877AbeFBFD3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 01:03:29 -0400
+Date: Sat, 2 Jun 2018 13:03:22 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 15/18] rhashtable: use bit_spin_locks to protect hash
+ bucket.
+Message-ID: <20180602050322.liesw324q5kawcue@gondor.apana.org.au>
+References: <152782754287.30340.4395718227884933670.stgit@noble>
+ <152782824984.30340.1634082820568216846.stgit@noble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f43465cf-e2f1-807f-d283-89033c056b5b@kernel.dk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <152782824984.30340.1634082820568216846.stgit@noble>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 10:31:13PM -0600, Jens Axboe wrote:
-> On 6/1/18 8:36 PM, Ming Lei wrote:
-> >> clear the bit when we need to, potentially even adding a debug check to
-> >> blk_queue_enter_live() that complains if the ref was not already
-> >> elevated. Though that would be expensive, compared to the percpu inc
-> >> now. Not saying the bit is necessarily the best way forward, but I do
-> >> like it a LOT more than adding an argument to generic_make_request.
-> > 
-> > We may introduce generic_make_request_with_ref() for blk_queue_split(),
-> > what do you think of the following patch?
+On Fri, Jun 01, 2018 at 02:44:09PM +1000, NeilBrown wrote:
+> This patch changes rhashtables to use a bit_spin_lock (BIT(1))
+> the bucket pointer to lock the hash chain for that bucket.
 > 
-> Functionally it'll work as well.
-
-If you are fine with this one, I'm glad to prepare for a normal one,
-so that we can save one precious bio flag, and the total number is
-just 13.
-
+> The benefits of a bit spin_lock are:
+>  - no need to allocate a separate array of locks.
+>  - no need to have a configuration option to guide the
+>    choice of the size of this array
+>  - locking cost if often a single test-and-set in a cache line
+>    that will have to be loaded anyway.  When inserting at, or removing
+>    from, the head of the chain, the unlock is free - writing the new
+>    address in the bucket head implicitly clears the lock bit.
+>  - even when lockings costs 2 updates (lock and unlock), they are
+>    in a cacheline that needs to be read anyway.
 > 
-> > In DM or MD, there is the following use case:
-> > 
-> > 1) bio comes from fs, then one clone is made from this bio
-> > 
-> > 2) the cloned bio is submitted via generic_make_request() from
-> > another context, such as wq.
-> > 
-> > 3) then the flag of BIO_QUEUE_ENTERED is inherited and causes
-> > the queue usage counter isn't held.
+> The cost of using a bit spin_lock is a little bit of code complexity,
+> which I think is quite manageable.
 > 
-> We don't copy flags on a clone.
+> Bit spin_locks are sometimes inappropriate because they are not fair -
+> if multiple CPUs repeatedly contend of the same lock, one CPU can
+> easily be starved.  This is not a credible situation with rhashtable.
+> Multiple CPUs may want to repeatedly add or remove objects, but they
+> will typically do so at different buckets, so they will attempt to
+> acquire different locks.
+> 
+> As we have more bit-locks than we previously had spinlocks (by at
+> least a factor of two) we can expect slightly less contention to
+> go with the slightly better cache behavior and reduced memory
+> consumption.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.com>
 
-Yeah, you are right, seems I ignored that.
+...
+
+> @@ -74,6 +71,61 @@ struct bucket_table {
+>  	struct rhash_head __rcu *buckets[] ____cacheline_aligned_in_smp;
+>  };
+>  
+> +/*
+> + * We lock a bucket by setting BIT(1) in the pointer - this is always
+> + * zero in real pointers and in the nulls marker.
+> + * bit_spin_locks do not handle contention well, but the whole point
+> + * of the hashtable design is to achieve minimum per-bucket contention.
+> + * A nested hash table might not have a bucket pointer.  In that case
+> + * we cannot get a lock.  For remove and replace the bucket cannot be
+> + * interesting and doesn't need locking.
+> + * For insert we allocate the bucket if this is the last bucket_table,
+> + * and then take the lock.
+> + * Sometimes we unlock a bucket by writing a new pointer there.  In that
+> + * case we don't need to unlock, but we do need to reset state such as
+> + * local_bh. For that we have rht_unlocked().  This doesn't include
+> + * the memory barrier that bit_spin_unlock() provides, but rcu_assign_pointer()
+> + * will have provided that.
+> + */
+
+Yes the concept looks good to me.  But I would like to hear from
+Eric/Dave as to whether this would be acceptable for existing
+network hash tables such as the ones in inet.
 
 Thanks,
-Ming
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
