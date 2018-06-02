@@ -1,83 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751387AbeFBD1x (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 23:27:53 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37972 "EHLO
+        id S1751593AbeFBD2f (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 23:28:35 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38056 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750998AbeFBD1w (ORCPT
+        with ESMTP id S1751297AbeFBD1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 23:27:52 -0400
+        Fri, 1 Jun 2018 23:27:53 -0400
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: Michael Schmitz <schmitzmic@gmail.com>,
         <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Message-Id: <cover.1527909627.git.fthain@telegraphics.com.au>
+Message-Id: <af2106d65c6b845c178bb2a0837e8554be2d1e8e.1527909627.git.fthain@telegraphics.com.au>
+In-Reply-To: <ddfa9261a77d747e6523dd5cc0df84cc555dc440.1527909627.git.fthain@telegraphics.com.au>
+References: <cover.1527909627.git.fthain@telegraphics.com.au>
+        <f32f4e3a0fd736152f768b7a00bfc731daba1629.1527909627.git.fthain@telegraphics.com.au>
+        <7ce9a8c3996506ae6f9ab16b3cf73c287e205a89.1527909627.git.fthain@telegraphics.com.au>
+        <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
+        <878b389293851359e53de186bf302ce52d95ad95.1527909627.git.fthain@telegraphics.com.au>
+        <adba0545c06cd6c67e26c433990d036b0d7e968c.1527909627.git.fthain@telegraphics.com.au>
+        <166b4c3a7347fe27f12bda86d50533cd01ee11b9.1527909627.git.fthain@telegraphics.com.au>
+        <73507a3e9444da17c222cf74df41842ce30d15ee.1527909627.git.fthain@telegraphics.com.au>
+        <de8edb03dbd2fd25b53d0bdf9c6d65adf9aa0aa3.1527909627.git.fthain@telegraphics.com.au>
+        <ddfa9261a77d747e6523dd5cc0df84cc555dc440.1527909627.git.fthain@telegraphics.com.au>
 From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 00/11] macintosh: Resolve various PMU driver problems
+Subject: [PATCH 10/11] macintosh/via-pmu: Clean up interrupt statistics
 Date: Fri,  1 Jun 2018 23:27:51 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches has the following aims.
+Replace an open-coded ffs() with the function call.
+Simplify an if-else cascade using a switch statement.
+Correct a typo and an indentation issue.
 
-1) Eliminate duplicated code. Linux presently has two drivers for
-   the 68HC05-based PMU devices found in Macs: via-pmu and via-pmu68k.
-   There's no value in having separate PMU drivers for each architecture.
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ drivers/macintosh/via-pmu.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-2) Avoid further work on via-pmu68k that's not needed for via-pmu.
-
-3) Fix some bugs in the via-pmu driver.
-
-4) Enable the /dev/pmu and /proc/pmu/* userspace APIs on m68k Macs
-   by adopting via-pmu.
-
-5) Improve stability on early 100-series PowerBooks by loading no PMU
-   driver at all. Neither via-pmu nor via-pmu68k supports the early
-   M50753-based PMU device found in these models.
-
-6) Eliminate duplicated RTC accessors for PMU and Cuda. Presently these
-   can be found under both arch/m68k and arch/powerpc.
-
-7) Assist the out-of-tree NuBus PowerMac port to support PMU designs
-   shared with the m68k Mac port (e.g. PowerBooks 190 and 5300).
-
-This patch series has been regression tested on various PowerBooks
-(190, 520, 3400, Pismo G3) and PowerMacs (Beige G3, G5). These patches
-did not affect userland utilities. (Note that there is a userland-
-visible change to the contents of /proc/pmu/interrupts.)
-
-
-Finn Thain (11):
-  macintosh/via-pmu: Fix section mismatch warning
-  macintosh/via-pmu: Add missing mmio accessors
-  macintosh/via-pmu: Don't clear shift register interrupt flag twice
-  macintosh/via-pmu: Enhance state machine with new 'uninitialized'
-    state
-  macintosh/via-pmu: Replace via pointer with via1 and via2 pointers
-  macintosh/via-pmu: Add support for m68k PowerBooks
-  macintosh/via-pmu: Make CONFIG_PPC_PMAC Kconfig deps explicit
-  macintosh/via-pmu: Replace via-pmu68k driver with via-pmu driver
-  macintosh: Use common code to access RTC
-  macintosh/via-pmu: Clean up interrupt statistics
-  macintosh/via-pmu: Disambiguate interrupt statistics
-
- arch/m68k/configs/mac_defconfig        |   2 +-
- arch/m68k/configs/multi_defconfig      |   2 +-
- arch/m68k/mac/config.c                 |   2 +-
- arch/m68k/mac/misc.c                   | 118 +----
- arch/powerpc/platforms/powermac/time.c |  74 +--
- drivers/macintosh/Kconfig              |  19 +-
- drivers/macintosh/Makefile             |   1 -
- drivers/macintosh/adb.c                |   2 +-
- drivers/macintosh/via-cuda.c           |  34 ++
- drivers/macintosh/via-pmu.c            | 374 ++++++++++-----
- drivers/macintosh/via-pmu68k.c         | 850 ---------------------------------
- include/linux/cuda.h                   |   3 +
- include/linux/pmu.h                    |   3 +
- include/uapi/linux/pmu.h               |   2 -
- 14 files changed, 307 insertions(+), 1179 deletions(-)
- delete mode 100644 drivers/macintosh/via-pmu68k.c
-
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index 3cbccd346997..5c5ebad4e6ae 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -1392,7 +1392,8 @@ pmu_resume(void)
+ static void
+ pmu_handle_data(unsigned char *data, int len)
+ {
+-	unsigned char ints, pirq;
++	unsigned char ints;
++	int idx;
+ 	int i = 0;
+ 
+ 	asleep = 0;
+@@ -1414,25 +1415,24 @@ pmu_handle_data(unsigned char *data, int len)
+ 		ints &= ~(PMU_INT_ADB_AUTO | PMU_INT_AUTO_SRQ_POLL);
+ 
+ next:
+-
+ 	if (ints == 0) {
+ 		if (i > pmu_irq_stats[10])
+ 			pmu_irq_stats[10] = i;
+ 		return;
+ 	}
+-
+-	for (pirq = 0; pirq < 8; pirq++)
+-		if (ints & (1 << pirq))
+-			break;
+-	pmu_irq_stats[pirq]++;
+ 	i++;
+-	ints &= ~(1 << pirq);
++
++	idx = ffs(ints) - 1;
++	ints &= ~BIT(idx);
++
++	pmu_irq_stats[idx]++;
+ 
+ 	/* Note: for some reason, we get an interrupt with len=1,
+ 	 * data[0]==0 after each normal ADB interrupt, at least
+ 	 * on the Pismo. Still investigating...  --BenH
+ 	 */
+-	if ((1 << pirq) & PMU_INT_ADB) {
++	switch (BIT(idx)) {
++	case PMU_INT_ADB:
+ 		if ((data[0] & PMU_INT_ADB_AUTO) == 0) {
+ 			struct adb_request *req = req_awaiting_reply;
+ 			if (req == 0) {
+@@ -1470,25 +1470,25 @@ pmu_handle_data(unsigned char *data, int len)
+ 				adb_input(data+1, len-1, 1);
+ #endif /* CONFIG_ADB */		
+ 		}
+-	}
++		break;
+ 	/* Sound/brightness button pressed */
+-	else if ((1 << pirq) & PMU_INT_SNDBRT) {
++	case PMU_INT_SNDBRT:
+ #ifdef CONFIG_PMAC_BACKLIGHT
+ 		if (len == 3)
+ 			pmac_backlight_set_legacy_brightness_pmu(data[1] >> 4);
+ #endif
+-	}
++		break;
+ 	/* Tick interrupt */
+-	else if ((1 << pirq) & PMU_INT_TICK) {
+-		/* Environement or tick interrupt, query batteries */
++	case PMU_INT_TICK:
++		/* Environment or tick interrupt, query batteries */
+ 		if (pmu_battery_count) {
+ 			if ((--query_batt_timer) == 0) {
+ 				query_battery_state();
+ 				query_batt_timer = BATTERY_POLLING_COUNT;
+ 			}
+ 		}
+-        }
+-	else if ((1 << pirq) & PMU_INT_ENVIRONMENT) {
++		break;
++	case PMU_INT_ENVIRONMENT:
+ 		if (pmu_battery_count)
+ 			query_battery_state();
+ 		pmu_pass_intr(data, len);
+@@ -1498,7 +1498,8 @@ pmu_handle_data(unsigned char *data, int len)
+ 			via_pmu_event(PMU_EVT_POWER, !!(data[1]&8));
+ 			via_pmu_event(PMU_EVT_LID, data[1]&1);
+ 		}
+-	} else {
++		break;
++	default:
+ 	       pmu_pass_intr(data, len);
+ 	}
+ 	goto next;
 -- 
 2.16.1
