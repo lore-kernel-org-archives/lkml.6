@@ -1,106 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751864AbeFBQ04 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 12:26:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751624AbeFBQ0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 12:26:55 -0400
-Subject: [PATCH] Revert "vfio/type1: Improve memory pinning process for raw
- PFN mapping"
+        id S1751819AbeFBQkI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 12:40:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33755 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750964AbeFBQkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 12:40:06 -0400
+Date: Sat, 2 Jun 2018 10:40:05 -0600
 From: Alex Williamson <alex.williamson@redhat.com>
-To: alex.williamson@redhat.com
-Cc: "Jason Cai \(Xiang Feng\)" <jason.cai@linux.alibaba.com>,
-        Amadeusz =?utf-8?b?U8WCYXdpxYRza2k=?= <amade@asmblr.net>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 02 Jun 2018 10:26:49 -0600
-Message-ID: <152795678646.18023.2344946004912261972.stgit@w520.home>
-User-Agent: StGit/0.18-136-gffd7
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= <amade@asmblr.net>,
+        "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
+Subject: [GIT PULL] VFIO fix for v4.17
+Message-ID: <20180602104005.018ba72c@w520.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bisection by Amadeusz Sławiński implicates this commit leading to bad
-page state issues after VM shutdown, likely due to unbalanced page
-references.  The original commit was intended only as a performance
-improvement, therefore revert for offline rework.
+Hi Linus,
 
-Link: https://lkml.org/lkml/2018/6/2/97
-Fixes: 356e88ebe447 ("vfio/type1: Improve memory pinning process for raw PFN mapping")
-Cc: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
-Reported-by: Amadeusz Sławiński <amade@asmblr.net>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
- drivers/vfio/vfio_iommu_type1.c |   25 ++++++++++---------------
+Sorry for the last minute pull request, a bisection has just identified
+the commit reverted below as introducing a bad page state issue for
+vfio users.  Please pull for v4.17.  Thanks,
+
+Alex
+
+The following changes since commit 0512e0134582ef85dee77d51aae77dcd1edec495:
+
+  Merge tag 'xfs-4.17-fixes-3' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux (2018-05-31 16:23:07 -0500)
+
+are available in the Git repository at:
+
+  git://github.com/awilliam/linux-vfio.git tags/vfio-v4.17
+
+for you to fetch changes up to 89c29def6b0101fff66a3d74d0178b844f88d732:
+
+  Revert "vfio/type1: Improve memory pinning process for raw PFN mapping" (2018-06-02 08:41:44 -0600)
+
+----------------------------------------------------------------
+VFIO fix v4.17
+
+ - Revert a pfn page mapping optimization identified as introducing
+   a bad page state regression (Alex Williamson)
+
+----------------------------------------------------------------
+Alex Williamson (1):
+      Revert "vfio/type1: Improve memory pinning process for raw PFN mapping"
+
+ drivers/vfio/vfio_iommu_type1.c | 25 ++++++++++---------------
  1 file changed, 10 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 5c212bf29640..3c082451ab1a 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -404,6 +404,7 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- {
- 	unsigned long pfn = 0;
- 	long ret, pinned = 0, lock_acct = 0;
-+	bool rsvd;
- 	dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
- 
- 	/* This code path is only user initiated */
-@@ -414,23 +415,14 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 	if (ret)
- 		return ret;
- 
--	if (is_invalid_reserved_pfn(*pfn_base)) {
--		struct vm_area_struct *vma;
--
--		down_read(&current->mm->mmap_sem);
--		vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
--		pinned = min_t(long, npage, vma_pages(vma));
--		up_read(&current->mm->mmap_sem);
--		return pinned;
--	}
--
- 	pinned++;
-+	rsvd = is_invalid_reserved_pfn(*pfn_base);
- 
- 	/*
- 	 * Reserved pages aren't counted against the user, externally pinned
- 	 * pages are already counted against the user.
- 	 */
--	if (!vfio_find_vpfn(dma, iova)) {
-+	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
- 		if (!lock_cap && current->mm->locked_vm + 1 > limit) {
- 			put_pfn(*pfn_base, dma->prot);
- 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
-@@ -450,12 +442,13 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 		if (ret)
- 			break;
- 
--		if (pfn != *pfn_base + pinned) {
-+		if (pfn != *pfn_base + pinned ||
-+		    rsvd != is_invalid_reserved_pfn(pfn)) {
- 			put_pfn(pfn, dma->prot);
- 			break;
- 		}
- 
--		if (!vfio_find_vpfn(dma, iova)) {
-+		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
- 			if (!lock_cap &&
- 			    current->mm->locked_vm + lock_acct + 1 > limit) {
- 				put_pfn(pfn, dma->prot);
-@@ -473,8 +466,10 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
- 
- unpin_out:
- 	if (ret) {
--		for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
--			put_pfn(pfn, dma->prot);
-+		if (!rsvd) {
-+			for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-+				put_pfn(pfn, dma->prot);
-+		}
- 
- 		return ret;
- 	}
