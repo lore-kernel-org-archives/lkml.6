@@ -1,223 +1,315 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti33d1t02-1407096-1528090267-2-7260566291655855374
+Return-Path: <linux-efi-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4236-1527904930-2-17464461609513505732
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-efi-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1528090267; b=hUzex/79RHr/2i4fJ3CL4n9hiQNuzvcCTSTxBJwIonlJqn1mJ8
-    dO5hdA5jd+Qby7mDgvQD9rAhuCB87gr7CeqBMeQA9pBxi7+mlm0sBdVYOXFPN+4u
-    ssRXMdAjUcqh3nTGUV52F23cD73HWxE4gyvQEfwwG+hYlN8BhwFqP9RyIKF8FpNE
-    ez5z/ZaHl78V+FXCpMudBsVhvZntRLHt0Eq53TXJwv/39mFmeoZ2H9D4xHPIN2qS
-    yLoVrrLeeac25e6MVgBAJXYJ7V+EWgx6WBohzNOHNMWf2bp8mT4c6hDX53E/53li
-    89KIB22Dr0ZuVYEGY02m7+J+AoBfoe8JVREA==
+    1527904930; b=a8/omjfDZXcP1xRUp2B/Mulk137nnGR0sTgHCe1BDtFxdGjlqy
+    a2sZdifAvF8wOxsvK3T76qrwhXJxDtZUOJduQqj98/ualScXp18AW1pqVrcJ5bbg
+    Ito94F42cSyWRe3OFoezl4pJodHs5X/WV+AtX7+0UfYXsYYbKXfvs0fMwxZ0wJhq
+    z0roTSz+MlAvrN/w7Lh0QjnDCQKo460sJwiq8kvJlDM0vNSqv+h0pNpGJbW59cdI
+    q6l+5luxiEPb2R3amzY44sRGdvv5WwVCZwooRDspbvZVOLlINa6cGxqUzBXIGIAY
+    LJBoZYg9Qb8VZ+7SCd0gvuIrThiNEHhTN23w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:date:message-id:subject:from
-    :to:content-type:sender:list-id; s=fm2; t=1528090267; bh=tq5jEYL
-    Puqpt2FPfxg9swghFQsNWqFwlLL09mpwlv0o=; b=RTBVALeCmGv7Td4ypUMDS67
-    Kvil/I2tNKG7sQgUShaxCV8hL/+lf+9TOiBh73UMwOrS0lAPHAsAb2MctLICTKGA
-    xJUhZSDgmVOriHP22iqKXk85pqtkaoSZtaiZLQjmyb5H1I6WRFBV1xw5AI/lOxmq
-    hNmaPlOCLjgpjQroGc3DNcmOjVfVis0cLG8NUeKK+1+wtKx604RQUa6U9tVuN9R0
-    YTiyck8/GPGfVor0ygHWOB5YzwEXZGFSp53pUTe1I9ZwvI3aNbuJo9rHNIHZPmtY
-    no1l2qgT9J33C9wznxQy1XO9tJSdUwjGcdL6I5vRt9TfE9tfByduMhySkrriSwQ=
-    =
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=syzkaller.appspotmail.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1527904930; bh=WnvFu+uSaN2KVsn29IwPeF1magBT2SGp9kKX48SnuL
+    w=; b=XflDkfnxEjEb2IiqmSgu0IIzVt6knOCA3uXQY52GqiTSYzXrnAxl34HeX3
+    w2I+oYy65nlhjXmaC3Rrl279ZERlLupNabEQoOnZaFOttaG9wQAl8rRab7ax2VKg
+    4CfoHIb8MNZ1MKHKNyPrugqFbY1et0iuh9dlK/B5d4Hnwkkl1TjDLNTXSSx8rRqm
+    7iLZQ8/n61S5cQwp6xkdzSuhc2GPgUvX9etFBu9HXqt3HcW6uVL39NlmA1lplfAF
+    r+605NLHQQ5Ij9LpExFRZoMO5RXHX1zHnpiCUwwYdzcGbUoAR0sCx002swuIWe4E
+    TkNwohybXEaGv05GXbMeM+I44Iww==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=linaro.org header.i=@linaro.org header.b=d9QCzevu
+    header.a=rsa-sha256 header.s=google x-bits=1024;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=Y31oq8ND;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=W1WGY1t0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=syzkaller.appspotmail.com header.result=pass
-    header_org.domain=appspotmail.com header_org.result=pass
-    header_is_org_domain=no;
-    x-vs=clean score=49 state=0
-Authentication-Results: mx6.messagingengine.com;
+    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=syzkaller.appspotmail.com;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=linaro.org header.i=@linaro.org header.b=d9QCzevu
+      header.a=rsa-sha256 header.s=google x-bits=1024;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=Y31oq8ND;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=W1WGY1t0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=syzkaller.appspotmail.com header.result=pass
-      header_org.domain=appspotmail.com header_org.result=pass
-      header_is_org_domain=no;
-    x-vs=clean score=49 state=0
+      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPahbLD7EtRQ2jn9b7a+3JLhOfJS6HvY6NSwHsP+fAJKSX0GTHx+GtC+CytIPSs6btsUZEySBh7SZoh5uc3ikJYGs3Ug+jltQ4RC5qvBKhubiljki6YL
-    ULHrpEhfi68i4XPW0cgVXoJiaX46C6wA31Ema0cf4MwUlqN5LzQO8mTth5kvc6dPET5jE2wmKHb1yEMCWCtDgjm02C1c9tH5viTV1ho1MOKijwyCJmKISXK6
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfP1SQLq0pMFeHoEDeR4Q44fGqvYSAfmgfvf179jd1JW1TUpiWQqvCpgw8ZVnAf+VUuUSRNslBIlGn08xYJ9Zl8mPEUhleNkB+aeog8Nh+UHvMripwBzA
+    nBkVvNqyfo+kL51dGiQlfxnUaikMm7xiWt1Zu779oL02ILLf7n7LadhD3xxkaEpN0E7GStl2LSpC4lJHEbdMTsHFHFX5Iv699umhfsIKB6ZYNaTnqlsKDIMh
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=7mUfYlMuFuIA:10
-    a=VwQbUJbxAAAA:8 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=mzoz-TVAAAAA:20
-    a=4RBUngkUAAAA:8 a=6WR9MKj8Iv5OXRgAWmQA:9 a=OAta1iC1oRLzIsbK:21
-    a=QEXdDO2ut3YA:10 a=vVHabExCe68A:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22
+    a=QyXUC8HyAAAA:8 a=i3X5FwGiAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8
+    a=7CQSdrXTAAAA:8 a=20KFwNOVAAAA:8 a=KKAkSRfTAAAA:8 a=JfrnYn6hAAAA:8
+    a=CxaZg77CAAAA:8 a=pGLkceISAAAA:8 a=ObHuDp5PPrJWBTHaTi0A:9
+    a=s_150581p3K-dzCI:21 a=Y6Xu9NggU2a7AapK:21 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=mmqRlSCDY2ywfjPLJ4af:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=cvBusfyB2V15izCimMoJ:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=HxQw6O0h_v37Y3_G5fB_:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751097AbeFDFbD (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 4 Jun 2018 01:31:03 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:41570 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750825AbeFDFbC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Jun 2018 01:31:02 -0400
-X-Google-Smtp-Source: ADUXVKIyRtxNAq60G4epBNXwk3XexyOf9SDyiqAQ1PmB6r1MKcA7FSPqM0LAnuBVTmDGxHwb5MYHnsLKguNWAy86dPU2PnlqZsdb
+        id S1750852AbeFBCCH (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 1 Jun 2018 22:02:07 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35349 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750776AbeFBCCG (ORCPT
+        <rfc822;linux-efi@vger.kernel.org>); Fri, 1 Jun 2018 22:02:06 -0400
+X-Google-Smtp-Source: ADUXVKIbR1y4bQuwvAri3Gk7H4tmAKsy/BkIUWRHePjOauZsH5Lfv4dB/Y7cLPAa83DRnAv0iNVs/Mp/1nr9fpxTn/Y=
 MIME-Version: 1.0
-Date: Sun, 03 Jun 2018 22:31:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000043195b056dca3dad@google.com>
-Subject: BUG: soft lockup in shrink_dcache_parent (2)
-From: syzbot <syzbot+be3179e6006280aaf174@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+In-Reply-To: <1527560464-19466-1-git-send-email-sai.praneeth.prakhya@intel.com>
+References: <1527560464-19466-1-git-send-email-sai.praneeth.prakhya@intel.com>
+From: Naresh Bhat <naresh.bhat@linaro.org>
+Date: Sat, 2 Jun 2018 07:32:04 +0530
+Message-ID: <CAFoFrHYcD7fGYaJzKwcPCtu+XyR+mh5ORDqmCpiBjLmEkDfwOQ@mail.gmail.com>
+Subject: Re: [PATCH V5 0/3] Use efi_rts_wq to invoke EFI Runtime Services
+To: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-efi-owner@vger.kernel.org
+X-Mailing-List: linux-efi@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+On 29 May 2018 at 07:51, Sai Praneeth Prakhya
+<sai.praneeth.prakhya@intel.com> wrote:
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+>
+> Problem statement:
+> ------------------
+> Presently, efi_runtime_services() silently switch %cr3 from swapper_pgd
+> to efi_pgd. As a consequence, kernel code that runs in efi_pgd (e.g.,
+> perf code via an NMI) will have incorrect user space mappings[1]. This
+> could lead to otherwise unexpected access errors and, worse, unauthorized
+> access to firmware code and data.
+>
+> Detailed discussion of problem statement:
+> -----------------------------------------
+> As this switch is not propagated to other kernel subsystems; they will
+> wrongly assume that swapper_pgd is still in use and it can lead to
+> following issues:
+>
+> 1. If kernel code tries to access user space addresses while in efi_pgd,
+> it could lead to unauthorized accesses to firmware code/data.
+> (e.g: <__>/copy_from_user_nmi()).
+> [This could also be disastrous if the frame pointer happens to point at
+> MMIO in the EFI runtime mappings] - Mark Rutland.
+>
+> An example of a subsystem that could touch user space while in efi_pgd is
+> perf. Assume that we are in efi_pgd, a user could use perf to profile
+> some user data and depending on the address the user is trying to
+> profile, two things could happen.
+> 1. If the mappings are absent, perf fails to profile.
+> 2. If efi_pgd does have mappings for the requested address (these
+>   mappings are erroneous), perf profiles firmware code/data. If the
+>   address is MMIO'ed, perf could have potentially changed some device state.
+>
+> The culprit in both the cases is, EFI subsystem swapping out pgd and not
+> perf. Because, EFI subsystem has broken the *general assumption* that
+> all other subsystems rely on - "user space might be valid and nobody has
+> switched %cr3".
+>
+> Solutions:
+> ----------
+> There are two ways to fix this issue:
+> 1. Educate about pgd change to *all* the subsystems that could
+>    potentially access user space while in efi_pgd.
+>   On x86, AFAIK, it could happen only when some one touches user space
+>   from the back of an NMI (a quick audit on <__>/copy_from_user_nmi,
+>   showed perf and oprofile). On arm, it could happen from multiple
+>   places as arm runs efi_runtime_services() interrupts enabled (ARM folks,
+>   please comment on this as I might be wrong); whereas x86 runs
+>   efi_runtime_services() interrupts disabled.
+>
+>   I think, this solution isn't holistic because
+>   a. Any other subsystem might well do the same, if not now, in future.
+>   b. Also, this solution looks simpler on x86 but not true if it's the
+>     same for arm (ARM folks, please comment on this as I might be wrong).
+>   c. This solution looks like a work around rather than addressing the issue.
+>
+> 2. Running efi_runtime_services() in kthread context.
+>   This makes sense because efi_pgd doesn't have user space and kthread
+>   by definition means that user space is not valid. Any kernel code that
+>   tries to touch user space while in kthread is buggy in itself. If so,
+>   it should be an easy fix in the other subsystem. This also take us one
+>   step closer to long awaiting proposal of Andy - Running EFI at CPL 3.
+>
+> What does this patch set do?
+> ----------------------------
+> Introduce efi_rts_wq (EFI runtime services work queue).
+> When a user process requests the kernel to execute any efi_runtime_service(),
+> kernel queues the work to efi_rts_wq, a kthread comes along, switches to
+> efi_pgd and executes efi_runtime_service() in kthread context. IOW, this
+> patch set adds support to the EFI subsystem to handle all calls to
+> efi_runtime_services() using a work queue (which in turn uses kthread).
+>
+> How running efi_runtime_services() in kthread fixes above discussed issues?
+> ---------------------------------------------------------------------------
+> If we run efi_runtime_services() in kthread context and if perf
+> checks for it, we could get both the above scenarios correct by perf
+> aborting the profiling. Not only perf, but any subsystem that tries to
+> touch user space should first check for kthread context and if so,
+> should abort.
+>
+> Q. If we still need check for kthread context in other subsystems that
+> access user space, what does this patch set fix?
+> A. This patch set makes sure that EFI subsystem is not at fault.
+> Without this patch set the blame is upon EFI subsystem, because it's the
+> one that changed pgd and hasn't communicated this change to everyone and
+> hence broke the general assumption. Running efi_runtime_services() in
+> kthread means explicitly communicating that user space is invalid, now
+> it's the responsibility of other subsystem to make sure that it's
+> running in right context.
+>
+> Testing:
+> --------
+> Tested using LUV (Linux UEFI Validation) for x86_64, x86_32 and arm64
+> (qemu only). Will appreciate the effort if someone could test the
+> patches on real ARM/ARM64 machines.
+> LUV: https://01.org/linux-uefi-validation
 
-syzbot found the following crash on:
+I have tested V4 series on ThunderX2 Val1 and Saber platform by
+integrating the patches with LUV project.
+I will test V5 version soon and let you know the outcome.
 
-HEAD commit:    325e14f97e0c Merge branch 'fixes' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=166329d7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=be3179e6006280aaf174
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+be3179e6006280aaf174@syzkaller.appspotmail.com
-
-watchdog: BUG: soft lockup - CPU#1 stuck for 134s! [syz-executor4:4588]
-Modules linked in:
-irq event stamp: 76609500
-hardirqs last  enabled at (76609499): [<ffffffff81c66ccf>]  
-seqcount_lockdep_reader_access include/linux/seqlock.h:83 [inline]
-hardirqs last  enabled at (76609499): [<ffffffff81c66ccf>]  
-read_seqcount_begin include/linux/seqlock.h:164 [inline]
-hardirqs last  enabled at (76609499): [<ffffffff81c66ccf>] read_seqbegin  
-include/linux/seqlock.h:433 [inline]
-hardirqs last  enabled at (76609499): [<ffffffff81c66ccf>]  
-read_seqbegin_or_lock include/linux/seqlock.h:529 [inline]
-hardirqs last  enabled at (76609499): [<ffffffff81c66ccf>]  
-d_walk+0x80f/0xc80 fs/dcache.c:1248
-hardirqs last disabled at (76609500): [<ffffffff87800905>]  
-interrupt_entry+0xb5/0xf0 arch/x86/entry/entry_64.S:625
-softirqs last  enabled at (468244): [<ffffffff87a00778>]  
-__do_softirq+0x778/0xaf5 kernel/softirq.c:311
-softirqs last disabled at (468177): [<ffffffff814762c1>] invoke_softirq  
-kernel/softirq.c:365 [inline]
-softirqs last disabled at (468177): [<ffffffff814762c1>]  
-irq_exit+0x1d1/0x200 kernel/softirq.c:405
-CPU: 1 PID: 4588 Comm: syz-executor4 Not tainted 4.17.0-rc7+ #81
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:seqcount_lockdep_reader_access include/linux/seqlock.h:83 [inline]
-RIP: 0010:read_seqcount_begin include/linux/seqlock.h:164 [inline]
-RIP: 0010:read_seqbegin include/linux/seqlock.h:433 [inline]
-RIP: 0010:read_seqbegin_or_lock include/linux/seqlock.h:529 [inline]
-RIP: 0010:d_walk+0x840/0xc80 fs/dcache.c:1248
-RSP: 0018:ffff880183f5f9f8 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
-RAX: ffff8801b0d3c680 RBX: 0000000000000293 RCX: 1ffff100361a79e5
-RDX: 0000000000000000 RSI: ffffffff81c66cfb RDI: 0000000000000293
-RBP: ffff880183f5fb78 R08: ffff8801b0d3ceb8 R09: 0000000000000006
-R10: ffff8801b0d3c680 R11: 0000000000000000 R12: 0000000000000200
-R13: dffffc0000000000 R14: 1ffff100307ebf82 R15: ffff880183f5fb50
-FS:  000000000217c940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffca8309eac CR3: 0000000183eb2000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  shrink_dcache_parent+0x179/0x230 fs/dcache.c:1486
-  vfs_rmdir+0x202/0x470 fs/namei.c:3855
-  do_rmdir+0x523/0x610 fs/namei.c:3916
-  __do_sys_rmdir fs/namei.c:3934 [inline]
-  __se_sys_rmdir fs/namei.c:3932 [inline]
-  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3932
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455777
-RSP: 002b:00007ffca830a5b8 EFLAGS: 00000206 ORIG_RAX: 0000000000000054
-RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 0000000000455777
-RDX: 0000000000000000 RSI: 00007ffca830c360 RDI: 00007ffca830c360
-RBP: 00007ffca830c360 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000006 R11: 0000000000000206 R12: 000000000217d940
-R13: 0000000000000000 R14: 0000000000000198 R15: 000000000001f12d
-Code: 88 48 89 f8 48 c1 e8 03 42 80 3c 28 00 0f 85 1e 04 00 00 48 83 3d 78  
-20 0b 07 00 0f 84 29 02 00 00 e8 e5 d7 b2 ff 48 89 df 57 9d <0f> 1f 44 00  
-00 e8 d6 d7 b2 ff 49 8d 5f 80 48 c1 eb 03 4c 01 eb
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 4581 Comm: syz-executor6 Not tainted 4.17.0-rc7+ #81
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:select_collect+0x249/0x5f0 fs/dcache.c:1443
-RSP: 0018:ffff880189947908 EFLAGS: 00000286
-RAX: 0000000000000000 RBX: ffffed0031328f24 RCX: ffffffff81c5c3b4
-RDX: 0000000000000000 RSI: ffffffff81c5c4fa RDI: ffff880189947c28
-RBP: ffff8801899479e8 R08: ffff88018993e5c0 R09: ffffed0039dde7a4
-R10: ffffed0039dde7a4 R11: ffff8801ceef3d23 R12: 0000000000000000
-R13: 1ffff10031328f28 R14: ffff880189947c18 R15: dffffc0000000000
-FS:  0000000001790940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffebea69e9c CR3: 000000018989f000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  d_walk+0x3c3/0xc80 fs/dcache.c:1276
-  shrink_dcache_parent+0x179/0x230 fs/dcache.c:1486
-  vfs_rmdir+0x202/0x470 fs/namei.c:3855
-  do_rmdir+0x523/0x610 fs/namei.c:3916
-  __do_sys_rmdir fs/namei.c:3934 [inline]
-  __se_sys_rmdir fs/namei.c:3932 [inline]
-  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3932
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455777
-RSP: 002b:00007ffebea6a5a8 EFLAGS: 00000202 ORIG_RAX: 0000000000000054
-RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 0000000000455777
-RDX: 0000000000000000 RSI: 00007ffebea6c350 RDI: 00007ffebea6c350
-RBP: 00007ffebea6c350 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000006 R11: 0000000000000202 R12: 0000000001791940
-R13: 0000000000000000 R14: 0000000000000192 R15: 000000000001f12b
-Code: 0f b6 e4 41 83 c4 01 e8 e6 7f b3 ff 48 b8 00 00 00 00 00 fc ff df 48  
-01 c3 44 89 e0 48 c7 03 00 00 00 00 48 c7 43 08 00 00 00 00 <c7> 43 10 00  
-00 00 00 48 81 c4 b8 00 00 00 5b 41 5c 41 5d 41 5e
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+>
+> Credits:
+> --------
+> Thanks to Ricardo, Dan, Miguel, Mark, Peter Z and Ard for reviews and
+> suggestions. Thanks to Boris and Andy for making me think through/help
+> on what I am addressing with this patch set.
+>
+> Please feel free to pour in your comments and concerns.
+>
+> Note:
+> -----
+> Patches are based on Linus's kernel v4.17-rc7
+>
+> [1] Backup: Detailing efi_pgd:
+> ------------------------------
+> efi_pgd has mappings for EFI Runtime Code/Data (on x86, plus EFI Boot time
+> Code/Data) regions. Due to the nature of these mappings, they fall
+> in user space address ranges and they are not the same as swapper.
+>
+> [On arm64, the EFI mappings are in the VA range usually used for user
+> space. The two halves of the address space are managed by separate
+> tables, TTBR0 and TTBR1. We always map the kernel in TTBR1, and we map
+> user space or EFI runtime mappings in TTBR0.] - Mark Rutland
+>
+> Changes from V4 to V5:
+> ----------------------
+> 1. As suggested by Ard, don't use efi_rts_wq for non-blocking variants.
+>   Non-blocking variants are supposed to not block and using workqueue
+>   exactly does the opposite, hence refrain from using it.
+> 2. Use non-blocking variants in efi_delete_dummy_variable(). Use of
+>   blocking variants means that we have to call efi_delete_dummy_variable()
+>   after efi_rts_wq has been created.
+> 3. Remove in_atomic() check in set_variable<>() and query_variable_info<>().
+>   Any caller wishing to use set_variable() and query_variable_info() in
+>   atomic context should use their non-blocking variants.
+>
+> Changes from V3 to V4:
+> ----------------------
+> 1. As suggested by Peter, use completions instead of flush_work() as the
+>   former is cheaper
+> 2. Call efi_delete_dummy_variable() from efisubsys_init(). Sorry! Ard,
+>   wasn't able to find a better alternative to keep this change local to
+>   arch/x86.
+>
+> Changes from V2 to V3:
+> ----------------------
+> 1. Rewrite the cover letter to clearly state the problem. What we are
+>   fixing and what we are not fixing.
+> 2. Make efi_delete_dummy_variable() change local to x86.
+> 3. Avoid using BUG(), instead, print error message and exit gracefully.
+> 4. Move struct efi_runtime_work to runtime-wrappers.c file.
+> 5. Give enum a name (efi_rts_ids) and use it in efi_runtime_work.
+> 6. Add Naresh (maintainer of LUV for ARM) and Miguel to the CC list.
+>
+> Changes from V1 to V2:
+> ----------------------
+> 1. Remove unnecessary include of asm/efi.h file - Fixes build error on
+>   ia64, reported by 0-day
+> 2. Use enum to identify efi_runtime_services()
+> 3. Use alloc_ordered_workqueue() to create efi_rts_wq as
+>   create_workqueue() is scheduled for depreciation.
+> 4. Make efi_call_rts() static, as it has no callers outside
+>   runtime-wrappers.c
+> 5. Use BUG(), when we are unable to queue work or unable to identify
+>   requested efi_runtime_service() - Because these two situations should
+>   *never* happen.
+>
+> Sai Praneeth (3):
+>   x86/efi: Make efi_delete_dummy_variable() use
+>     set_variable_nonblocking() instead of set_variable()
+>   efi: Create efi_rts_wq and efi_queue_work() to invoke all
+>     efi_runtime_services()
+>   efi: Use efi_rts_wq to invoke EFI Runtime Services
+>
+>  arch/x86/platform/efi/quirks.c          |  11 +-
+>  drivers/firmware/efi/efi.c              |  14 ++
+>  drivers/firmware/efi/runtime-wrappers.c | 218 +++++++++++++++++++++++++++++---
+>  include/linux/efi.h                     |   3 +
+>  4 files changed, 224 insertions(+), 22 deletions(-)
+>
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Cc: Lee Chun-Yi <jlee@suse.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Bhupesh Sharma <bhsharma@redhat.com>
+> Cc: Naresh Bhat <naresh.bhat@linaro.org>
+> Cc: Ricardo Neri <ricardo.neri@intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+> Cc: Matt Fleming <matt@codeblueprint.co.uk>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>
+> --
+> 2.7.4
+>
