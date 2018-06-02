@@ -1,150 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751737AbeFBRuE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 13:50:04 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:46792 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeFBRuC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 13:50:02 -0400
-Date: Sat, 2 Jun 2018 18:49:58 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: David Howells <dhowells@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 30/32] vfs: Allow cloning of a mount tree with
- open(O_PATH|O_CLONE_MOUNT) [ver #8]
-Message-ID: <20180602174957.GX30522@ZenIV.linux.org.uk>
-References: <20180602040434.GW30522@ZenIV.linux.org.uk>
- <20180601063928.GS30522@ZenIV.linux.org.uk>
- <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
- <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
- <20180601062654.GA32397@infradead.org>
- <7067.1527841663@warthog.procyon.org.uk>
- <20180602030913.GU30522@ZenIV.linux.org.uk>
- <20180602034255.GV30522@ZenIV.linux.org.uk>
- <21804.1527954321@warthog.procyon.org.uk>
+        id S1751758AbeFBRzH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 13:55:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53030 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750831AbeFBRzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 13:55:06 -0400
+Date: Sat, 2 Jun 2018 13:53:58 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>
+Subject: Re: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean
+ where convenient
+Message-ID: <20180602175358.wfdlx6dvnxypspya@madcap2.tricolour.ca>
+References: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
+ <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com>
+ <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca>
+ <CAHC9VhTABDT0FKb=vY4G06aY9Ky+NctArCRo8-iUQF6=eWKy1g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <21804.1527954321@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAHC9VhTABDT0FKb=vY4G06aY9Ky+NctArCRo8-iUQF6=eWKy1g@mail.gmail.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 04:45:21PM +0100, David Howells wrote:
-> Al Viro <viro@ZenIV.linux.org.uk> wrote:
+On 2018-06-01 18:15, Paul Moore wrote:
+> On Thu, May 31, 2018 at 12:38 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2018-05-31 11:48, Paul Moore wrote:
+> >> On Thu, May 31, 2018 at 11:13 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> >> > Most uses of audit_enabled don't care about the distinction between
+> >> > AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
+> >> > more sense and is easier to read. Most uses of audit_enabled treat it as
+> >> > a boolean, so switch the remaining AUDIT_OFF usage to simply use
+> >> > audit_enabled as a boolean where applicable.
+> >> >
+> >> > See: https://github.com/linux-audit/audit-kernel/issues/86
+> >> >
+> >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> >> > ---
+> >> >  drivers/tty/tty_audit.c      | 2 +-
+> >> >  include/net/xfrm.h           | 2 +-
+> >> >  kernel/audit.c               | 8 ++++----
+> >> >  net/netfilter/xt_AUDIT.c     | 2 +-
+> >> >  net/netlabel/netlabel_user.c | 2 +-
+> >> >  5 files changed, 8 insertions(+), 8 deletions(-)
+> >>
+> >> I'm not sure I like this idea.  Yes, technically this change is
+> >> functionally equivalent but I worry that this will increase the chance
+> >> that non-audit folks will mistake audit_enabled as a true/false value
+> >> when it is not.  It might work now, but I worry about some subtle
+> >> problem in the future.
+> >
+> > Would you prefer a patch to change the majority (18) of uses of
+> > audit_enabled to be of the form "audit_enabled == AUDIT_OFF" (or
+> > "audit_enabled != AUDIT_OFF")?
+> >
+> > I prefer the approach in this patch because it makes the code smaller
+> > and significantly easier to read, but either way, I'd like all uses to
+> > be consistent so that it is easier to read all the code similarly.
+> >
+> >> If you are bothered by the comparison to 0 (magic numbers), you could
+> >> move the AUDIT_OFF/AUDIT_ON/AUDIT_LOCKED definitions into
+> >> include/linux/audit.h and convert the "audit_enabled == 0" to
+> >> "audit_enabled == AUDIT_OFF".
+> >
+> > I'd be fine doing that if you really dislike this patch's approach.
 > 
-> > TBH, I would probably prefer separate mount_setattr(2) for that kind
-> > of work, with something like
-> > 	int mount_setattr(int dirfd, const char *path, int flags, int attr)
-> > *not* opening any files.
-> > flags:
-> > 	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE
-> 
-> I would call these MOUNT_SETATTR_* rather than AT_*.
+> Like I said, I'm don't really care for the boolean-like approach of
+> this first patch.
 
-Why?  AT_EMPTY_PATH/AT_NO_AUTOMOUNT are common with other ...at()
-syscalls; AT_RECURSIVE - maybe, but it's still more like AT_...
-namespace fodder, IMO.
+That doesn't really address the original issue though.
 
-> > attr:
-> > 	MOUNT_SETATTR_DEV		(1<<0)
-> > 	MOUNT_SETATTR_NODEV		(1<<0)|(1<<1)
-> > 	MOUNT_SETATTR_EXEC		(1<<2)
-> > 	MOUNT_SETATTR_NOEXEC		(1<<2)|(1<<3)
-> > 	MOUNT_SETATTR_SUID		(1<<4)
-> > 	MOUNT_SETATTR_NOSUID		(1<<4)|(1<<5)
-> > 	MOUNT_SETATTR_RW		(1<<6)
-> > 	MOUNT_SETATTR_RO		(1<<6)|(1<<7)
-> > 	MOUNT_SETATTR_RELATIME		(1<<8)
-> > 	MOUNT_SETATTR_NOATIME		(1<<8)|(1<<9)
-> > 	MOUNT_SETATTR_NODIRATIME	(1<<8)|(2<<9)
-> > 	MOUNT_SETATTR_STRICTATIME	(1<<8)|(3<<9)
-> > 	MOUNT_SETATTR_PRIVATE		(1<<11)
-> > 	MOUNT_SETATTR_SHARED		(1<<11)|(1<<12)
-> > 	MOUNT_SETATTR_SLAVE		(1<<11)|(2<<12)
-> > 	MOUNT_SETATTR_UNBINDABLE	(1<<11)|(3<<12)
-> 
-> So, I like this generally, some notes though:
-> 
-> I wonder if this should be two separate parameters, a mask and the settings?
-> I'm not sure that's worth it since some of the mask bits would cover multiple
-> settings.
+Without any elaboration, I am not able to guess why you don't like this
+or what possible future subtleties would cause a problem.  Is there a
+past example somewhere else that brings up this concern?
+Can you explain the problem with "non-audit folks will mistake
+audit_enabled as a true/false value when it is not"?  Other subsystems
+should not care about the distinction between locked and not.
 
-Nah, better put those bits in the same word, as in above.  Here bits 0, 2, 4, 6,
-8 and 11 tell which attributes are to be modified, with values to set living
-in bits 1, 3, 5, 7, 9--10 and 12--13.  Look at the constants above..
+While I realize people change their opinions given a broader context,
+and the origninal reply was ambiguous, I went ahead with this patch
+based on your "Sounds good." from:
+	https://www.redhat.com/archives/linux-audit/2018-April/msg00089.html
 
-> Also, should NODIRATIME be separate from the other *ATIME flags?  I do also
-> like treating some of these settings as enumerations rather than a set of
-> bits.
+Would you accept a patch that defines a function by the same name as the
+global variable that returns a boolean (and localizes and renames the
+existing global with a "__" prefix?  I'm not willing to offer a patch to
+make the existing boolean usage harder to read to bring it all into
+similar usage.
 
-Huh?  That's precisely what I'm doing there: bit 8 is "want to change atime
-settings", bits 9 and 10 hold a 4-element enumeration (rel/no/nodir/strict).
-Similar for propagation settings (bit 11 indicates that we want to set those,
-bits 12 and 13 - 4-element enum)...
+> paul moore
 
-> I would make the prototype:
-> 
-> 	int mount_setattr(int dirfd, const char *path,
-> 			  unsigned int flags, unsigned int attr,
-> 			  void *reserved5);
-> 
-> Further, do we want to say you can either change the propagation type *or*
-> reconfigure the mountpoint restrictions, but not both at the same time?
+- RGB
 
-Why?  MOUNT_SETATTR_PRIVATE | MOUNT_NOATIME | MOUNT_SUID, i.e. 00101100010000,
-i.e. 0xb10 for "turn nosuid off, switch atime polcy to noatime, change propagation
-to private, leave everything else as-is"...
-
-And for fsck sake, what's that "void *reserved5" for?
-
-> > With either openat() used as in this series, or explicit
-> > 	int open_tree(int dirfd, const char *path, int flags)
-> 
-> Maybe open_mount(), grab_mount() or pick_mount()?
-> 
-> I wonder if fsopen()/fspick() should be create_fs()/open_fs()...
-> 
-> > returning a descriptor, with flags being
-> > 	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE, AT_CLONE
-> > with AT_RECURSIVE without AT_CLONE being an error.
-> 
-> You also need an O_CLOEXEC equivalent.
-
-Point.
-
-> I would make it:
-> 
-> 	OPEN_TREE_CLOEXEC		0x00000001
-
-Why not O_CLOEXEC, as with epoll_create()/timerfd_create()/etc.?
-
-> 	OPEN_TREE_EMPTY_PATH		0x00000002
-> 	OPEN_TREE_FOLLOW_SYMLINK	0x00000004
-> 	OPEN_TREE_NO_AUTOMOUNT		0x00000008
-
-Why?  How are those different from normal AT_EMPTY_PATH/AT_NO_AUTOMOUNT?
-
-> 	OPEN_TREE_CLONE			0x00000010
-> 	OPEN_TREE_RECURSIVE		0x00000020
-> 
-> adding the follow-symlinks so that you don't grab a symlink target by
-> accident.  (Can you actually mount on top of a symlink?)
-
-You can't - mount(2) uses LOOKUP_FOLLOW for mountpoint (well, user_path(),
-actually).
-
-> > Hell, might even add AT_UMOUNT for "open root and detach, to be dissolved on
-> > close", incompatible with AT_CLONE.
-> 
-> Cute.  Guess you could do:
-> 
-> 	fd = open_mount(..., OPEN_TREE_DETACH);
-> 	mount_setattr(fd, "",
-> 		      MOUNT_SETATTR_EMPTY_PATH,
-> 		      MOUNT_SETATTR_NOSUID, NULL);
-> 	move_mount(fd, "", ...);
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
