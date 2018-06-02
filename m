@@ -1,83 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750974AbeFBEEj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 00:04:39 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35154 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750748AbeFBEEi (ORCPT
+        id S1751309AbeFBEGw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 00:06:52 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41652 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750748AbeFBEGv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 00:04:38 -0400
-Date: Sat, 2 Jun 2018 05:04:34 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: David Howells <dhowells@redhat.com>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH 30/32] vfs: Allow cloning of a mount tree with
- open(O_PATH|O_CLONE_MOUNT) [ver #8]
-Message-ID: <20180602040434.GW30522@ZenIV.linux.org.uk>
-References: <20180601063928.GS30522@ZenIV.linux.org.uk>
- <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
- <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
- <20180601062654.GA32397@infradead.org>
- <7067.1527841663@warthog.procyon.org.uk>
- <20180602030913.GU30522@ZenIV.linux.org.uk>
- <20180602034255.GV30522@ZenIV.linux.org.uk>
+        Sat, 2 Jun 2018 00:06:51 -0400
+X-Google-Smtp-Source: ADUXVKL/hTCabr9xqx4w5b9veRfcvZMRKuqDvpL9UPYYUyNiiabX17ZPlir8PGSgbMi27JTZpSmnSxMkITl6P/y2zNk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180602034255.GV30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAB+yDaZAwFny2NdOZfymdpdR3Sf7pdkxahgQ6v2zBzUvSwBWTA@mail.gmail.com>
+References: <CAB+yDaZAwFny2NdOZfymdpdR3Sf7pdkxahgQ6v2zBzUvSwBWTA@mail.gmail.com>
+From: shankarapailoor <shankarapailoor@gmail.com>
+Date: Fri, 1 Jun 2018 21:06:49 -0700
+Message-ID: <CAB+yDaZFZhku34wp-t_i32Vy6cYB9fnS0iboPnQZ26sQeAZ+Uw@mail.gmail.com>
+Subject: Re: Slab out of bounds in setxattr
+To: shaggy@kernel.org
+Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 04:42:56AM +0100, Al Viro wrote:
-> _If_ I'm interpreting that correctly, that should be something like a bitmap
-> of attributes to modify + values to set for each.  Let's see -
-> 	propagation	1 + 2 bits
-> 	nodev		1 + 1
-> 	noexec		1 + 1
-> 	nosuid		1 + 1
-> 	ro		1 + 1
-> 	atime		1 + 3
-> That's 15 bits.  On top of that, we have 1 bit for "clone or original"
-> and 1 bit for "recursive or single-mount".  As well as AT_EMPTY_PATH,
-> and AT_NO_AUTOMOUNT (inconvenient, since these are fixed bits).  In
-> principle, that does fit into int, with some space to spare...
-> 
-> Is that what you have in mind?
+Hi,
 
-TBH, I would probably prefer separate mount_setattr(2) for that kind
-of work, with something like
-	int mount_setattr(int dirfd, const char *path, int flags, int attr)
-*not* opening any files.
-flags:
-	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE
-attr:
-	MOUNT_SETATTR_DEV		(1<<0)
-	MOUNT_SETATTR_NODEV		(1<<0)|(1<<1)
-	MOUNT_SETATTR_EXEC		(1<<2)
-	MOUNT_SETATTR_NOEXEC		(1<<2)|(1<<3)
-	MOUNT_SETATTR_SUID		(1<<4)
-	MOUNT_SETATTR_NOSUID		(1<<4)|(1<<5)
-	MOUNT_SETATTR_RW		(1<<6)
-	MOUNT_SETATTR_RO		(1<<6)|(1<<7)
-	MOUNT_SETATTR_RELATIME		(1<<8)
-	MOUNT_SETATTR_NOATIME		(1<<8)|(1<<9)
-	MOUNT_SETATTR_NODIRATIME	(1<<8)|(2<<9)
-	MOUNT_SETATTR_STRICTATIME	(1<<8)|(3<<9)
-	MOUNT_SETATTR_PRIVATE		(1<<11)
-	MOUNT_SETATTR_SHARED		(1<<11)|(1<<12)
-	MOUNT_SETATTR_SLAVE		(1<<11)|(2<<12)
-	MOUNT_SETATTR_UNBINDABLE	(1<<11)|(3<<12)
+Looking at the crash some more, it seems that if value_len > PAGE_SIZE
+then e_buf->max_size is rounded up nearest page size [1]. If a new
+attribute is added with value_len < e_buf->max_size - EA_SIZE(ea) then
+no new space is allocated for the attiribute list [2] and this
+triggers the KASAN slab out of bounds error. This is the case in the C
+repro I provided.
 
-With either openat() used as in this series, or explicit
-	int open_tree(int dirfd, const char *path, int flags)
-returning a descriptor, with flags being
-	AT_EMPTY_PATH, AT_NO_AUTOMOUNT, AT_RECURSIVE, AT_CLONE
-with AT_RECURSIVE without AT_CLONE being an error.  Hell, might
-even add AT_UMOUNT for "open root and detach, to be dissolved on
-close", incompatible with AT_CLONE.
 
-Comments?
+1. https://elixir.bootlin.com/linux/v4.17-rc7/source/fs/jfs/xattr.c#L501
+2. https://elixir.bootlin.com/linux/v4.17-rc7/source/fs/jfs/xattr.c#L723
+
+On Fri, Jun 1, 2018 at 1:52 PM, shankarapailoor
+<shankarapailoor@gmail.com> wrote:
+> Hi Dave et al,
+>
+> I have been fuzzing linux 4.17-rc4 with JFS using Syzkaller  KASAN:
+> slab-out-of-bounds in jfs_xattr.
+>
+> Attached are my kernel configs and a C reproducer. In the first
+> setxattr call it appears that length is much larger than the name. In
+> __jfs_setxattr, I don't see where the length is checked against the
+> actual value length.
+>
+> Regards,
+> Shankara Pailoor
+
+
+
+-- 
+Regards,
+Shankara Pailoor
