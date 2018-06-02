@@ -1,52 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751361AbeFBBHS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 1 Jun 2018 21:07:18 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41190 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750812AbeFBBHP (ORCPT
+        id S1751209AbeFBBR2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 1 Jun 2018 21:17:28 -0400
+Received: from mail.efficios.com ([167.114.142.138]:32894 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750758AbeFBBRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Jun 2018 21:07:15 -0400
-X-Google-Smtp-Source: ADUXVKIEMr4KAoppVqXHbIW+q4QLmYDEMKMCFhGt+B1cbgdJecPopilMYHwPKT8al5V8YzEiz1yVIg==
-From: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-To: dmitry.torokhov@gmail.com, chenhong3@huawei.com,
-        ravisadineni@chromium.org, ravisadineni@google.com, dtor@google.com
-Cc: tbroch@google.com, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org, rajatja@google.com, bleung@google.com
-Subject: [PATCH V2] i8042: Increment wakeup_count for the respective port.
-Date: Fri,  1 Jun 2018 18:07:08 -0700
-Message-Id: <20180602010708.152025-1-ravisadineni@chromium.org>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
-In-Reply-To: <20180601180053.120202-1-ravisadineni@chromium.org>
-References: <20180601180053.120202-1-ravisadineni@chromium.org>
+        Fri, 1 Jun 2018 21:17:25 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 5993F2262C8
+Date: Fri, 1 Jun 2018 21:17:24 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: "Joel Fernandes, Google" <joel@joelfernandes.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest <linux-kselftest@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, shuah <shuah@kernel.org>,
+        rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Message-ID: <1349580221.4426.1527902244184.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180531175153.GA129415@joelaf.mtv.corp.google.com>
+References: <20180530000500.257225-1-joel@joelfernandes.org> <20180530000500.257225-6-joel@joelfernandes.org> <214539705.3633.1527749441133.JavaMail.zimbra@efficios.com> <20180531175153.GA129415@joelaf.mtv.corp.google.com>
+Subject: Re: [PATCH v8 5/8] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
+Thread-Index: S3anSCqc8LuW6U6wpVQUjzDowSukxA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call pm_wakeup_event on every irq. This should help us in identifying if
-keyboard was a potential wake reason for the last resume.
+----- On May 31, 2018, at 1:51 PM, Joel Fernandes, Google joel@joelfernandes.org wrote:
 
-Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
----
-V2: Increment the wakeup count only when there is a irq and not when the
-method is called internally.
+>> I find it odd to have a "return" in a macro that consists of a
+>> do { } while (0). I'm tempted to replace "return" by "break" here,
+>> to break the macro do/while (0) loop.
+> 
+> "return;" is also used from "if (!(cond))" above so I prefer be consistent
+> and just use return than break as done above, but please let me know if you
+> still object.
 
-drivers/input/serio/i8042.c | 3 +++
- 1 file changed, 3 insertions(+)
+It's fine by me,
 
-diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
-index 824f4c1c1f310..2bd6f2633e29a 100644
---- a/drivers/input/serio/i8042.c
-+++ b/drivers/input/serio/i8042.c
-@@ -573,6 +573,9 @@ static irqreturn_t i8042_interrupt(int irq, void *dev_id)
- 	port = &i8042_ports[port_no];
- 	serio = port->exists ? port->serio : NULL;
- 
-+	if (irq && serio && device_may_wakeup(&serio->dev))
-+		pm_wakeup_event(&serio->dev, 0);
-+
- 	filter_dbg(port->driver_bound, data, "<- i8042 (interrupt, %d, %d%s%s)\n",
- 		   port_no, irq,
- 		   dfl & SERIO_PARITY ? ", bad parity" : "",
+Thanks!
+
+Mathieu
+
 -- 
-2.17.1.1185.g55be947832-goog
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
