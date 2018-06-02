@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751789AbeFBOoK (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 10:44:10 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39330 "EHLO
+        id S1751823AbeFBOoi (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 10:44:38 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36555 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeFBOoI (ORCPT
+        with ESMTP id S1751267AbeFBOog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 10:44:08 -0400
-X-Google-Smtp-Source: ADUXVKL74reI16F8A7i5g+IqJyVI1hRqR9lQytt+sZX2ftvWllbjylYwF6BKLK5aTt1hnss8+MEegVDTzk8AX0XstFs=
+        Sat, 2 Jun 2018 10:44:36 -0400
+X-Google-Smtp-Source: ADUXVKIraNnLtexPMQEvBKmtLVoDGkoj23VZuCWtK0OWf1I50ANNX6BJ1YyaAhedqFb3krJpeHkdF6lxokbIWvWxBuw=
 MIME-Version: 1.0
-In-Reply-To: <20180530111602.GB17450@bombadil.infradead.org>
+In-Reply-To: <CAFqt6zaWVxpjyyoZvcRbNqMixRwsii6r59ya_cvfnob1bC7O0w@mail.gmail.com>
 References: <20180529143126.GA19698@jordon-HP-15-Notebook-PC>
  <20180529145055.GA15148@bombadil.infradead.org> <CAFqt6zaxt=wXjvKV0qA+OwU1iUyoBdW2cJSLFqXupVWRpKdqEA@mail.gmail.com>
  <20180529173445.GD15148@bombadil.infradead.org> <CAFqt6zZCX7Ai2w9dV3OvUn=V4Z02H=+FBirjHT3QSU1Fuz+uLQ@mail.gmail.com>
- <20180530111602.GB17450@bombadil.infradead.org>
+ <20180530111602.GB17450@bombadil.infradead.org> <CAFqt6zaWVxpjyyoZvcRbNqMixRwsii6r59ya_cvfnob1bC7O0w@mail.gmail.com>
 From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Sat, 2 Jun 2018 20:14:05 +0530
-Message-ID: <CAFqt6zaWVxpjyyoZvcRbNqMixRwsii6r59ya_cvfnob1bC7O0w@mail.gmail.com>
+Date: Sat, 2 Jun 2018 20:14:33 +0530
+Message-ID: <CAFqt6zYCRU7vFZA8sJpBqOdC243EUcuSH0S2b+wGhjLwG5ZKBg@mail.gmail.com>
 Subject: Re: [PATCH] mm: Change return type to vm_fault_t
 To: Matthew Wilcox <willy@infradead.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>, Hugh Dickins <hughd@google.com>,
@@ -39,134 +39,137 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 4:46 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Wed, May 30, 2018 at 09:10:47AM +0530, Souptick Joarder wrote:
->> On Tue, May 29, 2018 at 11:04 PM, Matthew Wilcox <willy@infradead.org> wrote:
->> > I see:
->> >
->> > mm/gup.c:817:15: warning: invalid assignment: |=
->> > mm/gup.c:817:15:    left side has type int
->> > mm/gup.c:817:15:    right side has type restricted vm_fault_t
->> >
->> > are you building with 'c=2' or 'C=2'?
+Please ignoe this mail. I send it by mistake.
+
+On Sat, Jun 2, 2018 at 8:14 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Wed, May 30, 2018 at 4:46 PM, Matthew Wilcox <willy@infradead.org> wrote:
+>> On Wed, May 30, 2018 at 09:10:47AM +0530, Souptick Joarder wrote:
+>>> On Tue, May 29, 2018 at 11:04 PM, Matthew Wilcox <willy@infradead.org> wrote:
+>>> > I see:
+>>> >
+>>> > mm/gup.c:817:15: warning: invalid assignment: |=
+>>> > mm/gup.c:817:15:    left side has type int
+>>> > mm/gup.c:817:15:    right side has type restricted vm_fault_t
+>>> >
+>>> > are you building with 'c=2' or 'C=2'?
+>>>
+>>> Building with C=2.
+>>> Do I need to enable any separate FLAG ?
 >>
->> Building with C=2.
->> Do I need to enable any separate FLAG ?
+>> Nope.  Here's what I have:
+>>
+>> willy@bobo:~/kernel/souptick$ make C=2 mm/gup.o
+>>   CHK     include/config/kernel.release
+>>   CHK     include/generated/uapi/linux/version.h
+>>   CHK     include/generated/utsrelease.h
+>>   CHECK   arch/x86/purgatory/purgatory.c
+>>   CHECK   arch/x86/purgatory/sha256.c
+>>   CHECK   arch/x86/purgatory/string.c
+>> arch/x86/purgatory/../boot/string.c:134:6: warning: symbol 'simple_strtol' was not declared. Should it be static?
+>>   CHK     include/generated/bounds.h
+>>   CHK     include/generated/timeconst.h
+>>   CHK     include/generated/asm-offsets.h
+>>   CALL    scripts/checksyscalls.sh
+>>   DESCEND  objtool
+>>   CHECK   scripts/mod/empty.c
+>>   CHK     scripts/mod/devicetable-offsets.h
+>>   CHECK   mm/gup.c
+>> mm/gup.c:817:15: warning: invalid assignment: |=
+>> mm/gup.c:817:15:    left side has type int
+>> mm/gup.c:817:15:    right side has type restricted vm_fault_t
+>>   CC      mm/gup.o
+>>
 >
-> Nope.  Here's what I have:
+> Matthew,
 >
-> willy@bobo:~/kernel/souptick$ make C=2 mm/gup.o
+> Due to some unidentified error still not able to catch this warning
+> in (X86_64 + sparse) compilation. It is constantly showing below error.
+>
+> Documents/linux-4.17-rc7$ make C=2 -j4 mm/gup.o
 >   CHK     include/config/kernel.release
 >   CHK     include/generated/uapi/linux/version.h
+>   DESCEND  objtool
 >   CHK     include/generated/utsrelease.h
->   CHECK   arch/x86/purgatory/purgatory.c
->   CHECK   arch/x86/purgatory/sha256.c
->   CHECK   arch/x86/purgatory/string.c
-> arch/x86/purgatory/../boot/string.c:134:6: warning: symbol 'simple_strtol' was not declared. Should it be static?
+>   CHECK   scripts/mod/empty.c
+>   CHK     scripts/mod/devicetable-offsets.h
 >   CHK     include/generated/bounds.h
 >   CHK     include/generated/timeconst.h
 >   CHK     include/generated/asm-offsets.h
 >   CALL    scripts/checksyscalls.sh
->   DESCEND  objtool
+>   CHECK   mm/gup.c
+> mm/gup.c:394:17: error: undefined identifier '__COUNTER__'
+> mm/gup.c:439:9: error: undefined identifier '__COUNTER__'
+> mm/gup.c:441:9: error: undefined identifier '__COUNTER__'
+> mm/gup.c:443:9: error: undefined identifier '__COUNTER__'
+> mm/gup.c:508:17: error: undefined identifier '__COUNTER__'
+> mm/gup.c:716:25: error: undefined identifier '__COUNTER__'
+> mm/gup.c:826:17: error: undefined identifier '__COUNTER__'
+> mm/gup.c:863:17: error: undefined identifier '__COUNTER__'
+> mm/gup.c:865:17: error: undefined identifier '__COUNTER__'
+> mm/gup.c:882:25: error: undefined identifier '__COUNTER__'
+> mm/gup.c:883:25: error: undefined identifier '__COUNTER__'
+> mm/gup.c:920:25: error: undefined identifier '__COUNTER__'
+> ./include/linux/hugetlb.h:239:9: error: undefined identifier '__COUNTER__'
+>
+>
+> But able to capture it in (powerpc + sparse) compilation.
+> I will fix it in v2.
+>
+> /Documents/linux-4.17-rc7$ make C=2 ARCH=powerpc
+> CROSS_COMPILE=powerpc-linux-gnu- mm/gup.o
+>   CHK     include/config/kernel.release
+>   CHK     include/generated/uapi/linux/version.h
+>   CHK     include/generated/utsrelease.h
+>   CHK     include/generated/bounds.h
+>   CHK     include/generated/timeconst.h
+>   CHK     include/generated/asm-offsets.h
+>   CALL    scripts/checksyscalls.sh
 >   CHECK   scripts/mod/empty.c
 >   CHK     scripts/mod/devicetable-offsets.h
 >   CHECK   mm/gup.c
-> mm/gup.c:817:15: warning: invalid assignment: |=
-> mm/gup.c:817:15:    left side has type int
-> mm/gup.c:817:15:    right side has type restricted vm_fault_t
+> ./arch/powerpc/include/asm/book3s/64/pgtable.h:669:24: warning:
+> restricted __be64 degrades to integer
+> mm/gup.c:820:15: warning: incorrect type in assignment (different base types)
+> mm/gup.c:820:15:    expected int [signed] major
+> mm/gup.c:820:15:    got restricted vm_fault_t
+> mm/gup.c:1247:24: warning: expression using sizeof bool
+> mm/gup.c:1247:24: warning: expression using sizeof(void)
+> mm/gup.c:1247:24: warning: expression using sizeof(void)
+> ./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20: warning:
+> incorrect type in initializer (different base types)
+> ./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20:    expected
+> unsigned long long [unsigned] [usertype] mask
+> ./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20:    got
+> restricted __be64 [usertype] <noident>
+> mm/gup.c:1735:6: warning: symbol 'gup_fast_permitted' was not
+> declared. Should it be static?
 >   CC      mm/gup.o
 >
-
-Matthew,
-
-Due to some unidentified error still not able to catch this warning
-in (X86_64 + sparse) compilation. It is constantly showing below error.
-
-Documents/linux-4.17-rc7$ make C=2 -j4 mm/gup.o
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  DESCEND  objtool
-  CHK     include/generated/utsrelease.h
-  CHECK   scripts/mod/empty.c
-  CHK     scripts/mod/devicetable-offsets.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  CHECK   mm/gup.c
-mm/gup.c:394:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:439:9: error: undefined identifier '__COUNTER__'
-mm/gup.c:441:9: error: undefined identifier '__COUNTER__'
-mm/gup.c:443:9: error: undefined identifier '__COUNTER__'
-mm/gup.c:508:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:716:25: error: undefined identifier '__COUNTER__'
-mm/gup.c:826:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:863:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:865:17: error: undefined identifier '__COUNTER__'
-mm/gup.c:882:25: error: undefined identifier '__COUNTER__'
-mm/gup.c:883:25: error: undefined identifier '__COUNTER__'
-mm/gup.c:920:25: error: undefined identifier '__COUNTER__'
-./include/linux/hugetlb.h:239:9: error: undefined identifier '__COUNTER__'
-
-
-But able to capture it in (powerpc + sparse) compilation.
-I will fix it in v2.
-
-/Documents/linux-4.17-rc7$ make C=2 ARCH=powerpc
-CROSS_COMPILE=powerpc-linux-gnu- mm/gup.o
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  CHECK   scripts/mod/empty.c
-  CHK     scripts/mod/devicetable-offsets.h
-  CHECK   mm/gup.c
-./arch/powerpc/include/asm/book3s/64/pgtable.h:669:24: warning:
-restricted __be64 degrades to integer
-mm/gup.c:820:15: warning: incorrect type in assignment (different base types)
-mm/gup.c:820:15:    expected int [signed] major
-mm/gup.c:820:15:    got restricted vm_fault_t
-mm/gup.c:1247:24: warning: expression using sizeof bool
-mm/gup.c:1247:24: warning: expression using sizeof(void)
-mm/gup.c:1247:24: warning: expression using sizeof(void)
-./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20: warning:
-incorrect type in initializer (different base types)
-./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20:    expected
-unsigned long long [unsigned] [usertype] mask
-./arch/powerpc/include/asm/book3s/64/pgtable.h:667:20:    got
-restricted __be64 [usertype] <noident>
-mm/gup.c:1735:6: warning: symbol 'gup_fast_permitted' was not
-declared. Should it be static?
-  CC      mm/gup.o
-
-
-Sparse is throwing below warning ->
-
-/Documents/linux-4.17-rc7$ make C=2 ARCH=powerpc
-CROSS_COMPILE=powerpc-linux-gnu- mm/hugetlb.o
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  CHECK   scripts/mod/empty.c
-  CHK     scripts/mod/devicetable-offsets.h
-  CHECK   mm/hugetlb.c
-mm/hugetlb.c:3778:33: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3777:31: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3777:29: warning: incorrect type in assignment (different
-base types)
-mm/hugetlb.c:3777:29:    expected restricted vm_fault_t [assigned]
-[usertype] ret
-mm/hugetlb.c:3777:29:    got unsigned int
-mm/hugetlb.c:3895:33: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3894:32: warning: restricted vm_fault_t degrades to integer
-mm/hugetlb.c:3894:56: warning: incorrect type in return expression
-(different base types)
-mm/hugetlb.c:3894:56:    expected restricted vm_fault_t
-mm/hugetlb.c:3894:56:    got unsigned int
+>
+> Sparse is throwing below warning ->
+>
+> /Documents/linux-4.17-rc7$ make C=2 ARCH=powerpc
+> CROSS_COMPILE=powerpc-linux-gnu- mm/hugetlb.o
+>   CHK     include/config/kernel.release
+>   CHK     include/generated/uapi/linux/version.h
+>   CHK     include/generated/utsrelease.h
+>   CHK     include/generated/bounds.h
+>   CHK     include/generated/timeconst.h
+>   CHK     include/generated/asm-offsets.h
+>   CALL    scripts/checksyscalls.sh
+>   CHECK   scripts/mod/empty.c
+>   CHK     scripts/mod/devicetable-offsets.h
+>   CHECK   mm/hugetlb.c
+> mm/hugetlb.c:3778:33: warning: restricted vm_fault_t degrades to integer
+> mm/hugetlb.c:3777:31: warning: restricted vm_fault_t degrades to integer
+> mm/hugetlb.c:3777:29: warning: incorrect type in assignment (different
+> base types)
+> mm/hugetlb.c:3777:29:    expected restricted vm_fault_t [assigned]
+> [usertype] ret
+> mm/hugetlb.c:3777:29:    got unsigned int
+> mm/hugetlb.c:3895:33: warning: restricted vm_fault_t degrades to integer
+> mm/hugetlb.c:3894:32: warning: restricted vm_fault_t degrades to integer
+> mm/hugetlb.c:3894:56: warning: incorrect type in return expression
+> (different base types)
+> mm/hugetlb.c:3894:56:    expected restricted vm_fault_t
+> mm/hugetlb.c:3894:56:    got unsigned int
