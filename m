@@ -1,88 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeFCIh5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 04:37:57 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45960 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbeFCIhz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 04:37:55 -0400
-X-Google-Smtp-Source: ADUXVKKXP75k/6DaRVRWfFTKeDUGsMermyI8Edur1e8nUC+tH93ptSFzUpf7x4/fkvUhMq8zgcuNm1jL+DQL7kAafLA=
+        id S1751098AbeFCIme convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 04:42:34 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:35179 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750810AbeFCImc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 04:42:32 -0400
+Subject: Re: [PATCH 4.14 2/4] powerpc/mm/slice: create header files dedicated
+ to slices
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
+ <798b787d74d94b5d29f1c0279bad157b6b5df7ec.1527755908.git.christophe.leroy@c-s.fr>
+ <20180602132107.GH31493@kroah.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <f18dc860-6007-9955-8c73-25faf43097e8@c-s.fr>
+Date: Sat, 2 Jun 2018 22:55:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180602165415.30956-4-manivannan.sadhasivam@linaro.org>
-References: <20180602165415.30956-1-manivannan.sadhasivam@linaro.org> <20180602165415.30956-4-manivannan.sadhasivam@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 3 Jun 2018 11:37:53 +0300
-Message-ID: <CAHp75Ve8ZCbEqnYK0KqtCHQm-EOUWRSyMzi51P+3_7brtXq6dA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: actions: Add interrupt support for OWL S900 SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        =?UTF-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>,
-        Thomas Liau <thomas.liau@actions-semi.com>, jeff.chen@actions-semi.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180602132107.GH31493@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 2, 2018 at 7:54 PM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Add interrupt support for Actions Semi OWL S900 SoC.
-
-> +       port = owl_gpio_get_port(pctrl, &gpio);
-> +       if (WARN_ON(port == NULL))
-> +               return;
-
-At which circumstances the above possible?
-
-> +       port = owl_gpio_get_port(pctrl, &gpio);
-> +       if (WARN_ON(port == NULL))
-> +               return;
-
-Ditto.
-
-> +       port = owl_gpio_get_port(pctrl, &gpio);
-> +       if (WARN_ON(port == NULL))
-> +               return;
-
-Ditto.
-
-> +       port = owl_gpio_get_port(pctrl, &gpio);
-> +       if (WARN_ON(port == NULL))
-> +               return -ENODEV;
-
-Ditto.
 
 
-> +       for (i = 0; i < chip->ngpio; i++) {
-> +               irqno = irq_create_mapping(pctrl->domain, i);
-> +               irq_set_chip_and_handler(irqno, &owl_gpio_irq_chip,
-> +                                        handle_edge_irq);
-> +               irq_set_chip_data(irqno, pctrl);
-> +       }
+On 06/02/2018 03:21 PM, Greg Kroah-Hartman wrote:
+> On Thu, May 31, 2018 at 08:54:52AM +0000, Christophe Leroy wrote:
+>> [ Upstream commit a3286f05bc5a5bc7fc73a9783ec89de78fcd07f8 ]
+>>
+>> In preparation for the following patch which will enhance 'slices'
+>> for supporting PPC32 in order to fix an issue on hugepages on 8xx,
+>> this patch takes out of page*.h all bits related to 'slices' and put
+>> them into newly created slice.h header files.
+>> While common parts go into asm/slice.h, subarch specific
+>> parts go into respective books3s/64/slice.c and nohash/64/slice.c
+>> 'slices'
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>> ---
+>>   arch/powerpc/include/asm/book3s/64/slice.h | 27 ++++++++++++++
+>>   arch/powerpc/include/asm/nohash/64/slice.h | 12 ++++++
+>>   arch/powerpc/include/asm/page.h            |  1 +
+>>   arch/powerpc/include/asm/page_64.h         | 59 ------------------------------
+>>   arch/powerpc/include/asm/slice.h           | 40 ++++++++++++++++++++
+>>   5 files changed, 80 insertions(+), 59 deletions(-)
+>>   create mode 100644 arch/powerpc/include/asm/book3s/64/slice.h
+>>   create mode 100644 arch/powerpc/include/asm/nohash/64/slice.h
+>>   create mode 100644 arch/powerpc/include/asm/slice.h
+> 
+> This patch does not apply :(
 
-I'm not sure the handle_edge_irq() is a correct handler here. It would
-be handle_bad_irq() until IRQ has been requested properly.
-No?
+I tried again, it applies well for me:
 
-> +/* GPIO TYPE Bit Definition */
-> +#define OWL_GPIO_INT_LEVEL_HIGH                0
-> +#define OWL_GPIO_INT_LEVEL_LOW         1
-> +#define OWL_GPIO_INT_EDGE_RISING       2
-> +#define OWL_GPIO_INT_EDGE_FALLING      3
+[root@localhost linux-stable]# git checkout v4.14.47 -b 4.14.47
+Checking out files: 100% (27111/27111), done.
+Switched to a new branch '4.14.47'
+[root@localhost linux-stable]# git am 
+/root/Downloads/4.14-1-4-powerpc-mm-slice-Remove-intermediate-bitmap-copy.patch 
 
-> +#define OWL_GPIO_INT_MASK              3
+Applying: powerpc/mm/slice: Remove intermediate bitmap copy
+Applying: powerpc/mm/slice: create header files dedicated to slices
+Applying: powerpc/mm/slice: Enhance for supporting PPC32
+Applying: powerpc/mm/slice: Fix hugepage allocation at hint address on 8xx
+[root@localhost linux-stable]#
 
-GENMASK?
+> 
+> Can you fix this series up and resend the whole thing?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Is there any conflicting patch in the queue ?
+What should I rebase on ?
+
+Thanks,
+Christophe
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
