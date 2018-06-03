@@ -1,53 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750913AbeFCEkY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 00:40:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46690 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeFCEkW (ORCPT
+        id S1750879AbeFCEuK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 00:50:10 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33177 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeFCEuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 00:40:22 -0400
-To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] net: skbuff.h: drop unneeded <linux/slab.h>
-Message-ID: <86ee9a53-3136-7a2c-e59a-57d4d078188f@infradead.org>
-Date: Sat, 2 Jun 2018 21:40:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 3 Jun 2018 00:50:08 -0400
+X-Google-Smtp-Source: ADUXVKKSF6n5X+ow4NBPLt9GDFTh0LcDX5aBmDDh72dxVJGf2ekIMCZHGBtf8avAYj5x8ZWEjTGN8Q==
+From: tomkpz@gmail.com
+X-Google-Original-From: tomKPZ@gmail.com
+To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Thomas Anderson <tomKPZ@gmail.com>
+Subject: [PATCH v2] exec: binfmt_misc: update reference to documentation
+Date: Sat,  2 Jun 2018 21:49:35 -0700
+Message-Id: <20180603044935.18011-1-tomKPZ@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Thomas Anderson <tomKPZ@gmail.com>
 
-<linux/skbuff.h> does not use nor need <linux/slab.h>, so drop this
-header file from skbuff.h.
+Documentation/binfmt_misc.txt was moved to
+Documentation/admin-guide/binfmt-misc.rst in 9d85025b.  This change
+updates a reference to the file.
 
-<linux/skbuff.h> is currently #included in around 1200 C source and
-header files, making it the 31st most-used header file.
-
-Build tested [allmodconfig] on 20 arch-es.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thomas Anderson <tomKPZ@gmail.com>
 ---
- include/linux/skbuff.h |    2 --
- 1 file changed, 2 deletions(-)
+ fs/binfmt_misc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- lnx.orig/include/linux/skbuff.h
-+++ lnx.next/include/linux/skbuff.h
-@@ -852,8 +852,6 @@ struct sk_buff {
- /*
-  *	Handling routines are only of interest to the kernel
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index a41b48f82a70..5ad89b838c79 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -4,7 +4,8 @@
+  * Copyright (C) 1997 Richard Günther
+  *
+  * binfmt_misc detects binaries via a magic or filename extension and invokes
+- * a specified wrapper. See Documentation/binfmt_misc.txt for more details.
++ * a specified wrapper. See Documentation/admin-guide/binfmt-misc.rst for more
++ * details.
   */
--#include <linux/slab.h>
--
  
- #define SKB_ALLOC_FCLONE	0x01
- #define SKB_ALLOC_RX		0x02
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-- 
+2.17.1
