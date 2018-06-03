@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751876AbeFCM2h (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:28:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54948 "EHLO mail.kernel.org"
+        id S1751928AbeFCM2r (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:28:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751722AbeFCM22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:28:28 -0400
+        id S1751722AbeFCM2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:28:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        damian <damian.tometzki@icloud.com>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 22/29] objtool: Support GCC 8 switch tables
-Date: Sun,  3 Jun 2018 14:26:45 +0200
-Message-Id: <20180603122652.17453-23-gregkh@linuxfoundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 09/29] tools include: Introduce atomic_cmpxchg_{relaxed,release}()
+Date: Sun,  3 Jun 2018 14:26:32 +0200
+Message-Id: <20180603122652.17453-10-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
@@ -26,116 +25,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit fd35c88b74170d9335530d9abf271d5d73eb5401 upstream.
+commit 2bcdeadbc094b4f6511aedea1e5b8052bf0cc89c upstream.
 
-With GCC 8, some issues were found with the objtool switch table
-detection.
+Will be used by refcnt.h
 
-1) In the .rodata section, immediately after the switch table, there can
-   be another object which contains a pointer to the function which had
-   the switch statement.  In this case objtool wrongly considers the
-   function pointer to be part of the switch table.  Fix it by:
-
-   a) making sure there are no pointers to the beginning of the
-      function; and
-
-   b) making sure there are no gaps in the switch table.
-
-   Only the former was needed, the latter adds additional protection for
-   future optimizations.
-
-2) In find_switch_table(), case 1 and case 2 are missing the check to
-   ensure that the .rodata switch table data is anonymous, i.e. that it
-   isn't already associated with an ELF symbol.  Fix it by adding the
-   same find_symbol_containing() check which is used for case 3.
-
-This fixes the following warnings with GCC 8:
-
-  drivers/block/virtio_blk.o: warning: objtool: virtio_queue_rq()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+72
-  net/ipv6/icmp.o: warning: objtool: icmpv6_rcv()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+64
-  drivers/usb/core/quirks.o: warning: objtool: quirks_param_set()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+48
-  drivers/mtd/nand/raw/nand_hynix.o: warning: objtool: hynix_nand_decode_id()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+24
-  drivers/mtd/nand/raw/nand_samsung.o: warning: objtool: samsung_nand_decode_id()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+32
-  drivers/gpu/drm/nouveau/nvkm/subdev/top/gk104.o: warning: objtool: gk104_top_oneinit()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+64
-
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: damian <damian.tometzki@icloud.com>
-Link: http://lkml.kernel.org/r/20180510224849.xwi34d6tzheb5wgw@treble
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Elena Reshetova <elena.reshetova@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-jszriruqfqpez1bkivwfj6qb@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/objtool/check.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ tools/include/linux/atomic.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 3126760180c4..063afbdec42d 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -805,17 +805,28 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
- 	struct rela *rela = table;
- 	struct instruction *alt_insn;
- 	struct alternative *alt;
-+	struct symbol *pfunc = insn->func->pfunc;
-+	unsigned int prev_offset = 0;
+diff --git a/tools/include/linux/atomic.h b/tools/include/linux/atomic.h
+index 4e3d3d18ebab..9f21fc2b092b 100644
+--- a/tools/include/linux/atomic.h
++++ b/tools/include/linux/atomic.h
+@@ -3,4 +3,10 @@
  
- 	list_for_each_entry_from(rela, &file->rodata->rela->rela_list, list) {
- 		if (rela == next_table)
- 			break;
+ #include <asm/atomic.h>
  
-+		/* Make sure the switch table entries are consecutive: */
-+		if (prev_offset && rela->offset != prev_offset + 8)
-+			break;
++/* atomic_cmpxchg_relaxed */
++#ifndef atomic_cmpxchg_relaxed
++#define  atomic_cmpxchg_relaxed		atomic_cmpxchg
++#define  atomic_cmpxchg_release         atomic_cmpxchg
++#endif /* atomic_cmpxchg_relaxed */
 +
-+		/* Detect function pointers from contiguous objects: */
-+		if (rela->sym->sec == pfunc->sec &&
-+		    rela->addend == pfunc->offset)
-+			break;
-+
- 		alt_insn = find_insn(file, rela->sym->sec, rela->addend);
- 		if (!alt_insn)
- 			break;
- 
- 		/* Make sure the jmp dest is in the function or subfunction: */
--		if (alt_insn->func->pfunc != insn->func->pfunc)
-+		if (alt_insn->func->pfunc != pfunc)
- 			break;
- 
- 		alt = malloc(sizeof(*alt));
-@@ -826,6 +837,13 @@ static int add_switch_table(struct objtool_file *file, struct instruction *insn,
- 
- 		alt->insn = alt_insn;
- 		list_add_tail(&alt->list, &insn->alts);
-+		prev_offset = rela->offset;
-+	}
-+
-+	if (!prev_offset) {
-+		WARN_FUNC("can't find switch jump table",
-+			  insn->sec, insn->offset);
-+		return -1;
- 	}
- 
- 	return 0;
-@@ -882,7 +900,9 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 	struct instruction *orig_insn = insn;
- 
- 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
--	if (text_rela && text_rela->sym == file->rodata->sym) {
-+	if (text_rela && text_rela->sym == file->rodata->sym &&
-+	    !find_symbol_containing(file->rodata, text_rela->addend)) {
-+
- 		/* case 1 */
- 		rodata_rela = find_rela_by_dest(file->rodata,
- 						text_rela->addend);
+ #endif /* __TOOLS_LINUX_ATOMIC_H */
 -- 
 2.17.1
