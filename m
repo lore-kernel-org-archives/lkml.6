@@ -1,56 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751259AbeFCMRM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:17:12 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:45210 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeFCMRL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:17:11 -0400
-X-Google-Smtp-Source: ADUXVKJF/qinF2yOi+oSdFs7pRXs1IVBsNGWAJwjHS7xLUi+voiqFj4LYOj65BFLXc+Y34JV9Hm6UQfHHs0oArvK8os=
-MIME-Version: 1.0
-In-Reply-To: <1527994847-2363-2-git-send-email-Anson.Huang@nxp.com>
-References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com> <1527994847-2363-2-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 3 Jun 2018 09:17:09 -0300
-Message-ID: <CAOMZO5Af_Wdp=MNR28v3ALiguxQSQv4x2Zf224FXSiEGtP68Bw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: imx6sl: remove clks_init_on array
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751400AbeFCM1f (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:27:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751354AbeFCM1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:27:31 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 01/29] objtool: Improve detection of BUG() and other dead ends
+Date: Sun,  3 Jun 2018 14:26:24 +0200
+Message-Id: <20180603122652.17453-2-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
+References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-On Sun, Jun 3, 2018 at 12:00 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Clock framework will enable those clocks registered
-> with CLK_IS_CRITICAL flag, so no need to have
-> clks_init_on array during clock initialization now.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx6sl.c | 12 ------------
->  1 file changed, 12 deletions(-)
->
-> diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-> index 66b1dd1..eb6bcbf 100644
-> --- a/drivers/clk/imx/clk-imx6sl.c
-> +++ b/drivers/clk/imx/clk-imx6sl.c
-> @@ -104,10 +104,6 @@ static struct clk_onecell_data clk_data;
->  static void __iomem *ccm_base;
->  static void __iomem *anatop_base;
->
-> -static const u32 clks_init_on[] __initconst = {
-> -       IMX6SL_CLK_IPG, IMX6SL_CLK_ARM, IMX6SL_CLK_MMDC_ROOT,
-> -};
+commit d1091c7fa3d52ebce4dd3f15d04155b3469b2f90 upstream.
 
-It looks like you missed to pass the CLK_IS_CRITICAL flag to these clocks.
+The BUG() macro's use of __builtin_unreachable() via the unreachable()
+macro tells gcc that the instruction is a dead end, and that it's safe
+to assume the current code path will not execute past the previous
+instruction.
+
+On x86, the BUG() macro is implemented with the 'ud2' instruction.  When
+objtool's branch analysis sees that instruction, it knows the current
+code path has come to a dead end.
+
+Peter Zijlstra has been working on a patch to change the WARN macros to
+use 'ud2'.  That patch will break objtool's assumption that 'ud2' is
+always a dead end.
+
+Generally it's best for objtool to avoid making those kinds of
+assumptions anyway.  The more ignorant it is of kernel code internals,
+the better.
+
+So create a more generic way for objtool to detect dead ends by adding
+an annotation to the unreachable() macro.  The annotation stores a
+pointer to the end of the unreachable code path in an '__unreachable'
+section.  Objtool can read that section to find the dead ends.
+
+Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/41a6d33971462ebd944a1c60ad4bf5be86c17b77.1487712920.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/x86/kernel/vmlinux.lds.S   |  1 +
+ include/linux/compiler-gcc.h    | 13 ++++++-
+ tools/objtool/arch.h            |  5 ++-
+ tools/objtool/arch/x86/decode.c |  3 --
+ tools/objtool/builtin-check.c   | 60 ++++++++++++++++++++++++++++++---
+ 5 files changed, 71 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index c7194e97c3d4..4ef267fb635a 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -353,6 +353,7 @@ SECTIONS
+ 	/DISCARD/ : {
+ 		*(.eh_frame)
+ 		*(__func_stack_frame_non_standard)
++		*(__unreachable)
+ 	}
+ }
+ 
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index a1b1de17455c..accb5ec188cb 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -203,6 +203,17 @@
+ #endif
+ #endif
+ 
++#ifdef CONFIG_STACK_VALIDATION
++#define annotate_unreachable() ({					\
++	asm("1:\t\n"							\
++	    ".pushsection __unreachable, \"a\"\t\n"			\
++	    ".long 1b\t\n"						\
++	    ".popsection\t\n");						\
++})
++#else
++#define annotate_unreachable()
++#endif
++
+ /*
+  * Mark a position in code as unreachable.  This can be used to
+  * suppress control flow warnings after asm blocks that transfer
+@@ -212,7 +223,7 @@
+  * this in the preprocessor, but we can live with this because they're
+  * unreleased.  Really, we need to have autoconf for the kernel.
+  */
+-#define unreachable() __builtin_unreachable()
++#define unreachable() annotate_unreachable(); __builtin_unreachable()
+ 
+ /* Mark a function definition as prohibited from being cloned. */
+ #define __noclone	__attribute__((__noclone__, __optimize__("no-tracer")))
+diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
+index f7350fcedc70..a59e061c0b4a 100644
+--- a/tools/objtool/arch.h
++++ b/tools/objtool/arch.h
+@@ -31,9 +31,8 @@
+ #define INSN_CALL_DYNAMIC	8
+ #define INSN_RETURN		9
+ #define INSN_CONTEXT_SWITCH	10
+-#define INSN_BUG		11
+-#define INSN_NOP		12
+-#define INSN_OTHER		13
++#define INSN_NOP		11
++#define INSN_OTHER		12
+ #define INSN_LAST		INSN_OTHER
+ 
+ int arch_decode_instruction(struct elf *elf, struct section *sec,
+diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
+index 039636ffb6c8..6ac99e3266eb 100644
+--- a/tools/objtool/arch/x86/decode.c
++++ b/tools/objtool/arch/x86/decode.c
+@@ -118,9 +118,6 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 			 op2 == 0x35)
+ 			/* sysenter, sysret */
+ 			*type = INSN_CONTEXT_SWITCH;
+-		else if (op2 == 0x0b || op2 == 0xb9)
+-			/* ud2 */
+-			*type = INSN_BUG;
+ 		else if (op2 == 0x0d || op2 == 0x1f)
+ 			/* nopl/nopw */
+ 			*type = INSN_NOP;
+diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+index a688a857a7ae..2aa7313e31f2 100644
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -51,7 +51,7 @@ struct instruction {
+ 	unsigned int len, state;
+ 	unsigned char type;
+ 	unsigned long immediate;
+-	bool alt_group, visited, ignore_alts;
++	bool alt_group, visited, dead_end, ignore_alts;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
+ 	struct list_head alts;
+@@ -329,6 +329,54 @@ static int decode_instructions(struct objtool_file *file)
+ 	return 0;
+ }
+ 
++/*
++ * Find all uses of the unreachable() macro, which are code path dead ends.
++ */
++static int add_dead_ends(struct objtool_file *file)
++{
++	struct section *sec;
++	struct rela *rela;
++	struct instruction *insn;
++	bool found;
++
++	sec = find_section_by_name(file->elf, ".rela__unreachable");
++	if (!sec)
++		return 0;
++
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in .rela__unreachable");
++			return -1;
++		}
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (insn)
++			insn = list_prev_entry(insn, list);
++		else if (rela->addend == rela->sym->sec->len) {
++			found = false;
++			list_for_each_entry_reverse(insn, &file->insn_list, list) {
++				if (insn->sec == rela->sym->sec) {
++					found = true;
++					break;
++				}
++			}
++
++			if (!found) {
++				WARN("can't find unreachable insn at %s+0x%x",
++				     rela->sym->sec->name, rela->addend);
++				return -1;
++			}
++		} else {
++			WARN("can't find unreachable insn at %s+0x%x",
++			     rela->sym->sec->name, rela->addend);
++			return -1;
++		}
++
++		insn->dead_end = true;
++	}
++
++	return 0;
++}
++
+ /*
+  * Warnings shouldn't be reported for ignored functions.
+  */
+@@ -905,6 +953,10 @@ static int decode_sections(struct objtool_file *file)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = add_dead_ends(file);
++	if (ret)
++		return ret;
++
+ 	add_ignores(file);
+ 
+ 	ret = add_nospec_ignores(file);
+@@ -1103,13 +1155,13 @@ static int validate_branch(struct objtool_file *file,
+ 
+ 			return 0;
+ 
+-		case INSN_BUG:
+-			return 0;
+-
+ 		default:
+ 			break;
+ 		}
+ 
++		if (insn->dead_end)
++			return 0;
++
+ 		insn = next_insn_same_sec(file, insn);
+ 		if (!insn) {
+ 			WARN("%s: unexpected end of section", sec->name);
+-- 
+2.17.1
