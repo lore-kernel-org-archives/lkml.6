@@ -1,23 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752109AbeFCMdM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:33:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54330 "EHLO mail.kernel.org"
+        id S1751551AbeFCM1r (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:27:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751554AbeFCM1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:27:48 -0400
+        id S1751354AbeFCM1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:27:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 08/29] tools include: Adopt __compiletime_error
-Date: Sun,  3 Jun 2018 14:26:31 +0200
-Message-Id: <20180603122652.17453-9-gregkh@linuxfoundation.org>
+Subject: [PATCH 07/29] radix tree test suite: Remove types.h
+Date: Sun,  3 Jun 2018 14:26:30 +0200
+Message-Id: <20180603122652.17453-8-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
@@ -25,55 +20,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit 4900653829175f60356efc279695bb23c59483c3 upstream.
+commit 12ea65390bd5a46f8a70f068eb0d48922576a781 upstream.
 
->From the kernel, get the gcc one and provide the fallback so that we can
-continue build with other compilers, such as with clang.
+Move the pieces we still need to tools/include and update a few implicit
+includes.
 
-Will be used by tools/arch/x86/include/asm/cmpxchg.h.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Elena Reshetova <elena.reshetova@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-pecgz6efai4a9euuk4rxuotr@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+[ Just take the tools/include/linux/* portions of this patch - gregkh]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/include/linux/compiler-gcc.h | 4 ++++
- tools/include/linux/compiler.h     | 4 ++++
- 2 files changed, 8 insertions(+)
+ tools/include/linux/compiler.h | 4 ++++
+ tools/include/linux/spinlock.h | 5 +++++
+ 2 files changed, 9 insertions(+)
+ create mode 100644 tools/include/linux/spinlock.h
 
-diff --git a/tools/include/linux/compiler-gcc.h b/tools/include/linux/compiler-gcc.h
-index 48af2f10a42d..616935f1ff56 100644
---- a/tools/include/linux/compiler-gcc.h
-+++ b/tools/include/linux/compiler-gcc.h
-@@ -12,3 +12,7 @@
- #if GCC_VERSION >= 70000 && !defined(__CHECKER__)
- # define __fallthrough __attribute__ ((fallthrough))
- #endif
-+
-+#if GCC_VERSION >= 40300
-+# define __compiletime_error(message) __attribute__((error(message)))
-+#endif /* GCC_VERSION >= 40300 */
 diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
-index 8de163b17c0d..c9e65e8faacd 100644
+index 6326ede9aece..8de163b17c0d 100644
 --- a/tools/include/linux/compiler.h
 +++ b/tools/include/linux/compiler.h
-@@ -5,6 +5,10 @@
- #include <linux/compiler-gcc.h>
+@@ -25,6 +25,8 @@
  #endif
  
-+#ifndef __compiletime_error
-+# define __compiletime_error(message)
-+#endif
+ #define __user
++#define __rcu
++#define __read_mostly
+ 
+ #ifndef __attribute_const__
+ # define __attribute_const__
+@@ -54,6 +56,8 @@
+ # define unlikely(x)		__builtin_expect(!!(x), 0)
+ #endif
+ 
++#define uninitialized_var(x) x = *(&(x))
 +
- /* Optimization barrier */
- /* The "volatile" is due to gcc bugs */
- #define barrier() __asm__ __volatile__("": : :"memory")
+ #define ACCESS_ONCE(x) (*(volatile typeof(x) *)&(x))
+ 
+ #include <linux/types.h>
+diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
+new file mode 100644
+index 000000000000..58397dcb19d6
+--- /dev/null
++++ b/tools/include/linux/spinlock.h
+@@ -0,0 +1,5 @@
++#define spinlock_t		pthread_mutex_t
++#define DEFINE_SPINLOCK(x)	pthread_mutex_t x = PTHREAD_MUTEX_INITIALIZER;
++
++#define spin_lock_irqsave(x, f)		(void)f, pthread_mutex_lock(x)
++#define spin_unlock_irqrestore(x, f)	(void)f, pthread_mutex_unlock(x)
 -- 
 2.17.1
