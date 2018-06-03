@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751163AbeFCH6m (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 03:58:42 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38735 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeFCH6k (ORCPT
+        id S1751230AbeFCH7W (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 03:59:22 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:38767 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751198AbeFCH7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 03:58:40 -0400
-X-Google-Smtp-Source: ADUXVKIbIEBhKJBHucho2MejxUQlPfv6A+kJKyjoQOkU2cb4Lo+Xj+yJQE7c4rPE2V9E3zWAMkR4vboaa6czGQJO/gk=
+        Sun, 3 Jun 2018 03:59:20 -0400
+X-Google-Smtp-Source: ADUXVKIz9740QB9JKwdjdXStmu5Fl9jgzahC44Ay7f/sM3BDl5S1KXoBQZUW9ReDMkvuq4/KcdAQ4c84AJ7u5UIeJ18=
 MIME-Version: 1.0
-In-Reply-To: <152791812599.257724.10989340037255897378.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152791813206.257724.14863139556803168986.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152791788214.257724.13044360353832574147.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152791812599.257724.10989340037255897378.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152791813206.257724.14863139556803168986.stgit@bhelgaas-glaptop.roam.corp.google.com>
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 3 Jun 2018 09:58:39 +0200
-X-Google-Sender-Auth: 04EZS6cUXr6hmiCRgzj3yBPUf-4
-Message-ID: <CAJZ5v0jq5D06ezuOt2o18HL9bmTurbL+gujo=PynWyHuMCswag@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] PCI: shpchp: Use dev_printk() for OSHP-related messages
+Date: Sun, 3 Jun 2018 09:59:18 +0200
+X-Google-Sender-Auth: O-VgPJCKHDZ4DoD9gXvAV8hMazk
+Message-ID: <CAJZ5v0hHHR_559P1vF+9g_vmKkPSWjm9pv5zmjBq9qQ7vDhjOg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] PCI: shpchp: Fix AMD POGO identification
 To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: Linux PCI <linux-pci@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -36,58 +36,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Sat, Jun 2, 2018 at 7:42 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
 > From: Bjorn Helgaas <bhelgaas@google.com>
 >
-> Use dev_printk() for messages related to requesting control of SHPC hotplug
-> via the OSHP method.
+> The fix for an AMD POGO erratum related to SHPC incorrectly identified the
+> device.  The workaround should be applied only for AMD POGO devices, but it
+> was instead applied to:
 >
+>   - all AMD bridges, and
+>   - all devices from any vendor with device ID 0x7458
+>
+> Fixes: 53044f357448 ("[PATCH] PCI Hotplug: shpchp: AMD POGO errata fix")
 > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
 Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
 > ---
->  drivers/pci/hotplug/acpi_pcihp.c |   13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
+>  drivers/pci/hotplug/shpchp_ctrl.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
-> index 7cc50cfef9c6..597d22aeefc1 100644
-> --- a/drivers/pci/hotplug/acpi_pcihp.c
-> +++ b/drivers/pci/hotplug/acpi_pcihp.c
-> @@ -96,7 +96,7 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
->         if (!handle) {
->                 /*
->                  * This hotplug controller was not listed in the ACPI name
-> -                * space at all. Try to get acpi handle of parent pci bus.
-> +                * space at all. Try to get ACPI handle of parent PCI bus.
->                  */
->                 struct pci_bus *pbus;
->                 for (pbus = pdev->bus; pbus; pbus = pbus->parent) {
-> @@ -108,8 +108,8 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+> diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
+> index bedda5bda910..1047b56e5730 100644
+> --- a/drivers/pci/hotplug/shpchp_ctrl.c
+> +++ b/drivers/pci/hotplug/shpchp_ctrl.c
+> @@ -585,13 +585,13 @@ static int shpchp_enable_slot (struct slot *p_slot)
+>         ctrl_dbg(ctrl, "%s: p_slot->pwr_save %x\n", __func__, p_slot->pwr_save);
+>         p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
 >
->         while (handle) {
->                 acpi_get_name(handle, ACPI_FULL_PATHNAME, &string);
-> -               dbg("Trying to get hotplug control for %s\n",
-> -                   (char *)string.pointer);
-> +               pci_info(pdev, "Requesting control of SHPC hotplug via OSHP (%s)\n",
-> +                        (char *)string.pointer);
->                 status = acpi_run_oshp(handle);
->                 if (ACPI_SUCCESS(status))
->                         goto got_one;
-> @@ -121,13 +121,12 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
->                         break;
->         }
->  no_control:
-> -       dbg("Cannot get control of hotplug hardware for pci %s\n",
-> -           pci_name(pdev));
-> +       pci_info(pdev, "Cannot get control of SHPC hotplug\n");
->         kfree(string.pointer);
->         return -ENODEV;
->  got_one:
-> -       dbg("Gained control for hotplug HW for pci %s (%s)\n",
-> -           pci_name(pdev), (char *)string.pointer);
-> +       pci_info(pdev, "Gained control of SHPC hotplug (%s)\n",
-> +                (char *)string.pointer);
->         kfree(string.pointer);
->         return 0;
->  }
+> -       if (((p_slot->ctrl->pci_dev->vendor == PCI_VENDOR_ID_AMD) ||
+> -           (p_slot->ctrl->pci_dev->device == PCI_DEVICE_ID_AMD_POGO_7458))
+> +       if ((p_slot->ctrl->pci_dev->vendor == PCI_VENDOR_ID_AMD &&
+> +            p_slot->ctrl->pci_dev->device == PCI_DEVICE_ID_AMD_POGO_7458)
+>              && p_slot->ctrl->num_slots == 1) {
+> -               /* handle amd pogo errata; this must be done before enable  */
+> +               /* handle AMD POGO errata; this must be done before enable  */
+>                 amd_pogo_errata_save_misc_reg(p_slot);
+>                 retval = board_added(p_slot);
+> -               /* handle amd pogo errata; this must be done after enable  */
+> +               /* handle AMD POGO errata; this must be done after enable  */
+>                 amd_pogo_errata_restore_misc_reg(p_slot);
+>         } else
+>                 retval = board_added(p_slot);
 >
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
