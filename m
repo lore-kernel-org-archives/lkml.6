@@ -1,97 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751284AbeFCKsn (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 06:48:43 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55279 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeFCKsl (ORCPT
+        id S1751291AbeFCLAn (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 07:00:43 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54010 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbeFCLAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 06:48:41 -0400
-Date: Sun, 3 Jun 2018 12:48:40 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Cc: aaro.koskinen@iki.fi
-Subject: Common config for N900 and D4
-Message-ID: <20180603104839.GA21197@amd>
+        Sun, 3 Jun 2018 07:00:41 -0400
+X-Google-Smtp-Source: ADUXVKIX7GzpeExvL1TUuszIjU5hRsXnHCLTiRT8XjwP8OujgweOO2n0OV4/xHoMDnVCoqrWyFPVPQ==
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+To: Mike Snitzer <snitzer@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
+        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>, axboe@kernel.dk
+References: <20180525125322.15398-1-jthumshirn@suse.de>
+ <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com>
+ <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
+ <20180530220206.GA7037@redhat.com> <20180531163311.GA30954@lst.de>
+ <20180531181757.GB11848@redhat.com> <yq17enjut3q.fsf@oracle.com>
+ <20180601042441.GB14244@redhat.com>
+From: Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <0a0d4ff8-fe06-5869-cd18-a8c99b5e86f6@grimberg.me>
+Date: Sun, 3 Jun 2018 14:00:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180601042441.GB14244@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I'm aware that most everything in multipath.conf is SCSI/FC specific.
+> That isn't the point.  dm-multipath and multipathd are an existing
+> framework for managing multipath storage.
+> 
+> It could be made to work with NVMe.  But yes it would not be easy.
+> Especially not with the native NVMe multipath crew being so damn
+> hostile.
 
-Hi!
+The resistance is not a hostile act. Please try and keep the
+discussion technical.
 
-Aaro, I know I have asked before, but if you have common config for
-N900 and Droid4, please send me a copy. Yes, it should be somewhere in
-my inbox already, but I can't find it and version for v4.17 would be
-more useful.
+>> But I don't think the burden of allowing multipathd/DM to inject
+>> themselves into the path transition state machine has any benefit
+>> whatsoever to the user. It's only complicating things and therefore we'd
+>> be doing people a disservice rather than a favor.
+> 
+> This notion that only native NVMe multipath can be successful is utter
+> bullshit.  And the mere fact that I've gotten such a reaction from a
+> select few speaks to some serious control issues.
+> 
+> Imagine if XFS developers just one day imposed that it is the _only_
+> filesystem that can be used on persistent memory.
+> 
+> Just please dial it back.. seriously tiresome.
 
-While trying to came up with common config, I hit:
+Mike, you make a fair point on multipath tools being more mature
+compared to NVMe multipathing. But this is not the discussion at all (at
+least not from my perspective). There was not a single use-case that
+gave a clear-cut justification for a per-subsystem personality switch
+(other than some far fetched imaginary scenarios). This is not unusual
+for the kernel community not to accept things with little to no use,
+especially when it involves exposing a userspace ABI.
 
-[    0.000000] L2C-310 erratum 727915 enabled
-[    0.000000] L2C-310 enabling early BRESP for Cortex-A9
-[    0.000000] L2C-310 full line of zeros enabled for Cortex-A9
-[    0.000000] Unhandled fault: imprecise external abort (0xc06) at
-0x01f9d31c
-[    0.000000] pgd =3D (ptrval)
-[    0.000000] [01f9d31c] *pgd=3D00000000
-[    0.000000] Internal error: : c06 [#1] ARM
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Tainted: G        W
-4.17.0-rc7-75534-g9416de8-\
-dirty #692
-[    0.000000] Hardware name: Generic DT based system
-[    0.000000] PC is at l2c310_configure+0x38/0x160
-[    0.000000] LR is at l2c310_configure+0x10/0x160
-[    0.000000] pc : [<c0116168>]    lr : [<c0116140>]    psr: 60000093
-[    0.000000] sp : c0d01ec0  ip : 00000001  fp : 00000000
-[    0.000000] r10: c0c0674c  r9 : 00000000  r8 : 00000000
-[    0.000000] r7 : 00000008  r6 : c0b4a030  r5 : c0d50f4c  r4 :
-f0800000
-[    0.000000] r3 : 00000000  r2 : 00000000  r1 : 00000008  r0 :
-00000000
-[    0.000000] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
-Segment none
-[    0.000000] Control: 10c5387d  Table: 80004059  DAC: 00000051
-[    0.000000] Process swapper (pid: 0, stack limit =3D 0x(ptrval))
-[    0.000000] Stack: (0xc0d01ec0 to 0xc0d02000)
-[    0.000000] 1ec0: f0800000 c0d50f4c c0b4a030 c0115f54 c0d50f4c
-f0800000 5e470001 00000004
+As for now, all I see is a disclaimer saying that it'd need to be
+nurtured over time as the NVMe spec evolves.
 
-Which sounds like kernel bug. I was running Droid 4 in !CONFIG_SMP
-configuration by mistake, maybe that has something to do with it. I'll
-try to investigate more.
+Can you (or others) please try and articulate why a "fine grained"
+multipathing is an absolute must? At the moment, I just don't
+understand.
 
-Best regards
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsTx4cACgkQMOfwapXb+vL8fwCeI1JPpt1zDdYKsgtVQxH5rvUc
-kF8Anjaf2FXbga1vDIDNCZP/G1xgTmIx
-=Oqd6
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
+Also, I get your point that exposing state/stats information to
+userspace is needed. That's a fair comment.
