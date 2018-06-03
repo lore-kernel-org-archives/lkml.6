@@ -1,233 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751411AbeFCLuL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 07:50:11 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41356 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeFCLuK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 07:50:10 -0400
-X-Google-Smtp-Source: ADUXVKLBfkbzDYMuA7ofvXYUAWjbX72IYFDYvCNq5ijm+gQttJ4iuFh0tIR6/+UGM53g0OcA8vl/OQ==
-From: Varsha Rao <rvarsha016@gmail.com>
-To: Rasesh Mody <rasesh.mody@cavium.com>,
-        Harish Patil <harish.patil@cavium.com>, Dept-GELinuxNICDev@cavium.com,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <der.herr@hofr.at>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH 2/2] net: ethernet: bnx2: Replace NULL comparison
-Date: Sun,  3 Jun 2018 17:19:52 +0530
-Message-Id: <a3eeedefe582565505781ad96ef3992ff0e17c2b.1528025569.git.rvarsha016@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1528025568.git.rvarsha016@gmail.com>
-References: <cover.1528025568.git.rvarsha016@gmail.com>
+        id S1751290AbeFCMBY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:01:24 -0400
+Received: from botnar.kaiser.cx ([176.28.20.183]:49430 "EHLO botnar.kaiser.cx"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751022AbeFCMBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:01:23 -0400
+From: Martin Kaiser <martin@kaiser.cx>
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Kaiser <martin@kaiser.cx>, stable@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: mxc: set spare area size register explicitly
+Date: Sun,  3 Jun 2018 13:31:35 +0200
+Message-Id: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch issue of NULL comparison. Replace x == NULL
-with !x, by using the following coccinelle script:
+The v21 version of the NAND flash controller contains a Spare Area Size
+Register (SPAS) at offset 0x10. Its setting defaults to the maximum
+spare area size of 218 bytes. The size that is set in this register is
+used by the controller when it calculates the ECC bytes internally in
+hardware.
 
-@disable is_null@
-expression e;
-@@
--e==NULL
-+!e
+Usually, this register is updated from settings in the IIM fuses when
+the system is booting from nand flash. For other boot media, however,
+the SPAS register remains at the default setting, which may not work for
+the particular flash chip on the board. The same goes for flash chips
+whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
+sector size and 128 bytes spare area size can't be configured in the IIM
+fuses on imx25 systems).
 
-Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+Set the SPAS register explicitly during the preset operation. Derive the
+register value from mtd->oobsize that was detected during probe by
+decoding the flash chip's ID bytes.
+
+While at it, rename the define for the spare area register's offset to
+NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
+different from the register on v21 controllers.
+
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Cc: stable@vger.kernel.org
 ---
- drivers/net/ethernet/broadcom/bnx2.c | 42 ++++++++++++++--------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/mtd/nand/raw/mxc_nand.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2.c b/drivers/net/ethernet/broadcom/bnx2.c
-index 2306523778d4..3853296d78c1 100644
---- a/drivers/net/ethernet/broadcom/bnx2.c
-+++ b/drivers/net/ethernet/broadcom/bnx2.c
-@@ -384,7 +384,7 @@ static int bnx2_register_cnic(struct net_device *dev, struct cnic_ops *ops,
- 	struct bnx2 *bp = netdev_priv(dev);
- 	struct cnic_eth_dev *cp = &bp->cnic_eth_dev;
+diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
+index 45786e7..c2f8572 100644
+--- a/drivers/mtd/nand/raw/mxc_nand.c
++++ b/drivers/mtd/nand/raw/mxc_nand.c
+@@ -48,7 +48,7 @@
+ #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
+ #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
+ #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
+-#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
++#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
+ #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
+ #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
+ #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
+@@ -1274,6 +1274,9 @@ static void preset_v2(struct mtd_info *mtd)
+ 	writew(config1, NFC_V1_V2_CONFIG1);
+ 	/* preset operation */
  
--	if (ops == NULL)
-+	if (!ops)
- 		return -EINVAL;
++	/* spare area size in 16bit words */
++	writew(mtd->oobsize >> 1, NFC_V21_RSLTSPARE_AREA);
++
+ 	/* Unlock the internal RAM Buffer */
+ 	writew(0x2, NFC_V1_V2_CONFIG);
  
- 	if (cp->drv_state & CNIC_DRV_STATE_REGD)
-@@ -755,13 +755,13 @@ bnx2_alloc_tx_mem(struct bnx2 *bp)
- 		struct bnx2_tx_ring_info *txr = &bnapi->tx_ring;
- 
- 		txr->tx_buf_ring = kzalloc(SW_TXBD_RING_SIZE, GFP_KERNEL);
--		if (txr->tx_buf_ring == NULL)
-+		if (!txr->tx_buf_ring)
- 			return -ENOMEM;
- 
- 		txr->tx_desc_ring =
- 			dma_alloc_coherent(&bp->pdev->dev, TXBD_RING_SIZE,
- 					   &txr->tx_desc_mapping, GFP_KERNEL);
--		if (txr->tx_desc_ring == NULL)
-+		if (!txr->tx_desc_ring)
- 			return -ENOMEM;
- 	}
- 	return 0;
-@@ -779,7 +779,7 @@ bnx2_alloc_rx_mem(struct bnx2 *bp)
- 
- 		rxr->rx_buf_ring =
- 			vzalloc(SW_RXBD_RING_SIZE * bp->rx_max_ring);
--		if (rxr->rx_buf_ring == NULL)
-+		if (!rxr->rx_buf_ring)
- 			return -ENOMEM;
- 
- 		for (j = 0; j < bp->rx_max_ring; j++) {
-@@ -788,7 +788,7 @@ bnx2_alloc_rx_mem(struct bnx2 *bp)
- 						   RXBD_RING_SIZE,
- 						   &rxr->rx_desc_mapping[j],
- 						   GFP_KERNEL);
--			if (rxr->rx_desc_ring[j] == NULL)
-+			if (!rxr->rx_desc_ring[j])
- 				return -ENOMEM;
- 
- 		}
-@@ -796,7 +796,7 @@ bnx2_alloc_rx_mem(struct bnx2 *bp)
- 		if (bp->rx_pg_ring_size) {
- 			rxr->rx_pg_ring = vzalloc(SW_RXPG_RING_SIZE *
- 						  bp->rx_max_pg_ring);
--			if (rxr->rx_pg_ring == NULL)
-+			if (!rxr->rx_pg_ring)
- 				return -ENOMEM;
- 
- 		}
-@@ -807,7 +807,7 @@ bnx2_alloc_rx_mem(struct bnx2 *bp)
- 						   RXBD_RING_SIZE,
- 						   &rxr->rx_pg_desc_mapping[j],
- 						   GFP_KERNEL);
--			if (rxr->rx_pg_desc_ring[j] == NULL)
-+			if (!rxr->rx_pg_desc_ring[j])
- 				return -ENOMEM;
- 
- 		}
-@@ -845,7 +845,7 @@ bnx2_alloc_stats_blk(struct net_device *dev)
- 				sizeof(struct statistics_block);
- 	status_blk = dma_zalloc_coherent(&bp->pdev->dev, bp->status_stats_size,
- 					 &bp->status_blk_mapping, GFP_KERNEL);
--	if (status_blk == NULL)
-+	if (!status_blk)
- 		return -ENOMEM;
- 
- 	bp->status_blk = status_blk;
-@@ -914,7 +914,7 @@ bnx2_alloc_mem(struct bnx2 *bp)
- 						BNX2_PAGE_SIZE,
- 						&bp->ctx_blk_mapping[i],
- 						GFP_KERNEL);
--			if (bp->ctx_blk[i] == NULL)
-+			if (!bp->ctx_blk[i])
- 				goto alloc_mem_err;
- 		}
- 	}
-@@ -2667,7 +2667,7 @@ bnx2_alloc_bad_rbuf(struct bnx2 *bp)
- 	u32 val;
- 
- 	good_mbuf = kmalloc(512 * sizeof(u16), GFP_KERNEL);
--	if (good_mbuf == NULL)
-+	if (!good_mbuf)
- 		return -ENOMEM;
- 
- 	BNX2_WR(bp, BNX2_MISC_ENABLE_SET_BITS,
-@@ -3225,7 +3225,7 @@ bnx2_rx_int(struct bnx2 *bp, struct bnx2_napi *bnapi, int budget)
- 
- 		if (len <= bp->rx_copy_thresh) {
- 			skb = netdev_alloc_skb(bp->dev, len + 6);
--			if (skb == NULL) {
-+			if (!skb) {
- 				bnx2_reuse_rx_data(bp, rxr, data, sw_ring_cons,
- 						  sw_ring_prod);
- 				goto next_rx;
-@@ -4561,7 +4561,7 @@ bnx2_nvram_write(struct bnx2 *bp, u32 offset, u8 *data_buf,
- 
- 	if (align_start || align_end) {
- 		align_buf = kmalloc(len32, GFP_KERNEL);
--		if (align_buf == NULL)
-+		if (!align_buf)
- 			return -ENOMEM;
- 		if (align_start) {
- 			memcpy(align_buf, start, 4);
-@@ -4575,7 +4575,7 @@ bnx2_nvram_write(struct bnx2 *bp, u32 offset, u8 *data_buf,
- 
- 	if (!(bp->flash_info->flags & BNX2_NV_BUFFERED)) {
- 		flash_buffer = kmalloc(264, GFP_KERNEL);
--		if (flash_buffer == NULL) {
-+		if (!flash_buffer) {
- 			rc = -ENOMEM;
- 			goto nvram_write_end;
- 		}
-@@ -5440,7 +5440,7 @@ bnx2_free_tx_skbs(struct bnx2 *bp)
- 		struct bnx2_tx_ring_info *txr = &bnapi->tx_ring;
- 		int j;
- 
--		if (txr->tx_buf_ring == NULL)
-+		if (!txr->tx_buf_ring)
- 			continue;
- 
- 		for (j = 0; j < BNX2_TX_DESC_CNT; ) {
-@@ -5448,7 +5448,7 @@ bnx2_free_tx_skbs(struct bnx2 *bp)
- 			struct sk_buff *skb = tx_buf->skb;
- 			int k, last;
- 
--			if (skb == NULL) {
-+			if (!skb) {
- 				j = BNX2_NEXT_TX_BD(j);
- 				continue;
- 			}
-@@ -5485,14 +5485,14 @@ bnx2_free_rx_skbs(struct bnx2 *bp)
- 		struct bnx2_rx_ring_info *rxr = &bnapi->rx_ring;
- 		int j;
- 
--		if (rxr->rx_buf_ring == NULL)
-+		if (!rxr->rx_buf_ring)
- 			return;
- 
- 		for (j = 0; j < bp->rx_max_ring_idx; j++) {
- 			struct bnx2_sw_bd *rx_buf = &rxr->rx_buf_ring[j];
- 			u8 *data = rx_buf->data;
- 
--			if (data == NULL)
-+			if (!data)
- 				continue;
- 
- 			dma_unmap_single(&bp->pdev->dev,
-@@ -6826,7 +6826,7 @@ bnx2_get_stats64(struct net_device *dev, struct rtnl_link_stats64 *net_stats)
- {
- 	struct bnx2 *bp = netdev_priv(dev);
- 
--	if (bp->stats_blk == NULL)
-+	if (!bp->stats_blk)
- 		return;
- 
- 	net_stats->rx_packets =
-@@ -7217,7 +7217,7 @@ bnx2_get_eeprom_len(struct net_device *dev)
- {
- 	struct bnx2 *bp = netdev_priv(dev);
- 
--	if (bp->flash_info == NULL)
-+	if (!bp->flash_info)
- 		return 0;
- 
- 	return (int) bp->flash_size;
-@@ -7678,7 +7678,7 @@ bnx2_get_ethtool_stats(struct net_device *dev,
- 	u32 *temp_stats = (u32 *) bp->temp_stats_blk;
- 	u8 *stats_len_arr = NULL;
- 
--	if (hw_stats == NULL) {
-+	if (!hw_stats) {
- 		memset(buf, 0, sizeof(u64) * BNX2_NUM_STATS);
- 		return;
- 	}
-@@ -8121,7 +8121,7 @@ bnx2_init_board(struct pci_dev *pdev, struct net_device *dev)
- 	bp->temp_stats_blk =
- 		kzalloc(sizeof(struct statistics_block), GFP_KERNEL);
- 
--	if (bp->temp_stats_blk == NULL) {
-+	if (!bp->temp_stats_blk) {
- 		rc = -ENOMEM;
- 		goto err_out;
- 	}
 -- 
-2.17.0
+2.1.4
