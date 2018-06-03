@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751708AbeFCM2D (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:28:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
+        id S1751774AbeFCM2L (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751613AbeFCM16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:27:58 -0400
+        id S1751718AbeFCM2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:28:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jiri Olsa <jolsa@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 12/29] perf tools: Force fixdep compilation at the start of the build
-Date: Sun,  3 Jun 2018 14:26:35 +0200
-Message-Id: <20180603122652.17453-13-gregkh@linuxfoundation.org>
+Subject: [PATCH 15/29] tools include: Introduce linux/bug.h, from the kernel sources
+Date: Sun,  3 Jun 2018 14:26:38 +0200
+Message-Id: <20180603122652.17453-16-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
@@ -23,241 +23,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit abb26210a39522a6645bce3f438ed9a26bedb11b upstream.
+commit 379d61b1c7d42512cded04d372f15a7e725db9e1 upstream.
 
-The fixdep tool needs to be built before everything else, because it fixes
-every object dependency file.
+With just what we will need in the upcoming changesets, the
+BUILD_BUG_ON_ZERO() definition.
 
-We handle this currently by making all objects to depend on fixdep, which is
-error prone and is easily forgotten when new object is added.
-
-Instead of this, this patch force fixdep tool to be built as the first target
-in the separate make session. This way we don't need to handle extra fixdep
-dependencies and we are certain there's no fixdep race with any parallel make
-job.
-
-Committer notes:
-
-Testing it:
-
-Before:
-
-  $ rm -rf /tmp/build/perf/ ; mkdir -p /tmp/build/perf ; make -k O=/tmp/build/perf -C tools/perf install-bin
-  make: Entering directory '/home/acme/git/linux/tools/perf'
-    BUILD:   Doing 'make -j4' parallel build
-
-  Auto-detecting system features:
-  ...                         dwarf: [ on  ]
-  ...            dwarf_getlocations: [ on  ]
-  ...                         glibc: [ on  ]
-  ...                          gtk2: [ on  ]
-  ...                      libaudit: [ on  ]
-  ...                        libbfd: [ on  ]
-  ...                        libelf: [ on  ]
-  ...                       libnuma: [ on  ]
-  ...        numa_num_possible_cpus: [ on  ]
-  ...                       libperl: [ on  ]
-  ...                     libpython: [ on  ]
-  ...                      libslang: [ on  ]
-  ...                     libcrypto: [ on  ]
-  ...                     libunwind: [ on  ]
-  ...            libdw-dwarf-unwind: [ on  ]
-  ...                          zlib: [ on  ]
-  ...                          lzma: [ on  ]
-  ...                     get_cpuid: [ on  ]
-  ...                           bpf: [ on  ]
-
-    GEN      /tmp/build/perf/common-cmds.h
-    HOSTCC   /tmp/build/perf/fixdep.o
-    HOSTLD   /tmp/build/perf/fixdep-in.o
-    LINK     /tmp/build/perf/fixdep
-    MKDIR    /tmp/build/perf/pmu-events/
-    HOSTCC   /tmp/build/perf/pmu-events/json.o
-    MKDIR    /tmp/build/perf/pmu-events/
-    HOSTCC   /tmp/build/perf/pmu-events/jsmn.o
-    HOSTCC   /tmp/build/perf/pmu-events/jevents.o
-    HOSTLD   /tmp/build/perf/pmu-events/jevents-in.o
-    PERF_VERSION = 4.9.rc8.g868cd5
-    CC       /tmp/build/perf/perf-read-vdso32
-  <SNIP>
-
-After:
-
-  $ rm -rf /tmp/build/perf/ ; mkdir -p /tmp/build/perf ; make -k O=/tmp/build/perf -C tools/perf install-bin
-  make: Entering directory '/home/acme/git/linux/tools/perf'
-    BUILD:   Doing 'make -j4' parallel build
-    HOSTCC   /tmp/build/perf/fixdep.o
-    HOSTLD   /tmp/build/perf/fixdep-in.o
-    LINK     /tmp/build/perf/fixdep
-
-  Auto-detecting system features:
-  ...                         dwarf: [ on  ]
-  ...            dwarf_getlocations: [ on  ]
-  ...                         glibc: [ on  ]
-  ...                          gtk2: [ on  ]
-  ...                      libaudit: [ on  ]
-  ...                        libbfd: [ on  ]
-  ...                        libelf: [ on  ]
-  ...                       libnuma: [ on  ]
-  ...        numa_num_possible_cpus: [ on  ]
-  ...                       libperl: [ on  ]
-  ...                     libpython: [ on  ]
-  ...                      libslang: [ on  ]
-  ...                     libcrypto: [ on  ]
-  ...                     libunwind: [ on  ]
-  ...            libdw-dwarf-unwind: [ on  ]
-  ...                          zlib: [ on  ]
-  ...                          lzma: [ on  ]
-  ...                     get_cpuid: [ on  ]
-  ...                           bpf: [ on  ]
-
-    GEN      /tmp/build/perf/common-cmds.h
-    MKDIR    /tmp/build/perf/fd/
-    CC       /tmp/build/perf/fd/array.o
-    LD       /tmp/build/perf/fd/libapi-in.o
-    MKDIR    /tmp/build/perf/fs/
-    CC       /tmp/build/perf/event-parse.o
-    CC       /tmp/build/perf/fs/fs.o
-    PERF_VERSION = 4.9.rc8.g57a92f
-    CC       /tmp/build/perf/event-plugin.o
-    MKDIR    /tmp/build/perf/fs/
-    CC       /tmp/build/perf/fs/tracing_path.o
-  <SNIP>
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Link: http://lkml.kernel.org/r/1481030331-31944-3-git-send-email-jolsa@kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-lw8zg7x6ttwcvqhp90mwe3vo@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/Makefile.perf | 50 ++++++++++++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 12 deletions(-)
+ tools/include/linux/bug.h | 10 ++++++++++
+ tools/perf/MANIFEST       |  1 +
+ 2 files changed, 11 insertions(+)
+ create mode 100644 tools/include/linux/bug.h
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 2b92ffef554b..7dde2618d677 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -177,6 +177,35 @@ ifeq ($(filter-out $(NON_CONFIG_TARGETS),$(MAKECMDGOALS)),)
- endif
- endif
- 
-+# The fixdep build - we force fixdep tool to be built as
-+# the first target in the separate make session not to be
-+# disturbed by any parallel make jobs. Once fixdep is done
-+# we issue the requested build with FIXDEP=1 variable.
-+#
-+# The fixdep build is disabled for $(NON_CONFIG_TARGETS)
-+# targets, because it's not necessary.
+diff --git a/tools/include/linux/bug.h b/tools/include/linux/bug.h
+new file mode 100644
+index 000000000000..8e4a4f49135d
+--- /dev/null
++++ b/tools/include/linux/bug.h
+@@ -0,0 +1,10 @@
++#ifndef _TOOLS_PERF_LINUX_BUG_H
++#define _TOOLS_PERF_LINUX_BUG_H
 +
-+ifdef FIXDEP
-+  force_fixdep := 0
-+else
-+  force_fixdep := $(config)
-+endif
++/* Force a compilation error if condition is true, but also produce a
++   result (of value 0 and type size_t), so the expression can be used
++   e.g. in a structure initializer (or where-ever else comma expressions
++   aren't permitted). */
++#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
 +
-+export srctree OUTPUT RM CC CXX LD AR CFLAGS CXXFLAGS V BISON FLEX AWK
-+export HOSTCC HOSTLD HOSTAR
-+
-+include $(srctree)/tools/build/Makefile.include
-+
-+ifeq ($(force_fixdep),1)
-+goals := $(filter-out all sub-make, $(MAKECMDGOALS))
-+
-+$(goals) all: sub-make
-+
-+sub-make: fixdep
-+	$(Q)$(MAKE) FIXDEP=1 -f Makefile.perf $(goals)
-+
-+else # force_fixdep
-+
- # Set FEATURE_TESTS to 'all' so all possible feature checkers are executed.
- # Without this setting the output feature dump file misses some features, for
- # example, liberty. Select all checkers so we won't get an incomplete feature
-@@ -348,10 +377,6 @@ strip: $(PROGRAMS) $(OUTPUT)perf
- 
- PERF_IN := $(OUTPUT)perf-in.o
- 
--export srctree OUTPUT RM CC LD AR CFLAGS V BISON FLEX AWK
--export HOSTCC HOSTLD HOSTAR
--include $(srctree)/tools/build/Makefile.include
--
- JEVENTS       := $(OUTPUT)pmu-events/jevents
- JEVENTS_IN    := $(OUTPUT)pmu-events/jevents-in.o
- 
-@@ -470,7 +495,7 @@ $(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(PMU_EVENTS_IN) $(LIBTRACEEVENT_DYNAMIC_L
- 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $(LIBTRACEEVENT_DYNAMIC_LIST_LDFLAGS) \
- 		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBS) -o $@
- 
--$(GTK_IN): fixdep FORCE
-+$(GTK_IN): FORCE
- 	$(Q)$(MAKE) $(build)=gtk
- 
- $(OUTPUT)libperf-gtk.so: $(GTK_IN) $(PERFLIBS)
-@@ -515,7 +540,7 @@ endif
- __build-dir = $(subst $(OUTPUT),,$(dir $@))
- build-dir   = $(if $(__build-dir),$(__build-dir),.)
- 
--prepare: $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)common-cmds.h fixdep archheaders
-+prepare: $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)common-cmds.h archheaders
- 
- $(OUTPUT)%.o: %.c prepare FORCE
- 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=$(build-dir) $@
-@@ -555,7 +580,7 @@ $(patsubst perf-%,%.o,$(PROGRAMS)): $(wildcard */*.h)
- 
- LIBPERF_IN := $(OUTPUT)libperf-in.o
- 
--$(LIBPERF_IN): prepare fixdep FORCE
-+$(LIBPERF_IN): prepare FORCE
- 	$(Q)$(MAKE) $(build)=libperf
- 
- $(LIB_FILE): $(LIBPERF_IN)
-@@ -563,10 +588,10 @@ $(LIB_FILE): $(LIBPERF_IN)
- 
- LIBTRACEEVENT_FLAGS += plugin_dir=$(plugindir_SQ)
- 
--$(LIBTRACEEVENT): fixdep FORCE
-+$(LIBTRACEEVENT): FORCE
- 	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) $(OUTPUT)libtraceevent.a
- 
--libtraceevent_plugins: fixdep FORCE
-+libtraceevent_plugins: FORCE
- 	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) plugins
- 
- $(LIBTRACEEVENT_DYNAMIC_LIST): libtraceevent_plugins
-@@ -579,21 +604,21 @@ $(LIBTRACEEVENT)-clean:
- install-traceevent-plugins: libtraceevent_plugins
- 	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) install_plugins
- 
--$(LIBAPI): fixdep FORCE
-+$(LIBAPI): FORCE
- 	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) $(OUTPUT)libapi.a
- 
- $(LIBAPI)-clean:
- 	$(call QUIET_CLEAN, libapi)
- 	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) clean >/dev/null
- 
--$(LIBBPF): fixdep FORCE
-+$(LIBBPF): FORCE
- 	$(Q)$(MAKE) -C $(BPF_DIR) O=$(OUTPUT) $(OUTPUT)libbpf.a FEATURES_DUMP=$(FEATURE_DUMP_EXPORT)
- 
- $(LIBBPF)-clean:
- 	$(call QUIET_CLEAN, libbpf)
- 	$(Q)$(MAKE) -C $(BPF_DIR) O=$(OUTPUT) clean >/dev/null
- 
--$(LIBSUBCMD): fixdep FORCE
-+$(LIBSUBCMD): FORCE
- 	$(Q)$(MAKE) -C $(SUBCMD_DIR) O=$(OUTPUT) $(OUTPUT)libsubcmd.a
- 
- $(LIBSUBCMD)-clean:
-@@ -790,3 +815,4 @@ FORCE:
- .PHONY: $(GIT-HEAD-PHONY) TAGS tags cscope FORCE prepare
- .PHONY: libtraceevent_plugins archheaders
- 
-+endif # force_fixdep
++#endif	/* _TOOLS_PERF_LINUX_BUG_H */
+diff --git a/tools/perf/MANIFEST b/tools/perf/MANIFEST
+index 776f6b23ea2e..a4f98e131819 100644
+--- a/tools/perf/MANIFEST
++++ b/tools/perf/MANIFEST
+@@ -63,6 +63,7 @@ tools/include/linux/bitops.h
+ tools/include/linux/compiler.h
+ tools/include/linux/compiler-gcc.h
+ tools/include/linux/coresight-pmu.h
++tools/include/linux/bug.h
+ tools/include/linux/filter.h
+ tools/include/linux/hash.h
+ tools/include/linux/kernel.h
 -- 
 2.17.1
