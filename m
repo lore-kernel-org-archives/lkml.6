@@ -1,115 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751366AbeFCME6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:04:58 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40807 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeFCME4 (ORCPT
+        id S1751259AbeFCMRM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:17:12 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:45210 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751013AbeFCMRL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:04:56 -0400
-X-Google-Smtp-Source: ADUXVKIYGlHTEJNgAm+vSDmyk/SzTTLC3jewSi06pHXtu+ETI2v5TsS/XHWe6OjwuAsQepR6J3Uj8w==
-From: John Whitmore <johnfwhitmore@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: kstewart@linuxfoundation.org, colin.king@canonical.com,
-        pombredanne@nexb.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v5 2/8] staging: rtl8192e: Addition of prefered spacing - Coding style
-Date: Sun,  3 Jun 2018 13:04:07 +0100
-Message-Id: <20180603120413.13042-3-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180603120413.13042-1-johnfwhitmore@gmail.com>
-References: <20180603120413.13042-1-johnfwhitmore@gmail.com>
+        Sun, 3 Jun 2018 08:17:11 -0400
+X-Google-Smtp-Source: ADUXVKJF/qinF2yOi+oSdFs7pRXs1IVBsNGWAJwjHS7xLUi+voiqFj4LYOj65BFLXc+Y34JV9Hm6UQfHHs0oArvK8os=
+MIME-Version: 1.0
+In-Reply-To: <1527994847-2363-2-git-send-email-Anson.Huang@nxp.com>
+References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com> <1527994847-2363-2-git-send-email-Anson.Huang@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sun, 3 Jun 2018 09:17:09 -0300
+Message-ID: <CAOMZO5Af_Wdp=MNR28v3ALiguxQSQv4x2Zf224FXSiEGtP68Bw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: imx6sl: remove clks_init_on array
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added spaces around various operators, as preferred by coding style.
+Hi Anson,
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 22 +++++++++----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+On Sun, Jun 3, 2018 at 12:00 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> Clock framework will enable those clocks registered
+> with CLK_IS_CRITICAL flag, so no need to have
+> clks_init_on array during clock initialization now.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6sl.c | 12 ------------
+>  1 file changed, 12 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+> index 66b1dd1..eb6bcbf 100644
+> --- a/drivers/clk/imx/clk-imx6sl.c
+> +++ b/drivers/clk/imx/clk-imx6sl.c
+> @@ -104,10 +104,6 @@ static struct clk_onecell_data clk_data;
+>  static void __iomem *ccm_base;
+>  static void __iomem *anatop_base;
+>
+> -static const u32 clks_init_on[] __initconst = {
+> -       IMX6SL_CLK_IPG, IMX6SL_CLK_ARM, IMX6SL_CLK_MMDC_ROOT,
+> -};
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 47b6add256d0..0db98c77a8e9 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -264,7 +264,7 @@ u16 HTHalfMcsToDataRate(struct ieee80211_device *ieee,	u8	nMcsRate)
- 	is40MHz = (IsHTHalfNmode40Bandwidth(ieee)) ? 1 : 0;
- 	isShortGI = (IsHTHalfNmodeSGI(ieee, is40MHz)) ? 1 : 0;
- 
--	return MCS_DATA_RATE[is40MHz][isShortGI][(nMcsRate&0x7f)];
-+	return MCS_DATA_RATE[is40MHz][isShortGI][(nMcsRate & 0x7f)];
- }
- 
- u16 HTMcsToDataRate(struct ieee80211_device *ieee, u8 nMcsRate)
-@@ -275,7 +275,7 @@ u16 HTMcsToDataRate(struct ieee80211_device *ieee, u8 nMcsRate)
- 	u8	isShortGI = (pHTInfo->bCurBW40MHz) ?
- 						((pHTInfo->bCurShortGI40MHz) ? 1 : 0) :
- 						((pHTInfo->bCurShortGI20MHz) ? 1 : 0);
--	return MCS_DATA_RATE[is40MHz][isShortGI][(nMcsRate&0x7f)];
-+	return MCS_DATA_RATE[is40MHz][isShortGI][(nMcsRate & 0x7f)];
- }
- 
- /********************************************************************************************************************
-@@ -317,7 +317,7 @@ u16  TxCountToDataRate(struct ieee80211_device *ieee, u8 nDataRate)
- 
- 			//nDataRate = nDataRate - 60;
- 		}
--		return MCS_DATA_RATE[is40MHz][isShortGI][nDataRate&0xf];
-+		return MCS_DATA_RATE[is40MHz][isShortGI][nDataRate & 0xf];
- 	}
- }
- 
-@@ -823,15 +823,15 @@ u8 HTGetHighestMCSRate(struct ieee80211_device *ieee, u8 *pMCSRateSet, u8 *pMCSF
- 		if (availableMcsRate[i] != 0) {
- 			bitMap = availableMcsRate[i];
- 			for (j = 0; j < 8; j++) {
--				if ((bitMap%2) != 0) {
--					if (HTMcsToDataRate(ieee, (8*i+j)) > HTMcsToDataRate(ieee, mcsRate))
--						mcsRate = (8*i+j);
-+				if ((bitMap % 2) != 0) {
-+					if (HTMcsToDataRate(ieee, (8 * i + j)) > HTMcsToDataRate(ieee, mcsRate))
-+						mcsRate = (8 * i + j);
- 				}
- 				bitMap >>= 1;
- 			}
- 		}
- 	}
--	return (mcsRate|0x80);
-+	return (mcsRate | 0x80);
- }
- 
- /*
-@@ -850,7 +850,7 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
- 
- 	// filter out operational rate set not supported by AP, the length of it is 16
- 	for (i = 0; i <= 15; i++) {
--		pOperateMCS[i] = ieee->Regdot11HTOperationalRateSet[i]&pSupportMCS[i];
-+		pOperateMCS[i] = ieee->Regdot11HTOperationalRateSet[i] & pSupportMCS[i];
- 	}
- 
- 	// TODO: adjust our operational rate set  according to our channel bandwidth, STBC and Antenna number
-@@ -909,7 +909,7 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 	////////////////////////////////////////////////////////
- 	// Configurations:
- 	////////////////////////////////////////////////////////
--	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA|IEEE80211_DL_HT, pPeerHTCap, sizeof(HT_CAPABILITY_ELE));
-+	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA | IEEE80211_DL_HT, pPeerHTCap, sizeof(HT_CAPABILITY_ELE));
- //	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA|IEEE80211_DL_HT, pPeerHTInfo, sizeof(HT_INFORMATION_ELE));
- 	// Config Supported Channel Width setting
- 	//
-@@ -1303,9 +1303,9 @@ void HTSetConnectBwModeCallback(struct ieee80211_device *ieee)
- 
- 	if (pHTInfo->bCurBW40MHz) {
- 		if (pHTInfo->CurSTAExtChnlOffset == HT_EXTCHNL_OFFSET_UPPER)
--			ieee->set_chan(ieee->dev, ieee->current_network.channel+2);
-+			ieee->set_chan(ieee->dev, ieee->current_network.channel + 2);
- 		else if (pHTInfo->CurSTAExtChnlOffset == HT_EXTCHNL_OFFSET_LOWER)
--			ieee->set_chan(ieee->dev, ieee->current_network.channel-2);
-+			ieee->set_chan(ieee->dev, ieee->current_network.channel - 2);
- 		else
- 			ieee->set_chan(ieee->dev, ieee->current_network.channel);
- 
--- 
-2.17.0
+It looks like you missed to pass the CLK_IS_CRITICAL flag to these clocks.
