@@ -1,92 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751098AbeFCIme convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 04:42:34 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:35179 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750810AbeFCImc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 04:42:32 -0400
-Subject: Re: [PATCH 4.14 2/4] powerpc/mm/slice: create header files dedicated
- to slices
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
- <798b787d74d94b5d29f1c0279bad157b6b5df7ec.1527755908.git.christophe.leroy@c-s.fr>
- <20180602132107.GH31493@kroah.com>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <f18dc860-6007-9955-8c73-25faf43097e8@c-s.fr>
-Date: Sat, 2 Jun 2018 22:55:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751085AbeFCJEZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 05:04:25 -0400
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:54273 "EHLO
+        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbeFCJEY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 05:04:24 -0400
+Date: Sun, 3 Jun 2018 09:03:08 +0000
+From: Nicholas Mc Guire <der.herr@hofr.at>
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Sebastian Reichel <sre@kernel.org>, ldv-project@linuxtesting.org,
+        sil2review@lists.osadl.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Subject: Re: [SIL2review] [PATCH] power: reset: zx-reboot: put device node in
+ zx_reboot_probe()
+Message-ID: <20180603090308.GA1287@osadl.at>
+References: <1527978125-29850-1-git-send-email-khoroshilov@ispras.ru>
 MIME-Version: 1.0
-In-Reply-To: <20180602132107.GH31493@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527978125-29850-1-git-send-email-khoroshilov@ispras.ru>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jun 03, 2018 at 01:22:05AM +0300, Alexey Khoroshilov wrote:
+> zx_reboot_probe() increments refcnt of zx296702-pcu device node by
+> of_find_compatible_node() and leaves it undecremented on both
+> successful and error paths.
+>
 
+Just wonder - if it warns on the failed case it probably should also
+note if it failed in of_find_compatible_node() or not to allow
+diagnosing the problem (the compatible_node score was 0) ? 
 
-On 06/02/2018 03:21 PM, Greg Kroah-Hartman wrote:
-> On Thu, May 31, 2018 at 08:54:52AM +0000, Christophe Leroy wrote:
->> [ Upstream commit a3286f05bc5a5bc7fc73a9783ec89de78fcd07f8 ]
->>
->> In preparation for the following patch which will enhance 'slices'
->> for supporting PPC32 in order to fix an issue on hugepages on 8xx,
->> this patch takes out of page*.h all bits related to 'slices' and put
->> them into newly created slice.h header files.
->> While common parts go into asm/slice.h, subarch specific
->> parts go into respective books3s/64/slice.c and nohash/64/slice.c
->> 'slices'
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
->> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
->> ---
->>   arch/powerpc/include/asm/book3s/64/slice.h | 27 ++++++++++++++
->>   arch/powerpc/include/asm/nohash/64/slice.h | 12 ++++++
->>   arch/powerpc/include/asm/page.h            |  1 +
->>   arch/powerpc/include/asm/page_64.h         | 59 ------------------------------
->>   arch/powerpc/include/asm/slice.h           | 40 ++++++++++++++++++++
->>   5 files changed, 80 insertions(+), 59 deletions(-)
->>   create mode 100644 arch/powerpc/include/asm/book3s/64/slice.h
->>   create mode 100644 arch/powerpc/include/asm/nohash/64/slice.h
->>   create mode 100644 arch/powerpc/include/asm/slice.h
+> Found by Linux Driver Verification project (linuxtesting.org).
 > 
-> This patch does not apply :(
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Reviewed-by: Nicholas Mc Guire <der.herr@hofr.at>
 
-I tried again, it applies well for me:
-
-[root@localhost linux-stable]# git checkout v4.14.47 -b 4.14.47
-Checking out files: 100% (27111/27111), done.
-Switched to a new branch '4.14.47'
-[root@localhost linux-stable]# git am 
-/root/Downloads/4.14-1-4-powerpc-mm-slice-Remove-intermediate-bitmap-copy.patch 
-
-Applying: powerpc/mm/slice: Remove intermediate bitmap copy
-Applying: powerpc/mm/slice: create header files dedicated to slices
-Applying: powerpc/mm/slice: Enhance for supporting PPC32
-Applying: powerpc/mm/slice: Fix hugepage allocation at hint address on 8xx
-[root@localhost linux-stable]#
-
+> ---
+>  drivers/power/reset/zx-reboot.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Can you fix this series up and resend the whole thing?
-
-Is there any conflicting patch in the queue ?
-What should I rebase on ?
-
-Thanks,
-Christophe
-
+> diff --git a/drivers/power/reset/zx-reboot.c b/drivers/power/reset/zx-reboot.c
+> index c03e96e6a041..186901c96c01 100644
+> --- a/drivers/power/reset/zx-reboot.c
+> +++ b/drivers/power/reset/zx-reboot.c
+> @@ -51,6 +51,7 @@ static int zx_reboot_probe(struct platform_device *pdev)
+>  
+>  	np = of_find_compatible_node(NULL, NULL, "zte,zx296702-pcu");
+>  	pcu_base = of_iomap(np, 0);
+> +	of_node_put(np);
+>  	if (!pcu_base) {
+>  		iounmap(base);
+>  		WARN(1, "failed to map pcu_base address");
+> -- 
+> 2.7.4
 > 
-> thanks,
-> 
-> greg k-h
-> 
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+> _______________________________________________
+> SIL2review mailing list
+> SIL2review@lists.osadl.org
+> https://lists.osadl.org/mailman/listinfo/sil2review
