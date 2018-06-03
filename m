@@ -1,90 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeFCWUn (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 18:20:43 -0400
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:25616 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751210AbeFCWUm (ORCPT
+        id S1751622AbeFCWiC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 18:38:02 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:40449 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751201AbeFCWiB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 18:20:42 -0400
-Date: Mon, 4 Jun 2018 08:20:38 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
- boolean returns
-Message-ID: <20180603222038.GS10363@dastard>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-3-ross.zwisler@linux.intel.com>
- <20180529212510.GJ30110@magnolia>
- <20180529220114.GA13948@linux.intel.com>
- <20180531191332.GB7825@magnolia>
- <20180601012657.GQ10363@dastard>
- <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
- <20180601022418.GR10363@dastard>
- <CAPcyv4iXTsxmQgjoLs2E_8QrLHrFOV_58T7UYf0zPJuB2744qQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4iXTsxmQgjoLs2E_8QrLHrFOV_58T7UYf0zPJuB2744qQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Sun, 3 Jun 2018 18:38:01 -0400
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+X-Original-SENDERIP: 10.177.226.38
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+From: Hoeun Ryu <hoeun.ryu@lge.com.com>
+To: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: Hoeun Ryu <hoeun.ryu@lge.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2]  printk: make printk_safe_flush safe in NMI context by skipping flushing
+Date: Mon,  4 Jun 2018 07:37:34 +0900
+Message-Id: <1528065471-22830-1-git-send-email-hoeun.ryu@lge.com.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 09:02:52PM -0700, Dan Williams wrote:
-> On Thu, May 31, 2018 at 7:24 PM, Dave Chinner <david@fromorbit.com> wrote:
-> > On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
-> >> > FWIW, XFS+DAX used to just work on this setup (I hadn't even
-> >> > installed ndctl until this morning!) but after changing the kernel
-> >> > it no longer works. That would make it a regression, yes?
+From: Hoeun Ryu <hoeun.ryu@lge.com>
 
-[....]
+ Make printk_safe_flush() safe in NMI context.
+nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
+function is called in watchdog_overflow_callback() if the flag of hardlockup
+backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
+watchdog_overflow_callback() function is called in NMI context on some
+architectures.
+ Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries
+to lock logbuf_lock in vprintk_emit() that might be already be part
+of another non-nmi context on the same CPU or a soft- or hard-lockup on another
+CPU. The example of deadlock can be
 
-> >> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
-> >> has the following dependencies:
-> >>
-> >>         depends on MEMORY_HOTPLUG
-> >>         depends on MEMORY_HOTREMOVE
-> >>         depends on SPARSEMEM_VMEMMAP
-> >
-> > Filesystem DAX now has a dependency on memory hotplug?
+ CPU0
+ local_irq_save();
+ for (;;)
+   req = blk_peek_request(q);
+   if (unlikely(!scsi_device_online(sdev)))
+     printk()
+       vprintk_emit()
+         console_unlock()
+           logbuf_lock_irqsave()
+             slow-serial-console-write()        // close to watchdog threshold
+               watchdog_overflow_callback()
+                 trigger_allbutself_cpu_backtrace()
+                   printk_safe_flush()
+                     vprintk_emit()
+                       logbuf_lock_irqsave()
+                       ^^^^ deadlock
 
-[....]
+and some other cases.
+ This patch prevents a deadlock in printk_safe_flush() in NMI context. It makes
+sure that we continue and eventually call printk_safe_flush_on_panic() from panic()
+that has better chances to succeed.
+ There is a risk that logbuf_lock was not part of a soft- or dead-lockup and we
+might just loose the messages. But then there is a high chance that irq_work will
+get called and the messages will get flushed the normal way.
 
-> > OK, works now I've found the magic config incantantions to turn
-> > everything I now need on.
+Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
+Suggested-by: Petr Mladek <pmladek@suse.com>
+Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+---
+ v2: fix comments in commit message and code. no change in code itself.
 
-By enabling these options, my test VM now has a ~30s pause in the
-boot very soon after the nvdimm subsystem is initialised.
+ kernel/printk/printk_safe.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-[    1.523718] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-[    1.550353] 00:05: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
-[    1.552175] Non-volatile memory driver v1.3
-[    2.332045] tsc: Refined TSC clocksource calibration: 2199.909 MHz
-[    2.333280] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1fb5dcd4620, max_idle_ns: 440795264143 ns
-[   37.217453] brd: module loaded
-[   37.225423] loop: module loaded
-[   37.228441] virtio_blk virtio2: [vda] 10485760 512-byte logical blocks (5.37 GB/5.00 GiB)
-[   37.245418] virtio_blk virtio3: [vdb] 146800640 512-byte logical blocks (75.2 GB/70.0 GiB)
-[   37.255794] virtio_blk virtio4: [vdc] 1073741824000 512-byte logical blocks (550 TB/500 TiB)
-[   37.265403] nd_pmem namespace1.0: unable to guarantee persistence of writes
-[   37.265618] nd_pmem namespace0.0: unable to guarantee persistence of writes
-
-The system does not appear to be consuming CPU, but it is blocking
-NMIs so I can't get a CPU trace. For a VM that I rely on booting in
-a few seconds because I reboot it tens of times a day, this is a
-problem....
-
-Cheers,
-
-Dave.
+diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
+index 3e3c200..3b5c660 100644
+--- a/kernel/printk/printk_safe.c
++++ b/kernel/printk/printk_safe.c
+@@ -254,6 +254,17 @@ void printk_safe_flush(void)
+ {
+ 	int cpu;
+ 
++	/*
++	 * Just avoid a deadlock here.
++	 * It makes sure that we continue and eventually call
++	 * printk_safe_flush_on_panic() from panic() that has better chances to succeed.
++	 * There is a risk that logbuf_lock was not part of a soft- or dead-lockup and
++	 * we might just loose the messages. But then there is a high chance that
++	 * irq_work will get called and the messages will get flushed the normal way.
++	 */
++	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
++		return;
++
+ 	for_each_possible_cpu(cpu) {
+ #ifdef CONFIG_PRINTK_NMI
+ 		__printk_safe_flush(&per_cpu(nmi_print_seq, cpu).work);
 -- 
-Dave Chinner
-david@fromorbit.com
+2.1.4
