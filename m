@@ -1,120 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751285AbeFCQ5l (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 12:57:41 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40610 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750952AbeFCQ5j (ORCPT
+        id S1751315AbeFCRMX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 13:12:23 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42103 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbeFCRMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 12:57:39 -0400
-X-Google-Smtp-Source: ADUXVKIryperZ61ZDl5d/rhUUMju9oJSdXPGEJCbDwYbqJLxcYP15u9A9mOdRZrcXp6SMG5VeSRT+g==
-Date: Sun, 3 Jun 2018 22:27:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        =?utf-8?B?5YiY54Kc?= <liuwei@actions-semi.com>, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree <devicetree@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>, amit.kucheria@linaro.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        Mani Sadhasivam <manivannanece23@gmail.com>,
-        Thomas Liau <thomas.liau@actions-semi.com>, jeff.chen@actions-semi.com
-Subject: Re: [PATCH 3/3] pinctrl: actions: Add interrupt support for OWL S900
- SoC
-Message-ID: <20180603165723.GA14907@Mani-XPS-13-9360>
-References: <20180602165415.30956-1-manivannan.sadhasivam@linaro.org>
- <20180602165415.30956-4-manivannan.sadhasivam@linaro.org>
- <CAHp75Ve8ZCbEqnYK0KqtCHQm-EOUWRSyMzi51P+3_7brtXq6dA@mail.gmail.com>
+        Sun, 3 Jun 2018 13:12:21 -0400
+X-Google-Smtp-Source: ADUXVKI5wdoaHV6F9Bic7u9cGmzqh3ifRPg4kqxWO1V49OUDZH+yYFStDUuLwnjUFhRPj6V4QT6Lbg==
+Date: Sun, 3 Jun 2018 19:12:16 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>, Borislav Petkov <bp@suse.de>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 0/4] perf/urgent fixes
+Message-ID: <20180603171216.GA17473@gmail.com>
+References: <20180602145927.23307-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75Ve8ZCbEqnYK0KqtCHQm-EOUWRSyMzi51P+3_7brtXq6dA@mail.gmail.com>
+In-Reply-To: <20180602145927.23307-1-acme@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
 
-On Sun, Jun 03, 2018 at 11:37:53AM +0300, Andy Shevchenko wrote:
-> On Sat, Jun 2, 2018 at 7:54 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > Add interrupt support for Actions Semi OWL S900 SoC.
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+
+> Hi Ingo,
 > 
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return;
+> 	Please consider pulling,
 > 
-> At which circumstances the above possible?
+> - Arnaldo
 > 
-
-Only possible when the requested GPIO exceeds chip->ngpio. I know it is
-a kind of redundant check, but it is good to have this during development.
-
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return;
+> Test results at the end of this message, as usual.
 > 
-> Ditto.
->
-
-Same as above.
-
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return;
+> The following changes since commit 6497bbc35ac5efce3bccd31d3719bae020282da6:
 > 
-> Ditto.
->
-
-Same as above.
-
-> > +       port = owl_gpio_get_port(pctrl, &gpio);
-> > +       if (WARN_ON(port == NULL))
-> > +               return -ENODEV;
+>   Merge tag 'perf-urgent-for-mingo-4.17-20180531' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-05-31 12:37:07 +0200)
 > 
-> Ditto.
->
-
-Same as above.
-
+> are available in the Git repository at:
 > 
-> > +       for (i = 0; i < chip->ngpio; i++) {
-> > +               irqno = irq_create_mapping(pctrl->domain, i);
-> > +               irq_set_chip_and_handler(irqno, &owl_gpio_irq_chip,
-> > +                                        handle_edge_irq);
-> > +               irq_set_chip_data(irqno, pctrl);
-> > +       }
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180602
 > 
-> I'm not sure the handle_edge_irq() is a correct handler here. It would
-> be handle_bad_irq() until IRQ has been requested properly.
-> No?
->
-
-Hmmm, good question. Since the handler used in irq_set_chip_and_handler
-is superseded by irq_set_chained_handler_and_data, this doesn't matter
-anyway. But I would like to hear what Linus suggests here!
-
-> > +/* GPIO TYPE Bit Definition */
-> > +#define OWL_GPIO_INT_LEVEL_HIGH                0
-> > +#define OWL_GPIO_INT_LEVEL_LOW         1
-> > +#define OWL_GPIO_INT_EDGE_RISING       2
-> > +#define OWL_GPIO_INT_EDGE_FALLING      3
+> for you to fetch changes up to 0b3a18387f3e5cdcfaaf884860a4688280d09c9d:
 > 
-> > +#define OWL_GPIO_INT_MASK              3
+>   perf tools intel-pt-decoder: Update insn.h from the kernel sources (2018-06-01 16:13:18 -0300)
 > 
-> GENMASK?
->
+> ----------------------------------------------------------------
+> perf/urgent fixes:
+> 
+> - Update prctl and cpufeatures.h tools/ copies with the kernel sources
+>   originals, which makes 'perf trace' know about the new prctl options
+>   for speculation control and silences the build warnings (Arnaldo Carvalho de Melo)
+> 
+> - Update insn.h in Intel-PT instruction decoder with its original from from the
+>   kernel sources, to silence build warnings, no effect on the actual tools this
+>   time around (Arnaldo Carvalho de Melo)
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Arnaldo Carvalho de Melo (4):
+>       perf trace beauty prctl: Default header_dir to cwd to work without parms
+>       tools headers: Synchronize prctl.h ABI header
+>       tools headers: Sync x86 cpufeatures.h with the kernel sources
+>       perf tools intel-pt-decoder: Update insn.h from the kernel sources
+> 
+>  tools/arch/x86/include/asm/cpufeatures.h | 20 ++++++++++++++------
+>  tools/include/uapi/linux/prctl.h         | 12 ++++++++++++
+>  tools/perf/trace/beauty/prctl_option.sh  |  2 +-
+>  tools/perf/util/intel-pt-decoder/insn.h  | 18 ++++++++++++++++++
+>  4 files changed, 45 insertions(+), 7 deletions(-)
 
-Ack.
+Pulled, thanks a lot Arnaldo!
 
-Thanks,
-Mani
-
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+	Ingo
