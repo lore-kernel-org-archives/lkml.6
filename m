@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751802AbeFCM2S (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:28:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
+        id S1752037AbeFCMcH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:32:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751476AbeFCM2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:28:16 -0400
+        id S1751716AbeFCM2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:28:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 18/29] tools include: Drop ARRAY_SIZE() definition from linux/hashtable.h
-Date: Sun,  3 Jun 2018 14:26:41 +0200
-Message-Id: <20180603122652.17453-19-gregkh@linuxfoundation.org>
+Subject: [PATCH 16/29] tools include: Adopt __same_type() and __must_be_array() from the kernel
+Date: Sun,  3 Jun 2018 14:26:39 +0200
+Message-Id: <20180603122652.17453-17-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
@@ -26,39 +25,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit 68289cbd83eaa20faef7cc818121bc8e769065de upstream.
+commit f6441aff8946f7fd6ab730d7eb9eba18a9ebeba4 upstream.
 
-As tools/include/linux/kernel.h has it now, with the goodies present in
-the kernel.h counterpart, i.e. checking that the parameter is an array
-at build time.
+Will be used to adopt the more stringent version of ARRAY_SIZE(), the
+one in the kernel sources.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-v0b41ivu6z6dyugbq9ffa9ez@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-d85dpvay1hoqscpezlntyd8x@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/include/linux/hashtable.h | 4 ----
- 1 file changed, 4 deletions(-)
+ tools/include/linux/compiler-gcc.h | 3 +++
+ tools/include/linux/compiler.h     | 5 +++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/include/linux/hashtable.h b/tools/include/linux/hashtable.h
-index c65cc0aa2659..251eabf2a05e 100644
---- a/tools/include/linux/hashtable.h
-+++ b/tools/include/linux/hashtable.h
-@@ -13,10 +13,6 @@
- #include <linux/hash.h>
- #include <linux/log2.h>
+diff --git a/tools/include/linux/compiler-gcc.h b/tools/include/linux/compiler-gcc.h
+index 616935f1ff56..825d44f89a29 100644
+--- a/tools/include/linux/compiler-gcc.h
++++ b/tools/include/linux/compiler-gcc.h
+@@ -16,3 +16,6 @@
+ #if GCC_VERSION >= 40300
+ # define __compiletime_error(message) __attribute__((error(message)))
+ #endif /* GCC_VERSION >= 40300 */
++
++/* &a[0] degrades to a pointer: a different type from an array */
++#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
+index c9e65e8faacd..23299d7e7160 100644
+--- a/tools/include/linux/compiler.h
++++ b/tools/include/linux/compiler.h
+@@ -17,6 +17,11 @@
+ # define __always_inline	inline __attribute__((always_inline))
+ #endif
  
--#ifndef ARRAY_SIZE
--#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
--#endif
--
- #define DEFINE_HASHTABLE(name, bits)						\
- 	struct hlist_head name[1 << (bits)] =					\
- 			{ [0 ... ((1 << (bits)) - 1)] = HLIST_HEAD_INIT }
++/* Are two types/vars the same type (ignoring qualifiers)? */
++#ifndef __same_type
++# define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
++#endif
++
+ #ifdef __ANDROID__
+ /*
+  * FIXME: Big hammer to get rid of tons of:
 -- 
 2.17.1
