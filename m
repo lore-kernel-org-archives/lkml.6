@@ -1,126 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751091AbeFCHvK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 03:51:10 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34240 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750847AbeFCHvI (ORCPT
+        id S1751163AbeFCH6m (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 03:58:42 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:38735 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbeFCH6k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 03:51:08 -0400
-X-Google-Smtp-Source: ADUXVKJKabXtWcMgQFlUrH7pqnVBSco2c26p/xx3KzI9Tny73cTSTfRGP+93ljLo3gCgziU5G5L8VYxyifuG5Ll9IFY=
+        Sun, 3 Jun 2018 03:58:40 -0400
+X-Google-Smtp-Source: ADUXVKIbIEBhKJBHucho2MejxUQlPfv6A+kJKyjoQOkU2cb4Lo+Xj+yJQE7c4rPE2V9E3zWAMkR4vboaa6czGQJO/gk=
 MIME-Version: 1.0
-In-Reply-To: <20180603062330.GA153988@joelaf.mtv.corp.google.com>
-References: <1527818589-13476-1-git-send-email-byungchul.park@lge.com>
- <20180603035848.GA76941@joelaf.mtv.corp.google.com> <CANrsvRNeMc8JppnP53ordMkzw+HDdPn0VsiF0j3YdWbQe1+sUg@mail.gmail.com>
- <20180603062330.GA153988@joelaf.mtv.corp.google.com>
-From: Byungchul Park <max.byungchul.park@gmail.com>
-Date: Sun, 3 Jun 2018 16:51:06 +0900
-Message-ID: <CANrsvRM+b+Ei_GAtLERFtN7QJN3Au3grc_asfT=pOY0g4rTFWQ@mail.gmail.com>
-Subject: Re: [PATCH] rcu: Check the range of jiffies_till_{first,next}_fqs
- when setting them
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>, josh@joshtriplett.org,
-        rostedt@goodmis.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        kernel-team@android.com
+In-Reply-To: <152791812599.257724.10989340037255897378.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152791788214.257724.13044360353832574147.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <152791812599.257724.10989340037255897378.stgit@bhelgaas-glaptop.roam.corp.google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sun, 3 Jun 2018 09:58:39 +0200
+X-Google-Sender-Auth: 04EZS6cUXr6hmiCRgzj3yBPUf-4
+Message-ID: <CAJZ5v0jq5D06ezuOt2o18HL9bmTurbL+gujo=PynWyHuMCswag@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] PCI: shpchp: Use dev_printk() for OSHP-related messages
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lukas Wunner <lukas@wunner.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 3, 2018 at 3:23 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Sun, Jun 03, 2018 at 02:38:04PM +0900, Byungchul Park wrote:
->> On Sun, Jun 3, 2018 at 12:58 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
->> > On Fri, Jun 01, 2018 at 11:03:09AM +0900, Byungchul Park wrote:
->> >> Currently, the range of jiffies_till_{first,next}_fqs are checked and
->> >> adjusted on and on in the loop of rcu_gp_kthread on runtime.
->> >>
->> >> However, it's enough to check them only when setting them, not every
->> >> time in the loop. So make them handled on a setting time via sysfs.
->> >>
->> >> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
->> >> ---
->> >>  kernel/rcu/tree.c | 45 ++++++++++++++++++++++++++++++++-------------
->> >>  1 file changed, 32 insertions(+), 13 deletions(-)
->> >>
->> >> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
->> >> index 4e96761..eb54d7d 100644
->> >> --- a/kernel/rcu/tree.c
->> >> +++ b/kernel/rcu/tree.c
->> >> @@ -518,8 +518,38 @@ void rcu_all_qs(void)
->> >>  static ulong jiffies_till_next_fqs = ULONG_MAX;
->> >>  static bool rcu_kick_kthreads;
->> >>
->> >> -module_param(jiffies_till_first_fqs, ulong, 0644);
->> >> -module_param(jiffies_till_next_fqs, ulong, 0644);
->> >> +static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
->> >> +{
->> >> +     ulong j;
->> >> +     int ret = kstrtoul(val, 0, &j);
->> >> +
->> >> +     if (!ret)
->> >> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : j);
->> >> +     return ret;
->> >> +}
->> >> +
->> >> +static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param *kp)
->> >> +{
->> >> +     ulong j;
->> >> +     int ret = kstrtoul(val, 0, &j);
->> >> +
->> >> +     if (!ret)
->> >> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : (j ?: 1));
->> >> +     return ret;
->> >> +}
->> >
->> > Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> >
->> > Also, can we not combine the 2 param_set_ handlers as well?
->> >
->> > Only thing we would be giving up is that jiffies_till_first_fqs = 0 wouldn't
->> > be allowed (if we go with the param_set_next handler to be the common one)
->> > but don't think that's a useful/valid usecase since jiffies_till_first_fqs is
->> > set to a sane non-0 value anyway at boot up because of rcu_init_geometry
->> > anyway.. Thoughts?
->>
->> Excuse me. Which code in rcu_init_geometry() makes jiffies_till_first_fqs
->> be a non-zero in case called with jiffies_till_first_fqs == 0?
+On Sat, Jun 2, 2018 at 7:42 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 >
-> What do you mean? I think you misunderstood. I didn't say value of 0 is being
-> handled at boot up. What I said is its initialized to something sane that's
-> non-zero:
+> Use dev_printk() for messages related to requesting control of SHPC hotplug
+> via the OSHP method.
 >
-> If you see, jiffies_till_first_fqs is assigned to ULONG_MAX at compile time:
-> static ulong jiffies_till_first_fqs = ULONG_MAX;
->
-> Then in rcu_init_geometry, we have:
->         d = RCU_JIFFIES_TILL_FORCE_QS + nr_cpu_ids / RCU_JIFFIES_FQS_DIV;
->         if (jiffies_till_first_fqs == ULONG_MAX)
->                         jiffies_till_first_fqs = d;
->
-> On my system, jiffies_till_first_fqs is assigned to 3 because of this at
-> boot.
->
->> Furthermore, what if we want to change the value through sysfs to zero
->> on runtime?
->
-> My patch was just a suggestion. I didn't know if anyone would want to force
-> it to 0 or not and was wondering what the value in doing so was at the cost
-> of adding one more function to handle it. It basically says if you set to 0,
-> that you never want to wait for a timeout before forcing a qs for the first
-> time? Then why are we calling swait_event_idle_timeout anyway? Wouldn't a
-> saner timeout be something not zero?
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-I'm sorry I tried but don't understand your point :(
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Did you happen to read the following?
-
-https://lkml.org/lkml/2018/5/29/99
-
-If yes, it would be appreciated if you let me know what I'm missing.
-
--- 
-Thanks,
-Byungchul
+> ---
+>  drivers/pci/hotplug/acpi_pcihp.c |   13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
+> index 7cc50cfef9c6..597d22aeefc1 100644
+> --- a/drivers/pci/hotplug/acpi_pcihp.c
+> +++ b/drivers/pci/hotplug/acpi_pcihp.c
+> @@ -96,7 +96,7 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+>         if (!handle) {
+>                 /*
+>                  * This hotplug controller was not listed in the ACPI name
+> -                * space at all. Try to get acpi handle of parent pci bus.
+> +                * space at all. Try to get ACPI handle of parent PCI bus.
+>                  */
+>                 struct pci_bus *pbus;
+>                 for (pbus = pdev->bus; pbus; pbus = pbus->parent) {
+> @@ -108,8 +108,8 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+>
+>         while (handle) {
+>                 acpi_get_name(handle, ACPI_FULL_PATHNAME, &string);
+> -               dbg("Trying to get hotplug control for %s\n",
+> -                   (char *)string.pointer);
+> +               pci_info(pdev, "Requesting control of SHPC hotplug via OSHP (%s)\n",
+> +                        (char *)string.pointer);
+>                 status = acpi_run_oshp(handle);
+>                 if (ACPI_SUCCESS(status))
+>                         goto got_one;
+> @@ -121,13 +121,12 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+>                         break;
+>         }
+>  no_control:
+> -       dbg("Cannot get control of hotplug hardware for pci %s\n",
+> -           pci_name(pdev));
+> +       pci_info(pdev, "Cannot get control of SHPC hotplug\n");
+>         kfree(string.pointer);
+>         return -ENODEV;
+>  got_one:
+> -       dbg("Gained control for hotplug HW for pci %s (%s)\n",
+> -           pci_name(pdev), (char *)string.pointer);
+> +       pci_info(pdev, "Gained control of SHPC hotplug (%s)\n",
+> +                (char *)string.pointer);
+>         kfree(string.pointer);
+>         return 0;
+>  }
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
