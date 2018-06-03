@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751748AbeFCM2J (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:28:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54564 "EHLO mail.kernel.org"
+        id S1752058AbeFCMco (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:32:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751674AbeFCM2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:28:04 -0400
+        id S1751678AbeFCM2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:28:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+Cc: Jiri Olsa <jolsa@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 14/29] tools include uapi: Grab copies of stat.h and fcntl.h
-Date: Sun,  3 Jun 2018 14:26:37 +0200
-Message-Id: <20180603122652.17453-15-gregkh@linuxfoundation.org>
+Subject: [PATCH 13/29] perf tools: Move headers check into bash script
+Date: Sun,  3 Jun 2018 14:26:36 +0200
+Message-Id: <20180603122652.17453-14-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
@@ -23,331 +23,208 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 67ef28794d7e30f33936d655f2951e8dcae7cd5a upstream.
+commit aeafd623f866c429307e3a4a39998f5f06b4f00e upstream.
 
-We will need it to build tools/perf/trace/beauty/statx.h.
+To make it nicer and easily maintainable.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+Also moving the check into fixdep sub make, so its output is not
+scattered around the build output.
+
+Removing extra $$ from mman*.h checks.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-nin41ve2fa63lrfbdr6x57yr@git.kernel.org
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Link: http://lkml.kernel.org/r/1481030331-31944-5-git-send-email-jolsa@kernel.org
+[ Use /bin/sh, and 'function check() {' -> 'check () {' to make it work with busybox, in Alpine Linux, for instance ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/include/linux/types.h      |   1 +
- tools/include/uapi/linux/fcntl.h |  72 +++++++++++++
- tools/include/uapi/linux/stat.h  | 176 +++++++++++++++++++++++++++++++
- tools/perf/MANIFEST              |   2 +
- tools/perf/check-headers.sh      |   2 +
- 5 files changed, 253 insertions(+)
- create mode 100644 tools/include/uapi/linux/fcntl.h
- create mode 100644 tools/include/uapi/linux/stat.h
+ tools/perf/Makefile.perf    | 94 +------------------------------------
+ tools/perf/check-headers.sh | 59 +++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 93 deletions(-)
+ create mode 100644 tools/perf/check-headers.sh
 
-diff --git a/tools/include/linux/types.h b/tools/include/linux/types.h
-index c24b3e3ae296..77a28a26a670 100644
---- a/tools/include/linux/types.h
-+++ b/tools/include/linux/types.h
-@@ -7,6 +7,7 @@
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 7dde2618d677..ad3726c5754d 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -202,6 +202,7 @@ goals := $(filter-out all sub-make, $(MAKECMDGOALS))
+ $(goals) all: sub-make
  
- #define __SANE_USERSPACE_TYPES__	/* For PPC64, to get LL64 types */
- #include <asm/types.h>
-+#include <asm/posix_types.h>
+ sub-make: fixdep
++	@./check-headers.sh
+ 	$(Q)$(MAKE) FIXDEP=1 -f Makefile.perf $(goals)
  
- struct page;
- struct kmem_cache;
-diff --git a/tools/include/uapi/linux/fcntl.h b/tools/include/uapi/linux/fcntl.h
-new file mode 100644
-index 000000000000..813afd6eee71
---- /dev/null
-+++ b/tools/include/uapi/linux/fcntl.h
-@@ -0,0 +1,72 @@
-+#ifndef _UAPI_LINUX_FCNTL_H
-+#define _UAPI_LINUX_FCNTL_H
-+
-+#include <asm/fcntl.h>
-+
-+#define F_SETLEASE	(F_LINUX_SPECIFIC_BASE + 0)
-+#define F_GETLEASE	(F_LINUX_SPECIFIC_BASE + 1)
-+
-+/*
-+ * Cancel a blocking posix lock; internal use only until we expose an
-+ * asynchronous lock api to userspace:
-+ */
-+#define F_CANCELLK	(F_LINUX_SPECIFIC_BASE + 5)
-+
-+/* Create a file descriptor with FD_CLOEXEC set. */
-+#define F_DUPFD_CLOEXEC	(F_LINUX_SPECIFIC_BASE + 6)
-+
-+/*
-+ * Request nofications on a directory.
-+ * See below for events that may be notified.
-+ */
-+#define F_NOTIFY	(F_LINUX_SPECIFIC_BASE+2)
-+
-+/*
-+ * Set and get of pipe page size array
-+ */
-+#define F_SETPIPE_SZ	(F_LINUX_SPECIFIC_BASE + 7)
-+#define F_GETPIPE_SZ	(F_LINUX_SPECIFIC_BASE + 8)
-+
-+/*
-+ * Set/Get seals
-+ */
-+#define F_ADD_SEALS	(F_LINUX_SPECIFIC_BASE + 9)
-+#define F_GET_SEALS	(F_LINUX_SPECIFIC_BASE + 10)
-+
-+/*
-+ * Types of seals
-+ */
-+#define F_SEAL_SEAL	0x0001	/* prevent further seals from being set */
-+#define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
-+#define F_SEAL_GROW	0x0004	/* prevent file from growing */
-+#define F_SEAL_WRITE	0x0008	/* prevent writes */
-+/* (1U << 31) is reserved for signed error codes */
-+
-+/*
-+ * Types of directory notifications that may be requested.
-+ */
-+#define DN_ACCESS	0x00000001	/* File accessed */
-+#define DN_MODIFY	0x00000002	/* File modified */
-+#define DN_CREATE	0x00000004	/* File created */
-+#define DN_DELETE	0x00000008	/* File removed */
-+#define DN_RENAME	0x00000010	/* File renamed */
-+#define DN_ATTRIB	0x00000020	/* File changed attibutes */
-+#define DN_MULTISHOT	0x80000000	/* Don't remove notifier */
-+
-+#define AT_FDCWD		-100    /* Special value used to indicate
-+                                           openat should use the current
-+                                           working directory. */
-+#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
-+#define AT_REMOVEDIR		0x200   /* Remove directory instead of
-+                                           unlinking file.  */
-+#define AT_SYMLINK_FOLLOW	0x400   /* Follow symbolic links.  */
-+#define AT_NO_AUTOMOUNT		0x800	/* Suppress terminal automount traversal */
-+#define AT_EMPTY_PATH		0x1000	/* Allow empty relative pathname */
-+
-+#define AT_STATX_SYNC_TYPE	0x6000	/* Type of synchronisation required from statx() */
-+#define AT_STATX_SYNC_AS_STAT	0x0000	/* - Do whatever stat() does */
-+#define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
-+#define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
-+
-+
-+#endif /* _UAPI_LINUX_FCNTL_H */
-diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
-new file mode 100644
-index 000000000000..51a6b86e3700
---- /dev/null
-+++ b/tools/include/uapi/linux/stat.h
-@@ -0,0 +1,176 @@
-+#ifndef _UAPI_LINUX_STAT_H
-+#define _UAPI_LINUX_STAT_H
-+
-+#include <linux/types.h>
-+
-+#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ < 2)
-+
-+#define S_IFMT  00170000
-+#define S_IFSOCK 0140000
-+#define S_IFLNK	 0120000
-+#define S_IFREG  0100000
-+#define S_IFBLK  0060000
-+#define S_IFDIR  0040000
-+#define S_IFCHR  0020000
-+#define S_IFIFO  0010000
-+#define S_ISUID  0004000
-+#define S_ISGID  0002000
-+#define S_ISVTX  0001000
-+
-+#define S_ISLNK(m)	(((m) & S_IFMT) == S_IFLNK)
-+#define S_ISREG(m)	(((m) & S_IFMT) == S_IFREG)
-+#define S_ISDIR(m)	(((m) & S_IFMT) == S_IFDIR)
-+#define S_ISCHR(m)	(((m) & S_IFMT) == S_IFCHR)
-+#define S_ISBLK(m)	(((m) & S_IFMT) == S_IFBLK)
-+#define S_ISFIFO(m)	(((m) & S_IFMT) == S_IFIFO)
-+#define S_ISSOCK(m)	(((m) & S_IFMT) == S_IFSOCK)
-+
-+#define S_IRWXU 00700
-+#define S_IRUSR 00400
-+#define S_IWUSR 00200
-+#define S_IXUSR 00100
-+
-+#define S_IRWXG 00070
-+#define S_IRGRP 00040
-+#define S_IWGRP 00020
-+#define S_IXGRP 00010
-+
-+#define S_IRWXO 00007
-+#define S_IROTH 00004
-+#define S_IWOTH 00002
-+#define S_IXOTH 00001
-+
-+#endif
-+
-+/*
-+ * Timestamp structure for the timestamps in struct statx.
-+ *
-+ * tv_sec holds the number of seconds before (negative) or after (positive)
-+ * 00:00:00 1st January 1970 UTC.
-+ *
-+ * tv_nsec holds a number of nanoseconds before (0..-999,999,999 if tv_sec is
-+ * negative) or after (0..999,999,999 if tv_sec is positive) the tv_sec time.
-+ *
-+ * Note that if both tv_sec and tv_nsec are non-zero, then the two values must
-+ * either be both positive or both negative.
-+ *
-+ * __reserved is held in case we need a yet finer resolution.
-+ */
-+struct statx_timestamp {
-+	__s64	tv_sec;
-+	__s32	tv_nsec;
-+	__s32	__reserved;
-+};
-+
-+/*
-+ * Structures for the extended file attribute retrieval system call
-+ * (statx()).
-+ *
-+ * The caller passes a mask of what they're specifically interested in as a
-+ * parameter to statx().  What statx() actually got will be indicated in
-+ * st_mask upon return.
-+ *
-+ * For each bit in the mask argument:
-+ *
-+ * - if the datum is not supported:
-+ *
-+ *   - the bit will be cleared, and
-+ *
-+ *   - the datum will be set to an appropriate fabricated value if one is
-+ *     available (eg. CIFS can take a default uid and gid), otherwise
-+ *
-+ *   - the field will be cleared;
-+ *
-+ * - otherwise, if explicitly requested:
-+ *
-+ *   - the datum will be synchronised to the server if AT_STATX_FORCE_SYNC is
-+ *     set or if the datum is considered out of date, and
-+ *
-+ *   - the field will be filled in and the bit will be set;
-+ *
-+ * - otherwise, if not requested, but available in approximate form without any
-+ *   effort, it will be filled in anyway, and the bit will be set upon return
-+ *   (it might not be up to date, however, and no attempt will be made to
-+ *   synchronise the internal state first);
-+ *
-+ * - otherwise the field and the bit will be cleared before returning.
-+ *
-+ * Items in STATX_BASIC_STATS may be marked unavailable on return, but they
-+ * will have values installed for compatibility purposes so that stat() and
-+ * co. can be emulated in userspace.
-+ */
-+struct statx {
-+	/* 0x00 */
-+	__u32	stx_mask;	/* What results were written [uncond] */
-+	__u32	stx_blksize;	/* Preferred general I/O size [uncond] */
-+	__u64	stx_attributes;	/* Flags conveying information about the file [uncond] */
-+	/* 0x10 */
-+	__u32	stx_nlink;	/* Number of hard links */
-+	__u32	stx_uid;	/* User ID of owner */
-+	__u32	stx_gid;	/* Group ID of owner */
-+	__u16	stx_mode;	/* File mode */
-+	__u16	__spare0[1];
-+	/* 0x20 */
-+	__u64	stx_ino;	/* Inode number */
-+	__u64	stx_size;	/* File size */
-+	__u64	stx_blocks;	/* Number of 512-byte blocks allocated */
-+	__u64	__spare1[1];
-+	/* 0x40 */
-+	struct statx_timestamp	stx_atime;	/* Last access time */
-+	struct statx_timestamp	stx_btime;	/* File creation time */
-+	struct statx_timestamp	stx_ctime;	/* Last attribute change time */
-+	struct statx_timestamp	stx_mtime;	/* Last data modification time */
-+	/* 0x80 */
-+	__u32	stx_rdev_major;	/* Device ID of special file [if bdev/cdev] */
-+	__u32	stx_rdev_minor;
-+	__u32	stx_dev_major;	/* ID of device containing file [uncond] */
-+	__u32	stx_dev_minor;
-+	/* 0x90 */
-+	__u64	__spare2[14];	/* Spare space for future expansion */
-+	/* 0x100 */
-+};
-+
-+/*
-+ * Flags to be stx_mask
-+ *
-+ * Query request/result mask for statx() and struct statx::stx_mask.
-+ *
-+ * These bits should be set in the mask argument of statx() to request
-+ * particular items when calling statx().
-+ */
-+#define STATX_TYPE		0x00000001U	/* Want/got stx_mode & S_IFMT */
-+#define STATX_MODE		0x00000002U	/* Want/got stx_mode & ~S_IFMT */
-+#define STATX_NLINK		0x00000004U	/* Want/got stx_nlink */
-+#define STATX_UID		0x00000008U	/* Want/got stx_uid */
-+#define STATX_GID		0x00000010U	/* Want/got stx_gid */
-+#define STATX_ATIME		0x00000020U	/* Want/got stx_atime */
-+#define STATX_MTIME		0x00000040U	/* Want/got stx_mtime */
-+#define STATX_CTIME		0x00000080U	/* Want/got stx_ctime */
-+#define STATX_INO		0x00000100U	/* Want/got stx_ino */
-+#define STATX_SIZE		0x00000200U	/* Want/got stx_size */
-+#define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
-+#define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
-+#define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
-+#define STATX_ALL		0x00000fffU	/* All currently supported flags */
-+
-+/*
-+ * Attributes to be found in stx_attributes
-+ *
-+ * These give information about the features or the state of a file that might
-+ * be of use to ordinary userspace programs such as GUIs or ls rather than
-+ * specialised tools.
-+ *
-+ * Note that the flags marked [I] correspond to generic FS_IOC_FLAGS
-+ * semantically.  Where possible, the numerical value is picked to correspond
-+ * also.
-+ */
-+#define STATX_ATTR_COMPRESSED		0x00000004 /* [I] File is compressed by the fs */
-+#define STATX_ATTR_IMMUTABLE		0x00000010 /* [I] File is marked immutable */
-+#define STATX_ATTR_APPEND		0x00000020 /* [I] File is append-only */
-+#define STATX_ATTR_NODUMP		0x00000040 /* [I] File is not to be dumped */
-+#define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
-+
-+#define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
-+
-+
-+#endif /* _UAPI_LINUX_STAT_H */
-diff --git a/tools/perf/MANIFEST b/tools/perf/MANIFEST
-index 7ea8a3ba097b..776f6b23ea2e 100644
---- a/tools/perf/MANIFEST
-+++ b/tools/perf/MANIFEST
-@@ -72,9 +72,11 @@ tools/include/uapi/asm-generic/mman-common.h
- tools/include/uapi/asm-generic/mman.h
- tools/include/uapi/linux/bpf.h
- tools/include/uapi/linux/bpf_common.h
-+tools/include/uapi/linux/fcntl.h
- tools/include/uapi/linux/hw_breakpoint.h
- tools/include/uapi/linux/mman.h
- tools/include/uapi/linux/perf_event.h
-+tools/include/uapi/linux/stat.h
- tools/include/linux/poison.h
- tools/include/linux/rbtree.h
- tools/include/linux/rbtree_augmented.h
+ else # force_fixdep
+@@ -387,99 +388,6 @@ export JEVENTS
+ build := -f $(srctree)/tools/build/Makefile.build dir=. obj
+ 
+ $(PERF_IN): prepare FORCE
+-	@(test -f ../../include/uapi/linux/perf_event.h && ( \
+-        (diff -B ../include/uapi/linux/perf_event.h ../../include/uapi/linux/perf_event.h >/dev/null) \
+-        || echo "Warning: tools/include/uapi/linux/perf_event.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/linux/hash.h && ( \
+-        (diff -B ../include/linux/hash.h ../../include/linux/hash.h >/dev/null) \
+-        || echo "Warning: tools/include/linux/hash.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/linux/hw_breakpoint.h && ( \
+-        (diff -B ../include/uapi/linux/hw_breakpoint.h ../../include/uapi/linux/hw_breakpoint.h >/dev/null) \
+-        || echo "Warning: tools/include/uapi/linux/hw_breakpoint.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/asm/disabled-features.h && ( \
+-        (diff -B ../arch/x86/include/asm/disabled-features.h ../../arch/x86/include/asm/disabled-features.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/asm/disabled-features.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/asm/required-features.h && ( \
+-        (diff -B ../arch/x86/include/asm/required-features.h ../../arch/x86/include/asm/required-features.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/asm/required-features.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/asm/cpufeatures.h && ( \
+-        (diff -B ../arch/x86/include/asm/cpufeatures.h ../../arch/x86/include/asm/cpufeatures.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/asm/cpufeatures.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/lib/memcpy_64.S && ( \
+-        (diff -B ../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memcpy_64.S >/dev/null) \
+-        || echo "Warning: tools/arch/x86/lib/memcpy_64.S differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/lib/memset_64.S && ( \
+-        (diff -B ../arch/x86/lib/memset_64.S ../../arch/x86/lib/memset_64.S >/dev/null) \
+-        || echo "Warning: tools/arch/x86/lib/memset_64.S differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/arm/include/uapi/asm/perf_regs.h ../../arch/arm/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm64/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/arm64/include/uapi/asm/perf_regs.h ../../arch/arm64/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm64/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/powerpc/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/powerpc/include/uapi/asm/perf_regs.h ../../arch/powerpc/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/powerpc/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/perf_regs.h ../../arch/x86/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/kvm.h ../../arch/x86/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/kvm_perf.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/kvm_perf.h ../../arch/x86/include/uapi/asm/kvm_perf.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/kvm_perf.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/svm.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/svm.h ../../arch/x86/include/uapi/asm/svm.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/svm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/vmx.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/vmx.h ../../arch/x86/include/uapi/asm/vmx.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/vmx.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/powerpc/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/powerpc/include/uapi/asm/kvm.h ../../arch/powerpc/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/powerpc/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/s390/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/s390/include/uapi/asm/kvm.h ../../arch/s390/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/s390/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/s390/include/uapi/asm/kvm_perf.h && ( \
+-        (diff -B ../arch/s390/include/uapi/asm/kvm_perf.h ../../arch/s390/include/uapi/asm/kvm_perf.h >/dev/null) \
+-        || echo "Warning: tools/arch/s390/include/uapi/asm/kvm_perf.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/s390/include/uapi/asm/sie.h && ( \
+-        (diff -B ../arch/s390/include/uapi/asm/sie.h ../../arch/s390/include/uapi/asm/sie.h >/dev/null) \
+-        || echo "Warning: tools/arch/s390/include/uapi/asm/sie.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/arm/include/uapi/asm/kvm.h ../../arch/arm/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm64/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/arm64/include/uapi/asm/kvm.h ../../arch/arm64/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm64/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/arch_hweight.h && ( \
+-        (diff -B ../include/asm-generic/bitops/arch_hweight.h ../../include/asm-generic/bitops/arch_hweight.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/arch_hweight.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/const_hweight.h && ( \
+-        (diff -B ../include/asm-generic/bitops/const_hweight.h ../../include/asm-generic/bitops/const_hweight.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/const_hweight.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/__fls.h && ( \
+-        (diff -B ../include/asm-generic/bitops/__fls.h ../../include/asm-generic/bitops/__fls.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/__fls.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/fls.h && ( \
+-        (diff -B ../include/asm-generic/bitops/fls.h ../../include/asm-generic/bitops/fls.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/fls.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/fls64.h && ( \
+-        (diff -B ../include/asm-generic/bitops/fls64.h ../../include/asm-generic/bitops/fls64.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/fls64.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/linux/coresight-pmu.h && ( \
+-	(diff -B ../include/linux/coresight-pmu.h ../../include/linux/coresight-pmu.h >/dev/null) \
+-	|| echo "Warning: tools/include/linux/coresight-pmu.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/asm-generic/mman-common.h && ( \
+-	(diff -B ../include/uapi/asm-generic/mman-common.h ../../include/uapi/asm-generic/mman-common.h >/dev/null) \
+-	|| echo "Warning: tools/include/uapi/asm-generic/mman-common.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/asm-generic/mman.h && ( \
+-	(diff -B -I "^#include <\(uapi/\)*asm-generic/mman-common.h>$$" ../include/uapi/asm-generic/mman.h ../../include/uapi/asm-generic/mman.h >/dev/null) \
+-	|| echo "Warning: tools/include/uapi/asm-generic/mman.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/linux/mman.h && ( \
+-	(diff -B -I "^#include <\(uapi/\)*asm/mman.h>$$" ../include/uapi/linux/mman.h ../../include/uapi/linux/mman.h >/dev/null) \
+-	|| echo "Warning: tools/include/uapi/linux/mman.h differs from kernel" >&2 )) || true
+ 	$(Q)$(MAKE) $(build)=perf
+ 
+ $(JEVENTS_IN): FORCE
 diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index c747bfd7f14d..83fe2202382e 100644
---- a/tools/perf/check-headers.sh
+new file mode 100644
+index 000000000000..c747bfd7f14d
+--- /dev/null
 +++ b/tools/perf/check-headers.sh
-@@ -1,7 +1,9 @@
- #!/bin/sh
- 
- HEADERS='
-+include/uapi/linux/fcntl.h
- include/uapi/linux/perf_event.h
-+include/uapi/linux/stat.h
- include/linux/hash.h
- include/uapi/linux/hw_breakpoint.h
- arch/x86/include/asm/disabled-features.h
+@@ -0,0 +1,59 @@
++#!/bin/sh
++
++HEADERS='
++include/uapi/linux/perf_event.h
++include/linux/hash.h
++include/uapi/linux/hw_breakpoint.h
++arch/x86/include/asm/disabled-features.h
++arch/x86/include/asm/required-features.h
++arch/x86/include/asm/cpufeatures.h
++arch/arm/include/uapi/asm/perf_regs.h
++arch/arm64/include/uapi/asm/perf_regs.h
++arch/powerpc/include/uapi/asm/perf_regs.h
++arch/x86/include/uapi/asm/perf_regs.h
++arch/x86/include/uapi/asm/kvm.h
++arch/x86/include/uapi/asm/kvm_perf.h
++arch/x86/include/uapi/asm/svm.h
++arch/x86/include/uapi/asm/vmx.h
++arch/powerpc/include/uapi/asm/kvm.h
++arch/s390/include/uapi/asm/kvm.h
++arch/s390/include/uapi/asm/kvm_perf.h
++arch/s390/include/uapi/asm/sie.h
++arch/arm/include/uapi/asm/kvm.h
++arch/arm64/include/uapi/asm/kvm.h
++include/asm-generic/bitops/arch_hweight.h
++include/asm-generic/bitops/const_hweight.h
++include/asm-generic/bitops/__fls.h
++include/asm-generic/bitops/fls.h
++include/asm-generic/bitops/fls64.h
++include/linux/coresight-pmu.h
++include/uapi/asm-generic/mman-common.h
++'
++
++check () {
++  file=$1
++  opts=
++
++  shift
++  while [ -n "$*" ]; do
++    opts="$opts \"$1\""
++    shift
++  done
++
++  cmd="diff $opts ../$file ../../$file > /dev/null"
++
++  test -f ../../$file &&
++  eval $cmd || echo "Warning: $file differs from kernel" >&2
++}
++
++
++# simple diff check
++for i in $HEADERS; do
++  check $i -B
++done
++
++# diff with extra ignore lines
++check arch/x86/lib/memcpy_64.S        -B -I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"
++check arch/x86/lib/memset_64.S        -B -I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"
++check include/uapi/asm-generic/mman.h -B -I "^#include <\(uapi/\)*asm-generic/mman-common.h>"
++check include/uapi/linux/mman.h       -B -I "^#include <\(uapi/\)*asm/mman.h>"
 -- 
 2.17.1
