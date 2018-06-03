@@ -1,97 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751622AbeFCWiC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 18:38:02 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:40449 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751201AbeFCWiB (ORCPT
+        id S1751750AbeFCWiY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 18:38:24 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35729 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751666AbeFCWiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 18:38:01 -0400
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-X-Original-SENDERIP: 10.177.226.38
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-From: Hoeun Ryu <hoeun.ryu@lge.com.com>
-To: Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc: Hoeun Ryu <hoeun.ryu@lge.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2]  printk: make printk_safe_flush safe in NMI context by skipping flushing
-Date: Mon,  4 Jun 2018 07:37:34 +0900
-Message-Id: <1528065471-22830-1-git-send-email-hoeun.ryu@lge.com.com>
-X-Mailer: git-send-email 2.1.4
+        Sun, 3 Jun 2018 18:38:20 -0400
+X-Google-Smtp-Source: ADUXVKLwGsTMGy/ZLSQWBSGd35up95nzI9usSaviqOEGPdMtlSmLRe29Lic+Df2vhreuYkgsJ2y9Ew==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Tegra20 External Memory Controller driver
+Date: Mon,  4 Jun 2018 01:36:49 +0300
+Message-Id: <20180603223654.23324-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hoeun Ryu <hoeun.ryu@lge.com>
+Hello,
 
- Make printk_safe_flush() safe in NMI context.
-nmi_trigger_cpumask_backtrace() can be called in NMI context. For example the
-function is called in watchdog_overflow_callback() if the flag of hardlockup
-backtrace (sysctl_hardlockup_all_cpu_backtrace) is true and
-watchdog_overflow_callback() function is called in NMI context on some
-architectures.
- Calling printk_safe_flush() in nmi_trigger_cpumask_backtrace() eventually tries
-to lock logbuf_lock in vprintk_emit() that might be already be part
-of another non-nmi context on the same CPU or a soft- or hard-lockup on another
-CPU. The example of deadlock can be
+Couple years ago the Tegra20 EMC driver was removed from the kernel
+due to incompatible changes in the Tegra's clock driver. This patchset
+introduces a modernized EMC driver. Currently the sole purpose of the
+driver is to initialize DRAM frequency to maximum rate during of the
+kernels boot-up. Later we may consider implementing dynamic memory
+frequency scaling, utilizing functionality provided by this driver.
 
- CPU0
- local_irq_save();
- for (;;)
-   req = blk_peek_request(q);
-   if (unlikely(!scsi_device_online(sdev)))
-     printk()
-       vprintk_emit()
-         console_unlock()
-           logbuf_lock_irqsave()
-             slow-serial-console-write()        // close to watchdog threshold
-               watchdog_overflow_callback()
-                 trigger_allbutself_cpu_backtrace()
-                   printk_safe_flush()
-                     vprintk_emit()
-                       logbuf_lock_irqsave()
-                       ^^^^ deadlock
+Changelog:
 
-and some other cases.
- This patch prevents a deadlock in printk_safe_flush() in NMI context. It makes
-sure that we continue and eventually call printk_safe_flush_on_panic() from panic()
-that has better chances to succeed.
- There is a risk that logbuf_lock was not part of a soft- or dead-lockup and we
-might just loose the messages. But then there is a high chance that irq_work will
-get called and the messages will get flushed the normal way.
+v2:
+	- Minor code cleanups like consistent use of writel_relaxed instead
+	  of non-relaxed version, reworded error messages, etc.
 
-Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Suggested-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
----
- v2: fix comments in commit message and code. no change in code itself.
+	- Factored out use_pllm_ud bit checking into a standalone patch for
+	  consistency.
 
- kernel/printk/printk_safe.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Dmitry Osipenko (5):
+  dt: bindings: tegra20-emc: Document interrupt property
+  ARM: dts: tegra20: Add interrupt to External Memory Controller
+  clk: tegra20: Turn EMC clock gate into divider
+  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+  memory: tegra: Introduce Tegra20 EMC driver
 
-diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
-index 3e3c200..3b5c660 100644
---- a/kernel/printk/printk_safe.c
-+++ b/kernel/printk/printk_safe.c
-@@ -254,6 +254,17 @@ void printk_safe_flush(void)
- {
- 	int cpu;
- 
-+	/*
-+	 * Just avoid a deadlock here.
-+	 * It makes sure that we continue and eventually call
-+	 * printk_safe_flush_on_panic() from panic() that has better chances to succeed.
-+	 * There is a risk that logbuf_lock was not part of a soft- or dead-lockup and
-+	 * we might just loose the messages. But then there is a high chance that
-+	 * irq_work will get called and the messages will get flushed the normal way.
-+	 */
-+	if (this_cpu_read(printk_context) & PRINTK_NMI_CONTEXT_MASK)
-+		return;
-+
- 	for_each_possible_cpu(cpu) {
- #ifdef CONFIG_PRINTK_NMI
- 		__printk_safe_flush(&per_cpu(nmi_print_seq, cpu).work);
+ .../bindings/arm/tegra/nvidia,tegra20-emc.txt |   2 +
+ arch/arm/boot/dts/tegra20.dtsi                |   1 +
+ drivers/clk/tegra/clk-tegra20.c               |  46 +-
+ drivers/memory/tegra/Kconfig                  |  10 +
+ drivers/memory/tegra/Makefile                 |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 586 ++++++++++++++++++
+ 6 files changed, 636 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
+
 -- 
-2.1.4
+2.17.0
