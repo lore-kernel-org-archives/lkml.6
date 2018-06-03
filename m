@@ -1,91 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751312AbeFCJYO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 05:24:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751013AbeFCJYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 05:24:12 -0400
-Date: Sun, 3 Jun 2018 11:23:49 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 4.14 2/4] powerpc/mm/slice: create header files dedicated
- to slices
-Message-ID: <20180603092349.GB10556@kroah.com>
-References: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
- <798b787d74d94b5d29f1c0279bad157b6b5df7ec.1527755908.git.christophe.leroy@c-s.fr>
- <20180602132107.GH31493@kroah.com>
- <f18dc860-6007-9955-8c73-25faf43097e8@c-s.fr>
- <20180603092145.GA10556@kroah.com>
+        id S1751219AbeFCJ1F (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 05:27:05 -0400
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:43520 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750810AbeFCJ1E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 05:27:04 -0400
+X-Google-Smtp-Source: ADUXVKLG6QuUJV1x0LensvkU/8fxtx3paHYcsxra18exNK0c9OJACWbyGPVcqVLvqMlkpy270A1eYCLMwwGeFwj+VXg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180603092145.GA10556@kroah.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180602175508.GC14870@amd>
+References: <CA+55aFwUqz9z1Rf4Wwr29W7DeKxQ67qKEW5xty+JPyCY3aNQ=A@mail.gmail.com>
+ <20180530111715.GA19410@amd> <CAPj87rOuoTM_EHDHkPrA_RE=2=az8jS+Xdcqgh1emBg4oEoRiA@mail.gmail.com>
+ <20180602175508.GC14870@amd>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Sun, 3 Jun 2018 10:27:02 +0100
+Message-ID: <CAPj87rMftLP-XOYTOoH+Niz35ipcmE3xoqUn4bmQas=_226QMg@mail.gmail.com>
+Subject: Re: Linux 4.17-rc7
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Dave Airlie <airlied@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 03, 2018 at 11:21:45AM +0200, Greg Kroah-Hartman wrote:
-> On Sat, Jun 02, 2018 at 10:55:31PM +0200, Christophe Leroy wrote:
-> > 
-> > 
-> > On 06/02/2018 03:21 PM, Greg Kroah-Hartman wrote:
-> > > On Thu, May 31, 2018 at 08:54:52AM +0000, Christophe Leroy wrote:
-> > > > [ Upstream commit a3286f05bc5a5bc7fc73a9783ec89de78fcd07f8 ]
-> > > > 
-> > > > In preparation for the following patch which will enhance 'slices'
-> > > > for supporting PPC32 in order to fix an issue on hugepages on 8xx,
-> > > > this patch takes out of page*.h all bits related to 'slices' and put
-> > > > them into newly created slice.h header files.
-> > > > While common parts go into asm/slice.h, subarch specific
-> > > > parts go into respective books3s/64/slice.c and nohash/64/slice.c
-> > > > 'slices'
-> > > > 
-> > > > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> > > > Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-> > > > Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> > > > ---
-> > > >   arch/powerpc/include/asm/book3s/64/slice.h | 27 ++++++++++++++
-> > > >   arch/powerpc/include/asm/nohash/64/slice.h | 12 ++++++
-> > > >   arch/powerpc/include/asm/page.h            |  1 +
-> > > >   arch/powerpc/include/asm/page_64.h         | 59 ------------------------------
-> > > >   arch/powerpc/include/asm/slice.h           | 40 ++++++++++++++++++++
-> > > >   5 files changed, 80 insertions(+), 59 deletions(-)
-> > > >   create mode 100644 arch/powerpc/include/asm/book3s/64/slice.h
-> > > >   create mode 100644 arch/powerpc/include/asm/nohash/64/slice.h
-> > > >   create mode 100644 arch/powerpc/include/asm/slice.h
-> > > 
-> > > This patch does not apply :(
-> > 
-> > I tried again, it applies well for me:
-> > 
-> > [root@localhost linux-stable]# git checkout v4.14.47 -b 4.14.47
-> > Checking out files: 100% (27111/27111), done.
-> > Switched to a new branch '4.14.47'
-> > [root@localhost linux-stable]# git am /root/Downloads/4.14-1-4-powerpc-mm-slice-Remove-intermediate-bitmap-copy.patch
-> > 
-> > Applying: powerpc/mm/slice: Remove intermediate bitmap copy
-> > Applying: powerpc/mm/slice: create header files dedicated to slices
-> > Applying: powerpc/mm/slice: Enhance for supporting PPC32
-> > Applying: powerpc/mm/slice: Fix hugepage allocation at hint address on 8xx
-> > [root@localhost linux-stable]#
-> > 
-> > > 
-> > > Can you fix this series up and resend the whole thing?
-> > 
-> > Is there any conflicting patch in the queue ?
-> > What should I rebase on ?
-> 
-> Ah, the problem is I was taking the upstream version of this patch, not
-> your backported one.  Next time be a bit more specific and say you
-> changed something here, otherwise I will always default to what is in
-> Linus's tree.
-> 
-> Let me go work on this again...
+Hi Pavel,
 
-Ok, that worked, all now queued up properly, sorry for the confusion.
+On 2 June 2018 at 18:55, Pavel Machek <pavel@ucw.cz> wrote:
+>> On 30 May 2018 at 12:17, Pavel Machek <pavel@ucw.cz> wrote:
+>> > Any chance to still get in this one?
+>> >
+>> > https://github.com/freedesktop/drm-misc/commit/2bc5ff0bdc00d81d719dad74589317a260d583ed
+>> >
+>> > ...it fixes display on Nokia N900, and display is rather important for
+>> > cellphone.
+>>
+>> The pull request was sent to Dave just yesterday:
+>> https://lists.freedesktop.org/archives/dri-devel/2018-May/178606.html
+>
+> Still nothing in the mainline. If there's no -rc8, time is running out
+> :-(.
 
-greg k-h
+https://lists.freedesktop.org/archives/dri-devel/2018-June/179000.html
+
+Cheers,
+Daniel
