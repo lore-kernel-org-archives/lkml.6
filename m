@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751684AbeFCXgG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 19:36:06 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:36217 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751354AbeFCXgD (ORCPT
+        id S1751580AbeFCXgF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 19:36:05 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:34351 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeFCXgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Jun 2018 19:36:03 -0400
-X-Google-Smtp-Source: ADUXVKJFXZs69llGFi5a8Y9ZdrH2hgLTuhpOzUSfRUP/GKirh/fSGSoYaAh60ZGXWSPEq2Mk2KF2CS1HeMOrOJOKXRCM9rE2kRf/
+X-Google-Smtp-Source: ADUXVKICESzXDdMz8hImBc19Kh0zQG5nbT61uVWiPsP0ssKlIobMnA88kEOy9AAeikr5/n9Fg9r3KSzVnjQYUGbbMdzIm/YOdHxR
 MIME-Version: 1.0
 Date: Sun, 03 Jun 2018 16:36:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b7be6e056dc547e8@google.com>
-Subject: KASAN: slab-out-of-bounds Read in skb_ensure_writable
-From: syzbot <syzbot+e5190cb881d8660fb1a3@syzkaller.appspotmail.com>
+Message-ID: <000000000000b2a7ea056dc54779@google.com>
+Subject: KASAN: slab-out-of-bounds Read in bpf_csum_update
+From: syzbot <syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com>
 To: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
@@ -29,28 +29,28 @@ syzbot found the following crash on:
 
 HEAD commit:    0512e0134582 Merge tag 'xfs-4.17-fixes-3' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14956af7800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17eb2d7b800000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=e5190cb881d8660fb1a3
+dashboard link: https://syzkaller.appspot.com/bug?extid=efae31b384d5badbd620
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=123d9d7b800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100329d7800000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=162c6def800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14fe3db7800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e5190cb881d8660fb1a3@syzkaller.appspotmail.com
+Reported-by: syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com
 
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 ==================================================================
-BUG: KASAN: slab-out-of-bounds in pskb_may_pull include/linux/skbuff.h:2104  
-[inline]
-BUG: KASAN: slab-out-of-bounds in skb_ensure_writable+0x554/0x620  
-net/core/skbuff.c:5101
-Read of size 4 at addr ffff8801aefc1780 by task syz-executor159/4509
+BUG: KASAN: slab-out-of-bounds in ____bpf_csum_update  
+net/core/filter.c:1679 [inline]
+BUG: KASAN: slab-out-of-bounds in bpf_csum_update+0xb4/0xc0  
+net/core/filter.c:1673
+Read of size 1 at addr ffff8801d9235b50 by task syz-executor507/4513
 
-CPU: 0 PID: 4509 Comm: syz-executor159 Not tainted 4.17.0-rc7+ #78
+CPU: 0 PID: 4513 Comm: syz-executor507 Not tainted 4.17.0-rc7+ #78
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -59,13 +59,9 @@ Call Trace:
   print_address_description+0x6c/0x20b mm/kasan/report.c:256
   kasan_report_error mm/kasan/report.c:354 [inline]
   kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  pskb_may_pull include/linux/skbuff.h:2104 [inline]
-  skb_ensure_writable+0x554/0x620 net/core/skbuff.c:5101
-  __bpf_try_make_writable net/core/filter.c:1419 [inline]
-  bpf_try_make_writable net/core/filter.c:1425 [inline]
-  ____bpf_l3_csum_replace net/core/filter.c:1546 [inline]
-  bpf_l3_csum_replace+0x8c/0x4d0 net/core/filter.c:1537
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  ____bpf_csum_update net/core/filter.c:1679 [inline]
+  bpf_csum_update+0xb4/0xc0 net/core/filter.c:1673
 
 Allocated by task 0:
 (stack is not available)
@@ -73,24 +69,24 @@ Allocated by task 0:
 Freed by task 0:
 (stack is not available)
 
-The buggy address belongs to the object at ffff8801aefc1680
+The buggy address belongs to the object at ffff8801d9235a40
   which belongs to the cache skbuff_head_cache of size 232
-The buggy address is located 24 bytes to the right of
-  232-byte region [ffff8801aefc1680, ffff8801aefc1768)
+The buggy address is located 40 bytes to the right of
+  232-byte region [ffff8801d9235a40, ffff8801d9235b28)
 The buggy address belongs to the page:
-page:ffffea0006bbf040 count:1 mapcount:0 mapping:ffff8801aefc1040 index:0x0
+page:ffffea0007648d40 count:1 mapcount:0 mapping:ffff8801d9235040 index:0x0
 flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801aefc1040 0000000000000000 000000010000000c
-raw: ffffea0006b61060 ffffea0006bd69e0 ffff8801d9bdd6c0 0000000000000000
+raw: 02fffc0000000100 ffff8801d9235040 0000000000000000 000000010000000c
+raw: ffffea00074360a0 ffff8801d944d848 ffff8801d9bdd6c0 0000000000000000
 page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffff8801aefc1680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801aefc1700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801aefc1780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                    ^
-  ffff8801aefc1800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801aefc1880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d9235a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d9235a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801d9235b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                                  ^
+  ffff8801d9235b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d9235c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
 ==================================================================
 
 
