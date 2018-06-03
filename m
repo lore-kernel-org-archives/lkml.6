@@ -1,101 +1,276 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751402AbeFCMsI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:48:08 -0400
-Received: from mail-ve1eur01on0048.outbound.protection.outlook.com ([104.47.1.48]:60398
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751057AbeFCMsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:48:06 -0400
-From: Anson Huang <anson.huang@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] clk: imx6q: remove clks_init_on array
-Thread-Topic: [PATCH 1/4] clk: imx6q: remove clks_init_on array
-Thread-Index: AQHT+ueX6hYt01LFM028YAG/S2bHiKROe18AgAABC1s=
-Date: Sun, 3 Jun 2018 12:48:03 +0000
-Message-ID: <2D554312-36F2-4781-899C-8D9F5BD20B46@nxp.com>
-References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>,<CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
-In-Reply-To: <CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com;
-x-originating-ip: [183.192.19.79]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1139;7:AgIUWo4CT2jTjHYActIgyh2e2Z7qsGJSL4/gl6ELge5pkFxQPdhzY4EzFuvY2T7xSZAld6xq0uGokjwAqMTgk7Mt3g7CswztS/F6+qXbI1CVjUbYA++z/iygdFNzB46qSki4MgXy8jkM1CEtD0KYDRtcwtwlrKtrT4ONY7FBqAZYKRGPZAFIwQLuJeQxX7T5yf6SQxPrODYCx9iHuE6TbDlW8brgmY0rqz037jAp29eFs0X2vg872V1vaO6q9Ymn
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1139;
-x-ms-traffictypediagnostic: AM3PR04MB1139:
-x-microsoft-antispam-prvs: <AM3PR04MB113930E332F8EB567A552D52F5600@AM3PR04MB1139.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1139;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1139;
-x-forefront-prvs: 069255B8B8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(396003)(39860400002)(39380400002)(189003)(199004)(229853002)(53546011)(6486002)(102836004)(66066001)(76176011)(97736004)(3846002)(2900100001)(26005)(186003)(478600001)(99286004)(86362001)(82746002)(83716003)(6506007)(6436002)(2616005)(446003)(476003)(11346002)(486006)(44832011)(81156014)(105586002)(81166006)(14454004)(5250100002)(8936002)(8676002)(3280700002)(3660700001)(68736007)(6116002)(2906002)(53936002)(4326008)(6512007)(39060400002)(5660300001)(25786009)(6246003)(36756003)(316002)(6916009)(33656002)(7736002)(305945005)(54906003)(1411001)(106356001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1139;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 2yRojYFoRCugvIBcy7nufvDnHrLtDdWzhmeNbMtVeXm+FoJwDkX181UU+40Bpx30eYC3EaWxjiwGEuapQBhaXVnhhYCBAbIzjxX3PW3aFHpfiufW0Gdsb7EHCQS95z5RAQwDLwHiHTy98vCyAhUw/6HVYi44zVeXcCnacddIszlEHDG5K4No9ztYyGbDsB9G
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751386AbeFCMtz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:49:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42616 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751057AbeFCMtx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:49:53 -0400
+Date: Sun, 3 Jun 2018 15:49:41 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: ufo19890607@gmail.com
+Cc: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, yuzhoujian <yuzhoujian@didichuxing.com>
+Subject: Re: [PATCH v7 2/2] Refactor part of the oom report in dump_header
+References: <1527940734-35161-1-git-send-email-ufo19890607@gmail.com>
+ <1527940734-35161-2-git-send-email-ufo19890607@gmail.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 2c89be88-3309-4960-49f1-08d5c9503f37
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c89be88-3309-4960-49f1-08d5c9503f37
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2018 12:48:03.7479
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1139
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1527940734-35161-2-git-send-email-ufo19890607@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18060312-0028-0000-0000-000002CC33F7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060312-0029-0000-0000-00002382B4A4
+Message-Id: <20180603124941.GA29497@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806030158
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w53CmEPx022058
 
-Hi, Fabio
-
->From Anson's iPhone 6
-
-
-> 在 2018年6月3日，20:44，Fabio Estevam <festevam@gmail.com> 写道：
+On Sat, Jun 02, 2018 at 07:58:52PM +0800, ufo19890607@gmail.com wrote:
+> From: yuzhoujian <yuzhoujian@didichuxing.com>
 > 
->> On Sun, Jun 3, 2018 at 12:00 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
->> Clock framework will enable those clocks registered
->> with CLK_IS_CRITICAL flag, so no need to have
->> clks_init_on array during clock initialization now.
->> 
->> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
->> ---
->> drivers/clk/imx/clk-imx6q.c | 14 ++------------
->> 1 file changed, 2 insertions(+), 12 deletions(-)
->> 
->> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
->> index b9ea703..8754c61 100644
->> --- a/drivers/clk/imx/clk-imx6q.c
->> +++ b/drivers/clk/imx/clk-imx6q.c
->> @@ -96,12 +96,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
->> static struct clk *clk[IMX6QDL_CLK_END];
->> static struct clk_onecell_data clk_data;
->> 
->> -static unsigned int const clks_init_on[] __initconst = {
->> -       IMX6QDL_CLK_MMDC_CH0_AXI,
->> -       IMX6QDL_CLK_ROM,
->> -       IMX6QDL_CLK_ARM,
+> The dump_header does not print the memcg's name when the system
+> oom happened, so users cannot locate the certain container which
+> contains the task that has been killed by the oom killer.
 > 
-> IMX6QDL_CLK_ARM does not have the CLK_IS_CRITICAL flag.
+> I follow the advices of David Rientjes and Michal Hocko, and refactor
+> part of the oom report in a backwards compatible way. After this patch,
+> users can get the memcg's path from the oom report and check the certain
+> container more quickly.
 > 
-> Is this intended? If so, please mention in the commit log.
+> Below is the part of the oom report in the dmesg
+> ...
+> [  142.158316] panic cpuset=/ mems_allowed=0-1
+> [  142.158983] CPU: 15 PID: 8682 Comm: panic Not tainted 4.17.0-rc6+ #13
+> [  142.159659] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
+> [  142.160342] Call Trace:
+> [  142.161037]  dump_stack+0x78/0xb3
+> [  142.161734]  dump_header+0x7d/0x334
+> [  142.162433]  oom_kill_process+0x228/0x490
+> [  142.163126]  ? oom_badness+0x2a/0x130
+> [  142.163821]  out_of_memory+0xf0/0x280
+> [  142.164532]  __alloc_pages_slowpath+0x711/0xa07
+> [  142.165241]  __alloc_pages_nodemask+0x23f/0x260
+> [  142.165947]  alloc_pages_vma+0x73/0x180
+> [  142.166665]  do_anonymous_page+0xed/0x4e0
+> [  142.167388]  __handle_mm_fault+0xbd2/0xe00
+> [  142.168114]  handle_mm_fault+0x116/0x250
+> [  142.168841]  __do_page_fault+0x233/0x4d0
+> [  142.169567]  do_page_fault+0x32/0x130
+> [  142.170303]  ? page_fault+0x8/0x30
+> [  142.171036]  page_fault+0x1e/0x30
+> [  142.171764] RIP: 0033:0x7f403000a860
+> [  142.172517] RSP: 002b:00007ffc9f745c28 EFLAGS: 00010206
+> [  142.173268] RAX: 00007f3f6fd7d000 RBX: 0000000000000000 RCX: 00007f3f7f5cd000
+> [  142.174040] RDX: 00007f3fafd7d000 RSI: 0000000000000000 RDI: 00007f3f6fd7d000
+> [  142.174806] RBP: 00007ffc9f745c50 R08: ffffffffffffffff R09: 0000000000000000
+> [  142.175623] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000400490
+> [  142.176542] R13: 00007ffc9f745d30 R14: 0000000000000000 R15: 0000000000000000
+> [  142.177709] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),origin_memcg=(null),kill_memcg=/test/test1/test2,task=panic,pid= 8622,uid=    0
+> ...
+> 
+> Changes since v6:
+> - divide the patch v5 into two parts. One part is to add an array of const char and
+> put enum oom_constraint into the memcontrol.h; the other is will refactor the output
+> in the dump_header.
+> - limit the memory usage for the static char array by using NAME_MAX in the mem_cgroup_print_oom_context.
+> - eliminate the spurious spaces in the oom's output and fix the spelling of "constrain".
+> 
+> Changes since v5:
+> - add an array of const char for each constraint.
+> - replace all of the pr_cont with a single line print of the pr_info.
+> - put enum oom_constraint into the memcontrol.c file for printing oom constraint.
+> 
+> Changes since v4:
+> - rename the helper's name to mem_cgroup_print_oom_context.
+> - rename the mem_cgroup_print_oom_info to mem_cgroup_print_oom_meminfo.
+> - add the constrain info in the dump_header.
+> 
+> Changes since v3:
+> - rename the helper's name to mem_cgroup_print_oom_memcg_name.
+> - add the rcu lock held to the helper.
+> - remove the print info of memcg's name in mem_cgroup_print_oom_info.
+> 
+> Changes since v2:
+> - add the mem_cgroup_print_memcg_name helper to print the memcg's
+>   name which contains the task that will be killed by the oom-killer.
+> 
+> Changes since v1:
+> - replace adding mem_cgroup_print_oom_info with printing the memcg's
+>   name only.
+> 
+> Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+> ---
+>  include/linux/memcontrol.h | 15 ++++++++++---
+>  mm/memcontrol.c            | 55 ++++++++++++++++++++++++++++++++--------------
+>  mm/oom_kill.c              |  5 +++--
+>  3 files changed, 53 insertions(+), 22 deletions(-)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 57311b6c4d67..1c7d5da1c827 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -478,8 +478,11 @@ void mem_cgroup_handle_over_high(void);
+> 
+>  unsigned long mem_cgroup_get_limit(struct mem_cgroup *memcg);
+> 
+> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
+> -				struct task_struct *p);
+> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
+> +		struct task_struct *p, enum oom_constraint constraint,
+> +		nodemask_t *nodemask);
+> +
+> +void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
+> 
+>  static inline void mem_cgroup_oom_enable(void)
+>  {
+> @@ -873,7 +876,13 @@ static inline unsigned long mem_cgroup_get_limit(struct mem_cgroup *memcg)
+>  }
+> 
+>  static inline void
+> -mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
+> +mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p,
+> +			enum oom_constraint constraint, nodemask_t *nodemask)
+> +{
+> +}
+> +
+> +static inline void
+> +mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+>  {
+>  }
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 2bd3df3d101a..fd1172938c8e 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1118,33 +1118,54 @@ static const char *const memcg1_stat_names[] = {
+>  };
+> 
+>  #define K(x) ((x) << (PAGE_SHIFT-10))
+> -/**
+> - * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
+> - * @memcg: The memory cgroup that went over limit
+> +/*
+> + * mem_cgroup_print_oom_context: Print OOM context information relevant to
+> + * memory controller, which includes allocation constraint, nodemask, origin
+> + * memcg that has reached its limit, kill memcg that contains the killed
+> + * process, killed process's command, pid and uid.
 
-As I explain in previous mail, busy divider clk type already include the flag when registered.
+Please keep the brief description of the function actually brief and move
+the detailed explanation after the parameters description.
 
-Anson.
+> + * @memcg: The origin memory cgroup that went over limit
+>   * @p: Task that is going to be killed
+> + * @constraint: The allocation constraint
+> + * @nodemask: The allocation nodemask
+>   *
+>   * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
+>   * enabled
+>   */
+> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
+> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p,
+> +			enum oom_constraint constraint, nodemask_t *nodemask)
+>  {
+> -	struct mem_cgroup *iter;
+> -	unsigned int i;
+> +	static char origin_memcg_name[NAME_MAX], kill_memcg_name[NAME_MAX];
+> +	struct cgroup *origin_cgrp, *kill_cgrp;
+> 
+>  	rcu_read_lock();
+> -
+> -	if (p) {
+> -		pr_info("Task in ");
+> -		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
+> -		pr_cont(" killed as a result of limit of ");
+> -	} else {
+> -		pr_info("Memory limit reached of cgroup ");
+> +	if (memcg) {
+> +		origin_cgrp = memcg->css.cgroup;
+> +		cgroup_path(origin_cgrp, origin_memcg_name, NAME_MAX);
+>  	}
+> -
+> -	pr_cont_cgroup_path(memcg->css.cgroup);
+> -	pr_cont("\n");
+> -
+> +	kill_cgrp = task_cgroup(p, memory_cgrp_id);
+> +	cgroup_path(kill_cgrp, kill_memcg_name, NAME_MAX);
+> +
+> +	if (p)
+> +		pr_info("oom-kill:constraint=%s,nodemask=%*pbl,origin_memcg=%s,kill_memcg=%s,task=%s,pid=%5d,uid=%5d\n",
+> +			oom_constraint_text[constraint], nodemask_pr_args(nodemask),
+> +			strlen(origin_memcg_name) ? origin_memcg_name : "(null)",
+> +			kill_memcg_name, p->comm, p->pid,
+> +			from_kuid(&init_user_ns, task_uid(p)));
+> +	else
+> +		pr_info("oom-kill:constraint=%s,nodemask=%*pbl,origin_memcg=%s,kill_memcg=%s\n",
+> +			oom_constraint_text[constraint], nodemask_pr_args(nodemask),
+> +			strlen(origin_memcg_name) ? origin_memcg_name : "(null)", kill_memcg_name);
+>  	rcu_read_unlock();
+> +}
+> +
+> +/**
+> + * mem_cgroup_print_oom_info: Print OOM memory information relevant to memory controller.
+> + * @memcg: The memory cgroup that went over limit
+> + */
+> +void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+> +{
+> +	struct mem_cgroup *iter;
+> +	unsigned int i;
+> 
+>  	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
+>  		K((u64)page_counter_read(&memcg->memory)),
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index c806cd656af6..af0efab8a9e5 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -16,7 +16,6 @@
+>   *  for newbie kernel hackers. It features several pointers to major
+>   *  kernel subsystems and hints as to where to find out what things do.
+>   */
+> -
+>  #include <linux/oom.h>
+>  #include <linux/mm.h>
+>  #include <linux/err.h>
+> @@ -414,6 +413,7 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
+> 
+>  static void dump_header(struct oom_control *oc, struct task_struct *p)
+>  {
+> +	enum oom_constraint constraint = constrained_alloc(oc);
+
+The allocation constraint is detected by the dump_header() callers, why not
+just use it here?
+
+>  	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n",
+>  		current->comm, oc->gfp_mask, &oc->gfp_mask,
+>  		nodemask_pr_args(oc->nodemask), oc->order,
+> @@ -423,8 +423,9 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+> 
+>  	cpuset_print_current_mems_allowed();
+>  	dump_stack();
+> +	mem_cgroup_print_oom_context(oc->memcg, p, constraint, oc->nodemask);
+>  	if (is_memcg_oom(oc))
+> -		mem_cgroup_print_oom_info(oc->memcg, p);
+> +		mem_cgroup_print_oom_meminfo(oc->memcg);
+>  	else {
+>  		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
+>  		if (is_dump_unreclaim_slabs())
+> -- 
+> 2.14.1
+> 
+
+-- 
+Sincerely yours,
+Mike.
