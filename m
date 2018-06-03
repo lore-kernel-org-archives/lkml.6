@@ -1,53 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751849AbeFCMd5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:33:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751402AbeFCM1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:27:39 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 05/29] tools: enable endian checks for all sparse builds
-Date: Sun,  3 Jun 2018 14:26:28 +0200
-Message-Id: <20180603122652.17453-6-gregkh@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
-References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
+        id S1751355AbeFCMoX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:44:23 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41708 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbeFCMoV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:44:21 -0400
+X-Google-Smtp-Source: ADUXVKJvT4aM8SudJMnSNf5OryI0wTLG0eVSxucvTTf5R5iZoeZ5xKrhaRBk9SXRlRRrK+1xVCdFzi/bE4lSjS3XMec=
+MIME-Version: 1.0
+In-Reply-To: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sun, 3 Jun 2018 09:44:20 -0300
+Message-ID: <CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: imx6q: remove clks_init_on array
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Michael S. Tsirkin" <mst@redhat.com>
+On Sun, Jun 3, 2018 at 12:00 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> Clock framework will enable those clocks registered
+> with CLK_IS_CRITICAL flag, so no need to have
+> clks_init_on array during clock initialization now.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6q.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> index b9ea703..8754c61 100644
+> --- a/drivers/clk/imx/clk-imx6q.c
+> +++ b/drivers/clk/imx/clk-imx6q.c
+> @@ -96,12 +96,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
+>  static struct clk *clk[IMX6QDL_CLK_END];
+>  static struct clk_onecell_data clk_data;
+>
+> -static unsigned int const clks_init_on[] __initconst = {
+> -       IMX6QDL_CLK_MMDC_CH0_AXI,
+> -       IMX6QDL_CLK_ROM,
+> -       IMX6QDL_CLK_ARM,
 
-commit 376a5fb34b04524af501a0c5979c5920be940e05 upstream.
+ IMX6QDL_CLK_ARM does not have the CLK_IS_CRITICAL flag.
 
-We dropped need for __CHECK_ENDIAN__ for linux,
-this mirrors this for tools.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/include/linux/types.h | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/tools/include/linux/types.h b/tools/include/linux/types.h
-index 8ebf6278b2ef..c24b3e3ae296 100644
---- a/tools/include/linux/types.h
-+++ b/tools/include/linux/types.h
-@@ -42,11 +42,7 @@ typedef __s8  s8;
- #else
- #define __bitwise__
- #endif
--#ifdef __CHECK_ENDIAN__
- #define __bitwise __bitwise__
--#else
--#define __bitwise
--#endif
- 
- #define __force
- #define __user
--- 
-2.17.1
+Is this intended? If so, please mention in the commit log.
