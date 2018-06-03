@@ -1,155 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751385AbeFCSTD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 14:19:03 -0400
-Received: from hera.aquilenet.fr ([185.233.100.1]:33048 "EHLO
-        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750952AbeFCSTC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 14:19:02 -0400
-Date: Sun, 3 Jun 2018 20:18:58 +0200
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Anton Zinoviev <anton@lml.bas.bg>
-Subject: [PATCH] kbd: complete dead keys definitions
-Message-ID: <20180603181858.dtyhhmb7f43cqg3d@var.youpi.perso.aquilenet.fr>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org, Anton Zinoviev <anton@lml.bas.bg>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: I am not organized
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751454AbeFCSYH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 14:24:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751132AbeFCSYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 14:24:06 -0400
+From: David Arcari <darcari@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: David Arcari <darcari@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Donald Zickus <dzickus@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>
+Subject: [PATCH] perf/x86: read the FREEZE_WHILE_SMM bit during boot
+Date: Sun,  3 Jun 2018 14:23:43 -0400
+Message-Id: <1528050223-144925-1-git-send-email-darcari@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This completes dead keys definitions for internationalization
-completeness on the console.  The representatives have been chosen
-coherently with libx11 compose sequences, which avoid symetry conflicts
-(e.g. there is U with caron, but no c with breve).
+On some systems pressing the external NMI button is now failing to inject
+an NMI 5-10% of the time.  This causes confusion for a user that expects
+the NMI to dump the system.
 
-Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Commit 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
+does not read the firmware setting of the FREEZE_WHILE_SMM bit and will
+always clear it when the PMU is initialized.  As a result the performance
+counters will always run and that greatly expands the race in which
+external NMI will not be processed if a local NMI is already being
+processed.
 
-Index: linux-4.15/drivers/s390/char/keyboard.c
-===================================================================
---- linux-4.15.orig/drivers/s390/char/keyboard.c
-+++ linux-4.15/drivers/s390/char/keyboard.c
-@@ -39,8 +39,34 @@ static const int kbd_max_vals[] = {
- };
- static const int KBD_NR_TYPES = ARRAY_SIZE(kbd_max_vals);
- 
--static unsigned char ret_diacr[NR_DEAD] = {
--	'`', '\'', '^', '~', '"', ','
-+static const unsigned char ret_diacr[NR_DEAD] = {
-+	'`',	/* dead_grave */
-+	'\'',	/* dead_acute */
-+	'^',	/* dead_circumflex */
-+	'~',	/* dead_tilda */
-+	'"',	/* dead_diaeresis */
-+	',',	/* dead_cedilla */
-+	'_',	/* dead_macron */
-+	'U',	/* dead_breve */
-+	'.',	/* dead_abovedot */
-+	'*',	/* dead_abovering */
-+	'=',	/* dead_doubleacute */
-+	'c',	/* dead_caron */
-+	'k',	/* dead_ogonek */
-+	'i',	/* dead_iota */
-+	'#',	/* dead_voiced_sound */
-+	'o',	/* dead_semivoiced_sound */
-+	'!',	/* dead_belowdot */
-+	'?',	/* dead_hook */
-+	'+',	/* dead_horn */
-+	'-',	/* dead_stroke */
-+	')',	/* dead_abovecomma */
-+	'(',	/* dead_abovereversedcomma */
-+	':',	/* dead_doublegrave */
-+	'n',	/* dead_invertedbreve */
-+	';',	/* dead_belowcomma */
-+	'$',	/* dead_currency */
-+	'@',	/* dead_greek */
- };
- 
- /*
-Index: linux-4.15/drivers/tty/vt/keyboard.c
-===================================================================
---- linux-4.15.orig/drivers/tty/vt/keyboard.c
-+++ linux-4.15/drivers/tty/vt/keyboard.c
-@@ -690,7 +690,35 @@ static void k_dead2(struct vc_data *vc,
-  */
- static void k_dead(struct vc_data *vc, unsigned char value, char up_flag)
- {
--	static const unsigned char ret_diacr[NR_DEAD] = {'`', '\'', '^', '~', '"', ',' };
-+	static const unsigned char ret_diacr[NR_DEAD] = {
-+		'`',	/* dead_grave */
-+		'\'',	/* dead_acute */
-+		'^',	/* dead_circumflex */
-+		'~',	/* dead_tilda */
-+		'"',	/* dead_diaeresis */
-+		',',	/* dead_cedilla */
-+		'_',	/* dead_macron */
-+		'U',	/* dead_breve */
-+		'.',	/* dead_abovedot */
-+		'*',	/* dead_abovering */
-+		'=',	/* dead_doubleacute */
-+		'c',	/* dead_caron */
-+		'k',	/* dead_ogonek */
-+		'i',	/* dead_iota */
-+		'#',	/* dead_voiced_sound */
-+		'o',	/* dead_semivoiced_sound */
-+		'!',	/* dead_belowdot */
-+		'?',	/* dead_hook */
-+		'+',	/* dead_horn */
-+		'-',	/* dead_stroke */
-+		')',	/* dead_abovecomma */
-+		'(',	/* dead_abovereversedcomma */
-+		':',	/* dead_doublegrave */
-+		'n',	/* dead_invertedbreve */
-+		';',	/* dead_belowcomma */
-+		'$',	/* dead_currency */
-+		'@',	/* dead_greek */
-+	};
- 
- 	k_deadunicode(vc, ret_diacr[value], up_flag);
+One option is to change default_do_nmi().  The code snippet below shows the
+relevant portion of a patch that resolves the issue, but it is problematic
+from a performance perspective and was dismissed.
+
+-345,7 +345,17 @@ static void default_do_nmi(struct pt_regs *regs)
+ 		 */
+ 		if (handled > 1)
+ 			__this_cpu_write(swallow_nmi, true);
+-		return;
++
++		/*
++		 * Unfortunately, there is a race condition which can
++		 * result in a missing an external NMI.  Typically, an
++		 * external NMI is processed on cpu 0.  Therefore, on
++		 * cpu 0 check for an external NMI before returning.
++		 */
++		if (smp_processor_id() ||
++		    (x86_platform.get_nmi_reason() & NMI_REASON_MASK) == 0) {
++			return;
++		}
+ 	}
+
+Ultimately, the issue can be resolved by storing the default firmware
+setting of FREEZE_WHILE_SMM before initializing the PMU.
+
+Fixes: 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
+
+Signed-off-by: David Arcari <darcari@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Donald Zickus <dzickus@redhat.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Jerry Hoemann <jerry.hoemann@hpe.com>
+---
+ arch/x86/events/intel/core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 707b2a9..fce98df 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3325,6 +3325,18 @@ static void flip_smm_bit(void *data)
+ 	}
  }
-Index: linux-4.15/include/uapi/linux/keyboard.h
-===================================================================
---- linux-4.15.orig/include/uapi/linux/keyboard.h
-+++ linux-4.15/include/uapi/linux/keyboard.h
-@@ -357,8 +357,29 @@
- #define K_DTILDE	K(KT_DEAD,3)
- #define K_DDIERE	K(KT_DEAD,4)
- #define K_DCEDIL	K(KT_DEAD,5)
-+#define K_DMACRON	K(KT_DEAD,6)
-+#define K_DBREVE	K(KT_DEAD,7)
-+#define K_DABDOT	K(KT_DEAD,8)
-+#define K_DABRING	K(KT_DEAD,9)
-+#define K_DDBACUTE	K(KT_DEAD,10)
-+#define K_DCARON	K(KT_DEAD,11)
-+#define K_DOGONEK	K(KT_DEAD,12)
-+#define K_DIOTA		K(KT_DEAD,13)
-+#define K_DVOICED	K(KT_DEAD,14)
-+#define K_DSEMVOICED	K(KT_DEAD,15)
-+#define K_DBEDOT	K(KT_DEAD,16)
-+#define K_DHOOK		K(KT_DEAD,17)
-+#define K_DHORN		K(KT_DEAD,18)
-+#define K_DSTROKE	K(KT_DEAD,19)
-+#define K_DABCOMMA	K(KT_DEAD,20)
-+#define K_DABREVCOMMA	K(KT_DEAD,21)
-+#define K_DDBGRAVE	K(KT_DEAD,22)
-+#define K_DINVBREVE	K(KT_DEAD,23)
-+#define K_DBECOMMA	K(KT_DEAD,24)
-+#define K_DCURRENCY	K(KT_DEAD,25)
-+#define K_DGREEK	K(KT_DEAD,26)
  
--#define NR_DEAD		6
-+#define NR_DEAD		27
++static int read_smm_bit(void)
++{
++	u64 val;
++
++	if (!rdmsrl_safe(MSR_IA32_DEBUGCTLMSR, &val)) {
++		if (val & DEBUGCTLMSR_FREEZE_IN_SMM)
++			return 1;
++	}
++
++	return 0;
++}
++
+ static void intel_pmu_cpu_starting(int cpu)
+ {
+ 	struct cpu_hw_events *cpuc = &per_cpu(cpu_hw_events, cpu);
+@@ -4423,6 +4435,8 @@ __init int intel_pmu_init(void)
+ 		pr_cont("full-width counters, ");
+ 	}
  
- #define K_DOWN		K(KT_CUR,0)
- #define K_LEFT		K(KT_CUR,1)
++	x86_pmu.attr_freeze_on_smi = read_smm_bit();
++
+ 	kfree(to_free);
+ 	return 0;
+ }
+-- 
+1.8.3.1
