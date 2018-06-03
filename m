@@ -1,241 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751010AbeFCBRn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 21:17:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57304 "EHLO mx1.redhat.com"
+        id S1751007AbeFCBgY (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 21:36:24 -0400
+Received: from mail-he1eur01on0059.outbound.protection.outlook.com ([104.47.0.59]:40212
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750831AbeFCBRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 21:17:41 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net] rxrpc: Fix handling of call quietly cancelled out on
- server
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date: Sun, 03 Jun 2018 02:17:39 +0100
-Message-ID: <152798865948.5814.10196893914153717731.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
+        id S1750871AbeFCBgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 21:36:21 -0400
+From: Anson Huang <anson.huang@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
+        "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
+Thread-Topic: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
+Thread-Index: AQHT8X0hKe8UP9s1NUmhGGfUU647+KQ7rP2AgBDjVICAAUIvIA==
+Date: Sun, 3 Jun 2018 01:36:13 +0000
+Message-ID: <AM3PR04MB1315BD8947467077B61BB2E6F5600@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
+ <1439344955.9677.1526991935718@email.1und1.de>
+ <152792036327.225090.14543251343485084840@swboyd.mtv.corp.google.com>
+In-Reply-To: <152792036327.225090.14543251343485084840@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com;
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB0629;7:jKA9r0Cs1ttpp10eeOBWOmABF1imdFV51G5S/YyFvW8mSAA3aUez5SwrvSTQh+bLjCe3ahBcIMHLGGQ1S5luz8jtNep08Q1ZrgBZAAWwIHJgLISUaLY+mGASpliTxy8N951/EbFkVSl+cq0aRbjuuo/Phcd7ISXXr1UZ+FTRS0sollAfFPEgs8yNLlDGwAY3XxZ52CbkWLLnzN9cifK95v/ZFNcH5CWzOSb7jPGKppqTdak/17JjrtYai98F9Kgh
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB0629;
+x-ms-traffictypediagnostic: AM3PR04MB0629:
+x-microsoft-antispam-prvs: <AM3PR04MB062916B3E83AE772E32D65D3F5600@AM3PR04MB0629.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB0629;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB0629;
+x-forefront-prvs: 069255B8B8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39380400002)(39860400002)(376002)(366004)(13464003)(189003)(199004)(53936002)(3280700002)(2906002)(9686003)(33656002)(110136005)(54906003)(316002)(66066001)(106356001)(105586002)(2900100001)(2501003)(102836004)(8936002)(26005)(6506007)(53546011)(186003)(8676002)(5250100002)(68736007)(6436002)(97736004)(99286004)(76176011)(7696005)(44832011)(486006)(476003)(74316002)(305945005)(446003)(81166006)(81156014)(55016002)(5660300001)(7416002)(7736002)(4326008)(3660700001)(6246003)(14454004)(11346002)(6116002)(3846002)(2201001)(478600001)(229853002)(86362001)(25786009)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB0629;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: q3ul1IfngoAlRyFnVf+GPZ6vqiig2GUuOe4HzkueyZPn8/dPowPiNtwzJ7JQMseLD5TA5p+GmOzeHyilOTj9Rs7IKhysEHKg9ScSqvS8NYacO3Y+rf/pfdwaqf8WJIpUQ+oTyOQ/YC7k9CavTlVgsSLzCdxZiUi1cZ2kBVQdUfxT6S+u1tJWLHLVjeMr0ByZ
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 5a42ee21-c761-4897-14a1-08d5c8f264a7
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a42ee21-c761-4897-14a1-08d5c8f264a7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2018 01:36:13.8167
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB0629
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w531adZq009411
 
-Sometimes an in-progress call will stop responding on the fileserver when
-the fileserver quietly cancels the call with an internally marked abort
-(RX_CALL_DEAD), without sending an ABORT to the client.
+Hi, Stephen
 
-This causes the client's call to eventually expire from lack of incoming
-packets directed its way, which currently leads to it being cancelled
-locally with ETIME.  Note that it's not currently clear as to why this
-happens as it's really hard to reproduce.
+Anson Huang
+Best Regards!
 
-The rotation policy implement by kAFS, however, doesn't differentiate
-between ETIME meaning we didn't get any response from the server and ETIME
-meaning the call got cancelled mid-flow.  The latter leads to an oops when
-fetching data as the rotation partially resets the afs_read descriptor,
-which can result in a cleared page pointer being dereferenced because that
-page has already been filled.
 
-Handle this by the following means:
-
- (1) Set a flag on a call when we receive a packet for it.
-
- (2) Store the highest packet serial number so far received for a call
-     (bearing in mind this may wrap).
-
- (3) If, when the "not received anything recently" timeout expires on a
-     call, we've received at least one packet for a call and the connection
-     as a whole has received packets more recently than that call, then
-     cancel the call locally with ECONNRESET rather than ETIME.
-
-     This indicates that the call was definitely in progress on the server.
-
- (4) In kAFS, if the rotation algorithm sees ECONNRESET rather than ETIME,
-     don't try the next server, but rather abort the call.
-
-     This avoids the oops as we don't try to reuse the afs_read struct.
-     Rather, as-yet ungotten pages will be reread at a later data.
-
-Also:
-
- (5) Add an rxrpc tracepoint to log detection of the call being reset.
-
-Without this, I occasionally see an oops like the following:
-
-    general protection fault: 0000 [#1] SMP PTI
-    ...
-    RIP: 0010:_copy_to_iter+0x204/0x310
-    RSP: 0018:ffff8800cae0f828 EFLAGS: 00010206
-    RAX: 0000000000000560 RBX: 0000000000000560 RCX: 0000000000000560
-    RDX: ffff8800cae0f968 RSI: ffff8800d58b3312 RDI: 0005080000000000
-    RBP: ffff8800cae0f968 R08: 0000000000000560 R09: ffff8800ca00f400
-    R10: ffff8800c36f28d4 R11: 00000000000008c4 R12: ffff8800cae0f958
-    R13: 0000000000000560 R14: ffff8800d58b3312 R15: 0000000000000560
-    FS:  00007fdaef108080(0000) GS:ffff8800ca680000(0000) knlGS:0000000000000000
-    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-    CR2: 00007fb28a8fa000 CR3: 00000000d2a76002 CR4: 00000000001606e0
-    Call Trace:
-     skb_copy_datagram_iter+0x14e/0x289
-     rxrpc_recvmsg_data.isra.0+0x6f3/0xf68
-     ? trace_buffer_unlock_commit_regs+0x4f/0x89
-     rxrpc_kernel_recv_data+0x149/0x421
-     afs_extract_data+0x1e0/0x798
-     ? afs_wait_for_call_to_complete+0xc9/0x52e
-     afs_deliver_fs_fetch_data+0x33a/0x5ab
-     afs_deliver_to_call+0x1ee/0x5e0
-     ? afs_wait_for_call_to_complete+0xc9/0x52e
-     afs_wait_for_call_to_complete+0x12b/0x52e
-     ? wake_up_q+0x54/0x54
-     afs_make_call+0x287/0x462
-     ? afs_fs_fetch_data+0x3e6/0x3ed
-     ? rcu_read_lock_sched_held+0x5d/0x63
-     afs_fs_fetch_data+0x3e6/0x3ed
-     afs_fetch_data+0xbb/0x14a
-     afs_readpages+0x317/0x40d
-     __do_page_cache_readahead+0x203/0x2ba
-     ? ondemand_readahead+0x3a7/0x3c1
-     ondemand_readahead+0x3a7/0x3c1
-     generic_file_buffered_read+0x18b/0x62f
-     __vfs_read+0xdb/0xfe
-     vfs_read+0xb2/0x137
-     ksys_read+0x50/0x8c
-     do_syscall_64+0x7d/0x1a0
-     entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Note the weird value in RDI which is a result of trying to kmap() a NULL
-page pointer.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/afs/rotate.c              |    4 ++++
- include/trace/events/rxrpc.h |   32 ++++++++++++++++++++++++++++++++
- net/rxrpc/ar-internal.h      |    2 ++
- net/rxrpc/call_event.c       |    8 +++++++-
- net/rxrpc/input.c            |   10 ++++++++--
- 5 files changed, 53 insertions(+), 3 deletions(-)
-
-diff --git a/fs/afs/rotate.c b/fs/afs/rotate.c
-index e065bc0768e6..1faef56b12bd 100644
---- a/fs/afs/rotate.c
-+++ b/fs/afs/rotate.c
-@@ -310,6 +310,10 @@ bool afs_select_fileserver(struct afs_fs_cursor *fc)
- 	case -ETIME:
- 		_debug("no conn");
- 		goto iterate_address;
-+
-+	case -ECONNRESET:
-+		_debug("call reset");
-+		goto failed;
- 	}
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@kernel.org]
+> Sent: Saturday, June 2, 2018 2:19 PM
+> To: Anson Huang <anson.huang@nxp.com>; Stefan Wahren
+> <stefan.wahren@i2se.com>; Fabio Estevam <fabio.estevam@nxp.com>;
+> kernel@pengutronix.de; mark.rutland@arm.com; matteo.lisi@engicam.com;
+> michael@amarulasolutions.com; mturquette@baylibre.com;
+> robh+dt@kernel.org; shawnguo@kernel.org
+> Cc: linux-clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
+> 
+> Quoting Stefan Wahren (2018-05-22 05:25:35)
+> > > +++ b/include/dt-bindings/clock/imx6ul-clock.h
+> > > @@ -242,20 +242,25 @@
+> > >  #define IMX6UL_CLK_CKO2_PODF         229
+> > >  #define IMX6UL_CLK_CKO2                      230
+> > >  #define IMX6UL_CLK_CKO                       231
+> > > +#define IMX6UL_CLK_GPIO1             232
+> > > +#define IMX6UL_CLK_GPIO2             233
+> > > +#define IMX6UL_CLK_GPIO3             234
+> > > +#define IMX6UL_CLK_GPIO4             235
+> > > +#define IMX6UL_CLK_GPIO5             236
+> >
+> > this change looks like a breakage of devicetree ABI. You are changing the
+> mean of the existing clock IDs on i.MX6ULL, which probably regress the
+> combination of older DTBs with newer kernel.
+> >
+> 
+> Agreed. Why can't we just tack on more numbers at the end?
  
- restart_from_beginning:
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 077e664ac9a2..4fff00e9da8a 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -1459,6 +1459,38 @@ TRACE_EVENT(rxrpc_tx_fail,
- 		      __print_symbolic(__entry->what, rxrpc_tx_fail_traces))
- 	    );
- 
-+TRACE_EVENT(rxrpc_call_reset,
-+	    TP_PROTO(struct rxrpc_call *call),
-+
-+	    TP_ARGS(call),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		debug_id	)
-+		    __field(u32,			cid		)
-+		    __field(u32,			call_id		)
-+		    __field(rxrpc_serial_t,		call_serial	)
-+		    __field(rxrpc_serial_t,		conn_serial	)
-+		    __field(rxrpc_seq_t,		tx_seq		)
-+		    __field(rxrpc_seq_t,		rx_seq		)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->debug_id = call->debug_id;
-+		    __entry->cid = call->cid;
-+		    __entry->call_id = call->call_id;
-+		    __entry->call_serial = call->rx_serial;
-+		    __entry->conn_serial = call->conn->hi_serial;
-+		    __entry->tx_seq = call->tx_hard_ack;
-+		    __entry->rx_seq = call->ackr_seen;
-+			   ),
-+
-+	    TP_printk("c=%08x %08x:%08x r=%08x/%08x tx=%08x rx=%08x",
-+		      __entry->debug_id,
-+		      __entry->cid, __entry->call_id,
-+		      __entry->call_serial, __entry->conn_serial,
-+		      __entry->tx_seq, __entry->rx_seq)
-+	    );
-+
- #endif /* _TRACE_RXRPC_H */
- 
- /* This part must be outside protection */
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 29923ec2189c..5fb7d3254d9e 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -477,6 +477,7 @@ enum rxrpc_call_flag {
- 	RXRPC_CALL_PINGING,		/* Ping in process */
- 	RXRPC_CALL_RETRANS_TIMEOUT,	/* Retransmission due to timeout occurred */
- 	RXRPC_CALL_BEGAN_RX_TIMER,	/* We began the expect_rx_by timer */
-+	RXRPC_CALL_RX_HEARD,		/* The peer responded at least once to this call */
- };
- 
- /*
-@@ -624,6 +625,7 @@ struct rxrpc_call {
- 						 */
- 	rxrpc_seq_t		rx_top;		/* Highest Rx slot allocated. */
- 	rxrpc_seq_t		rx_expect_next;	/* Expected next packet sequence number */
-+	rxrpc_serial_t		rx_serial;	/* Highest serial received for this call */
- 	u8			rx_winsize;	/* Size of Rx window */
- 	u8			tx_winsize;	/* Maximum size of Tx window */
- 	bool			tx_phase;	/* T if transmission phase, F if receive phase */
-diff --git a/net/rxrpc/call_event.c b/net/rxrpc/call_event.c
-index 6e0d788b4dc4..20210418904b 100644
---- a/net/rxrpc/call_event.c
-+++ b/net/rxrpc/call_event.c
-@@ -392,7 +392,13 @@ void rxrpc_process_call(struct work_struct *work)
- 
- 	/* Process events */
- 	if (test_and_clear_bit(RXRPC_CALL_EV_EXPIRED, &call->events)) {
--		rxrpc_abort_call("EXP", call, 0, RX_USER_ABORT, -ETIME);
-+		if (test_bit(RXRPC_CALL_RX_HEARD, &call->flags) &&
-+		    (int)call->conn->hi_serial - (int)call->rx_serial > 0) {
-+			trace_rxrpc_call_reset(call);
-+			rxrpc_abort_call("EXP", call, 0, RX_USER_ABORT, -ECONNRESET);
-+		} else {
-+			rxrpc_abort_call("EXP", call, 0, RX_USER_ABORT, -ETIME);
-+		}
- 		set_bit(RXRPC_CALL_EV_ABORT, &call->events);
- 		goto recheck_state;
- 	}
-diff --git a/net/rxrpc/input.c b/net/rxrpc/input.c
-index b5fd6381313d..608d078a4981 100644
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -1278,8 +1278,14 @@ void rxrpc_data_ready(struct sock *udp_sk)
- 			call = NULL;
- 		}
- 
--		if (call && sp->hdr.serviceId != call->service_id)
--			call->service_id = sp->hdr.serviceId;
-+		if (call) {
-+			if (sp->hdr.serviceId != call->service_id)
-+				call->service_id = sp->hdr.serviceId;
-+			if ((int)sp->hdr.serial - (int)call->rx_serial > 0)
-+				call->rx_serial = sp->hdr.serial;
-+			if (!test_bit(RXRPC_CALL_RX_HEARD, &call->flags))
-+				set_bit(RXRPC_CALL_RX_HEARD, &call->flags);
-+		}
- 	} else {
- 		skew = 0;
- 		call = NULL;
+Ah, yes, I saw 6ULL are at the end of 6UL, so added them in 6UL, but did NOT consider the old dtb support.
+
+Will send out a V2 patch to fix it, and I saw Fabio also sent a patch to fix the clko1/2 definition, I will do the
+V2 patch based on his patch.
+
+Anson.
+
+> 
+> > >
+> > >  /* For i.MX6ULL */
+> > > -#define IMX6ULL_CLK_ESAI_PRED                232
