@@ -1,49 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751467AbeFCWsp (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 18:48:45 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34717 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751132AbeFCWsn (ORCPT
+        id S1751684AbeFCXgG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 19:36:06 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:36217 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751354AbeFCXgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 18:48:43 -0400
-X-Google-Smtp-Source: ADUXVKIDyIoX8NI4IVgBAIM3r8k87EO4kVHfugCGvaKtM2yyfJ259TO74oCPmtJHjGS5NNqgKMG/8A==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: tegra: Mark Memory Controller clock as critical
-Date: Mon,  4 Jun 2018 01:48:05 +0300
-Message-Id: <20180603224805.495-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sun, 3 Jun 2018 19:36:03 -0400
+X-Google-Smtp-Source: ADUXVKJFXZs69llGFi5a8Y9ZdrH2hgLTuhpOzUSfRUP/GKirh/fSGSoYaAh60ZGXWSPEq2Mk2KF2CS1HeMOrOJOKXRCM9rE2kRf/
+MIME-Version: 1.0
+Date: Sun, 03 Jun 2018 16:36:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b7be6e056dc547e8@google.com>
+Subject: KASAN: slab-out-of-bounds Read in skb_ensure_writable
+From: syzbot <syzbot+e5190cb881d8660fb1a3@syzkaller.appspotmail.com>
+To: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory Controller should be always-on. Currently the sibling EMC clock is
-marked as critical, let's mark MC clock too for consistency.
+Hello,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+syzbot found the following crash on:
+
+HEAD commit:    0512e0134582 Merge tag 'xfs-4.17-fixes-3' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14956af7800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
+dashboard link: https://syzkaller.appspot.com/bug?extid=e5190cb881d8660fb1a3
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=123d9d7b800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100329d7800000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e5190cb881d8660fb1a3@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KASAN: slab-out-of-bounds in pskb_may_pull include/linux/skbuff.h:2104  
+[inline]
+BUG: KASAN: slab-out-of-bounds in skb_ensure_writable+0x554/0x620  
+net/core/skbuff.c:5101
+Read of size 4 at addr ffff8801aefc1780 by task syz-executor159/4509
+
+CPU: 0 PID: 4509 Comm: syz-executor159 Not tainted 4.17.0-rc7+ #78
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  pskb_may_pull include/linux/skbuff.h:2104 [inline]
+  skb_ensure_writable+0x554/0x620 net/core/skbuff.c:5101
+  __bpf_try_make_writable net/core/filter.c:1419 [inline]
+  bpf_try_make_writable net/core/filter.c:1425 [inline]
+  ____bpf_l3_csum_replace net/core/filter.c:1546 [inline]
+  bpf_l3_csum_replace+0x8c/0x4d0 net/core/filter.c:1537
+
+Allocated by task 0:
+(stack is not available)
+
+Freed by task 0:
+(stack is not available)
+
+The buggy address belongs to the object at ffff8801aefc1680
+  which belongs to the cache skbuff_head_cache of size 232
+The buggy address is located 24 bytes to the right of
+  232-byte region [ffff8801aefc1680, ffff8801aefc1768)
+The buggy address belongs to the page:
+page:ffffea0006bbf040 count:1 mapcount:0 mapping:ffff8801aefc1040 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801aefc1040 0000000000000000 000000010000000c
+raw: ffffea0006b61060 ffffea0006bd69e0 ffff8801d9bdd6c0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801aefc1680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801aefc1700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801aefc1780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                    ^
+  ffff8801aefc1800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801aefc1880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- drivers/clk/tegra/clk-divider.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 16e0aee14773..58874c1bbf5e 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -194,6 +194,7 @@ static const struct clk_div_table mc_div_table[] = {
- struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
- 				  void __iomem *reg, spinlock_t *lock)
- {
--	return clk_register_divider_table(NULL, name, parent_name, 0, reg,
--					  16, 1, 0, mc_div_table, lock);
-+	return clk_register_divider_table(NULL, name, parent_name,
-+					  CLK_IS_CRITICAL, reg, 16, 1, 0,
-+					  mc_div_table, lock);
- }
--- 
-2.17.0
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
