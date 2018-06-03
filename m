@@ -1,33 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751601AbeFCPDq (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 11:03:46 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:35774 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751345AbeFCPDp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 11:03:45 -0400
-Date: Sun, 03 Jun 2018 11:03:43 -0400 (EDT)
-Message-Id: <20180603.110343.156442650400207278.davem@davemloft.net>
-To: kvalo@codeaurora.org
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: pull-request: wireless-drivers-next 2018-05-31
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <877enj29x4.fsf@kamboji.qca.qualcomm.com>
-References: <877enj29x4.fsf@kamboji.qca.qualcomm.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1751568AbeFCPMm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 11:12:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751373AbeFCPMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 11:12:40 -0400
+Date: Sun, 3 Jun 2018 16:12:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Brian Masney <masneyb@onstation.org>
+Cc: Colin King <colin.king@canonical.com>,
+        Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: tsl2x7x/tsl2772: avoid potential division by
+ zero
+Message-ID: <20180603161234.008ac6c5@archlinux>
+In-Reply-To: <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
+References: <20180530181936.17902-1-colin.king@canonical.com>
+        <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 31 May 2018 17:10:15 +0300
+On Thu, 31 May 2018 05:28:01 -0400
+Brian Masney <masneyb@onstation.org> wrote:
 
-> here's a pull request to net-next tree for 4.18. More info below and
-> please let me know if there are any problems.
+> On Wed, May 30, 2018 at 07:19:36PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > It may be possible for tsl2772_get_lux to return a zero lux value
+> > and hence a division by zero can occur when lux_val is zero. Check
+> > for this case and return -ERANGE to avoid the division by zero.
+> > 
+> > Detected by CoverityScan, CID#1469484 ("Division or modulo by zero")
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>  
+> 
+> Acked-by: Brian Masney <masneyb@onstation.org>
 
-Pulled, thanks Kalle.
+Applied to the fixes-togreg branch of iio.git.
+
+As there was nothing in that branch that is going upstream until after
+the merge window closes, I moved it forward to match staging/staging-next.
+
+Jonathan
