@@ -1,122 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751254AbeFCSlP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 14:41:15 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:42986 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750952AbeFCSlO (ORCPT
+        id S1751303AbeFCSrJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 14:47:09 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41646 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750952AbeFCSrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 14:41:14 -0400
-X-Google-Smtp-Source: ADUXVKKG7HfrszDC6MCNGpD71F2UWEOT82YhvAXW/OVNueIKFF6CpNwbWHL8Jj8CSDWbxw63VNSYAncryv5b3zaK1v8=
+        Sun, 3 Jun 2018 14:47:07 -0400
+X-Google-Smtp-Source: ADUXVKJVnXrsn4TcdtLA7G7Zps9qm+rYVyYYU4fh4UaLflvrKcRaHmgTqbuZCMCLINljJrzAUjArNA==
+Date: Sun, 3 Jun 2018 11:47:05 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Byungchul Park <max.byungchul.park@gmail.com>
+Cc: Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>, josh@joshtriplett.org,
+        rostedt@goodmis.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        kernel-team@android.com
+Subject: Re: [PATCH] rcu: Check the range of jiffies_till_{first,next}_fqs
+ when setting them
+Message-ID: <20180603184705.GA85962@joelaf.mtv.corp.google.com>
+References: <1527818589-13476-1-git-send-email-byungchul.park@lge.com>
+ <20180603035848.GA76941@joelaf.mtv.corp.google.com>
+ <CANrsvRNeMc8JppnP53ordMkzw+HDdPn0VsiF0j3YdWbQe1+sUg@mail.gmail.com>
+ <20180603062330.GA153988@joelaf.mtv.corp.google.com>
+ <CANrsvRM+b+Ei_GAtLERFtN7QJN3Au3grc_asfT=pOY0g4rTFWQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180531144949.24995-1-tycho@tycho.ws> <20180531144949.24995-2-tycho@tycho.ws>
-In-Reply-To: <20180531144949.24995-2-tycho@tycho.ws>
-From: Jann Horn <jannh@google.com>
-Date: Sun, 3 Jun 2018 20:41:01 +0200
-Message-ID: <CAG48ez3x9HSkLZc-da6zjPbckyfdPvwyQa3p9P6EzQ5sGk53eg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] seccomp: add a return code to trap to userspace
-To: tycho@tycho.ws
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, christian.brauner@ubuntu.com,
-        Tyler Hicks <tyhicks@canonical.com>, suda.akihiro@lab.ntt.co.jp,
-        "Tobin C. Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANrsvRM+b+Ei_GAtLERFtN7QJN3Au3grc_asfT=pOY0g4rTFWQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 3, 2018 at 2:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
->
-> This patch introduces a means for syscalls matched in seccomp to notify
-> some other task that a particular filter has been triggered.
->
-> The motivation for this is primarily for use with containers. For example,
-> if a container does an init_module(), we obviously don't want to load this
-> untrusted code, which may be compiled for the wrong version of the kernel
-> anyway. Instead, we could parse the module image, figure out which module
-> the container is trying to load and load it on the host.
->
-> As another example, containers cannot mknod(), since this checks
-> capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
-> /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
-> coding some whitelist in the kernel. Another example is mount(), which has
-> many security restrictions for good reason, but configuration or runtime
-> knowledge could potentially be used to relax these restrictions.
->
-> This patch adds functionality that is already possible via at least two
-> other means that I know about, both of which involve ptrace(): first, one
-> could ptrace attach, and then iterate through syscalls via PTRACE_SYSCALL.
-> Unfortunately this is slow, so a faster version would be to install a
-> filter that does SECCOMP_RET_TRACE, which triggers a PTRACE_EVENT_SECCOMP.
-> Since ptrace allows only one tracer, if the container runtime is that
-> tracer, users inside the container (or outside) trying to debug it will not
-> be able to use ptrace, which is annoying. It also means that older
-> distributions based on Upstart cannot boot inside containers using ptrace,
-> since upstart itself uses ptrace to start services.
->
-> The actual implementation of this is fairly small, although getting the
-> synchronization right was/is slightly complex.
->
-> Finally, it's worth noting that the classic seccomp TOCTOU of reading
-> memory data from the task still applies here, but can be avoided with
-> careful design of the userspace handler: if the userspace handler reads all
-> of the task memory that is necessary before applying its security policy,
-> the tracee's subsequent memory edits will not be read by the tracer.
-[...]
-> @@ -857,13 +1020,28 @@ static long seccomp_set_mode_filter(unsigned int flags,
->         if (IS_ERR(prepared))
->                 return PTR_ERR(prepared);
->
-> +       if (flags & SECCOMP_FILTER_FLAG_GET_LISTENER) {
-> +               listener = get_unused_fd_flags(O_RDWR);
+On Sun, Jun 03, 2018 at 04:51:06PM +0900, Byungchul Park wrote:
+> On Sun, Jun 3, 2018 at 3:23 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > On Sun, Jun 03, 2018 at 02:38:04PM +0900, Byungchul Park wrote:
+> >> On Sun, Jun 3, 2018 at 12:58 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> >> > On Fri, Jun 01, 2018 at 11:03:09AM +0900, Byungchul Park wrote:
+> >> >> Currently, the range of jiffies_till_{first,next}_fqs are checked and
+> >> >> adjusted on and on in the loop of rcu_gp_kthread on runtime.
+> >> >>
+> >> >> However, it's enough to check them only when setting them, not every
+> >> >> time in the loop. So make them handled on a setting time via sysfs.
+> >> >>
+> >> >> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> >> >> ---
+> >> >>  kernel/rcu/tree.c | 45 ++++++++++++++++++++++++++++++++-------------
+> >> >>  1 file changed, 32 insertions(+), 13 deletions(-)
+> >> >>
+> >> >> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> >> >> index 4e96761..eb54d7d 100644
+> >> >> --- a/kernel/rcu/tree.c
+> >> >> +++ b/kernel/rcu/tree.c
+> >> >> @@ -518,8 +518,38 @@ void rcu_all_qs(void)
+> >> >>  static ulong jiffies_till_next_fqs = ULONG_MAX;
+> >> >>  static bool rcu_kick_kthreads;
+> >> >>
+> >> >> -module_param(jiffies_till_first_fqs, ulong, 0644);
+> >> >> -module_param(jiffies_till_next_fqs, ulong, 0644);
+> >> >> +static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
+> >> >> +{
+> >> >> +     ulong j;
+> >> >> +     int ret = kstrtoul(val, 0, &j);
+> >> >> +
+> >> >> +     if (!ret)
+> >> >> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : j);
+> >> >> +     return ret;
+> >> >> +}
+> >> >> +
+> >> >> +static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param *kp)
+> >> >> +{
+> >> >> +     ulong j;
+> >> >> +     int ret = kstrtoul(val, 0, &j);
+> >> >> +
+> >> >> +     if (!ret)
+> >> >> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : (j ?: 1));
+> >> >> +     return ret;
+> >> >> +}
+> >> >
+> >> > Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> >> >
+> >> > Also, can we not combine the 2 param_set_ handlers as well?
+> >> >
+> >> > Only thing we would be giving up is that jiffies_till_first_fqs = 0 wouldn't
+> >> > be allowed (if we go with the param_set_next handler to be the common one)
+> >> > but don't think that's a useful/valid usecase since jiffies_till_first_fqs is
+> >> > set to a sane non-0 value anyway at boot up because of rcu_init_geometry
+> >> > anyway.. Thoughts?
+> >>
+> >> Excuse me. Which code in rcu_init_geometry() makes jiffies_till_first_fqs
+> >> be a non-zero in case called with jiffies_till_first_fqs == 0?
+> >
+> > What do you mean? I think you misunderstood. I didn't say value of 0 is being
+> > handled at boot up. What I said is its initialized to something sane that's
+> > non-zero:
+> >
+> > If you see, jiffies_till_first_fqs is assigned to ULONG_MAX at compile time:
+> > static ulong jiffies_till_first_fqs = ULONG_MAX;
+> >
+> > Then in rcu_init_geometry, we have:
+> >         d = RCU_JIFFIES_TILL_FORCE_QS + nr_cpu_ids / RCU_JIFFIES_FQS_DIV;
+> >         if (jiffies_till_first_fqs == ULONG_MAX)
+> >                         jiffies_till_first_fqs = d;
+> >
+> > On my system, jiffies_till_first_fqs is assigned to 3 because of this at
+> > boot.
+> >
+> >> Furthermore, what if we want to change the value through sysfs to zero
+> >> on runtime?
+> >
+> > My patch was just a suggestion. I didn't know if anyone would want to force
+> > it to 0 or not and was wondering what the value in doing so was at the cost
+> > of adding one more function to handle it. It basically says if you set to 0,
+> > that you never want to wait for a timeout before forcing a qs for the first
+> > time? Then why are we calling swait_event_idle_timeout anyway? Wouldn't a
+> > saner timeout be something not zero?
+> 
+> I'm sorry I tried but don't understand your point :(
+> Did you happen to read the following?
+> 
+> https://lkml.org/lkml/2018/5/29/99
 
-I think you want either 0 or O_CLOEXEC here?
+No I did not happen to read that and I am very sorry about that. I see Paul
+said jiffies_till_first_fqs = 0 is a useful case in that thread, to record
+the idle CPUs quickly, which makes sense.
 
-> +out_put_fd:
-> +       if (flags & SECCOMP_FILTER_FLAG_GET_LISTENER) {
-> +               if (ret < 0) {
-> +                       fput(listener_f);
-> +                       put_unused_fd(listener);
-> +               } else {
-> +                       fd_install(listener, listener_f);
-> +                       ret = listener;
-> +               }
-> +       }
->  out_free:
->         seccomp_filter_free(prepared);
->         return ret;
-[...]
-> +static __poll_t seccomp_notify_poll(struct file *file,
-> +                                   struct poll_table_struct *poll_tab)
-> +{
-> +       struct seccomp_filter *filter = file->private_data;
-> +       __poll_t ret = 0;
-> +       struct seccomp_knotif *cur;
-> +
-> +       ret = mutex_lock_interruptible(&filter->notify_lock);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       list_for_each_entry(cur, &filter->notifications, list) {
-> +               if (cur->state == SECCOMP_NOTIFY_INIT)
-> +                       ret |= EPOLLIN | EPOLLRDNORM;
-> +               if (cur->state == SECCOMP_NOTIFY_SENT)
-> +                       ret |= EPOLLOUT | EPOLLWRNORM;
-> +       }
-> +
-> +       mutex_unlock(&filter->notify_lock);
-> +
-> +       return ret;
-> +}
+> If yes, it would be appreciated if you let me know what I'm missing.
 
-I don't think f_op->poll handlers work like this. AFAIK you're
-supposed to use something like poll_wait() to connect the caller to
-something like a waitqueue head, so that as soon as the file becomes
-ready for reading/writing, any waiting task is notified. See
-eventfd_poll() in fs/eventfd.c for a simple example. AFAICS in the
-current code, seccomp_notify_poll() only works if an event is pending
-at the time seccomp_notify_poll() is called.
+You are right and not missing anything. I'll be more careful to go through
+old threads next time.. 
+
+Glad to learn something from the discussions. thanks,
+
+BTW one more dumb question - if jiffies_till_first_fqs == 0 is so useful,
+then why not default initialize it to 0? I'd think most systems expect
+atleast some of the CPUs to idle.
+
+- Joel
