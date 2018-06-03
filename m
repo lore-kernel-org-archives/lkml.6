@@ -1,68 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751389AbeFCROc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 13:14:32 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:42671 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbeFCROb (ORCPT
+        id S1751343AbeFCRQR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 13:16:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56025 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750952AbeFCRQP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 13:14:31 -0400
-X-Google-Smtp-Source: ADUXVKI/rClY3wzA7jP3GM6uXvzyblwq6lxzXjSPBafjcm/sB1+Fj90jZd3Uj0h5G8cs1g8kycRi/ZmVnDi9N1+n7+g=
+        Sun, 3 Jun 2018 13:16:15 -0400
+Date: Sun, 3 Jun 2018 10:15:57 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-qtotspuztydjttxi7k6mec6h@git.kernel.org>
+Cc: jolsa@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        acme@redhat.com, namhyung@kernel.org, adrian.hunter@intel.com,
+        wangnan0@huawei.com, dsahern@gmail.com, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: mingo@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, acme@redhat.com, dsahern@gmail.com,
+        wangnan0@huawei.com, adrian.hunter@intel.com, hpa@zytor.com,
+        tglx@linutronix.de
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf trace beauty prctl: Default header_dir to
+ cwd to work without parms
+Git-Commit-ID: 0d690fc043f17fe7afab4b3dd9a57ffa07bc8064
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gWeq034sObmHsbJoiBri4a=Av8xroeuW+eqyv_W=cHjQ@mail.gmail.com>
-References: <20180602023215.176521-1-ravisadineni@chromium.org> <CAJZ5v0gWeq034sObmHsbJoiBri4a=Av8xroeuW+eqyv_W=cHjQ@mail.gmail.com>
-From: Ravi Chandra Sadineni <ravisadineni@google.com>
-Date: Sun, 3 Jun 2018 10:14:09 -0700
-Message-ID: <CAOGSYL0ga-H=0a5EEDmOWSZjnmG1Qc=9AxAbM_-ifHDj_FbREg@mail.gmail.com>
-Subject: Re: [PATCH] power: Print wakeup_count instead of event_count in the
- sysfs attribute.
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, chenhong3@huawei.com,
-        Pavel Machek <pavel@ucw.cz>, Dmitry Torokhov <dtor@google.com>,
-        Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Todd Broch <tbroch@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, Rajat Jain <rajatja@google.com>,
-        Benson Leung <bleung@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+Commit-ID:  0d690fc043f17fe7afab4b3dd9a57ffa07bc8064
+Gitweb:     https://git.kernel.org/tip/0d690fc043f17fe7afab4b3dd9a57ffa07bc8064
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 30 May 2018 10:29:52 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 1 Jun 2018 16:13:06 -0300
 
-On Sun, Jun 3, 2018 at 1:05 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Sat, Jun 2, 2018 at 4:32 AM, Ravi Chandra Sadineni
-> <ravisadineni@chromium.org> wrote:
->> Currently we show event_count instead of wakeup_count as part of per
->> device wakeup_count sysfs attribute. Change it to wakeup_count to make
->> it more meaningful.
->
-> More information, please.
->
-> In particular, why it is more meaningful.
-Wakeup_count increments only when events_check_enabled is set. This
-bool is set whenever we write current wakeup count to
-/sys/power/wakeup_count from the user land. Also events_check_enabled
-is cleared on every resume. My understanding is that, userland is
-expected to write to this just before suspend. This way
-pm_wakeup_event() when called from irqs will increment the
-wakeup_count only if we are in system wide suspend resume cycle and
-should give a fair approximation of how many times a device might have
-caused a wake from S3/S0iX.  event_count on the other hand will
-increment every time pm_wakeup_event() is called irrespective of
-whether we are in a suspend/resume cycle.  For example when I try
-doing something like this (https://lkml.org/lkml/2018/6/1/890), we see
-the wakeup_count sysfs attribute for the particular device
-incrementing every time there is a irq. If it is important to expose
-event_count via sysfs attribute, should we create another attribute ?
-Also we do expose each of these counters via
-debugfs(/sys/kernel/debug/wake_sources).
+perf trace beauty prctl: Default header_dir to cwd to work without parms
 
-Please correct me if I am wrong or missing something. Also if there is
-a better way to do this, please let me know.
->
-> Thanks,
-> Rafael
+Useful when checking the effects of header synchs for the files it uses
+as a input to generate string tables, in retrospect this is how it
+should've been done from day 1, not requiring the header_dir to be set
+on the Makefile, will change everything later, so that the only parm,
+common to all generators will be $(srctree) and $(beauty_outdir).
+
+So, to see what it generates, just call it without any parameters:
+
+  $ tools/perf/trace/beauty/prctl_option.sh
+  static const char *prctl_options[] = {
+	  [1] = "SET_PDEATHSIG",
+	  [2] = "GET_PDEATHSIG",
+	  [3] = "GET_DUMPABLE",
+	  [4] = "SET_DUMPABLE",
+	  [5] = "GET_UNALIGN",
+	  [6] = "SET_UNALIGN",
+	  [7] = "GET_KEEPCAPS",
+	  [8] = "SET_KEEPCAPS",
+	  [9] = "GET_FPEMU",
+	  [10] = "SET_FPEMU",
+	  [11] = "GET_FPEXC",
+	  [12] = "SET_FPEXC",
+	  [13] = "GET_TIMING",
+	  [14] = "SET_TIMING",
+	  [15] = "SET_NAME",
+	  [16] = "GET_NAME",
+	  [19] = "GET_ENDIAN",
+	  [20] = "SET_ENDIAN",
+	  [21] = "GET_SECCOMP",
+	  [22] = "SET_SECCOMP",
+	  [25] = "GET_TSC",
+	  [26] = "SET_TSC",
+	  [27] = "GET_SECUREBITS",
+	  [28] = "SET_SECUREBITS",
+	  [29] = "SET_TIMERSLACK",
+	  [30] = "GET_TIMERSLACK",
+	  [35] = "SET_MM",
+	  [36] = "SET_CHILD_SUBREAPER",
+	  [37] = "GET_CHILD_SUBREAPER",
+	  [38] = "SET_NO_NEW_PRIVS",
+	  [39] = "GET_NO_NEW_PRIVS",
+	  [40] = "GET_TID_ADDRESS",
+	  [41] = "SET_THP_DISABLE",
+	  [42] = "GET_THP_DISABLE",
+	  [45] = "SET_FP_MODE",
+	  [46] = "GET_FP_MODE",
+  };
+  static const char *prctl_set_mm_options[] = {
+	  [1] = "START_CODE",
+	  [2] = "END_CODE",
+	  [3] = "START_DATA",
+	  [4] = "END_DATA",
+	  [5] = "START_STACK",
+	  [6] = "START_BRK",
+	  [7] = "BRK",
+	  [8] = "ARG_START",
+	  [9] = "ARG_END",
+	  [10] = "ENV_START",
+	  [11] = "ENV_END",
+	  [12] = "AUXV",
+	  [13] = "EXE_FILE",
+	  [14] = "MAP",
+	  [15] = "MAP_SIZE",
+  };
+  $
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-qtotspuztydjttxi7k6mec6h@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/prctl_option.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/trace/beauty/prctl_option.sh b/tools/perf/trace/beauty/prctl_option.sh
+index 0be4138fbe71..f24722146ebe 100755
+--- a/tools/perf/trace/beauty/prctl_option.sh
++++ b/tools/perf/trace/beauty/prctl_option.sh
+@@ -1,6 +1,6 @@
+ #!/bin/sh
+ 
+-header_dir=$1
++[ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 
+ printf "static const char *prctl_options[] = {\n"
+ regex='^#define[[:space:]]+PR_([GS]ET\w+)[[:space:]]*([[:xdigit:]]+).*'
