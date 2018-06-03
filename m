@@ -1,51 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751568AbeFCPMm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 11:12:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50744 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751373AbeFCPMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 11:12:40 -0400
-Date: Sun, 3 Jun 2018 16:12:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Brian Masney <masneyb@onstation.org>
-Cc: Colin King <colin.king@canonical.com>,
-        Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: tsl2x7x/tsl2772: avoid potential division by
- zero
-Message-ID: <20180603161234.008ac6c5@archlinux>
-In-Reply-To: <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
-References: <20180530181936.17902-1-colin.king@canonical.com>
-        <20180531092801.bsmqujkfnge3xhpo@0dcddc0a723b>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751625AbeFCPkM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 11:40:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45738 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751132AbeFCPkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 11:40:11 -0400
+Date: Sun, 3 Jun 2018 23:40:04 +0800
+From: Wei Xu <wexu@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jfreimann@redhat.com,
+        tiwei.bie@intel.com
+Subject: Re: [RFC V5 PATCH 8/8] vhost: event suppression for packed ring
+Message-ID: <20180603154004.GA24012@wei-ubt>
+References: <1527559830-8133-1-git-send-email-jasowang@redhat.com>
+ <1527559830-8133-9-git-send-email-jasowang@redhat.com>
+ <20180530114200.GA23792@wei-ubt>
+ <12f2c455-5868-3b07-0eba-d49dcafd10f2@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <12f2c455-5868-3b07-0eba-d49dcafd10f2@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018 05:28:01 -0400
-Brian Masney <masneyb@onstation.org> wrote:
-
-> On Wed, May 30, 2018 at 07:19:36PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > It may be possible for tsl2772_get_lux to return a zero lux value
-> > and hence a division by zero can occur when lux_val is zero. Check
-> > for this case and return -ERANGE to avoid the division by zero.
-> > 
-> > Detected by CoverityScan, CID#1469484 ("Division or modulo by zero")
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>  
+On Thu, May 31, 2018 at 11:09:07AM +0800, Jason Wang wrote:
 > 
-> Acked-by: Brian Masney <masneyb@onstation.org>
+> 
+> On 2018年05月30日 19:42, Wei Xu wrote:
+> >>  /* This actually signals the guest, using eventfd. */
+> >>  void vhost_signal(struct vhost_dev *dev, struct vhost_virtqueue *vq)
+> >>  {
+> >>@@ -2802,10 +2930,34 @@ static bool vhost_enable_notify_packed(struct vhost_dev *dev,
+> >>  				       struct vhost_virtqueue *vq)
+> >>  {
+> >>  	struct vring_desc_packed *d = vq->desc_packed + vq->avail_idx;
+> >>-	__virtio16 flags;
+> >>+	__virtio16 flags = RING_EVENT_FLAGS_ENABLE;
+> >>  	int ret;
+> >>-	/* FIXME: disable notification through device area */
+> >>+	if (!(vq->used_flags & VRING_USED_F_NO_NOTIFY))
+> >>+		return false;
+> >>+	vq->used_flags &= ~VRING_USED_F_NO_NOTIFY;
+> >'used_flags' was originally designed for 1.0, why should we pay attetion to it here?
+> >
+> >Wei
+> 
+> It was used to recored whether or not we've disabled notification. Then we
+> can avoid unnecessary userspace writes or memory barriers.
 
-Applied to the fixes-togreg branch of iio.git.
+OK, thanks.
 
-As there was nothing in that branch that is going upstream until after
-the merge window closes, I moved it forward to match staging/staging-next.
-
-Jonathan
+> 
+> Thanks
