@@ -1,102 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751341AbeFCCiV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 22:38:21 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:56111 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751295AbeFCCiU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 22:38:20 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w532c27i016807
-X-Nifty-SrcIP: [209.85.213.48]
-X-Google-Smtp-Source: ADUXVKIGkYP27SNNyTl2L4l59SSUvQKrXfTixdnF0IXXNxdqOWNoyUoBb9SnOA8Loi7SsNeXKB2k9sK16KOhXAGl/Z4=
+        id S1751387AbeFCCkp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 22:40:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8628 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750871AbeFCCkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 22:40:43 -0400
+From: YueHaibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <santosh@chelsio.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <ganeshgr@chelsio.com>, <leedom@chelsio.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: chelsio: Use zeroing memory allocator instead of allocator/memset
+Date: Sun, 3 Jun 2018 10:40:15 +0800
+Message-ID: <20180603024015.12744-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <1526351878-24961-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526351878-24961-1-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 3 Jun 2018 11:37:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASfiRcPVb0Bs_KWuAL3mtzdQfWwATVLkit8MkXeWtgrRQ@mail.gmail.com>
-Message-ID: <CAK7LNASfiRcPVb0Bs_KWuAL3mtzdQfWwATVLkit8MkXeWtgrRQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND] um: vdso: remove unused vdso-syms.lds
-To: Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        uml-devel <user-mode-linux-devel@lists.sourceforge.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi UML maintainers,
+Use dma_zalloc_coherent for allocating zeroed
+memory and remove unnecessary memset function.
 
-2018-05-15 11:37 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> This file contains symbol values, and was originally linked into
-> vmlinux, but I have no idea what it was actually used for.
->
-> Since commit 827880ec260b ("x86/um: thin archives build fix"), it is
-> not even linked.  Now it is completely orphan, and no problem has
-> been reported.  It is a proof that this file was not needed in the
-> first place.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Ingo Molnar <mingo@kernel.org>
-> ---
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/chelsio/cxgb3/sge.c   | 3 +--
+ drivers/net/ethernet/chelsio/cxgb4/sge.c   | 3 +--
+ drivers/net/ethernet/chelsio/cxgb4vf/sge.c | 7 +------
+ 3 files changed, 3 insertions(+), 10 deletions(-)
 
-
-Could you take a look at this patch, please?
-
-Thanks.
-
-
-> The previous post has gone to the moderator
-> due to too many recipients.
-> I am resending this.
-> I hope this is reaching UML maintainers.
->
->  arch/x86/um/vdso/.gitignore |  1 -
->  arch/x86/um/vdso/Makefile   | 16 ----------------
->  2 files changed, 17 deletions(-)
->
-> diff --git a/arch/x86/um/vdso/.gitignore b/arch/x86/um/vdso/.gitignore
-> index 9cac6d0..f8b69d8 100644
-> --- a/arch/x86/um/vdso/.gitignore
-> +++ b/arch/x86/um/vdso/.gitignore
-> @@ -1,2 +1 @@
-> -vdso-syms.lds
->  vdso.lds
-> diff --git a/arch/x86/um/vdso/Makefile b/arch/x86/um/vdso/Makefile
-> index 1000335..426681e 100644
-> --- a/arch/x86/um/vdso/Makefile
-> +++ b/arch/x86/um/vdso/Makefile
-> @@ -53,22 +53,6 @@ $(vobjs): KBUILD_CFLAGS += $(CFL)
->  CFLAGS_REMOVE_vdso-note.o = -pg -fprofile-arcs -ftest-coverage
->  CFLAGS_REMOVE_um_vdso.o = -pg -fprofile-arcs -ftest-coverage
->
-> -targets += vdso-syms.lds
-> -extra-$(VDSO64-y)                      += vdso-syms.lds
-> -
-> -#
-> -# Match symbols in the DSO that look like VDSO*; produce a file of constants.
-> -#
-> -sed-vdsosym := -e 's/^00*/0/' \
-> -       -e 's/^\([0-9a-fA-F]*\) . \(VDSO[a-zA-Z0-9_]*\)$$/\2 = 0x\1;/p'
-> -quiet_cmd_vdsosym = VDSOSYM $@
-> -define cmd_vdsosym
-> -       $(NM) $< | LC_ALL=C sed -n $(sed-vdsosym) | LC_ALL=C sort > $@
-> -endef
-> -
-> -$(obj)/%-syms.lds: $(obj)/%.so.dbg FORCE
-> -       $(call if_changed,vdsosym)
-> -
->  #
->  # The DSO images are built using a special linker script.
->  #
-> --
-> 2.7.4
->
-
-
-
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/sge.c b/drivers/net/ethernet/chelsio/cxgb3/sge.c
+index e988caa..20b6e1b 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/sge.c
+@@ -620,7 +620,7 @@ static void *alloc_ring(struct pci_dev *pdev, size_t nelem, size_t elem_size,
+ {
+ 	size_t len = nelem * elem_size;
+ 	void *s = NULL;
+-	void *p = dma_alloc_coherent(&pdev->dev, len, phys, GFP_KERNEL);
++	void *p = dma_zalloc_coherent(&pdev->dev, len, phys, GFP_KERNEL);
+ 
+ 	if (!p)
+ 		return NULL;
+@@ -633,7 +633,6 @@ static void *alloc_ring(struct pci_dev *pdev, size_t nelem, size_t elem_size,
+ 		}
+ 		*(void **)metadata = s;
+ 	}
+-	memset(p, 0, len);
+ 	return p;
+ }
+ 
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/sge.c b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+index 276f223..7a271fe 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/sge.c
+@@ -694,7 +694,7 @@ static void *alloc_ring(struct device *dev, size_t nelem, size_t elem_size,
+ {
+ 	size_t len = nelem * elem_size + stat_size;
+ 	void *s = NULL;
+-	void *p = dma_alloc_coherent(dev, len, phys, GFP_KERNEL);
++	void *p = dma_zalloc_coherent(dev, len, phys, GFP_KERNEL);
+ 
+ 	if (!p)
+ 		return NULL;
+@@ -708,7 +708,6 @@ static void *alloc_ring(struct device *dev, size_t nelem, size_t elem_size,
+ 	}
+ 	if (metadata)
+ 		*(void **)metadata = s;
+-	memset(p, 0, len);
+ 	return p;
+ }
+ 
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
+index dfce5df..3007e1a 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
+@@ -756,7 +756,7 @@ static void *alloc_ring(struct device *dev, size_t nelem, size_t hwsize,
+ 	 * Allocate the hardware ring and PCI DMA bus address space for said.
+ 	 */
+ 	size_t hwlen = nelem * hwsize + stat_size;
+-	void *hwring = dma_alloc_coherent(dev, hwlen, busaddrp, GFP_KERNEL);
++	void *hwring = dma_zalloc_coherent(dev, hwlen, busaddrp, GFP_KERNEL);
+ 
+ 	if (!hwring)
+ 		return NULL;
+@@ -776,11 +776,6 @@ static void *alloc_ring(struct device *dev, size_t nelem, size_t hwsize,
+ 		*(void **)swringp = swring;
+ 	}
+ 
+-	/*
+-	 * Zero out the hardware ring and return its address as our function
+-	 * value.
+-	 */
+-	memset(hwring, 0, hwlen);
+ 	return hwring;
+ }
+ 
 -- 
-Best Regards
-Masahiro Yamada
+2.7.0
