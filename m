@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751818AbeFCXgj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 19:36:39 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:42222 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbeFCXgD (ORCPT
+        id S1751783AbeFCXgi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 19:36:38 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:41029 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751439AbeFCXgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Jun 2018 19:36:03 -0400
-X-Google-Smtp-Source: ADUXVKI+d/eQG8+DEtUohmMbodKmy9OsH6vkkek8xPILMda9pzEJaPXqy/ikLUn6adGaWoDSRFHnFCQ55qpcLUyEXupw6es22vtL
+X-Google-Smtp-Source: ADUXVKIh9gjBWZoFFew8kvm3plkakWgdawcLs/HWPQUJRFTyl12eF6cCqb9u8WfNLh8weGpAWH8vGRPBiCxtSZ43YDoRM82KEWr4
 MIME-Version: 1.0
-Date: Sun, 03 Jun 2018 16:36:02 -0700
+Date: Sun, 03 Jun 2018 16:36:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bab429056dc547be@google.com>
-Subject: KASAN: use-after-free Read in skb_ensure_writable
-From: syzbot <syzbot+c8504affd4fdd0c1b626@syzkaller.appspotmail.com>
+Message-ID: <000000000000bec587056dc547ba@google.com>
+Subject: KASAN: use-after-free Read in bpf_csum_update
+From: syzbot <syzbot+3d0b2441dbb71751615e@syzkaller.appspotmail.com>
 To: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
@@ -29,28 +29,28 @@ syzbot found the following crash on:
 
 HEAD commit:    bcece5dc40b9 bpf: Change bpf_fib_lookup to return -EAFNOSU..
 git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ee76b7800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=161e2c6f800000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
-dashboard link: https://syzkaller.appspot.com/bug?extid=c8504affd4fdd0c1b626
+dashboard link: https://syzkaller.appspot.com/bug?extid=3d0b2441dbb71751615e
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10d926df800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1778c26f800000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17cb5adf800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ebf19f800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c8504affd4fdd0c1b626@syzkaller.appspotmail.com
+Reported-by: syzbot+3d0b2441dbb71751615e@syzkaller.appspotmail.com
 
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 ==================================================================
-BUG: KASAN: use-after-free in pskb_may_pull include/linux/skbuff.h:2108  
+BUG: KASAN: use-after-free in ____bpf_csum_update net/core/filter.c:1907  
 [inline]
-BUG: KASAN: use-after-free in skb_ensure_writable+0x554/0x620  
-net/core/skbuff.c:5118
-Read of size 4 at addr ffff8801b0b40fc0 by task syz-executor258/4479
+BUG: KASAN: use-after-free in bpf_csum_update+0xb4/0xc0  
+net/core/filter.c:1901
+Read of size 1 at addr ffff8801ad062f10 by task syz-executor354/4488
 
-CPU: 0 PID: 4479 Comm: syz-executor258 Not tainted 4.17.0-rc6+ #29
+CPU: 1 PID: 4488 Comm: syz-executor354 Not tainted 4.17.0-rc6+ #29
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -59,28 +59,24 @@ Call Trace:
   print_address_description+0x6c/0x20b mm/kasan/report.c:256
   kasan_report_error mm/kasan/report.c:354 [inline]
   kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  pskb_may_pull include/linux/skbuff.h:2108 [inline]
-  skb_ensure_writable+0x554/0x620 net/core/skbuff.c:5118
-  __bpf_try_make_writable net/core/filter.c:1606 [inline]
-  bpf_try_make_writable net/core/filter.c:1612 [inline]
-  ____bpf_l3_csum_replace net/core/filter.c:1774 [inline]
-  bpf_l3_csum_replace+0x8c/0x4d0 net/core/filter.c:1765
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  ____bpf_csum_update net/core/filter.c:1907 [inline]
+  bpf_csum_update+0xb4/0xc0 net/core/filter.c:1901
 
 The buggy address belongs to the page:
-page:ffffea0006c2d000 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+page:ffffea0006b41880 count:0 mapcount:0 mapping:0000000000000000 index:0x0
 flags: 0x2fffc0000000000()
 raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: ffffea00075ea760 ffffea0006c39660 ffff8801b5848738 0000000000000000
+raw: ffffea0006b41820 ffffea0006b671a0 0000000000000000 0000000000000000
 page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffff8801b0b40e80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801b0b40f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff8801b0b40f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                                            ^
-  ffff8801b0b41000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801b0b41080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801ad062e00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801ad062e80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ffff8801ad062f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                          ^
+  ffff8801ad062f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801ad063000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
 ==================================================================
 
 
