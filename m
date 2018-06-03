@@ -1,161 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750934AbeFCFUg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 01:20:36 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33077 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750786AbeFCFUe (ORCPT
+        id S1750987AbeFCFiI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 01:38:08 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33107 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750789AbeFCFiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 01:20:34 -0400
-X-Google-Smtp-Source: ADUXVKJlCEyuBhuwr9Abxy/OjCLT4CCqMpHZU8sJnuUSdd3h4Yln1ecyTJa8sZDk4iGM+vcTqJb9am6UcWFpb3JtuiE=
+        Sun, 3 Jun 2018 01:38:06 -0400
+X-Google-Smtp-Source: ADUXVKI8XB0t7qvIOL4DNqDpcxiXeXeTD96Nmy3OZ2W4I2nTIqNwXrUjoZmRlUeygBwywzFpHj44dAVhLkL2WFFWRnk=
 MIME-Version: 1.0
-In-Reply-To: <20180601155235.GA66123@joelaf.mtv.corp.google.com>
-References: <1515392081-32320-2-git-send-email-byungchul.park@lge.com>
- <20180601061255.GA189147@joelaf.mtv.corp.google.com> <20180601061841.GA191514@joelaf.mtv.corp.google.com>
- <b61c30fe-bc16-0f12-7a20-46a89f7cea55@lge.com> <20180601155235.GA66123@joelaf.mtv.corp.google.com>
+In-Reply-To: <20180603035848.GA76941@joelaf.mtv.corp.google.com>
+References: <1527818589-13476-1-git-send-email-byungchul.park@lge.com> <20180603035848.GA76941@joelaf.mtv.corp.google.com>
 From: Byungchul Park <max.byungchul.park@gmail.com>
-Date: Sun, 3 Jun 2018 14:20:32 +0900
-Message-ID: <CANrsvRPaE1oDdD5JyxsCo7z-W=yBycOdDMf-+Tam3rMKB+MHmA@mail.gmail.com>
-Subject: Re: [RESEND, v3, 2/2] sched/deadline: Initialize cp->elements[].cpu
- to an invalid value
+Date: Sun, 3 Jun 2018 14:38:04 +0900
+Message-ID: <CANrsvRNeMc8JppnP53ordMkzw+HDdPn0VsiF0j3YdWbQe1+sUg@mail.gmail.com>
+Subject: Re: [PATCH] rcu: Check the range of jiffies_till_{first,next}_fqs
+ when setting them
 To: Joel Fernandes <joel@joelfernandes.org>
-Cc: Byungchul Park <byungchul.park@lge.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        rostedt@goodmis.org, Thomas Gleixner <tglx@linutronix.de>,
-        raistlin@linux.it, linux-kernel@vger.kernel.org,
-        Juri Lelli <juri.lelli@gmail.com>, bristot@redhat.com,
-        kernel-team@lge.com, kernel-team@android.com
+Cc: Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>, josh@joshtriplett.org,
+        rostedt@goodmis.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 2, 2018 at 12:52 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Fri, Jun 01, 2018 at 04:10:56PM +0900, Byungchul Park wrote:
->> > On Thu, May 31, 2018 at 11:12:55PM -0700, Joel Fernandes wrote:
->> > > On Mon, Jan 08, 2018 at 03:14:41PM +0900, byungchul park wrote:
->> > > > Currently, migrating tasks to cpu0 unconditionally happens when the
->> > > > heap is empty, since cp->elements[].cpu was initialized to 0(=cpu0).
->> > > > We have to distinguish between the empty case and cpu0 to avoid the
->> > > > unnecessary migrations. Therefore, it has to return an invalid value
->> > > > e.i. -1 in that case.
->> > > >
->> > > > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
->> > > > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
->> > > > Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
->> > > > ---
->> > > >   kernel/sched/cpudeadline.c | 10 +++++++++-
->> > > >   1 file changed, 9 insertions(+), 1 deletion(-)
->> > > >
->> > > > diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
->> > > > index 9f02035..bcf903f 100644
->> > > > --- a/kernel/sched/cpudeadline.c
->> > > > +++ b/kernel/sched/cpudeadline.c
->> > > > @@ -138,6 +138,12 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
->> > > >                 int best_cpu = cpudl_maximum_cpu(cp);
->> > > >                 WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
->> > > > +               /*
->> > > > +                * The heap tree is empty for now, just return.
->> > > > +                */
->> > > > +               if (best_cpu == -1)
->> > > > +                       return 0;
->> > > > +
->> > > >                 if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
->> > > >                     dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
->> > > >                         if (later_mask)
->> > > > @@ -265,8 +271,10 @@ int cpudl_init(struct cpudl *cp)
->> > > >                 return -ENOMEM;
->> > > >         }
->> > > > -       for_each_possible_cpu(i)
->> > > > +       for_each_possible_cpu(i) {
->> > > > +               cp->elements[i].cpu = -1;
->> > > >                 cp->elements[i].idx = IDX_INVALID;
->> > >
->> > > Shouldn't you also set cp->elements[cpu].cpu to -1 in cpudl_clear (when you
->> > > set cp->elements[cpu].cpu to IDX_INVALID there)?
->> >
->> > I messed up my words, I meant : "when setting cp->elements[cpu].idx to
->> > IDX_INVALID there". Which means I need to call it a day :-)
+On Sun, Jun 3, 2018 at 12:58 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> On Fri, Jun 01, 2018 at 11:03:09AM +0900, Byungchul Park wrote:
+>> Currently, the range of jiffies_till_{first,next}_fqs are checked and
+>> adjusted on and on in the loop of rcu_gp_kthread on runtime.
 >>
->> Ah.. I agree with you. It might be a problem when removing the last
->> element.. Then I think the following change should also be applied
->> additionally. Right?
->
-> Yes.
->
+>> However, it's enough to check them only when setting them, not every
+>> time in the loop. So make them handled on a setting time via sysfs.
+>>
+>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 >> ---
->> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
->> index 8d9562d..44d4c88 100644
->> --- a/kernel/sched/cpudeadline.c
->> +++ b/kernel/sched/cpudeadline.c
->> @@ -172,12 +172,14 @@ void cpudl_clear(struct cpudl *cp, int cpu)
->>         } else {
->>                 new_cpu = cp->elements[cp->size - 1].cpu;
->>                 cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
->> -               cp->elements[old_idx].cpu = new_cpu;
->> +               cp->elements[old_idx].cpu = (new_cpu == cpu) ? -1 : new_cpu;
->>                 cp->size--;
->> -               cp->elements[new_cpu].idx = old_idx;
->>                 cp->elements[cpu].idx = IDX_INVALID;
->> -               cpudl_heapify(cp, old_idx);
+>>  kernel/rcu/tree.c | 45 ++++++++++++++++++++++++++++++++-------------
+>>  1 file changed, 32 insertions(+), 13 deletions(-)
 >>
->> +               if (new_cpu != cpu) {
->> +                       cp->elements[new_cpu].idx = old_idx;
->> +                       cpudl_heapify(cp, old_idx);
->> +               }
->>                 cpumask_set_cpu(cpu, cp->free_cpus);
+>> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+>> index 4e96761..eb54d7d 100644
+>> --- a/kernel/rcu/tree.c
+>> +++ b/kernel/rcu/tree.c
+>> @@ -518,8 +518,38 @@ void rcu_all_qs(void)
+>>  static ulong jiffies_till_next_fqs = ULONG_MAX;
+>>  static bool rcu_kick_kthreads;
+>>
+>> -module_param(jiffies_till_first_fqs, ulong, 0644);
+>> -module_param(jiffies_till_next_fqs, ulong, 0644);
+>> +static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
+>> +{
+>> +     ulong j;
+>> +     int ret = kstrtoul(val, 0, &j);
+>> +
+>> +     if (!ret)
+>> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : j);
+>> +     return ret;
+>> +}
+>> +
+>> +static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param *kp)
+>> +{
+>> +     ulong j;
+>> +     int ret = kstrtoul(val, 0, &j);
+>> +
+>> +     if (!ret)
+>> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : (j ?: 1));
+>> +     return ret;
+>> +}
 >
-> This looks a bit confusing. How about the following? (untested)
+> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>
+> Also, can we not combine the 2 param_set_ handlers as well?
+>
+> Only thing we would be giving up is that jiffies_till_first_fqs = 0 wouldn't
+> be allowed (if we go with the param_set_next handler to be the common one)
+> but don't think that's a useful/valid usecase since jiffies_till_first_fqs is
+> set to a sane non-0 value anyway at boot up because of rcu_init_geometry
+> anyway.. Thoughts?
 
-Hello,
+Excuse me. Which code in rcu_init_geometry() makes jiffies_till_first_fqs
+be a non-zero in case called with jiffies_till_first_fqs == 0?
 
-Whatever. Your code also looks good to me.
+Furthermore, what if we want to change the value through sysfs to zero
+on runtime?
 
-I just wanna follow the maintainers' decision. ;)
-
+> If you agree, the below patch could be applied on top of rcu/dev (tested on
+> rcu/dev), it saves another 20 lines.
+>
 > thanks,
 >
->  - Joel
+> - Joel
 >
 > ---8<-----------------------
 >
-> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-> index 50316455ea66..741a97e58c05 100644
-> --- a/kernel/sched/cpudeadline.c
-> +++ b/kernel/sched/cpudeadline.c
-> @@ -129,6 +129,10 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
->         } else {
->                 int best_cpu = cpudl_maximum(cp);
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> Date: Sat, 2 Jun 2018 20:47:06 -0700
+> Subject: [PATCH] rcu: Use common handler for setting
+>  jiffies_till_{first,next}_fqs
 >
-> +               /* The max-heap is empty, just return. */
-> +               if (best_cpu == -1)
-> +                       return 0;
-> +
->                 WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
+> Recently the checking of jiffies_till_{first,next}_fqs during forcing of
+> quiescent states was changed to be done whenever the parameters are set.
 >
->                 if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
-> @@ -167,6 +171,12 @@ void cpudl_clear(struct cpudl *cp, int cpu)
->                  * This could happen if a rq_offline_dl is
->                  * called for a CPU without -dl tasks running.
->                  */
-> +       } else if (cp->size == 1) {
-> +               /* Only one element in max-heap, clear it */
-> +               cp->elements[0].cpu = -1;
-> +               cp->elements[cpu].idx = IDX_INVALID;
-> +               cp->size--;
-> +               cpumask_set_cpu(cpu, cp->free_cpus);
->         } else {
->                 new_cpu = cp->elements[cp->size - 1].cpu;
->                 cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
-> @@ -262,6 +272,9 @@ int cpudl_init(struct cpudl *cp)
->         for_each_possible_cpu(i)
->                 cp->elements[i].idx = IDX_INVALID;
+> Looking at how jiffies_till_first_fqs is used on my system, I noticed a
+> value of 0 for it doesn't make much sense and is infact set to a non-0
+> value at boot up. In this case, we can combine the module_param handlers
+> for setting both these and keep code size small. This patch attempts it.
 >
-> +       /* Mark heap as initially empty */
-> +       cp->elements[0].cpu = -1;
-> +
->         return 0;
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  kernel/rcu/tree.c | 25 +++++--------------------
+>  1 file changed, 5 insertions(+), 20 deletions(-)
+>
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index deb2508be923..6550040f8d46 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -498,17 +498,7 @@ static ulong jiffies_till_first_fqs = ULONG_MAX;
+>  static ulong jiffies_till_next_fqs = ULONG_MAX;
+>  static bool rcu_kick_kthreads;
+>
+> -static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
+> -{
+> -       ulong j;
+> -       int ret = kstrtoul(val, 0, &j);
+> -
+> -       if (!ret)
+> -               WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : j);
+> -       return ret;
+> -}
+> -
+> -static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param *kp)
+> +static int param_set_fqs_jiffies(const char *val, const struct kernel_param *kp)
+>  {
+>         ulong j;
+>         int ret = kstrtoul(val, 0, &j);
+> @@ -518,18 +508,13 @@ static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param
+>         return ret;
 >  }
+>
+> -static struct kernel_param_ops first_fqs_jiffies_ops = {
+> -       .set = param_set_first_fqs_jiffies,
+> -       .get = param_get_ulong,
+> -};
+> -
+> -static struct kernel_param_ops next_fqs_jiffies_ops = {
+> -       .set = param_set_next_fqs_jiffies,
+> +static struct kernel_param_ops fqs_jiffies_ops = {
+> +       .set = param_set_fqs_jiffies,
+>         .get = param_get_ulong,
+>  };
+>
+> -module_param_cb(jiffies_till_first_fqs, &first_fqs_jiffies_ops, &jiffies_till_first_fqs, 0644);
+> -module_param_cb(jiffies_till_next_fqs, &next_fqs_jiffies_ops, &jiffies_till_next_fqs, 0644);
+> +module_param_cb(jiffies_till_first_fqs, &fqs_jiffies_ops, &jiffies_till_first_fqs, 0644);
+> +module_param_cb(jiffies_till_next_fqs, &fqs_jiffies_ops, &jiffies_till_next_fqs, 0644);
+>  module_param(rcu_kick_kthreads, bool, 0644);
+>
+>  /*
+> --
+> 2.17.1.1185.g55be947832-goog
 >
 
 
