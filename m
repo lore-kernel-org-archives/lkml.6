@@ -1,198 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751775AbeFBXj3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 19:39:29 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:44622 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeFBXj1 (ORCPT
+        id S1751104AbeFCAw1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 20:52:27 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59906 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750964AbeFCAwZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 19:39:27 -0400
-Date: Sat, 02 Jun 2018 19:39:23 -0400 (EDT)
-Message-Id: <20180602.193923.1752404501296246599.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-CC: akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Networking
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-2
-Content-Transfer-Encoding: 8BIT
+        Sat, 2 Jun 2018 20:52:25 -0400
+From: Song Liu <songliubraving@fb.com>
+To: Andy Lutomirski <luto@kernel.org>
+CC: "riel@surriel.com" <riel@surriel.com>, Mike Galbraith <efault@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>, Kernel Team <Kernel-team@fb.com>,
+        "Ingo Molnar" <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
+Thread-Topic: [PATCH] x86,switch_mm: skip atomic operations for init_mm
+Thread-Index: AQHT+aQkoCM4OwpdokeqAd0pb+8n46RLgj4AgAA1YACAAAc8AIAAD3yAgAAFuoCAAAjKAIAADQIAgAAOY4CAAFn5gIAAGL4AgAD+bQCAAE1rgA==
+Date: Sun, 3 Jun 2018 00:51:46 +0000
+Message-ID: <A87157D6-4A0A-44F8-8AC8-4411F5EDC57A@fb.com>
+References: <20180601082811.4c0d33ba@imladris.surriel.com>
+ <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
+ <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
+ <1527882207.7898.86.camel@surriel.com>
+ <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
+ <1527885324.7898.88.camel@surriel.com>
+ <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
+ <20180601181327.367f0fe3@imladris.surriel.com>
+ <CALCETrXTLqcro4uu5f77EmeaDvNqGZNLpsk-w_BApRNmzvcz=Q@mail.gmail.com>
+ <1527915842.7898.93.camel@surriel.com>
+ <CALCETrW5m3Y3CGnRZwDTMT9g-1an_LO6Fp_6FWOokydhN9BDLQ@mail.gmail.com>
+In-Reply-To: <CALCETrW5m3Y3CGnRZwDTMT9g-1an_LO6Fp_6FWOokydhN9BDLQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.6.18)
+x-originating-ip: [2620:10d:c090:180::1:183e]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1520;7:KbNu6f16oQDI8yxGDNnyIPG56s7e8piZwA0icz0skoYnQtMBv9kBQGvPzF6z6dLKyGa8ZbTqJxcBIVuKHTFoSdLFISli4s/qIh58ojasW7vnC3hUMx0FekhOYnF6zATxtHSmVBjETirBT2g7ihtbSBv1znI6bTPcSlBNJlpa0kwVsduPgBwkQDize73ZiX5RzRNzL8c/AGwLDRUqBboPfNqZPODFYRq+M+1VdK/4pjhbScO6LvKSuuW1vU0BH1qD;20:zU2i65K5lnpXfEIrvK3NaOVeSiXIWlQgnhNJxTbHwU6Ae69ikDZpEbW7IGxHYtLCqDFKIJ/1YFCcXuKES2EAdJCuA/0yADoTC/bW4oZJ6cZTRJ/2ON5cHIWfTlI+YZwHdR7z5MyDlgbe28sH2XEiQ2uBZPpLEm9WZiQd1yMdCUo=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1520;
+x-ms-traffictypediagnostic: MWHPR15MB1520:
+x-microsoft-antispam-prvs: <MWHPR15MB15203717AF758464F3A4F718B3600@MWHPR15MB1520.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231254)(11241501184)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR15MB1520;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1520;
+x-forefront-prvs: 069255B8B8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(376002)(39860400002)(366004)(396003)(54094003)(189003)(199004)(8936002)(8676002)(33656002)(105586002)(97736004)(486006)(186003)(4326008)(6916009)(478600001)(81156014)(25786009)(6486002)(68736007)(106356001)(54906003)(86362001)(81166006)(11346002)(8666007)(6436002)(2900100001)(50226002)(476003)(2616005)(446003)(5660300001)(3280700002)(229853002)(305945005)(93886005)(2906002)(53546011)(6506007)(76176011)(82746002)(102836004)(46003)(36756003)(6512007)(53936002)(83716003)(5250100002)(6246003)(99286004)(7736002)(6116002)(14454004)(316002)(57306001)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1520;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: Bz7nz9hkmp9QLgX1kgDc3Pbr4C/eSXpPUYEuVjXjNqjBMs8eYlbeWrX7sThSZoqanQKeFJWIVwuiBk2yTJF5rvlX4+XLn/9hTRBDYrVGy6gOEFRwAEA776WRbdKu3DjjA0kibm0x1QMS1EsxHhpWPsbv7nBI9F4zFnufj8M57m4MlxvODXiRkz0uzr0SGRQ1
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <CDE48D3EE00C0F4BBBDE637D86C63988@namprd15.prod.outlook.com>
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 1b992ecc-06e4-4595-f9a1-08d5c8ec2ea5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b992ecc-06e4-4595-f9a1-08d5c8ec2ea5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2018 00:51:46.1697
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1520
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-02_15:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w530qaBO009191
 
 
-1) Infinite loop in _decode_session6(), from Eric Dumazet.
 
-2) Pass correct argument to nla_strlcpy() in netfilter, also
-   from Eric Dumazet.
+> On Jun 2, 2018, at 1:14 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> 
+> On Fri, Jun 1, 2018 at 10:04 PM Rik van Riel <riel@surriel.com> wrote:
+>> 
+>> On Fri, 2018-06-01 at 20:35 -0700, Andy Lutomirski wrote:
+>>> On Fri, Jun 1, 2018 at 3:13 PM Rik van Riel <riel@surriel.com> wrote:
+>>>> 
+>>>> On Fri, 1 Jun 2018 14:21:58 -0700
+>>>> Andy Lutomirski <luto@kernel.org> wrote:
+>>>> 
+>>>>> Hmm.  I wonder if there's a more clever data structure than a
+>>>>> bitmap
+>>>>> that we could be using here.  Each CPU only ever needs to be in
+>>>>> one
+>>>>> mm's cpumask, and each cpu only ever changes its own state in the
+>>>>> bitmask.  And writes are much less common than reads for most
+>>>>> workloads.
+>>>> 
+>>>> It would be easy enough to add an mm_struct pointer to the
+>>>> per-cpu tlbstate struct, and iterate over those.
+>>>> 
+>>>> However, that would be an orthogonal change to optimizing
+>>>> lazy TLB mode.
+>>>> 
+>>>> Does the (untested) patch below make sense as a potential
+>>>> improvement to the lazy TLB heuristic?
+>>>> 
+>>>> ---8<---
+>>>> Subject: x86,tlb: workload dependent per CPU lazy TLB switch
+>>>> 
+>>>> Lazy TLB mode is a tradeoff between flushing the TLB and touching
+>>>> the mm_cpumask(&init_mm) at context switch time, versus potentially
+>>>> incurring a remote TLB flush IPI while in lazy TLB mode.
+>>>> 
+>>>> Whether this pays off is likely to be workload dependent more than
+>>>> anything else. However, the current heuristic keys off hardware
+>>>> type.
+>>>> 
+>>>> This patch changes the lazy TLB mode heuristic to a dynamic, per-
+>>>> CPU
+>>>> decision, dependent on whether we recently received a remote TLB
+>>>> shootdown while in lazy TLB mode.
+>>>> 
+>>>> This is a very simple heuristic. When a CPU receives a remote TLB
+>>>> shootdown IPI while in lazy TLB mode, a counter in the same cache
+>>>> line is set to 16. Every time we skip lazy TLB mode, the counter
+>>>> is decremented.
+>>>> 
+>>>> While the counter is zero (no recent TLB flush IPIs), allow lazy
+>>>> TLB mode.
+>>> 
+>>> Hmm, cute.  That's not a bad idea at all.  It would be nice to get
+>>> some kind of real benchmark on both PCID and !PCID.  If nothing else,
+>>> I would expect the threshold (16 in your patch) to want to be lower
+>>> on
+>>> PCID systems.
+>> 
+>> That depends on how well we manage to get rid of
+>> the cpumask manipulation overhead. On the PCID
+>> system we first found this issue, the atomic
+>> accesses to the mm_cpumask took about 4x as much
+>> CPU time as the TLB invalidation itself.
+>> 
+>> That kinda limits how much the cost of cheaper
+>> TLB flushes actually help :)
+>> 
+>> I agree this code should get some testing.
+>> 
+> 
+> Just to check: in the workload where you're seeing this problem, are
+> you using an mm with many threads?  I would imagine that, if you only
+> have one or two threads, the bit operations aren't so bad.
 
-3) Out of bounds memory access in ipv6 srh code, from Mathieu
-   Xhonneux.
+Yes, we are running netperf/netserver with 300 threads. We don't see
+this much overhead in with real workload. 
 
-4) NULL deref in XDP_REDIRECT handling of tun driver, from
-   Toshiaki Makita.
+Here are some test results. The tests are on 2-socket system with E5-2678 v3, 
+so 48 logical cores with PCID. I tested 3 kernel (and tunes 
+flushed_while_lazy):
 
-5) Incorrect idr release in cls_flower, from Paul Blakey.
+Baseline: 0512e01345 in upstream
+Baseline + lazy-tlb: 0512e01345 + "x86,tlb: workload dependent per CPU lazy TLB switch"   
+Baseline + both patches: 0512e01345 + "x86,tlb: workload dependent per CPU lazy TLB switch" + "x86,switch_mm: skip atomic operations for init_mm"    
 
-6) Probe error handling fix in davinci_emac, from Dan Carpenter.
+The tests are wrong with the following options: 
 
-7) Memory leak in XPS configuration, from Alexander Duyck.
+./super_netperf 300 -P 0 -t TCP_RR -p 8888 -H <target_host> -l 60 -- -r 100,100 -o -s 1M,1M -S 1M,1M
 
-8) Use after free with cloned sockets in kcm, from Kirill Tkhai.
+There are the results:
+                       flushed_while_lazy    Throughput     %-cpu-on-switch_mm_irqs_off() 
 
-9) MTU handling fixes fo ip_tunnel and ip6_tunnel, from Nicolas
-   Dichtel.
+Baseline                      N/A             2.02756e+06         2.82%    (1.54% in ctx of netserver + 1.28% in ctx of swapper)
+Baseline + lazy-tlb            16             1.92706e+06         1.19%    (only in ctx of swapper, same for all cases below)
+Baseline + lazy-tlb            4              2.03863e+06         1.12%    Good option 1
+Baseline + lazy-tlb            2              1.93847e+06         1.22%
+Baseline + both patches        64             1.92219e+06         1.09%
+Baseline + both patches        16             1.93597e+06         1.15%
+Baseline + both patches        8              1.92175e+06         1.11%
+Baseline + both patches        4              2.03465e+06         1.09%    Good option 2
+Baseline + both patches        2              2.03603e+06         1.10%    Good option 3
+Baseline + both patches        1              1.9241e+06          1.06%
 
-10) Fix UAPI hole in bpf data structure for 32-bit compat
-    applications, from Daniel Borkmann.
+I highlighted 3 good options above. They are about the same for this 
+test case. 
 
-Please pull, thanks a lot!
-
-The following changes since commit bc2dbc5420e82560e650f8531ceca597441ca171:
-
-  Merge branch 'akpm' (patches from Andrew) (2018-05-25 20:24:28 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
-
-for you to fetch changes up to cd075ce4679ca7797734c4f6c5aa23878c8e2208:
-
-  Merge git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf (2018-06-02 08:07:52 -0400)
-
-----------------------------------------------------------------
-Alexander Duyck (1):
-      net-sysfs: Fix memory leak in XPS configuration
-
-Ard Biesheuvel (1):
-      net: netsec: reduce DMA mask to 40 bits
-
-Damien Thébault (1):
-      net: dsa: b53: Add BCM5389 support
-
-Dan Carpenter (1):
-      net: ethernet: davinci_emac: fix error handling in probe()
-
-Daniel Borkmann (1):
-      bpf: fix uapi hole for 32 bit compat applications
-
-Daniele Palmas (1):
-      net: usb: cdc_mbim: add flag FLAG_SEND_ZLP
-
-David S. Miller (5):
-      Merge git://git.kernel.org/.../pablo/nf
-      Merge tag 'wireless-drivers-for-davem-2018-05-30' of git://git.kernel.org/.../kvalo/wireless-drivers
-      Merge branch 'master' of git://git.kernel.org/.../klassert/ipsec
-      Merge branch 'tunnel-mtus'
-      Merge git://git.kernel.org/.../bpf/bpf
-
-Eric Dumazet (2):
-      xfrm6: avoid potential infinite loop in _decode_session6()
-      netfilter: provide correct argument to nla_strlcpy()
-
-Finn Thain (1):
-      net/sonic: Use dma_mapping_error()
-
-Hao Wei Tee (1):
-      iwlwifi: pcie: compare with number of IRQs requested for, not number of CPUs
-
-Ivan Bornyakov (1):
-      atm: zatm: fix memcmp casting
-
-Jason Wang (1):
-      vhost_net: flush batched heads before trying to busy polling
-
-Josh Hill (1):
-      net: qmi_wwan: Add Netgear Aircard 779S
-
-Julian Anastasov (1):
-      ipvs: fix buffer overflow with sync daemon and service
-
-Kirill Tkhai (1):
-      kcm: Fix use-after-free caused by clonned sockets
-
-Mathieu Xhonneux (1):
-      ipv6: sr: fix memory OOB access in seg6_do_srh_encap/inline
-
-Nicolas Dichtel (2):
-      ip_tunnel: restore binding to ifaces with a large mtu
-      ip6_tunnel: remove magic mtu value 0xFFF8
-
-Ondøej Hlavatý (1):
-      ixgbe: fix parsing of TC actions for HW offload
-
-Pablo Neira Ayuso (2):
-      netfilter: nft_limit: fix packet ratelimiting
-      netfilter: nf_tables: disable preemption in nft_update_chain_stats()
-
-Paolo Abeni (1):
-      netfilter: ebtables: handle string from userspace with care
-
-Paul Blakey (1):
-      cls_flower: Fix incorrect idr release when failing to modify rule
-
-Petr Machata (1):
-      mlxsw: spectrum: Forbid creation of VLAN 1 over port/LAG
-
-Samuel Mendoza-Jonas (1):
-      net/ncsi: Fix array size in dumpit handler
-
-Stanislaw Gruszka (1):
-      Revert "rt2800: use TXOP_BACKOFF for probe frames"
-
-Steffen Klassert (1):
-      xfrm Fix potential error pointer dereference in xfrm_bundle_create.
-
-Suresh Reddy (1):
-      be2net: Fix error detection logic for BE3
-
-Taehee Yoo (4):
-      netfilter: nf_tables: fix NULL pointer dereference on nft_ct_helper_obj_dump()
-      netfilter: nft_meta: fix wrong value dereference in nft_meta_set_eval
-      netfilter: nf_tables: fix NULL-ptr in nf_tables_dump_obj()
-      netfilter: nf_tables: increase nft_counters_enabled in nft_chain_stats_replace()
-
-Toshiaki Makita (1):
-      tun: Fix NULL pointer dereference in XDP redirect
-
- Documentation/devicetree/bindings/net/dsa/b53.txt |  1 +
- drivers/atm/zatm.c                                |  4 ++--
- drivers/net/dsa/b53/b53_common.c                  | 13 +++++++++++++
- drivers/net/dsa/b53/b53_mdio.c                    |  5 ++++-
- drivers/net/dsa/b53/b53_priv.h                    |  1 +
- drivers/net/ethernet/emulex/benet/be_main.c       |  4 +++-
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c     |  9 ++++-----
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c    |  5 +++++
- drivers/net/ethernet/natsemi/sonic.c              |  2 +-
- drivers/net/ethernet/socionext/netsec.c           |  4 ++--
- drivers/net/ethernet/ti/davinci_emac.c            | 22 ++++++++++++----------
- drivers/net/tun.c                                 | 15 +++++++++------
- drivers/net/usb/cdc_mbim.c                        |  2 +-
- drivers/net/usb/qmi_wwan.c                        |  1 +
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c   | 10 +++++-----
- drivers/net/wireless/ralink/rt2x00/rt2x00queue.c  |  7 +++----
- drivers/vhost/net.c                               | 37 ++++++++++++++++++++++++-------------
- include/uapi/linux/bpf.h                          |  2 ++
- net/bridge/netfilter/ebtables.c                   |  3 ++-
- net/core/net-sysfs.c                              |  6 +++---
- net/ipv4/ip_tunnel.c                              |  8 ++++----
- net/ipv6/ip6_tunnel.c                             | 11 ++++++++---
- net/ipv6/seg6_iptunnel.c                          |  4 ++--
- net/ipv6/sit.c                                    |  5 +++--
- net/ipv6/xfrm6_policy.c                           |  2 +-
- net/kcm/kcmsock.c                                 |  2 +-
- net/ncsi/ncsi-netlink.c                           |  2 +-
- net/netfilter/ipvs/ip_vs_ctl.c                    | 21 +++++++++++++++------
- net/netfilter/nf_tables_api.c                     |  8 +++++---
- net/netfilter/nf_tables_core.c                    |  4 ++--
- net/netfilter/nfnetlink_acct.c                    |  2 +-
- net/netfilter/nfnetlink_cthelper.c                |  4 ++--
- net/netfilter/nft_ct.c                            | 20 ++++++++++++--------
- net/netfilter/nft_limit.c                         | 38 ++++++++++++++++++++++++--------------
- net/netfilter/nft_meta.c                          | 14 ++++++++------
- net/sched/cls_flower.c                            |  2 +-
- net/xfrm/xfrm_policy.c                            |  5 ++---
- tools/include/uapi/linux/bpf.h                    |  2 ++
- 38 files changed, 192 insertions(+), 115 deletions(-)
+Thanks,
+Song
