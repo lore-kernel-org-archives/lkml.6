@@ -1,238 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751400AbeFCM1f (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:27:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751354AbeFCM1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751348AbeFCM1b (ORCPT <rfc822;w@1wt.eu>);
         Sun, 3 Jun 2018 08:27:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751022AbeFCM12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:27:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, David Ahern <dsahern@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Jiri Slaby <jslaby@suse.cz>, Joe Perches <joe@perches.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 01/29] objtool: Improve detection of BUG() and other dead ends
-Date: Sun,  3 Jun 2018 14:26:24 +0200
-Message-Id: <20180603122652.17453-2-gregkh@linuxfoundation.org>
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Wang Nan <wangnan0@huawei.com>,
+        damian <damian.tometzki@icloud.com>
+Subject: [PATCH 00/29] objtool sync up for the stable 4.9.y tree
+Date: Sun,  3 Jun 2018 14:26:23 +0200
+Message-Id: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
-References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+There are pros and cons of dealing with tools in the kernel directory.
+The pros are the fact that development happens fast, and new features
+can be added to the kernel and the tools at the same times.  The cons
+are when dealing with backported kernel patches, it can be necessary to
+backport parts of the tool changes as well.
 
-commit d1091c7fa3d52ebce4dd3f15d04155b3469b2f90 upstream.
+For 4.9.y so far, we have backported individual patches.  That quickly
+breaks down when there are minor differences between how backports were
+handled, so grabbing 40+ patch long series can be difficult, not
+impossible, but really frustrating to attempt.
 
-The BUG() macro's use of __builtin_unreachable() via the unreachable()
-macro tells gcc that the instruction is a dead end, and that it's safe
-to assume the current code path will not execute past the previous
-instruction.
+To help mitigate this mess, this patch series works to sync up the
+objtool code with the version that is currently in 4.14.47.  This
+required a number of objtool old patches to be backported, a single big
+"sync the world" patch, and a lot of include file updates to get
+everything all working properly as well as some minor fixes for build
+warnings.
 
-On x86, the BUG() macro is implemented with the 'ud2' instruction.  When
-objtool's branch analysis sees that instruction, it knows the current
-code path has come to a dead end.
+And at the end of this series, is a set of backported objtool patches
+for gcc-8 that was the main reason this whole patch series was created.
+They applied just fine, being the identical version that goes into the
+4.14.y stable tree, so it feels like the backport was successful.
 
-Peter Zijlstra has been working on a patch to change the WARN macros to
-use 'ud2'.  That patch will break objtool's assumption that 'ud2' is
-always a dead end.
+This has survivied my limited testing, and as the codebase is identical
+to 4.14.47, I'm pretty comfortable dropping this big change in here in
+4.9.y.  Hopefully all goes well...
 
-Generally it's best for objtool to avoid making those kinds of
-assumptions anyway.  The more ignorant it is of kernel code internals,
-the better.
+If anyone has any objections to this patch series, or finds anything I
+messed up on, please let me know.
 
-So create a more generic way for objtool to detect dead ends by adding
-an annotation to the unreachable() macro.  The annotation stores a
-pointer to the end of the unreachable code path in an '__unreachable'
-section.  Objtool can read that section to find the dead ends.
+thanks,
 
-Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/41a6d33971462ebd944a1c60ad4bf5be86c17b77.1487712920.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/vmlinux.lds.S   |  1 +
- include/linux/compiler-gcc.h    | 13 ++++++-
- tools/objtool/arch.h            |  5 ++-
- tools/objtool/arch/x86/decode.c |  3 --
- tools/objtool/builtin-check.c   | 60 ++++++++++++++++++++++++++++++---
- 5 files changed, 71 insertions(+), 11 deletions(-)
+greg k-h
 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index c7194e97c3d4..4ef267fb635a 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -353,6 +353,7 @@ SECTIONS
- 	/DISCARD/ : {
- 		*(.eh_frame)
- 		*(__func_stack_frame_non_standard)
-+		*(__unreachable)
- 	}
- }
- 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index a1b1de17455c..accb5ec188cb 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -203,6 +203,17 @@
- #endif
- #endif
- 
-+#ifdef CONFIG_STACK_VALIDATION
-+#define annotate_unreachable() ({					\
-+	asm("1:\t\n"							\
-+	    ".pushsection __unreachable, \"a\"\t\n"			\
-+	    ".long 1b\t\n"						\
-+	    ".popsection\t\n");						\
-+})
-+#else
-+#define annotate_unreachable()
-+#endif
-+
- /*
-  * Mark a position in code as unreachable.  This can be used to
-  * suppress control flow warnings after asm blocks that transfer
-@@ -212,7 +223,7 @@
-  * this in the preprocessor, but we can live with this because they're
-  * unreleased.  Really, we need to have autoconf for the kernel.
-  */
--#define unreachable() __builtin_unreachable()
-+#define unreachable() annotate_unreachable(); __builtin_unreachable()
- 
- /* Mark a function definition as prohibited from being cloned. */
- #define __noclone	__attribute__((__noclone__, __optimize__("no-tracer")))
-diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
-index f7350fcedc70..a59e061c0b4a 100644
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -31,9 +31,8 @@
- #define INSN_CALL_DYNAMIC	8
- #define INSN_RETURN		9
- #define INSN_CONTEXT_SWITCH	10
--#define INSN_BUG		11
--#define INSN_NOP		12
--#define INSN_OTHER		13
-+#define INSN_NOP		11
-+#define INSN_OTHER		12
- #define INSN_LAST		INSN_OTHER
- 
- int arch_decode_instruction(struct elf *elf, struct section *sec,
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index 039636ffb6c8..6ac99e3266eb 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -118,9 +118,6 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 			 op2 == 0x35)
- 			/* sysenter, sysret */
- 			*type = INSN_CONTEXT_SWITCH;
--		else if (op2 == 0x0b || op2 == 0xb9)
--			/* ud2 */
--			*type = INSN_BUG;
- 		else if (op2 == 0x0d || op2 == 0x1f)
- 			/* nopl/nopw */
- 			*type = INSN_NOP;
-diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-index a688a857a7ae..2aa7313e31f2 100644
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -51,7 +51,7 @@ struct instruction {
- 	unsigned int len, state;
- 	unsigned char type;
- 	unsigned long immediate;
--	bool alt_group, visited, ignore_alts;
-+	bool alt_group, visited, dead_end, ignore_alts;
- 	struct symbol *call_dest;
- 	struct instruction *jump_dest;
- 	struct list_head alts;
-@@ -329,6 +329,54 @@ static int decode_instructions(struct objtool_file *file)
- 	return 0;
- }
- 
-+/*
-+ * Find all uses of the unreachable() macro, which are code path dead ends.
-+ */
-+static int add_dead_ends(struct objtool_file *file)
-+{
-+	struct section *sec;
-+	struct rela *rela;
-+	struct instruction *insn;
-+	bool found;
-+
-+	sec = find_section_by_name(file->elf, ".rela__unreachable");
-+	if (!sec)
-+		return 0;
-+
-+	list_for_each_entry(rela, &sec->rela_list, list) {
-+		if (rela->sym->type != STT_SECTION) {
-+			WARN("unexpected relocation symbol type in .rela__unreachable");
-+			return -1;
-+		}
-+		insn = find_insn(file, rela->sym->sec, rela->addend);
-+		if (insn)
-+			insn = list_prev_entry(insn, list);
-+		else if (rela->addend == rela->sym->sec->len) {
-+			found = false;
-+			list_for_each_entry_reverse(insn, &file->insn_list, list) {
-+				if (insn->sec == rela->sym->sec) {
-+					found = true;
-+					break;
-+				}
-+			}
-+
-+			if (!found) {
-+				WARN("can't find unreachable insn at %s+0x%x",
-+				     rela->sym->sec->name, rela->addend);
-+				return -1;
-+			}
-+		} else {
-+			WARN("can't find unreachable insn at %s+0x%x",
-+			     rela->sym->sec->name, rela->addend);
-+			return -1;
-+		}
-+
-+		insn->dead_end = true;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Warnings shouldn't be reported for ignored functions.
-  */
-@@ -905,6 +953,10 @@ static int decode_sections(struct objtool_file *file)
- 	if (ret)
- 		return ret;
- 
-+	ret = add_dead_ends(file);
-+	if (ret)
-+		return ret;
-+
- 	add_ignores(file);
- 
- 	ret = add_nospec_ignores(file);
-@@ -1103,13 +1155,13 @@ static int validate_branch(struct objtool_file *file,
- 
- 			return 0;
- 
--		case INSN_BUG:
--			return 0;
--
- 		default:
- 			break;
- 		}
- 
-+		if (insn->dead_end)
-+			return 0;
-+
- 		insn = next_insn_same_sec(file, insn);
- 		if (!insn) {
- 			WARN("%s: unexpected end of section", sec->name);
+Arnaldo Carvalho de Melo (11):
+  tools include: Introduce linux/compiler-gcc.h
+  tools include: Adopt __compiletime_error
+  tools include: Introduce atomic_cmpxchg_{relaxed,release}()
+  tools include: Add UINT_MAX def to kernel.h
+  tools include: Adopt kernel's refcount.h
+  tools include uapi: Grab copies of stat.h and fcntl.h
+  tools include: Introduce linux/bug.h, from the kernel sources
+  tools include: Adopt __same_type() and __must_be_array() from the
+    kernel
+  tools include: Move ARRAY_SIZE() to linux/kernel.h
+  tools include: Drop ARRAY_SIZE() definition from linux/hashtable.h
+  tools include: Include missing headers for fls() and types in
+    linux/log2.h
+
+Greg Kroah-Hartman (4):
+  objtool: sync up with the 4.14.47 version of objtool
+  perf/tools: header file sync up
+  objtool: header file sync-up
+  x86/xen: Add unwind hint annotations to xen_setup_gdt
+
+Jiri Olsa (3):
+  tools lib: Add for_each_clear_bit macro
+  perf tools: Force fixdep compilation at the start of the build
+  perf tools: Move headers check into bash script
+
+Josh Poimboeuf (8):
+  objtool: Improve detection of BUG() and other dead ends
+  objtool: Move checking code to check.c
+  objtool: Support GCC 8's cold subfunctions
+  objtool: Support GCC 8 switch tables
+  objtool: Detect RIP-relative switch table references
+  objtool: Detect RIP-relative switch table references, part 2
+  objtool: Fix "noreturn" detection for recursive sibling calls
+  objtool, x86: Add several functions and files to the objtool whitelist
+
+Matthew Wilcox (2):
+  tools: add more bitmap functions
+  radix tree test suite: Remove types.h
+
+Michael S. Tsirkin (1):
+  tools: enable endian checks for all sparse builds
+
+ arch/x86/crypto/Makefile                      |    2 +
+ arch/x86/crypto/sha1-mb/Makefile              |    2 +
+ arch/x86/crypto/sha256-mb/Makefile            |    2 +
+ arch/x86/include/asm/orc_types.h              |  107 +
+ arch/x86/include/asm/unwind_hints.h           |  103 +
+ arch/x86/kernel/Makefile                      |    1 +
+ arch/x86/kernel/acpi/Makefile                 |    2 +
+ arch/x86/kernel/kprobes/opt.c                 |    9 +-
+ arch/x86/kernel/reboot.c                      |    2 +
+ arch/x86/kernel/vmlinux.lds.S                 |    1 +
+ arch/x86/kvm/svm.c                            |    2 +
+ arch/x86/kvm/vmx.c                            |    3 +
+ arch/x86/lib/msr-reg.S                        |    8 +-
+ arch/x86/net/Makefile                         |    2 +
+ arch/x86/platform/efi/Makefile                |    1 +
+ arch/x86/power/Makefile                       |    2 +
+ arch/x86/xen/Makefile                         |    3 +
+ arch/x86/xen/enlighten.c                      |    5 +-
+ include/linux/compiler-gcc.h                  |   13 +-
+ kernel/kexec_core.c                           |    4 +-
+ tools/arch/arm/include/uapi/asm/kvm.h         |   13 +
+ tools/arch/arm64/include/uapi/asm/kvm.h       |    6 +
+ tools/arch/powerpc/include/uapi/asm/kvm.h     |    1 +
+ tools/arch/s390/include/uapi/asm/kvm.h        |    5 +-
+ tools/arch/x86/include/asm/cpufeatures.h      |   44 +-
+ .../arch/x86/include/asm/disabled-features.h  |    7 +-
+ .../arch/x86/include/asm/required-features.h  |    3 +-
+ tools/include/asm-generic/bitops.h            |    1 +
+ tools/include/asm-generic/bitops/__ffz.h      |   12 +
+ tools/include/asm-generic/bitops/find.h       |   28 +
+ tools/include/linux/atomic.h                  |    6 +
+ tools/include/linux/bitmap.h                  |   26 +
+ tools/include/linux/bitops.h                  |    5 +
+ tools/include/linux/bug.h                     |   10 +
+ tools/include/linux/compiler-gcc.h            |   21 +
+ tools/include/linux/compiler.h                |   23 +-
+ tools/include/linux/hashtable.h               |    4 -
+ tools/include/linux/kernel.h                  |    7 +
+ tools/include/linux/log2.h                    |    3 +
+ tools/include/linux/refcount.h                |  151 ++
+ tools/include/linux/spinlock.h                |    5 +
+ tools/include/linux/types.h                   |    5 +-
+ tools/include/uapi/asm-generic/mman-common.h  |    5 +
+ tools/include/uapi/linux/bpf.h                |   51 +
+ tools/include/uapi/linux/fcntl.h              |   67 +
+ tools/include/uapi/linux/stat.h               |   45 +
+ tools/lib/find_bit.c                          |   25 +
+ tools/objtool/Build                           |    4 +
+ .../Documentation/stack-validation.txt        |  195 +-
+ tools/objtool/Makefile                        |   35 +-
+ tools/objtool/arch.h                          |   66 +-
+ tools/objtool/arch/x86/Build                  |   10 +-
+ tools/objtool/arch/x86/decode.c               |  407 ++-
+ .../arch/x86/{insn => include/asm}/inat.h     |    2 +-
+ .../x86/{insn => include/asm}/inat_types.h    |    0
+ .../arch/x86/{insn => include/asm}/insn.h     |    2 +-
+ .../objtool/arch/x86/include/asm/orc_types.h  |  107 +
+ tools/objtool/arch/x86/{insn => lib}/inat.c   |    2 +-
+ tools/objtool/arch/x86/{insn => lib}/insn.c   |    4 +-
+ .../arch/x86/{insn => lib}/x86-opcode-map.txt |    0
+ .../x86/{insn => tools}/gen-insn-attr-x86.awk |    0
+ tools/objtool/builtin-check.c                 | 1297 +---------
+ tools/objtool/builtin-orc.c                   |   68 +
+ tools/objtool/builtin.h                       |    6 +
+ tools/objtool/cfi.h                           |   55 +
+ tools/objtool/check.c                         | 2209 +++++++++++++++++
+ tools/objtool/check.h                         |   82 +
+ tools/objtool/elf.c                           |  326 ++-
+ tools/objtool/elf.h                           |   23 +-
+ tools/objtool/objtool.c                       |   12 +-
+ tools/objtool/orc.h                           |   30 +
+ tools/objtool/orc_dump.c                      |  213 ++
+ tools/objtool/orc_gen.c                       |  221 ++
+ tools/objtool/special.c                       |    6 +-
+ tools/objtool/sync-check.sh                   |   29 +
+ tools/objtool/warn.h                          |   10 +
+ tools/perf/MANIFEST                           |    6 +
+ tools/perf/Makefile.perf                      |  144 +-
+ .../arch/x86/entry/syscalls/syscall_64.tbl    |    7 +-
+ tools/perf/check-headers.sh                   |   61 +
+ tools/perf/util/util.h                        |    2 -
+ 81 files changed, 4802 insertions(+), 1692 deletions(-)
+ create mode 100644 arch/x86/include/asm/orc_types.h
+ create mode 100644 arch/x86/include/asm/unwind_hints.h
+ create mode 100644 tools/include/asm-generic/bitops/__ffz.h
+ create mode 100644 tools/include/linux/bug.h
+ create mode 100644 tools/include/linux/compiler-gcc.h
+ create mode 100644 tools/include/linux/refcount.h
+ create mode 100644 tools/include/linux/spinlock.h
+ create mode 100644 tools/include/uapi/linux/fcntl.h
+ create mode 100644 tools/include/uapi/linux/stat.h
+ rename tools/objtool/arch/x86/{insn => include/asm}/inat.h (99%)
+ rename tools/objtool/arch/x86/{insn => include/asm}/inat_types.h (100%)
+ rename tools/objtool/arch/x86/{insn => include/asm}/insn.h (99%)
+ create mode 100644 tools/objtool/arch/x86/include/asm/orc_types.h
+ rename tools/objtool/arch/x86/{insn => lib}/inat.c (99%)
+ rename tools/objtool/arch/x86/{insn => lib}/insn.c (99%)
+ rename tools/objtool/arch/x86/{insn => lib}/x86-opcode-map.txt (100%)
+ rename tools/objtool/arch/x86/{insn => tools}/gen-insn-attr-x86.awk (100%)
+ create mode 100644 tools/objtool/builtin-orc.c
+ create mode 100644 tools/objtool/cfi.h
+ create mode 100644 tools/objtool/check.c
+ create mode 100644 tools/objtool/check.h
+ create mode 100644 tools/objtool/orc.h
+ create mode 100644 tools/objtool/orc_dump.c
+ create mode 100644 tools/objtool/orc_gen.c
+ create mode 100644 tools/objtool/sync-check.sh
+ create mode 100644 tools/perf/check-headers.sh
+
 -- 
 2.17.1
