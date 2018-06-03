@@ -1,89 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751209AbeFCJWK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 05:22:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750862AbeFCJWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 05:22:09 -0400
-Date: Sun, 3 Jun 2018 11:21:45 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 4.14 2/4] powerpc/mm/slice: create header files dedicated
- to slices
-Message-ID: <20180603092145.GA10556@kroah.com>
-References: <170bd2b5b5cb1e474599165e8f21f121225a2df9.1527755908.git.christophe.leroy@c-s.fr>
- <798b787d74d94b5d29f1c0279bad157b6b5df7ec.1527755908.git.christophe.leroy@c-s.fr>
- <20180602132107.GH31493@kroah.com>
- <f18dc860-6007-9955-8c73-25faf43097e8@c-s.fr>
+        id S1751295AbeFCJXD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 05:23:03 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36106 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751254AbeFCJXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 05:23:02 -0400
+Date: Sun, 3 Jun 2018 11:23:00 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] scheduler fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1806031113440.1603@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f18dc860-6007-9955-8c73-25faf43097e8@c-s.fr>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 10:55:31PM +0200, Christophe Leroy wrote:
-> 
-> 
-> On 06/02/2018 03:21 PM, Greg Kroah-Hartman wrote:
-> > On Thu, May 31, 2018 at 08:54:52AM +0000, Christophe Leroy wrote:
-> > > [ Upstream commit a3286f05bc5a5bc7fc73a9783ec89de78fcd07f8 ]
-> > > 
-> > > In preparation for the following patch which will enhance 'slices'
-> > > for supporting PPC32 in order to fix an issue on hugepages on 8xx,
-> > > this patch takes out of page*.h all bits related to 'slices' and put
-> > > them into newly created slice.h header files.
-> > > While common parts go into asm/slice.h, subarch specific
-> > > parts go into respective books3s/64/slice.c and nohash/64/slice.c
-> > > 'slices'
-> > > 
-> > > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> > > Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-> > > Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> > > ---
-> > >   arch/powerpc/include/asm/book3s/64/slice.h | 27 ++++++++++++++
-> > >   arch/powerpc/include/asm/nohash/64/slice.h | 12 ++++++
-> > >   arch/powerpc/include/asm/page.h            |  1 +
-> > >   arch/powerpc/include/asm/page_64.h         | 59 ------------------------------
-> > >   arch/powerpc/include/asm/slice.h           | 40 ++++++++++++++++++++
-> > >   5 files changed, 80 insertions(+), 59 deletions(-)
-> > >   create mode 100644 arch/powerpc/include/asm/book3s/64/slice.h
-> > >   create mode 100644 arch/powerpc/include/asm/nohash/64/slice.h
-> > >   create mode 100644 arch/powerpc/include/asm/slice.h
-> > 
-> > This patch does not apply :(
-> 
-> I tried again, it applies well for me:
-> 
-> [root@localhost linux-stable]# git checkout v4.14.47 -b 4.14.47
-> Checking out files: 100% (27111/27111), done.
-> Switched to a new branch '4.14.47'
-> [root@localhost linux-stable]# git am /root/Downloads/4.14-1-4-powerpc-mm-slice-Remove-intermediate-bitmap-copy.patch
-> 
-> Applying: powerpc/mm/slice: Remove intermediate bitmap copy
-> Applying: powerpc/mm/slice: create header files dedicated to slices
-> Applying: powerpc/mm/slice: Enhance for supporting PPC32
-> Applying: powerpc/mm/slice: Fix hugepage allocation at hint address on 8xx
-> [root@localhost linux-stable]#
-> 
-> > 
-> > Can you fix this series up and resend the whole thing?
-> 
-> Is there any conflicting patch in the queue ?
-> What should I rebase on ?
+Linus,
 
-Ah, the problem is I was taking the upstream version of this patch, not
-your backported one.  Next time be a bit more specific and say you
-changed something here, otherwise I will always default to what is in
-Linus's tree.
+please pull the latest sched-urgent-for-linus git tree from:
 
-Let me go work on this again...
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
 
-thanks,
+A set of scheduler fixes:
 
-greg k-h
+ - Two patches addressing the problem that the scheduler allows under
+   certain conditions user space tasks to be scheduled on CPUs which are
+   not yet fully booted which causes a few subtle and hard to debug issue.
+
+ - Add a missing runqueue clock update in the deadline scheduler which
+   triggers a warning under certain circumstances.
+
+ - Fix a silly typo in the scheduler header file.
+
+Thanks,
+
+	tglx
+
+------------------>
+Davidlohr Bueso (1):
+      sched/headers: Fix typo
+
+Juri Lelli (1):
+      sched/deadline: Fix missing clock update
+
+Paul Burton (1):
+      sched/core: Require cpu_active() in select_task_rq(), for user tasks
+
+Peter Zijlstra (1):
+      sched/core: Fix rules for running on online && !active CPUs
+
+
+ kernel/sched/core.c     | 45 +++++++++++++++++++++++++++++++--------------
+ kernel/sched/deadline.c |  6 +++---
+ kernel/sched/sched.h    |  2 +-
+ 3 files changed, 35 insertions(+), 18 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 092f7c4de903..211890edf37e 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -881,6 +881,33 @@ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
+ }
+ 
+ #ifdef CONFIG_SMP
++
++static inline bool is_per_cpu_kthread(struct task_struct *p)
++{
++	if (!(p->flags & PF_KTHREAD))
++		return false;
++
++	if (p->nr_cpus_allowed != 1)
++		return false;
++
++	return true;
++}
++
++/*
++ * Per-CPU kthreads are allowed to run on !actie && online CPUs, see
++ * __set_cpus_allowed_ptr() and select_fallback_rq().
++ */
++static inline bool is_cpu_allowed(struct task_struct *p, int cpu)
++{
++	if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
++		return false;
++
++	if (is_per_cpu_kthread(p))
++		return cpu_online(cpu);
++
++	return cpu_active(cpu);
++}
++
+ /*
+  * This is how migration works:
+  *
+@@ -938,16 +965,8 @@ struct migration_arg {
+ static struct rq *__migrate_task(struct rq *rq, struct rq_flags *rf,
+ 				 struct task_struct *p, int dest_cpu)
+ {
+-	if (p->flags & PF_KTHREAD) {
+-		if (unlikely(!cpu_online(dest_cpu)))
+-			return rq;
+-	} else {
+-		if (unlikely(!cpu_active(dest_cpu)))
+-			return rq;
+-	}
+-
+ 	/* Affinity changed (again). */
+-	if (!cpumask_test_cpu(dest_cpu, &p->cpus_allowed))
++	if (!is_cpu_allowed(p, dest_cpu))
+ 		return rq;
+ 
+ 	update_rq_clock(rq);
+@@ -1476,10 +1495,9 @@ static int select_fallback_rq(int cpu, struct task_struct *p)
+ 	for (;;) {
+ 		/* Any allowed, online CPU? */
+ 		for_each_cpu(dest_cpu, &p->cpus_allowed) {
+-			if (!(p->flags & PF_KTHREAD) && !cpu_active(dest_cpu))
+-				continue;
+-			if (!cpu_online(dest_cpu))
++			if (!is_cpu_allowed(p, dest_cpu))
+ 				continue;
++
+ 			goto out;
+ 		}
+ 
+@@ -1542,8 +1560,7 @@ int select_task_rq(struct task_struct *p, int cpu, int sd_flags, int wake_flags)
+ 	 * [ this allows ->select_task() to simply return task_cpu(p) and
+ 	 *   not worry about this generic constraint ]
+ 	 */
+-	if (unlikely(!cpumask_test_cpu(cpu, &p->cpus_allowed) ||
+-		     !cpu_online(cpu)))
++	if (unlikely(!is_cpu_allowed(p, cpu)))
+ 		cpu = select_fallback_rq(task_cpu(p), p);
+ 
+ 	return cpu;
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 1356afd1eeb6..fbfc3f1d368a 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1259,6 +1259,9 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
+ 
+ 	rq = task_rq_lock(p, &rf);
+ 
++	sched_clock_tick();
++	update_rq_clock(rq);
++
+ 	if (!dl_task(p) || p->state == TASK_DEAD) {
+ 		struct dl_bw *dl_b = dl_bw_of(task_cpu(p));
+ 
+@@ -1278,9 +1281,6 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
+ 	if (dl_se->dl_non_contending == 0)
+ 		goto unlock;
+ 
+-	sched_clock_tick();
+-	update_rq_clock(rq);
+-
+ 	sub_running_bw(dl_se, &rq->dl);
+ 	dl_se->dl_non_contending = 0;
+ unlock:
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 1f0a4bc6a39d..cb467c221b15 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -983,7 +983,7 @@ static inline void rq_clock_skip_update(struct rq *rq)
+ }
+ 
+ /*
+- * See rt task throttoling, which is the only time a skip
++ * See rt task throttling, which is the only time a skip
+  * request is cancelled.
+  */
+ static inline void rq_clock_cancel_skipupdate(struct rq *rq)
