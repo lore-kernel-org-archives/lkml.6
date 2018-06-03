@@ -1,51 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751305AbeFCT4A (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 15:56:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750952AbeFCTz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 15:55:58 -0400
-Date: Sun, 3 Jun 2018 21:55:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Andrew Banman <abanman@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Mike Travis <mike.travis@hpe.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>
-Subject: Re: [PATCH] x86/platform/uv/BAU: gracefully disable BAU during panic
-Message-ID: <20180603195535.GB7941@kroah.com>
-References: <1528044152-148686-1-git-send-email-abanman@hpe.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528044152-148686-1-git-send-email-abanman@hpe.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1751361AbeFCUDI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 16:03:08 -0400
+Received: from smtprelay0157.hostedemail.com ([216.40.44.157]:60205 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750952AbeFCUDH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 16:03:07 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2898:2899:3138:3139:3140:3141:3142:3352:3622:3865:3867:3870:3871:3872:3873:4321:4605:5007:8957:10004:10400:10848:11026:11232:11658:11914:12043:12438:12679:12740:12760:12895:13069:13095:13311:13357:13439:14659:14721:21080:21212:21433:21627:30012:30054:30070:30080:30083:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:35,LUA_SUMMARY:none
+X-HE-Tag: room66_1aeb472a87716
+X-Filterd-Recvd-Size: 2226
+Message-ID: <1800e18130f7f768128feea2755f2c6ea0af7241.camel@perches.com>
+Subject: Re: [PATCH 3/3] message: fusion: Fix line over 80 characters
+From: Joe Perches <joe@perches.com>
+To: Varsha Rao <rvarsha016@gmail.com>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <der.herr@hofr.at>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date: Sun, 03 Jun 2018 13:03:03 -0700
+In-Reply-To: <ae9327e821e82a9c9e6a41c1fa12ec02496189f2.1528031458.git.rvarsha016@gmail.com>
+References: <cover.1528031458.git.rvarsha016@gmail.com>
+         <ae9327e821e82a9c9e6a41c1fa12ec02496189f2.1528031458.git.rvarsha016@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 03, 2018 at 11:42:32AM -0500, Andrew Banman wrote:
-> When panic happens while BAU is active there is a chance that
-> outstanding broadcasts tie up BAU resources enough to cause timeouts in
-> the UV ASIC. These timeouts are hardware errors that immediately bring
-> down the system, preventing kdump from completing.
+On Sun, 2018-06-03 at 18:52 +0530, Varsha Rao wrote:
+> Line over 80 characters is split to fix the following checkpatch issue:
 > 
-> Add uv_bau_crash_shutdown() to bring BAU to quiescence during panic before
-> continuing with the native crash shutdown. Assign uv_bau_crash_shutdown
-> to machine_ops during init.
-> 
-> Signed-off-by: Andrew Banman <abanman@hpe.com>
-> ---
->  arch/x86/platform/uv/tlb_uv.c | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
+> WARNING: line over 80 characters
+[]
+> diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+[]
+> @@ -5690,7 +5690,8 @@ mpt_inactive_raid_volumes(MPT_ADAPTER *ioc, u8 channel, u8 id)
+>  		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
+>  			continue;
+>  
+> -		if (!(component_info = kmalloc(sizeof(*component_info), GFP_KERNEL)))
+> +		if (!(component_info = kmalloc(sizeof(*component_info),
+> +		      GFP_KERNEL)))
+>  			continue;
 
-<formletter>
+It's much more common to split this into multiple statements like
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+		component_info = kmalloc(sizeof(*component_info), GFP_KERNEL);
+		if (!component_info)
+			continue;
 
-</formletter>
+but the continue in a loop with a known alloc failure
+seems silly as the next alloc is also extremely likely
+to fail as well.
+
+btw: Are you actually using this code?
+
+If not, perhaps it's better to send cleanup only patches
+for files in drivers/staging as practice instead.
