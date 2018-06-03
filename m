@@ -1,70 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751490AbeFCWAp (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 18:00:45 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:50393 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbeFCWAo (ORCPT
+        id S1751539AbeFCWCV (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 18:02:21 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34923 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeFCWCS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 18:00:44 -0400
-Subject: Re: [PATCH v2 0/4] drm/tinydrm: new dirver for ILI9341 displays
-To: David Lechner <david@lechnology.com>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        limor@ladyada.net, Nitin Patil <nitin@mindsensors.com>,
+        Sun, 3 Jun 2018 18:02:18 -0400
+X-Google-Smtp-Source: ADUXVKIUCfvRYmmO5afzQ28VxZgZUZ7Jt1OWXliD8VbfdYT61sAooKSIqm3Rpo9bbJM3iU4cQ1ILsg==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        dri-devel@lists.freedesktop.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>, Ben Skeggs <bskeggs@redhat.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180525193623.15533-1-david@lechnology.com>
-From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <8840212b-fd46-e700-58a1-cb1b882c5771@tronnes.org>
-Date: Mon, 4 Jun 2018 00:00:36 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Subject: [RFC PATCH v3 0/2] drm: Add generic colorkey plane properties
+Date: Mon,  4 Jun 2018 01:00:57 +0300
+Message-Id: <20180603220059.17670-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <20180525193623.15533-1-david@lechnology.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-Den 25.05.2018 21.36, skrev David Lechner:
-> This series adds a new tinydrm driver for the Ilitek ILI9341 controller and
-> a 2.4" display panel that uses this controller.
+In this version I've reduced color keying modes and properties to a bare
+minimum because considering several modes and properties at once might take
+quite a lot of effort due to a variety of HW capabilities. This allows us to
+start easy with the generic colorkey properties support.
 
-David, do you have commit rights now?
+For the starter let's implement probably the most common (and simple) color
+keying mode - the "green screen" (or "chroma key") mode. More advanced modes
+and features could be implemented later on by as needed basis.
 
-Noralf.
+Following Ville's Syrjälä review comments to v2, the color key value is now
+given in ARGB16161616 format. Drivers have to convert this 16bpc format into
+internal color key value representation themselves. This works well for cases
+where conversion is done to a non-planar integer formats, but I'm not sure how
+drivers are supposed to cope with cases where conversion involves churning with
+fixed point math / floating point representation. Comments are welcome.
 
-> A few things to note here:
-> * The datasheet for this display[1] doesn't have a vendor mentioned on it
->    anywhere, so I have used "adafruit" as the vendor prefix. If someone has a
->    better suggestion, please speak up.
-> * The MAINTAINERS patch for ili9225 is included so we don't end up with a merge
->    conflict later on.
->
-> v2 changes:
-> * change vendor prefix from "noname" to "adafruit"
-> * new patch for "adafruit" vendor prefix
-> * minor style changes
-> * drop regulator from driver (instead of adding to DT bindings)
->
-> [1]: https://cdn-learn.adafruit.com/assets/assets/000/046/879/original/SPEC-YX240QV29-T_Rev.A__1_.pdf
->
->
-> David Lechner (4):
->    MAINTAINERS: fix path to ilitek,ili9225 device tree bindings
->    dt-bindings: Add vendor prefix for Adafruit
->    dt-bindings: new binding for Ilitek ILI9341 display panels
->    drm/tinydrm: new driver for ILI9341 display panels
->
->   .../bindings/display/ilitek,ili9341.txt       |  27 ++
->   .../devicetree/bindings/vendor-prefixes.txt   |   1 +
->   MAINTAINERS                                   |   8 +-
->   drivers/gpu/drm/tinydrm/Kconfig               |  10 +
->   drivers/gpu/drm/tinydrm/Makefile              |   1 +
->   drivers/gpu/drm/tinydrm/ili9341.c             | 233 ++++++++++++++++++
->   6 files changed, 279 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/devicetree/bindings/display/ilitek,ili9341.txt
->   create mode 100644 drivers/gpu/drm/tinydrm/ili9341.c
->
+v2: https://lists.freedesktop.org/archives/dri-devel/2018-May/178408.html
+v1: https://lists.freedesktop.org/archives/dri-devel/2017-December/160510.html
+
+Dmitry Osipenko (1):
+  drm/tegra: plane: Implement generic colorkey property for older
+    Tegra's
+
+Laurent Pinchart (1):
+  drm: Add generic colorkey properties for DRM planes
+
+ drivers/gpu/drm/drm_atomic.c  |  12 ++++
+ drivers/gpu/drm/drm_blend.c   |  99 +++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/dc.c    |  25 +++++++++
+ drivers/gpu/drm/tegra/dc.h    |   7 +++
+ drivers/gpu/drm/tegra/plane.c | 102 ++++++++++++++++++++++++++++++++++
+ include/drm/drm_blend.h       |   3 +
+ include/drm/drm_plane.h       |  53 ++++++++++++++++++
+ 7 files changed, 301 insertions(+)
+
+-- 
+2.17.0
