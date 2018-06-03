@@ -1,17 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751582AbeFCM3o (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:29:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55374 "EHLO mail.kernel.org"
+        id S1752055AbeFCM36 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:29:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751931AbeFCM2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:28:51 -0400
+        id S1751849AbeFCM2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:28:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 28/29] objtool: header file sync-up
-Date: Sun,  3 Jun 2018 14:26:51 +0200
-Message-Id: <20180603122652.17453-29-gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, Jiri Slaby <jslaby@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, live-patching@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 26/29] objtool, x86: Add several functions and files to the objtool whitelist
+Date: Sun,  3 Jun 2018 14:26:49 +0200
+Message-Id: <20180603122652.17453-27-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
@@ -19,108 +25,314 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building tools/objtool/ it rightly complains about a number of
-files being out of sync.  Fix this up by syncing them properly with the
-relevant in-kernel versions.
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
+commit c207aee48037abca71c669cbec407b9891965c34 upstream.
+
+In preparation for an objtool rewrite which will have broader checks,
+whitelist functions and files which cause problems because they do
+unusual things with the stack.
+
+These whitelists serve as a TODO list for which functions and files
+don't yet have undwarf unwinder coverage.  Eventually most of the
+whitelists can be removed in favor of manual CFI hint annotations or
+objtool improvements.
+
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: live-patching@vger.kernel.org
+Link: http://lkml.kernel.org/r/7f934a5d707a574bda33ea282e9478e627fb1829.1498659915.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/objtool/arch/x86/include/asm/inat.h         | 10 ----------
- tools/objtool/arch/x86/include/asm/orc_types.h    |  2 +-
- tools/objtool/arch/x86/lib/x86-opcode-map.txt     | 15 +++------------
- .../objtool/arch/x86/tools/gen-insn-attr-x86.awk  |  1 -
- 4 files changed, 4 insertions(+), 24 deletions(-)
+ arch/x86/crypto/Makefile           | 2 ++
+ arch/x86/crypto/sha1-mb/Makefile   | 2 ++
+ arch/x86/crypto/sha256-mb/Makefile | 2 ++
+ arch/x86/kernel/Makefile           | 1 +
+ arch/x86/kernel/acpi/Makefile      | 2 ++
+ arch/x86/kernel/kprobes/opt.c      | 9 ++++++++-
+ arch/x86/kernel/reboot.c           | 2 ++
+ arch/x86/kvm/svm.c                 | 2 ++
+ arch/x86/kvm/vmx.c                 | 3 +++
+ arch/x86/lib/msr-reg.S             | 8 ++++----
+ arch/x86/net/Makefile              | 2 ++
+ arch/x86/platform/efi/Makefile     | 1 +
+ arch/x86/power/Makefile            | 2 ++
+ arch/x86/xen/Makefile              | 3 +++
+ kernel/kexec_core.c                | 4 +++-
+ 15 files changed, 39 insertions(+), 6 deletions(-)
 
-diff --git a/tools/objtool/arch/x86/include/asm/inat.h b/tools/objtool/arch/x86/include/asm/inat.h
-index 1c78580e58be..02aff0867211 100644
---- a/tools/objtool/arch/x86/include/asm/inat.h
-+++ b/tools/objtool/arch/x86/include/asm/inat.h
-@@ -97,16 +97,6 @@
- #define INAT_MAKE_GROUP(grp)	((grp << INAT_GRP_OFFS) | INAT_MODRM)
- #define INAT_MAKE_IMM(imm)	(imm << INAT_IMM_OFFS)
+diff --git a/arch/x86/crypto/Makefile b/arch/x86/crypto/Makefile
+index 34b3fa2889d1..9e32d40d71bd 100644
+--- a/arch/x86/crypto/Makefile
++++ b/arch/x86/crypto/Makefile
+@@ -2,6 +2,8 @@
+ # Arch-specific CryptoAPI modules.
+ #
  
--/* Identifiers for segment registers */
--#define INAT_SEG_REG_IGNORE	0
--#define INAT_SEG_REG_DEFAULT	1
--#define INAT_SEG_REG_CS		2
--#define INAT_SEG_REG_SS		3
--#define INAT_SEG_REG_DS		4
--#define INAT_SEG_REG_ES		5
--#define INAT_SEG_REG_FS		6
--#define INAT_SEG_REG_GS		7
--
- /* Attribute search APIs */
- extern insn_attr_t inat_get_opcode_attribute(insn_byte_t opcode);
- extern int inat_get_last_prefix_id(insn_byte_t last_pfx);
-diff --git a/tools/objtool/arch/x86/include/asm/orc_types.h b/tools/objtool/arch/x86/include/asm/orc_types.h
-index 9c9dc579bd7d..7dc777a6cb40 100644
---- a/tools/objtool/arch/x86/include/asm/orc_types.h
-+++ b/tools/objtool/arch/x86/include/asm/orc_types.h
-@@ -88,7 +88,7 @@ struct orc_entry {
- 	unsigned	sp_reg:4;
- 	unsigned	bp_reg:4;
- 	unsigned	type:2;
--} __packed;
-+};
++OBJECT_FILES_NON_STANDARD := y
++
+ avx_supported := $(call as-instr,vpxor %xmm0$(comma)%xmm0$(comma)%xmm0,yes,no)
+ avx2_supported := $(call as-instr,vpgatherdd %ymm0$(comma)(%eax$(comma)%ymm1\
+ 				$(comma)4)$(comma)%ymm2,yes,no)
+diff --git a/arch/x86/crypto/sha1-mb/Makefile b/arch/x86/crypto/sha1-mb/Makefile
+index 2f8756375df5..2e14acc3da25 100644
+--- a/arch/x86/crypto/sha1-mb/Makefile
++++ b/arch/x86/crypto/sha1-mb/Makefile
+@@ -2,6 +2,8 @@
+ # Arch-specific CryptoAPI modules.
+ #
+ 
++OBJECT_FILES_NON_STANDARD := y
++
+ avx2_supported := $(call as-instr,vpgatherdd %ymm0$(comma)(%eax$(comma)%ymm1\
+                                 $(comma)4)$(comma)%ymm2,yes,no)
+ ifeq ($(avx2_supported),yes)
+diff --git a/arch/x86/crypto/sha256-mb/Makefile b/arch/x86/crypto/sha256-mb/Makefile
+index 41089e7c400c..45b4fca6c4a8 100644
+--- a/arch/x86/crypto/sha256-mb/Makefile
++++ b/arch/x86/crypto/sha256-mb/Makefile
+@@ -2,6 +2,8 @@
+ # Arch-specific CryptoAPI modules.
+ #
+ 
++OBJECT_FILES_NON_STANDARD := y
++
+ avx2_supported := $(call as-instr,vpgatherdd %ymm0$(comma)(%eax$(comma)%ymm1\
+                                 $(comma)4)$(comma)%ymm2,yes,no)
+ ifeq ($(avx2_supported),yes)
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 79076d75bdbf..4c9c61517613 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -29,6 +29,7 @@ OBJECT_FILES_NON_STANDARD_head_$(BITS).o		:= y
+ OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o	:= y
+ OBJECT_FILES_NON_STANDARD_mcount_$(BITS).o		:= y
+ OBJECT_FILES_NON_STANDARD_test_nx.o			:= y
++OBJECT_FILES_NON_STANDARD_paravirt_patch_$(BITS).o	:= y
+ 
+ # If instrumentation of this dir is enabled, boot hangs during first second.
+ # Probably could be more selective here, but note that files related to irqs,
+diff --git a/arch/x86/kernel/acpi/Makefile b/arch/x86/kernel/acpi/Makefile
+index 26b78d86f25a..85a9e17e0dbc 100644
+--- a/arch/x86/kernel/acpi/Makefile
++++ b/arch/x86/kernel/acpi/Makefile
+@@ -1,3 +1,5 @@
++OBJECT_FILES_NON_STANDARD_wakeup_$(BITS).o := y
++
+ obj-$(CONFIG_ACPI)		+= boot.o
+ obj-$(CONFIG_ACPI_SLEEP)	+= sleep.o wakeup_$(BITS).o
+ obj-$(CONFIG_ACPI_APEI)		+= apei.o
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index fa671b90c374..1808a9cc7701 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -28,6 +28,7 @@
+ #include <linux/kdebug.h>
+ #include <linux/kallsyms.h>
+ #include <linux/ftrace.h>
++#include <linux/frame.h>
+ 
+ #include <asm/text-patching.h>
+ #include <asm/cacheflush.h>
+@@ -91,6 +92,7 @@ static void synthesize_set_arg1(kprobe_opcode_t *addr, unsigned long val)
+ }
+ 
+ asm (
++			"optprobe_template_func:\n"
+ 			".global optprobe_template_entry\n"
+ 			"optprobe_template_entry:\n"
+ #ifdef CONFIG_X86_64
+@@ -128,7 +130,12 @@ asm (
+ 			"	popf\n"
+ #endif
+ 			".global optprobe_template_end\n"
+-			"optprobe_template_end:\n");
++			"optprobe_template_end:\n"
++			".type optprobe_template_func, @function\n"
++			".size optprobe_template_func, .-optprobe_template_func\n");
++
++void optprobe_template_func(void);
++STACK_FRAME_NON_STANDARD(optprobe_template_func);
+ 
+ #define TMPL_MOVE_IDX \
+ 	((long)&optprobe_template_val - (long)&optprobe_template_entry)
+diff --git a/arch/x86/kernel/reboot.c b/arch/x86/kernel/reboot.c
+index 03f21dbfaa9d..4a12362a194a 100644
+--- a/arch/x86/kernel/reboot.c
++++ b/arch/x86/kernel/reboot.c
+@@ -9,6 +9,7 @@
+ #include <linux/sched.h>
+ #include <linux/tboot.h>
+ #include <linux/delay.h>
++#include <linux/frame.h>
+ #include <acpi/reboot.h>
+ #include <asm/io.h>
+ #include <asm/apic.h>
+@@ -127,6 +128,7 @@ void __noreturn machine_real_restart(unsigned int type)
+ #ifdef CONFIG_APM_MODULE
+ EXPORT_SYMBOL(machine_real_restart);
+ #endif
++STACK_FRAME_NON_STANDARD(machine_real_restart);
  
  /*
-  * This struct is used by asm and inline asm code to manually annotate the
-diff --git a/tools/objtool/arch/x86/lib/x86-opcode-map.txt b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-index e0b85930dd77..1754e094bc28 100644
---- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-+++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-@@ -607,7 +607,7 @@ fb: psubq Pq,Qq | vpsubq Vx,Hx,Wx (66),(v1)
- fc: paddb Pq,Qq | vpaddb Vx,Hx,Wx (66),(v1)
- fd: paddw Pq,Qq | vpaddw Vx,Hx,Wx (66),(v1)
- fe: paddd Pq,Qq | vpaddd Vx,Hx,Wx (66),(v1)
--ff: UD0
-+ff:
- EndTable
+  * Some Apple MacBook and MacBookPro's needs reboot=p to be able to reboot
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index a27f9e442ffc..c4cd1280ac3e 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -36,6 +36,7 @@
+ #include <linux/slab.h>
+ #include <linux/amd-iommu.h>
+ #include <linux/hashtable.h>
++#include <linux/frame.h>
  
- Table: 3-byte opcode 1 (0x0f 0x38)
-@@ -717,7 +717,7 @@ AVXcode: 2
- 7e: vpermt2d/q Vx,Hx,Wx (66),(ev)
- 7f: vpermt2ps/d Vx,Hx,Wx (66),(ev)
- 80: INVEPT Gy,Mdq (66)
--81: INVVPID Gy,Mdq (66)
-+81: INVPID Gy,Mdq (66)
- 82: INVPCID Gy,Mdq (66)
- 83: vpmultishiftqb Vx,Hx,Wx (66),(ev)
- 88: vexpandps/d Vpd,Wpd (66),(ev)
-@@ -970,15 +970,6 @@ GrpTable: Grp9
- EndTable
+ #include <asm/apic.h>
+ #include <asm/perf_event.h>
+@@ -5111,6 +5112,7 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
  
- GrpTable: Grp10
--# all are UD1
--0: UD1
--1: UD1
--2: UD1
--3: UD1
--4: UD1
--5: UD1
--6: UD1
--7: UD1
- EndTable
+ 	mark_all_clean(svm->vmcb);
+ }
++STACK_FRAME_NON_STANDARD(svm_vcpu_run);
  
- # Grp11A and Grp11B are expressed as Grp11 in Intel SDM
-@@ -1018,7 +1009,7 @@ GrpTable: Grp15
- 1: fxstor | RDGSBASE Ry (F3),(11B)
- 2: vldmxcsr Md (v1) | WRFSBASE Ry (F3),(11B)
- 3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)
--4: XSAVE | ptwrite Ey (F3),(11B)
-+4: XSAVE
- 5: XRSTOR | lfence (11B)
- 6: XSAVEOPT | clwb (66) | mfence (11B)
- 7: clflush | clflushopt (66) | sfence (11B)
-diff --git a/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk b/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk
-index b02a36b2c14f..a3d2c62fd805 100644
---- a/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk
-+++ b/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk
-@@ -1,5 +1,4 @@
- #!/bin/awk -f
--# SPDX-License-Identifier: GPL-2.0
- # gen-insn-attr-x86.awk: Instruction attribute table generator
- # Written by Masami Hiramatsu <mhiramat@redhat.com>
+ static void svm_set_cr3(struct kvm_vcpu *vcpu, unsigned long root)
+ {
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 2827a9622d97..4a66a620fc17 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -33,6 +33,7 @@
+ #include <linux/slab.h>
+ #include <linux/tboot.h>
+ #include <linux/hrtimer.h>
++#include <linux/frame.h>
+ #include <linux/nospec.h>
+ #include "kvm_cache_regs.h"
+ #include "x86.h"
+@@ -8698,6 +8699,7 @@ static void vmx_handle_external_intr(struct kvm_vcpu *vcpu)
+ 			);
+ 	}
+ }
++STACK_FRAME_NON_STANDARD(vmx_handle_external_intr);
+ 
+ static bool vmx_has_emulated_msr(int index)
+ {
+@@ -9138,6 +9140,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	vmx_recover_nmi_blocking(vmx);
+ 	vmx_complete_interrupts(vmx);
+ }
++STACK_FRAME_NON_STANDARD(vmx_vcpu_run);
+ 
+ static void vmx_load_vmcs01(struct kvm_vcpu *vcpu)
+ {
+diff --git a/arch/x86/lib/msr-reg.S b/arch/x86/lib/msr-reg.S
+index c81556409bbb..10ffa7e8519f 100644
+--- a/arch/x86/lib/msr-reg.S
++++ b/arch/x86/lib/msr-reg.S
+@@ -13,14 +13,14 @@
+ .macro op_safe_regs op
+ ENTRY(\op\()_safe_regs)
+ 	pushq %rbx
+-	pushq %rbp
++	pushq %r12
+ 	movq	%rdi, %r10	/* Save pointer */
+ 	xorl	%r11d, %r11d	/* Return value */
+ 	movl    (%rdi), %eax
+ 	movl    4(%rdi), %ecx
+ 	movl    8(%rdi), %edx
+ 	movl    12(%rdi), %ebx
+-	movl    20(%rdi), %ebp
++	movl    20(%rdi), %r12d
+ 	movl    24(%rdi), %esi
+ 	movl    28(%rdi), %edi
+ 1:	\op
+@@ -29,10 +29,10 @@ ENTRY(\op\()_safe_regs)
+ 	movl    %ecx, 4(%r10)
+ 	movl    %edx, 8(%r10)
+ 	movl    %ebx, 12(%r10)
+-	movl    %ebp, 20(%r10)
++	movl    %r12d, 20(%r10)
+ 	movl    %esi, 24(%r10)
+ 	movl    %edi, 28(%r10)
+-	popq %rbp
++	popq %r12
+ 	popq %rbx
+ 	ret
+ 3:
+diff --git a/arch/x86/net/Makefile b/arch/x86/net/Makefile
+index 90568c33ddb0..fefb4b619598 100644
+--- a/arch/x86/net/Makefile
++++ b/arch/x86/net/Makefile
+@@ -1,4 +1,6 @@
  #
+ # Arch-specific network modules
+ #
++OBJECT_FILES_NON_STANDARD_bpf_jit.o += y
++
+ obj-$(CONFIG_BPF_JIT) += bpf_jit.o bpf_jit_comp.o
+diff --git a/arch/x86/platform/efi/Makefile b/arch/x86/platform/efi/Makefile
+index 066619b0700c..7a255022933e 100644
+--- a/arch/x86/platform/efi/Makefile
++++ b/arch/x86/platform/efi/Makefile
+@@ -1,4 +1,5 @@
+ OBJECT_FILES_NON_STANDARD_efi_thunk_$(BITS).o := y
++OBJECT_FILES_NON_STANDARD_efi_stub_$(BITS).o := y
+ 
+ obj-$(CONFIG_EFI) 		+= quirks.o efi.o efi_$(BITS).o efi_stub_$(BITS).o
+ obj-$(CONFIG_ACPI_BGRT) += efi-bgrt.o
+diff --git a/arch/x86/power/Makefile b/arch/x86/power/Makefile
+index a6a198c33623..05041871ac90 100644
+--- a/arch/x86/power/Makefile
++++ b/arch/x86/power/Makefile
+@@ -1,3 +1,5 @@
++OBJECT_FILES_NON_STANDARD_hibernate_asm_$(BITS).o := y
++
+ # __restore_processor_state() restores %gs after S3 resume and so should not
+ # itself be stack-protected
+ nostackp := $(call cc-option, -fno-stack-protector)
+diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
+index e47e52787d32..4a54059f42ba 100644
+--- a/arch/x86/xen/Makefile
++++ b/arch/x86/xen/Makefile
+@@ -1,3 +1,6 @@
++OBJECT_FILES_NON_STANDARD_xen-asm_$(BITS).o := y
++OBJECT_FILES_NON_STANDARD_xen-pvh.o := y
++
+ ifdef CONFIG_FUNCTION_TRACER
+ # Do not profile debug and lowlevel utilities
+ CFLAGS_REMOVE_spinlock.o = -pg
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 561675589511..f5ab72ebda11 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -38,6 +38,7 @@
+ #include <linux/syscore_ops.h>
+ #include <linux/compiler.h>
+ #include <linux/hugetlb.h>
++#include <linux/frame.h>
+ 
+ #include <asm/page.h>
+ #include <asm/sections.h>
+@@ -878,7 +879,7 @@ int kexec_load_disabled;
+  * only when panic_cpu holds the current CPU number; this is the only CPU
+  * which processes crash_kexec routines.
+  */
+-void __crash_kexec(struct pt_regs *regs)
++void __noclone __crash_kexec(struct pt_regs *regs)
+ {
+ 	/* Take the kexec_mutex here to prevent sys_kexec_load
+ 	 * running on one cpu from replacing the crash kernel
+@@ -900,6 +901,7 @@ void __crash_kexec(struct pt_regs *regs)
+ 		mutex_unlock(&kexec_mutex);
+ 	}
+ }
++STACK_FRAME_NON_STANDARD(__crash_kexec);
+ 
+ void crash_kexec(struct pt_regs *regs)
+ {
 -- 
 2.17.1
