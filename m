@@ -1,157 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751182AbeFCQGd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 12:06:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46206 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750789AbeFCQGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 12:06:31 -0400
-Date: Sun, 3 Jun 2018 12:06:27 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
-        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>, axboe@kernel.dk
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-Message-ID: <20180603160626.GA4361@redhat.com>
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de>
- <20180525135813.GB9591@redhat.com>
- <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
- <20180530220206.GA7037@redhat.com>
- <20180531163311.GA30954@lst.de>
- <20180531181757.GB11848@redhat.com>
- <yq17enjut3q.fsf@oracle.com>
- <20180601042441.GB14244@redhat.com>
- <0a0d4ff8-fe06-5869-cd18-a8c99b5e86f6@grimberg.me>
+        id S1751217AbeFCQPX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 12:15:23 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40146 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750789AbeFCQPW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 12:15:22 -0400
+X-Google-Smtp-Source: ADUXVKIujWA50jIo8u6cQChQCs6hUQ56W1goLPyfF16DMLHvt/g4WzkULvoW8vmgsJCFy2+Gx+JcWQ==
+Subject: Re: [PATCH] staging:r8188eu: Use lib80211 to encrypt (WEP) tx frames
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Santha Meena Ramamoorthy <santhameena13@gmail.com>,
+        Janani Sankara Babu <jananis37@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180528061821.26948-1-insafonov@gmail.com>
+ <20180528135351.5y66u4puldawfic5@mwanda>
+From: Ivan Safonov <insafonov@gmail.com>
+Message-ID: <3e3851f2-7b51-3ab3-5663-ce7147ef8114@gmail.com>
+Date: Sun, 3 Jun 2018 19:16:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a0d4ff8-fe06-5869-cd18-a8c99b5e86f6@grimberg.me>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180528135351.5y66u4puldawfic5@mwanda>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 03 2018 at  7:00P -0400,
-Sagi Grimberg <sagi@grimberg.me> wrote:
+On 05/28/2018 04:53 PM, Dan Carpenter wrote:
+> On Mon, May 28, 2018 at 09:18:21AM +0300, Ivan Safonov wrote:
+>> Put data to skb, decrypt with lib80211_crypt_wep, and place back to tx buffer.
+>>
+>> Signed-off-by: Ivan Safonov <insafonov@gmail.com>
+>> ---
+>>   drivers/staging/rtl8188eu/core/rtw_security.c | 72 ++++++++++++++++-----------
+>>   1 file changed, 43 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/drivers/staging/rtl8188eu/core/rtw_security.c b/drivers/staging/rtl8188eu/core/rtw_security.c
+>> index bfe0b217e679..80d7569a3108 100644
+>> --- a/drivers/staging/rtl8188eu/core/rtw_security.c
+>> +++ b/drivers/staging/rtl8188eu/core/rtw_security.c
+>> @@ -139,17 +139,11 @@ static __le32 getcrc32(u8 *buf, int len)
+>>   	Need to consider the fragment  situation
+>>   */
+>>   void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+>> -{	/*  exclude ICV */
+>> -
+>> -	unsigned char	crc[4];
+>> -	struct arc4context	 mycontext;
+>> -
+>> +{
+>>   	int	curfragnum, length;
+>> -	u32	keylength;
+>>   
+>> -	u8	*pframe, *payload, *iv;    /* wepkey */
+>> -	u8	wepkey[16];
+>> -	u8   hw_hdr_offset = 0;
+>> +	u8 *pframe;
+>> +	u8 hw_hdr_offset = 0;
+>>   	struct	pkt_attrib	 *pattrib = &((struct xmit_frame *)pxmitframe)->attrib;
+>>   	struct	security_priv	*psecuritypriv = &padapter->securitypriv;
+>>   	struct	xmit_priv		*pxmitpriv = &padapter->xmitpriv;
+>> @@ -165,33 +159,53 @@ void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+>>   
+>>   	/* start to encrypt each fragment */
+>>   	if ((pattrib->encrypt == _WEP40_) || (pattrib->encrypt == _WEP104_)) {
+>> -		keylength = psecuritypriv->dot11DefKeylen[psecuritypriv->dot11PrivacyKeyIndex];
+>> +		const int keyindex = psecuritypriv->dot11PrivacyKeyIndex;
+>> +		void *crypto_private;
+>> +		struct sk_buff *skb;
+>> +		struct lib80211_crypto_ops *crypto_ops = try_then_request_module(lib80211_get_crypto_ops("WEP"), "lib80211_crypt_wep");
+>> +
+>> +		if (!crypto_ops)
+>> +			goto exit;
+>> +
+>> +		crypto_private = crypto_ops->init(keyindex);
+>> +		if (!crypto_private)
+>> +			goto exit;
+>> +
+>> +		if (crypto_ops->set_key(psecuritypriv->dot11DefKey[keyindex].skey,
+>> +					psecuritypriv->dot11DefKeylen[keyindex], NULL, crypto_private) < 0)
+>> +			goto exit;
+>>   
+>>   		for (curfragnum = 0; curfragnum < pattrib->nr_frags; curfragnum++) {
+>> -			iv = pframe+pattrib->hdrlen;
+>> -			memcpy(&wepkey[0], iv, 3);
+>> -			memcpy(&wepkey[3], &psecuritypriv->dot11DefKey[psecuritypriv->dot11PrivacyKeyIndex].skey[0], keylength);
+>> -			payload = pframe+pattrib->iv_len+pattrib->hdrlen;
+>> +			if (curfragnum + 1 == pattrib->nr_frags)
+>> +				length = pattrib->last_txcmdsz;
+>> +			else
+>> +				length = pxmitpriv->frag_len;
+>> +			skb = dev_alloc_skb(length);
+>> +			if (!skb)
+>> +				goto exit;
+>>   
+>> -			if ((curfragnum+1) == pattrib->nr_frags) {	/* the last fragment */
+>> -				length = pattrib->last_txcmdsz-pattrib->hdrlen-pattrib->iv_len-pattrib->icv_len;
+>> +			skb_put_data(skb, pframe, length);
+>>   
+>> -				*((__le32 *)crc) = getcrc32(payload, length);
+>> +			memmove(skb->data + 4, skb->data, pattrib->hdrlen);
+>> +			skb_pull(skb, 4);
+>> +			skb_trim(skb, skb->len - 4);
+>>   
+>> -				arcfour_init(&mycontext, wepkey, 3+keylength);
+>> -				arcfour_encrypt(&mycontext, payload, payload, length);
+>> -				arcfour_encrypt(&mycontext, payload+length, crc, 4);
+>> -			} else {
+>> -				length = pxmitpriv->frag_len-pattrib->hdrlen-pattrib->iv_len-pattrib->icv_len;
+>> -				*((__le32 *)crc) = getcrc32(payload, length);
+>> -				arcfour_init(&mycontext, wepkey, 3+keylength);
+>> -				arcfour_encrypt(&mycontext, payload, payload, length);
+>> -				arcfour_encrypt(&mycontext, payload+length, crc, 4);
+>> -
+>> -				pframe += pxmitpriv->frag_len;
+>> -				pframe = (u8 *)round_up((size_t)(pframe), 4);
+>> +			if (crypto_ops->encrypt_mpdu(skb, pattrib->hdrlen, crypto_private)) {
+>> +				kfree_skb(skb);
+>> +				goto exit;
+>>   			}
+>> +
+>> +			memcpy(pframe, skb->data, skb->len);
+>> +
+>> +			pframe += skb->len;
+>> +			pframe = (u8 *)round_up((size_t)(pframe), 4);
+>> +
+>> +			kfree_skb(skb);
+>>   		}
+>> +
+>> +exit:
+>> +		if (crypto_ops && crypto_private)
+>> +			crypto_ops->deinit(crypto_private);
+> 
+> One label style error handling is always bugggy.  I'm surprised GCC
+> doesn't catch that crypto_private can be uninitialized...
+
+This is not a compiler defect. The code
+
+if (a && b) {
+	...
+}
+
+is equal to
+
+if (a) {
+	if (b) {
+		...
+	}
+}
 
 > 
-> >I'm aware that most everything in multipath.conf is SCSI/FC specific.
-> >That isn't the point.  dm-multipath and multipathd are an existing
-> >framework for managing multipath storage.
-> >
-> >It could be made to work with NVMe.  But yes it would not be easy.
-> >Especially not with the native NVMe multipath crew being so damn
-> >hostile.
+> Flip the if ((pattrib->encrypt == _WEP40_) || (pattrib->encrypt == _WEP104_)) {
+> tests so it's:
 > 
-> The resistance is not a hostile act. Please try and keep the
-> discussion technical.
+> 	if (pattrib->encrypt != _WEP40_ && pattrib->encrypt != _WEP104_)
+> 		return;
 
-This projecting onto me that I've not been keeping the conversation
-technical is in itself hostile.  Sure I get frustrated and lash out (as
-I'm _sure_ you'll feel in this reply) but I've been beating my head
-against the wall on the need for native NVMe multipath and dm-multipath
-to coexist in a fine-grained manner for literally 2 years!
+The check is superfluous inside this function, it should be
+(somewhen) around rtw_wep_encrypt().
 
-But for the time-being I was done dwelling on the need for a switch like
-mpath_personality.  Yet you persist.  If you read the latest messages in
-this thread [1] and still elected to send this message, then _that_ is a
-hostile act.  Because I have been nothing but informative.  The fact you
-choose not to care, appreciate or have concern for users' experience
-isn't my fault.
-
-And please don't pretend like the entire evolution of native NVMe
-multipath was anything but one elaborate hostile act against
-dm-multipath.  To deny that would simply discredit your entire
-viewpoint on this topic.
-
-Even smaller decisions that were communicated in person and then later
-unilaterally reversed were hostile.  Examples:
-1) ANA would serve as a scsi device handler like (multipath agnostic)
-   feature to enhance namespaces -- now you can see in the v2
-   implemation that certainly isn't the case
-2) The dm-multipath path-selectors were going to be elevated for use by
-   both native NVMe multipath and dm-multipath -- now people are
-   implementing yet another round-robin path selector directly in NVMe.
-
-I get it, Christoph (and others by association) are operating from a
-"winning" position that was hostiley taken and now the winning position
-is being leveraged to further ensure dm-multipath has no hope of being a
-viable alternative to native NVMe multipath -- at least not without a
-lot of work to refactor code to be unnecessarily homed in the
-CONFIG_NVME_MULTIPATH=y sandbox.
-
-> >>But I don't think the burden of allowing multipathd/DM to inject
-> >>themselves into the path transition state machine has any benefit
-> >>whatsoever to the user. It's only complicating things and therefore we'd
-> >>be doing people a disservice rather than a favor.
-> >
-> >This notion that only native NVMe multipath can be successful is utter
-> >bullshit.  And the mere fact that I've gotten such a reaction from a
-> >select few speaks to some serious control issues.
-> >
-> >Imagine if XFS developers just one day imposed that it is the _only_
-> >filesystem that can be used on persistent memory.
-> >
-> >Just please dial it back.. seriously tiresome.
 > 
-> Mike, you make a fair point on multipath tools being more mature
-> compared to NVMe multipathing. But this is not the discussion at all (at
-> least not from my perspective). There was not a single use-case that
-> gave a clear-cut justification for a per-subsystem personality switch
-> (other than some far fetched imaginary scenarios). This is not unusual
-> for the kernel community not to accept things with little to no use,
-> especially when it involves exposing a userspace ABI.
-
-The interfaces dm-multipath and multipath-tools provide are exactly the
-issue.  SO which is it, do I have a valid usecase, like you indicated
-before [2] or am I just talking non-sense (with hypotehticals because I
-was baited to do so)?  NOTE: even in your [2] reply you also go on to
-say that "no one is forbidden to use [dm-]multipath." when the reality
-is users will be as-is.
-
-If you and others genuinely think that disallowing dm-multipath from
-being able to manage NVMe devices if CONFIG_NVME_MULTIPATH is enabled
-(and not shutoff via nvme_core.multipath=N) is a reasonable action then
-you're actively complicit in limiting users from continuing to use the
-long-established dm-multipath based infrastructure that Linux has had
-for over 10 years.
-
-There is literally no reason why they need to be mutually exclussive
-(other than to grant otherwise would errode the "winning" position hch
-et al have been operating from).
-The implemetation of the switch to allow fine-grained control does need
-proper care and review and buy-in.  But I'm sad to see there literally
-is zero willingness to even acknowledge that it is "the right thing to
-do".
-
-> As for now, all I see is a disclaimer saying that it'd need to be
-> nurtured over time as the NVMe spec evolves.
+> The use normal error handling style:
 > 
-> Can you (or others) please try and articulate why a "fine grained"
-> multipathing is an absolute must? At the moment, I just don't
-> understand.
+> 	kfree_skb(skb);
+> 	return;
+> 
+> err_free_skb:
+> 	kfree_skb(skb);
+> err_deinit:
+> 	crypto_ops->deinit(crypto_private);
+> }
+> 
 
-Already made the point multiple times in this thread [3][4][5][1].
-Hint: it is about the users who have long-standing expertise and
-automation built around dm-multipath and multipath-tools.  BUT those
-same users may need/want to simultaneously use native NVMe multipath on
-the same host.  Dismissing this point or acting like I haven't
-articulated it just illustrates to me continuing this conversation is
-not going to be fruitful.
+rtw_(wep|aes|tkip)_(en|de)crypt still need to be rewritten, so I'll 
+leave this patch as is. In the following patches I'll take your comments 
+into account, they really simplify reading the code.
 
-Mike
+> regards,
+> dan carpenter
+> 
 
-[1] https://lkml.org/lkml/2018/6/1/562
-[2] https://lkml.org/lkml/2018/5/31/175
-[3] https://lkml.org/lkml/2018/5/29/230
-[4] https://lkml.org/lkml/2018/5/29/1260
-[5] https://lkml.org/lkml/2018/5/31/707
+Ivan Safonov.
