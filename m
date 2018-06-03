@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751364AbeFCDE5 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 2 Jun 2018 23:04:57 -0400
-Received: from mail-eopbgr40045.outbound.protection.outlook.com ([40.107.4.45]:60887
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1751417AbeFCDFA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 2 Jun 2018 23:05:00 -0400
+Received: from mail-db5eur01on0058.outbound.protection.outlook.com ([104.47.2.58]:64880
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751258AbeFCDEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Jun 2018 23:04:42 -0400
+        id S1750931AbeFCDEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Jun 2018 23:04:39 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=anson.huang@nxp.com;
 From: Anson Huang <Anson.Huang@nxp.com>
@@ -14,9 +14,9 @@ To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
         mturquette@baylibre.com, sboyd@kernel.org
 Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] clk: imx6ul: remove clks_init_on array
-Date: Sun,  3 Jun 2018 11:00:47 +0800
-Message-Id: <1527994847-2363-4-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH 3/4] clk: imx6sx: remove clks_init_on array
+Date: Sun,  3 Jun 2018 11:00:46 +0800
+Message-Id: <1527994847-2363-3-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
 References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
@@ -29,46 +29,46 @@ X-ClientProxiedBy: HK2PR0401CA0003.apcprd04.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1323;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;3:HOBHOf9m8LGSLv27C5Gv57039T43HoIt6pLKunbbZOmU93AjAr1i3giIA1kYL6BJBduwu8adQwaqL5JLERDscEH9jXQytvegXQiZY7EexzsMB0TlXJqqXAjOxF7I+PsZ+YIA76XgD3VydXpLHV7tg8+BPs/vykf5Z27ZLHX2sMm+NHLNZlW2jKrg6xuwH87Z/vwGEz0G5nnOm4pX4HV2gH9Q7VxO56L1C/uEvX4cgZYQEQSc2ifatQajf2SjV7U3;25:PGA51+pOtUUmyAG61qLVWrqr0RkPSGE1PcCBCh5Ck89nT49P2cTQFpvpvQpj7lVa5jbWqrrGu8o25SaquHr/T26fJzKfJcAZ1EB43z6ZlTLh8IHrGC5dtfd/U3CAgnjpoRrZ7SLm+IUSlXKNTcEhghI2AizYAkK3Z8838FI2Rwspz7jdpETD6ol+IA4Epet8xISkHXSEDLOXK5/KHjnD8EqllC4PLYAB6+HyDp6wSV0/Bj9GqhepmrSWvARrGZmpgRVGdmfUJhNEBrmdtgIxjNeciyrKKYYP/lxgyQ9RuPMQT34JPR7cbIKHlpTaYDd8QhD5IUBAIn14ealzvhuC2g==;31:dzybMsW7U7VC+1m1DI1CD0WBGtDz01mdn8YPEZbrPVg3FjpySa07CuBgIl9LHO2E+zWGbxAz7WYQCq38oB+DVEMeokapVQNrFVGBjcgMFaXHix40Gp+ziJSXHRz1q4/unLLTMEGQiIXtYzk+V5whCszGyR7HEvjaTdA1wLyibu3G+OueRS321oMxCAHOOno2tb1vrZPM7BjL/FBVWyWp3ccdSI3d/8dj6nuoqauyHCo=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;3:M98Sor/tCX48dEp319B31n/8CIkb1/oJEx3xCMKVC1k7O949N9Lc2kGJ/nu8JQl3crZwnhqBpXJ8mhko6qvEdt4IFjy6jwo6cHgW11HhK9HKqR2YUjg7sHtA0HJoBoAWFO61M/rZavo2EwH94uv+SVcXdxf9RzhFMbMNIqf/kcnpcrrbiZTFtWSjTsfFhHyMikIdzcmAx+vkboOz9zjxtNFdGOGktcWLOC9uMjG2Oi+pZvHrd3ZWegPfyVwf2SC4;25:/yBRwImG4EWUURd6+JH819jNq7hzp6Yua2i2n8+4upSn0SM740YCl8/iwoRZWy+Ox2svcswABOW0zt5UxDKkUOW5B0mIO+PvoeHgQvu38Sc7jXxr0IzrimuiNYbXs7HcXbx3yQUgCaMQwQ/vPIsskeaMlkSxHDFg1VJQLV75CXCQhfE3mwwTI2eMOjVyhEQ61mck82II1wdBX/Gu3smD/391bMgPB98wGmGpMxYn3XCczoS0ETzvEZ2FiAhyoZCa2Xu9QLOZkYI+KPqo0A0hsP9ROImAwwched/iJHrRmHEQMF7Ib2CDJoES+V907MXMAJToiZaFoFQEFiF9nOUTSg==;31:4QJvzRwmU2TLo50rM6R0JeShDFY0YYxwpDo/O1OW35FQ+S7SrDHCh3+oNBM+ssis+7QkqKVjRw4ngXDexbXfbg3FpqVDPR+R7Pbc1wvdRIIwTRAb9QFv0W3VUYZQTcwVQyBVcvyQ4VvIyK9jdCH4SOSC16wjXjdkwwFUf9Tt0X9TsA0y84ryohtipP3SbeFULgExO3YGQLiRozohUpLUfcr4UrZAxZzIHN0GPxixSA4=
 X-MS-TrafficTypeDiagnostic: HE1PR04MB1323:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;20:BXB6SQaLrSj7WpKdnbleICNcU21OmaRjbvVSndZDZ/ISkeWNqJfgtx8FQByOs4XkoXEn1yA8ZkicIK7cmtMSTc1QKLa/CAoQcYpI+vY1PNikyNBpXdrmFEfshsxspccUS03OJzjjTGGO2yHh7vvqmI4zHFGwtCwxq9dp20UAuduMPeGeC+J0YmEXTn63wh7WHu0mUgoQ9EYW4mfnLV5b/BNMdCeq6HpcdeH9QalOvlOevlqGKwjxB6hHQhF2YjIhukClpz/bLAtFTl5uR95Cl/Gz+b3oAGSh3fqiVtgvmISg3s9SKzg63LkGk/Xcvmk7GNk5Z5k9kupDWFdUZ9rDqPRbG1J+1HFQhdQ7hDhtWhvEYVXgspLHZyTJq5IG+dGmyVwJPh3w+KBpSZGBuKdBZuKClz2QHrXw/H9xwd1sshqZ5AD+SX/g3uR56IT7mlkJKZSVYzrwfecVkx4JPoOa7/gmoWGQ9/1RCzYM1rk5gt/ORDqf7/5ZBa1oOHi2pXp9;4:5NBw1OLgNGuMSMtTzzrxuzM95l5xYIDgbxrvkhKevj+3s2VJs6OI3KFNcREF3Ke97TQuuScUddu7mKBuBanaJaE1zplGoTmeRzl2ipGhSoiWJu66G6RU1j+F+AzoFC+cD7hPpjE76ThHNQeFaxlnnnFpk0CJU7ECArcv91+8TtMDLbKtVegAi5uk1fSHbpcKfczDEwNdSbKbDBUUU82eq78+HbSieCL8DkjCE2euEvYuoAWZ187r4VeatKeFvffOndhcI1TV9J6x41KH+lpVyiuqOE3p3/K5SLdGnwX969fjlU/Ml+hHoTCFZpFwP7W0
-X-Microsoft-Antispam-PRVS: <HE1PR04MB13236710C18CA574ED237BEFF5600@HE1PR04MB1323.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;20:l1pH1LQ4jE9fnh42GA7RVixO7SBlvlWEIb5s5guGNX+kdNARUbiUMMmEW5QIlRKMWpyVAStYkpENck9cH2S5QDcZL7WKraJ3/9TRKBcvtijc9GOr9ZJaEQ2IKHvQ7NQ6Rl0YmRPTroBt6y1SjWmjG7/vTkHIOoNpxmfurkIENHQugyQ8ySRRq4WA31waapsw3mdurD1JEn7rumhBWhk5HnxoI2rvoVWkQKkoDaov10Rg2ymp+TeCTLEXBgPjKNY4PuWY+2TWOGHh87H7m9JR4Z3iIyWCBx2hKgeXEJzD1sc2IQXUMOlx3mZG7YQr14x6+ulEfjkZV0HQsahr/VK+BBNPggGKgMdEkpCbyFssUz4t7I5y0ZU4fRQspwLWg6hTbUlGViT4ifXClIVp7237pQjwULjdJXwxjpiBEv6oMDnL0d7ta9nbh8cZ39eW7GOvhrcBFCwqYXs1KpjTy9D75Znzi4K8M1ow43/9BDKiXevQLJgwuHkR58sZUvE659qi;4:gvfS5CUEeV+15sQVlZkw/gfZskyCp5Qg+3NAj3JcU9dXeW6cQF5UrxjXfOhLZdFFu49reVg0Rs7PBJ5K+M3eIlo7Wx1l5KhaLhlmWZosiZAWCwaJpt/KyDey5cf3ZTghIookcMqlnhshj9fRUAhau9KhRLMbKLNUx8u6upsqN/XXaxJjP8UxbfSAbOjiH0diUc4PdkeTzLtdGqyqcsi7w0olRdcqp04hWYXXRkTA52N4XxQQClh3+1IECzjQM4bcHh9StpOgRKvRD/ZhXe/BnZnIRC1Q3Z68F3WvoG6Clwh6MxA4/1Fdrnqezw1s3XUc
+X-Microsoft-Antispam-PRVS: <HE1PR04MB1323E442DBD8A28DDABE69AAF5600@HE1PR04MB1323.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1323;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1323;
 X-Forefront-PRVS: 069255B8B8
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(366004)(39380400002)(396003)(199004)(189003)(105586002)(305945005)(97736004)(86362001)(2906002)(106356001)(478600001)(66066001)(81156014)(8676002)(7736002)(51416003)(8936002)(48376002)(81166006)(50466002)(486006)(186003)(956004)(47776003)(476003)(2616005)(52116002)(16526019)(11346002)(446003)(16586007)(76176011)(6486002)(36756003)(3846002)(6666003)(6116002)(316002)(386003)(6506007)(25786009)(6512007)(5660300001)(4326008)(50226002)(53936002)(26005)(68736007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1323;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1323;23:vVwJP3jqT42Oywl7RWLx1ngcxM7yKEkjgACEnWGSX?=
- =?us-ascii?Q?jrfS3ZgucCqi/oFo1YpTBYnmw0SV0Df+Pk/nc5LHV7DwH0OazaULxjwV7imS?=
- =?us-ascii?Q?aa3fUDPfLE7o+8APxSTnfOQ97ViOy6s4ohxh1sQ1XV/sQG+rwmtLXaFPv5uC?=
- =?us-ascii?Q?REnyAjc47dwkaQ6HDIcmMsn+xXIV6LyF9fh4E4FF0SoXYRsSgKDefNC8LE5t?=
- =?us-ascii?Q?q4zhbl4fyBpILUj0hu7Fyby25T9zz1p7LI16bNKrZwbXcVcV0fxV+G+o6TJj?=
- =?us-ascii?Q?jr8U7Lyz2r3nwtq+C7HcYnU8S9ZcORgs6Xx+Qo61iPp8CoI1JWiHEyUmlJ6n?=
- =?us-ascii?Q?xgErDffjx9Yef8laXQjHtY7dqeB9yO8hfWyTDGWe69EXPbE28PjGYPdXCONf?=
- =?us-ascii?Q?NZCnZy0EPRFNlKORPEphkBSsQ9y5LZORdIZYTXA5xUrfqz3l7YGbBsuZyQxL?=
- =?us-ascii?Q?Yzt0ZDUohEOj1U1vU21ID6SOLt/3pMCtjAp4rzfDnRJ7lpqwquNf/1nKsCiz?=
- =?us-ascii?Q?TfvKkbW14fUHx0EXZCQJhJDVA6MFmPkMucEZVL9bvzFDgsYJCx28WHtVF267?=
- =?us-ascii?Q?mtUU/WvSj/OWLzJ3EF7KlhoiX66N2nOgBMZ8o53xfA0SBIwtbPzGIYXckmTi?=
- =?us-ascii?Q?i1cC2kk7GCwV3Lhfp0OaaB+XCwFVJHpxBrl6o4xmb1Kk62qLYSatVisng612?=
- =?us-ascii?Q?DWsV8CGFzV7CZi8Uw2OajcwGgFL1QzFm7vFDbFzcx3+U93g5jiyFod/EO+Np?=
- =?us-ascii?Q?dAFJlVEgx7Lk9FJfQ9+u+Z63BUH4uW4BNoIMfpO5uCRcLg5j0bRBLSHN/dAm?=
- =?us-ascii?Q?2cy1LbUwh2Xnu/NwHnK9JpHWxBiQSVM6hNTonrpwCMFC/vjDqLywGmSxyDbv?=
- =?us-ascii?Q?U34TuGSfKBJCrJzhH7j3D+qqpuwksVKtT9x3SeGN518kMYvU52x0H/E+RzoK?=
- =?us-ascii?Q?xuUiXWVS+YYFqbGbGjm49jGbiSvmJC7jcq2GCSeJ7JffmzlGxFIbKQ9V0xPo?=
- =?us-ascii?Q?qRa8KB0zbAkpdQMCyqE89iIIUXBlmjUh5Fm+357GQbxrwptNG1gG00IO6VI4?=
- =?us-ascii?Q?yVs6dwmX3g/KCw9HbtUMzfD67Wmyya3RtknsV/sjbr0aN2u3hutR43TRYwtC?=
- =?us-ascii?Q?JzfXpnvt9z9Bhy5R3WS1y1ZBjAikWtFPJRDvnmcwvlZLjEOTCrEeywWbr/j1?=
- =?us-ascii?Q?4HYjGqVPwrCYXk=3D?=
-X-Microsoft-Antispam-Message-Info: bn4DBQNpvxoplWRGjzOR8bo9q37mdW90tC8LzArllx/KATwHzz9vRfJjvMred/6BckfkRNm64tfhwKzzpUSlYjZWwy+qTcRdmrII+tdrnRms3m/UfII1+Sos9h6oeI0XLP29GKy3tAAFTC5XMN9fhJZOFUDs9pSKhynbiXZRYv8W2z3T1wNcy9kMXCpWAmUy
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;6:0wklwWhTi7sogG6bk+Ci4odnQKvRqKGs2qV4JVKPfc+79N2mK8it+SzbF8RsxyjgNuqJKFXSCfZB/U70d+GsRmjktypS+/M40J95oAHGo91uuLSnk2/tADVC6QuigCkqbXtNdfSiY8rn+eZagW/3qZIqdclOXczFBwL69p4KZ12F4SoviYolj/WFMqkQ3ah2vLwfSxeNKbpYqrBwQgtKRg/YtGapNlpS6ALksbGMCNys0YexVnv8XNlupD6xNT6hBonq6UqpzFAk0lSrk3tdmV0tG6e0sCR0b36SnF6X2Ix+nZiP40LC9i95hgh2s7KMafP9TFO8vk+eca26nVce0VVI7Y7MGP5HngiyaBmgqarvxJ0GS2A2XzbJ0Miv135TpSi31BrGgKTVlHlbh9tm6RaEwLhZFciV0decxPP5+jxAo5jEojDA69wg3+XK8tqXRSKjxVOV4Mywk1EwK5oPmQ==;5:28wbeLjSsLIjg7k+NALFPLzuypX+2ZbE3QRkfaj/i6AhLojEhgyJf+U8FYvNqy/z6t5OGQzCczdJG1pVx04xen6kwtWwqHsMtu+D53wg1gAiIiA+EXcrW7Tequ4cjOPDpCMtvIozf0cr9Ofeb2lCMIaS9QKFc02MZ+OmGV/sv1Q=;24:wfyNdv1UWK2tuww20PL0QfbsWr2nQnALA7+6hz5tlsHS62W35LASHDaynxE1fGQTOJQW85kk5wfGfxCt0JfdE9FtAj0q8LAYixMscm0T0yc=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1323;23:qQ3FI55nI7MSIBcHQ4BadGbCrWvzip1xF1ctn1FDP?=
+ =?us-ascii?Q?Je0bBkC+EuHb8YAsEpUveOUa1h50hwK9mlbhDR2IUe9ihIKTKceI497UW9kS?=
+ =?us-ascii?Q?ZaRAfmfaIIYqM1YxBVDEq7ulcfJSUbA6DaPPE+132uuODWEu3xbpAnljhGB0?=
+ =?us-ascii?Q?yBqpwNj/CeVonP3SNK0lHLwK+bg+Rr25p7Xj2dokliZT71xDFXnywl+29zhe?=
+ =?us-ascii?Q?+bilKOmF3D20/ppFHhgcWHScISnGRqj+NqmuN+KxoJVODgWsj9VeeTkHxMOu?=
+ =?us-ascii?Q?qObsDg7tJYvMXhUx5K5NZjICKwn/o1EFzbsA/A216DrFkUgWXEogcxNK1Tkr?=
+ =?us-ascii?Q?qG4i4vF8rBLawDBuKKNIhlFxH0XHn8IU1q/ecAa0MkYepaWv8jrh+iXGNv/o?=
+ =?us-ascii?Q?AIC4WyzIHvf9TC3wga+kFdFWvRHI8ADcikGc5urrbf1vP3dVllLdmP9LgbiR?=
+ =?us-ascii?Q?yi6Y/wxLZVR/Up2amwldN3jYNP5ZrZSmNKbN7IAlaSadpJMsVSwkbo0++aPQ?=
+ =?us-ascii?Q?ZjAt+8pAHMqmKxLBwp5LdIrCs6fcQR1lTJEG2wGhquxaiWIrEKIuHVFuUXz+?=
+ =?us-ascii?Q?7aKgtsENbnDU8IauQ7HE2I6NSdjmjjOA95H9pvkjxupNwCdMVt/ijpNozTjT?=
+ =?us-ascii?Q?O9RobFHS8tPRizX4T77KO4A8WC+/5B6aCBHXsk3pmEKKCkszShRW6/rGWP3U?=
+ =?us-ascii?Q?h+b2eQnOLSB/WnDSTzRe7pdbO/ARH6AkogA8AoZubnTd02wll/ERyCUQLcJP?=
+ =?us-ascii?Q?fnABF9TgEgkbGGsi4r7TDzAt2Jnd/4n0OYTpdBjpfwTsWahUdg7ReimnLLm4?=
+ =?us-ascii?Q?/3ZC6jJS5oe6kHPXpjkhjKOdTXGvcuZvRwsmPkNE51wNeN5nY8b49Bkoo4HR?=
+ =?us-ascii?Q?KW1Ym7uo70SFYw2H5tZZJMzLdIN9g0TURd1Aa0SwacWa0pzAthJYUwR0WEYx?=
+ =?us-ascii?Q?2iceBPHLCkVfLVmtxMyG9heBaN2ShFCFBE9yVjIf1CGtEoTGtCyzZo4Cjp6d?=
+ =?us-ascii?Q?9uKthPmZzLOiTMaGgrWXHfrhDP0Uk6UyPVmwCWOd8V69LwGTTB8pmEE2w6eq?=
+ =?us-ascii?Q?TNEDWV9eWsGichMFcYJPZNICbmN8hVmMMXrWRtLNvzI2imNFeov2IrlQQZSl?=
+ =?us-ascii?Q?G+RC+dtBeQpnjIO5x0kIQT/bW0Up+IXqNdfsmC5+kHp+yWDUkERyLKc3IXoB?=
+ =?us-ascii?Q?LMAYIf6gBFoQRQ=3D?=
+X-Microsoft-Antispam-Message-Info: 0meVMfHQY5vz/fEmEexy8a8awFi/HseIJt+lq8Lb6yakblpDlQPKHGsM0O3YoJK9OkNL2U2Xv2c/sEETxJpwQ0mquERTKhqf6TWj5oInC7RjXmun/Oyl9OgXvTeOZZTFpu/gmlpahfwco9WLjmTQjmHfbu0wIJHZiYhitV9QLHGxhI8FFQWvTfatKceI13Bo
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;6:F7d5maGFsE7aWkDmlC7JDRe4oQkVZ15ISIBOAG1UxZ3WyP5hQe7yPyvfZUIDLDuq9eJMGFEaBNBaupitocfkRoO/thiIQIdpbLwZI0QAsIAYUXkOnPeSNBeUnxIr479rEJeRVhsinbTxOuTWn1mZQDtJB66kmePURE0OZDBpYcQYkMloav9n+P2IhNj9AmWfwYb84CfWVlYCGgv+zaygFC6shOBL/lEDJqRvvTx0uzntP9J1rCplzN3NZL04NIdQ/St1F6Qxhn7B0OjQpn68x1RzLjng9lXQlyTFdx4nr6sXAmjV1+K1BoYJHy9/qyinYuZBS8ObduwSgcfKchDkRJmQsyBFJgN/dAUcFKY1hZA9JPhtr/lZrEmyNB89VhGfPokXAafKfUIWwR348etLMKV1O6MI9UpvFrnI6diGTAopzHg61/9LBx4nMr555v5LDtxQ6Q0ZFL2MTt4bXXqBHw==;5:kYVsQpQX3I+GH0/04HhorAGZexm8C0XS+h+cs3TigrRPaTQj/G0LtxYsVKWiOVSz9N0CRDF6a8xK8GaBirarYouhrYkYKd5NTXJt9vRm3rlyaLDXfvPlhcKLhdKU3r/cHT66QrfrrAgiZfaSXOJgyhpUsqjoerDsmTi9GsXFNH4=;24:HXe+4i0pjBqznyWlGLT9kn6998wOyt/q417HQFjlaWQN2/UWzvx5cPaw0NSdciwhJo+pmCw4BkBLd7Xf8VgR0psOCiilJBgKukmGr3LJo8I=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;7:HQyeu1L1WYXC6bnG3NY8ZyZ6DR0Y5tGX4KBjIRWFIcyTW/za7H4d9460XZ+sZ+MpLD0B+2vWwYKSO+U8s0/rhbvZ5g3IoABJSNy/D7BHz5+3zpjomE05TgQtO8h6CsLU+mF8YpAS7pAUX8FOehFfMG478PT0gzT3kZ96LC0LYxZ9Q/+xjmQh31UNe4QASGGOpTR8gRPWvZtew7m/hFmzS18nhCFgtiDfCqUHzBU9YCt3YCUyxe1DkfvJeVMKatpt
-X-MS-Office365-Filtering-Correlation-Id: e263a541-f93e-46ec-d2f4-08d5c8febe89
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1323;7:DMAzkuTz99HzYCcaZc1iynGC/7eu7HGD9E0s5EEQIkUaWlNZlHF3iHEQpXsDozT+Qw7z9uvGlHUxKDHwXVf/J8KPpWIPwS5yOdg4E8V0wG0xMMSRLsqn57PL5hsFwXF+QQM2ZG0gx9voWHzGyvljXv08yKdBhllzU6LJaxo3QSldq0rptF3SusakSAPIRd+28j3LIHxA3OcFrFy5stU6Xz/PqCMYHXLYvwd6jKh/IRj7Bqw4puO5D0GAwoAK31ga
+X-MS-Office365-Filtering-Correlation-Id: 1f649308-b3df-47de-0aad-08d5c8febc44
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2018 03:04:35.6274
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2018 03:04:31.7990
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e263a541-f93e-46ec-d2f4-08d5c8febe89
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f649308-b3df-47de-0aad-08d5c8febc44
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1323
@@ -82,78 +82,127 @@ clks_init_on array during clock initialization now.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-	This patch is based on "[V2,1/2] clk: imx6ul: add GPIO clock gates".
- drivers/clk/imx/clk-imx6ul.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ drivers/clk/imx/clk-imx6sx.c | 40 ++++++++++++++--------------------------
+ 1 file changed, 14 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 3ea2d97..d3f7f4d 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -79,12 +79,6 @@ static const char *cko_sels[] = { "cko1", "cko2", };
- static struct clk *clks[IMX6UL_CLK_END];
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 10c771b..aed4391 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -92,14 +92,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
+ static struct clk *clks[IMX6SX_CLK_CLK_END];
  static struct clk_onecell_data clk_data;
  
 -static int const clks_init_on[] __initconst = {
--	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
--	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
--	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
+-	IMX6SX_CLK_AIPS_TZ1, IMX6SX_CLK_AIPS_TZ2, IMX6SX_CLK_AIPS_TZ3,
+-	IMX6SX_CLK_IPMUX1, IMX6SX_CLK_IPMUX2, IMX6SX_CLK_IPMUX3,
+-	IMX6SX_CLK_WAKEUP, IMX6SX_CLK_MMDC_P0_FAST, IMX6SX_CLK_MMDC_P0_IPG,
+-	IMX6SX_CLK_ROM, IMX6SX_CLK_ARM, IMX6SX_CLK_IPG, IMX6SX_CLK_OCRAM,
+-	IMX6SX_CLK_PER2_MAIN, IMX6SX_CLK_PERCLK, IMX6SX_CLK_TZASC1,
 -};
 -
  static const struct clk_div_table clk_enet_ref_table[] = {
  	{ .val = 0, .div = 20, },
  	{ .val = 1, .div = 10, },
-@@ -129,7 +123,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+@@ -142,7 +134,6 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
  {
  	struct device_node *np;
  	void __iomem *base;
 -	int i;
  
- 	clks[IMX6UL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+ 	clks[IMX6SX_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
  
-@@ -336,8 +329,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_AHB]		= imx_clk_busy_divider("ahb",	    "periph",	base +  0x14, 10, 3,  base + 0x48, 1);
+@@ -332,7 +323,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_QSPI1_PODF]         = imx_clk_divider("qspi1_podf",     "qspi1_sel",         base + 0x1c, 26,   3);
+ 	clks[IMX6SX_CLK_EIM_SLOW_PODF]      = imx_clk_divider("eim_slow_podf",  "eim_slow_sel",      base + 0x1c, 23,   3);
+ 	clks[IMX6SX_CLK_LCDIF2_PODF]        = imx_clk_divider("lcdif2_podf",    "lcdif2_pred",       base + 0x1c, 20,   3);
+-	clks[IMX6SX_CLK_PERCLK]             = imx_clk_divider("perclk",         "perclk_sel",        base + 0x1c, 0,    6);
++	clks[IMX6SX_CLK_PERCLK]             = imx_clk_divider_flags("perclk", "perclk_sel", base + 0x1c, 0, 6, CLK_IS_CRITICAL);
+ 	clks[IMX6SX_CLK_VID_PODF]           = imx_clk_divider("vid_podf",       "vid_sel",           base + 0x20, 24,   2);
+ 	clks[IMX6SX_CLK_CAN_PODF]           = imx_clk_divider("can_podf",       "can_sel",           base + 0x20, 2,    6);
+ 	clks[IMX6SX_CLK_USDHC4_PODF]        = imx_clk_divider("usdhc4_podf",    "usdhc4_sel",        base + 0x24, 22,   3);
+@@ -380,8 +371,8 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
  
+ 	/*                                            name             parent_name          reg         shift */
  	/* CCGR0 */
--	clks[IMX6UL_CLK_AIPSTZ1]	= imx_clk_gate2("aips_tz1",	"ahb",		base + 0x68,	0);
--	clks[IMX6UL_CLK_AIPSTZ2]	= imx_clk_gate2("aips_tz2",	"ahb",		base + 0x68,	2);
-+	clks[IMX6UL_CLK_AIPSTZ1]	= imx_clk_gate2_flags("aips_tz1", "ahb", base + 0x68, 0, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_AIPSTZ2]	= imx_clk_gate2_flags("aips_tz2", "ahb", base + 0x68, 2, CLK_IS_CRITICAL);
- 	clks[IMX6UL_CLK_APBHDMA]	= imx_clk_gate2("apbh_dma",	"bch_podf",	base + 0x68,	4);
- 	clks[IMX6UL_CLK_ASRC_IPG]	= imx_clk_gate2_shared("asrc_ipg",	"ahb",	base + 0x68,	6, &share_count_asrc);
- 	clks[IMX6UL_CLK_ASRC_MEM]	= imx_clk_gate2_shared("asrc_mem",	"ahb",	base + 0x68,	6, &share_count_asrc);
-@@ -412,9 +405,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPIO4]		= imx_clk_gate2("gpio4",	"ipg",		base + 0x74,	12);
- 	clks[IMX6UL_CLK_QSPI]		= imx_clk_gate2("qspi1",	"qspi1_podf",	base + 0x74,	14);
- 	clks[IMX6UL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74,	16);
--	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20);
--	clks[IMX6UL_CLK_MMDC_P0_IPG]	= imx_clk_gate2("mmdc_p0_ipg",	"ipg",		base + 0x74,	24);
--	clks[IMX6UL_CLK_AXI]		= imx_clk_gate("axi",	"axi_podf",	base + 0x74,	28);
-+	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate_flags("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_MMDC_P0_IPG]	= imx_clk_gate2_flags("mmdc_p0_ipg",	"ipg",		base + 0x74,	24, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_AXI]		= imx_clk_gate_flags("axi",	"axi_podf",	base + 0x74,	28, CLK_IS_CRITICAL);
+-	clks[IMX6SX_CLK_AIPS_TZ1]     = imx_clk_gate2("aips_tz1",      "ahb",               base + 0x68, 0);
+-	clks[IMX6SX_CLK_AIPS_TZ2]     = imx_clk_gate2("aips_tz2",      "ahb",               base + 0x68, 2);
++	clks[IMX6SX_CLK_AIPS_TZ1]     = imx_clk_gate2_flags("aips_tz1", "ahb", base + 0x68, 0, CLK_IS_CRITICAL);
++	clks[IMX6SX_CLK_AIPS_TZ2]     = imx_clk_gate2_flags("aips_tz2", "ahb", base + 0x68, 2, CLK_IS_CRITICAL);
+ 	clks[IMX6SX_CLK_APBH_DMA]     = imx_clk_gate2("apbh_dma",      "usdhc3",            base + 0x68, 4);
+ 	clks[IMX6SX_CLK_ASRC_MEM]     = imx_clk_gate2_shared("asrc_mem", "ahb",             base + 0x68, 6, &share_count_asrc);
+ 	clks[IMX6SX_CLK_ASRC_IPG]     = imx_clk_gate2_shared("asrc_ipg", "ahb",             base + 0x68, 6, &share_count_asrc);
+@@ -394,7 +385,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_CAN2_SERIAL]  = imx_clk_gate2("can2_serial",   "can_podf",          base + 0x68, 20);
+ 	clks[IMX6SX_CLK_DCIC1]        = imx_clk_gate2("dcic1",         "display_podf",      base + 0x68, 24);
+ 	clks[IMX6SX_CLK_DCIC2]        = imx_clk_gate2("dcic2",         "display_podf",      base + 0x68, 26);
+-	clks[IMX6SX_CLK_AIPS_TZ3]     = imx_clk_gate2("aips_tz3",      "ahb",               base + 0x68, 30);
++	clks[IMX6SX_CLK_AIPS_TZ3]     = imx_clk_gate2_flags("aips_tz3", "ahb", base + 0x68, 30, CLK_IS_CRITICAL);
+ 
+ 	/* CCGR1 */
+ 	clks[IMX6SX_CLK_ECSPI1]       = imx_clk_gate2("ecspi1",        "ecspi_podf",        base + 0x6c, 0);
+@@ -407,7 +398,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal", "esai_podf",     base + 0x6c, 16, &share_count_esai);
+ 	clks[IMX6SX_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
+ 	clks[IMX6SX_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem",   "ahb",           base + 0x6c, 16, &share_count_esai);
+-	clks[IMX6SX_CLK_WAKEUP]       = imx_clk_gate2("wakeup",        "ipg",               base + 0x6c, 18);
++	clks[IMX6SX_CLK_WAKEUP]       = imx_clk_gate2_flags("wakeup", "ipg", base + 0x6c, 18, CLK_IS_CRITICAL);
+ 	clks[IMX6SX_CLK_GPT_BUS]      = imx_clk_gate2("gpt_bus",       "perclk",            base + 0x6c, 20);
+ 	clks[IMX6SX_CLK_GPT_SERIAL]   = imx_clk_gate2("gpt_serial",    "perclk",            base + 0x6c, 22);
+ 	clks[IMX6SX_CLK_GPU]          = imx_clk_gate2("gpu",           "gpu_core_podf",     base + 0x6c, 26);
+@@ -420,10 +411,10 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_I2C3]         = imx_clk_gate2("i2c3",          "perclk",            base + 0x70, 10);
+ 	clks[IMX6SX_CLK_OCOTP]        = imx_clk_gate2("ocotp",         "ipg",               base + 0x70, 12);
+ 	clks[IMX6SX_CLK_IOMUXC]       = imx_clk_gate2("iomuxc",        "lcdif1_podf",       base + 0x70, 14);
+-	clks[IMX6SX_CLK_IPMUX1]       = imx_clk_gate2("ipmux1",        "ahb",               base + 0x70, 16);
+-	clks[IMX6SX_CLK_IPMUX2]       = imx_clk_gate2("ipmux2",        "ahb",               base + 0x70, 18);
+-	clks[IMX6SX_CLK_IPMUX3]       = imx_clk_gate2("ipmux3",        "ahb",               base + 0x70, 20);
+-	clks[IMX6SX_CLK_TZASC1]       = imx_clk_gate2("tzasc1",        "mmdc_podf",         base + 0x70, 22);
++	clks[IMX6SX_CLK_IPMUX1]       = imx_clk_gate2_flags("ipmux1", "ahb", base + 0x70, 16, CLK_IS_CRITICAL);
++	clks[IMX6SX_CLK_IPMUX2]       = imx_clk_gate2_flags("ipmux2", "ahb", base + 0x70, 18, CLK_IS_CRITICAL);
++	clks[IMX6SX_CLK_IPMUX3]       = imx_clk_gate2_flags("ipmux3", "ahb", base + 0x70, 20, CLK_IS_CRITICAL);
++	clks[IMX6SX_CLK_TZASC1]       = imx_clk_gate2_flags("tzasc1", "mmdc_podf", base + 0x70, 22, CLK_IS_CRITICAL);
+ 	clks[IMX6SX_CLK_LCDIF_APB]    = imx_clk_gate2("lcdif_apb",     "display_podf",      base + 0x70, 28);
+ 	clks[IMX6SX_CLK_PXP_AXI]      = imx_clk_gate2("pxp_axi",       "display_podf",      base + 0x70, 30);
+ 
+@@ -437,15 +428,15 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_LDB_DI0]      = imx_clk_gate2("ldb_di0",       "ldb_di0_div_sel",   base + 0x74, 12);
+ 	clks[IMX6SX_CLK_QSPI1]        = imx_clk_gate2("qspi1",         "qspi1_podf",        base + 0x74, 14);
+ 	clks[IMX6SX_CLK_MLB]          = imx_clk_gate2("mlb",           "ahb",               base + 0x74, 18);
+-	clks[IMX6SX_CLK_MMDC_P0_FAST] = imx_clk_gate2("mmdc_p0_fast",  "mmdc_podf",         base + 0x74, 20);
+-	clks[IMX6SX_CLK_MMDC_P0_IPG]  = imx_clk_gate2("mmdc_p0_ipg",   "ipg",               base + 0x74, 24);
+-	clks[IMX6SX_CLK_OCRAM]        = imx_clk_gate2("ocram",         "ocram_podf",        base + 0x74, 28);
++	clks[IMX6SX_CLK_MMDC_P0_FAST] = imx_clk_gate2_flags("mmdc_p0_fast", "mmdc_podf", base + 0x74, 20, CLK_IS_CRITICAL);
++	clks[IMX6SX_CLK_MMDC_P0_IPG]  = imx_clk_gate2_flags("mmdc_p0_ipg", "ipg", base + 0x74, 24, CLK_IS_CRITICAL);
++	clks[IMX6SX_CLK_OCRAM]        = imx_clk_gate2_flags("ocram", "ocram_podf", base + 0x74, 28, CLK_IS_CRITICAL);
  
  	/* CCGR4 */
- 	clks[IMX6UL_CLK_PER_BCH]	= imx_clk_gate2("per_bch",	"bch_podf",	base + 0x78,	12);
-@@ -428,7 +421,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPMI_APB]	= imx_clk_gate2("gpmi_apb",	"bch_podf",	base + 0x78,	30);
+ 	clks[IMX6SX_CLK_PCIE_AXI]     = imx_clk_gate2("pcie_axi",      "display_podf",      base + 0x78, 0);
+ 	clks[IMX6SX_CLK_QSPI2]        = imx_clk_gate2("qspi2",         "qspi2_podf",        base + 0x78, 10);
+ 	clks[IMX6SX_CLK_PER1_BCH]     = imx_clk_gate2("per1_bch",      "usdhc3",            base + 0x78, 12);
+-	clks[IMX6SX_CLK_PER2_MAIN]    = imx_clk_gate2("per2_main",     "ahb",               base + 0x78, 14);
++	clks[IMX6SX_CLK_PER2_MAIN]    = imx_clk_gate2_flags("per2_main", "ahb", base + 0x78, 14, CLK_IS_CRITICAL);
+ 	clks[IMX6SX_CLK_PWM1]         = imx_clk_gate2("pwm1",          "perclk",            base + 0x78, 16);
+ 	clks[IMX6SX_CLK_PWM2]         = imx_clk_gate2("pwm2",          "perclk",            base + 0x78, 18);
+ 	clks[IMX6SX_CLK_PWM3]         = imx_clk_gate2("pwm3",          "perclk",            base + 0x78, 20);
+@@ -456,7 +447,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_GPMI_APB]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
  
  	/* CCGR5 */
--	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2("rom",		"ahb",		base + 0x7c,	0);
-+	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2_flags("rom",	"ahb",		base + 0x7c,	0,	CLK_IS_CRITICAL);
- 	clks[IMX6UL_CLK_SDMA]		= imx_clk_gate2("sdma",		"ahb",		base + 0x7c,	6);
- 	clks[IMX6UL_CLK_KPP]		= imx_clk_gate2("kpp",		"ipg",		base + 0x7c,	8);
- 	clks[IMX6UL_CLK_WDOG2]		= imx_clk_gate2("wdog2",	"ipg",		base + 0x7c,	10);
-@@ -502,10 +495,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clk_set_rate(clks[IMX6UL_CLK_ENET2_REF], 50000000);
- 	clk_set_rate(clks[IMX6UL_CLK_CSI], 24000000);
+-	clks[IMX6SX_CLK_ROM]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
++	clks[IMX6SX_CLK_ROM]          = imx_clk_gate2_flags("rom", "ahb", base + 0x7c, 0, CLK_IS_CRITICAL);
+ 	clks[IMX6SX_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
+ 	clks[IMX6SX_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
+ 	clks[IMX6SX_CLK_AUDIO]        = imx_clk_gate2_shared("audio",  "audio_podf",        base + 0x7c, 14, &share_count_audio);
+@@ -502,9 +493,6 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
  
--	/* keep all the clks on just for bringup */
 -	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
 -		clk_prepare_enable(clks[clks_init_on[i]]);
 -
- 	if (clk_on_imx6ull())
- 		clk_prepare_enable(clks[IMX6UL_CLK_AIPSTZ3]);
- 
+ 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+ 		clk_prepare_enable(clks[IMX6SX_CLK_USBPHY1_GATE]);
+ 		clk_prepare_enable(clks[IMX6SX_CLK_USBPHY2_GATE]);
 -- 
 2.7.4
