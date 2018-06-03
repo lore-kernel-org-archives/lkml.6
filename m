@@ -1,92 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751783AbeFCXgi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 19:36:38 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:41029 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751439AbeFCXgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 19:36:03 -0400
-X-Google-Smtp-Source: ADUXVKIh9gjBWZoFFew8kvm3plkakWgdawcLs/HWPQUJRFTyl12eF6cCqb9u8WfNLh8weGpAWH8vGRPBiCxtSZ43YDoRM82KEWr4
+        id S1751499AbeFCXuZ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 19:50:25 -0400
+Received: from mx.socionext.com ([202.248.49.38]:33088 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751132AbeFCXuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 19:50:23 -0400
+From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+To: "'Masahiro Yamada'" <yamada.masahiro@socionext.com>,
+        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?=
+        <suzuki.katsuhiro@socionext.com>
+Cc: "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        <linux-media@vger.kernel.org>,
+        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com> <20180530090946.1635-2-suzuki.katsuhiro@socionext.com> <CAK7LNAT3qOrH5PgidVKk73PeL97-VuySnkzSBDWUWqoD8ZwuyQ@mail.gmail.com>
+In-Reply-To: <CAK7LNAT3qOrH5PgidVKk73PeL97-VuySnkzSBDWUWqoD8ZwuyQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] media: uniphier: add DT bindings documentation for UniPhier HSC
+Date: Mon, 4 Jun 2018 08:50:18 +0900
+Message-ID: <005c01d3fb95$a0b016f0$e21044d0$@socionext.com>
 MIME-Version: 1.0
-Date: Sun, 03 Jun 2018 16:36:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bec587056dc547ba@google.com>
-Subject: KASAN: use-after-free Read in bpf_csum_update
-From: syzbot <syzbot+3d0b2441dbb71751615e@syzkaller.appspotmail.com>
-To: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHT9/X29JijI300Zkioo8nq+MkS6KRMJ2QAgAMTP7A=
+Content-Language: ja
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hello Yamada-san,
 
-syzbot found the following crash on:
+Thank you for your review and comments.
+I'll fix this mail and other your replies!
 
-HEAD commit:    bcece5dc40b9 bpf: Change bpf_fib_lookup to return -EAFNOSU..
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=161e2c6f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4078980b886800c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d0b2441dbb71751615e
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17cb5adf800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ebf19f800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3d0b2441dbb71751615e@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-==================================================================
-BUG: KASAN: use-after-free in ____bpf_csum_update net/core/filter.c:1907  
-[inline]
-BUG: KASAN: use-after-free in bpf_csum_update+0xb4/0xc0  
-net/core/filter.c:1901
-Read of size 1 at addr ffff8801ad062f10 by task syz-executor354/4488
-
-CPU: 1 PID: 4488 Comm: syz-executor354 Not tainted 4.17.0-rc6+ #29
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-  ____bpf_csum_update net/core/filter.c:1907 [inline]
-  bpf_csum_update+0xb4/0xc0 net/core/filter.c:1901
-
-The buggy address belongs to the page:
-page:ffffea0006b41880 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: ffffea0006b41820 ffffea0006b671a0 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801ad062e00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801ad062e80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff8801ad062f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                          ^
-  ffff8801ad062f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801ad063000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+Regards,
+--
+Katsuhiro Suzuki
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> -----Original Message-----
+> From: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Sent: Saturday, June 2, 2018 6:50 PM
+> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
+> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
+> linux-media@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
+> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel
+> <linux-arm-kernel@lists.infradead.org>; Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH 1/8] media: uniphier: add DT bindings documentation for UniPhier
+> HSC
+> 
+> 2018-05-30 18:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> > This patch adds DT binding documentation for UniPhier HSC which is
+> > MPEG2-TS input/output and demux subsystem.
+> >
+> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> > ---
+> >  .../bindings/media/uniphier,hsc.txt           | 38 +++++++++++++++++++
+> >  1 file changed, 38 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/media/uniphier,hsc.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/uniphier,hsc.txt
+> b/Documentation/devicetree/bindings/media/uniphier,hsc.txt
+> > new file mode 100644
+> > index 000000000000..4242483b2ecc
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/uniphier,hsc.txt
+> > @@ -0,0 +1,38 @@
+> > +Socionext UniPhier HSC (High-speed Stream Controller)
+> > +
+> > +The Socionext UniPhier HSC subsystem consists of MPEG2-TS input/output and
+> > +demultiplexer cores in the same register space.
+> > +
+> > +This interface is support TS serial signals (clock, valid, sync, data) from
+> > +external demodulators.
+> > +
+> > +Required properties:
+> > +- compatible      : should be one of the following:
+> > +                   "socionext,uniphier-ld11-hsc"
+> > +                   "socionext,uniphier-ld20-hsc"
+> > +- reg             : offset and length of the register set for the device.
+> > +- interrupts      : should contain DMA and TSI error interrupt.
+> > +- pinctrl-names   : should be "default".
+> > +- pinctrl-0       : defined TS serial signal pins for external demodulators.
+> > +- clock-names     : should include following entries:
+> 
+> 
+> "the following entries:"
+> 
+> 
+> 
+> > +                    "hsc", "stdmac"
+> > +- clocks          : a list of phandle, should contain an entry for each
+> > +                    entry in clock-names.
+> > +- reset-names     : should include following entries:
+> 
+> 
+> Ditto.
+> 
+> 
+> 
+> > +                    "hsc", "stdmac"
+> > +- resets          : a list of phandle, should contain an entry for each
+> > +                    entry in reset-names.
+> > +
+> > +Example:
+> > +       hsc {
+> > +               compatible = "socionext,uniphier-ld20-hsc";
+> > +               reg = <0x5c000000 0x100000>;
+> > +               interrupts = <0 100 4>, <0 101 4>;
+> > +               pinctrl-names = "default";
+> > +               pinctrl-0 = <&pinctrl_hscin2_s>,
+> > +                           <&pinctrl_hscin3_s>;
+> > +               clock-names = "stdmac", "hsc";
+> > +               clocks = <&sys_clk 8>, <&sys_clk 9>;
+> > +               reset-names = "stdmac", "hsc";
+> > +               resets = <&sys_rst 8>, <&sys_rst 9>;
+> > +       };
+> > --
+> > 2.17.0
+> >
+> 
+> 
+> 
+> --
+> Best Regards
+> Masahiro Yamada
