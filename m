@@ -1,60 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeFCLMH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 07:12:07 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37733 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeFCLMF (ORCPT
+        id S1751307AbeFCLdC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 07:33:02 -0400
+Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:54341 "EHLO
+        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbeFCLdB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 07:12:05 -0400
-X-Google-Smtp-Source: ADUXVKIxJmmlLWxyMyM2VjtZ/RH3iampG3NMf8ypobIidDWzxKhHRnWzyWZFlUXINglzgOzxCJtOFQ==
-From: Varsha Rao <rvarsha016@gmail.com>
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <der.herr@hofr.at>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH] net: ipw2x00: Replace NULL comparison with !priv
-Date: Sun,  3 Jun 2018 16:41:35 +0530
-Message-Id: <20180603111136.4262-1-rvarsha016@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Sun, 3 Jun 2018 07:33:01 -0400
+Date: Sun, 3 Jun 2018 11:31:45 +0000
+From: Nicholas Mc Guire <der.herr@hofr.at>
+To: Varsha Rao <rvarsha016@gmail.com>
+Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] message: fusion: Remove extra parentheses
+Message-ID: <20180603113145.GA6348@osadl.at>
+References: <20180603110307.4080-1-rvarsha016@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180603110307.4080-1-rvarsha016@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove extra parentheses and replace NULL comparison with !priv, to fix
-clang warning of extraneous parentheses and check patch issue. Following
-coccinelle script is used to fix it.
+On Sun, Jun 03, 2018 at 04:33:07PM +0530, Varsha Rao wrote:
+> To fix clang warning of extraneous parentheses and check patch issue,
+> remove extra parentheses and replace x == NULL with !x. Following
+> coccinelle script is used to fix it.
+> 
+> @disable is_null,paren@
+> expression e;
+> statement s;
+> @@
+> if (
+> - (e==NULL)
+> +!e
+>  )
+> s
+> 
+> Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+Reviewed-by: Nicholas Mc Guire <der.herr@hofr.at>
 
-@disable is_null,paren@
-expression e;
-statement s;
-@@
-if (
-- (e==NULL)
-+!e
- )
-s
+> ---
+>  drivers/message/fusion/mptbase.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
+> index 51eb1b027963..3fe53b65c5fa 100644
+> --- a/drivers/message/fusion/mptbase.c
+> +++ b/drivers/message/fusion/mptbase.c
+> @@ -335,11 +335,11 @@ static int mpt_remove_dead_ioc_func(void *arg)
+>  	MPT_ADAPTER *ioc = (MPT_ADAPTER *)arg;
+>  	struct pci_dev *pdev;
+>  
+> -	if ((ioc == NULL))
+> +	if (!ioc)
+>  		return -1;
+>  
+>  	pdev = ioc->pcidev;
+> -	if ((pdev == NULL))
+> +	if (!pdev)
 
-Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
----
- drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is of course equivalent - but note that in mptbase.c the "style"
+== NULL is used in other places as well - so maybe it would be good to
+change those as well or leave the == NULL in place for readability reasons.
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index 87a5e414c2f7..7d55bb09413b 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -7112,7 +7112,7 @@ static u32 ipw_qos_get_burst_duration(struct ipw_priv *priv)
- {
- 	u32 ret = 0;
- 
--	if ((priv == NULL))
-+	if (!priv)
- 		return 0;
- 
- 	if (!(priv->ieee->modulation & LIBIPW_OFDM_MODULATION))
--- 
-2.17.0
+>  		return -1;
+>  
+>  	pci_stop_and_remove_bus_device_locked(pdev);
+> -- 
+> 2.17.0
+> 
