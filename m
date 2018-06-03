@@ -1,81 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751230AbeFCH7W (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 03:59:22 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:38767 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeFCH7U (ORCPT
+        id S1751104AbeFCIFa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 04:05:30 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:41899 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750974AbeFCIF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 03:59:20 -0400
-X-Google-Smtp-Source: ADUXVKIz9740QB9JKwdjdXStmu5Fl9jgzahC44Ay7f/sM3BDl5S1KXoBQZUW9ReDMkvuq4/KcdAQ4c84AJ7u5UIeJ18=
+        Sun, 3 Jun 2018 04:05:27 -0400
+X-Google-Smtp-Source: ADUXVKKq3LcXmOJr9Tw11bV5FO5JEgfinNpf+8GYB9zttIk7OrZapYHTya4rcqtWX4YpI4N9X/9qNNAZw6G83XqnwUM=
 MIME-Version: 1.0
-In-Reply-To: <152791813206.257724.14863139556803168986.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152791788214.257724.13044360353832574147.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152791813206.257724.14863139556803168986.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180602023215.176521-1-ravisadineni@chromium.org>
+References: <20180602023215.176521-1-ravisadineni@chromium.org>
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 3 Jun 2018 09:59:18 +0200
-X-Google-Sender-Auth: O-VgPJCKHDZ4DoD9gXvAV8hMazk
-Message-ID: <CAJZ5v0hHHR_559P1vF+9g_vmKkPSWjm9pv5zmjBq9qQ7vDhjOg@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] PCI: shpchp: Fix AMD POGO identification
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Linux PCI <linux-pci@vger.kernel.org>,
+Date: Sun, 3 Jun 2018 10:05:26 +0200
+X-Google-Sender-Auth: WrxGVoJO4eIflNu_8Spzjfv8Pks
+Message-ID: <CAJZ5v0gWeq034sObmHsbJoiBri4a=Av8xroeuW+eqyv_W=cHjQ@mail.gmail.com>
+Subject: Re: [PATCH] power: Print wakeup_count instead of event_count in the
+ sysfs attribute.
+To: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, chenhong3@huawei.com,
+        Pavel Machek <pavel@ucw.cz>, ravisadineni@google.com,
+        Dmitry Torokhov <dtor@google.com>, Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, tbroch@google.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Lukas Wunner <lukas@wunner.de>
+        Linux PM <linux-pm@vger.kernel.org>, Rajat Jain <rajatja@google.com>,
+        bleung@google.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 2, 2018 at 7:42 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> The fix for an AMD POGO erratum related to SHPC incorrectly identified the
-> device.  The workaround should be applied only for AMD POGO devices, but it
-> was instead applied to:
->
->   - all AMD bridges, and
->   - all devices from any vendor with device ID 0x7458
->
-> Fixes: 53044f357448 ("[PATCH] PCI Hotplug: shpchp: AMD POGO errata fix")
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+On Sat, Jun 2, 2018 at 4:32 AM, Ravi Chandra Sadineni
+<ravisadineni@chromium.org> wrote:
+> Currently we show event_count instead of wakeup_count as part of per
+> device wakeup_count sysfs attribute. Change it to wakeup_count to make
+> it more meaningful.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+More information, please.
 
-> ---
->  drivers/pci/hotplug/shpchp_ctrl.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
-> index bedda5bda910..1047b56e5730 100644
-> --- a/drivers/pci/hotplug/shpchp_ctrl.c
-> +++ b/drivers/pci/hotplug/shpchp_ctrl.c
-> @@ -585,13 +585,13 @@ static int shpchp_enable_slot (struct slot *p_slot)
->         ctrl_dbg(ctrl, "%s: p_slot->pwr_save %x\n", __func__, p_slot->pwr_save);
->         p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
->
-> -       if (((p_slot->ctrl->pci_dev->vendor == PCI_VENDOR_ID_AMD) ||
-> -           (p_slot->ctrl->pci_dev->device == PCI_DEVICE_ID_AMD_POGO_7458))
-> +       if ((p_slot->ctrl->pci_dev->vendor == PCI_VENDOR_ID_AMD &&
-> +            p_slot->ctrl->pci_dev->device == PCI_DEVICE_ID_AMD_POGO_7458)
->              && p_slot->ctrl->num_slots == 1) {
-> -               /* handle amd pogo errata; this must be done before enable  */
-> +               /* handle AMD POGO errata; this must be done before enable  */
->                 amd_pogo_errata_save_misc_reg(p_slot);
->                 retval = board_added(p_slot);
-> -               /* handle amd pogo errata; this must be done after enable  */
-> +               /* handle AMD POGO errata; this must be done after enable  */
->                 amd_pogo_errata_restore_misc_reg(p_slot);
->         } else
->                 retval = board_added(p_slot);
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+In particular, why it is more meaningful.
+
+Thanks,
+Rafael
