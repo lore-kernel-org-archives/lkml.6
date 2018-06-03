@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeFCM1n (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 08:27:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54122 "EHLO mail.kernel.org"
+        id S1751591AbeFCM1t (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 08:27:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751354AbeFCM1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 08:27:37 -0400
+        id S1751477AbeFCM1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 08:27:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <willy@linux.intel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Joe Perches <joe@perches.com>, Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 04/29] tools: add more bitmap functions
-Date: Sun,  3 Jun 2018 14:26:27 +0200
-Message-Id: <20180603122652.17453-5-gregkh@linuxfoundation.org>
+Subject: [PATCH 06/29] tools include: Introduce linux/compiler-gcc.h
+Date: Sun,  3 Jun 2018 14:26:29 +0200
+Message-Id: <20180603122652.17453-7-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
@@ -25,66 +24,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <willy@linux.intel.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit b328daf3b7130098b105c18bdae694ddaad5b6e3 upstream.
+commit 192614010a5052fe92611c7076ef664fd9bb60e8 upstream.
 
-I need the following functions for the radix tree:
+To match the kernel headers structure, setting up things that are
+specific to gcc or to some specific version of gcc.
 
-  bitmap_fill
-  bitmap_empty
-  bitmap_full
+It gets included by linux/compiler.h when gcc is the compiler being
+used.
 
-Copy the implementations from include/linux/bitmap.h
-
-Signed-off-by: Matthew Wilcox <willy@linux.intel.com>
-Tested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-fabcqfq4asodq9t158hcs8t3@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/include/linux/bitmap.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ tools/include/linux/compiler-gcc.h | 14 ++++++++++++++
+ tools/include/linux/compiler.h     | 10 +++++-----
+ tools/perf/MANIFEST                |  1 +
+ 3 files changed, 20 insertions(+), 5 deletions(-)
+ create mode 100644 tools/include/linux/compiler-gcc.h
 
-diff --git a/tools/include/linux/bitmap.h b/tools/include/linux/bitmap.h
-index 43c1c5021e4b..eef41d500e9e 100644
---- a/tools/include/linux/bitmap.h
-+++ b/tools/include/linux/bitmap.h
-@@ -35,6 +35,32 @@ static inline void bitmap_zero(unsigned long *dst, int nbits)
- 	}
- }
+diff --git a/tools/include/linux/compiler-gcc.h b/tools/include/linux/compiler-gcc.h
+new file mode 100644
+index 000000000000..48af2f10a42d
+--- /dev/null
++++ b/tools/include/linux/compiler-gcc.h
+@@ -0,0 +1,14 @@
++#ifndef _TOOLS_LINUX_COMPILER_H_
++#error "Please don't include <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
++#endif
++
++/*
++ * Common definitions for all gcc versions go here.
++ */
++#define GCC_VERSION (__GNUC__ * 10000		\
++		     + __GNUC_MINOR__ * 100	\
++		     + __GNUC_PATCHLEVEL__)
++
++#if GCC_VERSION >= 70000 && !defined(__CHECKER__)
++# define __fallthrough __attribute__ ((fallthrough))
++#endif
+diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
+index d94179f94caa..6326ede9aece 100644
+--- a/tools/include/linux/compiler.h
++++ b/tools/include/linux/compiler.h
+@@ -1,6 +1,10 @@
+ #ifndef _TOOLS_LINUX_COMPILER_H_
+ #define _TOOLS_LINUX_COMPILER_H_
  
-+static inline void bitmap_fill(unsigned long *dst, unsigned int nbits)
-+{
-+	unsigned int nlongs = BITS_TO_LONGS(nbits);
-+	if (!small_const_nbits(nbits)) {
-+		unsigned int len = (nlongs - 1) * sizeof(unsigned long);
-+		memset(dst, 0xff,  len);
-+	}
-+	dst[nlongs - 1] = BITMAP_LAST_WORD_MASK(nbits);
-+}
++#ifdef __GNUC__
++#include <linux/compiler-gcc.h>
++#endif
 +
-+static inline int bitmap_empty(const unsigned long *src, unsigned nbits)
-+{
-+	if (small_const_nbits(nbits))
-+		return ! (*src & BITMAP_LAST_WORD_MASK(nbits));
-+
-+	return find_first_bit(src, nbits) == nbits;
-+}
-+
-+static inline int bitmap_full(const unsigned long *src, unsigned int nbits)
-+{
-+	if (small_const_nbits(nbits))
-+		return ! (~(*src) & BITMAP_LAST_WORD_MASK(nbits));
-+
-+	return find_first_zero_bit(src, nbits) == nbits;
-+}
-+
- static inline int bitmap_weight(const unsigned long *src, int nbits)
- {
- 	if (small_const_nbits(nbits))
+ /* Optimization barrier */
+ /* The "volatile" is due to gcc bugs */
+ #define barrier() __asm__ __volatile__("": : :"memory")
+@@ -128,11 +132,7 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+ 
+ 
+ #ifndef __fallthrough
+-# if defined(__GNUC__) && __GNUC__ >= 7
+-#  define __fallthrough __attribute__ ((fallthrough))
+-# else
+-#  define __fallthrough
+-# endif
++# define __fallthrough
+ #endif
+ 
+ #endif /* _TOOLS_LINUX_COMPILER_H */
+diff --git a/tools/perf/MANIFEST b/tools/perf/MANIFEST
+index a511e5f31e36..8672f835ae4e 100644
+--- a/tools/perf/MANIFEST
++++ b/tools/perf/MANIFEST
+@@ -61,6 +61,7 @@ tools/include/asm-generic/bitops.h
+ tools/include/linux/atomic.h
+ tools/include/linux/bitops.h
+ tools/include/linux/compiler.h
++tools/include/linux/compiler-gcc.h
+ tools/include/linux/coresight-pmu.h
+ tools/include/linux/filter.h
+ tools/include/linux/hash.h
 -- 
 2.17.1
