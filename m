@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751520AbeFDTB7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:01:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38280 "EHLO
+        id S1751610AbeFDTCb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:02:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24573 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751364AbeFDTBK (ORCPT
+        by vger.kernel.org with ESMTP id S1751254AbeFDTBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:01:10 -0400
+        Mon, 4 Jun 2018 15:01:05 -0400
 From: Eddie James <eajames@linux.vnet.ibm.com>
 To: linux-i2c@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -14,20 +14,20 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
         rdunlap@infradead.org, andy.shevchenko@gmail.com,
         Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v9 5/7] i2c: fsi: Add transfer implementation
-Date: Mon,  4 Jun 2018 14:00:48 -0500
+Subject: [PATCH v9 2/7] i2c: Add FSI-attached I2C master algorithm
+Date: Mon,  4 Jun 2018 14:00:45 -0500
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
 References: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18060419-0064-0000-0000-00000315131A
+x-cbid: 18060419-2213-0000-0000-000002B3142E
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009129; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000265; SDB=6.01042302; UDB=6.00533708; IPR=6.00821432;
- MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 19:01:07
+ MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 19:01:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060419-0065-0000-0000-0000397A6137
-Message-Id: <1528138850-18259-6-git-send-email-eajames@linux.vnet.ibm.com>
+x-cbparentid: 18060419-2214-0000-0000-00005A5C6C54
+Message-Id: <1528138850-18259-3-git-send-email-eajames@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -39,242 +39,288 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Execute I2C transfers from the FSI-attached I2C master. Use polling
-instead of interrupts as we have no hardware IRQ over FSI.
+Add register definitions for FSI-attached I2C master and functions to
+access those registers over FSI. Add an FSI driver so that our I2C bus
+is probed up during an FSI scan.
 
 Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 ---
- drivers/i2c/busses/i2c-fsi.c | 195 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 193 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/Kconfig   |  11 ++
+ drivers/i2c/busses/Makefile  |   1 +
+ drivers/i2c/busses/i2c-fsi.c | 234 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 246 insertions(+)
+ create mode 100644 drivers/i2c/busses/i2c-fsi.c
 
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 4f8df2e..cddd159 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -1330,4 +1330,15 @@ config I2C_ZX2967
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called i2c-zx2967.
+ 
++config I2C_FSI
++	tristate "FSI I2C driver"
++	depends on FSI
++	help
++	  Driver for FSI bus attached I2C masters. These are I2C masters that
++	  are connected to the system over an FSI bus, instead of the more
++	  common PCI or MMIO interface.
++
++	  This driver can also be built as a module. If so, the module will be
++	  called as i2c-fsi.
++
+ endmenu
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 5a86914..4909fd6 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -137,5 +137,6 @@ obj-$(CONFIG_I2C_PCA_ISA)	+= i2c-pca-isa.o
+ obj-$(CONFIG_I2C_SIBYTE)	+= i2c-sibyte.o
+ obj-$(CONFIG_I2C_XGENE_SLIMPRO) += i2c-xgene-slimpro.o
+ obj-$(CONFIG_SCx200_ACB)	+= scx200_acb.o
++obj-$(CONFIG_I2C_FSI)		+= i2c-fsi.o
+ 
+ ccflags-$(CONFIG_I2C_DEBUG_BUS) := -DDEBUG
 diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
-index 101b9c5..4e5964e 100644
---- a/drivers/i2c/busses/i2c-fsi.c
+new file mode 100644
+index 0000000..e1b183c
+--- /dev/null
 +++ b/drivers/i2c/busses/i2c-fsi.c
-@@ -150,6 +150,7 @@ struct fsi_i2c_port {
- 	struct i2c_adapter	adapter;
- 	struct fsi_i2c_master	*master;
- 	u16			port;
-+	u16			xfrd;
- };
- 
- static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
-@@ -225,6 +226,99 @@ static int fsi_i2c_set_port(struct fsi_i2c_port *port)
- 	return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
- }
- 
-+static int fsi_i2c_start(struct fsi_i2c_port *port, struct i2c_msg *msg,
-+			 bool stop)
+@@ -0,0 +1,234 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * FSI-attached I2C master algorithm
++ *
++ * Copyright 2018 IBM Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version
++ * 2 of the License, or (at your option) any later version.
++ */
++
++#include <linux/bitfield.h>
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/fsi.h>
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++
++#define FSI_ENGID_I2C		0x7
++
++#define I2C_DEFAULT_CLK_DIV	6
++
++/* i2c registers */
++#define I2C_FSI_FIFO		0x00
++#define I2C_FSI_CMD		0x04
++#define I2C_FSI_MODE		0x08
++#define I2C_FSI_WATER_MARK	0x0C
++#define I2C_FSI_INT_MASK	0x10
++#define I2C_FSI_INT_COND	0x14
++#define I2C_FSI_OR_INT_MASK	0x14
++#define I2C_FSI_INTS		0x18
++#define I2C_FSI_AND_INT_MASK	0x18
++#define I2C_FSI_STAT		0x1C
++#define I2C_FSI_RESET_I2C	0x1C
++#define I2C_FSI_ESTAT		0x20
++#define I2C_FSI_RESET_ERR	0x20
++#define I2C_FSI_RESID_LEN	0x24
++#define I2C_FSI_SET_SCL		0x24
++#define I2C_FSI_PORT_BUSY	0x28
++#define I2C_FSI_RESET_SCL	0x2C
++#define I2C_FSI_SET_SDA		0x30
++#define I2C_FSI_RESET_SDA	0x34
++
++/* cmd register */
++#define I2C_CMD_WITH_START	BIT(31)
++#define I2C_CMD_WITH_ADDR	BIT(30)
++#define I2C_CMD_RD_CONT		BIT(29)
++#define I2C_CMD_WITH_STOP	BIT(28)
++#define I2C_CMD_FORCELAUNCH	BIT(27)
++#define I2C_CMD_ADDR		GENMASK(23, 17)
++#define I2C_CMD_READ		BIT(16)
++#define I2C_CMD_LEN		GENMASK(15, 0)
++
++/* mode register */
++#define I2C_MODE_CLKDIV		GENMASK(31, 16)
++#define I2C_MODE_PORT		GENMASK(15, 10)
++#define I2C_MODE_ENHANCED	BIT(3)
++#define I2C_MODE_DIAG		BIT(2)
++#define I2C_MODE_PACE_ALLOW	BIT(1)
++#define I2C_MODE_WRAP		BIT(0)
++
++/* watermark register */
++#define I2C_WATERMARK_HI	GENMASK(15, 12)
++#define I2C_WATERMARK_LO	GENMASK(7, 4)
++
++#define I2C_FIFO_HI_LVL		4
++#define I2C_FIFO_LO_LVL		4
++
++/* interrupt register */
++#define I2C_INT_INV_CMD		BIT(15)
++#define I2C_INT_PARITY		BIT(14)
++#define I2C_INT_BE_OVERRUN	BIT(13)
++#define I2C_INT_BE_ACCESS	BIT(12)
++#define I2C_INT_LOST_ARB	BIT(11)
++#define I2C_INT_NACK		BIT(10)
++#define I2C_INT_DAT_REQ		BIT(9)
++#define I2C_INT_CMD_COMP	BIT(8)
++#define I2C_INT_STOP_ERR	BIT(7)
++#define I2C_INT_BUSY		BIT(6)
++#define I2C_INT_IDLE		BIT(5)
++
++#define I2C_INT_ENABLE		0x0000ff80
++#define I2C_INT_ERR		0x0000fcc0
++
++/* status register */
++#define I2C_STAT_INV_CMD	BIT(31)
++#define I2C_STAT_PARITY		BIT(30)
++#define I2C_STAT_BE_OVERRUN	BIT(29)
++#define I2C_STAT_BE_ACCESS	BIT(28)
++#define I2C_STAT_LOST_ARB	BIT(27)
++#define I2C_STAT_NACK		BIT(26)
++#define I2C_STAT_DAT_REQ	BIT(25)
++#define I2C_STAT_CMD_COMP	BIT(24)
++#define I2C_STAT_STOP_ERR	BIT(23)
++#define I2C_STAT_MAX_PORT	GENMASK(19, 16)
++#define I2C_STAT_ANY_INT	BIT(15)
++#define I2C_STAT_SCL_IN		BIT(11)
++#define I2C_STAT_SDA_IN		BIT(10)
++#define I2C_STAT_PORT_BUSY	BIT(9)
++#define I2C_STAT_SELF_BUSY	BIT(8)
++#define I2C_STAT_FIFO_COUNT	GENMASK(7, 0)
++
++#define I2C_STAT_ERR		0xfc800000
++#define I2C_STAT_ANY_RESP	0xff800000
++
++/* extended status register */
++#define I2C_ESTAT_FIFO_SZ	GENMASK(31, 24)
++#define I2C_ESTAT_SCL_IN_SY	BIT(15)
++#define I2C_ESTAT_SDA_IN_SY	BIT(14)
++#define I2C_ESTAT_S_SCL		BIT(13)
++#define I2C_ESTAT_S_SDA		BIT(12)
++#define I2C_ESTAT_M_SCL		BIT(11)
++#define I2C_ESTAT_M_SDA		BIT(10)
++#define I2C_ESTAT_HI_WATER	BIT(9)
++#define I2C_ESTAT_LO_WATER	BIT(8)
++#define I2C_ESTAT_PORT_BUSY	BIT(7)
++#define I2C_ESTAT_SELF_BUSY	BIT(6)
++#define I2C_ESTAT_VERSION	GENMASK(4, 0)
++
++struct fsi_i2c_master {
++	struct fsi_device	*fsi;
++	u8			fifo_size;
++};
++
++static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
++			    u32 *data)
 +{
-+	struct fsi_i2c_master *i2c = port->master;
-+	u32 cmd = I2C_CMD_WITH_START | I2C_CMD_WITH_ADDR;
-+
-+	port->xfrd = 0;
-+
-+	if (msg->flags & I2C_M_RD)
-+		cmd |= I2C_CMD_READ;
-+
-+	if (stop || msg->flags & I2C_M_STOP)
-+		cmd |= I2C_CMD_WITH_STOP;
-+
-+	cmd |= FIELD_PREP(I2C_CMD_ADDR, msg->addr >> 1);
-+	cmd |= FIELD_PREP(I2C_CMD_LEN, msg->len);
-+
-+	return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_CMD, &cmd);
-+}
-+
-+static int fsi_i2c_get_op_bytes(int op_bytes)
-+{
-+	/* fsi is limited to max 4 byte aligned ops */
-+	if (op_bytes > 4)
-+		return 4;
-+	else if (op_bytes == 3)
-+		return 2;
-+	return op_bytes;
-+}
-+
-+static int fsi_i2c_write_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
-+			      u8 fifo_count)
-+{
-+	int write;
 +	int rc;
-+	struct fsi_i2c_master *i2c = port->master;
-+	int bytes_to_write = i2c->fifo_size - fifo_count;
-+	int bytes_remaining = msg->len - port->xfrd;
++	__be32 data_be;
 +
-+	bytes_to_write = min(bytes_to_write, bytes_remaining);
++	rc = fsi_device_read(fsi, reg, &data_be, sizeof(data_be));
++	if (rc)
++		return rc;
 +
-+	while (bytes_to_write) {
-+		write = fsi_i2c_get_op_bytes(bytes_to_write);
-+
-+		rc = fsi_device_write(i2c->fsi, I2C_FSI_FIFO,
-+				      &msg->buf[port->xfrd], write);
-+		if (rc)
-+			return rc;
-+
-+		port->xfrd += write;
-+		bytes_to_write -= write;
-+	}
++	*data = be32_to_cpu(data_be);
 +
 +	return 0;
 +}
 +
-+static int fsi_i2c_read_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
-+			     u8 fifo_count)
++static int fsi_i2c_write_reg(struct fsi_device *fsi, unsigned int reg,
++			     u32 *data)
 +{
-+	int read;
++	__be32 data_be = cpu_to_be32p(data);
++
++	return fsi_device_write(fsi, reg, &data_be, sizeof(data_be));
++}
++
++static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
++{
 +	int rc;
-+	struct fsi_i2c_master *i2c = port->master;
-+	int bytes_to_read;
-+	int xfr_remaining = msg->len - port->xfrd;
-+	u32 dummy;
++	u32 mode = I2C_MODE_ENHANCED, extended_status, watermark;
++	u32 interrupt = 0;
 +
-+	bytes_to_read = min_t(int, fifo_count, xfr_remaining);
++	/* since we use polling, disable interrupts */
++	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_INT_MASK, &interrupt);
++	if (rc)
++		return rc;
 +
-+	while (bytes_to_read) {
-+		read = fsi_i2c_get_op_bytes(bytes_to_read);
++	mode |= FIELD_PREP(I2C_MODE_CLKDIV, I2C_DEFAULT_CLK_DIV);
++	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
++	if (rc)
++		return rc;
 +
-+		if (xfr_remaining) {
-+			rc = fsi_device_read(i2c->fsi, I2C_FSI_FIFO,
-+					     &msg->buf[port->xfrd], read);
-+			if (rc)
-+				return rc;
++	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_ESTAT, &extended_status);
++	if (rc)
++		return rc;
 +
-+			port->xfrd += read;
-+			xfr_remaining -= read;
-+		} else {
-+			/* no more buffer but data in fifo, need to clear it */
-+			rc = fsi_device_read(i2c->fsi, I2C_FSI_FIFO, &dummy,
-+					     read);
-+			if (rc)
-+				return rc;
-+		}
++	i2c->fifo_size = FIELD_GET(I2C_ESTAT_FIFO_SZ, extended_status);
++	watermark = FIELD_PREP(I2C_WATERMARK_HI,
++			       i2c->fifo_size - I2C_FIFO_HI_LVL);
++	watermark |= FIELD_PREP(I2C_WATERMARK_LO, I2C_FIFO_LO_LVL);
 +
-+		bytes_to_read -= read;
-+	}
++	return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_WATER_MARK, &watermark);
++}
++
++static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
++			int num)
++{
++	return -EOPNOTSUPP;
++}
++
++static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
++{
++	return I2C_FUNC_I2C | I2C_FUNC_PROTOCOL_MANGLING | I2C_FUNC_10BIT_ADDR
++		| I2C_FUNC_SMBUS_EMUL | I2C_FUNC_SMBUS_BLOCK_DATA;
++}
++
++static const struct i2c_algorithm fsi_i2c_algorithm = {
++	.master_xfer = fsi_i2c_xfer,
++	.functionality = fsi_i2c_functionality,
++};
++
++static int fsi_i2c_probe(struct device *dev)
++{
++	struct fsi_i2c_master *i2c;
++	int rc;
++
++	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
++	if (!i2c)
++		return -ENOMEM;
++
++	i2c->fsi = to_fsi_dev(dev);
++
++	rc = fsi_i2c_dev_init(i2c);
++	if (rc)
++		return rc;
++
++	dev_set_drvdata(dev, i2c);
 +
 +	return 0;
 +}
 +
- static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c)
- {
- 	int i, rc;
-@@ -388,17 +482,114 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
- 	return -ETIMEDOUT;
- }
- 
-+static int fsi_i2c_handle_status(struct fsi_i2c_port *port,
-+				 struct i2c_msg *msg, u32 status)
-+{
-+	int rc;
-+	u8 fifo_count;
++static const struct fsi_device_id fsi_i2c_ids[] = {
++	{ FSI_ENGID_I2C, FSI_VERSION_ANY },
++	{ 0 }
++};
 +
-+	if (status & I2C_STAT_ERR) {
-+		rc = fsi_i2c_abort(port, status);
-+		if (rc)
-+			return rc;
++static struct fsi_driver fsi_i2c_driver = {
++	.id_table = fsi_i2c_ids,
++	.drv = {
++		.name = "i2c-fsi",
++		.bus = &fsi_bus_type,
++		.probe = fsi_i2c_probe,
++	},
++};
 +
-+		if (status & I2C_STAT_INV_CMD)
-+			return -EINVAL;
++module_fsi_driver(fsi_i2c_driver);
 +
-+		if (status & (I2C_STAT_PARITY | I2C_STAT_BE_OVERRUN |
-+		    I2C_STAT_BE_ACCESS))
-+			return -EPROTO;
-+
-+		if (status & I2C_STAT_NACK)
-+			return -ENXIO;
-+
-+		if (status & I2C_STAT_LOST_ARB)
-+			return -EAGAIN;
-+
-+		if (status & I2C_STAT_STOP_ERR)
-+			return -EBADMSG;
-+
-+		return -EIO;
-+	}
-+
-+	if (status & I2C_STAT_DAT_REQ) {
-+		fifo_count = FIELD_GET(I2C_STAT_FIFO_COUNT, status);
-+
-+		if (msg->flags & I2C_M_RD)
-+			return fsi_i2c_read_fifo(port, msg, fifo_count);
-+
-+		return fsi_i2c_write_fifo(port, msg, fifo_count);
-+	}
-+
-+	if (status & I2C_STAT_CMD_COMP) {
-+		if (port->xfrd < msg->len)
-+			return -ENODATA;
-+
-+		return msg->len;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fsi_i2c_wait(struct fsi_i2c_port *port, struct i2c_msg *msg,
-+			unsigned long timeout)
-+{
-+	u32 status = 0;
-+	int rc;
-+	unsigned long start = jiffies;
-+
-+	do {
-+		rc = fsi_i2c_read_reg(port->master->fsi, I2C_FSI_STAT,
-+				      &status);
-+		if (rc)
-+			return rc;
-+
-+		if (status & I2C_STAT_ANY_RESP) {
-+			rc = fsi_i2c_handle_status(port, msg, status);
-+			if (rc < 0)
-+				return rc;
-+
-+			/* cmd complete and all data xfrd */
-+			if (rc == msg->len)
-+				return 0;
-+
-+			/* need to xfr more data, but maybe don't need wait */
-+			continue;
-+		}
-+
-+		usleep_range(I2C_CMD_SLEEP_MIN_US, I2C_CMD_SLEEP_MAX_US);
-+	} while (time_after(start + timeout, jiffies));
-+
-+	return -ETIMEDOUT;
-+}
-+
- static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 			int num)
- {
--	int rc;
-+	int i, rc;
-+	unsigned long start_time;
- 	struct fsi_i2c_port *port = adap->algo_data;
-+	struct i2c_msg *msg;
- 
- 	rc = fsi_i2c_set_port(port);
- 	if (rc)
- 		return rc;
- 
--	return -EOPNOTSUPP;
-+	for (i = 0; i < num; i++) {
-+		msg = msgs + i;
-+		start_time = jiffies;
-+
-+		rc = fsi_i2c_start(port, msg, i == num - 1);
-+		if (rc)
-+			return rc;
-+
-+		rc = fsi_i2c_wait(port, msg,
-+				  adap->timeout - (jiffies - start_time));
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return 0;
- }
- 
- static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
++MODULE_AUTHOR("Eddie James <eajames@us.ibm.com>");
++MODULE_DESCRIPTION("FSI attached I2C master");
++MODULE_LICENSE("GPL");
 -- 
 1.8.3.1
