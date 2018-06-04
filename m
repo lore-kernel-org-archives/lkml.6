@@ -1,107 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753181AbeFDNJX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:09:23 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:41964 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753154AbeFDNJU (ORCPT
+        id S1753149AbeFDNKX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:10:23 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:32929 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752432AbeFDNKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:09:20 -0400
-X-Google-Smtp-Source: ADUXVKKK6stFVJg9Pvip+aj/ZDoaXPaebfemBEzL8fqbyvYwE4o3LC+plUXHa1+Lh6WFNezE+19h4A==
+        Mon, 4 Jun 2018 09:10:21 -0400
+X-Google-Smtp-Source: ADUXVKL02Nq9+MTHc1s2R9Eop8QKY9JKSnxRvkxxWnwiRhXrLmX/TeLTGhbGyrLRh8Nlubn0Zq8a3FTW8zbzaQZ4LVw=
 MIME-Version: 1.0
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org> <1527884768-22392-5-git-send-email-vgarodia@codeaurora.org>
-In-Reply-To: <1527884768-22392-5-git-send-email-vgarodia@codeaurora.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Mon, 4 Jun 2018 22:09:05 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AKy8X0Dd47fOKxTUaLuErtWv005_AGbB=O5SP+F+rrgA@mail.gmail.com>
-Message-ID: <CAAFQd5AKy8X0Dd47fOKxTUaLuErtWv005_AGbB=O5SP+F+rrgA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] media: venus: add no TZ boot and shutdown routine
-To: vgarodia@codeaurora.org
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        andy.gross@linaro.org, bjorn.andersson@linaro.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Will Deacon <will.deacon@arm.com>, Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <152720693123.9073.4511934790831409009.stgit@warthog.procyon.org.uk>
+References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+ <152720693123.9073.4511934790831409009.stgit@warthog.procyon.org.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 4 Jun 2018 15:10:18 +0200
+X-Google-Sender-Auth: qWKm6LOe9g4WRieWum_xrD6EMo0
+Message-ID: <CAK8P3a0rO=F_n0pmsxUghRrF9hC_2+2Bd6RaVwC9H-=Xo6oQWA@mail.gmail.com>
+Subject: Re: [PATCH 32/32] [RFC] fsinfo: Add a system call to allow querying
+ of filesystem information [ver #8]
+To: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-afs@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vikash,
+On Fri, May 25, 2018 at 2:08 AM, David Howells <dhowells@redhat.com> wrote:
 
-On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
-[snip]
-> +int venus_boot_noTZ(struct venus_core *core, phys_addr_t mem_phys,
-> +                                                       size_t mem_size)
+> +
+> +static int fsinfo_generic_timestamp_info(struct dentry *dentry,
+> +                                        struct fsinfo_timestamp_info *ts)
 > +{
-> +       struct iommu_domain *iommu;
-> +       struct device *dev;
-> +       int ret;
+> +       struct super_block *sb = dentry->d_sb;
 > +
-> +       if (!core->fw.dev)
-> +               return -EPROBE_DEFER;
-
-Is it really possible that the device appears after the probe is retried?
-
+> +       /* If unset, assume 1s granularity */
+> +       u16 mantissa = 1;
+> +       s8 exponent = 0;
 > +
-> +       dev = core->fw.dev;
-> +
-> +       iommu = iommu_domain_alloc(&platform_bus_type);
-> +       if (!iommu) {
-> +               dev_err(dev, "Failed to allocate iommu domain\n");
-> +               return -ENOMEM;
-> +       }
-> +
-> +       ret = iommu_attach_device(iommu, dev);
-> +       if (ret) {
-> +               dev_err(dev, "could not attach device\n");
-> +               goto err_attach;
-> +       }
-> +
-> +       ret = iommu_map(iommu, VENUS_FW_START_ADDR, mem_phys, mem_size,
-> +                       IOMMU_READ|IOMMU_WRITE|IOMMU_PRIV);
-> +       if (ret) {
-> +               dev_err(dev, "could not map video firmware region\n");
-> +               goto err_map;
+> +       ts->minimum_timestamp = S64_MIN;
+> +       ts->maximum_timestamp = S64_MAX;
+> +       if (sb->s_time_gran < 1000000000) {
+> +               if (sb->s_time_gran < 1000)
+> +                       exponent = -9;
+> +               else if (sb->s_time_gran < 1000000)
+> +                       exponent = -6;
+> +               else
+> +                       exponent = -3;
 > +       }
 
-I'm not very familiar with translation capabilities of ARM SMMU, so
-that might be an elementary question, but could you explain how this
-works? Will this make the firmware device (transfers with firmware
-PASID) use different page directory from the main device (all the
-other PASIDs; used with DMA mapping API)?
+ntfs has sb->s_time_gran=100, and vfat should really have
+sb->s_time_gran=2000000000 but that doesn't seem to be set right
+at the moment.
 
-+Will and Robin, just in case.
+> +/*
+> + * Optional fsinfo() parameter structure.
+> + *
+> + * If this is not given, it is assumed that fsinfo_attr_statfs instance 0 is
+> + * desired.
+> + */
+> +struct fsinfo_params {
+> +       enum fsinfo_attribute   request;        /* What is being asking for */
+> +       __u32                   Nth;            /* Instance of it (some may have multiple) */
+> +       __u32                   at_flags;       /* AT_SYMLINK_NOFOLLOW and similar flags */
+> +       __u32                   __spare[6];     /* Spare params; all must be 0 */
+> +};
 
-> +       core->fw.iommu_domain = iommu;
-> +       venus_reset_hw(core);
+I fear the 'enum' in the uapi structure may have a different size depending
+on the architecture. Maybe turn that into a __u32 as well?
+
+> +struct fsinfo_capabilities {
+> +       __u64   supported_stx_attributes;       /* What statx::stx_attributes are supported */
+> +       __u32   supported_stx_mask;             /* What statx::stx_mask bits are supported */
+> +       __u32   supported_ioc_flags;            /* What FS_IOC_* flags are supported */
+> +       __u8    capabilities[(fsinfo_cap__nr + 7) / 8];
+> +};
+
+This looks a bit odd: with the 44 capabilities, you end up having a
+six-byte array
+followed by two bytes of implicit padding. If the number of
+capabilities grows beyond
+64, you have a nine byte array with more padding to the next alignof(__u64). Is
+that intentional?
+
+How about making it a fixed size with either 64 or 128 capability bits?
+
+> +/*
+> + * Information struct for fsinfo(fsinfo_attr_timestamp_info).
+> + */
+> +struct fsinfo_timestamp_info {
+> +       __s64   minimum_timestamp;      /* Minimum timestamp value in seconds */
+> +       __s64   maximum_timestamp;      /* Maximum timestamp value in seconds */
+> +       __u16   atime_gran_mantissa;    /* Granularity(secs) = mant * 10^exp */
+> +       __u16   btime_gran_mantissa;
+> +       __u16   ctime_gran_mantissa;
+> +       __u16   mtime_gran_mantissa;
+> +       __s8    atime_gran_exponent;
+> +       __s8    btime_gran_exponent;
+> +       __s8    ctime_gran_exponent;
+> +       __s8    mtime_gran_exponent;
+> +};
+
+This structure has a slightly inconsistent amount of padding at the end:
+on x86-32 it has no padding, everywhere else it has 32 bits of padding
+to make it 64-bit aligned. Maybe add a __u32 reserved field?
+
 > +
-> +       return 0;
-> +
-> +err_map:
-> +       iommu_detach_device(iommu, dev);
-> +err_attach:
-> +       iommu_domain_free(iommu);
-> +       return ret;
-> +}
-[snip]
-> diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
-> index 0916826..67fdd89 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.h
-> +++ b/drivers/media/platform/qcom/venus/firmware.h
-> @@ -14,10 +14,15 @@
->  #ifndef __VENUS_FIRMWARE_H__
->  #define __VENUS_FIRMWARE_H__
->
-> +#define VENUS_PAS_ID                   9
+> +#define __NR_fsinfo 326
 
-Shouldn't this normally be given in DT?
+Hardcoding the syscall number in the example makes it architecture specific.
+Could you include <asm/unistd.h> to get the real number?
 
-Best regards,
-Tomasz
+      Arnd
