@@ -1,72 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753150AbeFDNWc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:22:32 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38170 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752432AbeFDNW3 (ORCPT
+        id S1753211AbeFDNWr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:22:47 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40612 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752429AbeFDNWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:22:29 -0400
-X-Google-Smtp-Source: ADUXVKJqaSKMMP9X7qUPwA5VvNK9Df87TR1BraPvM04ya+SPCyW8ltYy3EGcOL2U2PltLRtbQdlfEw==
-Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-To: Michal Hocko <mhocko@kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
-        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
-References: <20180523232246.20445-1-qing.huang@oracle.com>
- <20180525.102321.858995452200286788.davem@davemloft.net>
- <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
- <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
- <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
- <20180531065405.GH15278@dhcp22.suse.cz>
- <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
- <20180531085532.GK15278@dhcp22.suse.cz>
- <20180531091022.GL15278@dhcp22.suse.cz>
- <20180604131104.GS19202@dhcp22.suse.cz>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <1908601f-2eda-d739-9c4d-430a002b1a05@gmail.com>
-Date: Mon, 4 Jun 2018 06:22:26 -0700
+        Mon, 4 Jun 2018 09:22:40 -0400
+X-Google-Smtp-Source: ADUXVKIBwB3AZttYYFtMK3chCQH63DRLxVhOUqd8c8+49hcd9iDdpQy5JdVJOgwCTJ4YcLaFuwJ+RQ==
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
+ on kbd brightness change
+To: Chris Chiu <chiu@endlessm.com>, corentin.chary@gmail.com,
+        dvhart@infradead.org, andy.shevchenko@gmail.com
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, linux@endlessm.com
+References: <20180604123238.82200-1-chiu@endlessm.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
+Date: Mon, 4 Jun 2018 15:22:38 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180604131104.GS19202@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180604123238.82200-1-chiu@endlessm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Chris.
+
+On 04-06-18 14:32, Chris Chiu wrote:
+> Make asus-wmi notify on hotkey kbd brightness changes, listen for
+> brightness events and update the brightness directly in the driver.
+> For this purpose, bound check on brightness in kbd_led_set must be
+> based on the same data type to prevent illegal value been set.
+> 
+> Update the brightness by led_classdev_notify_brightness_hw_changed.
+> This will allow userspace to monitor (poll) for brightness changes
+> on the LED without reporting via input keymapping.
+
+Is this really a case of the hardware itself processing the
+keypress and then changing the brightness *itself* ?
+
+ From the "[PATCH 2/2] platform/x86: asus-wmi: Add keyboard backlight
+toggle support" patch I get the impression that the driver is
+modifying the brightness from within the kernel rather then the
+keyboard controller are ACPI embeddec-controller doing it itself.
+
+If that is the case then the right fix is for the driver to stop
+mucking with the brighness itself, it should simply report the
+right keyboard events and export a led interface and then userspace
+will do the right thing (and be able to offer flexible policies
+to the user).
+
+Regards,
+
+Hans
 
 
-On 06/04/2018 06:11 AM, Michal Hocko wrote:
-> On Thu 31-05-18 11:10:22, Michal Hocko wrote:
 
-> Just in case you are interested
+
+> 
+> Signed-off-by: Chris Chiu <chiu@endlessm.com>
 > ---
-> From 5010543ed6f73e4c00367801486dca8d5c63b2ce Mon Sep 17 00:00:00 2001
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Mon, 4 Jun 2018 15:07:37 +0200
-> Subject: [PATCH] net: cleanup gfp mask in alloc_skb_with_frags
+>   drivers/platform/x86/asus-nb-wmi.c |  2 --
+>   drivers/platform/x86/asus-wmi.c    | 21 +++++++++++++++++++--
+>   2 files changed, 19 insertions(+), 4 deletions(-)
 > 
-> alloc_skb_with_frags uses __GFP_NORETRY for non-sleeping allocations
-> which is just a noop and a little bit confusing.
+> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+> index 136ff2b4cce5..7ce80e4bb5a3 100644
+> --- a/drivers/platform/x86/asus-nb-wmi.c
+> +++ b/drivers/platform/x86/asus-nb-wmi.c
+> @@ -493,8 +493,6 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
+>   	{ KE_KEY, 0xA6, { KEY_SWITCHVIDEOMODE } }, /* SDSP CRT + TV + HDMI */
+>   	{ KE_KEY, 0xA7, { KEY_SWITCHVIDEOMODE } }, /* SDSP LCD + CRT + TV + HDMI */
+>   	{ KE_KEY, 0xB5, { KEY_CALC } },
+> -	{ KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
+> -	{ KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
+>   	{ KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
+>   	{ KE_END, 0},
+>   };
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 1f6e68f0b646..b4915b7718c1 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -460,6 +460,7 @@ static void kbd_led_update(struct work_struct *work)
+>   		ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
+>   
+>   	asus_wmi_set_devstate(ASUS_WMI_DEVID_KBD_BACKLIGHT, ctrl_param, NULL);
+> +	led_classdev_notify_brightness_hw_changed(&asus->kbd_led, asus->kbd_led_wk);
+>   }
+>   
+>   static int kbd_led_read(struct asus_wmi *asus, int *level, int *env)
+> @@ -497,9 +498,9 @@ static void kbd_led_set(struct led_classdev *led_cdev,
+>   
+>   	asus = container_of(led_cdev, struct asus_wmi, kbd_led);
+>   
+> -	if (value > asus->kbd_led.max_brightness)
+> +	if ((int)value > (int)asus->kbd_led.max_brightness)
+>   		value = asus->kbd_led.max_brightness;
+> -	else if (value < 0)
+> +	else if ((int)value < 0)
+>   		value = 0;
+>   
+>   	asus->kbd_led_wk = value;
+> @@ -656,6 +657,7 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+>   
+>   		asus->kbd_led_wk = led_val;
+>   		asus->kbd_led.name = "asus::kbd_backlight";
+> +		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
+>   		asus->kbd_led.brightness_set = kbd_led_set;
+>   		asus->kbd_led.brightness_get = kbd_led_get;
+>   		asus->kbd_led.max_brightness = 3;
+> @@ -1700,6 +1702,13 @@ static int is_display_toggle(int code)
+>   	return 0;
+>   }
+>   
+> +static int is_kbd_led_event(int code)
+> +{
+> +	if (code == NOTIFY_KBD_BRTUP || code == NOTIFY_KBD_BRTDWN)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+>   static void asus_wmi_notify(u32 value, void *context)
+>   {
+>   	struct asus_wmi *asus = context;
+> @@ -1745,6 +1754,14 @@ static void asus_wmi_notify(u32 value, void *context)
+>   		}
+>   	}
+>   
+> +	if (is_kbd_led_event(code)) {
+> +		if (code == NOTIFY_KBD_BRTDWN)
+> +			kbd_led_set(&asus->kbd_led, asus->kbd_led_wk - 1);
+> +		else
+> +			kbd_led_set(&asus->kbd_led, asus->kbd_led_wk + 1);
+> +		goto exit;
+> +	}
+> +
+>   	if (is_display_toggle(code) &&
+>   	    asus->driver->quirks->no_display_toggle)
+>   		goto exit;
 > 
-> __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
-> high order allocations") to prevent from the OOM killer. Yet this was
-> not enough because fb05e7a89f50 ("net: don't wait for order-3 page
-> allocation") didn't want an excessive reclaim for non-costly orders
-> so it made it completely NOWAIT while it preserved __GFP_NORETRY in
-> place which is now redundant.
-> 
-> Drop the pointless __GFP_NORETRY because this function is used as
-> copy&paste source for other places.
-> 
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
-
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-
-Thanks !
