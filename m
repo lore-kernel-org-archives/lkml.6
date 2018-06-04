@@ -1,60 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753943AbeFDHFP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:05:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753929AbeFDHFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:05:12 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.16 20/47] nvme: fix extended data LBA supported setting
-Date: Mon,  4 Jun 2018 08:58:32 +0200
-Message-Id: <20180604065550.343547377@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
-References: <20180604065549.468488465@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753952AbeFDHFa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:05:30 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8630 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751796AbeFDHF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:05:27 -0400
+From: nixiaoming <nixiaoming@huawei.com>
+To: <davem@davemloft.net>, <dhowells@redhat.com>,
+        <manuel.schoelling@gmx.de>, <wang840925@gmail.com>
+CC: <nixiaoming@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+Subject: [PATCH] net/dns_resolver: dns_query Modify parameter checking to avoid dead code
+Date: Mon, 4 Jun 2018 14:40:31 +0800
+Message-ID: <20180604064031.116472-1-nixiaoming@huawei.com>
+X-Mailer: git-send-email 2.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+After commit 1a4240f4764a ("DNS: Separate out CIFS DNS Resolver code")
+a dead code exists in function dns_query
 
-------------------
+code show as below:
+	if (!name || namelen == 0)
+		return -EINVAL;
+	/*Now the value of "namelen" cannot be equal to 0*/
+	....
+	if (!namelen) /*The condition "!namelen"" cannot be true*/
+		namelen = strnlen(name, 256); /*deadcode*/
 
-From: Max Gurtovoy <maxg@mellanox.com>
+Modify parameter checking to avoid dead code
 
-commit c97f414c54a255f4f05a50a2625efaeee406e134 upstream.
-
-This value depands on the metadata support value, so reorder the
-initialization to fit.
-
-Fixes: b5be3b392 ("nvme: always unregister the integrity profile in __nvme_revalidate_disk")
-Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: nixiaoming <nixiaoming@huawei.com>
 ---
- drivers/nvme/host/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/dns_resolver/dns_query.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1446,8 +1446,8 @@ static void __nvme_revalidate_disk(struc
- 	if (ns->lba_shift == 0)
- 		ns->lba_shift = 9;
- 	ns->noiob = le16_to_cpu(id->noiob);
--	ns->ext = ns->ms && (id->flbas & NVME_NS_FLBAS_META_EXT);
- 	ns->ms = le16_to_cpu(id->lbaf[id->flbas & NVME_NS_FLBAS_LBA_MASK].ms);
-+	ns->ext = ns->ms && (id->flbas & NVME_NS_FLBAS_META_EXT);
- 	/* the PI implementation requires metadata equal t10 pi tuple size */
- 	if (ns->ms == sizeof(struct t10_pi_tuple))
- 		ns->pi_type = id->dps & NVME_NS_DPS_PI_MASK;
+diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
+index 49da670..f2acee2 100644
+--- a/net/dns_resolver/dns_query.c
++++ b/net/dns_resolver/dns_query.c
+@@ -81,7 +81,9 @@ int dns_query(const char *type, const char *name, size_t namelen,
+ 	kenter("%s,%*.*s,%zu,%s",
+ 	       type, (int)namelen, (int)namelen, name, namelen, options);
+ 
+-	if (!name || namelen == 0)
++	if (!name || namelen < 3 || namelen > 255)
++		return -EINVAL;
++	if (namelen > strnlen(name, 256)) /*maybe only need part of name*/
+ 		return -EINVAL;
+ 
+ 	/* construct the query key description as "[<type>:]<name>" */
+@@ -94,10 +96,6 @@ int dns_query(const char *type, const char *name, size_t namelen,
+ 		desclen += typelen + 1;
+ 	}
+ 
+-	if (!namelen)
+-		namelen = strnlen(name, 256);
+-	if (namelen < 3 || namelen > 255)
+-		return -EINVAL;
+ 	desclen += namelen + 1;
+ 
+ 	desc = kmalloc(desclen, GFP_KERNEL);
+-- 
+2.10.1
