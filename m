@@ -1,48 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753533AbeFDO4R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:56:17 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:43631 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751782AbeFDO4P (ORCPT
+        id S1753595AbeFDO5U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:57:20 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:50978 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751473AbeFDO5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:56:15 -0400
-X-Google-Smtp-Source: ADUXVKL829Y3I3JVEBAjiiYhDcD3sV1m7D9d4UwAntfRNKKK6cE5oe5iC8yl9M1tcpQS81pvVzdwvg==
-Date: Mon, 4 Jun 2018 09:56:10 -0500
-From: Rob Herring <robh@kernel.org>
-To: David Collins <collinsd@codeaurora.org>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org, dianders@chromium.org
-Subject: Re: [PATCH v5 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-Message-ID: <20180604145610.GA8926@rob-hp-laptop>
-References: <cover.1527901471.git.collinsd@codeaurora.org>
- <af7152133afd7bbf9ad207905ec4e8d5cbe4e718.1527901471.git.collinsd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af7152133afd7bbf9ad207905ec4e8d5cbe4e718.1527901471.git.collinsd@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 4 Jun 2018 10:57:19 -0400
+Message-ID: <1528124238.7898.106.camel@surriel.com>
+Subject: Re: [PATCH 03/19] sched/numa: Simplify load_too_imbalanced
+From: Rik van Riel <riel@surriel.com>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 04 Jun 2018 10:57:18 -0400
+In-Reply-To: <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+         <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-solBE/0ZvhJA4if6sX6C"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 06:34:05PM -0700, David Collins wrote:
-> Introduce bindings for RPMh regulator devices found on some
-> Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
-> processor within the SoC to make PMIC regulator requests which
-> are aggregated within the RPMh hardware block along with requests
-> from other processors in the SoC to determine the final PMIC
-> regulator hardware state.
-> 
-> Signed-off-by: David Collins <collinsd@codeaurora.org>
-> ---
->  .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++++++++++++++++++
->  .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +++++
->  2 files changed, 196 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
->  create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--=-solBE/0ZvhJA4if6sX6C
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2018-06-04 at 15:30 +0530, Srikar Dronamraju wrote:
+> Currently load_too_imbalance() cares about the slope of imbalance.
+> It doesn't care of the direction of the imbalance.
+>=20
+> However this may not work if nodes that are being compared have
+> dissimilar capacities. Few nodes might have more cores than other
+> nodes
+> in the system. Also unlike traditional load balance at a NUMA sched
+> domain, multiple requests to migrate from the same source node to
+> same
+> destination node may run in parallel. This can cause huge load
+> imbalance. This is specially true on a larger machines with either
+> large
+> cores per node or more number of nodes in the system. Hence allow
+> move/swap only if the imbalance is going to reduce.
+
+> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+
+Reviewed-by: Rik van Riel <riel@surriel.com>
+
+--=20
+All Rights Reversed.
+--=-solBE/0ZvhJA4if6sX6C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVU04ACgkQznnekoTE
+3oNSDAgApd4DNcPeeQL7l42ZqQcPYgiCFvaSlzr8bHWc9COVNw4EAbxrogTFxlK7
+MjA/1psoN7inf0PkUf9R5N16QI2mbNiAA6B5hKgUQHdnVKsrhUPLA3Fv/uM1D8hd
+wOWNQCTzhkp+nkgFhxu1VhrpKrSrkg1sUliOj0I5MMC5daAhzZ6K4EMsj1VCxDkw
+9bM5tg28R7kfFgW/xEi18wEkfexZxg8WYYcL60PpGceI+eDzm9pmziyi19zh2o2x
+M6/cOslctQS+27J0CM5bMlMMmEDWQwKoGXZJ/rPduHLUKVYlI37t/xNWpe7CDdo5
+CCX9+rmg+sb5wSl8EtQUnf1/IERw6Q==
+=LBNN
+-----END PGP SIGNATURE-----
+
+--=-solBE/0ZvhJA4if6sX6C--
