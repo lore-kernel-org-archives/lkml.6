@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753119AbeFDHCB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:02:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54444 "EHLO mail.kernel.org"
+        id S1753199AbeFDHCR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:02:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753029AbeFDHB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:57 -0400
+        id S1753168AbeFDHCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 37/52] MIPS: ptrace: Fix PTRACE_PEEKUSR requests for 64-bit FGRs
-Date: Mon,  4 Jun 2018 08:58:32 +0200
-Message-Id: <20180604065608.061925407@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 42/52] IB/core: Fix error code for invalid GID entry
+Date: Mon,  4 Jun 2018 08:58:37 +0200
+Message-Id: <20180604065608.281621228@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -30,51 +31,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Parav Pandit <parav@mellanox.com>
 
-commit c7e814628df65f424fe197dde73bfc67e4a244d7 upstream.
+commit a840c93ca7582bb6c88df2345a33f979b7a67874 upstream.
 
-Use 64-bit accesses for 64-bit floating-point general registers with
-PTRACE_PEEKUSR, removing the truncation of their upper halves in the
-FR=1 mode, caused by commit bbd426f542cb ("MIPS: Simplify FP context
-access"), which inadvertently switched them to using 32-bit accesses.
+When a GID entry is invalid EAGAIN is returned. This is an incorrect error
+code, there is nothing that will make this GID entry valid again in
+bounded time.
 
-The PTRACE_POKEUSR side is fine as it's never been broken and continues
-using 64-bit accesses.
+Some user space tools fail incorrectly if EAGAIN is returned here, and
+this represents a small ABI change from earlier kernels.
 
-Fixes: bbd426f542cb ("MIPS: Simplify FP context access")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.15+
-Patchwork: https://patchwork.linux-mips.org/patch/19334/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+The first patch in the Fixes list makes entries that were valid before
+to become invalid, allowing this code to trigger, while the second patch
+in the Fixes list introduced the wrong EAGAIN.
+
+Therefore revert the return result to EINVAL which matches the historical
+expectations of the ibv_query_gid_type() API of the libibverbs user space
+library.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 598ff6bae689 ("IB/core: Refactor GID modify code for RoCE")
+Fixes: 03db3a2d81e6 ("IB/core: Add RoCE GID table management")
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/ptrace.c   |    2 +-
- arch/mips/kernel/ptrace32.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/cache.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -809,7 +809,7 @@ long arch_ptrace(struct task_struct *chi
- 				break;
- 			}
- #endif
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -108,7 +108,7 @@ long compat_arch_ptrace(struct task_stru
- 						addr & 1);
- 				break;
- 			}
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
+--- a/drivers/infiniband/core/cache.c
++++ b/drivers/infiniband/core/cache.c
+@@ -434,7 +434,7 @@ static int __ib_cache_gid_get(struct ib_
+ 		return -EINVAL;
+ 
+ 	if (table->data_vec[index].props & GID_TABLE_ENTRY_INVALID)
+-		return -EAGAIN;
++		return -EINVAL;
+ 
+ 	memcpy(gid, &table->data_vec[index].gid, sizeof(*gid));
+ 	if (attr) {
