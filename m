@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeFDHAl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:00:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53498 "EHLO mail.kernel.org"
+        id S1752768AbeFDHBD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:01:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750899AbeFDHAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:38 -0400
+        id S1752685AbeFDHAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:00:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, David Laight <David.Laight@ACULAB.COM>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        damian <damian.tometzki@icloud.com>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 07/52] objtool: Fix "noreturn" detection for recursive sibling calls
-Date: Mon,  4 Jun 2018 08:58:02 +0200
-Message-Id: <20180604065606.834545657@linuxfoundation.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 06/52] objtool: Detect RIP-relative switch table references, part 2
+Date: Mon,  4 Jun 2018 08:58:01 +0200
+Message-Id: <20180604065606.797106003@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -35,56 +34,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 0afd0d9e0e7879d666c1df2fa1bea4d8716909fe upstream.
+commit 7dec80ccbe310fb7e225bf21c48c672bb780ce7b upstream.
 
-Objtool has some crude logic for detecting static "noreturn" functions
-(aka "dead ends").  This is necessary for being able to correctly follow
-GCC code flow when such functions are called.
+With the following commit:
 
-It's remotely possible for two functions to call each other via sibling
-calls.  If they don't have RET instructions, objtool's noreturn
-detection logic goes into a recursive loop:
+  fd35c88b7417 ("objtool: Support GCC 8 switch tables")
 
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
+I added a "can't find switch jump table" warning, to stop covering up
+silent failures if add_switch_table() can't find anything.
 
-Instead of reporting an error in this case, consider the functions to be
-non-dead-ends.
+That warning found yet another bug in the objtool switch table detection
+logic.  For cases 1 and 2 (as described in the comments of
+find_switch_table()), the find_symbol_containing() check doesn't adjust
+the offset for RIP-relative switch jumps.
 
-Reported-and-tested-by: Randy Dunlap <rdunlap@infradead.org>
+Incidentally, this bug was already fixed for case 3 with:
+
+  6f5ec2993b1f ("objtool: Detect RIP-relative switch table references")
+
+However, that commit missed the fix for cases 1 and 2.
+
+The different cases are now starting to look more and more alike.  So
+fix the bug by consolidating them into a single case, by checking the
+original dynamic jump instruction in the case 3 loop.
+
+This also simplifies the code and makes it more robust against future
+switch table detection issues -- of which I'm sure there will be many...
+
+Switch table detection has been the most fragile area of objtool, by
+far.  I long for the day when we'll have a GCC plugin for annotating
+switch tables.  Linus asked me to delay such a plugin due to the
+flakiness of the plugin infrastructure in older versions of GCC, so this
+rickety code is what we're stuck with for now.  At least the code is now
+a little simpler than it was.
+
+Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: damian <damian.tometzki@icloud.com>
-Link: http://lkml.kernel.org/r/7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com
+Link: http://lkml.kernel.org/r/f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ tools/objtool/check.c |   37 ++++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 25 deletions(-)
 
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -207,9 +207,13 @@ static int __dead_end_function(struct ob
+@@ -900,40 +900,19 @@ static struct rela *find_switch_table(st
+ 	struct instruction *orig_insn = insn;
+ 	unsigned long table_offset;
  
- 				/* local sibling call */
- 				if (recursion == 5) {
--					WARN_FUNC("infinite recursion (objtool bug!)",
--						  dest->sec, dest->offset);
--					return -1;
-+					/*
-+					 * Infinite recursion: two functions
-+					 * have sibling calls to each other.
-+					 * This is a very rare case.  It means
-+					 * they aren't dead ends.
-+					 */
-+					return 0;
- 				}
+-	/* case 1 & 2 */
+-	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
+-	if (text_rela && text_rela->sym == file->rodata->sym &&
+-	    !find_symbol_containing(file->rodata, text_rela->addend)) {
+-
+-		table_offset = text_rela->addend;
+-		if (text_rela->type == R_X86_64_PC32) {
+-			/* case 2 */
+-			table_offset += 4;
+-			file->ignore_unreachables = true;
+-		}
+-
+-		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+-		if (!rodata_rela)
+-			return NULL;
+-
+-		return rodata_rela;
+-	}
+-
+-	/* case 3 */
+ 	/*
+ 	 * Backward search using the @first_jump_src links, these help avoid
+ 	 * much of the 'in between' code. Which avoids us getting confused by
+ 	 * it.
+ 	 */
+-	for (insn = list_prev_entry(insn, list);
+-
++	for (;
+ 	     &insn->list != &file->insn_list &&
+ 	     insn->sec == func->sec &&
+ 	     insn->offset >= func->offset;
  
- 				return __dead_end_function(file, dest->func,
+ 	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
+ 
+-		if (insn->type == INSN_JUMP_DYNAMIC)
++		if (insn != orig_insn && insn->type == INSN_JUMP_DYNAMIC)
+ 			break;
+ 
+ 		/* allow small jumps within the range */
+@@ -960,10 +939,18 @@ static struct rela *find_switch_table(st
+ 		if (find_symbol_containing(file->rodata, table_offset))
+ 			continue;
+ 
+-		/* mov [rodata addr], %reg */
+ 		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+-		if (rodata_rela)
++		if (rodata_rela) {
++			/*
++			 * Use of RIP-relative switch jumps is quite rare, and
++			 * indicates a rare GCC quirk/bug which can leave dead
++			 * code behind.
++			 */
++			if (text_rela->type == R_X86_64_PC32)
++				file->ignore_unreachables = true;
++
+ 			return rodata_rela;
++		}
+ 	}
+ 
+ 	return NULL;
