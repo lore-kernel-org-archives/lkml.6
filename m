@@ -1,115 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752127AbeFDVp4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:45:56 -0400
-Received: from mout.gmx.net ([212.227.15.19]:34481 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751949AbeFDVpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:45:52 -0400
-Subject: Re: [PATCH 1/1] arm64: dts: rockchip: correct voltage selector
- Firefly-RK3399
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Vagrant Cascadian <vagrant@debian.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Pierre-Hugues Husson <phh@phh.me>, Jianqun Xu <jay.xu@rock-chips.com>,
-        Kever Yang <kever.yang@rock-chips.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180604171523.28454-1-xypron.glpk@gmx.de>
-From: Heinrich Schuchardt <xypron.glpk@gmx.de>
-Message-ID: <1d5c4a57-c89c-07e9-e4ad-1bda2247e2be@gmx.de>
-Date: Mon, 4 Jun 2018 23:45:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180604171523.28454-1-xypron.glpk@gmx.de>
-Content-Type: text/plain; charset=utf-8
+        id S1752051AbeFDVrZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:47:25 -0400
+Received: from esa7.dell-outbound.iphmx.com ([68.232.153.96]:61174 "EHLO
+        esa7.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751099AbeFDVrX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 17:47:23 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GmAAAWshVbmMqZ6ERcGwEBAQEDAQEBC?=
+ =?us-ascii?q?QEBAYQXgQ0oCoNuiASMboF5lEuBeAuEbAIXgXohNBgBAgEBAQEBAQIBAQIQAQE?=
+ =?us-ascii?q?BAQEICwsGKC+CNSKCUwEBAQMBIwQNRQwEAgEIEQQBAQMCIwMCAgJEAQgIAgQBE?=
+ =?us-ascii?q?giDGoF5CKZogWkziEGBaIELhzeCE4EOAYMNhFcjEA8UgkaCVAKMLoxABwKOW40?=
+ =?us-ascii?q?iK5B0gUGCC3CDE4IgDgmOF2+Nf4EZAQE?=
+X-IPAS-Result: =?us-ascii?q?A2GmAAAWshVbmMqZ6ERcGwEBAQEDAQEBCQEBAYQXgQ0oCoN?=
+ =?us-ascii?q?uiASMboF5lEuBeAuEbAIXgXohNBgBAgEBAQEBAQIBAQIQAQEBAQEICwsGKC+CN?=
+ =?us-ascii?q?SKCUwEBAQMBIwQNRQwEAgEIEQQBAQMCIwMCAgJEAQgIAgQBEgiDGoF5CKZogWk?=
+ =?us-ascii?q?ziEGBaIELhzeCE4EOAYMNhFcjEA8UgkaCVAKMLoxABwKOW40iK5B0gUGCC3CDE?=
+ =?us-ascii?q?4IgDgmOF2+Nf4EZAQE?=
+From: <Mario.Limonciello@dell.com>
+Cc: <Jared.Dominguez@dell.com>
+X-LoopCount0: from 10.166.132.72
+X-IronPort-AV: E=Sophos;i="5.49,477,1520917200";
+   d="scan'208";a="206509760"
+X-DLP: DLP_GlobalPCIDSS
+To: <daniel@quora.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>
+Subject: RE: 4.14.44: BUG_ON(!list_empty(&sem->wait_list));
+Thread-Topic: 4.14.44: BUG_ON(!list_empty(&sem->wait_list));
+Thread-Index: AQHT+U82M4YsnGiWikyX5ufW0V2lj6RQqEFw
+Date: Mon, 4 Jun 2018 21:47:20 +0000
+Message-ID: <d3ff641eb0e84e25a9e1470743b3483b@ausx13mpc120.AMER.DELL.COM>
+References: <CAMVG2svkh9AcLKg+A4M7+XuvdROcx4vOcZQwnTTwqLuBU-vaXw@mail.gmail.com>
+In-Reply-To: <CAMVG2svkh9AcLKg+A4M7+XuvdROcx4vOcZQwnTTwqLuBU-vaXw@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:hq6lf+LhYLjHrWQ2zo5Gea48gkGIc+vTpo3dR/5STrOhrga01LA
- d/UDheueRuesCr7agfhd6fOZtU7i5ZzfQNeAq2H1dx2dZPnyoWBhR5Dx+xVkNbU8HI4UtPL
- ehRIBFbL7rmakGn4ZGgxy1Xs6ip0NlNwV+fbHVgYK9IUlBwtKO257T/3eR0VHjZyjL77uta
- 0GDWs6KhWh2NVaQsvCYRA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:IUlhoz5a/a8=:g5FBY5vpM4NBwzfNOFgQyG
- vT5gOT+gr9BjuQbQ48qi6+JI9VSLFJUAmzRcWS/NO99kDmp5R29QZtMPfa58eS11Y0KCFoi0G
- gDhoGH+gw7OvyP761ATwaqCpv4JI/pi5H1U6RcYAKcY82DTsImy9APLR0bYuI36/rUzk64/EH
- gBGoyRlKThiCDxiafL7avTV7RB7827FZQmnIcMHK7u2nREZDp99H8YGAu4IoXAU15rPsOqaZw
- gyOGuV03+w32bFM2zTWryOagKhX3dC2YxLZJzdIYIa3QVF+SYyvuSViSqyA/CWd6WBMoVciWb
- lh2mwUlFQv3QfdYWydW3HjTuipqKylpHiQqusoOUAeY3QZHiIT68FzpGo49+LzLk+Bzw3F/GA
- PTkgDUZlA3ycoUbKcGoXbzQCuA3doQHlxNusqHj2etULJxvoVL7ECLPCwFnZzX6WwGGPXai01
- EqxLBCvj7BkFjlvbHj4cFtHXUcbJmf4UYrw+yIGyZulm8UXNcNpQEuh5vRmUjFHQ9Ax51SLtr
- Et5MwG+aPZGC7avLDm0SKCOgFeWzB1GRWhU3Zvjkgds4x3uK6UsJNn/uy8Wg/j4Ha6MUQ6FPt
- pjYVNSGd952sdJrRjr7115KBwAJl7GQlwkQs+frQg3uDdcI4ZkNg2pVaNV0pxM7AnR4iV4J16
- ZvJIbcwe4cgVOGoKmwnxxYtWTx/w1tcycWVCLFTFp1tAPcpyQlfYz6OfUD33RRVTnXDmCFssL
- W08qnZ87jkWncsP03Os81Z2LQJJRDhue+LIk42aj0cUgyNpxMtJFN0OvGa29NKy1GAJInGXJS
- EzvaC/I
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w54LlbGG018600
 
-On 06/04/2018 07:15 PM, Heinrich Schuchardt wrote:
-> Without this patch the Firefly-RK3399 board boot process hangs after these
-> lines:
+> -----Original Message-----
+> From: Daniel J Blueman [mailto:daniel@quora.org]
+> Sent: Thursday, May 31, 2018 9:21 PM
+> To: Linux Kernel; linux-acpi@vger.kernel.org
+> Cc: Limonciello, Mario; Dominguez, Jared
+> Subject: 4.14.44: BUG_ON(!list_empty(&sem->wait_list));
 > 
->    fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
->    fan53555-reg: supplied by vcc_sys
->    vcc1v8_s3: supplied by vcc_1v8
+> Plugging in a USB-C power source on my Dell XPS 9550 trips an ACPI
+> BUG_ON [1], reproducible with mainline 4.14.44, suggesting other
+> threads are waiting for semaphore acquisition due to
+> "BUG_ON(!list_empty(&sem->wait_list))".
 > 
-> Blacklisting driver fan53555 allows booting.
+> This is the current 1.7.0 BIOS with Ubuntu 18.04 userspace, plugging
+> in an LG 27UD88 (also with the current firmware) monitor USB-C
+> connection which apparently advertises 60W charging (x1,
+> PowerDelivery, DisplayPort alternative mode, data). The same issues
+> reproduce on a Dell Precision 5510 with Ubuntu 16.04, the shipped
+> kernel and 4.14.44.
 > 
-> The device tree uses a value of fcs,suspend-voltage-selector different to
-> any other board.
+> I can enable ACPI debugging if useful? Perhaps ACPI_DB_MUTEX or other
+> levels would be appropriate?
+
+I think most useful would be if this can still reproduce with 4.17.
+
 > 
-> Changing this setting to the usual value is sufficient to enable booting.
+> Thanks,
+>   Daniel
 > 
-> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-firefly.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> -- [1]
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-> index 4f28628aa091..50940ef844a7 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-> @@ -458,7 +458,7 @@
->  	vdd_cpu_b: regulator@40 {
->  		compatible = "silergy,syr827";
->  		reg = <0x40>;
-> -		fcs,suspend-voltage-selector = <0>;
-> +		fcs,suspend-voltage-selector = <1>;
-
-The same value <1> is used in the legacy kernel:
-
-https://github.com/rockchip-linux/kernel/blob/release-4.4/arch/arm64/boot/dts/rockchip/rk3399-firefly-linux.dts
-
-	vdd_cpu_b: syr827@40 {
-		compatible = "silergy,syr827";
-		reg = <0x40>;
-		vin-supply = <&vcc5v0_sys>;
-		regulator-compatible = "fan53555-reg";
-		regulator-name = "vdd_cpu_b";
-		regulator-min-microvolt = <712500>;
-		regulator-max-microvolt = <1500000>;
-		regulator-ramp-delay = <1000>;
-		vsel-gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>;
-		fcs,suspend-voltage-selector = <1>;
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-initial-state = <3>;
-			regulator-state-mem {
-			regulator-off-in-suspend;
-		};
-};
-
-Best regards
-
-Heinrich
-
-
->  		regulator-name = "vdd_cpu_b";
->  		regulator-min-microvolt = <712500>;
->  		regulator-max-microvolt = <1500000>;
-> 
+> kernel BUG at /home/kernel/COD/linux/drivers/acpi/osl.c:1201
+> invalid opcode: 0000 [#1] SMP PTI
+> Modules linked in: [...]
+> CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 4.14.44-041444-generic
+> #201805251612
+> Hardware name: Dell Inc. XPS 15 9550/, BIOS 1.7.0 02/23/2018
+> task: ffff9bc2ab6b9740 task.stack: ffffbOca80034000
+> RIP: 0010:acpi_os_delete_semaphore+0x6d/0x70
+> RSP: 0018:ffffbOca80037be8 EFLAGS: 00010283
+> RAX: ffffbOca83f8fc40 RBX: ffff9bc238b5dbe0 RCX: 0000000000000000
+> RDX: ffff9bc238b5dbe8 RSI: 0000000000000000 RDI: ffff9bc238b5dbe0
+> RBP: ffff9bc2adlc0990 ROB: ffff9bc2bdc25f20 R09: ffff9bc29ee56300
+> R10: ffffe03bd2796440 R11: ffff9bc2ad183fa0 R12: ffff9bc22f1321e0
+> R13: 0000000000000001 R14: 0000000000000001 R15: ffff9bc22f132eb0
+> FS: 00007fc03886f940(0000) GS:ffff9bc2bdc00000(0000)
+> knlGS:0000000000000000
+> CS: 0010 DS: 0000 ES: 0000 CRO: 0000000080050033
+> CR2: 00007ffc645e70f8 CR3: 000000049e120001 CR4: 00000000003606f0
+> Call Trace:
+> acpi_ex_system_reset_event+0x3f/0x65
+> acpi_ex_opcode_1A_OT_0R+0x70/0xfa
+> acpi_ds_exec_end_op+0x15d/0x71b
+> acpi_ps_parse_loop+0x929/0x9d6
+> ? acpi_ds_result_push+0x82/0x1d2
+> acpi_ps_parse_aml+0x1a2/0x4af
+> acpi_ps_execute_method+0x1ef/0x2ab
+> acpi_ns_evaluate+0x2e4/0x41d
+> acpi_evaluate_object+0x1cb/0x38e
+> acpi_enter_sleep_state_prep+0xae/0x13a
+> acpi_sleep_prepare.part.2+0x2e/0x40
+> acpi_power_off_prepare+0xf/0x20
+> [38871.1925361 kernel_power_off+0x42/0x70
+> SYSC_reboot+0x12f/0x210
+> ? handle_mm_fault+0xea/0x1e0
+> [38871.1925861 ? do_writev+0x5e/0xf0
+> ? do_writev+0x5e/0xf0
+> do_syscall_64+0x6e/0x120
+> entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> RIP: 0033:0x7fc03839b373
+> RSP: 002b:00007ffc645e70f8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a9
+> RAX: ffffffffffffffda RBX: 000000004321fedc RCX: 00007fc03839b373
+> ROX: 000000004321fedc RSI: 0000000028121969 RDI: 00000000fee1dead
+> RBP: 00007ffc645e7160 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000002 R11: 0000000000000202 R12: 00007ffc645e7168
+> R13: 0000000000000000 R14: 0000001b00000004 R15: 00007ffc645e7458
+> Code: b8 00 04 00 00 48 c7 c1 c3 91 28 ab 48 c7 c2 20 91 28 ab be of
+> 04 00 00 bf 00 00 00 01 03 41 85 04 00 58 eb b0 b8 01 10 00 00 c3 <Of>
+> Ob 90 Of if 44 00 00 80 3d 74 CO 97 01 00 41 54 55 53 Of 84
+> RIP: acpi_os_delete_semaphore+0x6d/0x70 RSP: ffffb0ca80037be8
+> --
+> Daniel J Blueman
