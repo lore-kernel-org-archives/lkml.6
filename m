@@ -1,60 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753891AbeFDORx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:17:53 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:57632 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1753669AbeFDORs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:17:48 -0400
-Date: Mon, 4 Jun 2018 10:17:47 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        <andrea.parri@amarulasolutions.com>, Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        Roman Pen <roman.penyaev@profitbricks.com>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-In-Reply-To: <20180602144440.GI3593@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1806041014250.1380-100000@iolanthe.rowland.org>
+        id S1753897AbeFDOSN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:18:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753783AbeFDOSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:18:10 -0400
+X-Google-Smtp-Source: ADUXVKJ+esbgiimZMClEnkIhb7KgHTCBvEemlh55UVbhQ51B2MZrvTWzmWIgjkKw+9cT/qy6W1XbUWNGKzZ9hEMgCc4=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1527631130-20045-2-git-send-email-ray.jui@broadcom.com>
+References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com> <1527631130-20045-2-git-send-email-ray.jui@broadcom.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 4 Jun 2018 09:17:49 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+ac6dmHKS6m0h5N3bv=VseKVL8XLU5K7j1Rn=mgFNLsA@mail.gmail.com>
+Message-ID: <CAL_Jsq+ac6dmHKS6m0h5N3bv=VseKVL8XLU5K7j1Rn=mgFNLsA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] PCI: iproc: Update iProc PCI binding for INTx support
+To: Ray Jui <ray.jui@broadcom.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2 Jun 2018, Paul E. McKenney wrote:
++Arnd
 
-> One crude but effective workaround is to replicate the code following the
-> "if" statement into both legs of the "if" statement.  This has the effect
-> of extending the control dependency to cover all of the code that used to
-> follow the "if" statement, leveraging herd's current limited knowledge of
-> compiler optimization.  This workaround would of course be hopeless for
-> general Linux-kernel code, but should be at least semi-acceptable for the
-> very small snippets of code that can be accommodated within litmus tests.
-> 
-> Please see the litmus test shown below, which uses this workaround,
-> allowing the smp_store_release() to be downgraded to WRITE_ONCE().
-> 
-> Given this workaround, crude though it might be, I believe that we can
-> take a more measured approach to identifying a longer-term solution.
-> 
-> Thoughts?
+On Tue, May 29, 2018 at 4:58 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+> Update the iProc PCIe binding document for better modeling of the legacy
+> interrupt (INTx) support
+>
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> ---
+>  .../devicetree/bindings/pci/brcm,iproc-pcie.txt    | 31 +++++++++++++++++-----
+>  1 file changed, 24 insertions(+), 7 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt b/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+> index b8e48b4..7ea24dc 100644
+> --- a/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/brcm,iproc-pcie.txt
+> @@ -13,9 +13,6 @@ controller, used in Stingray
+>    PAXB-based root complex is used for external endpoint devices. PAXC-based
+>  root complex is connected to emulated endpoint devices internal to the ASIC
+>  - reg: base address and length of the PCIe controller I/O register space
+> -- #interrupt-cells: set to <1>
+> -- interrupt-map-mask and interrupt-map, standard PCI properties to define the
+> -  mapping of the PCIe interface to interrupt numbers
+>  - linux,pci-domain: PCI domain ID. Should be unique for each host controller
+>  - bus-range: PCI bus numbers covered
+>  - #address-cells: set to <3>
+> @@ -41,6 +38,16 @@ Required:
+>  - brcm,pcie-ob-axi-offset: The offset from the AXI address to the internal
+>  address used by the iProc PCIe core (not the PCIe address)
+>
+> +Legacy interrupt (INTx) support (optional):
+> +
+> +Note INTx is for PAXB only.
+> +
+> +- interrupt-controller: claims itself as an interrupt controller for INTx
+> +- #interrupt-cells: set to <1>
+> +- interrupt-map-mask and interrupt-map, standard PCI properties to define
+> +the mapping of the PCIe interface to interrupt numbers
+> +- interrupts: interrupt line wired to the generic GIC for INTx support
+> +
+>  MSI support (optional):
+>
+>  For older platforms without MSI integrated in the GIC, iProc PCIe core provides
+> @@ -77,9 +84,14 @@ Example:
+>                 compatible = "brcm,iproc-pcie";
+>                 reg = <0x18012000 0x1000>;
+>
+> +               interrupt-controller;
+>                 #interrupt-cells = <1>;
+> -               interrupt-map-mask = <0 0 0 0>;
+> -               interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
+> +               interrupt-map-mask = <0 0 0 7>;
+> +               interrupt-map = <0 0 0 1 &pcie0 1>,
 
-Yes, this works, although it is clearly just a stopgap.  And obviously
-it can't be applied in situations where one of the legs of the "if"  
-statement contains a non-trivial branch.
+Are you sure this works? The irq parsing code will ignore
+interrupt-map if interrupt-controller is found. In other words, you
+should have one or the other, but not both.
 
-In the long run, I don't think this problem is solvable.  At least, not 
-for all cases.  It requires too much guesswork about what optimizations 
-a compiler might do.
+Maybe it happens to work because "pcie0" is this node and your irq
+numbers are the same.
 
-Alan
+Arnd, any thoughts on this?
+
+> +                               <0 0 0 2 &pcie0 2>,
+> +                               <0 0 0 3 &pcie0 3>,
+> +                               <0 0 0 4 &pcie0 4>;
+> +               interrupts = <GIC_SPI 100 IRQ_TYPE_NONE>;
+>
+>                 linux,pci-domain = <0>;
+>
+> @@ -115,9 +127,14 @@ Example:
+>                 compatible = "brcm,iproc-pcie";
+>                 reg = <0x18013000 0x1000>;
+>
+> +               interrupt-controller;
+>                 #interrupt-cells = <1>;
+> -               interrupt-map-mask = <0 0 0 0>;
+> -               interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_NONE>;
+> +               interrupt-map-mask = <0 0 0 7>;
+> +               interrupt-map = <0 0 0 1 &pcie1 1>,
+> +                               <0 0 0 2 &pcie1 2>,
+> +                               <0 0 0 3 &pcie1 3>,
+> +                               <0 0 0 4 &pcie1 4>;
+> +               interrupts = <GIC_SPI 106 IRQ_TYPE_NONE>;
+>
+>                 linux,pci-domain = <1>;
+>
+> --
+> 2.1.4
+>
