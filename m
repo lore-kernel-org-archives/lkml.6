@@ -1,70 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeFDM1H (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:27:07 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35704 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753107AbeFDM1C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:27:02 -0400
-X-Google-Smtp-Source: ADUXVKI9X7SO47GgybV+BMaXTnXhntOjDIUX9LUrw4G+0ZhT9Xt/hWJAolBr2+MbsOsskpHFaEWS6Q==
-Date: Mon, 4 Jun 2018 13:26:58 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to
- PMIC_CHIP_ID_DA9063
-Message-ID: <20180604122658.GC21163@dell>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
+        id S1752480AbeFDM35 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:29:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51882 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750868AbeFDM34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:29:56 -0400
+Date: Mon, 4 Jun 2018 14:29:53 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>, Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 2/2] mm: don't skip memory guarantee calculations
+Message-ID: <20180604122953.GN19202@dhcp22.suse.cz>
+References: <20180522132528.23769-1-guro@fb.com>
+ <20180522132528.23769-2-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180522132528.23769-2-guro@fb.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 02 Jun 2018, Marek Vasut wrote:
-
-> The PMIC_DA9063 is a complete misnomer, it denotes the value of the
-> DA9063 chip ID register, so rename it as such. It is also the value
-> of chip ID register of DA9063L though, so drop the enum as all the
-> DA9063 "models" share the same chip ID and thus the distinction will
-> have to be made using DT or otherwise.
+On Tue 22-05-18 14:25:28, Roman Gushchin wrote:
+> There are two cases when effective memory guarantee calculation
+> is mistakenly skipped:
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> V2: No change
-> V3: No change
-> ---
->  drivers/mfd/da9063-core.c            | 2 +-
->  drivers/mfd/da9063-i2c.c             | 2 +-
->  drivers/regulator/da9063-regulator.c | 2 +-
->  include/linux/mfd/da9063/core.h      | 4 +---
->  4 files changed, 4 insertions(+), 6 deletions(-)
+> 1) If memcg is a child of the root cgroup, and the root
+> cgroup is not root_mem_cgroup (in other words, if the reclaim
+> is targeted). Top-level memory cgroups are handled specially
+> in mem_cgroup_protected(), because the root memory cgroup doesn't
+> have memory guarantee and can't limit its children guarantees.
+> So, all effective guarantee calculation is skipped.
+> But in case of targeted reclaim things are different:
+> cgroups, which parent exceeded its memory limit aren't special.
+> 
+> 2) If memcg has no charged memory (memory usage is 0). In this
+> case mem_cgroup_protected() always returns MEMCG_PROT_NONE, which
+> is correct and prevents to generate fake memory low events for
+> empty cgroups. But skipping memory emin/elow calculation is wrong:
+> if there is no global memory pressure there might be no good
+> chance again, so we can end up with effective guarantees set to 0
+> without any reason.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Roman, so these two patches are on top of the min limit patches, right?
+The fact that they come after just makes me feel this whole thing is not
+completely thought through and I would like to see all 4 patch in one
+series describing the whole design. We are getting really close to the
+merge window and last minute updates makes me really nervouse. Can you
+please repost the whole thing after the merge window, please?
 
+As I've said earlier I am not even sure we really want to have a hard
+guarantee once we decided to go with low limit. So a very good reasoning
+should be added for the whole thing.
+
+Thanks!
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Michal Hocko
+SUSE Labs
