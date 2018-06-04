@@ -1,240 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752180AbeFDL2j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:28:39 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8632 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751473AbeFDL2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:28:37 -0400
-Subject: Re: [PATCH 3/7] iommu: prepare for the non-strict mode support
-To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
-        linux-mediatek <linux-mediatek@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
- <1527752569-18020-4-git-send-email-thunder.leizhen@huawei.com>
- <f6b2b67e-2178-91a1-1e54-c15fc8c0a7c6@arm.com>
-CC: Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
-        "Guozhu Li" <liguozhu@hisilicon.com>, Xinwei Hu <huxinwei@huawei.com>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5B152234.80607@huawei.com>
-Date: Mon, 4 Jun 2018 19:27:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1752299AbeFDL3a (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:29:30 -0400
+Received: from mail-ot0-f179.google.com ([74.125.82.179]:38261 "EHLO
+        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbeFDL32 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:29:28 -0400
+X-Google-Smtp-Source: ADUXVKL5UI4CJx/Q87+UndDGLNetWeLGh4kFI38gSONeJpG1uFUF8cLAoJO9Xr/Mma+vFE66dABQnnqMcHcldklrQDA=
 MIME-Version: 1.0
-In-Reply-To: <f6b2b67e-2178-91a1-1e54-c15fc8c0a7c6@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 4 Jun 2018 13:29:27 +0200
+X-Google-Sender-Auth: fl-iqbSUbz93WLGI0ie5HKRrjXI
+Message-ID: <CAJZ5v0i4-=8c5nBHyBhfyUKa8Bu3fhz8SE6dGRNDOurgvnc44Q@mail.gmail.com>
+Subject: [GIT PULL] ACPI updates for v4.18-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
+Please pull from the tag
 
-On 2018/5/31 21:04, Robin Murphy wrote:
-> On 31/05/18 08:42, Zhen Lei wrote:
->> In common, a IOMMU unmap operation follow the below steps:
->> 1. remove the mapping in page table of the specified iova range
->> 2. execute tlbi command to invalid the mapping which is cached in TLB
->> 3. wait for the above tlbi operation to be finished
->> 4. free the IOVA resource
->> 5. free the physical memory resource
->>
->> This maybe a problem when unmap is very frequently, the combination of tlbi
->> and wait operation will consume a lot of time. A feasible method is put off
->> tlbi and iova-free operation, when accumulating to a certain number or
->> reaching a specified time, execute only one tlbi_all command to clean up
->> TLB, then free the backup IOVAs. Mark as non-strict mode.
->>
->> But it must be noted that, although the mapping has already been removed in
->> the page table, it maybe still exist in TLB. And the freed physical memory
->> may also be reused for others. So a attacker can persistent access to memory
->> based on the just freed IOVA, to obtain sensible data or corrupt memory. So
->> the VFIO should always choose the strict mode.
->>
->> This patch just add a new parameter for the unmap operation, to help the
->> upper functions capable choose which mode to be applied.
-> 
-> This seems like it might be better handled by a flag in io_pgtable_cfg->quirks. This interface change on its own looks rather invasive, and teh fact that it ends up only being used to pass through a constant property of the domain (which is already known by the point io_pgtable_alloc() is called) implies that it is indeed the wrong level of abstraction.
-> 
-Sound good. Thanks for your suggestion, I will try it in v2.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.18-rc1
 
->> No functional changes.
->>
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->> ---
->>   drivers/iommu/arm-smmu-v3.c        | 2 +-
->>   drivers/iommu/arm-smmu.c           | 2 +-
->>   drivers/iommu/io-pgtable-arm-v7s.c | 6 +++---
->>   drivers/iommu/io-pgtable-arm.c     | 6 +++---
->>   drivers/iommu/io-pgtable.h         | 2 +-
->>   drivers/iommu/ipmmu-vmsa.c         | 2 +-
->>   drivers/iommu/msm_iommu.c          | 2 +-
->>   drivers/iommu/mtk_iommu.c          | 2 +-
->>   drivers/iommu/qcom_iommu.c         | 2 +-
->>   include/linux/iommu.h              | 2 ++
-> 
-> Plus things specific to io-pgtable shouldn't really be spilling into the core API header either.
-> 
-> Robin.
-> 
->>   10 files changed, 15 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->> index 4402187..59b3387 100644
->> --- a/drivers/iommu/arm-smmu-v3.c
->> +++ b/drivers/iommu/arm-smmu-v3.c
->> @@ -1767,7 +1767,7 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
->>       if (!ops)
->>           return 0;
->>   -    return ops->unmap(ops, iova, size);
->> +    return ops->unmap(ops, iova, size, IOMMU_STRICT);
->>   }
->>     static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
->> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->> index 69e7c60..253e807 100644
->> --- a/drivers/iommu/arm-smmu.c
->> +++ b/drivers/iommu/arm-smmu.c
->> @@ -1249,7 +1249,7 @@ static size_t arm_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
->>       if (!ops)
->>           return 0;
->>   -    return ops->unmap(ops, iova, size);
->> +    return ops->unmap(ops, iova, size, IOMMU_STRICT);
->>   }
->>     static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
->> diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
->> index 10e4a3d..799eced 100644
->> --- a/drivers/iommu/io-pgtable-arm-v7s.c
->> +++ b/drivers/iommu/io-pgtable-arm-v7s.c
->> @@ -658,7 +658,7 @@ static size_t __arm_v7s_unmap(struct arm_v7s_io_pgtable *data,
->>   }
->>     static size_t arm_v7s_unmap(struct io_pgtable_ops *ops, unsigned long iova,
->> -                size_t size)
->> +                size_t size, int strict)
->>   {
->>       struct arm_v7s_io_pgtable *data = io_pgtable_ops_to_data(ops);
->>   @@ -883,7 +883,7 @@ static int __init arm_v7s_do_selftests(void)
->>       size = 1UL << __ffs(cfg.pgsize_bitmap);
->>       while (i < loopnr) {
->>           iova_start = i * SZ_16M;
->> -        if (ops->unmap(ops, iova_start + size, size) != size)
->> +        if (ops->unmap(ops, iova_start + size, size, IOMMU_STRICT) != size)
->>               return __FAIL(ops);
->>             /* Remap of partial unmap */
->> @@ -902,7 +902,7 @@ static int __init arm_v7s_do_selftests(void)
->>       while (i != BITS_PER_LONG) {
->>           size = 1UL << i;
->>   -        if (ops->unmap(ops, iova, size) != size)
->> +        if (ops->unmap(ops, iova, size, IOMMU_STRICT) != size)
->>               return __FAIL(ops);
->>             if (ops->iova_to_phys(ops, iova + 42))
->> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
->> index 39c2a05..e0f52db 100644
->> --- a/drivers/iommu/io-pgtable-arm.c
->> +++ b/drivers/iommu/io-pgtable-arm.c
->> @@ -624,7 +624,7 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->>   }
->>     static size_t arm_lpae_unmap(struct io_pgtable_ops *ops, unsigned long iova,
->> -                 size_t size)
->> +                 size_t size, int strict)
->>   {
->>       struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
->>       arm_lpae_iopte *ptep = data->pgd;
->> @@ -1108,7 +1108,7 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
->>             /* Partial unmap */
->>           size = 1UL << __ffs(cfg->pgsize_bitmap);
->> -        if (ops->unmap(ops, SZ_1G + size, size) != size)
->> +        if (ops->unmap(ops, SZ_1G + size, size, IOMMU_STRICT) != size)
->>               return __FAIL(ops, i);
->>             /* Remap of partial unmap */
->> @@ -1124,7 +1124,7 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
->>           while (j != BITS_PER_LONG) {
->>               size = 1UL << j;
->>   -            if (ops->unmap(ops, iova, size) != size)
->> +            if (ops->unmap(ops, iova, size, IOMMU_STRICT) != size)
->>                   return __FAIL(ops, i);
->>                 if (ops->iova_to_phys(ops, iova + 42))
->> diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
->> index 2df7909..2908806 100644
->> --- a/drivers/iommu/io-pgtable.h
->> +++ b/drivers/iommu/io-pgtable.h
->> @@ -120,7 +120,7 @@ struct io_pgtable_ops {
->>       int (*map)(struct io_pgtable_ops *ops, unsigned long iova,
->>              phys_addr_t paddr, size_t size, int prot);
->>       size_t (*unmap)(struct io_pgtable_ops *ops, unsigned long iova,
->> -            size_t size);
->> +            size_t size, int strict);
->>       phys_addr_t (*iova_to_phys)(struct io_pgtable_ops *ops,
->>                       unsigned long iova);
->>   };
->> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
->> index 40ae6e8..e6d9e11 100644
->> --- a/drivers/iommu/ipmmu-vmsa.c
->> +++ b/drivers/iommu/ipmmu-vmsa.c
->> @@ -716,7 +716,7 @@ static size_t ipmmu_unmap(struct iommu_domain *io_domain, unsigned long iova,
->>   {
->>       struct ipmmu_vmsa_domain *domain = to_vmsa_domain(io_domain);
->>   -    return domain->iop->unmap(domain->iop, iova, size);
->> +    return domain->iop->unmap(domain->iop, iova, size, IOMMU_STRICT);
->>   }
->>     static void ipmmu_iotlb_sync(struct iommu_domain *io_domain)
->> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
->> index 0d33504..180fa3d 100644
->> --- a/drivers/iommu/msm_iommu.c
->> +++ b/drivers/iommu/msm_iommu.c
->> @@ -532,7 +532,7 @@ static size_t msm_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
->>       unsigned long flags;
->>         spin_lock_irqsave(&priv->pgtlock, flags);
->> -    len = priv->iop->unmap(priv->iop, iova, len);
->> +    len = priv->iop->unmap(priv->iop, iova, len, IOMMU_STRICT);
->>       spin_unlock_irqrestore(&priv->pgtlock, flags);
->>         return len;
->> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
->> index f2832a1..54661ed 100644
->> --- a/drivers/iommu/mtk_iommu.c
->> +++ b/drivers/iommu/mtk_iommu.c
->> @@ -386,7 +386,7 @@ static size_t mtk_iommu_unmap(struct iommu_domain *domain,
->>       size_t unmapsz;
->>         spin_lock_irqsave(&dom->pgtlock, flags);
->> -    unmapsz = dom->iop->unmap(dom->iop, iova, size);
->> +    unmapsz = dom->iop->unmap(dom->iop, iova, size, IOMMU_STRICT);
->>       spin_unlock_irqrestore(&dom->pgtlock, flags);
->>         return unmapsz;
->> diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
->> index 65b9c99..90abde1 100644
->> --- a/drivers/iommu/qcom_iommu.c
->> +++ b/drivers/iommu/qcom_iommu.c
->> @@ -444,7 +444,7 @@ static size_t qcom_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
->>        */
->>       pm_runtime_get_sync(qcom_domain->iommu->dev);
->>       spin_lock_irqsave(&qcom_domain->pgtbl_lock, flags);
->> -    ret = ops->unmap(ops, iova, size);
->> +    ret = ops->unmap(ops, iova, size, IOMMU_STRICT);
->>       spin_unlock_irqrestore(&qcom_domain->pgtbl_lock, flags);
->>       pm_runtime_put_sync(qcom_domain->iommu->dev);
->>   diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index 19938ee..39b3150 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -86,6 +86,8 @@ struct iommu_domain_geometry {
->>   #define IOMMU_DOMAIN_DMA    (__IOMMU_DOMAIN_PAGING |    \
->>                    __IOMMU_DOMAIN_DMA_API)
->>   +#define IOMMU_STRICT        1
->> +
->>   struct iommu_domain {
->>       unsigned type;
->>       const struct iommu_ops *ops;
->>
-> 
-> .
-> 
+with top-most commit 2448d1399bac5b49c2664f96e223e42d2b88c022
 
--- 
+ Merge branches 'acpi-soc' and 'acpi-tables'
+
+on top of commit 771c577c23bac90597c685971d7297ea00f99d11
+
+ Linux 4.17-rc6
+
+to receive the first batch of ACPI updates for 4.18-rc1.
+
+These update the ACPICA code in the kernel to the 20180508 upstream
+revision and make it support the RT patch, add CPPC v3 support to the
+ACPI CPPC library, add a WDAT-based watchdog quirk to prevent clashes
+with the RTC, add quirks to the ACPI AC and battery drivers, and
+update the ACPI SoC drivers.
+
+Specifics:
+
+ - Update the ACPICA code in the kernel to the 20180508 upstream
+   revision including:
+   * iASL -tc option enhancement (Bob Moore).
+   * Debugger improvements (Bob Moore).
+   * Support for tables larger than 1 MB in acpidump/acpixtract
+     (Bob Moore).
+   * Minor fixes and cleanups (Colin Ian King, Toomas Soome).
+
+ - Make the ACPICA code in the kernel support the RT patch (Sebastian
+   Andrzej Siewior, Steven Rostedt).
+
+ - Add a kmemleak annotation to the ACPICA code (Larry Finger).
+
+ - Add CPPC v3 support to the ACPI CPPC library and fix two issues
+   related to CPPC (Prashanth Prakash, Al Stone).
+
+ - Add an ACPI WDAT-based watchdog quirk to prefer iTCO_wdt on
+   systems where WDAT clashes with the RTC SRAM (Mika Westerberg).
+
+ - Add some quirks to the ACPI AC and battery drivers (Carlo Caione,
+   Hans de Goede).
+
+ - Update the ACPI SoC drivers for Intel (LPSS) and AMD (APD)
+   platforms (Akshu Agrawal, Hans de Goede).
+
+ - Fix up some assorted minor issues (Al Stone, Laszlo Toth,
+   Mathieu Malaterre).
+
 Thanks!
-BestRegards
+
+
+---------------
+
+Akshu Agrawal (2):
+      clk: x86: Add ST oscout platform clock
+      ACPI: APD: Add AMD misc clock handler support
+
+Al Stone (2):
+      ACPI / tables: improve comments regarding acpi_parse_entries_array()
+      mailbox: PCC: erroneous error message when parsing ACPI PCCT
+
+Bob Moore (7):
+      ACPICA: iASL: Enhance the -tc option (create AML hex file in C)
+      ACPICA: Improve error messages for the namespace root node
+      ACPICA: Debugger: Add Package support for "test objects" command
+      ACPICA: Debugger: Removed direct support for EC address space in
+"Test Objects"
+      ACPICA: Update version to 20180427
+      ACPICA: acpidump/acpixtract: Support for tables larger than 1MB
+      ACPICA: Update version to 20180508
+
+Carlo Caione (2):
+      ACPI / battery: Add quirk to avoid checking for PMIC with native driver
+      ACPI / AC: Add quirk to avoid checking for PMIC with native driver
+
+Colin Ian King (2):
+      ACPICA: Tables: Fix spelling mistake in comment
+      ACPICA: Fix potential infinite loop in acpi_rs_dump_byte_list
+
+Hans de Goede (5):
+      ACPI / AC: Remove initializer for unused ident dmi_system_id
+      ACPI / battery: Remove initializer for unused ident dmi_system_id
+      ACPI / battery: Add handling for devices which wrongly report
+discharging state
+      ACPI / battery: Ignore AC state in handle_discharging on systems
+where it is broken
+      ACPI / LPSS: Only call pwm_add_table() for Bay Trail PWM if PMIC HRV is 2
+
+Larry Finger (1):
+      ACPICA: Mark acpi_ut_create_internal_object_dbg() memory
+allocations as non-leaks
+
+Laszlo Toth (1):
+      ACPI: add missing newline to printk
+
+Mathieu Malaterre (1):
+      ACPI: Add missing prototype_for arch_post_acpi_subsys_init()
+
+Mika Westerberg (1):
+      ACPI / watchdog: Prefer iTCO_wdt always when WDAT table uses RTC SRAM
+
+Prashanth Prakash (4):
+      ACPI / CPPC: Add support for CPPC v3
+      ACPI / CPPC: Check for valid PCC subspace only if PCC is used
+      cpufreq / CPPC: Support for CPPC v3
+      ACPI / CPPC: Document CPPC sysfs interface
+      ACPI / CPPC: Fix invalid PCC channel status errors
+
+Sebastian Andrzej Siewior (1):
+      ACPICA: provide abstraction for raw_spinlock_t
+
+Steven Rostedt (1):
+      ACPICA: Convert acpi_gbl_hardware lock back to an acpi_raw_spinlock
+
+Toomas Soome (1):
+      ACPICA: vsnprintf: this statement may fall through
+
+---------------
+
+ Documentation/acpi/cppc_sysfs.txt    |  69 +++++++++++++++
+ drivers/acpi/ac.c                    |  48 ++++++++---
+ drivers/acpi/acpi_apd.c              |  47 +++++++++++
+ drivers/acpi/acpi_lpss.c             |   6 +-
+ drivers/acpi/acpi_watchdog.c         |  72 ++++++++++------
+ drivers/acpi/acpica/acapps.h         |   2 +
+ drivers/acpi/acpica/acglobal.h       |   2 +-
+ drivers/acpi/acpica/dbnames.c        |  12 ++-
+ drivers/acpi/acpica/dbtest.c         |  59 ++++++++++++-
+ drivers/acpi/acpica/dswscope.c       |   8 +-
+ drivers/acpi/acpica/hwregs.c         |   4 +-
+ drivers/acpi/acpica/hwxface.c        |   4 +-
+ drivers/acpi/acpica/rsdump.c         |   2 +-
+ drivers/acpi/acpica/tbinstal.c       |   2 +-
+ drivers/acpi/acpica/utbuffer.c       |   4 +-
+ drivers/acpi/acpica/utmutex.c        |   4 +-
+ drivers/acpi/acpica/utobject.c       |   2 +
+ drivers/acpi/acpica/utprint.c        |   1 +
+ drivers/acpi/acpica/utstring.c       |   2 +-
+ drivers/acpi/battery.c               |  81 +++++++++++++++---
+ drivers/acpi/cppc_acpi.c             | 159 +++++++++++++++++++++++------------
+ drivers/acpi/reboot.c                |   4 +-
+ drivers/acpi/tables.c                |   9 +-
+ drivers/clk/x86/Makefile             |   3 +-
+ drivers/clk/x86/clk-st.c             |  77 +++++++++++++++++
+ drivers/cpufreq/cppc_cpufreq.c       |  80 +++++++++++++++---
+ drivers/mailbox/pcc.c                |  81 +++++++++---------
+ include/acpi/acnames.h               |   7 +-
+ include/acpi/acpiosxf.h              |  21 +++++
+ include/acpi/acpixf.h                |   2 +-
+ include/acpi/actypes.h               |   4 +
+ include/acpi/cppc_acpi.h             |  14 ++-
+ include/acpi/platform/aclinux.h      |   5 ++
+ include/acpi/platform/aclinuxex.h    |  30 +++++++
+ include/linux/acpi.h                 |   1 +
+ include/linux/platform_data/clk-st.h |  17 ++++
+ 36 files changed, 751 insertions(+), 194 deletions(-)
