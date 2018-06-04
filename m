@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752768AbeFDHBD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:01:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53456 "EHLO mail.kernel.org"
+        id S1752788AbeFDHBJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:01:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752685AbeFDHAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:36 -0400
+        id S1752254AbeFDHBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 06/52] objtool: Detect RIP-relative switch table references, part 2
-Date: Mon,  4 Jun 2018 08:58:01 +0200
-Message-Id: <20180604065606.797106003@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Hirte <johannes.hirte@datenkhaos.de>,
+        Borislav Petkov <bp@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Yazen Ghannam <yazen.ghannam@amd.com>
+Subject: [PATCH 4.14 09/52] x86/MCE/AMD: Cache SMCA MISC block addresses
+Date: Mon,  4 Jun 2018 08:58:04 +0200
+Message-Id: <20180604065606.910821176@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -32,118 +30,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit 7dec80ccbe310fb7e225bf21c48c672bb780ce7b upstream.
+commit 78ce241099bb363b19dbd0245442e66c8de8f567 upstream.
 
-With the following commit:
+... into a global, two-dimensional array and service subsequent reads from
+that cache to avoid rdmsr_on_cpu() calls during CPU hotplug (IPIs with IRQs
+disabled).
 
-  fd35c88b7417 ("objtool: Support GCC 8 switch tables")
+In addition, this fixes a KASAN slab-out-of-bounds read due to wrong usage
+of the bank->blocks pointer.
 
-I added a "can't find switch jump table" warning, to stop covering up
-silent failures if add_switch_table() can't find anything.
-
-That warning found yet another bug in the objtool switch table detection
-logic.  For cases 1 and 2 (as described in the comments of
-find_switch_table()), the find_symbol_containing() check doesn't adjust
-the offset for RIP-relative switch jumps.
-
-Incidentally, this bug was already fixed for case 3 with:
-
-  6f5ec2993b1f ("objtool: Detect RIP-relative switch table references")
-
-However, that commit missed the fix for cases 1 and 2.
-
-The different cases are now starting to look more and more alike.  So
-fix the bug by consolidating them into a single case, by checking the
-original dynamic jump instruction in the case 3 loop.
-
-This also simplifies the code and makes it more robust against future
-switch table detection issues -- of which I'm sure there will be many...
-
-Switch table detection has been the most fragile area of objtool, by
-far.  I long for the day when we'll have a GCC plugin for annotating
-switch tables.  Linus asked me to delay such a plugin due to the
-flakiness of the plugin infrastructure in older versions of GCC, so this
-rickety code is what we're stuck with for now.  At least the code is now
-a little simpler than it was.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 27bd59502702 ("x86/mce/AMD: Get address from already initialized block")
+Reported-by: Johannes Hirte <johannes.hirte@datenkhaos.de>
+Tested-by: Johannes Hirte <johannes.hirte@datenkhaos.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Link: http://lkml.kernel.org/r/20180414004230.GA2033@probook
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   37 ++++++++++++-------------------------
- 1 file changed, 12 insertions(+), 25 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce_amd.c |   29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -900,40 +900,19 @@ static struct rela *find_switch_table(st
- 	struct instruction *orig_insn = insn;
- 	unsigned long table_offset;
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -94,6 +94,11 @@ static struct smca_bank_name smca_names[
+ 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
+ };
  
--	/* case 1 & 2 */
--	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
--	if (text_rela && text_rela->sym == file->rodata->sym &&
--	    !find_symbol_containing(file->rodata, text_rela->addend)) {
++static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
++{
++	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
++};
++
+ const char *smca_get_name(enum smca_bank_types t)
+ {
+ 	if (t >= N_SMCA_BANK_TYPES)
+@@ -441,20 +446,26 @@ static u32 smca_get_block_address(unsign
+ 	if (!block)
+ 		return MSR_AMD64_SMCA_MCx_MISC(bank);
+ 
++	/* Check our cache first: */
++	if (smca_bank_addrs[bank][block] != -1)
++		return smca_bank_addrs[bank][block];
++
+ 	/*
+ 	 * For SMCA enabled processors, BLKPTR field of the first MISC register
+ 	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
+ 	 */
+ 	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
+-		return addr;
++		goto out;
+ 
+ 	if (!(low & MCI_CONFIG_MCAX))
+-		return addr;
++		goto out;
+ 
+ 	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
+ 	    (low & MASK_BLKPTR_LO))
+-		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
++		addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
+ 
++out:
++	smca_bank_addrs[bank][block] = addr;
+ 	return addr;
+ }
+ 
+@@ -466,18 +477,6 @@ static u32 get_block_address(unsigned in
+ 	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
+ 		return addr;
+ 
+-	/* Get address from already initialized block. */
+-	if (per_cpu(threshold_banks, cpu)) {
+-		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
 -
--		table_offset = text_rela->addend;
--		if (text_rela->type == R_X86_64_PC32) {
--			/* case 2 */
--			table_offset += 4;
--			file->ignore_unreachables = true;
+-		if (bankp && bankp->blocks) {
+-			struct threshold_block *blockp = &bankp->blocks[block];
+-
+-			if (blockp)
+-				return blockp->address;
 -		}
--
--		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
--		if (!rodata_rela)
--			return NULL;
--
--		return rodata_rela;
 -	}
 -
--	/* case 3 */
- 	/*
- 	 * Backward search using the @first_jump_src links, these help avoid
- 	 * much of the 'in between' code. Which avoids us getting confused by
- 	 * it.
- 	 */
--	for (insn = list_prev_entry(insn, list);
--
-+	for (;
- 	     &insn->list != &file->insn_list &&
- 	     insn->sec == func->sec &&
- 	     insn->offset >= func->offset;
+ 	if (mce_flags.smca)
+ 		return smca_get_block_address(cpu, bank, block);
  
- 	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
- 
--		if (insn->type == INSN_JUMP_DYNAMIC)
-+		if (insn != orig_insn && insn->type == INSN_JUMP_DYNAMIC)
- 			break;
- 
- 		/* allow small jumps within the range */
-@@ -960,10 +939,18 @@ static struct rela *find_switch_table(st
- 		if (find_symbol_containing(file->rodata, table_offset))
- 			continue;
- 
--		/* mov [rodata addr], %reg */
- 		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
--		if (rodata_rela)
-+		if (rodata_rela) {
-+			/*
-+			 * Use of RIP-relative switch jumps is quite rare, and
-+			 * indicates a rare GCC quirk/bug which can leave dead
-+			 * code behind.
-+			 */
-+			if (text_rela->type == R_X86_64_PC32)
-+				file->ignore_unreachables = true;
-+
- 			return rodata_rela;
-+		}
- 	}
- 
- 	return NULL;
