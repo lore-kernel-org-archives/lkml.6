@@ -1,128 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeFDJJI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 05:09:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35224 "EHLO mail.kernel.org"
+        id S1752481AbeFDJJX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 05:09:23 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41870 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752289AbeFDJIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:08:51 -0400
-Date: Mon, 4 Jun 2018 18:08:44 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        Josef Bacik <jbacik@fb.com>, James Hogan <jhogan@kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>, Will Deacon <will.deacon@arm.com>,
-        x86@kernel.org
-Subject: Re: [PATCH -tip v4 24/27] bpf: error-inject: kprobes: Clear
- current_kprobe and enable preempt in kprobe
-Message-Id: <20180604180844.e7025ed438ceb823b2ab846c@kernel.org>
-In-Reply-To: <1527937081.8b4s5988lk.naveen@linux.ibm.com>
-References: <152749074878.15132.16693721906742461289.stgit@devbox>
-        <152749149794.15132.15817377604536829521.stgit@devbox>
-        <1527763450.f65xiu4yuz.naveen@linux.ibm.com>
-        <20180602083648.fc40ce260c2cafb9a0d31aaa@kernel.org>
-        <1527937081.8b4s5988lk.naveen@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752432AbeFDJJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 05:09:21 -0400
+Date: Mon, 4 Jun 2018 11:09:19 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 2/2] arm64: allwinner: a64-amarula-relic: Enable
+ AP6330 WiFi support
+Message-ID: <20180604090919.s2mp7etd2eao3w6b@flea>
+References: <20180601173527.18051-1-jagan@amarulasolutions.com>
+ <20180601173527.18051-2-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="imuw6uj272abzmoe"
+Content-Disposition: inline
+In-Reply-To: <20180601173527.18051-2-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 02 Jun 2018 17:28:05 +0530
-"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
 
-> Masami Hiramatsu wrote:
-> > On Thu, 31 May 2018 16:25:38 +0530
-> > "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
-> > 
-> >> Masami Hiramatsu wrote:
-> >> > Clear current_kprobe and enable preemption in kprobe
-> >> > even if pre_handler returns !0.
-> >> > 
-> >> > This simplifies function override using kprobes.
-> >> > 
-> >> > Jprobe used to require to keep the preemption disabled and
-> >> > keep current_kprobe until it returned to original function
-> >> > entry. For this reason kprobe_int3_handler() and similar
-> >> > arch dependent kprobe handers checks pre_handler result
-> >> > and exit without enabling preemption if the result is !0.
-> >> > 
-> >> > After removing the jprobe, Kprobes does not need to
-> >> > keep preempt disabled even if user handler returns !0
-> >> > anymore.
-> >> 
-> >> I think the reason jprobes did it that way is to address architecture 
-> >> specific requirements when changing a function. So, without that 
-> >> infrastructure, I am not sure if we will be able to claim support for 
-> >> over-riding functions with kprobes. I am not sure if we want to claim 
-> >> that, but this is something we need to be clear on.
-> > 
-> > Really? as far as I can see, there seems no such architecture.
-> > The keeping preempt disabled is corresponding to keeping current_kprobe
-> > since the current_kprobe is per-cpu.
-> 
-> Right, and the reason for not resetting current_kprobe after kprobe 
-> handling is done is primarily for jprobes. 
-> 
-> > This means if it is preempted
-> > before hitting break_handler and changed cpu core, we missed to
-> > handle current_kprobe and goes to panic. But if we don't need
-> > such "break back" (removing break_handler), we don't need to
-> > keep current_kprobe (because it is not handled afterwards).
-> 
-> Agreed.
-> 
-> > 
-> > Anyway, changing function execution path is a "one-way" change.
-> 
-> This is the problem. With jprobes, over-riding a function was not a 
-> "one-way" change because it involves more than just changing the [n]ip.  
-> That is the reason we had setjmp/longjmp (aka break_handler).
-> 
-> > We don't have a chance to fixup that disabled preemption and current_kprobe
-> > after returning to the new function. So current error-inject clears
-> > current_kprobe and enable preemption before returning !0 from its
-> > kprobe pre_handler.
-> > 
-> > This is just moving such needless operation from user-pre_handler to
-> > kprobes itself. 
-> > 
-> >> For powerpc, the current function override in error-inject works fine 
-> >> since the new function does nothing. But, if anyone wants to do more 
-> >> work in the replacement function, it won't work with the current 
-> >> approach.
-> > 
-> > If you are considering about TOC change etc. yes, it depends on
-> > the archtecture. As far as I know IA64 and powerpc will not allow
-> > to support changing execution path without special care.
-> > Other "flat and simple" function call architectures like x86, arm
-> > can change execution path without special care. 
-> 
-> Yes, that's the concern. As I stated earlier, the only user seems to be 
-> error-injection where this is not a concern. I wanted this to be made 
-> clear.
-> 
-> I've since noticed that you are updating Documentation/kprobes.txt to 
-> make this clear in patch 24/27 in this series. So, I'm ok with the 
-> changes in this series.
+--imuw6uj272abzmoe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I see your concern. Yeah, that's why I added [24/27] for clearly stating it.
+On Fri, Jun 01, 2018 at 11:05:27PM +0530, Jagan Teki wrote:
+> Enable AP6330 WiFi/BT combo chip on Amarula A64-Relic board:
+> - WiFi SDIO interface is connected to MMC1
+> - WiFi WL-PMU-EN pin connected to gpio PL2: attach to mmc-pwrseq
+> - WiFi WL-WAKE-AP pin connected to gpio PL3
+> - 32kHz external oscillator gate clock from RTC
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-Thanks,
+Applied both, thanks
 
+Maxime
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--imuw6uj272abzmoe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsVAb4ACgkQ0rTAlCFN
+r3QLYA//XX6AgPIIPWlnDRs0oerry9XmtGVsdtRtuoQKqlvto+gqPO19gNSa7I3M
+xFuB4zqtzrRdxmqACVWTgOvz8NPaUDhtxTAJZ6RXwk1ebdPyUV+y9e0BTYCHG32c
+EsD0khoVWwrt49cBGO/Kv6uT8FJkIY29QrovSWz452ChPOFhWzW3lE48gtX/+CB3
+y3DdL4CGdnBy2PmhZStekltB7LyUGGozD+W5/xqXFhjkEHWupwqk/gjrwpk5JQfA
+4rlkSwIBp97haivMliT+Cy6M38hXmf+9A51IZ8HRXIvOXqtFnonGaxQu3uGvqhc6
+wEp1WTcOZFeZAb6tEDBY+V7LelcT7usj4iyC1tS7uR6XwkndmMFy/gFy3h/uzfbS
+RASaFAOMkYeCnIKYeRw0jlxXMsjpY/0Vfz2UALZHUMgGdfz1ik8CF2cGdNzoKdO+
+ejZ5dO6bpcxKi1U2X40rgi+aM9IwuvU7mahZAf4mAUfS+Av2MZ4tCItPGyqhjnjF
+3hJ8C9Qz3nfK4DqAEGrZSfTBPbsEstERRsbWZvWgu5hr6HQX4Hy7U62CHFrROO9m
+9LJLhnOsjd6YCTHXF1vMHnLnjD3f0axeKiujmLGazfLIutsGdD34cYNTYXOSRfdb
+lgxZ+BFYx2CCZ/DxMPDyEWGi03LutjZtkteUrg1BDZsHQPt1TNk=
+=9XoQ
+-----END PGP SIGNATURE-----
+
+--imuw6uj272abzmoe--
