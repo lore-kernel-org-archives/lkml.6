@@ -1,60 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753454AbeFDO1l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:27:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55556 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753297AbeFDO1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:27:40 -0400
-Subject: Re: [Cluster-devel] [PATCH] MAINTAINERS: Add Andreas Gruenbacher as a
- maintainer for gfs2
-To: Bob Peterson <rpeterso@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-References: <1511027539.39786658.1528121371637.JavaMail.zimbra@redhat.com>
-From: Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <b19d6562-f33a-7a4a-176e-805c681f5ddc@redhat.com>
-Date: Mon, 4 Jun 2018 15:27:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1753490AbeFDOcx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:32:53 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:52894 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751473AbeFDOcv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:32:51 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        peterz@infradead.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
+        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
+        riel@redhat.com, tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
+        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
+        <20180426130700.GP17484@dhcp22.suse.cz> <877enj9uwf.fsf@xmission.com>
+        <20180601135725.GE15278@dhcp22.suse.cz> <87a7sey3ud.fsf@xmission.com>
+        <20180601150219.GG15278@dhcp22.suse.cz> <87y3fyv88o.fsf@xmission.com>
+        <20180604065425.GF19202@dhcp22.suse.cz>
+Date: Mon, 04 Jun 2018 09:31:46 -0500
+In-Reply-To: <20180604065425.GF19202@dhcp22.suse.cz> (Michal Hocko's message
+        of "Mon, 4 Jun 2018 08:54:25 +0200")
+Message-ID: <87r2lmlj1p.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1511027539.39786658.1528121371637.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-XM-SPF: eid=1fPqWX-0000SX-HR;;;mid=<87r2lmlj1p.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/i/qowBLS6IFFtpPycxKHv7S+VI/JK0wU=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Michal Hocko <mhocko@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 15020 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 2.5 (0.0%), b_tie_ro: 1.63 (0.0%), parse: 0.81 (0.0%),
+        extract_message_metadata: 2.8 (0.0%), get_uri_detail_list: 1.13 (0.0%),
+        tests_pri_-1000: 2.9 (0.0%), tests_pri_-950: 1.16 (0.0%), tests_pri_-900:
+        1.00 (0.0%), tests_pri_-400: 21 (0.1%), check_bayes: 20 (0.1%), b_tokenize: 7
+        (0.0%), b_tok_get_all: 7 (0.0%), b_comp_prob: 1.93 (0.0%), b_tok_touch_all:
+        2.5 (0.0%), b_finish: 0.60 (0.0%), tests_pri_0: 188 (1.3%),
+        check_dkim_signature: 0.53 (0.0%), check_dkim_adsp: 4.3 (0.0%),
+        tests_pri_500: 14792 (98.5%), poll_dns_idle: 14784 (98.4%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner() more scalable
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Michal Hocko <mhocko@kernel.org> writes:
 
-
-On 04/06/18 15:09, Bob Peterson wrote:
-> Add Andreas Gruenbacher as a maintainer for the gfs2 file system
+> On Fri 01-06-18 10:25:59, Eric W. Biederman wrote:
+>> Michal Hocko <mhocko@kernel.org> writes:
+>> 
+>> > On Fri 01-06-18 09:32:42, Eric W. Biederman wrote:
+>> >> Michal Hocko <mhocko@kernel.org> writes:
+>> > [...]
+>> >> > Group leader exiting early without tearing down the whole thread
+>> >> > group should be quite rare as well. No question that somebody might do
+>> >> > that on purpose though...
+>> >> 
+>> >> The group leader exiting early is a completely legitimate and reasonable
+>> >> thing to do, even if it is rare.
+>> >
+>> > I am not saying it isn't legitimate. But the most common case is the
+>> > main thread waiting for its threads or calling exit which would tear the
+>> > whole group down. Is there any easy way to achieve this other than tkill
+>> > to group leader? Calling exit(3) from the leader performs group exit
+>> > IIRC.
+>> 
+>> pthread_exit from the group leader.
 >
-> Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-> ---
->   MAINTAINERS | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b60179d948bb..f369e975c821 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5941,6 +5941,7 @@ F:	scripts/get_maintainer.pl
->   GFS2 FILE SYSTEM
->   M:	Steven Whitehouse <swhiteho@redhat.com>
->   M:	Bob Peterson <rpeterso@redhat.com>
-> +M:	Andreas Gruenbacher <agruenba@redhat.com>
->   L:	cluster-devel@redhat.com
->   W:	http://sources.redhat.com/cluster/
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
->
+> Right, forgot to mention this one but this would be quite exotic,
+> right?
 
-You should also remove me at the same time. I'm still keeping an eye on 
-the patches and so forth, but I can't claim to be maintaining gfs2 any 
-more really,
+Not exotic.  It is easy to do and well defined.
 
-Steve.
+It would be easy to do if you are running a thread pool and closing
+unnecessary threads.  Or frankly anything where the application is not
+assigning a special role to the initial thread.
+
+It does seem rare enough that no one has noticed how attrocious
+mm_update_next_owner is until now.
+
+My key point is that it is easy to trigger which makes the current
+mm_update_next_owner a fundamentally flawed design, and something that
+needs to be fixed.
+
+Eric
