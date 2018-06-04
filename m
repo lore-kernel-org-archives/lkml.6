@@ -1,136 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeFDMK4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:10:56 -0400
-Received: from mout.gmx.net ([212.227.15.18]:37991 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750868AbeFDMKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:10:55 -0400
-Date: Mon, 4 Jun 2018 14:09:41 +0200 (CEST)
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-X-X-Sender: lyakh@axis700.grange
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Olivier BRAUN <olivier.braun@stereolabs.com>,
-        Troy Kisky <troy.kisky@boundarydevices.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 6/6] media: uvcvideo: Move decode processing to process
- context
-In-Reply-To: <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
-Message-ID: <alpine.DEB.2.20.1806041407450.23116@axis700.grange>
-References: <cover.3cb9065dabdf5d455da508fb4109201e626d5ee7.1522168131.git-series.kieran.bingham@ideasonboard.com> <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1752598AbeFDMM0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:12:26 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:50978 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFDMMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:12:24 -0400
+X-Google-Smtp-Source: ADUXVKI0yEoyqYs0uKVChRlgqcpPe5aEVgYVVt5Y+Oj415KwbEzTlbcIgrKqyxJRFWg7MX8+GOJ6pw==
+Date: Mon, 4 Jun 2018 14:12:20 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] scheduler changes for v4.18
+Message-ID: <20180604121220.GA31206@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Provags-ID: V03:K1:VEdFm2pV6/eLtkgvfFjGjSECJc1GS4AvacdZwdNJVrqtEJa4hZ9
- IH9tn0oo0vONTJzIzHGOcmoVEM4d/gSgRzZGYNvZjSwA4C0s8DSTML14QSsDlQrtu/65ep3
- Vf1TN2UcFVdcTdRrOt8Bo8RyzOZCvqCHksJnUGUfX45IyUtjUOTH7240TIRs9ZvfdD5T7HQ
- pIiwO5sOqMY/QCGOtxQsg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:e+EBR5ekqrU=:NFM8asTaXOZ4W7BOKQS27C
- Wtd7LEIgKFz15ESRrsulD3qma9MJjgOKLNf0JX8y4/XTVYYhsiJc/udil0FHXUTpG8lZyIhzB
- kA2IlyK/1bN4hSg6vuG8SsZcy48OgrnBS/zLFRNQrjeSelSNY7bwv6iufapTxJsZaKTeZ4+Do
- lq7y7ma5JQK6d2GbsLwA/hhBahC9CPrYQjokbjNM3khwt3+x4scI5aTxiPYl+I8fDGr+0PNjx
- dgV9uLvOF1NUgL+myR+WouzjzmIy7qT+FmgvcEmaZ4CVZ8zflsgJGTc6LueEIbXdeDUe6DSJo
- g+4vbkvQh0YVhuRrNZZQkBNbRoSMhUsEnbabh6K9SpFBaVl742TzeTJjnhpiLaa38QzTZpQNA
- hkgRzRgt+Bm8DSePSMWO3i9po5KcW/XDlTnR0AU0Mb4k6hopVL9PNmfe3ZGYKhYU7wBjawMwS
- u9hrx1i6Kqv8n6F7PYxiZ4oiMAYHl+4tivBf+0BamC0TyxTVjEwR0YrnjCdfE6EJo5DAJZcG4
- l8G+aPP+eBfiMlDAQlNLZuAq5Rl84CBXjOtMxdOWlnJWSnp9ApUv+tK71fnEJRaRjEw6Dmjlz
- IsMRW3A7uyDjGJWamuuFucx5cXrU+GQpaTYYi3bX4axoC/at24Dqh992Hh621irAb32+qxGlW
- ykQAc7vLn8pB+awoXTeOAEgXvS5xJO91WI0iVqbrR1sO/JE2KdrtNkvvcMCBLW5+kg6kbhCPe
- UeJ0cyNbAS4uXjZD/Z8NBYRGBLg9vVm08LJAGvrt49MjcpR6NRdarpmf0UZcCX33Ect2uYO4x
- lMihgfa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+Linus,
 
-I've got a question:
+Please pull the latest sched-core-for-linus git tree from:
 
-On Tue, 27 Mar 2018, Kieran Bingham wrote:
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
 
-> Newer high definition cameras, and cameras with multiple lenses such as
-> the range of stereo-vision cameras now available have ever increasing
-> data rates.
-> 
-> The inclusion of a variable length packet header in URB packets mean
-> that we must memcpy the frame data out to our destination 'manually'.
-> This can result in data rates of up to 2 gigabits per second being
-> processed.
-> 
-> To improve efficiency, and maximise throughput, handle the URB decode
-> processing through a work queue to move it from interrupt context, and
-> allow multiple processors to work on URBs in parallel.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> ---
-> v2:
->  - Lock full critical section of usb_submit_urb()
-> 
-> v3:
->  - Fix race on submitting uvc_video_decode_data_work() to work queue.
->  - Rename uvc_decode_op -> uvc_copy_op (Generic to encode/decode)
->  - Rename decodes -> copy_operations
->  - Don't queue work if there is no async task
->  - obtain copy op structure directly in uvc_video_decode_data()
->  - uvc_video_decode_data_work() -> uvc_video_copy_data_work()
-> 
-> v4:
->  - Provide for_each_uvc_urb()
->  - Simplify fix for shutdown race to flush queue before freeing URBs
->  - Rebase to v4.16-rc4 (linux-media/master) adjusting for metadata
->    conflicts.
-> 
->  drivers/media/usb/uvc/uvc_video.c | 107 ++++++++++++++++++++++++-------
->  drivers/media/usb/uvc/uvcvideo.h  |  28 ++++++++-
->  2 files changed, 111 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index 7dd0dcb457f3..a62e8caf367c 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -1042,21 +1042,54 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
->  	return data[0];
->  }
->  
-> -static void uvc_video_decode_data(struct uvc_streaming *stream,
-> +/*
-> + * uvc_video_decode_data_work: Asynchronous memcpy processing
-> + *
-> + * Perform memcpy tasks in process context, with completion handlers
-> + * to return the URB, and buffer handles.
-> + */
-> +static void uvc_video_copy_data_work(struct work_struct *work)
-> +{
-> +	struct uvc_urb *uvc_urb = container_of(work, struct uvc_urb, work);
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	for (i = 0; i < uvc_urb->async_operations; i++) {
-> +		struct uvc_copy_op *op = &uvc_urb->copy_operations[i];
-> +
-> +		memcpy(op->dst, op->src, op->len);
-> +
-> +		/* Release reference taken on this buffer */
-> +		uvc_queue_buffer_release(op->buf);
-> +	}
-> +
-> +	ret = usb_submit_urb(uvc_urb->urb, GFP_ATOMIC);
+   # HEAD: 2539fc82aa9b07d968cf9ba1ffeec3e0416ac721 sched/fair: Update util_est before updating schedutil
 
-Does this still have to be ATOMIC now that it's called from a work queue 
-context?
+The main changes in this cycle were:
 
-> +	if (ret < 0)
-> +		uvc_printk(KERN_ERR, "Failed to resubmit video URB (%d).\n",
-> +			   ret);
-> +}
+ - power-aware scheduling improvements (Patrick Bellasi)
 
-[snip]
+ - NUMA balancing improvements (Mel Gorman)
 
-Thannks
-Guennadi
+ - vCPU scheduling fixes (Rohit Jain)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Claudio Scordino (1):
+      sched/deadline/Documentation: Add overrun signal and GRUB-PA documentation
+
+Mel Gorman (1):
+      sched/numa: Stagger NUMA balancing scan periods for new threads
+
+Patrick Bellasi (2):
+      sched/cpufreq: Modify aggregate utilization to always include blocked FAIR utilization
+      sched/fair: Update util_est before updating schedutil
+
+Rohit Jain (2):
+      sched/core: Don't schedule threads on pre-empted vCPUs
+      sched/core: Distinguish between idle_cpu() calls based on desired effect, introduce available_idle_cpu()
+
+Sebastian Andrzej Siewior (1):
+      sched/wait: Include <linux/wait.h> in <linux/swait.h>
+
+Viresh Kumar (2):
+      sched/fair: Rearrange select_task_rq_fair() to optimize it
+      sched/fair: Avoid calling sync_entity_load_avg() unnecessarily
+
+
+ Documentation/scheduler/sched-deadline.txt |  25 +++++-
+ include/linux/sched.h                      |   1 +
+ include/linux/swait.h                      |   1 +
+ kernel/sched/core.c                        |  39 +++++-----
+ kernel/sched/cpufreq_schedutil.c           |  17 ++---
+ kernel/sched/fair.c                        | 117 +++++++++++++++++++----------
+ kernel/sched/sched.h                       |   6 ++
+ 7 files changed, 137 insertions(+), 69 deletions(-)
