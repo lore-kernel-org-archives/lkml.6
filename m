@@ -1,109 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753490AbeFDOcx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:32:53 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:52894 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751473AbeFDOcv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:32:51 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
-        riel@redhat.com, tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
-        <20180426130700.GP17484@dhcp22.suse.cz> <877enj9uwf.fsf@xmission.com>
-        <20180601135725.GE15278@dhcp22.suse.cz> <87a7sey3ud.fsf@xmission.com>
-        <20180601150219.GG15278@dhcp22.suse.cz> <87y3fyv88o.fsf@xmission.com>
-        <20180604065425.GF19202@dhcp22.suse.cz>
-Date: Mon, 04 Jun 2018 09:31:46 -0500
-In-Reply-To: <20180604065425.GF19202@dhcp22.suse.cz> (Michal Hocko's message
-        of "Mon, 4 Jun 2018 08:54:25 +0200")
-Message-ID: <87r2lmlj1p.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fPqWX-0000SX-HR;;;mid=<87r2lmlj1p.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/i/qowBLS6IFFtpPycxKHv7S+VI/JK0wU=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Michal Hocko <mhocko@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 15020 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 2.5 (0.0%), b_tie_ro: 1.63 (0.0%), parse: 0.81 (0.0%),
-        extract_message_metadata: 2.8 (0.0%), get_uri_detail_list: 1.13 (0.0%),
-        tests_pri_-1000: 2.9 (0.0%), tests_pri_-950: 1.16 (0.0%), tests_pri_-900:
-        1.00 (0.0%), tests_pri_-400: 21 (0.1%), check_bayes: 20 (0.1%), b_tokenize: 7
-        (0.0%), b_tok_get_all: 7 (0.0%), b_comp_prob: 1.93 (0.0%), b_tok_touch_all:
-        2.5 (0.0%), b_finish: 0.60 (0.0%), tests_pri_0: 188 (1.3%),
-        check_dkim_signature: 0.53 (0.0%), check_dkim_adsp: 4.3 (0.0%),
-        tests_pri_500: 14792 (98.5%), poll_dns_idle: 14784 (98.4%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner() more scalable
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        id S1753538AbeFDOdz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:33:55 -0400
+Received: from gate.crashing.org ([63.228.1.57]:59991 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751473AbeFDOdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:33:54 -0400
+Message-ID: <acdfef1327f73f6ac67645d9f1a8e9204a0f22fb.camel@kernel.crashing.org>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au
+Date: Mon, 04 Jun 2018 23:14:36 +1000
+In-Reply-To: <20180604125530.GA16378@infradead.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+         <20180523213703-mutt-send-email-mst@kernel.org>
+         <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
+         <20180604153558-mutt-send-email-mst@kernel.org>
+         <20180604125530.GA16378@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> writes:
+On Mon, 2018-06-04 at 05:55 -0700, Christoph Hellwig wrote:
+> On Mon, Jun 04, 2018 at 03:43:09PM +0300, Michael S. Tsirkin wrote:
+> > Another is that given the basic functionality is in there, optimizations
+> > can possibly wait until per-device quirks in DMA API are supported.
+> 
+> We have had per-device dma_ops for quite a while.
 
-> On Fri 01-06-18 10:25:59, Eric W. Biederman wrote:
->> Michal Hocko <mhocko@kernel.org> writes:
->> 
->> > On Fri 01-06-18 09:32:42, Eric W. Biederman wrote:
->> >> Michal Hocko <mhocko@kernel.org> writes:
->> > [...]
->> >> > Group leader exiting early without tearing down the whole thread
->> >> > group should be quite rare as well. No question that somebody might do
->> >> > that on purpose though...
->> >> 
->> >> The group leader exiting early is a completely legitimate and reasonable
->> >> thing to do, even if it is rare.
->> >
->> > I am not saying it isn't legitimate. But the most common case is the
->> > main thread waiting for its threads or calling exit which would tear the
->> > whole group down. Is there any easy way to achieve this other than tkill
->> > to group leader? Calling exit(3) from the leader performs group exit
->> > IIRC.
->> 
->> pthread_exit from the group leader.
->
-> Right, forgot to mention this one but this would be quite exotic,
-> right?
+I've asked Ansuman to start with a patch that converts virtio to use
+DMA ops always, along with an init quirk to hookup "direct" ops when
+the IOMMU flag isn't set.
 
-Not exotic.  It is easy to do and well defined.
+This will at least remove that horrid duplication of code path we have
+in there.
 
-It would be easy to do if you are running a thread pool and closing
-unnecessary threads.  Or frankly anything where the application is not
-assigning a special role to the initial thread.
+Then we can just involve the arch in that init quirk so we can chose an
+alternate set of ops when running a secure VM.
 
-It does seem rare enough that no one has noticed how attrocious
-mm_update_next_owner is until now.
+This is completely orthogonal to whether an iommu exist qemu side or
+not, and should be entirely solved on the Linux side.
 
-My key point is that it is easy to trigger which makes the current
-mm_update_next_owner a fundamentally flawed design, and something that
-needs to be fixed.
-
-Eric
+Cheers,
+Ben.
