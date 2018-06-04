@@ -1,52 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752973AbeFDMN0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:13:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42382 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752733AbeFDMNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:13:20 -0400
-Date: Mon, 4 Jun 2018 13:13:51 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Chintan Pandya <cpandya@codeaurora.org>
-Cc: catalin.marinas@arm.com, mark.rutland@arm.com,
-        akpm@linux-foundation.org, toshi.kani@hpe.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 3/5] arm64: pgtable: Add p*d_page_vaddr helper macros
-Message-ID: <20180604121351.GJ9482@arm.com>
-References: <1527856758-27169-1-git-send-email-cpandya@codeaurora.org>
- <1527856758-27169-4-git-send-email-cpandya@codeaurora.org>
+        id S1752988AbeFDMN6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:13:58 -0400
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:42363 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751473AbeFDMN5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:13:57 -0400
+X-Google-Smtp-Source: ADUXVKIbSyZPS3oCGkYlDgYqcSc9ntGwPMGRtNdP+mZxx76VsV9D35/SB8SQ/rUr4nL2TbF+IQhD0awuPqcsxF7bHmI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527856758-27169-4-git-send-email-cpandya@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1527940734-35161-1-git-send-email-ufo19890607@gmail.com>
+ <1527940734-35161-2-git-send-email-ufo19890607@gmail.com> <20180604065238.GE19202@dhcp22.suse.cz>
+ <CAHCio2iCdBU=xqEGqUrmc-ere-BhiS1AU052L4GfphbDPvOPqQ@mail.gmail.com>
+ <CAHCio2jufEO7D4AT89URi+QWYJRMXyUo0-PwobcJzm0iLUnEzQ@mail.gmail.com> <20180604095212.GH19202@dhcp22.suse.cz>
+In-Reply-To: <20180604095212.GH19202@dhcp22.suse.cz>
+From: =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Date: Mon, 4 Jun 2018 20:13:44 +0800
+Message-ID: <CAHCio2gQBZDi1oOh8QYbKFbB5E3eSain0soeqE3wAn=zQZeZ5A@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] Refactor part of the oom report in dump_header
+To: mhocko@kernel.org
+Cc: akpm@linux-foundation.org, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 06:09:16PM +0530, Chintan Pandya wrote:
-> Add helper macros to give virtual references to page
-> tables. These will be used while freeing dangling
-> page tables.
-> 
-> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
-> ---
->  arch/arm64/include/asm/pgtable.h | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 7c4c8f3..ef4047f 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -580,6 +580,9 @@ static inline phys_addr_t pgd_page_paddr(pgd_t pgd)
->  
->  #endif  /* CONFIG_PGTABLE_LEVELS > 3 */
->  
-> +#define pmd_page_vaddr(pmd) __va(pmd_page_paddr(pmd))
-> +#define pud_page_vaddr(pud) __va(pud_page_paddr(pud))
+Hi Michal
+I will add the missing information in the cover-letter.
 
-Are these actually needed, or do pte_offset_kernel and pmd_offset do the
-job already?
+> That being said, I am ready to ack a patch which adds the memcg of the
+> oom victim. I will not ack (nor nack) the patch which turns it into a
+> single print because I am not sure the benefit is really worth it. Maybe
+> others will though.
 
-Will
+OK, I will use the pr_cont_cgroup_name() to print origin and kill
+memcg's name. I hope David will not have other opinions :)
+
+Thanks
