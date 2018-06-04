@@ -1,69 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751807AbeFDAkV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 20:40:21 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36954 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751593AbeFDAkU (ORCPT
+        id S1751803AbeFDAtq (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 20:49:46 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35052 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751550AbeFDAto (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 20:40:20 -0400
-X-Google-Smtp-Source: ADUXVKIlbmcKl1Xg28wIpOqJTuF9xp+Lpwr0TjWKn0/ssW/rp9CWoWsMG2/RWmbdCI3kJhkEy4z/0g==
-Date: Sun, 3 Jun 2018 17:40:16 -0700
+        Sun, 3 Jun 2018 20:49:44 -0400
+X-Google-Smtp-Source: ADUXVKKc/0Nw1F3gxFnTpTTI27yyfgSRXzkrcRolSkKV7JhrSR0s9UwnjKUAIakSuqOfQDhuBi9KKQ==
+Date: Sun, 3 Jun 2018 17:49:40 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Suman Anna <s-anna@ti.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/5] rpmsg: Convert to use SPDX license identifiers
-Message-ID: <20180604004016.GA11998@builder>
-References: <20180531171103.8703-1-s-anna@ti.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, bgoswami@codeaurora.org,
+        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: smd: do not use mananged resources for endpoints
+ and channels
+Message-ID: <20180604004940.GA3206@builder>
+References: <20180601233231.11230-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180531171103.8703-1-s-anna@ti.com>
+In-Reply-To: <20180601233231.11230-1-srinivas.kandagatla@linaro.org>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31 May 10:10 PDT 2018, Suman Anna wrote:
+On Fri 01 Jun 16:32 PDT 2018, Srinivas Kandagatla wrote:
+> @@ -1380,11 +1380,13 @@ static void qcom_smd_edge_release(struct device *dev)
+>  {
+>  	struct qcom_smd_channel *channel;
+>  	struct qcom_smd_edge *edge = to_smd_edge(dev);
+> +	struct list_head *this, *tmp;
+>  
+> -	list_for_each_entry(channel, &edge->channels, list) {
+> -		SET_RX_CHANNEL_INFO(channel, state, SMD_CHANNEL_CLOSED);
+> -		SET_RX_CHANNEL_INFO(channel, head, 0);
+> -		SET_RX_CHANNEL_INFO(channel, tail, 0);
+> +	list_for_each_safe(this, tmp, &edge->channels) {
+> +		channel = list_entry(this, struct qcom_smd_channel, list);
 
-> Hi Bjorn,
-> 
-> The following series switches over the current licensing text in
-> various rpmsg drivers to the SPDX licensing format. I see that you
-> have already picked up my series for the HwSpinlock drivers, so this
-> series does the same for the rpmsg drivers. Please pick these as well
-> for 4.18. Patches done on top of latest upstream kernel.
-> 
-> regards
-> Suman
+Is there a reason not to use list_for_each_entry_safe()?
 
-Thanks Summan,
+> +		list_del(&channel->list);
+> +		kfree(channel->name);
+> +		kfree(channel);
+
+Regards,
 Bjorn
-
-> 
-> Suman Anna (5):
->   rpmsg: Switch to SPDX license identifier
->   rpmsg: virtio_rpmsg_bus: Switch to SPDX license identifier
->   rpmsg: smd: Switch to SPDX license identifier
->   rpmsg: glink: Switch to SPDX license identifier
->   rpmsg: char: Switch to SPDX license identifier
-> 
->  drivers/rpmsg/Kconfig             |  2 ++
->  drivers/rpmsg/qcom_glink_native.c | 10 +---------
->  drivers/rpmsg/qcom_glink_native.h | 10 +---------
->  drivers/rpmsg/qcom_glink_rpm.c    | 10 +---------
->  drivers/rpmsg/qcom_glink_smem.c   | 10 +---------
->  drivers/rpmsg/qcom_smd.c          | 10 +---------
->  drivers/rpmsg/rpmsg_char.c        | 10 +---------
->  drivers/rpmsg/rpmsg_core.c        | 10 +---------
->  drivers/rpmsg/rpmsg_internal.h    | 10 +---------
->  drivers/rpmsg/virtio_rpmsg_bus.c  | 10 +---------
->  include/linux/rpmsg.h             | 27 +--------------------------
->  include/linux/rpmsg/qcom_glink.h  |  2 ++
->  include/uapi/linux/rpmsg.h        |  9 ---------
->  13 files changed, 14 insertions(+), 116 deletions(-)
-> 
-> -- 
-> 2.17.0
-> 
