@@ -1,91 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753938AbeFDHJa (ORCPT <rfc822;w@1wt.eu>);
+        id S1753966AbeFDHJd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:09:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34430 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752352AbeFDHJa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 03:09:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:60391 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753725AbeFDHEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:12 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 4 Jun 2018 17:04:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Message-ID: <20180604170409.63d31d4a@canb.auug.org.au>
+Date: Mon, 4 Jun 2018 00:09:22 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andreas Dilger <adilger@dilger.ca>,
+        Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        James Simmons <jsimmons@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        lustre-devel <lustre-devel@lists.lustre.org>,
+        fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org,
+        selinux@tycho.nsa.gov
+Subject: Re: [PATCH] staging: lustre: delete the filesystem from the tree.
+Message-ID: <20180604070922.GA13156@infradead.org>
+References: <20180601091133.GA27521@kroah.com>
+ <6A5E4E02-AE72-4068-BF93-38791BF38B4F@dilger.ca>
+ <20180601190839.GA20734@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IsUaLI=0/xwAw9a.+df.kfR"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601190839.GA20734@kroah.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IsUaLI=0/xwAw9a.+df.kfR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 01, 2018 at 09:08:39PM +0200, Greg Kroah-Hartman wrote:
+> Please, compare yourself to orangefs.  That is the perfect example of
+> how to do everything right.  They got their code into staging, cleaned
+> it up, talked to us about what was needed to do to get the remaining
+> bits in proper shape, they assigned dedicated developers to do that
+> work, talked with all of us at different conferences around the world to
+> check up and constantly ensure that they were doing the right thing, and
+> most importantly, they asked for feedback and acted on it.  In the end,
+> their codebase is much smaller, works better, is in the "real" part of
+> the kernel, and available to every Linux user out there.
 
-Hi all,
-
-Today's linux-next merge of the kvm tree got a conflict in:
-
-  arch/x86/kvm/hyperv.c
-
-between commit:
-
-  696ca779a928 ("KVM: x86: fix #UD address of failed Hyper-V hypercalls")
-
-from Linus' tree and commit:
-
-  56b9ae78303a ("KVM: x86: hyperv: do rep check for each hypercall separate=
-ly")
-
-from the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/kvm/hyperv.c
-index 46ff64da44ca,14e0d0ae4e0a..000000000000
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@@ -1385,8 -1527,8 +1531,7 @@@ int kvm_hv_hypercall(struct kvm_vcpu *v
-  		break;
-  	}
- =20
-- out:
- -	kvm_hv_hypercall_set_result(vcpu, ret);
- -	return 1;
- +	return kvm_hv_hypercall_complete(vcpu, ret);
-  }
- =20
-  void kvm_hv_init_vm(struct kvm *kvm)
-
---Sig_/IsUaLI=0/xwAw9a.+df.kfR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsU5GkACgkQAVBC80lX
-0GzteAf9GIbXfSUdUu8YupnBf8WlYp25aURas/wVjpX3dldpQqv6T46GBIKm2B7/
-CkPp24IioqG1xNndJ/KRSbeqlsVLXY1Q7knAgbMBB0PdFfkYt7YCDsGv4P/5auLN
-n1b5vkJbqYZP8TAtE6vbhCrmaVRv/HyDh08Xn+VXngQc3esUIY0Y4WcEveMlOAo9
-R2U0aLEya+J7na6ELX5Jje6Lzj1V6gKFQy9rlpyd14gLW/cJIRufxxlZKsiQHCuk
-LsmKSy4nzRtZIq7ZZMlsxnZmr6PGq830ZEoppLuaA/E+U7nqGF2VAW4lklDZOZdM
-92511XIg0qr4yUEMDC6KRcRskZYiag==
-=tHmv
------END PGP SIGNATURE-----
-
---Sig_/IsUaLI=0/xwAw9a.+df.kfR--
+FYI, orangefs never went through the statging tree.  Which might be
+one reason why it got merged so quickly - allowing rapid iteration
+without respect to merged windows, and doing all the trivial cleanups
+either before or after (but not at the same time as) the feature
+work really does help productivity.
