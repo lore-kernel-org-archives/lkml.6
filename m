@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeFDUaw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:30:52 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46424 "EHLO
+        id S1751467AbeFDUbM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:31:12 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44482 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751400AbeFDUat (ORCPT
+        with ESMTP id S1751332AbeFDUar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:30:49 -0400
-X-Google-Smtp-Source: ADUXVKKHqKzp3Ln//ypM1fmk32MLUJLly5pOf7DqxT49F8nH60AQPrgFHyqHs+WaKcIDn3AfTYKYkQ==
+        Mon, 4 Jun 2018 16:30:47 -0400
+X-Google-Smtp-Source: ADUXVKKwHDi2tQNFzEuviTzWxibioBLSJG7poogwNckA+8QjkIwaXkPImai3WYgjEUZ8eaQpWiFj4w==
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -16,9 +16,9 @@ To: Ohad Ben-Cohen <ohad@wizery.com>,
         Rohit kumar <rohitkr@codeaurora.org>
 Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH 4/4] remoteproc: qcom: q6v5-pil: Use common q6v5 helpers
-Date: Mon,  4 Jun 2018 13:30:38 -0700
-Message-Id: <20180604203038.14080-5-bjorn.andersson@linaro.org>
+Subject: [PATCH 3/4] remoteproc: qcom: adsp: Use common q6v5 helpers
+Date: Mon,  4 Jun 2018 13:30:37 -0700
+Message-Id: <20180604203038.14080-4-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180604203038.14080-1-bjorn.andersson@linaro.org>
 References: <20180604203038.14080-1-bjorn.andersson@linaro.org>
@@ -26,293 +26,285 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Migrate the MSS remoteproc driver to use the newly extracted helper
-functions.
+Migrate the Hexagon V5 PAS (ADSP) driver to using the newly extracted
+helper functions. The use of the handover callback does introduce latent
+disabling of proxy resources. But apart from this there should be no
+change in functionality.
 
+Reviewed-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Sricharan R <sricharan@codeaurora.org>
+Tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since RFC:
-- Remove duplicate Kconfig selects
-- Picked up Sricharan's reviewed-by
+- Picked up reviewed-by from Rohit and Sricharan
 
  drivers/remoteproc/Kconfig         |   1 +
- drivers/remoteproc/qcom_q6v5_pil.c | 157 +++--------------------------
- 2 files changed, 16 insertions(+), 142 deletions(-)
+ drivers/remoteproc/qcom_adsp_pil.c | 156 +++++------------------------
+ 2 files changed, 28 insertions(+), 129 deletions(-)
 
 diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index d51d155cf8bd..a6a74bde906a 100644
+index 63b79ea91a21..d51d155cf8bd 100644
 --- a/drivers/remoteproc/Kconfig
 +++ b/drivers/remoteproc/Kconfig
-@@ -116,6 +116,7 @@ config QCOM_Q6V5_PIL
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+@@ -93,6 +93,7 @@ config QCOM_ADSP_PIL
  	depends on QCOM_SYSMON || QCOM_SYSMON=n
  	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
 +	select QCOM_Q6V5_COMMON
  	select QCOM_RPROC_COMMON
  	select QCOM_SCM
  	help
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 2bf8e7c49f2a..e04319573c91 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -30,12 +30,11 @@
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
--#include <linux/soc/qcom/smem.h>
--#include <linux/soc/qcom/smem_state.h>
- #include <linux/iopoll.h>
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 89a86ce07f99..d4339a6da616 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -31,6 +31,7 @@
+ #include <linux/soc/qcom/smem_state.h>
  
- #include "remoteproc_internal.h"
  #include "qcom_common.h"
 +#include "qcom_q6v5.h"
+ #include "remoteproc_internal.h"
  
- #include <linux/qcom_scm.h>
+ struct adsp_data {
+@@ -48,14 +49,7 @@ struct qcom_adsp {
+ 	struct device *dev;
+ 	struct rproc *rproc;
  
-@@ -151,12 +150,7 @@ struct q6v5 {
- 
- 	struct reset_control *mss_restart;
- 
+-	int wdog_irq;
+-	int fatal_irq;
+-	int ready_irq;
+-	int handover_irq;
+-	int stop_ack_irq;
+-
 -	struct qcom_smem_state *state;
 -	unsigned stop_bit;
--
--	int handover_irq;
--
--	bool proxy_unvoted;
 +	struct qcom_q6v5 q6v5;
  
- 	struct clk *active_clks[8];
- 	struct clk *reset_clks[4];
-@@ -170,8 +164,6 @@ struct q6v5 {
- 	int active_reg_count;
- 	int proxy_reg_count;
- 
--	struct completion start_done;
--	struct completion stop_done;
- 	bool running;
- 
- 	phys_addr_t mba_phys;
-@@ -798,9 +790,7 @@ static int q6v5_start(struct rproc *rproc)
- 	int xfermemop_ret;
+ 	struct clk *xo;
+ 	struct clk *aggre2_clk;
+@@ -96,6 +90,8 @@ static int adsp_start(struct rproc *rproc)
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
  	int ret;
  
--	qproc->proxy_unvoted = false;
--
--	enable_irq(qproc->handover_irq);
-+	qcom_q6v5_prepare(&qproc->q6v5);
- 
- 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
- 				    qproc->proxy_reg_count);
-@@ -875,11 +865,9 @@ static int q6v5_start(struct rproc *rproc)
++	qcom_q6v5_prepare(&adsp->q6v5);
++
+ 	ret = clk_prepare_enable(adsp->xo);
  	if (ret)
- 		goto reclaim_mpss;
- 
--	ret = wait_for_completion_timeout(&qproc->start_done,
--					  msecs_to_jiffies(5000));
--	if (ret == 0) {
-+	ret = qcom_q6v5_wait_for_start(&qproc->q6v5, msecs_to_jiffies(5000));
-+	if (ret == -ETIMEDOUT) {
- 		dev_err(qproc->dev, "start timed out\n");
--		ret = -ETIMEDOUT;
- 		goto reclaim_mpss;
+ 		return ret;
+@@ -119,16 +115,14 @@ static int adsp_start(struct rproc *rproc)
+ 		goto disable_px_supply;
  	}
  
-@@ -933,7 +921,7 @@ static int q6v5_start(struct rproc *rproc)
- 			       qproc->proxy_reg_count);
+-	ret = wait_for_completion_timeout(&adsp->start_done,
+-					  msecs_to_jiffies(5000));
+-	if (!ret) {
++	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5000));
++	if (ret == -ETIMEDOUT) {
+ 		dev_err(adsp->dev, "start timed out\n");
+ 		qcom_scm_pas_shutdown(adsp->pas_id);
+-		ret = -ETIMEDOUT;
+ 		goto disable_px_supply;
+ 	}
  
- disable_irqs:
--	disable_irq(qproc->handover_irq);
-+	qcom_q6v5_unprepare(&qproc->q6v5);
+-	ret = 0;
++	return 0;
  
+ disable_px_supply:
+ 	regulator_disable(adsp->px_supply);
+@@ -142,28 +136,34 @@ static int adsp_start(struct rproc *rproc)
  	return ret;
  }
-@@ -946,16 +934,10 @@ static int q6v5_stop(struct rproc *rproc)
  
- 	qproc->running = false;
++static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
++{
++	struct qcom_adsp *adsp = container_of(q6v5, struct qcom_adsp, q6v5);
++
++	regulator_disable(adsp->px_supply);
++	regulator_disable(adsp->cx_supply);
++	clk_disable_unprepare(adsp->aggre2_clk);
++	clk_disable_unprepare(adsp->xo);
++}
++
+ static int adsp_stop(struct rproc *rproc)
+ {
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	int handover;
+ 	int ret;
  
--	qcom_smem_state_update_bits(qproc->state,
--				    BIT(qproc->stop_bit), BIT(qproc->stop_bit));
+-	qcom_smem_state_update_bits(adsp->state,
+-				    BIT(adsp->stop_bit),
+-				    BIT(adsp->stop_bit));
 -
--	ret = wait_for_completion_timeout(&qproc->stop_done,
+-	ret = wait_for_completion_timeout(&adsp->stop_done,
 -					  msecs_to_jiffies(5000));
 -	if (ret == 0)
-+	ret = qcom_q6v5_request_stop(&qproc->q6v5);
++	ret = qcom_q6v5_request_stop(&adsp->q6v5);
 +	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "timed out on wait\n");
+ 		dev_err(adsp->dev, "timed out on wait\n");
  
--	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
+-	qcom_smem_state_update_bits(adsp->state,
+-				    BIT(adsp->stop_bit),
+-				    0);
 -
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-@@ -976,9 +958,8 @@ static int q6v5_stop(struct rproc *rproc)
+ 	ret = qcom_scm_pas_shutdown(adsp->pas_id);
+ 	if (ret)
+ 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
  
- 	q6v5_reset_assert(qproc);
++	handover = qcom_q6v5_unprepare(&adsp->q6v5);
++	if (handover)
++		qcom_pas_handover(&adsp->q6v5);
++
+ 	return ret;
+ }
  
--	disable_irq(qproc->handover_irq);
--
--	if (!qproc->proxy_unvoted) {
-+	ret = qcom_q6v5_unprepare(&qproc->q6v5);
-+	if (ret) {
- 		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
- 				 qproc->proxy_clk_count);
- 		q6v5_regulator_disable(qproc, qproc->proxy_regs,
-@@ -1014,74 +995,14 @@ static const struct rproc_ops q6v5_ops = {
- 	.load = q6v5_load,
+@@ -187,53 +187,6 @@ static const struct rproc_ops adsp_ops = {
+ 	.load = adsp_load,
  };
  
--static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
+-static irqreturn_t adsp_wdog_interrupt(int irq, void *dev)
 -{
--	struct q6v5 *qproc = dev;
+-	struct qcom_adsp *adsp = dev;
+-
+-	rproc_report_crash(adsp->rproc, RPROC_WATCHDOG);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t adsp_fatal_interrupt(int irq, void *dev)
+-{
+-	struct qcom_adsp *adsp = dev;
 -	size_t len;
 -	char *msg;
 -
--	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
--	if (!qproc->running) {
--		complete(&qproc->stop_done);
--		return IRQ_HANDLED;
--	}
--
--	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, MPSS_CRASH_REASON_SMEM, &len);
+-	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, adsp->crash_reason_smem, &len);
 -	if (!IS_ERR(msg) && len > 0 && msg[0])
--		dev_err(qproc->dev, "watchdog received: %s\n", msg);
--	else
--		dev_err(qproc->dev, "watchdog without message\n");
+-		dev_err(adsp->dev, "fatal error received: %s\n", msg);
 -
--	rproc_report_crash(qproc->rproc, RPROC_WATCHDOG);
+-	rproc_report_crash(adsp->rproc, RPROC_FATAL_ERROR);
 -
 -	return IRQ_HANDLED;
 -}
 -
--static irqreturn_t q6v5_fatal_interrupt(int irq, void *dev)
+-static irqreturn_t adsp_ready_interrupt(int irq, void *dev)
 -{
--	struct q6v5 *qproc = dev;
--	size_t len;
--	char *msg;
--
--	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, MPSS_CRASH_REASON_SMEM, &len);
--	if (!IS_ERR(msg) && len > 0 && msg[0])
--		dev_err(qproc->dev, "fatal error received: %s\n", msg);
--	else
--		dev_err(qproc->dev, "fatal error without message\n");
--
--	rproc_report_crash(qproc->rproc, RPROC_FATAL_ERROR);
--
 -	return IRQ_HANDLED;
 -}
 -
--static irqreturn_t q6v5_ready_interrupt(int irq, void *dev)
+-static irqreturn_t adsp_handover_interrupt(int irq, void *dev)
 -{
--	struct q6v5 *qproc = dev;
+-	struct qcom_adsp *adsp = dev;
 -
--	complete(&qproc->start_done);
+-	complete(&adsp->start_done);
+-
 -	return IRQ_HANDLED;
 -}
 -
--static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
-+static void qcom_msa_handover(struct qcom_q6v5 *q6v5)
+-static irqreturn_t adsp_stop_ack_interrupt(int irq, void *dev)
+-{
+-	struct qcom_adsp *adsp = dev;
+-
+-	complete(&adsp->stop_done);
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static int adsp_init_clock(struct qcom_adsp *adsp)
  {
--	struct q6v5 *qproc = dev;
-+	struct q6v5 *qproc = container_of(q6v5, struct q6v5, q6v5);
- 
- 	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
- 			 qproc->proxy_clk_count);
- 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
- 			       qproc->proxy_reg_count);
--
--	qproc->proxy_unvoted = true;
--
--	return IRQ_HANDLED;
--}
--
--static irqreturn_t q6v5_stop_ack_interrupt(int irq, void *dev)
--{
--	struct q6v5 *qproc = dev;
--
--	complete(&qproc->stop_done);
--	return IRQ_HANDLED;
+ 	int ret;
+@@ -272,29 +225,6 @@ static int adsp_init_regulator(struct qcom_adsp *adsp)
+ 	return PTR_ERR_OR_ZERO(adsp->px_supply);
  }
  
- static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
-@@ -1154,30 +1075,6 @@ static int q6v5_init_reset(struct q6v5 *qproc)
- 	return 0;
- }
- 
--static int q6v5_request_irq(struct q6v5 *qproc,
+-static int adsp_request_irq(struct qcom_adsp *adsp,
 -			     struct platform_device *pdev,
 -			     const char *name,
 -			     irq_handler_t thread_fn)
 -{
--	int irq;
 -	int ret;
 -
--	irq = platform_get_irq_byname(pdev, name);
--	if (irq < 0) {
+-	ret = platform_get_irq_byname(pdev, name);
+-	if (ret < 0) {
 -		dev_err(&pdev->dev, "no %s IRQ defined\n", name);
--		return irq;
+-		return ret;
 -	}
 -
--	ret = devm_request_threaded_irq(&pdev->dev, irq,
+-	ret = devm_request_threaded_irq(&pdev->dev, ret,
 -					NULL, thread_fn,
--					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
--					"q6v5", qproc);
+-					IRQF_ONESHOT,
+-					"adsp", adsp);
 -	if (ret)
 -		dev_err(&pdev->dev, "request %s IRQ failed\n", name);
 -
--	return ret ? : irq;
+-	return ret;
 -}
 -
- static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
  {
- 	struct device_node *child;
-@@ -1247,9 +1144,6 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc->rproc = rproc;
- 	platform_set_drvdata(pdev, qproc);
+ 	struct device_node *node;
+@@ -348,13 +278,9 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->pas_id = desc->pas_id;
+-	adsp->crash_reason_smem = desc->crash_reason_smem;
+ 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+ 	platform_set_drvdata(pdev, adsp);
  
--	init_completion(&qproc->start_done);
--	init_completion(&qproc->stop_done);
+-	init_completion(&adsp->start_done);
+-	init_completion(&adsp->stop_done);
 -
- 	ret = q6v5_init_mem(qproc, pdev);
+ 	ret = adsp_alloc_memory_region(adsp);
  	if (ret)
  		goto free_rproc;
-@@ -1305,33 +1199,12 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc->version = desc->version;
- 	qproc->has_alt_reset = desc->has_alt_reset;
- 	qproc->need_mem_protection = desc->need_mem_protection;
--	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
--	if (ret < 0)
--		goto free_rproc;
- 
--	ret = q6v5_request_irq(qproc, pdev, "fatal", q6v5_fatal_interrupt);
--	if (ret < 0)
--		goto free_rproc;
--
--	ret = q6v5_request_irq(qproc, pdev, "ready", q6v5_ready_interrupt);
--	if (ret < 0)
--		goto free_rproc;
--
--	ret = q6v5_request_irq(qproc, pdev, "handover", q6v5_handover_interrupt);
--	if (ret < 0)
--		goto free_rproc;
--	qproc->handover_irq = ret;
--	disable_irq(qproc->handover_irq);
--
--	ret = q6v5_request_irq(qproc, pdev, "stop-ack", q6v5_stop_ack_interrupt);
--	if (ret < 0)
-+	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
-+			     qcom_msa_handover);
-+	if (ret)
+@@ -367,37 +293,10 @@ static int adsp_probe(struct platform_device *pdev)
+ 	if (ret)
  		goto free_rproc;
  
--	qproc->state = qcom_smem_state_get(&pdev->dev, "stop", &qproc->stop_bit);
--	if (IS_ERR(qproc->state)) {
--		ret = PTR_ERR(qproc->state);
+-	ret = adsp_request_irq(adsp, pdev, "wdog", adsp_wdog_interrupt);
+-	if (ret < 0)
 -		goto free_rproc;
+-	adsp->wdog_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "fatal", adsp_fatal_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->fatal_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "ready", adsp_ready_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->ready_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "handover", adsp_handover_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->handover_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "stop-ack", adsp_stop_ack_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->stop_ack_irq = ret;
+-
+-	adsp->state = qcom_smem_state_get(&pdev->dev, "stop",
+-					  &adsp->stop_bit);
+-	if (IS_ERR(adsp->state)) {
+-		ret = PTR_ERR(adsp->state);
++	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
++			     qcom_pas_handover);
++	if (ret)
+ 		goto free_rproc;
 -	}
- 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
+ 
+ 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
+ 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
+@@ -422,7 +321,6 @@ static int adsp_remove(struct platform_device *pdev)
+ {
+ 	struct qcom_adsp *adsp = platform_get_drvdata(pdev);
+ 
+-	qcom_smem_state_put(adsp->state);
+ 	rproc_del(adsp->rproc);
+ 
+ 	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
 -- 
 2.17.0
