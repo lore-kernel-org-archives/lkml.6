@@ -1,133 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752995AbeFDM0V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:26:21 -0400
-Received: from mga02.intel.com ([134.134.136.20]:27589 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751473AbeFDM0S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:26:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="234461990"
-Message-ID: <3f16e887bfdb543b02020f37d6b2cbb7921270f3.camel@linux.intel.com>
-Subject: Re: [PATCH 4/8] serial: 8250: Handle case port doesn't have TEMT
- interrupt using em485.
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Matwey V.Kornilov" <matwey@sai.msu.ru>
-Cc: Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Vignesh R <vigneshr@ti.com>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 04 Jun 2018 15:26:11 +0300
-In-Reply-To: <2c61887c-53e0-1ece-9f4a-89250134f083@micronovasrl.com>
-References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
-         <20180601124021.102970-5-giulio.benetti@micronovasrl.com>
-         <3a66327727d9bf2ce5adf8ef0f1fcc1fffeaa4ec.camel@linux.intel.com>
-         <4a7148d5-ab2c-425d-afdc-08ddd3c522c2@micronovasrl.com>
-         <2a2f547d787db9d593bb7fe3ad9c833836e23749.camel@linux.intel.com>
-         <2c61887c-53e0-1ece-9f4a-89250134f083@micronovasrl.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753093AbeFDM0c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:26:32 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38815 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753036AbeFDM02 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:26:28 -0400
+X-Google-Smtp-Source: ADUXVKIoiQNWcpLqXHr45aw3jmWJw1z7ioQ2+XzJWLRu4PIvlx3DzrMQk6YO4qOL9EMjci3k2G4pvw==
+Date: Mon, 4 Jun 2018 13:26:24 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
+Message-ID: <20180604122624.GB21163@dell>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-04 at 13:50 +0200, Giulio Benetti wrote:
-> Hi,
-> 
-> Il 04/06/2018 13:38, Andy Shevchenko ha scritto:
-> > On Mon, 2018-06-04 at 12:50 +0200, Giulio Benetti wrote:
-> > > Hi,
-> > > 
-> > > Il 04/06/2018 12:17, Andy Shevchenko ha scritto:
-> > > > On Fri, 2018-06-01 at 14:40 +0200, Giulio Benetti wrote:
-> > > > > Some 8250 ports only have TEMT interrupt, so current
-> > > > > implementation
-> > > > > can't work for ports without it. The only chance to make it
-> > > > > work
-> > > > > is to
-> > > > > loop-read on LSR register.
-> > > > > 
-> > > > > With NO TEMT interrupt check if both TEMT and THRE are set
-> > > > > looping
-> > > > > on
-> > > > > LSR register.
-> > > > > --- a/drivers/tty/serial/8250/8250_dw.c
-> > > > > +++ b/drivers/tty/serial/8250/8250_dw.c
-> > > > > -		int ret = serial8250_em485_init(up);
-> > > > > +		int ret = serial8250_em485_init(up, false);
-> > > > 
-> > > > Is true for all possible DW configured types? Or it's your
-> > > > particular
-> > > > case?
-> > > > 
-> > > 
-> > > I've checked on Synopsis Designware 8250 datasheet and it's not
-> > > supported.
-> > > Here is datasheet I went through:
-> > > https://linux-sunxi.org/images/d/d2/Dw_apb_uart_db.pdf
-> > > 
-> > > There seems not to be TEMT interrupt, I use it under sunxi SoC and
-> > > on
-> > > their datasheet(A20 for example), they don't report that interrupt
-> > > too.
-> > > So it seems to be valid for all DW configured types, anyway I
-> > > don't
-> > > know
-> > > how many IP reviews there could be of that peripheral.
-> > 
-> > This is an excerpt from the document you referred to:
-> > 
-> > --- 8< --- 8< ---
-> > 
-> > 6 TEMT R Transmitter Empty bit. If in FIFO mode (FIFO_MODE != NONE)
-> > and
-> > FIFOs enabled (FCR[0] set to one), this bit is set whenever the
-> > Transmitter Shift Register and the FIFO are both empty. If in non-
-> > FIFO
-> > mode or FIFOs are disabled, this bit is set whenever the Transmitter
-> > Holding Register and the Transmitter Shift Register are both empty.
-> > 
-> > Reset Value: 0x1
-> > 
-> > --- 8< --- 8< ---
-> > 
-> > 
-> > If I'm reading this correctly the support is there. Or otherwise,
-> > care
-> > to point exact paragraph needs to be read and checked?
-> 
-> In the beginning I thought the same as you but
-> unfortunately LSR is only a status register and IER doesn't have 
-> corresponding TEMT bit to enable an interrupt on TEMT triggering.
-> On OMAP instead there is a specific interrupt bound to TEMT LSR flag.
-> And THRE interrupt is not enough because shift register won't be
-> empty 
-> when it triggers, so you would loose some bit of last byte to be 
-> transmitted.
+On Sat, 02 Jun 2018, Marek Vasut wrote:
 
-Hmm... Okay, it's something you and Matwey better to discuss.
+> Convert the regmap_irq table to use REGMAP_IRQ_REG().
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V3: New patch
+> Note: A sed oneliner was used:
+>       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
+> ---
+>  drivers/mfd/da9063-irq.c | 145 ++++++++++-------------------------------------
+>  1 file changed, 29 insertions(+), 116 deletions(-)
+> 
+> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+> index 207bbfe55449..5b406ecfc14a 100644
+> --- a/drivers/mfd/da9063-irq.c
+> +++ b/drivers/mfd/da9063-irq.c
+> @@ -28,125 +28,38 @@
+>  
+>  static const struct regmap_irq da9063_irqs[] = {
+>  	/* DA9063 event A register */
+> -	[DA9063_IRQ_ONKEY] = {
+> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> -		.mask = DA9063_M_ONKEY,
+> -	},
+> -	[DA9063_IRQ_ALARM] = {
+> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> -		.mask = DA9063_M_ALARM,
+> -	},
+> -	[DA9063_IRQ_TICK] = {
+> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> -		.mask = DA9063_M_TICK,
+> -	},
+> -	[DA9063_IRQ_ADC_RDY] = {
+> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> -		.mask = DA9063_M_ADC_RDY,
+> -	},
+> -	[DA9063_IRQ_SEQ_RDY] = {
+> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> -		.mask = DA9063_M_SEQ_RDY,
+> -	},
+> +	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
+> +	REGMAP_IRQ_REG(DA9063_IRQ_ALARM, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
+> +	REGMAP_IRQ_REG(DA9063_IRQ_TICK, DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
+> +	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
+> +	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
 
-P.S. Latest version of document I have does describe RS485 HW supported
-mode. I don't know if it was added recently to the IP itself, or just
-missed documentation. That's what you need to clarify with Synopsys.
+Nice, but I think checkpatch.pl would complain.
+
+Better to break after the first argument I think.
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
