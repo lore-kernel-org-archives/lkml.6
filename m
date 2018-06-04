@@ -1,134 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753124AbeFDKFG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:05:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14312 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752474AbeFDKBD (ORCPT
+        id S1752779AbeFDKF1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:05:27 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53658 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752418AbeFDKBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:01:03 -0400
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
-Date: Mon,  4 Jun 2018 15:30:13 +0530
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18060410-0008-0000-0000-000002437368
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060410-0009-0000-0000-000021A9323C
-Message-Id: <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040123
+        Mon, 4 Jun 2018 06:01:02 -0400
+X-Google-Smtp-Source: ADUXVKLalu4C0UVr2imLfwojd8O/kpWOrGf2EM4zgPdEeWB8ScJFnLh6DcHg4/+y/sGYd8w5vVEFyA==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v5 2/4] dt-bindings: timer: add i.MX EPIT timer binding
+Date: Mon,  4 Jun 2018 12:00:33 +0200
+Message-Id: <20180604100035.19558-3-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180604100035.19558-1-peron.clem@gmail.com>
+References: <20180604100035.19558-1-peron.clem@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently preferred node is set to dst_nid which is the last node in the
-iteration whose group weight or task weight is greater than the current
-node. However it doesn't guarantee that dst_nid has the numa capacity
-to move. It also doesn't guarantee that dst_nid has the best_cpu which
-is the cpu/node ideal for node migration.
+From: Clément Peron <clement.peron@devialet.com>
 
-Lets consider faults on a 4 node system with group weight numbers
-in different nodes being in 0 < 1 < 2 < 3 proportion. Consider the task
-is running on 3 and 0 is its preferred node but its capacity is full.
-Consider nodes 1, 2 and 3 have capacity. Then the task should be
-migrated to node 1. Currently the task gets moved to node 2. env.dst_nid
-points to the last node whose faults were greater than current node.
+Add devicetree binding document for NXP's i.MX SoC specific
+EPIT timer driver.
 
-Modify to set the preferred node based of best_cpu.
-
-Also while modifying task_numa_migrate(), use sched_setnuma to set
-preferred node. This ensures out numa accounting is correct.
-
-Testcase       Time:         Min         Max         Avg      StdDev
-numa01.sh      Real:      435.78      653.81      534.58       83.20
-numa01.sh       Sys:      121.93      187.18      145.90       23.47
-numa01.sh      User:    37082.81    51402.80    43647.60     5409.75
-numa02.sh      Real:       60.64       61.63       61.19        0.40
-numa02.sh       Sys:       14.72       25.68       19.06        4.03
-numa02.sh      User:     5210.95     5266.69     5233.30       20.82
-numa03.sh      Real:      746.51      808.24      780.36       23.88
-numa03.sh       Sys:       97.26      108.48      105.07        4.28
-numa03.sh      User:    58956.30    61397.05    60162.95     1050.82
-numa04.sh      Real:      465.97      519.27      484.81       19.62
-numa04.sh       Sys:      304.43      359.08      334.68       20.64
-numa04.sh      User:    37544.16    41186.15    39262.44     1314.91
-numa05.sh      Real:      411.57      457.20      433.29       16.58
-numa05.sh       Sys:      230.05      435.48      339.95       67.58
-numa05.sh      User:    33325.54    36896.31    35637.84     1222.64
-
-Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-numa01.sh      Real:      506.35      794.46      599.06      104.26 	 -10.76%
-numa01.sh       Sys:      150.37      223.56      195.99       24.94 	 -25.55%
-numa01.sh      User:    43450.69    61752.04    49281.50     6635.33 	 -11.43%
-numa02.sh      Real:       60.33       62.40       61.31        0.90 	 -0.195%
-numa02.sh       Sys:       18.12       31.66       24.28        5.89 	 -21.49%
-numa02.sh      User:     5203.91     5325.32     5260.29       49.98 	 -0.513%
-numa03.sh      Real:      696.47      853.62      745.80       57.28 	 4.6339%
-numa03.sh       Sys:       85.68      123.71       97.89       13.48 	 7.3347%
-numa03.sh      User:    55978.45    66418.63    59254.94     3737.97 	 1.5323%
-numa04.sh      Real:      444.05      514.83      497.06       26.85 	 -2.464%
-numa04.sh       Sys:      230.39      375.79      316.23       48.58 	 5.8343%
-numa04.sh      User:    35403.12    41004.10    39720.80     2163.08 	 -1.153%
-numa05.sh      Real:      423.09      460.41      439.57       13.92 	 -1.428%
-numa05.sh       Sys:      287.38      480.15      369.37       68.52 	 -7.964%
-numa05.sh      User:    34732.12    38016.80    36255.85     1070.51 	 -1.704%
-
-While there is a performance hit, this is a correctness issue that is very
-much needed in bigger systems.
-
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- kernel/sched/fair.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ .../devicetree/bindings/timer/fsl,imxepit.txt | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/fsl,imxepit.txt
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ea32a66..94091e6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1725,8 +1725,9 @@ static int task_numa_migrate(struct task_struct *p)
- 	 * Tasks that are "trapped" in such domains cannot be migrated
- 	 * elsewhere, so there is no point in (re)trying.
- 	 */
--	if (unlikely(!sd)) {
--		p->numa_preferred_nid = task_node(p);
-+	if (unlikely(!sd) && p->numa_preferred_nid != task_node(p)) {
-+		/* Set the new preferred node */
-+		sched_setnuma(p, task_node(p));
- 		return -EINVAL;
- 	}
- 
-@@ -1785,15 +1786,13 @@ static int task_numa_migrate(struct task_struct *p)
- 	 * trying for a better one later. Do not set the preferred node here.
- 	 */
- 	if (p->numa_group) {
--		struct numa_group *ng = p->numa_group;
--
- 		if (env.best_cpu == -1)
- 			nid = env.src_nid;
- 		else
--			nid = env.dst_nid;
-+			nid = cpu_to_node(env.best_cpu);
- 
--		if (ng->active_nodes > 1 && numa_is_active_node(env.dst_nid, ng))
--			sched_setnuma(p, env.dst_nid);
-+		if (nid != p->numa_preferred_nid)
-+			sched_setnuma(p, nid);
- 	}
- 
- 	/* No better CPU than the current one was found. */
+diff --git a/Documentation/devicetree/bindings/timer/fsl,imxepit.txt b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+new file mode 100644
+index 000000000000..de2e6ef68d24
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+@@ -0,0 +1,21 @@
++Binding for the i.MX Enhanced Periodic Interrupt Timer (EPIT)
++
++The Enhanced Periodic Interrupt Timer (EPIT) is a 32-bit set-and-forget timer
++that is capable of providing precise interrupts at regular intervals with
++minimal processor intervention.
++
++Required properties:
++- compatible: should be "fsl,<chip>-epit", "fsl,imx31-epit" where <chip> is
++  imx25, imx6qdl, imx6sl, imx6sul or imx6sx.
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- interrupts: Should contain EPIT controller interrupt
++- clocks : The clock provided by the SoC to drive the timer.
++
++Example for i.MX6QDL:
++	epit1: epit@20d0000 {
++		compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
++		reg = <0x020d0000 0x4000>;
++		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6QDL_CLK_EPIT1>;
++	};
 -- 
-1.8.3.1
+2.17.0
