@@ -1,154 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751230AbeFDUhd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:37:33 -0400
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:52052 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750879AbeFDUhc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:37:32 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FGAQBwohVbmGOa6ERcGgEBAQEBAgEBA?=
- =?us-ascii?q?QEIAQEBAYQXgQ0oCphfgXmUS4F4C4RsAoIRITUXAQIBAQEBAQECAQECEAEBAQE?=
- =?us-ascii?q?BCAsLBigvgjUiglMBAQEEJxM/DAQCAQgRBAEBHwkHRgkIAgQBDQUIgxqCAahOM?=
- =?us-ascii?q?4hBgWiIQoITgQ+DDYpHAphuBwKOW4FEg3iHZpEfgUMCggdwUIJDgiAOCY4Xb41?=
- =?us-ascii?q?/gRkBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2FGAQBwohVbmGOa6ERcGgEBAQEBAgEBAQEIAQEBAYQXgQ0?=
- =?us-ascii?q?oCphfgXmUS4F4C4RsAoIRITUXAQIBAQEBAQECAQECEAEBAQEBCAsLBigvgjUig?=
- =?us-ascii?q?lMBAQEEJxM/DAQCAQgRBAEBHwkHRgkIAgQBDQUIgxqCAahOM4hBgWiIQoITgQ+?=
- =?us-ascii?q?DDYpHAphuBwKOW4FEg3iHZpEfgUMCggdwUIJDgiAOCY4Xb41/gRkBAQ?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.187
-X-IronPort-AV: E=Sophos;i="5.49,477,1520917200";
-   d="scan'208";a="201079798"
-X-DLP: DLP_GlobalPCIDSS
-To: <benjamin.tissoires@redhat.com>, <jikos@kernel.org>
-CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] HID: core: allow concurrent registration of drivers
-Thread-Topic: [PATCH] HID: core: allow concurrent registration of drivers
-Thread-Index: AQHT+NV5fk+195GLLUuRdr+lgJ0afaRQlLQQ
-Date: Mon, 4 Jun 2018 20:37:30 +0000
-Message-ID: <4635b69c79704cc3beee5f97d9e739f2@ausx13mpc120.AMER.DELL.COM>
-References: <20180531114929.30545-1-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180531114929.30545-1-benjamin.tissoires@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+        id S1751722AbeFDUlN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:41:13 -0400
+Received: from ns.pmeerw.net ([84.19.176.117]:42844 "EHLO ns.pmeerw.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751375AbeFDUkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 16:40:52 -0400
+From: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Subject: [PATCH] rfkill: Correctly document rkill subfolder range as >= 0 in sysfs-class-rfkill
+Date: Mon,  4 Jun 2018 22:32:43 +0200
+Message-Id: <20180604203243.28612-1-pmeerw@pmeerw.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w54Kbbf4011054
 
-Benjamin,
+The first subfolder is rfkill0, hence rfkillX (X >= 0).
+Also fix two trivial typos.
 
-I had to make a minor change since I didn't see
->  #define HID_STAT_DUP_DETECTED	BIT(2)
-In Linus's tree.
+Signed-off-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+---
+ Documentation/ABI/stable/sysfs-class-rfkill | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I tested with master today though and it seems to be working now with your patch across
-several boot attempts.
-
-Tested-by: Mario Limonciello <mario.limonciello@dell.com>
-
-Thanks,
-
-> -----Original Message-----
-> From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com]
-> Sent: Thursday, May 31, 2018 6:49 AM
-> To: Jiri Kosina; Limonciello, Mario
-> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Benjamin Tissoires
-> Subject: [PATCH] HID: core: allow concurrent registration of drivers
-> 
-> Detected on the Dell XPS 9365.
-> The laptop has 2 devices that benefit from the hid-generic auto-unbinding.
-> When those 2 devices are presented to the userspace, udev loads both
-> wacom and hid-multitouch. When this happens, the code in
-> __hid_bus_reprobe_drivers() is called concurrently and the second device
-> gets reprobed twice.
-> An other bug in the power_supply subsystem prevent to remove the wacom
-> driver if it just finished its initialization, which basically kills
-> the wacom node.
-> 
-> Fixes c17a7476e4c4 ("HID: core: rewrite the hid-generic automatic unbind")
-> 
-> Cc: stable@vger.kernel.org # v4.17
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> ---
-> 
-> Hi Mario,
-> 
-> can you please test this on your faulty XPS?
-> I think it'll fix the issue, but I can not reproduce, so better wait for
-> your confirmation.
-> 
-> Jiri, ideally I would love to see this in v4.17 final, but Mario seems
-> to be on PTO until next week. I guess we'll just push this in v4.17.1
-> then. Also, if you can double check that it makes sense, that would be
-> nice :)
-> 
-> Cheers,
-> Benjamin
-> 
->  drivers/hid/hid-core.c | 5 ++++-
->  include/linux/hid.h    | 3 ++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 2f7367b1de00..7afed0c0f9e5 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -1960,6 +1960,8 @@ static int hid_device_probe(struct device *dev)
->  	}
->  	hdev->io_started = false;
-> 
-> +	clear_bit(ffs(HID_STAT_REPROBED), &hdev->status);
-> +
->  	if (!hdev->driver) {
->  		id = hid_match_device(hdev, hdrv);
->  		if (id == NULL) {
-> @@ -2223,7 +2225,8 @@ static int __hid_bus_reprobe_drivers(struct device *dev,
-> void *data)
->  	struct hid_device *hdev = to_hid_device(dev);
-> 
->  	if (hdev->driver == hdrv &&
-> -	    !hdrv->match(hdev, hid_ignore_special_drivers))
-> +	    !hdrv->match(hdev, hid_ignore_special_drivers) &&
-> +	    !test_and_set_bit(ffs(HID_STAT_REPROBED), &hdev->status))
->  		return device_reprobe(dev);
-> 
->  	return 0;
-> diff --git a/include/linux/hid.h b/include/linux/hid.h
-> index ee2510019033..aee281522c6d 100644
-> --- a/include/linux/hid.h
-> +++ b/include/linux/hid.h
-> @@ -517,6 +517,7 @@ struct hid_output_fifo {
->  #define HID_STAT_ADDED		BIT(0)
->  #define HID_STAT_PARSED		BIT(1)
->  #define HID_STAT_DUP_DETECTED	BIT(2)
-> +#define HID_STAT_REPROBED	BIT(3)
-> 
->  struct hid_input {
->  	struct list_head list;
-> @@ -585,7 +586,7 @@ struct hid_device {
-> 		/* device report descriptor */
->  	bool battery_avoid_query;
->  #endif
-> 
-> -	unsigned int status;						/* see
-> STAT flags above */
-> +	unsigned long status;						/* see
-> STAT flags above */
->  	unsigned claimed;						/*
-> Claimed by hidinput, hiddev? */
->  	unsigned quirks;						/* Various
-> quirks the device can pull on us */
->  	bool io_started;						/* If IO has started
-> */
-> --
-> 2.14.3
+diff --git a/Documentation/ABI/stable/sysfs-class-rfkill b/Documentation/ABI/stable/sysfs-class-rfkill
+index e1ba4a104753..80151a409d67 100644
+--- a/Documentation/ABI/stable/sysfs-class-rfkill
++++ b/Documentation/ABI/stable/sysfs-class-rfkill
+@@ -11,7 +11,7 @@ KernelVersion:	v2.6.22
+ Contact:	linux-wireless@vger.kernel.org,
+ Description: 	The rfkill class subsystem folder.
+ 		Each registered rfkill driver is represented by an rfkillX
+-		subfolder (X being an integer > 0).
++		subfolder (X being an integer >= 0).
+ 
+ 
+ What:		/sys/class/rfkill/rfkill[0-9]+/name
+@@ -48,8 +48,8 @@ Contact:	linux-wireless@vger.kernel.org
+ Description: 	Current state of the transmitter.
+ 		This file was scheduled to be removed in 2014, but due to its
+ 		large number of users it will be sticking around for a bit
+-		longer. Despite it being marked as stabe, the newer "hard" and
+-		"soft" interfaces should be preffered, since it is not possible
++		longer. Despite it being marked as stable, the newer "hard" and
++		"soft" interfaces should be preferred, since it is not possible
+ 		to express the 'soft and hard block' state of the rfkill driver
+ 		through this interface. There will likely be another attempt to
+ 		remove it in the future.
+-- 
+2.11.0
