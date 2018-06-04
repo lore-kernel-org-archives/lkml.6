@@ -1,72 +1,338 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751610AbeFDQGk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:06:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45954 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751375AbeFDQGj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:06:39 -0400
-Subject: Re: linux-next: Tree for Jun 4 (md/dm-writecache.c)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mikulas Patocka <dm-devel@redhat.com>, dm-devel@redhat.com
-References: <20180604215911.75399f6e@canb.auug.org.au>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <0e3fa62d-727e-ccb8-53ae-a6aaa6c506e2@infradead.org>
-Date: Mon, 4 Jun 2018 09:06:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751441AbeFDQJZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:09:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37616 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750865AbeFDQJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 12:09:23 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, eparis@parisplace.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [RFC PATCH ghak32 V2 01/13] audit: add container id
+Date: Mon, 04 Jun 2018 12:09:20 -0400
+Message-ID: <36399691.WpcOE4jDTJ@x2>
+Organization: Red Hat
+In-Reply-To: <20180601210455.boz3tjqeqcx3kucg@madcap2.tricolour.ca>
+References: <cover.1521179281.git.rgb@redhat.com> <20180517170053.7d4afa87@ivy-bridge> <20180601210455.boz3tjqeqcx3kucg@madcap2.tricolour.ca>
 MIME-Version: 1.0
-In-Reply-To: <20180604215911.75399f6e@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 04:59 AM, Stephen Rothwell wrote:
-> Hi all,
+On Friday, June 1, 2018 5:04:55 PM EDT Richard Guy Briggs wrote:
+> Re: [RFC PATCH ghak32 V2 01/13] audit: add container id
 > 
-> Changes since 20180601:
+> From:	Richard Guy Briggs <rgb@redhat.com>
+> To:	Me
+> CC:	linux-api@vger.kernel.org, containers@lists.linux-foundation.org, LKML
+> <linux-kernel@vger.kernel.org>, eparis@parisplace.org, ... Date:	6/1/18
+> 5:04 PM
 > 
+> On 2018-05-17 17:00, Steve Grubb wrote:
+> > On Fri, 16 Mar 2018 05:00:28 -0400
+> > 
+> > Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > Implement the proc fs write to set the audit container ID of a
+> > > process, emitting an AUDIT_CONTAINER record to document the event.
+> > > 
+> > > This is a write from the container orchestrator task to a proc entry
+> > > of the form /proc/PID/containerid where PID is the process ID of the
+> > > newly created task that is to become the first task in a container,
+> > > or an additional task added to a container.
+> > > 
+> > > The write expects up to a u64 value (unset: 18446744073709551615).
+> > > 
+> > > This will produce a record such as this:
+> > > type=CONTAINER msg=audit(1519903238.968:261): op=set pid=596 uid=0
+> > > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 auid=0
+> > > tty=pts0 ses=1 opid=596 old-contid=18446744073709551615 contid=123455
+> > > res=0
+> > 
+> > The was one thing I was wondering about. Currently when we set the
+> > loginuid, the record is AUDIT_LOGINUID. The corollary is that when we
+> > set the container id, the event should be AUDIT_CONTAINERID or
+> > AUDIT_CONTAINER_ID.
+> > 
+> > During syscall events, the path info is returned in a a record simply
+> > called AUDIT_PATH, cwd info is returned in AUDIT_CWD. So, rather than
+> > calling the record that gets attached to everything
+> > AUDIT_CONTAINER_INFO, how about simply AUDIT_CONTAINER.
+> > 
+> > > The "op" field indicates an initial set.  The "pid" to "ses" fields
+> > > are the orchestrator while the "opid" field is the object's PID, the
+> > > process being "contained".  Old and new container ID values are given
+> > > in the "contid" fields, while res indicates its success.
+> > > 
+> > > It is not permitted to self-set, unset or re-set the container ID.  A
+> > > child inherits its parent's container ID, but then can be set only
+> > > once after.
+> > > 
+> > > See: https://github.com/linux-audit/audit-kernel/issues/32
+> > > 
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > > fs/proc/base.c             | 37 ++++++++++++++++++++
+> > > include/linux/audit.h      | 16 +++++++++
+> > > include/linux/init_task.h  |  4 ++-
+> > > include/linux/sched.h      |  1 +
+> > > include/uapi/linux/audit.h |  2 ++
+> > > kernel/auditsc.c           | 84
+> > > ++++++++++++++++++++++++++++++++++++++++++++++ 6 files changed, 143
+> > > insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > > index 60316b5..6ce4fbe 100644
+> > > --- a/fs/proc/base.c
+> > > +++ b/fs/proc/base.c
+> > > @@ -1299,6 +1299,41 @@ static ssize_t proc_sessionid_read(struct file
+> > > * file, char __user * buf, .read                = proc_sessionid_read,
+> > > .llseek         = generic_file_llseek,
+> > > };
+> > > +
+> > > +static ssize_t proc_containerid_write(struct file *file, const char
+> > > __user *buf,
+> > > +                                  size_t count, loff_t *ppos)
+> > > +{
+> > > +       struct inode *inode = file_inode(file);
+> > > +       u64 containerid;
+> > > +       int rv;
+> > > +       struct task_struct *task = get_proc_task(inode);
+> > > +
+> > > +       if (!task)
+> > > +               return -ESRCH;
+> > > +       if (*ppos != 0) {
+> > > +               /* No partial writes. */
+> > > +               put_task_struct(task);
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       rv = kstrtou64_from_user(buf, count, 10, &containerid);
+> > > +       if (rv < 0) {
+> > > +               put_task_struct(task);
+> > > +               return rv;
+> > > +       }
+> > > +
+> > > +       rv = audit_set_containerid(task, containerid);
+> > > +       put_task_struct(task);
+> > > +       if (rv < 0)
+> > > +               return rv;
+> > > +       return count;
+> > > +}
+> > > +
+> > > +static const struct file_operations proc_containerid_operations = {
+> > > +       .write          = proc_containerid_write,
+> > > +       .llseek         = generic_file_llseek,
+> > > +};
+> > > +
+> > > #endif
+> > > 
+> > > #ifdef CONFIG_FAULT_INJECTION
+> > > @@ -2961,6 +2996,7 @@ static int proc_pid_patch_state(struct seq_file
+> > > *m, struct pid_namespace *ns, #ifdef CONFIG_AUDITSYSCALL
+> > > REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
+> > > REG("sessionid",  S_IRUGO, proc_sessionid_operations),
+> > > +       REG("containerid", S_IWUSR, proc_containerid_operations),
+> > > #endif
+> > > #ifdef CONFIG_FAULT_INJECTION
+> > > REG("make-it-fail", S_IRUGO|S_IWUSR,
+> > > proc_fault_inject_operations), @@ -3355,6 +3391,7 @@ static int
+> > > proc_tid_comm_permission(struct inode *inode, int mask) #ifdef
+> > > CONFIG_AUDITSYSCALL REG("loginuid",  S_IWUSR|S_IRUGO,
+> > > proc_loginuid_operations), REG("sessionid",  S_IRUGO,
+> > > proc_sessionid_operations),
+> > > +       REG("containerid", S_IWUSR, proc_containerid_operations),
+> > > #endif
+> > > #ifdef CONFIG_FAULT_INJECTION
+> > > REG("make-it-fail", S_IRUGO|S_IWUSR,
+> > > proc_fault_inject_operations), diff --git a/include/linux/audit.h
+> > > b/include/linux/audit.h index af410d9..fe4ba3f 100644
+> > > --- a/include/linux/audit.h
+> > > +++ b/include/linux/audit.h
+> > > @@ -29,6 +29,7 @@
+> > > 
+> > > #define AUDIT_INO_UNSET ((unsigned long)-1)
+> > > #define AUDIT_DEV_UNSET ((dev_t)-1)
+> > > +#define INVALID_CID AUDIT_CID_UNSET
+> > > 
+> > > struct audit_sig_info {
+> > > uid_t           uid;
+> > > @@ -321,6 +322,7 @@ static inline void audit_ptrace(struct
+> > > task_struct *t) extern int auditsc_get_stamp(struct audit_context
+> > > *ctx, struct timespec64 *t, unsigned int *serial);
+> > > extern int audit_set_loginuid(kuid_t loginuid);
+> > > +extern int audit_set_containerid(struct task_struct *tsk, u64
+> > > containerid);
+> > > static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+> > > {
+> > > @@ -332,6 +334,11 @@ static inline unsigned int
+> > > audit_get_sessionid(struct task_struct *tsk) return tsk->sessionid;
+> > > }
+> > > 
+> > > +static inline u64 audit_get_containerid(struct task_struct *tsk)
+> > > +{
+> > > +       return tsk->containerid;
+> > > +}
+> > > +
+> > > extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
+> > > extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid,
+> > > gid_t gid, umode_t mode); extern void __audit_bprm(struct
+> > > linux_binprm *bprm); @@ -517,6 +524,10 @@ static inline unsigned int
+> > > audit_get_sessionid(struct task_struct *tsk) {
+> > > return -1;
+> > > }
+> > > +static inline kuid_t audit_get_containerid(struct task_struct *tsk)
+> > > +{
+> > > +       return INVALID_CID;
+> > > +}
+> > > static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+> > > { }
+> > > static inline void audit_ipc_set_perm(unsigned long qbytes, uid_t
+> > > uid, @@ -581,6 +592,11 @@ static inline bool
+> > > audit_loginuid_set(struct task_struct *tsk) return
+> > > uid_valid(audit_get_loginuid(tsk)); }
+> > > 
+> > > +static inline bool audit_containerid_set(struct task_struct *tsk)
+> > > +{
+> > > +       return audit_get_containerid(tsk) != INVALID_CID;
+> > > +}
+> > > +
+> > > static inline void audit_log_string(struct audit_buffer *ab, const
+> > > char *buf) {
+> > > audit_log_n_string(ab, buf, strlen(buf));
+> > > diff --git a/include/linux/init_task.h b/include/linux/init_task.h
+> > > index 6a53262..046bd0a 100644
+> > > --- a/include/linux/init_task.h
+> > > +++ b/include/linux/init_task.h
+> > > @@ -18,6 +18,7 @@
+> > > #include <linux/sched/rt.h>
+> > > #include <linux/livepatch.h>
+> > > #include <linux/mm_types.h>
+> > > +#include <linux/audit.h>
+> > > 
+> > > #include <asm/thread_info.h>
+> > > 
+> > > @@ -120,7 +121,8 @@
+> > > #ifdef CONFIG_AUDITSYSCALL
+> > > #define INIT_IDS \
+> > > .loginuid = INVALID_UID, \
+> > > -       .sessionid = (unsigned int)-1,
+> > > +       .sessionid = (unsigned int)-1, \
+> > > +       .containerid = INVALID_CID,
+> > > #else
+> > > #define INIT_IDS
+> > > #endif
+> > > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > > index d258826..1b82191 100644
+> > > --- a/include/linux/sched.h
+> > > +++ b/include/linux/sched.h
+> > > @@ -796,6 +796,7 @@ struct task_struct {
+> > > #ifdef CONFIG_AUDITSYSCALL
+> > > kuid_t                          loginuid;
+> > > unsigned int                    sessionid;
+> > > +       u64                             containerid;
+> > > #endif
+> > > struct seccomp                  seccomp;
+> > > 
+> > > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> > > index 4e61a9e..921a71f 100644
+> > > --- a/include/uapi/linux/audit.h
+> > > +++ b/include/uapi/linux/audit.h
+> > > @@ -71,6 +71,7 @@
+> > > #define AUDIT_TTY_SET           1017    /* Set TTY auditing
+> > > status */ #define AUDIT_SET_FEATURE     1018    /* Turn an
+> > > audit feature on or off */ #define AUDIT_GET_FEATURE
+> > > 1019    /* Get which features are enabled */ +#define
+> > > AUDIT_CONTAINER         1020    /* Define the container id
+> > > and information */ #define AUDIT_FIRST_USER_MSG 1100    /*
+> > > Userspace messages mostly uninteresting to kernel */ #define
+> > > AUDIT_USER_AVC          1107    /* We filter this
+> > > differently */ @@ -465,6 +466,7 @@ struct audit_tty_status { };
+> > > 
+> > > #define AUDIT_UID_UNSET (unsigned int)-1
+> > > +#define AUDIT_CID_UNSET ((u64)-1)
+> > > 
+> > > /* audit_rule_data supports filter rules with both integer and string
+> > > * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > index 4e0a4ac..29c8482 100644
+> > > --- a/kernel/auditsc.c
+> > > +++ b/kernel/auditsc.c
+> > > @@ -2073,6 +2073,90 @@ int audit_set_loginuid(kuid_t loginuid)
+> > > return rc;
+> > > }
+> > > 
+> > > +static int audit_set_containerid_perm(struct task_struct *task, u64
+> > > containerid) +{
+> > > +       struct task_struct *parent;
+> > > +       u64 pcontainerid, ccontainerid;
+> > > +
+> > > +       /* Don't allow to set our own containerid */
+> > > +       if (current == task)
+> > > +               return -EPERM;
+> > > +       /* Don't allow the containerid to be unset */
+> > > +       if (!cid_valid(containerid))
+> > > +               return -EINVAL;
+> > > +       /* if we don't have caps, reject */
+> > > +       if (!capable(CAP_AUDIT_CONTROL))
+> > > +               return -EPERM;
+> > > +       /* if containerid is unset, allow */
+> > > +       if (!audit_containerid_set(task))
+> > > +               return 0;
+> > > +       /* it is already set, and not inherited from the parent,
+> > > reject */
+> > > +       ccontainerid = audit_get_containerid(task);
+> > > +       rcu_read_lock();
+> > > +       parent = rcu_dereference(task->real_parent);
+> > > +       rcu_read_unlock();
+> > > +       task_lock(parent);
+> > > +       pcontainerid = audit_get_containerid(parent);
+> > > +       task_unlock(parent);
+> > > +       if (ccontainerid != pcontainerid)
+> > > +               return -EPERM;
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static void audit_log_set_containerid(struct task_struct *task, u64
+> > > oldcontainerid,
+> > > +                                     u64 containerid, int rc)
+> > > +{
+> > > +       struct audit_buffer *ab;
+> > > +       uid_t uid;
+> > > +       struct tty_struct *tty;
+> > > +
+> > > +       if (!audit_enabled)
+> > > +               return;
+> > > +
+> > > +       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONTAINER);
+> > > +       if (!ab)
+> > > +               return;
+> > > +
+> > > +       uid = from_kuid(&init_user_ns, task_uid(current));
+> > > +       tty = audit_get_tty(current);
+> > > +
+> > > +       audit_log_format(ab, "op=set pid=%d uid=%u",
+> > > task_tgid_nr(current), uid);
+> > > +       audit_log_task_context(ab);
+> > > +       audit_log_format(ab, " auid=%u tty=%s ses=%u opid=%d
+> > > old-contid=%llu contid=%llu res=%d",
+> > 
+> > The preferred ordering would be: op, opid, old-contid, contid, pid, uid,
+> > tty, ses, subj, comm, exe, res. This groups the searchable fields
+> > together using the most common ordering so that parsing is simple.
+> 
+> Where would you like auid?  It appears that just before uid would be the
+> right place, if not in place of uid, but this is just a guess since it
+> isn't consistent.
 
-on x86_64:
 
-In file included from ../drivers/md/dm-writecache.c:8:0:
-../drivers/md/dm-writecache.c: In function ‘writecache_status’:
-../include/linux/compiler.h:61:17: warning: format ‘%ld’ expects argument of type ‘long int’, but argument 4 has type ‘int’ [-Wformat=]
-   static struct ftrace_branch_data   \
-                 ^
-../include/linux/device-mapper.h:550:46: note: in definition of macro ‘DMEMIT’
-      0 : scnprintf(result + sz, maxlen - sz, x))
-                                              ^
-../include/linux/compiler.h:48:24: note: in expansion of macro ‘__branch_check__’
- #  define unlikely(x) (__branch_check__(x, 0, __builtin_constant_p(x)))
-                        ^
-../drivers/md/dm-writecache.c:414:35: note: in expansion of macro ‘unlikely’
- #define writecache_has_error(wc) (unlikely(READ_ONCE((wc)->error)))
-                                   ^
-../include/linux/compiler.h:56:23: note: in expansion of macro ‘__trace_if’
- #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                       ^
-../include/linux/compiler.h:251:2: note: in expansion of macro ‘if’
-  if (check)       \
-  ^
-../include/linux/compiler.h:258:22: note: in expansion of macro ‘__READ_ONCE’
- #define READ_ONCE(x) __READ_ONCE(x, 1)
-                      ^
-../drivers/md/dm-writecache.c:414:44: note: in expansion of macro ‘READ_ONCE’
- #define writecache_has_error(wc) (unlikely(READ_ONCE((wc)->error)))
-                                            ^
-../drivers/md/dm-writecache.c:2196:32: note: in expansion of macro ‘writecache_has_error’
-   DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
-                                ^
+Just after the uid is the proper place. The most common sequence is:
+pid, uid, auid, tty, session, subject context, comm, exe.
 
-s/%ld/%d/
-
-
--- 
-~Randy
+Thanks,
+-Steve
