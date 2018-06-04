@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753682AbeFDHRY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:17:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55776 "EHLO mail.kernel.org"
+        id S1753516AbeFDHDa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:03:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753554AbeFDHDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:37 -0400
+        id S1752720AbeFDHD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 03/47] objtool: Detect RIP-relative switch table references
-Date: Mon,  4 Jun 2018 08:58:15 +0200
-Message-Id: <20180604065549.616337740@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.16 18/47] tracing: Fix crash when freeing instances with event triggers
+Date: Mon,  4 Jun 2018 08:58:30 +0200
+Message-Id: <20180604065550.251210878@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -32,113 +29,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33 upstream.
+commit 86b389ff22bd6ad8fd3cb98e41cd271886c6d023 upstream.
 
-Typically a switch table can be found by detecting a .rodata access
-followed an indirect jump:
+If a instance has an event trigger enabled when it is freed, it could cause
+an access of free memory. Here's the case that crashes:
 
-    1969:	4a 8b 0c e5 00 00 00 	mov    0x0(,%r12,8),%rcx
-    1970:	00
-			196d: R_X86_64_32S	.rodata+0x438
-    1971:	e9 00 00 00 00       	jmpq   1976 <dispc_runtime_suspend+0xb6a>
-			1972: R_X86_64_PC32	__x86_indirect_thunk_rcx-0x4
+ # cd /sys/kernel/tracing
+ # mkdir instances/foo
+ # echo snapshot > instances/foo/events/initcall/initcall_start/trigger
+ # rmdir instances/foo
 
-Randy Dunlap reported a case (seen with GCC 4.8) where the .rodata
-access uses RIP-relative addressing:
+Would produce:
 
-    19bd:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 19c4 <dispc_runtime_suspend+0xbb8>
-			19c0: R_X86_64_PC32	.rodata+0x45c
-    19c4:	e9 00 00 00 00       	jmpq   19c9 <dispc_runtime_suspend+0xbbd>
-			19c5: R_X86_64_PC32	__x86_indirect_thunk_rdi-0x4
+ general protection fault: 0000 [#1] PREEMPT SMP PTI
+ Modules linked in: tun bridge ...
+ CPU: 5 PID: 6203 Comm: rmdir Tainted: G        W         4.17.0-rc4-test+ #933
+ Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+ RIP: 0010:clear_event_triggers+0x3b/0x70
+ RSP: 0018:ffffc90003783de0 EFLAGS: 00010286
+ RAX: 0000000000000000 RBX: 6b6b6b6b6b6b6b2b RCX: 0000000000000000
+ RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8800c7130ba0
+ RBP: ffffc90003783e00 R08: ffff8801131993f8 R09: 0000000100230016
+ R10: ffffc90003783d80 R11: 0000000000000000 R12: ffff8800c7130ba0
+ R13: ffff8800c7130bd8 R14: ffff8800cc093768 R15: 00000000ffffff9c
+ FS:  00007f6f4aa86700(0000) GS:ffff88011eb40000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007f6f4a5aed60 CR3: 00000000cd552001 CR4: 00000000001606e0
+ Call Trace:
+  event_trace_del_tracer+0x2a/0xc5
+  instance_rmdir+0x15c/0x200
+  tracefs_syscall_rmdir+0x52/0x90
+  vfs_rmdir+0xdb/0x160
+  do_rmdir+0x16d/0x1c0
+  __x64_sys_rmdir+0x17/0x20
+  do_syscall_64+0x55/0x1a0
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-In this case the relocation addend needs to be adjusted accordingly in
-order to find the location of the switch table.
+This was due to the call the clears out the triggers when an instance is
+being deleted not removing the trigger from the link list.
 
-The fix is for case 3 (as described in the comments), but also make the
-existing case 1 & 2 checks more precise by only adjusting the addend for
-R_X86_64_PC32 relocations.
-
-This fixes the following warnings:
-
-  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
-  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 85f2b08268c01 ("tracing: Add basic event trigger framework")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+ kernel/trace/trace_events_trigger.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -899,24 +899,24 @@ static struct rela *find_switch_table(st
- {
- 	struct rela *text_rela, *rodata_rela;
- 	struct instruction *orig_insn = insn;
-+	unsigned long table_offset;
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -482,9 +482,10 @@ clear_event_triggers(struct trace_array
+ 	struct trace_event_file *file;
  
-+	/* case 1 & 2 */
- 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
- 	if (text_rela && text_rela->sym == file->rodata->sym &&
- 	    !find_symbol_containing(file->rodata, text_rela->addend)) {
- 
--		/* case 1 */
--		rodata_rela = find_rela_by_dest(file->rodata,
--						text_rela->addend);
--		if (rodata_rela)
--			return rodata_rela;
-+		table_offset = text_rela->addend;
-+		if (text_rela->type == R_X86_64_PC32) {
-+			/* case 2 */
-+			table_offset += 4;
-+			file->ignore_unreachables = true;
-+		}
- 
--		/* case 2 */
--		rodata_rela = find_rela_by_dest(file->rodata,
--						text_rela->addend + 4);
-+		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
- 		if (!rodata_rela)
- 			return NULL;
- 
--		file->ignore_unreachables = true;
- 		return rodata_rela;
- 	}
- 
-@@ -950,18 +950,21 @@ static struct rela *find_switch_table(st
- 		if (!text_rela || text_rela->sym != file->rodata->sym)
- 			continue;
- 
-+		table_offset = text_rela->addend;
-+		if (text_rela->type == R_X86_64_PC32)
-+			table_offset += 4;
-+
- 		/*
- 		 * Make sure the .rodata address isn't associated with a
- 		 * symbol.  gcc jump tables are anonymous data.
- 		 */
--		if (find_symbol_containing(file->rodata, text_rela->addend))
-+		if (find_symbol_containing(file->rodata, table_offset))
- 			continue;
- 
--		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
--		if (!rodata_rela)
--			continue;
--
--		return rodata_rela;
-+		/* mov [rodata addr], %reg */
-+		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
-+		if (rodata_rela)
-+			return rodata_rela;
- 	}
- 
- 	return NULL;
+ 	list_for_each_entry(file, &tr->events, list) {
+-		struct event_trigger_data *data;
+-		list_for_each_entry_rcu(data, &file->triggers, list) {
++		struct event_trigger_data *data, *n;
++		list_for_each_entry_safe(data, n, &file->triggers, list) {
+ 			trace_event_trigger_enable_disable(file, 0);
++			list_del_rcu(&data->list);
+ 			if (data->ops->free)
+ 				data->ops->free(data->ops, data);
+ 		}
