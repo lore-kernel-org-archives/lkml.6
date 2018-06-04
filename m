@@ -1,55 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeFDQJg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:09:36 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52303 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751312AbeFDQJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:09:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="45164704"
-Date: Mon, 4 Jun 2018 10:12:13 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: bhelgaas@google.com, alex_gagniuc@dellteam.com, austin_bolen@dell.com,
-        shyam_iyer@dell.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: access.c: Piggyback user config access on
- pci_read/write_*()
-Message-ID: <20180604161213.GA7712@localhost.localdomain>
-References: <20180604154803.14185-1-mr.nuke.me@gmail.com>
+        id S1751345AbeFDQMk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:12:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45974 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeFDQMi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 12:12:38 -0400
+Subject: Re: linux-next: Tree for Jun 4 (fs/afs/)
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <20180604215911.75399f6e@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <7e4a317a-d57e-1499-dc1e-2eba35610632@infradead.org>
+Date: Mon, 4 Jun 2018 09:12:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604154803.14185-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180604215911.75399f6e@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 10:48:02AM -0500, Alexandru Gagniuc wrote:
-> +++ b/drivers/pci/access.c
-> @@ -223,16 +223,9 @@ int pci_user_read_config_##size						\
->  	(struct pci_dev *dev, int pos, type *val)			\
->  {									\
->  	int ret = PCIBIOS_SUCCESSFUL;					\
-> -	u32 data = -1;							\
->  	if (PCI_##size##_BAD)						\
->  		return -EINVAL;						\
-> -	raw_spin_lock_irq(&pci_lock);				\
-> -	if (unlikely(dev->block_cfg_access))				\
-> -		pci_wait_cfg(dev);					\
-> -	ret = dev->bus->ops->read(dev->bus, dev->devfn,			\
-> -					pos, sizeof(type), &data);	\
-> -	raw_spin_unlock_irq(&pci_lock);				\
-> -	*val = (type)data;						\
-> +	ret = pci_read_config_##size(dev, pos, val);			\
->  	return pcibios_err_to_errno(ret);				\
->  }									\
+On 06/04/2018 04:59 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180601:
+> 
 
-If it wasn't for the block_cfg_access check for user access, this would
-have been a nice code reuse cleanup.
+on x86_64:
+
+# CONFIG_PROC_FS is not set
+
+
+../fs/afs/proc.c: In function ‘afs_proc_init’:
+../fs/afs/proc.c:604:2: error: implicit declaration of function ‘proc_create_net_data_write’ [-Werror=implicit-function-declaration]
+  if (!proc_create_net_data_write("cells", 0644, p,
+  ^
+../fs/afs/proc.c:609:6: error: implicit declaration of function ‘proc_create_net_single_write’ [-Werror=implicit-function-declaration]
+      !proc_create_net_single_write("rootcell", 0644, p,
+      ^
+../fs/afs/proc.c: At top level:
+../fs/afs/proc.c:517:12: warning: ‘afs_proc_stats_show’ defined but not used [-Wunused-function]
+ static int afs_proc_stats_show(struct seq_file *m, void *v)
+            ^
+cc1: some warnings being treated as errors
+../scripts/Makefile.build:311: recipe for target 'fs/afs/proc.o' failed
+
+
+afs seems not to handle CONFIG_PROC_FS=n at all.
+
+-- 
+~Randy
