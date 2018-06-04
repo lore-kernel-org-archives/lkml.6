@@ -1,87 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753088AbeFDLtf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:49:35 -0400
-Received: from mga04.intel.com ([192.55.52.120]:3400 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753062AbeFDLtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:49:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="229742264"
-Message-ID: <b850a3cf565a24414d3290f6699f5a040bf61223.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2] serial: 8250: enable SERIAL_MCTRL_GPIO by default.
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Vignesh R <vigneshr@ti.com>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 04 Jun 2018 14:49:27 +0300
-In-Reply-To: <20180601141158.93817-1-giulio.benetti@micronovasrl.com>
-References: <20180601141158.93817-1-giulio.benetti@micronovasrl.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752978AbeFDLtJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:49:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56924 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752649AbeFDLtG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:49:06 -0400
+Date: Mon, 4 Jun 2018 13:48:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Ingo Molnar <mingo@redhat.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
+Subject: Re: [PATCH 1.5/5] alpha: atomic: provide asm for the fastpath for
+ _atomic_dec_and_lock_irqsave
+Message-ID: <20180604114852.GQ12217@hirez.programming.kicks-ass.net>
+References: <20180504154533.8833-1-bigeasy@linutronix.de>
+ <20180504154533.8833-2-bigeasy@linutronix.de>
+ <20180604102559.2ynbassthjzva62l@linutronix.de>
+ <20180604102757.h46feymcfdydl4nz@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604102757.h46feymcfdydl4nz@linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-01 at 16:11 +0200, Giulio Benetti wrote:
-> It can be useful to override 8250 mctrl lines with gpios, for rts on
-> rs485 for example, when rts is not mapped correctly to HW RTS pin.
+On Mon, Jun 04, 2018 at 12:27:57PM +0200, Sebastian Andrzej Siewior wrote:
+> I just looked at Alpha's atomic_dec_and_lock assembly and did something
+> that should work for atomic_dec_and_lock_irqsave. I think it works but I
+> would prefer for someone from the Alpha-Camp to ack this before it goes
+> in. It is not critical because the non-optimized version should work.
+
+I would vote to simply delete this entire file and get alpha on the
+generic code.
+
+Afaict, this asm gets the ordering wrong, and I doubt it is much faster
+than using atomic_add_unless() in any case (+- the ordering of course).
+
+>  arch/alpha/lib/dec_and_lock.c | 33 ++++++++++++++++++++++++++-------
+>  1 file changed, 26 insertions(+), 7 deletions(-)
 > 
-> Enable SERIAL_MCTRL_GPIO by default.
+> diff --git a/arch/alpha/lib/dec_and_lock.c b/arch/alpha/lib/dec_and_lock.c
+> index 069fef7372dc..d29ba1de4f68 100644
+> --- a/arch/alpha/lib/dec_and_lock.c
+> +++ b/arch/alpha/lib/dec_and_lock.c
+> @@ -32,6 +32,28 @@ _atomic_dec_and_lock:				\n\
+>  	.previous				\n\
+>  	.end _atomic_dec_and_lock");
+>  
+> +  asm (".text					\n\
+> +	.global _atomic_dec_and_lock_irqsave	\n\
+> +	.ent _atomic_dec_and_lock_irqsave	\n\
+> +	.align	4				\n\
+> +_atomic_dec_and_lock_irqsave:			\n\
+> +	.prologue 0				\n\
+> +1:	ldl_l	$1, 0($16)			\n\
+> +	subl	$1, 1, $1			\n\
+> +	beq	$1, 2f				\n\
+> +	stl_c	$1, 0($16)			\n\
+> +	beq	$1, 4f				\n\
+> +	mb					\n\
+> +	clr	$0				\n\
+> +	ret					\n\
+> +2:	br	$29, 3f				\n\
+> +3:	ldgp	$29, 0($29)			\n\
+> +	br	$atomic_dec_and_lock_irqsave1..ng	\n\
+> +	.subsection 2				\n\
+> +4:	br	1b				\n\
+> +	.previous				\n\
+> +	.end _atomic_dec_and_lock_irqsave");
+> +
+>  static int __used atomic_dec_and_lock_1(atomic_t *atomic, spinlock_t *lock)
+>  {
+>  	/* Slow path */
+> @@ -43,14 +65,11 @@ static int __used atomic_dec_and_lock_1(atomic_t *atomic, spinlock_t *lock)
+>  }
+>  EXPORT_SYMBOL(_atomic_dec_and_lock);
+>  
+> -int _atomic_dec_and_lock_irqsave(atomic_t *atomic, spinlock_t *lock,
+> -				 unsigned long *flags)
+> +static int __used atomic_dec_and_lock_irqsave1(atomic_t *atomic,
+> +					       spinlock_t *lock,
+> +					       unsigned long *flags)
+>  {
+> -	/* Subtract 1 from counter unless that drops it to 0 (ie. it was 1) */
+> -	if (atomic_add_unless(atomic, -1, 1))
+> -		return 0;
+> -
+> -	/* Otherwise do it the slow way */
+> +	/* Slow way */
+>  	spin_lock_irqsave(lock, *flags);
+>  	if (atomic_dec_and_test(atomic))
+>  		return 1;
+> -- 
+> 2.17.1
 > 
-
-Unfortunately NAK, see 
-
-commit 5db4f7f80d165fc9725f356e99feec409e446baa
-Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date:   Tue Aug 16 15:06:54 2016 +0300
-
-    Revert "tty/serial/8250: use mctrl_gpio helpers"
-
-for the details.
-
-I would love to see a solution that will satisfy everyone, though I have
-only means to test proposals for now.
-
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> ---
->  drivers/tty/serial/8250/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/tty/serial/8250/Kconfig
-> b/drivers/tty/serial/8250/Kconfig
-> index f005eaf8bc57..c7992b94fece 100644
-> --- a/drivers/tty/serial/8250/Kconfig
-> +++ b/drivers/tty/serial/8250/Kconfig
-> @@ -7,6 +7,7 @@ config SERIAL_8250
->  	tristate "8250/16550 and compatible serial support"
->  	depends on !S390
->  	select SERIAL_CORE
-> +	select SERIAL_MCTRL_GPIO if GPIOLIB
->  	---help---
->  	  This selects whether you want to include the driver for the
-> standard
->  	  serial ports.  The standard answer is Y.  People who might
-> say N
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
