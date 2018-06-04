@@ -1,78 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeFDRQS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:16:18 -0400
-Received: from mout.gmx.net ([212.227.17.22]:48799 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750987AbeFDRQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:16:16 -0400
-From: Heinrich Schuchardt <xypron.glpk@gmx.de>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Vagrant Cascadian <vagrant@debian.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Pierre-Hugues Husson <phh@phh.me>, Jianqun Xu <jay.xu@rock-chips.com>,
-        Kever Yang <kever.yang@rock-chips.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>
-Subject: [PATCH 1/1] arm64: dts: rockchip: correct voltage selector Firefly-RK3399
-Date: Mon,  4 Jun 2018 19:15:23 +0200
-Message-Id: <20180604171523.28454-1-xypron.glpk@gmx.de>
-X-Mailer: git-send-email 2.17.1
-X-Provags-ID: V03:K1:Lbv6wA/j7fgagAN++ULMMkM7jVhWx8vYo3cCFNRJgoMaNJ7SQ7/
- ZyAvO2oo0ESAbb3MfQrBVcA6cR4f5gaK6A7ZX7AjZCo2+bMySR/dQw6c2FuBZl9ggm4oy/N
- yflalbmI30L7JurtN2iXM5IwO6UqUw7D2VCvTaUM41o/q541bjpjzcsdcvnNy97T00zHhDs
- hA1WpPrOZ8zCEI6yVM8Cg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:FP+NKcw2tyY=:yKYaInVpIIz7Ce5q73NF1Q
- VV4s2/0AhSHYoYUWWIU/InjmDxrDMagbVa9S+7+A6Koqr4j7f2OKRbp530wASl1Y7aYpstz6w
- ZKMwIUN3Qw+WirjP5kmuEou/iS0jenDSuiG4JDFy9bnNdURzeB4ziDpEYRp8A+NkPV1CaqCx8
- COMX7MlR5sHXGPAdECJZB5085itO3PpZngjc0y3YBruAOO2IgHXEccukIarFuV+hgYD5gMuK/
- aqPKfsjzpwbFePXy9ofqdt0WZ12D29IcGBHovXSHCCKasY960edX7aCR1Pths9xu4kzOOoD80
- GNVm/Lued7k3Rk3ryGEawAh/muRBjme3g8wKkuo2NmLDHpfL+po98De+Uiut7iAvnlW4CK0P7
- ifCPOYw/EsHe4jFvxN1dGyDk0PyEkxy3/1F7ORZqpE8L+kK+jE786UdIzF0+ChVf3F2xZsVPp
- z9pxNRIK81vj9zQtMW8d/4ccuCjP0RUzFdQV36CWumJH2LWWfntSE0Aszs81K7tX3Yr129ltR
- 8X9MMkz7EmHfKVvIa4Es8mW6rP4NkLQjTDNxcIPi1AiEEl01hFZIRayeokplyuDT8SX5xUAi4
- xX2yXUK8RZSaWlFneFCOWuarQXzxlawRxUN+HV2W+z76bY9vBIzcU4nVVTbO7X6/nlj+XtpL2
- 3iOVcwZsfEpJmOuuz4PcQfP2pE1AvZ1UM/osNvBOcmXM9u8kcOfVeKezZav2Y3180cpLOF4NL
- m4pYxSbrZcXm8KYl/80QRWs+Wl75cnMOWiq9UiFVNL1zI50FxxqbT+AYn6c=
+        id S1751387AbeFDRQf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:16:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43140 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeFDRQd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 13:16:33 -0400
+Date: Mon, 4 Jun 2018 10:16:30 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH][RFC] open_tree(2) (was Re: [PATCH 30/32] vfs: Allow
+ cloning of a mount tree with open(O_PATH|O_CLONE_MOUNT) [ver #8])
+Message-ID: <20180604171630.GA29059@bombadil.infradead.org>
+References: <20180601063928.GS30522@ZenIV.linux.org.uk>
+ <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+ <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
+ <20180601062654.GA32397@infradead.org>
+ <7067.1527841663@warthog.procyon.org.uk>
+ <20180602030913.GU30522@ZenIV.linux.org.uk>
+ <20180602034255.GV30522@ZenIV.linux.org.uk>
+ <21804.1527954321@warthog.procyon.org.uk>
+ <20180602174957.GX30522@ZenIV.linux.org.uk>
+ <20180603005532.GZ30522@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180603005532.GZ30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this patch the Firefly-RK3399 board boot process hangs after these
-lines:
+On Sun, Jun 03, 2018 at 01:55:37AM +0100, Al Viro wrote:
+> +SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
+> +{
+> +	struct file *file;
+> +	struct path path;
+> +	int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
+> +	bool detached = flags & OPEN_TREE_CLONE;
+> +	int error;
+> +	int fd;
+> +
+> +	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
 
-   fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
-   fan53555-reg: supplied by vcc_sys
-   vcc1v8_s3: supplied by vcc_1v8
-
-Blacklisting driver fan53555 allows booting.
-
-The device tree uses a value of fcs,suspend-voltage-selector different to
-any other board.
-
-Changing this setting to the usual value is sufficient to enable booting.
-
-Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
----
- arch/arm64/boot/dts/rockchip/rk3399-firefly.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-index 4f28628aa091..50940ef844a7 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-firefly.dts
-@@ -458,7 +458,7 @@
- 	vdd_cpu_b: regulator@40 {
- 		compatible = "silergy,syr827";
- 		reg = <0x40>;
--		fcs,suspend-voltage-selector = <0>;
-+		fcs,suspend-voltage-selector = <1>;
- 		regulator-name = "vdd_cpu_b";
- 		regulator-min-microvolt = <712500>;
- 		regulator-max-microvolt = <1500000>;
--- 
-2.17.1
+Why do we need OPEN_TREE_CLOEXEC?  Wouldn't we be better off just making
+the fd returned by open_tree implicitly close-on-exec?  I can think of
+no good reason for these file descriptors to be inherited across exec()
+and if someone comes up with such a reason, fcntl(F_SETFD) is not an
+expensive call to make.
