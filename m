@@ -1,75 +1,886 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751368AbeFDSb5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 14:31:57 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38362 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750998AbeFDSb4 (ORCPT
+        id S1751198AbeFDScn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 14:32:43 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40320 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeFDScj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 14:31:56 -0400
-X-Google-Smtp-Source: ADUXVKLRRAnFD/0Yufu+Z8aXN2SM4nOYboCEWa9RToaDW2rznv6f+7ecb+CFto26rH1JOaWrNkbIAw==
-Subject: Re: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to
- PMIC_CHIP_ID_DA9063
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
- <20180604122658.GC21163@dell>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <3853ee6e-86a7-793e-c633-fc9c2910976f@gmail.com>
-Date: Mon, 4 Jun 2018 20:31:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 4 Jun 2018 14:32:39 -0400
+Date: Mon, 4 Jun 2018 19:32:38 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] vfs, pile 5
+Message-ID: <20180604183237.GL30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180604122658.GC21163@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 02:26 PM, Lee Jones wrote:
-> On Sat, 02 Jun 2018, Marek Vasut wrote:
-> 
->> The PMIC_DA9063 is a complete misnomer, it denotes the value of the
->> DA9063 chip ID register, so rename it as such. It is also the value
->> of chip ID register of DA9063L though, so drop the enum as all the
->> DA9063 "models" share the same chip ID and thus the distinction will
->> have to be made using DT or otherwise.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Lee Jones <lee.jones@linaro.org>
->> Cc: Mark Brown <broonie@kernel.org>
->> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
->> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Cc: linux-renesas-soc@vger.kernel.org
->> Acked-by: Mark Brown <broonie@kernel.org>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> V2: No change
->> V3: No change
->> ---
->>  drivers/mfd/da9063-core.c            | 2 +-
->>  drivers/mfd/da9063-i2c.c             | 2 +-
->>  drivers/regulator/da9063-regulator.c | 2 +-
->>  include/linux/mfd/da9063/core.h      | 4 +---
->>  4 files changed, 4 insertions(+), 6 deletions(-)
-> 
-> For my own reference:
->   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+	Majority of AIO stuff this cycle.  aio-fsync and aio-poll,
+mostly.  The only thing I'm holding back for a day or so is Adam's
+aio ioprio - his last-minute fixup is trivial (missing stub in
+!CONFIG_BLOCK case), but let it sit in -next for decency sake...
 
-Thanks.
+The following changes since commit 4faa99965e027cc057c5145ce45fa772caa04e8d:
 
-Any other comments before I submit the next round in a few days?
+  fix io_destroy()/aio_complete() race (2018-05-23 22:53:22 -0400)
 
--- 
-Best regards,
-Marek Vasut
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.aio-1
+
+for you to fetch changes up to 1da92779e2e8f309d5aecbbed346e7f812b174e8:
+
+  aio: sanitize the limit checking in io_submit(2) (2018-05-29 23:20:17 -0400)
+
+----------------------------------------------------------------
+Al Viro (6):
+      aio: take list removal to (some) callers of aio_complete()
+      aio: all callers of aio_{read,write,fsync,poll} treat 0 and -EIOCBQUEUED the same way
+      aio_read_events_ring(): make a bit more readable
+      aio: shift copyin of iocb into io_submit_one()
+      aio: fold do_io_submit() into callers
+      aio: sanitize the limit checking in io_submit(2)
+
+Christoph Hellwig (41):
+      aio: don't print the page size at boot time
+      aio: remove an outdated BUG_ON and comment in aio_complete
+      aio: sanitize ki_list handling
+      aio: remove the extra get_file/fput pair in io_submit_one
+      aio: refactor read/write iocb setup
+      aio: implement IOCB_CMD_FSYNC and IOCB_CMD_FDSYNC
+      aio: implement io_pgetevents
+      Merge branch 'fixes' of https://git.kernel.org/.../viro/vfs into aio-base
+      uapi: turn __poll_t sparse checks on by default
+      fs: unexport poll_schedule_timeout
+      fs: cleanup do_pollfd
+      fs: update documentation to mention __poll_t and match the code
+      fs: add new vfs_poll and file_can_poll helpers
+      fs: introduce new ->get_poll_head and ->poll_mask methods
+      aio: simplify KIOCB_KEY handling
+      aio: simplify cancellation
+      aio: implement IOCB_CMD_POLL
+      aio: try to complete poll iocbs without context switch
+      net: refactor socket_poll
+      net: add support for ->poll_mask in proto_ops
+      net: remove sock_no_poll
+      net/tcp: convert to ->poll_mask
+      net/unix: convert to ->poll_mask
+      net: convert datagram_poll users tp ->poll_mask
+      net/dccp: convert to ->poll_mask
+      net/atm: convert to ->poll_mask
+      net/vmw_vsock: convert to ->poll_mask
+      net/tipc: convert to ->poll_mask
+      net/sctp: convert to ->poll_mask
+      net/bluetooth: convert to ->poll_mask
+      net/caif: convert to ->poll_mask
+      net/nfc: convert to ->poll_mask
+      net/phonet: convert to ->poll_mask
+      net/iucv: convert to ->poll_mask
+      net/rxrpc: convert to ->poll_mask
+      crypto: af_alg: convert to ->poll_mask
+      pipe: convert to ->poll_mask
+      eventfd: switch to ->poll_mask
+      timerfd: convert to ->poll_mask
+      random: convert to ->poll_mask
+      aio: add missing break for the IOCB_CMD_FDSYNC case
+
+ Documentation/core-api/kernel-api.rst              |  13 +
+ .../bindings/serial/amlogic,meson-uart.txt         |   2 +-
+ .../devicetree/bindings/serial/mvebu-uart.txt      |   2 +-
+ .../bindings/serial/renesas,sci-serial.txt         |   2 +
+ .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
+ .../devicetree/bindings/thermal/thermal.txt        |  16 +-
+ .../bindings/timer/nuvoton,npcm7xx-timer.txt       |  21 +
+ .../devicetree/bindings/timer/nxp,tpm-timer.txt    |   2 +-
+ Documentation/devicetree/bindings/usb/usb-xhci.txt |   5 +-
+ .../driver-api/firmware/request_firmware.rst       |  16 +-
+ Documentation/driver-api/infrastructure.rst        |   2 +-
+ Documentation/driver-api/usb/typec.rst             |   2 +-
+ Documentation/filesystems/Locking                  |   9 +-
+ Documentation/filesystems/vfs.txt                  |  15 +-
+ Documentation/i2c/dev-interface                    |  32 +-
+ Documentation/ioctl/ioctl-number.txt               |   2 -
+ Documentation/livepatch/shadow-vars.txt            |  41 +-
+ Documentation/networking/filter.txt                |   6 +-
+ Documentation/networking/ip-sysctl.txt             |  23 +-
+ Documentation/power/suspend-and-cpuhotplug.txt     |   2 +-
+ Documentation/process/magic-number.rst             |   3 -
+ Documentation/trace/ftrace.rst                     |  14 +-
+ Documentation/virtual/kvm/api.txt                  |   9 +-
+ Documentation/virtual/kvm/arm/psci.txt             |  30 +
+ MAINTAINERS                                        |  68 +-
+ Makefile                                           |   2 +-
+ arch/arm/boot/dts/gemini-nas4220b.dts              |  28 +-
+ arch/arm/boot/dts/omap4.dtsi                       |   8 +-
+ arch/arm/configs/gemini_defconfig                  |  27 +-
+ arch/arm/configs/socfpga_defconfig                 |   1 +
+ arch/arm/include/asm/kvm_host.h                    |   3 +
+ arch/arm/include/uapi/asm/kvm.h                    |   6 +
+ arch/arm/kvm/guest.c                               |  13 +
+ arch/arm/mach-omap2/Makefile                       |   6 +-
+ arch/arm/mach-omap2/pm-asm-offsets.c               |   3 +
+ arch/arm/mach-omap2/sleep33xx.S                    |   1 -
+ arch/arm/mach-omap2/sleep43xx.S                    |   1 -
+ arch/arm/mach-s3c24xx/mach-jive.c                  |   4 +-
+ arch/arm64/Makefile                                |   4 +
+ .../arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi |   4 +
+ .../dts/amlogic/meson-gxl-s905x-libretech-cc.dts   |  12 +
+ .../dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    |   4 +
+ .../boot/dts/amlogic/meson-gxl-s905x-p212.dtsi     |   4 +
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi         |  61 ++
+ .../boot/dts/amlogic/meson-gxm-khadas-vim2.dts     |   4 +
+ arch/arm64/boot/dts/amlogic/meson-gxm.dtsi         |  17 +
+ arch/arm64/boot/dts/arm/juno-motherboard.dtsi      |   2 -
+ .../boot/dts/broadcom/stingray/stingray-sata.dtsi  |  80 +--
+ arch/arm64/include/asm/kvm_host.h                  |   3 +
+ arch/arm64/include/asm/module.h                    |   2 +-
+ arch/arm64/include/asm/pgtable.h                   |   4 +-
+ arch/arm64/include/uapi/asm/kvm.h                  |   6 +
+ arch/arm64/kernel/cpufeature.c                     |   1 +
+ arch/arm64/kernel/module-plts.c                    |   2 +-
+ arch/arm64/kernel/module.c                         |   2 +-
+ arch/arm64/kernel/ptrace.c                         |  20 +-
+ arch/arm64/kernel/traps.c                          |   5 +-
+ arch/arm64/kvm/guest.c                             |  14 +-
+ arch/arm64/kvm/sys_regs.c                          |   6 +-
+ arch/arm64/lib/Makefile                            |   4 +
+ arch/arm64/mm/flush.c                              |   2 +-
+ arch/arm64/mm/kasan_init.c                         |   4 +-
+ arch/mips/boot/dts/img/boston.dts                  |   6 +
+ arch/mips/include/asm/io.h                         |   4 +-
+ arch/mips/include/asm/uaccess.h                    |  11 +-
+ arch/mips/lib/memset.S                             |  11 +-
+ arch/parisc/kernel/Makefile                        |   2 +-
+ arch/powerpc/include/asm/powernv.h                 |   2 +-
+ arch/powerpc/kernel/eeh_pe.c                       |   3 +-
+ arch/powerpc/kernel/idle_book3s.S                  |   4 +-
+ arch/powerpc/kernel/mce_power.c                    |   7 +-
+ arch/powerpc/kernel/setup_64.c                     |  11 +
+ arch/powerpc/kernel/smp.c                          |  49 +-
+ arch/powerpc/kvm/booke.c                           |   7 +
+ arch/powerpc/lib/feature-fixups.c                  |   2 +-
+ arch/powerpc/mm/mem.c                              |   2 +
+ arch/powerpc/platforms/cell/spufs/sched.c          |   2 +-
+ arch/powerpc/platforms/powernv/memtrace.c          |  17 -
+ arch/powerpc/platforms/powernv/npu-dma.c           |  88 ++-
+ arch/powerpc/platforms/powernv/opal-rtc.c          |   8 +-
+ arch/powerpc/sysdev/xive/native.c                  |   4 +
+ arch/riscv/Kconfig                                 |   4 +-
+ arch/riscv/include/asm/Kbuild                      |   1 -
+ arch/riscv/kernel/vdso/Makefile                    |   2 +-
+ arch/s390/Kbuild                                   |   1 +
+ arch/s390/Kconfig                                  |  32 +-
+ arch/s390/boot/Makefile                            |   6 -
+ arch/s390/boot/compressed/.gitignore               |   1 +
+ .../configs/{default_defconfig => debug_defconfig} |  30 +-
+ arch/s390/configs/gcov_defconfig                   | 661 -------------------
+ arch/s390/configs/performance_defconfig            |  20 +-
+ arch/s390/defconfig                                |  13 +-
+ arch/s390/include/asm/kexec.h                      |  23 +
+ arch/s390/include/asm/purgatory.h                  |  17 +
+ arch/s390/include/asm/setup.h                      |  40 +-
+ arch/s390/include/asm/thread_info.h                |   3 +
+ arch/s390/include/uapi/asm/signal.h                |  23 +-
+ arch/s390/kernel/Makefile                          |   3 +
+ arch/s390/kernel/asm-offsets.c                     |   5 +
+ arch/s390/kernel/compat_wrapper.c                  |   1 +
+ arch/s390/kernel/kexec_elf.c                       | 147 +++++
+ arch/s390/kernel/kexec_image.c                     |  76 +++
+ arch/s390/kernel/machine_kexec_file.c              | 245 +++++++
+ arch/s390/kernel/module.c                          |   4 +-
+ arch/s390/kernel/nospec-branch.c                   |   1 +
+ arch/s390/kernel/perf_cpum_cf_events.c             |   9 +-
+ arch/s390/kernel/process.c                         |  10 +
+ arch/s390/kernel/setup.c                           |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl              |   1 +
+ arch/s390/kernel/uprobes.c                         |   9 +
+ arch/s390/purgatory/.gitignore                     |   2 +
+ arch/s390/purgatory/Makefile                       |  37 ++
+ arch/s390/purgatory/head.S                         | 279 ++++++++
+ arch/s390/purgatory/purgatory.c                    |  42 ++
+ arch/x86/Kconfig                                   |   4 +
+ arch/x86/entry/entry_64_compat.S                   |   8 +-
+ arch/x86/entry/syscalls/syscall_32.tbl             |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
+ arch/x86/events/intel/core.c                       |   9 +-
+ arch/x86/events/intel/uncore_snbep.c               |  37 ++
+ arch/x86/include/asm/asm.h                         |   2 -
+ arch/x86/include/asm/cpufeatures.h                 |   1 +
+ arch/x86/include/asm/ftrace.h                      |  19 +-
+ arch/x86/include/asm/irq_vectors.h                 |   7 -
+ arch/x86/include/asm/jailhouse_para.h              |   2 +-
+ arch/x86/include/asm/kvm_host.h                    |   1 +
+ arch/x86/include/asm/pgtable.h                     |   5 +
+ arch/x86/include/asm/pgtable_64_types.h            |   8 +-
+ arch/x86/include/asm/processor.h                   |   2 -
+ arch/x86/include/uapi/asm/msgbuf.h                 |  31 +
+ arch/x86/include/uapi/asm/shmbuf.h                 |  42 ++
+ arch/x86/kernel/acpi/boot.c                        |   4 +
+ arch/x86/kernel/cpu/intel.c                        |   3 +
+ arch/x86/kernel/cpu/microcode/core.c               |   6 +-
+ arch/x86/kernel/cpu/microcode/intel.c              |   2 -
+ arch/x86/kernel/jailhouse.c                        |   2 +-
+ arch/x86/kernel/kexec-bzimage64.c                  |   5 +-
+ arch/x86/kernel/ldt.c                              |   2 +-
+ arch/x86/kernel/pci-nommu.c                        |  90 ---
+ arch/x86/kernel/setup.c                            |   6 +
+ arch/x86/kernel/smpboot.c                          |  47 +-
+ arch/x86/kernel/tsc.c                              |   2 +-
+ arch/x86/kvm/svm.c                                 |  31 +-
+ arch/x86/kvm/vmx.c                                 | 109 +--
+ arch/x86/kvm/x86.c                                 |  15 +-
+ arch/x86/kvm/x86.h                                 |   7 -
+ arch/x86/mm/dump_pagetables.c                      |  11 +-
+ arch/x86/mm/pageattr.c                             |  44 +-
+ arch/x86/mm/pti.c                                  |  26 +-
+ arch/x86/power/hibernate_64.c                      |   2 +-
+ block/bfq-iosched.c                                |  10 +-
+ block/blk-cgroup.c                                 |  28 +-
+ block/blk-core.c                                   |  15 +-
+ block/blk-mq.c                                     |  41 +-
+ block/blk-mq.h                                     |   3 +
+ crypto/af_alg.c                                    |  14 +-
+ crypto/algif_aead.c                                |   4 +-
+ crypto/algif_hash.c                                |   2 -
+ crypto/algif_rng.c                                 |   1 -
+ crypto/algif_skcipher.c                            |   4 +-
+ crypto/api.c                                       |  11 +-
+ crypto/drbg.c                                      |   2 +
+ drivers/acpi/acpi_video.c                          |  27 +-
+ drivers/acpi/acpi_watchdog.c                       |  59 +-
+ drivers/acpi/button.c                              |  24 +-
+ drivers/acpi/scan.c                                |   2 +-
+ drivers/acpi/sleep.c                               |  13 +
+ drivers/amba/bus.c                                 |  17 +-
+ drivers/android/binder.c                           |   8 +
+ drivers/atm/iphase.c                               |   4 +-
+ drivers/base/dma-coherent.c                        |   5 +-
+ drivers/base/dma-mapping.c                         |   6 +-
+ drivers/base/firmware_loader/fallback.c            |   4 +-
+ drivers/base/firmware_loader/fallback.h            |   2 +-
+ drivers/block/loop.c                               |  64 +-
+ drivers/block/loop.h                               |   1 -
+ drivers/block/rbd.c                                | 101 ++-
+ drivers/block/swim.c                               |  49 +-
+ drivers/block/swim3.c                              |   6 +-
+ drivers/bus/Kconfig                                |   1 +
+ drivers/cdrom/cdrom.c                              |   2 +-
+ drivers/char/random.c                              | 201 ++++--
+ drivers/char/virtio_console.c                      | 157 ++---
+ drivers/clocksource/Kconfig                        |   8 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/timer-imx-tpm.c                |  45 +-
+ drivers/clocksource/timer-npcm7xx.c                | 215 ++++++
+ drivers/cpufreq/Kconfig.arm                        |  10 -
+ drivers/cpufreq/brcmstb-avs-cpufreq.c              | 323 +--------
+ drivers/cpufreq/powernv-cpufreq.c                  |  14 +-
+ drivers/dax/device.c                               |   2 +
+ drivers/firmware/arm_scmi/clock.c                  |   2 +-
+ drivers/fpga/altera-ps-spi.c                       |   2 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c              |   7 +-
+ drivers/gpu/drm/amd/amdkfd/Kconfig                 |   1 +
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c           |  17 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  10 +-
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_color.c    |   7 -
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c  |   5 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  54 +-
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c   |  16 +-
+ .../drm/amd/powerplay/inc/vega12/smu9_driver_if.h  |   4 +-
+ drivers/gpu/drm/drm_dp_dual_mode_helper.c          |  39 +-
+ drivers/gpu/drm/drm_edid.c                         |  11 +-
+ drivers/gpu/drm/exynos/exynos_drm_fb.c             |  73 +-
+ drivers/gpu/drm/i915/gvt/cmd_parser.c              |   1 +
+ drivers/gpu/drm/i915/gvt/display.c                 |  10 +
+ drivers/gpu/drm/i915/gvt/dmabuf.c                  |   1 +
+ drivers/gpu/drm/i915/gvt/fb_decoder.c              |  27 +-
+ drivers/gpu/drm/i915/gvt/gtt.c                     |  52 +-
+ drivers/gpu/drm/i915/gvt/gtt.h                     |   2 +-
+ drivers/gpu/drm/i915/gvt/handlers.c                |   1 +
+ drivers/gpu/drm/i915/gvt/kvmgt.c                   |   2 +-
+ drivers/gpu/drm/i915/i915_drv.c                    |  27 +-
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c         |   2 +-
+ drivers/gpu/drm/i915/i915_pmu.c                    |  37 +-
+ drivers/gpu/drm/i915/intel_audio.c                 |   2 +-
+ drivers/gpu/drm/i915/intel_bios.c                  |  13 +-
+ drivers/gpu/drm/i915/intel_cdclk.c                 |  16 +-
+ drivers/gpu/drm/i915/intel_drv.h                   |   4 +-
+ drivers/gpu/drm/i915/intel_fbdev.c                 |   2 +-
+ drivers/gpu/drm/i915/intel_lrc.c                   |   9 +
+ drivers/gpu/drm/i915/intel_runtime_pm.c            |  11 +-
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c          |   1 +
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c          |   1 +
+ drivers/gpu/drm/msm/disp/mdp_format.c              |   3 +-
+ drivers/gpu/drm/msm/disp/mdp_kms.h                 |   2 +-
+ drivers/gpu/drm/msm/dsi/dsi_host.c                 |  16 +-
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              | 109 +++
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |   2 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c         |  28 -
+ drivers/gpu/drm/msm/msm_fb.c                       |   3 +-
+ drivers/gpu/drm/msm/msm_fbdev.c                    |  11 +-
+ drivers/gpu/drm/msm/msm_gem.c                      |  20 +-
+ drivers/gpu/drm/msm/msm_kms.h                      |   5 +-
+ drivers/gpu/drm/qxl/qxl_cmd.c                      |   6 +-
+ drivers/gpu/drm/qxl/qxl_drv.h                      |   1 +
+ drivers/gpu/drm/qxl/qxl_ioctl.c                    |   4 +-
+ drivers/gpu/drm/qxl/qxl_release.c                  |  18 +-
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 |  55 --
+ drivers/gpu/drm/vc4/vc4_bo.c                       |   2 +
+ drivers/gpu/drm/vc4/vc4_validate_shaders.c         |   1 +
+ drivers/gpu/drm/virtio/virtgpu_vq.c                |   4 +-
+ drivers/hid/hid-ids.h                              |   3 +
+ drivers/hid/hid-input.c                            |  24 +-
+ drivers/hid/hidraw.c                               |   5 +
+ drivers/hid/i2c-hid/i2c-hid.c                      |  13 +
+ drivers/hid/wacom_wac.c                            |  76 ++-
+ drivers/hwmon/k10temp.c                            |  17 +-
+ drivers/hwmon/nct6683.c                            |   4 +-
+ drivers/hwmon/scmi-hwmon.c                         |   5 +-
+ drivers/i2c/busses/Kconfig                         |   3 -
+ drivers/i2c/busses/i2c-sprd.c                      |  22 +-
+ drivers/i2c/i2c-dev.c                              |   2 +-
+ drivers/input/evdev.c                              |   7 +-
+ drivers/isdn/mISDN/dsp_hwec.c                      |   8 +-
+ drivers/isdn/mISDN/l1oip_core.c                    |  14 +-
+ drivers/isdn/mISDN/socket.c                        |   3 +-
+ drivers/md/md.c                                    |   6 +-
+ drivers/md/raid1.c                                 |  25 +-
+ drivers/memory/emif-asm-offsets.c                  |  72 +-
+ drivers/message/fusion/mptsas.c                    |   1 +
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      |  39 +-
+ drivers/mmc/host/sdhci-pci-core.c                  |  25 +-
+ drivers/mtd/chips/cfi_cmdset_0001.c                |  33 +-
+ drivers/mtd/chips/cfi_cmdset_0002.c                |   9 +-
+ drivers/mtd/nand/core.c                            |   3 -
+ drivers/mtd/nand/raw/marvell_nand.c                |  25 +-
+ drivers/mtd/nand/raw/tango_nand.c                  |   2 +-
+ drivers/mtd/spi-nor/cadence-quadspi.c              |  19 +-
+ drivers/net/bonding/bond_main.c                    |   3 +-
+ drivers/net/dsa/mv88e6xxx/hwtstamp.c               |  12 +-
+ drivers/net/ethernet/amd/xgbe/xgbe-common.h        |   8 +
+ drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c       |  16 +
+ drivers/net/ethernet/amd/xgbe/xgbe-main.c          |   1 +
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c          |  24 +-
+ drivers/net/ethernet/amd/xgbe/xgbe-pci.c           |   2 +
+ drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c        | 196 +++++-
+ drivers/net/ethernet/amd/xgbe/xgbe.h               |   9 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c  |  49 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_nvm_defs.h |   2 -
+ drivers/net/ethernet/hisilicon/hns/hnae.h          |   2 +-
+ drivers/net/ethernet/ibm/ibmvnic.c                 |  89 ++-
+ drivers/net/ethernet/ibm/ibmvnic.h                 |   1 -
+ drivers/net/ethernet/intel/ice/ice_adminq_cmd.h    |   2 +-
+ drivers/net/ethernet/intel/ice/ice_common.c        |  22 +-
+ drivers/net/ethernet/intel/ice/ice_hw_autogen.h    |   2 -
+ drivers/net/ethernet/intel/ice/ice_main.c          |   4 -
+ drivers/net/ethernet/intel/ice/ice_sched.c         |   4 +-
+ drivers/net/ethernet/intel/igb/igb_main.c          |  17 +-
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c  |   2 +-
+ drivers/net/ethernet/marvell/mvpp2.c               |  14 +-
+ drivers/net/ethernet/netronome/nfp/flower/cmsg.c   |  44 +-
+ drivers/net/ethernet/netronome/nfp/flower/cmsg.h   |   2 +
+ drivers/net/ethernet/netronome/nfp/flower/main.c   |   6 +-
+ drivers/net/ethernet/netronome/nfp/flower/main.h   |   8 +-
+ .../net/ethernet/netronome/nfp/nfpcore/nfp_mutex.c |   5 +-
+ .../net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c   |   3 +-
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c |  11 +-
+ drivers/net/ethernet/sfc/ef10.c                    |  85 +--
+ drivers/net/ethernet/sfc/efx.c                     | 143 ++++
+ drivers/net/ethernet/sfc/efx.h                     |  21 +
+ drivers/net/ethernet/sfc/farch.c                   |  41 +-
+ drivers/net/ethernet/sfc/net_driver.h              |  61 ++
+ drivers/net/ethernet/sfc/rx.c                      | 122 +++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   7 -
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   7 +-
+ drivers/net/ethernet/ti/cpsw.c                     |   2 +-
+ drivers/net/macsec.c                               |   5 +-
+ drivers/net/phy/marvell.c                          |   9 +
+ drivers/net/phy/microchip.c                        | 178 ++++-
+ drivers/net/ppp/pppoe.c                            |   6 +-
+ drivers/net/ppp/pptp.c                             |   1 -
+ drivers/net/team/team.c                            |  38 +-
+ drivers/net/tun.c                                  |   7 +-
+ drivers/net/usb/qmi_wwan.c                         |   1 +
+ drivers/net/virtio_net.c                           |  79 ++-
+ drivers/net/vmxnet3/vmxnet3_drv.c                  |  17 +-
+ drivers/net/vmxnet3/vmxnet3_int.h                  |   4 +-
+ drivers/nvdimm/Kconfig                             |   3 +-
+ drivers/nvdimm/dimm_devs.c                         |  22 +-
+ drivers/nvdimm/of_pmem.c                           |   2 +-
+ drivers/of/fdt.c                                   |   7 +-
+ drivers/pci/dwc/pcie-kirin.c                       |   2 +-
+ drivers/pci/host/pci-aardvark.c                    |  53 +-
+ drivers/pci/pci-driver.c                           |   5 +-
+ drivers/pci/pci.c                                  |   4 +-
+ drivers/rapidio/devices/rio_mport_cdev.c           |  19 +-
+ drivers/rtc/rtc-opal.c                             |  37 +-
+ drivers/s390/block/dasd_alias.c                    |  13 +-
+ drivers/s390/block/dasd_diag.c                     |   1 -
+ drivers/s390/char/sclp_early_core.c                |   2 +-
+ drivers/s390/cio/chsc.c                            |  14 +-
+ drivers/s390/cio/vfio_ccw_fsm.c                    |  19 +-
+ drivers/s390/net/qeth_core.h                       |   2 -
+ drivers/s390/net/qeth_core_main.c                  | 158 ++---
+ drivers/s390/net/qeth_core_mpc.h                   |  12 +
+ drivers/s390/net/qeth_l2_main.c                    |  60 +-
+ drivers/s390/net/smsgiucv.c                        |   2 +-
+ drivers/scsi/fnic/fnic_trace.c                     |   2 +-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c        |   6 +-
+ drivers/scsi/scsi_debug.c                          |  33 +-
+ drivers/scsi/scsi_transport_iscsi.c                |  29 +-
+ drivers/scsi/sd.c                                  |   2 +
+ drivers/scsi/sd_zbc.c                              | 140 ++--
+ drivers/scsi/ufs/ufshcd.c                          |  40 ++
+ drivers/slimbus/messaging.c                        |   2 +-
+ drivers/soc/bcm/raspberrypi-power.c                |   2 +-
+ drivers/staging/comedi/drivers/serial2002.c        |   4 +-
+ drivers/staging/ipx/af_ipx.c                       |   2 +-
+ drivers/staging/wilc1000/host_interface.c          |   2 +-
+ drivers/target/target_core_pscsi.c                 |   2 +
+ drivers/tty/n_gsm.c                                |  23 +-
+ drivers/tty/serial/earlycon.c                      |   6 +-
+ drivers/tty/serial/imx.c                           |  19 +-
+ drivers/tty/serial/mvebu-uart.c                    |   1 -
+ drivers/tty/serial/qcom_geni_serial.c              |  10 +-
+ drivers/tty/serial/xilinx_uartps.c                 |   2 +-
+ drivers/tty/tty_io.c                               |   5 +-
+ drivers/tty/tty_ldisc.c                            |  29 +-
+ drivers/uio/uio_hv_generic.c                       |  72 +-
+ drivers/usb/Kconfig                                |   1 +
+ drivers/usb/core/hcd.c                             |  19 +-
+ drivers/usb/core/hub.c                             |  10 +-
+ drivers/usb/core/phy.c                             |  93 ++-
+ drivers/usb/core/phy.h                             |  22 +-
+ drivers/usb/core/quirks.c                          |   3 +
+ drivers/usb/host/xhci-dbgtty.c                     |   8 +-
+ drivers/usb/host/xhci-pci.c                        |   5 +-
+ drivers/usb/host/xhci-plat.c                       |  32 +-
+ drivers/usb/host/xhci.h                            |   3 +-
+ drivers/usb/musb/musb_dsps.c                       |   2 -
+ drivers/usb/musb/musb_host.c                       |   1 +
+ drivers/usb/serial/Kconfig                         |   1 +
+ drivers/usb/serial/cp210x.c                        |   1 +
+ drivers/usb/serial/ftdi_sio.c                      |   3 +-
+ drivers/usb/serial/usb-serial-simple.c             |   7 +
+ drivers/usb/typec/ucsi/Makefile                    |   2 +-
+ drivers/usb/typec/ucsi/ucsi.c                      |   2 +-
+ drivers/usb/usbip/stub_main.c                      |   5 +
+ drivers/usb/usbip/usbip_common.h                   |   2 +-
+ drivers/usb/usbip/usbip_event.c                    |   4 -
+ drivers/usb/usbip/vhci_hcd.c                       |  13 +
+ drivers/vfio/virqfd.c                              |   2 +-
+ drivers/vhost/vhost.c                              |   2 +-
+ drivers/virt/vboxguest/vboxguest_core.c            |  70 +-
+ drivers/virt/vboxguest/vboxguest_core.h            |   9 +
+ drivers/virt/vboxguest/vboxguest_linux.c           |  19 +-
+ drivers/virt/vboxguest/vboxguest_utils.c           |  17 +-
+ drivers/watchdog/aspeed_wdt.c                      |   7 +
+ drivers/watchdog/renesas_wdt.c                     |   6 +-
+ drivers/watchdog/sch311x_wdt.c                     |   2 +-
+ drivers/watchdog/w83977f_wdt.c                     |   2 +-
+ drivers/watchdog/wafer5823wdt.c                    |   2 +-
+ drivers/xen/xen-pciback/conf_space_quirks.c        |   2 +-
+ drivers/xen/xen-pciback/pci_stub.c                 |   8 +-
+ drivers/xen/xenbus/xenbus_dev_frontend.c           |   3 +-
+ fs/afs/server.c                                    |   9 +-
+ fs/aio.c                                           | 731 ++++++++++++++-------
+ fs/autofs4/root.c                                  |   2 +-
+ fs/binfmt_elf.c                                    |   8 +-
+ fs/btrfs/ctree.h                                   |  25 +
+ fs/btrfs/delayed-inode.c                           |  20 +-
+ fs/btrfs/delayed-ref.c                             |  19 +-
+ fs/btrfs/delayed-ref.h                             |   1 +
+ fs/btrfs/disk-io.c                                 |   1 +
+ fs/btrfs/extent-tree.c                             |  73 +-
+ fs/btrfs/file.c                                    |   2 +-
+ fs/btrfs/inode.c                                   |  20 +-
+ fs/btrfs/print-tree.c                              |  25 +-
+ fs/btrfs/print-tree.h                              |   2 +-
+ fs/btrfs/qgroup.c                                  |  43 +-
+ fs/btrfs/transaction.c                             |   1 +
+ fs/btrfs/transaction.h                             |  14 +
+ fs/ceph/inode.c                                    |  10 +-
+ fs/ceph/xattr.c                                    |  28 +-
+ fs/cifs/cifs_debug.h                               |   2 +-
+ fs/cifs/cifssmb.c                                  |   3 +
+ fs/cifs/connect.c                                  |  32 +-
+ fs/cifs/dir.c                                      |   9 +-
+ fs/cifs/file.c                                     |   2 +-
+ fs/cifs/smb2ops.c                                  |  22 +-
+ fs/cifs/smb2pdu.c                                  |  13 +-
+ fs/cifs/smb2pdu.h                                  |   2 +-
+ fs/cifs/smbdirect.c                                |  42 +-
+ fs/cifs/transport.c                                |   9 +-
+ fs/ecryptfs/crypto.c                               |  41 +-
+ fs/ecryptfs/file.c                                 |  21 +-
+ fs/ecryptfs/inode.c                                |   3 +-
+ fs/ecryptfs/keystore.c                             |   2 +-
+ fs/eventfd.c                                       |  15 +-
+ fs/eventpoll.c                                     |   5 +-
+ fs/ext2/file.c                                     |   4 +-
+ fs/ext4/balloc.c                                   |   9 +-
+ fs/ext4/extents.c                                  |  16 +-
+ fs/ext4/super.c                                    |   1 +
+ fs/fs-writeback.c                                  |   7 +-
+ fs/isofs/compress.c                                |  19 +-
+ fs/isofs/inode.c                                   |   3 +
+ fs/jbd2/transaction.c                              |   1 +
+ fs/namespace.c                                     |   2 +-
+ fs/notify/fanotify/fanotify.c                      |  34 +-
+ fs/notify/fsnotify.c                               |  25 +-
+ fs/pipe.c                                          |  22 +-
+ fs/proc/base.c                                     |   6 +
+ fs/proc/loadavg.c                                  |   2 +-
+ fs/proc/task_mmu.c                                 |   6 +-
+ fs/quota/dquot.c                                   |   2 +-
+ fs/select.c                                        |  85 ++-
+ fs/timerfd.c                                       |  22 +-
+ fs/udf/unicode.c                                   |   6 +
+ include/asm-generic/vmlinux.lds.h                  |   2 +-
+ include/crypto/if_alg.h                            |   3 +-
+ include/drm/drm_hdcp.h                             |   2 +-
+ include/kvm/arm_psci.h                             |  16 +-
+ include/linux/aio.h                                |   2 -
+ include/linux/backing-dev-defs.h                   |   5 +
+ include/linux/backing-dev.h                        |  30 +-
+ include/linux/blk-mq.h                             |   3 +
+ include/linux/blkdev.h                             |   6 +
+ include/linux/bpf.h                                |   4 +-
+ include/linux/compat.h                             |   7 +
+ include/linux/compiler-clang.h                     |   3 +
+ include/linux/coresight-pmu.h                      |  13 +-
+ include/linux/device.h                             |   6 +-
+ include/linux/ethtool.h                            |   2 +
+ include/linux/fs.h                                 |   2 +
+ include/linux/fsnotify_backend.h                   |   6 +-
+ include/linux/hid.h                                |   9 +-
+ include/linux/hrtimer.h                            |   2 +
+ include/linux/if_vlan.h                            |   7 +-
+ include/linux/livepatch.h                          |  19 +-
+ include/linux/microchipphy.h                       |   8 +
+ include/linux/mtd/flashchip.h                      |   1 +
+ include/linux/net.h                                |   1 +
+ include/linux/poll.h                               |  14 +-
+ include/linux/serial_core.h                        |  21 +-
+ include/linux/skbuff.h                             |   3 +-
+ include/linux/stringhash.h                         |   4 +-
+ include/linux/syscalls.h                           |   6 +
+ include/linux/textsearch.h                         |   4 +-
+ include/linux/thread_info.h                        |   6 +-
+ include/linux/ti-emif-sram.h                       |  75 +++
+ include/linux/timekeeper_internal.h                |   2 -
+ include/linux/timekeeping.h                        |  37 +-
+ include/linux/timekeeping32.h                      |   3 -
+ include/linux/timer.h                              |   2 -
+ include/linux/tty.h                                |   2 +-
+ include/linux/vbox_utils.h                         |  23 -
+ include/linux/virtio.h                             |   3 +
+ include/net/bluetooth/bluetooth.h                  |   2 +-
+ include/net/busy_poll.h                            |  15 +
+ include/net/ife.h                                  |   3 +-
+ include/net/iucv/af_iucv.h                         |   2 -
+ include/net/llc_conn.h                             |   1 +
+ include/net/sctp/sctp.h                            |   3 +-
+ include/net/sock.h                                 |   2 -
+ include/net/tcp.h                                  |   3 +-
+ include/net/udp.h                                  |   2 +-
+ include/scsi/scsi_dbg.h                            |   2 -
+ include/soc/bcm2835/raspberrypi-firmware.h         |   4 +-
+ include/sound/control.h                            |   7 +-
+ include/trace/events/ufs.h                         |  27 +
+ include/trace/events/workqueue.h                   |   2 +
+ include/uapi/asm-generic/unistd.h                  |   4 +-
+ include/uapi/linux/aio_abi.h                       |  12 +-
+ include/uapi/linux/kvm.h                           |   7 +
+ include/uapi/linux/perf_event.h                    |  18 +-
+ include/uapi/linux/random.h                        |   3 +
+ include/uapi/linux/sysctl.h                        |  18 -
+ include/uapi/linux/time.h                          |   1 -
+ include/uapi/linux/types.h                         |   4 -
+ include/uapi/linux/virtio_balloon.h                |  15 +
+ include/xen/interface/io/sndif.h                   | 322 ++++++++-
+ kernel/bpf/core.c                                  |  45 +-
+ kernel/bpf/sockmap.c                               |   3 -
+ kernel/events/callchain.c                          |  25 +-
+ kernel/events/core.c                               |   8 +-
+ kernel/fork.c                                      |   3 +-
+ kernel/kprobes.c                                   |   2 +-
+ kernel/livepatch/shadow.c                          | 108 +--
+ kernel/module.c                                    |   3 +-
+ kernel/sys_ni.c                                    |   2 +
+ kernel/sysctl_binary.c                             |  20 +-
+ kernel/time/hrtimer.c                              |  16 +-
+ kernel/time/posix-cpu-timers.c                     |   4 +-
+ kernel/time/posix-stubs.c                          |   2 -
+ kernel/time/posix-timers.c                         |  26 +-
+ kernel/time/tick-common.c                          |  15 -
+ kernel/time/tick-internal.h                        |   6 -
+ kernel/time/tick-oneshot.c                         |  11 +-
+ kernel/time/tick-sched.c                           |  19 +-
+ kernel/time/timekeeping.c                          |  85 ++-
+ kernel/time/timekeeping.h                          |   1 +
+ kernel/trace/bpf_trace.c                           |  25 +-
+ kernel/trace/trace.c                               |   2 +-
+ kernel/trace/trace_entries.h                       |   2 +-
+ kernel/trace/trace_events_filter.c                 |  14 +-
+ kernel/trace/trace_kprobe.c                        |   2 -
+ lib/dma-direct.c                                   |   3 +-
+ lib/kobject.c                                      |  11 +-
+ lib/textsearch.c                                   |  40 +-
+ mm/filemap.c                                       |   9 +-
+ mm/huge_memory.c                                   |   5 +-
+ mm/memcontrol.c                                    |   4 +-
+ mm/migrate.c                                       |  22 +-
+ mm/mmap.c                                          |  11 +-
+ mm/page-writeback.c                                |  18 +-
+ mm/rmap.c                                          |   3 -
+ net/9p/trans_fd.c                                  |  18 +-
+ net/appletalk/ddp.c                                |   2 +-
+ net/atm/common.c                                   |  11 +-
+ net/atm/common.h                                   |   2 +-
+ net/atm/pvc.c                                      |   2 +-
+ net/atm/svc.c                                      |   2 +-
+ net/ax25/af_ax25.c                                 |   2 +-
+ net/bluetooth/af_bluetooth.c                       |   7 +-
+ net/bluetooth/bnep/sock.c                          |   1 -
+ net/bluetooth/cmtp/sock.c                          |   1 -
+ net/bluetooth/hci_sock.c                           |   2 +-
+ net/bluetooth/hidp/sock.c                          |   1 -
+ net/bluetooth/l2cap_sock.c                         |   2 +-
+ net/bluetooth/rfcomm/sock.c                        |   2 +-
+ net/bluetooth/sco.c                                |   2 +-
+ net/bridge/netfilter/ebtables.c                    |  11 +-
+ net/caif/caif_socket.c                             |  12 +-
+ net/caif/chnl_net.c                                |   2 +-
+ net/can/bcm.c                                      |   2 +-
+ net/can/raw.c                                      |   2 +-
+ net/ceph/messenger.c                               |   7 +
+ net/ceph/mon_client.c                              |  14 +-
+ net/core/datagram.c                                |  13 +-
+ net/core/dev.c                                     |   2 +-
+ net/core/dev_addr_lists.c                          |   2 +-
+ net/core/neighbour.c                               |  40 +-
+ net/core/sock.c                                    |   6 -
+ net/dccp/dccp.h                                    |   3 +-
+ net/dccp/ipv4.c                                    |   2 +-
+ net/dccp/ipv6.c                                    |   2 +-
+ net/dccp/proto.c                                   |  13 +-
+ net/decnet/af_decnet.c                             |   6 +-
+ net/dns_resolver/dns_key.c                         |  12 +-
+ net/ieee802154/socket.c                            |   4 +-
+ net/ife/ife.c                                      |  38 +-
+ net/ipv4/af_inet.c                                 |   8 +-
+ net/ipv4/ip_output.c                               |   8 +-
+ net/ipv4/tcp.c                                     |  31 +-
+ net/ipv4/tcp_input.c                               |   7 +-
+ net/ipv4/udp.c                                     |  10 +-
+ net/ipv6/af_inet6.c                                |   4 +-
+ net/ipv6/netfilter/Kconfig                         |  55 +-
+ net/ipv6/raw.c                                     |   4 +-
+ net/ipv6/route.c                                   |   2 +
+ net/ipv6/seg6_iptunnel.c                           |   2 +-
+ net/iucv/af_iucv.c                                 |   7 +-
+ net/kcm/kcmsock.c                                  |  10 +-
+ net/key/af_key.c                                   |   2 +-
+ net/l2tp/l2tp_core.c                               |  40 +-
+ net/l2tp/l2tp_core.h                               |   3 +-
+ net/l2tp/l2tp_debugfs.c                            |  18 +-
+ net/l2tp/l2tp_ip.c                                 |   2 +-
+ net/l2tp/l2tp_ip6.c                                |   2 +-
+ net/l2tp/l2tp_netlink.c                            |  11 +-
+ net/l2tp/l2tp_ppp.c                                |  36 +-
+ net/llc/af_llc.c                                   |  16 +-
+ net/llc/llc_c_ac.c                                 |   9 +-
+ net/llc/llc_conn.c                                 |  22 +-
+ net/netfilter/Kconfig                              |   1 +
+ net/netfilter/ipvs/ip_vs_ctl.c                     |   8 -
+ net/netfilter/ipvs/ip_vs_sync.c                    | 155 ++---
+ net/netfilter/nf_conntrack_expect.c                |   5 +-
+ net/netfilter/nf_conntrack_extend.c                |   2 +
+ net/netfilter/nf_conntrack_sip.c                   |  16 +-
+ net/netfilter/nf_tables_api.c                      |  69 +-
+ net/netfilter/xt_connmark.c                        |  49 +-
+ net/netlink/af_netlink.c                           |   2 +-
+ net/netrom/af_netrom.c                             |   2 +-
+ net/nfc/llcp_sock.c                                |   9 +-
+ net/nfc/rawsock.c                                  |   4 +-
+ net/packet/af_packet.c                             |  92 ++-
+ net/packet/internal.h                              |  10 +-
+ net/phonet/socket.c                                |   9 +-
+ net/qrtr/qrtr.c                                    |   3 +-
+ net/rose/af_rose.c                                 |   2 +-
+ net/rxrpc/af_rxrpc.c                               |  10 +-
+ net/sched/act_ife.c                                |   9 +-
+ net/sctp/ipv6.c                                    |  62 +-
+ net/sctp/protocol.c                                |   2 +-
+ net/sctp/socket.c                                  |   4 +-
+ net/smc/af_smc.c                                   |  10 +-
+ net/socket.c                                       |  55 +-
+ net/strparser/strparser.c                          |   9 +-
+ net/tipc/monitor.c                                 |   2 +-
+ net/tipc/name_table.c                              |  34 +-
+ net/tipc/name_table.h                              |   2 +-
+ net/tipc/net.c                                     |   2 +
+ net/tipc/netlink.c                                 |   5 +-
+ net/tipc/node.c                                    |  11 +-
+ net/tipc/socket.c                                  |  18 +-
+ net/tipc/subscr.c                                  |   5 +-
+ net/tls/tls_sw.c                                   |  10 +-
+ net/unix/af_unix.c                                 |  30 +-
+ net/vmw_vsock/af_vsock.c                           |  25 +-
+ net/x25/af_x25.c                                   |   2 +-
+ samples/livepatch/livepatch-shadow-fix1.c          |  43 +-
+ samples/livepatch/livepatch-shadow-fix2.c          |  33 +-
+ security/commoncap.c                               |   2 +
+ sound/core/control.c                               |   2 +-
+ sound/core/pcm_compat.c                            |   7 +-
+ sound/core/pcm_native.c                            |  30 +-
+ sound/core/rawmidi_compat.c                        |  18 +-
+ sound/core/seq/oss/seq_oss_event.c                 |  15 +-
+ sound/core/seq/oss/seq_oss_midi.c                  |   2 +
+ sound/core/seq/oss/seq_oss_synth.c                 |  85 ++-
+ sound/core/seq/oss/seq_oss_synth.h                 |   3 +-
+ sound/drivers/opl3/opl3_synth.c                    |   7 +-
+ sound/firewire/dice/dice-stream.c                  |   2 +-
+ sound/firewire/dice/dice.c                         |   2 +-
+ sound/pci/asihpi/hpimsginit.c                      |  13 +-
+ sound/pci/asihpi/hpioctl.c                         |   4 +-
+ sound/pci/hda/hda_hwdep.c                          |  12 +-
+ sound/pci/hda/hda_intel.c                          |   3 +-
+ sound/pci/hda/patch_hdmi.c                         |   9 +-
+ sound/pci/hda/patch_realtek.c                      |   8 +
+ sound/pci/rme9652/hdspm.c                          |  24 +-
+ sound/pci/rme9652/rme9652.c                        |   6 +-
+ sound/soc/amd/acp-da7219-max98357a.c               |   2 +-
+ sound/soc/codecs/adau17x1.c                        |  26 +-
+ sound/soc/codecs/adau17x1.h                        |   3 +-
+ sound/soc/codecs/msm8916-wcd-analog.c              |   9 +-
+ sound/soc/codecs/rt5514.c                          |   3 +
+ sound/soc/fsl/fsl_esai.c                           |   7 +
+ sound/soc/fsl/fsl_ssi.c                            |  14 +-
+ sound/soc/intel/Kconfig                            |  22 +-
+ sound/soc/omap/omap-dmic.c                         |  14 +-
+ sound/soc/sh/rcar/core.c                           |   4 +-
+ sound/soc/soc-topology.c                           |  14 +-
+ sound/usb/line6/midi.c                             |   2 +-
+ sound/usb/mixer.c                                  |   7 +-
+ sound/usb/mixer_maps.c                             |   3 +
+ sound/usb/stream.c                                 |   2 +-
+ sound/usb/usx2y/us122l.c                           |   2 +-
+ sound/usb/usx2y/usX2Yhwdep.c                       |   2 +-
+ sound/usb/usx2y/usx2yhwdeppcm.c                    |   2 +-
+ tools/arch/arm/include/uapi/asm/kvm.h              |   9 +
+ tools/arch/x86/include/asm/required-features.h     |   8 +-
+ tools/arch/x86/include/uapi/asm/kvm.h              |  19 +-
+ tools/include/linux/compiler.h                     |  20 +-
+ tools/include/linux/coresight-pmu.h                |  13 +-
+ tools/include/uapi/asm-generic/mman-common.h       |   3 +
+ tools/include/uapi/linux/bpf.h                     |   1 +
+ tools/include/uapi/linux/if_link.h                 |  39 ++
+ tools/include/uapi/linux/kvm.h                     |  21 +-
+ tools/include/uapi/linux/perf_event.h              |  18 +-
+ tools/include/uapi/sound/asound.h                  |   1 +
+ tools/lib/subcmd/parse-options.c                   |   6 +-
+ tools/objtool/Makefile                             |   4 +-
+ tools/perf/Documentation/perf-config.txt           |   5 +
+ tools/perf/Documentation/perf-mem.txt              |  42 +-
+ tools/perf/Documentation/perf-sched.txt            |   4 +-
+ tools/perf/Documentation/perf-script.txt           |  17 +-
+ tools/perf/Documentation/perf-stat.txt             |   2 +-
+ tools/perf/Makefile.config                         |   4 +-
+ tools/perf/arch/arm/include/arch-tests.h           |  12 +
+ tools/perf/arch/arm/tests/Build                    |   2 +
+ tools/perf/arch/arm/tests/arch-tests.c             |  16 +
+ tools/perf/arch/arm/util/auxtrace.c                |  13 +-
+ tools/perf/arch/arm/util/cs-etm.c                  |  13 +-
+ tools/perf/arch/arm/util/cs-etm.h                  |  13 +-
+ tools/perf/arch/arm/util/pmu.c                     |  13 +-
+ tools/perf/arch/s390/util/auxtrace.c               |   1 +
+ tools/perf/arch/s390/util/header.c                 |  18 -
+ tools/perf/arch/x86/Makefile                       |   2 +-
+ tools/perf/arch/x86/annotate/instructions.c        |  67 +-
+ tools/perf/arch/x86/entry/syscalls/syscall_64.tbl  | 712 ++++++++++----------
+ tools/perf/builtin-help.c                          |   2 +-
+ tools/perf/builtin-mem.c                           |   4 +-
+ tools/perf/builtin-script.c                        |   9 +-
+ tools/perf/builtin-stat.c                          |  54 +-
+ tools/perf/builtin-version.c                       |   3 +
+ tools/perf/perf.c                                  |   4 +-
+ tools/perf/pmu-events/arch/s390/mapfile.csv        |  10 +-
+ tools/perf/tests/attr/test-record-group-sampling   |   3 +
+ tools/perf/tests/bpf-script-example.c              |   2 +-
+ tools/perf/tests/bpf-script-test-kbuild.c          |   1 -
+ tools/perf/tests/builtin-test.c                    |   1 +
+ tools/perf/tests/mmap-basic.c                      |   2 +-
+ .../tests/shell/record+probe_libc_inet_pton.sh     |   6 +-
+ tools/perf/trace/beauty/mmap.c                     |   3 +
+ tools/perf/ui/browsers/annotate.c                  |   5 +
+ tools/perf/ui/browsers/hists.c                     |   2 +-
+ tools/perf/util/annotate.c                         |  26 +-
+ tools/perf/util/annotate.h                         |   9 +
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c    |   3 +-
+ tools/perf/util/cs-etm.c                           |   3 +-
+ tools/perf/util/cs-etm.h                           |  13 +-
+ tools/perf/util/event.c                            |   4 +-
+ tools/perf/util/evsel.c                            |  24 +-
+ tools/perf/util/evsel.h                            |   1 +
+ tools/perf/util/generate-cmdlist.sh                |   2 +-
+ tools/perf/util/header.c                           |   3 +-
+ tools/perf/util/machine.c                          |  30 +-
+ tools/perf/util/parse-events.y                     |   8 +-
+ tools/perf/util/pmu.c                              |  28 +-
+ tools/perf/util/symbol.c                           |   8 +-
+ tools/perf/util/syscalltbl.c                       |   6 +-
+ tools/perf/util/trace-event-scripting.c            |   4 +-
+ tools/testing/nvdimm/test/nfit.c                   |  84 ++-
+ tools/testing/selftests/bpf/.gitignore             |   3 +
+ tools/testing/selftests/bpf/test_sock.c            |   1 +
+ tools/testing/selftests/bpf/test_sock_addr.c       |   1 +
+ tools/testing/selftests/bpf/test_sock_addr.sh      |   4 +-
+ tools/testing/selftests/filesystems/Makefile       |   8 +-
+ tools/testing/selftests/firmware/Makefile          |   1 +
+ tools/testing/selftests/firmware/fw_lib.sh         |  10 +-
+ tools/testing/selftests/firmware/fw_run_tests.sh   |   2 +-
+ .../inter-event/trigger-extended-error-support.tc  |   2 +-
+ .../inter-event/trigger-multi-actions-accept.tc    |  44 ++
+ tools/testing/selftests/kvm/Makefile               |   5 +-
+ tools/testing/selftests/kvm/include/kvm_util.h     |  15 +-
+ tools/testing/selftests/kvm/include/vmx.h          | 494 ++++++++++++++
+ tools/testing/selftests/kvm/lib/kvm_util.c         |  20 +-
+ tools/testing/selftests/kvm/lib/sparsebit.c        |   4 +-
+ tools/testing/selftests/kvm/lib/vmx.c              | 243 +++++++
+ tools/testing/selftests/kvm/vmx_tsc_adjust_test.c  | 231 +++++++
+ tools/testing/selftests/net/Makefile               |   2 +-
+ tools/testing/selftests/x86/test_syscall_vdso.c    |  35 +-
+ virt/kvm/arm/arm.c                                 |  15 +-
+ virt/kvm/arm/psci.c                                |  60 ++
+ virt/kvm/arm/vgic/vgic-mmio-v2.c                   |   5 +
+ virt/kvm/arm/vgic/vgic.c                           |  22 +-
+ virt/kvm/eventfd.c                                 |   2 +-
+ 773 files changed, 10665 insertions(+), 5467 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/nuvoton,npcm7xx-timer.txt
+ create mode 100644 Documentation/virtual/kvm/arm/psci.txt
+ rename arch/s390/configs/{default_defconfig => debug_defconfig} (97%)
+ delete mode 100644 arch/s390/configs/gcov_defconfig
+ create mode 100644 arch/s390/include/asm/purgatory.h
+ create mode 100644 arch/s390/kernel/kexec_elf.c
+ create mode 100644 arch/s390/kernel/kexec_image.c
+ create mode 100644 arch/s390/kernel/machine_kexec_file.c
+ create mode 100644 arch/s390/purgatory/.gitignore
+ create mode 100644 arch/s390/purgatory/Makefile
+ create mode 100644 arch/s390/purgatory/head.S
+ create mode 100644 arch/s390/purgatory/purgatory.c
+ delete mode 100644 arch/x86/kernel/pci-nommu.c
+ create mode 100644 drivers/clocksource/timer-npcm7xx.c
+ create mode 100644 tools/perf/arch/arm/include/arch-tests.h
+ create mode 100644 tools/perf/arch/arm/tests/arch-tests.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
+ create mode 100644 tools/testing/selftests/kvm/include/vmx.h
+ create mode 100644 tools/testing/selftests/kvm/lib/vmx.c
+ create mode 100644 tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
