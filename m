@@ -1,54 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752434AbeFDL1r (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:27:47 -0400
-Received: from ozlabs.org ([203.11.71.1]:58065 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751597AbeFDL1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:27:45 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Stewart Smith <stewart@linux.vnet.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: Re: [PATCH] cpuidle:powernv: Make the snooze timeout dynamic.
-In-Reply-To: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
-Date: Mon, 04 Jun 2018 21:27:40 +1000
-Message-ID: <87fu22bxlf.fsf@concordia.ellerman.id.au>
+        id S1752537AbeFDL17 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:27:59 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:5555 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751769AbeFDL1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:27:46 -0400
+From: Nixiaoming <nixiaoming@huawei.com>
+To: Michal Hocko <mhocko@kernel.org>
+CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "garsilva@embeddedor.com" <garsilva@embeddedor.com>,
+        "ktkhai@virtuozzo.com" <ktkhai@virtuozzo.com>,
+        "stummala@codeaurora.org" <stummala@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: RE: [PATCH] mm: Add conditions to avoid out-of-bounds
+Thread-Topic: [PATCH] mm: Add conditions to avoid out-of-bounds
+Thread-Index: AQHT+/ODcalbMzUwQk2w0KnDFcXRgaRPbg8AgACHnjA=
+Date: Mon, 4 Jun 2018 11:27:26 +0000
+Message-ID: <E490CD805F7529488761C40FD9D26EF12A6834EF@dggemm507-mbx.china.huawei.com>
+References: <20180604103735.42781-1-nixiaoming@huawei.com>
+ <20180604112026.GI19202@dhcp22.suse.cz>
+In-Reply-To: <20180604112026.GI19202@dhcp22.suse.cz>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.88.168]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
+I'm very sorry. It was my mistake. 
+it won't cross the border here.
 
-> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
->
-> The commit 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of
-> snooze to deeper idle state") introduced a timeout for the snooze idle
-> state so that it could be eventually be promoted to a deeper idle
-> state. The snooze timeout value is static and set to the target
-> residency of the next idle state, which would train the cpuidle
-> governor to pick the next idle state eventually.
->
-> The unfortunate side-effect of this is that if the next idle state(s)
-> is disabled, the CPU will forever remain in snooze, despite the fact
-> that the system is completely idle, and other deeper idle states are
-> available.
+Thanks 
 
-That sounds like a bug, I'll add?
 
-Fixes: 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of snooze to deeper idle state")
-Cc: stable@vger.kernel.org # v4.2+
+-----Original Message-----
+From: Michal Hocko [mailto:mhocko@kernel.org] 
+Sent: Monday, June 04, 2018 7:20 PM
+To: Nixiaoming <nixiaoming@huawei.com>
+Cc: akpm@linux-foundation.org; vdavydov.dev@gmail.com; hannes@cmpxchg.org; garsilva@embeddedor.com; ktkhai@virtuozzo.com; stummala@codeaurora.org; linux-kernel@vger.kernel.org; linux-mm@kvack.org
+Subject: Re: [PATCH] mm: Add conditions to avoid out-of-bounds
 
-cheers
+On Mon 04-06-18 18:37:35, nixiaoming wrote:
+> In the function memcg_init_list_lru
+> if call goto fail when i == 0, will cause out-of-bounds at lru->node[i]
+
+How? All I can see is that the fail path does
+	for (i = i - 1; i >= 0; i--)
+
+so it will not do anything for i=0.
+-- 
+Michal Hocko
+SUSE Labs
