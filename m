@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753418AbeFDHWo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:22:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54710 "EHLO mail.kernel.org"
+        id S1753180AbeFDHCO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:02:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753190AbeFDHCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:16 -0400
+        id S1753157AbeFDHCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        stable@vger.kernel.org, Edvard Holst <edvard.holst@gmail.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 16/52] Input: synaptics - add Intertouch support on X1 Carbon 6th and X280
-Date: Mon,  4 Jun 2018 08:58:11 +0200
-Message-Id: <20180604065607.182986518@linuxfoundation.org>
+Subject: [PATCH 4.14 15/52] Input: synaptics - Lenovo Thinkpad X1 Carbon G5 (2017) with Elantech trackpoints should use RMI
+Date: Mon,  4 Jun 2018 08:58:10 +0200
+Message-Id: <20180604065607.146222132@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -29,38 +29,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Edvard Holst <edvard.holst@gmail.com>
 
-commit 5717a09aeaf62d197deba1fc7ccd6bc45f3a9dcc upstream.
+commit 15e2cffec3aa0d47a8d75ae80e1b136bfb5dff30 upstream.
 
-Synaptics devices reported it has Intertouch support,
-and it fails via PS/2 as following logs:
+Lenovo use two different trackpoints in the fifth generation Thinkpad X1
+Carbon. Both are accessible over SMBUS/RMI but the pnpIDs are missing.
+This patch is for the Elantech trackpoint specifically which also
+reports SMB version 3 so rmi_smbus needs to be updated in order to
+handle it.
 
-psmouse serio2: Failed to reset mouse on synaptics-pt/serio0
-psmouse serio2: Failed to enable mouse on synaptics-pt/serio0
+For the record, I was not the first one to come up with this patch as it
+has been floating around the internet for a while now. However, I have
+spent significant time with testing and my efforts to find the original
+author of the patch have been unsuccessful.
 
-Set these new devices to use SMBus to fix this issue, then they report
-SMBus version 3 is using, patch:
-https://patchwork.kernel.org/patch/9989547/ enabled SMBus ver 3 and
-makes synaptics devices work fine on SMBus mode.
-
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Signed-off-by: Edvard Holst <edvard.holst@gmail.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/input/mouse/synaptics.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/input/mouse/synaptics.c
 +++ b/drivers/input/mouse/synaptics.c
-@@ -174,6 +174,8 @@ static const char * const smbus_pnp_ids[
+@@ -173,6 +173,7 @@ static const char * const smbus_pnp_ids[
+ 	"LEN0046", /* X250 */
  	"LEN004a", /* W541 */
  	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
- 	"LEN0073", /* X1 Carbon G5 (Elantech) */
-+	"LEN0092", /* X1 Carbon 6 */
-+	"LEN0096", /* X280 */
++	"LEN0073", /* X1 Carbon G5 (Elantech) */
  	"LEN200f", /* T450s */
  	NULL
  };
