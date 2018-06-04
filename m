@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752889AbeFDHBY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:01:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53880 "EHLO mail.kernel.org"
+        id S1753251AbeFDH0c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:26:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752828AbeFDHBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:19 -0400
+        id S1752872AbeFDHBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 24/52] drm/i915: Always sanity check engine state upon idling
-Date: Mon,  4 Jun 2018 08:58:19 +0200
-Message-Id: <20180604065607.539384625@linuxfoundation.org>
+Subject: [PATCH 4.14 25/52] dma-buf: remove redundant initialization of sg_table
+Date: Mon,  4 Jun 2018 08:58:20 +0200
+Message-Id: <20180604065607.580878314@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -32,90 +31,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit cad9946c2a4375386062131858881cfd30fc1b8f upstream.
+commit 531beb067c6185aceabfdee0965234c6a8fd133b upstream.
 
-When we do a locked idle we know that afterwards all requests have been
-completed and the engines have been cleared of tasks. For whatever
-reason, this doesn't always happen and we may go into a suspend with
-ELSP still full, and this causes an issue upon resume as we get very,
-very confused.
+sg_table is being initialized and is never read before it is updated
+again later on, hence making the initialization redundant. Remove
+the initialization.
 
-If the engines refuse to idle, mark the device as wedged. In the process
-we get rid of the maybe unused open-coded version of wait_for_engines
-reported by Nick Desaulniers and Matthias Kaehlcke.
+Detected by clang scan-build:
+"warning: Value stored to 'sg_table' during its initialization is
+never read"
 
-v2: Suppress the -EIO before suspend, but keep it for seqno wrap.
-
-References: https://bugs.freedesktop.org/show_bug.cgi?id=101891
-References: https://bugs.freedesktop.org/show_bug.cgi?id=102456
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20170826110935.10237-1-chris@chris-wilson.co.uk
-Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20170914230516.6056-1-colin.king@canonical.com
 Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_gem.c |   27 ++++++++-------------------
- 1 file changed, 8 insertions(+), 19 deletions(-)
+ drivers/dma-buf/dma-buf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -3378,24 +3378,12 @@ static int wait_for_timeline(struct i915
- 	return 0;
- }
- 
--static int wait_for_engine(struct intel_engine_cs *engine, int timeout_ms)
--{
--	return wait_for(intel_engine_is_idle(engine), timeout_ms);
--}
--
- static int wait_for_engines(struct drm_i915_private *i915)
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -625,7 +625,7 @@ EXPORT_SYMBOL_GPL(dma_buf_detach);
+ struct sg_table *dma_buf_map_attachment(struct dma_buf_attachment *attach,
+ 					enum dma_data_direction direction)
  {
--	struct intel_engine_cs *engine;
--	enum intel_engine_id id;
--
--	for_each_engine(engine, i915, id) {
--		if (GEM_WARN_ON(wait_for_engine(engine, 50))) {
--			i915_gem_set_wedged(i915);
--			return -EIO;
--		}
--
--		GEM_BUG_ON(intel_engine_get_seqno(engine) !=
--			   intel_engine_last_submit(engine));
-+	if (wait_for(intel_engines_are_idle(i915), 50)) {
-+		DRM_ERROR("Failed to idle engines, declaring wedged!\n");
-+		i915_gem_set_wedged(i915);
-+		return -EIO;
- 	}
+-	struct sg_table *sg_table = ERR_PTR(-EINVAL);
++	struct sg_table *sg_table;
  
- 	return 0;
-@@ -4575,7 +4563,7 @@ int i915_gem_suspend(struct drm_i915_pri
- 	ret = i915_gem_wait_for_idle(dev_priv,
- 				     I915_WAIT_INTERRUPTIBLE |
- 				     I915_WAIT_LOCKED);
--	if (ret)
-+	if (ret && ret != -EIO)
- 		goto err_unlock;
+ 	might_sleep();
  
- 	assert_kernel_context_is_current(dev_priv);
-@@ -4619,11 +4607,12 @@ int i915_gem_suspend(struct drm_i915_pri
- 	 * machine in an unusable condition.
- 	 */
- 	i915_gem_sanitize(dev_priv);
--	goto out_rpm_put;
-+
-+	intel_runtime_pm_put(dev_priv);
-+	return 0;
- 
- err_unlock:
- 	mutex_unlock(&dev->struct_mutex);
--out_rpm_put:
- 	intel_runtime_pm_put(dev_priv);
- 	return ret;
- }
