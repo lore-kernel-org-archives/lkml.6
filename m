@@ -1,137 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751394AbeFDTRI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:17:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751093AbeFDTRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:17:05 -0400
-Date: Mon, 4 Jun 2018 16:16:59 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3]: perf record: enable arbitrary event names thru name=
- modifier
-Message-ID: <20180604191659.GM3397@kernel.org>
-References: <c194b060-761d-0d50-3b21-bb4ed680002d@linux.intel.com>
- <20180604075600.GA10484@krava>
- <20180604135849.GE3397@kernel.org>
- <3269ec8e-88b0-8254-6419-da1896c083df@linux.intel.com>
- <20180604142340.GJ3397@kernel.org>
- <ed38dfcc-be73-e1d7-4eb5-862468955766@linux.intel.com>
- <20180604145844.GL3397@kernel.org>
- <80a37269-e54d-0992-712a-ee72555a04d4@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80a37269-e54d-0992-712a-ee72555a04d4@linux.intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751182AbeFDTQo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:16:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40394 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeFDTQl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 15:16:41 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1F21606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+From: David Collins <collinsd@codeaurora.org>
+To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: David Collins <collinsd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
+        dianders@chromium.org
+Subject: [PATCH v6 0/2] regulator: add QCOM RPMh regulator driver
+Date: Mon,  4 Jun 2018 12:15:10 -0700
+Message-Id: <cover.1528138319.git.collinsd@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Jun 04, 2018 at 06:22:43PM +0300, Alexey Budankov escreveu:
-> On 04.06.2018 17:58, Arnaldo Carvalho de Melo wrote:
-> > Em Mon, Jun 04, 2018 at 05:51:03PM +0300, Alexey Budankov escreveu:
-> >> event names quoted there. If such cases were pointed out then they also 
-> >> could be addressed along with the unit/regression testing mentioned above.
+This patch series adds a driver and device tree binding documentation for
+PMIC regulator control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc. SoCs such as SDM845.  RPMh is a hardware block
+which contains several accelerators which are used to manage various
+hardware resources that are shared between the processors of the SoC.  The
+final hardware state of a regulator is determined within RPMh by performing
+max aggregation of the requests made by all of the processors.
 
-> > So lests stick to just the unit/regression testing, can you take a look
-> > at that?
- 
-> Sure. Is it enough to run perf record with some quoted event name to make 
-> sure it runs successfully?
+The RPMh regulator driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.  It also depends upon
+three recent regulator changes: [3], [4], and [5].
 
-I mentioned tools/perf/tests/attr/, for checking if the perf_event_attr
-was setup the way you intended, and tools/perf/tests/parse-events.c,
-which probably is what we want here, see, for instance, this cset I've
-added recently to have we testing intel_pt event parsing:
+Changes since v5 [6]:
+ - Removed unused constants
+ - Added Reviewed-by tag for DT patch 1/2
 
-$ git show b3f58c8da64bc63bd0c0a06a4e2cf258a3d20be6
-commit b3f58c8da64bc63bd0c0a06a4e2cf258a3d20be6
-Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date:   Fri May 11 11:48:54 2018 -0300
+Changes since v4 [7]:
+ - Removed support for DT properties qcom,regulator-drms-modes and
+   qcom,drms-mode-max-microamps
+ - Specified fixed DRMS high power mode minimum limits for LDO type
+   regulators
+ - Removed DRMS support for SMPS and BOB type regulators
+ - Simplified voltage caching logic
 
-    perf tests parse-events: Add intel_pt parse test
-    
-    To avoid regressions such as the one fixed by 4a35a9027f64 ("Revert
-    "perf pmu: Fix pmu events parsing rule""), where '-e intel_pt//u' got
-    broken, with this new entry in this 'perf tests' subtest, we would have
-    caught it before pushing upstream.
-    
-    Acked-by: Jiri Olsa <jolsa@kernel.org>
-    Cc: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    Cc: Andi Kleen <ak@linux.intel.com>
-    Cc: David Ahern <dsahern@gmail.com>
-    Cc: Jiri Olsa <jolsa@kernel.org>
-    Cc: Kan Liang <kan.liang@linux.intel.com>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: Wang Nan <wangnan0@huawei.com>
-    Link: https://lkml.kernel.org/n/tip-kw62fys9bwdgsp722so2ln1l@git.kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Changes since v3 [8]:
+ - Removed support for DT properties qcom,regulator-initial-microvolt
+   and qcom,headroom-microvolt
+ - Renamed DT property qcom,allowed-drms-modes to be
+   qcom,regulator-drms-modes
+ - Updated DT binding documentation to mention which common regulator
+   bindings can be used for qcom-rpmh-regulator devices
+ - Added voltage caching so that voltage requests are only sent to RPMh
+   after the regulator has been enabled at least once
+ - Changed 'voltage_selector' default value to be -ENOTRECOVERABLE to
+   interact with [5]
+ - Initialized 'enabled' to -EINVAL so that unused regulators are
+   disabled by regulator_late_cleanup()
+ - Removed rpmh_regulator_load_default_parameters() as it is no longer
+   needed
+ - Updated the mode usage description in qcom,rpmh-regulator.h
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 18b06444f230..6829dd416a99 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1309,6 +1309,14 @@ static int test__checkevent_config_cache(struct perf_evlist *evlist)
- 	return 0;
- }
- 
-+static int test__intel_pt(struct perf_evlist *evlist)
-+{
-+	struct perf_evsel *evsel = perf_evlist__first(evlist);
-+
-+	TEST_ASSERT_VAL("wrong name setting", strcmp(evsel->name, "intel_pt//u") == 0);
-+	return 0;
-+}
-+
- static int count_tracepoints(void)
- {
- 	struct dirent *events_ent;
-@@ -1637,6 +1645,11 @@ static struct evlist_test test__events[] = {
- 		.check = test__checkevent_config_cache,
- 		.id    = 51,
- 	},
-+	{
-+		.name  = "intel_pt//u",
-+		.check = test__intel_pt,
-+		.id    = 52,
-+	},
- };
- 
- static struct evlist_test test__events_pmu[] = {
+Changes since v2 [9]:
+ - Replaced '_' with '-' in device tree supply property names
+ - Renamed qcom_rpmh-regulator.c to be qcom-rpmh-regulator.c
+ - Updated various DT property names to use "microvolt" and "microamp"
+ - Moved allowed modes constraint specification out of the driver [4]
+ - Replaced rpmh_client with device pointer to match new RPMh API [1]
+ - Corrected drms mode threshold checking
+ - Initialized voltage_selector to -EINVAL when not specified in DT
+ - Added constants for PMIC regulator hardware modes
+ - Corrected type sign of mode mapping tables
+ - Made variable names for mode arrays plural
+ - Simplified Kconfig depends on
+ - Removed unnecessary constants and struct fields
+ - Added some descriptive comments
 
-See also this one:
+Changes since v1 [10]:
+ - Addressed review feedback from Doug, Mark, and Stephen
+ - Replaced set_voltage()/get_voltage() callbacks with set_voltage_sel()/
+   get_voltage_sel()
+ - Added set_bypass()/get_bypass() callbacks for BOB pass-through mode
+   control
+ - Removed top-level PMIC data structures
+ - Removed initialization variables from structs and passed them as
+   function parameters
+ - Removed various comments and error messages
+ - Simplified mode handling
+ - Refactored per-PMIC rpmh-regulator data specification
+ - Simplified probe function
+ - Moved header into DT patch
+ - Removed redundant property listings from DT binding documentation
 
-static int
-test__checkevent_breakpoint_len_rw_modifier(struct perf_evlist *evlist)
-{
-        struct perf_evsel *evsel = perf_evlist__first(evlist);
+[1]: https://lkml.org/lkml/2018/5/9/729
+[2]: https://lkml.org/lkml/2018/4/10/714
+[3]: https://lkml.org/lkml/2018/4/18/556
+[4]: https://lkml.org/lkml/2018/5/11/696
+[5]: https://lkml.org/lkml/2018/5/15/1005
+[6]: https://lkml.org/lkml/2018/6/1/895
+[7]: https://lkml.org/lkml/2018/5/22/1168
+[8]: https://lkml.org/lkml/2018/5/11/701
+[9]: https://lkml.org/lkml/2018/4/13/687
+[10]: https://lkml.org/lkml/2018/3/16/1431
 
-        TEST_ASSERT_VAL("wrong exclude_user", !evsel->attr.exclude_user);
-        TEST_ASSERT_VAL("wrong exclude_kernel", evsel->attr.exclude_kernel);
-        TEST_ASSERT_VAL("wrong exclude_hv", evsel->attr.exclude_hv);
-        TEST_ASSERT_VAL("wrong precise_ip", !evsel->attr.precise_ip);
+David Collins (2):
+  regulator: dt-bindings: add QCOM RPMh regulator bindings
+  regulator: add QCOM RPMh regulator driver
 
-        return test__checkevent_breakpoint_rw(evlist);
-}
-        {
-                .name  = "mem:0/4:rw:u",
-                .check = test__checkevent_breakpoint_len_rw_modifier,
-                .id    = 44
-        },
+ .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/qcom-rpmh-regulator.c            | 767 +++++++++++++++++++++
+ .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +
+ 5 files changed, 973 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+ create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
+ create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
 
-
-I.e. have as many TEST_ASSERT_VAL as you need, checking how parsing the
-event name ends up setting up the evsel, evlist and perf_event_attr.
-
-- Arnaldo
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
