@@ -1,38 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753624AbeFDOSt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:18:49 -0400
-Received: from ozlabs.org ([203.11.71.1]:53751 "EHLO ozlabs.org"
+        id S1753696AbeFDOTR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:19:17 -0400
+Received: from mga14.intel.com ([192.55.52.115]:13368 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753163AbeFDOKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:10:32 -0400
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 92c8c16f345759e87c5d5b771d438ff18ec7593f
-In-Reply-To: <20180406011720.7728-2-mgreer@animalcreek.com>
-To: Mark Greer <mgreer@animalcreek.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Remi Machet <rmachet@nvidia.com>,
-        Dale Farnsworth <dale@farnsworth.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Mark Greer <mgreer@animalcreek.com>
-Subject: Re: [1/5] powerpc/embedded6xx: Remove C2K board support
-Message-Id: <40zxfb5H0xz9s2S@ozlabs.org>
-Date: Tue,  5 Jun 2018 00:10:31 +1000 (AEST)
+        id S1753512AbeFDOTQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:19:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="229773580"
+Subject: Re: [PATCH v3]: perf record: enable arbitrary event names thru name=
+ modifier
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <c194b060-761d-0d50-3b21-bb4ed680002d@linux.intel.com>
+ <20180604075600.GA10484@krava> <20180604135849.GE3397@kernel.org>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Message-ID: <3269ec8e-88b0-8254-6419-da1896c083df@linux.intel.com>
+Date: Mon, 4 Jun 2018 17:19:11 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180604135849.GE3397@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-06 at 01:17:16 UTC, Mark Greer wrote:
-> The C2K platform appears to be orphaned so remove code supporting it.
+Hi,
+
+On 04.06.2018 16:58, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Jun 04, 2018 at 09:56:02AM +0200, Jiri Olsa escreveu:
+>> On Mon, Jun 04, 2018 at 09:50:56AM +0300, Alexey Budankov wrote:
+>>> Enable complex event names containing [.:=,] symbols to be encoded into Perf 
+>>> trace using name= modifier e.g. like this:
 > 
-> CC: Remi Machet <rmachet@nvidia.com>
-> Signed-off-by: Mark Greer <mgreer@animalcreek.com>
-> Acked-by: Remi Machet <remi@machet.us>
-> Signed-off-by: Mark Greer <mgreer@animalcreek.com>
+>>> perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
+>>> 		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
+> 
+>>> Below is how it looks like in the report output. Please note explicit escaped 
+>>> quoting at cmdline string in the header so that thestring can be directly reused
+>>> for another collection in shell:
+> 
+> Applied, but there are other places where we show event names, such as:
+> 
+> [root@jouet ~]# perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',period=0x3567e0,event=0x3c,cmask=0x1/Duk
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 1.599 MB perf.data (704 samples) ]
+> 
+> [root@jouet ~]# perf evlist
+> OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM
+> [root@jouet ~]# perf evlist -v
+> OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM: type: 4, size: 112, config: 0x100003c, { sample_period, sample_freq }: 3500000, sample_type: IP|TID|TIME|CPU, disabled: 1, inherit: 1, pinned: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1
+> [root@jouet ~]# 
+> 
+> That I used to check if the period, etc were correctly set, etc. Perhaps
+> we should add that \'\' there as well?
 
-Series applied to powerpc next, thanks.
+Like this?
 
-https://git.kernel.org/powerpc/c/92c8c16f345759e87c5d5b771d438f
+name: 'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM', type: 4, size: 112, config: 0x100003c, { sample_period, sample_freq }: 3500000, sample_type: IP|TID|TIME|CPU, disabled: 1, inherit: 1, pinned: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1
 
-cheers
+Thanks,
+Alexey
+
+> 
+> Also please consider adding an entry to tools/perf/tests/attr/ to make
+> sure this is checked everytime we run 'perf test attr' or plain 'perf
+> test'.
+> 
+> Those can be followup patches, so I'm applying this one, thanks.
+> 
+> - Arnaldo
+> 
