@@ -1,108 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751552AbeFDAIS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 20:08:18 -0400
-Received: from mx.socionext.com ([202.248.49.38]:33358 "EHLO mx.socionext.com"
+        id S1751656AbeFDAOm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 20:14:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39254 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751150AbeFDAIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 20:08:17 -0400
-From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To: "'Masahiro Yamada'" <yamada.masahiro@socionext.com>,
-        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?=
-        <suzuki.katsuhiro@socionext.com>
-Cc: "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        <linux-media@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com> <20180530090946.1635-7-suzuki.katsuhiro@socionext.com> <CAK7LNAS8JT8+MAuH+eYUJ3Xa4r07=ecJS0E=SX-tgmV7db_FKw@mail.gmail.com>
-In-Reply-To: <CAK7LNAS8JT8+MAuH+eYUJ3Xa4r07=ecJS0E=SX-tgmV7db_FKw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] media: uniphier: add common module of DVB adapter drivers
-Date: Mon, 4 Jun 2018 09:08:11 +0900
-Message-ID: <005d01d3fb98$20711900$61534b00$@socionext.com>
+        id S1751232AbeFDAOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 20:14:41 -0400
+From: NeilBrown <neil@brown.name>
+To: Abdun Nihaal <abdun.nihaal@gmail.com>, gregkh@linuxfoundation.org
+Date: Mon, 04 Jun 2018 10:13:58 +1000
+Cc: matthias.bgg@gmail.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Abdun Nihaal <abdun.nihaal@gmail.com>
+Subject: Re: [PATCH 0/7] staging: mt7621-pci: Fix coding style issues
+In-Reply-To: <cover.1528040188.git.abdun.nihaal@gmail.com>
+References: <cover.1528040188.git.abdun.nihaal@gmail.com>
+Message-ID: <877enfqugp.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHT9/X2UbYENkxCrkO9sDWPady0aKRMS5uAgALyEOA=
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yamada-san,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Sent: Saturday, June 2, 2018 9:00 PM
-> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
-> linux-media@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
-> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel
-> <linux-arm-kernel@lists.infradead.org>; Linux Kernel Mailing List
-> <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH 6/8] media: uniphier: add common module of DVB adapter drivers
-> 
-> 2018-05-30 18:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> > This patch adds common module for UniPhier DVB adapter drivers
-> > that equipments tuners and demod that connected by I2C and
-> > UniPhier demux.
-> >
-> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> > ---
-> >  drivers/media/platform/uniphier/Makefile      |  5 ++
-> >  drivers/media/platform/uniphier/hsc-core.c    |  8 ---
-> >  .../platform/uniphier/uniphier-adapter.c      | 54 +++++++++++++++++++
-> >  .../platform/uniphier/uniphier-adapter.h      | 42 +++++++++++++++
-> >  4 files changed, 101 insertions(+), 8 deletions(-)
-> >  create mode 100644 drivers/media/platform/uniphier/uniphier-adapter.c
-> >  create mode 100644 drivers/media/platform/uniphier/uniphier-adapter.h
-> >
-> > diff --git a/drivers/media/platform/uniphier/Makefile
-> b/drivers/media/platform/uniphier/Makefile
-> > index 0622f04d9e68..9e75ad081b77 100644
-> > --- a/drivers/media/platform/uniphier/Makefile
-> > +++ b/drivers/media/platform/uniphier/Makefile
-> > @@ -3,3 +3,8 @@ uniphier-dvb-y += hsc-core.o hsc-ucode.o hsc-css.o hsc-ts.o
-> hsc-dma.o
-> >  uniphier-dvb-$(CONFIG_DVB_UNIPHIER_LD11) += hsc-ld11.o
-> >
-> >  obj-$(CONFIG_DVB_UNIPHIER) += uniphier-dvb.o
-> > +
-> > +ccflags-y += -Idrivers/media/dvb-frontends/
-> > +ccflags-y += -Idrivers/media/tuners/
-> 
-> 
-> Please add $(srctree)/ like
-> 
-> ccflags-y += -I$(srctree)/drivers/media/dvb-frontends/
-> ccflags-y += -I$(srctree)/drivers/media/tuners/
-> 
-> 
-> Currently, it works $(srctree)/,
-> but I really want to rip off the build system hack.
+On Sun, Jun 03 2018, Abdun Nihaal wrote:
 
-Thanks, I agree with your opinion, but other Makefiles in drivers/media use 
-same hack. I don't know other way to include headers of demodulators and 
-tuners...
+> This patchset fixes the following set of coding style=20
+> issues found using checkpatch.
+>
+> ERROR: space prohibited after that open parenthesis '('
+> ERROR: trailing whitespace
+> ERROR: space required before the open parenthesis '('
+> ERROR: space required after that ',' (ctx:VxV)
+> ERROR: spaces required around that '=3D' (ctx:VxW)
+> ERROR: spaces required around that '=3D=3D' (ctx:WxV)
+> ERROR: that open brace { should be on the previous line
 
-Do you have any good ideas?
+Hi,
+ thanks for contributing these, how ever some of these issues have
+ already been address (not all).  I think you must be working from an
+ old try.
+ When submitting patches to drives/staging, they should be based on
+ the staging-next branch of
+    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+
+ Also, I'd suggest leaving linux-arm-kernel and linux-mediatek off the
+ cc list.  They are unlikely to be interested until the driver is ready
+ to be moved out of drivers/staging.
+
+Thanks,
+NeilBrown
 
 
-Regards,
---
-Katsuhiro Suzuki
+>
+> Abdun Nihaal (7):
+>   staging: mt7621-pci: Remove space after open parenthesis
+>   staging: mt7621-pci: remove trailing whitespace
+>   staging: mt7621-pci: add space before open parenthesis
+>   staging: mt7621-pci: add space after comma symbol
+>   staging: mt7621-pci: add spaces around equal symbol
+>   staging: mt7621-pci: add space after '=3D=3D' symbol
+>   staging: mt7621-pci: fix coding style error
+>
+>  drivers/staging/mt7621-pci/pci-mt7621.c | 114 ++++++++++++------------
+>  1 file changed, 56 insertions(+), 58 deletions(-)
+>
+> --=20
+> 2.17.0
 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> 
-> 
-> 
-> 
-> --
-> Best Regards
-> Masahiro Yamada
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsUhEYACgkQOeye3VZi
+gbmqeQ//WA32pYuVChludSOQq2pmdfEHZLVBJoxzDx2ew0IVjjXOtSCx3dEig7qI
+pcgiQd9ER1zhBBt/9Y4Fxu4iWA20CA8sQcQJqbmfMIz1rf9yJOBag0hilnYH8SgU
+ccl9hmi+H1F4KPjB53zxFle5okyfiQPlUPzcdGecLg68MPjsNpQdr/XW2LgFwaMV
+J4PqwkjiG9tVWzhHYpNJIkHuW6tk5mgEHkiZFQBTUWW2IX4f0O5Spbju5d1Obc3e
+GBjyXap4xcKMI9zzbYPQet6VAb6Nm5XxuORJ5TZM5KzxTwDv3sJ9QYazynocn1zM
+h1vke1vueXrFo0RlELfWTn5kuwjVOWEdnzlNZnboKTOVV3F0xtR/QdDZuL9mJzbJ
+eds9Jpi2hOtHwTD2jZI1oz10kChWcW9k03kDOWmLUzRLnGGdqofhR8hE0xEj/OcF
+kedW54bI11Ol2xRxaOYTKGViu0wEKYH9devxw4qgH+u2mLHsCYNoZWzUnF8RLiIC
+k4bI4oKxTOsTiBJk9ZmGSU325wORyydScZQo++lJpU20gteUVXWisMsbcXJAW6y4
+1c3VzajAuZH/ipMR4WEiMZX2T9ur9u0YxnQtGnxgpsXkqMeDvqEeQdC/JyuQmHT8
+P9SmOV+eTkItLdq7nt13rAVmj2qgWnlkRQLFwMdZe0c6Zu/8sRw=
+=ysyz
+-----END PGP SIGNATURE-----
+--=-=-=--
