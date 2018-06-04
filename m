@@ -1,84 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752448AbeFDMIC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:08:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47578 "EHLO mail.bootlin.com"
+        id S1752517AbeFDMK4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:10:56 -0400
+Received: from mout.gmx.net ([212.227.15.18]:37991 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751354AbeFDMIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:08:01 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] rtc: mrst: switch to devm_rtc_allocate_device
-Date: Mon,  4 Jun 2018 14:07:42 +0200
-Message-Id: <20180604120742.6084-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.1
+        id S1750868AbeFDMKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:10:55 -0400
+Date: Mon, 4 Jun 2018 14:09:41 +0200 (CEST)
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+X-X-Sender: lyakh@axis700.grange
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Olivier BRAUN <olivier.braun@stereolabs.com>,
+        Troy Kisky <troy.kisky@boundarydevices.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 6/6] media: uvcvideo: Move decode processing to process
+ context
+In-Reply-To: <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
+Message-ID: <alpine.DEB.2.20.1806041407450.23116@axis700.grange>
+References: <cover.3cb9065dabdf5d455da508fb4109201e626d5ee7.1522168131.git-series.kieran.bingham@ideasonboard.com> <cae511f90085701e7093ce39dc8dabf8fc16b844.1522168131.git-series.kieran.bingham@ideasonboard.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Provags-ID: V03:K1:VEdFm2pV6/eLtkgvfFjGjSECJc1GS4AvacdZwdNJVrqtEJa4hZ9
+ IH9tn0oo0vONTJzIzHGOcmoVEM4d/gSgRzZGYNvZjSwA4C0s8DSTML14QSsDlQrtu/65ep3
+ Vf1TN2UcFVdcTdRrOt8Bo8RyzOZCvqCHksJnUGUfX45IyUtjUOTH7240TIRs9ZvfdD5T7HQ
+ pIiwO5sOqMY/QCGOtxQsg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:e+EBR5ekqrU=:NFM8asTaXOZ4W7BOKQS27C
+ Wtd7LEIgKFz15ESRrsulD3qma9MJjgOKLNf0JX8y4/XTVYYhsiJc/udil0FHXUTpG8lZyIhzB
+ kA2IlyK/1bN4hSg6vuG8SsZcy48OgrnBS/zLFRNQrjeSelSNY7bwv6iufapTxJsZaKTeZ4+Do
+ lq7y7ma5JQK6d2GbsLwA/hhBahC9CPrYQjokbjNM3khwt3+x4scI5aTxiPYl+I8fDGr+0PNjx
+ dgV9uLvOF1NUgL+myR+WouzjzmIy7qT+FmgvcEmaZ4CVZ8zflsgJGTc6LueEIbXdeDUe6DSJo
+ g+4vbkvQh0YVhuRrNZZQkBNbRoSMhUsEnbabh6K9SpFBaVl742TzeTJjnhpiLaa38QzTZpQNA
+ hkgRzRgt+Bm8DSePSMWO3i9po5KcW/XDlTnR0AU0Mb4k6hopVL9PNmfe3ZGYKhYU7wBjawMwS
+ u9hrx1i6Kqv8n6F7PYxiZ4oiMAYHl+4tivBf+0BamC0TyxTVjEwR0YrnjCdfE6EJo5DAJZcG4
+ l8G+aPP+eBfiMlDAQlNLZuAq5Rl84CBXjOtMxdOWlnJWSnp9ApUv+tK71fnEJRaRjEw6Dmjlz
+ IsMRW3A7uyDjGJWamuuFucx5cXrU+GQpaTYYi3bX4axoC/at24Dqh992Hh621irAb32+qxGlW
+ ykQAc7vLn8pB+awoXTeOAEgXvS5xJO91WI0iVqbrR1sO/JE2KdrtNkvvcMCBLW5+kg6kbhCPe
+ UeJ0cyNbAS4uXjZD/Z8NBYRGBLg9vVm08LJAGvrt49MjcpR6NRdarpmf0UZcCX33Ect2uYO4x
+ lMihgfa
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to devm_rtc_allocate_device/rtc_device_unregister to allow for
-further improvements.
+Hi Kieran,
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-mrst.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+I've got a question:
 
-diff --git a/drivers/rtc/rtc-mrst.c b/drivers/rtc/rtc-mrst.c
-index fcb9de5218b2..a3c528f7e833 100644
---- a/drivers/rtc/rtc-mrst.c
-+++ b/drivers/rtc/rtc-mrst.c
-@@ -341,12 +341,11 @@ static int vrtc_mrst_do_probe(struct device *dev, struct resource *iomem,
- 	mrst_rtc.dev = dev;
- 	dev_set_drvdata(dev, &mrst_rtc);
- 
--	mrst_rtc.rtc = rtc_device_register(driver_name, dev,
--				&mrst_rtc_ops, THIS_MODULE);
--	if (IS_ERR(mrst_rtc.rtc)) {
--		retval = PTR_ERR(mrst_rtc.rtc);
--		goto cleanup0;
--	}
-+	mrst_rtc.rtc = devm_rtc_allocate_device(dev);
-+	if (IS_ERR(mrst_rtc.rtc))
-+		return PTR_ERR(mrst_rtc.rtc);
-+
-+	mrst_rtc.rtc->ops = &mrst_rtc_ops;
- 
- 	rename_region(iomem, dev_name(&mrst_rtc.rtc->dev));
- 
-@@ -365,14 +364,21 @@ static int vrtc_mrst_do_probe(struct device *dev, struct resource *iomem,
- 		if (retval < 0) {
- 			dev_dbg(dev, "IRQ %d is already in use, err %d\n",
- 				rtc_irq, retval);
--			goto cleanup1;
-+			goto cleanup0;
- 		}
- 	}
-+
-+	retval = rtc_register_device(mrst_rtc.rtc);
-+	if (retval) {
-+		retval = PTR_ERR(mrst_rtc.rtc);
-+		goto cleanup1;
-+	}
-+
- 	dev_dbg(dev, "initialised\n");
- 	return 0;
- 
- cleanup1:
--	rtc_device_unregister(mrst_rtc.rtc);
-+	free_irq(rtc_irq, mrst->rtc);
- cleanup0:
- 	mrst_rtc.dev = NULL;
- 	release_mem_region(iomem->start, resource_size(iomem));
-@@ -397,7 +403,6 @@ static void rtc_mrst_do_remove(struct device *dev)
- 	if (mrst->irq)
- 		free_irq(mrst->irq, mrst->rtc);
- 
--	rtc_device_unregister(mrst->rtc);
- 	mrst->rtc = NULL;
- 
- 	iomem = mrst->iomem;
--- 
-2.17.1
+On Tue, 27 Mar 2018, Kieran Bingham wrote:
+
+> Newer high definition cameras, and cameras with multiple lenses such as
+> the range of stereo-vision cameras now available have ever increasing
+> data rates.
+> 
+> The inclusion of a variable length packet header in URB packets mean
+> that we must memcpy the frame data out to our destination 'manually'.
+> This can result in data rates of up to 2 gigabits per second being
+> processed.
+> 
+> To improve efficiency, and maximise throughput, handle the URB decode
+> processing through a work queue to move it from interrupt context, and
+> allow multiple processors to work on URBs in parallel.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> ---
+> v2:
+>  - Lock full critical section of usb_submit_urb()
+> 
+> v3:
+>  - Fix race on submitting uvc_video_decode_data_work() to work queue.
+>  - Rename uvc_decode_op -> uvc_copy_op (Generic to encode/decode)
+>  - Rename decodes -> copy_operations
+>  - Don't queue work if there is no async task
+>  - obtain copy op structure directly in uvc_video_decode_data()
+>  - uvc_video_decode_data_work() -> uvc_video_copy_data_work()
+> 
+> v4:
+>  - Provide for_each_uvc_urb()
+>  - Simplify fix for shutdown race to flush queue before freeing URBs
+>  - Rebase to v4.16-rc4 (linux-media/master) adjusting for metadata
+>    conflicts.
+> 
+>  drivers/media/usb/uvc/uvc_video.c | 107 ++++++++++++++++++++++++-------
+>  drivers/media/usb/uvc/uvcvideo.h  |  28 ++++++++-
+>  2 files changed, 111 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index 7dd0dcb457f3..a62e8caf367c 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -1042,21 +1042,54 @@ static int uvc_video_decode_start(struct uvc_streaming *stream,
+>  	return data[0];
+>  }
+>  
+> -static void uvc_video_decode_data(struct uvc_streaming *stream,
+> +/*
+> + * uvc_video_decode_data_work: Asynchronous memcpy processing
+> + *
+> + * Perform memcpy tasks in process context, with completion handlers
+> + * to return the URB, and buffer handles.
+> + */
+> +static void uvc_video_copy_data_work(struct work_struct *work)
+> +{
+> +	struct uvc_urb *uvc_urb = container_of(work, struct uvc_urb, work);
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	for (i = 0; i < uvc_urb->async_operations; i++) {
+> +		struct uvc_copy_op *op = &uvc_urb->copy_operations[i];
+> +
+> +		memcpy(op->dst, op->src, op->len);
+> +
+> +		/* Release reference taken on this buffer */
+> +		uvc_queue_buffer_release(op->buf);
+> +	}
+> +
+> +	ret = usb_submit_urb(uvc_urb->urb, GFP_ATOMIC);
+
+Does this still have to be ATOMIC now that it's called from a work queue 
+context?
+
+> +	if (ret < 0)
+> +		uvc_printk(KERN_ERR, "Failed to resubmit video URB (%d).\n",
+> +			   ret);
+> +}
+
+[snip]
+
+Thannks
+Guennadi
