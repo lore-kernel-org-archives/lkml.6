@@ -1,52 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751233AbeFDUyw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:54:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47422 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750915AbeFDUyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:54:51 -0400
-Date: Mon, 4 Jun 2018 16:54:44 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Steven Rostedt <rostedt@goodmis.org>
-cc: Ingo Molnar <mingo@redhat.com>, Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] branch-check: fix long->int truncation when profiling
- branches
-In-Reply-To: <20180604165024.3be78887@gandalf.local.home>
-Message-ID: <alpine.LRH.2.02.1806041653260.18196@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180528155432.2864616-1-arnd@arndb.de> <alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com> <20180604165024.3be78887@gandalf.local.home>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        id S1751341AbeFDUzF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:55:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58690 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751267AbeFDUzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 16:55:03 -0400
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: zohar@linux.vnet.ibm.com, paul@paul-moore.com,
+        linux-integrity@vger.kernel.org, linux-audit@redhat.com
+Cc: sgrubb@redhat.com, linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/4] IMA: work on audit records produced by IMA
+Date: Mon,  4 Jun 2018 16:54:51 -0400
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18060420-8235-0000-0000-00000DA97C40
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009129; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01042340; UDB=6.00533731; IPR=6.00821470;
+ MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 20:55:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060420-8236-0000-0000-00004156FE6B
+Message-Id: <20180604205455.2325754-1-stefanb@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=901 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040238
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series of patches cleans up some usages of the audit
+subsystem's API by IMA. We also introduce a new record type
+that IMA creates while parsing policy rules.
 
+   Stefan
 
-On Mon, 4 Jun 2018, Steven Rostedt wrote:
+v2->v3:
+ - reworked patch 4; pass current->audit_context rather than NULL
 
-> On Wed, 30 May 2018 08:19:22 -0400 (EDT)
-> Mikulas Patocka <mpatocka@redhat.com> wrote:
-> 
-> > The function __builtin_expect returns long type (see the gcc
-> > documentation), and so do macros likely and unlikely. Unfortunatelly, when
-> > CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
-> > unlikely expand to __branch_check__ and __branch_check__ truncates the
-> 
-> Nice catch.
-> 
-> > long type to int. This unintended truncation may cause bugs in various
-> > kernel code (we found a bug in dm-writecache because of it), so it's
-> 
-> I'm curious to what that bug was.
+v1->v2:
+ - dropped several patches that extended existing messages with missing
+   fields
+ - Using audit_log_task_info() for new record type in last patch
+ - rebased on security-next; new message type is now 1807
 
-printk("%ld", writecache_has_error(wc))
+Stefan Berger (4):
+  ima: Call audit_log_string() rather than logging it untrusted
+  ima: Use audit_log_format() rather than audit_log_string()
+  ima: Do not audit if CONFIG_INTEGRITY_AUDIT is not set
+  ima: Differentiate auditing policy rules from "audit" actions
 
-... and writecache_has_error was defined as
-#define writecache_has_error(wc)	(unlikely(READ_ONCE((wc)->error)))
+ include/uapi/linux/audit.h           |  1 +
+ security/integrity/ima/Kconfig       |  1 +
+ security/integrity/ima/ima_policy.c  |  9 ++++++---
+ security/integrity/integrity.h       | 15 +++++++++++++++
+ security/integrity/integrity_audit.c |  6 +-----
+ 5 files changed, 24 insertions(+), 8 deletions(-)
 
-Mikulas
+-- 
+2.13.6
