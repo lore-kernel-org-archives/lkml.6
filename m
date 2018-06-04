@@ -1,232 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752115AbeFDIMf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 04:12:35 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9828 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752082AbeFDIMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 04:12:34 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="45066049"
-Date: Mon, 4 Jun 2018 16:12:31 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: kernel test robot <xiaolong.ye@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, lkp@01.org
-Subject: Re: [LKP] [lkp-robot] [tracing/x86] 1c758a2202:
- aim9.disk_rr.ops_per_sec -12.0% regression
-Message-ID: <20180604081231.GC15961@intel.com>
-References: <20180528113419.GE9904@yexl-desktop>
- <20180601174319.52646440@vmware.local.home>
+        id S1752144AbeFDIMq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 04:12:46 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44437 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752082AbeFDIMn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 04:12:43 -0400
+X-Google-Smtp-Source: ADUXVKL39D0DKFjxhHQWVr7T6hMvX7gbdWXVyD0ZiXjDogmT8shSb3qPHQQZl4h4kGVUnsWVea0ALJ6L+bVde9n7T/Q=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180601174319.52646440@vmware.local.home>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Mon, 4 Jun 2018 10:12:41 +0200
+Message-ID: <CA+icZUVez5tdR61_0y-jcojFNuzFskEhHqfPCsd3PBUJTgmRBg@mail.gmail.com>
+Subject: [2/3] x86/build: use -std=gnu89 for proper extern inline semantics
+To: hpa@zytor.com
+Cc: Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>, tstellar@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 05:43:19PM -0400, Steven Rostedt wrote:
-> On Mon, 28 May 2018 19:34:19 +0800
-> kernel test robot <xiaolong.ye@intel.com> wrote:
-> 
-> > Greeting,
-> > 
-> > FYI, we noticed a -12.0% regression of aim9.disk_rr.ops_per_sec due to commit:
-> > 
-> > 
-> > commit: 1c758a2202a6b4624d0703013a2c6cfa6e7455aa ("tracing/x86: Update syscall trace events to handle new prefixed syscall func names")
-> 
-> How can this commit cause a run time regression. It changes code
-> in an __init call (that gets removed after boot)??
+[ CC me I'am not subscribed to LKML and linux-kbuild ]
+[ Unsure if this the complete CC list of the original posting [0] ]
 
-Sorry for the noise.
+Hi,
 
-We actually enabled the syscall trace events for a duration of 10s
-during many tests to hopefully capture syscall "noise", i.e. does some
-syscall start to take more time etc. for a workload?
+I am discovering clang's compiler flags as HPA writes in [0]...
 
-We failed to notice this monitor has stopped running due to commit
-d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based
-sys_*() to  __x64_sys_*()") as you pointed out in your commit's
-changelog. And with your fix commit, syscall trace event starts to work
-again, and I believe it is the 10s trace that caused some overhead
-during the test that it triggered a bisect and ultimately sent out this
-misleading report.
+"-fgnu-inlines would be a better option.
+
+We could also simply #define inline inline __attribute__((gnu_inline))"
+
+[1] says on clang-7 compiler-flags...
+
+Generate output compatible with the standard GNU Objective-C runtime
+
+-fgnu89-inline, -fno-gnu89-inline
+
+...and...
+
+Place each function in its own section (ELF Only)
+
+-fgnu-inline-asm, -fno-gnu-inline-asm
+
+Should that be '-fgnu89-inline'?
+You happen to know what '-fgnu-inline-asm' does and it is an option?
+
+This what Linux v4.17 says about inline defines...
+
+[ include/linux/compiler-gcc.h ]
+...
+/*
+ * Force always-inline if the user requests it so via the .config,
+ * or if gcc is too old.
+ * GCC does not warn about unused static inline functions for
+ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+ * directives.  Suppress the warning in clang as well by using "unused"
+ * function attribute, which is redundant but not harmful for gcc.
+ */
+#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||                \
+    !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+#define inline inline           __attribute__((always_inline,unused)) notrace
+#define __inline__ __inline__   __attribute__((always_inline,unused)) notrace
+#define __inline __inline       __attribute__((always_inline,unused)) notrace
+#else
+/* A lot of inline functions can cause havoc with function tracing */
+#define inline inline           __attribute__((unused)) notrace
+#define __inline__ __inline__   __attribute__((unused)) notrace
+#define __inline __inline       __attribute__((unused)) notrace
+#endif
+...
+
+[ include/linux/compiler_types.h ]
+...
+/*
+ * Allow us to avoid 'defined but not used' warnings on functions and data,
+ * as well as force them to be emitted to the assembly file.
+ *
+ * As of gcc 3.4, static functions that are not marked with attribute((used))
+ * may be elided from the assembly file.  As of gcc 3.4, static data not so
+ * marked will not be elided, but this may change in a future gcc version.
+ *
+ * NOTE: Because distributions shipped with a backported unit-at-a-time
+ * compiler in gcc 3.3, we must define __used to be __attribute__((used))
+ * for gcc >=3.3 instead of 3.4.
+ *
+ * In prior versions of gcc, such functions and data would be emitted, but
+ * would be warned about except with attribute((unused)).
+ *
+ * Mark functions that are referenced only in inline assembly as __used so
+ * the code is emitted even though it appears to be unreferenced.
+ */
+#ifndef __used
+# define __used                 /* unimplemented */
+#endif
+
+#ifndef __maybe_unused
+# define __maybe_unused         /* unimplemented */
+#endif
+
+#ifndef __always_unused
+# define __always_unused        /* unimplemented */
+#endif
+
+#ifndef noinline
+#define noinline
+#endif
+
+/*
+ * Rather then using noinline to prevent stack consumption, use
+ * noinline_for_stack instead.  For documentation reasons.
+ */
+#define noinline_for_stack noinline
+
+#ifndef __always_inline
+#define __always_inline inline
+#endif
+...
 
 Regards,
-Aaron
+- Sedat -
 
-> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > 
-> > in testcase: aim9
-> > on test machine: 144 threads Intel(R) Xeon(R) CPU E7-8890 v3 @ 2.50GHz with 512G memory
-> > with following parameters:
-> > 
-> > 	testtime: 300s
-> > 	test: disk_rr
-> > 	cpufreq_governor: performance
-> > 
-> > test-description: Suite IX is the "AIM Independent Resource Benchmark:" the famous synthetic benchmark.
-> > test-url: https://sourceforge.net/projects/aimbench/files/aim-suite9/
-> > 
-> > 
-> > Details are as below:
-> > -------------------------------------------------------------------------------------------------->  
-> > =========================================================================================
-> > compiler/cpufreq_governor/kconfig/rootfs/tbox_group/test/testcase/testtime:
-> >   gcc-7/performance/x86_64-rhel-7.2/debian-x86_64-2016-08-31.cgz/lkp-hsx04/disk_rr/aim9/300s
-> > 
-> > commit: 
-> >   1cdae042fc ("tracing: Add missing forward declaration")
-> >   1c758a2202 ("tracing/x86: Update syscall trace events to handle new prefixed syscall func names")
-> > 
-> > 1cdae042fc63dd98 1c758a2202a6b4624d0703013a 
-> > ---------------- -------------------------- 
-> >          %stddev     %change         %stddev
-> >              \          |                \  
-> >     633310           -12.0%     557268        aim9.disk_rr.ops_per_sec
-> >     244.24            +2.2%     249.57        aim9.time.system_time
-> >      55.76            -9.6%      50.43        aim9.time.user_time
-> >       8135 ± 39%     +73.2%      14091 ± 33%  numa-meminfo.node0.Shmem
-> >       1328           -11.9%       1171        pmeter.performance_per_watt
-> >     450606 ±  3%      -9.5%     407878 ±  5%  meminfo.Committed_AS
-> >     406.75 ±173%    +300.1%       1627        meminfo.Mlocked
-> >      20124 ±  4%      +8.4%      21819 ±  6%  softirqs.NET_RX
-> >    8237636 ±  6%     -15.4%    6965294 ±  2%  softirqs.RCU
-> >       2033 ± 39%     +73.0%       3518 ± 33%  numa-vmstat.node0.nr_shmem
-> >      21.25 ±173%    +378.8%     101.75 ± 27%  numa-vmstat.node2.nr_mlock
-> >      21.25 ±173%    +378.8%     101.75 ± 27%  numa-vmstat.node3.nr_mlock
-> >  9.408e+08 ±  6%     +53.3%  1.442e+09 ± 20%  perf-stat.dTLB-load-misses
-> >      47.39 ± 17%     -10.4       36.99 ±  8%  perf-stat.iTLB-load-miss-rate%
-> >       1279 ± 27%     +63.4%       2089 ± 21%  perf-stat.instructions-per-iTLB-miss
-> >      46.73 ±  5%      -5.4       41.33 ±  5%  perf-stat.node-store-miss-rate%
-> >      19240            +1.2%      19474        proc-vmstat.nr_indirectly_reclaimable
-> >      18868            +4.0%      19628        proc-vmstat.nr_slab_reclaimable
-> >   48395423           -11.8%   42700849        proc-vmstat.numa_hit
-> >   48314997           -11.8%   42620296        proc-vmstat.numa_local
-> >    3153408           -12.0%    2775642        proc-vmstat.pgactivate
-> >   48365477           -11.8%   42678780        proc-vmstat.pgfree
-> >       3060           +38.9%       4250        slabinfo.ftrace_event_field.active_objs
-> >       3060           +38.9%       4250        slabinfo.ftrace_event_field.num_objs
-> >       2748 ±  3%      -8.9%       2502 ±  3%  slabinfo.sighand_cache.active_objs
-> >       2763 ±  3%      -8.9%       2517 ±  3%  slabinfo.sighand_cache.num_objs
-> >       4125 ±  4%     -10.3%       3700 ±  2%  slabinfo.signal_cache.active_objs
-> >       4125 ±  4%     -10.3%       3700 ±  2%  slabinfo.signal_cache.num_objs
-> >       1104           +57.3%       1736        slabinfo.trace_event_file.active_objs
-> >       1104           +57.3%       1736        slabinfo.trace_event_file.num_objs
-> >       0.78 ±  4%      -0.1        0.67 ±  5%  perf-profile.calltrace.cycles-pp.rcu_process_callbacks.__softirqentry_text_start.irq_exit.smp_apic_timer_interrupt.apic_timer_interrupt
-> >       2.10 ±  2%      -0.1        2.00        perf-profile.calltrace.cycles-pp.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt.smp_apic_timer_interrupt.apic_timer_interrupt
-> >       1.89            -0.1        1.79        perf-profile.calltrace.cycles-pp.tick_sched_handle.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt.smp_apic_timer_interrupt
-> >       1.71 ±  2%      -0.1        1.60        perf-profile.calltrace.cycles-pp.update_process_times.tick_sched_handle.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt
-> >       0.53 ± 12%      -0.1        0.44 ±  4%  perf-profile.children.cycles-pp._raw_spin_lock_irqsave
-> >       0.17 ±  7%      -0.0        0.15 ±  4%  perf-profile.children.cycles-pp.leave_mm
-> >       0.09 ±  8%      -0.0        0.08 ± 11%  perf-profile.children.cycles-pp.cpu_load_update_active
-> >       0.17 ±  8%      +0.0        0.19 ±  4%  perf-profile.children.cycles-pp.irq_work_needs_cpu
-> >       0.43 ± 14%      -0.1        0.38 ±  3%  perf-profile.self.cycles-pp._raw_spin_lock_irqsave
-> >       0.17 ±  7%      -0.0        0.15 ±  4%  perf-profile.self.cycles-pp.leave_mm
-> >       0.30            +0.0        0.32 ±  2%  perf-profile.self.cycles-pp.get_next_timer_interrupt
-> >       0.17 ±  8%      +0.0        0.19 ±  4%  perf-profile.self.cycles-pp.irq_work_needs_cpu
-> >       0.06 ±  9%      +0.0        0.08 ± 15%  perf-profile.self.cycles-pp.sched_clock
-> >       4358 ± 15%     +25.0%       5446 ±  7%  sched_debug.cfs_rq:/.exec_clock.avg
-> >      24231 ±  7%     +12.3%      27202 ±  3%  sched_debug.cfs_rq:/.exec_clock.stddev
-> >      23637 ± 17%     +33.3%      31501 ± 14%  sched_debug.cfs_rq:/.load.avg
-> >      73299 ±  9%     +19.8%      87807 ±  8%  sched_debug.cfs_rq:/.load.stddev
-> >      35584 ±  7%     +13.2%      40294 ±  5%  sched_debug.cfs_rq:/.min_vruntime.stddev
-> >       0.09 ± 10%     +27.8%       0.12 ± 15%  sched_debug.cfs_rq:/.nr_running.avg
-> >      17.10 ± 18%     +36.5%      23.33 ± 18%  sched_debug.cfs_rq:/.runnable_load_avg.avg
-> >      63.20 ± 10%     +18.9%      75.11 ±  7%  sched_debug.cfs_rq:/.runnable_load_avg.stddev
-> >      23618 ± 17%     +33.3%      31477 ± 14%  sched_debug.cfs_rq:/.runnable_weight.avg
-> >      73217 ±  9%     +19.9%      87751 ±  8%  sched_debug.cfs_rq:/.runnable_weight.stddev
-> >      35584 ±  7%     +13.2%      40294 ±  5%  sched_debug.cfs_rq:/.spread0.stddev
-> >      95.02 ±  9%     +14.5%     108.82 ±  7%  sched_debug.cfs_rq:/.util_avg.avg
-> >      19.44 ±  9%     +23.0%      23.91 ± 10%  sched_debug.cfs_rq:/.util_est_enqueued.avg
-> >     323.02 ±  3%      -6.4%     302.21 ±  4%  sched_debug.cpu.ttwu_local.avg
-> > 
-> > 
-> >                                                                                 
-> >                               aim9.disk_rr.ops_per_sec                          
-> >                                                                                 
-> >   650000 +-+----------------------------------------------------------------+   
-> >   640000 +-+                  .+..                                          |   
-> >          |    .+.+..+..+..+..+    +..       .+..          .+..       .+..+..|   
-> >   630000 +-++.                       +..+..+    +..+..+.+.    +..+..+       |   
-> >   620000 +-+                                                                |   
-> >          |                                                                  |   
-> >   610000 +-+                                                                |   
-> >   600000 +-+                                                                |   
-> >   590000 +-+                                                                |   
-> >          |                                                                  |   
-> >   580000 +-+                                                                |   
-> >   570000 +-+                                                                |   
-> >          O     O O     O  O  O O        O  O                     O          |   
-> >   560000 +-+O       O             O  O       O  O  O  O O  O  O     O O     |   
-> >   550000 +-+----------------------------------------------------------------+   
-> >                                                                                 
-> >                                                                                                                                                                 
-> >                                aim9.time.user_time                              
-> >                                                                                 
-> >   57 +-+--------------------------------------------------------------------+   
-> >      |                      .+..+..     .+.           .+..                 .|   
-> >   56 +-+  .+..+..  .+..+..+.       +..+.   +..  .+..+.    +..  .+..  .+..+. |   
-> >   55 +-++.       +.                           +.             +.    +.       |   
-> >      |                                                                      |   
-> >   54 +-+                                                                    |   
-> >      |                                                                      |   
-> >   53 +-+                                                                    |   
-> >      |                                                                      |   
-> >   52 +-+                              O                                     |   
-> >   51 +-+                                                                    |   
-> >      |     O  O           O     O  O     O                O     O     O     |   
-> >   50 O-+O        O           O                O     O  O     O     O        |   
-> >      |              O  O                   O     O                          |   
-> >   49 +-+--------------------------------------------------------------------+   
-> >                                                                                 
-> >                                                                                                                                                                 
-> >                                aim9.time.system_time                            
-> >                                                                                 
-> >   251 +-+-------------------------------------------------------------------+   
-> >       |              O  O                   O     O                         |   
-> >   250 O-+O        O          O                 O     O  O    O     O        |   
-> >   249 +-+   O  O          O     O  O     O                 O    O     O     |   
-> >       |                                                                     |   
-> >   248 +-+                             O                                     |   
-> >       |                                                                     |   
-> >   247 +-+                                                                   |   
-> >       |                                                                     |   
-> >   246 +-+                                                                   |   
-> >   245 +-+                                                                   |   
-> >       | .+..     .+..                         .+..          .+..  .+..      |   
-> >   244 +-+   +..+.    +..+.+..     .+..+..+..+.    +..+..+..+    +.    +..+..|   
-> >       |                      +..+.                                          |   
-> >   243 +-+-------------------------------------------------------------------+   
-> >                                                                                 
-> >                                                                                 
-> >                                                                                 
-> > [*] bisect-good sample
-> > [O] bisect-bad  sample
-> > 
-> > 
-> > Disclaimer:
-> > Results have been estimated based on internal Intel analysis and are provided
-> > for informational purposes only. Any difference in system hardware or software
-> > design or configuration may affect actual performance.
-> > 
-> > 
-> > Thanks,
-> > Xiaolong
-> 
-> _______________________________________________
-> LKP mailing list
-> LKP@lists.01.org
-> https://lists.01.org/mailman/listinfo/lkp
+
+[0] https://patchwork.kernel.org/patch/10444075/
+[1] https://clang.llvm.org/docs/ClangCommandLineReference.html
