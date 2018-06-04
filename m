@@ -1,98 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeFDJ4Y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 05:56:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54684 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752292AbeFDJ4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:56:21 -0400
-In-Reply-To: <687af1bc-a1f9-c0d2-dd3a-eeef3a2bf9b4@gmail.com>
-References: <687af1bc-a1f9-c0d2-dd3a-eeef3a2bf9b4@gmail.com>
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Mon, 4 Jun 2018 11:36:05 +0200
-Subject: [PATCH net v3] ipv6: omit traffic class when calculating flow hash
-To: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Tom Herbert <tom@herbertland.com>, David Ahern <dsahern@gmail.com>,
-        Ido Schimmel <idosch@idosch.org>
-Message-Id: <20180604095619.7D9C1A09F0@unicorn.suse.cz>
+        id S1752231AbeFDJ5f (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 05:57:35 -0400
+Received: from hera.aquilenet.fr ([185.233.100.1]:36562 "EHLO
+        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFDJ5d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 05:57:33 -0400
+Date: Mon, 4 Jun 2018 11:57:30 +0200
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: "Speakup is a screen review system for Linux."
+        <speakup@linux-speakup.org>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
+Message-ID: <20180604095730.l2vuzbapxeapr3ni@var.youpi.perso.aquilenet.fr>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        "Speakup is a screen review system for Linux." <speakup@linux-speakup.org>,
+        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <20180604095212.GA18381@tanglefoot>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604095212.GA18381@tanglefoot>
+Organization: I am not organized
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the code paths calculating flow hash for IPv6 use flowlabel member
-of struct flowi6 which, despite its name, encodes both flow label and
-traffic class. If traffic class changes within a TCP connection (as e.g.
-ssh does), ECMP route can switch between path. It's also inconsistent with
-other code paths where ip6_flowlabel() (returning only flow label) is used
-to feed the key.
+Hello,
 
-Use only flow label everywhere, including one place where hash key is set
-using ip6_flowinfo().
+Justin Skists, le lun. 04 juin 2018 10:52:12 +0100, a ecrit:
+> The synths[] array is a collection of synths acting like a list.
+> There is no need for synths to be an array, so refactor synths[] to use
+> standard kernel list_head API, instead, and modify the usages to suit.
+> As a side-effect, the maximum number of synths has also become redundant.
+> 
+> Signed-off-by: Justin Skists <justin.skists@juzza.co.uk>
 
-Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
-v2: introduce and use an inline helper as suggested by David Ahern
-v3: keep the cast out of the helper to make future cleanup easier
+This needs a review, but the principle looks sound to me :)
 
- include/net/ipv6.h        | 5 +++++
- net/core/flow_dissector.c | 2 +-
- net/ipv6/route.c          | 4 ++--
- 3 files changed, 8 insertions(+), 3 deletions(-)
+Thanks,
+Samuel
 
-diff --git a/include/net/ipv6.h b/include/net/ipv6.h
-index 836f31af1369..a406f2e8680a 100644
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -906,6 +906,11 @@ static inline __be32 ip6_make_flowinfo(unsigned int tclass, __be32 flowlabel)
- 	return htonl(tclass << IPV6_TCLASS_SHIFT) | flowlabel;
- }
- 
-+static inline __be32 flowi6_get_flowlabel(const struct flowi6 *fl6)
-+{
-+	return fl6->flowlabel & IPV6_FLOWLABEL_MASK;
-+}
-+
- /*
-  *	Prototypes exported by ipv6
-  */
-diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-index d29f09bc5ff9..0234f8d1f0ac 100644
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -1334,7 +1334,7 @@ __u32 __get_hash_from_flowi6(const struct flowi6 *fl6, struct flow_keys *keys)
- 	keys->ports.src = fl6->fl6_sport;
- 	keys->ports.dst = fl6->fl6_dport;
- 	keys->keyid.keyid = fl6->fl6_gre_key;
--	keys->tags.flow_label = (__force u32)fl6->flowlabel;
-+	keys->tags.flow_label = (__force u32)flowi6_get_flowlabel(fl6);
- 	keys->basic.ip_proto = fl6->flowi6_proto;
- 
- 	return flow_hash_from_keys(keys);
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index f4d61736c41a..4530a82aaa2e 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1868,7 +1868,7 @@ static void ip6_multipath_l3_keys(const struct sk_buff *skb,
- 	} else {
- 		keys->addrs.v6addrs.src = key_iph->saddr;
- 		keys->addrs.v6addrs.dst = key_iph->daddr;
--		keys->tags.flow_label = ip6_flowinfo(key_iph);
-+		keys->tags.flow_label = ip6_flowlabel(key_iph);
- 		keys->basic.ip_proto = key_iph->nexthdr;
- 	}
- }
-@@ -1889,7 +1889,7 @@ u32 rt6_multipath_hash(const struct net *net, const struct flowi6 *fl6,
- 		} else {
- 			hash_keys.addrs.v6addrs.src = fl6->saddr;
- 			hash_keys.addrs.v6addrs.dst = fl6->daddr;
--			hash_keys.tags.flow_label = (__force u32)fl6->flowlabel;
-+			hash_keys.tags.flow_label = (__force u32)flowi6_get_flowlabel(fl6);
- 			hash_keys.basic.ip_proto = fl6->flowi6_proto;
- 		}
- 		break;
+> ---
+>  drivers/staging/speakup/spk_types.h |  2 ++
+>  drivers/staging/speakup/synth.c     | 40 ++++++++++-------------------
+>  2 files changed, 15 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/staging/speakup/spk_types.h b/drivers/staging/speakup/spk_types.h
+> index 3e082dc3d45c..a2fc72c29894 100644
+> --- a/drivers/staging/speakup/spk_types.h
+> +++ b/drivers/staging/speakup/spk_types.h
+> @@ -160,6 +160,8 @@ struct spk_io_ops {
+>  };
+>  
+>  struct spk_synth {
+> +	struct list_head node;
+> +
+>  	const char *name;
+>  	const char *version;
+>  	const char *long_name;
+> diff --git a/drivers/staging/speakup/synth.c b/drivers/staging/speakup/synth.c
+> index 7deeb7061018..25f259ee4ffc 100644
+> --- a/drivers/staging/speakup/synth.c
+> +++ b/drivers/staging/speakup/synth.c
+> @@ -18,8 +18,7 @@
+>  #include "speakup.h"
+>  #include "serialio.h"
+>  
+> -#define MAXSYNTHS       16      /* Max number of synths in array. */
+> -static struct spk_synth *synths[MAXSYNTHS + 1];
+> +static LIST_HEAD(synths);
+>  struct spk_synth *synth;
+>  char spk_pitch_buff[32] = "";
+>  static int module_status;
+> @@ -355,9 +354,8 @@ struct var_t synth_time_vars[] = {
+>  /* called by: speakup_init() */
+>  int synth_init(char *synth_name)
+>  {
+> -	int i;
+>  	int ret = 0;
+> -	struct spk_synth *synth = NULL;
+> +	struct spk_synth *tmp, *synth = NULL;
+>  
+>  	if (!synth_name)
+>  		return 0;
+> @@ -371,9 +369,10 @@ int synth_init(char *synth_name)
+>  
+>  	mutex_lock(&spk_mutex);
+>  	/* First, check if we already have it loaded. */
+> -	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
+> -		if (strcmp(synths[i]->name, synth_name) == 0)
+> -			synth = synths[i];
+> +	list_for_each_entry(tmp, &synths, node) {
+> +		if (strcmp(tmp->name, synth_name) == 0)
+> +			synth = tmp;
+> +	}
+>  
+>  	/* If we got one, initialize it now. */
+>  	if (synth)
+> @@ -448,29 +447,23 @@ void synth_release(void)
+>  /* called by: all_driver_init() */
+>  int synth_add(struct spk_synth *in_synth)
+>  {
+> -	int i;
+>  	int status = 0;
+> +	struct spk_synth *tmp;
+>  
+>  	mutex_lock(&spk_mutex);
+> -	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
+> -		/* synth_remove() is responsible for rotating the array down */
+> -		if (in_synth == synths[i]) {
+> +
+> +	list_for_each_entry(tmp, &synths, node) {
+> +		if (tmp == in_synth) {
+>  			mutex_unlock(&spk_mutex);
+>  			return 0;
+>  		}
+> -	if (i == MAXSYNTHS) {
+> -		pr_warn("Error: attempting to add a synth past end of array\n");
+> -		mutex_unlock(&spk_mutex);
+> -		return -1;
+>  	}
+>  
+>  	if (in_synth->startup)
+>  		status = do_synth_init(in_synth);
+>  
+> -	if (!status) {
+> -		synths[i++] = in_synth;
+> -		synths[i] = NULL;
+> -	}
+> +	if (!status)
+> +		list_add_tail(&in_synth->node, &synths);
+>  
+>  	mutex_unlock(&spk_mutex);
+>  	return status;
+> @@ -479,17 +472,10 @@ EXPORT_SYMBOL_GPL(synth_add);
+>  
+>  void synth_remove(struct spk_synth *in_synth)
+>  {
+> -	int i;
+> -
+>  	mutex_lock(&spk_mutex);
+>  	if (synth == in_synth)
+>  		synth_release();
+> -	for (i = 0; synths[i]; i++) {
+> -		if (in_synth == synths[i])
+> -			break;
+> -	}
+> -	for ( ; synths[i]; i++) /* compress table */
+> -		synths[i] = synths[i + 1];
+> +	list_del(&in_synth->node);
+>  	module_status = 0;
+>  	mutex_unlock(&spk_mutex);
+>  }
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> Speakup mailing list
+> Speakup@linux-speakup.org
+> http://linux-speakup.org/cgi-bin/mailman/listinfo/speakup
+
 -- 
-2.17.1
+Samuel
+<N> un driver qui fait quoi, alors ?
+<y> ben pour les bips
+<s> pour passer les oops en morse
+ -+- #ens-mim - vive les rapports de bug -+-
