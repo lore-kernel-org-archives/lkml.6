@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeFDHC3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:02:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54774 "EHLO mail.kernel.org"
+        id S1753348AbeFDHV6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:21:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753210AbeFDHCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:22 -0400
+        id S1752694AbeFDHCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        KT Liao <kt.liao@emc.com.tw>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 18/52] Input: elan_i2c_smbus - fix corrupted stack
-Date: Mon,  4 Jun 2018 08:58:13 +0200
-Message-Id: <20180604065607.300002117@linuxfoundation.org>
+        stable@vger.kernel.org, Sachin Grover <sgrover@codeaurora.org>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.14 21/52] selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
+Date: Mon,  4 Jun 2018 08:58:16 +0200
+Message-Id: <20180604065607.428799494@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -31,128 +29,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Sachin Grover <sgrover@codeaurora.org>
 
-commit 40f7090bb1b4ec327ea1e1402ff5783af5b35195 upstream.
+commit efe3de79e0b52ca281ef6691480c8c68c82a4657 upstream.
 
-New ICs (like the one on the Lenovo T480s) answer to
-ETP_SMBUS_IAP_VERSION_CMD 4 bytes instead of 3. This corrupts the stack
-as i2c_smbus_read_block_data() uses the values returned by the i2c
-device to know how many data it need to return.
+Call trace:
+ [<ffffff9203a8d7a8>] dump_backtrace+0x0/0x428
+ [<ffffff9203a8dbf8>] show_stack+0x28/0x38
+ [<ffffff920409bfb8>] dump_stack+0xd4/0x124
+ [<ffffff9203d187e8>] print_address_description+0x68/0x258
+ [<ffffff9203d18c00>] kasan_report.part.2+0x228/0x2f0
+ [<ffffff9203d1927c>] kasan_report+0x5c/0x70
+ [<ffffff9203d1776c>] check_memory_region+0x12c/0x1c0
+ [<ffffff9203d17cdc>] memcpy+0x34/0x68
+ [<ffffff9203d75348>] xattr_getsecurity+0xe0/0x160
+ [<ffffff9203d75490>] vfs_getxattr+0xc8/0x120
+ [<ffffff9203d75d68>] getxattr+0x100/0x2c8
+ [<ffffff9203d76fb4>] SyS_fgetxattr+0x64/0xa0
+ [<ffffff9203a83f70>] el0_svc_naked+0x24/0x28
 
-i2c_smbus_read_block_data() can read up to 32 bytes (I2C_SMBUS_BLOCK_MAX)
-and there is no safeguard on how many bytes are provided in the return
-value. Ensure we always have enough space for any future firmware.
-Also 0-initialize the values to prevent any access to uninitialized memory.
+If user get root access and calls security.selinux setxattr() with an
+embedded NUL on a file and then if some process performs a getxattr()
+on that file with a length greater than the actual length of the string,
+it would result in a panic.
 
-Cc: <stable@vger.kernel.org> # v4.4.x, v4.9.x, v4.14.x, v4.15.x, v4.16.x
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Acked-by: KT Liao <kt.liao@emc.com.tw>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To fix this, add the actual length of the string to the security context
+instead of the length passed by the userspace process.
+
+Signed-off-by: Sachin Grover <sgrover@codeaurora.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c_smbus.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ security/selinux/ss/services.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/mouse/elan_i2c_smbus.c
-+++ b/drivers/input/mouse/elan_i2c_smbus.c
-@@ -130,7 +130,7 @@ static int elan_smbus_get_baseline_data(
- 					bool max_baseline, u8 *value)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  max_baseline ?
-@@ -149,7 +149,7 @@ static int elan_smbus_get_version(struct
- 				  bool iap, u8 *version)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  iap ? ETP_SMBUS_IAP_VERSION_CMD :
-@@ -170,7 +170,7 @@ static int elan_smbus_get_sm_version(str
- 				     u8 *clickpad)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  ETP_SMBUS_SM_VERSION_CMD, val);
-@@ -188,7 +188,7 @@ static int elan_smbus_get_sm_version(str
- static int elan_smbus_get_product_id(struct i2c_client *client, u16 *id)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  ETP_SMBUS_UNIQUEID_CMD, val);
-@@ -205,7 +205,7 @@ static int elan_smbus_get_checksum(struc
- 				   bool iap, u16 *csum)
- {
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client,
- 					  iap ? ETP_SMBUS_FW_CHECKSUM_CMD :
-@@ -226,7 +226,7 @@ static int elan_smbus_get_max(struct i2c
- {
- 	int ret;
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_RANGE_CMD, val);
- 	if (ret != 3) {
-@@ -246,7 +246,7 @@ static int elan_smbus_get_resolution(str
- {
- 	int ret;
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_RESOLUTION_CMD, val);
- 	if (ret != 3) {
-@@ -267,7 +267,7 @@ static int elan_smbus_get_num_traces(str
- {
- 	int ret;
- 	int error;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_XY_TRACENUM_CMD, val);
- 	if (ret != 3) {
-@@ -294,7 +294,7 @@ static int elan_smbus_iap_get_mode(struc
- {
- 	int error;
- 	u16 constant;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	error = i2c_smbus_read_block_data(client, ETP_SMBUS_IAP_CTRL_CMD, val);
- 	if (error < 0) {
-@@ -345,7 +345,7 @@ static int elan_smbus_prepare_fw_update(
- 	int len;
- 	int error;
- 	enum tp_mode mode;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 	u8 cmd[4] = {0x0F, 0x78, 0x00, 0x06};
- 	u16 password;
- 
-@@ -419,7 +419,7 @@ static int elan_smbus_write_fw_block(str
- 	struct device *dev = &client->dev;
- 	int error;
- 	u16 result;
--	u8 val[3];
-+	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
- 
- 	/*
- 	 * Due to the limitation of smbus protocol limiting
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -1448,7 +1448,7 @@ static int security_context_to_sid_core(
+ 				      scontext_len, &context, def_sid);
+ 	if (rc == -EINVAL && force) {
+ 		context.str = str;
+-		context.len = scontext_len;
++		context.len = strlen(str) + 1;
+ 		str = NULL;
+ 	} else if (rc)
+ 		goto out_unlock;
