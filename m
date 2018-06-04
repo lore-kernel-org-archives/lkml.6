@@ -1,82 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751228AbeFDT2c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:28:32 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48710 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbeFDT2b (ORCPT
+        id S1751322AbeFDT2t (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:28:49 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:52938 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751201AbeFDT2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:28:31 -0400
-Date: Mon, 4 Jun 2018 21:28:21 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 13/19] mm/migrate: Use xchg instead of spinlock
-Message-ID: <20180604192821.GB12217@hirez.programming.kicks-ass.net>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1528106428-19992-14-git-send-email-srikar@linux.vnet.ibm.com>
+        Mon, 4 Jun 2018 15:28:48 -0400
+X-IronPort-AV: E=Sophos;i="5.49,476,1520870400";
+   d="scan'208";a="176491398"
+Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Albert Ou <albert@sifive.com>
+References: <20180601152123.47256-1-luc.vanoostenryck@gmail.com>
+ <20180601152123.47256-4-luc.vanoostenryck@gmail.com>
+ <235fec3e-be2e-874a-8313-e7390fcdca74@wdc.com>
+ <20180604190927.7jrdlulgowt5umce@ltop.local>
+From: Atish Patra <atish.patra@wdc.com>
+Message-ID: <6a0ab99d-6e4d-eb80-bc4d-854d154ae827@wdc.com>
+Date: Mon, 4 Jun 2018 12:28:47 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528106428-19992-14-git-send-email-srikar@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180604190927.7jrdlulgowt5umce@ltop.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 03:30:22PM +0530, Srikar Dronamraju wrote:
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 8c0af0f..1c55956 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1874,11 +1874,9 @@ static bool numamigrate_update_ratelimit(pg_data_t *pgdat,
->  	 * all the time is being spent migrating!
->  	 */
->  	if (time_after(jiffies, pgdat->numabalancing_migrate_next_window)) {
-> -		spin_lock(&pgdat->numabalancing_migrate_lock);
-> -		pgdat->numabalancing_migrate_nr_pages = 0;
-> -		pgdat->numabalancing_migrate_next_window = jiffies +
-> -			msecs_to_jiffies(migrate_interval_millisecs);
-> -		spin_unlock(&pgdat->numabalancing_migrate_lock);
-> +		if (xchg(&pgdat->numabalancing_migrate_nr_pages, 0))
-> +			pgdat->numabalancing_migrate_next_window = jiffies +
-> +				msecs_to_jiffies(migrate_interval_millisecs);
+On 6/4/18 12:09 PM, Luc Van Oostenryck wrote:
+> On Mon, Jun 04, 2018 at 11:46:50AM -0700, Atish Patra wrote:
+>> On 6/1/18 8:22 AM, Luc Van Oostenryck wrote:
+>>> __copy_user() is a function, written in assembly, used to copy
+>>> memory between kernel & user space. As such its to & from args
+>>> may both take a user pointer or a kernel pointer.
+>>>
+>>> However the prototype for this function declare these two args
+>>> as 'void __user *', which is no more & no less correct than
+>>> declaring them as 'void *'. In fact theer is no possible correct
+>>
+>> /s/theer/there
+>>
+>>> annotation for such a function.
+>>>
+>>> The problem is worked around here by declaring these args as
+>>> unsigned long and casting them to the right type in each of
+>>> two callers raw_copy_{to,from}_user() as some kind of cast would
+>>> be needed anyway.
+>>>
+>>> Note: another solution, maybe cleaner but slightly more complex,
+>>>         would be to declare two version of __copy_user,
+>>>         either in the asm file or via an alias, each having already
+>>>         the correct typing for raw_copy_{to,from}_user().
+>>>
+>>
+>> I feel that would be a better solution as it is implemented similarly
+>> in ARM as well.
+>>
+>> I am unable to understand how "unsigned long" is better than "void*".
+>> x86 implementation has both arguments as void*. Can you please clarify ?
+> 
+> "better" is quite relative and it must be understood that sparse
+> allow to cast pointers o fany kinds to and from unsigned long
+> without any warnings (while doing a cast between different address
+> space will emit a warning unless you use '__force').
+> 
 
-Note that both are in fact wrong. That wants to be something like:
+Got it.
+> As I tried to explain here above, the fact that this function is
+> declared as taking 2 __user pointers requires to use of casts
+> (ugly casts with __force) to get over the __user. By declaring
+> them as taking unsigned long, you still have to use casts but, IMO,
+> it's cleaner
+> 
 
-	pgdat->numabalancing_migrate_next_window += interval;
+Thanks for the detailed explanation.
 
-Otherwise you stretch every interval by 'jiffies - numabalancing_migrate_next_window'.
+> Note: they're generic pointers/addresses anyway, they can't be
+>        dereferenced anyway so unsigned is as good as a plain void*
+>        or a void __user*
+> Note: using unsigned long here, fundamentally to bypass the __user,
+>        is the same as casting a const pointer back to a plain pointer
+>        via an intermediate cast to unsigned long. People can argue
+>        that's kinda cheating, and they would be right of course, but
+>        using __force or declaring twice the function with two different
+>        names and prototype is also a form of cheating.
+> Note: if this would be my code, I would choose the solution with
+>        two declarations.
 
-Also, that all wants READ_ONCE/WRITE_ONCE, irrespective of the
-spinlock/xchg.
+I prefer that as well.
 
-I suppose the problem here is that PPC has a very nasty test-and-set
-spinlock with fwd progress issues while xchg maps to a fairly simple
-ll/sc that (hopefully) has some hardware fairness.
-
-And pgdata being a rather course data structure (per node?) there could
-be a lot of CPUs stomping on this here thing.
-
-So simpler not really, but better for PPC.
-
->  	}
->  	if (pgdat->numabalancing_migrate_nr_pages > ratelimit_pages) {
->  		trace_mm_numa_migrate_ratelimit(current, pgdat->node_id,
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 4526643..464a25c 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6208,7 +6208,6 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
->  
->  	pgdat_resize_init(pgdat);
->  #ifdef CONFIG_NUMA_BALANCING
-> -	spin_lock_init(&pgdat->numabalancing_migrate_lock);
->  	pgdat->numabalancing_migrate_nr_pages = 0;
->  	pgdat->active_node_migrate = 0;
->  	pgdat->numabalancing_migrate_next_window = jiffies;
-> -- 
-> 1.8.3.1
+Regards,
+Atish
+> 
+> 
+> Best regards,
+> -- Luc
 > 
