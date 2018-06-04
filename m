@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752151AbeFDHEI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:04:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56212 "EHLO mail.kernel.org"
+        id S1753692AbeFDHEF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:04:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753693AbeFDHEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:06 -0400
+        id S1753269AbeFDHED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:04:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eugen Hristev <eugen.hristev@microchip.com>,
         Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.16 32/47] iio: adc: select buffer for at91-sama5d2_adc
-Date: Mon,  4 Jun 2018 08:58:44 +0200
-Message-Id: <20180604065550.814561680@linuxfoundation.org>
+Subject: [PATCH 4.16 31/47] iio: adc: at91-sama5d2_adc: fix channel configuration for differential channels
+Date: Mon,  4 Jun 2018 08:58:43 +0200
+Message-Id: <20180604065550.773255345@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -31,32 +31,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eugen Hristev <eugen.hristev@microchip.com>
 
-commit 76974ef9d1bf397b7bb97892a3b3bc516a1fc2c2 upstream.
+commit f0c8d1f6dc8eac5a1fbf441c8e080721a7b6c0ff upstream.
 
-We need to select the buffer code, otherwise we get build errors
-with undefined functions on the trigger and buffer,
-if we select just IIO and then AT91_SAMA5D2_ADC from menuconfig
+When iterating through the channels, the index in the array is not the
+scan index. Added an xlate function to translate to the proper index.
+The result of the bug is that the channel array is indexed with a wrong index,
+thus instead of the proper channel, we access invalid memory, which may
+lead to invalid results and/or corruption.
+This will be used also for devicetree channel xlate.
 
-This adds a Kconfig 'select' statement like other ADC
-drivers have it already.
-
-Fixes: 5e1a1da0f8c9 ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
+Fixes: 5e1a1da0f ("iio: adc: at91-sama5d2_adc: add hw trigger and buffer support")
+Fixes: 073c66201 ("iio: adc: at91-sama5d2_adc: add support for DMA")
 Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
 Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/adc/at91-sama5d2_adc.c |   41 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 37 insertions(+), 4 deletions(-)
 
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -159,6 +159,7 @@ config AT91_SAMA5D2_ADC
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	depends on HAS_IOMEM
- 	depends on HAS_DMA
-+	select IIO_BUFFER
- 	select IIO_TRIGGERED_BUFFER
- 	help
- 	  Say yes here to build support for Atmel SAMA5D2 ADC which is
+--- a/drivers/iio/adc/at91-sama5d2_adc.c
++++ b/drivers/iio/adc/at91-sama5d2_adc.c
+@@ -333,6 +333,27 @@ static const struct iio_chan_spec at91_a
+ 				+ AT91_SAMA5D2_DIFF_CHAN_CNT + 1),
+ };
+ 
++static int at91_adc_chan_xlate(struct iio_dev *indio_dev, int chan)
++{
++	int i;
++
++	for (i = 0; i < indio_dev->num_channels; i++) {
++		if (indio_dev->channels[i].scan_index == chan)
++			return i;
++	}
++	return -EINVAL;
++}
++
++static inline struct iio_chan_spec const *
++at91_adc_chan_get(struct iio_dev *indio_dev, int chan)
++{
++	int index = at91_adc_chan_xlate(indio_dev, chan);
++
++	if (index < 0)
++		return NULL;
++	return indio_dev->channels + index;
++}
++
+ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
+ {
+ 	struct iio_dev *indio = iio_trigger_get_drvdata(trig);
+@@ -350,8 +371,10 @@ static int at91_adc_configure_trigger(st
+ 	at91_adc_writel(st, AT91_SAMA5D2_TRGR, status);
+ 
+ 	for_each_set_bit(bit, indio->active_scan_mask, indio->num_channels) {
+-		struct iio_chan_spec const *chan = indio->channels + bit;
++		struct iio_chan_spec const *chan = at91_adc_chan_get(indio, bit);
+ 
++		if (!chan)
++			continue;
+ 		if (state) {
+ 			at91_adc_writel(st, AT91_SAMA5D2_CHER,
+ 					BIT(chan->channel));
+@@ -448,7 +471,11 @@ static int at91_adc_dma_start(struct iio
+ 
+ 	for_each_set_bit(bit, indio_dev->active_scan_mask,
+ 			 indio_dev->num_channels) {
+-		struct iio_chan_spec const *chan = indio_dev->channels + bit;
++		struct iio_chan_spec const *chan =
++					 at91_adc_chan_get(indio_dev, bit);
++
++		if (!chan)
++			continue;
+ 
+ 		st->dma_st.rx_buf_sz += chan->scan_type.storagebits / 8;
+ 	}
+@@ -526,8 +553,11 @@ static int at91_adc_buffer_predisable(st
+ 	 */
+ 	for_each_set_bit(bit, indio_dev->active_scan_mask,
+ 			 indio_dev->num_channels) {
+-		struct iio_chan_spec const *chan = indio_dev->channels + bit;
++		struct iio_chan_spec const *chan =
++					at91_adc_chan_get(indio_dev, bit);
+ 
++		if (!chan)
++			continue;
+ 		if (st->dma_st.dma_chan)
+ 			at91_adc_readl(st, chan->address);
+ 	}
+@@ -587,8 +617,11 @@ static void at91_adc_trigger_handler_nod
+ 
+ 	for_each_set_bit(bit, indio_dev->active_scan_mask,
+ 			 indio_dev->num_channels) {
+-		struct iio_chan_spec const *chan = indio_dev->channels + bit;
++		struct iio_chan_spec const *chan =
++					at91_adc_chan_get(indio_dev, bit);
+ 
++		if (!chan)
++			continue;
+ 		st->buffer[i] = at91_adc_readl(st, chan->address);
+ 		i++;
+ 	}
