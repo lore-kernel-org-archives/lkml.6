@@ -1,92 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeFDLlL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:41:11 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8688 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751482AbeFDLki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:40:38 -0400
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <james.morse@arm.com>, <gengdongjiu@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>
-Subject: [PATCH v2 1/2] arm64: KVM: export the capability to set guest SError syndrome
-Date: Tue, 5 Jun 2018 03:45:41 +0800
-Message-ID: <1528141542-44048-2-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528141542-44048-1-git-send-email-gengdongjiu@huawei.com>
-References: <1528141542-44048-1-git-send-email-gengdongjiu@huawei.com>
+        id S1752540AbeFDLmQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:42:16 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35392 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751482AbeFDLmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:42:14 -0400
+Subject: Re: [PATCH 4/7] iommu/amd: make sure TLB to be flushed before IOVA
+ freed
+To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
+ <1527752569-18020-5-git-send-email-thunder.leizhen@huawei.com>
+ <ccc47903-d946-13ed-3c68-b264bc44b216@arm.com>
+CC: Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
+        "Guozhu Li" <liguozhu@hisilicon.com>, Xinwei Hu <huxinwei@huawei.com>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B152573.2080905@huawei.com>
+Date: Mon, 4 Jun 2018 19:41:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.28.90]
+In-Reply-To: <ccc47903-d946-13ed-3c68-b264bc44b216@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the arm64 RAS Extension, user space can inject a virtual-SError
-with specified ESR. So user space needs to know whether KVM support
-to inject such SError, this interface adds this query for this capability.
 
-KVM will check whether system support RAS Extension, if supported, KVM
-returns true to user space, otherwise returns false.
 
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-Reviewed-by: James Morse <james.morse@arm.com>
----
- Documentation/virtual/kvm/api.txt | 11 +++++++++++
- arch/arm64/kvm/reset.c            |  3 +++
- include/uapi/linux/kvm.h          |  1 +
- 3 files changed, 15 insertions(+)
+On 2018/5/31 21:04, Robin Murphy wrote:
+> On 31/05/18 08:42, Zhen Lei wrote:
+>> Although the mapping has already been removed in the page table, it maybe
+>> still exist in TLB. Suppose the freed IOVAs is reused by others before the
+>> flush operation completed, the new user can not correctly access to its
+>> meomory.
+> 
+> This change seems reasonable in isolation, but why is it right in the middle of a series which has nothing to do with x86?
+Because I described more in the previous patch, which may help this patch to be understood well.
 
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index 758bf40..fdac969 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -4603,3 +4603,14 @@ Architectures: s390
- This capability indicates that kvm will implement the interfaces to handle
- reset, migration and nested KVM for branch prediction blocking. The stfle
- facility 82 should not be provided to the guest without this capability.
-+
-+8.14 KVM_CAP_ARM_SET_SERROR_ESR
-+
-+Architectures: arm, arm64
-+
-+This capability indicates that userspace can specify the syndrome value reported
-+to the guest OS when guest takes a virtual SError interrupt exception.
-+If KVM has this capability, userspace can only specify the ISS field for the ESR
-+syndrome, it can not specify the EC field which is not under control by KVM.
-+If this virtual SError is taken to EL1 using AArch64, this value will be reported
-+in ISS filed of ESR_EL1.
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 3256b92..38c8a64 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -77,6 +77,9 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_ARM_PMU_V3:
- 		r = kvm_arm_support_pmu_v3();
- 		break;
-+	case KVM_CAP_ARM_INJECT_SERROR_ESR:
-+		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
-+		break;
- 	case KVM_CAP_SET_GUEST_DEBUG:
- 	case KVM_CAP_VCPU_ATTRIBUTES:
- 		r = 1;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index b02c41e..e88f976 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -948,6 +948,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_S390_BPB 152
- #define KVM_CAP_GET_MSR_FEATURES 153
- #define KVM_CAP_HYPERV_EVENTFD 154
-+#define KVM_CAP_ARM_INJECT_SERROR_ESR 155
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
+You're right, I will repost this patch separately.
+
+> 
+> Robin.
+> 
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+>>   drivers/iommu/amd_iommu.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+>> index 8fb8c73..93aa389 100644
+>> --- a/drivers/iommu/amd_iommu.c
+>> +++ b/drivers/iommu/amd_iommu.c
+>> @@ -2402,9 +2402,9 @@ static void __unmap_single(struct dma_ops_domain *dma_dom,
+>>       }
+>>         if (amd_iommu_unmap_flush) {
+>> -        dma_ops_free_iova(dma_dom, dma_addr, pages);
+>>           domain_flush_tlb(&dma_dom->domain);
+>>           domain_flush_complete(&dma_dom->domain);
+>> +        dma_ops_free_iova(dma_dom, dma_addr, pages);
+>>       } else {
+>>           pages = __roundup_pow_of_two(pages);
+>>           queue_iova(&dma_dom->iovad, dma_addr >> PAGE_SHIFT, pages, 0);
+>>
+> 
+> .
+> 
+
 -- 
-2.7.4
+Thanks!
+BestRegards
