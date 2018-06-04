@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753366AbeFDHDN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55378 "EHLO mail.kernel.org"
+        id S1753572AbeFDHUm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:20:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750731AbeFDHDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:11 -0400
+        id S1751838AbeFDHCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 4.16 12/47] xfs: detect agfl count corruption and reset agfl
-Date: Mon,  4 Jun 2018 08:58:24 +0200
-Message-Id: <20180604065550.004615380@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 51/52] powerpc/mm/slice: Enhance for supporting PPC32
+Date: Mon,  4 Jun 2018 08:58:46 +0200
+Message-Id: <20180604065608.649268228@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
-References: <20180604065549.468488465@linuxfoundation.org>
+In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
+References: <20180604065606.532044490@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -26,232 +26,197 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Brian Foster <bfoster@redhat.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit a27ba2607e60312554cbcd43fc660b2c7f29dc9c upstream.
+commit db3a528db41caaa6dfd4c64e9f5efb1c81a80467 upstream.
 
-The struct xfs_agfl v5 header was originally introduced with
-unexpected padding that caused the AGFL to operate with one less
-slot than intended. The header has since been packed, but the fix
-left an incompatibility for users who upgrade from an old kernel
-with the unpacked header to a newer kernel with the packed header
-while the AGFL happens to wrap around the end. The newer kernel
-recognizes one extra slot at the physical end of the AGFL that the
-previous kernel did not. The new kernel will eventually attempt to
-allocate a block from that slot, which contains invalid data, and
-cause a crash.
+In preparation for the following patch which will fix an issue on
+the 8xx by re-using the 'slices', this patch enhances the
+'slices' implementation to support 32 bits CPUs.
 
-This condition can be detected by comparing the active range of the
-AGFL to the count. While this detects a padding mismatch, it can
-also trigger false positives for unrelated flcount corruption. Since
-we cannot distinguish a size mismatch due to padding from unrelated
-corruption, we can't trust the AGFL enough to simply repopulate the
-empty slot.
+On PPC32, the address space is limited to 4Gbytes, hence only the low
+slices will be used.
 
-Instead, avoid unnecessarily complex detection logic and and use a
-solution that can handle any form of flcount corruption that slips
-through read verifiers: distrust the entire AGFL and reset it to an
-empty state. Any valid blocks within the AGFL are intentionally
-leaked. This requires xfs_repair to rectify (which was already
-necessary based on the state the AGFL was found in). The reset
-mitigates the side effect of the padding mismatch problem from a
-filesystem crash to a free space accounting inconsistency. The
-generic approach also means that this patch can be safely backported
-to kernels with or without a packed struct xfs_agfl.
+The high slices use bitmaps. As bitmap functions are not prepared to
+handle bitmaps of size 0, this patch ensures that bitmap functions
+are called only when SLICE_NUM_HIGH is not nul.
 
-Check the AGF for an invalid freelist count on initial read from
-disk. If detected, set a flag on the xfs_perag to indicate that a
-reset is required before the AGFL can be used. In the first
-transaction that attempts to use a flagged AGFL, reset it to empty,
-warn the user about the inconsistency and allow the freelist fixup
-code to repopulate the AGFL with new blocks. The xfs_perag flag is
-cleared to eliminate the need for repeated checks on each block
-allocation operation.
-
-This allows kernels that include the packing fix commit 96f859d52bcb
-("libxfs: pack the agfl header structure so XFS_AGFL_SIZE is correct")
-to handle older unpacked AGFL formats without a filesystem crash.
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by Dave Chiluk <chiluk+linuxxfs@indeed.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/xfs/libxfs/xfs_alloc.c |   94 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_mount.h        |    1 
- fs/xfs/xfs_trace.h        |    9 +++-
- 3 files changed, 103 insertions(+), 1 deletion(-)
 
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -2071,6 +2071,93 @@ xfs_alloc_space_available(
+---
+ arch/powerpc/include/asm/nohash/32/slice.h |   18 ++++++++++++++
+ arch/powerpc/include/asm/slice.h           |    4 ++-
+ arch/powerpc/mm/slice.c                    |   37 ++++++++++++++++++++++-------
+ 3 files changed, 50 insertions(+), 9 deletions(-)
+
+--- /dev/null
++++ b/arch/powerpc/include/asm/nohash/32/slice.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_POWERPC_NOHASH_32_SLICE_H
++#define _ASM_POWERPC_NOHASH_32_SLICE_H
++
++#ifdef CONFIG_PPC_MM_SLICES
++
++#define SLICE_LOW_SHIFT		28
++#define SLICE_LOW_TOP		(0x100000000ull)
++#define SLICE_NUM_LOW		(SLICE_LOW_TOP >> SLICE_LOW_SHIFT)
++#define GET_LOW_SLICE_INDEX(addr)	((addr) >> SLICE_LOW_SHIFT)
++
++#define SLICE_HIGH_SHIFT	0
++#define SLICE_NUM_HIGH		0ul
++#define GET_HIGH_SLICE_INDEX(addr)	(addr & 0)
++
++#endif /* CONFIG_PPC_MM_SLICES */
++
++#endif /* _ASM_POWERPC_NOHASH_32_SLICE_H */
+--- a/arch/powerpc/include/asm/slice.h
++++ b/arch/powerpc/include/asm/slice.h
+@@ -4,8 +4,10 @@
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+ #include <asm/book3s/64/slice.h>
+-#else
++#elif defined(CONFIG_PPC64)
+ #include <asm/nohash/64/slice.h>
++#elif defined(CONFIG_PPC_MMU_NOHASH)
++#include <asm/nohash/32/slice.h>
+ #endif
+ 
+ #ifdef CONFIG_PPC_MM_SLICES
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -73,10 +73,12 @@ static void slice_range_to_mask(unsigned
+ 	unsigned long end = start + len - 1;
+ 
+ 	ret->low_slices = 0;
+-	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
++	if (SLICE_NUM_HIGH)
++		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 
+ 	if (start < SLICE_LOW_TOP) {
+-		unsigned long mend = min(end, (SLICE_LOW_TOP - 1));
++		unsigned long mend = min(end,
++					 (unsigned long)(SLICE_LOW_TOP - 1));
+ 
+ 		ret->low_slices = (1u << (GET_LOW_SLICE_INDEX(mend) + 1))
+ 			- (1u << GET_LOW_SLICE_INDEX(start));
+@@ -113,11 +115,13 @@ static int slice_high_has_vma(struct mm_
+ 	unsigned long start = slice << SLICE_HIGH_SHIFT;
+ 	unsigned long end = start + (1ul << SLICE_HIGH_SHIFT);
+ 
++#ifdef CONFIG_PPC64
+ 	/* Hack, so that each addresses is controlled by exactly one
+ 	 * of the high or low area bitmaps, the first high area starts
+ 	 * at 4GB, not 0 */
+ 	if (start == 0)
+ 		start = SLICE_LOW_TOP;
++#endif
+ 
+ 	return !slice_area_is_free(mm, start, end - start);
+ }
+@@ -127,7 +131,8 @@ static void slice_mask_for_free(struct m
+ 	unsigned long i;
+ 
+ 	ret->low_slices = 0;
+-	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
++	if (SLICE_NUM_HIGH)
++		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 
+ 	for (i = 0; i < SLICE_NUM_LOW; i++)
+ 		if (!slice_low_has_vma(mm, i))
+@@ -149,7 +154,8 @@ static void slice_mask_for_size(struct m
+ 	u64 lpsizes;
+ 
+ 	ret->low_slices = 0;
+-	bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
++	if (SLICE_NUM_HIGH)
++		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 
+ 	lpsizes = mm->context.low_slices_psize;
+ 	for (i = 0; i < SLICE_NUM_LOW; i++)
+@@ -171,6 +177,10 @@ static int slice_check_fit(struct mm_str
+ 	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
+ 	unsigned long slice_count = GET_HIGH_SLICE_INDEX(mm->context.addr_limit);
+ 
++	if (!SLICE_NUM_HIGH)
++		return (mask.low_slices & available.low_slices) ==
++		       mask.low_slices;
++
+ 	bitmap_and(result, mask.high_slices,
+ 		   available.high_slices, slice_count);
+ 
+@@ -180,6 +190,7 @@ static int slice_check_fit(struct mm_str
+ 
+ static void slice_flush_segments(void *parm)
+ {
++#ifdef CONFIG_PPC64
+ 	struct mm_struct *mm = parm;
+ 	unsigned long flags;
+ 
+@@ -191,6 +202,7 @@ static void slice_flush_segments(void *p
+ 	local_irq_save(flags);
+ 	slb_flush_and_rebolt();
+ 	local_irq_restore(flags);
++#endif
  }
  
- /*
-+ * Check the agfl fields of the agf for inconsistency or corruption. The purpose
-+ * is to detect an agfl header padding mismatch between current and early v5
-+ * kernels. This problem manifests as a 1-slot size difference between the
-+ * on-disk flcount and the active [first, last] range of a wrapped agfl. This
-+ * may also catch variants of agfl count corruption unrelated to padding. Either
-+ * way, we'll reset the agfl and warn the user.
-+ *
-+ * Return true if a reset is required before the agfl can be used, false
-+ * otherwise.
-+ */
-+static bool
-+xfs_agfl_needs_reset(
-+	struct xfs_mount	*mp,
-+	struct xfs_agf		*agf)
-+{
-+	uint32_t		f = be32_to_cpu(agf->agf_flfirst);
-+	uint32_t		l = be32_to_cpu(agf->agf_fllast);
-+	uint32_t		c = be32_to_cpu(agf->agf_flcount);
-+	int			agfl_size = xfs_agfl_size(mp);
-+	int			active;
-+
-+	/* no agfl header on v4 supers */
-+	if (!xfs_sb_version_hascrc(&mp->m_sb))
-+		return false;
-+
-+	/*
-+	 * The agf read verifier catches severe corruption of these fields.
-+	 * Repeat some sanity checks to cover a packed -> unpacked mismatch if
-+	 * the verifier allows it.
-+	 */
-+	if (f >= agfl_size || l >= agfl_size)
-+		return true;
-+	if (c > agfl_size)
-+		return true;
-+
-+	/*
-+	 * Check consistency between the on-disk count and the active range. An
-+	 * agfl padding mismatch manifests as an inconsistent flcount.
-+	 */
-+	if (c && l >= f)
-+		active = l - f + 1;
-+	else if (c)
-+		active = agfl_size - f + l + 1;
-+	else
-+		active = 0;
-+
-+	return active != c;
-+}
-+
-+/*
-+ * Reset the agfl to an empty state. Ignore/drop any existing blocks since the
-+ * agfl content cannot be trusted. Warn the user that a repair is required to
-+ * recover leaked blocks.
-+ *
-+ * The purpose of this mechanism is to handle filesystems affected by the agfl
-+ * header padding mismatch problem. A reset keeps the filesystem online with a
-+ * relatively minor free space accounting inconsistency rather than suffer the
-+ * inevitable crash from use of an invalid agfl block.
-+ */
-+static void
-+xfs_agfl_reset(
-+	struct xfs_trans	*tp,
-+	struct xfs_buf		*agbp,
-+	struct xfs_perag	*pag)
-+{
-+	struct xfs_mount	*mp = tp->t_mountp;
-+	struct xfs_agf		*agf = XFS_BUF_TO_AGF(agbp);
-+
-+	ASSERT(pag->pagf_agflreset);
-+	trace_xfs_agfl_reset(mp, agf, 0, _RET_IP_);
-+
-+	xfs_warn(mp,
-+	       "WARNING: Reset corrupted AGFL on AG %u. %d blocks leaked. "
-+	       "Please unmount and run xfs_repair.",
-+	         pag->pag_agno, pag->pagf_flcount);
-+
-+	agf->agf_flfirst = 0;
-+	agf->agf_fllast = cpu_to_be32(xfs_agfl_size(mp) - 1);
-+	agf->agf_flcount = 0;
-+	xfs_alloc_log_agf(tp, agbp, XFS_AGF_FLFIRST | XFS_AGF_FLLAST |
-+				    XFS_AGF_FLCOUNT);
-+
-+	pag->pagf_flcount = 0;
-+	pag->pagf_agflreset = false;
-+}
-+
-+/*
-  * Decide whether to use this allocation group for this allocation.
-  * If so, fix up the btree freelist's size.
-  */
-@@ -2131,6 +2218,10 @@ xfs_alloc_fix_freelist(
- 		}
- 	}
+ static void slice_convert(struct mm_struct *mm, struct slice_mask mask, int psize)
+@@ -380,6 +392,8 @@ static unsigned long slice_find_area(str
+ static inline void slice_or_mask(struct slice_mask *dst, struct slice_mask *src)
+ {
+ 	dst->low_slices |= src->low_slices;
++	if (!SLICE_NUM_HIGH)
++		return;
+ 	bitmap_or(dst->high_slices, dst->high_slices, src->high_slices,
+ 		  SLICE_NUM_HIGH);
+ }
+@@ -388,6 +402,8 @@ static inline void slice_andnot_mask(str
+ {
+ 	dst->low_slices &= ~src->low_slices;
  
-+	/* reset a padding mismatched agfl before final free space check */
-+	if (pag->pagf_agflreset)
-+		xfs_agfl_reset(tp, agbp, pag);
++	if (!SLICE_NUM_HIGH)
++		return;
+ 	bitmap_andnot(dst->high_slices, dst->high_slices, src->high_slices,
+ 		      SLICE_NUM_HIGH);
+ }
+@@ -437,14 +453,17 @@ unsigned long slice_get_unmapped_area(un
+ 	 * init different masks
+ 	 */
+ 	mask.low_slices = 0;
+-	bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
+ 
+ 	/* silence stupid warning */;
+ 	potential_mask.low_slices = 0;
+-	bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
+ 
+ 	compat_mask.low_slices = 0;
+-	bitmap_zero(compat_mask.high_slices, SLICE_NUM_HIGH);
 +
- 	/* If there isn't enough total space or single-extent, reject it. */
- 	need = xfs_alloc_min_freelist(mp, pag);
- 	if (!xfs_alloc_space_available(args, need, flags))
-@@ -2287,6 +2378,7 @@ xfs_alloc_get_freelist(
- 		agf->agf_flfirst = 0;
++	if (SLICE_NUM_HIGH) {
++		bitmap_zero(mask.high_slices, SLICE_NUM_HIGH);
++		bitmap_zero(potential_mask.high_slices, SLICE_NUM_HIGH);
++		bitmap_zero(compat_mask.high_slices, SLICE_NUM_HIGH);
++	}
  
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, -1);
- 	xfs_trans_agflist_delta(tp, -1);
- 	pag->pagf_flcount--;
-@@ -2398,6 +2490,7 @@ xfs_alloc_put_freelist(
- 		agf->agf_fllast = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, 1);
- 	xfs_trans_agflist_delta(tp, 1);
- 	pag->pagf_flcount++;
-@@ -2605,6 +2698,7 @@ xfs_alloc_read_agf(
- 		pag->pagb_count = 0;
- 		pag->pagb_tree = RB_ROOT;
- 		pag->pagf_init = 1;
-+		pag->pagf_agflreset = xfs_agfl_needs_reset(mp, agf);
- 	}
- #ifdef DEBUG
- 	else if (!XFS_FORCED_SHUTDOWN(mp)) {
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -353,6 +353,7 @@ typedef struct xfs_perag {
- 	char		pagi_inodeok;	/* The agi is ok for inodes */
- 	uint8_t		pagf_levels[XFS_BTNUM_AGF];
- 					/* # of levels in bno & cnt btree */
-+	bool		pagf_agflreset; /* agfl requires reset before use */
- 	uint32_t	pagf_flcount;	/* count of blocks in freelist */
- 	xfs_extlen_t	pagf_freeblks;	/* total free blocks */
- 	xfs_extlen_t	pagf_longest;	/* longest free space */
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -1477,7 +1477,7 @@ TRACE_EVENT(xfs_extent_busy_trim,
- 		  __entry->tlen)
- );
- 
--TRACE_EVENT(xfs_agf,
-+DECLARE_EVENT_CLASS(xfs_agf_class,
- 	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags,
- 		 unsigned long caller_ip),
- 	TP_ARGS(mp, agf, flags, caller_ip),
-@@ -1533,6 +1533,13 @@ TRACE_EVENT(xfs_agf,
- 		  __entry->longest,
- 		  (void *)__entry->caller_ip)
- );
-+#define DEFINE_AGF_EVENT(name) \
-+DEFINE_EVENT(xfs_agf_class, name, \
-+	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags, \
-+		 unsigned long caller_ip), \
-+	TP_ARGS(mp, agf, flags, caller_ip))
-+DEFINE_AGF_EVENT(xfs_agf);
-+DEFINE_AGF_EVENT(xfs_agfl_reset);
- 
- TRACE_EVENT(xfs_free_extent,
- 	TP_PROTO(struct xfs_mount *mp, xfs_agnumber_t agno, xfs_agblock_t agbno,
+ 	/* Sanity checks */
+ 	BUG_ON(mm->task_size == 0);
+@@ -582,7 +601,9 @@ unsigned long slice_get_unmapped_area(un
+  convert:
+ 	slice_andnot_mask(&mask, &good_mask);
+ 	slice_andnot_mask(&mask, &compat_mask);
+-	if (mask.low_slices || !bitmap_empty(mask.high_slices, SLICE_NUM_HIGH)) {
++	if (mask.low_slices ||
++	    (SLICE_NUM_HIGH &&
++	     !bitmap_empty(mask.high_slices, SLICE_NUM_HIGH))) {
+ 		slice_convert(mm, mask, psize);
+ 		if (psize > MMU_PAGE_BASE)
+ 			on_each_cpu(slice_flush_segments, mm, 1);
