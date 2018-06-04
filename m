@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753162AbeFDHCL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:02:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54606 "EHLO mail.kernel.org"
+        id S1753116AbeFDHX2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:23:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751564AbeFDHCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:08 -0400
+        id S1753100AbeFDHCF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.14 41/52] hwtracing: stm: fix build error on some arches
-Date: Mon,  4 Jun 2018 08:58:36 +0200
-Message-Id: <20180604065608.235441460@linuxfoundation.org>
+Subject: [PATCH 4.14 40/52] stm class: Use vmalloc for the master map
+Date: Mon,  4 Jun 2018 08:58:35 +0200
+Message-Id: <20180604065608.194188700@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -29,31 +29,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit 806e30873f0e74d9d41b0ef761bd4d3e55c7d510 upstream.
+commit b5e2ced9bf81393034072dd4d372f6b430bc1f0a upstream.
 
-Commit b5e2ced9bf81 ("stm class: Use vmalloc for the master map") caused
-a build error on some arches as vmalloc.h was not explicitly included.
+Fengguang is running into a warning from the buddy allocator:
 
-Fix that by adding it to the list of includes.
+> swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
+> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #262
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> Call Trace:
+...
+>  __kmalloc+0x14b/0x180: ____cache_alloc at mm/slab.c:3127
+>  stm_register_device+0xf3/0x5c0: stm_register_device at drivers/hwtracing/stm/core.c:695
+...
 
-Fixes: b5e2ced9bf81 ("stm class: Use vmalloc for the master map")
-Reported-by: kbuild test robot <lkp@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Which is basically a result of the stm class trying to allocate ~512kB
+for the dummy_stm with its default parameters. There's no reason, however,
+for it not to be vmalloc()ed instead, which is what this patch does.
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/stm/core.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwtracing/stm/core.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 --- a/drivers/hwtracing/stm/core.c
 +++ b/drivers/hwtracing/stm/core.c
-@@ -27,6 +27,7 @@
- #include <linux/stm.h>
- #include <linux/fs.h>
- #include <linux/mm.h>
-+#include <linux/vmalloc.h>
- #include "stm.h"
+@@ -682,7 +682,7 @@ static void stm_device_release(struct de
+ {
+ 	struct stm_device *stm = to_stm_device(dev);
  
- #include <uapi/linux/stm.h>
+-	kfree(stm);
++	vfree(stm);
+ }
+ 
+ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+@@ -699,7 +699,7 @@ int stm_register_device(struct device *p
+ 		return -EINVAL;
+ 
+ 	nmasters = stm_data->sw_end - stm_data->sw_start + 1;
+-	stm = kzalloc(sizeof(*stm) + nmasters * sizeof(void *), GFP_KERNEL);
++	stm = vzalloc(sizeof(*stm) + nmasters * sizeof(void *));
+ 	if (!stm)
+ 		return -ENOMEM;
+ 
+@@ -752,7 +752,7 @@ err_device:
+ 	/* matches device_initialize() above */
+ 	put_device(&stm->dev);
+ err_free:
+-	kfree(stm);
++	vfree(stm);
+ 
+ 	return err;
+ }
