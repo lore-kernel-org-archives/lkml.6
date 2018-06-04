@@ -1,220 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752115AbeFDX2J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 19:28:09 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35533 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752001AbeFDX2G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 19:28:06 -0400
-X-Google-Smtp-Source: ADUXVKJTeypLsEg9yS6hAmUvobACjjevyiHoYy4xf1kHNhBz4CzwbyC2goHyhPzy1pshDnwUNodBqw==
-Date: Mon, 4 Jun 2018 16:28:01 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Peter Hutterer <peter.hutterer@who-t.net>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>,
-        Jason Gerecke <killertofu@gmail.com>,
-        Dennis Kempin <denniskempin@google.com>,
-        Andrew de los Reyes <adlr@google.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
- non-confident touches
-Message-ID: <20180604232801.GJ164893@dtor-ws>
-References: <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
- <20180601184330.GD222005@dtor-ws>
- <72b7120a-d304-0b2f-d04a-473631623f72@bitmath.org>
- <CAO-hwJKibKvqviLZ5SSYR_X3yLTzJrr0G4d6svM3FtgJ6AfvQQ@mail.gmail.com>
- <20180604172759.GA164893@dtor-ws>
- <994e5698-fbdf-05c8-b0b6-3df6af1b3dbc@bitmath.org>
- <20180604182658.GC164893@dtor-ws>
- <CAO-hwJK3h8xjuO=GQRT0prdbXURCTinkQg4i7N8ScPOig1KTYw@mail.gmail.com>
- <20180604213255.GF164893@dtor-ws>
- <20180604230624.GA13197@jelly>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180604230624.GA13197@jelly>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752146AbeFDX2V (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 19:28:21 -0400
+Received: from gate.crashing.org ([63.228.1.57]:51296 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752015AbeFDX2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 19:28:07 -0400
+Message-ID: <6164442a718645a754879eac5c4c5fad9283c211.camel@kernel.crashing.org>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
+Date: Tue, 05 Jun 2018 09:26:56 +1000
+In-Reply-To: <20180604184035-mutt-send-email-mst@kernel.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+         <20180523213703-mutt-send-email-mst@kernel.org>
+         <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
+         <20180604153558-mutt-send-email-mst@kernel.org>
+         <e7ceddbec11711a89282e9b70b7fd3c8af10b030.camel@kernel.crashing.org>
+         <20180604184035-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 09:06:24AM +1000, Peter Hutterer wrote:
-> On Mon, Jun 04, 2018 at 02:32:55PM -0700, Dmitry Torokhov wrote:
-> > On Mon, Jun 04, 2018 at 10:59:16PM +0200, Benjamin Tissoires wrote:
-> > > On Mon, Jun 4, 2018 at 8:26 PM, Dmitry Torokhov
-> > > <dmitry.torokhov@gmail.com> wrote:
-> > > > On Mon, Jun 04, 2018 at 07:55:57PM +0200, Henrik Rydberg wrote:
-> > > >> Hi Dmitry,
-> > > >>
-> > > >> > > > Logically, the confidence state is a property of a contact, not a new type
-> > > >> > > > of contact. Trying to use it in any other way is bound to lead to confusion.
-> > > >> > > >
-> > > >> > > > Problem is that MT_TOOL_PALM has been introduced in the kernel since
-> > > >> > > > v4.0 (late 2015 by a736775db683 "Input: add MT_TOOL_PALM").
-> > > >> > > > It's been used in the Synaptics RMI4 driver since and by hid-asus in late 2016.
-> > > >> > > > I can't find any other users in the current upstream tree, but those
-> > > >> > > > two are already making a precedent and changing the semantic is a
-> > > >> > > > little bit late :/
-> > > >> > I am sorry I did not respond and lost track of this issue back then, but
-> > > >> > I disagree with Henrik here. While confidence is a property of contact,
-> > > >> > so is the type of contact and it can and will change throughout life of
-> > > >> > a contact, especially if we will continue adding new types, such as, for
-> > > >> > example, thumb. In this case the firmware can transition through
-> > > >> > finger->thumb or finger->thumb->palm or finger->palm as the nature of
-> > > >> > contact becomes better understood. Still it is the same contact and we
-> > > >> > should not attempt to signal userspace differently.
-> > > >> We agree that the contact should stay the same, but the fear, and I think
-> > > >> somewhere along the blurry history of this thread, the problem was that
-> > > >> userspace interpreted the property change as a new contact (lift up/double
-> > > >> click/etc). Finger/thumb/palm is one set of hand properties, but what about
-> > > >> Pen? It would be hard for an application to consider a switch from finger to
-> > > >> pen as the same contact, which is where the natural implementation starts to
-> > > >> diverge from the intention.
-> > > >
-> > > > I think the userspace has to trust our tracking ID to decide whether it
-> > > > is a same contact or not. The current issue is that kernel is forcing
-> > > > tracking ID change on tool type change, and one of the 2 patches that I
-> > > > posted fixed that, allowing us to keep the tracking ID for finger->palm
-> > > > transitions.
+On Mon, 2018-06-04 at 19:21 +0300, Michael S. Tsirkin wrote:
+> 
+> > > > - First qemu doesn't know that the guest will switch to "secure mode"
+> > > > in advance. There is no difference between a normal and a secure
+> > > > partition until the partition does the magic UV call to "enter secure
+> > > > mode" and qemu doesn't see any of it. So who can set the flag here ?
 > > > 
-> > > I think I missed those 2 patches, can you point a LKML link?
+> > > The user should set it. You just tell user "to be able to use with
+> > > feature X, enable IOMMU".
 > > 
-> > Sorry, I thought I sent it out with the patch we are talking about here,
-> > but I did not. See below. Note that it doe snot have any protections on
-> > finger->pen transitions and I am not sure any are needed at the moment.
-> > We can add them wither to MT core or to drivers if we see issues with
-> > devices.
+> > That's completely backwards. The user has no idea what that stuff is.
+> > And it would have to percolate all the way up the management stack,
+> > libvirt, kimchi, whatever else ... that's just nonsense.
 > > 
-> > > Also, note that libevdev discards the tracking ID change now (it
-> > > shouts at the user in the logs). So that means that it will now be
-> > > hard to force libevdev to trust the kernel again for the tracking ID.
-> > > The current rule is:
-> > > - tracking ID >= 0 -> new touch
-> > > - any subsequent tracking ID >= 0 -> discarded
-> > > - tracking ID == -1 -> end of touch
-> > 
-> > Well, I guess it is like synaptics driver that used to dump core
-> > whenever it saw tracking ID change for the same slot (not going though
-> > -1 sequence). It only mattered to Synaptics PS/2 having only 2 slots and
-> > us having to produce weird results when users would use fancy gestures
-> > with 3+ fingers.
+> > Especially since, as I explained in my other email, this is *not* a
+> > qemu problem and thus the solution shouldn't be messing around with
+> > qemu.
 > 
-> yeah, my mistake, sorry. I always assumed a transition from M to -1 to N,
-> never M to N. This assumption made its way into libevdev (where the tracking
-> ID is transparently discarded, albeit with a warning). There are libevdev
-> patches to get rid of that but whatever device needed it got fixed in some
-> other way, so the patch didn't get pushed.
-> 
-> fwiw, dump core was just "print the backtrace to the log" here, there was no
-> actual core dump.
+> virtio is implemented in qemu though. If you prefer to stick
+> all your code in either guest or the UV that's your decision
+> but it looks like qemu could be helpful here.
 
-Hmm, I do not recall what version I was playing with, but I tried
-changing Synaptics kernel driver to not insert the fake -1 tracking ID
-for a slot when rolling 3 fingers on a 2-slot device (so removing finger
-1 while holding finger 2 and adding finger 3 does not appear to
-userspace as 2 - 1 - 2 fingers on the surface, but 2 - 2 - 2 instead)
-and xf86-input-synaptics-1.7.8 would scream about too many slots and
-stop working.
+Sorry Michael, that doesn't click. Yes of course virtio is implemented
+in qemu, but the problem we are trying to solve is *not* a qemu problem
+(the fact that the Linux drivers bypass the DMA API is wrong, needs
+fixing, and isnt a qemu problem). The fact that the secure guests need
+bounce buffering is not a qemu problem either.
 
-That was a while ago though, before libinput I think.
+Whether qemu chose to use an iommu or not is, and should remain an
+orthogonal problem.
 
-> 
-> > It probably does not matter with devices with 5+ slots. We should pretty
-> > much always have free slot for new contact.
+Forcing qemu to use the iommu to work around a linux side lack of
+proper use of the DMA API is not only just papering over the problem,
+it's also forcing changes up 3 or 4 levels of the SW stack to create
+that new option that no user will understand the meaning of and that
+would otherwise be unnecessary.
+
+> For example what if you have a guest that passes physical addresses
+> to qemu bypassing swiotlb? Don't you want to detect
+> that and fail gracefully rather than crash the guest?
+
+A guest bug then ? Well it wouldn't so much crash as force the pages to
+become encrypted and cause horrible ping/pong between qemu and the
+guest (the secure pages aren't accessible to qemu directly).
+
+> That's what VIRTIO_F_IOMMU_PLATFORM will do for you.
+
+Again this is orthogonal. Using an iommu will indeed provide a modicum
+of protection against buggy drivers, like it does on HW PCI platforms,
+whether those guests are secure or not.
+
+Note however that in practice, we tend to disable the iommu even on
+real HW whenever we want performance (of course we can't for guests but
+for bare metal systems we do, the added RAS isn't worth the performance
+lost for very fast networking for example).
+
+> Still that's hypervisor's decision. What isn't up to the hypervisor is
+> the way we structure code. We made an early decision to merge a hack
+> with xen, among discussion about how with time DMA API will learn to
+> support per-device quirks and we'll be able to switch to that.
+> So let's do that now?
+
+The DMA API itself isn't the one that needs to learn "per-device
+quirks", it's just plumbing into arch backends. The "quirk" is at the
+point of establishing the backend for a given device.
+
+We can go a good way down that path simply by having virtio in Linux
+start with putting *itself* its own direct ops in there when
+VIRTIO_F_IOMMU_PLATFORM is not set, and removing all the special casing
+in the rest of the driver.
+
+Once that's done, we have a single point of establishing the dma ops,
+we can quirk in there if needed, that's rather nicely contained, or put
+an arch hook, or whatever is necessary.
+
+I would like to keep however the ability to bypass the iommu for
+performance reasons, and also because it's qemu default mode of
+operation and my secure guest has no clean way to force qemu to turn
+the iommu on. The hypervisor *could* return something to qemu when the
+guest switch to secure as we do know that, and qemu could walk all of
+it's virtio devices as a result and "switch" them over but that's
+almost grosser from a qemu perspective.
+
+.../...
+
+> > The point is that requiring specific qemu command line arguments isn't
+> > going to fly. We have additional problems due to the fact that our
+> > firmware (SLOF) inside qemu doesn't currently deal with iommu's etc...
+> > though those can be fixed.
 > > 
+> > Overall, however, this seems to be the most convoluted way of achieving
+> > things, require user interventions where none should be needed etc...
+> > 
+> > Again, what's wrong with a 2 lines hook instead that solves it all and
+> > completely avoids involving qemu ?
+> > 
+> > Ben.
+> 
+> That each platform wants to add hacks in this data path function.
+
+Sure, then add a single platform hook and the platforms can do what
+they want here.
+
+But as I said, it should all be done at initialization time rather than
+in the data path, this we absolutely agree. We should just chose the
+right set of dma_ops, and have the data path always use the DMA API.
+
+Cheers,
+Ben.
+
+
 > > > 
-> > > >
-> > > > I think it is kernel task to not signal transitions that do not make
-> > > > sense, such as finger->pen or palm->pen etc.
-> > > 
-> > > I fully agree, though there is currently no such guard in the kernel
-> > > (maybe it's part of your series). I am worried about the RMI4 F12
-> > > driver that automatically forward the info from the firmware, so if
-> > > the firmware does something crazy, it will be exported to user space.
-> > > But I guess it might be better to treat that on a per driver basis.
-> > 
-> > Yeah, I think so.
-> > 
-> > > 
-> > > >
-> > > >>
-> > > >> > We could introduce the ABS_MT_CONFIDENCE (0/1 or even 0..n range), to
-> > > >> > complement ABS_MT_TOOL, but that would not really solve the issue with
-> > > >> > Wacom firmware (declaring contact non-confident and releasing it right
-> > > >> > away) and given MS explanation of the confidence as "contact is too big"
-> > > >> > MT_TOOL_PALM fits it perfectly.
-> > > >> Indeed, the Wacom firmware seems to need some special handling, which should
-> > > >> be fine by everyone. I do think it would make sense to add
-> > > >> ABS_MT_TOOL_TOO_BIG, or something, and use it if it exists. This would apply
-> > > 
-> > > Except we are already running out of ABS_* axes.
-> > 
-> > Sorry, meants MT_TOOL_TO_BIG, not a new axis.
-> 
-> bikeshed: MT_TOOL_IGNORE is a more generic name and does not imply size. A
-> pen that's lying on its side doesn't have a size but should still be
-> ignored.
-
-OK, when we start seeing this for non finger/thumb/palm objects we can
-add this tool type. For current devices we are dealing with palms.
-
-> 
-> > > 
-> > > >> also to a pen lying down on a touchpad, for instance.
-> > > >
-> > > > OK, I can see that for Pens, if we have firmware that would recognize
-> > > > such condition, it would be weird to report PALM. We could indeed have
-> > > > ABS_MT_TOOL_TOO_BIG, but on the other hand it is still a pen (as long as
-> > > > the hardware can recognize it as such). Maybe we'd be better off just
-> > > > having userspace going by contact size for pens. Peter, any suggestions
-> > > > here?
-> > > 
-> > > I don't think we have size handling in the tablet implementation in
-> > > libinput. I do not see it as a big issue to add such axes from a
-> > > libinput point of view. However, there is no existing hardware that
-> > > would provide such information, so I guess this will be a 'no' until
-> > > actual hardware comes in.
-> 
-> correct on all counts :)
-> 
-> 
-> > > Also note that the MT_TOOL_PEN implementation is limited (even
-> > > non-existant if I remember correctly). Peter and I do not have access
-> > > to any device that support such multi pen, so AFAICT, there is no code
-> > > to handle this in libinput.
-> 
-> Yep, correct. On this note: libinput very much follows a "no hardware, no
-> implementation" rule. I played the game of trying to support everything in a
-> generic manner with the X drivers and it's a nightmare to maintain. libinput
-> instead takes a use case and tries to make it sensible - but for that to
-> work we need to know both the hardware and the use-cases. That's why tablet
-> handling coming out of libinput is very different to the handling we have in
-> X but, afaict, everyone is better off for it so far.
-> 
-> This means that if you give me a MT_TOOL_FINGER → MT_TOOL_PEN transition,
-> I'll handle it, but only after you also give me the use-case for it and the
-> promise of real devices that need it. 
-> 
-> > > One last point from libinput, the pen device would need to be on its
-> > > separate kernel node for the protocol to be smoothly handled. So
-> > > basically, even the transition from MT_TOOL_FINGER to MT_TOOL_PEN
-> > > would not be handled properly right now. The Pen event will be treated
-> > > as a touch.
-> > 
-> > I think normally pen and touch a separate controllers, so we have that
-> > going for us...
-> 
-> Side-effect of this is: the tablet interface doesn't handle touch at all
-> because it didn't need to yet. So while technically possible, it requires a
-> fair bit of re-arranging.
-
-What about things like Bamboo touch? It is a Wacom tablet with both
-multitouch finger and stylus.
-
-Thanks.
-
--- 
-Dmitry
+> > > > > 
+> > > > > 
+> > > > > >  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
+> > > > > >  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
+> > > > > >  drivers/virtio/virtio_ring.c           | 10 ++++++++++
+> > > > > >  3 files changed, 27 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+> > > > > > index 8fa3945..056e578 100644
+> > > > > > --- a/arch/powerpc/include/asm/dma-mapping.h
+> > > > > > +++ b/arch/powerpc/include/asm/dma-mapping.h
+> > > > > > @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
+> > > > > >  #define ARCH_HAS_DMA_MMAP_COHERENT
+> > > > > >  
+> > > > > >  #endif /* __KERNEL__ */
+> > > > > > +
+> > > > > > +#define platform_forces_virtio_dma platform_forces_virtio_dma
+> > > > > > +
+> > > > > > +struct virtio_device;
+> > > > > > +
+> > > > > > +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
+> > > > > >  #endif	/* _ASM_DMA_MAPPING_H */
+> > > > > > diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+> > > > > > index 06f0296..a2ec15a 100644
+> > > > > > --- a/arch/powerpc/platforms/pseries/iommu.c
+> > > > > > +++ b/arch/powerpc/platforms/pseries/iommu.c
+> > > > > > @@ -38,6 +38,7 @@
+> > > > > >  #include <linux/of.h>
+> > > > > >  #include <linux/iommu.h>
+> > > > > >  #include <linux/rculist.h>
+> > > > > > +#include <linux/virtio.h>
+> > > > > >  #include <asm/io.h>
+> > > > > >  #include <asm/prom.h>
+> > > > > >  #include <asm/rtas.h>
+> > > > > > @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
+> > > > > >  __setup("multitce=", disable_multitce);
+> > > > > >  
+> > > > > >  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
+> > > > > > +
+> > > > > > +bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > > > > +{
+> > > > > > +	/*
+> > > > > > +	 * On protected guest platforms, force virtio core to use DMA
+> > > > > > +	 * MAP API for all virtio devices. But there can also be some
+> > > > > > +	 * exceptions for individual devices like virtio balloon.
+> > > > > > +	 */
+> > > > > > +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
+> > > > > > +}
+> > > > > 
+> > > > > Isn't this kind of slow?  vring_use_dma_api is on
+> > > > > data path and supposed to be very fast.
+> > > > > 
+> > > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > > > index 21d464a..47ea6c3 100644
+> > > > > > --- a/drivers/virtio/virtio_ring.c
+> > > > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > > > @@ -141,8 +141,18 @@ struct vring_virtqueue {
+> > > > > >   * unconditionally on data path.
+> > > > > >   */
+> > > > > >  
+> > > > > > +#ifndef platform_forces_virtio_dma
+> > > > > > +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > > > > +{
+> > > > > > +	return false;
+> > > > > > +}
+> > > > > > +#endif
+> > > > > > +
+> > > > > >  static bool vring_use_dma_api(struct virtio_device *vdev)
+> > > > > >  {
+> > > > > > +	if (platform_forces_virtio_dma(vdev))
+> > > > > > +		return true;
+> > > > > > +
+> > > > > >  	if (!virtio_has_iommu_quirk(vdev))
+> > > > > >  		return true;
+> > > > > >  
+> > > > > > -- 
+> > > > > > 2.9.3
