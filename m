@@ -1,173 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeFDJ5f (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 05:57:35 -0400
-Received: from hera.aquilenet.fr ([185.233.100.1]:36562 "EHLO
-        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbeFDJ5d (ORCPT
+        id S1752335AbeFDJ6F (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 05:58:05 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:51146 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751791AbeFDJ6D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:57:33 -0400
-Date: Mon, 4 Jun 2018 11:57:30 +0200
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-To: "Speakup is a screen review system for Linux."
-        <speakup@linux-speakup.org>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        Mon, 4 Jun 2018 05:58:03 -0400
+Date: Mon, 4 Jun 2018 11:57:44 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: arm@kernel.org, biju.das@bp.renesas.com,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
-Message-ID: <20180604095730.l2vuzbapxeapr3ni@var.youpi.perso.aquilenet.fr>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        "Speakup is a screen review system for Linux." <speakup@linux-speakup.org>,
-        devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-References: <20180604095212.GA18381@tanglefoot>
+Subject: Re: [PATCH V2 13/15] arm: dts: r8a77xx: Add missing OPP properties
+ for CPUs
+Message-ID: <20180604095744.a7ztsmokxzhcat7j@verge.net.au>
+References: <5821a6dbe413b5a217ca1e24ddf8ebfa63ba6ef0.1527244201.git.viresh.kumar@linaro.org>
+ <c6254ebb1f177468db6b8ac560ffb5a4a0b864f0.1527655562.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180604095212.GA18381@tanglefoot>
-Organization: I am not organized
+In-Reply-To: <c6254ebb1f177468db6b8ac560ffb5a4a0b864f0.1527655562.git.viresh.kumar@linaro.org>
+Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-Justin Skists, le lun. 04 juin 2018 10:52:12 +0100, a ecrit:
-> The synths[] array is a collection of synths acting like a list.
-> There is no need for synths to be an array, so refactor synths[] to use
-> standard kernel list_head API, instead, and modify the usages to suit.
-> As a side-effect, the maximum number of synths has also become redundant.
+On Wed, May 30, 2018 at 10:16:58AM +0530, Viresh Kumar wrote:
+> The OPP properties, like "operating-points", should either be present
+> for all the CPUs of a cluster or none. If these are present only for a
+> subset of CPUs of a cluster then things will start falling apart as soon
+> as the CPUs are brought online in a different order. For example, this
+> will happen because the operating system looks for such properties in
+> the CPU node it is trying to bring up, so that it can create an OPP
+> table.
 > 
-> Signed-off-by: Justin Skists <justin.skists@juzza.co.uk>
-
-This needs a review, but the principle looks sound to me :)
-
-Thanks,
-Samuel
-
-> ---
->  drivers/staging/speakup/spk_types.h |  2 ++
->  drivers/staging/speakup/synth.c     | 40 ++++++++++-------------------
->  2 files changed, 15 insertions(+), 27 deletions(-)
+> Add such missing properties.
 > 
-> diff --git a/drivers/staging/speakup/spk_types.h b/drivers/staging/speakup/spk_types.h
-> index 3e082dc3d45c..a2fc72c29894 100644
-> --- a/drivers/staging/speakup/spk_types.h
-> +++ b/drivers/staging/speakup/spk_types.h
-> @@ -160,6 +160,8 @@ struct spk_io_ops {
->  };
->  
->  struct spk_synth {
-> +	struct list_head node;
-> +
->  	const char *name;
->  	const char *version;
->  	const char *long_name;
-> diff --git a/drivers/staging/speakup/synth.c b/drivers/staging/speakup/synth.c
-> index 7deeb7061018..25f259ee4ffc 100644
-> --- a/drivers/staging/speakup/synth.c
-> +++ b/drivers/staging/speakup/synth.c
-> @@ -18,8 +18,7 @@
->  #include "speakup.h"
->  #include "serialio.h"
->  
-> -#define MAXSYNTHS       16      /* Max number of synths in array. */
-> -static struct spk_synth *synths[MAXSYNTHS + 1];
-> +static LIST_HEAD(synths);
->  struct spk_synth *synth;
->  char spk_pitch_buff[32] = "";
->  static int module_status;
-> @@ -355,9 +354,8 @@ struct var_t synth_time_vars[] = {
->  /* called by: speakup_init() */
->  int synth_init(char *synth_name)
->  {
-> -	int i;
->  	int ret = 0;
-> -	struct spk_synth *synth = NULL;
-> +	struct spk_synth *tmp, *synth = NULL;
->  
->  	if (!synth_name)
->  		return 0;
-> @@ -371,9 +369,10 @@ int synth_init(char *synth_name)
->  
->  	mutex_lock(&spk_mutex);
->  	/* First, check if we already have it loaded. */
-> -	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
-> -		if (strcmp(synths[i]->name, synth_name) == 0)
-> -			synth = synths[i];
-> +	list_for_each_entry(tmp, &synths, node) {
-> +		if (strcmp(tmp->name, synth_name) == 0)
-> +			synth = tmp;
-> +	}
->  
->  	/* If we got one, initialize it now. */
->  	if (synth)
-> @@ -448,29 +447,23 @@ void synth_release(void)
->  /* called by: all_driver_init() */
->  int synth_add(struct spk_synth *in_synth)
->  {
-> -	int i;
->  	int status = 0;
-> +	struct spk_synth *tmp;
->  
->  	mutex_lock(&spk_mutex);
-> -	for (i = 0; i < MAXSYNTHS && synths[i]; i++)
-> -		/* synth_remove() is responsible for rotating the array down */
-> -		if (in_synth == synths[i]) {
-> +
-> +	list_for_each_entry(tmp, &synths, node) {
-> +		if (tmp == in_synth) {
->  			mutex_unlock(&spk_mutex);
->  			return 0;
->  		}
-> -	if (i == MAXSYNTHS) {
-> -		pr_warn("Error: attempting to add a synth past end of array\n");
-> -		mutex_unlock(&spk_mutex);
-> -		return -1;
->  	}
->  
->  	if (in_synth->startup)
->  		status = do_synth_init(in_synth);
->  
-> -	if (!status) {
-> -		synths[i++] = in_synth;
-> -		synths[i] = NULL;
-> -	}
-> +	if (!status)
-> +		list_add_tail(&in_synth->node, &synths);
->  
->  	mutex_unlock(&spk_mutex);
->  	return status;
-> @@ -479,17 +472,10 @@ EXPORT_SYMBOL_GPL(synth_add);
->  
->  void synth_remove(struct spk_synth *in_synth)
->  {
-> -	int i;
-> -
->  	mutex_lock(&spk_mutex);
->  	if (synth == in_synth)
->  		synth_release();
-> -	for (i = 0; synths[i]; i++) {
-> -		if (in_synth == synths[i])
-> -			break;
-> -	}
-> -	for ( ; synths[i]; i++) /* compress table */
-> -		synths[i] = synths[i + 1];
-> +	list_del(&in_synth->node);
->  	module_status = 0;
->  	mutex_unlock(&spk_mutex);
->  }
-> -- 
-> 2.17.1
+> Fix other missing properties (like, clock latency, voltage tolerance,
+> etc) as well to make it all work.
 > 
-> _______________________________________________
-> Speakup mailing list
-> Speakup@linux-speakup.org
-> http://linux-speakup.org/cgi-bin/mailman/listinfo/speakup
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
--- 
-Samuel
-<N> un driver qui fait quoi, alors ?
-<y> ben pour les bips
-<s> pour passer les oops en morse
- -+- #ens-mim - vive les rapports de bug -+-
+Thanks, I took the liberty of changing the prefix of this patch to
+"ARM: dts: r8a77(43|9[013]):" when applying this patch.
