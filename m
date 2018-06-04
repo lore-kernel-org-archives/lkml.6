@@ -1,108 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751605AbeFDQDe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:03:34 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53893 "EHLO mail.bootlin.com"
+        id S1751356AbeFDQGM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:06:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:45356 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751093AbeFDQDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:03:33 -0400
-Date: Mon, 4 Jun 2018 18:03:31 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Tudor Ambarus <tudor.ambarus@microchip.com>
-Cc: Peter Rosin <peda@axentia.se>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
- dma
-Message-ID: <20180604180331.67299cc3@bbrezillon>
-In-Reply-To: <28c58ca3-d8ca-7195-3aa2-10d7c703dd65@microchip.com>
-References: <20180329131054.22506-1-peda@axentia.se>
-        <20180329153322.5e2fc1e7@bbrezillon>
-        <ed87cf13-a69a-6115-f0a8-5f51c4957d1d@axentia.se>
-        <20180329154416.5c1a0013@bbrezillon>
-        <b740406a-e91c-67ad-24a3-cbdbe259d00d@axentia.se>
-        <20180402142249.7e076a64@bbrezillon>
-        <e0d9bd59-8031-e387-676e-dc5811170a0c@axentia.se>
-        <20180402212843.164d5d21@bbrezillon>
-        <20180402222020.1d344c14@bbrezillon>
-        <d7e6f78d-b57b-4d0f-c07c-ca6c1930cd51@axentia.se>
-        <20180403091813.5fb5c18c@bbrezillon>
-        <d0afd431-6e51-a9b7-c103-ecf1f6e07c2e@axentia.se>
-        <959d826d-1a98-ca22-acee-a4548427fcd3@microchip.com>
-        <a25ca617-d3da-d401-1ba9-8e5887f8a8e5@microchip.com>
-        <024079cb-77ad-9c48-e370-e6e8f2de171b@axentia.se>
-        <9c496531-f7b6-4b9d-dd51-0bfb68ead303@axentia.se>
-        <c3cc1894-2d7d-93b6-a9de-ed9ca4564ae9@axentia.se>
-        <28c58ca3-d8ca-7195-3aa2-10d7c703dd65@microchip.com>
-Followup-To: Eugen Hristev <eugen.hristev@microchip.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751058AbeFDQGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 12:06:10 -0400
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: [PATCH 0/2] Improve estimated utilization of preempted FAIR tasks
+Date: Mon,  4 Jun 2018 17:05:58 +0100
+Message-Id: <20180604160600.22052-1-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Jun 2018 18:46:56 +0300
-Tudor Ambarus <tudor.ambarus@microchip.com> wrote:
+Here is a small series to improve the estimated utilization of fair
+tasks which
+are preempted by either another FAIR task of by tasks of an higher
+priority
+scheduling class (i.e. RT and DL).
 
-> Hi, Peter,
-> 
-> On 05/28/2018 01:10 PM, Peter Rosin wrote:
-> 
-> [cut]
-> 
-> > So, I think I want either
-> > 
-> > A) the NAND controller to use master 1 DMAC0/IF0 (i.e. slave 8 DDR2 port 2) and
-> >     the LCDC to use master 9 (i.e. slave 9 DDR2 Port 3)
-> > 
-> > or
-> > 
-> > B) the NAND controller to use master 2 DMAC0/IF1 (i.e. slave 7 DDR2 port 1, and
-> >     possibly slave 9 DDR2 port 3 (if my previous findings are relevant) and the
-> >     LCDC to use master 8 (i.e. slave 8 DDR2 Port 2)  
-> 
-> My understanding is that "Table 14-3. Master to Slave Access" describes
-> what connections are allowed between the masters and slaves, while the
-> PRxSy registers just set the priorities. What happens when you assign
-> the highest priority to a master to slave connection that is not
-> allowed? Probably it is ignored, but I'll check with the hardware team.
-> So I expect that the NAND controller can not use DDR2 port 3 regardless
-> of the priority set.
-> 
-> [cut]
-> 
-> > So, output is as expected and I believe that the patch makes the NAND DMA
-> > accesses use master 2 DMAC0/IF1 and are thus forced to use slave 7 DDR2 Port 1
-> > (and possibly 9). The LCDC is using slave 8 DDR2 Port 2. So there should be no
-> > slave conflict?
-> > 
-> > But the on-screen crap remains during NAND accesses.  
-> 
-> No conflict, but you missed to dispatch the load on the LCDC DMA
-> masters, if I understood correctly.
-> 
-> So, I think we want to test the following:
-> - NAND controller to use DMAC0/IF1 (slave 7 DDR2 port 1)
+It can certainly be improved, but it has been already functionally
+tested and given the discussion going on on IRC and in this other
+thread:
 
-As I explained in one of my previous email, it's not that easy to set
-up, because the SRAM is connected to IF0, and we're using DMA memcpy
-here. Also, I don't see how it could solve Peter's problem if, even
-when he switches to LCDC master 9 for the primary overlay, he still
-keeps experiencing FIFO underruns.
+   https://lkml.org/lkml/2018/5/25/410
+   1527253951-22709-1-git-send-email-vincent.guittot@linaro.org
 
-> - LCDC to use master 8 (slave 8 DDR2 Port 2) and master 9 (slave 9 DDR2
-> Port 3).
+I wanted to anticipate a possible simple alternative/additional approach
+to improve CPU utilization tracking for CFS tasks. Thus, every comment
+and suggestion is more then welcome!
 
-Except that only works if you have several overlays activated, which
-AFAIR, is not the case in Peter's setup.
+The main reasons and the overall idea is explained by the second patch
+of this
+series. While the first patch is just a first step in the direction of
+having a
+more memory and run-time efficient implementation.
+
+The ultimate benefit of this series is to make the CFS class more robust
+in
+terms of its integration with the schedutil governor. Indeed, by better
+estimating the CPU bandwidth requirements for CFS tasks we can assert
+more
+accurately their bandwidth demands and be less sensitive to side effect,
+on
+PELT, generated by higher priority classes preempting CFS tasks, like
+the
+CFS util_avg decay.
+
+Cheers Patrick
+
+Patrick Bellasi (2):
+  sched/fair: pelt: use u32 for util_avg
+  sched/fair: util_est: add running_sum tracking
+
+ include/linux/sched.h |  3 ++-
+ kernel/sched/debug.c  |  2 +-
+ kernel/sched/fair.c   | 33 ++++++++++++++++++++++++---------
+ 3 files changed, 27 insertions(+), 11 deletions(-)
+
+-- 
+2.15.1
