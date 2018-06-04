@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752752AbeFDH3X (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:29:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53198 "EHLO mail.kernel.org"
+        id S1752778AbeFDH3v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:29:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752569AbeFDHAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:19 -0400
+        id S1751527AbeFDHAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:00:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
-        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 10/52] Revert "pinctrl: msm: Use dynamic GPIO numbering"
-Date: Mon,  4 Jun 2018 08:58:05 +0200
-Message-Id: <20180604065606.947869233@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 24/29] objtool: Detect RIP-relative switch table references, part 2
+Date: Mon,  4 Jun 2018 08:58:20 +0200
+Message-Id: <20180604065803.121030885@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
-References: <20180604065606.532044490@linuxfoundation.org>
+In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
+References: <20180604065802.157744637@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -28,38 +28,122 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-This reverts commit bd36ea57d6d58041180c4f7d2c2bf5194c26845d which is
-commit a7aa75a2a7dba32594291a71c3704000a2fd7089 upstream.
+commit 7dec80ccbe310fb7e225bf21c48c672bb780ce7b upstream.
 
-There's been too many complaints about this.  Personally I think it's
-going to blow up when people hit this in mainline, but hey, it's not my
-systems.  At least we don't have to backport the mess to the stable
-kernels to give them some more life to live unscathed :)
+With the following commit:
 
-Reported-by: Timur Tabi <timur@codeaurora.org>
-Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+  fd35c88b7417 ("objtool: Support GCC 8 switch tables")
+
+I added a "can't find switch jump table" warning, to stop covering up
+silent failures if add_switch_table() can't find anything.
+
+That warning found yet another bug in the objtool switch table detection
+logic.  For cases 1 and 2 (as described in the comments of
+find_switch_table()), the find_symbol_containing() check doesn't adjust
+the offset for RIP-relative switch jumps.
+
+Incidentally, this bug was already fixed for case 3 with:
+
+  6f5ec2993b1f ("objtool: Detect RIP-relative switch table references")
+
+However, that commit missed the fix for cases 1 and 2.
+
+The different cases are now starting to look more and more alike.  So
+fix the bug by consolidating them into a single case, by checking the
+original dynamic jump instruction in the case 3 loop.
+
+This also simplifies the code and makes it more robust against future
+switch table detection issues -- of which I'm sure there will be many...
+
+Switch table detection has been the most fragile area of objtool, by
+far.  I long for the day when we'll have a GCC plugin for annotating
+switch tables.  Linus asked me to delay such a plugin due to the
+flakiness of the plugin infrastructure in older versions of GCC, so this
+rickety code is what we're stuck with for now.  At least the code is now
+a little simpler than it was.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
- 		return -EINVAL;
+---
+ tools/objtool/check.c |   37 ++++++++++++-------------------------
+ 1 file changed, 12 insertions(+), 25 deletions(-)
+
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -900,40 +900,19 @@ static struct rela *find_switch_table(st
+ 	struct instruction *orig_insn = insn;
+ 	unsigned long table_offset;
  
- 	chip = &pctrl->chip;
--	chip->base = -1;
-+	chip->base = 0;
- 	chip->ngpio = ngpio;
- 	chip->label = dev_name(pctrl->dev);
- 	chip->parent = pctrl->dev;
+-	/* case 1 & 2 */
+-	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
+-	if (text_rela && text_rela->sym == file->rodata->sym &&
+-	    !find_symbol_containing(file->rodata, text_rela->addend)) {
+-
+-		table_offset = text_rela->addend;
+-		if (text_rela->type == R_X86_64_PC32) {
+-			/* case 2 */
+-			table_offset += 4;
+-			file->ignore_unreachables = true;
+-		}
+-
+-		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+-		if (!rodata_rela)
+-			return NULL;
+-
+-		return rodata_rela;
+-	}
+-
+-	/* case 3 */
+ 	/*
+ 	 * Backward search using the @first_jump_src links, these help avoid
+ 	 * much of the 'in between' code. Which avoids us getting confused by
+ 	 * it.
+ 	 */
+-	for (insn = list_prev_entry(insn, list);
+-
++	for (;
+ 	     &insn->list != &file->insn_list &&
+ 	     insn->sec == func->sec &&
+ 	     insn->offset >= func->offset;
+ 
+ 	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
+ 
+-		if (insn->type == INSN_JUMP_DYNAMIC)
++		if (insn != orig_insn && insn->type == INSN_JUMP_DYNAMIC)
+ 			break;
+ 
+ 		/* allow small jumps within the range */
+@@ -960,10 +939,18 @@ static struct rela *find_switch_table(st
+ 		if (find_symbol_containing(file->rodata, table_offset))
+ 			continue;
+ 
+-		/* mov [rodata addr], %reg */
+ 		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+-		if (rodata_rela)
++		if (rodata_rela) {
++			/*
++			 * Use of RIP-relative switch jumps is quite rare, and
++			 * indicates a rare GCC quirk/bug which can leave dead
++			 * code behind.
++			 */
++			if (text_rela->type == R_X86_64_PC32)
++				file->ignore_unreachables = true;
++
+ 			return rodata_rela;
++		}
+ 	}
+ 
+ 	return NULL;
