@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753593AbeFDHDm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55808 "EHLO mail.kernel.org"
+        id S1753535AbeFDHDd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:03:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753569AbeFDHDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:39 -0400
+        id S1753511AbeFDHDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 04/47] objtool: Detect RIP-relative switch table references, part 2
-Date: Mon,  4 Jun 2018 08:58:16 +0200
-Message-Id: <20180604065549.658029154@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.16 19/47] tracing: Make the snapshot trigger work with instances
+Date: Mon,  4 Jun 2018 08:58:31 +0200
+Message-Id: <20180604065550.302266366@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -32,118 +29,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 7dec80ccbe310fb7e225bf21c48c672bb780ce7b upstream.
+commit 2824f5033248600673e3e126a4d135363cbfd9ac upstream.
 
-With the following commit:
+The snapshot trigger currently only affects the main ring buffer, even when
+it is used by the instances. This can be confusing as the snapshot trigger
+is listed in the instance.
 
-  fd35c88b7417 ("objtool: Support GCC 8 switch tables")
+ > # cd /sys/kernel/tracing
+ > # mkdir instances/foo
+ > # echo snapshot > instances/foo/events/syscalls/sys_enter_fchownat/trigger
+ > # echo top buffer > trace_marker
+ > # echo foo buffer > instances/foo/trace_marker
+ > # touch /tmp/bar
+ > # chown rostedt /tmp/bar
+ > # cat instances/foo/snapshot
+ # tracer: nop
+ #
+ #
+ # * Snapshot is freed *
+ #
+ # Snapshot commands:
+ # echo 0 > snapshot : Clears and frees snapshot buffer
+ # echo 1 > snapshot : Allocates snapshot buffer, if not already allocated.
+ #                      Takes a snapshot of the main buffer.
+ # echo 2 > snapshot : Clears snapshot buffer (but does not allocate or free)
+ #                      (Doesn't have to be '2' works with any number that
+ #                       is not a '0' or '1')
 
-I added a "can't find switch jump table" warning, to stop covering up
-silent failures if add_switch_table() can't find anything.
+ > # cat snapshot
+ # tracer: nop
+ #
+ #                              _-----=> irqs-off
+ #                             / _----=> need-resched
+ #                            | / _---=> hardirq/softirq
+ #                            || / _--=> preempt-depth
+ #                            ||| /     delay
+ #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+ #              | |       |   ||||       |         |
+             bash-1189  [000] ....   111.488323: tracing_mark_write: top buffer
 
-That warning found yet another bug in the objtool switch table detection
-logic.  For cases 1 and 2 (as described in the comments of
-find_switch_table()), the find_symbol_containing() check doesn't adjust
-the offset for RIP-relative switch jumps.
+Not only did the snapshot occur in the top level buffer, but the instance
+snapshot buffer should have been allocated, and it is still free.
 
-Incidentally, this bug was already fixed for case 3 with:
-
-  6f5ec2993b1f ("objtool: Detect RIP-relative switch table references")
-
-However, that commit missed the fix for cases 1 and 2.
-
-The different cases are now starting to look more and more alike.  So
-fix the bug by consolidating them into a single case, by checking the
-original dynamic jump instruction in the case 3 loop.
-
-This also simplifies the code and makes it more robust against future
-switch table detection issues -- of which I'm sure there will be many...
-
-Switch table detection has been the most fragile area of objtool, by
-far.  I long for the day when we'll have a GCC plugin for annotating
-switch tables.  Linus asked me to delay such a plugin due to the
-flakiness of the plugin infrastructure in older versions of GCC, so this
-rickety code is what we're stuck with for now.  At least the code is now
-a little simpler than it was.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 85f2b08268c01 ("tracing: Add basic event trigger framework")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   37 ++++++++++++-------------------------
- 1 file changed, 12 insertions(+), 25 deletions(-)
+ kernel/trace/trace.c                |   12 ++++++------
+ kernel/trace/trace.h                |   11 +++++++++++
+ kernel/trace/trace_events_trigger.c |   10 ++++++++--
+ 3 files changed, 25 insertions(+), 8 deletions(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -901,40 +901,19 @@ static struct rela *find_switch_table(st
- 	struct instruction *orig_insn = insn;
- 	unsigned long table_offset;
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -892,7 +892,7 @@ int __trace_bputs(unsigned long ip, cons
+ EXPORT_SYMBOL_GPL(__trace_bputs);
  
--	/* case 1 & 2 */
--	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
--	if (text_rela && text_rela->sym == file->rodata->sym &&
--	    !find_symbol_containing(file->rodata, text_rela->addend)) {
--
--		table_offset = text_rela->addend;
--		if (text_rela->type == R_X86_64_PC32) {
--			/* case 2 */
--			table_offset += 4;
--			file->ignore_unreachables = true;
--		}
--
--		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
--		if (!rodata_rela)
--			return NULL;
--
--		return rodata_rela;
--	}
--
--	/* case 3 */
- 	/*
- 	 * Backward search using the @first_jump_src links, these help avoid
- 	 * much of the 'in between' code. Which avoids us getting confused by
- 	 * it.
- 	 */
--	for (insn = list_prev_entry(insn, list);
--
-+	for (;
- 	     &insn->list != &file->insn_list &&
- 	     insn->sec == func->sec &&
- 	     insn->offset >= func->offset;
+ #ifdef CONFIG_TRACER_SNAPSHOT
+-static void tracing_snapshot_instance(struct trace_array *tr)
++void tracing_snapshot_instance(struct trace_array *tr)
+ {
+ 	struct tracer *tracer = tr->current_trace;
+ 	unsigned long flags;
+@@ -948,7 +948,7 @@ static int resize_buffer_duplicate_size(
+ 					struct trace_buffer *size_buf, int cpu_id);
+ static void set_buffer_entries(struct trace_buffer *buf, unsigned long val);
  
- 	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
+-static int alloc_snapshot(struct trace_array *tr)
++int tracing_alloc_snapshot_instance(struct trace_array *tr)
+ {
+ 	int ret;
  
--		if (insn->type == INSN_JUMP_DYNAMIC)
-+		if (insn != orig_insn && insn->type == INSN_JUMP_DYNAMIC)
- 			break;
+@@ -994,7 +994,7 @@ int tracing_alloc_snapshot(void)
+ 	struct trace_array *tr = &global_trace;
+ 	int ret;
  
- 		/* allow small jumps within the range */
-@@ -961,10 +940,18 @@ static struct rela *find_switch_table(st
- 		if (find_symbol_containing(file->rodata, table_offset))
- 			continue;
+-	ret = alloc_snapshot(tr);
++	ret = tracing_alloc_snapshot_instance(tr);
+ 	WARN_ON(ret < 0);
  
--		/* mov [rodata addr], %reg */
- 		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
--		if (rodata_rela)
-+		if (rodata_rela) {
-+			/*
-+			 * Use of RIP-relative switch jumps is quite rare, and
-+			 * indicates a rare GCC quirk/bug which can leave dead
-+			 * code behind.
-+			 */
-+			if (text_rela->type == R_X86_64_PC32)
-+				file->ignore_unreachables = true;
-+
- 			return rodata_rela;
-+		}
+ 	return ret;
+@@ -5395,7 +5395,7 @@ static int tracing_set_tracer(struct tra
+ 
+ #ifdef CONFIG_TRACER_MAX_TRACE
+ 	if (t->use_max_tr && !had_max_tr) {
+-		ret = alloc_snapshot(tr);
++		ret = tracing_alloc_snapshot_instance(tr);
+ 		if (ret < 0)
+ 			goto out;
  	}
+@@ -6373,7 +6373,7 @@ tracing_snapshot_write(struct file *filp
+ 		}
+ #endif
+ 		if (!tr->allocated_snapshot) {
+-			ret = alloc_snapshot(tr);
++			ret = tracing_alloc_snapshot_instance(tr);
+ 			if (ret < 0)
+ 				break;
+ 		}
+@@ -7094,7 +7094,7 @@ ftrace_trace_snapshot_callback(struct tr
+ 		return ret;
  
- 	return NULL;
+  out_reg:
+-	ret = alloc_snapshot(tr);
++	ret = tracing_alloc_snapshot_instance(tr);
+ 	if (ret < 0)
+ 		goto out;
+ 
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1812,6 +1812,17 @@ static inline void __init trace_event_in
+ static inline void trace_event_eval_update(struct trace_eval_map **map, int len) { }
+ #endif
+ 
++#ifdef CONFIG_TRACER_SNAPSHOT
++void tracing_snapshot_instance(struct trace_array *tr);
++int tracing_alloc_snapshot_instance(struct trace_array *tr);
++#else
++static inline void tracing_snapshot_instance(struct trace_array *tr) { }
++static inline int tracing_alloc_snapshot_instance(struct trace_array *tr)
++{
++	return 0;
++}
++#endif
++
+ extern struct trace_iterator *tracepoint_print_iter;
+ 
+ #endif /* _LINUX_KERNEL_TRACE_H */
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -642,6 +642,7 @@ event_trigger_callback(struct event_comm
+ 	trigger_data->count = -1;
+ 	trigger_data->ops = trigger_ops;
+ 	trigger_data->cmd_ops = cmd_ops;
++	trigger_data->private_data = file;
+ 	INIT_LIST_HEAD(&trigger_data->list);
+ 	INIT_LIST_HEAD(&trigger_data->named_list);
+ 
+@@ -1042,7 +1043,12 @@ static struct event_command trigger_trac
+ static void
+ snapshot_trigger(struct event_trigger_data *data, void *rec)
+ {
+-	tracing_snapshot();
++	struct trace_event_file *file = data->private_data;
++
++	if (file)
++		tracing_snapshot_instance(file->tr);
++	else
++		tracing_snapshot();
+ }
+ 
+ static void
+@@ -1064,7 +1070,7 @@ register_snapshot_trigger(char *glob, st
+ {
+ 	int ret = register_trigger(glob, ops, data, file);
+ 
+-	if (ret > 0 && tracing_alloc_snapshot() != 0) {
++	if (ret > 0 && tracing_alloc_snapshot_instance(file->tr) != 0) {
+ 		unregister_trigger(glob, ops, data, file);
+ 		ret = 0;
+ 	}
