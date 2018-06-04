@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753844AbeFDHGB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:06:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
+        id S1753901AbeFDHFD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:05:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753907AbeFDHFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:05:06 -0400
+        id S1753886AbeFDHFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:05:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
-        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.16 28/47] iio:kfifo_buf: check for uint overflow
-Date: Mon,  4 Jun 2018 08:58:40 +0200
-Message-Id: <20180604065550.659359853@linuxfoundation.org>
+        stable@vger.kernel.org, Bastien Nocera <hadess@hadess.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.16 26/47] iio: hid-sensor-trigger: Fix sometimes not powering up the sensor after resume
+Date: Mon,  4 Jun 2018 08:58:38 +0200
+Message-Id: <20180604065550.580372107@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -29,58 +31,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 3d13de4b027d5f6276c0f9d3a264f518747d83f2 upstream.
+commit 6f92253024d9d947a4f454654840ce479e251376 upstream.
 
-Currently, the following causes a kernel OOPS in memcpy:
+hid_sensor_set_power_work() powers the sensors back up after a resume
+based on the user_requested_state atomic_t.
 
-echo 1073741825 > buffer/length
-echo 1 > buffer/enable
+But hid_sensor_power_state() treats this as a boolean flag, leading to
+the following problematic scenario:
 
-Note that using 1073741824 instead of 1073741825 causes "write error:
-Cannot allocate memory" but no OOPS.
+1) Some app starts using the iio-sensor in buffered / triggered mode,
+   hid_sensor_data_rdy_trigger_set_state(true) gets called, setting
+   user_requested_state to 1.
+2) Something directly accesses a _raw value through sysfs, leading
+   to a call to hid_sensor_power_state(true) followed by
+   hid_sensor_power_state(false) call, this sets user_requested_state
+   to 1 followed by setting it to 0.
+3) Suspend/resume the machine, hid_sensor_set_power_work() now does
+   NOT power the sensor back up because user_requested_state (wrongly)
+   is 0. Which stops the app using the sensor in buffered mode from
+   receiving any new values.
 
-This is because 1073741824 == 2^30 and 1073741825 == 2^30+1. Since kfifo
-rounds up to the nearest power of 2, it will actually call kmalloc with
-roundup_pow_of_two(length) * bytes_per_datum.
+This commit changes user_requested_state to a counter tracking how many
+times hid_sensor_power_state(true) was called instead, fixing this.
 
-Using length == 1073741825 and bytes_per_datum == 2, we get:
-
-kmalloc(roundup_pow_of_two(1073741825) * 2
-or kmalloc(2147483648 * 2)
-or kmalloc(4294967296)
-or kmalloc(UINT_MAX + 1)
-
-so this overflows to 0, causing kmalloc to return ZERO_SIZE_PTR and
-subsequent memcpy to fail once the device is enabled.
-
-Fix this by checking for overflow prior to allocating a kfifo. With this
-check added, the above code returns -EINVAL when enabling the buffer,
-rather than causing an OOPS.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-cc: <Stable@vger.kernel.org>
+Cc: Bastien Nocera <hadess@hadess.net>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/buffer/kfifo_buf.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/iio/common/hid-sensors/hid-sensor-trigger.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/iio/buffer/kfifo_buf.c
-+++ b/drivers/iio/buffer/kfifo_buf.c
-@@ -27,6 +27,13 @@ static inline int __iio_allocate_kfifo(s
- 	if ((length == 0) || (bytes_per_datum == 0))
- 		return -EINVAL;
+--- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
++++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+@@ -178,14 +178,14 @@ int hid_sensor_power_state(struct hid_se
+ #ifdef CONFIG_PM
+ 	int ret;
  
-+	/*
-+	 * Make sure we don't overflow an unsigned int after kfifo rounds up to
-+	 * the next power of 2.
-+	 */
-+	if (roundup_pow_of_two(length) > UINT_MAX / bytes_per_datum)
-+		return -EINVAL;
-+
- 	return __kfifo_alloc((struct __kfifo *)&buf->kf, length,
- 			     bytes_per_datum, GFP_KERNEL);
- }
+-	atomic_set(&st->user_requested_state, state);
+-
+ 	if (atomic_add_unless(&st->runtime_pm_enable, 1, 1))
+ 		pm_runtime_enable(&st->pdev->dev);
+ 
+-	if (state)
++	if (state) {
++		atomic_inc(&st->user_requested_state);
+ 		ret = pm_runtime_get_sync(&st->pdev->dev);
+-	else {
++	} else {
++		atomic_dec(&st->user_requested_state);
+ 		pm_runtime_mark_last_busy(&st->pdev->dev);
+ 		pm_runtime_use_autosuspend(&st->pdev->dev);
+ 		ret = pm_runtime_put_autosuspend(&st->pdev->dev);
