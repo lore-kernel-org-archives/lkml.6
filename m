@@ -1,95 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751427AbeFDTGH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:06:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38664 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751042AbeFDTGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:06:03 -0400
-Date: Mon, 4 Jun 2018 14:05:52 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Nadav Amit <namit@vmware.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jan Beulich <JBeulich@suse.com>, Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>, linux-sparse@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 0/9] x86: macrofying inline asm for better compilation
-Message-ID: <20180604190552.hm5e6zcabeyxt26u@treble>
-References: <20180604112131.59100-1-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180604112131.59100-1-namit@vmware.com>
-User-Agent: NeoMutt/20180323
+        id S1751217AbeFDTHc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:07:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57054 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeFDTHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 15:07:31 -0400
+Date: Mon, 4 Jun 2018 12:07:02 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: vdavydov.dev@gmail.com, shakeelb@google.com, viro@zeniv.linux.org.uk,
+        hannes@cmpxchg.org, mhocko@kernel.org, tglx@linutronix.de,
+        pombredanne@nexb.com, stummala@codeaurora.org,
+        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
+        mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
+        ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
+        linux@roeck-us.net, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
+Subject: Re: [PATCH v7 00/17] Improve shrink_slab() scalability (old
+ complexity was O(n^2), new is O(n))
+Message-Id: <20180604120702.ef69c28585fe925f9a55e130@linux-foundation.org>
+In-Reply-To: <0e725889-c42f-0557-ef41-76e4c87a3c9b@virtuozzo.com>
+References: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
+        <0e725889-c42f-0557-ef41-76e4c87a3c9b@virtuozzo.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 04:21:22AM -0700, Nadav Amit wrote:
-> This patch-set deals with an interesting yet stupid problem: kernel code
-> that does not get inlined despite its simplicity. There are several
-> causes for this behavior: "cold" attribute on __init, different function
-> optimization levels; conditional constant computations based on
-> __builtin_constant_p(); and finally large inline assembly blocks.
-> 
-> This patch-set deals with the inline assembly problem. I separated these
-> patches from the others (that were sent in the RFC) for easier
-> inclusion. I also separated the removal of unnecessary new-lines which
-> would be sent separately.
-> 
-> The problem with inline assembly is that inline assembly is often used
-> by the kernel for things that are other than code - for example,
-> assembly directives and data. GCC however is oblivious to the content of
-> the blocks and assumes their cost in space and time is proportional to
-> the number of the perceived assembly "instruction", according to the
-> number of newlines and semicolons. Alternatives, paravirt and other
-> mechanisms are affected, causing code not to be inlined, and degrading
-> compilation quality in general.
-> 
-> The solution that this patch-set carries for this problem is to create
-> an assembly macro, and then call it from the inline assembly block.  As
-> a result, the compiler sees a single "instruction" and assigns the more
-> appropriate cost to the code.
-> 
-> To avoid uglification of the code, as many noted, the macros are first
-> precompiled into an assembly file, which is later assembled together
-> with the the C files. This also enables to avoid duplicate
-> implementation that was set before for the asm and C code. This can be
-> seen in the exception table changes.
-> 
-> Overall this patch-set slightly increases the kernel size (my build was
-> done using my Ubuntu 18.04 config + localyesconfig for the record):
-> 
->    text	   data	    bss	    dec	    hex	filename
-> 18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-> 18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
-> 
-> The number of static functions in the image is reduced by 379, but
-> actually inlining is even better, which does not always shows in these
-> numbers: a function may be inlined causing the calling function not to
-> be inlined.
-> 
-> The Makefile stuff may not be too clean. Ideas for improvements are
-> welcome.
-> 
-> v1->v2:	* Compiling the macros into a separate .s file, improving
-> 	  readability (Linus)
-> 	* Improving assembly formatting, applying most of the comments
-> 	  according to my judgment (Jan)
-> 	* Adding exception-table, cpufeature and jump-labels
-> 	* Removing new-line cleanup; to be submitted separately
+On Mon, 4 Jun 2018 15:45:17 +0300 Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
 
-How did you find these issues?  Is there some way to find them
-automatically in the future?  Perhaps with a GCC plugin?
+> Hi, Andrew!
+> 
+> This patchset is reviewed by Vladimir Davydov. I see, there is
+> minor change in current linux-next.git, which makes the second
+> patch to apply not completely clean.
+> 
+> Could you tell what should I do with this? Is this OK or should
+> I rebase it on top of linux.next or do something else?
 
--- 
-Josh
+A resend against 4.18-rc1 would be ideal, thanks.
