@@ -1,59 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751779AbeFDSAF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 14:00:05 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:37520 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751467AbeFDSAC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 14:00:02 -0400
-X-IronPort-AV: E=Sophos;i="5.49,476,1520870400";
-   d="scan'208";a="81550572"
-From: adam.manzanares@wdc.com
-To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Cc: axboe@kernel.dk, bcrl@kvack.org, mingo@kernel.org, tglx@linutronix.de,
-        kstewart@linuxfoundation.org, peterz@infradead.org,
-        pombredanne@nexb.com, gregkh@linuxfoundation.org,
-        bigeasy@linutronix.de, rgoldwyn@suse.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        linux-api@vger.kernel.org, hch@infradread.org, jmoyer@redhat.com,
-        willy@infradead.org, smfrench@gmail.com,
-        Adam Manzanares <adam.manzanares@wdc.com>
-Subject: [PATCH 1/2] fs: aio ioprio add explicit block layer dependence
-Date: Mon,  4 Jun 2018 10:59:56 -0700
-Message-Id: <20180604175957.2647-1-adam.manzanares@wdc.com>
+        id S1751170AbeFDSDI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 14:03:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55042 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750815AbeFDSDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 14:03:07 -0400
+From: Jeff Layton <jlayton@kernel.org>
+To: viro@ZenIV.linux.org.uk, dhowells@redhat.com
+Cc: willy@infradead.org, andres@anarazel.de, cmaiolino@redhat.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/5] vfs: track per-sb writeback errors and report them via fsinfo()
+Date: Mon,  4 Jun 2018 14:02:59 -0400
+Message-Id: <20180604180304.9662-1-jlayton@kernel.org>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adam Manzanares <adam.manzanares@wdc.com>
+From: Jeff Layton <jlayton@redhat.com>
 
-Previously, the ioprio_check_cap function was only defined when CONFIG_BLOCK
-was set. Make this relationship explicit and add a stub for !CONFIG_BLOCK.
+This is a reworked (and more modest) version of the syncfs rework that I
+posted recently. Given that we have a new fsinfo syscall being
+introduced, we may as well use it to report writeback errors on a per
+superblock basis. This allows us to provide the info that the PostgreSQL
+developers wanted, without needing to change an existing interface.
 
-Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
----
- include/linux/ioprio.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+We may still want to change syncfs to report writeback errors at some
+point, but for now, I think this is a safer path to presenting this
+info.
 
-diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
-index 4a28cec49ec3..9e30ed6443db 100644
---- a/include/linux/ioprio.h
-+++ b/include/linux/ioprio.h
-@@ -77,6 +77,13 @@ extern int ioprio_best(unsigned short aprio, unsigned short bprio);
- 
- extern int set_task_ioprio(struct task_struct *task, int ioprio);
- 
-+#ifdef CONFIG_BLOCK
- extern int ioprio_check_cap(int ioprio);
-+#else
-+static inline int ioprio_check_cap(int ioprio)
-+{
-+	return -ENOTBLK;
-+}
-+#endif /* CONFIG_BLOCK */
- 
- #endif
+This seems to do the right thing when tested by hand, but I don't yet
+have an xfstest for it, since the syscall is still quite new. Once that
+goes in and we get fsinfo support in xfs_io, it should be rather
+trivial to modify the test I wrote for the syncfs rework.
+
+Jeff Layton (5):
+  vfs: track per-sb writeback errors
+  buffer: record blockdev write errors in super_block that backs them
+  errseq: add a new errseq_scrape function
+  vfs: allow fsinfo to fetch the current state of s_wb_err
+  samples: extend test-fsinfo to access error_state
+
+ fs/buffer.c                 |  2 ++
+ fs/statfs.c                 |  9 +++++++++
+ include/linux/errseq.h      |  1 +
+ include/linux/fs.h          |  3 +++
+ include/linux/pagemap.h     |  5 ++++-
+ include/uapi/linux/fsinfo.h | 11 +++++++++++
+ lib/errseq.c                | 33 +++++++++++++++++++++++++++++++--
+ samples/statx/test-fsinfo.c | 13 +++++++++++++
+ 8 files changed, 74 insertions(+), 3 deletions(-)
+
 -- 
 2.17.0
