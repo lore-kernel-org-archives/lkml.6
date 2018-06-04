@@ -1,66 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751361AbeFDRwq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:52:46 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:38183 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeFDRwo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:52:44 -0400
-Message-ID: <1528134761.2289.45.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in
- QCA4019 with eth decap mode
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Sriram R <srirrama@codeaurora.org>
-Cc: stable@vger.kernel.org,
-        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Date: Mon, 04 Jun 2018 18:52:41 +0100
-In-Reply-To: <20180514064755.718467503@linuxfoundation.org>
-References: <20180514064754.853201981@linuxfoundation.org>
-         <20180514064755.718467503@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1751370AbeFDRxg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:53:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48656 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750985AbeFDRxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 13:53:35 -0400
+Date: Mon, 4 Jun 2018 13:53:35 -0400 (EDT)
+From: Bob Peterson <rpeterso@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <159205243.39899342.1528134815167.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1772901878.39899227.1528134744434.JavaMail.zimbra@redhat.com>
+Subject: GFS2: Pull request (merge window)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.116.15, 10.4.195.2]
+Thread-Topic: GFS2: Pull request (merge window)
+Thread-Index: PA3wtNNobXyY844K9iaVTMkEeboFlg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-14 at 08:48 +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> 
-> commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
-> 
-> Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
-> rx_hdr_status is not padded to align in 4-byte boundary. Define a
-> new hw_params field to handle different alignment behaviour between
-> different hw. This patch fixes improper retrieval of rfc1042 header
-> with QCA4019. This patch along with "ath10k: Properly remove padding
-> from the start of rx payload" will fix traffic failure in ethernet
-> decap mode for QCA4019.
-> 
-> Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
-> Signed-off-by: Sriram R <srirrama@codeaurora.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[...]
+Hi Linus,
 
-I'm curious as to why this backport doesn't include the change to
-ath10k_htt_rx_h_find_rfc1042().  I understand that the addition of the
-new field is a dependency for the following patch, but shouldn't the
-fix included in the upstream commit also be applied to 4.4?
+Please consider pulling the following changes for the GFS2 file system.
+Note that I'm on holiday the rest of this week, but I added Andreas
+Gruenbacher to the MAINTAINERS file, so he can react if there are
+problems that can't wait until I'm back on 11 June.
 
-Ben.
+Regards,
 
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+Bob Peterson
+----------------------------------------------------------------
+The following changes since commit 16e205cf42da1f497b10a4a24f563e6c0d574eec:
+
+  Merge tag 'drm-fixes-for-v4.17-rc1' of git://people.freedesktop.org/~airlied/linux (2018-04-12 20:56:10 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-4.18.fixes
+
+for you to fetch changes up to 6d1c2cf2247599c5b50df7d04e254ef0edec812c:
+
+  MAINTAINERS: Add Andreas Gruenbacher as a maintainer for gfs2 (2018-06-04 09:33:07 -0500)
+
+----------------------------------------------------------------
+We've got 9 more patches for this merge window.
+
+1. Andreas Gruenbacher contributed a patch to remove sd_jheightsize to
+   greatly simplify some code.
+2. Andreas fixed some comments.
+3. Andreas fixed a glock recursion bug when allocation errors occur.
+4. Andreas improved the hole_size function so it returns the entire hole
+   rather than figuring it out piecemeal.
+5. Andreas cleaned up gfs2_stuffed_write_end to remove a lot of redundancy.
+6. Andreas clarified code with regard to the way ordered writes are processed.
+7. Andreas did a bunch of improvements and cleanups of the iomap code to
+   pave the way for iomap writes, which is a future patch set.
+8. I fixed a bug where block reservations can run off the end of a bitmap.
+9. I added Andreas to the MAINTAINERS file.
+
+----------------------------------------------------------------
+Andreas Gruenbacher (7):
+      gfs2: Remove sdp->sd_jheightsize
+      gfs2: Update find_metapath comment
+      GFS2: Fix allocation error bug with recursive rgrp glocking
+      gfs2: hole_size improvement
+      gfs2: gfs2_stuffed_write_end cleanup
+      gfs2: Remove ordered write mode handling from gfs2_trans_add_data
+      gfs2: Iomap cleanups and improvements
+
+Bob Peterson (2):
+      GFS2: gfs2_free_extlen can return an extent that is too long
+      MAINTAINERS: Add Andreas Gruenbacher as a maintainer for gfs2
+
+ MAINTAINERS          |   2 +-
+ fs/gfs2/aops.c       |  69 ++++-----
+ fs/gfs2/bmap.c       | 428 +++++++++++++++++++++++++++++++++------------------
+ fs/gfs2/bmap.h       |   6 +-
+ fs/gfs2/file.c       |   6 +-
+ fs/gfs2/incore.h     |   3 +-
+ fs/gfs2/inode.c      |   4 -
+ fs/gfs2/log.h        |   7 +-
+ fs/gfs2/ops_fstype.c |  19 ---
+ fs/gfs2/quota.c      |   5 +-
+ fs/gfs2/rgrp.c       |   2 +-
+ fs/gfs2/trans.c      |  27 +---
+ 12 files changed, 332 insertions(+), 246 deletions(-)
