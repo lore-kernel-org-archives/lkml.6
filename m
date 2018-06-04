@@ -1,83 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753113AbeFDNpE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:45:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753057AbeFDNpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:45:01 -0400
-X-Google-Smtp-Source: ADUXVKJU8QHuWatHISBKKV8d3iQ0iX8dsgKtCCwmfZ9vCcj+vwQPJWzIqTM0FwP9TcsM9z2SjX6SzSUQRXbcEnUbPmw=
+        id S1753302AbeFDNqS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:46:18 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:56361 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753057AbeFDNqQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:46:16 -0400
+X-IronPort-AV: E=Sophos;i="5.49,476,1520895600";
+   d="scan'208";a="330239338"
+Date: Mon, 4 Jun 2018 22:46:08 +0900 (JST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Dan Carpenter <dan.carpenter@oracle.com>
+cc: Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fsl/qe: ucc: copy and paste bug in
+ ucc_get_tdm_sync_shift()
+In-Reply-To: <20180604134024.dmd7mn2wggqpmkcq@mwanda>
+Message-ID: <alpine.DEB.2.20.1806042245360.3542@hadrien>
+References: <20180604115842.7c4vzge3igjbnblt@kili.mountain> <alpine.DEB.2.20.1806042223580.3542@hadrien> <20180604134024.dmd7mn2wggqpmkcq@mwanda>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180602000343.20045-1-srinivas.kandagatla@linaro.org>
-References: <20180602000343.20045-1-srinivas.kandagatla@linaro.org>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 4 Jun 2018 08:44:39 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ9AMDiYCfgGgHZ=XL_1yJjTdSA4Jb_GqHAZML3jwB6+Q@mail.gmail.com>
-Message-ID: <CAL_JsqJ9AMDiYCfgGgHZ=XL_1yJjTdSA4Jb_GqHAZML3jwB6+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] of: platform: stop accessing invalid dev in of_platform_device_destroy
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Rohit Kumar <rohkumar@qti.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 7:03 PM, Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
-> Immediately after the platform_device_unregister() the device will be cleaned up.
-> Accessing the freed pointer immediately after that will crash the system.
+
+
+On Mon, 4 Jun 2018, Dan Carpenter wrote:
+
+> On Mon, Jun 04, 2018 at 10:25:14PM +0900, Julia Lawall wrote:
+> >
+> >
+> > On Mon, 4 Jun 2018, Dan Carpenter wrote:
+> >
+> > > There is a copy and paste bug so we accidentally use the RX_ shift when
+> > > we're in TX_ mode.
+> > >
+> > > Fixes: bb8b2062aff3 ("fsl/qe: setup clock source for TDM mode")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > ---
+> > > Static analysis work.  Not tested.  This affects the success path, so
+> > > we should probably test it.
+> >
+> > Maybe this is another one?  I don't have time to look into it at the
+> > moment...
+> >
+> > drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+> >
+> >  	/* For strict priority entries defines the number of consecutive
+> >  	 * slots for the highest priority.
+> >  	 */
+> > 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
+> > 		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
+> >  	/* Mapping between the CREDIT_WEIGHT registers and actual client
+> >  	 * numbers
+> >  	 */
+> >
+> > I find some others that choose between constants, such as ... ? 0 : 0.
 >
-> Found this bug when kernel is built with CONFIG_PAGE_POISONING and testing
-> loading/unloading audio drivers in a loop on Qcom platforms.
+> I feel like it should warn about all of those because people shouldn't
+> be submitting unfinished written code to the kernel.  Coccinelle is a
+> lot better for this than Smatch is because it's pre-processor stuff.
 
-Curious, does the unittest not catch this too?
+OK, maybe I can report these in the next few days.
 
->
-> Fix this by removing accessing the dev pointer.
-> Below is the carsh trace:
-
-s/carsh/crash/
-
-[...]
-
-> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> index c00d81dfac0b..84c5c899187b 100644
-> --- a/drivers/of/platform.c
-> +++ b/drivers/of/platform.c
-> @@ -529,10 +529,13 @@ arch_initcall_sync(of_platform_default_populate_init);
->
->  int of_platform_device_destroy(struct device *dev, void *data)
->  {
-> +       struct device_node *np;
-> +
->         /* Do not touch devices not populated from the device tree */
->         if (!dev->of_node || !of_node_check_flag(dev->of_node, OF_POPULATED))
->                 return 0;
->
-> +       np = dev->of_node;
->         /* Recurse for any nodes that were treated as busses */
->         if (of_node_check_flag(dev->of_node, OF_POPULATED_BUS))
->                 device_for_each_child(dev, NULL, of_platform_device_destroy);
-> @@ -544,8 +547,8 @@ int of_platform_device_destroy(struct device *dev, void *data)
->                 amba_device_unregister(to_amba_device(dev));
->  #endif
->
-> -       of_node_clear_flag(dev->of_node, OF_POPULATED);
-> -       of_node_clear_flag(dev->of_node, OF_POPULATED_BUS);
-
-Just move these 2 lines to before unregister calls.
-
-> +       of_node_clear_flag(np, OF_POPULATED);
-> +       of_node_clear_flag(np, OF_POPULATED_BUS);
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(of_platform_device_destroy);
-> --
-> 2.16.2
->
+thanks,
+julia
