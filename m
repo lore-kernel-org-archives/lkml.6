@@ -1,127 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751356AbeFDGGD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 02:06:03 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:35981 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750723AbeFDGGB (ORCPT
+        id S1751848AbeFDGKK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 02:10:10 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35917 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751796AbeFDGKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 02:06:01 -0400
-X-Google-Smtp-Source: ADUXVKJ0iiOSq7MmT6YEizUH6euq4iibGf6mptFpP4NsCvLQhimiRmPw9+FKEcQx2rq4w8Bl7s/gk2eZbYH+RtfueTk=
+        Mon, 4 Jun 2018 02:10:08 -0400
+X-Google-Smtp-Source: ADUXVKL6XtL4/fbtq5nsRG3CAwKam3Wv4cIKrTPvo3kWfdh2XRGhP8/cEnlNB6Pc9xDC6gDh3BXOBw==
+Date: Mon, 4 Jun 2018 07:10:04 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc: alexandre.torgue@st.com, thierry.reding@gmail.com,
+        benjamin.gaignard@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, mcoquelin.stm32@gmail.com,
+        benjamin.gaignard@st.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Subject: Re: [RESEND PATCH v5 2/6] mfd: stm32-timers: add support for dmas
+Message-ID: <20180604061004.GA25455@dell>
+References: <1526456161-27865-1-git-send-email-fabrice.gasnier@st.com>
+ <1526456161-27865-3-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJsGouQjWAu01fR4LpwanKbSj1d_CvyPXyMBe2vVBHqdw@mail.gmail.com>
-References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
- <1527486084-4636-2-git-send-email-srinath.mannam@broadcom.com>
- <20180531164820.GA23074@rob-hp-laptop> <CABe79T7=LK=PgaftQeCRE8kmMMztFBNeJ4cdnZhv8ULDO=6+Jw@mail.gmail.com>
- <CAL_JsqJsGouQjWAu01fR4LpwanKbSj1d_CvyPXyMBe2vVBHqdw@mail.gmail.com>
-From: Srinath Mannam <srinath.mannam@broadcom.com>
-Date: Mon, 4 Jun 2018 11:36:00 +0530
-Message-ID: <CABe79T7gGJ1mcBV4W9nFy1ZyBL4sFpB+DFJjgpLgOtRJGjJbpw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: thermal: Add binding document for SR thermal
-To: Rob Herring <robh@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526456161-27865-3-git-send-email-fabrice.gasnier@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob Herring,
+On Wed, 16 May 2018, Fabrice Gasnier wrote:
 
-Please find my comments in line..
+> STM32 Timers can support up to 7 DMA requests:
+> - 4 channels, update, compare and trigger.
+> Optionally request part, or all DMAs from stm32-timers MFD core.
+> 
+> Also add routine to implement burst reads using DMA from timer registers.
+> This is exported. So, it can be used by child drivers, PWM capture
+> for instance (but not limited to).
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> ---
+> Changes in v5:
+> - fix warning on dma_mapping_error() that doesn't return an error code.
+> - move stm32_timers_dma struct to header file as discussed with Lee.
+>   This allows to remove alloc for this struct in stm32_timers_dma_probe.
+> 
+> Changes in v4:
+> - Lee's comments: Add kerneldoc header, better format comments.
+> 
+> Changes in v3:
+> - Basically Lee's comments:
+> - rather create a struct stm32_timers_dma, and place a reference to it
+>   in existing ddata (instead of adding priv struct).
+> - rather use a struct device in exported routine prototype, and use
+>   standard helpers instead of ddata. Get rid of to_stm32_timers_priv().
+> - simplify error handling in probe (remove a goto)
+> - comment on devm_of_platform_*populate() usage.
+> 
+> Changes in v2:
+> - Abstract DMA handling from child driver: move it to MFD core
+> - Add comments on optional dma support
+> ---
+>  drivers/mfd/stm32-timers.c       | 201 ++++++++++++++++++++++++++++++++++++++-
+>  include/linux/mfd/stm32-timers.h |  46 +++++++++
+>  2 files changed, 245 insertions(+), 2 deletions(-)
 
-On Fri, Jun 1, 2018 at 7:59 PM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Jun 1, 2018 at 3:51 AM, Srinath Mannam
-> <srinath.mannam@broadcom.com> wrote:
->> Hi Rob Herring,
->>
->> Thank you for the review.
->> Please find my answers inline..
->>
->> On Thu, May 31, 2018 at 10:18 PM, Rob Herring <robh@kernel.org> wrote:
->>> On Mon, May 28, 2018 at 11:11:22AM +0530, Srinath Mannam wrote:
->>>> From: Pramod Kumar <pramod.kumar@broadcom.com>
->>>>
->>>> Add binding document for supported thermal implementation
->>>> in Stingray.
->>>>
->>>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->>>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>>> Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
->>>> ---
->>>>  .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
->>>>  1 file changed, 45 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>> new file mode 100644
->>>> index 0000000..33f9e11
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>> @@ -0,0 +1,45 @@
->>>> +* Broadcom Stingray Thermal
->>>> +
->>>> +This binding describes thermal sensors that is part of Stingray SoCs.
->>>> +
->>>> +Required properties:
->>>> +- compatible : Must be "brcm,sr-thermal"
->>>> +- reg : memory where tmon data will be available.
->>>
->>> What type of memory is this?
->> This is shared memory(cache-able) which is shared between two micro controllers.
->
-> What else is in this shared memory? You should probably be
-> representing that as a whole somewhere in DT.
-Nothing else except 4 byte memory containing temperature value of one
-thermal zone.
-At present we configured 6 thermal zones. So six separate 4byte
-memories provided in
-shared memory.
->
->> One micro controller update temperature of all thermal zones in this
->> shared memory.
->> thermal driver running on another micro controller monitors
->> temperature data of all thermal zones.
->>>
->>>> +
->>>> +Example:
->>>> +     tmons {
->>>> +             compatible = "simple-bus";
->>>> +             #address-cells = <1>;
->>>> +             #size-cells = <1>;
->>>> +             ranges;
->>>> +
->>>> +             tmon_ihost0: thermal@8f100000 {
->>>> +                     compatible = "brcm,sr-thermal";
->>>> +                     reg = <0x8f100000 0x4>;
->>>> +             };
->>>
->>> Convince me that you need a node per register. This can all be
->>> accomplished with a single node and either a single reg entry or a
->>> series of reg entries.
->>>
->> In our system we have 6 different thermal zones. each node belongs to
->> one thermal zone.
->> thermal driver detects each node as separate thermal zone and monitors
->> separately.
->> register entry is only 4byte memory which contains the temperature
->> value of respective thermal zone.
->> Based on requirement we can increase or decrease the number thermal
->> zones need to monitor.
->
-> Still, all this can be accomplished with a single node. Having a node
-> per register in DT doesn't scale.
-Our approach is like we have individual controllers have one driver
-with multiple DT nodes.
-In coming future we will add more thermal zones based on our
-requirement. then we can just
-add new DT node, instead of having driver changes.
-With this approach we can configure each thermal zone at different trip values.
-So we must have all thermal zones are independent.
->
-> Rob
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
