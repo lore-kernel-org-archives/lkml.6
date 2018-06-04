@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeFDHBu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:01:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54286 "EHLO mail.kernel.org"
+        id S1753049AbeFDHBo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:01:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753029AbeFDHBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:47 -0400
+        id S1753002AbeFDHBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
-        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 33/52] iio:buffer: make length types match kfifo types
-Date: Mon,  4 Jun 2018 08:58:28 +0200
-Message-Id: <20180604065607.894763050@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 14/52] Input: synaptics - Lenovo Carbon X1 Gen5 (2017) devices should use RMI
+Date: Mon,  4 Jun 2018 08:58:09 +0200
+Message-Id: <20180604065607.103615885@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -29,84 +30,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit c043ec1ca5baae63726aae32abbe003192bc6eec upstream.
+commit 9b2071028f8def49971a3b213ab6efd02a7e56e8 upstream.
 
-Currently, we use int for buffer length and bytes_per_datum. However,
-kfifo uses unsigned int for length and size_t for element size. We need
-to make sure these matches or we will have bugs related to overflow (in
-the range between INT_MAX and UINT_MAX for length, for example).
+The touchpad on Lenovo Carbon X1 Gen 5 (2017 - Kabylake) is accessible over
+SMBUS/RMI, so let's activate it by default.
 
-In addition, set_bytes_per_datum uses size_t while bytes_per_datum is an
-int, which would cause bugs for large values of bytes_per_datum.
-
-Change buffer length to use unsigned int and bytes_per_datum to use
-size_t.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/buffer/industrialio-buffer-dma.c |    2 +-
- drivers/iio/buffer/kfifo_buf.c               |    4 ++--
- include/linux/iio/buffer_impl.h              |    6 +++---
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/input/mouse/synaptics.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/iio/buffer/industrialio-buffer-dma.c
-+++ b/drivers/iio/buffer/industrialio-buffer-dma.c
-@@ -587,7 +587,7 @@ EXPORT_SYMBOL_GPL(iio_dma_buffer_set_byt
-  * Should be used as the set_length callback for iio_buffer_access_ops
-  * struct for DMA buffers.
-  */
--int iio_dma_buffer_set_length(struct iio_buffer *buffer, int length)
-+int iio_dma_buffer_set_length(struct iio_buffer *buffer, unsigned int length)
- {
- 	/* Avoid an invalid state */
- 	if (length < 2)
---- a/drivers/iio/buffer/kfifo_buf.c
-+++ b/drivers/iio/buffer/kfifo_buf.c
-@@ -22,7 +22,7 @@ struct iio_kfifo {
- #define iio_to_kfifo(r) container_of(r, struct iio_kfifo, buffer)
- 
- static inline int __iio_allocate_kfifo(struct iio_kfifo *buf,
--				int bytes_per_datum, int length)
-+			size_t bytes_per_datum, unsigned int length)
- {
- 	if ((length == 0) || (bytes_per_datum == 0))
- 		return -EINVAL;
-@@ -67,7 +67,7 @@ static int iio_set_bytes_per_datum_kfifo
- 	return 0;
- }
- 
--static int iio_set_length_kfifo(struct iio_buffer *r, int length)
-+static int iio_set_length_kfifo(struct iio_buffer *r, unsigned int length)
- {
- 	/* Avoid an invalid state */
- 	if (length < 2)
---- a/include/linux/iio/buffer_impl.h
-+++ b/include/linux/iio/buffer_impl.h
-@@ -53,7 +53,7 @@ struct iio_buffer_access_funcs {
- 	int (*request_update)(struct iio_buffer *buffer);
- 
- 	int (*set_bytes_per_datum)(struct iio_buffer *buffer, size_t bpd);
--	int (*set_length)(struct iio_buffer *buffer, int length);
-+	int (*set_length)(struct iio_buffer *buffer, unsigned int length);
- 
- 	int (*enable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
- 	int (*disable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
-@@ -72,10 +72,10 @@ struct iio_buffer_access_funcs {
-  */
- struct iio_buffer {
- 	/** @length: Number of datums in buffer. */
--	int length;
-+	unsigned int length;
- 
- 	/**  @bytes_per_datum: Size of individual datum including timestamp. */
--	int bytes_per_datum;
-+	size_t bytes_per_datum;
- 
- 	/**
- 	 * @access: Buffer access functions associated with the
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -172,6 +172,7 @@ static const char * const smbus_pnp_ids[
+ 	"LEN0048", /* X1 Carbon 3 */
+ 	"LEN0046", /* X250 */
+ 	"LEN004a", /* W541 */
++	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+ 	"LEN200f", /* T450s */
+ 	NULL
+ };
