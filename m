@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752489AbeFDKBD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:01:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40566 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752387AbeFDKBA (ORCPT
+        id S1753124AbeFDKFG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:05:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752474AbeFDKBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:01:00 -0400
+        Mon, 4 Jun 2018 06:01:03 -0400
 From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -14,16 +14,16 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 03/19] sched/numa: Simplify load_too_imbalanced
-Date: Mon,  4 Jun 2018 15:30:12 +0530
+Subject: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
+Date: Mon,  4 Jun 2018 15:30:13 +0530
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
 References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18060410-0016-0000-0000-000001D7738B
+x-cbid: 18060410-0008-0000-0000-000002437368
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060410-0017-0000-0000-0000322A0342
-Message-Id: <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
+x-cbparentid: 18060410-0009-0000-0000-000021A9323C
+Message-Id: <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -35,91 +35,100 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently load_too_imbalance() cares about the slope of imbalance.
-It doesn't care of the direction of the imbalance.
+Currently preferred node is set to dst_nid which is the last node in the
+iteration whose group weight or task weight is greater than the current
+node. However it doesn't guarantee that dst_nid has the numa capacity
+to move. It also doesn't guarantee that dst_nid has the best_cpu which
+is the cpu/node ideal for node migration.
 
-However this may not work if nodes that are being compared have
-dissimilar capacities. Few nodes might have more cores than other nodes
-in the system. Also unlike traditional load balance at a NUMA sched
-domain, multiple requests to migrate from the same source node to same
-destination node may run in parallel. This can cause huge load
-imbalance. This is specially true on a larger machines with either large
-cores per node or more number of nodes in the system. Hence allow
-move/swap only if the imbalance is going to reduce.
+Lets consider faults on a 4 node system with group weight numbers
+in different nodes being in 0 < 1 < 2 < 3 proportion. Consider the task
+is running on 3 and 0 is its preferred node but its capacity is full.
+Consider nodes 1, 2 and 3 have capacity. Then the task should be
+migrated to node 1. Currently the task gets moved to node 2. env.dst_nid
+points to the last node whose faults were greater than current node.
+
+Modify to set the preferred node based of best_cpu.
+
+Also while modifying task_numa_migrate(), use sched_setnuma to set
+preferred node. This ensures out numa accounting is correct.
 
 Testcase       Time:         Min         Max         Avg      StdDev
-numa01.sh      Real:      516.14      892.41      739.84      151.32
-numa01.sh       Sys:      153.16      192.99      177.70       14.58
-numa01.sh      User:    39821.04    69528.92    57193.87    10989.48
-numa02.sh      Real:       60.91       62.35       61.58        0.63
-numa02.sh       Sys:       16.47       26.16       21.20        3.85
-numa02.sh      User:     5227.58     5309.61     5265.17       31.04
-numa03.sh      Real:      739.07      917.73      795.75       64.45
-numa03.sh       Sys:       94.46      136.08      109.48       14.58
-numa03.sh      User:    57478.56    72014.09    61764.48     5343.69
-numa04.sh      Real:      442.61      715.43      530.31       96.12
-numa04.sh       Sys:      224.90      348.63      285.61       48.83
-numa04.sh      User:    35836.84    47522.47    40235.41     3985.26
-numa05.sh      Real:      386.13      489.17      434.94       43.59
-numa05.sh       Sys:      144.29      438.56      278.80      105.78
-numa05.sh      User:    33255.86    36890.82    34879.31     1641.98
+numa01.sh      Real:      435.78      653.81      534.58       83.20
+numa01.sh       Sys:      121.93      187.18      145.90       23.47
+numa01.sh      User:    37082.81    51402.80    43647.60     5409.75
+numa02.sh      Real:       60.64       61.63       61.19        0.40
+numa02.sh       Sys:       14.72       25.68       19.06        4.03
+numa02.sh      User:     5210.95     5266.69     5233.30       20.82
+numa03.sh      Real:      746.51      808.24      780.36       23.88
+numa03.sh       Sys:       97.26      108.48      105.07        4.28
+numa03.sh      User:    58956.30    61397.05    60162.95     1050.82
+numa04.sh      Real:      465.97      519.27      484.81       19.62
+numa04.sh       Sys:      304.43      359.08      334.68       20.64
+numa04.sh      User:    37544.16    41186.15    39262.44     1314.91
+numa05.sh      Real:      411.57      457.20      433.29       16.58
+numa05.sh       Sys:      230.05      435.48      339.95       67.58
+numa05.sh      User:    33325.54    36896.31    35637.84     1222.64
 
 Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-numa01.sh      Real:      435.78      653.81      534.58       83.20 	 38.39%
-numa01.sh       Sys:      121.93      187.18      145.90       23.47 	 21.79%
-numa01.sh      User:    37082.81    51402.80    43647.60     5409.75 	 31.03%
-numa02.sh      Real:       60.64       61.63       61.19        0.40 	 0.637%
-numa02.sh       Sys:       14.72       25.68       19.06        4.03 	 11.22%
-numa02.sh      User:     5210.95     5266.69     5233.30       20.82 	 0.608%
-numa03.sh      Real:      746.51      808.24      780.36       23.88 	 1.972%
-numa03.sh       Sys:       97.26      108.48      105.07        4.28 	 4.197%
-numa03.sh      User:    58956.30    61397.05    60162.95     1050.82 	 2.661%
-numa04.sh      Real:      465.97      519.27      484.81       19.62 	 9.385%
-numa04.sh       Sys:      304.43      359.08      334.68       20.64 	 -14.6%
-numa04.sh      User:    37544.16    41186.15    39262.44     1314.91 	 2.478%
-numa05.sh      Real:      411.57      457.20      433.29       16.58 	 0.380%
-numa05.sh       Sys:      230.05      435.48      339.95       67.58 	 -17.9%
-numa05.sh      User:    33325.54    36896.31    35637.84     1222.64 	 -2.12%
+numa01.sh      Real:      506.35      794.46      599.06      104.26 	 -10.76%
+numa01.sh       Sys:      150.37      223.56      195.99       24.94 	 -25.55%
+numa01.sh      User:    43450.69    61752.04    49281.50     6635.33 	 -11.43%
+numa02.sh      Real:       60.33       62.40       61.31        0.90 	 -0.195%
+numa02.sh       Sys:       18.12       31.66       24.28        5.89 	 -21.49%
+numa02.sh      User:     5203.91     5325.32     5260.29       49.98 	 -0.513%
+numa03.sh      Real:      696.47      853.62      745.80       57.28 	 4.6339%
+numa03.sh       Sys:       85.68      123.71       97.89       13.48 	 7.3347%
+numa03.sh      User:    55978.45    66418.63    59254.94     3737.97 	 1.5323%
+numa04.sh      Real:      444.05      514.83      497.06       26.85 	 -2.464%
+numa04.sh       Sys:      230.39      375.79      316.23       48.58 	 5.8343%
+numa04.sh      User:    35403.12    41004.10    39720.80     2163.08 	 -1.153%
+numa05.sh      Real:      423.09      460.41      439.57       13.92 	 -1.428%
+numa05.sh       Sys:      287.38      480.15      369.37       68.52 	 -7.964%
+numa05.sh      User:    34732.12    38016.80    36255.85     1070.51 	 -1.704%
+
+While there is a performance hit, this is a correctness issue that is very
+much needed in bigger systems.
 
 Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 ---
- kernel/sched/fair.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+ kernel/sched/fair.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 57d1ee8..ea32a66 100644
+index ea32a66..94091e6 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1507,28 +1507,12 @@ static bool load_too_imbalanced(long src_load, long dst_load,
- 	src_capacity = env->src_stats.compute_capacity;
- 	dst_capacity = env->dst_stats.compute_capacity;
+@@ -1725,8 +1725,9 @@ static int task_numa_migrate(struct task_struct *p)
+ 	 * Tasks that are "trapped" in such domains cannot be migrated
+ 	 * elsewhere, so there is no point in (re)trying.
+ 	 */
+-	if (unlikely(!sd)) {
+-		p->numa_preferred_nid = task_node(p);
++	if (unlikely(!sd) && p->numa_preferred_nid != task_node(p)) {
++		/* Set the new preferred node */
++		sched_setnuma(p, task_node(p));
+ 		return -EINVAL;
+ 	}
  
--	/* We care about the slope of the imbalance, not the direction. */
--	if (dst_load < src_load)
--		swap(dst_load, src_load);
+@@ -1785,15 +1786,13 @@ static int task_numa_migrate(struct task_struct *p)
+ 	 * trying for a better one later. Do not set the preferred node here.
+ 	 */
+ 	if (p->numa_group) {
+-		struct numa_group *ng = p->numa_group;
 -
--	/* Is the difference below the threshold? */
--	imb = dst_load * src_capacity * 100 -
--	      src_load * dst_capacity * env->imbalance_pct;
--	if (imb <= 0)
--		return false;
-+	imb = abs(dst_load * src_capacity - src_load * dst_capacity);
+ 		if (env.best_cpu == -1)
+ 			nid = env.src_nid;
+ 		else
+-			nid = env.dst_nid;
++			nid = cpu_to_node(env.best_cpu);
  
--	/*
--	 * The imbalance is above the allowed threshold.
--	 * Compare it with the old imbalance.
--	 */
- 	orig_src_load = env->src_stats.load;
- 	orig_dst_load = env->dst_stats.load;
+-		if (ng->active_nodes > 1 && numa_is_active_node(env.dst_nid, ng))
+-			sched_setnuma(p, env.dst_nid);
++		if (nid != p->numa_preferred_nid)
++			sched_setnuma(p, nid);
+ 	}
  
--	if (orig_dst_load < orig_src_load)
--		swap(orig_dst_load, orig_src_load);
--
--	old_imb = orig_dst_load * src_capacity * 100 -
--		  orig_src_load * dst_capacity * env->imbalance_pct;
-+	old_imb = abs(orig_dst_load * src_capacity - orig_src_load * dst_capacity);
- 
- 	/* Would this change make things worse? */
- 	return (imb > old_imb);
+ 	/* No better CPU than the current one was found. */
 -- 
 1.8.3.1
