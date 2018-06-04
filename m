@@ -1,61 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752520AbeFDKzP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:55:15 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33167 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752388AbeFDKzN (ORCPT
+        id S1752586AbeFDKzW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:55:22 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:59750 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752537AbeFDKzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:55:13 -0400
-X-Google-Smtp-Source: ADUXVKL1yw6RquTtat/U6T/S2l1/lai5fLtNKAZKpTrNDzXfjS9E03r9R3fpCoW73lh9+wuNJ2TY0g==
-Subject: Re: [PATCH] ASoC: dapm: delete dapm_kcontrol_data paths entry before
- freeing
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
-        lgirdwood@gmail.com, bgoswami@codeaurora.org, tiwai@suse.com,
-        perex@perex.cz, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com
-References: <20180601225334.19064-1-srinivas.kandagatla@linaro.org>
- <20180604104541.GB7536@sirena.org.uk>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <e37bf559-b040-db34-6273-d4f8ea1e2284@linaro.org>
-Date: Mon, 4 Jun 2018 11:55:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 4 Jun 2018 06:55:18 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Mon, 4 Jun 2018 11:55:12 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Lee Jones <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mfd: arizona: Don't use regmap_read_poll_timeout
+Message-ID: <20180604105512.GB18740@imbe.wolfsonmicro.main>
+References: <20180511135030.14590-1-ckeepax@opensource.cirrus.com>
+ <20180604054452.GD17993@dell>
+ <CAHp75Vdcg2GQ4G-YF054iCob+f4=ZmfT_XLknMZm72nOB7D_mw@mail.gmail.com>
+ <20180604102719.GA18740@imbe.wolfsonmicro.main>
 MIME-Version: 1.0
-In-Reply-To: <20180604104541.GB7536@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180604102719.GA18740@imbe.wolfsonmicro.main>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=850 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
+ definitions=main-1806040134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 04, 2018 at 11:27:19AM +0100, Charles Keepax wrote:
+> On Mon, Jun 04, 2018 at 12:40:37PM +0300, Andy Shevchenko wrote:
+> > On Mon, Jun 4, 2018 at 8:44 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> > > On Fri, 11 May 2018, Charles Keepax wrote:
+> > 
+> > >> +     while (true) {
+> > >> +             ret = regmap_read(arizona->regmap, reg, &val);
+> > >>
+> > >> +             if ((val & mask) == target)
+> > >> +                     return 0;
+> > >> +
+> > >> +             if (ktime_compare(ktime_get(), timeout) > 0)
+> > >> +                     break;
+> > >> +
+> > >> +             usleep_range(ARIZONA_REG_POLL_DELAY_US / 2,
+> > >> +                          ARIZONA_REG_POLL_DELAY_US);
+> > >> +     }
+> > 
+> > >From my point of view infinite loops not good for readability and maintenance.
+> > Perhaps
+> > 
+> > do {
+> > ...
+> > } while (ktime_compare(...));
+> > 
+> > ?
+> 
+> I would rather not do it that way since then it becomes
+> impossible to have a single poll with no delays happening. I can
+> refactor to remove the while(true) but it will make the code a
+> bit bigger, as I will probably need to duplicate some code
+> outside the loop.
+> 
 
+Looking again I think it is fine if I do the ktime_compare at the top
+of the loop though. Will respin.
 
-On 04/06/18 11:45, Mark Brown wrote:
-> On Fri, Jun 01, 2018 at 11:53:34PM +0100, Srinivas Kandagatla wrote:
-> 
->> Below is the kernel BUG with SLAB Poisoning
-> 
->> =============================================================================
->> BUG kmalloc-128 (Tainted: G        W        ): Poison overwritten
->> -----------------------------------------------------------------------------
->>
->> Disabling lock debugging due to kernel taint
->> INFO: 0xffff80003cf1c310-0xffff80003cf1c31f. First byte 0x10 instead of 0x6b
->> INFO: Allocated in dapm_kcontrol_data_alloc.isra.37+0x34/0x2a8 age=6929 cpu=0 pid=50
->>   __slab_alloc.isra.24+0x24/0x38
->>   kmem_cache_alloc+0x190/0x1d8
-> 
-> Please think hard before including complete backtraces in upstream
-> reports, they are very large and contain almost no useful information
-> relative to their size so often obscure the relevant content in your
-> message. If part of the backtrace is usefully illustrative then it's
-> usually better to pull out the relevant sections.
-I agree, Do you want me to resend the patch removing irrelevant sections 
-in log?
-
-thanks,
-srini
-> 
+Thanks,
+Charles
