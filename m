@@ -1,21 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752732AbeFDHap (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:30:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52808 "EHLO mail.kernel.org"
+        id S1752756AbeFDHbH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:31:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752359AbeFDG7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 02:59:50 -0400
+        id S1752310AbeFDG7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:59:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 19/29] tools include: Include missing headers for fls() and types in linux/log2.h
-Date: Mon,  4 Jun 2018 08:58:15 +0200
-Message-Id: <20180604065802.911198949@linuxfoundation.org>
+        stable@vger.kernel.org
+Subject: [PATCH 4.9 28/29] objtool: header file sync-up
+Date: Mon,  4 Jun 2018 08:58:24 +0200
+Message-Id: <20180604065803.289632572@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
 References: <20180604065802.157744637@linuxfoundation.org>
@@ -31,32 +28,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit a12a4e023a55f058178afea1ada3ce7bf4db94c3 upstream.
+When building tools/objtool/ it rightly complains about a number of
+files being out of sync.  Fix this up by syncing them properly with the
+relevant in-kernel versions.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-7wj865zidu5ylf87i6i7v6z7@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/include/linux/log2.h |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/objtool/arch/x86/include/asm/inat.h          |   10 ----------
+ tools/objtool/arch/x86/include/asm/orc_types.h     |    2 +-
+ tools/objtool/arch/x86/lib/x86-opcode-map.txt      |   15 +++------------
+ tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk |    1 -
+ 4 files changed, 4 insertions(+), 24 deletions(-)
 
---- a/tools/include/linux/log2.h
-+++ b/tools/include/linux/log2.h
-@@ -12,6 +12,9 @@
- #ifndef _TOOLS_LINUX_LOG2_H
- #define _TOOLS_LINUX_LOG2_H
+--- a/tools/objtool/arch/x86/include/asm/inat.h
++++ b/tools/objtool/arch/x86/include/asm/inat.h
+@@ -97,16 +97,6 @@
+ #define INAT_MAKE_GROUP(grp)	((grp << INAT_GRP_OFFS) | INAT_MODRM)
+ #define INAT_MAKE_IMM(imm)	(imm << INAT_IMM_OFFS)
  
-+#include <linux/bitops.h>
-+#include <linux/types.h>
-+
+-/* Identifiers for segment registers */
+-#define INAT_SEG_REG_IGNORE	0
+-#define INAT_SEG_REG_DEFAULT	1
+-#define INAT_SEG_REG_CS		2
+-#define INAT_SEG_REG_SS		3
+-#define INAT_SEG_REG_DS		4
+-#define INAT_SEG_REG_ES		5
+-#define INAT_SEG_REG_FS		6
+-#define INAT_SEG_REG_GS		7
+-
+ /* Attribute search APIs */
+ extern insn_attr_t inat_get_opcode_attribute(insn_byte_t opcode);
+ extern int inat_get_last_prefix_id(insn_byte_t last_pfx);
+--- a/tools/objtool/arch/x86/include/asm/orc_types.h
++++ b/tools/objtool/arch/x86/include/asm/orc_types.h
+@@ -88,7 +88,7 @@ struct orc_entry {
+ 	unsigned	sp_reg:4;
+ 	unsigned	bp_reg:4;
+ 	unsigned	type:2;
+-} __packed;
++};
+ 
  /*
-  * non-constant log of base 2 calculators
-  * - the arch may override these in asm/bitops.h if they can be implemented
+  * This struct is used by asm and inline asm code to manually annotate the
+--- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
++++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
+@@ -607,7 +607,7 @@ fb: psubq Pq,Qq | vpsubq Vx,Hx,Wx (66),(
+ fc: paddb Pq,Qq | vpaddb Vx,Hx,Wx (66),(v1)
+ fd: paddw Pq,Qq | vpaddw Vx,Hx,Wx (66),(v1)
+ fe: paddd Pq,Qq | vpaddd Vx,Hx,Wx (66),(v1)
+-ff: UD0
++ff:
+ EndTable
+ 
+ Table: 3-byte opcode 1 (0x0f 0x38)
+@@ -717,7 +717,7 @@ AVXcode: 2
+ 7e: vpermt2d/q Vx,Hx,Wx (66),(ev)
+ 7f: vpermt2ps/d Vx,Hx,Wx (66),(ev)
+ 80: INVEPT Gy,Mdq (66)
+-81: INVVPID Gy,Mdq (66)
++81: INVPID Gy,Mdq (66)
+ 82: INVPCID Gy,Mdq (66)
+ 83: vpmultishiftqb Vx,Hx,Wx (66),(ev)
+ 88: vexpandps/d Vpd,Wpd (66),(ev)
+@@ -970,15 +970,6 @@ GrpTable: Grp9
+ EndTable
+ 
+ GrpTable: Grp10
+-# all are UD1
+-0: UD1
+-1: UD1
+-2: UD1
+-3: UD1
+-4: UD1
+-5: UD1
+-6: UD1
+-7: UD1
+ EndTable
+ 
+ # Grp11A and Grp11B are expressed as Grp11 in Intel SDM
+@@ -1018,7 +1009,7 @@ GrpTable: Grp15
+ 1: fxstor | RDGSBASE Ry (F3),(11B)
+ 2: vldmxcsr Md (v1) | WRFSBASE Ry (F3),(11B)
+ 3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)
+-4: XSAVE | ptwrite Ey (F3),(11B)
++4: XSAVE
+ 5: XRSTOR | lfence (11B)
+ 6: XSAVEOPT | clwb (66) | mfence (11B)
+ 7: clflush | clflushopt (66) | sfence (11B)
+--- a/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk
++++ b/tools/objtool/arch/x86/tools/gen-insn-attr-x86.awk
+@@ -1,5 +1,4 @@
+ #!/bin/awk -f
+-# SPDX-License-Identifier: GPL-2.0
+ # gen-insn-attr-x86.awk: Instruction attribute table generator
+ # Written by Masami Hiramatsu <mhiramat@redhat.com>
+ #
