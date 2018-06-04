@@ -1,106 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753105AbeFDHZP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:25:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753013AbeFDHBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:39 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Wei Wang <weiwan@google.com>, Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 31/52] tcp: avoid integer overflows in tcp_rcv_space_adjust()
-Date: Mon,  4 Jun 2018 08:58:26 +0200
-Message-Id: <20180604065607.816036550@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
-References: <20180604065606.532044490@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753176AbeFDHZ2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:25:28 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:32832 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751820AbeFDHZ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:25:27 -0400
+Date: Mon, 4 Jun 2018 09:25:18 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: 4.13..4.14 scheduling overhead regression (bisected  -
+ b956575bed91)
+Message-ID: <20180604072518.GM12217@hirez.programming.kicks-ass.net>
+References: <1527857873.4674.11.camel@gmx.de>
+ <20180601132055.GT12198@hirez.programming.kicks-ass.net>
+ <1527879389.7898.84.camel@surriel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="H7BIH7T1fRJ3RGOi"
+Content-Disposition: inline
+In-Reply-To: <1527879389.7898.84.camel@surriel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--H7BIH7T1fRJ3RGOi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Eric Dumazet <edumazet@google.com>
+On Fri, Jun 01, 2018 at 02:56:29PM -0400, Rik van Riel wrote:
 
-commit 607065bad9931e72207b0cac365d7d4abc06bd99 upstream.
+> > IIRC all page freeing does indeed go through tlb_remove_page(), it
+> > shouldn't be too hard to make that work.
+>=20
+> Page freeing does. However, page table freeing
+> does not, and might need to be done in a different
+> way.
 
-When using large tcp_rmem[2] values (I did tests with 500 MB),
-I noticed overflows while computing rcvwin.
+We have tlb_remove_table() for those. And that had better work otherwise
+the whole 'RCU'-freed page table mess is broken :-)
 
-Lets fix this before the following patch.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Wei Wang <weiwan@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[Backport: sysctl_tcp_rmem is not Namespace-ify'd in older kernels]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+--H7BIH7T1fRJ3RGOi
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
- include/linux/tcp.h  |    2 +-
- net/ipv4/tcp_input.c |   10 ++++++----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -334,7 +334,7 @@ struct tcp_sock {
- 
- /* Receiver queue space */
- 	struct {
--		int	space;
-+		u32	space;
- 		u32	seq;
- 		u64	time;
- 	} rcvq_space;
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -591,8 +591,8 @@ static inline void tcp_rcv_rtt_measure_t
- void tcp_rcv_space_adjust(struct sock *sk)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 copied;
- 	int time;
--	int copied;
- 
- 	tcp_mstamp_refresh(tp);
- 	time = tcp_stamp_us_delta(tp->tcp_mstamp, tp->rcvq_space.time);
-@@ -615,12 +615,13 @@ void tcp_rcv_space_adjust(struct sock *s
- 
- 	if (sysctl_tcp_moderate_rcvbuf &&
- 	    !(sk->sk_userlocks & SOCK_RCVBUF_LOCK)) {
--		int rcvwin, rcvmem, rcvbuf;
-+		int rcvmem, rcvbuf;
-+		u64 rcvwin;
- 
- 		/* minimal window to cope with packet losses, assuming
- 		 * steady state. Add some cushion because of small variations.
- 		 */
--		rcvwin = (copied << 1) + 16 * tp->advmss;
-+		rcvwin = ((u64)copied << 1) + 16 * tp->advmss;
- 
- 		/* If rate increased by 25%,
- 		 *	assume slow start, rcvwin = 3 * copied
-@@ -640,7 +641,8 @@ void tcp_rcv_space_adjust(struct sock *s
- 		while (tcp_win_from_space(rcvmem) < tp->advmss)
- 			rcvmem += 128;
- 
--		rcvbuf = min(rcvwin / tp->advmss * rcvmem, sysctl_tcp_rmem[2]);
-+		do_div(rcvwin, tp->advmss);
-+		rcvbuf = min_t(u64, rcvwin * rcvmem, sysctl_tcp_rmem[2]);
- 		if (rcvbuf > sk->sk_rcvbuf) {
- 			sk->sk_rcvbuf = rcvbuf;
- 
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAlsU6V4ACgkQdkfhpEvA
+5Lo2Sg/+POW/AM/uOX/nJ+HwD8nB4EkmDwIgBKD9dZPchWZIiyGuaaYQYZ4LlLBp
+UyVClGaUb/frWPeC0dZl6hh85tVSJPFbY8Q44iVwUYsDWZYIbWW8WBiGv3nZrfr8
+omApelSCn6uhRtSbV9MZgL4b/Bm83bzaGAuzBwuXAkTqwlbuP11GV86rK7OSs/SD
+ROKmD7g0A4Rcj+b08Dc6gXGIYCNsU9LULW2s8f2Sbp89aB4SZbQtbbCtoiH+RwcK
+UEWqtDIzpGKB3p2lVFe/rVJrweiLhxRJyn9UzfIsqgugm/V1BCcvHfe0/2xwLRpC
+zA2oNUz9Q8OJOodKywvvXuC82k1GViO85SisVnXNlkBfpf5T1ByGw2bv+UJsoz6R
+A9zjuPHZ+IMp/1Bx3WqhWqK3QxxGbdrmjqZterwLpHG1LmwbN4EEJKESKt+3FDtX
+2PQakzS4S2Y2TYTw30jKaejotBt5zYMR5EQs+Y9KsgiRJC7Sv97fs7UTVP4CQm+7
+qDrn7EsRmrSH2qMhGe8GDwUivytqlwcahIfTaTEwOxsNCtoXtSCwEVKERK7WKxP1
+qsNVYfD+L2xdYCOfnB3zO9KO88LmTCxBnRAvzwSBAPqXgh/8DVRXetLnuhm7loZK
+1J0JFO3LQTVhOVBfy/bTKJC5nDHrMiSoRSbKoyOPx/r+4ity6vI=
+=Wo+r
+-----END PGP SIGNATURE-----
+
+--H7BIH7T1fRJ3RGOi--
