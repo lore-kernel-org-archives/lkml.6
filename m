@@ -1,100 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751303AbeFDSqw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 14:46:52 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:24887 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750950AbeFDSqv (ORCPT
+        id S1751233AbeFDSrn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 14:47:43 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:33450 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750915AbeFDSrm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 14:46:51 -0400
-X-IronPort-AV: E=Sophos;i="5.49,476,1520870400";
-   d="scan'208";a="176488093"
-Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>
-Cc: "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Albert Ou <albert@sifive.com>
-References: <20180601152123.47256-1-luc.vanoostenryck@gmail.com>
- <20180601152123.47256-4-luc.vanoostenryck@gmail.com>
-From: Atish Patra <atish.patra@wdc.com>
-Message-ID: <235fec3e-be2e-874a-8313-e7390fcdca74@wdc.com>
-Date: Mon, 4 Jun 2018 11:46:50 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Mon, 4 Jun 2018 14:47:42 -0400
+X-Google-Smtp-Source: ADUXVKK8CzLLCFidYDD+ejeYjc0kUeP3Uf9XFzZVz09fDhyLP6VSxZ/MbK4ggYpMPGeGcC/hrt28ig==
+Date: Mon, 4 Jun 2018 11:47:38 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        keescook@chromium.org, riel@redhat.com, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
+        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
+        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC][PATCH 1/2] memcg: Ensure every task that uses an mm is in
+ the same memory cgroup
+Message-ID: <20180604184738.GB1351649@devbig577.frc2.facebook.com>
+References: <20180524141635.c99b7025a73a709e179f92a2@linux-foundation.org>
+ <20180530121721.GD27180@dhcp22.suse.cz>
+ <87wovjacrh.fsf@xmission.com>
+ <87wovj8e1d.fsf_-_@xmission.com>
+ <87y3fywodn.fsf_-_@xmission.com>
+ <87sh66wobu.fsf_-_@xmission.com>
+ <20180601165034.GX1351649@devbig577.frc2.facebook.com>
+ <87bmcuv0k0.fsf@xmission.com>
+ <20180601191652.GZ1351649@devbig577.frc2.facebook.com>
+ <20180604125934.GR19202@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180601152123.47256-4-luc.vanoostenryck@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604125934.GR19202@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/1/18 8:22 AM, Luc Van Oostenryck wrote:
-> __copy_user() is a function, written in assembly, used to copy
-> memory between kernel & user space. As such its to & from args
-> may both take a user pointer or a kernel pointer.
-> 
-> However the prototype for this function declare these two args
-> as 'void __user *', which is no more & no less correct than
-> declaring them as 'void *'. In fact theer is no possible correct
+Hello, Michal.
 
-/s/theer/there
-
-> annotation for such a function.
+On Mon, Jun 04, 2018 at 03:01:19PM +0200, Michal Hocko wrote:
+> > On Fri, Jun 01, 2018 at 01:11:59PM -0500, Eric W. Biederman wrote:
+> > > Widening the definition of a process sounds good.  The memory control
+> > > group code would still need a way to forbid these in cgroup v1 mode,
+> > > when someone uses the task file.
+> > 
+> > Yeap, you're right.  We'll need memcg's can_attach rejecting for v1.
 > 
-> The problem is worked around here by declaring these args as
-> unsigned long and casting them to the right type in each of
-> two callers raw_copy_{to,from}_user() as some kind of cast would
-> be needed anyway.
-> 
-> Note: another solution, maybe cleaner but slightly more complex,
->        would be to declare two version of __copy_user,
->        either in the asm file or via an alias, each having already
->        the correct typing for raw_copy_{to,from}_user().
-> 
+> Do we really need? I mean, do we know about any existing usecase that
+> would need this weird threading concept and depend on memory migration
+> which doesn't really work?
 
-I feel that would be a better solution as it is implemented similarly
-in ARM as well.
+I thought the requirement is from the ->owner change so that the
+association doesn't become 1:N, right?
 
-I am unable to understand how "unsigned long" is better than "void*".
-x86 implementation has both arguments as void*. Can you please clarify ?
+Thanks.
 
-
-Regards,
-Atish
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> ---
->   arch/riscv/include/asm/uaccess.h | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-> index 14b0b22fb..c7a6a4a4a 100644
-> --- a/arch/riscv/include/asm/uaccess.h
-> +++ b/arch/riscv/include/asm/uaccess.h
-> @@ -392,19 +392,19 @@ do {								\
->   })
->   
->   
-> -extern unsigned long __must_check __copy_user(void __user *to,
-> -	const void __user *from, unsigned long n);
-> +extern unsigned long __must_check __copy_user(unsigned long to,
-> +	const unsigned long from, unsigned long n);
->   
->   static inline unsigned long
->   raw_copy_from_user(void *to, const void __user *from, unsigned long n)
->   {
-> -	return __copy_user(to, from, n);
-> +	return __copy_user((unsigned long)to, (unsigned long)from, n);
->   }
->   
->   static inline unsigned long
->   raw_copy_to_user(void __user *to, const void *from, unsigned long n)
->   {
-> -	return __copy_user(to, from, n);
-> +	return __copy_user((unsigned long)to, (unsigned long)from, n);
->   }
->   
->   extern long strncpy_from_user(char *dest, const char __user *src, long count);
-> 
+-- 
+tejun
