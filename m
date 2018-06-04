@@ -1,92 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeFDKty (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:49:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:49662 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751418AbeFDKtx (ORCPT
+        id S1752292AbeFDKux (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:50:53 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:43806 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751798AbeFDKuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:49:53 -0400
-Subject: Re: [PATCH 1/2] n_tty: Fix stall at n_tty_receive_char_special().
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: linux-kernel@vger.kernel.org, Peter Hurley <peter@hurleysoftware.com>
-References: <1527295994-3440-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <ce8d7e0f-d7c0-4eb2-5ed5-f38bdb5a975f@I-love.SAKURA.ne.jp>
-Date: Mon, 4 Jun 2018 19:49:40 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+        Mon, 4 Jun 2018 06:50:51 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH 4/8] serial: 8250: Handle case port doesn't have TEMT
+ interrupt using em485.
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
+        Ed Blake <ed.blake@sondrel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
+        Vignesh R <vigneshr@ti.com>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
+        Aaron Sierra <asierra@xes-inc.com>,
+        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
+        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
+ <20180601124021.102970-5-giulio.benetti@micronovasrl.com>
+ <3a66327727d9bf2ce5adf8ef0f1fcc1fffeaa4ec.camel@linux.intel.com>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <4a7148d5-ab2c-425d-afdc-08ddd3c522c2@micronovasrl.com>
+Date: Mon, 4 Jun 2018 12:50:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1527295994-3440-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3a66327727d9bf2ce5adf8ef0f1fcc1fffeaa4ec.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg, Jiri, will you pick up these patches?
+Hi,
 
-On 2018/05/26 1:12, Greg KH wrote:
-> On Thu, May 17, 2018 at 07:11:01AM -0700, syzbot wrote:
->> Hello,
+Il 04/06/2018 12:17, Andy Shevchenko ha scritto:
+> On Fri, 2018-06-01 at 14:40 +0200, Giulio Benetti wrote:
+>> Some 8250 ports only have TEMT interrupt, so current implementation
+>> can't work for ports without it. The only chance to make it work is to
+>> loop-read on LSR register.
 >>
->> syzbot has tested the proposed patch and the reproducer did not trigger
->> crash:
+>> With NO TEMT interrupt check if both TEMT and THRE are set looping on
+>> LSR register.
 > 
-> Great!  Is the patch going to be submitted "properly" so that I can
-> queue it up?  :)
+>> --- a/drivers/tty/serial/8250/8250_dw.c
+>> +++ b/drivers/tty/serial/8250/8250_dw.c
 > 
-> thanks,
+>> -		int ret = serial8250_em485_init(up);
+>> +		int ret = serial8250_em485_init(up, false);
 > 
-> greg k-h
-> 
-
-On 2018/05/26 9:53, Tetsuo Handa wrote:
-> syzbot is reporting stalls at n_tty_receive_char_special() [1]. This is
-> because comparison is not working as expected since ldata->read_head can
-> change at any moment. Mitigate this by explicitly masking with buffer size
-> when checking condition for "while" loops.
-> 
-> [1] https://syzkaller.appspot.com/bug?id=3d7481a346958d9469bebbeb0537d5f056bdd6e8
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>
-> Fixes: bc5a5e3f45d04784 ("n_tty: Don't wrap input buffer indices at buffer size")
-> Cc: Peter Hurley <peter@hurleysoftware.com>
-> ---
->  drivers/tty/n_tty.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
+> Is true for all possible DW configured types? Or it's your particular
+> case?
 > 
 
-On 2018/05/26 9:53, Tetsuo Handa wrote:
-> syzbot is reporting stalls at __process_echoes() [1]. This is because
-> since ldata->echo_commit < ldata->echo_tail becomes true for some reason,
-> the discard loop is serving as almost infinite loop. This patch tries to
-> avoid falling into ldata->echo_commit < ldata->echo_tail situation by
-> making access to echo_* variables more carefully.
-> 
-> Since reset_buffer_flags() is called without output_lock held, it should
-> not touch echo_* variables. And omit a call to reset_buffer_flags() from
-> n_tty_open() by using vzalloc().
-> 
-> Since add_echo_byte() is called without output_lock held, it needs memory
-> barrier between storing into echo_buf[] and incrementing echo_head counter.
-> echo_buf() needs corresponding memory barrier before reading echo_buf[].
-> Lack of handling the possibility of not-yet-stored multi-byte operation
-> might be the reason of falling into ldata->echo_commit < ldata->echo_tail
-> situation, for if I do WARN_ON(ldata->echo_commit == tail + 1) prior to
-> echo_buf(ldata, tail + 1), the WARN_ON() fires.
-> 
-> Also, explicitly masking with buffer for the former "while" loop, and
-> use ldata->echo_commit > tail for the latter "while" loop.
-> 
-> [1] https://syzkaller.appspot.com/bug?id=17f23b094cd80df750e5b0f8982c521ee6bcbf40
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>
-> Cc: Peter Hurley <peter@hurleysoftware.com>
-> ---
->  drivers/tty/n_tty.c | 42 ++++++++++++++++++++++++------------------
->  1 file changed, 24 insertions(+), 18 deletions(-)
+I've checked on Synopsis Designware 8250 datasheet and it's not supported.
+Here is datasheet I went through:
+https://linux-sunxi.org/images/d/d2/Dw_apb_uart_db.pdf
+
+There seems not to be TEMT interrupt, I use it under sunxi SoC and on 
+their datasheet(A20 for example), they don't report that interrupt too.
+So it seems to be valid for all DW configured types, anyway I don't know 
+how many IP reviews there could be of that peripheral.
+I've tried to subscribe at Synopsis to obtain latest Datasheet but it 
+ask me an active ID I don't have.
+
+-- 
+Giulio Benetti
+CTO
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
