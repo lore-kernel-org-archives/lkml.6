@@ -1,236 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751131AbeFDTko (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:40:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37134 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750995AbeFDTkl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:40:41 -0400
-Subject: Re: [PATCH v9 3/7] i2c: fsi: Add port structures
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1528138850-18259-4-git-send-email-eajames@linux.vnet.ibm.com>
- <CAHp75VfMsL3rBMT-SMcSCyuQd2YMexXqkrb=zBYEq0=MO=zHNA@mail.gmail.com>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-Date: Mon, 4 Jun 2018 14:40:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VfMsL3rBMT-SMcSCyuQd2YMexXqkrb=zBYEq0=MO=zHNA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18060419-0052-0000-0000-000002F81BB2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009129; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01042315; UDB=6.00533716; IPR=6.00821445;
- MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 19:40:38
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060419-0053-0000-0000-00005CE484B9
-Message-Id: <2c839e9a-5b60-af90-40f1-df94c0112d95@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040226
+        id S1751099AbeFDTom (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:44:42 -0400
+Received: from anholt.net ([50.246.234.109]:59046 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750779AbeFDTok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 15:44:40 -0400
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Kevin Quigley <kevin@kquigley.co.uk>,
+        James Hughes <james.hughes@raspberrypi.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH] drm/vc4: Enable the DSI module and link before other enables.
+Date: Mon,  4 Jun 2018 12:44:37 -0700
+Message-Id: <20180604194437.13790-1-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We want the DSI PHY to be enabled and the DSI module clocked before a
+panel or bridge's prepare() function, since most DSI panel drivers
+with a prepare() hook are doing DCS transactions inside of them.
 
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Cc: Kevin Quigley <kevin@kquigley.co.uk>
+Cc: James Hughes <james.hughes@raspberrypi.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+---
 
-On 06/04/2018 02:17 PM, Andy Shevchenko wrote:
-> On Mon, Jun 4, 2018 at 10:00 PM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
->> Add and initialize I2C adapters for each port on the FSI-attached I2C
->> master. Ports for each master are defined in the devicetree.
->>
->> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
->> ---
->>   drivers/i2c/busses/i2c-fsi.c | 90 ++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 90 insertions(+)
->>
->> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
->> index e1b183c..12130c3 100644
->> --- a/drivers/i2c/busses/i2c-fsi.c
->> +++ b/drivers/i2c/busses/i2c-fsi.c
->> @@ -17,7 +17,10 @@
->>   #include <linux/fsi.h>
->>   #include <linux/i2c.h>
->>   #include <linux/kernel.h>
->> +#include <linux/list.h>
->>   #include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/slab.h>
->>
->>   #define FSI_ENGID_I2C          0x7
->>
->> @@ -123,6 +126,14 @@
->>   struct fsi_i2c_master {
->>          struct fsi_device       *fsi;
->>          u8                      fifo_size;
->> +       struct list_head        ports;
->> +};
->> +
->> +struct fsi_i2c_port {
->> +       struct list_head        list;
->> +       struct i2c_adapter      adapter;
->> +       struct fsi_i2c_master   *master;
->> +       u16                     port;
->>   };
->>
->>   static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
->> @@ -176,9 +187,38 @@ static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
->>          return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_WATER_MARK, &watermark);
->>   }
->>
->> +static int fsi_i2c_set_port(struct fsi_i2c_port *port)
->> +{
->> +       int rc;
->> +       struct fsi_device *fsi = port->master->fsi;
->> +       u32 mode, dummy = 0;
->> +
->> +       rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
->> +       if (rc)
->> +               return rc;
->> +
->> +       if (FIELD_GET(I2C_MODE_PORT, mode) == port->port)
->> +               return 0;
->> +
->> +       mode = (mode & ~I2C_MODE_PORT) | FIELD_PREP(I2C_MODE_PORT, port->port);
-> Did you consider to split this to two lines / assignments?
+I'm not sure it makes sense to enable CRTCs before encoders on vc4 at
+all.  Why start scanning pixels before the encoder is ready to hear
+about VSTART?  However, this patch will hopefully unblock people
+trying to attach other panels to rpi
 
-It fit on one line (< 80 chars) so I left it as-is...
+ drivers/gpu/drm/vc4/vc4_drv.h |  1 +
+ drivers/gpu/drm/vc4/vc4_dsi.c |  3 +--
+ drivers/gpu/drm/vc4/vc4_kms.c | 25 +++++++++++++++++++++++++
+ 3 files changed, 27 insertions(+), 2 deletions(-)
 
->
->> +       rc = fsi_i2c_write_reg(fsi, I2C_FSI_MODE, &mode);
->> +       if (rc)
->> +               return rc;
->> +
->> +       /* reset engine when port is changed */
->> +       return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
->> +}
->> +
->>   static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->>                          int num)
->>   {
->> +       int rc;
->> +       struct fsi_i2c_port *port = adap->algo_data;
->> +
->> +       rc = fsi_i2c_set_port(port);
->> +       if (rc)
->> +               return rc;
->> +
->>          return -EOPNOTSUPP;
->>   }
->>
->> @@ -196,23 +236,72 @@ static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
->>   static int fsi_i2c_probe(struct device *dev)
->>   {
->>          struct fsi_i2c_master *i2c;
->> +       struct fsi_i2c_port *port;
->> +       struct device_node *np;
->>          int rc;
->> +       u32 port_no;
->>
->>          i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
->>          if (!i2c)
->>                  return -ENOMEM;
->>
->>          i2c->fsi = to_fsi_dev(dev);
->> +       INIT_LIST_HEAD(&i2c->ports);
->>
->>          rc = fsi_i2c_dev_init(i2c);
->>          if (rc)
->>                  return rc;
->>
->> +       /* Add adapter for each i2c port of the master. */
->> +       for_each_available_child_of_node(dev->of_node, np) {
->> +               rc = of_property_read_u32(np, "reg", &port_no);
->> +               if (rc || port_no > USHRT_MAX)
->> +                       continue;
->
->
->> +
->> +               port = kzalloc(sizeof(*port), GFP_KERNEL);
->> +               if (!port)
->> +                       break;
->> +
->> +               port->master = i2c;
->> +               port->port = port_no;
->> +
->> +               port->adapter.owner = THIS_MODULE;
->> +               port->adapter.dev.of_node = np;
->> +               port->adapter.dev.parent = dev;
->> +               port->adapter.algo = &fsi_i2c_algorithm;
->> +               port->adapter.algo_data = port;
->> +
->> +               snprintf(port->adapter.name, sizeof(port->adapter.name),
->> +                        "i2c_bus-%u", port_no);
->> +
->> +               rc = i2c_add_adapter(&port->adapter);
->> +               if (rc < 0) {
->> +                       dev_err(dev, "Failed to register adapter: %d\n", rc);
->> +                       kfree(port);
->> +                       continue;
->> +               }
->> +
->> +               list_add(&port->list, &i2c->ports);
->> +       }
->> +
->>          dev_set_drvdata(dev, i2c);
->>
->>          return 0;
->>   }
->>
->> +static int fsi_i2c_remove(struct device *dev)
->> +{
->> +       struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
->> +       struct fsi_i2c_port *port;
->> +
->> +       list_for_each_entry(port, &i2c->ports, list) {
->> +               i2c_del_adapter(&port->adapter);
->> +               kfree(port);
->> +       }
-> Just to be sure, it will be called if and only if all adapters are not
-> busy. Correct?
-
-If I understand the code and comments correctly, i2c_del_adapter will 
-block until all references to the adapter device are gone. So, should be 
-safe to free it now.
-
-Thanks,
-Eddie
-
->
->> +
->> +       return 0;
->> +}
->> +
->>   static const struct fsi_device_id fsi_i2c_ids[] = {
->>          { FSI_ENGID_I2C, FSI_VERSION_ANY },
->>          { 0 }
->> @@ -224,6 +313,7 @@ static int fsi_i2c_probe(struct device *dev)
->>                  .name = "i2c-fsi",
->>                  .bus = &fsi_bus_type,
->>                  .probe = fsi_i2c_probe,
->> +               .remove = fsi_i2c_remove,
->>          },
->>   };
->>
->> --
->> 1.8.3.1
->>
->
->
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+index 554a4e810d5b..e7d7bfc75acd 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.h
++++ b/drivers/gpu/drm/vc4/vc4_drv.h
+@@ -711,6 +711,7 @@ int vc4_dpi_debugfs_regs(struct seq_file *m, void *unused);
+ /* vc4_dsi.c */
+ extern struct platform_driver vc4_dsi_driver;
+ int vc4_dsi_debugfs_regs(struct seq_file *m, void *unused);
++void vc4_dsi_prepare(struct drm_encoder *encoder);
+ 
+ /* vc4_fence.c */
+ extern const struct dma_fence_ops vc4_fence_ops;
+diff --git a/drivers/gpu/drm/vc4/vc4_dsi.c b/drivers/gpu/drm/vc4/vc4_dsi.c
+index 8aa897835118..88471731e066 100644
+--- a/drivers/gpu/drm/vc4/vc4_dsi.c
++++ b/drivers/gpu/drm/vc4/vc4_dsi.c
+@@ -875,7 +875,7 @@ static bool vc4_dsi_encoder_mode_fixup(struct drm_encoder *encoder,
+ 	return true;
+ }
+ 
+-static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
++void vc4_dsi_prepare(struct drm_encoder *encoder)
+ {
+ 	struct drm_display_mode *mode = &encoder->crtc->state->adjusted_mode;
+ 	struct vc4_dsi_encoder *vc4_encoder = to_vc4_dsi_encoder(encoder);
+@@ -1345,7 +1345,6 @@ static const struct mipi_dsi_host_ops vc4_dsi_host_ops = {
+ 
+ static const struct drm_encoder_helper_funcs vc4_dsi_encoder_helper_funcs = {
+ 	.disable = vc4_dsi_encoder_disable,
+-	.enable = vc4_dsi_encoder_enable,
+ 	.mode_fixup = vc4_dsi_encoder_mode_fixup,
+ };
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
+index 8a411e5f8776..7e9b52ba3448 100644
+--- a/drivers/gpu/drm/vc4/vc4_kms.c
++++ b/drivers/gpu/drm/vc4/vc4_kms.c
+@@ -140,6 +140,9 @@ vc4_atomic_complete_commit(struct drm_atomic_state *state)
+ {
+ 	struct drm_device *dev = state->dev;
+ 	struct vc4_dev *vc4 = to_vc4_dev(dev);
++	struct drm_connector *connector;
++	struct drm_connector_state *new_conn_state;
++	int i;
+ 
+ 	drm_atomic_helper_wait_for_fences(dev, state, false);
+ 
+@@ -151,6 +154,28 @@ vc4_atomic_complete_commit(struct drm_atomic_state *state)
+ 
+ 	drm_atomic_helper_commit_planes(dev, state, 0);
+ 
++	/* Enable DSI link. */
++	for_each_new_connector_in_state(state, connector, new_conn_state, i) {
++		struct drm_encoder *encoder;
++		struct vc4_encoder *vc4_encoder;
++
++		if (!new_conn_state->best_encoder)
++			continue;
++
++		if (!new_conn_state->crtc->state->active ||
++		    !drm_atomic_crtc_needs_modeset(new_conn_state->crtc->state))
++			continue;
++
++		(void)connector;
++		encoder = new_conn_state->best_encoder;
++		vc4_encoder = to_vc4_encoder(encoder);
++
++		if (vc4_encoder->type == VC4_ENCODER_TYPE_DSI0 ||
++		    vc4_encoder->type == VC4_ENCODER_TYPE_DSI1) {
++			vc4_dsi_prepare(encoder);
++		}
++	}
++
+ 	drm_atomic_helper_commit_modeset_enables(dev, state);
+ 
+ 	/* Make sure that drm_atomic_helper_wait_for_vblanks()
+-- 
+2.17.0
