@@ -1,82 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeFDMYH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:24:07 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36257 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752141AbeFDMYG (ORCPT
+        id S1753005AbeFDMYQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:24:16 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35485 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752633AbeFDMYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:24:06 -0400
-X-Google-Smtp-Source: ADUXVKI2Dy8NLU/XUZf5gA+bJA4kFlFpRpcGX4+DJeHCzR9YSLCxBEfnLswvlGCg01ycGKiRKDkt3b+wN+FnhlcfhRs=
+        Mon, 4 Jun 2018 08:24:14 -0400
+X-Google-Smtp-Source: ADUXVKLs5Hfb/MYRvaR+eVCpQnKzqKbZO2+2oc19AT3Nmchiv019+5eBzQ8qZbVdPCSdvur13Hzr3A==
+Date: Mon, 4 Jun 2018 13:24:10 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] mfd: da9063: Fix failpath in core
+Message-ID: <20180604122410.GA21163@dell>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180604115830.18781-1-quentin.perret@arm.com>
-References: <20180604115830.18781-1-quentin.perret@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 4 Jun 2018 14:23:42 +0200
-Message-ID: <CAKfTPtA6L7_UnP-FG4vtKNzC+Dy0HA3g+q=cwjuKs=FFvAgnzg@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: Fix util_avg of new tasks for asymmetric systems
-To: Quentin Perret <quentin.perret@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Yuyang Du <yuyang.du@intel.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 June 2018 at 13:58, Quentin Perret <quentin.perret@arm.com> wrote:
-> When a new task wakes-up for the first time, its initial utilization
-> is set to half of the spare capacity of its CPU. The current
-> implementation of post_init_entity_util_avg() uses SCHED_CAPACITY_SCALE
-> directly as a capacity reference. As a result, on a big.LITTLE system, a
-> new task waking up on an idle little CPU will be given ~512 of util_avg,
-> even if the CPU's capacity is significantly less than that.
->
-> Fix this by computing the spare capacity with arch_scale_cpu_capacity().
->
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+On Sat, 02 Jun 2018, Marek Vasut wrote:
 
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-
+> In case mfd_add_devices() fails, da9063_irq_exit() is not called to
+> undo the IRQchip setup done by da9063_irq_init(). Fix this by adding
+> the missing fail path.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
 > ---
->  kernel/sched/fair.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index e497c05aab7f..f19432c17017 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -735,11 +735,12 @@ static void attach_entity_cfs_rq(struct sched_entity *se);
->   * To solve this problem, we also cap the util_avg of successive tasks to
->   * only 1/2 of the left utilization budget:
->   *
-> - *   util_avg_cap = (1024 - cfs_rq->avg.util_avg) / 2^n
-> + *   util_avg_cap = (cpu_scale - cfs_rq->avg.util_avg) / 2^n
->   *
-> - * where n denotes the nth task.
-> + * where n denotes the nth task and cpu_scale the CPU capacity.
->   *
-> - * For example, a simplest series from the beginning would be like:
-> + * For example, for a CPU with 1024 of capacity, a simplest series from
-> + * the beginning would be like:
->   *
->   *  task  util_avg: 512, 256, 128,  64,  32,   16,    8, ...
->   * cfs_rq util_avg: 512, 768, 896, 960, 992, 1008, 1016, ...
-> @@ -751,7 +752,8 @@ void post_init_entity_util_avg(struct sched_entity *se)
->  {
->         struct cfs_rq *cfs_rq = cfs_rq_of(se);
->         struct sched_avg *sa = &se->avg;
-> -       long cap = (long)(SCHED_CAPACITY_SCALE - cfs_rq->avg.util_avg) / 2;
-> +       long cpu_scale = arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
-> +       long cap = (long)(cpu_scale - cfs_rq->avg.util_avg) / 2;
->
->         if (cap > 0) {
->                 if (cfs_rq->avg.util_avg != 0) {
-> --
-> 2.17.0
->
+> V3: New patch
+> ---
+>  drivers/mfd/da9063-core.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+> index 6c2870d4e754..8226ebd8b96d 100644
+> --- a/drivers/mfd/da9063-core.c
+> +++ b/drivers/mfd/da9063-core.c
+> @@ -229,10 +229,16 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+>  	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
+>  			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
+>  			      NULL);
+> -	if (ret)
+> +	if (ret) {
+>  		dev_err(da9063->dev, "Cannot add MFD cells\n");
+> +		goto err_irq_exit;
+> +	}
+>  
+>  	return ret;
+> +
+> +err_irq_exit:
+> +	da9063_irq_exit(da9063);
+> +	return ret;
+>  }
+>  
+>  void da9063_device_exit(struct da9063 *da9063)
+
+I haven't seen the later patches yet, so maybe the goto label expanded
+on, but if it's not, then this would be better:
+
+ -	if (ret)
+ +	if (ret) {
+  		dev_err(da9063->dev, "Cannot add MFD cells\n");
+ +		da9063_irq_exit(da9063);
+ +	}
+  
+  	return ret;
+  }
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
