@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeFDHjy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:39:54 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:45700 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751931AbeFDHjv (ORCPT
+        id S1752049AbeFDHjw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:39:52 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40500 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751820AbeFDHju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:39:51 -0400
-X-Google-Smtp-Source: ADUXVKIdh0vf7LJ7q+g3azZVwsMrwA63Jfh+IPZVz5PmybeFaaBGTAwkNzLyIjBnYv4bnVVLN5TWvtYsPBRmR4DRLFQ=
+        Mon, 4 Jun 2018 03:39:50 -0400
+X-Google-Smtp-Source: ADUXVKLqTAOFqjBaaudrLnTqT2Lt0klK+4xGwzlHq+Xo+CqSeGgyWCBiJYsG3+mfKmxAK8SIlM6bwQ==
+Date: Mon, 4 Jun 2018 08:39:46 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, linux-input@vger.kernel.org,
+        Jian-Hong Pan <jian-hong@endlessm.com>, Chris Chiu <chiu@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] mfd: intel-lpss: Fix Intel Cannon Lake LPSS I2C input
+ clock
+Message-ID: <20180604073946.GI25455@dell>
+References: <20180518083827.20626-1-jarkko.nikula@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com> <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Jun 2018 09:39:49 +0200
-X-Google-Sender-Auth: bTxIiBsnY1iz40rsbUlLxCu5A6A
-Message-ID: <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
-Subject: Re: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180518083827.20626-1-jarkko.nikula@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek, Steve,
+On Fri, 18 May 2018, Jarkko Nikula wrote:
 
-On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
-> block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
-> prevent access into that register block.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Intel Cannon Lake PCH has much higher 216 MHz input clock to LPSS I2C
+> than Sunrisepoint which uses 120 MHz. Preliminary information was that
+> both share the same clock rate but actual silicon implements elevated
+> rate for better support for 3.4 MHz high-speed I2C.
+> 
+> This incorrect input clock rate results too high I2C bus clock in case
+> ACPI doesn't provide tuned I2C timing parameters since I2C host
+> controller driver calculates them from input clock rate.
+> 
+> Fix this by using the correct rate. We still share the same 230 ns SDA
+> hold time value than Sunrisepoint.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: b418bbff36dd ("mfd: intel-lpss: Add Intel Cannonlake PCI IDs")
+> Reported-by: Jian-Hong Pan <jian-hong@endlessm.com>
+> Reported-by: Chris Chiu <chiu@endlessm.com>
+> Reported-by: Daniel Drake <drake@endlessm.com>
+> Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+> ---
+> Hi Jian-Hong, Chris and Daniel. Could you test does this fix your
+> touchpad issue?
+> ---
+>  drivers/mfd/intel-lpss-pci.c | 25 +++++++++++++++----------
+>  1 file changed, 15 insertions(+), 10 deletions(-)
 
-Thanks for your patch!
-
-> --- a/drivers/mfd/da9063-i2c.c
-> +++ b/drivers/mfd/da9063-i2c.c
-> @@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
-
-Note that the line above doesn't check da9063->type, but da9063->variant_code...
-
->                 da9063_regmap_config.rd_table = &da9063_ad_readable_table;
->                 da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
->                 da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
-> +       } else if (da9063->type == PMIC_TYPE_DA9063L) {
-
-... so this may be slightly confusing.
-
-> +               da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
-> +               da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
-> +               da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
->         } else {
->                 da9063_regmap_config.rd_table = &da9063_bb_readable_table;
->                 da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
-
-However, da9063->variant_code doesn't seem to have been filled in at this
-point yet (the call to da9063_device_init() doing so is below, at the end
-of the probe function!), so commit 9cb42e2a8ed06e91 ("mfd: da9063: Add
-support for AD silicon variant") never actually handled the AD silicon variant
-correctly? Or am I missing something?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Applied, thanks.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
