@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752051AbeFDILh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 04:11:37 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:59257 "EHLO
+        id S1751987AbeFDILg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 04:11:36 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:45283 "EHLO
         lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751412AbeFDILe (ORCPT
+        with ESMTP id S1751097AbeFDILe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 04:11:34 -0400
 X-Original-SENDERIP: 156.147.1.125
@@ -16,162 +16,81 @@ To: peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org
 Cc: tglx@linutronix.de, raistlin@linux.it, linux-kernel@vger.kernel.org,
         juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
         joel@joelfernandes.org
-Subject: [PATCH v12 1/2] sched/deadline: Add support for SD_PREFER_SIBLING on find_later_rq()
-Date: Mon,  4 Jun 2018 17:10:05 +0900
-Message-Id: <1528099806-30632-2-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH v12 0/2] Make find_later_rq() choose a closer cpu in topology
+Date: Mon,  4 Jun 2018 17:10:04 +0900
+Message-Id: <1528099806-30632-1-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528099806-30632-1-git-send-email-byungchul.park@lge.com>
-References: <1528099806-30632-1-git-send-email-byungchul.park@lge.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Juri,
+Change from v11
+   -. Rebase onto the latest tip/sched/core
+   -. make the word 'cpu' in comments be upper case as Ingo did
+      in the commit 97fb7a0a89
+   -. Avoid a compile warning caused by mismatching bwt const and
+      non-const 'struct sched_domain' in find_cpu()
 
-I've changed the code a little bit to avoid a compile warning caused by
-'const' args of find_cpu(). Can I keep your Acked-by?
+Change from v10
+   -. modify a comment a bit as Steven suggested
 
-BEFORE:
-static int find_cpu(const struct cpumask *mask,
-		    const struct sched_domain *sd,
-		    const struct sched_domain *prefer)
+Change from v9
+   -. modify a comment a bit so to be more clear as Juri suggested
 
-AFTER:
-static int find_cpu(const struct cpumask *mask,
-		    struct sched_domain *sd,
-		    struct sched_domain *prefer)
+Change from v8
+   -. add suggested-by Peterz
+   -. add several comments
 
-(I temporarily removed the Acked-by you gave me.)
-Acked-by: Juri Lelli <juri.lelli@arm.com>
+Change from v7
+   -. fix a trivial typo
+   -. modify commit messages to explain what it does more clearly
+   -. simplify code with an existing macro
 
------8<-----
->From 5a4753e8c15369420a16fa04026f74ae5c9d377c Mon Sep 17 00:00:00 2001
-From: Byungchul Park <byungchul.park@lge.com>
-Date: Mon, 4 Jun 2018 16:46:56 +0900
-Subject: [PATCH v12 1/2] sched/deadline: Add support for SD_PREFER_SIBLING on
- find_later_rq()
+Change from v6
+   -. add a comment about selection of fallback_cpu incase more than one exist
+   -. modify a comment explaining what we do wrt PREFER_SIBLING
 
-It would be better to try to check other siblings first if
-SD_PREFER_SIBLING is flaged when pushing tasks - migration.
+Change from v5
+   -. exclude two patches already picked up by peterz
+      (sched/deadline: Make find_later_rq() choose a closer cpu in topology)
+      (sched/deadline: Change return value of cpudl_find())
+   -. apply what peterz fixed for 'prefer sibling', into deadline and rt
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
----
+Change from v4
+   -. remove a patch that might cause huge lock contention
+      (by spin lock(&cpudl.lock) in a hot path of scheduler)
+
+Change from v3
+   -. rename closest_cpu to best_cpu so that it align with rt
+   -. protect referring cpudl.elements with cpudl.lock
+   -. change return value of cpudl_find() to bool
+
+Change from v2
+   -. add support for SD_PREFER_SIBLING
+
+Change from v1
+   -. clean up the patch
+
+Byungchul Park (2):
+  sched/deadline: Add support for SD_PREFER_SIBLING on find_later_rq()
+  sched/rt: Add support for SD_PREFER_SIBLING on find_lowest_rq()
+
+ kernel/sched/deadline.c | 82 ++++++++++++++++++++++++++++++++++++++++++++-----
+ kernel/sched/rt.c       | 80 +++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 152 insertions(+), 10 deletions(-)
+
+-- 
+1.9.1
+
+*** BLURB HERE ***
+
+Byungchul Park (2):
+  sched/deadline: Add support for SD_PREFER_SIBLING on find_later_rq()
+  sched/rt: Add support for SD_PREFER_SIBLING on find_lowest_rq()
+
  kernel/sched/deadline.c | 80 ++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 73 insertions(+), 7 deletions(-)
+ kernel/sched/rt.c       | 78 +++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 148 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 1356afd..6130d40 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1853,12 +1853,33 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
- 
- static DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask_dl);
- 
-+/*
-+ * Find the first CPU in: mask & sd & ~prefer
-+ */
-+static int find_cpu(const struct cpumask *mask,
-+		    struct sched_domain *sd,
-+		    struct sched_domain *prefer)
-+{
-+	int cpu;
-+
-+	for_each_cpu(cpu, mask) {
-+		if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
-+			continue;
-+		if (prefer && cpumask_test_cpu(cpu, sched_domain_span(prefer)))
-+			continue;
-+		break;
-+	}
-+
-+	return cpu;
-+}
-+
- static int find_later_rq(struct task_struct *task)
- {
--	struct sched_domain *sd;
-+	struct sched_domain *sd, *prefer = NULL;
- 	struct cpumask *later_mask = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
- 	int this_cpu = smp_processor_id();
- 	int cpu = task_cpu(task);
-+	int fallback_cpu = -1;
- 
- 	/* Make sure the mask is initialized first */
- 	if (unlikely(!later_mask))
-@@ -1910,15 +1931,37 @@ static int find_later_rq(struct task_struct *task)
- 				return this_cpu;
- 			}
- 
--			best_cpu = cpumask_first_and(later_mask,
--							sched_domain_span(sd));
- 			/*
--			 * Last chance: if a CPU being in both later_mask
--			 * and current sd span is valid, that becomes our
--			 * choice. Of course, the latest possible CPU is
--			 * already under consideration through later_mask.
-+			 * If a CPU exists that is in the later_mask and
-+			 * the current sd span, but not in the prefer sd
-+			 * span, then that becomes our choice.
-+			 *
-+			 * Of course, the latest possible CPU is already
-+			 * under consideration through later_mask.
- 			 */
-+			best_cpu = find_cpu(later_mask, sd, prefer);
-+
- 			if (best_cpu < nr_cpu_ids) {
-+				/*
-+				 * If current domain is SD_PREFER_SIBLING
-+				 * flaged, we have to try to check other
-+				 * siblings first.
-+				 */
-+				if (sd->flags & SD_PREFER_SIBLING) {
-+					prefer = sd;
-+
-+					/*
-+					 * fallback_cpu should be one
-+					 * in the closest domain among
-+					 * SD_PREFER_SIBLING domains,
-+					 * in case that more than one
-+					 * SD_PREFER_SIBLING domains
-+					 * exist in the hierachy.
-+					 */
-+					if (fallback_cpu == -1)
-+						fallback_cpu = best_cpu;
-+					continue;
-+				}
- 				rcu_read_unlock();
- 				return best_cpu;
- 			}
-@@ -1927,6 +1970,29 @@ static int find_later_rq(struct task_struct *task)
- 	rcu_read_unlock();
- 
- 	/*
-+	 * If fallback_cpu is valid, all our guesses failed *except* for
-+	 * SD_PREFER_SIBLING domain. Now, we can return the fallback CPU.
-+	 *
-+	 * XXX: Consider the following example, 4 cores SMT2 system:
-+	 *
-+	 *    LLC [0       -        7]
-+	 *    SMT [0 1][2 3][4 5][6 7]
-+	 *         o x  o x  x x  x x
-+	 *
-+	 *    where 'o': occupied and 'x': empty.
-+	 *
-+	 * A wakeup on CPU0 will exclude CPU1 and choose CPU3, since
-+	 * CPU1 is in a SD_PREFER_SIBLING sd and CPU3 is not. However,
-+	 * in this case, CPU4 would have been a better choice, since
-+	 * CPU3 is a (SMT) thread of an already loaded core.
-+	 *
-+	 * Doing it 'right' is difficult and expensive. The current
-+	 * solution is an acceptable approximation.
-+	 */
-+	if (fallback_cpu != -1)
-+		return fallback_cpu;
-+
-+	/*
- 	 * At this point, all our guesses failed, we just return
- 	 * 'something', and let the caller sort the things out.
- 	 */
 -- 
 1.9.1
