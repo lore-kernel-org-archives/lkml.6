@@ -1,144 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751377AbeFDRrg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:47:36 -0400
-Received: from mail.horus.com ([78.46.148.228]:49599 "EHLO mail.horus.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750934AbeFDRre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:47:34 -0400
-Date: Mon, 4 Jun 2018 19:47:30 +0200
-From: Matthias Reichl <hias@horus.com>
-To: Sean Young <sean@mess.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Y Song <ys114321@gmail.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: Re: [PATCH v5 2/3] media: rc: introduce BPF_PROG_LIRC_MODE2
-Message-ID: <20180604174730.sctfoklq7klswebp@camel2.lan>
-Mail-Followup-To: Matthias Reichl <hias@horus.com>,
-        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Y Song <ys114321@gmail.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-References: <cover.1527419762.git.sean@mess.org>
- <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
+        id S1751385AbeFDRu0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:50:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41298 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750985AbeFDRuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 13:50:25 -0400
+Date: Mon, 4 Jun 2018 12:50:19 -0500
+From: David Teigland <teigland@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [GIT PULL] dlm updates for 4.18
+Message-ID: <20180604175019.GA25169@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
+Hi Linus,
 
-I finally found the time to test your patch series and noticed
-2 issues - comments are inline
+Please pull dlm updates from tag:
 
-On Sun, May 27, 2018 at 12:24:09PM +0100, Sean Young wrote:
-> diff --git a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
-> index eb2c3b6eca7f..d5b35a6ba899 100644
-> --- a/drivers/media/rc/Kconfig
-> +++ b/drivers/media/rc/Kconfig
-> @@ -25,6 +25,19 @@ config LIRC
->  	   passes raw IR to and from userspace, which is needed for
->  	   IR transmitting (aka "blasting") and for the lirc daemon.
->  
-> +config BPF_LIRC_MODE2
-> +	bool "Support for eBPF programs attached to lirc devices"
-> +	depends on BPF_SYSCALL
-> +	depends on RC_CORE=y
+git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-4.18
 
-Requiring rc-core to be built into the kernel could become
-problematic in the future for people using media_build.
+These three commits fix and clean up the flags dlm was
+using on its SCTP sockets.  The result improves the
+performance and fixes some bad connection delays.
 
-Currently the whole media tree (including rc-core) can be built
-as modules so DVB and IR drivers can be replaced by newer versions.
-But with rc-core in the kernel things could easily break if internal
-data structures are changed.
+Thanks,
+Dave
 
-Maybe we should add a small layer with a stable API/ABI between
-bpf-lirc and rc-core to decouple them? Or would it be possible
-to build rc-core with bpf support as a module?
+Gang He (3):
+      dlm: fix a clerical error when set SCTP_NODELAY
+      dlm: make sctp_connect_to_sock() return in specified time
+      dlm: remove O_NONBLOCK flag in sctp_connect_to_sock
 
-> +	depends on LIRC
-> +	help
-> +	   Allow attaching eBPF programs to a lirc device using the bpf(2)
-> +	   syscall command BPF_PROG_ATTACH. This is supported for raw IR
-> +	   receivers.
-> +
-> +	   These eBPF programs can be used to decode IR into scancodes, for
-> +	   IR protocols not supported by the kernel decoders.
-> +
->  menuconfig RC_DECODERS
->  	bool "Remote controller decoders"
->  	depends on RC_CORE
-> [...]
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 388d4feda348..3c104113d040 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -11,6 +11,7 @@
->   */
->  #include <linux/bpf.h>
->  #include <linux/bpf_trace.h>
-> +#include <linux/bpf_lirc.h>
->  #include <linux/btf.h>
->  #include <linux/syscalls.h>
->  #include <linux/slab.h>
-> @@ -1578,6 +1579,8 @@ static int bpf_prog_attach(const union bpf_attr *attr)
->  	case BPF_SK_SKB_STREAM_PARSER:
->  	case BPF_SK_SKB_STREAM_VERDICT:
->  		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, true);
-> +	case BPF_LIRC_MODE2:
-> +		return lirc_prog_attach(attr);
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -1648,6 +1651,8 @@ static int bpf_prog_detach(const union bpf_attr *attr)
->  	case BPF_SK_SKB_STREAM_PARSER:
->  	case BPF_SK_SKB_STREAM_VERDICT:
->  		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, false);
-> +	case BPF_LIRC_MODE2:
-> +		return lirc_prog_detach(attr);
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -1695,6 +1700,8 @@ static int bpf_prog_query(const union bpf_attr *attr,
->  	case BPF_CGROUP_SOCK_OPS:
->  	case BPF_CGROUP_DEVICE:
->  		break;
-> +	case BPF_LIRC_MODE2:
-> +		return lirc_prog_query(attr, uattr);
-
-When testing this patch series I was wondering why I always got
--EINVAL when trying to query the registered programs.
-
-Closer inspection revealed that bpf_prog_attach/detach/query and
-calls to them in the bpf syscall are in "#ifdef CONFIG_CGROUP_BPF"
-blocks - and as I built the kernel without CONFIG_CGROUP_BPF
-BPF_PROG_ATTACH/DETACH/QUERY weren't handled in the syscall switch
-and I got -EINVAL from the bpf syscall function.
-
-I haven't checked in detail yet, but it looks to me like
-bpf_prog_attach/detach/query could always be built (or when
-either cgroup bpf or lirc bpf are enabled) and the #ifdefs moved
-inside the switch(). So lirc bpf could be used without cgroup bpf.
-Or am I missing something?
-
-so long,
-
-Hias
->  	default:
->  		return -EINVAL;
->  	}
-> -- 
-> 2.17.0
-> 
+ fs/dlm/lowcomms.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
