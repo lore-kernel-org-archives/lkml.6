@@ -1,116 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753191AbeFDNQv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:16:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752710AbeFDNQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:16:50 -0400
-Date: Mon, 4 Jun 2018 08:16:48 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Jessica Yu <jeyu@kernel.org>
-Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH] module: exclude SHN_UNDEF symbols from kallsyms api
-Message-ID: <20180604131648.eykjibc3iubckeiu@treble>
-References: <20180602173209.merjb4o5a3wsdnbh@treble>
- <20180604080528.4z6rbhapbhn7xf5e@d217.suse.de>
- <20180604095416.rlthplerswzznyoc@d217.suse.de>
- <20180604130131.slyhtgyywffusf67@d217.suse.de>
+        id S1753154AbeFDNR4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:17:56 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43433 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752429AbeFDNRy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:17:54 -0400
+X-Google-Smtp-Source: ADUXVKIqpN/kHmTxbj+8IKx1DRFCsH233WUXj+WDYVs/QfzmmqPwM9JgqzKXWYdU0vhlKP0/5SEVZw==
+Date: Mon, 4 Jun 2018 16:17:44 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v5 0/4] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
+Message-ID: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180604130131.slyhtgyywffusf67@d217.suse.de>
-User-Agent: NeoMutt/20180323
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 03:01:31PM +0200, Jessica Yu wrote:
-> +++ Jessica Yu [04/06/18 11:54 +0200]:
-> > +++ Jessica Yu [04/06/18 10:05 +0200]:
-> > > +++ Josh Poimboeuf [02/06/18 12:32 -0500]:
-> > > > Hi Jessica,
-> > > > 
-> > > > I found a bug:
-> > > > 
-> > > > [root@f25 ~]# modprobe livepatch-sample
-> > > > [root@f25 ~]# grep ' u ' /proc/kallsyms
-> > > > ffffffff81161080 u klp_enable_patch	[livepatch_sample]
-> > > > ffffffff81a01800 u __fentry__	[livepatch_sample]
-> > > > ffffffff81161250 u klp_unregister_patch	[livepatch_sample]
-> > > > ffffffff81161870 u klp_register_patch	[livepatch_sample]
-> > > > ffffffff8131f0b0 u seq_printf	[livepatch_sample]
-> > > > 
-> > > > Notice that livepatch modules' undefined symbols are showing up in
-> > > > /proc/kallsyms.  This can confuse klp_find_object_symbol() which can
-> > > > cause subtle bugs in livepatch.
-> > > > 
-> > > > I stared at the module kallsyms code for a bit, but I don't see the bug.
-> > > > Maybe it has something to do with how we save the symbol table in
-> > > > copy_module_elf().  Any ideas?
-> > > 
-> > > Hi Josh!
-> > > 
-> > > This is because we preserve the entire symbol table for livepatch
-> > > modules, including the SHN_UNDEF symbols. IIRC, this is so that we can
-> > > still apply relocations properly with apply_relocate_add() after a
-> > > to-be-patched object is loaded. Normally we don't save these SHN_UNDEF
-> > > symbols for modules so they do not appear in /proc/kallsyms.
-> > 
-> > Hm, if having the full symtab in kallsyms is causing trouble, one
-> > possibility would be to just have the module kallsyms code simply
-> > skip/ignore undef symbols. That's what we technically do for normal
-> > modules anyway (we normally cut undef syms out of the symtab). Haven't
-> > tested this idea but does that sound like it'd help?
-> 
-> See if the following patch (untested) helps. It does not fix the
-> /proc/kallsyms lookup, that requires a separate patch. But it should
-> exclude the undef symbols from module_kallsyms_on_each_symbol() and
-> thus also from klp_find_object_symbol().
+Patch series adding support for ROHM BD71837 PMIC.
 
-That seems like it would work.  But wouldn't it be more robust if we
-don't store the SHN_UNDEF symbols to start with?  Really it's only the
-SHN_LIVEPATCH symbols that we need to keep, right?
+BD71837 is a programmable Power Management IC for powering single-core,
+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
+low BOM cost and compact solution footprint. It integrates 8 buck
+regulators and 7 LDO’s to provide all the power rails required by the
+SoC and the commonly used peripherals.
 
-What do you think about the following (untested)?
+The driver aims to not limit the usage of PMIC. Thus the buck and LDO
+naming is generic and not tied to any specific purposes. However there
+is following limitations which make it mostly suitable for use cases
+where the processor where PMIC driver is running is powered by the PMIC:
 
-diff --git a/kernel/module.c b/kernel/module.c
-index c9bea7f2b43e..78ec9de856e3 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2586,6 +2586,9 @@ static bool is_core_symbol(const Elf_Sym *src, const Elf_Shdr *sechdrs,
- {
- 	const Elf_Shdr *sec;
- 
-+	if (src->st_shndx == SHN_LIVEPATCH)
-+		return true;
-+
- 	if (src->st_shndx == SHN_UNDEF
- 	    || src->st_shndx >= shnum
- 	    || !src->st_name)
-@@ -2632,9 +2635,9 @@ static void layout_symtab(struct module *mod, struct load_info *info)
- 
- 	/* Compute total space required for the core symbols' strtab. */
- 	for (ndst = i = 0; i < nsrc; i++) {
--		if (i == 0 || is_livepatch_module(mod) ||
--		    is_core_symbol(src+i, info->sechdrs, info->hdr->e_shnum,
--				   info->index.pcpu)) {
-+		if (i == 0 || is_core_symbol(src+i, info->sechdrs,
-+					     info->hdr->e_shnum,
-+					     info->index.pcpu)) {
- 			strtab_size += strlen(&info->strtab[src[i].st_name])+1;
- 			ndst++;
- 		}
-@@ -2691,9 +2694,9 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
- 	mod->core_kallsyms.strtab = s = mod->core_layout.base + info->stroffs;
- 	src = mod->kallsyms->symtab;
- 	for (ndst = i = 0; i < mod->kallsyms->num_symtab; i++) {
--		if (i == 0 || is_livepatch_module(mod) ||
--		    is_core_symbol(src+i, info->sechdrs, info->hdr->e_shnum,
--				   info->index.pcpu)) {
-+		if (i == 0 || is_core_symbol(src+i, info->sechdrs,
-+					     info->hdr->e_shnum,
-+					     info->index.pcpu)) {
- 			dst[ndst] = src[i];
- 			dst[ndst++].st_name = s - mod->core_kallsyms.strtab;
- 			s += strlcpy(s, &mod->kallsyms->strtab[src[i].st_name],
+- The PMIC is not re-initialized if it resets. PMIC may reset as a
+  result of voltage monitoring (over/under voltage) or due to reset
+  request. Driver is only initializing PMIC at probe. This is not
+  problem as long as processor controlling PMIC is powered by PMIC.
+
+- The PMIC internal state machine is ignored by driver. Driver assumes
+  the PMIC is wired so that it is always in "run" state when controlled
+  by the driver.
+
+Changelog v5
+- dropped regulator patches which are already applied to Mark's tree
+Based on feedback from Rob Herring and Stephen Boyd
+- mfd bindings:	explain why this can be interrupt-controller
+- mfd bindings:	describe interrupts better
+- mfd bindings:	require one cell interrupt specifier
+- mfd bindings:	use generic node names in example
+- mfd driver:	ack masked interrupt once at init
+- clk bindings:	use generic node names in example
+- clk driver:	use devm
+- clk driver:	use of_clk_add_hw_provider
+- clk driver:	change severity of print and how prints are emitted at
+		probe error path.
+- clk driver:	dropped forward declared functions
+- clk configs:	drop unnecessary dependencies
+- clk driver:	other styling issues
+- mfd/clk DT:	drop clk node.
+
+Changelog v4
+- remove mutex from regulator state check as core prevents simultaneous
+  accesses
+- allow voltage change for bucks 1 to 4 when regulator is enabled
+- fix indentiation problems
+- properly correct SPDX comments
+
+Changelog v3
+- kill unused variable
+- kill unused definitions
+- use REGMAP_IRQ_REG
+
+Changelog v2
+Based on feedback from Mark Brown
+- Squashed code and buildfile changes to same patch
+- Fixed some styling issues
+- Changed SPDX comments to CPP style
+- Error out if voltage is changed when regulator is enabled instead of
+  Disabling the regulator for duration of change
+- Use devm_regulator_register
+- Remove compatible usage from regulators - use parent dev for config
+- Add a note about using regulator-boot-on for BUCK6 and 7
+- fixed warnings from kbuild test robot
+
+patch 1: 
+        MFD driver and definitions bringing interrupt support and
+        enabling clk and regulator subsystems.
+Patches 2 and 3
+
+This patch series is based on for-mfd-next
+
+---
+
+Matti Vaittinen (4):
+  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+  clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+  clk: bd71837: Add driver for BD71837 PMIC clock
+
+ .../bindings/clock/rohm,bd71837-clock.txt          |  38 +++
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  76 ++++++
+ drivers/clk/Kconfig                                |   7 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-bd71837.c                          | 146 +++++++++++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/bd71837.c                              | 223 ++++++++++++++++
+ include/linux/mfd/bd71837.h                        | 288 +++++++++++++++++++++
+ 9 files changed, 793 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+ create mode 100644 drivers/clk/clk-bd71837.c
+ create mode 100644 drivers/mfd/bd71837.c
+ create mode 100644 include/linux/mfd/bd71837.h
+
+-- 
+2.14.3
