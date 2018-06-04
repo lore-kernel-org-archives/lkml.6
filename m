@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752397AbeFDHH4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:07:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57756 "EHLO mail.kernel.org"
+        id S1752789AbeFDHIA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:08:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751820AbeFDHHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:07:54 -0400
+        id S1752496AbeFDHH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:07:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 01/52] fix io_destroy()/aio_complete() race
-Date: Mon,  4 Jun 2018 08:57:56 +0200
-Message-Id: <20180604065606.589543908@linuxfoundation.org>
+Subject: [PATCH 4.16 46/47] fix io_destroy()/aio_complete() race
+Date: Mon,  4 Jun 2018 08:58:58 +0200
+Message-Id: <20180604065551.452702810@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
-References: <20180604065606.532044490@linuxfoundation.org>
+In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
+References: <20180604065549.468488465@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
