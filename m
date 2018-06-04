@@ -1,87 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeFDBs2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 21:48:28 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:37197 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeFDBsZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 21:48:25 -0400
-X-Google-Smtp-Source: ADUXVKJyorjpUfeMJROmaSTh7e8WI9Z1Ba9mDGz6f/yax5GZMUdKvLQZX0sASP2mWflsHWB+0RdZRZX+ZxMPiWJRXWs=
+        id S1751634AbeFDByb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 21:54:31 -0400
+Received: from mx.socionext.com ([202.248.49.38]:35203 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751211AbeFDBya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 21:54:30 -0400
+From: "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+To: "'Masahiro Yamada'" <yamada.masahiro@socionext.com>,
+        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?=
+        <suzuki.katsuhiro@socionext.com>
+Cc: "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        <linux-media@vger.kernel.org>,
+        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com> <20180530090946.1635-7-suzuki.katsuhiro@socionext.com> <CAK7LNAS8JT8+MAuH+eYUJ3Xa4r07=ecJS0E=SX-tgmV7db_FKw@mail.gmail.com> <005d01d3fb98$20711900$61534b00$@socionext.com> <CAK7LNAQT-yigu83t7xOF_4-G1_0DX9OXz_YhJ3SAMH_CkGJcrw@mail.gmail.com>
+In-Reply-To: <CAK7LNAQT-yigu83t7xOF_4-G1_0DX9OXz_YhJ3SAMH_CkGJcrw@mail.gmail.com>
+Subject: Re: [PATCH 6/8] media: uniphier: add common module of DVB adapter drivers
+Date: Mon, 4 Jun 2018 10:54:24 +0900
+Message-ID: <005e01d3fba6$f7192700$e54b7500$@socionext.com>
 MIME-Version: 1.0
-In-Reply-To: <20180604002525.GI10363@dastard>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-3-ross.zwisler@linux.intel.com> <20180529212510.GJ30110@magnolia>
- <20180529220114.GA13948@linux.intel.com> <20180531191332.GB7825@magnolia>
- <20180601012657.GQ10363@dastard> <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
- <20180601022418.GR10363@dastard> <CAPcyv4iXTsxmQgjoLs2E_8QrLHrFOV_58T7UYf0zPJuB2744qQ@mail.gmail.com>
- <20180603222038.GS10363@dastard> <20180604002525.GI10363@dastard>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Sun, 3 Jun 2018 18:48:23 -0700
-Message-ID: <CAPcyv4jL5AKgP3io_hBZxkrKzBZq8wtuqk49L48v=XRiOHdoEw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
- boolean returns
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHT9/X2UbYENkxCrkO9sDWPady0aKRMS5uAgALyEOD//3g1gIAApt9Q
+Content-Language: ja
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 3, 2018 at 5:25 PM, Dave Chinner <david@fromorbit.com> wrote:
-> On Mon, Jun 04, 2018 at 08:20:38AM +1000, Dave Chinner wrote:
->> On Thu, May 31, 2018 at 09:02:52PM -0700, Dan Williams wrote:
->> > On Thu, May 31, 2018 at 7:24 PM, Dave Chinner <david@fromorbit.com> wrote:
->> > > On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
->> > >> > FWIW, XFS+DAX used to just work on this setup (I hadn't even
->> > >> > installed ndctl until this morning!) but after changing the kernel
->> > >> > it no longer works. That would make it a regression, yes?
->>
->> [....]
->>
->> > >> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
->> > >> has the following dependencies:
->> > >>
->> > >>         depends on MEMORY_HOTPLUG
->> > >>         depends on MEMORY_HOTREMOVE
->> > >>         depends on SPARSEMEM_VMEMMAP
->> > >
->> > > Filesystem DAX now has a dependency on memory hotplug?
->>
->> [....]
->>
->> > > OK, works now I've found the magic config incantantions to turn
->> > > everything I now need on.
->>
->> By enabling these options, my test VM now has a ~30s pause in the
->> boot very soon after the nvdimm subsystem is initialised.
->>
->> [    1.523718] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
->> [    1.550353] 00:05: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
->> [    1.552175] Non-volatile memory driver v1.3
->> [    2.332045] tsc: Refined TSC clocksource calibration: 2199.909 MHz
->> [    2.333280] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1fb5dcd4620, max_idle_ns: 440795264143 ns
->> [   37.217453] brd: module loaded
->> [   37.225423] loop: module loaded
->> [   37.228441] virtio_blk virtio2: [vda] 10485760 512-byte logical blocks (5.37 GB/5.00 GiB)
->> [   37.245418] virtio_blk virtio3: [vdb] 146800640 512-byte logical blocks (75.2 GB/70.0 GiB)
->> [   37.255794] virtio_blk virtio4: [vdc] 1073741824000 512-byte logical blocks (550 TB/500 TiB)
->> [   37.265403] nd_pmem namespace1.0: unable to guarantee persistence of writes
->> [   37.265618] nd_pmem namespace0.0: unable to guarantee persistence of writes
->>
->> The system does not appear to be consuming CPU, but it is blocking
->> NMIs so I can't get a CPU trace. For a VM that I rely on booting in
->> a few seconds because I reboot it tens of times a day, this is a
->> problem....
->
-> And when I turn on KASAN, the kernel fails to boot to a login prompt
-> because:
+Hello Yamada-san,
 
-What's your qemu and kernel command line? I'll take look at this first
-thing tomorrow.
+> -----Original Message-----
+> From: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Sent: Monday, June 4, 2018 9:53 AM
+> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
+> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
+> linux-media@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
+> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel
+> <linux-arm-kernel@lists.infradead.org>; Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH 6/8] media: uniphier: add common module of DVB adapter drivers
+> 
+> 2018-06-04 9:08 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> > Hello Yamada-san,
+> >
+> >> -----Original Message-----
+> >> From: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >> Sent: Saturday, June 2, 2018 9:00 PM
+> >> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
+> >> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
+> >> linux-media@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
+> >> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel
+> >> <linux-arm-kernel@lists.infradead.org>; Linux Kernel Mailing List
+> >> <linux-kernel@vger.kernel.org>
+> >> Subject: Re: [PATCH 6/8] media: uniphier: add common module of DVB adapter drivers
+> >>
+> >> 2018-05-30 18:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> >> > This patch adds common module for UniPhier DVB adapter drivers
+> >> > that equipments tuners and demod that connected by I2C and
+> >> > UniPhier demux.
+> >> >
+> >> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> >> > ---
+> >> >  drivers/media/platform/uniphier/Makefile      |  5 ++
+> >> >  drivers/media/platform/uniphier/hsc-core.c    |  8 ---
+> >> >  .../platform/uniphier/uniphier-adapter.c      | 54 +++++++++++++++++++
+> >> >  .../platform/uniphier/uniphier-adapter.h      | 42 +++++++++++++++
+> >> >  4 files changed, 101 insertions(+), 8 deletions(-)
+> >> >  create mode 100644 drivers/media/platform/uniphier/uniphier-adapter.c
+> >> >  create mode 100644 drivers/media/platform/uniphier/uniphier-adapter.h
+> >> >
+> >> > diff --git a/drivers/media/platform/uniphier/Makefile
+> >> b/drivers/media/platform/uniphier/Makefile
+> >> > index 0622f04d9e68..9e75ad081b77 100644
+> >> > --- a/drivers/media/platform/uniphier/Makefile
+> >> > +++ b/drivers/media/platform/uniphier/Makefile
+> >> > @@ -3,3 +3,8 @@ uniphier-dvb-y += hsc-core.o hsc-ucode.o hsc-css.o hsc-ts.o
+> >> hsc-dma.o
+> >> >  uniphier-dvb-$(CONFIG_DVB_UNIPHIER_LD11) += hsc-ld11.o
+> >> >
+> >> >  obj-$(CONFIG_DVB_UNIPHIER) += uniphier-dvb.o
+> >> > +
+> >> > +ccflags-y += -Idrivers/media/dvb-frontends/
+> >> > +ccflags-y += -Idrivers/media/tuners/
+> >>
+> >>
+> >> Please add $(srctree)/ like
+> >>
+> >> ccflags-y += -I$(srctree)/drivers/media/dvb-frontends/
+> >> ccflags-y += -I$(srctree)/drivers/media/tuners/
+> >>
+> >>
+> >> Currently, it works $(srctree)/,
+> >> but I really want to rip off the build system hack.
+> >
+> > Thanks, I agree with your opinion, but other Makefiles in drivers/media use
+> > same hack. I don't know other way to include headers of demodulators and
+> > tuners...
+> >
+> > Do you have any good ideas?
+> >
+> >
+> 
+> 
+> My suggestion is to add '$(srctree)/'.
+> 
+> For clarification,
+> 
+> 
+> 
+> Bad:
+> 
+> ccflags-y += -Idrivers/media/dvb-frontends/
+> ccflags-y += -Idrivers/media/tuners/
+> 
+> 
+> 
+> Good:
+> 
+> ccflags-y += -I$(srctree)/drivers/media/dvb-frontends/
+> ccflags-y += -I$(srctree)/drivers/media/tuners/
+> 
+> 
+
+OK, I understand.
+
+
+> 
+> 
+> 
+> I want to fix this tree-wide,
+> then remove the 'addtree' from scripts/Kbuild.include
+> but I have not been able to find time for that.
+> 
+> This is a new file, so just suggested to add '$(srctree)/'
+> 
+> 
+> 
+> If you want to know the context:
+> https://patchwork.kernel.org/patch/9632347/
+> 
+
+Thank you, that's interesting issue...
+
+
+Regards,
+--
+Katsuhiro Suzuki
+
+
+> 
+> --
+> Best Regards
+> Masahiro Yamada
