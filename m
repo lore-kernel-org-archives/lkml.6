@@ -1,54 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751865AbeFDJkk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 05:40:40 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:45465 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750886AbeFDJkj (ORCPT
+        id S1752039AbeFDJlO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 05:41:14 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40708 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751918AbeFDJlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:40:39 -0400
-X-Google-Smtp-Source: ADUXVKIczm5ElEghAL7pn6r8v9AsFWdKfRcchgt0jqih85sa6kW1GhyG2zAv5wMg8poO/1ZJvS4oTamdahYQoDj9Hi8=
-MIME-Version: 1.0
-In-Reply-To: <20180604054452.GD17993@dell>
-References: <20180511135030.14590-1-ckeepax@opensource.cirrus.com> <20180604054452.GD17993@dell>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 4 Jun 2018 12:40:37 +0300
-Message-ID: <CAHp75Vdcg2GQ4G-YF054iCob+f4=ZmfT_XLknMZm72nOB7D_mw@mail.gmail.com>
-Subject: Re: [PATCH] mfd: arizona: Don't use regmap_read_poll_timeout
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
-        patches@opensource.cirrus.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 4 Jun 2018 05:41:12 -0400
+X-Google-Smtp-Source: ADUXVKLyS24tid4Sb6vMtocMN6lGak7tYWCTbkpXImpfOlsADNbk/O7OVTxvt0TM3CHYOE/mdykmaQ==
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
+        rohkumar@qti.qualcomm.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] rpmsg: smd: do not use mananged resources for endpoints and channels
+Date: Mon,  4 Jun 2018 10:39:01 +0100
+Message-Id: <20180604093901.6963-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 8:44 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Fri, 11 May 2018, Charles Keepax wrote:
+All the managed resources would be freed by the time release function
+is invoked. Handling such memory in qcom_smd_edge_release() would do
+bad things.
 
->> +     while (true) {
->> +             ret = regmap_read(arizona->regmap, reg, &val);
->>
->> +             if ((val & mask) == target)
->> +                     return 0;
->> +
->> +             if (ktime_compare(ktime_get(), timeout) > 0)
->> +                     break;
->> +
->> +             usleep_range(ARIZONA_REG_POLL_DELAY_US / 2,
->> +                          ARIZONA_REG_POLL_DELAY_US);
->> +     }
+Found this issue while testing Audio usecase where the dsp is started up
+and shutdown in a loop.
 
->From my point of view infinite loops not good for readability and maintenance.
-Perhaps
+This patch fixes this issue by using simple kzalloc for allocating
+channel->name and channel which is then freed in qcom_smd_edge_release().
 
-do {
-...
-} while (ktime_compare(...));
+Without this patch restarting a remoteproc would crash the system.
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/rpmsg/qcom_smd.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-?
-
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 5ce9bf7b897d..f63adcd95eb0 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1100,12 +1100,12 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+ 	void *info;
+ 	int ret;
+ 
+-	channel = devm_kzalloc(&edge->dev, sizeof(*channel), GFP_KERNEL);
++	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
+ 	if (!channel)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	channel->edge = edge;
+-	channel->name = devm_kstrdup(&edge->dev, name, GFP_KERNEL);
++	channel->name = kstrdup(name, GFP_KERNEL);
+ 	if (!channel->name)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1156,8 +1156,8 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+ 	return channel;
+ 
+ free_name_and_channel:
+-	devm_kfree(&edge->dev, channel->name);
+-	devm_kfree(&edge->dev, channel);
++	kfree(channel->name);
++	kfree(channel);
+ 
+ 	return ERR_PTR(ret);
+ }
+@@ -1378,13 +1378,13 @@ static int qcom_smd_parse_edge(struct device *dev,
+  */
+ static void qcom_smd_edge_release(struct device *dev)
+ {
+-	struct qcom_smd_channel *channel;
++	struct qcom_smd_channel *channel, *tmp;
+ 	struct qcom_smd_edge *edge = to_smd_edge(dev);
+ 
+-	list_for_each_entry(channel, &edge->channels, list) {
+-		SET_RX_CHANNEL_INFO(channel, state, SMD_CHANNEL_CLOSED);
+-		SET_RX_CHANNEL_INFO(channel, head, 0);
+-		SET_RX_CHANNEL_INFO(channel, tail, 0);
++	list_for_each_entry_safe(channel, tmp, &edge->channels, list) {
++		list_del(&channel->list);
++		kfree(channel->name);
++		kfree(channel);
+ 	}
+ 
+ 	kfree(edge);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.16.2
