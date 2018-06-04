@@ -1,103 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751808AbeFDDAI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 23:00:08 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58134 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751412AbeFDDAH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 23:00:07 -0400
-To: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Bj=c3=b8rn_Forsman?= <bjorn.forsman@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v3] kbuild: check for pkg-config on make {menu,n,g.x}config
-Message-ID: <f13a8e3c-ebc6-53f7-1bac-965c0f30b110@infradead.org>
-Date: Sun, 3 Jun 2018 19:59:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751492AbeFDDcP convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 23:32:15 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:5553 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751210AbeFDDcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 23:32:14 -0400
+From: Nixiaoming <nixiaoming@huawei.com>
+To: "tj@kernel.org" <tj@kernel.org>
+CC: "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: For help, whether to check the return value of sata_scr_read should
+ be added in sata_print_link_status
+Thread-Topic: For help, whether to check the return value of sata_scr_read
+ should be added in sata_print_link_status
+Thread-Index: AdP7tHwsYIItW1lIR5+8myT1DH4gzQ==
+Date: Mon, 4 Jun 2018 03:32:07 +0000
+Message-ID: <E490CD805F7529488761C40FD9D26EF12A6828C7@dggemm507-mbx.china.huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.88.168]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hello
+I have trouble reading the code, I hope you can help guide
 
-Each of 'make {menu,n,g,x}config' uses (needs) pkg-config to make sure
-that other required files are present and to determine build flags
-settings, but none of these check that pkg-config itself is present.
-Add a check for all 4 of these targets and update
-Documentation/process/changes.rst to mention 'pkg-config'.
+The function sata_print_link_status in the file drivers/ata/libata-core.c checks the return value when the function sata_scr_read is called on line 3009, 
+but does not check the return value when calling sata_scr_read on line 3011.
+Why are two calls handled differently?
+Is there any other code logic that guarantees that the 3011 line will not return an exception? 
 
-Fixes kernel bugzilla #77511:
-https://bugzilla.kernel.org/show_bug.cgi?id=77511
+drivers/ata/libata-core.c :
+3005 static void sata_print_link_status(struct ata_link *link)
+3006 {
+3007     u32 sstatus, scontrol, tmp;
+3008
+3009     if (sata_scr_read(link, SCR_STATUS, &sstatus))
+3010         return;
+3011     sata_scr_read(link, SCR_CONTROL, &scontrol);
+3012
+3013     if (ata_phys_link_online(link)) {
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Bjørn Forsman <bjorn.forsman@gmail.com>
----
-Strictly speaking, pkg-config is not required if someone is only
-using 'make {menu,n}config' since there are fallbacks for those
-two targets.
-
- Documentation/process/changes.rst  |    8 ++++++++
- scripts/kconfig/Makefile           |    6 ++++++
- scripts/kconfig/check-pkgconfig.sh |   12 ++++++++++++
- 3 files changed, 26 insertions(+)
-
---- linux-next-20180601.orig/scripts/kconfig/Makefile
-+++ linux-next-20180601/scripts/kconfig/Makefile
-@@ -214,11 +214,17 @@ $(obj)/gconf.o: $(obj)/.gconf-cfg
- $(obj)/zconf.tab.o: $(obj)/zconf.lex.c
- 
- # check if necessary packages are available, and configure build flags
-+# pkg-config check
-+define check_pkg_config
-+	$(CONFIG_SHELL) $(srctree)/scripts/kconfig/check-pkgconfig.sh FORCE
-+endef
-+
- define filechk_conf_cfg
- 	$(CONFIG_SHELL) $<
- endef
- 
- $(obj)/.%conf-cfg: $(src)/%conf-cfg.sh FORCE
-+	$(call check_pkg_config)
- 	$(call filechk,conf_cfg)
- 
- clean-files += .*conf-cfg
---- /dev/null
-+++ linux-next-20180601/scripts/kconfig/check-pkgconfig.sh
-@@ -0,0 +1,12 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Check for pkg-config presence
-+
-+pkgcfg=`command -v pkg-config`
-+
-+if [ "$pkgcfg" = "" ]; then
-+	echo "'make *config' requires 'pkg-config'. Please install it." 1>&2
-+	exit 1		# error
-+fi
-+
-+exit 0
---- linux-next-20180601.orig/Documentation/process/changes.rst
-+++ linux-next-20180601/Documentation/process/changes.rst
-@@ -81,6 +81,14 @@ The build system has, as of 4.13, switch
- rather than incremental linking (`ld -r`) for built-in.a intermediate steps.
- This requires binutils 2.20 or newer.
- 
-+pkg-config
-+----------
-+
-+The build system, as of 4.18, requires pkg-config to check for installed
-+kconfig tools and to determine flags settings for use in
-+'make {menu,n,g,x}config'.  Previously pkg-config was being used but not
-+verified or documented.
-+
- Flex
- ----
- 
+Thanks
