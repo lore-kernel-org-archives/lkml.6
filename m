@@ -1,56 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752075AbeFDIOn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 04:14:43 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47741 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751624AbeFDIOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 04:14:42 -0400
-Subject: Re: [PATCH v2 02/21] mfd: omap-usb-host: use match_string() helper
-To: Lee Jones <lee.jones@linaro.org>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-3-git-send-email-xieyisheng1@huawei.com>
- <20180604074453.GK25455@dell>
-CC: <linux-kernel@vger.kernel.org>, <andy.shevchenko@gmail.com>,
-        Tony Lindgren <tony@atomide.com>, <linux-omap@vger.kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <f9950977-2777-2836-b8f6-e967f7b1d851@huawei.com>
-Date: Mon, 4 Jun 2018 16:13:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1752132AbeFDIPG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 04:15:06 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33832 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751649AbeFDIPF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 04:15:05 -0400
+Date: Mon, 4 Jun 2018 10:15:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andreas Hartmann <andihartmann@01019freenet.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Spectre mitigation doesn't seem to work at all?!
+Message-ID: <20180604081502.GE12258@hirez.programming.kicks-ass.net>
+References: <141672d1-8dcb-9a84-7f8f-60c7a2c58b07@01019freenet.de>
 MIME-Version: 1.0
-In-Reply-To: <20180604074453.GK25455@dell>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <141672d1-8dcb-9a84-7f8f-60c7a2c58b07@01019freenet.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+On Fri, Jun 01, 2018 at 02:19:38PM +0200, Andreas Hartmann wrote:
 
-On 2018/6/4 15:44, Lee Jones wrote:
-> On Thu, 31 May 2018, Yisheng Xie wrote:
+> I tested the spectre mitigation of different machines and kernels with
+> https://github.com/crozone/SpectrePoC
 > 
->> match_string() returns the index of an array for a matching string,
->> which can be used instead of open coded variant.
->>
->> Acked-by: Tony Lindgren <tony@atomide.com>
->> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->> Cc: Tony Lindgren <tony@atomide.com>
->> Cc: Lee Jones <lee.jones@linaro.org>
->> Cc: linux-omap@vger.kernel.org
->> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
->> ---
->> v2:
->>  - add Acked-by and Reviewed-by tag.
->>
->>  drivers/mfd/omap-usb-host.c | 24 ++----------------------
->>  1 file changed, 2 insertions(+), 22 deletions(-)
-> 
-> I already applied this with the tags
+> You can see the results below.
 
-Thanks
-Yisheng
-> 
+> My question: Did I miss something?
+
+Yes.
+
+> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
+> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
+> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
+
+                              ^^^^^^^^                         ^^^^^^^^
+
+The POC is a v1 on itself. V1 needs to be fixed for every individual
+executable (worse, for every individual location in the code, and we're
+still finding them). The kernel mitigation status for v1 only indicates
+the kernel itself has mitigations (for some locations).
+
+The POC is meant to test effectiveness of these mitigations, either the
+original LFENCE or the dependent instruction thing, but you have to
+enable one or the other.
