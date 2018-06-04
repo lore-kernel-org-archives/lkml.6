@@ -1,137 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753253AbeFDNeZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:34:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753036AbeFDNeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:34:24 -0400
-From: Miroslav Lichvar <mlichvar@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Miroslav Lichvar <mlichvar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>
-Subject: [PATCHv2] timekeeping: Update multiplier when NTP frequency is set directly
-Date: Mon,  4 Jun 2018 15:34:21 +0200
-Message-Id: <20180604133421.19559-1-mlichvar@redhat.com>
+        id S1753209AbeFDNkA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:40:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41346 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753110AbeFDNj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:39:59 -0400
+Date: Mon, 4 Jun 2018 15:39:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
+Message-ID: <20180604133953.GU12217@hirez.programming.kicks-ass.net>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180604122336.GS12217@hirez.programming.kicks-ass.net>
+ <20180604125939.GB38574@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604125939.GB38574@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the NTP frequency is set directly from userspace using the
-ADJ_FREQUENCY or ADJ_TICK timex mode, immediately update the
-timekeeper's multiplier instead of waiting for the next tick.
+On Mon, Jun 04, 2018 at 05:59:40AM -0700, Srikar Dronamraju wrote:
+> * Peter Zijlstra <peterz@infradead.org> [2018-06-04 14:23:36]:
+> 
+> > OK, the above matches the description, but I'm puzzled by the remainder:
+> >
+> > >
+> > > -		if (ng->active_nodes > 1 && numa_is_active_node(env.dst_nid, ng))
+> > > -			sched_setnuma(p, env.dst_nid);
+> > > +		if (nid != p->numa_preferred_nid)
+> > > +			sched_setnuma(p, nid);
+> > >  	}
+> >
+> > That seems to entirely loose the active_node thing, or are you saying
+> > best_cpu already includes that? (Changelog could use a little help there
+> > I suppose)
+> 
+> I think checking for active_nodes before calling sched_setnuma was a
+> mistake.
+> 
+> Before this change, we may be retaining numa_preferred_nid to be the
+> source node while we select another node with better numa affinity to
+> run on. So we are creating a situation where we force a thread to run on
+> a node which is not going to be its preferred_node. So in the course of
+> regular load balancing, this task might then be moved to set
+> preferred_node which is actually not the preferred_node.
 
-This removes a hidden non-deterministic delay in setting of the
-frequency and allows an extremely tight control of the system clock
-with update rates close to or even exceeding the kernel HZ.
-
-The update is limited to archs using modern timekeeping
-(!ARCH_USES_GETTIMEOFFSET).
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
----
-
-Notes:
-    RFC->v1:
-    - added a new parameter to force the update of the timekeeper to the current
-      NTP tick length only from adjtimex()
-    - added timekeeping_advance() to keep the parameter local to timekeeping.c
-    v1->v2:
-    - replaced bool parameter with enum
-    - changed timekeeping_advance() to not make any updates for TK_ADV_FREQ with
-      !ARCH_USES_GETTIMEOFFSET (an alternative might be to update with zero offset)
-
- kernel/time/timekeeping.c | 36 ++++++++++++++++++++++++++++++------
- 1 file changed, 30 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 49cbceef5deb..a08ef3771ab5 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -34,6 +34,14 @@
- #define TK_MIRROR		(1 << 1)
- #define TK_CLOCK_WAS_SET	(1 << 2)
- 
-+enum timekeeping_adv_mode {
-+	/* Update timekeeper when a tick has passed */
-+	TK_ADV_TICK,
-+
-+	/* Update timekeeper on a direct frequency change */
-+	TK_ADV_FREQ
-+};
-+
- /*
-  * The most important data for readout fits into a single 64 byte
-  * cache line.
-@@ -2021,11 +2029,11 @@ static u64 logarithmic_accumulation(struct timekeeper *tk, u64 offset,
- 	return offset;
- }
- 
--/**
-- * update_wall_time - Uses the current clocksource to increment the wall time
-- *
-+/*
-+ * timekeeping_advance - Updates the timekeeper to the current time and
-+ * current NTP tick length
-  */
--void update_wall_time(void)
-+static void timekeeping_advance(enum timekeeping_adv_mode mode)
- {
- 	struct timekeeper *real_tk = &tk_core.timekeeper;
- 	struct timekeeper *tk = &shadow_timekeeper;
-@@ -2042,14 +2050,17 @@ void update_wall_time(void)
- 
- #ifdef CONFIG_ARCH_USES_GETTIMEOFFSET
- 	offset = real_tk->cycle_interval;
-+
-+	if (mode != TK_ADV_TICK)
-+		goto out;
- #else
- 	offset = clocksource_delta(tk_clock_read(&tk->tkr_mono),
- 				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask);
--#endif
- 
- 	/* Check if there's really nothing to do */
--	if (offset < real_tk->cycle_interval)
-+	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
- 		goto out;
-+#endif
- 
- 	/* Do some additional sanity checking */
- 	timekeeping_check_update(tk, offset);
-@@ -2105,6 +2116,15 @@ void update_wall_time(void)
- 		clock_was_set_delayed();
- }
- 
-+/**
-+ * update_wall_time - Uses the current clocksource to increment the wall time
-+ *
-+ */
-+void update_wall_time(void)
-+{
-+	timekeeping_advance(TK_ADV_TICK);
-+}
-+
- /**
-  * getboottime64 - Return the real time of system boot.
-  * @ts:		pointer to the timespec64 to be set
-@@ -2332,6 +2352,10 @@ int do_adjtimex(struct timex *txc)
- 	write_seqcount_end(&tk_core.seq);
- 	raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
- 
-+	/* Update the multiplier immediately if frequency was set directly */
-+	if (txc->modes & (ADJ_FREQUENCY | ADJ_TICK))
-+		timekeeping_advance(TK_ADV_FREQ);
-+
- 	if (tai != orig_tai)
- 		clock_was_set();
- 
--- 
-2.14.3
+Then your Changelog had better explain all that, no?
