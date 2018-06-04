@@ -1,164 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751706AbeFDAak (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 20:30:40 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:49442 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751465AbeFDAaj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 20:30:39 -0400
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.220.135
-X-Original-MAILFROM: byungchul.park@lge.com
-Subject: Re: [PATCH] rcu: Check the range of jiffies_till_{first,next}_fqs
- when setting them
-To: Joel Fernandes <joel@joelfernandes.org>,
-        Byungchul Park <max.byungchul.park@gmail.com>
-Cc: jiangshanlai@gmail.com, Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        kernel-team@android.com
-References: <1527818589-13476-1-git-send-email-byungchul.park@lge.com>
- <20180603035848.GA76941@joelaf.mtv.corp.google.com>
- <CANrsvRNeMc8JppnP53ordMkzw+HDdPn0VsiF0j3YdWbQe1+sUg@mail.gmail.com>
- <20180603062330.GA153988@joelaf.mtv.corp.google.com>
- <CANrsvRM+b+Ei_GAtLERFtN7QJN3Au3grc_asfT=pOY0g4rTFWQ@mail.gmail.com>
- <20180603184705.GA85962@joelaf.mtv.corp.google.com>
-From: Byungchul Park <byungchul.park@lge.com>
-Message-ID: <a8dc8ef7-9b3a-4a06-1599-a87317db3462@lge.com>
-Date: Mon, 4 Jun 2018 09:30:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751828AbeFDAbJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 20:31:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40691 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751780AbeFDAbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 20:31:08 -0400
+From: NeilBrown <neilb@suse.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Date: Mon, 04 Jun 2018 10:30:55 +1000
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tom Herbert <tom@quantonium.net>
+Subject: Re: [PATCH 10/18] rhashtable: remove rhashtable_walk_peek()
+In-Reply-To: <20180602154851.pfy4wryezuhxp76v@gondor.apana.org.au>
+References: <152782754287.30340.4395718227884933670.stgit@noble> <152782824964.30340.6329146982899668633.stgit@noble> <20180602154851.pfy4wryezuhxp76v@gondor.apana.org.au>
+Message-ID: <87y3fvpf40.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <20180603184705.GA85962@joelaf.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-04 03:47, Joel Fernandes wrote:
-> On Sun, Jun 03, 2018 at 04:51:06PM +0900, Byungchul Park wrote:
->> On Sun, Jun 3, 2018 at 3:23 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
->>> On Sun, Jun 03, 2018 at 02:38:04PM +0900, Byungchul Park wrote:
->>>> On Sun, Jun 3, 2018 at 12:58 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
->>>>> On Fri, Jun 01, 2018 at 11:03:09AM +0900, Byungchul Park wrote:
->>>>>> Currently, the range of jiffies_till_{first,next}_fqs are checked and
->>>>>> adjusted on and on in the loop of rcu_gp_kthread on runtime.
->>>>>>
->>>>>> However, it's enough to check them only when setting them, not every
->>>>>> time in the loop. So make them handled on a setting time via sysfs.
->>>>>>
->>>>>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
->>>>>> ---
->>>>>>   kernel/rcu/tree.c | 45 ++++++++++++++++++++++++++++++++-------------
->>>>>>   1 file changed, 32 insertions(+), 13 deletions(-)
->>>>>>
->>>>>> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
->>>>>> index 4e96761..eb54d7d 100644
->>>>>> --- a/kernel/rcu/tree.c
->>>>>> +++ b/kernel/rcu/tree.c
->>>>>> @@ -518,8 +518,38 @@ void rcu_all_qs(void)
->>>>>>   static ulong jiffies_till_next_fqs = ULONG_MAX;
->>>>>>   static bool rcu_kick_kthreads;
->>>>>>
->>>>>> -module_param(jiffies_till_first_fqs, ulong, 0644);
->>>>>> -module_param(jiffies_till_next_fqs, ulong, 0644);
->>>>>> +static int param_set_first_fqs_jiffies(const char *val, const struct kernel_param *kp)
->>>>>> +{
->>>>>> +     ulong j;
->>>>>> +     int ret = kstrtoul(val, 0, &j);
->>>>>> +
->>>>>> +     if (!ret)
->>>>>> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : j);
->>>>>> +     return ret;
->>>>>> +}
->>>>>> +
->>>>>> +static int param_set_next_fqs_jiffies(const char *val, const struct kernel_param *kp)
->>>>>> +{
->>>>>> +     ulong j;
->>>>>> +     int ret = kstrtoul(val, 0, &j);
->>>>>> +
->>>>>> +     if (!ret)
->>>>>> +             WRITE_ONCE(*(ulong *)kp->arg, (j > HZ) ? HZ : (j ?: 1));
->>>>>> +     return ret;
->>>>>> +}
->>>>>
->>>>> Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->>>>>
->>>>> Also, can we not combine the 2 param_set_ handlers as well?
->>>>>
->>>>> Only thing we would be giving up is that jiffies_till_first_fqs = 0 wouldn't
->>>>> be allowed (if we go with the param_set_next handler to be the common one)
->>>>> but don't think that's a useful/valid usecase since jiffies_till_first_fqs is
->>>>> set to a sane non-0 value anyway at boot up because of rcu_init_geometry
->>>>> anyway.. Thoughts?
->>>>
->>>> Excuse me. Which code in rcu_init_geometry() makes jiffies_till_first_fqs
->>>> be a non-zero in case called with jiffies_till_first_fqs == 0?
->>>
->>> What do you mean? I think you misunderstood. I didn't say value of 0 is being
->>> handled at boot up. What I said is its initialized to something sane that's
->>> non-zero:
->>>
->>> If you see, jiffies_till_first_fqs is assigned to ULONG_MAX at compile time:
->>> static ulong jiffies_till_first_fqs = ULONG_MAX;
->>>
->>> Then in rcu_init_geometry, we have:
->>>          d = RCU_JIFFIES_TILL_FORCE_QS + nr_cpu_ids / RCU_JIFFIES_FQS_DIV;
->>>          if (jiffies_till_first_fqs == ULONG_MAX)
->>>                          jiffies_till_first_fqs = d;
->>>
->>> On my system, jiffies_till_first_fqs is assigned to 3 because of this at
->>> boot.
->>>
->>>> Furthermore, what if we want to change the value through sysfs to zero
->>>> on runtime?
->>>
->>> My patch was just a suggestion. I didn't know if anyone would want to force
->>> it to 0 or not and was wondering what the value in doing so was at the cost
->>> of adding one more function to handle it. It basically says if you set to 0,
->>> that you never want to wait for a timeout before forcing a qs for the first
->>> time? Then why are we calling swait_event_idle_timeout anyway? Wouldn't a
->>> saner timeout be something not zero?
->>
->> I'm sorry I tried but don't understand your point :(
->> Did you happen to read the following?
->>
->> https://lkml.org/lkml/2018/5/29/99
-> 
-> No I did not happen to read that and I am very sorry about that. I see Paul
-> said jiffies_till_first_fqs = 0 is a useful case in that thread, to record
-> the idle CPUs quickly, which makes sense.
-> 
->> If yes, it would be appreciated if you let me know what I'm missing.
-> 
-> You are right and not missing anything. I'll be more careful to go through
-> old threads next time..
-> 
-> Glad to learn something from the discussions. thanks,
-> 
-> BTW one more dumb question - if jiffies_till_first_fqs == 0 is so useful,
-> then why not default initialize it to 0? I'd think most systems expect
-> atleast some of the CPUs to idle.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-and some others to be busy tho :)
+On Sat, Jun 02 2018, Herbert Xu wrote:
 
-IMHO, although the case of jiffies_till_first_fqs == 0 is sometimes
-useful, the other case is much more useful since we normally don't
-want to add overhead by the forcing. The reason we don't force
-quiescent states immediately but wait several jiffies by default is
-because the overhead such as burning barrier, atomic ops and so on
-is needed to force it.
+> On Fri, Jun 01, 2018 at 02:44:09PM +1000, NeilBrown wrote:
+>> This function has a somewhat confused behavior that is not properly
+>> described by the documentation.
+>> Sometimes is returns the previous object, sometimes it returns the
+>> next one.
+>> Sometimes it changes the iterator, sometimes it doesn't.
+>>=20
+>> This function is not currently used and is not worth keeping, so
+>> remove it.
+>>=20
+>> A future patch will introduce a new function with a
+>> simpler interface which can meet the same need that
+>> this was added for.
+>>=20
+>> Signed-off-by: NeilBrown <neilb@suse.com>
+>
+> Please keep Tom Herbert in the loop.  IIRC he had an issue with
+> this patch.
 
-> 
-> - Joel
-> 
-> 
+Yes you are right - sorry for forgetting to add Tom.
 
--- 
+My understanding of where this issue stands is that Tom raised issue and
+asked for clarification, I replied, nothing further happened.
+
+It summary, my position is that:
+=2D most users of my new rhashtable_walk_prev() will use it like
+   rhasthable_talk_prev() ?: rhashtable_walk_next()
+  which is close to what rhashtable_walk_peek() does
+=2D I know of no use-case that could not be solved if we only had
+  the combined operation
+=2D BUT it is hard to document the combined operation, as it really
+  does two things.  If it is hard to document, then it might be
+  hard to understand.
+
+So provide the most understandable/maintainable solution, I think
+we should provide rhashtable_walk_prev() as a separate interface.
+
 Thanks,
-Byungchul
+NeilBronw
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsUiD8ACgkQOeye3VZi
+gbkffBAAlSQ2AhyyzxieA7FU8JyJKigEVXGXQpyCiyw0MQDhORq3h6ee59N0/28f
+bZ3m07NlDO4TsII2CElhdQ2nwR51QCy+id8gnV2w2wr1c//9ksiUbCY44o7stdiz
+u3ktzUNE/qEwD0qthP3qYMI480qFP22rdV8Oeo3XkV9kpl2C6uD3iu/81ntqxcJ3
+XIHGwoTZTXlEUro93nitLfNc8pg7VJZSv4MJFLvFGwGP8r0WCXA1RCGg+wAGUDPN
+6f6ir7NMio/2CplRtPL6ro1PSeggK9+DmKPdsgwIblFqtaZCvJotEwyU1FUODQOg
+5HNQhIjn6ggLEWggYXEs9N0JEdCwq4ZyzDZI2D3iWmHVj29XReUQogLfGHFTbIGG
+OBY1WbMPbo5QdReH/8EcPC5ufn+xjXxiQFQouCfZi7Fwzak9VPNir+BQIsi0ZDej
+BbaFimVdgNDX2AIV5DsQbjwcU9eQ22fTyuAOOm3UPpFk3ftpqma9RDhTcaMpoyuN
+ZADrQWFBkoQzjtfvUmil3JEQ6KXK1ocB3MXBste+L3WLt4BWMLDctR73FXxbgPtB
+D49Wdu5mxAbDXzxagLfsb7jjPVvo71ioZP5WDEPJKM/EnJWhcd/F1bka1SpToeJr
+4TkH4e9tOm9KvHETXKVrKw94beD0uN0pJL8pgkeXsLabgdQhjAQ=
+=6adA
+-----END PGP SIGNATURE-----
+--=-=-=--
