@@ -1,83 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752324AbeFDJIy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 05:08:54 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41645 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752284AbeFDJIq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:08:46 -0400
-X-Google-Smtp-Source: ADUXVKLz+1j/RcOK5piJhJ2LGShaJBvCdIwCHcDwfkwRK5dTSoueeCJZQQzlcXCvU0SfNJaQnwMq3A==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: jic23@kernel.org
-Cc: baolin.wang@linaro.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, arnd@arndb.de, broonie@kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: Convert to use timespec64 variables to get a time stamp
-Date: Mon,  4 Jun 2018 17:07:39 +0800
-Message-Id: <8ab19b1665b51364c1f7e607f9a69a86fe084d0d.1528102909.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        id S1752394AbeFDJJI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 05:09:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35224 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752289AbeFDJIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 05:08:51 -0400
+Date: Mon, 4 Jun 2018 18:08:44 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Josef Bacik <jbacik@fb.com>, James Hogan <jhogan@kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>, Will Deacon <will.deacon@arm.com>,
+        x86@kernel.org
+Subject: Re: [PATCH -tip v4 24/27] bpf: error-inject: kprobes: Clear
+ current_kprobe and enable preempt in kprobe
+Message-Id: <20180604180844.e7025ed438ceb823b2ab846c@kernel.org>
+In-Reply-To: <1527937081.8b4s5988lk.naveen@linux.ibm.com>
+References: <152749074878.15132.16693721906742461289.stgit@devbox>
+        <152749149794.15132.15817377604536829521.stgit@devbox>
+        <1527763450.f65xiu4yuz.naveen@linux.ibm.com>
+        <20180602083648.fc40ce260c2cafb9a0d31aaa@kernel.org>
+        <1527937081.8b4s5988lk.naveen@linux.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The struct timespec is not y2038 safe on 32bit machines, thus this patch
-converts to use timespec64 variables and related APIs to get a time stamp
-for events etc.
+On Sat, 02 Jun 2018 17:28:05 +0530
+"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/iio/industrialio-core.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+> Masami Hiramatsu wrote:
+> > On Thu, 31 May 2018 16:25:38 +0530
+> > "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+> > 
+> >> Masami Hiramatsu wrote:
+> >> > Clear current_kprobe and enable preemption in kprobe
+> >> > even if pre_handler returns !0.
+> >> > 
+> >> > This simplifies function override using kprobes.
+> >> > 
+> >> > Jprobe used to require to keep the preemption disabled and
+> >> > keep current_kprobe until it returned to original function
+> >> > entry. For this reason kprobe_int3_handler() and similar
+> >> > arch dependent kprobe handers checks pre_handler result
+> >> > and exit without enabling preemption if the result is !0.
+> >> > 
+> >> > After removing the jprobe, Kprobes does not need to
+> >> > keep preempt disabled even if user handler returns !0
+> >> > anymore.
+> >> 
+> >> I think the reason jprobes did it that way is to address architecture 
+> >> specific requirements when changing a function. So, without that 
+> >> infrastructure, I am not sure if we will be able to claim support for 
+> >> over-riding functions with kprobes. I am not sure if we want to claim 
+> >> that, but this is something we need to be clear on.
+> > 
+> > Really? as far as I can see, there seems no such architecture.
+> > The keeping preempt disabled is corresponding to keeping current_kprobe
+> > since the current_kprobe is per-cpu.
+> 
+> Right, and the reason for not resetting current_kprobe after kprobe 
+> handling is done is primarily for jprobes. 
+> 
+> > This means if it is preempted
+> > before hitting break_handler and changed cpu core, we missed to
+> > handle current_kprobe and goes to panic. But if we don't need
+> > such "break back" (removing break_handler), we don't need to
+> > keep current_kprobe (because it is not handled afterwards).
+> 
+> Agreed.
+> 
+> > 
+> > Anyway, changing function execution path is a "one-way" change.
+> 
+> This is the problem. With jprobes, over-riding a function was not a 
+> "one-way" change because it involves more than just changing the [n]ip.  
+> That is the reason we had setjmp/longjmp (aka break_handler).
+> 
+> > We don't have a chance to fixup that disabled preemption and current_kprobe
+> > after returning to the new function. So current error-inject clears
+> > current_kprobe and enable preemption before returning !0 from its
+> > kprobe pre_handler.
+> > 
+> > This is just moving such needless operation from user-pre_handler to
+> > kprobes itself. 
+> > 
+> >> For powerpc, the current function override in error-inject works fine 
+> >> since the new function does nothing. But, if anyone wants to do more 
+> >> work in the replacement function, it won't work with the current 
+> >> approach.
+> > 
+> > If you are considering about TOC change etc. yes, it depends on
+> > the archtecture. As far as I know IA64 and powerpc will not allow
+> > to support changing execution path without special care.
+> > Other "flat and simple" function call architectures like x86, arm
+> > can change execution path without special care. 
+> 
+> Yes, that's the concern. As I stated earlier, the only user seems to be 
+> error-injection where this is not a concern. I wanted this to be made 
+> clear.
+> 
+> I've since noticed that you are updating Documentation/kprobes.txt to 
+> make this clear in patch 24/27 in this series. So, I'm ok with the 
+> changes in this series.
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 19bdf3d..8d2b93b 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -207,35 +207,35 @@ static int iio_device_set_clock(struct iio_dev *indio_dev, clockid_t clock_id)
-  */
- s64 iio_get_time_ns(const struct iio_dev *indio_dev)
- {
--	struct timespec tp;
-+	struct timespec64 tp;
- 
- 	switch (iio_device_get_clock(indio_dev)) {
- 	case CLOCK_REALTIME:
--		ktime_get_real_ts(&tp);
-+		ktime_get_real_ts64(&tp);
- 		break;
- 	case CLOCK_MONOTONIC:
--		ktime_get_ts(&tp);
-+		ktime_get_ts64(&tp);
- 		break;
- 	case CLOCK_MONOTONIC_RAW:
--		getrawmonotonic(&tp);
-+		getrawmonotonic64(&tp);
- 		break;
- 	case CLOCK_REALTIME_COARSE:
--		tp = current_kernel_time();
-+		tp = current_kernel_time64();
- 		break;
- 	case CLOCK_MONOTONIC_COARSE:
--		tp = get_monotonic_coarse();
-+		tp = get_monotonic_coarse64();
- 		break;
- 	case CLOCK_BOOTTIME:
--		get_monotonic_boottime(&tp);
-+		get_monotonic_boottime64(&tp);
- 		break;
- 	case CLOCK_TAI:
--		timekeeping_clocktai(&tp);
-+		timekeeping_clocktai64(&tp);
- 		break;
- 	default:
- 		BUG();
- 	}
- 
--	return timespec_to_ns(&tp);
-+	return timespec64_to_ns(&tp);
- }
- EXPORT_SYMBOL(iio_get_time_ns);
- 
+I see your concern. Yeah, that's why I added [24/27] for clearly stating it.
+
+Thanks,
+
+
 -- 
-1.7.9.5
+Masami Hiramatsu <mhiramat@kernel.org>
