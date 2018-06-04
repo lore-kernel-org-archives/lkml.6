@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752778AbeFDH3v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:29:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52998 "EHLO mail.kernel.org"
+        id S1752460AbeFDHAA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:00:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751527AbeFDHAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:04 -0400
+        id S1752409AbeFDG74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:59:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        David Laight <David.Laight@ACULAB.COM>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 24/29] objtool: Detect RIP-relative switch table references, part 2
-Date: Mon,  4 Jun 2018 08:58:20 +0200
-Message-Id: <20180604065803.121030885@linuxfoundation.org>
+Subject: [PATCH 4.9 21/29] objtool: Support GCC 8s cold subfunctions
+Date: Mon,  4 Jun 2018 08:58:17 +0200
+Message-Id: <20180604065803.009101609@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
 References: <20180604065802.157744637@linuxfoundation.org>
@@ -34,116 +36,330 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 7dec80ccbe310fb7e225bf21c48c672bb780ce7b upstream.
+commit 13810435b9a7014fb92eb715f77da488f3b65b99 upstream.
 
-With the following commit:
+GCC 8 moves a lot of unlikely code out of line to "cold" subfunctions in
+.text.unlikely.  Properly detect the new subfunctions and treat them as
+extensions of the original functions.
 
-  fd35c88b7417 ("objtool: Support GCC 8 switch tables")
+This fixes a bunch of warnings like:
 
-I added a "can't find switch jump table" warning, to stop covering up
-silent failures if add_switch_table() can't find anything.
+  kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags()+0x33: sibling call from callable instruction with modified stack frame
+  kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files()+0x290: sibling call from callable instruction with modified stack frame
+  kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable()+0x25b: sibling call from callable instruction with modified stack frame
+  kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems()+0x325: sibling call from callable instruction with modified stack frame
 
-That warning found yet another bug in the objtool switch table detection
-logic.  For cases 1 and 2 (as described in the comments of
-find_switch_table()), the find_symbol_containing() check doesn't adjust
-the offset for RIP-relative switch jumps.
-
-Incidentally, this bug was already fixed for case 3 with:
-
-  6f5ec2993b1f ("objtool: Detect RIP-relative switch table references")
-
-However, that commit missed the fix for cases 1 and 2.
-
-The different cases are now starting to look more and more alike.  So
-fix the bug by consolidating them into a single case, by checking the
-original dynamic jump instruction in the case 3 loop.
-
-This also simplifies the code and makes it more robust against future
-switch table detection issues -- of which I'm sure there will be many...
-
-Switch table detection has been the most fragile area of objtool, by
-far.  I long for the day when we'll have a GCC plugin for annotating
-switch tables.  Linus asked me to delay such a plugin due to the
-flakiness of the plugin infrastructure in older versions of GCC, so this
-rickety code is what we're stuck with for now.  At least the code is now
-a little simpler than it was.
-
-Reported-by: kbuild test robot <lkp@intel.com>
+Reported-and-tested-by: damian <damian.tometzki@icloud.com>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/f400541613d45689086329432f3095119ffbc328.1526674218.git.jpoimboe@redhat.com
+Link: http://lkml.kernel.org/r/0965e7fcfc5f31a276f0c7f298ff770c19b68706.1525923412.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   37 ++++++++++++-------------------------
- 1 file changed, 12 insertions(+), 25 deletions(-)
+ tools/objtool/check.c |   93 +++++++++++++++++++++++++++-----------------------
+ tools/objtool/elf.c   |   42 +++++++++++++++++++++-
+ tools/objtool/elf.h   |    2 +
+ 3 files changed, 93 insertions(+), 44 deletions(-)
 
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -900,40 +900,19 @@ static struct rela *find_switch_table(st
- 	struct instruction *orig_insn = insn;
- 	unsigned long table_offset;
+@@ -59,6 +59,31 @@ static struct instruction *next_insn_sam
+ 	return next;
+ }
  
--	/* case 1 & 2 */
--	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
--	if (text_rela && text_rela->sym == file->rodata->sym &&
--	    !find_symbol_containing(file->rodata, text_rela->addend)) {
--
--		table_offset = text_rela->addend;
--		if (text_rela->type == R_X86_64_PC32) {
--			/* case 2 */
--			table_offset += 4;
--			file->ignore_unreachables = true;
--		}
--
--		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
--		if (!rodata_rela)
--			return NULL;
--
--		return rodata_rela;
--	}
--
--	/* case 3 */
- 	/*
- 	 * Backward search using the @first_jump_src links, these help avoid
- 	 * much of the 'in between' code. Which avoids us getting confused by
- 	 * it.
++static struct instruction *next_insn_same_func(struct objtool_file *file,
++					       struct instruction *insn)
++{
++	struct instruction *next = list_next_entry(insn, list);
++	struct symbol *func = insn->func;
++
++	if (!func)
++		return NULL;
++
++	if (&next->list != &file->insn_list && next->func == func)
++		return next;
++
++	/* Check if we're already in the subfunction: */
++	if (func == func->cfunc)
++		return NULL;
++
++	/* Move to the subfunction: */
++	return find_insn(file, func->cfunc->sec, func->cfunc->offset);
++}
++
++#define func_for_each_insn_all(file, func, insn)			\
++	for (insn = find_insn(file, func->sec, func->offset);		\
++	     insn;							\
++	     insn = next_insn_same_func(file, insn))
++
+ #define func_for_each_insn(file, func, insn)				\
+ 	for (insn = find_insn(file, func->sec, func->offset);		\
+ 	     insn && &insn->list != &file->insn_list &&			\
+@@ -148,10 +173,14 @@ static int __dead_end_function(struct ob
+ 			if (!strcmp(func->name, global_noreturns[i]))
+ 				return 1;
+ 
+-	if (!func->sec)
++	if (!func->len)
++		return 0;
++
++	insn = find_insn(file, func->sec, func->offset);
++	if (!insn->func)
+ 		return 0;
+ 
+-	func_for_each_insn(file, func, insn) {
++	func_for_each_insn_all(file, func, insn) {
+ 		empty = false;
+ 
+ 		if (insn->type == INSN_RETURN)
+@@ -166,35 +195,24 @@ static int __dead_end_function(struct ob
+ 	 * case, the function's dead-end status depends on whether the target
+ 	 * of the sibling call returns.
  	 */
--	for (insn = list_prev_entry(insn, list);
+-	func_for_each_insn(file, func, insn) {
+-		if (insn->sec != func->sec ||
+-		    insn->offset >= func->offset + func->len)
+-			break;
 -
-+	for (;
- 	     &insn->list != &file->insn_list &&
- 	     insn->sec == func->sec &&
- 	     insn->offset >= func->offset;
++	func_for_each_insn_all(file, func, insn) {
+ 		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
+ 			struct instruction *dest = insn->jump_dest;
+-			struct symbol *dest_func;
  
- 	     insn = insn->first_jump_src ?: list_prev_entry(insn, list)) {
+ 			if (!dest)
+ 				/* sibling call to another file */
+ 				return 0;
  
--		if (insn->type == INSN_JUMP_DYNAMIC)
-+		if (insn != orig_insn && insn->type == INSN_JUMP_DYNAMIC)
+-			if (dest->sec != func->sec ||
+-			    dest->offset < func->offset ||
+-			    dest->offset >= func->offset + func->len) {
+-				/* local sibling call */
+-				dest_func = find_symbol_by_offset(dest->sec,
+-								  dest->offset);
+-				if (!dest_func)
+-					continue;
++			if (dest->func && dest->func->pfunc != insn->func->pfunc) {
+ 
++				/* local sibling call */
+ 				if (recursion == 5) {
+ 					WARN_FUNC("infinite recursion (objtool bug!)",
+ 						  dest->sec, dest->offset);
+ 					return -1;
+ 				}
+ 
+-				return __dead_end_function(file, dest_func,
++				return __dead_end_function(file, dest->func,
+ 							   recursion + 1);
+ 			}
+ 		}
+@@ -421,7 +439,7 @@ static void add_ignores(struct objtool_f
+ 			if (!ignore_func(file, func))
+ 				continue;
+ 
+-			func_for_each_insn(file, func, insn)
++			func_for_each_insn_all(file, func, insn)
+ 				insn->ignore = true;
+ 		}
+ 	}
+@@ -781,9 +799,8 @@ out:
+ 	return ret;
+ }
+ 
+-static int add_switch_table(struct objtool_file *file, struct symbol *func,
+-			    struct instruction *insn, struct rela *table,
+-			    struct rela *next_table)
++static int add_switch_table(struct objtool_file *file, struct instruction *insn,
++			    struct rela *table, struct rela *next_table)
+ {
+ 	struct rela *rela = table;
+ 	struct instruction *alt_insn;
+@@ -793,18 +810,13 @@ static int add_switch_table(struct objto
+ 		if (rela == next_table)
  			break;
  
- 		/* allow small jumps within the range */
-@@ -960,10 +939,18 @@ static struct rela *find_switch_table(st
- 		if (find_symbol_containing(file->rodata, table_offset))
- 			continue;
+-		if (rela->sym->sec != insn->sec ||
+-		    rela->addend <= func->offset ||
+-		    rela->addend >= func->offset + func->len)
++		alt_insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!alt_insn)
+ 			break;
  
--		/* mov [rodata addr], %reg */
- 		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
--		if (rodata_rela)
-+		if (rodata_rela) {
-+			/*
-+			 * Use of RIP-relative switch jumps is quite rare, and
-+			 * indicates a rare GCC quirk/bug which can leave dead
-+			 * code behind.
-+			 */
-+			if (text_rela->type == R_X86_64_PC32)
-+				file->ignore_unreachables = true;
-+
- 			return rodata_rela;
-+		}
+-		alt_insn = find_insn(file, insn->sec, rela->addend);
+-		if (!alt_insn) {
+-			WARN("%s: can't find instruction at %s+0x%x",
+-			     file->rodata->rela->name, insn->sec->name,
+-			     rela->addend);
+-			return -1;
+-		}
++		/* Make sure the jmp dest is in the function or subfunction: */
++		if (alt_insn->func->pfunc != insn->func->pfunc)
++			break;
+ 
+ 		alt = malloc(sizeof(*alt));
+ 		if (!alt) {
+@@ -942,7 +954,7 @@ static int add_func_switch_tables(struct
+ 	struct rela *rela, *prev_rela = NULL;
+ 	int ret;
+ 
+-	func_for_each_insn(file, func, insn) {
++	func_for_each_insn_all(file, func, insn) {
+ 		if (!last)
+ 			last = insn;
+ 
+@@ -973,8 +985,7 @@ static int add_func_switch_tables(struct
+ 		 * the beginning of another switch table in the same function.
+ 		 */
+ 		if (prev_jump) {
+-			ret = add_switch_table(file, func, prev_jump, prev_rela,
+-					       rela);
++			ret = add_switch_table(file, prev_jump, prev_rela, rela);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -984,7 +995,7 @@ static int add_func_switch_tables(struct
  	}
  
+ 	if (prev_jump) {
+-		ret = add_switch_table(file, func, prev_jump, prev_rela, NULL);
++		ret = add_switch_table(file, prev_jump, prev_rela, NULL);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -1748,15 +1759,13 @@ static int validate_branch(struct objtoo
+ 	while (1) {
+ 		next_insn = next_insn_same_sec(file, insn);
+ 
+-
+-		if (file->c_file && func && insn->func && func != insn->func) {
++		if (file->c_file && func && insn->func && func != insn->func->pfunc) {
+ 			WARN("%s() falls through to next function %s()",
+ 			     func->name, insn->func->name);
+ 			return 1;
+ 		}
+ 
+-		if (insn->func)
+-			func = insn->func;
++		func = insn->func ? insn->func->pfunc : NULL;
+ 
+ 		if (func && insn->ignore) {
+ 			WARN_FUNC("BUG: why am I validating an ignored function?",
+@@ -1777,7 +1786,7 @@ static int validate_branch(struct objtoo
+ 
+ 				i = insn;
+ 				save_insn = NULL;
+-				func_for_each_insn_continue_reverse(file, func, i) {
++				func_for_each_insn_continue_reverse(file, insn->func, i) {
+ 					if (i->save) {
+ 						save_insn = i;
+ 						break;
+@@ -1864,7 +1873,7 @@ static int validate_branch(struct objtoo
+ 		case INSN_JUMP_UNCONDITIONAL:
+ 			if (insn->jump_dest &&
+ 			    (!func || !insn->jump_dest->func ||
+-			     func == insn->jump_dest->func)) {
++			     insn->jump_dest->func->pfunc == func)) {
+ 				ret = validate_branch(file, insn->jump_dest,
+ 						      state);
+ 				if (ret)
+@@ -2059,7 +2068,7 @@ static int validate_functions(struct obj
+ 
+ 	for_each_sec(file, sec) {
+ 		list_for_each_entry(func, &sec->symbol_list, list) {
+-			if (func->type != STT_FUNC)
++			if (func->type != STT_FUNC || func->pfunc != func)
+ 				continue;
+ 
+ 			insn = find_insn(file, sec, func->offset);
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -79,6 +79,19 @@ struct symbol *find_symbol_by_offset(str
  	return NULL;
+ }
+ 
++struct symbol *find_symbol_by_name(struct elf *elf, const char *name)
++{
++	struct section *sec;
++	struct symbol *sym;
++
++	list_for_each_entry(sec, &elf->sections, list)
++		list_for_each_entry(sym, &sec->symbol_list, list)
++			if (!strcmp(sym->name, name))
++				return sym;
++
++	return NULL;
++}
++
+ struct symbol *find_symbol_containing(struct section *sec, unsigned long offset)
+ {
+ 	struct symbol *sym;
+@@ -203,10 +216,11 @@ static int read_sections(struct elf *elf
+ 
+ static int read_symbols(struct elf *elf)
+ {
+-	struct section *symtab;
+-	struct symbol *sym;
++	struct section *symtab, *sec;
++	struct symbol *sym, *pfunc;
+ 	struct list_head *entry, *tmp;
+ 	int symbols_nr, i;
++	char *coldstr;
+ 
+ 	symtab = find_section_by_name(elf, ".symtab");
+ 	if (!symtab) {
+@@ -281,6 +295,30 @@ static int read_symbols(struct elf *elf)
+ 		hash_add(sym->sec->symbol_hash, &sym->hash, sym->idx);
+ 	}
+ 
++	/* Create parent/child links for any cold subfunctions */
++	list_for_each_entry(sec, &elf->sections, list) {
++		list_for_each_entry(sym, &sec->symbol_list, list) {
++			if (sym->type != STT_FUNC)
++				continue;
++			sym->pfunc = sym->cfunc = sym;
++			coldstr = strstr(sym->name, ".cold.");
++			if (coldstr) {
++				coldstr[0] = '\0';
++				pfunc = find_symbol_by_name(elf, sym->name);
++				coldstr[0] = '.';
++
++				if (!pfunc) {
++					WARN("%s(): can't find parent function",
++					     sym->name);
++					goto err;
++				}
++
++				sym->pfunc = pfunc;
++				pfunc->cfunc = sym;
++			}
++		}
++	}
++
+ 	return 0;
+ 
+ err:
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -61,6 +61,7 @@ struct symbol {
+ 	unsigned char bind, type;
+ 	unsigned long offset;
+ 	unsigned int len;
++	struct symbol *pfunc, *cfunc;
+ };
+ 
+ struct rela {
+@@ -86,6 +87,7 @@ struct elf {
+ struct elf *elf_open(const char *name, int flags);
+ struct section *find_section_by_name(struct elf *elf, const char *name);
+ struct symbol *find_symbol_by_offset(struct section *sec, unsigned long offset);
++struct symbol *find_symbol_by_name(struct elf *elf, const char *name);
+ struct symbol *find_symbol_containing(struct section *sec, unsigned long offset);
+ struct rela *find_rela_by_dest(struct section *sec, unsigned long offset);
+ struct rela *find_rela_by_dest_range(struct section *sec, unsigned long offset,
