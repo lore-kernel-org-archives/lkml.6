@@ -1,19 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753535AbeFDHDd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55652 "EHLO mail.kernel.org"
+        id S1753612AbeFDHDt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:03:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753511AbeFDHDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:31 -0400
+        id S1752394AbeFDHDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.16 19/47] tracing: Make the snapshot trigger work with instances
-Date: Mon,  4 Jun 2018 08:58:31 +0200
-Message-Id: <20180604065550.302266366@linuxfoundation.org>
+        stable@vger.kernel.org, Yazen Ghannam <yazen.ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>, Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 06/47] x86/mce/AMD: Carve out SMCA get_block_address() code
+Date: Mon,  4 Jun 2018 08:58:18 +0200
+Message-Id: <20180604065549.752487496@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -29,167 +34,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-commit 2824f5033248600673e3e126a4d135363cbfd9ac upstream.
+commit 8a331f4a0863bea758561c921b94b4d28f7c4029 upstream.
 
-The snapshot trigger currently only affects the main ring buffer, even when
-it is used by the instances. This can be confusing as the snapshot trigger
-is listed in the instance.
+Carve out the SMCA code in get_block_address() into a separate helper
+function.
 
- > # cd /sys/kernel/tracing
- > # mkdir instances/foo
- > # echo snapshot > instances/foo/events/syscalls/sys_enter_fchownat/trigger
- > # echo top buffer > trace_marker
- > # echo foo buffer > instances/foo/trace_marker
- > # touch /tmp/bar
- > # chown rostedt /tmp/bar
- > # cat instances/foo/snapshot
- # tracer: nop
- #
- #
- # * Snapshot is freed *
- #
- # Snapshot commands:
- # echo 0 > snapshot : Clears and frees snapshot buffer
- # echo 1 > snapshot : Allocates snapshot buffer, if not already allocated.
- #                      Takes a snapshot of the main buffer.
- # echo 2 > snapshot : Clears snapshot buffer (but does not allocate or free)
- #                      (Doesn't have to be '2' works with any number that
- #                       is not a '0' or '1')
+No functional change.
 
- > # cat snapshot
- # tracer: nop
- #
- #                              _-----=> irqs-off
- #                             / _----=> need-resched
- #                            | / _---=> hardirq/softirq
- #                            || / _--=> preempt-depth
- #                            ||| /     delay
- #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
- #              | |       |   ||||       |         |
-             bash-1189  [000] ....   111.488323: tracing_mark_write: top buffer
-
-Not only did the snapshot occur in the top level buffer, but the instance
-snapshot buffer should have been allocated, and it is still free.
-
-Cc: stable@vger.kernel.org
-Fixes: 85f2b08268c01 ("tracing: Add basic event trigger framework")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+[ Save an indentation level. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180215210943.11530-4-Yazen.Ghannam@amd.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace.c                |   12 ++++++------
- kernel/trace/trace.h                |   11 +++++++++++
- kernel/trace/trace_events_trigger.c |   10 ++++++++--
- 3 files changed, 25 insertions(+), 8 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce_amd.c |   57 +++++++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 26 deletions(-)
 
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -892,7 +892,7 @@ int __trace_bputs(unsigned long ip, cons
- EXPORT_SYMBOL_GPL(__trace_bputs);
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--static void tracing_snapshot_instance(struct trace_array *tr)
-+void tracing_snapshot_instance(struct trace_array *tr)
- {
- 	struct tracer *tracer = tr->current_trace;
- 	unsigned long flags;
-@@ -948,7 +948,7 @@ static int resize_buffer_duplicate_size(
- 					struct trace_buffer *size_buf, int cpu_id);
- static void set_buffer_entries(struct trace_buffer *buf, unsigned long val);
- 
--static int alloc_snapshot(struct trace_array *tr)
-+int tracing_alloc_snapshot_instance(struct trace_array *tr)
- {
- 	int ret;
- 
-@@ -994,7 +994,7 @@ int tracing_alloc_snapshot(void)
- 	struct trace_array *tr = &global_trace;
- 	int ret;
- 
--	ret = alloc_snapshot(tr);
-+	ret = tracing_alloc_snapshot_instance(tr);
- 	WARN_ON(ret < 0);
- 
- 	return ret;
-@@ -5395,7 +5395,7 @@ static int tracing_set_tracer(struct tra
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
- 	if (t->use_max_tr && !had_max_tr) {
--		ret = alloc_snapshot(tr);
-+		ret = tracing_alloc_snapshot_instance(tr);
- 		if (ret < 0)
- 			goto out;
- 	}
-@@ -6373,7 +6373,7 @@ tracing_snapshot_write(struct file *filp
- 		}
- #endif
- 		if (!tr->allocated_snapshot) {
--			ret = alloc_snapshot(tr);
-+			ret = tracing_alloc_snapshot_instance(tr);
- 			if (ret < 0)
- 				break;
- 		}
-@@ -7094,7 +7094,7 @@ ftrace_trace_snapshot_callback(struct tr
- 		return ret;
- 
-  out_reg:
--	ret = alloc_snapshot(tr);
-+	ret = tracing_alloc_snapshot_instance(tr);
- 	if (ret < 0)
- 		goto out;
- 
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1812,6 +1812,17 @@ static inline void __init trace_event_in
- static inline void trace_event_eval_update(struct trace_eval_map **map, int len) { }
- #endif
- 
-+#ifdef CONFIG_TRACER_SNAPSHOT
-+void tracing_snapshot_instance(struct trace_array *tr);
-+int tracing_alloc_snapshot_instance(struct trace_array *tr);
-+#else
-+static inline void tracing_snapshot_instance(struct trace_array *tr) { }
-+static inline int tracing_alloc_snapshot_instance(struct trace_array *tr)
-+{
-+	return 0;
-+}
-+#endif
-+
- extern struct trace_iterator *tracepoint_print_iter;
- 
- #endif /* _LINUX_KERNEL_TRACE_H */
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -642,6 +642,7 @@ event_trigger_callback(struct event_comm
- 	trigger_data->count = -1;
- 	trigger_data->ops = trigger_ops;
- 	trigger_data->cmd_ops = cmd_ops;
-+	trigger_data->private_data = file;
- 	INIT_LIST_HEAD(&trigger_data->list);
- 	INIT_LIST_HEAD(&trigger_data->named_list);
- 
-@@ -1042,7 +1043,12 @@ static struct event_command trigger_trac
- static void
- snapshot_trigger(struct event_trigger_data *data, void *rec)
- {
--	tracing_snapshot();
-+	struct trace_event_file *file = data->private_data;
-+
-+	if (file)
-+		tracing_snapshot_instance(file->tr);
-+	else
-+		tracing_snapshot();
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -431,6 +431,35 @@ static void deferred_error_interrupt_ena
+ 	wrmsr(MSR_CU_DEF_ERR, low, high);
  }
  
- static void
-@@ -1064,7 +1070,7 @@ register_snapshot_trigger(char *glob, st
++static u32 smca_get_block_address(unsigned int cpu, unsigned int bank,
++				  unsigned int block)
++{
++	u32 low, high;
++	u32 addr = 0;
++
++	if (smca_get_bank_type(bank) == SMCA_RESERVED)
++		return addr;
++
++	if (!block)
++		return MSR_AMD64_SMCA_MCx_MISC(bank);
++
++	/*
++	 * For SMCA enabled processors, BLKPTR field of the first MISC register
++	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
++	 */
++	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
++		return addr;
++
++	if (!(low & MCI_CONFIG_MCAX))
++		return addr;
++
++	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
++	    (low & MASK_BLKPTR_LO))
++		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
++
++	return addr;
++}
++
+ static u32 get_block_address(unsigned int cpu, u32 current_addr, u32 low, u32 high,
+ 			     unsigned int bank, unsigned int block)
  {
- 	int ret = register_trigger(glob, ops, data, file);
- 
--	if (ret > 0 && tracing_alloc_snapshot() != 0) {
-+	if (ret > 0 && tracing_alloc_snapshot_instance(file->tr) != 0) {
- 		unregister_trigger(glob, ops, data, file);
- 		ret = 0;
+@@ -451,32 +480,8 @@ static u32 get_block_address(unsigned in
+ 		}
  	}
+ 
+-	if (mce_flags.smca) {
+-		if (smca_get_bank_type(bank) == SMCA_RESERVED)
+-			return addr;
+-
+-		if (!block) {
+-			addr = MSR_AMD64_SMCA_MCx_MISC(bank);
+-		} else {
+-			/*
+-			 * For SMCA enabled processors, BLKPTR field of the
+-			 * first MISC register (MCx_MISC0) indicates presence of
+-			 * additional MISC register set (MISC1-4).
+-			 */
+-			u32 low, high;
+-
+-			if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
+-				return addr;
+-
+-			if (!(low & MCI_CONFIG_MCAX))
+-				return addr;
+-
+-			if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
+-			    (low & MASK_BLKPTR_LO))
+-				addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
+-		}
+-		return addr;
+-	}
++	if (mce_flags.smca)
++		return smca_get_block_address(cpu, bank, block);
+ 
+ 	/* Fall back to method we used for older processors: */
+ 	switch (block) {
