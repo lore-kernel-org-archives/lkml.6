@@ -1,26 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753561AbeFDHDi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55694 "EHLO mail.kernel.org"
+        id S1753682AbeFDHRY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:17:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753511AbeFDHDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:34 -0400
+        id S1753554AbeFDHDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        kbuild test robot <lkp@intel.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        David Laight <David.Laight@ACULAB.COM>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        damian <damian.tometzki@icloud.com>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 02/47] objtool: Support GCC 8 switch tables
-Date: Mon,  4 Jun 2018 08:58:14 +0200
-Message-Id: <20180604065549.574831400@linuxfoundation.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 03/47] objtool: Detect RIP-relative switch table references
+Date: Mon,  4 Jun 2018 08:58:15 +0200
+Message-Id: <20180604065549.616337740@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -38,111 +34,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit fd35c88b74170d9335530d9abf271d5d73eb5401 upstream.
+commit 6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33 upstream.
 
-With GCC 8, some issues were found with the objtool switch table
-detection.
+Typically a switch table can be found by detecting a .rodata access
+followed an indirect jump:
 
-1) In the .rodata section, immediately after the switch table, there can
-   be another object which contains a pointer to the function which had
-   the switch statement.  In this case objtool wrongly considers the
-   function pointer to be part of the switch table.  Fix it by:
+    1969:	4a 8b 0c e5 00 00 00 	mov    0x0(,%r12,8),%rcx
+    1970:	00
+			196d: R_X86_64_32S	.rodata+0x438
+    1971:	e9 00 00 00 00       	jmpq   1976 <dispc_runtime_suspend+0xb6a>
+			1972: R_X86_64_PC32	__x86_indirect_thunk_rcx-0x4
 
-   a) making sure there are no pointers to the beginning of the
-      function; and
+Randy Dunlap reported a case (seen with GCC 4.8) where the .rodata
+access uses RIP-relative addressing:
 
-   b) making sure there are no gaps in the switch table.
+    19bd:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 19c4 <dispc_runtime_suspend+0xbb8>
+			19c0: R_X86_64_PC32	.rodata+0x45c
+    19c4:	e9 00 00 00 00       	jmpq   19c9 <dispc_runtime_suspend+0xbbd>
+			19c5: R_X86_64_PC32	__x86_indirect_thunk_rdi-0x4
 
-   Only the former was needed, the latter adds additional protection for
-   future optimizations.
+In this case the relocation addend needs to be adjusted accordingly in
+order to find the location of the switch table.
 
-2) In find_switch_table(), case 1 and case 2 are missing the check to
-   ensure that the .rodata switch table data is anonymous, i.e. that it
-   isn't already associated with an ELF symbol.  Fix it by adding the
-   same find_symbol_containing() check which is used for case 3.
+The fix is for case 3 (as described in the comments), but also make the
+existing case 1 & 2 checks more precise by only adjusting the addend for
+R_X86_64_PC32 relocations.
 
-This fixes the following warnings with GCC 8:
+This fixes the following warnings:
 
-  drivers/block/virtio_blk.o: warning: objtool: virtio_queue_rq()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+72
-  net/ipv6/icmp.o: warning: objtool: icmpv6_rcv()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+64
-  drivers/usb/core/quirks.o: warning: objtool: quirks_param_set()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+48
-  drivers/mtd/nand/raw/nand_hynix.o: warning: objtool: hynix_nand_decode_id()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+24
-  drivers/mtd/nand/raw/nand_samsung.o: warning: objtool: samsung_nand_decode_id()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+32
-  drivers/gpu/drm/nouveau/nvkm/subdev/top/gk104.o: warning: objtool: gk104_top_oneinit()+0x0: stack state mismatch: cfa1=7+8 cfa2=7+64
+  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
+  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Greg KH <gregkh@linuxfoundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: damian <damian.tometzki@icloud.com>
-Link: http://lkml.kernel.org/r/20180510224849.xwi34d6tzheb5wgw@treble
+Link: http://lkml.kernel.org/r/b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ tools/objtool/check.c |   33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -806,17 +806,28 @@ static int add_switch_table(struct objto
- 	struct rela *rela = table;
- 	struct instruction *alt_insn;
- 	struct alternative *alt;
-+	struct symbol *pfunc = insn->func->pfunc;
-+	unsigned int prev_offset = 0;
+@@ -899,24 +899,24 @@ static struct rela *find_switch_table(st
+ {
+ 	struct rela *text_rela, *rodata_rela;
+ 	struct instruction *orig_insn = insn;
++	unsigned long table_offset;
  
- 	list_for_each_entry_from(rela, &file->rodata->rela->rela_list, list) {
- 		if (rela == next_table)
- 			break;
++	/* case 1 & 2 */
+ 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
+ 	if (text_rela && text_rela->sym == file->rodata->sym &&
+ 	    !find_symbol_containing(file->rodata, text_rela->addend)) {
  
-+		/* Make sure the switch table entries are consecutive: */
-+		if (prev_offset && rela->offset != prev_offset + 8)
-+			break;
-+
-+		/* Detect function pointers from contiguous objects: */
-+		if (rela->sym->sec == pfunc->sec &&
-+		    rela->addend == pfunc->offset)
-+			break;
-+
- 		alt_insn = find_insn(file, rela->sym->sec, rela->addend);
- 		if (!alt_insn)
- 			break;
+-		/* case 1 */
+-		rodata_rela = find_rela_by_dest(file->rodata,
+-						text_rela->addend);
+-		if (rodata_rela)
+-			return rodata_rela;
++		table_offset = text_rela->addend;
++		if (text_rela->type == R_X86_64_PC32) {
++			/* case 2 */
++			table_offset += 4;
++			file->ignore_unreachables = true;
++		}
  
- 		/* Make sure the jmp dest is in the function or subfunction: */
--		if (alt_insn->func->pfunc != insn->func->pfunc)
-+		if (alt_insn->func->pfunc != pfunc)
- 			break;
+-		/* case 2 */
+-		rodata_rela = find_rela_by_dest(file->rodata,
+-						text_rela->addend + 4);
++		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+ 		if (!rodata_rela)
+ 			return NULL;
  
- 		alt = malloc(sizeof(*alt));
-@@ -827,6 +838,13 @@ static int add_switch_table(struct objto
- 
- 		alt->insn = alt_insn;
- 		list_add_tail(&alt->list, &insn->alts);
-+		prev_offset = rela->offset;
-+	}
-+
-+	if (!prev_offset) {
-+		WARN_FUNC("can't find switch jump table",
-+			  insn->sec, insn->offset);
-+		return -1;
+-		file->ignore_unreachables = true;
+ 		return rodata_rela;
  	}
  
- 	return 0;
-@@ -883,7 +901,9 @@ static struct rela *find_switch_table(st
- 	struct instruction *orig_insn = insn;
+@@ -950,18 +950,21 @@ static struct rela *find_switch_table(st
+ 		if (!text_rela || text_rela->sym != file->rodata->sym)
+ 			continue;
  
- 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
--	if (text_rela && text_rela->sym == file->rodata->sym) {
-+	if (text_rela && text_rela->sym == file->rodata->sym &&
-+	    !find_symbol_containing(file->rodata, text_rela->addend)) {
++		table_offset = text_rela->addend;
++		if (text_rela->type == R_X86_64_PC32)
++			table_offset += 4;
 +
- 		/* case 1 */
- 		rodata_rela = find_rela_by_dest(file->rodata,
- 						text_rela->addend);
+ 		/*
+ 		 * Make sure the .rodata address isn't associated with a
+ 		 * symbol.  gcc jump tables are anonymous data.
+ 		 */
+-		if (find_symbol_containing(file->rodata, text_rela->addend))
++		if (find_symbol_containing(file->rodata, table_offset))
+ 			continue;
+ 
+-		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
+-		if (!rodata_rela)
+-			continue;
+-
+-		return rodata_rela;
++		/* mov [rodata addr], %reg */
++		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
++		if (rodata_rela)
++			return rodata_rela;
+ 	}
+ 
+ 	return NULL;
