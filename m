@@ -1,173 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751343AbeFDRqV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:46:21 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:36831 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbeFDRqT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:46:19 -0400
-X-Google-Smtp-Source: ADUXVKL/fwEztCHHiocSpCkGLX9uyWWzHdEopEJr4835HfYWy4vSeTEt7pHFRdIYJ3n/lwb3Fhq0Pw==
-Date: Mon, 4 Jun 2018 10:46:18 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
-Message-ID: <20180604174618.GA222053@joelaf.mtv.corp.google.com>
-References: <20180604160600.22052-1-patrick.bellasi@arm.com>
- <20180604160600.22052-3-patrick.bellasi@arm.com>
+        id S1751377AbeFDRrg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:47:36 -0400
+Received: from mail.horus.com ([78.46.148.228]:49599 "EHLO mail.horus.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750934AbeFDRre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 13:47:34 -0400
+Date: Mon, 4 Jun 2018 19:47:30 +0200
+From: Matthias Reichl <hias@horus.com>
+To: Sean Young <sean@mess.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [PATCH v5 2/3] media: rc: introduce BPF_PROG_LIRC_MODE2
+Message-ID: <20180604174730.sctfoklq7klswebp@camel2.lan>
+Mail-Followup-To: Matthias Reichl <hias@horus.com>,
+        Sean Young <sean@mess.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+References: <cover.1527419762.git.sean@mess.org>
+ <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180604160600.22052-3-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrick,
+Hi Sean,
 
-On Mon, Jun 04, 2018 at 05:06:00PM +0100, Patrick Bellasi wrote:
-> The estimated utilization of a task is affected by the task being
-> preempted, either by another FAIR task of by a task of an higher
-> priority class (i.e. RT or DL). Indeed, when a preemption happens, the
-> PELT utilization of the preempted task is going to be decayed a bit.
-> That's actually correct for utilization, which goal is to measure the
-> actual CPU bandwidth consumed by a task.
-> 
-> However, the above behavior does not allow to know exactly what is the
-> utilization a task "would have used" if it was running without
-> being preempted. Thus, this reduces the effectiveness of util_est for a
-> task because it does not always allow to predict how much CPU a task is
-> likely to require.
-> 
-> Let's improve the estimated utilization by adding a new "sort-of" PELT
-> signal, explicitly only for SE which has the following behavior:
->  a) at each enqueue time of a task, its value is the (already decayed)
->     util_avg of the task being enqueued
->  b) it's updated at each update_load_avg
->  c) it can just increase, whenever the task is actually RUNNING on a
->     CPU, while it's kept stable while the task is RUNNANBLE but not
->     actively consuming CPU bandwidth
-> 
-> Such a defined signal is exactly equivalent to the util_avg for a task
-> running alone on a CPU while, in case the task is preempted, it allows
-> to know at dequeue time how much would have been the task utilization if
-> it was running alone on that CPU.
-> 
-> This new signal is named "running_avg", since it tracks the actual
-> RUNNING time of a task by ignoring any form of preemption.
-> 
-> From an implementation standpoint, since the sched_avg should fit into a
-> single cache line, we save space by tracking only a new runnable sum:
->    p->se.avg.running_sum
-> while the conversion into a running_avg is done on demand whenever we
-> need it, which is at task dequeue time when a new util_est sample has to
-> be collected.
-> 
-> The conversion from "running_sum" to "running_avg" is done by performing
-> a single division by LOAD_AVG_MAX, which introduces a small error since
-> in the division we do not consider the (sa->period_contrib - 1024)
-> compensation factor used in ___update_load_avg(). However:
->  a) this error is expected to be limited (~2-3%)
->  b) it can be safely ignored since the estimated utilization is the only
->     consumer which is already subject to small estimation errors
-> 
-> The additional corresponding benefit is that, at run-time, we pay the
-> cost for a additional sum and multiply, while the more expensive
-> division is required only at dequeue time.
-> 
-> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Steve Muckle <smuckle@google.com>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> ---
->  include/linux/sched.h |  1 +
->  kernel/sched/fair.c   | 16 ++++++++++++++--
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 9d8732dab264..2bd5f1c68da9 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -399,6 +399,7 @@ struct sched_avg {
->  	u64				load_sum;
->  	u64				runnable_load_sum;
->  	u32				util_sum;
-> +	u32				running_sum;
->  	u32				period_contrib;
->  	unsigned long			load_avg;
->  	unsigned long			runnable_load_avg;
+I finally found the time to test your patch series and noticed
+2 issues - comments are inline
 
-Should update the documentation comments above the struct too?
-
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index f74441be3f44..5d54d6a4c31f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -3161,6 +3161,8 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
->  		sa->runnable_load_sum =
->  			decay_load(sa->runnable_load_sum, periods);
->  		sa->util_sum = decay_load((u64)(sa->util_sum), periods);
-> +		if (running)
-> +			sa->running_sum = decay_load(sa->running_sum, periods);
+On Sun, May 27, 2018 at 12:24:09PM +0100, Sean Young wrote:
+> diff --git a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
+> index eb2c3b6eca7f..d5b35a6ba899 100644
+> --- a/drivers/media/rc/Kconfig
+> +++ b/drivers/media/rc/Kconfig
+> @@ -25,6 +25,19 @@ config LIRC
+>  	   passes raw IR to and from userspace, which is needed for
+>  	   IR transmitting (aka "blasting") and for the lirc daemon.
 >  
->  		/*
->  		 * Step 2
-> @@ -3176,8 +3178,10 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
->  		sa->load_sum += load * contrib;
->  	if (runnable)
->  		sa->runnable_load_sum += runnable * contrib;
-> -	if (running)
-> +	if (running) {
->  		sa->util_sum += contrib * scale_cpu;
-> +		sa->running_sum += contrib * scale_cpu;
-> +	}
->  
->  	return periods;
->  }
-> @@ -3963,6 +3967,12 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
->  	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
->  }
+> +config BPF_LIRC_MODE2
+> +	bool "Support for eBPF programs attached to lirc devices"
+> +	depends on BPF_SYSCALL
+> +	depends on RC_CORE=y
 
-PELT changes look nice and makes sense :)
+Requiring rc-core to be built into the kernel could become
+problematic in the future for people using media_build.
 
-> +static inline void util_est_enqueue_running(struct task_struct *p)
-> +{
-> +	/* Initilize the (non-preempted) utilization */
-> +	p->se.avg.running_sum = p->se.avg.util_sum;
-> +}
+Currently the whole media tree (including rc-core) can be built
+as modules so DVB and IR drivers can be replaced by newer versions.
+But with rc-core in the kernel things could easily break if internal
+data structures are changed.
+
+Maybe we should add a small layer with a stable API/ABI between
+bpf-lirc and rc-core to decouple them? Or would it be possible
+to build rc-core with bpf support as a module?
+
+> +	depends on LIRC
+> +	help
+> +	   Allow attaching eBPF programs to a lirc device using the bpf(2)
+> +	   syscall command BPF_PROG_ATTACH. This is supported for raw IR
+> +	   receivers.
 > +
->  /*
->   * Check if a (signed) value is within a specified (unsigned) margin,
->   * based on the observation that:
-> @@ -4018,7 +4028,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
->  	 * Skip update of task's estimated utilization when its EWMA is
->  	 * already ~1% close to its last activation value.
->  	 */
-> -	ue.enqueued = (task_util(p) | UTIL_AVG_UNCHANGED);
-> +	ue.enqueued = p->se.avg.running_sum / LOAD_AVG_MAX;
+> +	   These eBPF programs can be used to decode IR into scancodes, for
+> +	   IR protocols not supported by the kernel decoders.
+> +
+>  menuconfig RC_DECODERS
+>  	bool "Remote controller decoders"
+>  	depends on RC_CORE
+> [...]
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 388d4feda348..3c104113d040 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -11,6 +11,7 @@
+>   */
+>  #include <linux/bpf.h>
+>  #include <linux/bpf_trace.h>
+> +#include <linux/bpf_lirc.h>
+>  #include <linux/btf.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/slab.h>
+> @@ -1578,6 +1579,8 @@ static int bpf_prog_attach(const union bpf_attr *attr)
+>  	case BPF_SK_SKB_STREAM_PARSER:
+>  	case BPF_SK_SKB_STREAM_VERDICT:
+>  		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, true);
+> +	case BPF_LIRC_MODE2:
+> +		return lirc_prog_attach(attr);
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -1648,6 +1651,8 @@ static int bpf_prog_detach(const union bpf_attr *attr)
+>  	case BPF_SK_SKB_STREAM_PARSER:
+>  	case BPF_SK_SKB_STREAM_VERDICT:
+>  		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, false);
+> +	case BPF_LIRC_MODE2:
+> +		return lirc_prog_detach(attr);
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -1695,6 +1700,8 @@ static int bpf_prog_query(const union bpf_attr *attr,
+>  	case BPF_CGROUP_SOCK_OPS:
+>  	case BPF_CGROUP_DEVICE:
+>  		break;
+> +	case BPF_LIRC_MODE2:
+> +		return lirc_prog_query(attr, uattr);
 
-I guess we are doing extra division here which adds some cost. Does
-performance look Ok with the change?
+When testing this patch series I was wondering why I always got
+-EINVAL when trying to query the registered programs.
 
-thanks,
+Closer inspection revealed that bpf_prog_attach/detach/query and
+calls to them in the bpf syscall are in "#ifdef CONFIG_CGROUP_BPF"
+blocks - and as I built the kernel without CONFIG_CGROUP_BPF
+BPF_PROG_ATTACH/DETACH/QUERY weren't handled in the syscall switch
+and I got -EINVAL from the bpf syscall function.
 
- - Joel
- 
+I haven't checked in detail yet, but it looks to me like
+bpf_prog_attach/detach/query could always be built (or when
+either cgroup bpf or lirc bpf are enabled) and the #ifdefs moved
+inside the switch(). So lirc bpf could be used without cgroup bpf.
+Or am I missing something?
+
+so long,
+
+Hias
+>  	default:
+>  		return -EINVAL;
+>  	}
+> -- 
+> 2.17.0
+> 
