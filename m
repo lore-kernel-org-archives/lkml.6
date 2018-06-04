@@ -1,60 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751345AbeFDQMk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:12:40 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45974 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750915AbeFDQMi (ORCPT
+        id S1751297AbeFDQQx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:16:53 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:50254 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeFDQQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:12:38 -0400
-Subject: Re: linux-next: Tree for Jun 4 (fs/afs/)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <20180604215911.75399f6e@canb.auug.org.au>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7e4a317a-d57e-1499-dc1e-2eba35610632@infradead.org>
-Date: Mon, 4 Jun 2018 09:12:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 4 Jun 2018 12:16:51 -0400
+Date: Mon, 4 Jun 2018 09:16:49 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
+Message-ID: <20180604161649.GA16269@roeck-us.net>
+References: <20180604065802.157744637@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180604215911.75399f6e@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 04:59 AM, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Jun 04, 2018 at 08:57:56AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.106 release.
+> There are 29 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Changes since 20180601:
+> Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
+> Anything received after that time might be too late.
 > 
 
-on x86_64:
+For v4.9.105-30-ge0f8632 (4.9.106-rc1-00030-ge0f8632):
 
-# CONFIG_PROC_FS is not set
+Build results:
+	total: 148 pass: 148 fail: 0
+Qemu test results:
+	total: 139 pass: 137 fail: 2
+Failed tests: 
+	mips64:malta_defconfig:nosmp
+	mips64:malta_defconfig:smp
 
+Qemu tests fail with:
 
-../fs/afs/proc.c: In function ‘afs_proc_init’:
-../fs/afs/proc.c:604:2: error: implicit declaration of function ‘proc_create_net_data_write’ [-Werror=implicit-function-declaration]
-  if (!proc_create_net_data_write("cells", 0644, p,
-  ^
-../fs/afs/proc.c:609:6: error: implicit declaration of function ‘proc_create_net_single_write’ [-Werror=implicit-function-declaration]
-      !proc_create_net_single_write("rootcell", 0644, p,
-      ^
-../fs/afs/proc.c: At top level:
-../fs/afs/proc.c:517:12: warning: ‘afs_proc_stats_show’ defined but not used [-Wunused-function]
- static int afs_proc_stats_show(struct seq_file *m, void *v)
-            ^
-cc1: some warnings being treated as errors
-../scripts/Makefile.build:311: recipe for target 'fs/afs/proc.o' failed
+This architecture does not have kernel memory protection.
+random: fast init done
+Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
 
+---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
 
-afs seems not to handle CONFIG_PROC_FS=n at all.
+While tracking this down, I found commit 4e4636cf981b ("objtool: Enclose
+contents of unreachable() macro in a block"), which says "... Guenter Roeck
+reported a boot failure in mips64 ...". Go figure. Applying commit
+4e4636cf981b on top of v4.9.106-rc1 indeed fixes the problem.
 
--- 
-~Randy
+Guenter
