@@ -1,119 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753865AbeFDHQE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:16:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753598AbeFDHDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:47 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Hirte <johannes.hirte@datenkhaos.de>,
-        Borislav Petkov <bp@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Yazen Ghannam <yazen.ghannam@amd.com>
-Subject: [PATCH 4.16 07/47] x86/MCE/AMD: Cache SMCA MISC block addresses
-Date: Mon,  4 Jun 2018 08:58:19 +0200
-Message-Id: <20180604065549.794683686@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
-References: <20180604065549.468488465@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753786AbeFDHQg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:16:36 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38334 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750933AbeFDHQd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:16:33 -0400
+Date: Mon, 4 Jun 2018 09:16:06 +0200
+From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "daniel@bristot.me" <daniel@bristot.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "williams@redhat.com" <williams@redhat.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "lclaudio@redhat.com" <lclaudio@redhat.com>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
+Subject: Re: [PATCH 1/2] target: drop spin_lock_assert() + irqs_disabled()
+ combo checks
+Message-ID: <20180604071605.frpptubbfxt2ngk7@linutronix.de>
+References: <1521822325.2535.5.camel@wdc.com>
+ <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
+ <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
+ <20180326111359.180f1604@gandalf.local.home>
+ <20180328101553.uduqsdbxwnxrhl7a@linutronix.de>
+ <c9f5df1e54bb2bd8f3f0aef86a55deb11888a6a4.camel@wdc.com>
+ <20180328151433.elhw6kgxdxq6fn6b@linutronix.de>
+ <86c1243e-8733-c94d-d8ff-5c299b8266a6@wdc.com>
+ <20180528143518.f46hyhi5r5jd3oxe@linutronix.de>
+ <92633c987a900acf5e7defb481d347a9e5b1253d.camel@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <92633c987a900acf5e7defb481d347a9e5b1253d.camel@wdc.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On 2018-06-04 07:02:15 [+0000], Bart Van Assche wrote:
+> 
+> Would adding WARN_ON_ONCE(!irqs_disabled()) work fine with an RT kernel?
 
-------------------
+no, because the interrupts are not disabled at this point on RT.
+Lockdep works fine on RT.
 
-From: Borislav Petkov <bp@suse.de>
+> Thanks,
+> 
+> Bart.
 
-commit 78ce241099bb363b19dbd0245442e66c8de8f567 upstream.
-
-... into a global, two-dimensional array and service subsequent reads from
-that cache to avoid rdmsr_on_cpu() calls during CPU hotplug (IPIs with IRQs
-disabled).
-
-In addition, this fixes a KASAN slab-out-of-bounds read due to wrong usage
-of the bank->blocks pointer.
-
-Fixes: 27bd59502702 ("x86/mce/AMD: Get address from already initialized block")
-Reported-by: Johannes Hirte <johannes.hirte@datenkhaos.de>
-Tested-by: Johannes Hirte <johannes.hirte@datenkhaos.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
-Link: http://lkml.kernel.org/r/20180414004230.GA2033@probook
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/kernel/cpu/mcheck/mce_amd.c |   29 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 15 deletions(-)
-
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -94,6 +94,11 @@ static struct smca_bank_name smca_names[
- 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
- };
- 
-+static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
-+{
-+	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
-+};
-+
- const char *smca_get_name(enum smca_bank_types t)
- {
- 	if (t >= N_SMCA_BANK_TYPES)
-@@ -443,20 +448,26 @@ static u32 smca_get_block_address(unsign
- 	if (!block)
- 		return MSR_AMD64_SMCA_MCx_MISC(bank);
- 
-+	/* Check our cache first: */
-+	if (smca_bank_addrs[bank][block] != -1)
-+		return smca_bank_addrs[bank][block];
-+
- 	/*
- 	 * For SMCA enabled processors, BLKPTR field of the first MISC register
- 	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
- 	 */
- 	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
--		return addr;
-+		goto out;
- 
- 	if (!(low & MCI_CONFIG_MCAX))
--		return addr;
-+		goto out;
- 
- 	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
- 	    (low & MASK_BLKPTR_LO))
--		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
-+		addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
- 
-+out:
-+	smca_bank_addrs[bank][block] = addr;
- 	return addr;
- }
- 
-@@ -468,18 +479,6 @@ static u32 get_block_address(unsigned in
- 	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
- 		return addr;
- 
--	/* Get address from already initialized block. */
--	if (per_cpu(threshold_banks, cpu)) {
--		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
--
--		if (bankp && bankp->blocks) {
--			struct threshold_block *blockp = &bankp->blocks[block];
--
--			if (blockp)
--				return blockp->address;
--		}
--	}
--
- 	if (mce_flags.smca)
- 		return smca_get_block_address(cpu, bank, block);
- 
+Sebastian
