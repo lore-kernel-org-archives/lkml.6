@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753487AbeFDHD1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55514 "EHLO mail.kernel.org"
+        id S1753222AbeFDHCW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:02:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752720AbeFDHDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:22 -0400
+        id S1752678AbeFDHCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -13,12 +13,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         KT Liao <kt.liao@emc.com.tw>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.16 16/47] Input: synaptics - add Lenovo 80 series ids to SMBus
-Date: Mon,  4 Jun 2018 08:58:28 +0200
-Message-Id: <20180604065550.163262810@linuxfoundation.org>
+Subject: [PATCH 4.14 17/52] Input: synaptics - add Lenovo 80 series ids to SMBus
+Date: Mon,  4 Jun 2018 08:58:12 +0200
+Message-Id: <20180604065607.236745471@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
-References: <20180604065549.468488465@linuxfoundation.org>
+In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
+References: <20180604065606.532044490@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -27,7 +27,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
