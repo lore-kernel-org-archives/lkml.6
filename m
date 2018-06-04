@@ -1,87 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeFDIUb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 04:20:31 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33918 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751695AbeFDIUa (ORCPT
+        id S1752086AbeFDIVF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 04:21:05 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:45213 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbeFDIVD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 04:20:30 -0400
-Date: Mon, 4 Jun 2018 10:20:22 +0200
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [GIT PULL] two more s390 bug fixes for 4.17
-In-Reply-To: <20180531161400.GB10203@infradead.org>
-References: <20180530075920.1f73275a@mschwideX1>
-        <20180530074130.GA6927@infradead.org>
-        <20180530111140.40c791bd@mschwideX1>
-        <20180531161400.GB10203@infradead.org>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Mon, 4 Jun 2018 04:21:03 -0400
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="14891974"
+Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
+To: Stephen Boyd <sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <alsa-devel@alsa-project.org>, <boris.brezillon@bootlin.com>,
+        <broonie@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <robh+dt@kernel.org>
+CC: <Cristian.Birsan@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
+ <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Message-ID: <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
+Date: Mon, 4 Jun 2018 11:20:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18060408-0012-0000-0000-0000027A6870
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060408-0013-0000-0000-000020AB275C
-Message-Id: <20180604102022.3bc03229@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=924 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040104
+In-Reply-To: <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018 09:14:00 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> On Wed, May 30, 2018 at 11:11:40AM +0200, Martin Schwidefsky wrote:
-> > On Wed, 30 May 2018 00:41:30 -0700
-> > Christoph Hellwig <hch@infradead.org> wrote:
-> >   
-> > > > -	req->completion_data = cqr;
-> > > > +	*((struct dasd_ccw_req **) blk_mq_rq_to_pdu(req)) = cqr;
-> > > > +    
-> > > 
-> > > Please don't play such tricks.  In general your driver structure
-> > > should have struct request embedded.  If for some reason
-> > > struct dasd_ccw_req has a different life time please create a new
-> > > structure instead of these hacks.  
-> > 
-> > Why do you consider this to be a 'trick'? The blk_mq_rq_to_pdu is
-> > meant to be used to access a block of data that is is associated
-> > with a request, no? With the change we store a single value, the
-> > pointer to a struct dasd_ccw_req. The struct request comes first,
-> > later do_dasd_request creates the struct dasd_ccw_req with the
-> > CCW chain for the request. And for the blk timeout handler we need
-> > a way to find the dasd_ccw_req again.  
+On 31.05.2018 18:26, Stephen Boyd wrote:
+> Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
+>> This driver is a simple muxing driver that controls the
+>> I2S's clock input by using syscon/regmap to change the parrent.
 > 
-> We'll we try really hard to have a structure that we can use
-> container_of on.  At least a minimal container with just the pointer
-> for a quick fix, but in general it seems like you should be able
-> to allocate the whole dasd_ccw_req with the request and just initialize
-> it later.
+> s/parrent/parent/
 
-A minimal container with a pointer is easy enough to do. To replace
-our allocation scheme for the CCW chains will be hard. For one there
-are internal I/Os that do not have an associated 'struct request'.
-For those we need to allocate the memory on our own anyway.
-Then the size of the memory block you need for the CCW varies wildly
-and can be quite large. The tag cmd_size is fixed at the time
-blk_mq_alloc_tag_set is called. If we replace out allocation scheme
-this would force us to use the maximum size CCW chain for the
-tag size, no?
+I will fix it.
 
--- 
-blue skies,
-   Martin.
+> 
+>> The available inputs can be Peripheral clock and Generated clock.
+> 
+> Why capitalize peripheral and generated?
 
-"Reality continues to ruin my life." - Calvin.
+In DS, at I2S block these clocks appear defined with capital letters... 
+I will fix it.
+
+> 
+>>
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> ---
+>> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+>> index 1254bf9..903f23c 100644
+>> --- a/arch/arm/mach-at91/Kconfig
+>> +++ b/arch/arm/mach-at91/Kconfig
+>> @@ -27,6 +27,7 @@ config SOC_SAMA5D2
+>>          select HAVE_AT91_H32MX
+>>          select HAVE_AT91_GENERATED_CLK
+>>          select HAVE_AT91_AUDIO_PLL
+>> +       select HAVE_AT91_I2S_MUX_CLK
+>>          select PINCTRL_AT91PIO4
+>>          help
+>>            Select this if ou are using one of Microchip's SAMA5D2 family SoC.
+>> @@ -129,6 +130,9 @@ config HAVE_AT91_GENERATED_CLK
+>>   config HAVE_AT91_AUDIO_PLL
+>>          bool
+>>   
+>> +config HAVE_AT91_I2S_MUX_CLK
+>> +       bool
+>> +
+>>   config SOC_SAM_V4_V5
+>>          bool
+>>   
+> 
+> I guess this is OK.
+> 
+>> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+>> index 082596f..facc169 100644
+>> --- a/drivers/clk/at91/Makefile
+>> +++ b/drivers/clk/at91/Makefile
+>> @@ -13,3 +13,4 @@ obj-$(CONFIG_HAVE_AT91_USB_CLK)               += clk-usb.o
+>>   obj-$(CONFIG_HAVE_AT91_SMD)            += clk-smd.o
+>>   obj-$(CONFIG_HAVE_AT91_H32MX)          += clk-h32mx.o
+>>   obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)  += clk-generated.o
+>> +obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)    += clk-i2s-mux.o
+>> diff --git a/drivers/clk/at91/clk-i2s-mux.c b/drivers/clk/at91/clk-i2s-mux.c
+>> new file mode 100644
+>> index 0000000..2d56ded
+>> --- /dev/null
+>> +++ b/drivers/clk/at91/clk-i2s-mux.c
+>> @@ -0,0 +1,117 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + *  Copyright (C) 2018 Microchip Technology Inc,
+>> + *                     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> + *
+>> + *
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/of.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include <soc/at91/atmel-sfr.h>
+>> +
+>> +#define        I2S_BUS_NR      2
+>> +
+>> +struct clk_i2s_mux {
+>> +       struct clk_hw hw;
+>> +       struct regmap *regmap;
+>> +       u32 bus_id;
+> 
+> Can be a u8?
+
+I think so, I will cast out_value parameter of of_property_read_u32() to u8.
+
+> 
+>> +};
+>> +
+>> +#define to_clk_i2s_mux(hw) container_of(hw, struct clk_i2s_mux, hw)
+>> +
+>> +static u8 clk_i2s_mux_get_parent(struct clk_hw *hw)
+>> +{
+>> +       struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
+>> +       u32 val;
+>> +
+>> +       regmap_read(mux->regmap, AT91_SFR_I2SCLKSEL, &val);
+>> +
+>> +       return (val & BIT(mux->bus_id)) >> mux->bus_id;
+>> +}
+>> +
+>> +static int clk_i2s_mux_set_parent(struct clk_hw *hw, u8 index)
+>> +{
+>> +       struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
+>> +
+>> +       return regmap_update_bits(mux->regmap, AT91_SFR_I2SCLKSEL,
+>> +                                 BIT(mux->bus_id), index << mux->bus_id);
+>> +}
+>> +
+>> +const struct clk_ops clk_i2s_mux_ops = {
+> 
+> static?
+
+Yes, I will fix it.
+
+> 
+>> +       .get_parent = clk_i2s_mux_get_parent,
+>> +       .set_parent = clk_i2s_mux_set_parent,
+>> +       .determine_rate = __clk_mux_determine_rate,
+>> +};
+>> +
+>> +static struct clk_hw * __init
+>> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
+>> +                         const char * const *parent_names,
+>> +                         unsigned int num_parents, u32 bus_id)
+>> +{
+>> +       struct clk_init_data init = {};
+>> +       struct clk_i2s_mux *i2s_ck;
+>> +       int ret;
+>> +
+>> +       i2s_ck = kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
+>> +       if (!i2s_ck)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = name;
+>> +       init.ops = &clk_i2s_mux_ops;
+>> +       init.parent_names = parent_names;
+>> +       init.num_parents = num_parents;
+>> +       init.flags = CLK_IGNORE_UNUSED;
+> 
+> Really? Why?
+
+I am thinking that there is no need to gate this clock, since there is 
+no way to gate this clock in HW.
+
+> 
+>> +
+>> +       i2s_ck->hw.init = &init;
+>> +       i2s_ck->bus_id = bus_id;
+>> +       i2s_ck->regmap = regmap;
+>> +
+>> +       ret = clk_hw_register(NULL, &i2s_ck->hw);
+>> +       if (ret) {
+>> +               kfree(i2s_ck);
+>> +               return ERR_PTR(ret);
+>> +       }
+>> +
+>> +       return &i2s_ck->hw;
+>> +}
+
+Thank you for your review. I will wait a few more days for more comments 
+on this series and send a V5 afterwards.
+
+Best regards,
+Codrin
