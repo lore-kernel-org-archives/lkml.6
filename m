@@ -1,88 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751795AbeFDCUa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 22:20:30 -0400
-Received: from mga14.intel.com ([192.55.52.115]:34043 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751373AbeFDCU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 22:20:29 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,473,1520924400";
-   d="scan'208";a="54472325"
-Date: Mon, 4 Jun 2018 10:10:06 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: changbin.du@intel.com, akpm@linux-foundation.org, tglx@linutronix.de,
-        pombredanne@nexb.com, neilb@suse.com, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com
-Subject: Re: [PATCH] scripts/faddr2line: show the code context
-Message-ID: <20180604021006.p2v6u2dlitpo6fqd@intel.com>
-References: <1521444205-2259-1-git-send-email-changbin.du@intel.com>
- <20180529160332.GD12258@hirez.programming.kicks-ass.net>
+        id S1751772AbeFDCfz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 22:35:55 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:43684 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751373AbeFDCfx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 22:35:53 -0400
+X-Google-Smtp-Source: ADUXVKJm8TDizQvRnOUX74qzIBdAaIPCWwPjLwtTYt9O8RMi1fdZk1i6O1CtsfOlH2qFZLb9qTjWv9Zgv7hSl2gKRIQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180529160332.GD12258@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323-6-5ca392
+In-Reply-To: <CAGFP0L+EprYNOoz2-rubi+EOytsEJmwckUZk9J8y3jZ9xjdHmw@mail.gmail.com>
+References: <CAGFP0L+ndXDPRFT3fjgwBoVZwHOhCEan4Pcj_oW0FXNHV2Rkbw@mail.gmail.com>
+ <CAGFP0L+EprYNOoz2-rubi+EOytsEJmwckUZk9J8y3jZ9xjdHmw@mail.gmail.com>
+From: Geunsik Lim <geunsik.lim@gmail.com>
+Date: Mon, 4 Jun 2018 11:35:50 +0900
+Message-ID: <CAGFP0LK3jWq=rW+3QY+=OxrJFHsVZyjd5jZ5=jvZ4TStebD23g@mail.gmail.com>
+Subject: Re: About GPL license compliance of Tesla Model S, Linux kernel 4.4
+To: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc: Harald Welte <laforge@gnumonks.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 06:03:32PM +0200, Peter Zijlstra wrote:
-> On Mon, Mar 19, 2018 at 03:23:25PM +0800, changbin.du@intel.com wrote:
-> > From: Changbin Du <changbin.du@intel.com>
-> > 
-> > Inspired by gdb command 'list', show the code context of target lines.
-> > Here is a example:
-> > 
-> > $ scripts/faddr2line vmlinux native_write_msr+0x6
-> > native_write_msr+0x6/0x20:
-> > arch_static_branch at arch/x86/include/asm/msr.h:105
-> > 100             return EAX_EDX_VAL(val, low, high);
-> > 101     }
-> > 102
-> > 103     static inline void notrace __wrmsr(unsigned int msr, u32 low, u32 high)
-> > 104     {
-> > 105             asm volatile("1: wrmsr\n"
-> > 106                          "2:\n"
-> > 107                          _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_wrmsr_unsafe)
-> > 108                          : : "c" (msr), "a"(low), "d" (high) : "memory");
-> > 109     }
-> > 110
-> > (inlined by) static_key_false at include/linux/jump_label.h:142
-> > 137     #define JUMP_TYPE_LINKED        2UL
-> > 138     #define JUMP_TYPE_MASK          3UL
-> > 139
-> > 140     static __always_inline bool static_key_false(struct static_key *key)
-> > 141     {
-> > 142             return arch_static_branch(key, false);
-> > 143     }
-> > 144
-> > 145     static __always_inline bool static_key_true(struct static_key *key)
-> > 146     {
-> > 147             return !arch_static_branch(key, true);
-> > (inlined by) native_write_msr at arch/x86/include/asm/msr.h:150
-> > 145     static inline void notrace
-> > 146     native_write_msr(unsigned int msr, u32 low, u32 high)
-> > 147     {
-> > 148             __wrmsr(msr, low, high);
-> > 149
-> > 150             if (msr_tracepoint_active(__tracepoint_write_msr))
-> > 151                     do_trace_write_msr(msr, ((u64)high << 32 | low), 0);
-> > 152     }
-> > 153
-> > 154     /* Can be uninlined because referenced by paravirt */
-> > 155     static inline int notrace
-> 
-> Not a fan of this :-/ And you didn't even make it optional. Nor did you
-> Cc the original author of the tool.
-Yeah, understand your compatibility concern, and thanks for your improvment.
-I only added people from 'scripts/get_maintainer.pl'.
+FYI, https://sfconservancy.org/blog/2018/may/18/tesla-incomplete-ccs/
+
+On Sun, Nov 26, 2017 at 8:23 PM, Geunsik Lim <geunsik.lim@gmail.com> wrote:
+> Here is my next activity.
+>
+> After reading http://gpl-violations.org/helping/,
+> I have reported this issue to solve a potential GPL misuse about the
+> Linux kernel open source code
+> that is used to deploy Tesla Model S (Linux kernel based commercial product).
+>
+>
+>
+>
+> BRs,
+> Geunsik Lim.
+>
+>
+> On Sat, Nov 25, 2017 at 4:48 PM, Geunsik Lim <geunsik.lim@gmail.com> wrote:
+>> Hi All,
+>>
+>> I want to talk about a potential GPL misuse of the Linux open source
+>> that is used by Tesla Model S. Some months ago, I have read that a
+>> version information of Linux kernel that is deployed into the
+>> commercial self-driving car such as Tesla Model S via (1) the twitter
+>> web page of Tesla CEO Elon Musk  and (2) the presentation material of
+>> the Blackhat 2017  presenter Sen Nie as follows.
+>>
+>> Oct-05-2016, Twitter, "When we upgrade the core Linux OS to 4.4, which
+>> is probably December"
+>> https://twitter.com/elonmusk/status/783759011724210176
+>>
+>> Jul-22-2017, Blackhat 2017, "FREE-FALL: HACKING TESLA FROM WIRELESS TO CAN BUS"
+>> https://www.blackhat.com/us-17/briefings.html#free-fall-hacking-tesla-from-wireless-to-can-bus
+>>
+>>
+>> In case of the embedded device vendors, it seems that the most of the
+>> global vendors have being uploaded related open source software that
+>> are used by commercial products via their open source release center
+>> to keep the GPL compliance as following:
+>>
+>> https://opensource.google.com/
+>> https://opensource.microsoft.com/
+>> https://opensource.apple.com
+>> https://opensource.samsung.com
+>> https://opensource.lge.com
+>> https://opensource.dell.com/
+>> http://opensource.alibaba.com/
+>> https://developer.sonymobile.com/knowledge-base/open-source/
+>> http://consumer.huawei.com/en/opensource/
+>> http://xiaomi.github.io/
+>> https://software.intel.com/en-us/open-source
+>>
+>>
+>> Also, we can download related open sources such as Linux kernel, GCC,
+>> and so on from their official homepage in case of BMW, GM, Ford, and
+>> Toyota cars.
+>>
+>> BMW - http://www.bmw-carit.de/open-source/
+>> GM - http://oss.bosch-cm.com/gm.html
+>> Ford - http://corporate.ford.com/ford-open-source.html
+>> Toyota - http://www.globaldenso.com/en/opensource/ivi/toyota/
+>>
+>>
+>> BTW, in case of Tesla, where can we find an official open source
+>> release center to download their Linux kernel source that is deployed
+>> into a commercial self-driving car? I could not find an official web
+>> page of Tesla to download Linux Kernel 4.4 (GPLv2) and other open
+>> sources that are used by Tesla company. And, I can not find the
+>> related Linux kernel source code from https://github.com/teslamotors.
+>> Unfortunately, even though I asked a person in charging on this issue,
+>> they do not reply me any e-mail for 2 weeks. Anyone that already tried
+>> to get their Linux kernel source of Tesla Model S?
+>>
+>> As we all know, Linus Torvalds has released his Linux Kernel under
+>> GPLv2 license via https://www.kernel.org/.
+>> For more details, please visit the below web-pages.
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/COPYING?h=v4.4
+>> http://www.gnu.org/licenses/gpl-faq.en.html#GPLRequireSourcePostedPublic
+>>
+>> I wonder if they correctly keep the GPL compliance because I am not a lawyer.
+>>
+>>
+>> Thanks for reading.
+>>
+>>
+>>
+>> BRs,
+>> Geunsik Lim.
+>>
+>>
+>>
+>> ----
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
+>> ----
+>
+>
+>
+> --
+> ----
+> Best regards,
+> Geunsik Lim, Samsung Electronics
+> http://leemgs.fedorapeople.org
+> ----
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
 
 
 -- 
-Thanks,
-Changbin Du
+----
+Best regards,
+Geunsik Lim, Samsung Electronics
+http://leemgs.fedorapeople.org
