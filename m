@@ -1,182 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751367AbeFDTc4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:32:56 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55404 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbeFDTcy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:32:54 -0400
-X-Google-Smtp-Source: ADUXVKKlfKsgckXAPZ0An8kGXeo+a+QLaNFnaeDY+ga59G3yjClibqCZF/jzlllOHjypNfSWZHM4uw==
-Date: Mon, 4 Jun 2018 21:32:50 +0200
-From: Thibaut Robert <thibaut.robert@gmail.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Aditya Shankar <aditya.shankar@microchip.com>,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
- warnings
-Message-ID: <20180604193250.GB32753@L80496>
-References: <20180529191143.13081-1-thibaut.robert@gmail.com>
- <20180530111725.gmigyddsp2i6mgzw@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180530111725.gmigyddsp2i6mgzw@mwanda>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751203AbeFDTfP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:35:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37022 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750868AbeFDTfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 15:35:14 -0400
+From: Lyude Paul <lyude@redhat.com>
+To: amd-gfx@lists.freedesktop.org
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>, Shirish S <shirish.s@amd.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amdgpu: Grab/put runtime PM references in atomic_commit_tail()
+Date: Mon,  4 Jun 2018 15:35:03 -0400
+Message-Id: <20180604193509.29153-1-lyude@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mercredi 30 mai 2018 à 14:17:25 (+0300), Dan Carpenter a écrit :
-> On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
-> > diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > index e248702ee519..745bf5ca2622 100644
-> > --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
-> >  
-> >  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
-> >  
-> > -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
-> > +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
-> 
-> "buff" comes from the network, it's going to be little endian, not cpu
-> endian.  The rest of the function treats it as CPU endian but I'm pretty
-> sure it's wrong...
-buff comes from the network but we are looking at single byte here.
-ieee80211_is_action expects an le16, so we I added this to extend an u8
-to an le16. Is this incorrect ?
+So, unfortunately I recently made the discovery that in the upstream
+kernel, the only reason that amdgpu is not currently suffering from
+issues with runtime PM putting the GPU into suspend while it's driving
+displays is due to the fact that on most prime systems, we have sound
+devices associated with the GPU that hold their own runtime PM ref for
+the GPU.
 
-Or maybe we the buff has the second byte ? but that I can't tell. 
+What this means however, is that in the event that there isn't any kind
+of sound device active (which can easily be reproduced by building a
+kernel with sound drivers disabled), the GPU will fall asleep even when
+there's displays active. This appears to be in part due to the fact that
+amdgpu has not actually ever relied on it's rpm_idle() function to be
+the only thing keeping it running, and normally grabs it's own power
+references whenever there are displays active (as can be seen with the
+original pre-DC codepath in amdgpu_display_crtc_set_config() in
+amdgpu_display.c). This means it's very likely that this bug was
+introduced during the switch over the DC.
 
-> 
-> >  		cfg80211_rx_mgmt(priv->wdev, freq, 0, buff, size, 0);
-> >  		return;
-> >  	}
-> 
-> 
-> > diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
-> > index 28c93f3f846e..a5ac1d26590b 100644
-> > --- a/drivers/staging/wilc1000/wilc_wlan.c
-> > +++ b/drivers/staging/wilc1000/wilc_wlan.c
-> > @@ -560,7 +560,8 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
-> >  	int ret = 0;
-> >  	int counter;
-> >  	int timeout;
-> > -	u32 vmm_table[WILC_VMM_TBL_SIZE];
-> > +	__le32 vmm_table[WILC_VMM_TBL_SIZE];
-> > +	u32 table_entry;
-> >  	struct wilc_vif *vif;
-> >  	struct wilc *wilc;
-> >  	const struct wilc_hif_func *func;
-> > @@ -598,10 +599,10 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
-> >  			if ((sum + vmm_sz) > LINUX_TX_SIZE)
-> >  				break;
-> >  
-> > -			vmm_table[i] = vmm_sz / 4;
-> > +			table_entry = vmm_sz / 4;
-> >  			if (tqe->type == WILC_CFG_PKT)
-> > -				vmm_table[i] |= BIT(10);
-> > -			vmm_table[i] = cpu_to_le32(vmm_table[i]);
-> > +				table_entry |= BIT(10);
-> > +			vmm_table[i] = cpu_to_le32(table_entry);
-> >  
-> >  			i++;
-> >  			sum += vmm_sz;
-> > @@ -704,8 +705,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
-> >  		if (vmm_table[i] == 0)
-> >  			break;
-> >  
-> > -		vmm_table[i] = cpu_to_le32(vmm_table[i]);
-> > -		vmm_sz = (vmm_table[i] & 0x3ff);
-> > +		vmm_sz = (le32_to_cpu(vmm_table[i]) & 0x3ff);
-> >  		vmm_sz *= 4;
-> >  		header = (tqe->type << 31) |
-> >  			 (tqe->buffer_size << 15) |
-> > @@ -715,8 +715,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
-> >  		else
-> >  			header &= ~BIT(30);
-> >  
-> > -		header = cpu_to_le32(header);
-> > -		memcpy(&txb[offset], &header, 4);
-> > +		*((__le32 *)&txb[offset]) = cpu_to_le32(header);
-> 
-> I worry about alignment issues here.  That might be the reason for the
-> memcpy().  (I'm reading as fast as I can and don't the code so I may
-> be wrong).
-> 
-> >  		if (tqe->type == WILC_CFG_PKT) {
-> >  			buffer_offset = ETH_CONFIG_PKT_HDR_OFFSET;
-> >  		} else if (tqe->type == WILC_NET_PKT) {
-> > @@ -770,8 +769,7 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
-> >  
-> >  	do {
-> >  		buff_ptr = buffer + offset;
-> > -		memcpy(&header, buff_ptr, 4);
-> > -		header = cpu_to_le32(header);
-> > +		header = le32_to_cpup((__le32 *)buff_ptr);
-> 
-> Maybe the same, whenever you see a memcpy().
-> 
-> >  
-> >  		is_cfg_packet = (header >> 31) & 0x1;
-> >  		pkt_offset = (header >> 22) & 0x1ff;
-> > @@ -942,6 +940,7 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
-> >  	u32 offset;
-> >  	u32 addr, size, size2, blksz;
-> >  	u8 *dma_buffer;
-> > +	const __le32 *header;
-> >  	int ret = 0;
-> >  
-> >  	blksz = BIT(12);
-> > @@ -952,10 +951,9 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
-> >  
-> >  	offset = 0;
-> >  	do {
-> > -		memcpy(&addr, &buffer[offset], 4);
-> > -		memcpy(&size, &buffer[offset + 4], 4);
-> > -		addr = cpu_to_le32(addr);
-> > -		size = cpu_to_le32(size);
-> > +		header = (__le32 *)buffer + offset;
-> > +		addr = le32_to_cpu(header[0]);
-> > +		size = le32_to_cpu(header[1]);
-> >  		acquire_bus(wilc, ACQUIRE_ONLY);
-> >  		offset += 8;
-> >  		while (((int)size) && (offset < buffer_size)) {
-> > diff --git a/drivers/staging/wilc1000/wilc_wlan_cfg.c b/drivers/staging/wilc1000/wilc_wlan_cfg.c
-> > index c0b9b700f4d7..4a914d8572aa 100644
-> > --- a/drivers/staging/wilc1000/wilc_wlan_cfg.c
-> > +++ b/drivers/staging/wilc1000/wilc_wlan_cfg.c
-> > @@ -275,14 +275,14 @@ static int wilc_wlan_cfg_set_bin(u8 *frame, u32 offset, u16 id, u8 *b, u32 size)
-> >  
-> >  static void wilc_wlan_parse_response_frame(u8 *info, int size)
-> >  {
-> > -	u32 wid, len = 0, i = 0;
-> > +	u32 wid;
-> > +	int len = 0, i = 0;
-> 
-> Why did we make these int now?
-> 
-> >  
-> >  	while (size > 0) {
-> >  		i = 0;
-> > -		wid = info[0] | (info[1] << 8);
-> > -		wid = cpu_to_le32(wid);
-> > +		wid = le16_to_cpup((__le16 *)info);
-> >  
-> > -		switch ((wid >> 12) & 0x7) {
-> > +		switch (info[1] >> 4) {
-> 
-> Why do we not need to mask by 0x7?  Anyway, I feel like this isn't
-> beautiful.  We should be using a macro and "wid" instead of magically
-> poking into info[1].
-> 
-> 		switch(SOME_MACRO(wid)) {
-> 
-> 
-> regards,
-> dan carpenter
+So to fix this, we start grabbing runtime PM references every time we
+enable a previously disabled CRTC in atomic_commit_tail(). This appears
+to be the correct solution, as it matches up with what i915 does in
+i915/intel_runtime_pm.c.
+
+The one sideaffect of this is that we ignore the variable that the
+pre-DC code used to use for tracking when it needed runtime PM refs,
+adev->have_disp_power_ref. This is mainly because there's no way for a
+driver to tell whether or not all of it's CRTCs are enabled or disabled
+when we've begun committing an atomic state, as there may be CRTC
+commits happening in parallel that aren't contained within the atomic
+state being committed. So, it's safer to just get/put a reference for
+each CRTC being enabled or disabled in the new atomic state.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+As a note, I'm not entirely happy with this fix and I wouldn't be
+surprised if I missed something while looking through amdgpu. So, please
+don't hesistate to suggest a better fix :).
+
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 1dd1142246c2..361b81ef6997 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -46,6 +46,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/version.h>
+ #include <linux/types.h>
++#include <linux/pm_runtime.h>
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_atomic.h>
+@@ -4211,6 +4212,8 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
+ 			if (dm_old_crtc_state->stream)
+ 				remove_stream(adev, acrtc, dm_old_crtc_state->stream);
+ 
++			pm_runtime_get_noresume(dev->dev);
++
+ 			acrtc->enabled = true;
+ 			acrtc->hw_mode = new_crtc_state->mode;
+ 			crtc->hwmode = new_crtc_state->mode;
+@@ -4396,6 +4399,16 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
+ 		drm_atomic_helper_wait_for_flip_done(dev, state);
+ 
+ 	drm_atomic_helper_cleanup_planes(dev, state);
++
++	/* Finally, drop a runtime PM reference for each newly disabled CRTC,
++	 * so we can put the GPU into runtime suspend if we're not driving any
++	 * displays anymore
++	 */
++	pm_runtime_mark_last_busy(dev->dev);
++	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
++		if (old_crtc_state->active && !new_crtc_state->active)
++			pm_runtime_put_autosuspend(dev->dev);
++	}
+ }
+ 
+ 
+-- 
+2.17.1
