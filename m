@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751800AbeFDQ3U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:29:20 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40698 "EHLO
+        id S1751817AbeFDQ3c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:29:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:40694 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751289AbeFDQ1n (ORCPT
+        with ESMTP id S1751254AbeFDQ1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 12:27:43 -0400
-Message-Id: <20180604162224.819273597@linutronix.de>
+Message-Id: <20180604162224.303870257@linutronix.de>
 User-Agent: quilt/0.65
-Date: Mon, 04 Jun 2018 17:33:59 +0200
+Date: Mon, 04 Jun 2018 17:33:53 +0200
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
@@ -17,87 +17,66 @@ Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
         Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
         Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>,
         stable@vger.kernel.org
-Subject: [patch 7/8] genirq/affinity: Defer affinity setting if irq chip is
- busy
+Subject: [patch 1/8] x86/apic/vector: Prevent hlist corruption and leaks
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=genirq-affinity--Defer-affinity-setting-if-irq-chip-is-busy.patch
+ filename=x86-apic-vector--Prevent-hlist-corruption-and-leaks.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The case that interrupt affinity setting fails with -EBUSY can be handled
-in the kernel completely by using the already available generic pending
-infrastructure.
+Several people observed the WARN_ON() in irq_matrix_free() which triggers
+when the caller tries to free an vector which is not in the allocation
+range. Song provided the trace information which allowed to decode the root
+cause.
 
-If a irq_chip::set_affinity() fails with -EBUSY, handle it like the
-interrupts for which irq_chip::set_affinity() can only be invoked from
-interrupt context. Copy the new affinity mask to irq_desc::pending_mask and
-set the affinity pending bit. The next raised interrupt for the affected
-irq will check the pending bit and try to set the new affinity from the
-handler. This avoids that -EBUSY is returned when an affinity change is
-requested from user space and the previous change has not been cleaned
-up. The new affinity will take effect when the next interrupt is raised
-from the device.
+The rework of the vector allocation mechanism failed to preserve a sanity
+check, which prevents setting a new target vector/CPU when the previous
+affinity change has not fully completed.
 
-Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
+As a result a half finished affinity change can be overwritten, which can
+cause the leak of a irq descriptor pointer on the previous target CPU and
+double enqueue of the hlist head into the cleanup lists of two or more
+CPUs. After one CPU cleaned up its vector the next CPU will invoke the
+cleanup handler with vector 0, which triggers the out of range warning in
+the matrix allocator.
+
+Prevent this by checking the apic_data of the interrupt whether the
+move_in_progress flag is false and the hlist node is not hashed. Return
+-EBUSY if not.
+
+This prevents the damage and restores the behaviour before the vector
+allocation rework, but due to other changes in that area it also widens the
+chance that user space can observe -EBUSY. In theory this should be fine,
+but actually not all user space tools handle -EBUSY correctly. Addressing
+that is not part of this fix, but will be addressed in follow up patches.
+
+Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
+Reported-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Reported-by: Tariq Toukan <tariqt@mellanox.com>
+Reported-by: Song Liu <liu.song.a23@gmail.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
 ---
- kernel/irq/manage.c |   37 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
+ arch/x86/kernel/apic/vector.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -204,6 +204,39 @@ int irq_do_set_affinity(struct irq_data
- 	return ret;
- }
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -235,6 +235,15 @@ static int allocate_vector(struct irq_da
+ 	if (vector && cpu_online(cpu) && cpumask_test_cpu(cpu, dest))
+ 		return 0;
  
-+#ifdef CONFIG_GENERIC_PENDING_IRQ
-+static inline int irq_set_affinity_pending(struct irq_data *data,
-+					   const struct cpumask *dest)
-+{
-+	struct irq_desc *desc = irq_data_to_desc(data);
-+
-+	irqd_set_move_pending(data);
-+	irq_copy_pending(desc, dest);
-+	return 0;
-+}
-+#else
-+static inline int irq_set_affinity_pending(struct irq_data *data,
-+					   const struct cpumask *dest)
-+{
-+	return -EBUSY;
-+}
-+#endif
-+
-+static int irq_try_set_affinity(struct irq_data *data,
-+				const struct cpumask *dest, bool force)
-+{
-+	int ret = irq_do_set_affinity(data, dest, force);
-+
 +	/*
-+	 * In case that the underlying vector management is busy and the
-+	 * architecture supports the generic pending mechanism then utilize
-+	 * this to avoid returning an error to user space.
++	 * Careful here. @apicd might either have move_in_progress set or
++	 * be enqueued for cleanup. Assigning a new vector would either
++	 * leave a stale vector on some CPU around or in case of a pending
++	 * cleanup corrupt the hlist.
 +	 */
-+	if (ret == -EBUSY && !force)
-+		ret = irq_set_affinity_pending(data, dest);
-+	return ret;
-+}
++	if (apicd->move_in_progress || !hlist_unhashed(&apicd->clist))
++		return -EBUSY;
 +
- int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
- 			    bool force)
- {
-@@ -214,8 +247,8 @@ int irq_set_affinity_locked(struct irq_d
- 	if (!chip || !chip->irq_set_affinity)
- 		return -EINVAL;
- 
--	if (irq_can_move_pcntxt(data)) {
--		ret = irq_do_set_affinity(data, mask, force);
-+	if (irq_can_move_pcntxt(data) && !irqd_is_setaffinity_pending(data)) {
-+		ret = irq_try_set_affinity(data, mask, force);
- 	} else {
- 		irqd_set_move_pending(data);
- 		irq_copy_pending(desc, mask);
+ 	vector = irq_matrix_alloc(vector_matrix, dest, resvd, &cpu);
+ 	if (vector > 0)
+ 		apic_update_vector(irqd, vector, cpu);
