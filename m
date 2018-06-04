@@ -1,105 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753494AbeFDOvK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:51:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:14917 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752370AbeFDOvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:51:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="60236783"
-Subject: Re: [PATCH v3]: perf record: enable arbitrary event names thru name=
- modifier
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <c194b060-761d-0d50-3b21-bb4ed680002d@linux.intel.com>
- <20180604075600.GA10484@krava> <20180604135849.GE3397@kernel.org>
- <3269ec8e-88b0-8254-6419-da1896c083df@linux.intel.com>
- <20180604142340.GJ3397@kernel.org>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <ed38dfcc-be73-e1d7-4eb5-862468955766@linux.intel.com>
-Date: Mon, 4 Jun 2018 17:51:03 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180604142340.GJ3397@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753565AbeFDOv3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:51:29 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:50950 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752071AbeFDOv2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:51:28 -0400
+Message-ID: <1528123887.7898.103.camel@surriel.com>
+Subject: Re: [PATCH 02/19] sched/numa: Evaluate move once per node
+From: Rik van Riel <riel@surriel.com>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 04 Jun 2018 10:51:27 -0400
+In-Reply-To: <1528106428-19992-3-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+         <1528106428-19992-3-git-send-email-srikar@linux.vnet.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-395iSGHptK32OJ8NjDXI"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 04.06.2018 17:23, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Jun 04, 2018 at 05:19:11PM +0300, Alexey Budankov escreveu:
->> Hi,
->>
->> On 04.06.2018 16:58, Arnaldo Carvalho de Melo wrote:
->>> Em Mon, Jun 04, 2018 at 09:56:02AM +0200, Jiri Olsa escreveu:
->>>> On Mon, Jun 04, 2018 at 09:50:56AM +0300, Alexey Budankov wrote:
->>>>> Enable complex event names containing [.:=,] symbols to be encoded into Perf 
->>>>> trace using name= modifier e.g. like this:
->>>
->>>>> perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
->>>>> 		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
->>>
->>>>> Below is how it looks like in the report output. Please note explicit escaped 
->>>>> quoting at cmdline string in the header so that thestring can be directly reused
->>>>> for another collection in shell:
->>>
->>> Applied, but there are other places where we show event names, such as:
->>>
->>> [root@jouet ~]# perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',period=0x3567e0,event=0x3c,cmask=0x1/Duk
->>> ^C[ perf record: Woken up 1 times to write data ]
->>> [ perf record: Captured and wrote 1.599 MB perf.data (704 samples) ]
->>>
->>> [root@jouet ~]# perf evlist
->>> OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM
->>> [root@jouet ~]# perf evlist -v
->>> OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM: type: 4, size: 112, config: 0x100003c, { sample_period, sample_freq }: 3500000, sample_type: IP|TID|TIME|CPU, disabled: 1, inherit: 1, pinned: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1
->>> [root@jouet ~]# 
->>>
->>> That I used to check if the period, etc were correctly set, etc. Perhaps
->>> we should add that \'\' there as well?
->>
->> Like this?
->>
->> name: 'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM', type: 4, size: 112, config: 0x100003c, { sample_period, sample_freq }: 3500000, sample_type: IP|TID|TIME|CPU, disabled: 1, inherit: 1, pinned: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1
-> 
-> Nope, I mean with the same intent you had when showing escaped single
-> quotes in the 'perf report' header, that users would copy'n'paste and
-> get something that works on the command line?
 
-Well ok, if there are other cases aside perf report that tool shows full 
-command line ready for reusing then it definitely makes sense to print 
-event names quoted there. If such cases were pointed out then they also 
-could be addressed along with the unit/regression testing mentioned above.
+--=-395iSGHptK32OJ8NjDXI
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Alexey
+On Mon, 2018-06-04 at 15:30 +0530, Srikar Dronamraju wrote:
 
-> 
-> - Arnaldo
->  
->> Thanks,
->> Alexey
->>
->>>
->>> Also please consider adding an entry to tools/perf/tests/attr/ to make
->>> sure this is checked everytime we run 'perf test attr' or plain 'perf
->>> test'.
->>>
->>> Those can be followup patches, so I'm applying this one, thanks.
->>>
->>> - Arnaldo
->>>
-> 
+> @@ -1564,97 +1563,73 @@ static void task_numa_compare(struct
+> task_numa_env *env,
+>  	if (cur =3D=3D env->p)
+>  		goto unlock;
+> =20
+> +	if (!cur) {
+> +		if (!move || imp <=3D env->best_imp)
+> +			goto unlock;
+> +		else
+> +			goto assign;
+> +	}
+
+Just bike shedding, but it may be easier to read
+if the "we found our destination" check were written
+more explicitly:
+
+
+	if (!cur) {
+		if (move && imp > env->best_imp)
+			gote assign;
+		else
+			goto unlock;
+	}
+
+Also, the "move" variable seems to indicate that
+the NUMA code may move the task, but not a decision
+that moving the task is better than a swap.
+
+Would it make sense to call it "maymove"?
+
+I like how this patch simplifies the code a little.
+
+--=20
+All Rights Reversed.
+--=-395iSGHptK32OJ8NjDXI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVUe8ACgkQznnekoTE
+3oOFcAf+LWFfiBTbrQxxbTghL166fJhf8cYSlWD7VmQuTgwPrPx+bfDjmCsWFZ9H
+KeurdddClxsPlcNtO5+PRb/CpyAISLFOaWUkO13ZHY9QPwpmv4eCFnkBDXn/kjwg
+45sYVJqEJRWmi5JjdeXg8GH3zX1/JyF2NOGNctVLjBRIl3MAfzu/VEbNycDY46Hf
+N6W//9Pa9e529jujFYYhHdYQColHxy1xH5RqyLyQbOQrLlGCWbNE/YbnD2D27NKN
+kgx+OuWKddYR5+nPSNjLDuRlm6aIWTQ+w6dB2ZrNu393Icwf4Y1bueb9PJI44sgf
+xLw/bYfVh8R/roqE8HfgpsoJQIhemQ==
+=PRzE
+-----END PGP SIGNATURE-----
+
+--=-395iSGHptK32OJ8NjDXI--
