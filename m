@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753229AbeFDHYv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:24:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
+        id S1753105AbeFDHZP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:25:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753039AbeFDHBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:44 -0400
+        id S1753013AbeFDHBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Nosthoff <committed@heine.so>,
-        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 32/52] iio: ad7793: implement IIO_CHAN_INFO_SAMP_FREQ
-Date: Mon,  4 Jun 2018 08:58:27 +0200
-Message-Id: <20180604065607.856572051@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Wei Wang <weiwan@google.com>, Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 31/52] tcp: avoid integer overflows in tcp_rcv_space_adjust()
+Date: Mon,  4 Jun 2018 08:58:26 +0200
+Message-Id: <20180604065607.816036550@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -29,146 +32,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Nosthoff <committed@heine.so>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 490fba90a90eb7b741f57fefd2bcf2c1e11eb471 upstream.
+commit 607065bad9931e72207b0cac365d7d4abc06bd99 upstream.
 
-This commit is a follow-up to changes made to ad_sigma_delta.h
-in staging: iio: ad7192: implement IIO_CHAN_INFO_SAMP_FREQ
-which broke ad7793 as it was not altered to match those changes.
+When using large tcp_rmem[2] values (I did tests with 500 MB),
+I noticed overflows while computing rcvwin.
 
-This driver predates the availability of IIO_CHAN_INFO_SAMP_FREQ
-attribute wherein usage has some advantages like it can be accessed by
-in-kernel consumers as well as reduces the code size.
+Lets fix this before the following patch.
 
-Therefore, use IIO_CHAN_INFO_SAMP_FREQ to implement the
-sampling_frequency attribute instead of using IIO_DEV_ATTR_SAMP_FREQ()
-macro.
-
-Move code from the functions associated with IIO_DEV_ATTR_SAMP_FREQ()
-into respective read and write hooks with the mask set to
-IIO_CHAN_INFO_SAMP_FREQ.
-
-Fixes: a13e831fcaa7 ("staging: iio: ad7192: implement IIO_CHAN_INFO_SAMP_FREQ")
-
-Signed-off-by: Michael Nosthoff <committed@heine.so>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Wei Wang <weiwan@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[Backport: sysctl_tcp_rmem is not Namespace-ify'd in older kernels]
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ad7793.c |   75 +++++++++++++++--------------------------------
- 1 file changed, 24 insertions(+), 51 deletions(-)
+ include/linux/tcp.h  |    2 +-
+ net/ipv4/tcp_input.c |   10 ++++++----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/iio/adc/ad7793.c
-+++ b/drivers/iio/adc/ad7793.c
-@@ -348,55 +348,6 @@ static const u16 ad7793_sample_freq_avai
- static const u16 ad7797_sample_freq_avail[16] = {0, 0, 0, 123, 62, 50, 0,
- 					33, 0, 17, 16, 12, 10, 8, 6, 4};
+--- a/include/linux/tcp.h
++++ b/include/linux/tcp.h
+@@ -334,7 +334,7 @@ struct tcp_sock {
  
--static ssize_t ad7793_read_frequency(struct device *dev,
--		struct device_attribute *attr,
--		char *buf)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7793_state *st = iio_priv(indio_dev);
--
--	return sprintf(buf, "%d\n",
--	       st->chip_info->sample_freq_avail[AD7793_MODE_RATE(st->mode)]);
--}
--
--static ssize_t ad7793_write_frequency(struct device *dev,
--		struct device_attribute *attr,
--		const char *buf,
--		size_t len)
--{
--	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
--	struct ad7793_state *st = iio_priv(indio_dev);
--	long lval;
--	int i, ret;
--
--	ret = kstrtol(buf, 10, &lval);
--	if (ret)
--		return ret;
--
--	if (lval == 0)
--		return -EINVAL;
--
--	for (i = 0; i < 16; i++)
--		if (lval == st->chip_info->sample_freq_avail[i])
--			break;
--	if (i == 16)
--		return -EINVAL;
--
--	ret = iio_device_claim_direct_mode(indio_dev);
--	if (ret)
--		return ret;
--	st->mode &= ~AD7793_MODE_RATE(-1);
--	st->mode |= AD7793_MODE_RATE(i);
--	ad_sd_write_reg(&st->sd, AD7793_REG_MODE, sizeof(st->mode), st->mode);
--	iio_device_release_direct_mode(indio_dev);
--
--	return len;
--}
--
--static IIO_DEV_ATTR_SAMP_FREQ(S_IWUSR | S_IRUGO,
--		ad7793_read_frequency,
--		ad7793_write_frequency);
--
- static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
- 	"470 242 123 62 50 39 33 19 17 16 12 10 8 6 4");
+ /* Receiver queue space */
+ 	struct {
+-		int	space;
++		u32	space;
+ 		u32	seq;
+ 		u64	time;
+ 	} rcvq_space;
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -591,8 +591,8 @@ static inline void tcp_rcv_rtt_measure_t
+ void tcp_rcv_space_adjust(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	u32 copied;
+ 	int time;
+-	int copied;
  
-@@ -424,7 +375,6 @@ static IIO_DEVICE_ATTR_NAMED(in_m_in_sca
- 		ad7793_show_scale_available, NULL, 0);
+ 	tcp_mstamp_refresh(tp);
+ 	time = tcp_stamp_us_delta(tp->tcp_mstamp, tp->rcvq_space.time);
+@@ -615,12 +615,13 @@ void tcp_rcv_space_adjust(struct sock *s
  
- static struct attribute *ad7793_attributes[] = {
--	&iio_dev_attr_sampling_frequency.dev_attr.attr,
- 	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
- 	&iio_dev_attr_in_m_in_scale_available.dev_attr.attr,
- 	NULL
-@@ -435,7 +385,6 @@ static const struct attribute_group ad77
- };
+ 	if (sysctl_tcp_moderate_rcvbuf &&
+ 	    !(sk->sk_userlocks & SOCK_RCVBUF_LOCK)) {
+-		int rcvwin, rcvmem, rcvbuf;
++		int rcvmem, rcvbuf;
++		u64 rcvwin;
  
- static struct attribute *ad7797_attributes[] = {
--	&iio_dev_attr_sampling_frequency.dev_attr.attr,
- 	&iio_const_attr_sampling_frequency_available_ad7797.dev_attr.attr,
- 	NULL
- };
-@@ -505,6 +454,10 @@ static int ad7793_read_raw(struct iio_de
- 			*val -= offset;
- 		}
- 		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		*val = st->chip_info
-+			       ->sample_freq_avail[AD7793_MODE_RATE(st->mode)];
-+		return IIO_VAL_INT;
- 	}
- 	return -EINVAL;
- }
-@@ -542,6 +495,26 @@ static int ad7793_write_raw(struct iio_d
- 				break;
- 			}
- 		break;
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		if (!val) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		for (i = 0; i < 16; i++)
-+			if (val == st->chip_info->sample_freq_avail[i])
-+				break;
-+
-+		if (i == 16) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		st->mode &= ~AD7793_MODE_RATE(-1);
-+		st->mode |= AD7793_MODE_RATE(i);
-+		ad_sd_write_reg(&st->sd, AD7793_REG_MODE, sizeof(st->mode),
-+				st->mode);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 	}
+ 		/* minimal window to cope with packet losses, assuming
+ 		 * steady state. Add some cushion because of small variations.
+ 		 */
+-		rcvwin = (copied << 1) + 16 * tp->advmss;
++		rcvwin = ((u64)copied << 1) + 16 * tp->advmss;
+ 
+ 		/* If rate increased by 25%,
+ 		 *	assume slow start, rcvwin = 3 * copied
+@@ -640,7 +641,8 @@ void tcp_rcv_space_adjust(struct sock *s
+ 		while (tcp_win_from_space(rcvmem) < tp->advmss)
+ 			rcvmem += 128;
+ 
+-		rcvbuf = min(rcvwin / tp->advmss * rcvmem, sysctl_tcp_rmem[2]);
++		do_div(rcvwin, tp->advmss);
++		rcvbuf = min_t(u64, rcvwin * rcvmem, sysctl_tcp_rmem[2]);
+ 		if (rcvbuf > sk->sk_rcvbuf) {
+ 			sk->sk_rcvbuf = rcvbuf;
+ 
