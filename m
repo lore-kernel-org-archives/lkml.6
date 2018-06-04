@@ -1,67 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752104AbeFDXin (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 19:38:43 -0400
-Received: from gate.crashing.org ([63.228.1.57]:32866 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751170AbeFDXim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 19:38:42 -0400
-Message-ID: <7daf29f643bb0445fceef85b1a7fff71048f2aa6.camel@kernel.crashing.org>
-Subject: Re: [PATCH v9 2/7] i2c: Add FSI-attached I2C master algorithm
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        id S1752132AbeFDXk3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 19:40:29 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37394 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752016AbeFDXk0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 19:40:26 -0400
+X-Google-Smtp-Source: ADUXVKJiueMNVJf1PYEgg3nvGmkROIOyhZyx+mD4mSlz6ff7ACQLlcGjE3+vI4hLa1t5gwFJTFb+zd4GdrR6oaORLpQ=
+MIME-Version: 1.0
+In-Reply-To: <CAPcyv4jL5AKgP3io_hBZxkrKzBZq8wtuqk49L48v=XRiOHdoEw@mail.gmail.com>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-3-ross.zwisler@linux.intel.com> <20180529212510.GJ30110@magnolia>
+ <20180529220114.GA13948@linux.intel.com> <20180531191332.GB7825@magnolia>
+ <20180601012657.GQ10363@dastard> <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
+ <20180601022418.GR10363@dastard> <CAPcyv4iXTsxmQgjoLs2E_8QrLHrFOV_58T7UYf0zPJuB2744qQ@mail.gmail.com>
+ <20180603222038.GS10363@dastard> <20180604002525.GI10363@dastard> <CAPcyv4jL5AKgP3io_hBZxkrKzBZq8wtuqk49L48v=XRiOHdoEw@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 4 Jun 2018 16:40:25 -0700
+Message-ID: <CAPcyv4iVU3n3G3Vxf9e6cKuCtQtmrm6+R6vS379NyHX6eTZ5Lg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
+ boolean returns
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Date: Tue, 05 Jun 2018 09:38:06 +1000
-In-Reply-To: <CAHp75Vd7NvDFmWSzNDz-tgGvMVyXU7Z16LgGCWnHkY-3kE7fwg@mail.gmail.com>
-References: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
-         <1528138850-18259-3-git-send-email-eajames@linux.vnet.ibm.com>
-         <CAHp75Vd7NvDFmWSzNDz-tgGvMVyXU7Z16LgGCWnHkY-3kE7fwg@mail.gmail.com>
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-04 at 22:21 +0300, Andy Shevchenko wrote:
-> > +#define I2C_INT_ENABLE         0x0000ff80
-> > +#define I2C_INT_ERR            0x0000fcc0
-> 
-> Now it looks like a flags combinations.
-> For me as for reader would be better to see quickly a decoded line.
-> 
-> My proposal is to introduce something like following
-> 
-> _INT_ALL  GENMASK()
-> _INT_ENABLE (_INT_ALL & ~(_FOO | _BAR))
-> _INT_ERR ... similar way as above ...
-> 
-> What do you think?
+On Sun, Jun 3, 2018 at 6:48 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+> On Sun, Jun 3, 2018 at 5:25 PM, Dave Chinner <david@fromorbit.com> wrote:
+>> On Mon, Jun 04, 2018 at 08:20:38AM +1000, Dave Chinner wrote:
+>>> On Thu, May 31, 2018 at 09:02:52PM -0700, Dan Williams wrote:
+>>> > On Thu, May 31, 2018 at 7:24 PM, Dave Chinner <david@fromorbit.com> wrote:
+>>> > > On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
+>>> > >> > FWIW, XFS+DAX used to just work on this setup (I hadn't even
+>>> > >> > installed ndctl until this morning!) but after changing the kernel
+>>> > >> > it no longer works. That would make it a regression, yes?
+>>>
+>>> [....]
+>>>
+>>> > >> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
+>>> > >> has the following dependencies:
+>>> > >>
+>>> > >>         depends on MEMORY_HOTPLUG
+>>> > >>         depends on MEMORY_HOTREMOVE
+>>> > >>         depends on SPARSEMEM_VMEMMAP
+>>> > >
+>>> > > Filesystem DAX now has a dependency on memory hotplug?
+>>>
+>>> [....]
+>>>
+>>> > > OK, works now I've found the magic config incantantions to turn
+>>> > > everything I now need on.
+>>>
+>>> By enabling these options, my test VM now has a ~30s pause in the
+>>> boot very soon after the nvdimm subsystem is initialised.
+>>>
+>>> [    1.523718] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+>>> [    1.550353] 00:05: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+>>> [    1.552175] Non-volatile memory driver v1.3
+>>> [    2.332045] tsc: Refined TSC clocksource calibration: 2199.909 MHz
+>>> [    2.333280] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1fb5dcd4620, max_idle_ns: 440795264143 ns
+>>> [   37.217453] brd: module loaded
+>>> [   37.225423] loop: module loaded
+>>> [   37.228441] virtio_blk virtio2: [vda] 10485760 512-byte logical blocks (5.37 GB/5.00 GiB)
+>>> [   37.245418] virtio_blk virtio3: [vdb] 146800640 512-byte logical blocks (75.2 GB/70.0 GiB)
+>>> [   37.255794] virtio_blk virtio4: [vdc] 1073741824000 512-byte logical blocks (550 TB/500 TiB)
+>>> [   37.265403] nd_pmem namespace1.0: unable to guarantee persistence of writes
+>>> [   37.265618] nd_pmem namespace0.0: unable to guarantee persistence of writes
+>>>
+>>> The system does not appear to be consuming CPU, but it is blocking
+>>> NMIs so I can't get a CPU trace. For a VM that I rely on booting in
+>>> a few seconds because I reboot it tens of times a day, this is a
+>>> problem....
+>>
+>> And when I turn on KASAN, the kernel fails to boot to a login prompt
+>> because:
+>
+> What's your qemu and kernel command line? I'll take look at this first
+> thing tomorrow.
 
-I don't think this absolutely needs to change but yes, open coding is
-error prone. However I would think it more readable to use positive
-logic and just list all the bits that are *set* even if it's a bit more
-text:
-
-#define I2C_INT_ERR	(I2C_INT_INV_CMD	|\                			
- I2C_INT_PARITY         |\
-			 I2C_INT_BE_OVERRUN	|\
-			.../...)
-
-#define I2C_INT_ENABLE	(I2C_INT_ERR		|\
-			 I2C_INT_DAT_REQ	|\
-			 I2C_INT_CMD_COMP)
-
-Note: Eddie, I notice I2C_INT_BUSY is in "ERR" but not in "ENABLE", any
-reason for that ?
-
-Cheers,
-Ben.
+I was able to reproduce this crash by just turning on KASAN...
+investigating. It would still help to have your config for our own
+regression testing purposes it makes sense for us to prioritize
+"Dave's test config", similar to the priority of not breaking Linus'
+laptop.
