@@ -1,138 +1,111 @@
-Return-Path: <linux-pci-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2973495-1528075505-2-10522228802559311777
+Return-Path: <linux-next-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti33d1t02-1817484-1528131890-2-2529501646332447593
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-pci-owner@vger.kernel.org
+X-Mail-from: linux-next-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1528075505; b=N4/rh6dpzXw+G+xHR1UgTVBHCtCndCdSXsW4VBxVD6DqRnF1Yh
-    +RKEY/Koso8s/qLLi+5yuGVie1bLu3Ih9rFUD/3rv0HQ7XODG4Yc1f0vHeQqrAai
-    fGN464KtKxwcwULTFQX20LQ9h+J48reNc28erNSQ0YnAzK28WWbUhUmEfdSkvlIS
-    hemqyFyUUCCO+BTK/7ctv4/DIUeXvcMxbiFhOCrcjVbvN9283bhnvPuhygEeTZaG
-    ciWESbxoK3sItzywFOqZFhuTR6Ejk+/k1pWrpODjQ5ETpqLhJuiAGaFbz/3dgaiV
-    nJu0ztpVzb9fzqONbkPWlh5xCMXYchZv8a6Q==
+    1528131890; b=GwB66eC4MJbc2qopzAHoEVco908SDQTP9BGip4g1dE7Gbz6MG1
+    83Wops1NeuFihwp3E+hC6otKH8BhGupJQTka9nbxznCFxKkZ9f5857VfrDtx9FnO
+    NTrCr1cg1uO1XQxghLoiSYu763rENkXhY6kLYHZNEUkqmQErWB7WKwt6kGqbaDff
+    WzWjSto6zx21yr6CQ/aWVfbuaS+NsO4SpPHsWmgfqUygVSadqu9qqloSV/YrQpEo
+    mpiPvwNMWrsKgM7C9Gys3CoKTX05MB2RqluQxpTlT8DtJKXaDBsseLYdWwPYOkKo
+    faWBTCPw54YCnD6xk5S298YKM1c6Y51jzWFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1528075505; bh=adc2/4L1aNr+5LyEVaLDbzK0z2MiiU
-    wwVGSvQemCGRk=; b=eP2xtUNbpxVlEsCSVqSoCFSvQ+4Epiy4b7PEM61jCH0iCk
-    JhXJGwDuSguSD0vFFwb5y1mewopiXF30IySc1o2xBRn2JeQW81C3PWzU8dIWFUvz
-    opXeKiPEktj/hu9ZJDNc8hO2dKSCFP4lP2X9F0AGdUeF7pTA5wA0yHNCs/5O9Eet
-    JyW4NPBpgH+8wGlWwZDM+NC7nGS0TJKIRikA1wIsY4EiNSng8jBEGaBVXuspolJc
-    kYNxP+LA6gXcaRvhZYHuaoTLtZ7DKY6ZjxTjl1p3H1DoAsaIz4XYDaX11EMS2STD
-    9PG8G2CjlIYVSIr1kDXqMK0iUeOnrx/g5NlBXa1w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
-    header.i=@linaro.org header.b=XRLZmhBn header.a=rsa-sha256
-    header.s=google x-bits=1024;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    messagingengine.com; h=mime-version:references:in-reply-to:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1528131890; bh=SHarJUfqGDzfCzTIrDEXbqHuOodG+UcVuff3zVthQ1
+    w=; b=FK9KZQwa7tcWQxfgoTvcT86s40sEOTj/2miXQGX/mLEcaqAhxJ+BdrbyoH
+    rF6brG27+TbS/V+EnLvBtoaJ76OZqjGHlcOon8O8XqC5VpI5EJzi7hjYreOiofxb
+    VwL7JVN6ygxUxsu386FPS+B+N7H97H9CO+G6MLLFfZqwXRtng6hGzn4Eb0IIKf8k
+    MjkySKEVX504f92QB7qBs8jdIimRGTwLVD+TBSNetT3WpeLmK7x2WMPDKeP+xyK9
+    1gtEINKeJf4grs9PZeoWnxGj3xNki9pTqZg6LPzLUS7ddL2JH8zmAnQTtM2U/46Q
+    tw0vwKnEtlcAfSOInEtYrNeaQzWw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=google.com header.i=@google.com header.b=jbhjqI3y
+    header.a=rsa-sha256 header.s=20161025 x-bits=2048;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-pci-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=Y49yDL1v;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=nJa3TtZU;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
-      header.i=@linaro.org header.b=XRLZmhBn header.a=rsa-sha256
-      header.s=google x-bits=1024;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=google.com header.i=@google.com header.b=jbhjqI3y
+      header.a=rsa-sha256 header.s=20161025 x-bits=2048;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-pci-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=Y49yDL1v;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=nJa3TtZU;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+      header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJPyIu9yt5/BrXg3PJI4IksUt/jgRbni6WxPq78jbmv+q5oGoLWHKJ5kNCyEYH015xtQ1dHBUBeSZrEUlEt3Twdma0TC58hCM0iTEgf+WlOBZLOtIKiu
-    91W5VYi1/OCjXvzgV6JYCNOAvnnOBsJ0R1DRPtHLOhhE7daBvZU7QhOk70CVIny+/n28a4UG/kydMbE7gmJBW60wJ8ub4BbgsS/wie/CYiXoxEILW/opNG4A
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=7mUfYlMuFuIA:10
-    a=KKAkSRfTAAAA:8 a=Cq3FnctH2xhL_tSUadMA:9 a=CjuIK1q_8ugA:10
-    a=cvBusfyB2V15izCimMoJ:22
+X-CM-Envelope: MS4wfPORPazptST9f/+Rn6SBDsQk15hrZQVoO/X3gNOe1YNhYJu61Rr1+DoffgZd7qgpfGXj0yUJItP5vA/I8ipxaS3GrbGaX6Xr4bqSwZcwz6XYFTcTJJRA
+    T7GaA7p3i81XWT1xVmouYxhWDZCKpJIAstAEGelQPs109StnAhvF8ea+ypu38oiSFXmjYDtwX0QBLY3W0r6/a4zwbqtow362vmoQhS/DFhwxxuGOGQLVuCMs
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=7mUfYlMuFuIA:10
+    a=rOUgymgbAAAA:8 a=VwQbUJbxAAAA:8 a=CayVG71PEulSS29KkrAA:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=MP9ZtiD8KjrkvI0BhSjB:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751489AbeFDBZA (ORCPT <rfc822;linux@kroah.com>);
-        Sun, 3 Jun 2018 21:25:00 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39486 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751424AbeFDBY6 (ORCPT
-        <rfc822;linux-pci@vger.kernel.org>); Sun, 3 Jun 2018 21:24:58 -0400
-X-Google-Smtp-Source: ADUXVKKaL3QO+9iTP1wb+So2+JooiKGEbHa9R3lo3f1rdn+ByxaRp1ejYrwei+lp7dtYv8JCTfXiJw==
-Date: Sun, 3 Jun 2018 18:24:55 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-gpio@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pci: qcom: include gpio/consumer.h
-Message-ID: <20180604012455.GA3374@builder>
-References: <20180530215324.1178564-1-arnd@arndb.de>
+        id S1750853AbeFDREr (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 4 Jun 2018 13:04:47 -0400
+Received: from mail-yw0-f176.google.com ([209.85.161.176]:42119 "EHLO
+        mail-yw0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeFDREq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 4 Jun 2018 13:04:46 -0400
+X-Google-Smtp-Source: ADUXVKIgupTEqXlpZweN0YNUOTZepXOu/Oymm4pruFYFhZXurOn3NOfzbznkwoK1wM1NRgy+TPmZjZyvxykKzne/AjA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180530215324.1178564-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: linux-pci-owner@vger.kernel.org
-X-Mailing-List: linux-pci@vger.kernel.org
+References: <20180603114133.64a2cc77@canb.auug.org.au>
+In-Reply-To: <20180603114133.64a2cc77@canb.auug.org.au>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Date: Mon, 4 Jun 2018 12:04:32 -0500
+Message-ID: <CAErSpo7VL6jajWxHVacbv-43iYZu_0H=+s=ZkGjeQd1irEkucA@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the pci tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next list <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        l.subrahmanya@mobiveil.co.in
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-next-owner@vger.kernel.org
+X-Mailing-List: linux-next@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed 30 May 14:53 PDT 2018, Arnd Bergmann wrote:
+On Sat, Jun 2, 2018 at 8:41 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Bjorn,
+>
+> Commits
+>
+>   aeddc65a043f ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver DT bindings")
+>   c1efa236b42b ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+>   18eb4158c840 ("PCI: mobiveil: Add MSI support")
+>
+> are missing a Signed-off-by from their committer.
 
-> When CONFIG_GPIOLIB is disabled, we run into a build failure:
-> 
-> drivers/pci/dwc/pcie-qcom.c: In function 'qcom_pcie_probe':
-> drivers/pci/dwc/pcie-qcom.c:1223:16: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_regulator_get_optional'? [-Werror=implicit-function-declaration]
->   pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
-> 
-> Including gpio/consumer.h directly is the correct fix.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/pci/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-qcom.c b/drivers/pci/dwc/pcie-qcom.c
-> index b65bbf7c284e..17df19db851e 100644
-> --- a/drivers/pci/dwc/pcie-qcom.c
-> +++ b/drivers/pci/dwc/pcie-qcom.c
-> @@ -10,7 +10,7 @@
->  
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> -- 
-> 2.9.0
-> 
+Fixed, thanks.  I had cherry-picked those from Lorenzo's branch to fix
+an issue while he's away, and neglected to add my own Signed-off-by.
