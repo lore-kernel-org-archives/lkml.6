@@ -1,72 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752793AbeFDMus (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:50:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52252 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752611AbeFDMur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:50:47 -0400
-Date: Mon, 4 Jun 2018 15:50:46 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: David Gibson <david@gibson.dropbear.id.au>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, jasowang@redhat.com, mpe@ellerman.id.au,
-        hch@infradead.org
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-Message-ID: <20180604154355-mutt-send-email-mst@kernel.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
- <20180523213703-mutt-send-email-mst@kernel.org>
- <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
- <20180604085742.GQ4251@umbus>
- <d5df613d6347fe2f9bb6ea65bc6f6be05650ca6f.camel@kernel.crashing.org>
+        id S1752852AbeFDMwT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:52:19 -0400
+Received: from verein.lst.de ([213.95.11.211]:54909 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752453AbeFDMwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:52:18 -0400
+Date: Mon, 4 Jun 2018 14:59:18 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Hannes Reinecke <hare@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Laurence Oberman <loberman@redhat.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>, Ewan Milne <emilne@redhat.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>, dm-devel@redhat.com,
+        mwilck@suse.de
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180604125918.GC30945@lst.de>
+References: <20180525141211.GA25971@lst.de> <20180525145056.GD9591@redhat.com> <yq1muwj45sg.fsf@oracle.com> <20180529030236.GA28895@redhat.com> <20180529072240.np5c62akbr7jqelr@linux-x5ow.site> <20180529080952.GA1369@lst.de> <20180529232718.GA1730@redhat.com> <f4951571-d37d-73cd-1d6c-0ca84647d5ac@kernel.dk> <20180604081921.3cedecbc@pentland.suse.de> <20180604071829.tq7wmx4bvk4uzubd@linux-x5ow.site>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d5df613d6347fe2f9bb6ea65bc6f6be05650ca6f.camel@kernel.crashing.org>
+In-Reply-To: <20180604071829.tq7wmx4bvk4uzubd@linux-x5ow.site>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 07:48:54PM +1000, Benjamin Herrenschmidt wrote:
-> On Mon, 2018-06-04 at 18:57 +1000, David Gibson wrote:
-> > 
-> > > - First qemu doesn't know that the guest will switch to "secure mode"
-> > > in advance. There is no difference between a normal and a secure
-> > > partition until the partition does the magic UV call to "enter secure
-> > > mode" and qemu doesn't see any of it. So who can set the flag here ?
-> > 
-> > This seems weird to me.  As a rule HV calls should go through qemu -
-> > or be allowed to go directly to KVM *by* qemu.
-> 
-> It's not an HV call, it's a UV call, qemu won't see it, qemu isn't
-> trusted. Now the UV *will* reflect that to the HV via some synthetized
-> HV calls, and we *could* have those do a pass by qemu, however, so far,
-> our entire design doesn't rely on *any* qemu knowledge whatsoever and
-> it would be sad to add it just for that purpose.
+On Mon, Jun 04, 2018 at 09:18:29AM +0200, Johannes Thumshirn wrote:
+> What we really should do is, try to give multipath-tools a 'nvme
+> list-subsys' like view of nvme native multipathing (and I think Martin
+> W. has already been looking into this a while ago).
 
-It's a temporary work-around. I think that the long-term fix is to
-support per-device quirks and have the DMA API DTRT for virtio.
+Which has been merged into multipath-tools a while ago:
 
-> Additionally, this is rather orthogonal, see my other email, the
-> problem we are trying to solve is *not* a qemu problem and it doesn't
-> make sense to leak that into qemu.
-> 
-> >   We generally reserve
-> > the latter for hot path things.  Since this isn't a hot path, having
-> > the call handled directly by the kernel seems wrong.
-> >
-> > Unless a "UV call" is something different I don't know about.
-> 
-> Yes, a UV call goes to the Ultravisor, not the Hypervisor. The
-> Hypervisor isn't trusted.
-> 
-> > > - Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
-> > > vhost) go through the emulated MMIO for every access to the guest,
-> > > which adds additional overhead.
-> > 
-> Ben.
+https://git.opensvc.com/gitweb.cgi?p=multipath-tools/.git;a=commit;h=86553b57b6bd55e0355ac27ae100cce6cc42bee3
