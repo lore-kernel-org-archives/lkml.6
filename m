@@ -1,46 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751214AbeFDSNa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 14:13:30 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36983 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeFDSN2 (ORCPT
+        id S1751270AbeFDSQP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 14:16:15 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53615 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750987AbeFDSQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 14:13:28 -0400
-X-Google-Smtp-Source: ADUXVKLFSQLCAPew7Iin/HJLILKhvO2135EjPfnY6nC0nS2otZBeH9omzoJkj7v+FgAhDvhDwMALFQ==
-Subject: Re: [PATCH v3] block/loop: Serialize ioctl operations.
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzbot
-        <syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com>,
-        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
-References: <1527297408-4428-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <ce5ce21a-5865-36c5-a110-eed11f785ab2@I-love.SAKURA.ne.jp>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <748bce03-afda-4ed2-13b3-1fcd01d57770@kernel.dk>
-Date: Mon, 4 Jun 2018 12:13:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 4 Jun 2018 14:16:13 -0400
+X-Google-Smtp-Source: ADUXVKKi7k5vj2bF17elcO1LI5LP6cZODv3RFrPY7Q8Pr+fN0hoG5VOk3Slp2Juy5fLs3f8Fy8k9bw==
+Date: Mon, 4 Jun 2018 20:16:10 +0200
+From: Simon Horman <simon.horman@netronome.com>
+To: NeilBrown <neilb@suse.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>, Thomas Graf <tgraf@suug.ch>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 15a/18] rhashtables: add lockdep tracking to bucket
+ bit-spin-locks.
+Message-ID: <20180604181609.sssd4ao6wfwj3il6@netronome.com>
+References: <152782754287.30340.4395718227884933670.stgit@noble>
+ <152782824984.30340.1634082820568216846.stgit@noble>
+ <20180602050322.liesw324q5kawcue@gondor.apana.org.au>
+ <9bea77df-e7db-677a-31b2-710dc6d956ee@gmail.com>
+ <871sdnqty4.fsf@notabene.neil.brown.name>
+ <87po17p8jd.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <ce5ce21a-5865-36c5-a110-eed11f785ab2@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87po17p8jd.fsf@notabene.neil.brown.name>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/4/18 5:19 AM, Tetsuo Handa wrote:
-> This problem was already ignored for 8 months. Unless we boost priority,
-> this problem will be ignored for years. Jens, can we test this patch?
+On Mon, Jun 04, 2018 at 12:52:54PM +1000, NeilBrown wrote:
+> 
+> Native bit_spin_locks are not tracked by lockdep.
+> 
+> The bit_spin_locks used for rhashtable buckets are local
+> to the rhashtable implementation, so there is little opportunity
+> for the sort of misuse that lockdep might detect.
+> However locks are held while a hash function or compare
+> function is called, and if one of these took a lock,
+> a misbehaviour is possible.
+> 
+> As it is quite easy to add lockdep support this unlikely
+> possibility see to be enough justification.
 
-Sorry, it's just that I _really_ hate this patch. We're making up
-a weird locking primitive that tracks the process, with a weird
-unlock helper that only unlocks if it's the process that is
-holding the mutex.
+nit: s/see/seems/
 
-I'll try and think about this a bit, it would be nice if we had
-a better alternative than the above.
-
--- 
-Jens Axboe
+> 
+> So create a lockdep class for bucket bit_spin_lock as attach
+> through a lockdep_map in each bucket_table.
+> 
+> With the 'nested' annotation in rhashtable_rehash_one(), lockdep
+> correctly reports a possible problem as this lock it taken
+> while another bucket lock (in another table) is held.  This
+> confirms that the added support works.
+> With the correct nested annotation in place, lockdep reports
+> no problems.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.com>
