@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751539AbeFDQ1s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:27:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40685 "EHLO
+        id S1751219AbeFDQ1q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:27:46 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:40683 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751233AbeFDQ1m (ORCPT
+        with ESMTP id S1751209AbeFDQ1l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:27:42 -0400
-Message-Id: <20180604162224.555716895@linutronix.de>
+        Mon, 4 Jun 2018 12:27:41 -0400
+Message-Id: <20180604162224.386544292@linutronix.de>
 User-Agent: quilt/0.65
-Date: Mon, 04 Jun 2018 17:33:56 +0200
+Date: Mon, 04 Jun 2018 17:33:54 +0200
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
@@ -17,75 +17,81 @@ Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
         Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
         Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>,
         stable@vger.kernel.org
-Subject: [patch 4/8] irq_remapping: Use apic_ack_irq()
+Subject: [patch 2/8] genirq/generic_pending: Do not lose pending affinity
+ update
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=irq_remapping--Use-apic_ack_irq().patch
+Content-Disposition: inline;
+ filename=genirq-generic_pending--Do-not-lose-pending-affinity-update.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To address the EBUSY fail of interrupt affinity settings in case that the
-previous setting has not been cleaned up yet, use the new apic_ack_irq()
-function instead of the special ir_ack_apic_edge() implementation which is
-merily a wrapper around ack_APIC_irq().
+The generic pending interrupt mechanism moves interrupts from the interrupt
+handler on the original target CPU to the new destination CPU. This is
+required for x86 and ia64 due to the way the interrupt delivery and
+acknowledge works if the interrupts are not remapped.
 
-Preparatory change for the real fix
+However that update can fail for various reasons. Some of them are valid
+reasons to discard the pending update, but the case, when the previous move
+has not been fully cleaned up is not a legit reason to fail.
 
-Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
+Check the return value of irq_do_set_affinity() for -EBUSY, which indicates
+a pending cleanup, and rearm the pending move in the irq dexcriptor so it's
+tried again when the next interrupt arrives.
+
+Fixes: 996c591227d9 ("x86/irq: Plug vector cleanup race")
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
 ---
- drivers/iommu/amd_iommu.c           |    2 +-
- drivers/iommu/intel_irq_remapping.c |    2 +-
- drivers/iommu/irq_remapping.c       |    5 -----
- drivers/iommu/irq_remapping.h       |    2 --
- 4 files changed, 2 insertions(+), 9 deletions(-)
+ kernel/irq/migration.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -4379,7 +4379,7 @@ static void ir_compose_msi_msg(struct ir
+--- a/kernel/irq/migration.c
++++ b/kernel/irq/migration.c
+@@ -38,17 +38,18 @@ bool irq_fixup_move_pending(struct irq_d
+ void irq_move_masked_irq(struct irq_data *idata)
+ {
+ 	struct irq_desc *desc = irq_data_to_desc(idata);
+-	struct irq_chip *chip = desc->irq_data.chip;
++	struct irq_data *data = &desc->irq_data;
++	struct irq_chip *chip = data->chip;
  
- static struct irq_chip amd_ir_chip = {
- 	.name			= "AMD-IR",
--	.irq_ack		= ir_ack_apic_edge,
-+	.irq_ack		= apic_ack_irq,
- 	.irq_set_affinity	= amd_ir_set_affinity,
- 	.irq_set_vcpu_affinity	= amd_ir_set_vcpu_affinity,
- 	.irq_compose_msi_msg	= ir_compose_msi_msg,
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -1223,7 +1223,7 @@ static int intel_ir_set_vcpu_affinity(st
+-	if (likely(!irqd_is_setaffinity_pending(&desc->irq_data)))
++	if (likely(!irqd_is_setaffinity_pending(data)))
+ 		return;
  
- static struct irq_chip intel_ir_chip = {
- 	.name			= "INTEL-IR",
--	.irq_ack		= ir_ack_apic_edge,
-+	.irq_ack		= apic_ack_irq,
- 	.irq_set_affinity	= intel_ir_set_affinity,
- 	.irq_compose_msi_msg	= intel_ir_compose_msi_msg,
- 	.irq_set_vcpu_affinity	= intel_ir_set_vcpu_affinity,
---- a/drivers/iommu/irq_remapping.c
-+++ b/drivers/iommu/irq_remapping.c
-@@ -156,11 +156,6 @@ void panic_if_irq_remap(const char *msg)
- 		panic(msg);
+-	irqd_clr_move_pending(&desc->irq_data);
++	irqd_clr_move_pending(data);
+ 
+ 	/*
+ 	 * Paranoia: cpu-local interrupts shouldn't be calling in here anyway.
+ 	 */
+-	if (irqd_is_per_cpu(&desc->irq_data)) {
++	if (irqd_is_per_cpu(data)) {
+ 		WARN_ON(1);
+ 		return;
+ 	}
+@@ -73,9 +74,20 @@ void irq_move_masked_irq(struct irq_data
+ 	 * For correct operation this depends on the caller
+ 	 * masking the irqs.
+ 	 */
+-	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids)
+-		irq_do_set_affinity(&desc->irq_data, desc->pending_mask, false);
++	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids) {
++		int ret;
+ 
++		ret = irq_do_set_affinity(data, desc->pending_mask, false);
++		/*
++		 * If the there is a cleanup pending in the underlying
++		 * vector management, reschedule the move for the next
++		 * interrupt. Leave desc->pending_mask intact.
++		 */
++		if (ret == -EBUSY) {
++			irqd_set_move_pending(data);
++			return;
++		}
++	}
+ 	cpumask_clear(desc->pending_mask);
  }
  
--void ir_ack_apic_edge(struct irq_data *data)
--{
--	ack_APIC_irq();
--}
--
- /**
-  * irq_remapping_get_ir_irq_domain - Get the irqdomain associated with the IOMMU
-  *				     device serving request @info
---- a/drivers/iommu/irq_remapping.h
-+++ b/drivers/iommu/irq_remapping.h
-@@ -65,8 +65,6 @@ struct irq_remap_ops {
- extern struct irq_remap_ops intel_irq_remap_ops;
- extern struct irq_remap_ops amd_iommu_irq_ops;
- 
--extern void ir_ack_apic_edge(struct irq_data *data);
--
- #else  /* CONFIG_IRQ_REMAP */
- 
- #define irq_remapping_enabled 0
