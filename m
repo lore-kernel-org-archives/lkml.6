@@ -1,91 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753711AbeFDO6t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753679AbeFDO6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:58:47 -0400
-Date: Mon, 4 Jun 2018 11:58:44 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v3]: perf record: enable arbitrary event names thru name=
- modifier
-Message-ID: <20180604145844.GL3397@kernel.org>
-References: <c194b060-761d-0d50-3b21-bb4ed680002d@linux.intel.com>
- <20180604075600.GA10484@krava>
- <20180604135849.GE3397@kernel.org>
- <3269ec8e-88b0-8254-6419-da1896c083df@linux.intel.com>
- <20180604142340.GJ3397@kernel.org>
- <ed38dfcc-be73-e1d7-4eb5-862468955766@linux.intel.com>
+        id S1753773AbeFDO7K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:59:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753743AbeFDO7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:59:09 -0400
+Date: Mon, 4 Jun 2018 09:59:02 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, David Ahern <dsahern@gmail.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Jiri Slaby <jslaby@suse.cz>, Joe Perches <joe@perches.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Wang Nan <wangnan0@huawei.com>,
+        damian <damian.tometzki@icloud.com>
+Subject: Re: [PATCH 00/29] objtool sync up for the stable 4.9.y tree
+Message-ID: <20180604145809.3uqin3jvooefd2bg@treble>
+References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ed38dfcc-be73-e1d7-4eb5-862468955766@linux.intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Jun 04, 2018 at 05:51:03PM +0300, Alexey Budankov escreveu:
-> Hi,
-> On 04.06.2018 17:23, Arnaldo Carvalho de Melo wrote:
-> > Em Mon, Jun 04, 2018 at 05:19:11PM +0300, Alexey Budankov escreveu:
-> >> Hi,
-> >>
-> >> On 04.06.2018 16:58, Arnaldo Carvalho de Melo wrote:
-> >>> Em Mon, Jun 04, 2018 at 09:56:02AM +0200, Jiri Olsa escreveu:
-> >>>> On Mon, Jun 04, 2018 at 09:50:56AM +0300, Alexey Budankov wrote:
-> >>>>> Enable complex event names containing [.:=,] symbols to be encoded into Perf 
-> >>>>> trace using name= modifier e.g. like this:
-> >>>
-> >>>>> perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',\
-> >>>>> 		period=0x3567e0,event=0x3c,cmask=0x1/Duk ./futex
-> >>>
-> >>>>> Below is how it looks like in the report output. Please note explicit escaped 
-> >>>>> quoting at cmdline string in the header so that thestring can be directly reused
-> >>>>> for another collection in shell:
-> >>>
-> >>> Applied, but there are other places where we show event names, such as:
-> >>>
-> >>> [root@jouet ~]# perf record -e cpu/name=\'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM\',period=0x3567e0,event=0x3c,cmask=0x1/Duk
-> >>> ^C[ perf record: Woken up 1 times to write data ]
-> >>> [ perf record: Captured and wrote 1.599 MB perf.data (704 samples) ]
-> >>>
-> >>> [root@jouet ~]# perf evlist
-> >>> OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM
-> >>> [root@jouet ~]# perf evlist -v
-> >>> OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM: type: 4, size: 112, config: 0x100003c, { sample_period, sample_freq }: 3500000, sample_type: IP|TID|TIME|CPU, disabled: 1, inherit: 1, pinned: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1
-> >>> [root@jouet ~]# 
-> >>>
-> >>> That I used to check if the period, etc were correctly set, etc. Perhaps
-> >>> we should add that \'\' there as well?
-> >>
-> >> Like this?
-> >>
-> >> name: 'OFFCORE_RESPONSE:request=DEMAND_RFO:response=L3_HIT.SNOOP_HITM', type: 4, size: 112, config: 0x100003c, { sample_period, sample_freq }: 3500000, sample_type: IP|TID|TIME|CPU, disabled: 1, inherit: 1, pinned: 1, exclude_hv: 1, mmap: 1, comm: 1, task: 1, sample_id_all: 1, mmap2: 1, comm_exec: 1
-> > 
-> > Nope, I mean with the same intent you had when showing escaped single
-> > quotes in the 'perf report' header, that users would copy'n'paste and
-> > get something that works on the command line?
+On Sun, Jun 03, 2018 at 02:26:23PM +0200, Greg Kroah-Hartman wrote:
+> There are pros and cons of dealing with tools in the kernel directory.
+> The pros are the fact that development happens fast, and new features
+> can be added to the kernel and the tools at the same times.  The cons
+> are when dealing with backported kernel patches, it can be necessary to
+> backport parts of the tool changes as well.
 > 
-> Well ok, if there are other cases aside perf report that tool shows full 
-> command line ready for reusing then it definitely makes sense to print 
+> For 4.9.y so far, we have backported individual patches.  That quickly
+> breaks down when there are minor differences between how backports were
+> handled, so grabbing 40+ patch long series can be difficult, not
+> impossible, but really frustrating to attempt.
+> 
+> To help mitigate this mess, this patch series works to sync up the
+> objtool code with the version that is currently in 4.14.47.  This
+> required a number of objtool old patches to be backported, a single big
+> "sync the world" patch, and a lot of include file updates to get
+> everything all working properly as well as some minor fixes for build
+> warnings.
+> 
+> And at the end of this series, is a set of backported objtool patches
+> for gcc-8 that was the main reason this whole patch series was created.
+> They applied just fine, being the identical version that goes into the
+> 4.14.y stable tree, so it feels like the backport was successful.
+> 
+> This has survivied my limited testing, and as the codebase is identical
+> to 4.14.47, I'm pretty comfortable dropping this big change in here in
+> 4.9.y.  Hopefully all goes well...
+> 
+> If anyone has any objections to this patch series, or finds anything I
+> messed up on, please let me know.
 
-Ok, lets leave it like you did, i.e. just when command lines appear and
-people are likely to copy'n'paste them to repeat it.
+Thanks Greg.  Looks good to me.
 
-> event names quoted there. If such cases were pointed out then they also 
-> could be addressed along with the unit/regression testing mentioned above.
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-So lests stick to just the unit/regression testing, can you take a look
-at that?
-
-- Arnaldo
+-- 
+Josh
