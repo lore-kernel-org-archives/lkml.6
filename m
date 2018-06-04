@@ -1,70 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753176AbeFDHZ2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:25:28 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:32832 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751820AbeFDHZ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:25:27 -0400
-Date: Mon, 4 Jun 2018 09:25:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: 4.13..4.14 scheduling overhead regression (bisected  -
- b956575bed91)
-Message-ID: <20180604072518.GM12217@hirez.programming.kicks-ass.net>
-References: <1527857873.4674.11.camel@gmx.de>
- <20180601132055.GT12198@hirez.programming.kicks-ass.net>
- <1527879389.7898.84.camel@surriel.com>
+        id S1753387AbeFDHZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:25:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54098 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752980AbeFDHBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:33 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Benson Leung <bleung@chromium.org>, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 29/52] platform/chrome: cros_ec_lpc: remove redundant pointer request
+Date: Mon,  4 Jun 2018 08:58:24 +0200
+Message-Id: <20180604065607.733383709@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
+References: <20180604065606.532044490@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="H7BIH7T1fRJ3RGOi"
-Content-Disposition: inline
-In-Reply-To: <1527879389.7898.84.camel@surriel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
---H7BIH7T1fRJ3RGOi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Fri, Jun 01, 2018 at 02:56:29PM -0400, Rik van Riel wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> > IIRC all page freeing does indeed go through tlb_remove_page(), it
-> > shouldn't be too hard to make that work.
->=20
-> Page freeing does. However, page table freeing
-> does not, and might need to be done in a different
-> way.
+commit d3b56c566d4ba8cae688baf3cca94425d57ea783 upstream.
 
-We have tlb_remove_table() for those. And that had better work otherwise
-the whole 'RCU'-freed page table mess is broken :-)
+Pointer request is being assigned but never used, so remove it. Cleans
+up the clang warning:
 
+drivers/platform/chrome/cros_ec_lpc.c:68:2: warning: Value stored to
+'request' is never read
 
---H7BIH7T1fRJ3RGOi
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Benson Leung <bleung@chromium.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
------BEGIN PGP SIGNATURE-----
+---
+ drivers/platform/chrome/cros_ec_lpc.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAlsU6V4ACgkQdkfhpEvA
-5Lo2Sg/+POW/AM/uOX/nJ+HwD8nB4EkmDwIgBKD9dZPchWZIiyGuaaYQYZ4LlLBp
-UyVClGaUb/frWPeC0dZl6hh85tVSJPFbY8Q44iVwUYsDWZYIbWW8WBiGv3nZrfr8
-omApelSCn6uhRtSbV9MZgL4b/Bm83bzaGAuzBwuXAkTqwlbuP11GV86rK7OSs/SD
-ROKmD7g0A4Rcj+b08Dc6gXGIYCNsU9LULW2s8f2Sbp89aB4SZbQtbbCtoiH+RwcK
-UEWqtDIzpGKB3p2lVFe/rVJrweiLhxRJyn9UzfIsqgugm/V1BCcvHfe0/2xwLRpC
-zA2oNUz9Q8OJOodKywvvXuC82k1GViO85SisVnXNlkBfpf5T1ByGw2bv+UJsoz6R
-A9zjuPHZ+IMp/1Bx3WqhWqK3QxxGbdrmjqZterwLpHG1LmwbN4EEJKESKt+3FDtX
-2PQakzS4S2Y2TYTw30jKaejotBt5zYMR5EQs+Y9KsgiRJC7Sv97fs7UTVP4CQm+7
-qDrn7EsRmrSH2qMhGe8GDwUivytqlwcahIfTaTEwOxsNCtoXtSCwEVKERK7WKxP1
-qsNVYfD+L2xdYCOfnB3zO9KO88LmTCxBnRAvzwSBAPqXgh/8DVRXetLnuhm7loZK
-1J0JFO3LQTVhOVBfy/bTKJC5nDHrMiSoRSbKoyOPx/r+4ity6vI=
-=Wo+r
------END PGP SIGNATURE-----
-
---H7BIH7T1fRJ3RGOi--
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -54,7 +54,6 @@ static int ec_response_timed_out(void)
+ static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
+ 				struct cros_ec_command *msg)
+ {
+-	struct ec_host_request *request;
+ 	struct ec_host_response response;
+ 	u8 sum;
+ 	int ret = 0;
+@@ -65,8 +64,6 @@ static int cros_ec_pkt_xfer_lpc(struct c
+ 	/* Write buffer */
+ 	cros_ec_lpc_write_bytes(EC_LPC_ADDR_HOST_PACKET, ret, ec->dout);
+ 
+-	request = (struct ec_host_request *)ec->dout;
+-
+ 	/* Here we go */
+ 	sum = EC_COMMAND_PROTOCOL_3;
+ 	cros_ec_lpc_write_bytes(EC_LPC_ADDR_HOST_CMD, 1, &sum);
