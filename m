@@ -1,72 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752638AbeFDKGs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:06:48 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:43581 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752027AbeFDKGr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:06:47 -0400
-X-Google-Smtp-Source: ADUXVKIMw7nN/FihhdOj6AHxC0uyFlHlcjdrGkHKX/MK7Bx7+22Fo1jcpdx54M4IYEirUTS4kXTg9Adjx7YGHr7OW74=
+        id S1752137AbeFDKJa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:09:30 -0400
+Received: from mga04.intel.com ([192.55.52.120]:64773 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751933AbeFDKJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:09:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="46243863"
+From: "Dziegielewski, Marcin" <marcin.dziegielewski@intel.com>
+To: Javier Gonzalez <javier@cnexlabs.com>,
+        Matias Bjorling <mb@lightnvm.io>
+CC: Jens Axboe <axboe@fb.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Konopko, Igor J" <igor.j.konopko@intel.com>
+Subject: RE: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
+ equals to 0
+Thread-Topic: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
+ equals to 0
+Thread-Index: AQHT9mJJ9Oeppdx29kSrRWdMkH84gaRE6UWAgArugQA=
+Date: Mon, 4 Jun 2018 10:09:26 +0000
+Message-ID: <9FC4315EA6BEAA449828D92CF173A10D3E382351@IRSMSX109.ger.corp.intel.com>
+References: <20180528085841.26684-1-mb@lightnvm.io>
+ <20180528085841.26684-19-mb@lightnvm.io>
+ <54B2CCDB-B869-4087-8AE2-2AC73381B1FF@cnexlabs.com>
+In-Reply-To: <54B2CCDB-B869-4087-8AE2-2AC73381B1FF@cnexlabs.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjVlOTc1MGEtMGU3ZS00ZDliLWEwNTItZDI3ODAwMGY2MGNlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQXZPTE9WUDlCSzh6SkpQb2c3cURrQ0tTZXNhOTgxa3BiS3J5cHJGR0xLUmpcL0lpdHQ2WU02eW05SVRya0liZUkifQ==
+x-originating-ip: [163.33.239.181]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <6fefc785-b6b7-e24f-2559-76ce70544717@huawei.com>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-22-git-send-email-xieyisheng1@huawei.com>
- <CAHp75VeM8+pWEx=XNOGAb=Fdh+rh3WOn2i4m7ObhcVdcXKVa3A@mail.gmail.com> <6fefc785-b6b7-e24f-2559-76ce70544717@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 4 Jun 2018 13:06:45 +0300
-Message-ID: <CAHp75Vc-BDtz62zS2_Chi=UgZJw7vvUzJ34CEHd-RCjqnOjBew@mail.gmail.com>
-Subject: Re: [PATCH v2 21/21] sparc64: use match_string() helper
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w54A9aXH003963
 
-On Mon, Jun 4, 2018 at 4:06 AM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
-> Hi Andy,
->
-> On 2018/6/1 19:34, Andy Shevchenko wrote:
->> On Thu, May 31, 2018 at 2:11 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
->>> match_string() returns the index of an array for a matching string,
->>> which can be used instead of open coded variant.
->>
->>> @@ -512,10 +512,9 @@ static unsigned long __init mdesc_cpu_hwcap_list(void)
->>>                                 break;
->>>                         }
->>>                 }
->>
->> It seems previous loop also can be replaced.
->
-> No, because the there is an NULL in the middle of the array hwcaps:
->  static const char *hwcaps[] = {
->           "flush", "stbar", "swap", "muldiv", "v9",
->           "ultra3", "blkinit", "n2",
->
->           /* These strings are as they appear in the machine description
->            * 'hwcap-list' property for cpu nodes.
->            */
->           "mul32", "div32", "fsmuld", "v8plus", "popc", "vis", "vis2",
->           "ASIBlkInit", "fmaf", "vis3", "hpc", "random", "trans", "fjfmau",
->           "ima", "cspare", "pause", "cbcond", NULL /*reserved for crypto */,
->           "adp",
->   };
 
-Actually you can.
-What you need is to add string literal instead of NULL and make an
-additional condition after match_string() in all users (not to many),
-something like
+Frist of all I want to say sorry for late response - I was on holiday.
 
-i = match_string();
-if (i < 0)
- ...
-if (BIT(i) == HWCAP_SPARC_CRYPTO) // or !=
- ...
+> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
+> Sent: Monday, May 28, 2018 1:03 PM
+> To: Matias Bjørling <mb@lightnvm.io>
+> Cc: Jens Axboe <axboe@fb.com>; linux-block@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Dziegielewski, Marcin
+> <marcin.dziegielewski@intel.com>; Konopko, Igor J
+> <igor.j.konopko@intel.com>
+> Subject: Re: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
+> equals to 0
+> 
+> > On 28 May 2018, at 10.58, Matias Bjørling <mb@lightnvm.io> wrote:
+> >
+> > From: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+> >
+> > Some devices can expose mw_cunits equal to 0, it can cause creation of
+> > too small write buffer and cause performance to drop on write
+> > workloads.
+> >
+> > To handle that, we use the default value for MLC and beacause it
+> > covers both 1.2 and 2.0 OC specification, setting up mw_cunits in
+> > nvme_nvm_setup_12 function isn't longer necessary.
+> >
+> > Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
+> > Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
+> > Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+> > ---
+> > drivers/lightnvm/pblk-init.c | 10 +++++++++-
+> > drivers/nvme/host/lightnvm.c |  1 -
+> > 2 files changed, 9 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/lightnvm/pblk-init.c
+> > b/drivers/lightnvm/pblk-init.c index d65d2f972ccf..0f277744266b 100644
+> > --- a/drivers/lightnvm/pblk-init.c
+> > +++ b/drivers/lightnvm/pblk-init.c
+> > @@ -356,7 +356,15 @@ static int pblk_core_init(struct pblk *pblk)
+> > 	atomic64_set(&pblk->nr_flush, 0);
+> > 	pblk->nr_flush_rst = 0;
+> >
+> > -	pblk->pgs_in_buffer = geo->mw_cunits * geo->all_luns;
+> > +	if (geo->mw_cunits) {
+> > +		pblk->pgs_in_buffer = geo->mw_cunits * geo->all_luns;
+> > +	} else {
+> > +		pblk->pgs_in_buffer = (geo->ws_opt << 3) * geo->all_luns;
+> > +		/*
+> > +		 * Some devices can expose mw_cunits equal to 0, so let's
+> use
+> > +		 * here default safe value for MLC.
+> > +		 */
+> > +	}
+> >
+> > 	pblk->min_write_pgs = geo->ws_opt * (geo->csecs / PAGE_SIZE);
+> > 	max_write_ppas = pblk->min_write_pgs * geo->all_luns; diff --git
+> > a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c index
+> > 41279da799ed..c747792da915 100644
+> > --- a/drivers/nvme/host/lightnvm.c
+> > +++ b/drivers/nvme/host/lightnvm.c
+> > @@ -338,7 +338,6 @@ static int nvme_nvm_setup_12(struct
+> nvme_nvm_id12
+> > *id,
+> >
+> > 	geo->ws_min = sec_per_pg;
+> > 	geo->ws_opt = sec_per_pg;
+> > -	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC safe values
+> */
+> >
+> > 	/* Do not impose values for maximum number of open blocks as it is
+> > 	 * unspecified in 1.2. Users of 1.2 must be aware of this and
+> > eventually
+> > --
+> > 2.11.0
+> 
+> By doing this, 1.2 future users (beyond pblk), will fail to have a valid
+> mw_cunits value. It's ok to deal with the 0 case in pblk, but I believe that we
+> should have the default value for 1.2 either way.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I'm not sure. From my understanding, setting of default value was workaround for pblk case, am I right ?. In my opinion any user of 1.2 spec should be aware that there is not mw_cunit value. From my point of view, leaving here 0 (and decision what do with it to lightnvm user) is more safer way, but maybe I'm wrong. I believe that it is topic to wider discussion with maintainers.
+
+> 
+> A more generic way of doing this would be to have a default value for
+> 2.0 too, in case mw_cunits is reported as 0.
+
+Since 0 is correct value and users can make different decisions based on it, I think we shouldn't overwrite it by default value. Is it make sense?
+> 
+> Javier
+
+Thanks,
+Marcin 
