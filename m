@@ -1,56 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753262AbeFDNLE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:11:04 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8635 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753001AbeFDNLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:11:03 -0400
-From: YueHaibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <Ariel.Elior@cavium.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <everest-linux-l2@cavium.com>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] qed: use dma_zalloc_coherent instead of allocator/memset
-Date: Mon, 4 Jun 2018 21:10:31 +0800
-Message-ID: <20180604131031.24476-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1753306AbeFDNLP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:11:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58970 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753040AbeFDNLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:11:06 -0400
+Date: Mon, 4 Jun 2018 15:11:04 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
+        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+Message-ID: <20180604131104.GS19202@dhcp22.suse.cz>
+References: <20180523232246.20445-1-qing.huang@oracle.com>
+ <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+ <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+ <20180531085532.GK15278@dhcp22.suse.cz>
+ <20180531091022.GL15278@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531091022.GL15278@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dma_zalloc_coherent instead of dma_alloc_coherent
-followed by memset 0.
+On Thu 31-05-18 11:10:22, Michal Hocko wrote:
+> On Thu 31-05-18 10:55:32, Michal Hocko wrote:
+> > On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
+> [...]
+> > > I merely copied/pasted from alloc_skb_with_frags() :/
+> > 
+> > I will have a look at it. Thanks!
+> 
+> OK, so this is an example of an incremental development ;).
+> 
+> __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
+> high order allocations") to prevent from OOM killer. Yet this was
+> not enough because fb05e7a89f50 ("net: don't wait for order-3 page
+> allocation") didn't want an excessive reclaim for non-costly orders
+> so it made it completely NOWAIT while it preserved __GFP_NORETRY in
+> place which is now redundant. Should I send a patch?
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Just in case you are interested
 ---
- drivers/net/ethernet/qlogic/qed/qed_cxt.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+>From 5010543ed6f73e4c00367801486dca8d5c63b2ce Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Mon, 4 Jun 2018 15:07:37 +0200
+Subject: [PATCH] net: cleanup gfp mask in alloc_skb_with_frags
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_cxt.c b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-index 820b226..1835f00 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_cxt.c
-@@ -936,14 +936,13 @@ static int qed_cxt_src_t2_alloc(struct qed_hwfn *p_hwfn)
- 		u32 size = min_t(u32, total_size, psz);
- 		void **p_virt = &p_mngr->t2[i].p_virt;
- 
--		*p_virt = dma_alloc_coherent(&p_hwfn->cdev->pdev->dev,
--					     size,
--					     &p_mngr->t2[i].p_phys, GFP_KERNEL);
-+		*p_virt = dma_zalloc_coherent(&p_hwfn->cdev->pdev->dev,
-+					      size, &p_mngr->t2[i].p_phys,
-+					      GFP_KERNEL);
- 		if (!p_mngr->t2[i].p_virt) {
- 			rc = -ENOMEM;
- 			goto t2_fail;
- 		}
--		memset(*p_virt, 0, size);
- 		p_mngr->t2[i].size = size;
- 		total_size -= size;
- 	}
+alloc_skb_with_frags uses __GFP_NORETRY for non-sleeping allocations
+which is just a noop and a little bit confusing.
+
+__GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
+high order allocations") to prevent from the OOM killer. Yet this was
+not enough because fb05e7a89f50 ("net: don't wait for order-3 page
+allocation") didn't want an excessive reclaim for non-costly orders
+so it made it completely NOWAIT while it preserved __GFP_NORETRY in
+place which is now redundant.
+
+Drop the pointless __GFP_NORETRY because this function is used as
+copy&paste source for other places.
+
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ net/core/skbuff.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 857e4e6f751a..c1f22adc30de 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -5239,8 +5239,7 @@ struct sk_buff *alloc_skb_with_frags(unsigned long header_len,
+ 			if (npages >= 1 << order) {
+ 				page = alloc_pages((gfp_mask & ~__GFP_DIRECT_RECLAIM) |
+ 						   __GFP_COMP |
+-						   __GFP_NOWARN |
+-						   __GFP_NORETRY,
++						   __GFP_NOWARN,
+ 						   order);
+ 				if (page)
+ 					goto fill_page;
 -- 
-2.7.0
+2.17.0
+
+-- 
+Michal Hocko
+SUSE Labs
