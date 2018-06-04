@@ -1,55 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751273AbeFDUQR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:16:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46884 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750998AbeFDUQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:16:16 -0400
-Date: Mon, 4 Jun 2018 16:16:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thomas Garnier <thgarnie@google.com>
-Cc: kernel-hardening@lists.openwall.com, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Guenter Roeck <linux@roeck-us.net>, nixiaoming <nixiaoming@huawei.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 21/27] x86/ftrace: Adapt function tracing for PIE
- support
-Message-ID: <20180604161612.6d48d8d2@gandalf.local.home>
-In-Reply-To: <20180529221625.33541-22-thgarnie@google.com>
-References: <20180529221625.33541-1-thgarnie@google.com>
-        <20180529221625.33541-22-thgarnie@google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751326AbeFDUQm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:16:42 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42312 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751098AbeFDUQk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 16:16:40 -0400
+X-Google-Smtp-Source: ADUXVKLzNTZeSIFZpzrd8SDsX2SJmVUSLwatcyTrepSJUtltFfBrcFm8FH7tBVl9vzRO8mi28biO+A==
+Date: Mon, 4 Jun 2018 13:16:37 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, Suman Anna <s-anna@ti.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
+        Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
+Message-ID: <20180604201637.GB9960@builder>
+References: <1524159181-351878-1-git-send-email-mst@redhat.com>
+ <5047d08c-9f9e-2902-d425-1fac849ce5b4@redhat.com>
+ <20180419204017-mutt-send-email-mst@kernel.org>
+ <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018 15:15:22 -0700
-Thomas Garnier <thgarnie@google.com> wrote:
+On Thu 19 Apr 10:48 PDT 2018, Paolo Bonzini wrote:
 
-> When using -fPIE/PIC with function tracing, the compiler generates a
-> call through the GOT (call *__fentry__@GOTPCREL). This instruction
-> takes 6 bytes instead of 5 on the usual relative call.
+> On 19/04/2018 19:46, Michael S. Tsirkin wrote:
+> >> This should be okay, but I wonder if there should be a virtio_wmb(...)
+> >> or an "if (weak_barriers) wmb()" before the "writel" in vm_notify
+> >> (drivers/virtio/virtio_mmio.c).
+> >>
+> >> Thanks,
+> >>
+> >> Paolo
+> > That one uses weak barriers AFAIK.
+> > 
+> > IIUC you mean rproc_virtio_notify.
+> > 
+> > I suspect it works because specific kick callbacks have a barrier internally.
 > 
-> If PIE is enabled, replace the 6th byte of the GOT call by a 1-byte nop
-> so ftrace can handle the previous 5-bytes as before.
+> Yes, that one.  At least keystone_rproc_kick doesn't seem to have a barrier.
 > 
-> Position Independent Executable (PIE) support will allow to extend the
-> KASLR randomization range 0xffffffff80000000.
 
-I thought you were going to write a update to recordmcount.c to handle
-this at compile time?
+Afaict you're correct. My expectation is that the kick ensures write
+ordering internally and if I read this correct keystone_rproc_kick()
+results in a writel_relaxed() in the gpio driver.
 
--- Steve
+@Suman, can you please have a look at this.
 
-> 
-> Signed-off-by: Thomas Garnier <thgarnie@google.com>
-> ---
->
+Thanks Paolo,
+Bjorn
