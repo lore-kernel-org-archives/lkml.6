@@ -1,32 +1,33 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti33d1t02-2574145-1528209544-2-114482130392235595
+X-Cyrus-Session-Id: sloti33d1t02-1703727-1528121052-2-15184898297807857944
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1528209544; b=UqM7tVwbHVoB2SMg6KoMvN69xrZ5q2FhjgZij7zfBkifrAdhhH
-    H2QXTWj+LzAT5domMbckNFZ11t3Ggbhzte8dy0lpVmlg5t85HqXxiOfBTZBmvBLu
-    CgSPc5ofpkja+FgHUAte/FwAAtvjTrT8YXwMI5wRHP/WKmAIRZrNet+iUqA6VQ4p
-    DfYMcQ/wdKVq4uXfC7sAZeUIrPDFU6QJeRH4+2dm1IHVwqx5s4Vfand/JX1mxWgT
-    cGi8bwBbV4X2HKw7W8gsYdkBi8iiF+pWs8V9+oWclHx/ns6nOmOwGPXOfIPjVtIn
-    wfU2qsi3TioZLwYJqwPgg3rLIq1Wj9MnLvzg==
+    1528121052; b=jeBueFSl3eFNOtRpviIUIDlVIus69a9XwL9EdVB9wt2u9ftOOR
+    uMF7RB8EczftgCYNAGrdgF32EE0H4UmgaUyYFAuBW6UwWJE3VNM8IlNp88+XMl8H
+    AHWz/3MagCdXUuDpMchFHGn67DLvsBfuwsvI+z6YksXMjYPRm/JYrEevpzgRTtbs
+    UlhazL0TqULYC/ClTZ8biNbR3+OmXJcgnHlgJ5gOEM98aWr9ILpyLKPI+GpPWnze
+    EUdddb9jKmvSBkLKqqmJThsRIKnIpitEJUTKVZgux0PDFXk1+cN4SGaxS84PiEeT
+    DHY+xMR6u+fY3RdEb+7YrBbwd9KcZXgoJSgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1528209544; bh=AVB+w8NGBJVTbi850fdm/WxUn50Osv
-    kqSNNRTd8xjr8=; b=WnJYqwXAJpNGuh6xtibJc8s/0Va2Cf3Pkiznjr/c2s45hu
-    NUytZWS6eJkIP8h+gs6/ylk5g/UoTDoQmlzFz/smgvFoZ5fj7hNkWy+Z/cOhzcvp
-    zLfNt2O8iIwxpC5RNxsbYIrwX4ijnN1shj++crgeUhnJvJ2BUYxn5g4g+47N+49X
-    B3Okxb3SrYkRT/U0NNbcneGphBWIO1pzejTysgjy22MjEZE8ejE0RXJ+8EKBUEqA
-    jYC4G0rBGlwA0xqnzJyN7HyxZbSH9BgUkE6Vlsui2kp3yeUWtd1BwENxinHITjBi
-    OMAB63uoXk624Eg4/65/H7a5bsudsw5/1V77UMIQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:from:to:cc:date:in-reply-to
+    :references:content-type:mime-version:content-transfer-encoding
+    :message-id:sender:list-id; s=fm2; t=1528121052; bh=euMQP95/rcac
+    UafrdNqQ5K4IY4BiMzzXAbVpMLuSzJs=; b=JhgRVttUKkhCjowdk73SOOlBWK1Q
+    LZGIbiJnbTwi+ToKQ/EpbUfRwJC8Aojdmy4UgRazwAxSjX009kcon6YRPCeMXFYv
+    uAv/pRP2X915Q3oDiT6Qnv1c9zC8bCRfnpRH/hiBj5flyahYQs3aR5CUCTPxcGij
+    W6XKIO4ICQaNf/qT4ObIlak2SMY4CE7HPq60632fPalze+TCbiEg9uC7qp739Ad5
+    VlUB2wj+VUzbZeo1tS3kDff9MNSiM8MN+Gx35QuSpW1C8XvSIe9hTISh7IAfBHia
+    Yd1QbIeGojjmcrhIjwySPWoUhAKcIt1NNq+mh4wAGC30gLQjxMY4KHUwWw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+    header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -35,14 +36,15 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
+    header.domain=linux.vnet.ibm.com header.result=pass
+    header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+      header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -51,70 +53,100 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
+      header.domain=linux.vnet.ibm.com header.result=pass
+      header_org.domain=ibm.com header_org.result=pass
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGl/DjwrSl4zxu1Uziuc1+28u35o1fDgressd6Am8WNNq0/yJyckyrI785qcN8loN+RSmOXi9tTbNeBSNJutGSNu182Eivg9fblBquB86zB72Nfn1gQu
-    QIlpNeeqF5moSDfz5J+XBdwDlNvW1ql4HoP25dTfdzBJUuJ5TLIJAMIejOS8jd+H3sGFoCvaDfJHoziGdneTNV3Q6k3TTxl78M6KlXe6n2jTFZleXrsa8kwi
-    HKXxp6VhHk1DsKJJ7t8QpA==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=7mUfYlMuFuIA:10
-    a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=5ZDGai7jz5g9HE0-3WEA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfKsbYCmxbRvbnnZB/JlHICBF/SD1PqdQVEkFQsy5+Vkc4skF4KmSh+SFXx9L6WqX6Ew26TBcn96HyJTzB67i49PCrP6gnbvfuKIDLOcVWKO6R0c5YAVU
+    ahavLFap1HLeoz89H5MWb+wjkBa2EUtvyOhcYdKnATn3wW1PfbSoRyW2h3BfB0cGQTAoopTIPnGInGndgWCwom+ku7MuZ4yutvyO8BenOsRES84+V8nHNoIC
+    kvaE/DcXY1ppsnUMPyxGjQ==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=7mUfYlMuFuIA:10
+    a=VwQbUJbxAAAA:8 a=18aXAE-iQdpnPZATxN0A:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeFEOjB (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 5 Jun 2018 10:39:01 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32625 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751959AbeFEOjA (ORCPT
+        id S1752062AbeFDOEJ (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 4 Jun 2018 10:04:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33273 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751933AbeFDOEI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:39:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="45433820"
-Date: Tue, 5 Jun 2018 17:38:57 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: James Morris <jmorris@namei.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] tpmdd 4.17 fixes
-Message-ID: <20180605143857.GA6199@linux.intel.com>
-References: <20180602130001.GA5196@linux.intel.com>
- <alpine.LRH.2.21.1806050201050.30339@namei.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1806050201050.30339@namei.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 4 Jun 2018 10:04:08 -0400
+Subject: Re: [PATCH v4 0/8] kexec/firmware: support system wide policy
+ requiring signatures
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jessica Yu <jeyu@kernel.org>
+Date: Mon, 04 Jun 2018 10:03:45 -0400
+In-Reply-To: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18060414-0028-0000-0000-000002CC87E8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060414-0029-0000-0000-000023830E2C
+Message-Id: <1528121025.3237.116.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040166
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Jun 05, 2018 at 02:01:29AM +1000, James Morris wrote:
-> On Sat, 2 Jun 2018, Jarkko Sakkinen wrote:
+On Tue, 2018-05-29 at 14:01 -0400, Mimi Zohar wrote:
+> Instead of adding the security_kernel_read_file LSM hook - or defining a
+> wrapper for security_kernel_read_file LSM hook and adding it, or
+> renaming the existing hook to security_kernel_read_data() and adding it
+> - in places where the kernel isn't reading a file, this version of the
+> patch set defines a new LSM hook named security_kernel_load_data().
 > 
-> > The following changes since commit 424eaf910c329ab06ad03a527ef45dcf6a328f00:
-> > 
-> >   tpm: reduce polling time to usecs for even finer granularity (2018-05-18 10:00:01 +0300)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20180602
-> > 
-> > for you to fetch changes up to 3ab2011ea368ec3433ad49e1b9e1c7b70d2e65df:
-> > 
-> >   tpm: fix race condition in tpm_common_write() (2018-05-30 20:11:31 +0300)
+> The new LSM hook does not replace the existing security_kernel_read_file
+> LSM hook, which is still needed, but defines a new LSM hook allowing
+> LSMs and IMA-appraisal the opportunity to fail loading userspace
+> provided file/data.
 > 
-> 4.17 was just released, I'll fold these into the 4.18 merge.
+> The only difference between the two LSM hooks is the LSM hook name and a
+> file descriptor.  Whether this is cause enough for requiring a new LSM
+> hook, is left to the security community.
 
-OK, thank you.
+Paul does not have a preference as to adding a new LSM hook or calling
+the existing hook.  Either way is fine, as long as both the new and
+existing hooks call the existing function.
 
-/Jarkko
+Casey didn't like the idea of a wrapper.
+James suggested renaming the LSM hook.
+
+The maintainers for the callers of the LSM hook prefer a meaningful
+LSM hook name.  The "null" argument is not as much of a concern.  Only
+Eric seems to be asking for a separate, new LSM hook, without the
+"null" argument.
+
+Unless someone really objects, to accommodate Eric we'll define a new
+LSM hook named security_kernel_load_data.  Eric, are you planning on
+Ack'ing patches 1 & 2?
+
+Mimi
+
