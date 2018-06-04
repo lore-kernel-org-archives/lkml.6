@@ -1,111 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753046AbeFDMwf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:52:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:41987 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752986AbeFDMwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:52:34 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH v2 00/14] Remove unneccessary included headers
-In-Reply-To: <cover.1527868006.git.christophe.leroy@c-s.fr>
-References: <cover.1527868006.git.christophe.leroy@c-s.fr>
-Date: Mon, 04 Jun 2018 22:52:31 +1000
-Message-ID: <87d0x6bto0.fsf@concordia.ellerman.id.au>
+        id S1753117AbeFDMx2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:53:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42320 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752478AbeFDMx1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:53:27 -0400
+Date: Mon, 4 Jun 2018 05:53:18 -0700
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180604121800.GR12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180604121800.GR12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18060412-0020-0000-0000-0000029682BC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060412-0021-0000-0000-000020E21809
+Message-Id: <20180604125318.GA38574@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040153
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+* Peter Zijlstra <peterz@infradead.org> [2018-06-04 14:18:00]:
 
-> The purpose of this serie is to limit the number of includes to
-> only the necessary ones in order to reduce the number of files
-> recompiled everytime a header file is modified.
->
-> This is the start of the work, please provide feedback if any so
-> that I don't go in the wrong direction.
->
-> Handled inclusion changes more carrefully after Michael feedback.
->
-> Started splitting some headers in order to reduce their coverage.
->
-> Christophe Leroy (14):
->   powerpc: remove kdump.h from page.h
->   powerpc: remove unneeded inclusions of cpu_has_feature.h
->   powerpc/405: move PPC405_ERR77 in asm-405.h
->   powerpc: move ASM_CONST and stringify_in_c() into asm-const.h
->   powerpc: clean the inclusion of stringify.h
->   powerpc: clean inclusions of asm/feature-fixups.h
->   powerpc: remove superflous inclusions of asm/fixmap.h
->   powerpc: declare set_breakpoint() static
->   powerpc/book3s: Remove PPC_PIN_SIZE
->   powerpc: fix includes in asm/processor.h
->   powerpc/nohash: fix hash related comments in pgtable.h
->   powerpc/44x: remove page.h from mmu-44x.h
->   powerpc: split reg.h in two parts
->   powerpc: Split synch.h in two parts
+> On Mon, Jun 04, 2018 at 03:30:13PM +0530, Srikar Dronamraju wrote:
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index ea32a66..94091e6 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -1725,8 +1725,9 @@ static int task_numa_migrate(struct task_struct *p)
+> >  	 * Tasks that are "trapped" in such domains cannot be migrated
+> >  	 * elsewhere, so there is no point in (re)trying.
+> >  	 */
+> > -	if (unlikely(!sd)) {
+> > -		p->numa_preferred_nid = task_node(p);
+> > +	if (unlikely(!sd) && p->numa_preferred_nid != task_node(p)) {
+> > +		/* Set the new preferred node */
+> > +		sched_setnuma(p, task_node(p));
+> >  		return -EINVAL;
+> >  	}
+> >  
+> 
+> That looks dodgy.. this would allow things to continue with !sd.
 
-Still some problems :)
+Okay so are we suggesting something like the below?
 
-  http://kisskb.ellerman.id.au/kisskb/head/14047/
+if (unlikely(!sd)) {
+	/* Set the new preferred node */
+	sched_setnuma(p, task_node(p));
+  		return -EINVAL;
+  	}
 
-cheers
-
-
-arch/powerpc/include/asm/reg.h:1286:31: error: expected ':' or ')' before 'ASM_FTR_IFCLR':
-  allmodconfig+64K_PAGES powerpc
-  allmodconfig+64K_PAGES powerpc-5.3
-  allmodconfig+ppc64le ppc64le
-  powernv_defconfig+NO_NUMA ppc64le
-  powernv_defconfig+NO_PERF ppc64le
-  powernv_defconfig+NO_RADIX ppc64le
-  powernv_defconfig+STRICT_RWX ppc64le
-  powernv_defconfig+THIN ppc64le
-  powerpc-allmodconfig powerpc
-  powerpc-allmodconfig powerpc-5.3
-  powerpc-allyesconfig powerpc
-  powerpc-allyesconfig powerpc-5.3
-  ppc64_defconfig powerpc
-  ppc64_defconfig powerpc-5.3
-  ppc64_defconfig+NO_ALTIVEC powerpc
-  ppc64_defconfig+NO_ALTIVEC powerpc-5.3
-  ppc64_defconfig+NO_HUGETLB powerpc
-  ppc64_defconfig+NO_HUGETLB powerpc-5.3
-  ppc64_defconfig+NO_KVM powerpc
-  ppc64_defconfig+NO_KVM powerpc-5.3
-  ppc64_defconfig+NO_RADIX powerpc
-  ppc64_defconfig+NO_TM powerpc
-  ppc64_defconfig+NO_TM powerpc-5.3
-  ppc64_defconfig+UP powerpc
-  ppc64_defconfig+UP powerpc-5.3
-  ppc64e_defconfig powerpc
-  ppc64e_defconfig powerpc-5.3
-  ppc64e_defconfig+KEXEC powerpc
-  ppc64e_defconfig+KEXEC powerpc-5.3
-  ppc64e_defconfig+UP powerpc
-  ppc64e_defconfig+UP powerpc-5.3
-  ppc64le_defconfig ppc64le
-  ppc64le_defconfig+NO_KPROBES ppc64le
-  ppc64le_defconfig+NO_KVM ppc64le
-  ppc6xx_defconfig powerpc
-  ppc6xx_defconfig powerpc-5.3
-  pseries_defconfig powerpc
-  pseries_defconfig powerpc-5.3
-  pseries_defconfig+FA_DUMP powerpc
-  pseries_defconfig+FA_DUMP powerpc-5.3
-  pseries_defconfig+NO_MEMORY_HOTPLUG powerpc
-  pseries_defconfig+NO_MEMORY_HOTPLUG powerpc-5.3
-  pseries_defconfig+NO_MEMORY_HOTREMOVE powerpc
-  pseries_defconfig+NO_SPLPAR powerpc
-  pseries_defconfig+NO_SPLPAR powerpc-5.3
-  pseries_le_defconfig ppc64le
-  pseries_le_defconfig+NO_NUMA ppc64le
-  pseries_le_defconfig+NO_SPLPAR ppc64le
-  skiroot_defconfig ppc64le
+The reason for using sched_setnuma was to make sure we account numa
+tasks correctly.
