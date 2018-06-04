@@ -1,142 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751799AbeFDCJW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 22:09:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49114 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751489AbeFDCJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 22:09:21 -0400
-From: NeilBrown <neilb@suse.com>
-To: Tom Herbert <tom@herbertland.com>
-Date: Mon, 04 Jun 2018 12:09:08 +1000
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Thomas Graf <tgraf@suug.ch>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Tom Herbert <tom@quantonium.net>
-Subject: Re: [PATCH 10/18] rhashtable: remove rhashtable_walk_peek()
-In-Reply-To: <CALx6S37AYrFoJNrdToRc84J=B4f57jaHS077UsxdEoQ-xwyCeg@mail.gmail.com>
-References: <152782754287.30340.4395718227884933670.stgit@noble> <152782824964.30340.6329146982899668633.stgit@noble> <20180602154851.pfy4wryezuhxp76v@gondor.apana.org.au> <87y3fvpf40.fsf@notabene.neil.brown.name> <CALx6S37AYrFoJNrdToRc84J=B4f57jaHS077UsxdEoQ-xwyCeg@mail.gmail.com>
-Message-ID: <87sh63pakb.fsf@notabene.neil.brown.name>
+        id S1751884AbeFDCKO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 22:10:14 -0400
+Received: from ZXSHCAS2.zhaoxin.com ([203.148.12.82]:58910 "EHLO
+        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751373AbeFDCKN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 22:10:13 -0400
+From: David Wang <davidwang@zhaoxin.com>
+To: "'Borislav Petkov'" <bp@alien8.de>
+CC: <tony.luck@intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>,
+        <hpa@zytor.com>, <gregkh@linuxfoudation.org>, <x86@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+        <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
+        <lukelin@viacpu.com>, <timguo@zhaoxin.com>
+Subject: Re: [PATCH] x86/mce: add CMCI support for Centaur CPUs
+Date: Mon, 4 Jun 2018 10:09:59 +0800
+Message-ID: <000001d3fba9$23d5df20$6b819d60$@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdP7pK2W/DP9kgHBQ5+eP6bQ1aJlLw==
+Content-Language: zh-cn
+X-Originating-IP: [10.29.8.88]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+> -----Original Mail-----
+> Sender: Borislav Petkov [mailto:bp@alien8.de]
+> Time: 2018年6月1日 17:38
+> Receiver: David Wang <davidwang@zhaoxin.com>
+> CC: tony.luck@intel.com; mingo@redhat.com; tglx@linutronix.de;
+> hpa@zytor.com; gregkh@linuxfoudation.org; x86@kernel.org;
+> linux-kernel@vger.kernel.org; linux-edac@vger.kernel.org;
+> brucechang@via-alliance.com; cooperyan@zhaoxin.com;
+> qiyuanwang@zhaoxin.com; benjaminpan@viatech.com; lukelin@viacpu.com;
+> timguo@zhaoxin.com
+> Topic : Re: [PATCH] x86/mce: add CMCI support for Centaur CPUs
+> 
+> On Thu, May 31, 2018 at 11:28:58AM +0800, David Wang wrote:
+> > Newer Centaur support CMCI mechanism, which is compatible with INTEL
+> CMCI.
+> >
+> > Signed-off-by: David Wang <davidwang@zhaoxin.com>
+> > ---
+> >  arch/x86/Kconfig                 | 12 ++++++++++++
+> >  arch/x86/kernel/cpu/mcheck/mce.c |  6 ++++++
+> >  2 files changed, 18 insertions(+)
+> >
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig index
+> > dda87a3..1adff5f 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -1130,6 +1130,18 @@ config X86_MCE_AMD
+> >  	   Additional support for AMD specific MCE features such as
+> >  	   the DRAM Error Threshold.
+> >
+> > +config X86_MCE_CENTAUR
+> > +	def_bool y
+> > +	prompt "CENTAUR MCE features"
+> > +	depends on CPU_SUP_CENTAUR && X86_MCE_INTEL
+> > +	help
+> > +	   Additional support for Centaur specific MCE features such as
+> > +	   MCE broadcasting and CMCI support.
+> > +	   New Centaur CPU support MCE broadcasting.
+> > +	   New Centaur CPU support CMCI which is fully compliant with Intel
+> CMCI.
+> > +
+> > +	   If unsure, say N here.
+> > +
+> >  config X86_ANCIENT_MCE
+> >  	bool "Support for old Pentium 5 / WinChip machine checks"
+> >  	depends on X86_32 && X86_MCE
+> > diff --git a/arch/x86/kernel/cpu/mcheck/mce.c
+> > b/arch/x86/kernel/cpu/mcheck/mce.c
+> > index cd76380..2ebafc7 100644
+> > --- a/arch/x86/kernel/cpu/mcheck/mce.c
+> > +++ b/arch/x86/kernel/cpu/mcheck/mce.c
+> > @@ -1727,6 +1727,7 @@ static void __mcheck_cpu_init_early(struct
+> cpuinfo_x86 *c)
+> >  	}
+> >  }
+> >
+> > +#ifdef CONFIG_X86_MCE_CENTAUR
+> >  static void mce_centaur_feature_init(struct cpuinfo_x86 *c)  {
+> >  	struct mca_config *cfg = &mca_cfg;
+> > @@ -1740,7 +1741,12 @@ static void mce_centaur_feature_init(struct
+> cpuinfo_x86 *c)
+> >  		if (cfg->monarch_timeout < 0)
+> >  			cfg->monarch_timeout = USEC_PER_SEC;
+> >  	}
+> > +	mce_intel_feature_init(c);
+> > +	mce_adjust_timer = cmci_intel_adjust_timer;
+> 
+> So far so good but above says "New Centaur CPU[s]" but you're calling
+> mce_intel_feature_init() unconditionally here, for *all* centaur CPUs.
+> Ditto for setting the CMCI handler.
 
-On Sun, Jun 03 2018, Tom Herbert wrote:
+	There is a check for CMCI support or not In cmci_supported() function which will be called by mce_intel_feature_init.
 
-> On Sun, Jun 3, 2018 at 5:30 PM, NeilBrown <neilb@suse.com> wrote:
->> On Sat, Jun 02 2018, Herbert Xu wrote:
->>
->>> On Fri, Jun 01, 2018 at 02:44:09PM +1000, NeilBrown wrote:
->>>> This function has a somewhat confused behavior that is not properly
->>>> described by the documentation.
->>>> Sometimes is returns the previous object, sometimes it returns the
->>>> next one.
->>>> Sometimes it changes the iterator, sometimes it doesn't.
->>>>
->>>> This function is not currently used and is not worth keeping, so
->>>> remove it.
->>>>
->>>> A future patch will introduce a new function with a
->>>> simpler interface which can meet the same need that
->>>> this was added for.
->>>>
->>>> Signed-off-by: NeilBrown <neilb@suse.com>
->>>
->>> Please keep Tom Herbert in the loop.  IIRC he had an issue with
->>> this patch.
->>
->> Yes you are right - sorry for forgetting to add Tom.
->>
->> My understanding of where this issue stands is that Tom raised issue and
->> asked for clarification, I replied, nothing further happened.
->>
->> It summary, my position is that:
->> - most users of my new rhashtable_walk_prev() will use it like
->>    rhasthable_talk_prev() ?: rhashtable_walk_next()
->>   which is close to what rhashtable_walk_peek() does
->> - I know of no use-case that could not be solved if we only had
->>   the combined operation
->> - BUT it is hard to document the combined operation, as it really
->>   does two things.  If it is hard to document, then it might be
->>   hard to understand.
->>
->> So provide the most understandable/maintainable solution, I think
->> we should provide rhashtable_walk_prev() as a separate interface.
->>
-> I'm still missing why requiring two API operations instead of one is
-> simpler or easier to document. Also, I disagree that
-> rhashtable_walk_peek does two things-- it just does one which is to
-> return the current element in the walk without advancing to the next
-> one. The fact that the iterator may or may not move is immaterial in
-> the API, that is an implementation detail. In fact, it's conceivable
-> that we might completely reimplement this someday such that the
-> iterator works completely differently implementation semantics but the
-> API doesn't change. Also the naming in your proposal is confusing,
-> we'd have operations to get the previous, and the next next object--
-> so the user may ask where's the API to get the current object in the
-> walk? The idea that we get it by first trying to get the previous
-> object, and then if that fails getting the next object seems
-> counterintuitive.
+		return !!(cap & MCG_CMCI_P);
+	So, I didn't add Family/Model/Stepping check.
 
-To respond to your points out of order:
+	But, I am sorry to add another patch just as following:
 
-- I accept that "rhashtable_walk_prev" is not a perfect name.  It
-  suggests a stronger symmetry with rhasthable_walk_next than actually
-  exist.  I cannot think of a better name, but I think the
-  description "Return the previously returned object if it is
-  still in the table" is clear and simple and explains the name.
-  I'm certainly open to suggestions for a better name.
+	@@ -85,7 +85,8 @@ static int cmci_supported(int *banks)
+         * initialization is vendor keyed and this
+         * makes sure none of the backdoors are entered otherwise.
+         */
+-       if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
++       if ((boot_cpu_data.x86_vendor != X86_VENDOR_INTEL &&
++               boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR))
+                return 0;
+        if (!boot_cpu_has(X86_FEATURE_APIC) || lapic_get_maxlvt() < 6)
+                return 0;
 
-- I don't think it is meaningful to talk about a "current" element in a
-  table where asynchronous insert/remove is to be expected.
-  The best we can hope for is a "current location" is the sequence of
-  objects in the table - a location which is after some objects and
-  before all others.  rhashtable_walk_next() returns the next object
-  after the current location, and advances the location pointer past
-  that object.
-  rhashtable_walk_prev() *doesn't* return the previous object in the
-  table.  It returns the previously returned object. ("previous" in
-  time, but not in space, if you like).
+	I will send patch v4 later to include this patch.
+	Thank you.
+> 
+> Also mce_intel_feature_init() does more things than init CMCI so I think you
+> wanna limit that to only intel_init_cmci(). IOW, something like the hunk below.
+> 
+> And frankly I'm not crazy about adding centaur code to mce_intel.c but since it
+> is copying functionality, I think we should copy the sw support in the kernel too
+> instead of adding a mce_centaur.c duplicate. For now at least...
+> 
+> Thx.
+> 
+> ---
+> diff --git a/arch/x86/kernel/cpu/mcheck/mce_intel.c
+> b/arch/x86/kernel/cpu/mcheck/mce_intel.c
+> index d05be307d081..77d8a9b996a6 100644
+> --- a/arch/x86/kernel/cpu/mcheck/mce_intel.c
+> +++ b/arch/x86/kernel/cpu/mcheck/mce_intel.c
+> @@ -506,8 +506,15 @@ static void intel_ppin_init(struct cpuinfo_x86 *c)
+> 
+>  void mce_intel_feature_init(struct cpuinfo_x86 *c)  {
+> -	intel_init_thermal(c);
+>  	intel_init_cmci();
+> +
+> +	/*
+> +	 * Some Centaur variants support CMCI.
+> +	 */
+> +	if (c->x86_vendor == X86_VENDOR_CENTAUR)
+> +		return;
+> +
+> +	intel_init_thermal(c);
+>  	intel_init_lmce();
+>  	intel_ppin_init(c);
+>  }
+> 
+	OK. I will send patch V4 to fix this problem, just like:
+	
+void mce_intel_feature_init(struct cpuinfo_x86 *c)
+ {
+-       intel_init_thermal(c);
+-       intel_init_cmci();
+-       intel_init_lmce();
+-       intel_ppin_init(c);
++
++       switch (c->x86_vendor) {
++       case X86_VENDOR_INTEL:
++               intel_init_thermal(c);
++               intel_init_cmci();
++               intel_init_lmce();
++               intel_ppin_init(c);
++               break;
++       case X86_VENDOR_CENTAUR:
++               intel_init_cmci();
++               break;
++       default:
++               break;
++       }
+ }
+	Thank you.
 
-- rhashtable_walk_peek() currently does one of two different things.
-  It either returns the previously returned object (iter->p) if that
-  is still in the table, or it find the next object, steps over it, and
-  returns it.
-
-- I would like to suggest that when an API acts on a iterator object,
-  the question of whether or not the iterator is advanced *must* be a
-  fundamental question, not one that might change from time to time.
-
-Maybe a useful way forward would be for you to write documentation for
-the rhashtable_walk_peek() interface which correctly describes what it
-does and how it is used.  Given that, I can implement that interface
-with the stability improvements that I'm working on.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsUn0QACgkQOeye3VZi
-gbk3BBAAm9I67JvwBU9zajnqjltyUgjRcEXE5ig3sEM0gkTXAxXeOoEVeqAXyQ0D
-OuRSrRT/Lc5TPhMxdzJXfEKX+Btelrjxx0E13YLGuQRSAXu3EqskZ8p3dRqYeAuN
-FbAfURAL+u1y0H2iRbvOIDKcgTyHI6jWQzel0lftRFsFc7/Jf6Z+yUjs7zfaGPDS
-S0hojOoJUbpl3YhUGCeVpuIknUG/sEpD5/kCwXzJZJyGs5xAhe+FMh6gPQJCrvTJ
-/UJlO5PKWjE0NU8lXjS53nOmm1I7ASFVpiipeoIbc9Adl8u/R6MiFJtDIjcZnnXb
-0s9VVratNsVhxG8eslARxigC6/OEoqteZvRpcdrQm+t/I/XwPlJYZI36YCOCZVjW
-5Hm/85GccFqFmKgzeIQhnJj9+OXFWoXp9w2cnKy1gWpRmb63Om+v0PzmVQ/IeZkf
-dwnWgPVIzWDRBGiX4H19LEDgium4Ee1f0LJhD0GOQ3oYlJWiAvf8r8pdQr3p2l5Q
-CUF3wNn7PoMDh+FCzvKaiA+dI8mfFKrd1DPF6Y4RfE+W98c8cdLHG3j1nH2KiOOL
-35AT6dev4IPMnnqWxw7Vpby0AdUTnZ1cef3+SrYzQv5F3DOpXIfs3rP+cl1rp0r3
-qcyROueXMtnAtHETJg3EC2Bz9b9Bp5T0uEiQ9O9oJP7bnQ5EwXw=
-=A+jC
------END PGP SIGNATURE-----
---=-=-=--
+> --
+> Regards/Gruss,
+>     Boris.
+> 
+> ECO tip #101: Trim your mails when you reply.
+> --
