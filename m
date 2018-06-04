@@ -1,121 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753518AbeFDOAC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:00:02 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58846 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753063AbeFDN74 (ORCPT
+        id S1753468AbeFDN77 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:59:59 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41125 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753206AbeFDN74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 09:59:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180604135954euoutp02ca88fcec5f6eb860424c6bdab3319dee~0_cQxeWak0818308183euoutp02V
-X-AuditID: cbfec7f5-b5fff700000028a9-b9-5b1545d9ab42
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180604135954euoutp019ebd4754921061d9fb1b4f1fe01c6cfd~0_cQgsU_x2381523815euoutp01L
+X-AuditID: cbfec7f2-1c1ff70000011644-80-5b1545d8376e
 From: Maciej Purski <m.purski@samsung.com>
 To: Mark Brown <broonie@kernel.org>, Tony Lindgren <tony@atomide.com>
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-omap@vger.kernel.org, Carlos Hernandez <ceh@ti.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 3/7] regulator: core: Use re-entrant locks
-Date: Mon, 04 Jun 2018 15:59:20 +0200
-Message-id: <1528120764-14316-4-git-send-email-m.purski@samsung.com>
+Subject: Re: Regression in Linux next again
+Date: Mon, 04 Jun 2018 15:59:17 +0200
+Message-id: <1528120764-14316-1-git-send-email-m.purski@samsung.com>
 X-Mailer: git-send-email 2.7.4
-In-reply-to: <1528120764-14316-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsWy7djPc7o3XUWjDXZPN7WY+vAJm8W+vt9s
+In-reply-to: <20180530144505.GB5705@atomide.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIIsWRmVeSWpSXmKPExsWy7djPc7o3XEWjDd6+NLSY+vAJm8W+vt9s
         FpseX2O1uLxrDpvF7CX9LBYLXt5isVh75C67xf4rXg4cHt++TmLx2LSqk81j85J6j74tqxg9
-        jt/YzuTxeZNcAFsUl01Kak5mWWqRvl0CV8bHr5uZC27xVcye8YSlgXEdTxcjJ4eEgInEgYMv
-        WLsYuTiEBFYwSuw4vRrK+cwo8f7ZP0aYql8rH7NDJJYxSpxfdg6q6j+jxNdfi5i7GDk42AS0
-        JNa0x4M0iAi4SnzvOcsCUsMscINR4sqh82CThAWsJCb9uMcKYrMIqEqs2fOKBcTmFXCROHbn
-        KRPENjmJm+c6mUFsTqBBb2dvYgQZJCEwhU1i0dspLBBFLhK9Lw9BnScs8er4FnYIW0bi8uRu
-        qJp8idZnj6HiFRL7ek+zQtjWEoePXwSzmQX4JCZtmw72gIQAr0RHmxBEiYfEr9aJjBBP7mOU
-        uNM6i2UCo+QCRoZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgRF5+t/xrzsY9/1JOsQo
-        wMGoxMOrYSUaLcSaWFZcmXuIUYKDWUmE97QFUIg3JbGyKrUoP76oNCe1+BCjNAeLkjhvnEZd
-        lJBAemJJanZqakFqEUyWiYNTqoHRae+xya+9NwUlZk5ojSt/KNEqZeyrsvqevt775Z2nP59V
-        Op2VJyoxd1fqhZK2V1vWr0482Ghz2FivwIEz8+GZ90UnA3fI9m3yzd8q1OmVvMuX4cmB+NOi
-        nVluNufWJ1VWrXntcUTHtcNNpyCve92PBXF/vmyed+pp7Iljv8R9+lfmXXi4NIxPiaU4I9FQ
-        i7moOBEAvvEBw8QCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjluLIzCtJLcpLzFFi42I5/e/4Nd2brqLRBi8v81hMffiEzWJf3282
+        jt/YzuTxeZNcAFsUl01Kak5mWWqRvl0CV8aJV+fZCg6wVzT+v8vUwNjD1sXIySEhYCJx5NgW
+        5i5GLg4hgRWMEiuWt7NAOJ8ZJSY9fs8IU7Xv41dWiMQyRomjvY+hqv4zSkw83wI0i4ODTUBL
+        Yk17PEiDiICrxPees2A1zAI3GCWuHDoPNklYQFuibf5csN0sAqoSjzYuZwGxeQVcJJbdvcQO
+        sU1O4ua5TmYQm1PAQGL2qf1gmyUEJrBJPLp5GKrIRaKzcxGULSzx6vgWKFtGorPjIBOEnS/R
+        +uwxVLxCYl/vaVYI21ri8PGLYDazAJ/EpG3TmUEekBDglehoE4Io8ZA4fmctO8STzYwSs2Zc
+        YZ3AKLmAkWEVo3hqaXFuemqxYV5quV5xYm5xaV66XnJ+7iZGYESe/nf80w7Gr5eSDjEKcDAq
+        8fBqWIlGC7EmlhVX5h5ilOBgVhLhPW0BFOJNSaysSi3Kjy8qzUktPsQozcGiJM4bp1EXJSSQ
+        nliSmp2aWpBaBJNl4uCUamCcc/Vk5iLGUL+75wUdGbdcbT40O+Bg2YNZ6Ucyl3xtfhEl7ucU
+        0dZxn2nVMg1rW//6t/YFXukP9vPedZ5hvKiM865R4c/J6zo3vkqRYv28K4jrla+1FttK9W1b
+        7T72lnc//8nKd2l/pf+9vawZt57riAq7qq++qzu50HD9ptNmVr9bXe/HWzxXYinOSDTUYi4q
+        TgQAboAF2MQCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjluLIzCtJLcpLzFFi42I5/e/4Nd3rrqLRBtsW2lhMffiEzWJf3282
         i02Pr7FaXN41h81i9pJ+FosFL2+xWKw9cpfdYv8VLwcOj29fJ7F4bFrVyeaxeUm9R9+WVYwe
-        x29sZ/L4vEkugC2KyyYlNSezLLVI3y6BK+Pj183MBbf4KmbPeMLSwLiOp4uRk0NCwETi18rH
-        7F2MXBxCAksYJa7/WcYIkhASaGSS+PhOtYuRg4NNQEtiTXs8SFhEwFXie89ZFpB6ZoFbjBLr
-        Xx1lAUkIC1hJTPpxjxXEZhFQlViz5xVYnFfAReLYnadMEMvkJG6e62QGsTmBBr2dvQlqV5bE
-        giuLmCcw8ixgZFjFKJJaWpybnltspFecmFtcmpeul5yfu4kRGErbjv3csoOx613wIUYBDkYl
-        Ht4GG9FoIdbEsuLK3EOMEhzMSiK8py2AQrwpiZVVqUX58UWlOanFhxilOViUxHnPG1RGCQmk
-        J5akZqemFqQWwWSZODilGhitHyaGTbt6aGvR5h1OXw7FfHINV5e5mXDwx8a6e+HNSz2qLjf0
-        qH0rVk542WEz7YybqFXay0Wz52zaHhC012Lrp5g4sa66k2vC266XSLGytHIs3vHBbPLxW2Gx
-        au+f/E98cWt5a3/HBfHQ500am3K3zH59TfROXt63p4cMSiaxq35ceWnLP+7HSizFGYmGWsxF
-        xYkAi3/0CSECAAA=
-X-CMS-MailID: 20180604135953eucas1p2f2c9dd9581cd114d323c3d64afe5c308
+        x29sZ/L4vEkugC2KyyYlNSezLLVI3y6BK+PEq/NsBQfYKxr/32VqYOxh62Lk5JAQMJHY9/Er
+        K4gtJLCEUWLPVd0uRi4gu5FJ4sXkh8xdjBwcbAJaEmva40FqRARcJb73nGUBqWEWuMUosf7V
+        URaQhLCAtkTb/LlgQ1kEVCUebVwOFucVcJFYdvcSO8QyOYmb5zqZQWxOAQOJ2af2Qy3Wlzi5
+        dh/LBEaeBYwMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQJDaduxn5t3MF7aGHyIUYCDUYmH
+        V8NKNFqINbGsuDL3EKMEB7OSCO9pC6AQb0piZVVqUX58UWlOavEhRmkOFiVx3vMGlVFCAumJ
+        JanZqakFqUUwWSYOTqkGxmld7Nvbiu5qvpiZ+Uvy9IKd9lss1l0VvRqkc1bu5ZtNrWFc1xbw
+        3s16LvDJZ+XcDfkzUgL7VK5XrpuqF2Jlnca/aUGJq0na48DytqK6K51xJ86xsnZ91n/MKyjZ
+        8WqS/lThDUt1uOLErL5Pzpp72+I094poydhj4Tvn52a5F1f7rX3851tEjRJLcUaioRZzUXEi
+        ANb/x6UhAgAA
+X-CMS-MailID: 20180604135952eucas1p292f7bcec405e6a1a6261031df36cad32
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180604135953eucas1p2f2c9dd9581cd114d323c3d64afe5c308
+X-CMS-RootMailID: 20180604135952eucas1p292f7bcec405e6a1a6261031df36cad32
 References: <20180530144505.GB5705@atomide.com>
-        <1528120764-14316-1-git-send-email-m.purski@samsung.com>
-        <CGME20180604135953eucas1p2f2c9dd9581cd114d323c3d64afe5c308@eucas1p2.samsung.com>
+        <CGME20180604135952eucas1p292f7bcec405e6a1a6261031df36cad32@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Re-entrant locks were implemented in previous patches. They should
-substitute all mutex_lock() and mutex_unlock() calls on regulators'
-mutexes.
+Hi,
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- drivers/regulator/core.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+this patchset contains previous two reverted patches. They were split
+in order to make it easier to bisect, where the problem lies. It adds
+also some simple debugs, which should help us track down the problem.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 413a824..c5478d2 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2274,9 +2274,9 @@ int regulator_enable(struct regulator *regulator)
- 			return ret;
- 	}
- 
--	mutex_lock(&rdev->mutex);
-+	regulator_lock(rdev);
- 	ret = _regulator_enable(rdev);
--	mutex_unlock(&rdev->mutex);
-+	regulator_unlock(rdev);
- 
- 	if (ret != 0 && rdev->supply)
- 		regulator_disable(rdev->supply);
-@@ -2384,9 +2384,9 @@ int regulator_disable(struct regulator *regulator)
- 	if (regulator->always_on)
- 		return 0;
- 
--	mutex_lock(&rdev->mutex);
-+	regulator_lock(rdev);
- 	ret = _regulator_disable(rdev);
--	mutex_unlock(&rdev->mutex);
-+	regulator_unlock(rdev);
- 
- 	if (ret == 0 && rdev->supply)
- 		regulator_disable(rdev->supply);
-@@ -2436,10 +2436,10 @@ int regulator_force_disable(struct regulator *regulator)
- 	struct regulator_dev *rdev = regulator->rdev;
- 	int ret;
- 
--	mutex_lock(&rdev->mutex);
-+	regulator_lock(rdev);
- 	regulator->uA_load = 0;
- 	ret = _regulator_force_disable(regulator->rdev);
--	mutex_unlock(&rdev->mutex);
-+	regulator_unlock(rdev);
- 
- 	if (rdev->supply)
- 		while (rdev->open_count--)
-@@ -2587,9 +2587,9 @@ int regulator_is_enabled(struct regulator *regulator)
- 	if (regulator->always_on)
- 		return 1;
- 
--	mutex_lock(&regulator->rdev->mutex);
-+	regulator_lock(regulator->rdev);
- 	ret = _regulator_is_enabled(regulator->rdev);
--	mutex_unlock(&regulator->rdev->mutex);
-+	regulator_unlock(regulator->rdev);
- 
- 	return ret;
- }
+Tony, please apply this patchset and test it on your Beaglebone. It'd be
+great if you could try to find out, which patch causes failure. They should
+be appliable on the current next.
+
+Thanks,
+
+Maciej Purski
+
+Maciej Purski (7):
+  regulator: core: Add debug messages
+  regulator: core: Add regulator_set_voltage_rdev()
+  regulator: core: Use re-entrant locks
+  regulator: core: Implement voltage balancing algorithm
+  regulator: core: Lock dependent regulators
+  regulator: core: Lock dependent regulators on regulator_enable()
+  regulator: core: Enable voltage balancing
+
+ drivers/regulator/core.c | 341 +++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 300 insertions(+), 41 deletions(-)
+
 -- 
 2.7.4
