@@ -1,88 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752548AbeFDHda (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:33:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39792 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752329AbeFDHd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:33:28 -0400
-Date: Mon, 4 Jun 2018 08:33:23 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the arm64 tree
-Message-ID: <20180604073319.GF22983@e103592.cambridge.arm.com>
-References: <20180604165754.6ae09612@canb.auug.org.au>
+        id S1752084AbeFDG7I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 02:59:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751520AbeFDG7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:59:05 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 4.9 13/29] perf tools: Move headers check into bash script
+Date: Mon,  4 Jun 2018 08:58:09 +0200
+Message-Id: <20180604065802.680459115@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
+References: <20180604065802.157744637@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604165754.6ae09612@canb.auug.org.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 04:57:54PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm tree got a conflict in:
-> 
->   arch/arm64/include/asm/processor.h
-> 
-> between commit:
-> 
->   94b07c1f8c39 ("arm64: signal: Report signal frame size to userspace via auxv")
-> 
-> from the arm64 tree and commit:
-> 
->   9a6e594869b2 ("arm64/sve: Move sve_pffr() to fpsimd.h and make inline")
-> 
-> from the kvm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-The resolution looks fine here, thanks.
+------------------
 
----Dave
+From: Jiri Olsa <jolsa@kernel.org>
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc arch/arm64/include/asm/processor.h
-> index 65ab83e8926e,c99e657fdd57..000000000000
-> --- a/arch/arm64/include/asm/processor.h
-> +++ b/arch/arm64/include/asm/processor.h
-> @@@ -246,9 -246,17 +248,20 @@@ void cpu_enable_pan(const struct arm64_
->   void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused);
->   void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused);
->   
->  +extern unsigned long __ro_after_init signal_minsigstksz; /* sigframe size */
->  +extern void __init minsigstksz_setup(void);
->  +
-> + /*
-> +  * Not at the top of the file due to a direct #include cycle between
-> +  * <asm/fpsimd.h> and <asm/processor.h>.  Deferring this #include
-> +  * ensures that contents of processor.h are visible to fpsimd.h even if
-> +  * processor.h is included first.
-> +  *
-> +  * These prctl helpers are the only things in this file that require
-> +  * fpsimd.h.  The core code expects them to be in this header.
-> +  */
-> + #include <asm/fpsimd.h>
-> + 
->   /* Userspace interface for PR_SVE_{SET,GET}_VL prctl()s: */
->   #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
->   #define SVE_GET_VL()	sve_get_current_vl()
+commit aeafd623f866c429307e3a4a39998f5f06b4f00e upstream.
+
+To make it nicer and easily maintainable.
+
+Also moving the check into fixdep sub make, so its output is not
+scattered around the build output.
+
+Removing extra $$ from mman*.h checks.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Link: http://lkml.kernel.org/r/1481030331-31944-5-git-send-email-jolsa@kernel.org
+[ Use /bin/sh, and 'function check() {' -> 'check () {' to make it work with busybox, in Alpine Linux, for instance ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ tools/perf/Makefile.perf    |   94 --------------------------------------------
+ tools/perf/check-headers.sh |   59 +++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 93 deletions(-)
+
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -202,6 +202,7 @@ goals := $(filter-out all sub-make, $(MA
+ $(goals) all: sub-make
+ 
+ sub-make: fixdep
++	@./check-headers.sh
+ 	$(Q)$(MAKE) FIXDEP=1 -f Makefile.perf $(goals)
+ 
+ else # force_fixdep
+@@ -387,99 +388,6 @@ export JEVENTS
+ build := -f $(srctree)/tools/build/Makefile.build dir=. obj
+ 
+ $(PERF_IN): prepare FORCE
+-	@(test -f ../../include/uapi/linux/perf_event.h && ( \
+-        (diff -B ../include/uapi/linux/perf_event.h ../../include/uapi/linux/perf_event.h >/dev/null) \
+-        || echo "Warning: tools/include/uapi/linux/perf_event.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/linux/hash.h && ( \
+-        (diff -B ../include/linux/hash.h ../../include/linux/hash.h >/dev/null) \
+-        || echo "Warning: tools/include/linux/hash.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/linux/hw_breakpoint.h && ( \
+-        (diff -B ../include/uapi/linux/hw_breakpoint.h ../../include/uapi/linux/hw_breakpoint.h >/dev/null) \
+-        || echo "Warning: tools/include/uapi/linux/hw_breakpoint.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/asm/disabled-features.h && ( \
+-        (diff -B ../arch/x86/include/asm/disabled-features.h ../../arch/x86/include/asm/disabled-features.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/asm/disabled-features.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/asm/required-features.h && ( \
+-        (diff -B ../arch/x86/include/asm/required-features.h ../../arch/x86/include/asm/required-features.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/asm/required-features.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/asm/cpufeatures.h && ( \
+-        (diff -B ../arch/x86/include/asm/cpufeatures.h ../../arch/x86/include/asm/cpufeatures.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/asm/cpufeatures.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/lib/memcpy_64.S && ( \
+-        (diff -B ../arch/x86/lib/memcpy_64.S ../../arch/x86/lib/memcpy_64.S >/dev/null) \
+-        || echo "Warning: tools/arch/x86/lib/memcpy_64.S differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/lib/memset_64.S && ( \
+-        (diff -B ../arch/x86/lib/memset_64.S ../../arch/x86/lib/memset_64.S >/dev/null) \
+-        || echo "Warning: tools/arch/x86/lib/memset_64.S differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/arm/include/uapi/asm/perf_regs.h ../../arch/arm/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm64/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/arm64/include/uapi/asm/perf_regs.h ../../arch/arm64/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm64/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/powerpc/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/powerpc/include/uapi/asm/perf_regs.h ../../arch/powerpc/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/powerpc/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/perf_regs.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/perf_regs.h ../../arch/x86/include/uapi/asm/perf_regs.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/perf_regs.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/kvm.h ../../arch/x86/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/kvm_perf.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/kvm_perf.h ../../arch/x86/include/uapi/asm/kvm_perf.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/kvm_perf.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/svm.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/svm.h ../../arch/x86/include/uapi/asm/svm.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/svm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/x86/include/uapi/asm/vmx.h && ( \
+-        (diff -B ../arch/x86/include/uapi/asm/vmx.h ../../arch/x86/include/uapi/asm/vmx.h >/dev/null) \
+-        || echo "Warning: tools/arch/x86/include/uapi/asm/vmx.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/powerpc/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/powerpc/include/uapi/asm/kvm.h ../../arch/powerpc/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/powerpc/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/s390/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/s390/include/uapi/asm/kvm.h ../../arch/s390/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/s390/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/s390/include/uapi/asm/kvm_perf.h && ( \
+-        (diff -B ../arch/s390/include/uapi/asm/kvm_perf.h ../../arch/s390/include/uapi/asm/kvm_perf.h >/dev/null) \
+-        || echo "Warning: tools/arch/s390/include/uapi/asm/kvm_perf.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/s390/include/uapi/asm/sie.h && ( \
+-        (diff -B ../arch/s390/include/uapi/asm/sie.h ../../arch/s390/include/uapi/asm/sie.h >/dev/null) \
+-        || echo "Warning: tools/arch/s390/include/uapi/asm/sie.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/arm/include/uapi/asm/kvm.h ../../arch/arm/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../arch/arm64/include/uapi/asm/kvm.h && ( \
+-        (diff -B ../arch/arm64/include/uapi/asm/kvm.h ../../arch/arm64/include/uapi/asm/kvm.h >/dev/null) \
+-        || echo "Warning: tools/arch/arm64/include/uapi/asm/kvm.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/arch_hweight.h && ( \
+-        (diff -B ../include/asm-generic/bitops/arch_hweight.h ../../include/asm-generic/bitops/arch_hweight.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/arch_hweight.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/const_hweight.h && ( \
+-        (diff -B ../include/asm-generic/bitops/const_hweight.h ../../include/asm-generic/bitops/const_hweight.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/const_hweight.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/__fls.h && ( \
+-        (diff -B ../include/asm-generic/bitops/__fls.h ../../include/asm-generic/bitops/__fls.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/__fls.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/fls.h && ( \
+-        (diff -B ../include/asm-generic/bitops/fls.h ../../include/asm-generic/bitops/fls.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/fls.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/asm-generic/bitops/fls64.h && ( \
+-        (diff -B ../include/asm-generic/bitops/fls64.h ../../include/asm-generic/bitops/fls64.h >/dev/null) \
+-        || echo "Warning: tools/include/asm-generic/bitops/fls64.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/linux/coresight-pmu.h && ( \
+-	(diff -B ../include/linux/coresight-pmu.h ../../include/linux/coresight-pmu.h >/dev/null) \
+-	|| echo "Warning: tools/include/linux/coresight-pmu.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/asm-generic/mman-common.h && ( \
+-	(diff -B ../include/uapi/asm-generic/mman-common.h ../../include/uapi/asm-generic/mman-common.h >/dev/null) \
+-	|| echo "Warning: tools/include/uapi/asm-generic/mman-common.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/asm-generic/mman.h && ( \
+-	(diff -B -I "^#include <\(uapi/\)*asm-generic/mman-common.h>$$" ../include/uapi/asm-generic/mman.h ../../include/uapi/asm-generic/mman.h >/dev/null) \
+-	|| echo "Warning: tools/include/uapi/asm-generic/mman.h differs from kernel" >&2 )) || true
+-	@(test -f ../../include/uapi/linux/mman.h && ( \
+-	(diff -B -I "^#include <\(uapi/\)*asm/mman.h>$$" ../include/uapi/linux/mman.h ../../include/uapi/linux/mman.h >/dev/null) \
+-	|| echo "Warning: tools/include/uapi/linux/mman.h differs from kernel" >&2 )) || true
+ 	$(Q)$(MAKE) $(build)=perf
+ 
+ $(JEVENTS_IN): FORCE
+--- /dev/null
++++ b/tools/perf/check-headers.sh
+@@ -0,0 +1,59 @@
++#!/bin/sh
++
++HEADERS='
++include/uapi/linux/perf_event.h
++include/linux/hash.h
++include/uapi/linux/hw_breakpoint.h
++arch/x86/include/asm/disabled-features.h
++arch/x86/include/asm/required-features.h
++arch/x86/include/asm/cpufeatures.h
++arch/arm/include/uapi/asm/perf_regs.h
++arch/arm64/include/uapi/asm/perf_regs.h
++arch/powerpc/include/uapi/asm/perf_regs.h
++arch/x86/include/uapi/asm/perf_regs.h
++arch/x86/include/uapi/asm/kvm.h
++arch/x86/include/uapi/asm/kvm_perf.h
++arch/x86/include/uapi/asm/svm.h
++arch/x86/include/uapi/asm/vmx.h
++arch/powerpc/include/uapi/asm/kvm.h
++arch/s390/include/uapi/asm/kvm.h
++arch/s390/include/uapi/asm/kvm_perf.h
++arch/s390/include/uapi/asm/sie.h
++arch/arm/include/uapi/asm/kvm.h
++arch/arm64/include/uapi/asm/kvm.h
++include/asm-generic/bitops/arch_hweight.h
++include/asm-generic/bitops/const_hweight.h
++include/asm-generic/bitops/__fls.h
++include/asm-generic/bitops/fls.h
++include/asm-generic/bitops/fls64.h
++include/linux/coresight-pmu.h
++include/uapi/asm-generic/mman-common.h
++'
++
++check () {
++  file=$1
++  opts=
++
++  shift
++  while [ -n "$*" ]; do
++    opts="$opts \"$1\""
++    shift
++  done
++
++  cmd="diff $opts ../$file ../../$file > /dev/null"
++
++  test -f ../../$file &&
++  eval $cmd || echo "Warning: $file differs from kernel" >&2
++}
++
++
++# simple diff check
++for i in $HEADERS; do
++  check $i -B
++done
++
++# diff with extra ignore lines
++check arch/x86/lib/memcpy_64.S        -B -I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"
++check arch/x86/lib/memset_64.S        -B -I "^EXPORT_SYMBOL" -I "^#include <asm/export.h>"
++check include/uapi/asm-generic/mman.h -B -I "^#include <\(uapi/\)*asm-generic/mman-common.h>"
++check include/uapi/linux/mman.h       -B -I "^#include <\(uapi/\)*asm/mman.h>"
