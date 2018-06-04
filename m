@@ -1,75 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeFDKzW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:55:22 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:59750 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752537AbeFDKzS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:55:18 -0400
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Date: Mon, 4 Jun 2018 11:55:12 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Lee Jones <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mfd: arizona: Don't use regmap_read_poll_timeout
-Message-ID: <20180604105512.GB18740@imbe.wolfsonmicro.main>
-References: <20180511135030.14590-1-ckeepax@opensource.cirrus.com>
- <20180604054452.GD17993@dell>
- <CAHp75Vdcg2GQ4G-YF054iCob+f4=ZmfT_XLknMZm72nOB7D_mw@mail.gmail.com>
- <20180604102719.GA18740@imbe.wolfsonmicro.main>
+        id S1752639AbeFDKzh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:55:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:41750 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752090AbeFDKzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:55:35 -0400
+Date: Mon, 4 Jun 2018 11:55:31 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        robh@kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, skannan@codeaurora.org,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
+ bindings
+Message-ID: <20180604105531.GB13977@e107155-lin>
+References: <1528109194-16864-1-git-send-email-tdas@codeaurora.org>
+ <1528109194-16864-2-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180604102719.GA18740@imbe.wolfsonmicro.main>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=850 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
- definitions=main-1806040134
+In-Reply-To: <1528109194-16864-2-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 11:27:19AM +0100, Charles Keepax wrote:
-> On Mon, Jun 04, 2018 at 12:40:37PM +0300, Andy Shevchenko wrote:
-> > On Mon, Jun 4, 2018 at 8:44 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> > > On Fri, 11 May 2018, Charles Keepax wrote:
-> > 
-> > >> +     while (true) {
-> > >> +             ret = regmap_read(arizona->regmap, reg, &val);
-> > >>
-> > >> +             if ((val & mask) == target)
-> > >> +                     return 0;
-> > >> +
-> > >> +             if (ktime_compare(ktime_get(), timeout) > 0)
-> > >> +                     break;
-> > >> +
-> > >> +             usleep_range(ARIZONA_REG_POLL_DELAY_US / 2,
-> > >> +                          ARIZONA_REG_POLL_DELAY_US);
-> > >> +     }
-> > 
-> > >From my point of view infinite loops not good for readability and maintenance.
-> > Perhaps
-> > 
-> > do {
-> > ...
-> > } while (ktime_compare(...));
-> > 
-> > ?
+On Mon, Jun 04, 2018 at 04:16:33PM +0530, Taniya Das wrote:
+> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+> SoCs. This is required for managing the cpu frequency transitions which are
+> controlled by firmware.
 > 
-> I would rather not do it that way since then it becomes
-> impossible to have a single poll with no delays happening. I can
-> refactor to remove the while(true) but it will make the code a
-> bit bigger, as I will probably need to duplicate some code
-> outside the loop.
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../bindings/cpufreq/cpufreq-qcom-fw.txt           | 173 +++++++++++++++++++++
+>  1 file changed, 173 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+> new file mode 100644
+> index 0000000..e3087ec
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+> @@ -0,0 +1,173 @@
+> +Qualcomm Technologies, Inc. CPUFREQ Bindings
+> +
+> +CPUFREQ FW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
+> +SoCs to manage frequency in hardware. It is capable of controlling frequency
+> +for multiple clusters.
+> +
+> +Properties:
+> +- compatible
+> +	Usage:		required
+> +	Value type:	<string>
+> +	Definition:	must be "qcom,cpufreq-fw".
+> +
+> +* Property qcom,freq-domain
+> +Devices supporting freq-domain must set their "qcom,freq-domain" property with
+> +phandle to a freq_domain_table in their DT node.
+> +
+> +* Frequency Domain Table Node
+> +
+> +This describes the frequency domain belonging to a device.
+> +This node can have following properties:
+> +
+> +- reg
+> +	Usage:		required
+> +	Value type:	<prop-encoded-array>
+> +	Definition:	Addresses and sizes for the memory of the perf
+> +			, lut and enable bases.
+> +			perf - indicates the base address for the desired
+> +			performance state to be set.
+> +			lut - indicates the look up table base address for the
+> +			cpufreq	driver to read frequencies.
+> +			enable - indicates the enable register for firmware.
+> +- reg-names
+> +	Usage:		required
+> +	Value type:	<stringlist>
+> +	Definition:	Address names. Must be "perf", "lut", "enable".
+> +			Must be specified in the same order as the reg property.
+> +
 
-Looking again I think it is fine if I do the ktime_compare at the top
-of the loop though. Will respin.
+[...]
 
-Thanks,
-Charles
+> +
+> +	qcom,cpufreq-fw {
+> +		compatible = "qcom,cpufreq-fw";
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		freq_domain_table0 : freq_table0 {
+> +			reg = <0x17d43920 0x4>, <0x17d43110 0x500>,
+> +				 <0x17d41000 0x4>;
+
+Are "perf", "lut", "enable" registers part of single IP block / share memory ?
+I am just trying to understand the reason for separate entries in this fashion
+as part of DT register property. I am wondering if there will be multiple
+entries that fall with the page size.
+
+--
+Regards,
+Sudeep
