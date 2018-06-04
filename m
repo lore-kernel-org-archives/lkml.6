@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751742AbeFDBdH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 21:33:07 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41947 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751282AbeFDBdF (ORCPT
+        id S1751853AbeFDBdZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 21:33:25 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:35805 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751796AbeFDBdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 21:33:05 -0400
-X-Google-Smtp-Source: ADUXVKKGS/7pde+OQdQJe/tgN1zA5bOtmZNO28HCOg3T79UNvTA5kAzTB9MvrWAQeyRkZuPzliMZjyWg3fEhhGZymnE=
+        Sun, 3 Jun 2018 21:33:23 -0400
+X-Google-Smtp-Source: ADUXVKJwEdztU9w0/iCYpSyCryt6nMgK0dZOGjqz22dLREpWxu8bYwxYIqGJpGJQVqX70tyRTcNnGsKNR9YuA3krmug=
 MIME-Version: 1.0
-In-Reply-To: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
-References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
+References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com> <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
 From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 3 Jun 2018 22:33:04 -0300
-Message-ID: <CAOMZO5B9fZVFmHSWPJLutQ=a71ehEUs=A3y9eeMoFzioeHGtxA@mail.gmail.com>
-Subject: Re: [PATCH V2 1/4] clk: imx6q: remove clks_init_on array
+Date: Sun, 3 Jun 2018 22:33:22 -0300
+Message-ID: <CAOMZO5BU-4O0K0z-ZiL7N9bCceQVeytsGT=5RvD=jRWZ0QfWmA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/4] clk: imx6sl: remove clks_init_on array
 To: Anson Huang <Anson.Huang@nxp.com>
 Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
@@ -36,5 +36,11 @@ On Sun, Jun 3, 2018 at 10:06 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
 >
 > ARM clock is busy divider type which has the
 > CLK_IS_CRITICAL flag set by default when registered.
+>
+> IPG clock has no clock gate and its parent AHB clock
+> is busy divider type, so no need to add CLK_IS_CRITICAL
+> flag for IPG clock.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
 Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
