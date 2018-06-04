@@ -1,74 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751297AbeFDQQx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:16:53 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:50254 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750723AbeFDQQv (ORCPT
+        id S1751328AbeFDQSY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:18:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45928 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeFDQSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:16:51 -0400
-Date: Mon, 4 Jun 2018 09:16:49 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
-Message-ID: <20180604161649.GA16269@roeck-us.net>
-References: <20180604065802.157744637@linuxfoundation.org>
+        Mon, 4 Jun 2018 12:18:22 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 04 Jun 2018 09:18:20 -0700
+From: rishabhb@codeaurora.org
+To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm@lists.infradead.org,
+        tsoni@codeaurora.org, ckadabi@codeaurora.org, evgreen@chromium.org,
+        robh@kernel.org, andy.shevchenko@gmail.com
+Subject: Re: [PATCH v8 0/2] SDM845 System Cache Driver
+In-Reply-To: <1527122121-31452-1-git-send-email-rishabhb@codeaurora.org>
+References: <1527122121-31452-1-git-send-email-rishabhb@codeaurora.org>
+Message-ID: <88e899d928575c59ee5beacd3b3b16f5@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 08:57:56AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.106 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2018-05-23 17:35, Rishabh Bhatnagar wrote:
+> This series implements system cache or LLCC(Last Level Cache 
+> Controller)
+> driver for SDM845 SOC. The purpose of the driver is to partition the
+> system cache and program the settings such as priortiy, lines to probe
+> while doing a look up in the system cache, low power related settings 
+> etc.
+> The partitions are called cache slices. Each cache slice is associated
+> with size and SCID(System Cache ID). The driver also provides API for
+> clients to query the cache slice details,activate and deactivate them.
 > 
-> Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
-> Anything received after that time might be too late.
+> The driver can be broadly classified into:
+> * SOC specific driver: llcc-sdm845.c: Cache partitioning and cache 
+> slice
+> properties for usecases on sdm845 that need to use system cache.
 > 
+> * API : llcc-slice.c: Exports APIs to clients to query cache slice 
+> details,
+> activate and deactivate cache slices.
+> 
+> Changes since v7:
+> * Change the DT node name to cache-controller.
+> * Use the module_platform_driver_macro
+> * Use GENMASK and SZ_* macros
+> * Correct indentation, and remove unnecessary assignemnts.
+> * Addresed all comments by Andy Schevchenko except the comment to 
+> ignore some
+>   lines of code going over 80 characters.
+> 
+> Changes since v6:
+> * Remove the max-slices property from DT.
+> * Make client's slice_ids as macros.
+> * Unlock mutex while returning from function in case of error.
+> 
+> Changes since v5:
+> * Remove client information from DT.
+> * Make the llcc driver data as global.
+> * Check return value of llcc_update_act_ctrl function
+> * Change error returned from -EFAULT to -EINVAL
+> 
+> Changes since v4:
+> * Remove null pointer checks as per comments.
+> * Remove extra blank lines.
+> 
+> Changes since v3:
+> * Use the regmap_read_poll_timeout function
+> * Check for regmap read/write errors.
+> * Remove memory barrier after regmap write
+> * Derive memory bank offsets using stride macro variable
+> * Remove debug statements from code
+> * Remove the qcom_llcc_remove function
+> * Use if IS_ENABLED in place of ifdef for built-in module
+> * Change EXPORT_SYMBOL to EXPORT_SYMBOL_GPL
+> * Remove unnecessary free functions
+> * Change the variable names as per review comments
+> 
+> Changes since v2:
+> * Corrected the Makefile to fix compilation.
+> 
+> Changes since v1:
+> * Added Makefile and Kconfig.
+> 
+> Changes since v0:
+> * Removed the syscon and simple-mfd approach
+> * Updated the device tree nodes to mention LLCC as a single HW block
+> * Moved llcc bank offsets from device tree and handled the offset
+>   in the driver.
+> 
+> ckadabi@codeaurora.org (2):
+>   dt-bindings: Documentation for qcom, llcc
+>   drivers: soc: Add LLCC driver
+> 
+>  .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  26 ++
+>  drivers/soc/qcom/Kconfig                           |  17 ++
+>  drivers/soc/qcom/Makefile                          |   2 +
+>  drivers/soc/qcom/llcc-sdm845.c                     |  94 ++++++
+>  drivers/soc/qcom/llcc-slice.c                      | 335 
+> +++++++++++++++++++++
+>  include/linux/soc/qcom/llcc-qcom.h                 | 180 +++++++++++
+>  6 files changed, 654 insertions(+)
+>  create mode 100644 
+> Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>  create mode 100644 drivers/soc/qcom/llcc-sdm845.c
+>  create mode 100644 drivers/soc/qcom/llcc-slice.c
+>  create mode 100644 include/linux/soc/qcom/llcc-qcom.h
 
-For v4.9.105-30-ge0f8632 (4.9.106-rc1-00030-ge0f8632):
-
-Build results:
-	total: 148 pass: 148 fail: 0
-Qemu test results:
-	total: 139 pass: 137 fail: 2
-Failed tests: 
-	mips64:malta_defconfig:nosmp
-	mips64:malta_defconfig:smp
-
-Qemu tests fail with:
-
-This architecture does not have kernel memory protection.
-random: fast init done
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
-
----[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
-
-While tracking this down, I found commit 4e4636cf981b ("objtool: Enclose
-contents of unreachable() macro in a block"), which says "... Guenter Roeck
-reported a boot failure in mips64 ...". Go figure. Applying commit
-4e4636cf981b on top of v4.9.106-rc1 indeed fixes the problem.
-
-Guenter
+Does this spin look fine to everyone? If yes can we go ahead and merge 
+this?
