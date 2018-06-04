@@ -1,61 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752208AbeFDL1c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:27:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
+        id S1752434AbeFDL1r (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:27:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:58065 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751473AbeFDL1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:27:30 -0400
-Date: Mon, 4 Jun 2018 13:27:06 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
-Message-ID: <20180604112706.GA16847@kroah.com>
-References: <20180604065802.157744637@linuxfoundation.org>
- <a4a96a37-0958-ca4e-ea32-826a29db1476@roeck-us.net>
+        id S1751597AbeFDL1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:27:45 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Stewart Smith <stewart@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Subject: Re: [PATCH] cpuidle:powernv: Make the snooze timeout dynamic.
+In-Reply-To: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
+References: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
+Date: Mon, 04 Jun 2018 21:27:40 +1000
+Message-ID: <87fu22bxlf.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a4a96a37-0958-ca4e-ea32-826a29db1476@roeck-us.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 03:15:23AM -0700, Guenter Roeck wrote:
-> On 06/03/2018 11:57 PM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.9.106 release.
-> > There are 29 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Are you testing us ?
-> 
-> Building x86_64:tools/perf ... failed
-> --------------
-> Error log:
-> make[4]: execvp: ./check-headers.sh: Permission denied
-> make[4]: *** [sub-make] Error 127
+"Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
 
-Heh, no, I wasn't, but thanks for checking.
+> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+>
+> The commit 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of
+> snooze to deeper idle state") introduced a timeout for the snooze idle
+> state so that it could be eventually be promoted to a deeper idle
+> state. The snooze timeout value is static and set to the target
+> residency of the next idle state, which would train the cpuidle
+> governor to pick the next idle state eventually.
+>
+> The unfortunate side-effect of this is that if the next idle state(s)
+> is disabled, the CPU will forever remain in snooze, despite the fact
+> that the system is completely idle, and other deeper idle states are
+> available.
 
-> Something went wrong with the patch creating the file. In the original
-> commit it is created as 755, in the backport it is created as 644.
+That sounds like a bug, I'll add?
 
-Ugh, quilt does not keep the permissions of files :(
+Fixes: 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of snooze to deeper idle state")
+Cc: stable@vger.kernel.org # v4.2+
 
-I thought I had figured that out in the past, let me try to go remember
-what I did before...
-
-There's also a .sh file in the objtool directory that is not the proper
-permissions as well...
-
-greg k-h
+cheers
