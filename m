@@ -1,81 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753773AbeFDO7K (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:59:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37546 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753743AbeFDO7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:59:09 -0400
-Date: Mon, 4 Jun 2018 09:59:02 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, David Ahern <dsahern@gmail.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Jiri Slaby <jslaby@suse.cz>, Joe Perches <joe@perches.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Wang Nan <wangnan0@huawei.com>,
-        damian <damian.tometzki@icloud.com>
-Subject: Re: [PATCH 00/29] objtool sync up for the stable 4.9.y tree
-Message-ID: <20180604145809.3uqin3jvooefd2bg@treble>
-References: <20180603122652.17453-1-gregkh@linuxfoundation.org>
+        id S1753796AbeFDO74 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:59:56 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:37590 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752098AbeFDO7y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:59:54 -0400
+X-Google-Smtp-Source: ADUXVKJkwMTzW2CpPRyS+x/Ls2t5UKmvfmbAsz5kdiNOtc+/SKYEgB/rJSZz8iYVn/6GhZTIG3AWIg==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180603122652.17453-1-gregkh@linuxfoundation.org>
-User-Agent: NeoMutt/20180323
+References: <20180529181740.195362-1-evgreen@chromium.org> <MWHPR04MB11372C75BFC9416BAF5E81A19A630@MWHPR04MB1137.namprd04.prod.outlook.com>
+ <CAE=gft4LoNiRtxgTA_ZPghZGEVOzu_GAwMgqhs-8NCYVgj_AVw@mail.gmail.com> <MWHPR04MB11370AED823FB608218CB9AD9A600@MWHPR04MB1137.namprd04.prod.outlook.com>
+In-Reply-To: <MWHPR04MB11370AED823FB608218CB9AD9A600@MWHPR04MB1137.namprd04.prod.outlook.com>
+From: Evan Green <evgreen@chromium.org>
+Date: Mon, 4 Jun 2018 07:59:14 -0700
+X-Gmail-Original-Message-ID: <CAE=gft5Vk3neDkyvmVf4CkBQQPVK=wXp=5jJ8n0uaosEwWUOAg@mail.gmail.com>
+Message-ID: <CAE=gft5Vk3neDkyvmVf4CkBQQPVK=wXp=5jJ8n0uaosEwWUOAg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Enable UFS provisioning via Linux
+To: Stanislav.Nijnikov@wdc.com
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>,
+        Alex.Lemberg@wdc.com, Avri.Altman@wdc.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 03, 2018 at 02:26:23PM +0200, Greg Kroah-Hartman wrote:
-> There are pros and cons of dealing with tools in the kernel directory.
-> The pros are the fact that development happens fast, and new features
-> can be added to the kernel and the tools at the same times.  The cons
-> are when dealing with backported kernel patches, it can be necessary to
-> backport parts of the tool changes as well.
-> 
-> For 4.9.y so far, we have backported individual patches.  That quickly
-> breaks down when there are minor differences between how backports were
-> handled, so grabbing 40+ patch long series can be difficult, not
-> impossible, but really frustrating to attempt.
-> 
-> To help mitigate this mess, this patch series works to sync up the
-> objtool code with the version that is currently in 4.14.47.  This
-> required a number of objtool old patches to be backported, a single big
-> "sync the world" patch, and a lot of include file updates to get
-> everything all working properly as well as some minor fixes for build
-> warnings.
-> 
-> And at the end of this series, is a set of backported objtool patches
-> for gcc-8 that was the main reason this whole patch series was created.
-> They applied just fine, being the identical version that goes into the
-> 4.14.y stable tree, so it feels like the backport was successful.
-> 
-> This has survivied my limited testing, and as the codebase is identical
-> to 4.14.47, I'm pretty comfortable dropping this big change in here in
-> 4.9.y.  Hopefully all goes well...
-> 
-> If anyone has any objections to this patch series, or finds anything I
-> messed up on, please let me know.
+On Sun, Jun 3, 2018 at 3:21 AM Stanislav Nijnikov
+<Stanislav.Nijnikov@wdc.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: linux-scsi-owner@vger.kernel.org <linux-scsi-owner@vger.kernel.org> On Behalf Of Evan Green
+> > Sent: Friday, June 1, 2018 5:44 PM
+> > To: Stanislav Nijnikov <Stanislav.Nijnikov@wdc.com>
+> > Cc: Vinayak Holikatti <vinholikatti@gmail.com>; jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; linux-
+> > kernel@vger.kernel.org; linux-scsi@vger.kernel.org; Gwendal Grignou <gwendal@chromium.org>; Alex Lemberg
+> > <Alex.Lemberg@wdc.com>; Avri Altman <Avri.Altman@wdc.com>
+> > Subject: Re: [PATCH 0/7] Enable UFS provisioning via Linux
+> >
+> > Hi Stanislav. Thanks for taking a look. Responses below.
+> >
+> > On Thu, May 31, 2018 at 3:04 AM Stanislav Nijnikov
+> > <Stanislav.Nijnikov@wdc.com> wrote:
+> > >
+> > > Hi Evan,
+> > > I have some generic notes:
+> > > - Why to create new sysfs entries for the configuration descriptor fields if they are just duplication of fields in the device and unit
+> > descriptors? And the sysfs representation of the device and unit descriptors is existing already.
+> >
+> > Well, UFS describes them as different descriptors. I worry that if I
+> > add a bunch of clever logic to hide the config descriptor behind other
+> > descriptors, there might be trouble later if 1) there is a quirky
+> > device that doesn't reflect the values between descriptors quite the
+> > same way or at the same time, or 2) if a later UFS spec adds more
+> > configuration descriptor fields that don't exactly reflect into other
+> > non-config descriptors, the cleverness will look awkward.
+>
+> No additional logic will be required to attach write functionality to the
+> existing entries instead of new defined ones. It will reduce the patch
+> size significantly. And there will be no need for the unit selector
+> mechanism which I'm not sure will be accepted by the SCSI community.
+>
 
-Thanks Greg.  Looks good to me.
+So this would be modifying the existing sysfs entries so that reads
+still come from the device and unit descriptors, but writes go to
+equivalent fields in the config descriptor? I can explore that
+approach. Alternatively, if the unit selector mechanism is not
+desired, I could dynamically create sysfs directories for each unit in
+the config descriptor, but still bring out the config descriptor
+values as separate entries. (I still worry a bit about smashing the
+descriptors together as the UFS spec called them out as different).
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
-
--- 
-Josh
+-Evan
