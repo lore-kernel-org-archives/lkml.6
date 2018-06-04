@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753930AbeFDHFL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:05:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57248 "EHLO mail.kernel.org"
+        id S1753844AbeFDHGB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:06:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753913AbeFDHFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:05:09 -0400
+        id S1753907AbeFDHFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:05:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.16 29/47] iio: adc: stm32-dfsdm: fix successive oversampling settings
-Date: Mon,  4 Jun 2018 08:58:41 +0200
-Message-Id: <20180604065550.696409642@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
+        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.16 28/47] iio:kfifo_buf: check for uint overflow
+Date: Mon,  4 Jun 2018 08:58:40 +0200
+Message-Id: <20180604065550.659359853@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -30,52 +29,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit 7531cf59bfa082769887ec70c2029838ea139f11 upstream.
+commit 3d13de4b027d5f6276c0f9d3a264f518747d83f2 upstream.
 
-When doing successive oversampling settings, it may fail to update filter
-parameters silently:
-- First time oversampling is being set, it will be successful, as fl->res
-is 0 initially.
-- Next attempts with various oversamp value may return 0 (success), but
-keep previous filter parameters, due to 'res' never reaches above or
-equal current 'fl->res'.
+Currently, the following causes a kernel OOPS in memcpy:
 
-This is particularly true when setting sampling frequency (that relies on
-oversamp). Typical failure without error:
-- run 1st test @16kHz samp freq will succeed
-- run new test @8kHz will succeed as well
-- run new test @16kHz (again): sample rate will remain 8kHz without error
+echo 1073741825 > buffer/length
+echo 1 > buffer/enable
 
-Fixes: e2e6771c6462 ("IIO: ADC: add STM32 DFSDM sigma delta ADC support")
+Note that using 1073741824 instead of 1073741825 causes "write error:
+Cannot allocate memory" but no OOPS.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: <Stable@vger.kernel.org>
+This is because 1073741824 == 2^30 and 1073741825 == 2^30+1. Since kfifo
+rounds up to the nearest power of 2, it will actually call kmalloc with
+roundup_pow_of_two(length) * bytes_per_datum.
+
+Using length == 1073741825 and bytes_per_datum == 2, we get:
+
+kmalloc(roundup_pow_of_two(1073741825) * 2
+or kmalloc(2147483648 * 2)
+or kmalloc(4294967296)
+or kmalloc(UINT_MAX + 1)
+
+so this overflows to 0, causing kmalloc to return ZERO_SIZE_PTR and
+subsequent memcpy to fail once the device is enabled.
+
+Fix this by checking for overflow prior to allocating a kfifo. With this
+check added, the above code returns -EINVAL when enabling the buffer,
+rather than causing an OOPS.
+
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/stm32-dfsdm-adc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iio/buffer/kfifo_buf.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/iio/adc/stm32-dfsdm-adc.c
-+++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-@@ -144,6 +144,7 @@ static int stm32_dfsdm_set_osrs(struct s
- 	 * Leave as soon as if exact resolution if reached.
- 	 * Otherwise the higher resolution below 32 bits is kept.
- 	 */
-+	fl->res = 0;
- 	for (fosr = 1; fosr <= DFSDM_MAX_FL_OVERSAMPLING; fosr++) {
- 		for (iosr = 1; iosr <= DFSDM_MAX_INT_OVERSAMPLING; iosr++) {
- 			if (fast)
-@@ -193,7 +194,7 @@ static int stm32_dfsdm_set_osrs(struct s
- 		}
- 	}
- 
--	if (!fl->fosr)
-+	if (!fl->res)
+--- a/drivers/iio/buffer/kfifo_buf.c
++++ b/drivers/iio/buffer/kfifo_buf.c
+@@ -27,6 +27,13 @@ static inline int __iio_allocate_kfifo(s
+ 	if ((length == 0) || (bytes_per_datum == 0))
  		return -EINVAL;
  
- 	return 0;
++	/*
++	 * Make sure we don't overflow an unsigned int after kfifo rounds up to
++	 * the next power of 2.
++	 */
++	if (roundup_pow_of_two(length) > UINT_MAX / bytes_per_datum)
++		return -EINVAL;
++
+ 	return __kfifo_alloc((struct __kfifo *)&buf->kf, length,
+ 			     bytes_per_datum, GFP_KERNEL);
+ }
