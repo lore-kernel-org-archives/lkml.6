@@ -1,134 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751813AbeFDWl6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 18:41:58 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38266 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeFDWl4 (ORCPT
+        id S1751997AbeFDWzp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 18:55:45 -0400
+Received: from leo.clearchain.com ([199.73.29.74]:65335 "EHLO
+        mail.clearchain.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbeFDWzo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 18:41:56 -0400
-X-Google-Smtp-Source: ADUXVKL1c7z1AzDZN134KvNScg3xhpxaBWrany6VTIXG+HrbuXzHFhvDfOqvyP9U946ARYM1Adc6lQ==
-Subject: Re: [PATCH] arm64: dts: stingray: Add otp device node
-To: Scott Branden <scott.branden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1527106630-4760-1-git-send-email-scott.branden@broadcom.com>
- <c9219029-6e45-1889-6326-470d2bc9e46c@gmail.com>
- <f6f3e76e-eac9-797d-fea5-eac64327ec7f@broadcom.com>
- <efaf0373-2959-b238-e5f3-ae7e16534384@gmail.com>
- <e641f180-0b7e-678c-07c4-834ff0676b34@broadcom.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <2d6cc541-7987-5b4c-a847-6fcbb27e12d2@gmail.com>
-Date: Mon, 4 Jun 2018 15:41:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 4 Jun 2018 18:55:44 -0400
+Date: Tue, 5 Jun 2018 08:55:39 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+Message-ID: <20180604225539.GA13447@jelly>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+ <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
+ <20180601184330.GD222005@dtor-ws>
+ <CAO-hwJJPGJzgX+7H1nnpd=OkLZu0q0TuKhvroJ1K3jtnv7t6dg@mail.gmail.com>
+ <20180604173339.GB164893@dtor-ws>
+ <CAO-hwJ+nzC=i1Jv_yu4vLL6Quw=850HJkOZBKCjFaZaw0-GWOQ@mail.gmail.com>
+ <20180604211944.GE164893@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <e641f180-0b7e-678c-07c4-834ff0676b34@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604211944.GE164893@dtor-ws>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 03:33 PM, Scott Branden wrote:
+On Mon, Jun 04, 2018 at 02:19:44PM -0700, Dmitry Torokhov wrote:
+> On Mon, Jun 04, 2018 at 10:42:31PM +0200, Benjamin Tissoires wrote:
+> > On Mon, Jun 4, 2018 at 7:33 PM, Dmitry Torokhov
+> > <dmitry.torokhov@gmail.com> wrote:
+> > > On Mon, Jun 04, 2018 at 03:18:12PM +0200, Benjamin Tissoires wrote:
+> > >> On Fri, Jun 1, 2018 at 8:43 PM, Dmitry Torokhov
+> > >> <dmitry.torokhov@gmail.com> wrote:
+> > >> > On Fri, Jun 01, 2018 at 04:16:09PM +0200, Benjamin Tissoires wrote:
+> > >> >> On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
+> > >> >> <dmitry.torokhov@gmail.com> wrote:
+> > >> >> > According to Microsoft specification [1] for Precision Touchpads (and
+> > >> >> > Touchscreens) the devices use "confidence" reports to signal accidental
+> > >> >> > touches, or contacts that are "too large to be a finger". Instead of
+> > >> >> > simply marking contact inactive in this case (which causes issues if
+> > >> >> > contact was originally proper and we lost confidence in it later, as
+> > >> >> > this results in accidental clicks, drags, etc), let's report such
+> > >> >> > contacts as MT_TOOL_PALM and let userspace decide what to do.
+> > >> >> > Additionally, let's report contact size for such touches as maximum
+> > >> >> > allowed for major/minor, which should help userspace that is not yet
+> > >> >> > aware of MT_TOOL_PALM to still perform palm rejection.
+> > >> >> >
+> > >> >> > An additional complication, is that some firmwares do not report
+> > >> >> > non-confident touches as active. To cope with this we delay release of
+> > >> >> > such contact (i.e. if contact was active we first report it as still
+> > >> >> > active MT+TOOL_PALM and then synthesize the release event in a separate
+> > >> >> > frame).
+> > >> >>
+> > >> >> I am not sure I agree with this part. The spec says that "Once a
+> > >> >> device has determined that a contact is unintentional, it should clear
+> > >> >> the confidence bit for that contact report and all subsequent
+> > >> >> reports."
+> > >> >> So in theory the spec says that if a touch has been detected as a
+> > >> >> palm, the flow of events should not stop (tested on the PTP of the
+> > >> >> Dell XPS 9360).
+> > >> >>
+> > >> >> However, I interpret a firmware that send (confidence 1, tip switch 1)
+> > >> >> and then (confidence 0, tip switch 0) a simple release, and the
+> > >> >> confidence bit should not be relayed.
+> > >> >
+> > >> > This unfortunately leads to false clicks: you start with finger, so
+> > >> > confidence is 1, then you transition the same touch to palm (use your
+> > >> > thumb and "roll" your hand until heel of it comes into contact with the
+> > >> > screen). The firmware reports "no-confidence" and "release" in the same
+> > >> > report and userspace seeing release does not pay attention to confidence
+> > >> > (i.e. it does exactly "simple release" logic) and this results in UI
+> > >> > interpreting this as a click. With splitting no-confidence
+> > >> > (MT_TOOL_PALM) and release event into separate frames we help userspace
+> > >> > to recognize that the contact should be discarded.
+> > >>
+> > >> After further thoughts, I would consider this to be a firmware bug,
+> > >> and not how the firmware is supposed to be reporting palm.
+> > >> For the precision touchpads, the spec says that the device "should
+> > >> clear the confidence bit for that contact report and all subsequent
+> > >> reports.". And it is how the Dell device I have here reports palms.
+> > >> The firmware is not supposed to cut the event stream.
+> > >>
+> > >> There is a test for that:
+> > >> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/hck/dn456905%28v%3dvs.85%29
+> > >> which tells me that I am right here for PTP.
+> > >>
+> > >> The touchscreen spec is blurrier however.
+> > >
+> > > OK, that is great to know.
+> > >
+> > >>
+> > >> >
+> > >> >>
+> > >> >> Do you have any precise example of reports where you need that feature?
+> > >> >
+> > >> > It was observed on Pixelbooks which use Wacom digitizers IIRC.
+> > >>
+> > >> Pixelbooks + Wacom means that it was likely a touchscreen. I am right
+> > >> guessing the device did not went through Microsoft certification
+> > >> process?
+> > >
+> > > That would be correct ;) At least the firmware that is shipping with
+> > > Pixlebooks hasn't, I do now if anyone else sourced these Wacom parts for
+> > > their MSWin devices.
+> > >
+> > >>
+> > >> I am in favor of splitting the patch in 2. One for the generic
+> > >> processing of confidence bit, and one for this spurious release. For
+> > >> the spurious release, I'm more in favor of explicitly quirking the
+> > >> devices in need of such quirk.
+> > >
+> > > Hmm, I am not sure about having specific quirk. It will be hard for
+> > > users to accurately diagnose the issue if firmware is broken in this way
+> > > so we could add a new quirk for a new device.
+> > 
+> > One thing we can do is keep the quirked mechanism as default in
+> > hid-multitouch, but remove it in hid-core. If people need the quirk,
+> > they can just use hid-multitouch instead (talking about the long run
+> > here).
 > 
+> Hmm, I am confused. My patch did not touch hid-core or hid-input, only
+> hid-multitouch... So we are already doing what you are proposing?..
 > 
-> On 18-06-04 02:33 PM, Florian Fainelli wrote:
->> On 06/04/2018 02:30 PM, Scott Branden wrote:
->>> Hi Florian,
->>>
->>>
->>> On 18-06-04 02:24 PM, Florian Fainelli wrote:
->>>> On 05/23/2018 01:17 PM, Scott Branden wrote:
->>>>> Add otp device node for Stingray SOC.
->>>>>
->>>>> Fixes: 2fa9e9e29ea2 ("arm64: dts: Add GPIO DT nodes for Stingray SOC")
->>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>>> Applied to devicetree-arm64/next with s/otp/OTP/ and removing the Fixes
->>>> line since that is not a bug fix AFAICT.
->>> It fixes the issue that OTP is not active as it is missing the device
->>> node?
->> By that token, any peripheral that is being added at some point in the
->> lifetime of this DTS would qualify as a bugfix when it is in fact
->> feature/peripheral enabling.
->>
->> I could not see the relationship between the commit being provided in
->> the "Fixes:" tag and OTP, am I missing something?
-> The relationship is the fixes tag points was selected to the last tag
-> when the commit applies directly against (and is far enough back that it
-> covers any possible LTS kernels that would have needed it).
+> > 
+> > However, I really believe this might only be required for a handful of
+> > devices, and probably only touchscreens. So I would be tempted to not
+> > make it default and see how many bug reports we have.
+> 
+> Up to you but it is hard to detect for users. If just sometimes there
+> are stray clicks...
 
-I understand how ones gets to select an appropriate Fixes: tag, what I
-don't understand is the relationship between the two changes, like why
-would a GPIO Device Tree node influence the OTP peripheral here when
-there is no pinmux or GPIO phandle of some sort linking the two. Also,
-since you guys were very trigger happy with Fixes: tag lately (referring
-to the internal review of Srinath's changes) this one looked a lot like
-that.
+fwiw, from my POV, if you give me MT_TOOL_PALM in the same frame as the
+ABS_MT_TRACKING_ID -1 I can work that into libinput to do the right thing.
+Not 100% whether that already works anyway but probably not. I'd prefer it
+being fixed in the kernel though, less work for me :)
 
-The only thing I am questioning here is treating that particular
-changeset as a bugfix proper. Yes it is technically a fix in that,
-without this changeset the OTP node is not there and that is
-functionality you want, but it is not preventing the platform from not
-booting for instance, or having an incorrect behavior for an established
-behavior before, right?
-
-> In this case
-> I don't care too much about whether this is fixed in LTS or not.  If
-> needed I'll send a request for the commit be ported to stable.
-
-If this is a true fix, I don't mind taking it as-is and keeping the
-Fixes: tag, keep in mind the following:
-
-I always treat bug fixes with a higher priority than features, and I
-will do my best to queue up fixes (separate branches, all ending in
-/fixes) and submit those at any time in the release cycle so they can
-land in Linus' tree and in the -stable trees as fast as possible.
-
-Don't bypass the maintainer if you can convince me this is a proper fix,
-then I will just move that patch into the appropriate branch, and you
-will get those stable backports automatically.
-
-Thanks for reading me.
--- 
-Florian
+Cheers,
+   Peter
