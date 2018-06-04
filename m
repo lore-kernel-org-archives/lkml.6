@@ -1,5 +1,5 @@
 Return-Path: <linux-next-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3139683-1528082457-2-12583945107714842466
+X-Cyrus-Session-Id: sloti22d1t05-3125135-1528081751-2-2130407728456631757
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='US-ASCII'
@@ -7,25 +7,25 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-next-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1528082457; b=cANrEdzXEtbJXfm566qE2q2NQtCLgFynVoWKyIofpjxSDYtsLa
-    qCwxHGa47K33OymHDklJA24wgAGqwcTkTsXMx99htEgzjK62qsxZPaVn6XIyPNsU
-    ydfShDDaPt1fytA0AuE4IPnyXt0izfb1NpG5laCMsy9/FEL0DJT9c8USfxGfLYvY
-    DcsiEiKVlwnWC9gyCeru95VyZL22uXrIncBTYSOE+uJ5DD6wymE6hfHr7V+01uMR
-    W5Q4wJMOJnv7+rD3YINPtfkx/WfCPC9q8Nj6vIuuLU5tq254C54v4OC5skAdCSzi
-    UID4l62tPC/1+Iyr4CuIxtxQNvK41hNlalYQ==
+    1528081751; b=jZErLRgu8aN7N4YXf1zSc3Tre8BjTRA0yzyhtdKmVDxRC+Dzey
+    r6oD6qrEMeVyNm+PeoVcbMSznqpNoyvPwuW3UhZkaLDnqZUxRynrpBNGI3vdHLLi
+    rfcB0DuBOoD6Lz3X/fidUQ01xsYffTW3nQSG2gRiZlBDy6UrmUFTsg6Fp99LhXLa
+    vEzhJIrcLAea1VvPu6iPHfy2y3FNVfTcZn3og9/ngLEug1rSghLelok/CUc3ur3U
+    GWKy5iVHWwrICdJ1vApALTuhD1bg7bwK+EZDyxzwcyC8GA+59PC8DP3DM7wlXMPb
+    Gdvj2arAngnn66GdS3/9iZWVay1uv0IWKCZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:sender:list-id; s=fm2; t=1528082457;
-    bh=mT0B7gjsZpthLoHLeyNRS5cJAJZodzu7puSeOLEIVys=; b=SlIu4oVzRpJ1
-    Nt4cljGYaWvV3yASNh2J+AQEyYq/ixeoOlGrgBfPVbj33AxMIaju57obdkURClAu
-    1MEUUg4RvgbQrjwBiH+RC6ep3Vu23C+/uXEzAvh98TCpQry+XL4L2VkDIBJ46CK1
-    yX2ZGKsRrKqHR4Ku6R6jkI5QWpl52aZIPb/zPHqAqQXMCqcE2BkeztgwVUFHy7ed
-    WbOiVAhDGHrmaUa2dOv5VjfmBznKKKLNfNb0InHy58/WAZhSbIhQWR2auP4x1Kik
-    hBROFhHOcNqhJhCYkFSVwo5HUMYj2NZNG4qTbe8MiDRapjkEEAPHniBvuYpOPyk5
-    HobgPVTAyQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :mime-version:content-type:sender:list-id; s=fm2; t=1528081751;
+    bh=dWbg1UHoQmOtqCDUkV0Mc5KWPx/z6Ii+2PzClugEzXI=; b=T3A/9y2gCXAn
+    hOWawJdB79hG5CUrCVnOkYDMZz0F3AyPtng996+THV5/Kw2LSxW5adb9umjgeH8D
+    TJvQZYPFYzOeGTDvyazCMrtLWxQMohXZq4ZcXvQyxUoBDo71Q9t+7FcyO9Br4+4V
+    QoSm3XZtHjOStLDJ9Kpvg1gh0hcmiUIVOMpN8jT4i/wvHw+Ovaj/qDa2yRaZUZkC
+    R+qNdu+9Avsn+m1Cb9N37wk/UbhDzMsK/J1sAlFbBKpfErr+SJVeg4+XUMwj+D3o
+    kdHcEmiAZSuwIoq0aZcGh8q4k10rzU4KkxaRo2xMSQhQr9PxN4DMLa6oCM9nUn3u
+    +V5XwTM3EA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EwaII3Wa
+    header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tQyCq4HP
     header.a=rsa-sha256 header.s=201702 x-bits=2048;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=canb.auug.org.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -40,10 +40,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header_org.domain=auug.org.au header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EwaII3Wa
+      header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tQyCq4HP
       header.a=rsa-sha256 header.s=201702 x-bits=2048;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=canb.auug.org.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -59,75 +59,112 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCvo/cU68Tu0lQrBbsiJKhPk1TYqLI1rEMw6V6EHWXoGY1iALuxcHsagaA4D6fa+VhxrqJvtIuQ88bu/moWaGb0nu0zJh137cNznpAvTBQ0BCmwBaRGi
-    7wjjTxKdqGCBSdxajr9oiyHIPvNpYqXgeoTraNCn+h6k9iThRAxt8OjLqzSNb7nChrGzj6j43Csjesg8QS+mp754AbqFwpSW73BH1lppGy6iDi3J4wXeWI7a
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=7mUfYlMuFuIA:10 a=Jk-UD360Ie56WAJnNqYA:9
-    a=CjuIK1q_8ugA:10 a=Jh360gsMpRqMmxZRAMYA:9 a=VwQbUJbxAAAA:8
+X-CM-Envelope: MS4wfGAO/IHGD1NbvXhh8hK+VTUUDFW6gaunIU74Vfe4fjCCEh+DDLMORllP+Oj+PD1xu0ZtOxUxxgKRokI2ufRm4h4lroXImYY3OKVIm8DoSow9bUnI8kXS
+    Sa1RFb755bsPZ6azn910AfM9mZgAv9/1JpbjUO5vaeL4yugCdChwlfGvJErHwhNptQ0yOfpwa1tem1ck++XnkXwvsquxaShVbI/XiGRXg9Iw7eChAt8W0m0s
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=7mUfYlMuFuIA:10 a=u-Y0lGIL-1t-5xPkIlwA:9
+    a=CjuIK1q_8ugA:10 a=TAz9w8g1t1xc5HeqYHkA:9 a=VwQbUJbxAAAA:8
     a=fT6DY2neKoG22zCxINUA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeFDDUy (ORCPT <rfc822;linux@kroah.com>);
-        Sun, 3 Jun 2018 23:20:54 -0400
-Received: from ozlabs.org ([203.11.71.1]:46547 "EHLO ozlabs.org"
+        id S1751198AbeFDDJI (ORCPT <rfc822;linux@kroah.com>);
+        Sun, 3 Jun 2018 23:09:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:46787 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751198AbeFDDUx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 3 Jun 2018 23:20:53 -0400
+        id S1751169AbeFDDJH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 3 Jun 2018 23:09:07 -0400
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 4 Jun 2018 13:20:49 +1000
+Date: Mon, 4 Jun 2018 13:09:00 +1000
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Clark <robdclark@gmail.com>
+To: Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sharat Masetty <smasetty@codeaurora.org>
-Subject: linux-next: build failure after merge of the drm-msm tree
-Message-ID: <20180604132049.117952be@canb.auug.org.au>
+        David Francis <David.Francis@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Message-ID: <20180604130900.07deb177@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY"; protocol="application/pgp-signature"
+ boundary="Sig_/blmek0qS6/Swspi6Zx9D8.A"; protocol="application/pgp-signature"
 Sender: linux-next-owner@vger.kernel.org
 X-Mailing-List: linux-next@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY
+--Sig_/blmek0qS6/Swspi6Zx9D8.A
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi all,
 
-After merging the drm-msm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in:
 
-drivers/gpu/drm/msm/adreno/a5xx_gpu.o: In function `a5xx_gpu_busy':
-a5xx_gpu.c:(.text+0xcc): undefined reference to `__aeabi_uldivmod'
+  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
 
-Caused by commit
+between commit:
 
-  dd4ff3063899 ("drm/msm: re-factor devfreq code")
+  a9e8d27574f2 ("drm/amd/display: Make atomic-check validate underscan chan=
+ges")
 
-I have reverted that commit for today.
+from Linus' tree and commit:
+
+  dm_update_crtcs_state ("drm/amd/display: Couple formatting fixes")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY
+diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 27579443cdc5,1ce10bc2d37b..000000000000
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@@ -4577,14 -4650,11 +4650,14 @@@ static int dm_update_crtcs_state(struc
+  		/* TODO This hack should go away */
+  		if (aconnector && enable) {
+  			// Make sure fake sink is created in plug-in scenario
+ -			new_con_state =3D drm_atomic_get_connector_state(state,
+ +			drm_new_conn_state =3D drm_atomic_get_new_connector_state(state,
+-  								    &aconnector->base);
++ 								    &aconnector->base);
+ +			drm_old_conn_state =3D drm_atomic_get_old_connector_state(state,
+ +								    &aconnector->base);
+ +
+ =20
+ -			if (IS_ERR(new_con_state)) {
+ -				ret =3D PTR_ERR_OR_ZERO(new_con_state);
+ +			if (IS_ERR(drm_new_conn_state)) {
+ +				ret =3D PTR_ERR_OR_ZERO(drm_new_conn_state);
+  				break;
+  			}
+ =20
+
+--Sig_/blmek0qS6/Swspi6Zx9D8.A
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUsBEACgkQAVBC80lX
-0GwwyAf9FIRSiZXmpBSwLztMljQDFRBNWMtC6yuEJ3jNvsCg+JuoMRHutoEvil/1
-YLM7DndxEwZXnE1bwh76AlIWmEWQS5NyeEGuxHwU5GQPXPcv78yDbYpiiVhKB+T8
-4HiEv25ygJp3H6zLBx3ynWbjh4WXhceLm2Y4kJsSsg8QzZEC/182Qhgnkg6C4ZVG
-qq6aTx60c7phlxcxs+Pisuvyz+Qye9hTxdnlicYFOebB7jMCi/UtsBifuGslVb0b
-IufAe0aErv+by1hOQvdMiERYHaqJTLOddK+aT5UjRF+u6bYZK10KJxaG7U5EJN1W
-ZSYCirzVRm6hxpFGPKjykAdoXoIK4w==
-=G44I
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUrUwACgkQAVBC80lX
+0Gyn2Af+Lpg5Wdv71CFqwaPPxWZ4uIMePiomUygDKAFiJE4X69LCKvZPG6r7L3ww
+KsqxwZ86hr70yEllebObtd0CdhypywI9DHEYH/VNMAu+rAVOgk+KNGKiAC94LBMG
+vLwHSEEdOybfhRXHyZwh7KWccnmKUqk1lFy+wrHV7B/8m/uoIICqJ5Q1RzKkUdfe
+pBkqkrQ7+rnpoYe/W69Nop18QXbllipPnLgMLZVKf4fBhBosItOB5ROCFK1GMixi
+s6g9hOC4Pu5kYBYO5Ok8hdSnxjO22GbQMAhnFwwSgGYMhksqTbcBRtCxzLi85zKC
+XrdE8frv3w+zxB2ZamP6xVHLtZDTtA==
+=7zR4
 -----END PGP SIGNATURE-----
 
---Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY--
+--Sig_/blmek0qS6/Swspi6Zx9D8.A--
