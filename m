@@ -1,19 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753829AbeFDHPh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:15:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56032 "EHLO mail.kernel.org"
+        id S1753895AbeFDHQF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:16:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753620AbeFDHDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:52 -0400
+        id S1753584AbeFDHDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
-        Brian Paul <brianp@vmware.com>, Sinclair Yeh <syeh@vmware.com>
-Subject: [PATCH 4.16 09/47] drm/vmwgfx: Fix host logging / guestinfo reading error paths
-Date: Mon,  4 Jun 2018 08:58:21 +0200
-Message-Id: <20180604065549.875848533@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, David Laight <David.Laight@ACULAB.COM>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        damian <damian.tometzki@icloud.com>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 05/47] objtool: Fix "noreturn" detection for recursive sibling calls
+Date: Mon,  4 Jun 2018 08:58:17 +0200
+Message-Id: <20180604065549.699801901@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -29,102 +33,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit f37230c0ad481091bc136788ff8b37dc86300c6d upstream.
+commit 0afd0d9e0e7879d666c1df2fa1bea4d8716909fe upstream.
 
-The error paths were leaking opened channels.
-Fix by using dedicated error paths.
+Objtool has some crude logic for detecting static "noreturn" functions
+(aka "dead ends").  This is necessary for being able to correctly follow
+GCC code flow when such functions are called.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Brian Paul <brianp@vmware.com>
-Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+It's remotely possible for two functions to call each other via sibling
+calls.  If they don't have RET instructions, objtool's noreturn
+detection logic goes into a recursive loop:
+
+  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
+  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
+
+Instead of reporting an error in this case, consider the functions to be
+non-dead-ends.
+
+Reported-and-tested-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: damian <damian.tometzki@icloud.com>
+Link: http://lkml.kernel.org/r/7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c |   48 +++++++++++++++++++++++-------------
- 1 file changed, 31 insertions(+), 17 deletions(-)
+ tools/objtool/check.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -329,8 +329,6 @@ int vmw_host_get_guestinfo(const char *g
- 	struct rpc_channel channel;
- 	char *msg, *reply = NULL;
- 	size_t reply_len = 0;
--	int ret = 0;
--
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -208,9 +208,13 @@ static int __dead_end_function(struct ob
  
- 	if (!vmw_msg_enabled)
- 		return -ENODEV;
-@@ -344,15 +342,14 @@ int vmw_host_get_guestinfo(const char *g
- 		return -ENOMEM;
- 	}
+ 				/* local sibling call */
+ 				if (recursion == 5) {
+-					WARN_FUNC("infinite recursion (objtool bug!)",
+-						  dest->sec, dest->offset);
+-					return -1;
++					/*
++					 * Infinite recursion: two functions
++					 * have sibling calls to each other.
++					 * This is a very rare case.  It means
++					 * they aren't dead ends.
++					 */
++					return 0;
+ 				}
  
--	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
--	    vmw_send_msg(&channel, msg) ||
--	    vmw_recv_msg(&channel, (void *) &reply, &reply_len) ||
--	    vmw_close_channel(&channel)) {
--		DRM_ERROR("Failed to get %s", guest_info_param);
-+	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM))
-+		goto out_open;
- 
--		ret = -EINVAL;
--	}
-+	if (vmw_send_msg(&channel, msg) ||
-+	    vmw_recv_msg(&channel, (void *) &reply, &reply_len))
-+		goto out_msg;
- 
-+	vmw_close_channel(&channel);
- 	if (buffer && reply && reply_len > 0) {
- 		/* Remove reply code, which are the first 2 characters of
- 		 * the reply
-@@ -369,7 +366,17 @@ int vmw_host_get_guestinfo(const char *g
- 	kfree(reply);
- 	kfree(msg);
- 
--	return ret;
-+	return 0;
-+
-+out_msg:
-+	vmw_close_channel(&channel);
-+	kfree(reply);
-+out_open:
-+	*length = 0;
-+	kfree(msg);
-+	DRM_ERROR("Failed to get %s", guest_info_param);
-+
-+	return -EINVAL;
- }
- 
- 
-@@ -400,15 +407,22 @@ int vmw_host_log(const char *log)
- 		return -ENOMEM;
- 	}
- 
--	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
--	    vmw_send_msg(&channel, msg) ||
--	    vmw_close_channel(&channel)) {
--		DRM_ERROR("Failed to send log\n");
-+	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM))
-+		goto out_open;
- 
--		ret = -EINVAL;
--	}
-+	if (vmw_send_msg(&channel, msg))
-+		goto out_msg;
-+
-+	vmw_close_channel(&channel);
-+	kfree(msg);
-+
-+	return 0;
- 
-+out_msg:
-+	vmw_close_channel(&channel);
-+out_open:
- 	kfree(msg);
-+	DRM_ERROR("Failed to send log\n");
- 
--	return ret;
-+	return -EINVAL;
- }
+ 				return __dead_end_function(file, dest->func,
