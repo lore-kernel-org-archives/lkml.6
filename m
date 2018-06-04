@@ -1,92 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753005AbeFDMYQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:24:16 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35485 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752633AbeFDMYO (ORCPT
+        id S1753052AbeFDMY1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:24:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40174 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753006AbeFDMYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:24:14 -0400
-X-Google-Smtp-Source: ADUXVKLs5Hfb/MYRvaR+eVCpQnKzqKbZO2+2oc19AT3Nmchiv019+5eBzQ8qZbVdPCSdvur13Hzr3A==
-Date: Mon, 4 Jun 2018 13:24:10 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] mfd: da9063: Fix failpath in core
-Message-ID: <20180604122410.GA21163@dell>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+        Mon, 4 Jun 2018 08:24:19 -0400
+Date: Mon, 4 Jun 2018 14:24:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 05/19] sched/numa: Use task faults only if numa_group is
+ not yet setup
+Message-ID: <20180604122408.GT12217@hirez.programming.kicks-ass.net>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-6-git-send-email-srikar@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1528106428-19992-6-git-send-email-srikar@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 02 Jun 2018, Marek Vasut wrote:
-
-> In case mfd_add_devices() fails, da9063_irq_exit() is not called to
-> undo the IRQchip setup done by da9063_irq_init(). Fix this by adding
-> the missing fail path.
+On Mon, Jun 04, 2018 at 03:30:14PM +0530, Srikar Dronamraju wrote:
+> When numa_group faults are available, task_numa_placement only uses
+> numa_group faults to evaluate preferred node. However it still accounts
+> task faults and even evaluates the preferred node just based on task
+> faults just to discard it in favour of preferred node chosen on the
+> basis of numa_group.
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V3: New patch
-> ---
->  drivers/mfd/da9063-core.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+> Instead use task faults only if numa_group is not set.
 > 
-> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-> index 6c2870d4e754..8226ebd8b96d 100644
-> --- a/drivers/mfd/da9063-core.c
-> +++ b/drivers/mfd/da9063-core.c
-> @@ -229,10 +229,16 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
->  	ret = mfd_add_devices(da9063->dev, -1, da9063_devs,
->  			      ARRAY_SIZE(da9063_devs), NULL, da9063->irq_base,
->  			      NULL);
-> -	if (ret)
-> +	if (ret) {
->  		dev_err(da9063->dev, "Cannot add MFD cells\n");
-> +		goto err_irq_exit;
-> +	}
->  
->  	return ret;
-> +
-> +err_irq_exit:
-> +	da9063_irq_exit(da9063);
-> +	return ret;
->  }
->  
->  void da9063_device_exit(struct da9063 *da9063)
+> Testcase       Time:         Min         Max         Avg      StdDev
+> numa01.sh      Real:      506.35      794.46      599.06      104.26
+> numa01.sh       Sys:      150.37      223.56      195.99       24.94
+> numa01.sh      User:    43450.69    61752.04    49281.50     6635.33
+> numa02.sh      Real:       60.33       62.40       61.31        0.90
+> numa02.sh       Sys:       18.12       31.66       24.28        5.89
+> numa02.sh      User:     5203.91     5325.32     5260.29       49.98
+> numa03.sh      Real:      696.47      853.62      745.80       57.28
+> numa03.sh       Sys:       85.68      123.71       97.89       13.48
+> numa03.sh      User:    55978.45    66418.63    59254.94     3737.97
+> numa04.sh      Real:      444.05      514.83      497.06       26.85
+> numa04.sh       Sys:      230.39      375.79      316.23       48.58
+> numa04.sh      User:    35403.12    41004.10    39720.80     2163.08
+> numa05.sh      Real:      423.09      460.41      439.57       13.92
+> numa05.sh       Sys:      287.38      480.15      369.37       68.52
+> numa05.sh      User:    34732.12    38016.80    36255.85     1070.51
+> 
+> Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
+> numa01.sh      Real:      478.45      565.90      515.11       30.87 	 16.29%
+> numa01.sh       Sys:      207.79      271.04      232.94       21.33 	 -15.8%
+> numa01.sh      User:    39763.93    47303.12    43210.73     2644.86 	 14.04%
+> numa02.sh      Real:       60.00       61.46       60.78        0.49 	 0.871%
+> numa02.sh       Sys:       15.71       25.31       20.69        3.42 	 17.35%
+> numa02.sh      User:     5175.92     5265.86     5235.97       32.82 	 0.464%
+> numa03.sh      Real:      776.42      834.85      806.01       23.22 	 -7.47%
+> numa03.sh       Sys:      114.43      128.75      121.65        5.49 	 -19.5%
+> numa03.sh      User:    60773.93    64855.25    62616.91     1576.39 	 -5.36%
+> numa04.sh      Real:      456.93      511.95      482.91       20.88 	 2.930%
+> numa04.sh       Sys:      178.09      460.89      356.86       94.58 	 -11.3%
+> numa04.sh      User:    36312.09    42553.24    39623.21     2247.96 	 0.246%
+> numa05.sh      Real:      393.98      493.48      436.61       35.59 	 0.677%
+> numa05.sh       Sys:      164.49      329.15      265.87       61.78 	 38.92%
+> numa05.sh      User:    33182.65    36654.53    35074.51     1187.71 	 3.368%
+> 
+> Ideally this change shouldn't have affected performance.
 
-I haven't seen the later patches yet, so maybe the goto label expanded
-on, but if it's not, then this would be better:
-
- -	if (ret)
- +	if (ret) {
-  		dev_err(da9063->dev, "Cannot add MFD cells\n");
- +		da9063_irq_exit(da9063);
- +	}
-  
-  	return ret;
-  }
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Ideally you go on here to explain why it does in fact do affect
+performance.. :-)
