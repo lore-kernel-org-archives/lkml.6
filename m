@@ -1,67 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeFDUu1 (ORCPT <rfc822;w@1wt.eu>);
+        id S1751498AbeFDUvE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:51:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751228AbeFDUu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 16:50:27 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43266 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751228AbeFDUuY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:50:24 -0400
-X-Google-Smtp-Source: ADUXVKJyFlyCnmK9UyB2AVnMlxv6M7qSS9aw2p1Cwn9AnUArIvROkptCCx0UhQ2xrqe8K/e92xF+MA==
-Subject: [PATCH 1/2] MAINTAINERS: Add myself as a maintainer for SiFive's drivers
-Date: Mon,  4 Jun 2018 13:50:10 -0700
-Message-Id: <20180604205011.23086-2-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180604205011.23086-1-palmer@sifive.com>
-References: <20180604205011.23086-1-palmer@sifive.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>
-From: Palmer Dabbelt <palmer@sifive.com>
-To: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Date: Mon, 4 Jun 2018 16:50:24 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] branch-check: fix long->int truncation when profiling
+ branches
+Message-ID: <20180604165024.3be78887@gandalf.local.home>
+In-Reply-To: <alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180528155432.2864616-1-arnd@arndb.de>
+        <alpine.LRH.2.02.1805300818140.24812@file01.intranet.prod.int.rdu2.redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There aren't actually any files in the tree that match these patterns
-right now, but we've just started submitting our drivers so I thought it
-would be good to make sure there's at least someone at SiFive who's
-listed as maintaining them.  I'm leaving the RISC-V lists on here
-because:
+On Wed, 30 May 2018 08:19:22 -0400 (EDT)
+Mikulas Patocka <mpatocka@redhat.com> wrote:
 
-* As of today, all the RISC-V ASICs that people can actually buy are
-  from SiFive -- though hopefully there'll be more soon!
-* The RTL for many of our devices is open source, so I anticipate these
-  devices might make they way chips from other vendors.
-* We may standardize some of these devices as part of a RISC-V
-  specification at some point in the future.
+> The function __builtin_expect returns long type (see the gcc
+> documentation), and so do macros likely and unlikely. Unfortunatelly, when
+> CONFIG_PROFILE_ANNOTATED_BRANCHES is selected, the macros likely and
+> unlikely expand to __branch_check__ and __branch_check__ truncates the
 
-I'm a bit swamped right now so I might not be the most active maintainer
-of these drivers, but I think it'd be good to make sure someone who has
-hardware access gets CC'd on updates to our drivers just as a sanity
-check.  Hopefully that's an OK way to handle this.
+Nice catch.
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> long type to int. This unintended truncation may cause bugs in various
+> kernel code (we found a bug in dm-writecache because of it), so it's
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9c125f705f78..a8f906d1d1e2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12764,6 +12764,14 @@ F:	drivers/media/usb/siano/
- F:	drivers/media/usb/siano/
- F:	drivers/media/mmc/siano/
- 
-+SIFIVE DRIVERS
-+M:	Palmer Dabbelt <palmer@sifive.com>
-+L:	linux-riscv@lists.infradead.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux.git
-+S:	Supported
-+K:	sifive
-+N:	sifive
-+
- SILEAD TOUCHSCREEN DRIVER
- M:	Hans de Goede <hdegoede@redhat.com>
- L:	linux-input@vger.kernel.org
--- 
-2.16.4
+I'm curious to what that bug was.
+
+> better to fix __branch_check__ to return long.
+> 
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> Cc: stable@vger.kernel.org
+
+Anyway, I can pull this in my tree and test it.
+
+-- Steve
+
+> 
+> ---
+>  include/linux/compiler.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Index: linux-2.6/include/linux/compiler.h
+> ===================================================================
+> --- linux-2.6.orig/include/linux/compiler.h	2018-02-26 20:34:17.000000000 +0100
+> +++ linux-2.6/include/linux/compiler.h	2018-05-30 14:11:53.000000000 +0200
+> @@ -21,7 +21,7 @@ void ftrace_likely_update(struct ftrace_
+>  #define unlikely_notrace(x)	__builtin_expect(!!(x), 0)
+>  
+>  #define __branch_check__(x, expect, is_constant) ({			\
+> -			int ______r;					\
+> +			long ______r;					\
+>  			static struct ftrace_likely_data		\
+>  				__attribute__((__aligned__(4)))		\
+>  				__attribute__((section("_ftrace_annotated_branch"))) \
