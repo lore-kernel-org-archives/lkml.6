@@ -1,130 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753450AbeFDNue (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:50:34 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:43506 "EHLO extserv.mm-sol.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753057AbeFDNuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:50:32 -0400
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH v2 2/5] media: venus: add a routine to set venus state
-To: Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
-        mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, bjorn.andersson@linaro.org,
-        stanimir.varbanov@linaro.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, acourbot@chromium.org
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
- <1527884768-22392-3-git-send-email-vgarodia@codeaurora.org>
-Message-ID: <be5cc865-608b-dabb-2a3c-b5864c387d64@mm-sol.com>
-Date: Mon, 4 Jun 2018 16:50:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753319AbeFDNvq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:51:46 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:38328 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753147AbeFDNvo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:51:44 -0400
+X-Google-Smtp-Source: ADUXVKJwDrYHje0Gp61EPYosQCsPVB0WSaVDEAc3g0LJS5/Nng7I/jcS8mhFBciPGpHyaH9FlF+zxr+4gdipVtYLMwI=
 MIME-Version: 1.0
-In-Reply-To: <1527884768-22392-3-git-send-email-vgarodia@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
+References: <20180604123238.82200-1-chiu@endlessm.com> <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
+From: Daniel Drake <drake@endlessm.com>
+Date: Mon, 4 Jun 2018 07:51:43 -0600
+Message-ID: <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
+ on kbd brightness change
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Chris Chiu <chiu@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Benjamin Berg <benjamin@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vikash,
+On Mon, Jun 4, 2018 at 7:22 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> Is this really a case of the hardware itself processing the
+> keypress and then changing the brightness *itself* ?
+>
+> From the "[PATCH 2/2] platform/x86: asus-wmi: Add keyboard backlight
+> toggle support" patch I get the impression that the driver is
+> modifying the brightness from within the kernel rather then the
+> keyboard controller are ACPI embeddec-controller doing it itself.
+>
+> If that is the case then the right fix is for the driver to stop
+> mucking with the brighness itself, it should simply report the
+> right keyboard events and export a led interface and then userspace
+> will do the right thing (and be able to offer flexible policies
+> to the user).
 
-Thanks for the patch!
+Before this modification, the driver reports the brightness keypresses
+to userspace and then userspace can respond by changing the brightness
+level, as you describe.
 
-On  1.06.2018 23:26, Vikash Garodia wrote:
-> Add a new routine which abstracts the TZ call to
+You are right in that the hardware doesn't change the brightness
+directly itself, which is the normal usage of LED_BRIGHT_HW_CHANGED.
 
-Actually the new routine abstracts Venus CPU state, Isn't it?
+However this approach was suggested by Benjamin Berg and Bastien
+Nocera in the thread: Re: [PATCH v2] platform/x86: asus-wmi: Add
+keyboard backlight toggle support
+https://marc.info/?l=linux-kernel&m=152639169210655&w=2
 
-> set the video hardware state.
-> 
-> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
-> ---
->   drivers/media/platform/qcom/venus/core.h      |  5 +++++
->   drivers/media/platform/qcom/venus/firmware.c  | 28 +++++++++++++++++++++++++++
->   drivers/media/platform/qcom/venus/firmware.h  |  1 +
->   drivers/media/platform/qcom/venus/hfi_venus.c | 13 ++++---------
->   4 files changed, 38 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 85e66e2..e7bfb63 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -35,6 +35,11 @@ struct reg_val {
->   	u32 value;
->   };
->   
-> +enum tzbsp_video_state {
-> +	TZBSP_VIDEO_SUSPEND = 0,
-> +	TZBSP_VIDEO_RESUME
-> +};
+The issue is that we need to support a new "keyboard backlight
+brightness cycle" key (in the patch that follows this one) which
+doesn't fit into any definitions of keys recognised by the kernel and
+likewise there's no userspace code to handle it.
 
-please move this in firmware.c, for more see below.
+If preferred we could leave the standard brightness keys behaving as
+they are (input events) and make the new special key type directly
+handled by the kernel?
 
-> +
->   struct venus_resources {
->   	u64 dma_mask;
->   	const struct freq_tbl *freq_tbl;
-> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index 7d89b5a..b4664ed 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.c
-> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -53,6 +53,34 @@ static void venus_reset_hw(struct venus_core *core)
->   	/* Bring Arm9 out of reset */
->   	writel_relaxed(0, reg_base + WRAPPER_A9SS_SW_RESET);
->   }
-> +
-> +int venus_set_hw_state(enum tzbsp_video_state state, struct venus_core *core)
-
-can we put this function this way:
-
-venus_set_state(struct venus_core *core, bool on)
-
-so we set the state to On when we are power-up the venus CPU and Off
-when we power-down.
-
-by this way we really abstract the state, IMO.
-
-> +{
-> +	int ret;
-> +	struct device *dev = core->dev;
-> +	void __iomem *reg_base = core->base;
-
-just 'base' should be enough.
-
-> +
-> +	switch (state) {
-> +	case TZBSP_VIDEO_SUSPEND:
-> +		if (qcom_scm_is_available())
-
-You really shouldn't rely on this function (see the comment from Bjorn
-on first version of this patch series).
-
-I think we have to replace qcom_scm_is_available() with some flag which
-is reflecting does the firmware subnode is exist or not. In case it is
-not exist the we have to go with TZ scm calls.
-
-> +			ret = qcom_scm_set_remote_state(TZBSP_VIDEO_SUSPEND, 0);
-> +		else
-> +			writel_relaxed(1, reg_base + WRAPPER_A9SS_SW_RESET);
-> +		break;
-> +	case TZBSP_VIDEO_RESUME:
-> +		if (qcom_scm_is_available())
-> +			ret = qcom_scm_set_remote_state(TZBSP_VIDEO_RESUME, 0);
-> +		else
-> +			venus_reset_hw(core);
-> +		break;
-> +	default:
-> +		dev_err(dev, "invalid state\n");
-> +		break;
-> +	}
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_set_hw_state);
-> +
-
-regards,
-Stan
+Daniel
