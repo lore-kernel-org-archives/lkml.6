@@ -1,114 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751315AbeFDS5U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 14:57:20 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:60716 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeFDS5S (ORCPT
+        id S1751214AbeFDTBB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:01:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59158 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751053AbeFDTA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 14:57:18 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH 1/2] serial: 8250: enable SERIAL_MCTRL_GPIO by default.
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Vignesh R <vigneshr@ti.com>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>
-References: <20180601141158.93817-1-giulio.benetti@micronovasrl.com>
- <b850a3cf565a24414d3290f6699f5a040bf61223.camel@linux.intel.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <7f4d688c-095a-d056-1edd-430bfc4e00da@micronovasrl.com>
-Date: Mon, 4 Jun 2018 20:57:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <b850a3cf565a24414d3290f6699f5a040bf61223.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+        Mon, 4 Jun 2018 15:00:59 -0400
+From: Eddie James <eajames@linux.vnet.ibm.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
+        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        rdunlap@infradead.org, andy.shevchenko@gmail.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v9 0/7] i2c: Add FSI-attached I2C master algorithm
+Date: Mon,  4 Jun 2018 14:00:43 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18060419-0060-0000-0000-00000278165A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009129; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01042302; UDB=6.00533707; IPR=6.00821432;
+ MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 19:00:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060419-0061-0000-0000-000045567075
+Message-Id: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=560 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040219
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il 04/06/2018 13:49, Andy Shevchenko ha scritto:
-> On Fri, 2018-06-01 at 16:11 +0200, Giulio Benetti wrote:
->> It can be useful to override 8250 mctrl lines with gpios, for rts on
->> rs485 for example, when rts is not mapped correctly to HW RTS pin.
->>
->> Enable SERIAL_MCTRL_GPIO by default.
->>
-> 
-> Unfortunately NAK, see
-> 
-> commit 5db4f7f80d165fc9725f356e99feec409e446baa
-> Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Date:   Tue Aug 16 15:06:54 2016 +0300
-> 
->      Revert "tty/serial/8250: use mctrl_gpio helpers"
-> 
-> for the details.
-> 
-> I would love to see a solution that will satisfy everyone, though I have
-> only means to test proposals for now.
+This series adds an algorithm for an I2C master physically located on an FSI
+slave device. The I2C master has multiple ports, each of which may be connected
+to an I2C slave. Access to the I2C master registers is achieved over FSI bus.
 
-Thanks for pointing me that.
-I would try to solve serial breakage on intel with already extisting 
-patches dropping this one.
-I'm going to try.
+Due to the multi-port nature of the I2C master, the driver instantiates a new
+I2C adapter for each port connected to a slave. The connected ports should be
+defined in the device tree under the I2C master device.
 
-I can't understand if it's enough using qemu x86 to reproduce the bug.
-If so I'm going to debug and check what makes driver to fail.
+Changes since v8
+ - Drop unecessary else statements
+ - Use i++ instead of ++i
+ - Use kzalloc/kfree instead of devm_kzalloc/devm_kfree for port structure
+ - Drop the list_empty check in remove
 
-Do you think it makes sense? Would it be accepted after bug fixing?
+Changes since v7
+ - Fix grammer in Kconfig (a -> an)
+ - Change I2C registers to use BIT and GENMASK
+ - Remove custom macros and use FIELD_PREP and FIELD_GET
+ - Fix a few unecessary initializations and "return rc" that are always zero
+ - Clean up the read/write fifo functions a bit
+ - Few other clean-up items
 
-Thanks
-Best regards
+Changes since v6
+ - Remove spinlock for reset functionality; it's unecessary and doesn't work
+   with the latest FSI core.
+ - Use a mutex instead of a semaphore, and don't wait for timeout to get the
+   lock.
+ - Use usleeps instead of schedule_timeout; it's not worth the overhead when
+   the wait should be very short in between sending the command and receiving
+   the response.
+
+Changes since v5
+ - Fix reset functionality and do a reset after every transfer failure
+
+Eddie James (7):
+  dt-bindings: i2c: Add FSI-attached I2C master dt binding documentation
+  i2c: Add FSI-attached I2C master algorithm
+  i2c: fsi: Add port structures
+  i2c: fsi: Add abort and hardware reset procedures
+  i2c: fsi: Add transfer implementation
+  i2c: fsi: Add I2C master locking
+  i2c: fsi: Add bus recovery
+
+ Documentation/devicetree/bindings/i2c/i2c-fsi.txt |  40 ++
+ drivers/i2c/busses/Kconfig                        |  11 +
+ drivers/i2c/busses/Makefile                       |   1 +
+ drivers/i2c/busses/i2c-fsi.c                      | 721 ++++++++++++++++++++++
+ 4 files changed, 773 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+ create mode 100644 drivers/i2c/busses/i2c-fsi.c
 
 -- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
-
-> 
->> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
->> ---
->>   drivers/tty/serial/8250/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/tty/serial/8250/Kconfig
->> b/drivers/tty/serial/8250/Kconfig
->> index f005eaf8bc57..c7992b94fece 100644
->> --- a/drivers/tty/serial/8250/Kconfig
->> +++ b/drivers/tty/serial/8250/Kconfig
->> @@ -7,6 +7,7 @@ config SERIAL_8250
->>   	tristate "8250/16550 and compatible serial support"
->>   	depends on !S390
->>   	select SERIAL_CORE
->> +	select SERIAL_MCTRL_GPIO if GPIOLIB
->>   	---help---
->>   	  This selects whether you want to include the driver for the
->> standard
->>   	  serial ports.  The standard answer is Y.  People who might
->> say N
-> 
+1.8.3.1
