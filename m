@@ -1,71 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751547AbeFDVGQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:06:16 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34306 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbeFDVGP (ORCPT
+        id S1751532AbeFDVIB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:08:01 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:52578 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbeFDVIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:06:15 -0400
-X-Google-Smtp-Source: ADUXVKKJyjqpZN1HWQ6n1DRyzSaYwhk+bcD7C/iU0m0p+imw/xi7xXLdrSjweGYfSeVByds7/wMU3GP2YbRJcytGJO0=
-MIME-Version: 1.0
-References: <20180529221625.33541-1-thgarnie@google.com> <20180529221625.33541-22-thgarnie@google.com>
- <20180604161612.6d48d8d2@gandalf.local.home>
-In-Reply-To: <20180604161612.6d48d8d2@gandalf.local.home>
-From: Thomas Garnier <thgarnie@google.com>
-Date: Mon, 4 Jun 2018 14:06:03 -0700
-Message-ID: <CAJcbSZG1dVBVeOjEDeTm4mwXS60wMi-5ej_FB+YyS7iwXoebOQ@mail.gmail.com>
-Subject: Re: [PATCH v4 21/27] x86/ftrace: Adapt function tracing for PIE support
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Guenter Roeck <linux@roeck-us.net>, nixiaoming <nixiaoming@huawei.com>,
-        James Hogan <jhogan@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 4 Jun 2018 17:08:00 -0400
+Date: Mon, 04 Jun 2018 17:07:57 -0400 (EDT)
+Message-Id: <20180604.170757.2073801461346947685.davem@davemloft.net>
+To: rvarsha016@gmail.com
+Cc: rasesh.mody@cavium.com, harish.patil@cavium.com,
+        Dept-GELinuxNICDev@cavium.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, der.herr@hofr.at,
+        lukas.bulwahn@gmail.com
+Subject: Re: [PATCH 0/2] net: bnx2: Fix checkpatch and clang warnings
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1528025568.git.rvarsha016@gmail.com>
+References: <cover.1528025568.git.rvarsha016@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 1:16 PM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Tue, 29 May 2018 15:15:22 -0700
-> Thomas Garnier <thgarnie@google.com> wrote:
->
-> > When using -fPIE/PIC with function tracing, the compiler generates a
-> > call through the GOT (call *__fentry__@GOTPCREL). This instruction
-> > takes 6 bytes instead of 5 on the usual relative call.
-> >
-> > If PIE is enabled, replace the 6th byte of the GOT call by a 1-byte nop
-> > so ftrace can handle the previous 5-bytes as before.
-> >
-> > Position Independent Executable (PIE) support will allow to extend the
-> > KASLR randomization range 0xffffffff80000000.
->
-> I thought you were going to write a update to recordmcount.c to handle
-> this at compile time?
+From: Varsha Rao <rvarsha016@gmail.com>
+Date: Sun,  3 Jun 2018 17:18:04 +0530
 
-I can correctly calculate the start of the call instruction with
-recordmcount (no need for addr-1) but I still need to handle the
-different size of the instructions. I don't think I can completely
-replace the GOT call with a relative call. Maybe I am missing
-something on the way recordmcount is used? Should it replace all
-mcount locations with a nop slide? Why is it done at runtime too then?
+> This patchset fixes NULL comparison and extra parentheses, checkpatch
+> and clang warnings.
 
->
-> -- Steve
->
-> >
-> > Signed-off-by: Thomas Garnier <thgarnie@google.com>
-> > ---
-> >
-
-
-
--- 
-Thomas
+Series applied, thanks.
