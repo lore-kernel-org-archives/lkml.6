@@ -1,50 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751191AbeFDRWS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:22:18 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:50192 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750865AbeFDRWQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:22:16 -0400
-Date: Mon, 04 Jun 2018 13:22:12 -0400 (EDT)
-Message-Id: <20180604.132212.983793538169890618.davem@davemloft.net>
-To: mkubecek@suse.cz
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nicolas.dichtel@6wind.com, tom@herbertland.com, dsahern@gmail.com,
-        idosch@idosch.org
-Subject: Re: [PATCH net v3] ipv6: omit traffic class when calculating flow
- hash
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180604095619.7D9C1A09F0@unicorn.suse.cz>
-References: <687af1bc-a1f9-c0d2-dd3a-eeef3a2bf9b4@gmail.com>
-        <20180604095619.7D9C1A09F0@unicorn.suse.cz>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1751290AbeFDRYC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:24:02 -0400
+Received: from mga17.intel.com ([192.55.52.151]:56988 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750995AbeFDRYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 13:24:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="234547205"
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>, grygorii.strashko@ti.com,
+        davem@davemloft.net
+Cc: corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, henrik@austad.us,
+        jesus.sanchez-palencia@intel.com,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: Re: [RFC PATCH 0/6] net: ethernet: ti: cpsw: add MQPRIO and CBS Qdisc offload
+In-Reply-To: <20180518211510.13341-1-ivan.khoronzhuk@linaro.org>
+References: <20180518211510.13341-1-ivan.khoronzhuk@linaro.org>
+Date: Mon, 04 Jun 2018 14:23:56 -0300
+Message-ID: <87602y1n4j.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Mon, 4 Jun 2018 11:36:05 +0200
+Hi Ivan,
 
-> Some of the code paths calculating flow hash for IPv6 use flowlabel member
-> of struct flowi6 which, despite its name, encodes both flow label and
-> traffic class. If traffic class changes within a TCP connection (as e.g.
-> ssh does), ECMP route can switch between path. It's also inconsistent with
-> other code paths where ip6_flowlabel() (returning only flow label) is used
-> to feed the key.
-> 
-> Use only flow label everywhere, including one place where hash key is set
-> using ip6_flowinfo().
-> 
-> Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-> Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-> ---
-> v2: introduce and use an inline helper as suggested by David Ahern
-> v3: keep the cast out of the helper to make future cleanup easier
+Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> writes:
 
-Applied and queued up for -stable, thank you.
+> This series adds MQPRIO and CBS Qdisc offload for TI cpsw driver.
+> It potentially can be used in audio video bridging (AVB) and time
+> sensitive networking (TSN).
+>
+> Patchset was tested on AM572x EVM and BBB boards. Last patch from this
+> series adds detailed description of configuration with examples. For
+> consistency reasons, in role of talker and listener, tools from
+> patchset "TSN: Add qdisc based config interface for CBS" were used and
+> can be seen here: https://www.spinics.net/lists/netdev/msg460869.html
+>
+> Based on net-next/master
+>
+
+I didn't test this, but it looks fine from my side.
+
+I agree with Grygorii, that if no comments, this should be re-sent as a
+patch series next.
+
+
+> Ivan Khoronzhuk (6):
+>   net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
+>   net: ethernet: ti: cpdma: fit rated channels in backward order
+>   net: ethernet: ti: cpsw: add MQPRIO Qdisc offload
+>   net: ethernet: ti: cpsw: add CBS Qdisc offload
+>   net: ethernet: ti: cpsw: restore shaper configuration while down/up
+>   Documentation: networking: cpsw: add MQPRIO & CBS offload examples
+>
+>  Documentation/networking/cpsw.txt       | 540 ++++++++++++++++++++++++
+>  drivers/net/ethernet/ti/cpsw.c          | 364 +++++++++++++++-
+>  drivers/net/ethernet/ti/davinci_cpdma.c |  31 +-
+>  3 files changed, 913 insertions(+), 22 deletions(-)
+>  create mode 100644 Documentation/networking/cpsw.txt
+>
+> -- 
+> 2.17.0
+
+
+Cheers,
+--
+Vinicius
