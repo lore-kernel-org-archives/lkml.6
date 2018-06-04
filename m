@@ -1,152 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752718AbeFDMkl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:40:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53850 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752066AbeFDMki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:40:38 -0400
-Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-To: Michal Hocko <mhocko@kernel.org>, Qing Huang <qing.huang@oracle.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        David Miller <davem@davemloft.net>, tariqt@mellanox.com,
-        haakon.bugge@oracle.com, yanjun.zhu@oracle.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gi-oh.kim@profitbricks.com,
-        "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-References: <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
- <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
- <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
- <20180531065405.GH15278@dhcp22.suse.cz>
- <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
- <20180531085532.GK15278@dhcp22.suse.cz>
- <20180531091022.GL15278@dhcp22.suse.cz>
- <7d8f52e1-aa16-d20c-a9a8-35ad88c0b1ab@oracle.com>
- <20180601073137.GV15278@dhcp22.suse.cz>
- <f0bfa913-1837-6c5d-6e77-2a188fd094e1@oracle.com>
- <20180604062737.GA19202@dhcp22.suse.cz>
-From: Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- A3XDrKOXTZil3g8D
-Message-ID: <c67934a5-8858-0de7-a7b5-532d14b5c881@suse.cz>
-Date: Mon, 4 Jun 2018 14:40:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752709AbeFDMnO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:43:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43164 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752143AbeFDMnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:43:13 -0400
+Date: Mon, 4 Jun 2018 15:43:09 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180604153558-mutt-send-email-mst@kernel.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
 MIME-Version: 1.0
-In-Reply-To: <20180604062737.GA19202@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 08:27 AM, Michal Hocko wrote:
-> On Fri 01-06-18 15:05:26, Qing Huang wrote:
->>
->>
->> On 6/1/2018 12:31 AM, Michal Hocko wrote:
->>> On Thu 31-05-18 19:04:46, Qing Huang wrote:
->>>>
->>>> On 5/31/2018 2:10 AM, Michal Hocko wrote:
->>>>> On Thu 31-05-18 10:55:32, Michal Hocko wrote:
->>>>>> On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
->>>>> [...]
->>>>>>> I merely copied/pasted from alloc_skb_with_frags() :/
->>>>>> I will have a look at it. Thanks!
->>>>> OK, so this is an example of an incremental development ;).
->>>>>
->>>>> __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
->>>>> high order allocations") to prevent from OOM killer. Yet this was
->>>>> not enough because fb05e7a89f50 ("net: don't wait for order-3 page
->>>>> allocation") didn't want an excessive reclaim for non-costly orders
->>>>> so it made it completely NOWAIT while it preserved __GFP_NORETRY in
->>>>> place which is now redundant. Should I send a patch?
->>>>>
->>>> Just curious, how about GFP_ATOMIC flag? Would it work in a similar fashion?
->>>> We experimented
->>>> with it a bit in the past but it seemed to cause other issue in our tests.
->>>> :-)
->>> GFP_ATOMIC is a non-sleeping (aka no reclaim) context with an access to
->>> memory reserves. So the risk is that you deplete those reserves and
->>> cause issues to other subsystems which need them as well.
->>>
->>>> By the way, we didn't encounter any OOM killer events. It seemed that the
->>>> mlx4_alloc_icm() triggered slowpath.
->>>> We still had about 2GB free memory while it was highly fragmented.
->>> The compaction was able to make a reasonable forward progress for you.
->>> But considering mlx4_alloc_icm is called with GFP_KERNEL resp. GFP_HIGHUSER
->>> then the OOM killer is clearly possible as long as the order is lower
->>> than 4.
->>
->> The allocation was 256KB so the order was much higher than 4. The compaction
->> seemed to be the root
->> cause for our problem. It took too long to finish its work while putting
->> mlx4_alloc_icm to sleep in a heavily
->> fragmented memory situation . Will NORETRY flag avoid the compaction ops and
->> fail the 256KB allocation
->> immediately so mlx4_alloc_icm can enter adjustable lower order allocation
->> code path quickly?
+On Thu, May 24, 2018 at 08:27:04AM +1000, Benjamin Herrenschmidt wrote:
+> On Wed, 2018-05-23 at 21:50 +0300, Michael S. Tsirkin wrote:
 > 
-> Costly orders should only perform a light compaction attempt unless
-> __GFP_RETRY_MAY_FAIL is used IIRC. CCing Vlastimil. So __GFP_NORETRY
-> shouldn't make any difference.
+> > I re-read that discussion and I'm still unclear on the
+> > original question, since I got several apparently
+> > conflicting answers.
+> > 
+> > I asked:
+> > 
+> > 	Why isn't setting VIRTIO_F_IOMMU_PLATFORM on the
+> > 	hypervisor side sufficient?
+> 
+> I thought I had replied to this...
+> 
+> There are a couple of reasons:
+> 
+> - First qemu doesn't know that the guest will switch to "secure mode"
+> in advance. There is no difference between a normal and a secure
+> partition until the partition does the magic UV call to "enter secure
+> mode" and qemu doesn't see any of it. So who can set the flag here ?
 
-It's a bit more complicated. Costly allocations will try the light
-compaction attempt first, even before reclaim. This is followed by
-reclaim and a more costly compaction attempt. With __GFP_NORETRY, the
-second compaction attempt is also only the light one, so the flag does
-make a difference here.
+The user should set it. You just tell user "to be able to use with
+feature X, enable IOMMU".
+
+> - Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
+> vhost) go through the emulated MMIO for every access to the guest,
+> which adds additional overhead.
+> 
+> Cheers,
+> Ben.
+
+There are several answers to this.  One is that we are working hard to
+make overhead small when the mappings are static (which they would be if
+there's no actual IOMMU). So maybe especially given you are using
+a bounce buffer on top it's not so bad - did you try to
+benchmark?
+
+Another is that given the basic functionality is in there, optimizations
+can possibly wait until per-device quirks in DMA API are supported.
+
+
+> > 
+> > 
+> > >  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
+> > >  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
+> > >  drivers/virtio/virtio_ring.c           | 10 ++++++++++
+> > >  3 files changed, 27 insertions(+)
+> > > 
+> > > diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+> > > index 8fa3945..056e578 100644
+> > > --- a/arch/powerpc/include/asm/dma-mapping.h
+> > > +++ b/arch/powerpc/include/asm/dma-mapping.h
+> > > @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
+> > >  #define ARCH_HAS_DMA_MMAP_COHERENT
+> > >  
+> > >  #endif /* __KERNEL__ */
+> > > +
+> > > +#define platform_forces_virtio_dma platform_forces_virtio_dma
+> > > +
+> > > +struct virtio_device;
+> > > +
+> > > +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
+> > >  #endif	/* _ASM_DMA_MAPPING_H */
+> > > diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+> > > index 06f0296..a2ec15a 100644
+> > > --- a/arch/powerpc/platforms/pseries/iommu.c
+> > > +++ b/arch/powerpc/platforms/pseries/iommu.c
+> > > @@ -38,6 +38,7 @@
+> > >  #include <linux/of.h>
+> > >  #include <linux/iommu.h>
+> > >  #include <linux/rculist.h>
+> > > +#include <linux/virtio.h>
+> > >  #include <asm/io.h>
+> > >  #include <asm/prom.h>
+> > >  #include <asm/rtas.h>
+> > > @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
+> > >  __setup("multitce=", disable_multitce);
+> > >  
+> > >  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
+> > > +
+> > > +bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > +{
+> > > +	/*
+> > > +	 * On protected guest platforms, force virtio core to use DMA
+> > > +	 * MAP API for all virtio devices. But there can also be some
+> > > +	 * exceptions for individual devices like virtio balloon.
+> > > +	 */
+> > > +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
+> > > +}
+> > 
+> > Isn't this kind of slow?  vring_use_dma_api is on
+> > data path and supposed to be very fast.
+> > 
+> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > index 21d464a..47ea6c3 100644
+> > > --- a/drivers/virtio/virtio_ring.c
+> > > +++ b/drivers/virtio/virtio_ring.c
+> > > @@ -141,8 +141,18 @@ struct vring_virtqueue {
+> > >   * unconditionally on data path.
+> > >   */
+> > >  
+> > > +#ifndef platform_forces_virtio_dma
+> > > +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > +{
+> > > +	return false;
+> > > +}
+> > > +#endif
+> > > +
+> > >  static bool vring_use_dma_api(struct virtio_device *vdev)
+> > >  {
+> > > +	if (platform_forces_virtio_dma(vdev))
+> > > +		return true;
+> > > +
+> > >  	if (!virtio_has_iommu_quirk(vdev))
+> > >  		return true;
+> > >  
+> > > -- 
+> > > 2.9.3
