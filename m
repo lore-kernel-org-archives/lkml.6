@@ -1,86 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753921AbeFDHJL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:09:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
+        id S1753938AbeFDHJa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:09:30 -0400
+Received: from ozlabs.org ([203.11.71.1]:60391 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752828AbeFDHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:14 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.16 35/47] MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
-Date: Mon,  4 Jun 2018 08:58:47 +0200
-Message-Id: <20180604065550.944787192@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
-References: <20180604065549.468488465@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753725AbeFDHEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:04:12 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 4 Jun 2018 17:04:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Message-ID: <20180604170409.63d31d4a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/IsUaLI=0/xwAw9a.+df.kfR"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+--Sig_/IsUaLI=0/xwAw9a.+df.kfR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-------------------
+Hi all,
 
-From: Maciej W. Rozycki <macro@mips.com>
+Today's linux-next merge of the kvm tree got a conflict in:
 
-commit 28e4213dd331e944e7fca1954a946829162ed9d4 upstream.
+  arch/x86/kvm/hyperv.c
 
-Having PR_FP_MODE_FRE (i.e. Config5.FRE) set without PR_FP_MODE_FR (i.e.
-Status.FR) is not supported as the lone purpose of Config5.FRE is to
-emulate Status.FR=0 handling on FPU hardware that has Status.FR=1
-hardwired[1][2].  Also we do not handle this case elsewhere, and assume
-throughout our code that TIF_HYBRID_FPREGS and TIF_32BIT_FPREGS cannot
-be set both at once for a task, leading to inconsistent behaviour if
-this does happen.
+between commit:
 
-Return unsuccessfully then from prctl(2) PR_SET_FP_MODE calls requesting
-PR_FP_MODE_FRE to be set with PR_FP_MODE_FR clear.  This corresponds to
-modes allowed by `mips_set_personality_fp'.
+  696ca779a928 ("KVM: x86: fix #UD address of failed Hyper-V hypercalls")
 
-References:
+from Linus' tree and commit:
 
-[1] "MIPS Architecture For Programmers, Vol. III: MIPS32 / microMIPS32
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00090, Revision 6.02, July 10, 2015, Table 9.69
-    "Config5 Register Field Descriptions", p. 262
+  56b9ae78303a ("KVM: x86: hyperv: do rep check for each hypercall separate=
+ly")
 
-[2] "MIPS Architecture For Programmers, Volume III: MIPS64 / microMIPS64
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00091, Revision 6.03, December 22, 2015, Table
-    9.72 "Config5 Register Field Descriptions", p. 288
+from the kvm tree.
 
-Fixes: 9791554b45a2 ("MIPS,prctl: add PR_[GS]ET_FP_MODE prctl options for MIPS")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.0+
-Patchwork: https://patchwork.linux-mips.org/patch/19327/
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
----
- arch/mips/kernel/process.c |    4 ++++
- 1 file changed, 4 insertions(+)
+--=20
+Cheers,
+Stephen Rothwell
 
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -721,6 +721,10 @@ int mips_set_process_fp_mode(struct task
- 	if (value & ~known_bits)
- 		return -EOPNOTSUPP;
- 
-+	/* Setting FRE without FR is not supported.  */
-+	if ((value & (PR_FP_MODE_FR | PR_FP_MODE_FRE)) == PR_FP_MODE_FRE)
-+		return -EOPNOTSUPP;
-+
- 	/* Avoid inadvertently triggering emulation */
- 	if ((value & PR_FP_MODE_FR) && raw_cpu_has_fpu &&
- 	    !(raw_current_cpu_data.fpu_id & MIPS_FPIR_F64))
+diff --cc arch/x86/kvm/hyperv.c
+index 46ff64da44ca,14e0d0ae4e0a..000000000000
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@@ -1385,8 -1527,8 +1531,7 @@@ int kvm_hv_hypercall(struct kvm_vcpu *v
+  		break;
+  	}
+ =20
+- out:
+ -	kvm_hv_hypercall_set_result(vcpu, ret);
+ -	return 1;
+ +	return kvm_hv_hypercall_complete(vcpu, ret);
+  }
+ =20
+  void kvm_hv_init_vm(struct kvm *kvm)
+
+--Sig_/IsUaLI=0/xwAw9a.+df.kfR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsU5GkACgkQAVBC80lX
+0GzteAf9GIbXfSUdUu8YupnBf8WlYp25aURas/wVjpX3dldpQqv6T46GBIKm2B7/
+CkPp24IioqG1xNndJ/KRSbeqlsVLXY1Q7knAgbMBB0PdFfkYt7YCDsGv4P/5auLN
+n1b5vkJbqYZP8TAtE6vbhCrmaVRv/HyDh08Xn+VXngQc3esUIY0Y4WcEveMlOAo9
+R2U0aLEya+J7na6ELX5Jje6Lzj1V6gKFQy9rlpyd14gLW/cJIRufxxlZKsiQHCuk
+LsmKSy4nzRtZIq7ZZMlsxnZmr6PGq830ZEoppLuaA/E+U7nqGF2VAW4lklDZOZdM
+92511XIg0qr4yUEMDC6KRcRskZYiag==
+=tHmv
+-----END PGP SIGNATURE-----
+
+--Sig_/IsUaLI=0/xwAw9a.+df.kfR--
