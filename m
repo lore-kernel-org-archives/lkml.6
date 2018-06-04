@@ -1,90 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751688AbeFDDpK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 23:45:10 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:54066 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751470AbeFDDpI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 23:45:08 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Containers <containers@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Date: Sun, 03 Jun 2018 22:45:01 -0500
-Message-ID: <878t7vp64i.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1751758AbeFDDzK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 23:55:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60612 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751273AbeFDDzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 23:55:08 -0400
+From: NeilBrown <neilb@suse.com>
+To: "Dilger\, Andreas" <andreas.dilger@intel.com>
+Date: Mon, 04 Jun 2018 13:54:55 +1000
+Cc: Doug Oucharek <doucharek@cray.com>, Andreas Dilger <adilger@dilger.ca>,
+        "devel\@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Drokin\, Oleg" <oleg.drokin@intel.com>,
+        "selinux\@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
+        fsdevel <linux-fsdevel@vger.kernel.org>,
+        lustre-devel <lustre-devel@lists.lustre.org>
+Subject: Re: [lustre-devel] [PATCH] staging: lustre: delete the filesystem from the tree.
+In-Reply-To: <58123CDD-8424-4E1D-A11F-0F899970A49B@intel.com>
+References: <20180601091133.GA27521@kroah.com> <20180601114151.GA25225@infradead.org> <E5BF8501-35EB-4DDF-ADBE-6016CF31A502@dilger.ca> <29ACF5A8-7608-46BB-8191-E3FEB77D0F24@cray.com> <87h8mmrt6b.fsf@notabene.neil.brown.name> <58123CDD-8424-4E1D-A11F-0F899970A49B@intel.com>
+Message-ID: <87h8mjp5o0.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fPgQd-0008Dq-4b;;;mid=<878t7vp64i.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+BkLaQZKl0murUv8AxUwIlHIbl4S8j1C4=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 203 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.3 (1.6%), b_tie_ro: 2.3 (1.1%), parse: 0.82 (0.4%),
-        extract_message_metadata: 3.3 (1.6%), get_uri_detail_list: 1.49 (0.7%),
-        tests_pri_-1000: 3.5 (1.7%), tests_pri_-950: 1.18 (0.6%), tests_pri_-900:
-        0.96 (0.5%), tests_pri_-400: 18 (8.7%), check_bayes: 17 (8.2%), b_tokenize: 5
-        (2.5%), b_tok_get_all: 5 (2.7%), b_comp_prob: 1.76 (0.9%), b_tok_touch_all:
-        2.5 (1.2%), b_finish: 0.62 (0.3%), tests_pri_0: 158 (77.9%),
-        check_dkim_signature: 0.42 (0.2%), check_dkim_adsp: 24 (11.8%),
-        tests_pri_500: 5 (2.7%), rewrite_mail: 0.00 (0.0%)
-Subject: [GIT PULL] userns 
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Sun, Jun 03 2018, Dilger, Andreas wrote:
 
-Please pull the userns-linus branch from the git tree:
+> On Jun 1, 2018, at 17:19, NeilBrown <neilb@suse.com> wrote:
+>>=20
+>> On Fri, Jun 01 2018, Doug Oucharek wrote:
+>>=20
+>>> Would it makes sense to land LNet and LNDs on their own first?  Get
+>>> the networking house in order first before layering on the file
+>>> system?
+>>=20
+>> I'd like to turn that question on it's head:
+>>  Do we need LNet and LNDs?  What value do they provide?
+>> (this is a genuine question, not being sarcastic).
+>>=20
+>> It is a while since I tried to understand LNet, and then it was a
+>> fairly superficial look, but I think it is an abstraction layer
+>> that provides packet-based send/receive with some numa-awareness
+>> and routing functionality.  It sits over sockets (TCP) and IB and
+>> provides a uniform interface.
+>
+> LNet is originally based on a high-performance networking stack called
+> Portals (v3, http://www.cs.sandia.gov/Portals/), with additions for LNet
+> routing to allow cross-network bridging.
+>
+> A critical part of LNet is that it is for RDMA and not packet-based
+> messages.  Everything in Lustre is structured around RDMA.  Of course,
+> RDMA is not possible with TCP so it just does send/receive under the
+> covers, though it can do zero copy data sends (and at one time zero-copy
+> receives, but those changes were rejected by the kernel maintainers).
+> It definitely does RDMA with IB, RoCE, OPA in the kernel, and other RDMA
+> network types not in the kernel (e.g. Cray Gemini/Aries, Atos/Bull BXI,
+> and previously older network types no longer supported).
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-linus
+Thanks!  That will probably help me understand it more easily next time
+I dive in.
 
-   HEAD: f3f1a18330ac1b717cd7a32adff38d965f365aa2 fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
+>
+> Even with TCP it has some improvements for performance, such as using
+> separate sockets for send and receive of large messages, as well as
+> a socket for small messages that has Nagle disabled so that it does
+> not delay those packets for aggregation.
 
-This is the last couple of vfs bits to enable root in a user namespace
-to mount and manipulate a filesystem with backing store (AKA not a
-virtual filesystem like proc, but a filesystem where the unprivileged
-user controls the content).   The target filesystem for this work
-is fuse, and Miklos should be sending you the pull request for the
-fuse bits this merge window.
+That sounds like something that could benefit NFS...
+pNFS already partially does this by virtue of the fact that data often
+goes to a different server than control, so a different socket is
+needed.  I wonder if it could benefit from more explicit separate of
+message sizes.
 
-The two key patches are " evm: Don't update hmacs in user ns mounts" and
-"vfs: Don't allow changing the link count of an inode with an invalid
-uid or gid".  Those close small gaps in the vfs that would be a problem
-if an unprivileged fuse filesystem is mounted.
 
-The rest of the changes are things that are now safe to allow a root
-user in a user namespace to do with a filesystem they have mounted.  The
-most interesting development is that remount is now safe.
+Thanks a lot for this background info!
+NeilBrown
 
-Eric W. Biederman (5):
-      vfs: Don't allow changing the link count of an inode with an invalid uid or gid
-      vfs: Allow userns root to call mknod on owned filesystems.
-      fs: Allow superblock owner to replace invalid owners of inodes
-      fs: Allow superblock owner to access do_remount_sb()
-      capabilities: Allow privileged user in s_user_ns to set security.* xattrs
+>
+> In addition to the RDMA support, there is also multi-rail support in
+> the out-of-tree version that we haven't been allowed to land, which
+> can aggregate network bandwidth.  While there exists channel bonding
+> for TCP connections, that does not exist for IB or other RDMA networks.
+>
+>> That is almost a description of the xprt layer in sunrpc.  sunrpc
+>> doesn't have routing, but it does have some numa awareness (for the
+>> server side at least) and it definitely provides packet-based
+>> send/receive over various transports - tcp, udp, local (unix domain),
+>> and IB.
+>> So: can we use sunrpc/xprt in place of LNet?
+>
+> No, that would totally kill the performance of Lustre.
+>
+>> How much would we need to enhance sunrpc/xprt for this to work?  What
+>> hooks would be needed to implement the routing as a separate layer.
+>>=20
+>> If LNet is, in some way, much better than sunrpc, then can we share that
+>> superior functionality with our NFS friends by adding it to sunrpc?
+>
+> There was some discussion at NetApp about adding a Lustre/LNet transport
+> for pNFS, but I don't think it ever got beyond the proposal stage:
+>
+> https://tools.ietf.org/html/draft-faibish-nfsv4-pnfs-lustre-layout-07
+>
+>> Maybe the answer to this is "no", but I think LNet would be hard to sell
+>> without a clear statement of why that was the answer.
+>
+> There are other users outside of the kernel tree that use LNet in addition
+> to just Lustre.  The Cray "DVS" I/O forwarding service[*] uses LNet, and
+> another experimental filesystem named Zest[+] also used LNet.
+>
+> [*] https://www.alcf.anl.gov/files/Sugiyama-Wallace-Thursday16B-slides.pdf
+> [+] https://www.psc.edu/images/zest/zest-sc07-paper.pdf
+>
+>> One reason that I would like to see lustre stay in drivers/staging (so I
+>> do not support Greg's patch) is that this sort of transition of Lustre
+>> to using an improved sunrpc/xprt would be much easier if both were in
+>> the same tree.  Certainly it would be easier for a larger community to
+>> be participating in the work.
+>
+> I don't think the proposal to encapsulate all of the Lustre protocol into
+> pNFS made a lot of sense, since this would have only really been available
+> on Linux, at which point it would be better to use the native Lustre clie=
+nt
+> rather than funnel everything through pNFS.
+>
+> However, _just_ using the LNet transport for (p)NFS might make sense.  LN=
+et
+> is largely independent from Lustre (it used to be a separate source tree)
+> and is very efficient over the network.
+>
+> Cheers, Andreas
+> --
+> Andreas Dilger
+> Lustre Principal Architect
+> Intel Corporation
 
-Seth Forshee (2):
-      evm: Don't update hmacs in user ns mounts
-      fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Eric
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsUuA8ACgkQOeye3VZi
+gbmTDg/+PBq1EVSU3KikxQ8H9Fy2jjVvPrJrd9REip8xDwHjOIVvClKSkgfcg55y
+bsktdVzS+C5J9bnx6EE4S57vh3ZIpK2xJOf50Gr4+NLQqoQ6bS7gTq436gYijuax
+GJ/edLSpsW8aIjnSlZpIs+60CRaYZCyrkKsHa+EBW9vjflSVvtMvU/s++p0YKJTV
+7dXoUJAHbsJv5nHVgImgeLFZIvvEu8/AgUtcVoIl1G/1LcxUN1KB4jbc2JX8zKVq
+XRzeR1I3lEqSCktOfuVSGZsefP+3kXZJdTiMMgFHAs9Dpvrqnv/qiDqn5Mz3T88R
+a04PoK9WovqWsqFfoMjgnVmdpgqHSJP+7n3X1jp9MXoSMhKyk87imEPb+gT++vfc
+O+3QB9+9M96HeY0o7LTDECVgTxN1My/B7Wu3hprcY5xXS+PZbaGxIyIEfkk5EKsC
+5BRwK6CYNh5psJpgqMrJwlA2nouooME0hs7RyGSDh69l/TjHRi/vEbDxT7QqjNZW
+NzgjHqVZuUe9aDtaWnlGi2zfz5PVN9nchzv1+3/DT010c7/bdsJKOJOyLlqdxRaF
+91C4EsitXgu5E0Qr4jWVmIDTpVBA3x3U+wrYQCU40pv4OgQ+Z7PiD4imapQZoWtP
+6XOBRw/TV01u4IOTX9cNJUNFPfBmNwAz+W5q86DmMyvWFxJMbv8=
+=vVBa
+-----END PGP SIGNATURE-----
+--=-=-=--
