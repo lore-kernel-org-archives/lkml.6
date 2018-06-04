@@ -1,99 +1,292 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751223AbeFDTLh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:11:37 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:41956 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbeFDTLg (ORCPT
+        id S1751209AbeFDTOv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:14:51 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:33061 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750999AbeFDTOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:11:36 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Tejun Heo <tj@kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        keescook@chromium.org, riel@redhat.com, tglx@linutronix.de,
-        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
-        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
-        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, Balbir Singh <balbir@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <20180524141635.c99b7025a73a709e179f92a2@linux-foundation.org>
-        <20180530121721.GD27180@dhcp22.suse.cz> <87wovjacrh.fsf@xmission.com>
-        <87wovj8e1d.fsf_-_@xmission.com> <87y3fywodn.fsf_-_@xmission.com>
-        <87sh66wobu.fsf_-_@xmission.com>
-        <20180601165034.GX1351649@devbig577.frc2.facebook.com>
-        <87bmcuv0k0.fsf@xmission.com>
-        <20180601191652.GZ1351649@devbig577.frc2.facebook.com>
-        <20180604125934.GR19202@dhcp22.suse.cz>
-        <20180604184738.GB1351649@devbig577.frc2.facebook.com>
-Date: Mon, 04 Jun 2018 14:11:11 -0500
-In-Reply-To: <20180604184738.GB1351649@devbig577.frc2.facebook.com> (Tejun
-        Heo's message of "Mon, 4 Jun 2018 11:47:38 -0700")
-Message-ID: <87d0x6jrjk.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 4 Jun 2018 15:14:49 -0400
+X-Google-Smtp-Source: ADUXVKLa++HIJKVxoDnkJi7nuU1cjxaE0HyoBsLYLTvK0aqd0XcC45XkrTX3I7gdxQVH3LTzj2Xx6tOkSouBXsvLBdo=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fPusw-0000yA-Vj;;;mid=<87d0x6jrjk.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/Dtt2oFikayIh5E07/Jp3/AJXTlccI/48=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Tejun Heo <tj@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 15022 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.9 (0.0%), b_tie_ro: 2.0 (0.0%), parse: 1.07 (0.0%),
-        extract_message_metadata: 3.3 (0.0%), get_uri_detail_list: 1.22 (0.0%),
-        tests_pri_-1000: 3.2 (0.0%), tests_pri_-950: 1.14 (0.0%), tests_pri_-900:
-        1.02 (0.0%), tests_pri_-400: 21 (0.1%), check_bayes: 20 (0.1%), b_tokenize: 6
-        (0.0%), b_tok_get_all: 7 (0.0%), b_comp_prob: 1.97 (0.0%), b_tok_touch_all:
-        2.9 (0.0%), b_finish: 0.62 (0.0%), tests_pri_0: 173 (1.2%),
-        check_dkim_signature: 0.45 (0.0%), check_dkim_adsp: 3.0 (0.0%),
-        tests_pri_500: 14807 (98.6%), poll_dns_idle: 14799 (98.5%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [RFC][PATCH 1/2] memcg: Ensure every task that uses an mm is in the same memory cgroup
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <1528138850-18259-6-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com> <1528138850-18259-6-git-send-email-eajames@linux.vnet.ibm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 4 Jun 2018 22:14:48 +0300
+Message-ID: <CAHp75VdcKg7fzPtfgb2mZ+07nGtA4HXMO2T=P1m+wovnph93Pg@mail.gmail.com>
+Subject: Re: [PATCH v9 5/7] i2c: fsi: Add transfer implementation
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tejun Heo <tj@kernel.org> writes:
-
-> Hello, Michal.
+On Mon, Jun 4, 2018 at 10:00 PM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> Execute I2C transfers from the FSI-attached I2C master. Use polling
+> instead of interrupts as we have no hardware IRQ over FSI.
 >
-> On Mon, Jun 04, 2018 at 03:01:19PM +0200, Michal Hocko wrote:
->> > On Fri, Jun 01, 2018 at 01:11:59PM -0500, Eric W. Biederman wrote:
->> > > Widening the definition of a process sounds good.  The memory control
->> > > group code would still need a way to forbid these in cgroup v1 mode,
->> > > when someone uses the task file.
->> > 
->> > Yeap, you're right.  We'll need memcg's can_attach rejecting for v1.
->> 
->> Do we really need? I mean, do we know about any existing usecase that
->> would need this weird threading concept and depend on memory migration
->> which doesn't really work?
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+>  drivers/i2c/busses/i2c-fsi.c | 195 ++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 193 insertions(+), 2 deletions(-)
 >
-> I thought the requirement is from the ->owner change so that the
-> association doesn't become 1:N, right?
+> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+> index 101b9c5..4e5964e 100644
+> --- a/drivers/i2c/busses/i2c-fsi.c
+> +++ b/drivers/i2c/busses/i2c-fsi.c
+> @@ -150,6 +150,7 @@ struct fsi_i2c_port {
+>         struct i2c_adapter      adapter;
+>         struct fsi_i2c_master   *master;
+>         u16                     port;
+> +       u16                     xfrd;
+>  };
+>
+>  static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
+> @@ -225,6 +226,99 @@ static int fsi_i2c_set_port(struct fsi_i2c_port *port)
+>         return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
+>  }
+>
+> +static int fsi_i2c_start(struct fsi_i2c_port *port, struct i2c_msg *msg,
+> +                        bool stop)
+> +{
+> +       struct fsi_i2c_master *i2c = port->master;
+> +       u32 cmd = I2C_CMD_WITH_START | I2C_CMD_WITH_ADDR;
+> +
+> +       port->xfrd = 0;
+> +
+> +       if (msg->flags & I2C_M_RD)
+> +               cmd |= I2C_CMD_READ;
+> +
+> +       if (stop || msg->flags & I2C_M_STOP)
+> +               cmd |= I2C_CMD_WITH_STOP;
+> +
+> +       cmd |= FIELD_PREP(I2C_CMD_ADDR, msg->addr >> 1);
 
-Yes.  We need not the existing can_attach, but my new
-mem_cgroup_mm_can_attach.
+Did you consider to unify READ + ADDR as ADDR_8BIT?
 
-Even if the cgroup notion of a process is extended to be any set of
-tasks that shares an mm.  We still need to fail cgroup migration through
-the tasks file for processes that are not single threaded for cgroup v1.
+> +       cmd |= FIELD_PREP(I2C_CMD_LEN, msg->len);
+> +
+> +       return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_CMD, &cmd);
+> +}
+> +
+> +static int fsi_i2c_get_op_bytes(int op_bytes)
+> +{
+> +       /* fsi is limited to max 4 byte aligned ops */
+> +       if (op_bytes > 4)
+> +               return 4;
 
-Eric
+> +       else if (op_bytes == 3)
+
+Since you dropped one of 'else', another also is not needed.
+
+> +               return 2;
+> +       return op_bytes;
+> +}
+> +
+> +static int fsi_i2c_write_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
+> +                             u8 fifo_count)
+> +{
+> +       int write;
+> +       int rc;
+> +       struct fsi_i2c_master *i2c = port->master;
+> +       int bytes_to_write = i2c->fifo_size - fifo_count;
+> +       int bytes_remaining = msg->len - port->xfrd;
+> +
+> +       bytes_to_write = min(bytes_to_write, bytes_remaining);
+> +
+> +       while (bytes_to_write) {
+> +               write = fsi_i2c_get_op_bytes(bytes_to_write);
+> +
+> +               rc = fsi_device_write(i2c->fsi, I2C_FSI_FIFO,
+> +                                     &msg->buf[port->xfrd], write);
+> +               if (rc)
+> +                       return rc;
+> +
+> +               port->xfrd += write;
+> +               bytes_to_write -= write;
+> +       }
+
+Just to be sure, if by some reason write == 0 in the loop for a while,
+would it become infinite loop?
+
+> +
+> +       return 0;
+> +}
+> +
+> +static int fsi_i2c_read_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
+> +                            u8 fifo_count)
+> +{
+> +       int read;
+> +       int rc;
+> +       struct fsi_i2c_master *i2c = port->master;
+> +       int bytes_to_read;
+> +       int xfr_remaining = msg->len - port->xfrd;
+> +       u32 dummy;
+> +
+> +       bytes_to_read = min_t(int, fifo_count, xfr_remaining);
+> +
+> +       while (bytes_to_read) {
+> +               read = fsi_i2c_get_op_bytes(bytes_to_read);
+> +
+> +               if (xfr_remaining) {
+> +                       rc = fsi_device_read(i2c->fsi, I2C_FSI_FIFO,
+> +                                            &msg->buf[port->xfrd], read);
+> +                       if (rc)
+> +                               return rc;
+> +
+> +                       port->xfrd += read;
+> +                       xfr_remaining -= read;
+> +               } else {
+> +                       /* no more buffer but data in fifo, need to clear it */
+> +                       rc = fsi_device_read(i2c->fsi, I2C_FSI_FIFO, &dummy,
+> +                                            read);
+> +                       if (rc)
+> +                               return rc;
+> +               }
+> +
+> +               bytes_to_read -= read;
+> +       }
+
+Ditto for read == 0.
+
+> +
+> +       return 0;
+> +}
+> +
+>  static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c)
+>  {
+>         int i, rc;
+> @@ -388,17 +482,114 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
+>         return -ETIMEDOUT;
+>  }
+>
+> +static int fsi_i2c_handle_status(struct fsi_i2c_port *port,
+> +                                struct i2c_msg *msg, u32 status)
+> +{
+> +       int rc;
+> +       u8 fifo_count;
+> +
+> +       if (status & I2C_STAT_ERR) {
+> +               rc = fsi_i2c_abort(port, status);
+> +               if (rc)
+> +                       return rc;
+> +
+> +               if (status & I2C_STAT_INV_CMD)
+> +                       return -EINVAL;
+> +
+> +               if (status & (I2C_STAT_PARITY | I2C_STAT_BE_OVERRUN |
+> +                   I2C_STAT_BE_ACCESS))
+> +                       return -EPROTO;
+> +
+> +               if (status & I2C_STAT_NACK)
+> +                       return -ENXIO;
+> +
+> +               if (status & I2C_STAT_LOST_ARB)
+> +                       return -EAGAIN;
+> +
+> +               if (status & I2C_STAT_STOP_ERR)
+> +                       return -EBADMSG;
+> +
+> +               return -EIO;
+> +       }
+> +
+> +       if (status & I2C_STAT_DAT_REQ) {
+> +               fifo_count = FIELD_GET(I2C_STAT_FIFO_COUNT, status);
+> +
+> +               if (msg->flags & I2C_M_RD)
+> +                       return fsi_i2c_read_fifo(port, msg, fifo_count);
+> +
+> +               return fsi_i2c_write_fifo(port, msg, fifo_count);
+> +       }
+> +
+> +       if (status & I2C_STAT_CMD_COMP) {
+> +               if (port->xfrd < msg->len)
+> +                       return -ENODATA;
+> +
+> +               return msg->len;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int fsi_i2c_wait(struct fsi_i2c_port *port, struct i2c_msg *msg,
+> +                       unsigned long timeout)
+> +{
+> +       u32 status = 0;
+> +       int rc;
+> +       unsigned long start = jiffies;
+> +
+> +       do {
+> +               rc = fsi_i2c_read_reg(port->master->fsi, I2C_FSI_STAT,
+> +                                     &status);
+> +               if (rc)
+> +                       return rc;
+> +
+> +               if (status & I2C_STAT_ANY_RESP) {
+> +                       rc = fsi_i2c_handle_status(port, msg, status);
+> +                       if (rc < 0)
+> +                               return rc;
+> +
+> +                       /* cmd complete and all data xfrd */
+> +                       if (rc == msg->len)
+> +                               return 0;
+> +
+> +                       /* need to xfr more data, but maybe don't need wait */
+> +                       continue;
+> +               }
+> +
+> +               usleep_range(I2C_CMD_SLEEP_MIN_US, I2C_CMD_SLEEP_MAX_US);
+> +       } while (time_after(start + timeout, jiffies));
+> +
+> +       return -ETIMEDOUT;
+> +}
+> +
+>  static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>                         int num)
+>  {
+> -       int rc;
+> +       int i, rc;
+> +       unsigned long start_time;
+>         struct fsi_i2c_port *port = adap->algo_data;
+> +       struct i2c_msg *msg;
+>
+>         rc = fsi_i2c_set_port(port);
+>         if (rc)
+>                 return rc;
+>
+> -       return -EOPNOTSUPP;
+> +       for (i = 0; i < num; i++) {
+> +               msg = msgs + i;
+> +               start_time = jiffies;
+> +
+> +               rc = fsi_i2c_start(port, msg, i == num - 1);
+> +               if (rc)
+> +                       return rc;
+> +
+> +               rc = fsi_i2c_wait(port, msg,
+> +                                 adap->timeout - (jiffies - start_time));
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +
+> +       return 0;
+>  }
+>
+>  static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
+> --
+> 1.8.3.1
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
