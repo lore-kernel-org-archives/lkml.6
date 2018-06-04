@@ -1,205 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753614AbeFDOBS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:01:18 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41140 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753291AbeFDN75 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:59:57 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180604135955euoutp01418a39d74bff3d24f05384546403de57~0_cRyq1rl2381723817euoutp01J
-X-AuditID: cbfec7f5-f95739c0000028a9-bc-5b1545daf0e7
-From: Maciej Purski <m.purski@samsung.com>
-To: Mark Brown <broonie@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org, Carlos Hernandez <ceh@ti.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH 5/7] regulator: core: Lock dependent regulators
-Date: Mon, 04 Jun 2018 15:59:22 +0200
-Message-id: <1528120764-14316-6-git-send-email-m.purski@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-reply-to: <1528120764-14316-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsWy7djPc7q3XEWjDTZdlLaY+vAJm8W+vt9s
-        FpseX2O1uLxrDpvF7CX9LBYLXt5isVh75C67xf4rXg4cHt++TmLx2LSqk81j85J6j74tqxg9
-        jt/YzuTxeZNcAFsUl01Kak5mWWqRvl0CV8aOp2dZCqYrVXzdeYKtgfGLdBcjJ4eEgInEja0z
-        2bsYuTiEBFYwSkxreAjlfGaUOP1qNxNM1YoLp6ASyxglfi/+DuX8Z5T4+msRcxcjBwebgJbE
-        mvZ4kAYRAVeJ7z1nWUBqmAVuMEpcOXSeESQhLGAvcfDPeXYQm0VAVeJKzz5WEJtXwEXi9dWb
-        rBDb5CRunutkBrE5gQa9nb2JESI+hU3i4C5BCNtFouHveajrhCVeHd/CDmHLSHR2HISK50u0
-        PnsMFa+Q2Nd7Gmq+tcTh4xfBbGYBPolJ26aD3S8hwCvR0SYEUeIhseItyFqQH/cxSmw/tYBx
-        AqPkAkaGVYziqaXFuempxcZ5qeV6xYm5xaV56XrJ+bmbGIHxePrf8a87GPf9STrEKMDBqMTD
-        q2ElGi3EmlhWXJl7iFGCg1lJhPe0BVCINyWxsiq1KD++qDQntfgQozQHi5I4b5xGXZSQQHpi
-        SWp2ampBahFMlomDU6qBMb/Qrm4Pyy7tl0mORjMtvvl5Lmnjqt49KVGWz87rvGhA/8EDDxUY
-        BV71y6g+r6qIKFNtUZVnLi+7e2GXC7eFrn1GQ3G4j3ZY6Lo5AuvDrRS/ZVsF6S6Zuvz5o1it
-        +F+Jek4CR7x/3YjLi85STOSadzUiveiqR5K8b5TIVINLhhvfdf5ad1WJpTgj0VCLuag4EQAD
-        f49wwwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjluLIzCtJLcpLzFFi42I5/e/4Nd1brqLRBg/aGS2mPnzCZrGv7zeb
-        xabH11gtLu+aw2Yxe0k/i8WCl7dYLNYeuctusf+KlwOHx7evk1g8Nq3qZPPYvKTeo2/LKkaP
-        4ze2M3l83iQXwBbFZZOSmpNZllqkb5fAlbHj6VmWgulKFV93nmBrYPwi3cXIySEhYCKx4sIp
-        9i5GLg4hgSWMEls6fzKCJIQEGpkkPr5T7WLk4GAT0JJY0x4PEhYRcJX43nOWBaSeWeAWo8T6
-        V0dZQBLCAvYSB/+cZwexWQRUJa707GMFsXkFXCReX73JCrFMTuLmuU5mEJsTaNDb2ZugdmVJ
-        LLiyiHkCI88CRoZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgaG07djPzTsYL20MPsQowMGo
-        xMOrYSUaLcSaWFZcmXuIUYKDWUmE97QFUIg3JbGyKrUoP76oNCe1+BCjNAeLkjjveYPKKCGB
-        9MSS1OzU1ILUIpgsEwenVANjdkdxQF7pJakXKakub59Obp7yP9u/ol61W+PJkd2Xvm/aL92/
-        jGdO1993U66LhH5kunOoxtNv2kmfIwuu/axN+fGFx95315rFdw1fPvn67J/jsnWJX/9Zat03
-        uPJedZrO15u9kvGFp83nv1vHHNKs9yL90XrDbd/auaznis5kmXDq0EfGIyXRD5VYijMSDbWY
-        i4oTAcaK6QYhAgAA
-X-CMS-MailID: 20180604135954eucas1p2156fed3300b5514a4efa2baf9e7b9bc5
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180604135954eucas1p2156fed3300b5514a4efa2baf9e7b9bc5
-References: <20180530144505.GB5705@atomide.com>
-        <1528120764-14316-1-git-send-email-m.purski@samsung.com>
-        <CGME20180604135954eucas1p2156fed3300b5514a4efa2baf9e7b9bc5@eucas1p2.samsung.com>
+        id S1753394AbeFDOFR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38218 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753313AbeFDOFO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:05:14 -0400
+Date: Mon, 4 Jun 2018 16:05:11 +0200
+From: Jessica Yu <jeyu@kernel.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: [PATCH] module: exclude SHN_UNDEF symbols from kallsyms api
+Message-ID: <20180604140510.jovmjhamo24mzh3l@d217.suse.de>
+References: <20180602173209.merjb4o5a3wsdnbh@treble>
+ <20180604080528.4z6rbhapbhn7xf5e@d217.suse.de>
+ <20180604095416.rlthplerswzznyoc@d217.suse.de>
+ <20180604130131.slyhtgyywffusf67@d217.suse.de>
+ <20180604131648.eykjibc3iubckeiu@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180604131648.eykjibc3iubckeiu@treble>
+X-OS: Linux d217 4.12.14-lp150.10-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implementing coupled regulators adds a new dependency between
-regulators. Therefore, the current locking model should be changed.
-Coupled regulators should be locked with regulator's supplies at the
-same time.
++++ Josh Poimboeuf [04/06/18 08:16 -0500]:
+>On Mon, Jun 04, 2018 at 03:01:31PM +0200, Jessica Yu wrote:
+>> +++ Jessica Yu [04/06/18 11:54 +0200]:
+>> > +++ Jessica Yu [04/06/18 10:05 +0200]:
+>> > > +++ Josh Poimboeuf [02/06/18 12:32 -0500]:
+>> > > > Hi Jessica,
+>> > > >
+>> > > > I found a bug:
+>> > > >
+>> > > > [root@f25 ~]# modprobe livepatch-sample
+>> > > > [root@f25 ~]# grep ' u ' /proc/kallsyms
+>> > > > ffffffff81161080 u klp_enable_patch	[livepatch_sample]
+>> > > > ffffffff81a01800 u __fentry__	[livepatch_sample]
+>> > > > ffffffff81161250 u klp_unregister_patch	[livepatch_sample]
+>> > > > ffffffff81161870 u klp_register_patch	[livepatch_sample]
+>> > > > ffffffff8131f0b0 u seq_printf	[livepatch_sample]
+>> > > >
+>> > > > Notice that livepatch modules' undefined symbols are showing up in
+>> > > > /proc/kallsyms.  This can confuse klp_find_object_symbol() which can
+>> > > > cause subtle bugs in livepatch.
+>> > > >
+>> > > > I stared at the module kallsyms code for a bit, but I don't see the bug.
+>> > > > Maybe it has something to do with how we save the symbol table in
+>> > > > copy_module_elf().  Any ideas?
+>> > >
+>> > > Hi Josh!
+>> > >
+>> > > This is because we preserve the entire symbol table for livepatch
+>> > > modules, including the SHN_UNDEF symbols. IIRC, this is so that we can
+>> > > still apply relocations properly with apply_relocate_add() after a
+>> > > to-be-patched object is loaded. Normally we don't save these SHN_UNDEF
+>> > > symbols for modules so they do not appear in /proc/kallsyms.
+>> >
+>> > Hm, if having the full symtab in kallsyms is causing trouble, one
+>> > possibility would be to just have the module kallsyms code simply
+>> > skip/ignore undef symbols. That's what we technically do for normal
+>> > modules anyway (we normally cut undef syms out of the symtab). Haven't
+>> > tested this idea but does that sound like it'd help?
+>>
+>> See if the following patch (untested) helps. It does not fix the
+>> /proc/kallsyms lookup, that requires a separate patch. But it should
+>> exclude the undef symbols from module_kallsyms_on_each_symbol() and
+>> thus also from klp_find_object_symbol().
+>
+>That seems like it would work.  But wouldn't it be more robust if we
+>don't store the SHN_UNDEF symbols to start with?  Really it's only the
+>SHN_LIVEPATCH symbols that we need to keep, right?
 
-Add new function regulator_lock_dependent(), which locks all regulators
-related with the one, that is being changed.
+Hm, didn't we have a reason for preserving the original symbol tables?
+It's not that we're storing the undef symbols on purpose, it's just
+that in the case of a livepatch module we keep *all* the symbols.
+IIRC, the original reasoning was that we needed to keep the original
+symtab indices in place, otherwise apply_relocate() (which uses the
+original symbol index encoded in the relocation) won't work.
+Selectively copying only SHN_LIVEPATCH symbols when building the
+module's symbol table will unfortunately mess the symbol indices up :/
+Under these restrictions, it just seemed easier to make kallsyms
+ignore undef symbols.
 
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
----
- drivers/regulator/core.c | 75 +++++++++++++++++++++++++++++++++---------------
- 1 file changed, 52 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 0b366c5..7c57268 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -201,38 +201,67 @@ static void regulator_unlock(struct regulator_dev *rdev)
- 	}
- }
- 
--/**
-- * regulator_lock_supply - lock a regulator and its supplies
-- * @rdev:         regulator source
-- */
--static void regulator_lock_supply(struct regulator_dev *rdev)
-+static int regulator_lock_recursive(struct regulator_dev *rdev,
-+				    unsigned int subclass)
- {
-+	struct regulator_dev *c_rdev;
- 	int i;
- 
--	for (i = 0; rdev; rdev = rdev_get_supply(rdev), i++)
--		regulator_lock_nested(rdev, i);
-+	for (i = 0; i < rdev->coupling_desc.n_coupled; i++) {
-+		c_rdev = rdev->coupling_desc.coupled_rdevs[i];
-+
-+		if (!c_rdev)
-+			continue;
-+
-+		regulator_lock_nested(c_rdev, subclass++);
-+
-+		if (c_rdev->supply)
-+			subclass =
-+				regulator_lock_recursive(c_rdev->supply->rdev,
-+							 subclass);
-+	}
-+
-+	return subclass;
- }
- 
- /**
-- * regulator_unlock_supply - unlock a regulator and its supplies
-- * @rdev:         regulator source
-+ * regulator_unlock_dependent - unlock regulator's suppliers and coupled
-+ *				regulators
-+ * @rdev:			regulator source
-+ *
-+ * Unlock all regulators related with rdev by coupling or suppling.
-  */
--static void regulator_unlock_supply(struct regulator_dev *rdev)
-+static void regulator_unlock_dependent(struct regulator_dev *rdev)
- {
--	struct regulator *supply;
-+	struct regulator_dev *c_rdev;
-+	int i;
- 
--	while (1) {
--		regulator_unlock(rdev);
--		supply = rdev->supply;
-+	for (i = 0; i < rdev->coupling_desc.n_coupled; i++) {
-+		c_rdev = rdev->coupling_desc.coupled_rdevs[i];
- 
--		if (!rdev->supply)
--			return;
-+		if (!c_rdev)
-+			continue;
-+
-+		regulator_unlock(c_rdev);
- 
--		rdev = supply->rdev;
-+		if (c_rdev->supply)
-+			regulator_unlock_dependent(c_rdev->supply->rdev);
- 	}
- }
- 
- /**
-+ * regulator_lock_dependent - lock regulator's suppliers and coupled regulators
-+ * @rdev:			regulator source
-+ *
-+ * This function as a wrapper on regulator_lock_recursive(), which locks
-+ * all regulators related with rdev by coupling or suppling.
-+ */
-+static inline void regulator_lock_dependent(struct regulator_dev *rdev)
-+{
-+	regulator_lock_recursive(rdev, 0);
-+}
-+
-+/**
-  * of_get_regulator - get a regulator device node based on supply name
-  * @dev: Device pointer for the consumer (of regulator) device
-  * @supply: regulator supply name
-@@ -3332,12 +3361,12 @@ int regulator_set_voltage(struct regulator *regulator, int min_uV, int max_uV)
- 	int ret = 0;
- 
- 	pr_err("%s: %d\n", __func__, __LINE__);
--	regulator_lock_supply(regulator->rdev);
-+	regulator_lock_dependent(regulator->rdev);
- 
- 	ret = regulator_set_voltage_unlocked(regulator, min_uV, max_uV,
- 					     PM_SUSPEND_ON);
- 
--	regulator_unlock_supply(regulator->rdev);
-+	regulator_unlock_dependent(regulator->rdev);
- 
- 	return ret;
- }
-@@ -3415,12 +3444,12 @@ int regulator_set_suspend_voltage(struct regulator *regulator, int min_uV,
- 	if (regulator_check_states(state) || state == PM_SUSPEND_ON)
- 		return -EINVAL;
- 
--	regulator_lock_supply(regulator->rdev);
-+	regulator_lock_dependent(regulator->rdev);
- 
- 	ret = _regulator_set_suspend_voltage(regulator, min_uV,
- 					     max_uV, state);
- 
--	regulator_unlock_supply(regulator->rdev);
-+	regulator_unlock_dependent(regulator->rdev);
- 
- 	return ret;
- }
-@@ -3612,11 +3641,11 @@ int regulator_get_voltage(struct regulator *regulator)
- {
- 	int ret;
- 
--	regulator_lock_supply(regulator->rdev);
-+	regulator_lock_dependent(regulator->rdev);
- 
- 	ret = _regulator_get_voltage(regulator->rdev);
- 
--	regulator_unlock_supply(regulator->rdev);
-+	regulator_unlock_dependent(regulator->rdev);
- 
- 	return ret;
- }
--- 
-2.7.4
+>What do you think about the following (untested)?
+>
+>diff --git a/kernel/module.c b/kernel/module.c
+>index c9bea7f2b43e..78ec9de856e3 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -2586,6 +2586,9 @@ static bool is_core_symbol(const Elf_Sym *src, const Elf_Shdr *sechdrs,
+> {
+> 	const Elf_Shdr *sec;
+>
+>+	if (src->st_shndx == SHN_LIVEPATCH)
+>+		return true;
+>+
+> 	if (src->st_shndx == SHN_UNDEF
+> 	    || src->st_shndx >= shnum
+> 	    || !src->st_name)
+>@@ -2632,9 +2635,9 @@ static void layout_symtab(struct module *mod, struct load_info *info)
+>
+> 	/* Compute total space required for the core symbols' strtab. */
+> 	for (ndst = i = 0; i < nsrc; i++) {
+>-		if (i == 0 || is_livepatch_module(mod) ||
+>-		    is_core_symbol(src+i, info->sechdrs, info->hdr->e_shnum,
+>-				   info->index.pcpu)) {
+>+		if (i == 0 || is_core_symbol(src+i, info->sechdrs,
+>+					     info->hdr->e_shnum,
+>+					     info->index.pcpu)) {
+> 			strtab_size += strlen(&info->strtab[src[i].st_name])+1;
+> 			ndst++;
+> 		}
+>@@ -2691,9 +2694,9 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
+> 	mod->core_kallsyms.strtab = s = mod->core_layout.base + info->stroffs;
+> 	src = mod->kallsyms->symtab;
+> 	for (ndst = i = 0; i < mod->kallsyms->num_symtab; i++) {
+>-		if (i == 0 || is_livepatch_module(mod) ||
+>-		    is_core_symbol(src+i, info->sechdrs, info->hdr->e_shnum,
+>-				   info->index.pcpu)) {
+>+		if (i == 0 || is_core_symbol(src+i, info->sechdrs,
+>+					     info->hdr->e_shnum,
+>+					     info->index.pcpu)) {
+> 			dst[ndst] = src[i];
+> 			dst[ndst++].st_name = s - mod->core_kallsyms.strtab;
+> 			s += strlcpy(s, &mod->kallsyms->strtab[src[i].st_name],
