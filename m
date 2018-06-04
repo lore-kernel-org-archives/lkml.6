@@ -1,98 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751762AbeFDGiP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 02:38:15 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:42468 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751482AbeFDGiO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 02:38:14 -0400
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From: Byungchul Park <byungchul.park@lge.com>
-To: peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org
-Cc: tglx@linutronix.de, raistlin@linux.it, linux-kernel@vger.kernel.org,
-        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
-        joel@joelfernandes.org
-Subject: [PATCH v4 2/2] sched/deadline: Set cp->elements[0].cpu to -1 when the heap is empty
-Date: Mon,  4 Jun 2018 15:36:47 +0900
-Message-Id: <1528094207-15567-2-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528094207-15567-1-git-send-email-byungchul.park@lge.com>
-References: <1528094207-15567-1-git-send-email-byungchul.park@lge.com>
+        id S1751727AbeFDGkn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 02:40:43 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24439 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750731AbeFDGkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:40:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,475,1520924400";
+   d="scan'208";a="64069201"
+From: "Hean-Loong, Ong" <hean.loong.ong@intel.com>
+To: Rob Herring <robh+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        hean.loong.ong@intel.com, Ong@vger.kernel.org
+Subject: [PATCHv9 0/3] Intel FPGA Video and Image Processing Suite
+Date: Mon,  4 Jun 2018 14:40:01 +0800
+Message-Id: <1528094404-3542-1-git-send-email-hean.loong.ong@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Steven and Daniel,
+From: Ong, Hean Loong <hean.loong.ong@intel.com>
 
-I've changed the 2nd patch a little bit to consider cpudl_clear()
-additionally. Can I keep your Acked-by on?
+The FPGA FrameBuffer Soft IP could be seen  as the GPU and the DRM driver patch here is allocating memory for information to be streamed from the ARM/Linux to the display port.
+Basically the driver just wraps the information such as the pixels to be drawn by the FPGA FrameBuffer 2.
 
-(I temporarily removed the Acked-by you gave me.)
+The piece of hardware in discussion is the SoC FPGA where Linux runs on the ARM chip and the FGPA is driven by its NIOS soft core with its own proprietary firmware.
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+For example the application from the ARM Linux would have to write information on the /dev/fb0 with the information stored in the SDRAM to be fetched by the FPGA framebuffer IP and displayed on the Display Port Monitor.
 
------8<-----
->From 1e368d276186c22f9da298206c718b33e805828d Mon Sep 17 00:00:00 2001
-From: Byungchul Park <byungchul.park@lge.com>
-Date: Mon, 4 Jun 2018 15:05:08 +0900
-Subject: [PATCH v4 2/2] sched/deadline: Set cp->elements[0].cpu to -1 when the
- heap is empty
+Ong Hean Loong (2):
+  ARM:socfpga-defconfig Intel FPGA Video and Image Processing Suite
+  ARM:drm ivip Intel FPGA Video and Image Processing Suite
 
-Currently, migrating tasks to cpu0 unconditionally happens when the
-heap is empty, since cp->elements[0].cpu is initialized to 0(=cpu0).
-We have to distinguish between the empty case and cpu0 to avoid the
-unnecessary migrations. Therefore, it has to return an invalid value
-e.i. -1 in the case the heap is empty.
+Ong, Hean Loong (1):
+  ARM:dt-bindings:display Intel FPGA Video and Image Processing Suite
 
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-Suggested-by: Joel Fernandes <joelaf@google.com>
----
- kernel/sched/cpudeadline.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-index ae4fbdc..a200b36 100644
---- a/kernel/sched/cpudeadline.c
-+++ b/kernel/sched/cpudeadline.c
-@@ -136,6 +136,10 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
- 
- 		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
- 
-+		/* The heap tree is empty, just return. */
-+		if (best_cpu == -1)
-+			return 0;
-+
- 		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
- 		    dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
- 			if (later_mask)
-@@ -172,6 +176,13 @@ void cpudl_clear(struct cpudl *cp, int cpu)
- 		 * This could happen if a rq_offline_dl is
- 		 * called for a CPU without -dl tasks running.
- 		 */
-+	} else if (cp->size == 1){
-+		/* Only one element in the heap, clear it. */
-+		cp->elements[0].cpu = -1;
-+		cp->elements[cpu].idx = IDX_INVALID;
-+		cp->size = 0;
-+
-+		cpumask_set_cpu(cpu, cp->free_cpus);
- 	} else {
- 		new_cpu = cp->elements[cp->size - 1].cpu;
- 		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
-@@ -267,6 +278,9 @@ int cpudl_init(struct cpudl *cp)
- 	for_each_possible_cpu(i)
- 		cp->elements[i].idx = IDX_INVALID;
- 
-+	/* Mark heap as initially empty. */
-+	cp->elements[i].cpu = -1;
-+
- 	return 0;
- }
- 
--- 
-1.9.1
+ .../devicetree/bindings/display/altr,vip-fb2.txt   |   99 ++++++++++
+ arch/arm/configs/socfpga_defconfig                 |    5 +
+ drivers/gpu/drm/Kconfig                            |    2 +
+ drivers/gpu/drm/Makefile                           |    1 +
+ drivers/gpu/drm/ivip/Kconfig                       |   14 ++
+ drivers/gpu/drm/ivip/Makefile                      |    9 +
+ drivers/gpu/drm/ivip/intel_vip_conn.c              |   95 ++++++++++
+ drivers/gpu/drm/ivip/intel_vip_core.c              |  161 ++++++++++++++++
+ drivers/gpu/drm/ivip/intel_vip_drv.h               |   52 ++++++
+ drivers/gpu/drm/ivip/intel_vip_of.c                |  193 ++++++++++++++++++++
+ 10 files changed, 631 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/altr,vip-fb2.txt
+ create mode 100644 drivers/gpu/drm/ivip/Kconfig
+ create mode 100644 drivers/gpu/drm/ivip/Makefile
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_conn.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_core.c
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.h
+ create mode 100644 drivers/gpu/drm/ivip/intel_vip_of.c
