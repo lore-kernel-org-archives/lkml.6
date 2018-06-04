@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeFDTBO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:01:14 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751411AbeFDTBM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751409AbeFDTBM (ORCPT <rfc822;w@1wt.eu>);
         Mon, 4 Jun 2018 15:01:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42308 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751354AbeFDTBI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 15:01:08 -0400
 From: Eddie James <eajames@linux.vnet.ibm.com>
 To: linux-i2c@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -14,20 +14,20 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
         rdunlap@infradead.org, andy.shevchenko@gmail.com,
         Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v9 6/7] i2c: fsi: Add I2C master locking
-Date: Mon,  4 Jun 2018 14:00:49 -0500
+Subject: [PATCH v9 3/7] i2c: fsi: Add port structures
+Date: Mon,  4 Jun 2018 14:00:46 -0500
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
 References: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18060419-0040-0000-0000-0000043B17C1
+x-cbid: 18060419-0060-0000-0000-000002781684
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009129; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01042302; UDB=6.00533708; IPR=6.00821432;
- MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 19:01:09
+ PH=3.00000004; SC=3.00000265; SDB=6.01042302; UDB=6.00533707; IPR=6.00821432;
+ MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 19:01:04
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060419-0041-0000-0000-0000084117C9
-Message-Id: <1528138850-18259-7-git-send-email-eajames@linux.vnet.ibm.com>
+x-cbparentid: 18060419-0061-0000-0000-0000455670AC
+Message-Id: <1528138850-18259-4-git-send-email-eajames@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -39,79 +39,163 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since there are many ports per master, each with it's own adapter and
-chardev, we need some locking to prevent transfers from changing the
-master state while other transfers are in progress.
+Add and initialize I2C adapters for each port on the FSI-attached I2C
+master. Ports for each master are defined in the devicetree.
 
 Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 ---
- drivers/i2c/busses/i2c-fsi.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-fsi.c | 90 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
 diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
-index 4e5964e..6e6e2b1 100644
+index e1b183c..12130c3 100644
 --- a/drivers/i2c/busses/i2c-fsi.c
 +++ b/drivers/i2c/busses/i2c-fsi.c
-@@ -21,6 +21,7 @@
+@@ -17,7 +17,10 @@
+ #include <linux/fsi.h>
+ #include <linux/i2c.h>
  #include <linux/kernel.h>
- #include <linux/list.h>
++#include <linux/list.h>
  #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/slab.h>
++#include <linux/of.h>
++#include <linux/slab.h>
  
-@@ -143,6 +144,7 @@ struct fsi_i2c_master {
+ #define FSI_ENGID_I2C		0x7
+ 
+@@ -123,6 +126,14 @@
+ struct fsi_i2c_master {
  	struct fsi_device	*fsi;
  	u8			fifo_size;
- 	struct list_head	ports;
-+	struct mutex		lock;
++	struct list_head	ports;
++};
++
++struct fsi_i2c_port {
++	struct list_head	list;
++	struct i2c_adapter	adapter;
++	struct fsi_i2c_master	*master;
++	u16			port;
  };
  
- struct fsi_i2c_port {
-@@ -569,11 +571,14 @@ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 	int i, rc;
- 	unsigned long start_time;
- 	struct fsi_i2c_port *port = adap->algo_data;
-+	struct fsi_i2c_master *master = port->master;
- 	struct i2c_msg *msg;
- 
-+	mutex_lock(&master->lock);
-+
- 	rc = fsi_i2c_set_port(port);
- 	if (rc)
--		return rc;
-+		goto unlock;
- 
- 	for (i = 0; i < num; i++) {
- 		msg = msgs + i;
-@@ -581,15 +586,17 @@ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 
- 		rc = fsi_i2c_start(port, msg, i == num - 1);
- 		if (rc)
--			return rc;
-+			goto unlock;
- 
- 		rc = fsi_i2c_wait(port, msg,
- 				  adap->timeout - (jiffies - start_time));
- 		if (rc)
--			return rc;
-+			goto unlock;
- 	}
- 
--	return 0;
-+unlock:
-+	mutex_unlock(&master->lock);
-+	return rc;
+ static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
+@@ -176,9 +187,38 @@ static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
+ 	return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_WATER_MARK, &watermark);
  }
  
- static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
-@@ -615,6 +622,7 @@ static int fsi_i2c_probe(struct device *dev)
++static int fsi_i2c_set_port(struct fsi_i2c_port *port)
++{
++	int rc;
++	struct fsi_device *fsi = port->master->fsi;
++	u32 mode, dummy = 0;
++
++	rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
++	if (rc)
++		return rc;
++
++	if (FIELD_GET(I2C_MODE_PORT, mode) == port->port)
++		return 0;
++
++	mode = (mode & ~I2C_MODE_PORT) | FIELD_PREP(I2C_MODE_PORT, port->port);
++	rc = fsi_i2c_write_reg(fsi, I2C_FSI_MODE, &mode);
++	if (rc)
++		return rc;
++
++	/* reset engine when port is changed */
++	return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
++}
++
+ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+ 			int num)
+ {
++	int rc;
++	struct fsi_i2c_port *port = adap->algo_data;
++
++	rc = fsi_i2c_set_port(port);
++	if (rc)
++		return rc;
++
+ 	return -EOPNOTSUPP;
+ }
+ 
+@@ -196,23 +236,72 @@ static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
+ static int fsi_i2c_probe(struct device *dev)
+ {
+ 	struct fsi_i2c_master *i2c;
++	struct fsi_i2c_port *port;
++	struct device_node *np;
+ 	int rc;
++	u32 port_no;
+ 
+ 	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
  	if (!i2c)
  		return -ENOMEM;
  
-+	mutex_init(&i2c->lock);
  	i2c->fsi = to_fsi_dev(dev);
- 	INIT_LIST_HEAD(&i2c->ports);
++	INIT_LIST_HEAD(&i2c->ports);
+ 
+ 	rc = fsi_i2c_dev_init(i2c);
+ 	if (rc)
+ 		return rc;
+ 
++	/* Add adapter for each i2c port of the master. */
++	for_each_available_child_of_node(dev->of_node, np) {
++		rc = of_property_read_u32(np, "reg", &port_no);
++		if (rc || port_no > USHRT_MAX)
++			continue;
++
++		port = kzalloc(sizeof(*port), GFP_KERNEL);
++		if (!port)
++			break;
++
++		port->master = i2c;
++		port->port = port_no;
++
++		port->adapter.owner = THIS_MODULE;
++		port->adapter.dev.of_node = np;
++		port->adapter.dev.parent = dev;
++		port->adapter.algo = &fsi_i2c_algorithm;
++		port->adapter.algo_data = port;
++
++		snprintf(port->adapter.name, sizeof(port->adapter.name),
++			 "i2c_bus-%u", port_no);
++
++		rc = i2c_add_adapter(&port->adapter);
++		if (rc < 0) {
++			dev_err(dev, "Failed to register adapter: %d\n", rc);
++			kfree(port);
++			continue;
++		}
++
++		list_add(&port->list, &i2c->ports);
++	}
++
+ 	dev_set_drvdata(dev, i2c);
+ 
+ 	return 0;
+ }
+ 
++static int fsi_i2c_remove(struct device *dev)
++{
++	struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
++	struct fsi_i2c_port *port;
++
++	list_for_each_entry(port, &i2c->ports, list) {
++		i2c_del_adapter(&port->adapter);
++		kfree(port);
++	}
++
++	return 0;
++}
++
+ static const struct fsi_device_id fsi_i2c_ids[] = {
+ 	{ FSI_ENGID_I2C, FSI_VERSION_ANY },
+ 	{ 0 }
+@@ -224,6 +313,7 @@ static int fsi_i2c_probe(struct device *dev)
+ 		.name = "i2c-fsi",
+ 		.bus = &fsi_bus_type,
+ 		.probe = fsi_i2c_probe,
++		.remove = fsi_i2c_remove,
+ 	},
+ };
  
 -- 
 1.8.3.1
