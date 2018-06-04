@@ -1,137 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751303AbeFDU7T (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:59:19 -0400
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:34130 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbeFDU7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:59:17 -0400
-X-Google-Smtp-Source: ADUXVKJ+3j6J9cdGADd3cXzlJKhmZqQTFCl66JqfNqt1uu0Vm2mL2AhOmSL1PSQwqhQMoTa7FuRSyKV0KdfF6EyVSHI=
-MIME-Version: 1.0
-In-Reply-To: <20180604182658.GC164893@dtor-ws>
-References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
- <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
- <20180601184330.GD222005@dtor-ws> <72b7120a-d304-0b2f-d04a-473631623f72@bitmath.org>
- <CAO-hwJKibKvqviLZ5SSYR_X3yLTzJrr0G4d6svM3FtgJ6AfvQQ@mail.gmail.com>
- <20180604172759.GA164893@dtor-ws> <994e5698-fbdf-05c8-b0b6-3df6af1b3dbc@bitmath.org>
- <20180604182658.GC164893@dtor-ws>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Mon, 4 Jun 2018 22:59:16 +0200
-Message-ID: <CAO-hwJK3h8xjuO=GQRT0prdbXURCTinkQg4i7N8ScPOig1KTYw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
- non-confident touches
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>,
-        Jason Gerecke <killertofu@gmail.com>,
-        Dennis Kempin <denniskempin@google.com>,
-        Andrew de los Reyes <adlr@google.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751433AbeFDVCJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:02:09 -0400
+Received: from ns.pmeerw.net ([84.19.176.117]:44792 "EHLO ns.pmeerw.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751093AbeFDVCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 17:02:08 -0400
+From: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Subject: [PATCH] rfkill: Fix several typos in documentation
+Date: Mon,  4 Jun 2018 23:02:03 +0200
+Message-Id: <20180604210203.29684-1-pmeerw@pmeerw.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 8:26 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Mon, Jun 04, 2018 at 07:55:57PM +0200, Henrik Rydberg wrote:
->> Hi Dmitry,
->>
->> > > > Logically, the confidence state is a property of a contact, not a new type
->> > > > of contact. Trying to use it in any other way is bound to lead to confusion.
->> > > >
->> > > > Problem is that MT_TOOL_PALM has been introduced in the kernel since
->> > > > v4.0 (late 2015 by a736775db683 "Input: add MT_TOOL_PALM").
->> > > > It's been used in the Synaptics RMI4 driver since and by hid-asus in late 2016.
->> > > > I can't find any other users in the current upstream tree, but those
->> > > > two are already making a precedent and changing the semantic is a
->> > > > little bit late :/
->> > I am sorry I did not respond and lost track of this issue back then, but
->> > I disagree with Henrik here. While confidence is a property of contact,
->> > so is the type of contact and it can and will change throughout life of
->> > a contact, especially if we will continue adding new types, such as, for
->> > example, thumb. In this case the firmware can transition through
->> > finger->thumb or finger->thumb->palm or finger->palm as the nature of
->> > contact becomes better understood. Still it is the same contact and we
->> > should not attempt to signal userspace differently.
->> We agree that the contact should stay the same, but the fear, and I think
->> somewhere along the blurry history of this thread, the problem was that
->> userspace interpreted the property change as a new contact (lift up/double
->> click/etc). Finger/thumb/palm is one set of hand properties, but what about
->> Pen? It would be hard for an application to consider a switch from finger to
->> pen as the same contact, which is where the natural implementation starts to
->> diverge from the intention.
->
-> I think the userspace has to trust our tracking ID to decide whether it
-> is a same contact or not. The current issue is that kernel is forcing
-> tracking ID change on tool type change, and one of the 2 patches that I
-> posted fixed that, allowing us to keep the tracking ID for finger->palm
-> transitions.
+Signed-off-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+---
+ Documentation/rfkill.txt | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-I think I missed those 2 patches, can you point a LKML link?
-Also, note that libevdev discards the tracking ID change now (it
-shouts at the user in the logs). So that means that it will now be
-hard to force libevdev to trust the kernel again for the tracking ID.
-The current rule is:
-- tracking ID >= 0 -> new touch
-- any subsequent tracking ID >= 0 -> discarded
-- tracking ID == -1 -> end of touch
-
->
-> I think it is kernel task to not signal transitions that do not make
-> sense, such as finger->pen or palm->pen etc.
-
-I fully agree, though there is currently no such guard in the kernel
-(maybe it's part of your series). I am worried about the RMI4 F12
-driver that automatically forward the info from the firmware, so if
-the firmware does something crazy, it will be exported to user space.
-But I guess it might be better to treat that on a per driver basis.
-
->
->>
->> > We could introduce the ABS_MT_CONFIDENCE (0/1 or even 0..n range), to
->> > complement ABS_MT_TOOL, but that would not really solve the issue with
->> > Wacom firmware (declaring contact non-confident and releasing it right
->> > away) and given MS explanation of the confidence as "contact is too big"
->> > MT_TOOL_PALM fits it perfectly.
->> Indeed, the Wacom firmware seems to need some special handling, which should
->> be fine by everyone. I do think it would make sense to add
->> ABS_MT_TOOL_TOO_BIG, or something, and use it if it exists. This would apply
-
-Except we are already running out of ABS_* axes.
-
->> also to a pen lying down on a touchpad, for instance.
->
-> OK, I can see that for Pens, if we have firmware that would recognize
-> such condition, it would be weird to report PALM. We could indeed have
-> ABS_MT_TOOL_TOO_BIG, but on the other hand it is still a pen (as long as
-> the hardware can recognize it as such). Maybe we'd be better off just
-> having userspace going by contact size for pens. Peter, any suggestions
-> here?
-
-I don't think we have size handling in the tablet implementation in
-libinput. I do not see it as a big issue to add such axes from a
-libinput point of view. However, there is no existing hardware that
-would provide such information, so I guess this will be a 'no' until
-actual hardware comes in.
-
-Also note that the MT_TOOL_PEN implementation is limited (even
-non-existant if I remember correctly). Peter and I do not have access
-to any device that support such multi pen, so AFAICT, there is no code
-to handle this in libinput.
-
-One last point from libinput, the pen device would need to be on its
-separate kernel node for the protocol to be smoothly handled. So
-basically, even the transition from MT_TOOL_FINGER to MT_TOOL_PEN
-would not be handled properly right now. The Pen event will be treated
-as a touch.
-
-Cheers,
-Benjamin
-
->
-> Thanks.
->
-> --
-> Dmitry
+diff --git a/Documentation/rfkill.txt b/Documentation/rfkill.txt
+index a289285d2412..7d3684e81df6 100644
+--- a/Documentation/rfkill.txt
++++ b/Documentation/rfkill.txt
+@@ -9,7 +9,7 @@ rfkill - RF kill switch support
+ Introduction
+ ============
+ 
+-The rfkill subsystem provides a generic interface to disabling any radio
++The rfkill subsystem provides a generic interface for disabling any radio
+ transmitter in the system. When a transmitter is blocked, it shall not
+ radiate any power.
+ 
+@@ -45,7 +45,7 @@ The rfkill subsystem is composed of three main components:
+  * the rfkill drivers.
+ 
+ The rfkill core provides API for kernel drivers to register their radio
+-transmitter with the kernel, methods for turning it on and off and, letting
++transmitter with the kernel, methods for turning it on and off, and letting
+ the system know about hardware-disabled states that may be implemented on
+ the device.
+ 
+@@ -54,7 +54,7 @@ ways for userspace to query the current states. See the "Userspace support"
+ section below.
+ 
+ When the device is hard-blocked (either by a call to rfkill_set_hw_state()
+-or from query_hw_block) set_block() will be invoked for additional software
++or from query_hw_block), set_block() will be invoked for additional software
+ block, but drivers can ignore the method call since they can use the return
+ value of the function rfkill_set_hw_state() to sync the software state
+ instead of keeping track of calls to set_block(). In fact, drivers should
+@@ -65,7 +65,6 @@ keeps track of soft and hard block separately.
+ Kernel API
+ ==========
+ 
+-
+ Drivers for radio transmitters normally implement an rfkill driver.
+ 
+ Platform drivers might implement input devices if the rfkill button is just
+@@ -75,14 +74,14 @@ a way to turn on/off the transmitter(s).
+ 
+ For some platforms, it is possible that the hardware state changes during
+ suspend/hibernation, in which case it will be necessary to update the rfkill
+-core with the current state is at resume time.
++core with the current state at resume time.
+ 
+ To create an rfkill driver, driver's Kconfig needs to have::
+ 
+ 	depends on RFKILL || !RFKILL
+ 
+ to ensure the driver cannot be built-in when rfkill is modular. The !RFKILL
+-case allows the driver to be built when rfkill is not configured, which
++case allows the driver to be built when rfkill is not configured, in which
+ case all rfkill API can still be used but will be provided by static inlines
+ which compile to almost nothing.
+ 
+@@ -91,7 +90,7 @@ rfkill drivers that control devices that can be hard-blocked unless they also
+ assign the poll_hw_block() callback (then the rfkill core will poll the
+ device). Don't do this unless you cannot get the event in any other way.
+ 
+-RFKill provides per-switch LED triggers, which can be used to drive LEDs
++rfkill provides per-switch LED triggers, which can be used to drive LEDs
+ according to the switch state (LED_FULL when blocked, LED_OFF otherwise).
+ 
+ 
+@@ -114,7 +113,7 @@ a specified type) into a state which also updates the default state for
+ hotplugged devices.
+ 
+ After an application opens /dev/rfkill, it can read the current state of all
+-devices. Changes can be either obtained by either polling the descriptor for
++devices. Changes can be obtained by either polling the descriptor for
+ hotplug or state change events or by listening for uevents emitted by the
+ rfkill core framework.
+ 
+@@ -127,8 +126,7 @@ environment variables set::
+ 	RFKILL_STATE
+ 	RFKILL_TYPE
+ 
+-The contents of these variables corresponds to the "name", "state" and
++The content of these variables corresponds to the "name", "state" and
+ "type" sysfs files explained above.
+ 
+-
+ For further details consult Documentation/ABI/stable/sysfs-class-rfkill.
+-- 
+2.11.0
