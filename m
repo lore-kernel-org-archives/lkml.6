@@ -1,207 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753390AbeFDHDP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55364 "EHLO mail.kernel.org"
+        id S1753511AbeFDHTj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:19:39 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30120 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752937AbeFDHDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:09 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>
-Subject: [PATCH 4.16 11/47] xfs: convert XFS_AGFL_SIZE to a helper function
-Date: Mon,  4 Jun 2018 08:58:23 +0200
-Message-Id: <20180604065549.963209287@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
-References: <20180604065549.468488465@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1751354AbeFDHTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:19:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,475,1520924400";
+   d="scan'208";a="45055422"
+From: "Liu, Jingqi" <jingqi.liu@intel.com>
+To: "pbonzini@redhat.com" <pbonzini@redhat.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wang, Wei W" <wei.w.wang@intel.com>
+Subject: RE: [PATCH RESEND] KVM: x86: Expose CLDEMOTE CPU feature to guest VM
+Thread-Topic: [PATCH RESEND] KVM: x86: Expose CLDEMOTE CPU feature to guest
+ VM
+Thread-Index: AQHT8NR70GIu/Mhwtki8WsXXAcQNGqRPwing
+Date: Mon, 4 Jun 2018 07:19:31 +0000
+Message-ID: <09D68D4CF52CAF489B702DEBDD12D3D352728A00@SHSMSX103.ccr.corp.intel.com>
+References: <1526979687-1262-1-git-send-email-jingqi.liu@intel.com>
+In-Reply-To: <1526979687-1262-1-git-send-email-jingqi.liu@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWI3ZDVkNmItODZiNC00N2I2LTliNjUtMDhiZDViMTEwNTZjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiclV1SGc5MFloSmtYNEo0QVpiXC9cL3hNUlVpdnFRTUtuYTlFNm1OTnBPaXVyQnRCdjdybGRQNXYybkMybWFqcWVqIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Hi Paolo,
 
-------------------
+I had changed the Signed-off-by chain.
+Could you help to review?
+Thanks.
 
-From: Dave Chinner <dchinner@redhat.com>
+On 5/22/2018 5:01 PM, Liu, Jingqi wrote:
 
-commit a78ee256c325ecfaec13cafc41b315bd4e1dd518 upstream.
-
-The AGFL size calculation is about to get more complex, so lets turn
-the macro into a function first and remove the macro.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-[darrick: forward port to newer kernel, simplify the helper]
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/xfs/libxfs/xfs_alloc.c  |   31 ++++++++++++++++++++++++-------
- fs/xfs/libxfs/xfs_alloc.h  |    2 ++
- fs/xfs/libxfs/xfs_format.h |   13 +------------
- fs/xfs/scrub/agheader.c    |    6 +++---
- fs/xfs/xfs_fsops.c         |    2 +-
- 5 files changed, 31 insertions(+), 23 deletions(-)
-
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -53,6 +53,23 @@ STATIC int xfs_alloc_ag_vextent_size(xfs
- STATIC int xfs_alloc_ag_vextent_small(xfs_alloc_arg_t *,
- 		xfs_btree_cur_t *, xfs_agblock_t *, xfs_extlen_t *, int *);
- 
-+/*
-+ * Size of the AGFL.  For CRC-enabled filesystes we steal a couple of slots in
-+ * the beginning of the block for a proper header with the location information
-+ * and CRC.
-+ */
-+unsigned int
-+xfs_agfl_size(
-+	struct xfs_mount	*mp)
-+{
-+	unsigned int		size = mp->m_sb.sb_sectsize;
-+
-+	if (xfs_sb_version_hascrc(&mp->m_sb))
-+		size -= sizeof(struct xfs_agfl);
-+
-+	return size / sizeof(xfs_agblock_t);
-+}
-+
- unsigned int
- xfs_refc_block(
- 	struct xfs_mount	*mp)
-@@ -550,7 +567,7 @@ xfs_agfl_verify(
- 	if (bp->b_pag && be32_to_cpu(agfl->agfl_seqno) != bp->b_pag->pag_agno)
- 		return __this_address;
- 
--	for (i = 0; i < XFS_AGFL_SIZE(mp); i++) {
-+	for (i = 0; i < xfs_agfl_size(mp); i++) {
- 		if (be32_to_cpu(agfl->agfl_bno[i]) != NULLAGBLOCK &&
- 		    be32_to_cpu(agfl->agfl_bno[i]) >= mp->m_sb.sb_agblocks)
- 			return __this_address;
-@@ -2266,7 +2283,7 @@ xfs_alloc_get_freelist(
- 	bno = be32_to_cpu(agfl_bno[be32_to_cpu(agf->agf_flfirst)]);
- 	be32_add_cpu(&agf->agf_flfirst, 1);
- 	xfs_trans_brelse(tp, agflbp);
--	if (be32_to_cpu(agf->agf_flfirst) == XFS_AGFL_SIZE(mp))
-+	if (be32_to_cpu(agf->agf_flfirst) == xfs_agfl_size(mp))
- 		agf->agf_flfirst = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-@@ -2377,7 +2394,7 @@ xfs_alloc_put_freelist(
- 			be32_to_cpu(agf->agf_seqno), &agflbp)))
- 		return error;
- 	be32_add_cpu(&agf->agf_fllast, 1);
--	if (be32_to_cpu(agf->agf_fllast) == XFS_AGFL_SIZE(mp))
-+	if (be32_to_cpu(agf->agf_fllast) == xfs_agfl_size(mp))
- 		agf->agf_fllast = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-@@ -2395,7 +2412,7 @@ xfs_alloc_put_freelist(
- 
- 	xfs_alloc_log_agf(tp, agbp, logflags);
- 
--	ASSERT(be32_to_cpu(agf->agf_flcount) <= XFS_AGFL_SIZE(mp));
-+	ASSERT(be32_to_cpu(agf->agf_flcount) <= xfs_agfl_size(mp));
- 
- 	agfl_bno = XFS_BUF_TO_AGFL_BNO(mp, agflbp);
- 	blockp = &agfl_bno[be32_to_cpu(agf->agf_fllast)];
-@@ -2428,9 +2445,9 @@ xfs_agf_verify(
- 	if (!(agf->agf_magicnum == cpu_to_be32(XFS_AGF_MAGIC) &&
- 	      XFS_AGF_GOOD_VERSION(be32_to_cpu(agf->agf_versionnum)) &&
- 	      be32_to_cpu(agf->agf_freeblks) <= be32_to_cpu(agf->agf_length) &&
--	      be32_to_cpu(agf->agf_flfirst) < XFS_AGFL_SIZE(mp) &&
--	      be32_to_cpu(agf->agf_fllast) < XFS_AGFL_SIZE(mp) &&
--	      be32_to_cpu(agf->agf_flcount) <= XFS_AGFL_SIZE(mp)))
-+	      be32_to_cpu(agf->agf_flfirst) < xfs_agfl_size(mp) &&
-+	      be32_to_cpu(agf->agf_fllast) < xfs_agfl_size(mp) &&
-+	      be32_to_cpu(agf->agf_flcount) <= xfs_agfl_size(mp)))
- 		return __this_address;
- 
- 	if (be32_to_cpu(agf->agf_levels[XFS_BTNUM_BNO]) < 1 ||
---- a/fs/xfs/libxfs/xfs_alloc.h
-+++ b/fs/xfs/libxfs/xfs_alloc.h
-@@ -26,6 +26,8 @@ struct xfs_trans;
- 
- extern struct workqueue_struct *xfs_alloc_wq;
- 
-+unsigned int xfs_agfl_size(struct xfs_mount *mp);
-+
- /*
-  * Freespace allocation types.  Argument to xfs_alloc_[v]extent.
-  */
---- a/fs/xfs/libxfs/xfs_format.h
-+++ b/fs/xfs/libxfs/xfs_format.h
-@@ -803,24 +803,13 @@ typedef struct xfs_agi {
- 		&(XFS_BUF_TO_AGFL(bp)->agfl_bno[0]) : \
- 		(__be32 *)(bp)->b_addr)
- 
--/*
-- * Size of the AGFL.  For CRC-enabled filesystes we steal a couple of
-- * slots in the beginning of the block for a proper header with the
-- * location information and CRC.
-- */
--#define XFS_AGFL_SIZE(mp) \
--	(((mp)->m_sb.sb_sectsize - \
--	 (xfs_sb_version_hascrc(&((mp)->m_sb)) ? \
--		sizeof(struct xfs_agfl) : 0)) / \
--	  sizeof(xfs_agblock_t))
--
- typedef struct xfs_agfl {
- 	__be32		agfl_magicnum;
- 	__be32		agfl_seqno;
- 	uuid_t		agfl_uuid;
- 	__be64		agfl_lsn;
- 	__be32		agfl_crc;
--	__be32		agfl_bno[];	/* actually XFS_AGFL_SIZE(mp) */
-+	__be32		agfl_bno[];	/* actually xfs_agfl_size(mp) */
- } __attribute__((packed)) xfs_agfl_t;
- 
- #define XFS_AGFL_CRC_OFF	offsetof(struct xfs_agfl, agfl_crc)
---- a/fs/xfs/scrub/agheader.c
-+++ b/fs/xfs/scrub/agheader.c
-@@ -80,7 +80,7 @@ xfs_scrub_walk_agfl(
- 	}
- 
- 	/* first to the end */
--	for (i = flfirst; i < XFS_AGFL_SIZE(mp); i++) {
-+	for (i = flfirst; i < xfs_agfl_size(mp); i++) {
- 		error = fn(sc, be32_to_cpu(agfl_bno[i]), priv);
- 		if (error)
- 			return error;
-@@ -664,7 +664,7 @@ xfs_scrub_agf(
- 	if (agfl_last > agfl_first)
- 		fl_count = agfl_last - agfl_first + 1;
- 	else
--		fl_count = XFS_AGFL_SIZE(mp) - agfl_first + agfl_last + 1;
-+		fl_count = xfs_agfl_size(mp) - agfl_first + agfl_last + 1;
- 	if (agfl_count != 0 && fl_count != agfl_count)
- 		xfs_scrub_block_set_corrupt(sc, sc->sa.agf_bp);
- 
-@@ -791,7 +791,7 @@ xfs_scrub_agfl(
- 	/* Allocate buffer to ensure uniqueness of AGFL entries. */
- 	agf = XFS_BUF_TO_AGF(sc->sa.agf_bp);
- 	agflcount = be32_to_cpu(agf->agf_flcount);
--	if (agflcount > XFS_AGFL_SIZE(sc->mp)) {
-+	if (agflcount > xfs_agfl_size(sc->mp)) {
- 		xfs_scrub_block_set_corrupt(sc, sc->sa.agf_bp);
- 		goto out;
- 	}
---- a/fs/xfs/xfs_fsops.c
-+++ b/fs/xfs/xfs_fsops.c
-@@ -217,7 +217,7 @@ xfs_growfs_data_private(
- 		}
- 
- 		agfl_bno = XFS_BUF_TO_AGFL_BNO(mp, bp);
--		for (bucket = 0; bucket < XFS_AGFL_SIZE(mp); bucket++)
-+		for (bucket = 0; bucket < xfs_agfl_size(mp); bucket++)
- 			agfl_bno[bucket] = cpu_to_be32(NULLAGBLOCK);
- 
- 		error = xfs_bwrite(bp);
+> 
+> The CLDEMOTE instruction hints to hardware that the cache line that contains
+> the linear address should be moved("demoted") from the cache(s) closest to the
+> processor core to a level more distant from the processor core. This may
+> accelerate subsequent accesses to the line by other cores in the same coherence
+> domain, especially if the line was written by the core that demotes the line.
+> 
+> This patch exposes the cldemote feature to the guest.
+> 
+> The release document ref below link:
+> https://software.intel.com/sites/default/files/managed/c5/15/\
+> architecture-instruction-set-extensions-programming-reference.pdf
+> This patch has a dependency on https://lkml.org/lkml/2018/4/23/928
+> 
+> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c index
+> 82055b9..72d8c49 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -403,7 +403,8 @@ static inline int __do_cpuid_ent(struct
+> kvm_cpuid_entry2 *entry, u32 function,
+>  	const u32 kvm_cpuid_7_0_ecx_x86_features =
+>  		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
+>  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI)
+> |
+> -		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) |
+> F(AVX512_BITALG);
+> +		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) |
+> F(AVX512_BITALG) |
+> +		F(CLDEMOTE);
+> 
+>  	/* cpuid 7.0.edx*/
+>  	const u32 kvm_cpuid_7_0_edx_x86_features =
+> --
+> 1.8.3.1
