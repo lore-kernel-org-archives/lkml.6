@@ -1,84 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752632AbeFDLIQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:08:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35920 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752027AbeFDLIP (ORCPT
+        id S1752542AbeFDLLW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:11:22 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:45790 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751970AbeFDLLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:08:15 -0400
-Date: Mon, 4 Jun 2018 12:08:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] regmap updates for v4.18
-Message-ID: <20180604110813.GF7536@sirena.org.uk>
+        Mon, 4 Jun 2018 07:11:21 -0400
+X-Google-Smtp-Source: ADUXVKJpf+f42Uweqxyo0R7bDKx9/2T8K7cbN0oRZajaFFQKc/Bk/+yfRXUYJuEgRVMVuyOdUYui9dTP8badlXIJOck=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hUH5gZbnpyIv7Mn4"
-Content-Disposition: inline
-X-Cookie: One Bell System - it works.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180529181740.195362-1-evgreen@chromium.org>
+References: <20180529181740.195362-1-evgreen@chromium.org>
+From: Kyuho Choi <chlrbgh0@gmail.com>
+Date: Mon, 4 Jun 2018 20:11:19 +0900
+Message-ID: <CAP2JTQJaYKoYANe6C68HnkVzT6eYUq9wJQxuy71LqQ72dacv_w@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Enable UFS provisioning via Linux
+To: Evan Green <evgreen@chromium.org>
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Evan,
 
---hUH5gZbnpyIv7Mn4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I've some question about end user's provisioning.
 
-The following changes since commit e241e3f2bf975788a1b70dff2eb5180ca395b28e:
+On 5/30/18, Evan Green <evgreen@chromium.org> wrote:
+> This series enables provisioning UFS devices using the existing sysfs
+> interface. This functionality is primarily useful along the assembly
+> line, but might also be useful for end users that receive devices that
+> aren't locked down.
 
-  Merge tag 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost (2018-04-11 18:58:27 -0700)
+As we knew, ufs are mainly adopted to boot device like mobile phone.
+Usally after  provisioning operation, every data in ufs (eg. Android :
+system, userdata, boot info and etc) would be removed. How end user
+download and flash all data to ufs?. dd or another download tools?.
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v4.18
-
-for you to fetch changes up to 869619e627287606d4d36a72a6e2127230f95507:
-
-  Merge branch 'regmap-4.17' into regmap-4.18 for the merge window (2018-06-04 12:03:03 +0100)
-
-----------------------------------------------------------------
-regmap: Updates for v4.18
-
-This is another quiet release for regmap, there's one minor feature
-improvement for the recently added slimbus support and a few minor fixes
-and cleanups.
-
-----------------------------------------------------------------
-James Kelly (1):
-      regmap: Skip clk_put for attached clocks when freeing context
-
-Mark Brown (1):
-      Merge branch 'regmap-4.17' into regmap-4.18 for the merge window
-
-Sean Wang (1):
-      regmap: include <linux/ktime.h> from include/linux/regmap.h
-
-Srinivas Kandagatla (2):
-      regmap: add missing prototype for devm_init_slimbus
-      regmap: slimbus: allow register offsets up to 16 bits
-
- drivers/base/regmap/regmap-mmio.c    |  3 ++-
- drivers/base/regmap/regmap-slimbus.c |  2 +-
- include/linux/regmap.h               | 19 ++++++++++++++++++-
- 3 files changed, 21 insertions(+), 3 deletions(-)
-
---hUH5gZbnpyIv7Mn4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsVHZ0ACgkQJNaLcl1U
-h9DBzAf/XtV3T29ObTd/OcLcqlo0JGSMbRfqwpNJnk/Ntms+JKp4A40eGeNoSLjQ
-zHBdTaa9m7gc7lElYEjbxZUbMhhMSk5jIWV1JAN/ji/vcQnsL4yp6gTa2MFYRt8M
-ixdONY+9p45qpO9wEvoqpjBt4+22inFjcTv6Il76ljmTsAxyIb2nFHWSqeebtBKQ
-L+YU65aRX0EFtMJj405fj/PVuh7MJIHhdwGnTqYgii7f87od1hzgu2vjudI6k2Zn
-bfC/S2AZTa4eGM5Ilja58AVdVQqtk7S+aXmdGx1Ba8QoMxtpLmLKR7vYmxooJqGT
-qHvY1cAg7ZF9eSQ0cEZA7ZTrWl++AQ==
-=n6nK
------END PGP SIGNATURE-----
-
---hUH5gZbnpyIv7Mn4--
+>
+> Evan Green (7):
+>   scsi: ufs: Add Configuration Descriptor to sysfs
+>   scsi: ufs: Add config descriptor documentation
+>   scsi: ufs: Make sysfs attributes writable
+>   scsi: ufs: sysfs: Document attribute writability
+>   scsi: ufs: Refactor descriptor read for write
+>   scsi: ufs: Enable writing config descriptor
+>   scsi: ufs: Update config descriptor documentation
+>
+>  Documentation/ABI/testing/sysfs-driver-ufs | 174 ++++++++++++++++++++---
+>  drivers/scsi/ufs/ufs-sysfs.c               | 217
+> ++++++++++++++++++++++++++---
+>  drivers/scsi/ufs/ufs.h                     |  29 ++++
+>  drivers/scsi/ufs/ufshcd.c                  |  89 ++++++++----
+>  drivers/scsi/ufs/ufshcd.h                  |  16 ++-
+>  5 files changed, 458 insertions(+), 67 deletions(-)
+>
+> --
+> 2.13.5
+>
+>
