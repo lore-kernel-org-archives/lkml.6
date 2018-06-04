@@ -1,124 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753273AbeFDNSl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:18:41 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46454 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752432AbeFDNSj (ORCPT
+        id S1753311AbeFDNSv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:18:51 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41621 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753280AbeFDNSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:18:39 -0400
-X-Google-Smtp-Source: ADUXVKKre4o0xVuE9g5WidxiYG93Atm2oh9nSeIQXONGAwIcPtfiLeMu5GHPVwOLrbvCQ5N2dCXf8A==
-Date: Mon, 4 Jun 2018 16:18:30 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v5 2/4] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <6509bbe0238c20c16930c9f23d63656b1d5f4af2.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+        Mon, 4 Jun 2018 09:18:48 -0400
+X-Google-Smtp-Source: ADUXVKLxVSUizyrZmWD4wDJ5dzP3w0txHEWe1p6UyPb5sBtjW7d2nzfyGALbICTdlhwk5KNGJ61nQA==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org> <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
+In-Reply-To: <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Mon, 4 Jun 2018 22:18:34 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5D39CkA=GucUs7YOHwsdj0gbk55BiY_gSvArY_RH4uDkg@mail.gmail.com>
+Message-ID: <CAAFQd5D39CkA=GucUs7YOHwsdj0gbk55BiY_gSvArY_RH4uDkg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware device
+To: vgarodia@codeaurora.org
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+Hi Vikash,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 76 ++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>
+> A separate child device is added for video firmware.
+> This is needed to
+> [1] configure the firmware context bank with the desired SID.
+> [2] ensure that the iova for firmware region is from 0x0.
+>
+> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> ---
+>  .../devicetree/bindings/media/qcom,venus.txt       |  8 +++-
+>  drivers/media/platform/qcom/venus/core.c           | 48 +++++++++++++++++++---
+>  drivers/media/platform/qcom/venus/firmware.c       | 20 ++++++++-
+>  drivers/media/platform/qcom/venus/firmware.h       |  2 +
+>  4 files changed, 71 insertions(+), 7 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> index 00d0d1b..701cbe8 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,venus.txt
+> +++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> @@ -53,7 +53,7 @@
+>
+>  * Subnodes
+>  The Venus video-codec node must contain two subnodes representing
+> -video-decoder and video-encoder.
+> +video-decoder and video-encoder, one optional firmware subnode.
+>
+>  Every of video-encoder or video-decoder subnode should have:
+>
+> @@ -79,6 +79,8 @@ Every of video-encoder or video-decoder subnode should have:
+>                     power domain which is responsible for collapsing
+>                     and restoring power to the subcore.
+>
+> +The firmware sub node must contain the iommus specifiers for ARM9.
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..ac2b66181f17
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,76 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDO’s to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - regulators:		: List of child nodes that specify the regulators
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+ - clock:		: Please see ../clock/rohm,bd71837-clock.txt
-+
-+Optional properties:
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+			  BD71837MWV can report different power state change
-+			  events to other drivers. Different events can be seen
-+			  as separate BD71837 domain interrupts.
-+			  The BD71837 driver only provides the infrastructure
-+			  for the IRQs. The users should write own driver to
-+			  convert the IRQ into the event they wish. The IRQ can
-+			  be used with the standard
-+			  request_irq/enable_irq/disable_irq API inside the
-+			  kernel.
-+ - #interrupt-cells	: The number of cells to describe an IRQ should be 1.
-+			    The value in cell is the IRQ number.
-+			    Meaningfull numbers are:
-+			      0 => PMIC_STBY_REQ level change
-+			      1 => PMIC_ON_REQ level change
-+			      2 => WDOG_B level change
-+			      3 => Power Button level change
-+			      4 => Power Button Long Push
-+			      5 => Power Button Short Push
-+			      6 => SWRESET register is written 1
-+
-+Example:
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#interrupt-cells = <1>;
-+		interrupt-controller;
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+			/* ... */
-+		};
-+	};
-+
-+	/* driver consuming PMIC interrupts */
-+
-+	my-power-button: power-button {
-+		compatible = "foo";
-+		interrupt-parent = <&pmic>;
-+		interrupts = <3>, <4>, <5>;
-+		interrupt-names = "pwrb", "pwrb-l", "pwrb-s";
-+		/* ... */
-+	};
-+
--- 
-2.14.3
+Please document the compatible string here as well.
+
+> +
+>  * An Example
+>         video-codec@1d00000 {
+>                 compatible = "qcom,msm8916-venus";
+> @@ -105,4 +107,8 @@ Every of video-encoder or video-decoder subnode should have:
+>                         clock-names = "core";
+>                         power-domains = <&mmcc VENUS_CORE1_GDSC>;
+>                 };
+> +               venus-firmware {
+> +                       compatible = "qcom,venus-firmware-no-tz";
+
+I don't think "-no-tz" should be mentioned here in DT, since it's a
+firmware/software detail.
+
+> +                       iommus = <&apps_smmu 0x10b2 0x0>;
+> +               }
+>         };
+> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+> index 101612b..5cfb3c2 100644
+> --- a/drivers/media/platform/qcom/venus/core.c
+> +++ b/drivers/media/platform/qcom/venus/core.c
+> @@ -179,6 +179,19 @@ static u32 to_v4l2_codec_type(u32 codec)
+>         }
+>  }
+>
+> +static int store_firmware_dev(struct device *dev, void *data)
+> +{
+> +       struct venus_core *core = data;
+> +
+> +       if (!core)
+> +               return -EINVAL;
+> +
+
+No need to check this AFAICT.
+
+> +       if (of_device_is_compatible(dev->of_node, "qcom,venus-firmware-no-tz"))
+> +               core->fw.dev = dev;
+> +
+> +       return 0;
+> +}
+> +
+>  static int venus_enumerate_codecs(struct venus_core *core, u32 type)
+>  {
+>         const struct hfi_inst_ops dummy_ops = {};
+> @@ -279,6 +292,13 @@ static int venus_probe(struct platform_device *pdev)
+>         if (ret < 0)
+>                 goto err_runtime_disable;
+>
+> +       ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> +       if (ret)
+> +               goto err_runtime_disable;
+> +
+> +       /* Attempt to store firmware device */
+> +       device_for_each_child(dev, core, store_firmware_dev);
+> +
+>         ret = venus_boot(core);
+>         if (ret)
+>                 goto err_runtime_disable;
+> @@ -303,10 +323,6 @@ static int venus_probe(struct platform_device *pdev)
+>         if (ret)
+>                 goto err_core_deinit;
+>
+> -       ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> -       if (ret)
+> -               goto err_dev_unregister;
+> -
+>         ret = pm_runtime_put_sync(dev);
+>         if (ret)
+>                 goto err_dev_unregister;
+> @@ -483,7 +499,29 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
+>                 .pm = &venus_pm_ops,
+>         },
+>  };
+> -module_platform_driver(qcom_venus_driver);
+> +
+> +static int __init venus_init(void)
+> +{
+> +       int ret;
+> +
+> +       ret = platform_driver_register(&qcom_video_firmware_driver);
+> +       if (ret)
+> +               return ret;
+
+Do we really need this firmware driver? As far as I can see, the
+approach used here should work even without any driver bound to the
+firmware device.
+
+Best regards,
+Tomasz
