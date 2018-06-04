@@ -1,381 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeFDUb2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:31:28 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:43989 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751313AbeFDUaq (ORCPT
+        id S1751501AbeFDUb1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:31:27 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:44770 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751315AbeFDUaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 16:30:46 -0400
-X-Google-Smtp-Source: ADUXVKL7Z2TVMgE06ow22EII5VO+2sJHGYXVwO9duaOs3NKKNh+ACYkfMVSyJVfl0UqwO20wgVX+4Q==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Rohit kumar <rohitkr@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH 2/4] remoteproc: q6v5: Extract common resource handling
-Date: Mon,  4 Jun 2018 13:30:36 -0700
-Message-Id: <20180604203038.14080-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180604203038.14080-1-bjorn.andersson@linaro.org>
-References: <20180604203038.14080-1-bjorn.andersson@linaro.org>
+X-Google-Smtp-Source: ADUXVKJEFpXIsmcScKDh7llcrMdJ/lSmpo8hIvaItNHHQ6839fjEQKDjRMScCZQHSKqjlEYuvyikDg==
+Subject: [PATCH] riscv/ftrace: Export _mcount when FUNCTION_GRAPH_TRACER isn't set
+Date: Mon,  4 Jun 2018 13:30:28 -0700
+Message-Id: <20180604203028.13886-2-palmer@sifive.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180604203028.13886-1-palmer@sifive.com>
+References: <1525749717-384-1-git-send-email-alankao@andestech.com>
+ <20180604203028.13886-1-palmer@sifive.com>
+Cc: linux-kernel@vger.kernel.org, Greentime Hu <greentime@andestech.com>,
+        Zong Li <zong@andestech.com>, Palmer Dabbelt <palmer@sifive.com>
+From: Palmer Dabbelt <palmer@sifive.com>
+To: alankao@andestech.com, linux-riscv@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shared between all Hexagon V5 based remoteprocs is the handling of the 5
-interrupts and the SMP2P stop request, so break this out into a separate
-function in order to allow these drivers to be cleaned up.
+From: Alan Kao <alankao@andestech.com>
 
-Reviewed-by: Rohit kumar <rohitkr@codeaurora.org>
-Tested-by: Rohit kumar <rohitkr@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+The EXPORT_SYMBOL(_mcount) for RISC-V ended up inside a
+CONFIG_FUNCTION_GRAPH_TRACER ifdef.  If you enable modules without
+enabling CONFIG_FUNCTION_GRAPH_TRACER then you'll get a build error
+without this patch because the modules won't be able to find _mcount.
+
+The new behavior is to export _mcount whenever CONFIG_FUNCTION_TRACER is
+defined.  This matches what every other architecture is doing.
+
+Signed-off-by: Alan Kao <alankao@andestech.com>
+Cc: Greentime Hu <greentime@andestech.com>
+Cc: Zong Li <zong@andestech.com>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 ---
+ arch/riscv/kernel/mcount.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since RFC:
-- Corrected header comment
-- Corrected copy-pasted crash type in wdog_intr
-- Picked up Rohit's reviewed-by
-
- drivers/remoteproc/Kconfig     |   5 +
- drivers/remoteproc/Makefile    |   1 +
- drivers/remoteproc/qcom_q6v5.c | 243 +++++++++++++++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5.h |  46 +++++++
- 4 files changed, 295 insertions(+)
- create mode 100644 drivers/remoteproc/qcom_q6v5.c
- create mode 100644 drivers/remoteproc/qcom_q6v5.h
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index cd1c168fd188..63b79ea91a21 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -102,6 +102,11 @@ config QCOM_ADSP_PIL
- config QCOM_RPROC_COMMON
- 	tristate
- 
-+config QCOM_Q6V5_COMMON
-+	tristate
-+	depends on ARCH_QCOM
-+	depends on QCOM_SMEM
-+
- config QCOM_Q6V5_PIL
- 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
- 	depends on OF && ARCH_QCOM
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 02627ede8d4a..5dd0249cf76a 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
- obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
- obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
- obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
-+obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
- obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
- obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-new file mode 100644
-index 000000000000..400cdf936f6b
---- /dev/null
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -0,0 +1,243 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm Peripheral Image Loader for Q6V5
-+ *
-+ * Copyright (C) 2016-2018 Linaro Ltd.
-+ * Copyright (C) 2014 Sony Mobile Communications AB
-+ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/soc/qcom/smem.h>
-+#include <linux/soc/qcom/smem_state.h>
-+#include <linux/remoteproc.h>
-+#include "qcom_q6v5.h"
-+
-+/**
-+ * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
-+ * @q6v5:	reference to qcom_q6v5 context to be reinitialized
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
-+{
-+	reinit_completion(&q6v5->start_done);
-+	reinit_completion(&q6v5->stop_done);
-+
-+	q6v5->running = true;
-+	q6v5->handover_issued = false;
-+
-+	enable_irq(q6v5->handover_irq);
-+
-+	return 0;
-+}
-+
-+/**
-+ * qcom_q6v5_unprepare() - unprepare the qcom_q6v5 context after stop
-+ * @q6v5:	reference to qcom_q6v5 context to be unprepared
-+ *
-+ * Return: 0 on success, 1 if handover hasn't yet been called
-+ */
-+int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
-+{
-+	disable_irq(q6v5->handover_irq);
-+
-+	return !q6v5->handover_issued;
-+}
-+
-+static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+	size_t len;
-+	char *msg;
-+
-+	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
-+	if (!q6v5->running) {
-+		complete(&q6v5->stop_done);
-+		return IRQ_HANDLED;
-+	}
-+
-+	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	if (!IS_ERR(msg) && len > 0 && msg[0])
-+		dev_err(q6v5->dev, "watchdog received: %s\n", msg);
-+	else
-+		dev_err(q6v5->dev, "watchdog without message\n");
-+
-+	rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+	size_t len;
-+	char *msg;
-+
-+	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	if (!IS_ERR(msg) && len > 0 && msg[0])
-+		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
-+	else
-+		dev_err(q6v5->dev, "fatal error without message\n");
-+
-+	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	complete(&q6v5->start_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * qcom_q6v5_wait_for_start() - wait for remote processor start signal
-+ * @q6v5:	reference to qcom_q6v5 context
-+ * @timeout:	timeout to wait for the event, in jiffies
-+ *
-+ * qcom_q6v5_unprepare() should not be called when this function fails.
-+ *
-+ * Return: 0 on success, -ETIMEDOUT on timeout
-+ */
-+int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
-+{
-+	int ret;
-+
-+	ret = wait_for_completion_timeout(&q6v5->start_done, timeout);
-+	if (!ret)
-+		disable_irq(q6v5->handover_irq);
-+
-+	return !ret ? -ETIMEDOUT : 0;
-+}
-+
-+static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	if (q6v5->handover)
-+		q6v5->handover(q6v5);
-+
-+	q6v5->handover_issued = true;
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	complete(&q6v5->stop_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * qcom_q6v5_request_stop() - request the remote processor to stop
-+ * @q6v5:	reference to qcom_q6v5 context
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
-+{
-+	int ret;
-+
-+	q6v5->running = false;
-+
-+	qcom_smem_state_update_bits(q6v5->state,
-+				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
-+
-+	ret = wait_for_completion_timeout(&q6v5->stop_done, 5 * HZ);
-+
-+	qcom_smem_state_update_bits(q6v5->state, BIT(q6v5->stop_bit), 0);
-+
-+	return ret == 0 ? -ETIMEDOUT : 0;
-+}
-+
-+/**
-+ * qcom_q6v5_init() - initializer of the q6v5 common struct
-+ * @q6v5:	handle to be initialized
-+ * @pdev:	platform_device reference for acquiring resources
-+ * @rproc:	associated remoteproc instance
-+ * @crash_reason: SMEM id for crash reason string, or 0 if none
-+ * @handover:	function to be called when proxy resources should be released
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-+		   struct rproc *rproc, int crash_reason,
-+		   void (*handover)(struct qcom_q6v5 *q6v5))
-+{
-+	int ret;
-+
-+	q6v5->rproc = rproc;
-+	q6v5->dev = &pdev->dev;
-+	q6v5->crash_reason = crash_reason;
-+	q6v5->handover = handover;
-+
-+	init_completion(&q6v5->start_done);
-+	init_completion(&q6v5->stop_done);
-+
-+	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->wdog_irq,
-+					NULL, q6v5_wdog_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 wdog", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire wdog IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
-+					NULL, q6v5_fatal_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 fatal", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire fatal IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
-+					NULL, q6v5_ready_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 ready", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire ready IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
-+					NULL, q6v5_handover_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 handover", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire handover IRQ\n");
-+		return ret;
-+	}
-+	disable_irq(q6v5->handover_irq);
-+
-+	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
-+					NULL, q6v5_stop_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 stop", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire stop-ack IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->state = qcom_smem_state_get(&pdev->dev, "stop", &q6v5->stop_bit);
-+	if (IS_ERR(q6v5->state)) {
-+		dev_err(&pdev->dev, "failed to acquire stop state\n");
-+		return PTR_ERR(q6v5->state);
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-new file mode 100644
-index 000000000000..7ac92c1e0f49
---- /dev/null
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __QCOM_Q6V5_H__
-+#define __QCOM_Q6V5_H__
-+
-+#include <linux/kernel.h>
-+#include <linux/completion.h>
-+
-+struct rproc;
-+struct qcom_smem_state;
-+
-+struct qcom_q6v5 {
-+	struct device *dev;
-+	struct rproc *rproc;
-+
-+	struct qcom_smem_state *state;
-+	unsigned stop_bit;
-+
-+	int wdog_irq;
-+	int fatal_irq;
-+	int ready_irq;
-+	int handover_irq;
-+	int stop_irq;
-+
-+	bool handover_issued;
-+
-+	struct completion start_done;
-+	struct completion stop_done;
-+
-+	int crash_reason;
-+
-+	bool running;
-+
-+	void (*handover)(struct qcom_q6v5 *q6v5);
-+};
-+
-+int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-+		   struct rproc *rproc, int crash_reason,
-+		   void (*handover)(struct qcom_q6v5 *q6v5));
-+
-+int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
-+
-+#endif
+diff --git a/arch/riscv/kernel/mcount.S b/arch/riscv/kernel/mcount.S
+index ce9bdc57a2a1..5721624886a1 100644
+--- a/arch/riscv/kernel/mcount.S
++++ b/arch/riscv/kernel/mcount.S
+@@ -126,5 +126,5 @@ do_trace:
+ 	RESTORE_ABI_STATE
+ 	ret
+ ENDPROC(_mcount)
+-EXPORT_SYMBOL(_mcount)
+ #endif
++EXPORT_SYMBOL(_mcount)
 -- 
-2.17.0
+2.16.4
