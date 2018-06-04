@@ -1,126 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753154AbeFDNR4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:17:56 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43433 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752429AbeFDNRy (ORCPT
+        id S1753220AbeFDNSQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:18:16 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44033 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753016AbeFDNSO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:17:54 -0400
-X-Google-Smtp-Source: ADUXVKIqpN/kHmTxbj+8IKx1DRFCsH233WUXj+WDYVs/QfzmmqPwM9JgqzKXWYdU0vhlKP0/5SEVZw==
-Date: Mon, 4 Jun 2018 16:17:44 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v5 0/4] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
-Message-ID: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+        Mon, 4 Jun 2018 09:18:14 -0400
+X-Google-Smtp-Source: ADUXVKLRwXOutoZuMgbPEI+m6pWvIn8bOLFBexgPvCv0syAJSoTkHSieu5X9waQJsYj7wNF5hle7idPnyiee4vMDutY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180601184330.GD222005@dtor-ws>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+ <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com> <20180601184330.GD222005@dtor-ws>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Mon, 4 Jun 2018 15:18:12 +0200
+Message-ID: <CAO-hwJJPGJzgX+7H1nnpd=OkLZu0q0TuKhvroJ1K3jtnv7t6dg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch series adding support for ROHM BD71837 PMIC.
+On Fri, Jun 1, 2018 at 8:43 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Fri, Jun 01, 2018 at 04:16:09PM +0200, Benjamin Tissoires wrote:
+>> On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
+>> <dmitry.torokhov@gmail.com> wrote:
+>> > According to Microsoft specification [1] for Precision Touchpads (and
+>> > Touchscreens) the devices use "confidence" reports to signal accidental
+>> > touches, or contacts that are "too large to be a finger". Instead of
+>> > simply marking contact inactive in this case (which causes issues if
+>> > contact was originally proper and we lost confidence in it later, as
+>> > this results in accidental clicks, drags, etc), let's report such
+>> > contacts as MT_TOOL_PALM and let userspace decide what to do.
+>> > Additionally, let's report contact size for such touches as maximum
+>> > allowed for major/minor, which should help userspace that is not yet
+>> > aware of MT_TOOL_PALM to still perform palm rejection.
+>> >
+>> > An additional complication, is that some firmwares do not report
+>> > non-confident touches as active. To cope with this we delay release of
+>> > such contact (i.e. if contact was active we first report it as still
+>> > active MT+TOOL_PALM and then synthesize the release event in a separate
+>> > frame).
+>>
+>> I am not sure I agree with this part. The spec says that "Once a
+>> device has determined that a contact is unintentional, it should clear
+>> the confidence bit for that contact report and all subsequent
+>> reports."
+>> So in theory the spec says that if a touch has been detected as a
+>> palm, the flow of events should not stop (tested on the PTP of the
+>> Dell XPS 9360).
+>>
+>> However, I interpret a firmware that send (confidence 1, tip switch 1)
+>> and then (confidence 0, tip switch 0) a simple release, and the
+>> confidence bit should not be relayed.
+>
+> This unfortunately leads to false clicks: you start with finger, so
+> confidence is 1, then you transition the same touch to palm (use your
+> thumb and "roll" your hand until heel of it comes into contact with the
+> screen). The firmware reports "no-confidence" and "release" in the same
+> report and userspace seeing release does not pay attention to confidence
+> (i.e. it does exactly "simple release" logic) and this results in UI
+> interpreting this as a click. With splitting no-confidence
+> (MT_TOOL_PALM) and release event into separate frames we help userspace
+> to recognize that the contact should be discarded.
 
-BD71837 is a programmable Power Management IC for powering single-core,
-dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-low BOM cost and compact solution footprint. It integrates 8 buck
-regulators and 7 LDO’s to provide all the power rails required by the
-SoC and the commonly used peripherals.
+After further thoughts, I would consider this to be a firmware bug,
+and not how the firmware is supposed to be reporting palm.
+For the precision touchpads, the spec says that the device "should
+clear the confidence bit for that contact report and all subsequent
+reports.". And it is how the Dell device I have here reports palms.
+The firmware is not supposed to cut the event stream.
 
-The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-naming is generic and not tied to any specific purposes. However there
-is following limitations which make it mostly suitable for use cases
-where the processor where PMIC driver is running is powered by the PMIC:
+There is a test for that:
+https://docs.microsoft.com/en-us/previous-versions/windows/hardware/hck/dn456905%28v%3dvs.85%29
+which tells me that I am right here for PTP.
 
-- The PMIC is not re-initialized if it resets. PMIC may reset as a
-  result of voltage monitoring (over/under voltage) or due to reset
-  request. Driver is only initializing PMIC at probe. This is not
-  problem as long as processor controlling PMIC is powered by PMIC.
+The touchscreen spec is blurrier however.
 
-- The PMIC internal state machine is ignored by driver. Driver assumes
-  the PMIC is wired so that it is always in "run" state when controlled
-  by the driver.
+>
+>>
+>> Do you have any precise example of reports where you need that feature?
+>
+> It was observed on Pixelbooks which use Wacom digitizers IIRC.
 
-Changelog v5
-- dropped regulator patches which are already applied to Mark's tree
-Based on feedback from Rob Herring and Stephen Boyd
-- mfd bindings:	explain why this can be interrupt-controller
-- mfd bindings:	describe interrupts better
-- mfd bindings:	require one cell interrupt specifier
-- mfd bindings:	use generic node names in example
-- mfd driver:	ack masked interrupt once at init
-- clk bindings:	use generic node names in example
-- clk driver:	use devm
-- clk driver:	use of_clk_add_hw_provider
-- clk driver:	change severity of print and how prints are emitted at
-		probe error path.
-- clk driver:	dropped forward declared functions
-- clk configs:	drop unnecessary dependencies
-- clk driver:	other styling issues
-- mfd/clk DT:	drop clk node.
+Pixelbooks + Wacom means that it was likely a touchscreen. I am right
+guessing the device did not went through Microsoft certification
+process?
 
-Changelog v4
-- remove mutex from regulator state check as core prevents simultaneous
-  accesses
-- allow voltage change for bucks 1 to 4 when regulator is enabled
-- fix indentiation problems
-- properly correct SPDX comments
+I am in favor of splitting the patch in 2. One for the generic
+processing of confidence bit, and one for this spurious release. For
+the spurious release, I'm more in favor of explicitly quirking the
+devices in need of such quirk.
 
-Changelog v3
-- kill unused variable
-- kill unused definitions
-- use REGMAP_IRQ_REG
+If you agree, I'll rebase your patch on top of my series as rebasing
+my series on top of yours will take more effort.
 
-Changelog v2
-Based on feedback from Mark Brown
-- Squashed code and buildfile changes to same patch
-- Fixed some styling issues
-- Changed SPDX comments to CPP style
-- Error out if voltage is changed when regulator is enabled instead of
-  Disabling the regulator for duration of change
-- Use devm_regulator_register
-- Remove compatible usage from regulators - use parent dev for config
-- Add a note about using regulator-boot-on for BUCK6 and 7
-- fixed warnings from kbuild test robot
+I am trying to be cautious in the generic path because I want to merge
+the cleanest multitouch implementation in hid-core/hid-input, and
+leave all the quirks in hid-multitouch for the devices in need.
 
-patch 1: 
-        MFD driver and definitions bringing interrupt support and
-        enabling clk and regulator subsystems.
-Patches 2 and 3
+Cheers,
+Benjamin
 
-This patch series is based on for-mfd-next
-
----
-
-Matti Vaittinen (4):
-  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Add driver for BD71837 PMIC clock
-
- .../bindings/clock/rohm,bd71837-clock.txt          |  38 +++
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  76 ++++++
- drivers/clk/Kconfig                                |   7 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-bd71837.c                          | 146 +++++++++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/bd71837.c                              | 223 ++++++++++++++++
- include/linux/mfd/bd71837.h                        | 288 +++++++++++++++++++++
- 9 files changed, 793 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
- create mode 100644 drivers/clk/clk-bd71837.c
- create mode 100644 drivers/mfd/bd71837.c
- create mode 100644 include/linux/mfd/bd71837.h
-
--- 
-2.14.3
+>
+> Thanks.
+>
+> --
+> Dmitry
