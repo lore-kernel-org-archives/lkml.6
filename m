@@ -1,104 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751322AbeFDT2t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 15:28:49 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:52938 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751201AbeFDT2s (ORCPT
+        id S1751367AbeFDTc4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 15:32:56 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55404 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750879AbeFDTcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:28:48 -0400
-X-IronPort-AV: E=Sophos;i="5.49,476,1520870400";
-   d="scan'208";a="176491398"
-Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Albert Ou <albert@sifive.com>
-References: <20180601152123.47256-1-luc.vanoostenryck@gmail.com>
- <20180601152123.47256-4-luc.vanoostenryck@gmail.com>
- <235fec3e-be2e-874a-8313-e7390fcdca74@wdc.com>
- <20180604190927.7jrdlulgowt5umce@ltop.local>
-From: Atish Patra <atish.patra@wdc.com>
-Message-ID: <6a0ab99d-6e4d-eb80-bc4d-854d154ae827@wdc.com>
-Date: Mon, 4 Jun 2018 12:28:47 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Mon, 4 Jun 2018 15:32:54 -0400
+X-Google-Smtp-Source: ADUXVKKlfKsgckXAPZ0An8kGXeo+a+QLaNFnaeDY+ga59G3yjClibqCZF/jzlllOHjypNfSWZHM4uw==
+Date: Mon, 4 Jun 2018 21:32:50 +0200
+From: Thibaut Robert <thibaut.robert@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
+ warnings
+Message-ID: <20180604193250.GB32753@L80496>
+References: <20180529191143.13081-1-thibaut.robert@gmail.com>
+ <20180530111725.gmigyddsp2i6mgzw@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20180604190927.7jrdlulgowt5umce@ltop.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180530111725.gmigyddsp2i6mgzw@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/4/18 12:09 PM, Luc Van Oostenryck wrote:
-> On Mon, Jun 04, 2018 at 11:46:50AM -0700, Atish Patra wrote:
->> On 6/1/18 8:22 AM, Luc Van Oostenryck wrote:
->>> __copy_user() is a function, written in assembly, used to copy
->>> memory between kernel & user space. As such its to & from args
->>> may both take a user pointer or a kernel pointer.
->>>
->>> However the prototype for this function declare these two args
->>> as 'void __user *', which is no more & no less correct than
->>> declaring them as 'void *'. In fact theer is no possible correct
->>
->> /s/theer/there
->>
->>> annotation for such a function.
->>>
->>> The problem is worked around here by declaring these args as
->>> unsigned long and casting them to the right type in each of
->>> two callers raw_copy_{to,from}_user() as some kind of cast would
->>> be needed anyway.
->>>
->>> Note: another solution, maybe cleaner but slightly more complex,
->>>         would be to declare two version of __copy_user,
->>>         either in the asm file or via an alias, each having already
->>>         the correct typing for raw_copy_{to,from}_user().
->>>
->>
->> I feel that would be a better solution as it is implemented similarly
->> in ARM as well.
->>
->> I am unable to understand how "unsigned long" is better than "void*".
->> x86 implementation has both arguments as void*. Can you please clarify ?
+Le mercredi 30 mai 2018 à 14:17:25 (+0300), Dan Carpenter a écrit :
+> On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
+> > diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > index e248702ee519..745bf5ca2622 100644
+> > --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
+> >  
+> >  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
+> >  
+> > -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
+> > +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
 > 
-> "better" is quite relative and it must be understood that sparse
-> allow to cast pointers o fany kinds to and from unsigned long
-> without any warnings (while doing a cast between different address
-> space will emit a warning unless you use '__force').
-> 
+> "buff" comes from the network, it's going to be little endian, not cpu
+> endian.  The rest of the function treats it as CPU endian but I'm pretty
+> sure it's wrong...
+buff comes from the network but we are looking at single byte here.
+ieee80211_is_action expects an le16, so we I added this to extend an u8
+to an le16. Is this incorrect ?
 
-Got it.
-> As I tried to explain here above, the fact that this function is
-> declared as taking 2 __user pointers requires to use of casts
-> (ugly casts with __force) to get over the __user. By declaring
-> them as taking unsigned long, you still have to use casts but, IMO,
-> it's cleaner
+Or maybe we the buff has the second byte ? but that I can't tell. 
+
 > 
-
-Thanks for the detailed explanation.
-
-> Note: they're generic pointers/addresses anyway, they can't be
->        dereferenced anyway so unsigned is as good as a plain void*
->        or a void __user*
-> Note: using unsigned long here, fundamentally to bypass the __user,
->        is the same as casting a const pointer back to a plain pointer
->        via an intermediate cast to unsigned long. People can argue
->        that's kinda cheating, and they would be right of course, but
->        using __force or declaring twice the function with two different
->        names and prototype is also a form of cheating.
-> Note: if this would be my code, I would choose the solution with
->        two declarations.
-
-I prefer that as well.
-
-Regards,
-Atish
+> >  		cfg80211_rx_mgmt(priv->wdev, freq, 0, buff, size, 0);
+> >  		return;
+> >  	}
 > 
 > 
-> Best regards,
-> -- Luc
+> > diff --git a/drivers/staging/wilc1000/wilc_wlan.c b/drivers/staging/wilc1000/wilc_wlan.c
+> > index 28c93f3f846e..a5ac1d26590b 100644
+> > --- a/drivers/staging/wilc1000/wilc_wlan.c
+> > +++ b/drivers/staging/wilc1000/wilc_wlan.c
+> > @@ -560,7 +560,8 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+> >  	int ret = 0;
+> >  	int counter;
+> >  	int timeout;
+> > -	u32 vmm_table[WILC_VMM_TBL_SIZE];
+> > +	__le32 vmm_table[WILC_VMM_TBL_SIZE];
+> > +	u32 table_entry;
+> >  	struct wilc_vif *vif;
+> >  	struct wilc *wilc;
+> >  	const struct wilc_hif_func *func;
+> > @@ -598,10 +599,10 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+> >  			if ((sum + vmm_sz) > LINUX_TX_SIZE)
+> >  				break;
+> >  
+> > -			vmm_table[i] = vmm_sz / 4;
+> > +			table_entry = vmm_sz / 4;
+> >  			if (tqe->type == WILC_CFG_PKT)
+> > -				vmm_table[i] |= BIT(10);
+> > -			vmm_table[i] = cpu_to_le32(vmm_table[i]);
+> > +				table_entry |= BIT(10);
+> > +			vmm_table[i] = cpu_to_le32(table_entry);
+> >  
+> >  			i++;
+> >  			sum += vmm_sz;
+> > @@ -704,8 +705,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+> >  		if (vmm_table[i] == 0)
+> >  			break;
+> >  
+> > -		vmm_table[i] = cpu_to_le32(vmm_table[i]);
+> > -		vmm_sz = (vmm_table[i] & 0x3ff);
+> > +		vmm_sz = (le32_to_cpu(vmm_table[i]) & 0x3ff);
+> >  		vmm_sz *= 4;
+> >  		header = (tqe->type << 31) |
+> >  			 (tqe->buffer_size << 15) |
+> > @@ -715,8 +715,7 @@ int wilc_wlan_handle_txq(struct net_device *dev, u32 *txq_count)
+> >  		else
+> >  			header &= ~BIT(30);
+> >  
+> > -		header = cpu_to_le32(header);
+> > -		memcpy(&txb[offset], &header, 4);
+> > +		*((__le32 *)&txb[offset]) = cpu_to_le32(header);
 > 
+> I worry about alignment issues here.  That might be the reason for the
+> memcpy().  (I'm reading as fast as I can and don't the code so I may
+> be wrong).
+> 
+> >  		if (tqe->type == WILC_CFG_PKT) {
+> >  			buffer_offset = ETH_CONFIG_PKT_HDR_OFFSET;
+> >  		} else if (tqe->type == WILC_NET_PKT) {
+> > @@ -770,8 +769,7 @@ static void wilc_wlan_handle_rx_buff(struct wilc *wilc, u8 *buffer, int size)
+> >  
+> >  	do {
+> >  		buff_ptr = buffer + offset;
+> > -		memcpy(&header, buff_ptr, 4);
+> > -		header = cpu_to_le32(header);
+> > +		header = le32_to_cpup((__le32 *)buff_ptr);
+> 
+> Maybe the same, whenever you see a memcpy().
+> 
+> >  
+> >  		is_cfg_packet = (header >> 31) & 0x1;
+> >  		pkt_offset = (header >> 22) & 0x1ff;
+> > @@ -942,6 +940,7 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+> >  	u32 offset;
+> >  	u32 addr, size, size2, blksz;
+> >  	u8 *dma_buffer;
+> > +	const __le32 *header;
+> >  	int ret = 0;
+> >  
+> >  	blksz = BIT(12);
+> > @@ -952,10 +951,9 @@ int wilc_wlan_firmware_download(struct wilc *wilc, const u8 *buffer,
+> >  
+> >  	offset = 0;
+> >  	do {
+> > -		memcpy(&addr, &buffer[offset], 4);
+> > -		memcpy(&size, &buffer[offset + 4], 4);
+> > -		addr = cpu_to_le32(addr);
+> > -		size = cpu_to_le32(size);
+> > +		header = (__le32 *)buffer + offset;
+> > +		addr = le32_to_cpu(header[0]);
+> > +		size = le32_to_cpu(header[1]);
+> >  		acquire_bus(wilc, ACQUIRE_ONLY);
+> >  		offset += 8;
+> >  		while (((int)size) && (offset < buffer_size)) {
+> > diff --git a/drivers/staging/wilc1000/wilc_wlan_cfg.c b/drivers/staging/wilc1000/wilc_wlan_cfg.c
+> > index c0b9b700f4d7..4a914d8572aa 100644
+> > --- a/drivers/staging/wilc1000/wilc_wlan_cfg.c
+> > +++ b/drivers/staging/wilc1000/wilc_wlan_cfg.c
+> > @@ -275,14 +275,14 @@ static int wilc_wlan_cfg_set_bin(u8 *frame, u32 offset, u16 id, u8 *b, u32 size)
+> >  
+> >  static void wilc_wlan_parse_response_frame(u8 *info, int size)
+> >  {
+> > -	u32 wid, len = 0, i = 0;
+> > +	u32 wid;
+> > +	int len = 0, i = 0;
+> 
+> Why did we make these int now?
+> 
+> >  
+> >  	while (size > 0) {
+> >  		i = 0;
+> > -		wid = info[0] | (info[1] << 8);
+> > -		wid = cpu_to_le32(wid);
+> > +		wid = le16_to_cpup((__le16 *)info);
+> >  
+> > -		switch ((wid >> 12) & 0x7) {
+> > +		switch (info[1] >> 4) {
+> 
+> Why do we not need to mask by 0x7?  Anyway, I feel like this isn't
+> beautiful.  We should be using a macro and "wid" instead of magically
+> poking into info[1].
+> 
+> 		switch(SOME_MACRO(wid)) {
+> 
+> 
+> regards,
+> dan carpenter
