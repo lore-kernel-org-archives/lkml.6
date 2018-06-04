@@ -1,135 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751824AbeFDAxf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 20:53:35 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:20979 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751550AbeFDAxd (ORCPT
+        id S1751834AbeFDA7k (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 20:59:40 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43148 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751593AbeFDA7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 20:53:33 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w540rKu7019056
-X-Nifty-SrcIP: [209.85.217.169]
-X-Google-Smtp-Source: ADUXVKJAXJITWY89pX49yyhKG/2Ipo9OJ7/6grJn7QErn9JdKtn+K6RKtchsngZwndGCF0m+X1o19y2W63M0hcQrcbA=
+        Sun, 3 Jun 2018 20:59:39 -0400
+Date: Mon, 4 Jun 2018 01:59:38 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] vfs, pile 1
+Message-ID: <20180604005937.GD30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <005d01d3fb98$20711900$61534b00$@socionext.com>
-References: <20180530090946.1635-1-suzuki.katsuhiro@socionext.com>
- <20180530090946.1635-7-suzuki.katsuhiro@socionext.com> <CAK7LNAS8JT8+MAuH+eYUJ3Xa4r07=ecJS0E=SX-tgmV7db_FKw@mail.gmail.com>
- <005d01d3fb98$20711900$61534b00$@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 4 Jun 2018 09:52:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQT-yigu83t7xOF_4-G1_0DX9OXz_YhJ3SAMH_CkGJcrw@mail.gmail.com>
-Message-ID: <CAK7LNAQT-yigu83t7xOF_4-G1_0DX9OXz_YhJ3SAMH_CkGJcrw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] media: uniphier: add common module of DVB adapter drivers
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-media@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w540rhhw001052
 
-2018-06-04 9:08 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> Hello Yamada-san,
->
->> -----Original Message-----
->> From: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Sent: Saturday, June 2, 2018 9:00 PM
->> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
->> Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>;
->> linux-media@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
->> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel
->> <linux-arm-kernel@lists.infradead.org>; Linux Kernel Mailing List
->> <linux-kernel@vger.kernel.org>
->> Subject: Re: [PATCH 6/8] media: uniphier: add common module of DVB adapter drivers
->>
->> 2018-05-30 18:09 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
->> > This patch adds common module for UniPhier DVB adapter drivers
->> > that equipments tuners and demod that connected by I2C and
->> > UniPhier demux.
->> >
->> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
->> > ---
->> >  drivers/media/platform/uniphier/Makefile      |  5 ++
->> >  drivers/media/platform/uniphier/hsc-core.c    |  8 ---
->> >  .../platform/uniphier/uniphier-adapter.c      | 54 +++++++++++++++++++
->> >  .../platform/uniphier/uniphier-adapter.h      | 42 +++++++++++++++
->> >  4 files changed, 101 insertions(+), 8 deletions(-)
->> >  create mode 100644 drivers/media/platform/uniphier/uniphier-adapter.c
->> >  create mode 100644 drivers/media/platform/uniphier/uniphier-adapter.h
->> >
->> > diff --git a/drivers/media/platform/uniphier/Makefile
->> b/drivers/media/platform/uniphier/Makefile
->> > index 0622f04d9e68..9e75ad081b77 100644
->> > --- a/drivers/media/platform/uniphier/Makefile
->> > +++ b/drivers/media/platform/uniphier/Makefile
->> > @@ -3,3 +3,8 @@ uniphier-dvb-y += hsc-core.o hsc-ucode.o hsc-css.o hsc-ts.o
->> hsc-dma.o
->> >  uniphier-dvb-$(CONFIG_DVB_UNIPHIER_LD11) += hsc-ld11.o
->> >
->> >  obj-$(CONFIG_DVB_UNIPHIER) += uniphier-dvb.o
->> > +
->> > +ccflags-y += -Idrivers/media/dvb-frontends/
->> > +ccflags-y += -Idrivers/media/tuners/
->>
->>
->> Please add $(srctree)/ like
->>
->> ccflags-y += -I$(srctree)/drivers/media/dvb-frontends/
->> ccflags-y += -I$(srctree)/drivers/media/tuners/
->>
->>
->> Currently, it works $(srctree)/,
->> but I really want to rip off the build system hack.
->
-> Thanks, I agree with your opinion, but other Makefiles in drivers/media use
-> same hack. I don't know other way to include headers of demodulators and
-> tuners...
->
-> Do you have any good ideas?
->
->
+	That pile is the first part of dealing with livelocks, etc. around
+shrink_dcache_parent().
 
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-My suggestion is to add '$(srctree)/'.
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
 
-For clarification,
+are available in the git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dcache
 
+for you to fetch changes up to 4fb48871409e2fcd375087d526d07f7600c88f94:
 
-Bad:
+  restore cond_resched() in shrink_dcache_parent() (2018-04-19 23:58:48 -0400)
 
-ccflags-y += -Idrivers/media/dvb-frontends/
-ccflags-y += -Idrivers/media/tuners/
+----------------------------------------------------------------
+Al Viro (5):
+      d_invalidate(): unhash immediately
+      d_walk(): kill 'finish' callback
+      dcache: move cond_resched() into the end of __dentry_kill()
+      dput(): turn into explicit while() loop
+      restore cond_resched() in shrink_dcache_parent()
 
-
-
-Good:
-
-ccflags-y += -I$(srctree)/drivers/media/dvb-frontends/
-ccflags-y += -I$(srctree)/drivers/media/tuners/
-
-
-
-
-
-I want to fix this tree-wide,
-then remove the 'addtree' from scripts/Kbuild.include
-but I have not been able to find time for that.
-
-This is a new file, so just suggested to add '$(srctree)/'
-
-
-
-If you want to know the context:
-https://patchwork.kernel.org/patch/9632347/
-
-
--- 
-Best Regards
-Masahiro Yamada
+ fs/dcache.c | 122 +++++++++++++++++++++---------------------------------------
+ 1 file changed, 43 insertions(+), 79 deletions(-)
