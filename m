@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeFDQGT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:06:19 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45390 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751058AbeFDQGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:06:15 -0400
+        id S1751508AbeFDQG2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:06:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:45396 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751375AbeFDQGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 12:06:18 -0400
 From: Patrick Bellasi <patrick.bellasi@arm.com>
 To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
@@ -16,9 +16,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Morten Rasmussen <morten.rasmussen@arm.com>,
         Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>, Todd Kjos <tkjos@google.com>
-Subject: [PATCH 1/2] sched/fair: pelt: use u32 for util_avg
-Date: Mon,  4 Jun 2018 17:05:59 +0100
-Message-Id: <20180604160600.22052-2-patrick.bellasi@arm.com>
+Subject: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
+Date: Mon,  4 Jun 2018 17:06:00 +0100
+Message-Id: <20180604160600.22052-3-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180604160600.22052-1-patrick.bellasi@arm.com>
 References: <20180604160600.22052-1-patrick.bellasi@arm.com>
@@ -26,23 +26,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The util_avg signal is used to track the utilization (i.e. RUNNING time)
-of SEs and RQs. Its values are computed according to the PELT algorithm
-and thus, for SE, they are bounded to an (internal) representation which
-uses 20bits. For RQ instead they are technically un-bounded, since when
-tasks are migrated across RQs we sum their utilization to the
-destination RQ.
+The estimated utilization of a task is affected by the task being
+preempted, either by another FAIR task of by a task of an higher
+priority class (i.e. RT or DL). Indeed, when a preemption happens, the
+PELT utilization of the preempted task is going to be decayed a bit.
+That's actually correct for utilization, which goal is to measure the
+actual CPU bandwidth consumed by a task.
 
-We currently use an unsigned long to track util_avg which maps into a
-64bits storage on 64bits systems. However, 32bits should be good enough
-for all practical usages. Indeed, even for RQs, the remaining 12bits
-allows to track up to 4K 100% tasks concurrently RUNNABLE on a single
-CPU.
+However, the above behavior does not allow to know exactly what is the
+utilization a task "would have used" if it was running without
+being preempted. Thus, this reduces the effectiveness of util_est for a
+task because it does not always allow to predict how much CPU a task is
+likely to require.
 
-Since the sched_avg data structure already completely fits a 64B cache
-line, let's get back 4B by using u32 to track util_avg. The recovered
-space could be conveniently used to fit other load tracking related
-metrics into the same cache line.
+Let's improve the estimated utilization by adding a new "sort-of" PELT
+signal, explicitly only for SE which has the following behavior:
+ a) at each enqueue time of a task, its value is the (already decayed)
+    util_avg of the task being enqueued
+ b) it's updated at each update_load_avg
+ c) it can just increase, whenever the task is actually RUNNING on a
+    CPU, while it's kept stable while the task is RUNNANBLE but not
+    actively consuming CPU bandwidth
+
+Such a defined signal is exactly equivalent to the util_avg for a task
+running alone on a CPU while, in case the task is preempted, it allows
+to know at dequeue time how much would have been the task utilization if
+it was running alone on that CPU.
+
+This new signal is named "running_avg", since it tracks the actual
+RUNNING time of a task by ignoring any form of preemption.
+
+>From an implementation standpoint, since the sched_avg should fit into a
+single cache line, we save space by tracking only a new runnable sum:
+   p->se.avg.running_sum
+while the conversion into a running_avg is done on demand whenever we
+need it, which is at task dequeue time when a new util_est sample has to
+be collected.
+
+The conversion from "running_sum" to "running_avg" is done by performing
+a single division by LOAD_AVG_MAX, which introduces a small error since
+in the division we do not consider the (sa->period_contrib - 1024)
+compensation factor used in ___update_load_avg(). However:
+ a) this error is expected to be limited (~2-3%)
+ b) it can be safely ignored since the estimated utilization is the only
+    consumer which is already subject to small estimation errors
+
+The additional corresponding benefit is that, at run-time, we pay the
+cost for a additional sum and multiply, while the more expensive
+division is required only at dequeue time.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -57,70 +88,77 @@ Cc: Morten Rasmussen <morten.rasmussen@arm.com>
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-pm@vger.kernel.org
 ---
- include/linux/sched.h |  2 +-
- kernel/sched/debug.c  |  2 +-
- kernel/sched/fair.c   | 17 ++++++++++-------
- 3 files changed, 12 insertions(+), 9 deletions(-)
+ include/linux/sched.h |  1 +
+ kernel/sched/fair.c   | 16 ++++++++++++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 28ff3ca9f752..9d8732dab264 100644
+index 9d8732dab264..2bd5f1c68da9 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -402,7 +402,7 @@ struct sched_avg {
+@@ -399,6 +399,7 @@ struct sched_avg {
+ 	u64				load_sum;
+ 	u64				runnable_load_sum;
+ 	u32				util_sum;
++	u32				running_sum;
  	u32				period_contrib;
  	unsigned long			load_avg;
  	unsigned long			runnable_load_avg;
--	unsigned long			util_avg;
-+	u32				util_avg;
- 	struct util_est			util_est;
- } ____cacheline_aligned;
- 
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 15b10e210a6b..a985789eeb9c 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -541,7 +541,7 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- 			cfs_rq->avg.load_avg);
- 	SEQ_printf(m, "  .%-30s: %lu\n", "runnable_load_avg",
- 			cfs_rq->avg.runnable_load_avg);
--	SEQ_printf(m, "  .%-30s: %lu\n", "util_avg",
-+	SEQ_printf(m, "  .%-30s: %u\n", "util_avg",
- 			cfs_rq->avg.util_avg);
- 	SEQ_printf(m, "  .%-30s: %u\n", "util_est_enqueued",
- 			cfs_rq->avg.util_est.enqueued);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e497c05aab7f..f74441be3f44 100644
+index f74441be3f44..5d54d6a4c31f 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -750,19 +750,22 @@ static void attach_entity_cfs_rq(struct sched_entity *se);
- void post_init_entity_util_avg(struct sched_entity *se)
- {
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
--	struct sched_avg *sa = &se->avg;
- 	long cap = (long)(SCHED_CAPACITY_SCALE - cfs_rq->avg.util_avg) / 2;
+@@ -3161,6 +3161,8 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
+ 		sa->runnable_load_sum =
+ 			decay_load(sa->runnable_load_sum, periods);
+ 		sa->util_sum = decay_load((u64)(sa->util_sum), periods);
++		if (running)
++			sa->running_sum = decay_load(sa->running_sum, periods);
  
- 	if (cap > 0) {
--		if (cfs_rq->avg.util_avg != 0) {
--			sa->util_avg  = cfs_rq->avg.util_avg * se->load.weight;
--			sa->util_avg /= (cfs_rq->avg.load_avg + 1);
-+		struct sched_avg *sa = &se->avg;
-+		u64 util_avg = READ_ONCE(sa->util_avg);
+ 		/*
+ 		 * Step 2
+@@ -3176,8 +3178,10 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
+ 		sa->load_sum += load * contrib;
+ 	if (runnable)
+ 		sa->runnable_load_sum += runnable * contrib;
+-	if (running)
++	if (running) {
+ 		sa->util_sum += contrib * scale_cpu;
++		sa->running_sum += contrib * scale_cpu;
++	}
  
--			if (sa->util_avg > cap)
--				sa->util_avg = cap;
-+		if (cfs_rq->avg.util_avg != 0) {
-+			util_avg  =  cfs_rq->avg.util_avg * se->load.weight;
-+			util_avg /= (cfs_rq->avg.load_avg + 1);
-+			if (util_avg > cap)
-+				util_avg = cap;
- 		} else {
--			sa->util_avg = cap;
-+			util_avg = cap;
- 		}
+ 	return periods;
+ }
+@@ -3963,6 +3967,12 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
+ 	WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
+ }
+ 
++static inline void util_est_enqueue_running(struct task_struct *p)
++{
++	/* Initilize the (non-preempted) utilization */
++	p->se.avg.running_sum = p->se.avg.util_sum;
++}
 +
-+		WRITE_ONCE(sa->util_avg, util_avg);
- 	}
+ /*
+  * Check if a (signed) value is within a specified (unsigned) margin,
+  * based on the observation that:
+@@ -4018,7 +4028,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+ 	 * Skip update of task's estimated utilization when its EWMA is
+ 	 * already ~1% close to its last activation value.
+ 	 */
+-	ue.enqueued = (task_util(p) | UTIL_AVG_UNCHANGED);
++	ue.enqueued = p->se.avg.running_sum / LOAD_AVG_MAX;
+ 	last_ewma_diff = ue.enqueued - ue.ewma;
+ 	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
+ 		return;
+@@ -5437,6 +5447,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!se)
+ 		add_nr_running(rq, 1);
  
- 	if (entity_is_task(se)) {
++	util_est_enqueue_running(p);
++
+ 	hrtick_update(rq);
+ }
+ 
 -- 
 2.15.1
