@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753336AbeFDHYf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54334 "EHLO mail.kernel.org"
+        id S1753229AbeFDHYv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:24:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753056AbeFDHBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:49 -0400
+        id S1753039AbeFDHBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
+        stable@vger.kernel.org, Michael Nosthoff <committed@heine.so>,
         Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 34/52] iio:kfifo_buf: check for uint overflow
-Date: Mon,  4 Jun 2018 08:58:29 +0200
-Message-Id: <20180604065607.936188738@linuxfoundation.org>
+Subject: [PATCH 4.14 32/52] iio: ad7793: implement IIO_CHAN_INFO_SAMP_FREQ
+Date: Mon,  4 Jun 2018 08:58:27 +0200
+Message-Id: <20180604065607.856572051@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -29,58 +29,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Michael Nosthoff <committed@heine.so>
 
-commit 3d13de4b027d5f6276c0f9d3a264f518747d83f2 upstream.
+commit 490fba90a90eb7b741f57fefd2bcf2c1e11eb471 upstream.
 
-Currently, the following causes a kernel OOPS in memcpy:
+This commit is a follow-up to changes made to ad_sigma_delta.h
+in staging: iio: ad7192: implement IIO_CHAN_INFO_SAMP_FREQ
+which broke ad7793 as it was not altered to match those changes.
 
-echo 1073741825 > buffer/length
-echo 1 > buffer/enable
+This driver predates the availability of IIO_CHAN_INFO_SAMP_FREQ
+attribute wherein usage has some advantages like it can be accessed by
+in-kernel consumers as well as reduces the code size.
 
-Note that using 1073741824 instead of 1073741825 causes "write error:
-Cannot allocate memory" but no OOPS.
+Therefore, use IIO_CHAN_INFO_SAMP_FREQ to implement the
+sampling_frequency attribute instead of using IIO_DEV_ATTR_SAMP_FREQ()
+macro.
 
-This is because 1073741824 == 2^30 and 1073741825 == 2^30+1. Since kfifo
-rounds up to the nearest power of 2, it will actually call kmalloc with
-roundup_pow_of_two(length) * bytes_per_datum.
+Move code from the functions associated with IIO_DEV_ATTR_SAMP_FREQ()
+into respective read and write hooks with the mask set to
+IIO_CHAN_INFO_SAMP_FREQ.
 
-Using length == 1073741825 and bytes_per_datum == 2, we get:
+Fixes: a13e831fcaa7 ("staging: iio: ad7192: implement IIO_CHAN_INFO_SAMP_FREQ")
 
-kmalloc(roundup_pow_of_two(1073741825) * 2
-or kmalloc(2147483648 * 2)
-or kmalloc(4294967296)
-or kmalloc(UINT_MAX + 1)
-
-so this overflows to 0, causing kmalloc to return ZERO_SIZE_PTR and
-subsequent memcpy to fail once the device is enabled.
-
-Fix this by checking for overflow prior to allocating a kfifo. With this
-check added, the above code returns -EINVAL when enabling the buffer,
-rather than causing an OOPS.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-cc: <Stable@vger.kernel.org>
+Signed-off-by: Michael Nosthoff <committed@heine.so>
+Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/buffer/kfifo_buf.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/iio/adc/ad7793.c |   75 +++++++++++++++--------------------------------
+ 1 file changed, 24 insertions(+), 51 deletions(-)
 
---- a/drivers/iio/buffer/kfifo_buf.c
-+++ b/drivers/iio/buffer/kfifo_buf.c
-@@ -27,6 +27,13 @@ static inline int __iio_allocate_kfifo(s
- 	if ((length == 0) || (bytes_per_datum == 0))
- 		return -EINVAL;
+--- a/drivers/iio/adc/ad7793.c
++++ b/drivers/iio/adc/ad7793.c
+@@ -348,55 +348,6 @@ static const u16 ad7793_sample_freq_avai
+ static const u16 ad7797_sample_freq_avail[16] = {0, 0, 0, 123, 62, 50, 0,
+ 					33, 0, 17, 16, 12, 10, 8, 6, 4};
  
-+	/*
-+	 * Make sure we don't overflow an unsigned int after kfifo rounds up to
-+	 * the next power of 2.
-+	 */
-+	if (roundup_pow_of_two(length) > UINT_MAX / bytes_per_datum)
-+		return -EINVAL;
-+
- 	return __kfifo_alloc((struct __kfifo *)&buf->kf, length,
- 			     bytes_per_datum, GFP_KERNEL);
+-static ssize_t ad7793_read_frequency(struct device *dev,
+-		struct device_attribute *attr,
+-		char *buf)
+-{
+-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+-	struct ad7793_state *st = iio_priv(indio_dev);
+-
+-	return sprintf(buf, "%d\n",
+-	       st->chip_info->sample_freq_avail[AD7793_MODE_RATE(st->mode)]);
+-}
+-
+-static ssize_t ad7793_write_frequency(struct device *dev,
+-		struct device_attribute *attr,
+-		const char *buf,
+-		size_t len)
+-{
+-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+-	struct ad7793_state *st = iio_priv(indio_dev);
+-	long lval;
+-	int i, ret;
+-
+-	ret = kstrtol(buf, 10, &lval);
+-	if (ret)
+-		return ret;
+-
+-	if (lval == 0)
+-		return -EINVAL;
+-
+-	for (i = 0; i < 16; i++)
+-		if (lval == st->chip_info->sample_freq_avail[i])
+-			break;
+-	if (i == 16)
+-		return -EINVAL;
+-
+-	ret = iio_device_claim_direct_mode(indio_dev);
+-	if (ret)
+-		return ret;
+-	st->mode &= ~AD7793_MODE_RATE(-1);
+-	st->mode |= AD7793_MODE_RATE(i);
+-	ad_sd_write_reg(&st->sd, AD7793_REG_MODE, sizeof(st->mode), st->mode);
+-	iio_device_release_direct_mode(indio_dev);
+-
+-	return len;
+-}
+-
+-static IIO_DEV_ATTR_SAMP_FREQ(S_IWUSR | S_IRUGO,
+-		ad7793_read_frequency,
+-		ad7793_write_frequency);
+-
+ static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
+ 	"470 242 123 62 50 39 33 19 17 16 12 10 8 6 4");
+ 
+@@ -424,7 +375,6 @@ static IIO_DEVICE_ATTR_NAMED(in_m_in_sca
+ 		ad7793_show_scale_available, NULL, 0);
+ 
+ static struct attribute *ad7793_attributes[] = {
+-	&iio_dev_attr_sampling_frequency.dev_attr.attr,
+ 	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
+ 	&iio_dev_attr_in_m_in_scale_available.dev_attr.attr,
+ 	NULL
+@@ -435,7 +385,6 @@ static const struct attribute_group ad77
+ };
+ 
+ static struct attribute *ad7797_attributes[] = {
+-	&iio_dev_attr_sampling_frequency.dev_attr.attr,
+ 	&iio_const_attr_sampling_frequency_available_ad7797.dev_attr.attr,
+ 	NULL
+ };
+@@ -505,6 +454,10 @@ static int ad7793_read_raw(struct iio_de
+ 			*val -= offset;
+ 		}
+ 		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		*val = st->chip_info
++			       ->sample_freq_avail[AD7793_MODE_RATE(st->mode)];
++		return IIO_VAL_INT;
+ 	}
+ 	return -EINVAL;
  }
+@@ -542,6 +495,26 @@ static int ad7793_write_raw(struct iio_d
+ 				break;
+ 			}
+ 		break;
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		if (!val) {
++			ret = -EINVAL;
++			break;
++		}
++
++		for (i = 0; i < 16; i++)
++			if (val == st->chip_info->sample_freq_avail[i])
++				break;
++
++		if (i == 16) {
++			ret = -EINVAL;
++			break;
++		}
++
++		st->mode &= ~AD7793_MODE_RATE(-1);
++		st->mode |= AD7793_MODE_RATE(i);
++		ad_sd_write_reg(&st->sd, AD7793_REG_MODE, sizeof(st->mode),
++				st->mode);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 	}
