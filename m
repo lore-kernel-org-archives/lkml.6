@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeFDHCO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:02:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753157AbeFDHCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753162AbeFDHCL (ORCPT <rfc822;w@1wt.eu>);
         Mon, 4 Jun 2018 03:02:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751564AbeFDHCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edvard Holst <edvard.holst@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 15/52] Input: synaptics - Lenovo Thinkpad X1 Carbon G5 (2017) with Elantech trackpoints should use RMI
-Date: Mon,  4 Jun 2018 08:58:10 +0200
-Message-Id: <20180604065607.146222132@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.14 41/52] hwtracing: stm: fix build error on some arches
+Date: Mon,  4 Jun 2018 08:58:36 +0200
+Message-Id: <20180604065608.235441460@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -29,37 +29,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Edvard Holst <edvard.holst@gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 15e2cffec3aa0d47a8d75ae80e1b136bfb5dff30 upstream.
+commit 806e30873f0e74d9d41b0ef761bd4d3e55c7d510 upstream.
 
-Lenovo use two different trackpoints in the fifth generation Thinkpad X1
-Carbon. Both are accessible over SMBUS/RMI but the pnpIDs are missing.
-This patch is for the Elantech trackpoint specifically which also
-reports SMB version 3 so rmi_smbus needs to be updated in order to
-handle it.
+Commit b5e2ced9bf81 ("stm class: Use vmalloc for the master map") caused
+a build error on some arches as vmalloc.h was not explicitly included.
 
-For the record, I was not the first one to come up with this patch as it
-has been floating around the internet for a while now. However, I have
-spent significant time with testing and my efforts to find the original
-author of the patch have been unsuccessful.
+Fix that by adding it to the list of includes.
 
-Signed-off-by: Edvard Holst <edvard.holst@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: b5e2ced9bf81 ("stm class: Use vmalloc for the master map")
+Reported-by: kbuild test robot <lkp@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/synaptics.c |    1 +
+ drivers/hwtracing/stm/core.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -173,6 +173,7 @@ static const char * const smbus_pnp_ids[
- 	"LEN0046", /* X250 */
- 	"LEN004a", /* W541 */
- 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
-+	"LEN0073", /* X1 Carbon G5 (Elantech) */
- 	"LEN200f", /* T450s */
- 	NULL
- };
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -27,6 +27,7 @@
+ #include <linux/stm.h>
+ #include <linux/fs.h>
+ #include <linux/mm.h>
++#include <linux/vmalloc.h>
+ #include "stm.h"
+ 
+ #include <uapi/linux/stm.h>
