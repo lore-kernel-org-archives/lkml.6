@@ -1,124 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751515AbeFDUzN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:55:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59690 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751394AbeFDUzI (ORCPT
+        id S1751567AbeFDUza (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:55:30 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55748 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751522AbeFDUz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:55:08 -0400
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: zohar@linux.vnet.ibm.com, paul@paul-moore.com,
-        linux-integrity@vger.kernel.org, linux-audit@redhat.com
-Cc: sgrubb@redhat.com, linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v3 3/4] ima: Do not audit if CONFIG_INTEGRITY_AUDIT is not set
-Date: Mon,  4 Jun 2018 16:54:54 -0400
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180604205455.2325754-1-stefanb@linux.vnet.ibm.com>
-References: <20180604205455.2325754-1-stefanb@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18060420-0016-0000-0000-000008E299D6
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009129; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01042340; UDB=6.00533730; IPR=6.00821470;
- MB=3.00021461; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 20:55:06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060420-0017-0000-0000-00003F1933FA
-Message-Id: <20180604205455.2325754-4-stefanb@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040238
+        Mon, 4 Jun 2018 16:55:27 -0400
+Date: Mon, 4 Jun 2018 16:54:47 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        tglx@linutronix.de, andrew.cooper3@citrix.com,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Kees Cook <keescook@chromium.org>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v1 2/3] x86/bugs: Add AMD's SPEC_CTRL MSR usage
+Message-ID: <20180604205447.GO5867@char.us.oracle.com>
+References: <20180601145921.9500-1-konrad.wilk@oracle.com>
+ <20180601145921.9500-3-konrad.wilk@oracle.com>
+ <fa831d0c-3e7b-b5ab-17a0-5d3b1bfd6142@amd.com>
+ <20180604202024.GF5867@char.us.oracle.com>
+ <2f325eea-5ffc-70f5-43d8-59ceef73d04d@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f325eea-5ffc-70f5-43d8-59ceef73d04d@amd.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8914 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806040238
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If Integrity is not auditing, IMA shouldn't audit, either.
+On Mon, Jun 04, 2018 at 03:43:17PM -0500, Tom Lendacky wrote:
+> On 6/4/2018 3:20 PM, Konrad Rzeszutek Wilk wrote:
+> >>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> >>> index 26110c202b19..950ec50f77c3 100644
+> >>> --- a/arch/x86/kvm/svm.c
+> >>> +++ b/arch/x86/kvm/svm.c
+> >>> @@ -4115,7 +4115,8 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> >>>  		break;
+> >>>  	case MSR_IA32_SPEC_CTRL:
+> >>>  		if (!msr_info->host_initiated &&
+> >>> -		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS))
+> >>> +		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS) &&
+> >>> +		    !guest_cpuid_has(vcpu, X86_FEATURE_AMD_SSBD))
+> >>
+> >> Shouldn't the IBRS/SSBD check be an "or" check?  I don't think it's
+> >> necessarily true that IBRS and SSBD have to both be set.  Maybe something
+> >> like:
+> >>
+> >> 	if (!msr_info->host_initiated &&
+> >> 	    !(guest_cpuid_has(vcpu, X86_FEATURE_AMD_IBRS) ||
+> >> 	      guest_cpuid_has(vcpu, X86_FEATURE_AMD_SSBD))
+> >>
+> >> Does that make sense?
+> > 
+> > The '!' on each of the CPUID and '&&' make this the same. See:
+> 
+> Doh!  Yes, I don't know what I was thinking.  Just the end of a long
+> week I guess.
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- security/integrity/ima/Kconfig      |  1 +
- security/integrity/ima/ima_policy.c |  6 +++++-
- security/integrity/integrity.h      | 15 +++++++++++++++
- 3 files changed, 21 insertions(+), 1 deletion(-)
+<grins> I can imagine!
+> 
+> > 
+> > 
+> >  AMD_IBRS set	|  AMD_SSBD set	| !AMD_IBRS && !AMD_SSBD | !(AMD_IBRS || AMD_SSBD)
+> > 	0	|	0	| 1 && 1 -> return 1	 | !(0) -> 1 -> return 1
+> > 	1	|	0	| 0 && 1, continue	 | !(1 || 0) -> continue
+> > 	1	|	1	| 0 && 0, continue	 | !(1 || 1) -> continue
+> > 	0	|	1	| 1 && 0, continue	 | !(0 || 1) -> continue
+> > 
+> > Meaning we will return 1 if:
+> >  the host has not initiator it or,
+> >  the guest CPUID does not have AMD_IBRS flag or,
+> >  the guest CPUID does not have AMD SSBD flag
+> > 
+> > I am fine modifying it the way you had in mind, but in the past the logic
+> > was to use ! and &&, hence stuck to that.
+> 
+> No reason to change, it's fine the way you have it.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 6a8f67714c83..94c2151331aa 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -12,6 +12,7 @@ config IMA
- 	select TCG_TIS if TCG_TPM && X86
- 	select TCG_CRB if TCG_TPM && ACPI
- 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
-+	select INTEGRITY_AUDIT if AUDIT
- 	help
- 	  The Trusted Computing Group(TCG) runtime Integrity
- 	  Measurement Architecture(IMA) maintains a list of hash
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 3fcf0935468c..bc99713dfe57 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -628,6 +628,9 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
- static void ima_log_string_op(struct audit_buffer *ab, char *key, char *value,
- 			      bool (*rule_operator)(kuid_t, kuid_t))
- {
-+	if (!ab)
-+		return;
-+
- 	if (rule_operator == &uid_gt)
- 		audit_log_format(ab, "%s>", key);
- 	else if (rule_operator == &uid_lt)
-@@ -649,7 +652,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 	bool uid_token;
- 	int result = 0;
- 
--	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_RULE);
-+	ab = integrity_audit_log_start(NULL, GFP_KERNEL,
-+				       AUDIT_INTEGRITY_RULE);
- 
- 	entry->uid = INVALID_UID;
- 	entry->fowner = INVALID_UID;
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 0bb372eed62a..e60473b13a8d 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -15,6 +15,7 @@
- #include <linux/integrity.h>
- #include <crypto/sha.h>
- #include <linux/key.h>
-+#include <linux/audit.h>
- 
- /* iint action cache flags */
- #define IMA_MEASURE		0x00000001
-@@ -199,6 +200,13 @@ static inline void evm_load_x509(void)
- void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 			 const unsigned char *fname, const char *op,
- 			 const char *cause, int result, int info);
-+
-+static inline struct audit_buffer *
-+integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
-+{
-+	return audit_log_start(ctx, gfp_mask, type);
-+}
-+
- #else
- static inline void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 				       const unsigned char *fname,
-@@ -206,4 +214,11 @@ static inline void integrity_audit_msg(int audit_msgno, struct inode *inode,
- 				       int result, int info)
- {
- }
-+
-+static inline struct audit_buffer *
-+integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
-+{
-+	return NULL;
-+}
-+
- #endif
--- 
-2.13.6
+Excellent. Would you be OK giving it an Acked by or such?
+
+Thanks.
