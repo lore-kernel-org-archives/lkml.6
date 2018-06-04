@@ -1,62 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753851AbeFDOL1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:11:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:49735 "EHLO ozlabs.org"
+        id S1753874AbeFDOLd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:11:33 -0400
+Received: from ozlabs.org ([203.11.71.1]:38369 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751473AbeFDOLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:11:23 -0400
+        id S1751473AbeFDOLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:11:31 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: f36bbf21e8b911b3c629fd36d4d217105b47a20e
-In-Reply-To: <23d156759ff411f5fd932e167b8b5f5ecd6aa88b.1527663626.git.christophe.leroy@c-s.fr>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, segher@kernel.crashing.org
+X-powerpc-patch-commit: 0abbf2bfdc9dec32e9832aa8d4522a57d698e753
+In-Reply-To: <1527765086-19873-21-git-send-email-xieyisheng1@huawei.com>
+To: Yisheng Xie <xieyisheng1@huawei.com>, <linux-kernel@vger.kernel.org>
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v6,1/2] powerpc/lib: optimise 32 bits __clear_user()
-Message-Id: <40zxgY4PMWz9s2k@ozlabs.org>
-Date: Tue,  5 Jun 2018 00:11:20 +1000 (AEST)
+Cc: Yisheng Xie <xieyisheng1@huawei.com>, andy.shevchenko@gmail.com,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [v2,20/21] powerpc/xmon: use match_string() helper
+Message-Id: <40zxgj5Kw4z9s1B@ozlabs.org>
+Date: Tue,  5 Jun 2018 00:11:28 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-30 at 07:06:13 UTC, Christophe Leroy wrote:
-> Rewrite clear_user() on the same principle as memset(0), making use
-> of dcbz to clear complete cache lines.
+On Thu, 2018-05-31 at 11:11:25 UTC, Yisheng Xie wrote:
+> match_string() returns the index of an array for a matching string,
+> which can be used instead of open coded variant.
 > 
-> This code is a copy/paste of memset(), with some modifications
-> in order to retrieve remaining number of bytes to be cleared,
-> as it needs to be returned in case of error.
-> 
-> On the same way as done on PPC64 in commit 17968fbbd19f1
-> ("powerpc: 64bit optimised __clear_user"), the patch moves
-> __clear_user() into a dedicated file string_32.S
-> 
-> On a MPC885, throughput is almost doubled:
-> 
-> Before:
-> ~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-> 1048576000 bytes (1000.0MB) copied, 18.990779 seconds, 52.7MB/s
-> 
-> After:
-> ~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-> 1048576000 bytes (1000.0MB) copied, 9.611468 seconds, 104.0MB/s
-> 
-> On a MPC8321, throughput is multiplied by 2.12:
-> 
-> Before:
-> root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-> 1048576000 bytes (1000.0MB) copied, 6.844352 seconds, 146.1MB/s
-> 
-> After:
-> root@vgoippro:~# dd if=/dev/zero of=/dev/null bs=1M count=1000
-> 1048576000 bytes (1000.0MB) copied, 3.218854 seconds, 310.7MB/s
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/f36bbf21e8b911b3c629fd36d4d217
+https://git.kernel.org/powerpc/c/0abbf2bfdc9dec32e9832aa8d4522a
 
 cheers
