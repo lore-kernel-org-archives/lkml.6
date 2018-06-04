@@ -1,131 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeFDChp (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 22:37:45 -0400
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:53074 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751412AbeFDChn (ORCPT
+        id S1751889AbeFDClZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 22:41:25 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45607 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751808AbeFDClY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 22:37:43 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: <bp@alien8.de>, <tony.luck@intel.com>, <mingo@redhat.com>,
-        <tglx@linutronix.de>, <hpa@zytor.com>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>
-CC: <cooperyan@zhaoxin.com>, <qiyuanwang@zhaoxin.com>,
-        <benjaminpan@viatech.com>, <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
-        "David Wang" <davidwang@zhaoxin.com>
-Subject: [PATCH v2] x86/mce: add CMCI support for Centaur CPUs
-Date: Mon, 4 Jun 2018 10:37:33 +0800
-Message-ID: <1528079853-8101-1-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
+        Sun, 3 Jun 2018 22:41:24 -0400
+X-Google-Smtp-Source: ADUXVKI4d2QoPLXTNJ/Rrmjj58ZcuYbjuflmcX/hcoqkjbGf/Yrn9S+0Cdypn2K60m1paMLNGC72LdO1FSd7y2cPRWg=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.54]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+References: <1527940734-35161-1-git-send-email-ufo19890607@gmail.com>
+ <1527940734-35161-2-git-send-email-ufo19890607@gmail.com> <20180603124941.GA29497@rapoport-lnx>
+ <CAHCio2ifo3SNH9E3GX2=q1a=MNiNnoCu+2a++yX5_xMBheya5g@mail.gmail.com>
+In-Reply-To: <CAHCio2ifo3SNH9E3GX2=q1a=MNiNnoCu+2a++yX5_xMBheya5g@mail.gmail.com>
+From: =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Date: Mon, 4 Jun 2018 10:41:10 +0800
+Message-ID: <CAHCio2in8NXZRanE9MS0VsSZxKaSvTy96TF59hODoNCxuQTz5A@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] Refactor part of the oom report in dump_header
+To: rppt@linux.vnet.ibm.com
+Cc: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w542fVd2005293
 
-New Centaur CPU support CMCI mechanism, which is compatible with INTEL CMCI.
+Hi Tetsuo
+> Since origin_memcg_name is printed for both memcg OOM and !memcg OOM, it is strange that origin_memcg_name is updated only when memcg != NULL. Have you really tested !memcg OOM case?
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
+if memcg == NULL , origin_memcg_name will also be NULL, so the length
+of it is 0. origin_memcg_name will be "(null)". I've tested !memcg OOM
+case with CONFIG_MEMCG and !CONFIG_MEMCG, and found nothing wrong.
 
-Changes from v1 to v2:
-*1, add vendor check for Centaur CPU in cmci_supported.
-*2, Only call intel_init_cmci for Centaur CPU in mce_intel_feature_init function.
----
- arch/x86/Kconfig                       | 12 ++++++++++++
- arch/x86/kernel/cpu/mcheck/mce.c       |  6 ++++++
- arch/x86/kernel/cpu/mcheck/mce_intel.c | 21 ++++++++++++++++-----
- 3 files changed, 34 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index dda87a3..1adff5f 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1130,6 +1130,18 @@ config X86_MCE_AMD
- 	   Additional support for AMD specific MCE features such as
- 	   the DRAM Error Threshold.
- 
-+config X86_MCE_CENTAUR
-+	def_bool y
-+	prompt "CENTAUR MCE features"
-+	depends on CPU_SUP_CENTAUR && X86_MCE_INTEL
-+	help
-+	   Additional support for Centaur specific MCE features such as
-+	   MCE broadcasting and CMCI support.
-+	   New Centaur CPU support MCE broadcasting.
-+	   New Centaur CPU support CMCI which is fully compliant with Intel CMCI.
-+
-+	   If unsure, say N here.
-+
- config X86_ANCIENT_MCE
- 	bool "Support for old Pentium 5 / WinChip machine checks"
- 	depends on X86_32 && X86_MCE
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index cd76380..2ebafc7 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1727,6 +1727,7 @@ static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
- 	}
- }
- 
-+#ifdef CONFIG_X86_MCE_CENTAUR
- static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
- {
- 	struct mca_config *cfg = &mca_cfg;
-@@ -1740,7 +1741,12 @@ static void mce_centaur_feature_init(struct cpuinfo_x86 *c)
- 		if (cfg->monarch_timeout < 0)
- 			cfg->monarch_timeout = USEC_PER_SEC;
- 	}
-+	mce_intel_feature_init(c);
-+	mce_adjust_timer = cmci_intel_adjust_timer;
- }
-+#else
-+static inline void mce_centaur_feature_init(struct cpuinfo_x86 *c) { }
-+#endif
- 
- static void __mcheck_cpu_init_vendor(struct cpuinfo_x86 *c)
- {
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_intel.c b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-index d05be30..5b1b68f 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_intel.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-@@ -85,7 +85,8 @@ static int cmci_supported(int *banks)
- 	 * initialization is vendor keyed and this
- 	 * makes sure none of the backdoors are entered otherwise.
- 	 */
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-+	if ((boot_cpu_data.x86_vendor != X86_VENDOR_INTEL &&
-+		boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR))
- 		return 0;
- 	if (!boot_cpu_has(X86_FEATURE_APIC) || lapic_get_maxlvt() < 6)
- 		return 0;
-@@ -506,10 +507,20 @@ static void intel_ppin_init(struct cpuinfo_x86 *c)
- 
- void mce_intel_feature_init(struct cpuinfo_x86 *c)
- {
--	intel_init_thermal(c);
--	intel_init_cmci();
--	intel_init_lmce();
--	intel_ppin_init(c);
-+
-+	switch (c->x86_vendor) {
-+	case X86_VENDOR_INTEL:
-+		intel_init_thermal(c);
-+		intel_init_cmci();
-+		intel_init_lmce();
-+		intel_ppin_init(c);
-+		break;
-+	case X86_VENDOR_CENTAUR:
-+		intel_init_cmci();
-+		break;
-+	default:
-+		break;
-+	}
- }
- 
- void mce_intel_feature_clear(struct cpuinfo_x86 *c)
--- 
-1.9.1
+Thanks
+Wind
+禹舟键 <ufo19890607@gmail.com> 于2018年6月4日周一 上午9:58写道：
+>
+> Hi Mike
+> > Please keep the brief description of the function actually brief and move the detailed explanation after the parameters description.
+> Thanks for your advice.
+>
+> > The allocation constraint is detected by the dump_header() callers, why not just use it here?
+> David suggest that constraint need to be printed in the oom report, so
+> I add the enum variable in this function.
+>
+> Thanks
+> Wind
