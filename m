@@ -1,127 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752079AbeFDK0U convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:26:20 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39037 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751782AbeFDK0R (ORCPT
+        id S1752003AbeFDK1Z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:27:25 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:60446 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750868AbeFDK1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:26:17 -0400
-Date: Mon, 4 Jun 2018 12:25:59 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
-Subject: [PATCH 1/5 v2] spinlock: atomic_dec_and_lock: Add an irqsave variant
-Message-ID: <20180604102559.2ynbassthjzva62l@linutronix.de>
-References: <20180504154533.8833-1-bigeasy@linutronix.de>
- <20180504154533.8833-2-bigeasy@linutronix.de>
+        Mon, 4 Jun 2018 06:27:24 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Mon, 4 Jun 2018 11:27:19 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+CC: Lee Jones <lee.jones@linaro.org>, <patches@opensource.cirrus.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mfd: arizona: Don't use regmap_read_poll_timeout
+Message-ID: <20180604102719.GA18740@imbe.wolfsonmicro.main>
+References: <20180511135030.14590-1-ckeepax@opensource.cirrus.com>
+ <20180604054452.GD17993@dell>
+ <CAHp75Vdcg2GQ4G-YF054iCob+f4=ZmfT_XLknMZm72nOB7D_mw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180504154533.8833-2-bigeasy@linutronix.de>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <CAHp75Vdcg2GQ4G-YF054iCob+f4=ZmfT_XLknMZm72nOB7D_mw@mail.gmail.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=878 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
+ definitions=main-1806040128
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are in-tree users of atomic_dec_and_lock() which must acquire the
-spin lock with interrupts disabled. To workaround the lack of an irqsave
-variant of atomic_dec_and_lock() they use local_irq_save() at the call
-site. This causes extra code and creates in some places unneeded long
-interrupt disabled times. These places need also extra treatment for
-PREEMPT_RT due to the disconnect of the irq disabling and the lock
-function.
+On Mon, Jun 04, 2018 at 12:40:37PM +0300, Andy Shevchenko wrote:
+> On Mon, Jun 4, 2018 at 8:44 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Fri, 11 May 2018, Charles Keepax wrote:
+> 
+> >> +     while (true) {
+> >> +             ret = regmap_read(arizona->regmap, reg, &val);
+> >>
+> >> +             if ((val & mask) == target)
+> >> +                     return 0;
+> >> +
+> >> +             if (ktime_compare(ktime_get(), timeout) > 0)
+> >> +                     break;
+> >> +
+> >> +             usleep_range(ARIZONA_REG_POLL_DELAY_US / 2,
+> >> +                          ARIZONA_REG_POLL_DELAY_US);
+> >> +     }
+> 
+> >From my point of view infinite loops not good for readability and maintenance.
+> Perhaps
+> 
+> do {
+> ...
+> } while (ktime_compare(...));
+> 
+> ?
 
-Implement the missing irqsave variant of the function.
-Add a stub for Alpha which should work without the assmebly optimisation
-for the fastpath.
+I would rather not do it that way since then it becomes
+impossible to have a single poll with no delays happening. I can
+refactor to remove the while(true) but it will make the code a
+bit bigger, as I will probably need to duplicate some code
+outside the loop.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org> [not the Alpha bits]
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: linux-alpha@vger.kernel.org
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-[bigeasy: adding Alpha bits]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-v1…v2: Add Alpha bits (kbuild reported build failure on Alpha)
-
- arch/alpha/lib/dec_and_lock.c | 16 ++++++++++++++++
- include/linux/spinlock.h      |  5 +++++
- lib/dec_and_lock.c            | 16 ++++++++++++++++
- 3 files changed, 37 insertions(+)
-
-diff --git a/arch/alpha/lib/dec_and_lock.c b/arch/alpha/lib/dec_and_lock.c
-index a117707f57fe..069fef7372dc 100644
---- a/arch/alpha/lib/dec_and_lock.c
-+++ b/arch/alpha/lib/dec_and_lock.c
-@@ -42,3 +42,19 @@ static int __used atomic_dec_and_lock_1(atomic_t *atomic, spinlock_t *lock)
- 	return 0;
- }
- EXPORT_SYMBOL(_atomic_dec_and_lock);
-+
-+int _atomic_dec_and_lock_irqsave(atomic_t *atomic, spinlock_t *lock,
-+				 unsigned long *flags)
-+{
-+	/* Subtract 1 from counter unless that drops it to 0 (ie. it was 1) */
-+	if (atomic_add_unless(atomic, -1, 1))
-+		return 0;
-+
-+	/* Otherwise do it the slow way */
-+	spin_lock_irqsave(lock, *flags);
-+	if (atomic_dec_and_test(atomic))
-+		return 1;
-+	spin_unlock_irqrestore(lock, *flags);
-+	return 0;
-+}
-+EXPORT_SYMBOL(_atomic_dec_and_lock_irqsave);
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index 4894d322d258..803536c992f5 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -409,6 +409,11 @@ extern int _atomic_dec_and_lock(atomic_t *atomic, spinlock_t *lock);
- #define atomic_dec_and_lock(atomic, lock) \
- 		__cond_lock(lock, _atomic_dec_and_lock(atomic, lock))
- 
-+extern int _atomic_dec_and_lock_irqsave(atomic_t *atomic, spinlock_t *lock,
-+					unsigned long *flags);
-+#define atomic_dec_and_lock_irqsave(atomic, lock, flags) \
-+		__cond_lock(lock, _atomic_dec_and_lock_irqsave(atomic, lock, &(flags)))
-+
- int alloc_bucket_spinlocks(spinlock_t **locks, unsigned int *lock_mask,
- 			   size_t max_size, unsigned int cpu_mult,
- 			   gfp_t gfp);
-diff --git a/lib/dec_and_lock.c b/lib/dec_and_lock.c
-index 347fa7ac2e8a..9555b68bb774 100644
---- a/lib/dec_and_lock.c
-+++ b/lib/dec_and_lock.c
-@@ -33,3 +33,19 @@ int _atomic_dec_and_lock(atomic_t *atomic, spinlock_t *lock)
- }
- 
- EXPORT_SYMBOL(_atomic_dec_and_lock);
-+
-+int _atomic_dec_and_lock_irqsave(atomic_t *atomic, spinlock_t *lock,
-+				 unsigned long *flags)
-+{
-+	/* Subtract 1 from counter unless that drops it to 0 (ie. it was 1) */
-+	if (atomic_add_unless(atomic, -1, 1))
-+		return 0;
-+
-+	/* Otherwise do it the slow way */
-+	spin_lock_irqsave(lock, *flags);
-+	if (atomic_dec_and_test(atomic))
-+		return 1;
-+	spin_unlock_irqrestore(lock, *flags);
-+	return 0;
-+}
-+EXPORT_SYMBOL(_atomic_dec_and_lock_irqsave);
--- 
-2.17.1
+Thanks,
+Charles
