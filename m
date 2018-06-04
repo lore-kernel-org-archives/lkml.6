@@ -1,418 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751695AbeFDU4Z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:56:25 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:52236 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751103AbeFDU4W (ORCPT
+        id S1751303AbeFDU7T (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:59:19 -0400
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:34130 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbeFDU7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:56:22 -0400
+        Mon, 4 Jun 2018 16:59:17 -0400
+X-Google-Smtp-Source: ADUXVKJ+3j6J9cdGADd3cXzlJKhmZqQTFCl66JqfNqt1uu0Vm2mL2AhOmSL1PSQwqhQMoTa7FuRSyKV0KdfF6EyVSHI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date: Mon, 04 Jun 2018 22:56:20 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: =?UTF-8?Q?Randolph_Maa=C3=9Fen?= <gaireg@gaireg.de>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de,
-        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
-        krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-In-Reply-To: <1528132590.3048.4.camel@gaireg.de>
-References: <20180531221637.6017-1-stefan@agner.ch>
- <20180531221637.6017-5-stefan@agner.ch> <1528132590.3048.4.camel@gaireg.de>
-Message-ID: <1702074adb9105a61971a3cb5867b7ed@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[23];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+In-Reply-To: <20180604182658.GC164893@dtor-ws>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+ <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
+ <20180601184330.GD222005@dtor-ws> <72b7120a-d304-0b2f-d04a-473631623f72@bitmath.org>
+ <CAO-hwJKibKvqviLZ5SSYR_X3yLTzJrr0G4d6svM3FtgJ6AfvQQ@mail.gmail.com>
+ <20180604172759.GA164893@dtor-ws> <994e5698-fbdf-05c8-b0b6-3df6af1b3dbc@bitmath.org>
+ <20180604182658.GC164893@dtor-ws>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Mon, 4 Jun 2018 22:59:16 +0200
+Message-ID: <CAO-hwJK3h8xjuO=GQRT0prdbXURCTinkQg4i7N8ScPOig1KTYw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Henrik Rydberg <rydberg@bitmath.org>, Jiri Kosina <jikos@kernel.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randolph,
-
-On 04.06.2018 19:16, Randolph Maaßen wrote:
-> Am Freitag, den 01.06.2018, 00:16 +0200 schrieb Stefan Agner:
->> Add support for the NAND flash controller found on NVIDIA
->> Tegra 2 SoCs. This implementation does not make use of the
->> command queue feature. Regular operations/data transfers are
->> done in PIO mode. Page read/writes with hardware ECC make
->> use of the DMA for data transfer.
+On Mon, Jun 4, 2018 at 8:26 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Mon, Jun 04, 2018 at 07:55:57PM +0200, Henrik Rydberg wrote:
+>> Hi Dmitry,
 >>
->> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  MAINTAINERS                       |    7 +
->>  drivers/mtd/nand/raw/Kconfig      |    6 +
->>  drivers/mtd/nand/raw/Makefile     |    1 +
->>  drivers/mtd/nand/raw/tegra_nand.c | 1143
->> +++++++++++++++++++++++++++++
->>  4 files changed, 1157 insertions(+)
->>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+>> > > > Logically, the confidence state is a property of a contact, not a new type
+>> > > > of contact. Trying to use it in any other way is bound to lead to confusion.
+>> > > >
+>> > > > Problem is that MT_TOOL_PALM has been introduced in the kernel since
+>> > > > v4.0 (late 2015 by a736775db683 "Input: add MT_TOOL_PALM").
+>> > > > It's been used in the Synaptics RMI4 driver since and by hid-asus in late 2016.
+>> > > > I can't find any other users in the current upstream tree, but those
+>> > > > two are already making a precedent and changing the semantic is a
+>> > > > little bit late :/
+>> > I am sorry I did not respond and lost track of this issue back then, but
+>> > I disagree with Henrik here. While confidence is a property of contact,
+>> > so is the type of contact and it can and will change throughout life of
+>> > a contact, especially if we will continue adding new types, such as, for
+>> > example, thumb. In this case the firmware can transition through
+>> > finger->thumb or finger->thumb->palm or finger->palm as the nature of
+>> > contact becomes better understood. Still it is the same contact and we
+>> > should not attempt to signal userspace differently.
+>> We agree that the contact should stay the same, but the fear, and I think
+>> somewhere along the blurry history of this thread, the problem was that
+>> userspace interpreted the property change as a new contact (lift up/double
+>> click/etc). Finger/thumb/palm is one set of hand properties, but what about
+>> Pen? It would be hard for an application to consider a switch from finger to
+>> pen as the same contact, which is where the natural implementation starts to
+>> diverge from the intention.
+>
+> I think the userspace has to trust our tracking ID to decide whether it
+> is a same contact or not. The current issue is that kernel is forcing
+> tracking ID change on tool type change, and one of the 2 patches that I
+> posted fixed that, allowing us to keep the tracking ID for finger->palm
+> transitions.
+
+I think I missed those 2 patches, can you point a LKML link?
+Also, note that libevdev discards the tracking ID change now (it
+shouts at the user in the logs). So that means that it will now be
+hard to force libevdev to trust the kernel again for the tracking ID.
+The current rule is:
+- tracking ID >= 0 -> new touch
+- any subsequent tracking ID >= 0 -> discarded
+- tracking ID == -1 -> end of touch
+
+>
+> I think it is kernel task to not signal transitions that do not make
+> sense, such as finger->pen or palm->pen etc.
+
+I fully agree, though there is currently no such guard in the kernel
+(maybe it's part of your series). I am worried about the RMI4 F12
+driver that automatically forward the info from the firmware, so if
+the firmware does something crazy, it will be exported to user space.
+But I guess it might be better to treat that on a per driver basis.
+
+>
 >>
-[...]
->> +static int tegra_nand_chips_init(struct device *dev,
->> +				 struct tegra_nand_controller *ctrl)
->> +{
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *np_nand;
->> +	int nchips = of_get_child_count(np);
->> +	struct tegra_nand_chip *nand;
->> +	struct mtd_info *mtd;
->> +	struct nand_chip *chip;
->> +	unsigned long config, bch_config = 0;
->> +	int bits_per_step;
->> +	int ret;
->> +
->> +	if (nchips != 1) {
->> +		dev_err(dev, "Currently only one NAND chip
->> supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	np_nand = of_get_next_child(np, NULL);
->> +
->> +	nand = devm_kzalloc(dev, sizeof(*nand), GFP_KERNEL);
->> +	if (!nand)
->> +		return -ENOMEM;
->> +
->> +	nand->wp_gpio = devm_gpiod_get_optional(dev, "wp",
->> GPIOD_OUT_LOW);
->> +
->> +	if (IS_ERR(nand->wp_gpio)) {
->> +		ret = PTR_ERR(nand->wp_gpio);
->> +		dev_err(dev, "Failed to request WP GPIO: %d\n",
->> ret);
->> +		return ret;
->> +	}
->> +
->> +	chip = &nand->chip;
->> +	chip->controller = &ctrl->controller;
->> +
->> +	mtd = nand_to_mtd(chip);
->> +
->> +	mtd->dev.parent = dev;
->> +	if (!mtd->name)
->> +		mtd->name = "tegra_nand";
->> +	mtd->owner = THIS_MODULE;
->> +
->> +	nand_set_flash_node(chip, np_nand);
-> 
-> Hi,
-> i just tried this driver and it works great so far, thanks.
-> I just found, that assigning the of node after setting the mtd->name
-> makes it impossible to assign a name via devicetree label. I have read
-> the discussion about the label on this list, so I'm curious if this is
-> intentional? Setting mtd->name after nand_set_flash_node() enables the
-> label parameter.
-> 
+>> > We could introduce the ABS_MT_CONFIDENCE (0/1 or even 0..n range), to
+>> > complement ABS_MT_TOOL, but that would not really solve the issue with
+>> > Wacom firmware (declaring contact non-confident and releasing it right
+>> > away) and given MS explanation of the confidence as "contact is too big"
+>> > MT_TOOL_PALM fits it perfectly.
+>> Indeed, the Wacom firmware seems to need some special handling, which should
+>> be fine by everyone. I do think it would make sense to add
+>> ABS_MT_TOOL_TOO_BIG, or something, and use it if it exists. This would apply
 
-Hm, good catch. No that was not intentional. The name indeed should be
-assigned after the call to nand_set_flash_node. Will fix this in the
-next revision.
+Except we are already running out of ABS_* axes.
 
->> +
->> +	chip->options = NAND_NO_SUBPAGE_WRITE |
->> NAND_USE_BOUNCE_BUFFER;
->> +	chip->exec_op = tegra_nand_exec_op;
->> +	chip->select_chip = tegra_nand_select_chip;
->> +	chip->setup_data_interface =
->> tegra_nand_setup_data_interface;
->> +
->> +	ret = nand_scan_ident(mtd, 1, NULL);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (chip->bbt_options & NAND_BBT_USE_FLASH)
->> +		chip->bbt_options |= NAND_BBT_NO_OOB;
->> +
->> +	chip->ecc.mode = NAND_ECC_HW;
->> +	chip->ecc.size = 512;
->> +	chip->ecc.steps = mtd->writesize / chip->ecc.size;
->> +	if (chip->ecc_step_ds != 512) {
->> +		dev_err(dev, "Unsupported step size %d\n", chip-
->> >ecc_step_ds);
->> +		return -EINVAL;
->> +	}
->> +
->> +	chip->ecc.read_page = tegra_nand_read_page_hwecc;
->> +	chip->ecc.write_page = tegra_nand_write_page_hwecc;
->> +
->> +	config = readl_relaxed(ctrl->regs + CFG);
->> +	config |= CFG_PIPE_EN | CFG_SKIP_SPARE |
->> CFG_SKIP_SPARE_SIZE_4;
->> +
->> +	if (chip->options & NAND_BUSWIDTH_16)
->> +		config |= CFG_BUS_WIDTH_16;
->> +
->> +	if (chip->ecc.algo == NAND_ECC_UNKNOWN) {
->> +		if (mtd->writesize < 2048)
->> +			chip->ecc.algo = NAND_ECC_RS;
->> +		else
->> +			chip->ecc.algo = NAND_ECC_BCH;
->> +	}
->> +
->> +	if (chip->ecc.algo == NAND_ECC_BCH && mtd->writesize < 2048)
->> {
->> +		dev_err(dev, "BCH supportes 2K or 4K page size
->> only\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (!chip->ecc.strength) {
->> +		ret = tegra_nand_select_strength(chip, mtd-
->> >oobsize);
->> +		if (ret < 0) {
->> +			dev_err(dev, "No valid strenght found,
->> minimum %d\n",
->> +				chip->ecc_strength_ds);
->> +			return ret;
->> +		}
->> +
->> +		chip->ecc.strength = ret;
->> +	}
->> +
->> +	switch (chip->ecc.algo) {
->> +	case NAND_ECC_RS:
->> +		bits_per_step = BITS_PER_STEP_RS * chip-
->> >ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_rs_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_4;
->> +			break;
->> +		case 6:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_6;
->> +			break;
->> +		case 8:
->> +			config |= CFG_ECC_SEL | CFG_TVAL_8;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not
->> supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	case NAND_ECC_BCH:
->> +		bits_per_step = BITS_PER_STEP_BCH * chip-
->> >ecc.strength;
->> +		mtd_set_ooblayout(mtd, &tegra_nand_oob_bch_ops);
->> +		switch (chip->ecc.strength) {
->> +		case 4:
->> +			bch_config = BCH_TVAL_4;
->> +			break;
->> +		case 8:
->> +			bch_config = BCH_TVAL_8;
->> +			break;
->> +		case 14:
->> +			bch_config = BCH_TVAL_14;
->> +			break;
->> +		case 16:
->> +			bch_config = BCH_TVAL_16;
->> +			break;
->> +		default:
->> +			dev_err(dev, "ECC strength %d not
->> supported\n",
->> +				chip->ecc.strength);
->> +			return -EINVAL;
->> +		}
->> +		break;
->> +	default:
->> +		dev_err(dev, "ECC algorithm not supported\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	dev_info(dev, "Using %s with strength %d per 512 byte
->> step\n",
->> +			chip->ecc.algo == NAND_ECC_BCH ? "BCH" :
->> "RS",
->> +			chip->ecc.strength);
->> +
->> +	chip->ecc.bytes = DIV_ROUND_UP(bits_per_step,
->> BITS_PER_BYTE);
->> +
->> +	switch (mtd->writesize) {
->> +	case 256:
->> +		config |= CFG_PS_256;
->> +		break;
->> +	case 512:
->> +		config |= CFG_PS_512;
->> +		break;
->> +	case 1024:
->> +		config |= CFG_PS_1024;
->> +		break;
->> +	case 2048:
->> +		config |= CFG_PS_2048;
->> +		break;
->> +	case 4096:
->> +		config |= CFG_PS_4096;
->> +		break;
->> +	default:
->> +		dev_err(dev, "Unsupported writesize %d\n", mtd-
->> >writesize);
->> +		return -ENODEV;
->> +	}
->> +
->> +	writel_relaxed(config, ctrl->regs + CFG);
->> +	writel_relaxed(bch_config, ctrl->regs + BCH_CONFIG);
->> +
->> +	ret = nand_scan_tail(mtd);
->> +	if (ret)
->> +		return ret;
->> +
->> +	mtd_ooblayout_free(mtd, 0, &nand->tag);
->> +
->> +	config |= CFG_TAG_BYTE_SIZE(nand->tag.length - 1);
->> +	writel_relaxed(config, ctrl->regs + CFG);
->> +
->> +	ret = mtd_device_register(mtd, NULL, 0);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to register mtd device: %d\n",
->> ret);
->> +		nand_cleanup(chip);
->> +		return ret;
->> +	}
->> +
->> +	ctrl->chip = chip;
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_nand_probe(struct platform_device *pdev)
->> +{
->> +	struct reset_control *rst;
->> +	struct tegra_nand_controller *ctrl;
->> +	struct resource *res;
->> +	unsigned long reg;
->> +	int irq, err = 0;
->> +
->> +	ctrl = devm_kzalloc(&pdev->dev, sizeof(*ctrl), GFP_KERNEL);
->> +	if (!ctrl)
->> +		return -ENOMEM;
->> +
->> +	ctrl->dev = &pdev->dev;
->> +	nand_hw_control_init(&ctrl->controller);
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	ctrl->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(ctrl->regs))
->> +		return PTR_ERR(ctrl->regs);
->> +
->> +	rst = devm_reset_control_get(&pdev->dev, "nand");
->> +	if (IS_ERR(rst))
->> +		return PTR_ERR(rst);
->> +
->> +	ctrl->clk = devm_clk_get(&pdev->dev, "nand");
->> +	if (IS_ERR(ctrl->clk))
->> +		return PTR_ERR(ctrl->clk);
->> +
->> +	err = clk_prepare_enable(ctrl->clk);
->> +	if (err)
->> +		return err;
->> +
->> +	err = reset_control_reset(rst);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	reg = HWSTATUS_RDSTATUS_MASK(1) | HWSTATUS_RDSTATUS_VALUE(0)
->> |
->> +		HWSTATUS_RBSY_MASK(NAND_STATUS_READY) |
->> +		HWSTATUS_RBSY_VALUE(NAND_STATUS_READY);
->> +	writel_relaxed(NAND_CMD_STATUS, ctrl->regs + HWSTATUS_CMD);
->> +	writel_relaxed(reg, ctrl->regs + HWSTATUS_MASK);
->> +
->> +	init_completion(&ctrl->command_complete);
->> +	init_completion(&ctrl->dma_complete);
->> +
->> +	/* clear interrupts */
->> +	reg = readl_relaxed(ctrl->regs + ISR);
->> +	writel_relaxed(reg, ctrl->regs + ISR);
->> +
->> +	irq = platform_get_irq(pdev, 0);
->> +	err = devm_request_irq(&pdev->dev, irq, tegra_nand_irq, 0,
->> +			       dev_name(&pdev->dev), ctrl);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	writel_relaxed(DMA_CTRL_IS_DONE, ctrl->regs + DMA_CTRL);
->> +
->> +	/* enable interrupts */
->> +	reg = IER_UND | IER_OVR | IER_CMD_DONE | IER_GIE;
->> +	writel_relaxed(reg, ctrl->regs + IER);
->> +
->> +	/* reset config */
->> +	writel_relaxed(0, ctrl->regs + CFG);
->> +
->> +	err = tegra_nand_chips_init(ctrl->dev, ctrl);
->> +	if (err)
->> +		goto err_disable_clk;
->> +
->> +	platform_set_drvdata(pdev, ctrl);
->> +
->> +	return 0;
->> +
->> +err_disable_clk:
->> +	clk_disable_unprepare(ctrl->clk);
->> +	return err;
->> +}
->> +
->> +static int tegra_nand_remove(struct platform_device *pdev)
->> +{
->> +	struct tegra_nand_controller *ctrl =
->> platform_get_drvdata(pdev);
->> +
->> +	nand_release(nand_to_mtd(ctrl->chip));
->> +
->> +	clk_disable_unprepare(ctrl->clk);
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct of_device_id tegra_nand_of_match[] = {
->> +	{ .compatible = "nvidia,tegra20-nand" },
->> +	{ /* sentinel */ }
->> +};
->> +
->> +static struct platform_driver tegra_nand_driver = {
->> +	.driver = {
->> +		.name = "tegra-nand",
->> +		.of_match_table = tegra_nand_of_match,
->> +	},
->> +	.probe = tegra_nand_probe,
->> +	.remove = tegra_nand_remove,
->> +};
->> +module_platform_driver(tegra_nand_driver);
->> +
->> +MODULE_DESCRIPTION("NVIDIA Tegra NAND driver");
->> +MODULE_AUTHOR("Thierry Reding <thierry.reding@nvidia.com>");
->> +MODULE_AUTHOR("Lucas Stach <dev@lynxeye.de>");
->> +MODULE_AUTHOR("Stefan Agner <stefan@agner.ch>");
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_DEVICE_TABLE(of, tegra_nand_of_match);
-> 
-> Sorry for any noise/mistake, I'm new to kernel development
+>> also to a pen lying down on a touchpad, for instance.
+>
+> OK, I can see that for Pens, if we have firmware that would recognize
+> such condition, it would be weird to report PALM. We could indeed have
+> ABS_MT_TOOL_TOO_BIG, but on the other hand it is still a pen (as long as
+> the hardware can recognize it as such). Maybe we'd be better off just
+> having userspace going by contact size for pens. Peter, any suggestions
+> here?
 
-That was constructive feedback! Thanks for pointing out!
+I don't think we have size handling in the tablet implementation in
+libinput. I do not see it as a big issue to add such axes from a
+libinput point of view. However, there is no existing hardware that
+would provide such information, so I guess this will be a 'no' until
+actual hardware comes in.
 
---
-Stefan
+Also note that the MT_TOOL_PEN implementation is limited (even
+non-existant if I remember correctly). Peter and I do not have access
+to any device that support such multi pen, so AFAICT, there is no code
+to handle this in libinput.
+
+One last point from libinput, the pen device would need to be on its
+separate kernel node for the protocol to be smoothly handled. So
+basically, even the transition from MT_TOOL_FINGER to MT_TOOL_PEN
+would not be handled properly right now. The Pen event will be treated
+as a touch.
+
+Cheers,
+Benjamin
+
+>
+> Thanks.
+>
+> --
+> Dmitry
