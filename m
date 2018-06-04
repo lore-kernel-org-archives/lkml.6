@@ -1,43 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753098AbeFDM6P (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:58:15 -0400
-Received: from mga18.intel.com ([134.134.136.126]:38826 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752946AbeFDM6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:58:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="46607121"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, Wang Nan <wangnan0@huawei.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] perf tools: Fix symbol and object code resolution for vdso32 and vdsox32
-Date: Mon,  4 Jun 2018 15:56:52 +0300
-Message-Id: <1528117014-30032-1-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1753218AbeFDM7w (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:59:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54912 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752066AbeFDM7u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:59:50 -0400
+Date: Mon, 4 Jun 2018 05:59:40 -0700
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180604122336.GS12217@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180604122336.GS12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18060412-4275-0000-0000-000002896CFE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060412-4276-0000-0000-000037908267
+Message-Id: <20180604125939.GB38574@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040154
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+* Peter Zijlstra <peterz@infradead.org> [2018-06-04 14:23:36]:
 
-Here are a couple of small fixes for tracing 32-bit binaries on a 64-bit
-kernel.
+> OK, the above matches the description, but I'm puzzled by the remainder:
+>
+> >
+> > -		if (ng->active_nodes > 1 && numa_is_active_node(env.dst_nid, ng))
+> > -			sched_setnuma(p, env.dst_nid);
+> > +		if (nid != p->numa_preferred_nid)
+> > +			sched_setnuma(p, nid);
+> >  	}
+>
+> That seems to entirely loose the active_node thing, or are you saying
+> best_cpu already includes that? (Changelog could use a little help there
+> I suppose)
 
+I think checking for active_nodes before calling sched_setnuma was a
+mistake.
 
-Adrian Hunter (2):
-      perf tests kmod-path: Add tests for vdso32 and vdsox32
-      perf tools: Fix symbol and object code resolution for vdso32 and vdsox32
-
- tools/perf/tests/kmod-path.c | 16 ++++++++++++++++
- tools/perf/util/dso.c        |  2 ++
- 2 files changed, 18 insertions(+)
-
-
-Regards
-Adrian
+Before this change, we may be retaining numa_preferred_nid to be the
+source node while we select another node with better numa affinity to
+run on. So we are creating a situation where we force a thread to run on
+a node which is not going to be its preferred_node. So in the course of
+regular load balancing, this task might then be moved to set
+preferred_node which is actually not the preferred_node.
