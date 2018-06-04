@@ -1,74 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753595AbeFDO5U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:57:20 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:50978 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751473AbeFDO5T (ORCPT
+        id S1753666AbeFDO6l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:58:41 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:54494 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753297AbeFDO6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:57:19 -0400
-Message-ID: <1528124238.7898.106.camel@surriel.com>
-Subject: Re: [PATCH 03/19] sched/numa: Simplify load_too_imbalanced
-From: Rik van Riel <riel@surriel.com>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date: Mon, 04 Jun 2018 10:57:18 -0400
-In-Reply-To: <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-         <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-solBE/0ZvhJA4if6sX6C"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Mon, 4 Jun 2018 10:58:39 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH 0/8] serial: 8250: Add 485 emulation to 8250_dw.
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
+        Ed Blake <ed.blake@sondrel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
+        Vignesh R <vigneshr@ti.com>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
+        Aaron Sierra <asierra@xes-inc.com>,
+        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
+        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
+ <65c26f5db1275e958cfe6390e9336568b0158dea.camel@linux.intel.com>
+ <CAJs94EZEEBNZRU3ixkdG9w44xsQDi7MUYAya2dzkAErT=xwqVA@mail.gmail.com>
+ <c14c671c-3240-0170-7c0e-2b195c5b1398@micronovasrl.com>
+ <7bdb658727b364e275c121a3bdd351f183d56cb9.camel@linux.intel.com>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <ec7fc614-63a4-9dcd-c83c-00628f8af2b1@micronovasrl.com>
+Date: Mon, 4 Jun 2018 16:58:34 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <7bdb658727b364e275c121a3bdd351f183d56cb9.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-solBE/0ZvhJA4if6sX6C
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Il 04/06/2018 13:44, Andy Shevchenko ha scritto:
+> On Mon, 2018-06-04 at 12:42 +0200, Giulio Benetti wrote:
+> 
+>>>> I don't see in Cc list author of rs485 code, who might be
+>>>> interested in
+>>>> this.
+>>>>
+>>>> So, added him here.
+>>
+>> Thanks Andy for adding in Cc an reviewing.
+>> Dumb question: how did you find him?
+> 
+> I'm just following mailing lists somehow.
+> Though you always can do `git annotate` to see who lately did change
+> what.
+> 
+>> I thought he was between people on get_maintainer.pl output.
+> 
+> Hmm... probably. Never checked myself for this particular case.
+> 
 
-On Mon, 2018-06-04 at 15:30 +0530, Srikar Dronamraju wrote:
-> Currently load_too_imbalance() cares about the slope of imbalance.
-> It doesn't care of the direction of the imbalance.
->=20
-> However this may not work if nodes that are being compared have
-> dissimilar capacities. Few nodes might have more cores than other
-> nodes
-> in the system. Also unlike traditional load balance at a NUMA sched
-> domain, multiple requests to migrate from the same source node to
-> same
-> destination node may run in parallel. This can cause huge load
-> imbalance. This is specially true on a larger machines with either
-> large
-> cores per node or more number of nodes in the system. Hence allow
-> move/swap only if the imbalance is going to reduce.
+Ok, thank you.
 
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+-- 
+Giulio Benetti
+CTO
 
-Reviewed-by: Rik van Riel <riel@surriel.com>
-
---=20
-All Rights Reversed.
---=-solBE/0ZvhJA4if6sX6C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVU04ACgkQznnekoTE
-3oNSDAgApd4DNcPeeQL7l42ZqQcPYgiCFvaSlzr8bHWc9COVNw4EAbxrogTFxlK7
-MjA/1psoN7inf0PkUf9R5N16QI2mbNiAA6B5hKgUQHdnVKsrhUPLA3Fv/uM1D8hd
-wOWNQCTzhkp+nkgFhxu1VhrpKrSrkg1sUliOj0I5MMC5daAhzZ6K4EMsj1VCxDkw
-9bM5tg28R7kfFgW/xEi18wEkfexZxg8WYYcL60PpGceI+eDzm9pmziyi19zh2o2x
-M6/cOslctQS+27J0CM5bMlMMmEDWQwKoGXZJ/rPduHLUKVYlI37t/xNWpe7CDdo5
-CCX9+rmg+sb5wSl8EtQUnf1/IERw6Q==
-=LBNN
------END PGP SIGNATURE-----
-
---=-solBE/0ZvhJA4if6sX6C--
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
