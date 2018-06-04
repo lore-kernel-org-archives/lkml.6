@@ -1,97 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751219AbeFDQ1q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:27:46 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40683 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751209AbeFDQ1l (ORCPT
+        id S1751603AbeFDQ2D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:28:03 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:53480 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeFDQ1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:27:41 -0400
-Message-Id: <20180604162224.386544292@linutronix.de>
-User-Agent: quilt/0.65
-Date: Mon, 04 Jun 2018 17:33:54 +0200
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Dmitry Safonov <0x7f454c46@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
-        Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>,
-        stable@vger.kernel.org
-Subject: [patch 2/8] genirq/generic_pending: Do not lose pending affinity
- update
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline;
- filename=genirq-generic_pending--Do-not-lose-pending-affinity-update.patch
+        Mon, 4 Jun 2018 12:27:46 -0400
+Message-ID: <1528129663.7898.107.camel@surriel.com>
+Subject: Re: [PATCH 07/19] sched/numa: Skip nodes that are at hoplimit
+From: Rik van Riel <riel@surriel.com>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 04 Jun 2018 12:27:43 -0400
+In-Reply-To: <1528106428-19992-8-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+         <1528106428-19992-8-git-send-email-srikar@linux.vnet.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-nfVV5vLjtX6glTRLtVcP"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic pending interrupt mechanism moves interrupts from the interrupt
-handler on the original target CPU to the new destination CPU. This is
-required for x86 and ia64 due to the way the interrupt delivery and
-acknowledge works if the interrupts are not remapped.
 
-However that update can fail for various reasons. Some of them are valid
-reasons to discard the pending update, but the case, when the previous move
-has not been fully cleaned up is not a legit reason to fail.
+--=-nfVV5vLjtX6glTRLtVcP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Check the return value of irq_do_set_affinity() for -EBUSY, which indicates
-a pending cleanup, and rearm the pending move in the irq dexcriptor so it's
-tried again when the next interrupt arrives.
+On Mon, 2018-06-04 at 15:30 +0530, Srikar Dronamraju wrote:
+> When comparing two nodes at a distance of hoplimit, we should
+> consider
+> nodes only upto hoplimit. Currently we also consider nodes at
+> hoplimit
+> distance too. Hence two nodes at a distance of "hoplimit" will have
+> same
+> groupweight. Fix this by skipping nodes at hoplimit.
 
-Fixes: 996c591227d9 ("x86/irq: Plug vector cleanup race")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
----
- kernel/irq/migration.c |   24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+> While there is a regression with this change, this change is needed
+> from a
+> correctness perspective. Also it helps consolidation as seen from
+> perf bench
+> output.
+>=20
+> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
---- a/kernel/irq/migration.c
-+++ b/kernel/irq/migration.c
-@@ -38,17 +38,18 @@ bool irq_fixup_move_pending(struct irq_d
- void irq_move_masked_irq(struct irq_data *idata)
- {
- 	struct irq_desc *desc = irq_data_to_desc(idata);
--	struct irq_chip *chip = desc->irq_data.chip;
-+	struct irq_data *data = &desc->irq_data;
-+	struct irq_chip *chip = data->chip;
- 
--	if (likely(!irqd_is_setaffinity_pending(&desc->irq_data)))
-+	if (likely(!irqd_is_setaffinity_pending(data)))
- 		return;
- 
--	irqd_clr_move_pending(&desc->irq_data);
-+	irqd_clr_move_pending(data);
- 
- 	/*
- 	 * Paranoia: cpu-local interrupts shouldn't be calling in here anyway.
- 	 */
--	if (irqd_is_per_cpu(&desc->irq_data)) {
-+	if (irqd_is_per_cpu(data)) {
- 		WARN_ON(1);
- 		return;
- 	}
-@@ -73,9 +74,20 @@ void irq_move_masked_irq(struct irq_data
- 	 * For correct operation this depends on the caller
- 	 * masking the irqs.
- 	 */
--	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids)
--		irq_do_set_affinity(&desc->irq_data, desc->pending_mask, false);
-+	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids) {
-+		int ret;
- 
-+		ret = irq_do_set_affinity(data, desc->pending_mask, false);
-+		/*
-+		 * If the there is a cleanup pending in the underlying
-+		 * vector management, reschedule the move for the next
-+		 * interrupt. Leave desc->pending_mask intact.
-+		 */
-+		if (ret == -EBUSY) {
-+			irqd_set_move_pending(data);
-+			return;
-+		}
-+	}
- 	cpumask_clear(desc->pending_mask);
- }
- 
+Good catch.
+
+Reviewed-by: Rik van Riel <riel@surriel.com>
+
+--=20
+All Rights Reversed.
+--=-nfVV5vLjtX6glTRLtVcP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVaH8ACgkQznnekoTE
+3oMsEwgAnVvSPnvsokDx3a1zFlxXi0PzOOAsvvwEn2pqzKrHYr0/jgjBmS8CvC0J
+5/6dYnGlAO456zYm45JntmLvPbEMz9BLTX/VKN0EdQzQ7gfQLbfcL4F9fX4Tt9t7
+Vw66GPlwtqss99F5VX3ppbwxUXUtdAWnoUGlgwhl0OxOMlPjDmLmWmk/cISpK2d3
+IZcownXLkcvCMnG0xs/fnQSo4cRpXVHEFjlxuZfqTemURdVoyMl6BwFOKcNzeCtZ
+26nOBbeUNgry6oDyo9at5UuFYIvnUW+B5tjNico5iagCpQd6xr5NacqaaZDrKBdt
+3aypcIEU8jFTVzbIRKiyGnoxV5UYKw==
+=8bQt
+-----END PGP SIGNATURE-----
+
+--=-nfVV5vLjtX6glTRLtVcP--
