@@ -1,33 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753754AbeFDORq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:17:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:39217 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753210AbeFDOKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:10:37 -0400
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 169f438a7e369226a452e0ac4a54dbdf85e31943
-In-Reply-To: <20180417123646.066056C09D@po15720vm.idsi0.si.c-s.fr>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: powerpc/boot: remove unused variable in mpc8xx
-Message-Id: <40zxff260Sz9s1w@ozlabs.org>
-Date: Tue,  5 Jun 2018 00:10:34 +1000 (AEST)
+        id S1753891AbeFDORx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:17:53 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:57632 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1753669AbeFDORs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:17:48 -0400
+Date: Mon, 4 Jun 2018 10:17:47 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        <andrea.parri@amarulasolutions.com>, Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nick Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        Roman Pen <roman.penyaev@profitbricks.com>
+Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
+In-Reply-To: <20180602144440.GI3593@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1806041014250.1380-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-17 at 12:36:45 UTC, Christophe Leroy wrote:
-> Variable div is set but never used. Remove it.
+On Sat, 2 Jun 2018, Paul E. McKenney wrote:
+
+> One crude but effective workaround is to replicate the code following the
+> "if" statement into both legs of the "if" statement.  This has the effect
+> of extending the control dependency to cover all of the code that used to
+> follow the "if" statement, leveraging herd's current limited knowledge of
+> compiler optimization.  This workaround would of course be hopeless for
+> general Linux-kernel code, but should be at least semi-acceptable for the
+> very small snippets of code that can be accommodated within litmus tests.
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Please see the litmus test shown below, which uses this workaround,
+> allowing the smp_store_release() to be downgraded to WRITE_ONCE().
+> 
+> Given this workaround, crude though it might be, I believe that we can
+> take a more measured approach to identifying a longer-term solution.
+> 
+> Thoughts?
 
-Applied to powerpc next, thanks.
+Yes, this works, although it is clearly just a stopgap.  And obviously
+it can't be applied in situations where one of the legs of the "if"  
+statement contains a non-trivial branch.
 
-https://git.kernel.org/powerpc/c/169f438a7e369226a452e0ac4a54db
+In the long run, I don't think this problem is solvable.  At least, not 
+for all cases.  It requires too much guesswork about what optimizations 
+a compiler might do.
 
-cheers
+Alan
