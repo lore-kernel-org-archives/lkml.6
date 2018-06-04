@@ -1,58 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeFDQ6v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:58:51 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:55606 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751313AbeFDQ6s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:58:48 -0400
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="14912376"
-From: Radu Pirea <radu.pirea@microchip.com>
-To: <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC: <linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v5 4/6] MAINTAINERS: add at91 usart spi driver
-Date: Mon, 4 Jun 2018 19:59:41 +0300
-Message-ID: <20180604165943.31381-5-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604165943.31381-1-radu.pirea@microchip.com>
-References: <20180604165943.31381-1-radu.pirea@microchip.com>
+        id S1751844AbeFDQ7p (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:59:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42638 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751582AbeFDQ6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 12:58:50 -0400
+Date: Mon, 4 Jun 2018 18:58:25 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
+Message-ID: <20180604165825.GB2004@kroah.com>
+References: <20180604065802.157744637@linuxfoundation.org>
+ <20180604161649.GA16269@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604161649.GA16269@roeck-us.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added entry for at91 usart mfd driver.
+On Mon, Jun 04, 2018 at 09:16:49AM -0700, Guenter Roeck wrote:
+> On Mon, Jun 04, 2018 at 08:57:56AM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.106 release.
+> > There are 29 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> 
+> For v4.9.105-30-ge0f8632 (4.9.106-rc1-00030-ge0f8632):
+> 
+> Build results:
+> 	total: 148 pass: 148 fail: 0
+> Qemu test results:
+> 	total: 139 pass: 137 fail: 2
+> Failed tests: 
+> 	mips64:malta_defconfig:nosmp
+> 	mips64:malta_defconfig:smp
+> 
+> Qemu tests fail with:
+> 
+> This architecture does not have kernel memory protection.
+> random: fast init done
+> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
+> 
+> ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
+> 
+> While tracking this down, I found commit 4e4636cf981b ("objtool: Enclose
+> contents of unreachable() macro in a block"), which says "... Guenter Roeck
+> reported a boot failure in mips64 ...". Go figure. Applying commit
+> 4e4636cf981b on top of v4.9.106-rc1 indeed fixes the problem.
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thanks, I'll go queue that up now.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 12203d07c6af..dae31df711fb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9201,6 +9201,13 @@ F:	drivers/mfd/at91-usart.c
- F:	include/dt-bindings/mfd/at91-usart.h
- F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
- 
-+MICROCHIP AT91 USART SPI DRIVER
-+M:	Radu Pirea <radu.pirea@microchip.com>
-+L:	linux-spi@vger.kernel.org
-+S:	Supported
-+F:	drivers/spi/spi-at91-usart.c
-+F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
-+
- MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER
- M:	Woojung Huh <Woojung.Huh@microchip.com>
- M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
--- 
-2.17.1
+greg k-h
