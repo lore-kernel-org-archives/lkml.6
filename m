@@ -1,200 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeFDSgd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 14:36:33 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2727 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751058AbeFDSg3 (ORCPT
+        id S1751290AbeFDSgb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 14:36:31 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:51805 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750759AbeFDSg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 14:36:29 -0400
+        Mon, 4 Jun 2018 14:36:27 -0400
 From: Nadav Amit <namit@vmware.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: Nadav Amit <namit@vmware.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+CC: Nadav Amit <namit@vmware.com>, Alok Kataria <akataria@vmware.com>,
+        Christopher Li <sparse@chrisli.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jan Beulich <JBeulich@suse.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>, <linux-sparse@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v2 5/9] x86: bug: prevent gcc distortions
-Date: Mon, 4 Jun 2018 04:21:27 -0700
-Message-ID: <20180604112131.59100-6-namit@vmware.com>
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <virtualization@lists.linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v2 0/9] x86: macrofying inline asm for better compilation
+Date: Mon, 4 Jun 2018 04:21:22 -0700
+Message-ID: <20180604112131.59100-1-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180604112131.59100-1-namit@vmware.com>
-References: <20180604112131.59100-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+This patch-set deals with an interesting yet stupid problem: kernel code
+that does not get inlined despite its simplicity. There are several
+causes for this behavior: "cold" attribute on __init, different function
+optimization levels; conditional constant computations based on
+__builtin_constant_p(); and finally large inline assembly blocks.
 
-The solution is to set an assembly macro and call it from the inlinedv
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
+This patch-set deals with the inline assembly problem. I separated these
+patches from the others (that were sent in the RFC) for easier
+inclusion. I also separated the removal of unnecessary new-lines which
+would be sent separately.
 
-This patch increases the kernel size:
+The problem with inline assembly is that inline assembly is often used
+by the kernel for things that are other than code - for example,
+assembly directives and data. GCC however is oblivious to the content of
+the blocks and assumes their cost in space and time is proportional to
+the number of the perceived assembly "instruction", according to the
+number of newlines and semicolons. Alternatives, paravirt and other
+mechanisms are affected, causing code not to be inlined, and degrading
+compilation quality in general.
+
+The solution that this patch-set carries for this problem is to create
+an assembly macro, and then call it from the inline assembly block.  As
+a result, the compiler sees a single "instruction" and assigns the more
+appropriate cost to the code.
+
+To avoid uglification of the code, as many noted, the macros are first
+precompiled into an assembly file, which is later assembled together
+with the the C files. This also enables to avoid duplicate
+implementation that was set before for the asm and C code. This can be
+seen in the exception table changes.
+
+Overall this patch-set slightly increases the kernel size (my build was
+done using my Ubuntu 18.04 config + localyesconfig for the record):
 
    text	   data	    bss	    dec	    hex	filename
-18146889 10225380 2957312 31329581 1de0d2d ./vmlinux before
-18147336 10226688 2957312 31331336 1de1408 ./vmlinux after (+1755)
+18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
+18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
 
-But enables more aggressive inlining (and probably branch decisions).
-The number of static text symbols in vmlinux is lower.
+The number of static functions in the image is reduced by 379, but
+actually inlining is even better, which does not always shows in these
+numbers: a function may be inlined causing the calling function not to
+be inlined.
 
-Static text symbols:
-Before:	40218
-After:	40053	(-165)
+The Makefile stuff may not be too clean. Ideas for improvements are
+welcome.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
+v1->v2:	* Compiling the macros into a separate .s file, improving
+	  readability (Linus)
+	* Improving assembly formatting, applying most of the comments
+	  according to my judgment (Jan)
+	* Adding exception-table, cpufeature and jump-labels
+	* Removing new-line cleanup; to be submitted separately
+
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: Christopher Li <sparse@chrisli.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jan Beulich <JBeulich@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: linux-sparse@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: virtualization@lists.linux-foundation.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86@kernel.org
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/bug.h | 98 ++++++++++++++++++++++----------------
- arch/x86/kernel/macros.S   |  1 +
- 2 files changed, 57 insertions(+), 42 deletions(-)
+Nadav Amit (9):
+  Makefile: Prepare for using macros for inline asm
+  x86: objtool: use asm macro for better compiler decisions
+  x86: refcount: prevent gcc distortions
+  x86: alternatives: macrofy locks for better inlining
+  x86: bug: prevent gcc distortions
+  x86: prevent inline distortion by paravirt ops
+  x86: extable: use macros instead of inline assembly
+  x86: cpufeature: use macros instead of inline assembly
+  x86: jump-labels: use macros instead of inline assembly
 
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 6804d6642767..5090035e6d16 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -4,6 +4,8 @@
- 
- #include <linux/stringify.h>
- 
-+#ifndef __ASSEMBLY__
-+
- /*
-  * Despite that some emulators terminate on UD2, we use it for WARN().
-  *
-@@ -20,53 +22,15 @@
- 
- #define LEN_UD2		2
- 
--#ifdef CONFIG_GENERIC_BUG
--
--#ifdef CONFIG_X86_32
--# define __BUG_REL(val)	".long " __stringify(val)
--#else
--# define __BUG_REL(val)	".long " __stringify(val) " - 2b"
--#endif
--
--#ifdef CONFIG_DEBUG_BUGVERBOSE
--
--#define _BUG_FLAGS(ins, flags)						\
--do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
--		     "\t.word %c1"        "\t# bug_entry::line\n"	\
--		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c3\n"					\
--		     ".popsection"					\
--		     : : "i" (__FILE__), "i" (__LINE__),		\
--			 "i" (flags),					\
--			 "i" (sizeof(struct bug_entry)));		\
--} while (0)
--
--#else /* !CONFIG_DEBUG_BUGVERBOSE */
--
- #define _BUG_FLAGS(ins, flags)						\
- do {									\
--	asm volatile("1:\t" ins "\n"					\
--		     ".pushsection __bug_table,\"aw\"\n"		\
--		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
--		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
--		     "\t.org 2b+%c1\n"					\
--		     ".popsection"					\
--		     : : "i" (flags),					\
-+	asm volatile("ASM_BUG ins=\"" ins "\" file=%c0 line=%c1 "	\
-+		     "flags=%c2 size=%c3"				\
-+		     : : "i" (__FILE__), "i" (__LINE__),                \
-+			 "i" (flags),                                   \
- 			 "i" (sizeof(struct bug_entry)));		\
- } while (0)
- 
--#endif /* CONFIG_DEBUG_BUGVERBOSE */
--
--#else
--
--#define _BUG_FLAGS(ins, flags)  asm volatile(ins)
--
--#endif /* CONFIG_GENERIC_BUG */
--
- #define HAVE_ARCH_BUG
- #define BUG()							\
- do {								\
-@@ -82,4 +46,54 @@ do {								\
- 
- #include <asm-generic/bug.h>
- 
-+#else /* __ASSEMBLY__ */
-+
-+#ifdef CONFIG_GENERIC_BUG
-+
-+#ifdef CONFIG_X86_32
-+.macro __BUG_REL val:req
-+	.long \val
-+.endm
-+#else
-+.macro __BUG_REL val:req
-+	.long \val - 2b
-+.endm
-+#endif
-+
-+#ifdef CONFIG_DEBUG_BUGVERBOSE
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+1:	\ins
-+	.pushsection __bug_table,"aw"
-+2:	__BUG_REL val=1b	# bug_entry::bug_addr
-+	__BUG_REL val=\file	# bug_entry::file
-+	.word \line		# bug_entry::line
-+	.word \flags		# bug_entry::flags
-+	.org 2b+\size
-+	.popsection
-+.endm
-+
-+#else /* !CONFIG_DEBUG_BUGVERBOSE */
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+1:	\ins
-+	.pushsection __bug_table,"aw"
-+2:	__BUG_REL val=1b	# bug_entry::bug_addr
-+	.word \flags		# bug_entry::flags
-+	.org 2b+\size
-+	.popsection
-+.endm
-+
-+#endif /* CONFIG_DEBUG_BUGVERBOSE */
-+
-+#else /* CONFIG_GENERIC_BUG */
-+
-+.macro ASM_BUG ins:req file:req line:req flags:req size:req
-+	\ins
-+.endm
-+
-+#endif /* CONFIG_GENERIC_BUG */
-+
-+#endif /* __ASSEMBLY__ */
-+
- #endif /* _ASM_X86_BUG_H */
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 852487a9fc56..66ccb8e823b1 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -9,3 +9,4 @@
- #include <linux/compiler.h>
- #include <asm/refcount.h>
- #include <asm/alternative-asm.h>
-+#include <asm/bug.h>
+ Makefile                               |  9 ++-
+ arch/x86/Makefile                      | 11 ++-
+ arch/x86/include/asm/alternative-asm.h | 20 ++++--
+ arch/x86/include/asm/alternative.h     | 16 +----
+ arch/x86/include/asm/asm.h             | 61 +++++++---------
+ arch/x86/include/asm/bug.h             | 98 +++++++++++++++-----------
+ arch/x86/include/asm/cpufeature.h      | 82 ++++++++++++---------
+ arch/x86/include/asm/jump_label.h      | 65 ++++++++++-------
+ arch/x86/include/asm/paravirt_types.h  | 54 +++++++-------
+ arch/x86/include/asm/refcount.h        | 73 +++++++++++--------
+ arch/x86/kernel/Makefile               |  6 ++
+ arch/x86/kernel/macros.S               | 16 +++++
+ include/linux/compiler.h               | 60 ++++++++++++----
+ scripts/Kbuild.include                 |  4 +-
+ 14 files changed, 346 insertions(+), 229 deletions(-)
+ create mode 100644 arch/x86/kernel/macros.S
+
 -- 
 2.17.0
