@@ -1,187 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752964AbeFDKEW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:04:22 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45264 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752498AbeFDKBE (ORCPT
+        id S1752489AbeFDKBD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:01:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40566 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752387AbeFDKBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:01:04 -0400
-X-Google-Smtp-Source: ADUXVKL0GvZzxLm4hZ41tYInz3Sna1RFXHDIHPEJnNMPEqbOSZej/BD4JOkop5HL7il9hvsKKXGvlw==
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v5 4/4] ARM: dts: imx: add missing compatible and clock properties for EPIT
-Date: Mon,  4 Jun 2018 12:00:35 +0200
-Message-Id: <20180604100035.19558-5-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180604100035.19558-1-peron.clem@gmail.com>
-References: <20180604100035.19558-1-peron.clem@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 4 Jun 2018 06:01:00 -0400
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 03/19] sched/numa: Simplify load_too_imbalanced
+Date: Mon,  4 Jun 2018 15:30:12 +0530
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18060410-0016-0000-0000-000001D7738B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060410-0017-0000-0000-0000322A0342
+Message-Id: <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040123
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Didier <colin.didier@devialet.com>
+Currently load_too_imbalance() cares about the slope of imbalance.
+It doesn't care of the direction of the imbalance.
 
-Add missing compatible and clock properties for EPIT node.
+However this may not work if nodes that are being compared have
+dissimilar capacities. Few nodes might have more cores than other nodes
+in the system. Also unlike traditional load balance at a NUMA sched
+domain, multiple requests to migrate from the same source node to same
+destination node may run in parallel. This can cause huge load
+imbalance. This is specially true on a larger machines with either large
+cores per node or more number of nodes in the system. Hence allow
+move/swap only if the imbalance is going to reduce.
 
-Signed-off-by: Colin Didier <colin.didier@devialet.com>
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Testcase       Time:         Min         Max         Avg      StdDev
+numa01.sh      Real:      516.14      892.41      739.84      151.32
+numa01.sh       Sys:      153.16      192.99      177.70       14.58
+numa01.sh      User:    39821.04    69528.92    57193.87    10989.48
+numa02.sh      Real:       60.91       62.35       61.58        0.63
+numa02.sh       Sys:       16.47       26.16       21.20        3.85
+numa02.sh      User:     5227.58     5309.61     5265.17       31.04
+numa03.sh      Real:      739.07      917.73      795.75       64.45
+numa03.sh       Sys:       94.46      136.08      109.48       14.58
+numa03.sh      User:    57478.56    72014.09    61764.48     5343.69
+numa04.sh      Real:      442.61      715.43      530.31       96.12
+numa04.sh       Sys:      224.90      348.63      285.61       48.83
+numa04.sh      User:    35836.84    47522.47    40235.41     3985.26
+numa05.sh      Real:      386.13      489.17      434.94       43.59
+numa05.sh       Sys:      144.29      438.56      278.80      105.78
+numa05.sh      User:    33255.86    36890.82    34879.31     1641.98
+
+Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
+numa01.sh      Real:      435.78      653.81      534.58       83.20 	 38.39%
+numa01.sh       Sys:      121.93      187.18      145.90       23.47 	 21.79%
+numa01.sh      User:    37082.81    51402.80    43647.60     5409.75 	 31.03%
+numa02.sh      Real:       60.64       61.63       61.19        0.40 	 0.637%
+numa02.sh       Sys:       14.72       25.68       19.06        4.03 	 11.22%
+numa02.sh      User:     5210.95     5266.69     5233.30       20.82 	 0.608%
+numa03.sh      Real:      746.51      808.24      780.36       23.88 	 1.972%
+numa03.sh       Sys:       97.26      108.48      105.07        4.28 	 4.197%
+numa03.sh      User:    58956.30    61397.05    60162.95     1050.82 	 2.661%
+numa04.sh      Real:      465.97      519.27      484.81       19.62 	 9.385%
+numa04.sh       Sys:      304.43      359.08      334.68       20.64 	 -14.6%
+numa04.sh      User:    37544.16    41186.15    39262.44     1314.91 	 2.478%
+numa05.sh      Real:      411.57      457.20      433.29       16.58 	 0.380%
+numa05.sh       Sys:      230.05      435.48      339.95       67.58 	 -17.9%
+numa05.sh      User:    33325.54    36896.31    35637.84     1222.64 	 -2.12%
+
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 ---
- arch/arm/boot/dts/imx25.dtsi   |  8 ++++++--
- arch/arm/boot/dts/imx6qdl.dtsi | 10 ++++++++--
- arch/arm/boot/dts/imx6sl.dtsi  | 14 ++++++++++----
- arch/arm/boot/dts/imx6sx.dtsi  | 10 ++++++++--
- arch/arm/boot/dts/imx6ul.dtsi  | 10 ++++++++--
- 5 files changed, 40 insertions(+), 12 deletions(-)
+ kernel/sched/fair.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
-index cf70df20b19c..15fd4308dad8 100644
---- a/arch/arm/boot/dts/imx25.dtsi
-+++ b/arch/arm/boot/dts/imx25.dtsi
-@@ -396,15 +396,19 @@
- 			};
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 57d1ee8..ea32a66 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1507,28 +1507,12 @@ static bool load_too_imbalanced(long src_load, long dst_load,
+ 	src_capacity = env->src_stats.compute_capacity;
+ 	dst_capacity = env->dst_stats.compute_capacity;
  
- 			epit1: timer@53f94000 {
--				compatible = "fsl,imx25-epit";
-+				compatible = "fsl,imx25-epit", "fsl,imx31-epit";
- 				reg = <0x53f94000 0x4000>;
- 				interrupts = <28>;
-+				clocks = <&clks 83>;
-+				status = "disabled";
- 			};
+-	/* We care about the slope of the imbalance, not the direction. */
+-	if (dst_load < src_load)
+-		swap(dst_load, src_load);
+-
+-	/* Is the difference below the threshold? */
+-	imb = dst_load * src_capacity * 100 -
+-	      src_load * dst_capacity * env->imbalance_pct;
+-	if (imb <= 0)
+-		return false;
++	imb = abs(dst_load * src_capacity - src_load * dst_capacity);
  
- 			epit2: timer@53f98000 {
--				compatible = "fsl,imx25-epit";
-+				compatible = "fsl,imx25-epit", "fsl,imx31-epit";
- 				reg = <0x53f98000 0x4000>;
- 				interrupts = <27>;
-+				clocks = <&clks 84>;
-+				status = "disabled";
- 			};
+-	/*
+-	 * The imbalance is above the allowed threshold.
+-	 * Compare it with the old imbalance.
+-	 */
+ 	orig_src_load = env->src_stats.load;
+ 	orig_dst_load = env->dst_stats.load;
  
- 			gpio4: gpio@53f9c000 {
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index c003e62bf290..65c4ee07454c 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -843,14 +843,20 @@
- 				};
- 			};
+-	if (orig_dst_load < orig_src_load)
+-		swap(orig_dst_load, orig_src_load);
+-
+-	old_imb = orig_dst_load * src_capacity * 100 -
+-		  orig_src_load * dst_capacity * env->imbalance_pct;
++	old_imb = abs(orig_dst_load * src_capacity - orig_src_load * dst_capacity);
  
--			epit1: epit@20d0000 { /* EPIT1 */
-+			epit1: timer@20d0000 {
-+				compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
- 				reg = <0x020d0000 0x4000>;
- 				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6QDL_CLK_EPIT1>;
-+				status = "disabled";
- 			};
- 
--			epit2: epit@20d4000 { /* EPIT2 */
-+			epit2: timer@20d4000 {
-+				compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
- 				reg = <0x020d4000 0x4000>;
- 				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6QDL_CLK_EPIT2>;
-+				status = "disabled";
- 			};
- 
- 			src: src@20d8000 {
-diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
-index ab6a7e2e7e8f..6229bbef7ccc 100644
---- a/arch/arm/boot/dts/imx6sl.dtsi
-+++ b/arch/arm/boot/dts/imx6sl.dtsi
-@@ -671,14 +671,20 @@
- 				};
- 			};
- 
--			epit1: epit@20d0000 {
-+			epit1: timer@20d0000 {
-+				compatible = "fsl,imx6sl-epit", "fsl,imx31-epit";
- 				reg = <0x020d0000 0x4000>;
--				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SL_CLK_EPIT1>;
-+				status = "disabled";
- 			};
- 
--			epit2: epit@20d4000 {
-+			epit2: timer@20d4000 {
-+				compatible = "fsl,imx6sl-epit", "fsl,imx31-epit";
- 				reg = <0x020d4000 0x4000>;
--				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SL_CLK_EPIT2>;
-+				status = "disabled";
- 			};
- 
- 			src: src@20d8000 {
-diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
-index 49c7205b8db8..2b30559d3270 100644
---- a/arch/arm/boot/dts/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/imx6sx.dtsi
-@@ -736,14 +736,20 @@
- 				};
- 			};
- 
--			epit1: epit@20d0000 {
-+			epit1: timer@20d0000 {
-+				compatible = "fsl,imx6sx-epit", "fsl,imx31-epit";
- 				reg = <0x020d0000 0x4000>;
- 				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SX_CLK_EPIT1>;
-+				status = "disabled";
- 			};
- 
--			epit2: epit@20d4000 {
-+			epit2: timer@20d4000 {
-+				compatible = "fsl,imx6sx-epit", "fsl,imx31-epit";
- 				reg = <0x020d4000 0x4000>;
- 				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SX_CLK_EPIT2>;
-+				status = "disabled";
- 			};
- 
- 			src: src@20d8000 {
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 1241972b16ba..d5f765da1ee2 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -658,14 +658,20 @@
- 				};
- 			};
- 
--			epit1: epit@20d0000 {
-+			epit1: timer@20d0000 {
-+				compatible = "fsl,imx6ul-epit", "fsl,imx31-epit";
- 				reg = <0x020d0000 0x4000>;
- 				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_EPIT1>;
-+				status = "disabled";
- 			};
- 
--			epit2: epit@20d4000 {
-+			epit2: timer@20d4000 {
-+				compatible = "fsl,imx6ul-epit", "fsl,imx31-epit";
- 				reg = <0x020d4000 0x4000>;
- 				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_EPIT2>;
-+				status = "disabled";
- 			};
- 
- 			src: src@20d8000 {
+ 	/* Would this change make things worse? */
+ 	return (imb > old_imb);
 -- 
-2.17.0
+1.8.3.1
