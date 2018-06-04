@@ -1,83 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751716AbeFDEtG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 00:49:06 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34022 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750826AbeFDEtF (ORCPT
+        id S1751804AbeFDE6X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 00:58:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47248 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751061AbeFDE6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 00:49:05 -0400
-X-Google-Smtp-Source: ADUXVKIsHbL92qVsjzYw8h84gSiVHZfGNY0nQBXk6OeMO9m6BeLZjn9aO8/m+98dnQovSJqJjcDrKQ==
-Date: Sun, 3 Jun 2018 21:49:02 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Alasdair Kergon <agk@redhat.com>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Colin Cross <ccross@android.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Mike Snitzer <snitzer@redhat.com>, Neil Brown <neilb@suse.com>,
-        Richard Weinberger <richard@nod.at>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>
-Subject: [GIT PULL] rslib updates for v4.18-rc1
-Message-ID: <20180604044902.GA25793@beast>
+        Mon, 4 Jun 2018 00:58:22 -0400
+Date: Mon, 4 Jun 2018 07:58:12 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Cc: akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Subject: Re: [PATCH v7 2/2] Refactor part of the oom report in dump_header
+References: <1527940734-35161-1-git-send-email-ufo19890607@gmail.com>
+ <1527940734-35161-2-git-send-email-ufo19890607@gmail.com>
+ <20180603124941.GA29497@rapoport-lnx>
+ <CAHCio2ifo3SNH9E3GX2=q1a=MNiNnoCu+2a++yX5_xMBheya5g@mail.gmail.com>
+ <CAHCio2in8NXZRanE9MS0VsSZxKaSvTy96TF59hODoNCxuQTz5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCio2in8NXZRanE9MS0VsSZxKaSvTy96TF59hODoNCxuQTz5A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18060404-0028-0000-0000-000002CC5750
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060404-0029-0000-0000-00002382DA2A
+Message-Id: <20180604045812.GA15196@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040061
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, Jun 04, 2018 at 10:41:10AM +0800, 禹舟键 wrote:
+> Hi Tetsuo
+> > Since origin_memcg_name is printed for both memcg OOM and !memcg OOM, it is strange that origin_memcg_name is updated only when memcg != NULL. Have you really tested !memcg OOM case?
+> 
+> if memcg == NULL , origin_memcg_name will also be NULL, so the length
+> of it is 0. origin_memcg_name will be "(null)". I've tested !memcg OOM
+> case with CONFIG_MEMCG and !CONFIG_MEMCG, and found nothing wrong.
+> 
+> Thanks
+> Wind
+> 禹舟键 <ufo19890607@gmail.com> 于2018年6月4日周一 上午9:58写道：
+> >
+> > Hi Mike
+> > > Please keep the brief description of the function actually brief and move the detailed explanation after the parameters description.
+> > Thanks for your advice.
+> >
+> > > The allocation constraint is detected by the dump_header() callers, why not just use it here?
+> > David suggest that constraint need to be printed in the oom report, so
+> > I add the enum variable in this function.
 
-Please pull these rslib changes for v4.18-rc1. Thomas asked me to carry
-this series since I've been coordinating VLA removal, and he's got enough
-trees to worry about. :) This has been in -next for a while now.
+My question was why do you call to alloc_constrained in the dump_header()
+function rather than pass the constraint that was detected a bit earlier to
+that function? 
 
-Thanks!
+Sorry if wasn't clear enough.
 
--Kees
-
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
-
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/rslib-v4.18-rc1
-
-for you to fetch changes up to 45888b40d2a6221d46bb69959e2600ddba71cc1f:
-
-  rslib: Allocate decoder buffers to avoid VLAs (2018-04-24 19:50:10 -0700)
-
-----------------------------------------------------------------
-Refactors rslib and callers to provide a per-instance allocation area
-instead of performing VLAs on the stack.
-
-----------------------------------------------------------------
-Thomas Gleixner (10):
-      rslib: Add GFP aware init function
-      dm/verity_fec: Use GFP aware reed solomon init
-      rslib: Cleanup whitespace damage
-      rslib: Cleanup top level comments
-      rslib: Add SPDX identifiers
-      rslib: Remove GPL boilerplate
-      rslib: Simplify error path
-      rslib: Split rs control struct
-      mtd: rawnand: diskonchip: Allocate rs control per instance
-      rslib: Allocate decoder buffers to avoid VLAs
-
- drivers/md/dm-verity-fec.c        |   2 +-
- drivers/mtd/nand/raw/cafe_nand.c  |   7 +-
- drivers/mtd/nand/raw/diskonchip.c |  67 +++++------
- include/linux/rslib.h             |  74 +++++++-----
- lib/reed_solomon/decode_rs.c      |  34 +++---
- lib/reed_solomon/encode_rs.c      |  15 +--
- lib/reed_solomon/reed_solomon.c   | 240 ++++++++++++++++++++++----------------
- 7 files changed, 243 insertions(+), 196 deletions(-)
+> > Thanks
+> > Wind
+> 
 
 -- 
-Kees Cook
-Pixel Security
+Sincerely yours,
+Mike.
