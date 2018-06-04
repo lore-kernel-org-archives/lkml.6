@@ -1,13 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751839AbeFDWZL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 18:25:11 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43448 "EHLO
+        id S1751857AbeFDWcm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 18:32:42 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50856 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751619AbeFDWYo (ORCPT
+        with ESMTP id S1751396AbeFDWck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 18:24:44 -0400
-Subject: Re: [PATCH v2 8/9] xen/gntdev: Implement dma-buf import functionality
+        Mon, 4 Jun 2018 18:32:40 -0400
+Subject: Re: [PATCH v2 9/9] xen/gntdev: Expose gntdev's dma-buf API for
+ in-kernel use
 To: Oleksandr Andrushchenko <andr2000@gmail.com>,
         xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
@@ -16,7 +17,7 @@ Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
         matthew.d.roper@intel.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-9-andr2000@gmail.com>
+ <20180601114132.22596-10-andr2000@gmail.com>
 From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
@@ -62,62 +63,32 @@ Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
  Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
  19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
  Jg6OxFYd01z+a+oL
-Message-ID: <7ef4f26e-4225-ea7e-8183-9a6c3fe69345@oracle.com>
-Date: Mon, 4 Jun 2018 18:28:18 -0400
+Message-ID: <86f5b340-856c-204f-4ba7-dd51f1e92639@oracle.com>
+Date: Mon, 4 Jun 2018 18:36:11 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180601114132.22596-9-andr2000@gmail.com>
+In-Reply-To: <20180601114132.22596-10-andr2000@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8914 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=672
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=640
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806040254
+ engine=8.0.1-1805220000 definitions=main-1806040256
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
->  /* ------------------------------------------------------------------ */
->  
-> +static int
-> +dmabuf_imp_grant_foreign_access(struct page **pages, u32 *refs,
-> +				int count, int domid)
-> +{
-> +	grant_ref_t priv_gref_head;
-> +	int i, ret;
-> +
-> +	ret = gnttab_alloc_grant_references(count, &priv_gref_head);
-> +	if (ret < 0) {
-> +		pr_err("Cannot allocate grant references, ret %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < count; i++) {
-> +		int cur_ref;
-> +
-> +		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-> +		if (cur_ref < 0) {
-> +			ret = cur_ref;
-> +			pr_err("Cannot claim grant reference, ret %d\n", ret);
-> +			goto out;
-> +		}
-> +
-> +		gnttab_grant_foreign_access_ref(cur_ref, domid,
-> +						xen_page_to_gfn(pages[i]), 0);
-> +		refs[i] = cur_ref;
-> +	}
-> +
-> +	ret = 0;
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>
+> Allow creating grant device context for use by kernel modules which
+> require functionality, provided by gntdev. Export symbols for dma-buf
+> API provided by the module.
 
-return 0?
+Can you give an example of who'd be using these interfaces?
 
-> +
-> +out:
-> +	gnttab_free_grant_references(priv_gref_head);
-> +	return ret;
-> +}
-> +
+
+-boris
