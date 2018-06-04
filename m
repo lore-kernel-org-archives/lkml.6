@@ -1,109 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752064AbeFDXHx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 19:07:53 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45944 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751409AbeFDXHv (ORCPT
+        id S1752072AbeFDXJ2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 19:09:28 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:39311 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752023AbeFDXJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 19:07:51 -0400
-X-Google-Smtp-Source: ADUXVKJK9hB7qCS/U6V3b6mrslmDHe6Z7iYpvP5E1U/ZjimST7x7sZ8iP9GWt1LAsmf+9QoO8C4hEg==
-Date: Mon, 4 Jun 2018 17:07:45 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Doug Ledford <dledford@redhat.com>
-Cc: Greg Thelen <gthelen@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        swise@opengridcomputing.com, swise@chelsio.com, yuval.shaia@oracle.com,
-        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Tarick Bedeir <tarick@google.com>
-Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
-Message-ID: <20180604230745.GG24926@ziepe.ca>
-References: <20180530215826.1343234-1-arnd@arndb.de>
- <20180530220405.GH30754@ziepe.ca>
- <0be4e0fb-8d8e-b337-fc8d-550c90829d8c@opengridcomputing.com>
- <20180530222520.GJ30754@ziepe.ca>
- <d2472443-3ae6-63f4-59ad-d6367b837038@opengridcomputing.com>
- <CAK8P3a3HZXTR60ua=cjBHnB5FWWKve9F-JqcNwn0ujks+=FsNg@mail.gmail.com>
- <20180530230136.GK30754@ziepe.ca>
- <CAHH2K0ZLDmsPNw=sOobL=+R54yRFrnG4syWcW43UEbwxsvFehw@mail.gmail.com>
- <d23e215a30f1277c941973043262cdfc60c71315.camel@redhat.com>
+        Mon, 4 Jun 2018 19:09:27 -0400
+X-Google-Smtp-Source: ADUXVKKPUJ9HEOSeF6qe7wgA9P/KSbxxr3jue1lY8ME1bCrobMsiC4F48XDWEzDTCuKbUVRUmIs67g==
+Subject: Re: [PATCH] arm64: dts: stingray: Add otp device node
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1527106630-4760-1-git-send-email-scott.branden@broadcom.com>
+ <c9219029-6e45-1889-6326-470d2bc9e46c@gmail.com>
+ <f6f3e76e-eac9-797d-fea5-eac64327ec7f@broadcom.com>
+ <efaf0373-2959-b238-e5f3-ae7e16534384@gmail.com>
+ <e641f180-0b7e-678c-07c4-834ff0676b34@broadcom.com>
+ <2d6cc541-7987-5b4c-a847-6fcbb27e12d2@gmail.com>
+From: Scott Branden <scott.branden@broadcom.com>
+Message-ID: <2a159d0f-77dc-f03f-a7f6-9e5c51eba70a@broadcom.com>
+Date: Mon, 4 Jun 2018 16:09:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d23e215a30f1277c941973043262cdfc60c71315.camel@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <2d6cc541-7987-5b4c-a847-6fcbb27e12d2@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 02:40:59PM -0400, Doug Ledford wrote:
-> On Wed, 2018-05-30 at 21:03 -0700, Greg Thelen wrote:
-> > On Wed, May 30, 2018 at 4:01 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > 
-> > > On Thu, May 31, 2018 at 12:40:54AM +0200, Arnd Bergmann wrote:
-> > > > > On 5/30/2018 5:25 PM, Jason Gunthorpe wrote:
-> > > > > > On Wed, May 30, 2018 at 05:10:35PM -0500, Steve Wise wrote:
-> > > > > > > 
-> > > > > > > On 5/30/2018 5:04 PM, Jason Gunthorpe wrote:
-> > > > > > > > On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
-> > > > > > > > > The newly added fill_res_ep_entry function fails to link if
-> > > > > > > > > CONFIG_INFINIBAND_ADDR_TRANS is not set:
-> > > > > > > > > 
-> > > > > > > > > drivers/infiniband/hw/cxgb4/restrack.o: In function
-> > 
-> > `fill_res_ep_entry':
-> > > > > > > > > restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
-> > > > > > > > > restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
-> > > > > > > > > 
-> > > > > > > > > This adds a Kconfig dependency for the driver.
-> > > > > > > > > 
-> > > > > > > > > Fixes: 116aeb887371 ("iw_cxgb4: provide detailed
-> > 
-> > provider-specific CM_ID information")
-> > > > > > > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > > > > >  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
-> > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > 
-> > > > > > > > Oh, I think we need to solve this with maybe a header fill null
-> > 
-> > stub
-> > > > > > > > instead..
-> > > > > > > > 
-> > > > > > > > We don't want to disable drivers just because a user interface is
-> > > > > > > > disabled.
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Why does CONFIG_INFINIBAND_ADDR_TRANS disable building rdma_cm.ko?
-> > 
-> > That
-> > > > > > > is not correct.
-> > > > > > 
-> > > > > > That seems like a reasonable thing to do..
-> > > > > 
-> > > > > rdma_ucm.ko is for usermode users, rdma_cm.ko is for kernel users, and
-> > > > > is required for iwarp drivers.  It seems rdma_cm.ko is not being
-> > > > > compiled if ADDR_TRANS is not set.
-> > > I think the intention was to completely disable rdma-cm, including all
-> > > support for rx'ing remote packets? Greg?
-> > 
-> > Yes.  That's my goal when INFINIBAND_ADDR_TRANS is unset.
-> > 
-> > > If this is required for iwarp then Arnd's patch is probably the right
-> > > way to go..
-> > > Jason
-> > 
-> > Agreed.
-> > Acked-by: Greg Thelen <gthelen@google.com>
-> 
-> If that's the case, then there should be a NOTE: in the Kconfig that
-> disabling the connection manager completely disables iWARP hardware.
-> 
-> I don't really think I like this approach though.  At a minimum if you
-> are going to make iWARP totally dependent on rdmacm, then there is zero
-> reason that iw_cm.o should be part of the obj-$(CONFIG_INFINIBAND)
-> Makefile recipe when ADDR_TRANS is disabled.
 
-This makes sense, Greg, can you send a followup patch with these
-items? I know this series has been tough..
 
-Thanks,
-Jason
+On 18-06-04 03:41 PM, Florian Fainelli wrote:
+> On 06/04/2018 03:33 PM, Scott Branden wrote:
+>>
+>> On 18-06-04 02:33 PM, Florian Fainelli wrote:
+>>> On 06/04/2018 02:30 PM, Scott Branden wrote:
+>>>> Hi Florian,
+>>>>
+>>>>
+>>>> On 18-06-04 02:24 PM, Florian Fainelli wrote:
+>>>>> On 05/23/2018 01:17 PM, Scott Branden wrote:
+>>>>>> Add otp device node for Stingray SOC.
+>>>>>>
+>>>>>> Fixes: 2fa9e9e29ea2 ("arm64: dts: Add GPIO DT nodes for Stingray SOC")
+>>>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>>>>> Applied to devicetree-arm64/next with s/otp/OTP/ and removing the Fixes
+>>>>> line since that is not a bug fix AFAICT.
+>>>> It fixes the issue that OTP is not active as it is missing the device
+>>>> node?
+>>> By that token, any peripheral that is being added at some point in the
+>>> lifetime of this DTS would qualify as a bugfix when it is in fact
+>>> feature/peripheral enabling.
+>>>
+>>> I could not see the relationship between the commit being provided in
+>>> the "Fixes:" tag and OTP, am I missing something?
+>> The relationship is the fixes tag points was selected to the last tag
+>> when the commit applies directly against (and is far enough back that it
+>> covers any possible LTS kernels that would have needed it).
+> I understand how ones gets to select an appropriate Fixes: tag, what I
+> don't understand is the relationship between the two changes, like why
+> would a GPIO Device Tree node influence the OTP peripheral here when
+> there is no pinmux or GPIO phandle of some sort linking the two. Also,
+> since you guys were very trigger happy with Fixes: tag lately (referring
+> to the internal review of Srinath's changes) this one looked a lot like
+> that.
+>
+> The only thing I am questioning here is treating that particular
+> changeset as a bugfix proper. Yes it is technically a fix in that,
+> without this changeset the OTP node is not there and that is
+> functionality you want, but it is not preventing the platform from not
+> booting for instance, or having an incorrect behavior for an established
+> behavior before, right?
+>
+>> In this case
+>> I don't care too much about whether this is fixed in LTS or not.  If
+>> needed I'll send a request for the commit be ported to stable.
+> If this is a true fix, I don't mind taking it as-is and keeping the
+> Fixes: tag, keep in mind the following:
+>
+> I always treat bug fixes with a higher priority than features, and I
+> will do my best to queue up fixes (separate branches, all ending in
+> /fixes) and submit those at any time in the release cycle so they can
+> land in Linus' tree and in the -stable trees as fast as possible.
+>
+> Don't bypass the maintainer if you can convince me this is a proper fix,
+> then I will just move that patch into the appropriate branch, and you
+> will get those stable backports automatically.
+For now, nobody needs it in the LTS.  The OTP driver hasn't actively 
+been used by applications.
+So not critical for backport right now.  It's in now so OTP won't be a 
+problem going forward.
+> Thanks for reading me.
