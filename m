@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeFDBdZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 21:33:25 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35805 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751796AbeFDBdX (ORCPT
+        id S1751900AbeFDBdw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 21:33:52 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45033 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeFDBdv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 21:33:23 -0400
-X-Google-Smtp-Source: ADUXVKJwEdztU9w0/iCYpSyCryt6nMgK0dZOGjqz22dLREpWxu8bYwxYIqGJpGJQVqX70tyRTcNnGsKNR9YuA3krmug=
+        Sun, 3 Jun 2018 21:33:51 -0400
+X-Google-Smtp-Source: ADUXVKKs4LsWmDTt0ERwWjdP7OsR2yyv5MOvUGuWIRvwC+XQMI4fisEY2Yd2EduxIRjdJKg+qqEHypcSMns/kkSgKM4=
 MIME-Version: 1.0
-In-Reply-To: <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
-References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com> <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1528074406-11735-3-git-send-email-Anson.Huang@nxp.com>
+References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com> <1528074406-11735-3-git-send-email-Anson.Huang@nxp.com>
 From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 3 Jun 2018 22:33:22 -0300
-Message-ID: <CAOMZO5BU-4O0K0z-ZiL7N9bCceQVeytsGT=5RvD=jRWZ0QfWmA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/4] clk: imx6sl: remove clks_init_on array
+Date: Sun, 3 Jun 2018 22:33:50 -0300
+Message-ID: <CAOMZO5Cr4C0BPS0zTymCm_M02=JXdxskntKXEMN6p9H9k28Z7A@mail.gmail.com>
+Subject: Re: [PATCH V2 3/4] clk: imx6sx: remove clks_init_on array
 To: Anson Huang <Anson.Huang@nxp.com>
 Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
