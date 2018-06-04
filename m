@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752998AbeFDHBe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:01:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54058 "EHLO mail.kernel.org"
+        id S1753026AbeFDHBj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:01:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752969AbeFDHBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:30 -0400
+        id S1752978AbeFDHBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 28/52] ASoC: Intel: sst: remove redundant variable dma_dev_name
-Date: Mon,  4 Jun 2018 08:58:23 +0200
-Message-Id: <20180604065607.696895370@linuxfoundation.org>
+        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 30/52] kbuild: clang: disable unused variable warnings only when constant
+Date: Mon,  4 Jun 2018 08:58:25 +0200
+Message-Id: <20180604065607.775425030@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -30,42 +30,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Sodagudi Prasad <psodagud@codeaurora.org>
 
-commit 271ef65b5882425d500e969e875c98e47a6b0c86 upstream.
+commit 0a5f41767444cc3b4fc5573921ab914b4f78baaa upstream.
 
-The pointer dma_dev_name is assigned but never read, it is redundant
-and can therefore be removed.
+Currently, GCC disables -Wunused-const-variable, but not
+-Wunused-variable, so warns unused variables if they are
+non-constant.
 
-Cleans up clang warning:
-sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
-'dma_dev_name' is never read
+While, Clang does not warn unused variables at all regardless of
+the const qualifier because -Wno-unused-const-variable is implied
+by the stronger option -Wno-unused-variable.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Disable -Wunused-const-variable instead of -Wunused-variable so that
+GCC and Clang work in the same way.
+
+Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/common/sst-firmware.c |    2 --
- 1 file changed, 2 deletions(-)
+ Makefile |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/sound/soc/intel/common/sst-firmware.c
-+++ b/sound/soc/intel/common/sst-firmware.c
-@@ -274,7 +274,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	struct sst_pdata *sst_pdata = sst->pdata;
- 	struct sst_dma *dma;
- 	struct resource mem;
--	const char *dma_dev_name;
- 	int ret = 0;
+--- a/Makefile
++++ b/Makefile
+@@ -706,7 +706,6 @@ KBUILD_CFLAGS += $(stackp-flag)
  
- 	if (sst->pdata->resindex_dma_base == -1)
-@@ -285,7 +284,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	* is attached to the ADSP IP. */
- 	switch (sst->pdata->dma_engine) {
- 	case SST_DMA_TYPE_DW:
--		dma_dev_name = "dw_dmac";
- 		break;
- 	default:
- 		dev_err(sst->dev, "error: invalid DMA engine %d\n",
+ ifeq ($(cc-name),clang)
+ KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
+ KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+ KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+@@ -724,9 +723,9 @@ else
+ # These warnings generated too much noise in a regular build.
+ # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+ KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+ endif
+ 
++KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+ ifdef CONFIG_FRAME_POINTER
+ KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+ else
