@@ -1,148 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751812AbeFDWEP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 18:04:15 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39266 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeFDWEN (ORCPT
+        id S1751716AbeFDWGS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 18:06:18 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:42412 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbeFDWGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 18:04:13 -0400
-X-Google-Smtp-Source: ADUXVKJQ0hdCknV/gNrFtt2VwZ1RzBHRkskW5KWW7U6gy3LuOZERghVAO628pAnbbEmTFd0eF6eQVQ==
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 5/6 v2] mtd: rawnand: ams-delta: use GPIO lookup table
-Date: Mon, 04 Jun 2018 18:48:08 +0200
-Message-ID: <1716431.jBl9UCSIdH@z50>
-In-Reply-To: <20180604115543.3be75717@bbrezillon>
-References: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com> <1582841.uoaVdad1fL@z50> <20180604115543.3be75717@bbrezillon>
+        Mon, 4 Jun 2018 18:06:17 -0400
+X-Google-Smtp-Source: ADUXVKJnJEEuhnmaeE2ezkv6Bn+nJBchvFwZZ2AP8Xg8VaQQZdZXPuBV5N8jPWz+3CBrVKBRdpGVdo9J+NViyjB7eoA=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180604112131.59100-4-namit@vmware.com>
+References: <20180604112131.59100-1-namit@vmware.com> <20180604112131.59100-4-namit@vmware.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 4 Jun 2018 15:06:15 -0700
+X-Google-Sender-Auth: bUVx7QNegFEXY-p0FmuEWRjJXF8
+Message-ID: <CAGXu5jJFUMsQFhxeZivbQZwQRPwdJr6gD8EkKfzasWr2SBoggQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] x86: refcount: prevent gcc distortions
+To: Nadav Amit <namit@vmware.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-ccpol: medium
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, June 4, 2018 11:55:43 AM CEST Boris Brezillon wrote:
-> On Wed, 30 May 2018 22:39:03 +0200
-> 
-> Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> > On Wednesday, May 30, 2018 7:52:20 PM CEST Boris Brezillon wrote:
-> > > On Wed, 30 May 2018 19:43:09 +0200
-> > > 
-> > > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> > > > On Wednesday, May 30, 2018 11:05:00 AM CEST Boris Brezillon wrote:
-> > > > > Hi Janusz,
-> > > > 
-> > > > Hi Boris,
-> > > > 
-> > > > > On Sat, 26 May 2018 00:20:45 +0200
-> > > > > 
-> > > > > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> > > > > > ...
-> > > > > > Changes since v1:
-> > > > > > - fix handling of devm_gpiod_get_optional() return values - thanks
-> > > > > > to
-> > > > > > 
-> > > > > >   Andy Shevchenko.
-> > > > > 
-> > > > > Can you put the changelog after the "---" separator so that it does
-> > > > > not
-> > > > > appear in the final commit message?
-> > > > 
-> > > > Yes, sure, sorry for that.
-> > > > 
-> > > > > > +err_gpiod:
-> > > > > > +	if (err == -ENODEV || err == -ENOENT)
-> > > > > > +		err = -EPROBE_DEFER;
-> > > > > 
-> > > > > Hm, isn't it better to make gpiod_find() return
-> > > > > ERR_PTR(-EPROBE_DEFER)
-> > > > > here [1]? At least, ENOENT should not be turned into EPROBE_DEFER,
-> > > > > because it's returned when there's no entry matching the requested
-> > > > > gpio
-> > > > > in the lookup table, and deferring the probe won't solve this
-> > > > > problem.
-> > > > 
-> > > > ENOENT is also returned when no matching lookup table is found. That
-> > > > may
-> > > > happen if consumer dev_name stored in the table differs from dev_name
-> > > > assigned to the consumer by its bus, the platform bus in this case.
-> > > > For
-> > > > that reason I think the consumer dev_name should be initialized in the
-> > > > table after the device is registered, when its actual dev_name can be
-> > > > obtained. If that device registration happens after the driver is
-> > > > already
-> > > > registered, e.g., at late_initcall, the device is probed before its
-> > > > lookup table is ready. For that reason returning EPROBE_DEFER seems
-> > > > better to me even in the ENOENT case.
-> > > 
-> > > Sorry, I don't get it. Aren't GPIO lookup tables supposed to be declared
-> > > in board files, especially if the GPIO is used by a platform device?
-> > > When would you have a lookup table registered later in the init/boot
-> > > process?
-> > 
-> > When e.g. I'd like to register my GPIO consumer platform device at
-> > late_initcall for some reason, and I'm not sure what exact dev_name my
-> > consomer will be registered with by the platform bus.
-> 
-> You should know the name before the device is registered.
+On Mon, Jun 4, 2018 at 4:21 AM, Nadav Amit <namit@vmware.com> wrote:
+> GCC considers the number of statements in inlined assembly blocks,
+> according to new-lines and semicolons, as an indication to the cost of
+> the block in time and space. This data is distorted by the kernel code,
+> which puts information in alternative sections. As a result, the
+> compiler may perform incorrect inlining and branch optimizations.
+>
+> The solution is to set an assembly macro and call it from the inlined
+> assembly block. As a result GCC considers the inline assembly block as
+> a single instruction.
+>
+> This patch allows to inline functions such as __get_seccomp_filter().
+> Interestingly, this allows more aggressive inlining while reducing the
+> kernel size.
+>
+>    text    data     bss     dec     hex filename
+> 18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
+> 18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
+>
+> Static text symbols:
+> Before: 40302
+> After:  40286   (-16)
+>
+> Functions such as kref_get(), free_user(), fuse_file_get() now get
+> inlined.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Jan Beulich <JBeulich@suse.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  arch/x86/include/asm/refcount.h | 73 ++++++++++++++++++++-------------
+>  arch/x86/kernel/macros.S        |  1 +
+>  2 files changed, 45 insertions(+), 29 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+> index 4cf11d88d3b3..53462f32b58e 100644
+> --- a/arch/x86/include/asm/refcount.h
+> +++ b/arch/x86/include/asm/refcount.h
+> @@ -4,6 +4,9 @@
+>   * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
+>   * PaX/grsecurity.
+>   */
+> +
+> +#ifndef __ASSEMBLY__
 
-What if I use PLATFORM_DEVID_AUTO?
+Can you swap the order here, so that the asm macros are visible first
+in the file?
 
-For other cases, if bus specific names of devices were supposed to be known 
-before registration, bus drivers should export functions returning those names 
-from initialized bus specific device structures or their components while they 
-don't. Under such circumstances, we end up hardcoding device names based on 
-our knowledge of bus internals if we need to specify them in advance, and 
-those internals are not guaranteed to never change.
+#ifdef __ASSEMBLY__
+...macros
+#else
+....C
+#endif
 
-> > In that case I think I
-> > should assign dev_name to the lookup table after the consumer device is
-> > registered and its exact dev_name can be obtained, then register the
-> > table,
-> 
-> I'm pretty sure it's not supposed to work like that. Resources attached
-> to a device should be defined before the device is registered, not
-> after,
+-Kees
 
-What do you mean by resources attached to a device? I don't think we should 
-consider GPIO lookup tables as consumer device resources. Those tables are 
-registered separately from consumer device registration and I know of no 
-requirement for registering them in advance. Maybe I'm missing something.
+> +
+>  #include <linux/refcount.h>
+>
+>  /*
+> @@ -14,34 +17,11 @@
+>   * central refcount exception. The fixup address for the exception points
+>   * back to the regular execution flow in .text.
+>   */
+> -#define _REFCOUNT_EXCEPTION                            \
+> -       ".pushsection .text..refcount\n"                \
+> -       "111:\tlea %[counter], %%" _ASM_CX "\n"         \
+> -       "112:\t" ASM_UD2 "\n"                           \
+> -       ASM_UNREACHABLE                                 \
+> -       ".popsection\n"                                 \
+> -       "113:\n"                                        \
+> -       _ASM_EXTABLE_REFCOUNT(112b, 113b)
+> -
+> -/* Trigger refcount exception if refcount result is negative. */
+> -#define REFCOUNT_CHECK_LT_ZERO                         \
+> -       "js 111f\n\t"                                   \
+> -       _REFCOUNT_EXCEPTION
+> -
+> -/* Trigger refcount exception if refcount result is zero or negative. */
+> -#define REFCOUNT_CHECK_LE_ZERO                         \
+> -       "jz 111f\n\t"                                   \
+> -       REFCOUNT_CHECK_LT_ZERO
+> -
+> -/* Trigger refcount exception unconditionally. */
+> -#define REFCOUNT_ERROR                                 \
+> -       "jmp 111f\n\t"                                  \
+> -       _REFCOUNT_EXCEPTION
+>
+>  static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+>  {
+>         asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
+> -               REFCOUNT_CHECK_LT_ZERO
+> +               "REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+>                 : [counter] "+m" (r->refs.counter)
+>                 : "ir" (i)
+>                 : "cc", "cx");
+> @@ -50,7 +30,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+>  static __always_inline void refcount_inc(refcount_t *r)
+>  {
+>         asm volatile(LOCK_PREFIX "incl %0\n\t"
+> -               REFCOUNT_CHECK_LT_ZERO
+> +               "REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+>                 : [counter] "+m" (r->refs.counter)
+>                 : : "cc", "cx");
+>  }
+> @@ -58,7 +38,7 @@ static __always_inline void refcount_inc(refcount_t *r)
+>  static __always_inline void refcount_dec(refcount_t *r)
+>  {
+>         asm volatile(LOCK_PREFIX "decl %0\n\t"
+> -               REFCOUNT_CHECK_LE_ZERO
+> +               "REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
+>                 : [counter] "+m" (r->refs.counter)
+>                 : : "cc", "cx");
+>  }
+> @@ -66,13 +46,15 @@ static __always_inline void refcount_dec(refcount_t *r)
+>  static __always_inline __must_check
+>  bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+>  {
+> -       GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
+> +       GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
+> +                                 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+>                                   r->refs.counter, "er", i, "%0", e, "cx");
+>  }
+>
+>  static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+>  {
+> -       GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
+> +       GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
+> +                                "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+>                                  r->refs.counter, "%0", e, "cx");
+>  }
+>
+> @@ -90,7 +72,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+>
+>                 /* Did we try to increment from/to an undesirable state? */
+>                 if (unlikely(c < 0 || c == INT_MAX || result < c)) {
+> -                       asm volatile(REFCOUNT_ERROR
+> +                       asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
+>                                      : : [counter] "m" (r->refs.counter)
+>                                      : "cc", "cx");
+>                         break;
+> @@ -106,4 +88,37 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
+>         return refcount_add_not_zero(1, r);
+>  }
+>
+> +#else /* __ASSEMBLY__ */
+> +#include <asm/asm.h>
+> +#include <asm/bug.h>
+> +
+> +.macro REFCOUNT_EXCEPTION counter:req
+> +       .pushsection .text..refcount
+> +111:   lea \counter, %_ASM_CX
+> +112:   ud2
+> +       ASM_UNREACHABLE
+> +       .popsection
+> +113:   _ASM_EXTABLE_REFCOUNT(112b, 113b)
+> +.endm
+> +
+> +/* Trigger refcount exception if refcount result is negative. */
+> +.macro REFCOUNT_CHECK_LT_ZERO counter:req
+> +       js 111f
+> +       REFCOUNT_EXCEPTION \counter
+> +.endm
+> +
+> +/* Trigger refcount exception if refcount result is zero or negative. */
+> +.macro REFCOUNT_CHECK_LE_ZERO counter:req
+> +       jz 111f
+> +       REFCOUNT_CHECK_LT_ZERO counter=\counter
+> +.endm
+> +
+> +/* Trigger refcount exception unconditionally. */
+> +.macro REFCOUNT_ERROR counter:req
+> +       jmp 111f
+> +       REFCOUNT_EXCEPTION counter=\counter
+> +.endm
+> +
+> +#endif /* __ASSEMBLY__ */
+> +
+>  #endif
+> diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+> index cee28c3246dc..f1fe1d570365 100644
+> --- a/arch/x86/kernel/macros.S
+> +++ b/arch/x86/kernel/macros.S
+> @@ -7,3 +7,4 @@
+>   */
+>
+>  #include <linux/compiler.h>
+> +#include <asm/refcount.h>
+> --
+> 2.17.0
+>
 
-Let's have a look at regulators. There are no separately registered regulator 
-lookup tables, instead regulator consumer supply tables are attached to bus 
-specific device structures of regulator devices, not their consumers, hence 
-registered together with providers, not consumers. Will you still call those 
-tables 'resources attached to' consumers? 
 
-As far as I can see, regulator_get() never returns -EINVAL, only -ENODEV or -
-EPROBE_DEFER. However, gpiod_get() can also return -EINVAL. Maybe it 
-shouldn't, but it does, and I'm just trying to adopt to that in order to not 
-break a driver I'm trying to update. 
 
-> simply because when you call platform_device_register(), the
-> device might be directly bind to the driver before the
-> platform_device_register() calls return, and the driver will fail to
-> probe the device if it doesn't find the GPIO it needs.
-
-That's exactly the case I'm talking about, but my conclusion is different: the 
-driver should fail softly so the device is probed again later, as long as I'm 
-not wrong the no requirement exists for registering GPIO lookup tables before 
-related consumers are registered.
-
-If I' missing something or you are still not convinced, I'll try to resolve 
-issues with the device I see in a different way and submit a new patch that 
-hopefully matches your requirements.
-
-Thanks,
-Janusz
+-- 
+Kees Cook
+Pixel Security
