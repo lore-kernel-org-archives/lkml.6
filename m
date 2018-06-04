@@ -1,65 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753029AbeFDM55 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:57:57 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:38638 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752453AbeFDM5z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:57:55 -0400
-X-Google-Smtp-Source: ADUXVKL5bUm+i5eAJjinCwlL1pBS/DpRoiqbUY65l5J1HBS0faFDsPr8/vYrZl+MASBF0n8FWZNEAmvYCTKMb0Bc+PE=
-MIME-Version: 1.0
-In-Reply-To: <72b7120a-d304-0b2f-d04a-473631623f72@bitmath.org>
-References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
- <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
- <20180601184330.GD222005@dtor-ws> <72b7120a-d304-0b2f-d04a-473631623f72@bitmath.org>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Mon, 4 Jun 2018 14:57:54 +0200
-Message-ID: <CAO-hwJKibKvqviLZ5SSYR_X3yLTzJrr0G4d6svM3FtgJ6AfvQQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
- non-confident touches
-To: Henrik Rydberg <rydberg@bitmath.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>, Jason Gerecke <killertofu@gmail.com>,
-        Dennis Kempin <denniskempin@google.com>,
-        Andrew de los Reyes <adlr@google.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753153AbeFDM6R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:58:17 -0400
+Received: from mga18.intel.com ([134.134.136.126]:38826 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753078AbeFDM6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:58:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="46607132"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, Wang Nan <wangnan0@huawei.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] perf tests kmod-path: Add tests for vdso32 and vdsox32
+Date: Mon,  4 Jun 2018 15:56:53 +0300
+Message-Id: <1528117014-30032-2-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528117014-30032-1-git-send-email-adrian.hunter@intel.com>
+References: <1528117014-30032-1-git-send-email-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 1, 2018 at 9:03 PM, Henrik Rydberg <rydberg@bitmath.org> wrote:
->
->>> However, I interpret a firmware that send (confidence 1, tip switch 1)
->>> and then (confidence 0, tip switch 0) a simple release, and the
->>> confidence bit should not be relayed.
->>
->> This unfortunately leads to false clicks: you start with finger, so
->> confidence is 1, then you transition the same touch to palm (use your
->> thumb and "roll" your hand until heel of it comes into contact with the
->> screen). The firmware reports "no-confidence" and "release" in the same
->> report and userspace seeing release does not pay attention to confidence
->> (i.e. it does exactly "simple release" logic) and this results in UI
->> interpreting this as a click. With splitting no-confidence
->> (MT_TOOL_PALM) and release event into separate frames we help userspace
->> to recognize that the contact should be discarded.
->
-> This is in part why I objected to this patch on August 11th, 2017.
-> Logically, the confidence state is a property of a contact, not a new type
-> of contact. Trying to use it in any other way is bound to lead to confusion.
+Add tests for vdso32 and vdsox32. This will cause the overall test to fail
+because __kmod_path__parse() does not handle vdso32 or vdsox32.
 
-Problem is that MT_TOOL_PALM has been introduced in the kernel since
-v4.0 (late 2015 by a736775db683 "Input: add MT_TOOL_PALM").
-It's been used in the Synaptics RMI4 driver since and by hid-asus in late 2016.
-I can't find any other users in the current upstream tree, but those
-two are already making a precedent and changing the semantic is a
-little bit late :/
+Fixes: 1f121b03d058 ("perf tools: Deal with kernel module names in '[]' correctly")
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ tools/perf/tests/kmod-path.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Cheers,
-Benjamin
-
->
-> Henrik
->
+diff --git a/tools/perf/tests/kmod-path.c b/tools/perf/tests/kmod-path.c
+index 8e57d46109de..148dd31cc201 100644
+--- a/tools/perf/tests/kmod-path.c
++++ b/tools/perf/tests/kmod-path.c
+@@ -127,6 +127,22 @@ int test__kmod_path__parse(struct test *t __maybe_unused, int subtest __maybe_un
+ 	M("[vdso]", PERF_RECORD_MISC_KERNEL, false);
+ 	M("[vdso]", PERF_RECORD_MISC_USER, false);
+ 
++	T("[vdso32]", true      , true     , false, false, "[vdso32]", NULL);
++	T("[vdso32]", false     , true     , false, false, NULL    , NULL);
++	T("[vdso32]", true      , false    , false, false, "[vdso32]", NULL);
++	T("[vdso32]", false     , false    , false, false, NULL    , NULL);
++	M("[vdso32]", PERF_RECORD_MISC_CPUMODE_UNKNOWN, false);
++	M("[vdso32]", PERF_RECORD_MISC_KERNEL, false);
++	M("[vdso32]", PERF_RECORD_MISC_USER, false);
++
++	T("[vdsox32]", true      , true     , false, false, "[vdsox32]", NULL);
++	T("[vdsox32]", false     , true     , false, false, NULL    , NULL);
++	T("[vdsox32]", true      , false    , false, false, "[vdsox32]", NULL);
++	T("[vdsox32]", false     , false    , false, false, NULL    , NULL);
++	M("[vdsox32]", PERF_RECORD_MISC_CPUMODE_UNKNOWN, false);
++	M("[vdsox32]", PERF_RECORD_MISC_KERNEL, false);
++	M("[vdsox32]", PERF_RECORD_MISC_USER, false);
++
+ 	/* path         alloc_name  alloc_ext  kmod   comp   name          ext */
+ 	T("[vsyscall]", true      , true     , false, false, "[vsyscall]", NULL);
+ 	T("[vsyscall]", false     , true     , false, false, NULL        , NULL);
+-- 
+1.9.1
