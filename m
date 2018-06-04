@@ -1,71 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752444AbeFDLCW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:02:22 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52022 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752029AbeFDLCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:02:21 -0400
-From: nixiaoming <nixiaoming@huawei.com>
-To: <akpm@linux-foundation.org>, <vdavydov.dev@gmail.com>,
-        <hannes@cmpxchg.org>, <garsilva@embeddedor.com>,
-        <ktkhai@virtuozzo.com>, <stummala@codeaurora.org>
-CC: <nixiaoming@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-Subject: [PATCH] mm: Add conditions to avoid out-of-bounds
-Date: Mon, 4 Jun 2018 18:37:35 +0800
-Message-ID: <20180604103735.42781-1-nixiaoming@huawei.com>
-X-Mailer: git-send-email 2.10.1
+        id S1752545AbeFDLGP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:06:15 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8631 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752062AbeFDLGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:06:13 -0400
+Subject: Re: [PATCH 1/7] iommu/dma: fix trival coding style mistake
+To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
+        linux-mediatek <linux-mediatek@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
+ <1527752569-18020-2-git-send-email-thunder.leizhen@huawei.com>
+ <b473059d-fee6-1627-4749-192771038741@arm.com>
+CC: Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
+        "Guozhu Li" <liguozhu@hisilicon.com>, Xinwei Hu <huxinwei@huawei.com>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B151CFA.10808@huawei.com>
+Date: Mon, 4 Jun 2018 19:05:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.189.174]
+In-Reply-To: <b473059d-fee6-1627-4749-192771038741@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the function memcg_init_list_lru
-if call goto fail when i == 0, will cause out-of-bounds at lru->node[i]
 
-The same out-of-bounds access scenario exists in the functions
-memcg_update_list_lru and __memcg_init_list_lru_node
 
-Signed-off-by: nixiaoming <nixiaoming@huawei.com>
----
- mm/list_lru.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+On 2018/5/31 21:03, Robin Murphy wrote:
+> On 31/05/18 08:42, Zhen Lei wrote:
+>> The static function iova_reserve_iommu_regions is only called by function
+>> iommu_dma_init_domain, and the 'if (!dev)' check in iommu_dma_init_domain
+>> affect it only, so we can safely move the check into it. I think it looks
+>> more natural.
+> 
+> As before, I disagree - the logic of iommu_dma_init_domain() is "we expect to have a valid device, but stop here if we don't", and moving the check just needlessly obfuscates that. It is not a coincidence that the arguments of both functions are in effective order of importance.
+OK
 
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index fcfb6c8..ec6bdd9 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -298,6 +298,9 @@ static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
- {
- 	int i;
- 
-+	if (unlikely(begin >= end))
-+		return;
-+
- 	for (i = begin; i < end; i++)
- 		kfree(memcg_lrus->lru[i]);
- }
-@@ -422,6 +425,8 @@ static int memcg_init_list_lru(struct list_lru *lru, bool memcg_aware)
- 	}
- 	return 0;
- fail:
-+	if (unlikely(i == 0))
-+		return -ENOMEM;
- 	for (i = i - 1; i >= 0; i--) {
- 		if (!lru->node[i].memcg_lrus)
- 			continue;
-@@ -456,6 +461,8 @@ static int memcg_update_list_lru(struct list_lru *lru,
- 	}
- 	return 0;
- fail:
-+	if (unlikely(i == 0))
-+		return -ENOMEM;
- 	for (i = i - 1; i >= 0; i--) {
- 		if (!lru->node[i].memcg_lrus)
- 			continue;
+> 
+>> In addition, the local variable 'ret' is only assigned in the branch of
+>> 'if (region->type == IOMMU_RESV_MSI)', so the 'if (ret)' should also only
+>> take effect in the branch, add a brace to enclose it.
+> 
+> 'ret' is clearly also assigned at its declaration, to cover the (very likely) case where we don't enter the loop at all. Thus testing it in the loop is harmless, and cluttering that up with extra tabs and braces is just noise.
+OK, I will drop this patch in v2
+
+> 
+> Robin.
+> 
+>> No functional changes.
+>>
+>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>> ---
+>>   drivers/iommu/dma-iommu.c | 12 +++++++-----
+>>   1 file changed, 7 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>> index ddcbbdb..4e885f7 100644
+>> --- a/drivers/iommu/dma-iommu.c
+>> +++ b/drivers/iommu/dma-iommu.c
+>> @@ -231,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device *dev,
+>>       LIST_HEAD(resv_regions);
+>>       int ret = 0;
+>>   +    if (!dev)
+>> +        return 0;
+>> +
+>>       if (dev_is_pci(dev))
+>>           iova_reserve_pci_windows(to_pci_dev(dev), iovad);
+>>   @@ -246,11 +249,12 @@ static int iova_reserve_iommu_regions(struct device *dev,
+>>           hi = iova_pfn(iovad, region->start + region->length - 1);
+>>           reserve_iova(iovad, lo, hi);
+>>   -        if (region->type == IOMMU_RESV_MSI)
+>> +        if (region->type == IOMMU_RESV_MSI) {
+>>               ret = cookie_init_hw_msi_region(cookie, region->start,
+>>                       region->start + region->length);
+>> -        if (ret)
+>> -            break;
+>> +            if (ret)
+>> +                break;
+>> +        }
+>>       }
+>>       iommu_put_resv_regions(dev, &resv_regions);
+>>   @@ -308,8 +312,6 @@ int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+>>       }
+>>         init_iova_domain(iovad, 1UL << order, base_pfn);
+>> -    if (!dev)
+>> -        return 0;
+>>         return iova_reserve_iommu_regions(dev, domain);
+>>   }
+>>
+> 
+> .
+> 
+
 -- 
-2.10.1
+Thanks!
+BestRegards
