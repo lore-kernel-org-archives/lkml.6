@@ -1,376 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751409AbeFDVLR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:11:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42396 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751187AbeFDVLO (ORCPT
+        id S1751610AbeFDVL1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:11:27 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:35102 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751459AbeFDVLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:11:14 -0400
-Subject: Re: [PATCH v9 2/7] i2c: Add FSI-attached I2C master algorithm
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>, Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <1528138850-18259-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1528138850-18259-3-git-send-email-eajames@linux.vnet.ibm.com>
- <CAHp75Vd7NvDFmWSzNDz-tgGvMVyXU7Z16LgGCWnHkY-3kE7fwg@mail.gmail.com>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-Date: Mon, 4 Jun 2018 16:11:05 -0500
+        Mon, 4 Jun 2018 17:11:23 -0400
+X-Google-Smtp-Source: ADUXVKJf3kWqZYlfXhc0NdtvxQ7jXHtVurDMDIetjpA8ROWOw/55kPl8hqO76C14ht1qEd4qWJ0/bg==
+Subject: Re: [PATCH v3 3/3] arm64: dts: Update Stingray clock DT nodes
+To: Ray Jui <ray.jui@broadcom.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+ <1527900968-12017-4-git-send-email-ray.jui@broadcom.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <9305e486-9c67-0fca-7fd8-c954ee0d8c6f@gmail.com>
+Date: Mon, 4 Jun 2018 14:11:18 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vd7NvDFmWSzNDz-tgGvMVyXU7Z16LgGCWnHkY-3kE7fwg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1527900968-12017-4-git-send-email-ray.jui@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18060421-0072-0000-0000-000003682864
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009130; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01042345; UDB=6.00533734; IPR=6.00821476;
- MB=3.00021462; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-04 21:11:11
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060421-0073-0000-0000-0000483EC7EC
-Message-Id: <c92d9ff9-25ce-886c-6777-930fc8ddefb8@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040241
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/01/2018 05:56 PM, Ray Jui wrote:
+> From: Pramod Kumar <pramod.kumar@broadcom.com>
+> 
+> Update clock output names in the Stingray clock DT nodes so they match
+> the binding document and the latest ASIC datasheet. Also add entries
+> for LCPLL2
+> 
+> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 
-
-On 06/04/2018 02:21 PM, Andy Shevchenko wrote:
-> On Mon, Jun 4, 2018 at 10:00 PM, Eddie James <eajames@linux.vnet.ibm.com> wrote:
->> Add register definitions for FSI-attached I2C master and functions to
->> access those registers over FSI. Add an FSI driver so that our I2C bus
->> is probed up during an FSI scan.
->>
->> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
->> ---
->>   drivers/i2c/busses/Kconfig   |  11 ++
->>   drivers/i2c/busses/Makefile  |   1 +
->>   drivers/i2c/busses/i2c-fsi.c | 234 +++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 246 insertions(+)
->>   create mode 100644 drivers/i2c/busses/i2c-fsi.c
->>
->> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
->> index 4f8df2e..cddd159 100644
->> --- a/drivers/i2c/busses/Kconfig
->> +++ b/drivers/i2c/busses/Kconfig
->> @@ -1330,4 +1330,15 @@ config I2C_ZX2967
->>            This driver can also be built as a module. If so, the module will be
->>            called i2c-zx2967.
->>
->> +config I2C_FSI
->> +       tristate "FSI I2C driver"
->> +       depends on FSI
->> +       help
->> +         Driver for FSI bus attached I2C masters. These are I2C masters that
->> +         are connected to the system over an FSI bus, instead of the more
->> +         common PCI or MMIO interface.
->> +
->> +         This driver can also be built as a module. If so, the module will be
->> +         called as i2c-fsi.
->> +
->>   endmenu
->> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
->> index 5a86914..4909fd6 100644
->> --- a/drivers/i2c/busses/Makefile
->> +++ b/drivers/i2c/busses/Makefile
->> @@ -137,5 +137,6 @@ obj-$(CONFIG_I2C_PCA_ISA)   += i2c-pca-isa.o
->>   obj-$(CONFIG_I2C_SIBYTE)       += i2c-sibyte.o
->>   obj-$(CONFIG_I2C_XGENE_SLIMPRO) += i2c-xgene-slimpro.o
->>   obj-$(CONFIG_SCx200_ACB)       += scx200_acb.o
->> +obj-$(CONFIG_I2C_FSI)          += i2c-fsi.o
->>
->>   ccflags-$(CONFIG_I2C_DEBUG_BUS) := -DDEBUG
->> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
->> new file mode 100644
->> index 0000000..e1b183c
->> --- /dev/null
->> +++ b/drivers/i2c/busses/i2c-fsi.c
->> @@ -0,0 +1,234 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * FSI-attached I2C master algorithm
->> + *
->> + * Copyright 2018 IBM Corporation
->> + *
->> + * This program is free software; you can redistribute it and/or
->> + * modify it under the terms of the GNU General Public License
->> + * as published by the Free Software Foundation; either version
->> + * 2 of the License, or (at your option) any later version.
->> + */
->> +
->> +#include <linux/bitfield.h>
->> +#include <linux/bitops.h>
->> +#include <linux/device.h>
->> +#include <linux/errno.h>
->> +#include <linux/fsi.h>
->> +#include <linux/i2c.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +
->> +#define FSI_ENGID_I2C          0x7
->> +
->> +#define I2C_DEFAULT_CLK_DIV    6
->> +
->> +/* i2c registers */
->> +#define I2C_FSI_FIFO           0x00
->> +#define I2C_FSI_CMD            0x04
->> +#define I2C_FSI_MODE           0x08
->> +#define I2C_FSI_WATER_MARK     0x0C
->> +#define I2C_FSI_INT_MASK       0x10
->> +#define I2C_FSI_INT_COND       0x14
->> +#define I2C_FSI_OR_INT_MASK    0x14
->> +#define I2C_FSI_INTS           0x18
->> +#define I2C_FSI_AND_INT_MASK   0x18
->> +#define I2C_FSI_STAT           0x1C
->> +#define I2C_FSI_RESET_I2C      0x1C
->> +#define I2C_FSI_ESTAT          0x20
->> +#define I2C_FSI_RESET_ERR      0x20
->> +#define I2C_FSI_RESID_LEN      0x24
->> +#define I2C_FSI_SET_SCL                0x24
->> +#define I2C_FSI_PORT_BUSY      0x28
->> +#define I2C_FSI_RESET_SCL      0x2C
->> +#define I2C_FSI_SET_SDA                0x30
->> +#define I2C_FSI_RESET_SDA      0x34
->> +
->> +/* cmd register */
->> +#define I2C_CMD_WITH_START     BIT(31)
->> +#define I2C_CMD_WITH_ADDR      BIT(30)
->> +#define I2C_CMD_RD_CONT                BIT(29)
->> +#define I2C_CMD_WITH_STOP      BIT(28)
->> +#define I2C_CMD_FORCELAUNCH    BIT(27)
->> +#define I2C_CMD_ADDR           GENMASK(23, 17)
->> +#define I2C_CMD_READ           BIT(16)
->> +#define I2C_CMD_LEN            GENMASK(15, 0)
->> +
->> +/* mode register */
->> +#define I2C_MODE_CLKDIV                GENMASK(31, 16)
->> +#define I2C_MODE_PORT          GENMASK(15, 10)
->> +#define I2C_MODE_ENHANCED      BIT(3)
->> +#define I2C_MODE_DIAG          BIT(2)
->> +#define I2C_MODE_PACE_ALLOW    BIT(1)
->> +#define I2C_MODE_WRAP          BIT(0)
->> +
->> +/* watermark register */
->> +#define I2C_WATERMARK_HI       GENMASK(15, 12)
->> +#define I2C_WATERMARK_LO       GENMASK(7, 4)
->> +
->> +#define I2C_FIFO_HI_LVL                4
->> +#define I2C_FIFO_LO_LVL                4
->> +
->> +/* interrupt register */
->> +#define I2C_INT_INV_CMD                BIT(15)
->> +#define I2C_INT_PARITY         BIT(14)
->> +#define I2C_INT_BE_OVERRUN     BIT(13)
->> +#define I2C_INT_BE_ACCESS      BIT(12)
->> +#define I2C_INT_LOST_ARB       BIT(11)
->> +#define I2C_INT_NACK           BIT(10)
->> +#define I2C_INT_DAT_REQ                BIT(9)
->> +#define I2C_INT_CMD_COMP       BIT(8)
->> +#define I2C_INT_STOP_ERR       BIT(7)
->> +#define I2C_INT_BUSY           BIT(6)
->> +#define I2C_INT_IDLE           BIT(5)
->> +
->> +#define I2C_INT_ENABLE         0x0000ff80
->> +#define I2C_INT_ERR            0x0000fcc0
-> Now it looks like a flags combinations.
-> For me as for reader would be better to see quickly a decoded line.
->
-> My proposal is to introduce something like following
->
-> _INT_ALL  GENMASK()
-> _INT_ENABLE (_INT_ALL & ~(_FOO | _BAR))
-> _INT_ERR ... similar way as above ...
->
-> What do you think?
-
-Yes I considered that. I do prefer the simplicity of just writing the 
-value directly. Doing GENMASK and then AND-ing out certain bits isn't 
-that much more understandable, in my opinion. To understand each bit 
-you'd still have to check the GENMASK against the bit fields defined 
-above. And just OR-ing together all the bits would be very lengthy for 
-such an expression. Up to you, I will follow your suggestion if you want.
-
->
->> +
->> +/* status register */
->> +#define I2C_STAT_INV_CMD       BIT(31)
->> +#define I2C_STAT_PARITY                BIT(30)
->> +#define I2C_STAT_BE_OVERRUN    BIT(29)
->> +#define I2C_STAT_BE_ACCESS     BIT(28)
->> +#define I2C_STAT_LOST_ARB      BIT(27)
->> +#define I2C_STAT_NACK          BIT(26)
->> +#define I2C_STAT_DAT_REQ       BIT(25)
->> +#define I2C_STAT_CMD_COMP      BIT(24)
->> +#define I2C_STAT_STOP_ERR      BIT(23)
->> +#define I2C_STAT_MAX_PORT      GENMASK(19, 16)
->> +#define I2C_STAT_ANY_INT       BIT(15)
->> +#define I2C_STAT_SCL_IN                BIT(11)
->> +#define I2C_STAT_SDA_IN                BIT(10)
->> +#define I2C_STAT_PORT_BUSY     BIT(9)
->> +#define I2C_STAT_SELF_BUSY     BIT(8)
->> +#define I2C_STAT_FIFO_COUNT    GENMASK(7, 0)
->> +
->> +#define I2C_STAT_ERR           0xfc800000
->> +#define I2C_STAT_ANY_RESP      0xff800000
-> Ditto.
->
->> +
->> +/* extended status register */
->> +#define I2C_ESTAT_FIFO_SZ      GENMASK(31, 24)
->> +#define I2C_ESTAT_SCL_IN_SY    BIT(15)
->> +#define I2C_ESTAT_SDA_IN_SY    BIT(14)
->> +#define I2C_ESTAT_S_SCL                BIT(13)
->> +#define I2C_ESTAT_S_SDA                BIT(12)
->> +#define I2C_ESTAT_M_SCL                BIT(11)
->> +#define I2C_ESTAT_M_SDA                BIT(10)
->> +#define I2C_ESTAT_HI_WATER     BIT(9)
->> +#define I2C_ESTAT_LO_WATER     BIT(8)
->> +#define I2C_ESTAT_PORT_BUSY    BIT(7)
->> +#define I2C_ESTAT_SELF_BUSY    BIT(6)
->> +#define I2C_ESTAT_VERSION      GENMASK(4, 0)
->> +
->> +struct fsi_i2c_master {
->> +       struct fsi_device       *fsi;
->> +       u8                      fifo_size;
->> +};
->> +
->> +static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
->> +                           u32 *data)
->> +{
->> +       int rc;
->> +       __be32 data_be;
->> +
->> +       rc = fsi_device_read(fsi, reg, &data_be, sizeof(data_be));
->> +       if (rc)
->> +               return rc;
->> +
->> +       *data = be32_to_cpu(data_be);
->> +
->> +       return 0;
->> +}
->> +
->> +static int fsi_i2c_write_reg(struct fsi_device *fsi, unsigned int reg,
->> +                            u32 *data)
->> +{
->> +       __be32 data_be = cpu_to_be32p(data);
->> +
->> +       return fsi_device_write(fsi, reg, &data_be, sizeof(data_be));
->> +}
->> +
->> +static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
->> +{
->> +       int rc;
->> +       u32 mode = I2C_MODE_ENHANCED, extended_status, watermark;
->> +       u32 interrupt = 0;
->> +
->> +       /* since we use polling, disable interrupts */
->> +       rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_INT_MASK, &interrupt);
->> +       if (rc)
->> +               return rc;
->> +
->> +       mode |= FIELD_PREP(I2C_MODE_CLKDIV, I2C_DEFAULT_CLK_DIV);
->> +       rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
->> +       if (rc)
->> +               return rc;
->> +
->> +       rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_ESTAT, &extended_status);
->> +       if (rc)
->> +               return rc;
->> +
->> +       i2c->fifo_size = FIELD_GET(I2C_ESTAT_FIFO_SZ, extended_status);
->> +       watermark = FIELD_PREP(I2C_WATERMARK_HI,
->> +                              i2c->fifo_size - I2C_FIFO_HI_LVL);
->> +       watermark |= FIELD_PREP(I2C_WATERMARK_LO, I2C_FIFO_LO_LVL);
->> +
->> +       return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_WATER_MARK, &watermark);
->> +}
->> +
->> +static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->> +                       int num)
->> +{
->> +       return -EOPNOTSUPP;
->> +}
->> +
->> +static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
->> +{
->> +       return I2C_FUNC_I2C | I2C_FUNC_PROTOCOL_MANGLING | I2C_FUNC_10BIT_ADDR
->> +               | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_SMBUS_BLOCK_DATA;
-> Perhaps one property per line?
-
-At a quick glance through some other I2C bus drivers, it appears more 
-standard to fit as many on a line as possible. I'll leave it as is 
-unless anyone objects. I didn't get any checkpatch warning.
-
-Thanks,
-Eddie
-
->
->> +}
->> +
->> +static const struct i2c_algorithm fsi_i2c_algorithm = {
->> +       .master_xfer = fsi_i2c_xfer,
->> +       .functionality = fsi_i2c_functionality,
->> +};
->> +
->> +static int fsi_i2c_probe(struct device *dev)
->> +{
->> +       struct fsi_i2c_master *i2c;
->> +       int rc;
->> +
->> +       i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
->> +       if (!i2c)
->> +               return -ENOMEM;
->> +
->> +       i2c->fsi = to_fsi_dev(dev);
->> +
->> +       rc = fsi_i2c_dev_init(i2c);
->> +       if (rc)
->> +               return rc;
->> +
->> +       dev_set_drvdata(dev, i2c);
->> +
->> +       return 0;
->> +}
->> +
->> +static const struct fsi_device_id fsi_i2c_ids[] = {
->> +       { FSI_ENGID_I2C, FSI_VERSION_ANY },
->> +       { 0 }
-> 0 is not required
->
->> +};
->> +
->> +static struct fsi_driver fsi_i2c_driver = {
->> +       .id_table = fsi_i2c_ids,
->> +       .drv = {
->> +               .name = "i2c-fsi",
->> +               .bus = &fsi_bus_type,
->> +               .probe = fsi_i2c_probe,
->> +       },
->> +};
->> +
->> +module_fsi_driver(fsi_i2c_driver);
->> +
->> +MODULE_AUTHOR("Eddie James <eajames@us.ibm.com>");
->> +MODULE_DESCRIPTION("FSI attached I2C master");
->> +MODULE_LICENSE("GPL");
->> --
->> 1.8.3.1
->>
->
->
+Applied to devicetree-arm64/next, thanks!
+-- 
+Florian
