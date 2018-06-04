@@ -1,112 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751479AbeFDPyp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 11:54:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751010AbeFDPyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 11:54:44 -0400
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-arch@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
-Subject: [RFC PATCH -tip v5 12/27] sparc64: kprobes: Remove jprobe implementation
-Date: Tue,  5 Jun 2018 00:54:20 +0900
-Message-Id: <152812765990.10068.4986702684441309090.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152812730943.10068.5166429445118734697.stgit@devbox>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S1751522AbeFDP42 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 11:56:28 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52424 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751005AbeFDP40 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 11:56:26 -0400
+Date: Mon, 4 Jun 2018 08:56:18 -0700
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Rik van Riel <riel@surriel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180604122336.GS12217@hirez.programming.kicks-ass.net>
+ <20180604125939.GB38574@linux.vnet.ibm.com>
+ <1528123050.7898.99.camel@surriel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <1528123050.7898.99.camel@surriel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18060415-4275-0000-0000-0000028A0221
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060415-4276-0000-0000-00003791020E
+Message-Id: <20180604155618.GC30328@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040186
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove arch dependent setjump/longjump functions
-and unused fields in kprobe_ctlblk for jprobes
-from arch/sparc.
+* Rik van Riel <riel@surriel.com> [2018-06-04 10:37:30]:
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: sparclinux@vger.kernel.org
----
- arch/sparc/include/asm/kprobes.h |    1 -
- arch/sparc/kernel/kprobes.c      |   47 --------------------------------------
- 2 files changed, 48 deletions(-)
+> On Mon, 2018-06-04 at 05:59 -0700, Srikar Dronamraju wrote:
+> > * Peter Zijlstra <peterz@infradead.org> [2018-06-04 14:23:36]:
+> > 
+> > > > -		if (ng->active_nodes > 1 &&
+> > > > numa_is_active_node(env.dst_nid, ng))
+> > > > -			sched_setnuma(p, env.dst_nid);
+> > > > +		if (nid != p->numa_preferred_nid)
+> > > > +			sched_setnuma(p, nid);
+> > > >  	}
+> > > 
+> > 
+> > I think checking for active_nodes before calling sched_setnuma was a
+> > mistake.
+> > 
+> > Before this change, we may be retaining numa_preferred_nid to be the
+> > source node while we select another node with better numa affinity to
+> > run on. 
+> 
+> Sometimes workloads are so large they get spread
+> around to multiple NUMA nodes.
+> 
+> In that case, you do NOT want all the tasks of
+> that workload (numa group) to try squeezing onto
+> the same load, only to have the load balancer
+> randomly move tasks off of that node again later.
+> 
+> How do you keep that from happening?
 
-diff --git a/arch/sparc/include/asm/kprobes.h b/arch/sparc/include/asm/kprobes.h
-index 3704490b4488..bfcaa6326c20 100644
---- a/arch/sparc/include/asm/kprobes.h
-+++ b/arch/sparc/include/asm/kprobes.h
-@@ -44,7 +44,6 @@ struct kprobe_ctlblk {
- 	unsigned long kprobe_status;
- 	unsigned long kprobe_orig_tnpc;
- 	unsigned long kprobe_orig_tstate_pil;
--	struct pt_regs jprobe_saved_regs;
- 	struct prev_kprobe prev_kprobe;
- };
- 
-diff --git a/arch/sparc/kernel/kprobes.c b/arch/sparc/kernel/kprobes.c
-index ab4ba4347941..f555711da8f1 100644
---- a/arch/sparc/kernel/kprobes.c
-+++ b/arch/sparc/kernel/kprobes.c
-@@ -441,53 +441,6 @@ asmlinkage void __kprobes kprobe_trap(unsigned long trap_level,
- 	exception_exit(prev_state);
- }
- 
--/* Jprobes support.  */
--int __kprobes setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
--{
--	struct jprobe *jp = container_of(p, struct jprobe, kp);
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
--
--	memcpy(&(kcb->jprobe_saved_regs), regs, sizeof(*regs));
--
--	regs->tpc  = (unsigned long) jp->entry;
--	regs->tnpc = ((unsigned long) jp->entry) + 0x4UL;
--	regs->tstate |= TSTATE_PIL;
--
--	return 1;
--}
--
--void __kprobes jprobe_return(void)
--{
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
--	register unsigned long orig_fp asm("g1");
--
--	orig_fp = kcb->jprobe_saved_regs.u_regs[UREG_FP];
--	__asm__ __volatile__("\n"
--"1:	cmp		%%sp, %0\n\t"
--	"blu,a,pt	%%xcc, 1b\n\t"
--	" restore\n\t"
--	".globl		jprobe_return_trap_instruction\n"
--"jprobe_return_trap_instruction:\n\t"
--	"ta		0x70"
--	: /* no outputs */
--	: "r" (orig_fp));
--}
--
--extern void jprobe_return_trap_instruction(void);
--
--int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
--{
--	u32 *addr = (u32 *) regs->tpc;
--	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
--
--	if (addr == (u32 *) jprobe_return_trap_instruction) {
--		memcpy(regs, &(kcb->jprobe_saved_regs), sizeof(*regs));
--		preempt_enable_no_resched();
--		return 1;
--	}
--	return 0;
--}
--
- /* The value stored in the return address register is actually 2
-  * instructions before where the callee will return to.
-  * Sequences usually look something like this
+Infact we are exactly doing this now in all cases. We are not changing
+anything in the ng->active_node > 1 case. (which is the workload spread
+across multiple nodes).
+
+Earlier we would not set the numa_preferred_nid if there is only one
+active node. However its not certain that the src node is the active
+node. Infact its most likely not going to be src node because we
+wouldn't have reached here if the task was running on the source node.
+Keeping the numa_preferred_nid as the source node increases the chances
+of the regular load balancer randomly moving tasks from the node.  Now
+we are making sure task_node(p) and numa_preferred_nid. Hence we would
+reduce the risk of moving to a random node.
+
+Hope this is clear.
