@@ -1,55 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752630AbeFDLtB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:49:01 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:35612 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbeFDLs4 (ORCPT
+        id S1753056AbeFDLt2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:49:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59407 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753033AbeFDLt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:48:56 -0400
-X-Google-Smtp-Source: ADUXVKIzAR4YDfV85pKEIA4Y36UCM36eghY2jVuFjhMuYEnvJPsPNN+mN+X6+BRrNjaoeJr9TR1JAcAmnjAQ42pIwtU=
+        Mon, 4 Jun 2018 07:49:27 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: usb-audio: remove redundant check on err
+Date: Mon,  4 Jun 2018 12:49:19 +0100
+Message-Id: <20180604114919.2199-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
-References: <cover.1527909627.git.fthain@telegraphics.com.au>
- <f32f4e3a0fd736152f768b7a00bfc731daba1629.1527909627.git.fthain@telegraphics.com.au>
- <7ce9a8c3996506ae6f9ab16b3cf73c287e205a89.1527909627.git.fthain@telegraphics.com.au>
- <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Jun 2018 13:48:55 +0200
-X-Google-Sender-Auth: XzMtV8mwRtphqDM1m1t9U_RrH00
-Message-ID: <CAMuHMdV6sKMLGhWLELqJWXS8Vj5Cnh82NE8MYOwU6EDWvoSTrg@mail.gmail.com>
-Subject: Re: [PATCH 03/11] macintosh/via-pmu: Don't clear shift register
- interrupt flag twice
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 2, 2018 at 5:27 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> Clearing the interrupt flag twice in succession creates a theoretical
-> race condition. Fix this.
+From: Colin Ian King <colin.king@canonical.com>
 
-I would add that the caller of pmu_sr_intr() has already cleared the flag,
-so the casual reviewer doesn't have to hunt for it.
+The check on err is redundant as both the true and false paths
+end up on a break statement. Remove the redundant check.
 
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Detected by CoverityScan, CID#1268773 ("Identical code for different
+branches")
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/usb/mixer_quirks.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
+index 4149543f613e..e82a72fea9a1 100644
+--- a/sound/usb/mixer_quirks.c
++++ b/sound/usb/mixer_quirks.c
+@@ -1849,8 +1849,6 @@ int snd_usb_mixer_apply_create_quirk(struct usb_mixer_interface *mixer)
+ 	/* EMU0204 */
+ 	case USB_ID(0x041e, 0x3f19):
+ 		err = snd_emu0204_controls_create(mixer);
+-		if (err < 0)
+-			break;
+ 		break;
+ 
+ 	case USB_ID(0x0763, 0x2030): /* M-Audio Fast Track C400 */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
