@@ -1,112 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751433AbeFDVCJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:02:09 -0400
-Received: from ns.pmeerw.net ([84.19.176.117]:44792 "EHLO ns.pmeerw.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751093AbeFDVCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:02:08 -0400
-From: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Subject: [PATCH] rfkill: Fix several typos in documentation
-Date: Mon,  4 Jun 2018 23:02:03 +0200
-Message-Id: <20180604210203.29684-1-pmeerw@pmeerw.net>
-X-Mailer: git-send-email 2.11.0
+        id S1751508AbeFDVCQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:02:16 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:47383 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751093AbeFDVCN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 17:02:13 -0400
+From: Nadav Amit <namit@vmware.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Nadav Amit <namit@vmware.com>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] usb: fix uvc_alloc_entity() allocation alignment
+Date: Mon, 4 Jun 2018 06:47:13 -0700
+Message-ID: <20180604134713.101064-1-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
----
- Documentation/rfkill.txt | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+The use of ALIGN() in uvc_alloc_entity() is incorrect, since the size of
+(entity->pads) is not a power of two. As a stop-gap, until a better
+solution is adapted, use roundup() instead.
 
-diff --git a/Documentation/rfkill.txt b/Documentation/rfkill.txt
-index a289285d2412..7d3684e81df6 100644
---- a/Documentation/rfkill.txt
-+++ b/Documentation/rfkill.txt
-@@ -9,7 +9,7 @@ rfkill - RF kill switch support
- Introduction
- ============
+Found by a static assertion. Compile-tested only.
+
+Fixes: 4ffc2d89f38a ("uvcvideo: Register subdevices for each entity")
+
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ drivers/media/usb/uvc/uvc_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index 2469b49b2b30..6b989d41c034 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -909,7 +909,7 @@ static struct uvc_entity *uvc_alloc_entity(u16 type, u8 id,
+ 	unsigned int size;
+ 	unsigned int i;
  
--The rfkill subsystem provides a generic interface to disabling any radio
-+The rfkill subsystem provides a generic interface for disabling any radio
- transmitter in the system. When a transmitter is blocked, it shall not
- radiate any power.
- 
-@@ -45,7 +45,7 @@ The rfkill subsystem is composed of three main components:
-  * the rfkill drivers.
- 
- The rfkill core provides API for kernel drivers to register their radio
--transmitter with the kernel, methods for turning it on and off and, letting
-+transmitter with the kernel, methods for turning it on and off, and letting
- the system know about hardware-disabled states that may be implemented on
- the device.
- 
-@@ -54,7 +54,7 @@ ways for userspace to query the current states. See the "Userspace support"
- section below.
- 
- When the device is hard-blocked (either by a call to rfkill_set_hw_state()
--or from query_hw_block) set_block() will be invoked for additional software
-+or from query_hw_block), set_block() will be invoked for additional software
- block, but drivers can ignore the method call since they can use the return
- value of the function rfkill_set_hw_state() to sync the software state
- instead of keeping track of calls to set_block(). In fact, drivers should
-@@ -65,7 +65,6 @@ keeps track of soft and hard block separately.
- Kernel API
- ==========
- 
--
- Drivers for radio transmitters normally implement an rfkill driver.
- 
- Platform drivers might implement input devices if the rfkill button is just
-@@ -75,14 +74,14 @@ a way to turn on/off the transmitter(s).
- 
- For some platforms, it is possible that the hardware state changes during
- suspend/hibernation, in which case it will be necessary to update the rfkill
--core with the current state is at resume time.
-+core with the current state at resume time.
- 
- To create an rfkill driver, driver's Kconfig needs to have::
- 
- 	depends on RFKILL || !RFKILL
- 
- to ensure the driver cannot be built-in when rfkill is modular. The !RFKILL
--case allows the driver to be built when rfkill is not configured, which
-+case allows the driver to be built when rfkill is not configured, in which
- case all rfkill API can still be used but will be provided by static inlines
- which compile to almost nothing.
- 
-@@ -91,7 +90,7 @@ rfkill drivers that control devices that can be hard-blocked unless they also
- assign the poll_hw_block() callback (then the rfkill core will poll the
- device). Don't do this unless you cannot get the event in any other way.
- 
--RFKill provides per-switch LED triggers, which can be used to drive LEDs
-+rfkill provides per-switch LED triggers, which can be used to drive LEDs
- according to the switch state (LED_FULL when blocked, LED_OFF otherwise).
- 
- 
-@@ -114,7 +113,7 @@ a specified type) into a state which also updates the default state for
- hotplugged devices.
- 
- After an application opens /dev/rfkill, it can read the current state of all
--devices. Changes can be either obtained by either polling the descriptor for
-+devices. Changes can be obtained by either polling the descriptor for
- hotplug or state change events or by listening for uevents emitted by the
- rfkill core framework.
- 
-@@ -127,8 +126,7 @@ environment variables set::
- 	RFKILL_STATE
- 	RFKILL_TYPE
- 
--The contents of these variables corresponds to the "name", "state" and
-+The content of these variables corresponds to the "name", "state" and
- "type" sysfs files explained above.
- 
--
- For further details consult Documentation/ABI/stable/sysfs-class-rfkill.
+-	extra_size = ALIGN(extra_size, sizeof(*entity->pads));
++	extra_size = roundup(extra_size, sizeof(*entity->pads));
+ 	num_inputs = (type & UVC_TERM_OUTPUT) ? num_pads : num_pads - 1;
+ 	size = sizeof(*entity) + extra_size + sizeof(*entity->pads) * num_pads
+ 	     + num_inputs;
 -- 
-2.11.0
+2.17.0
