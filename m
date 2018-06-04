@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753000AbeFDHIk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:08:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56538 "EHLO mail.kernel.org"
+        id S1753921AbeFDHJL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:09:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753765AbeFDHEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:25 -0400
+        id S1752828AbeFDHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:04:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.16 39/47] IB/core: Fix error code for invalid GID entry
-Date: Mon,  4 Jun 2018 08:58:51 +0200
-Message-Id: <20180604065551.120638200@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.16 35/47] MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
+Date: Mon,  4 Jun 2018 08:58:47 +0200
+Message-Id: <20180604065550.944787192@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -31,46 +30,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Maciej W. Rozycki <macro@mips.com>
 
-commit a840c93ca7582bb6c88df2345a33f979b7a67874 upstream.
+commit 28e4213dd331e944e7fca1954a946829162ed9d4 upstream.
 
-When a GID entry is invalid EAGAIN is returned. This is an incorrect error
-code, there is nothing that will make this GID entry valid again in
-bounded time.
+Having PR_FP_MODE_FRE (i.e. Config5.FRE) set without PR_FP_MODE_FR (i.e.
+Status.FR) is not supported as the lone purpose of Config5.FRE is to
+emulate Status.FR=0 handling on FPU hardware that has Status.FR=1
+hardwired[1][2].  Also we do not handle this case elsewhere, and assume
+throughout our code that TIF_HYBRID_FPREGS and TIF_32BIT_FPREGS cannot
+be set both at once for a task, leading to inconsistent behaviour if
+this does happen.
 
-Some user space tools fail incorrectly if EAGAIN is returned here, and
-this represents a small ABI change from earlier kernels.
+Return unsuccessfully then from prctl(2) PR_SET_FP_MODE calls requesting
+PR_FP_MODE_FRE to be set with PR_FP_MODE_FR clear.  This corresponds to
+modes allowed by `mips_set_personality_fp'.
 
-The first patch in the Fixes list makes entries that were valid before
-to become invalid, allowing this code to trigger, while the second patch
-in the Fixes list introduced the wrong EAGAIN.
+References:
 
-Therefore revert the return result to EINVAL which matches the historical
-expectations of the ibv_query_gid_type() API of the libibverbs user space
-library.
+[1] "MIPS Architecture For Programmers, Vol. III: MIPS32 / microMIPS32
+    Privileged Resource Architecture", Imagination Technologies,
+    Document Number: MD00090, Revision 6.02, July 10, 2015, Table 9.69
+    "Config5 Register Field Descriptions", p. 262
 
-Cc: <stable@vger.kernel.org>
-Fixes: 598ff6bae689 ("IB/core: Refactor GID modify code for RoCE")
-Fixes: 03db3a2d81e6 ("IB/core: Add RoCE GID table management")
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+[2] "MIPS Architecture For Programmers, Volume III: MIPS64 / microMIPS64
+    Privileged Resource Architecture", Imagination Technologies,
+    Document Number: MD00091, Revision 6.03, December 22, 2015, Table
+    9.72 "Config5 Register Field Descriptions", p. 288
+
+Fixes: 9791554b45a2 ("MIPS,prctl: add PR_[GS]ET_FP_MODE prctl options for MIPS")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 4.0+
+Patchwork: https://patchwork.linux-mips.org/patch/19327/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/cache.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/kernel/process.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/infiniband/core/cache.c
-+++ b/drivers/infiniband/core/cache.c
-@@ -434,7 +434,7 @@ static int __ib_cache_gid_get(struct ib_
- 		return -EINVAL;
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -721,6 +721,10 @@ int mips_set_process_fp_mode(struct task
+ 	if (value & ~known_bits)
+ 		return -EOPNOTSUPP;
  
- 	if (table->data_vec[index].props & GID_TABLE_ENTRY_INVALID)
--		return -EAGAIN;
-+		return -EINVAL;
- 
- 	memcpy(gid, &table->data_vec[index].gid, sizeof(*gid));
- 	if (attr) {
++	/* Setting FRE without FR is not supported.  */
++	if ((value & (PR_FP_MODE_FR | PR_FP_MODE_FRE)) == PR_FP_MODE_FRE)
++		return -EOPNOTSUPP;
++
+ 	/* Avoid inadvertently triggering emulation */
+ 	if ((value & PR_FP_MODE_FR) && raw_cpu_has_fpu &&
+ 	    !(raw_current_cpu_data.fpu_id & MIPS_FPIR_F64))
