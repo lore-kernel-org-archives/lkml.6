@@ -1,104 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753367AbeFDNt1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:49:27 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34715 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753063AbeFDNtY (ORCPT
+        id S1753397AbeFDNte (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:49:34 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42738 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753063AbeFDNt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:49:24 -0400
-X-Google-Smtp-Source: ADUXVKIfK2T0E42AsnFDlz/QRdgfZ732E82QqGYfUxD0swIgYmUGWMPGVOF3KDsxTX/OpWlJGLdd0A==
-Date: Mon, 4 Jun 2018 06:49:20 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] dpaa_eth: add support for hardware timestamping
-Message-ID: <20180604134920.ezhe6jz5ntpnqyzj@localhost>
-References: <20180604070837.19265-1-yangbo.lu@nxp.com>
- <20180604070837.19265-10-yangbo.lu@nxp.com>
+        Mon, 4 Jun 2018 09:49:28 -0400
+X-Google-Smtp-Source: ADUXVKK4Bjemf5Q8Pldm7w5UNGFlTUHmxIn8bCPjiPvK1KLeEtlUYVlY7IkKWjru4ZKxQ1DLpW4asWPTs1NLmX9DRkM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604070837.19265-10-yangbo.lu@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1527856871-3007-2-git-send-email-lowry.li@arm.com>
+References: <1527856871-3007-1-git-send-email-lowry.li@arm.com> <1527856871-3007-2-git-send-email-lowry.li@arm.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Mon, 4 Jun 2018 14:49:26 +0100
+Message-ID: <CACvgo53z9_DLXDXVgsvX6eVRr+-OXuJYu8_q2kANFTgyWCeacQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] drm: Add per-plane pixel blend mode property
+To: Lowry Li <lowry.li@arm.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        "Vetter, Daniel" <daniel.vetter@intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mali DP Maintainers <malidp@foss.arm.com>, nd@arm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 03:08:36PM +0800, Yangbo Lu wrote:
-
-> +if FSL_DPAA_ETH
-> +config FSL_DPAA_ETH_TS
-> +	bool "DPAA hardware timestamping support"
-> +	select PTP_1588_CLOCK_QORIQ
-> +	default n
-> +	help
-> +	  Enable DPAA hardware timestamping support.
-> +	  This option is useful for applications to get
-> +	  hardware time stamps on the Ethernet packets
-> +	  using the SO_TIMESTAMPING API.
-> +endif
-
-You should drop this #ifdef.  In general, if a MAC supports time
-stamping and PHC, then the driver support should simply be compiled
-in.
-
-[ When time stamping incurs a large run time performance penalty to
-  non-PTP users, then it might make sense to have a Kconfig option to
-  disable it, but that doesn't appear to be the case here. ]
-
-> @@ -1615,6 +1635,24 @@ static int dpaa_eth_refill_bpools(struct dpaa_priv *priv)
->  	skbh = (struct sk_buff **)phys_to_virt(addr);
->  	skb = *skbh;
->  
-> +#ifdef CONFIG_FSL_DPAA_ETH_TS
-> +	if (priv->tx_tstamp &&
-> +	    skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
-
-This condition fits on one line easily.
-
-> +		struct skb_shared_hwtstamps shhwtstamps;
-> +		u64 ns;
-
-Local variables belong at the top of the function.
-
-> +		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
+On 1 June 2018 at 13:41, Lowry Li <lowry.li@arm.com> wrote:
+> Pixel blend modes represent the alpha blending equation
+> selection, describing how the pixels from the current
+> plane are composited with the background.
+>
+> Add a pixel_blend_mode to drm_plane_state and a
+> blend_mode_property to drm_plane, and related support
+> functions.
+>
+> Defines three blend modes in drm_blend.h.
+>
+> Signed-off-by: Lowry Li <lowry.li@arm.com>
+> ---
+>  drivers/gpu/drm/drm_atomic.c        |   4 ++
+>  drivers/gpu/drm/drm_atomic_helper.c |   1 +
+>  drivers/gpu/drm/drm_blend.c         | 126 ++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_blend.h             |   6 ++
+>  include/drm/drm_plane.h             |   5 ++
+>  5 files changed, 142 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 07fef42..1d18389 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -785,6 +785,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+>                 state->src_h = val;
+>         } else if (property == plane->alpha_property) {
+>                 state->alpha = val;
+> +       } else if (property == plane->blend_mode_property) {
+> +               state->pixel_blend_mode = val;
+>         } else if (property == plane->rotation_property) {
+>                 if (!is_power_of_2(val & DRM_MODE_ROTATE_MASK))
+>                         return -EINVAL;
+> @@ -852,6 +854,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+>                 *val = state->src_h;
+>         } else if (property == plane->alpha_property) {
+>                 *val = state->alpha;
+> +       } else if (property == plane->blend_mode_property) {
+> +               *val = state->pixel_blend_mode;
+>         } else if (property == plane->rotation_property) {
+>                 *val = state->rotation;
+>         } else if (property == plane->zpos_property) {
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 130da51..7f5d463 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3515,6 +3515,7 @@ void drm_atomic_helper_plane_reset(struct drm_plane *plane)
+>                 /* Reset the alpha value to fully opaque if it matters */
+>                 if (plane->alpha_property)
+>                         plane->state->alpha = plane->alpha_property->values[1];
+> +               plane->state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
+>         }
+>  }
+>  EXPORT_SYMBOL(drm_atomic_helper_plane_reset);
+> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> index a16a74d..ac6f19c 100644
+> --- a/drivers/gpu/drm/drm_blend.c
+> +++ b/drivers/gpu/drm/drm_blend.c
+> @@ -107,6 +107,52 @@
+>   *     planes. Without this property the primary plane is always below the cursor
+>   *     plane, and ordering between all other planes is undefined.
+>   *
+> + * pixel blend mode:
+> + *     Pixel blend mode is set up with drm_plane_create_blend_mode_property().
+> + *     It adds a blend mode for alpha blending equation selection, describing
+> + *     how the pixels from the current plane are composited with the
+> + *     background.
+> + *
+> + *      Three alpha blending equations are defined:
+> + *
+> + *      "None":
+> + *              Blend formula that ignores the pixel alpha::
+> + *
+> + *                      out.rgb = plane_alpha * fg.rgb +
+> + *                              (1 - plane_alpha) * bg.rgb
+> + *
+> + *      "Pre-multiplied":
+> + *              Blend formula that assumes the pixel color values
+> + *              have been already pre-multiplied with the alpha
+> + *              channel values::
+> + *
+> + *                      out.rgb = plane_alpha * fg.rgb +
+> + *                              (1 - (plane_alpha * fg.alpha)) * bg.rgb
+> + *
+> + *      "Coverage":
+> + *              Blend formula that assumes the pixel color values have not
+> + *              been pre-multiplied and will do so when blending them to the
+> + *              background color values::
+> + *
+> + *                      out.rgb = plane_alpha * fg.alpha * fg.rgb +
+> + *                              (1 - (plane_alpha * fg.alpha)) * bg.rgb
+> + *
+> + *      Using the following symbols:
+> + *
+> + *      ``fg.rgb``:
+> + *              Each of the RGB component values from the plane's pixel
+> + *      ``fg.alpha``:
+> + *              Alpha component value from the plane's pixel. If the plane's
+> + *              pixel format has no alpha component, then this is assumed to be
+> + *              1.0. In these cases, this property has no effect, as all three
+> + *              equations become equivalent.
+> + *      ``bg.rgb``:
+> + *              Each of the RGB component values from the background
+> + *      ``plane_alpha``:
+> + *              Plane alpha value set by the plane "alpha" property. If the
+> + *              plane does not expose the "alpha" property, then this is
+> + *              assumed to be 1.0
+> + *
+>   * Note that all the property extensions described here apply either to the
+>   * plane or the CRTC (e.g. for the background color, which currently is not
+>   * exposed and assumed to be black).
+> @@ -448,3 +494,83 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+>         return 0;
+>  }
+>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
 > +
-> +		if (!dpaa_get_tstamp_ns(priv->net_dev, &ns,
-> +					priv->mac_dev->port[TX],
-> +					(void *)skbh)) {
-> +			shhwtstamps.hwtstamp = ns_to_ktime(ns);
-> +			skb_tstamp_tx(skb, &shhwtstamps);
-> +		} else {
-> +			dev_warn(dev, "dpaa_get_tstamp_ns failed!\n");
-> +		}
-> +	}
-> +#endif
->  	if (unlikely(qm_fd_get_format(fd) == qm_fd_sg)) {
->  		nr_frags = skb_shinfo(skb)->nr_frags;
->  		dma_unmap_single(dev, addr, qm_fd_get_offset(fd) +
-> @@ -2086,6 +2124,14 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
->  	if (unlikely(err < 0))
->  		goto skb_to_fd_failed;
->  
-> +#ifdef CONFIG_FSL_DPAA_ETH_TS
-> +	if (priv->tx_tstamp &&
-> +	    skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+> +/**
+> + * drm_plane_create_blend_mode_property - create a new blend mode property
+> + * @plane: drm plane
+> + * @supported_modes: bitmask of supported modes, must include
+> + *                  BIT(DRM_MODE_BLEND_PREMULTI). Current DRM assumption is
+> + *                  that alpha is premultiplied, and old userspace can break if
+> + *                  the property defaults to coverage.
+> + *
 
-One line please.
+Thanks for the explanation Lowry.
+Sigh, old userspace :-\
 
-> +		fd.cmd |= FM_FD_CMD_UPD;
-> +		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-> +	}
-> +#endif
-> +
->  	if (likely(dpaa_xmit(priv, percpu_stats, queue_mapping, &fd) == 0))
->  		return NETDEV_TX_OK;
->  
+One pedantic suggestion s/defaults to coverage/defaults to anything else/
+Since defaulting to "none" or any future blend mode is also a no-go.
 
-Thanks,
-Richard
+I wouldn't bother resending solely for ^^. Perhaps squash locally
+before merging?
+
+With that, the patch is
+Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+
+-Emil
