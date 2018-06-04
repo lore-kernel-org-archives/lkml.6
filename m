@@ -1,104 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751653AbeFDEUJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 00:20:09 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:59517 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbeFDEUH (ORCPT
+        id S1751543AbeFDEZi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 00:25:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53582 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeFDEZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 00:20:07 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Containers <containers@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>
-References: <878t7vp64i.fsf@xmission.com>
-Date: Sun, 03 Jun 2018 23:19:59 -0500
-In-Reply-To: <878t7vp64i.fsf@xmission.com> (Eric W. Biederman's message of
-        "Sun, 03 Jun 2018 22:45:01 -0500")
-Message-ID: <87bmcrmbdc.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 4 Jun 2018 00:25:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0B7460263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH 1/2] thermal: tsens: Add support for SDM845 platform
+To: Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-arm-msm@vger.kernel.org
+Cc: bjorn.andersson@linaro.org, edubezval@gmail.com,
+        Zhang Rui <rui.zhang@intel.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.1527937396.git.amit.kucheria@linaro.org>
+ <7a0f33cff94f41110bdbff14d28d36074fae2a7d.1527937396.git.amit.kucheria@linaro.org>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <31b21293-ae00-0146-c196-6c8e964473f9@codeaurora.org>
+Date: Mon, 4 Jun 2018 09:55:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fPgyT-0002zM-Uq;;;mid=<87bmcrmbdc.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/nvcxAJWG4CntXspZ0wX/NXrFNkrDjIQA=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 XMSubMetaSx_00 1+ Sexy Words
-        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 194 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.5 (1.3%), b_tie_ro: 1.80 (0.9%), parse: 0.82 (0.4%),
-        extract_message_metadata: 2.9 (1.5%), get_uri_detail_list: 1.36 (0.7%),
-        tests_pri_-1000: 3.6 (1.8%), tests_pri_-950: 1.18 (0.6%), tests_pri_-900:
-        1.03 (0.5%), tests_pri_-400: 19 (9.9%), check_bayes: 18 (9.4%), b_tokenize: 6
-        (3.1%), b_tok_get_all: 6 (3.1%), b_comp_prob: 1.87 (1.0%), b_tok_touch_all:
-        2.6 (1.3%), b_finish: 0.57 (0.3%), tests_pri_0: 151 (78.1%),
-        check_dkim_signature: 0.46 (0.2%), check_dkim_adsp: 2.6 (1.3%),
-        tests_pri_500: 4.1 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: [GIT PULL] userns vfs bits for v4.18-rc1
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <7a0f33cff94f41110bdbff14d28d36074fae2a7d.1527937396.git.amit.kucheria@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Linus,
 
-Please pull the userns-linus branch from the git tree:
+On 06/02/2018 04:41 PM, Amit Kucheria wrote:
+> There are two tsens blocks on the SDM845. These will be configured through
+> the devicetree.
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  .../devicetree/bindings/thermal/qcom-tsens.txt     |  1 +
+>  drivers/thermal/qcom/Makefile                      |  2 +-
+>  drivers/thermal/qcom/tsens-sdm845.c                | 98 ++++++++++++++++++++++
+>  drivers/thermal/qcom/tsens.c                       |  3 +
+>  drivers/thermal/qcom/tsens.h                       |  1 +
+>  5 files changed, 104 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/thermal/qcom/tsens-sdm845.c
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> index 292ed89..8652499 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> @@ -5,6 +5,7 @@ Required properties:
+>   - "qcom,msm8916-tsens" : For 8916 Family of SoCs
+>   - "qcom,msm8974-tsens" : For 8974 Family of SoCs
+>   - "qcom,msm8996-tsens" : For 8996 Family of SoCs
+> + - "qcom,sdm845-tsens"  : For SDM845 Family of SoCs
+>  
+>  - reg: Address range of the thermal registers
+>  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description.
+> diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
+> index 2cc2193..dc9f169 100644
+> --- a/drivers/thermal/qcom/Makefile
+> +++ b/drivers/thermal/qcom/Makefile
+> @@ -1,2 +1,2 @@
+>  obj-$(CONFIG_QCOM_TSENS)	+= qcom_tsens.o
+> -qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-8996.o
+> +qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-8996.o tsens-sdm845.o
+> diff --git a/drivers/thermal/qcom/tsens-sdm845.c b/drivers/thermal/qcom/tsens-sdm845.c
+> new file mode 100644
+> index 0000000..5d78f0b
+> --- /dev/null
+> +++ b/drivers/thermal/qcom/tsens-sdm845.c
+> @@ -0,0 +1,98 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, Linaro Limited
+> + */
+> +
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include "tsens.h"
+> +
+> +#define CNTL_OFFSET	4
+> +/* CNTL_OFFSET bitmasks */
+> +#define EN		BIT(0)
+> +#define SW_RST		BIT(1)
+> +
+> +#define SENSOR0_SHIFT	3
+> +
+> +#define TRDY_OFFSET     0xe4
+> +#define TRDY_READY_BIT  BIT(1)
+> +
+> +#define STATUS_OFFSET	0xa0
+> +#define LAST_TEMP_MASK	0xfff
+> +#define STATUS_VALID_BIT	BIT(21)
+> +#define CODE_SIGN_BIT		BIT(11)
+> +
+> +static int get_temp_sdm845(struct tsens_device *tmdev, int id, int *temp)
+> +{
+> +	struct tsens_sensor *s = &tmdev->sensor[id];
+> +	u32 code;
+> +	unsigned int sensor_addr;
+> +	int last_temp = 0, last_temp2 = 0, last_temp3 = 0, ret;
+> +
+> +	ret = regmap_read(tmdev->map, TRDY_OFFSET, &code);
+> +	if (ret)
+> +		return ret;
+> +	if (code & TRDY_READY_BIT)
+> +		return -ENODATA;
+> +
+> +	sensor_addr = STATUS_OFFSET + s->hw_id * 4;
+> +	ret = regmap_read(tmdev->map, sensor_addr, &code);
+> +	if (ret)
+> +		return ret;
+> +	last_temp = code & LAST_TEMP_MASK;
+> +	if (code & STATUS_VALID_BIT)
+> +		goto done;
+> +
+> +	/* Try a second time */
+> +	ret = regmap_read(tmdev->map, sensor_addr, &code);
+> +	if (ret)
+> +		return ret;
+> +	if (code & STATUS_VALID_BIT) {
+> +		last_temp = code & LAST_TEMP_MASK;
+> +		goto done;
+> +	} else {
+> +		last_temp2 = code & LAST_TEMP_MASK;
+> +	}
+> +
+> +	/* Try a third/last time */
+> +	ret = regmap_read(tmdev->map, sensor_addr, &code);
+> +	if (ret)
+> +		return ret;
+> +	if (code & STATUS_VALID_BIT) {
+> +		last_temp = code & LAST_TEMP_MASK;
+> +		goto done;
+> +	} else {
+> +		last_temp3 = code & LAST_TEMP_MASK;
+> +	}
+> +
+> +	if (last_temp == last_temp2)
+> +		last_temp = last_temp2;
+> +	else if (last_temp2 == last_temp3)
+> +		last_temp = last_temp3;
+> +done:
+> +	/* Code sign bit is the sign extension for a negative value */
+> +	if (last_temp & CODE_SIGN_BIT)
+> +		last_temp |= ~CODE_SIGN_BIT;
+> +
+> +	/* Temperatures are in deciCelicius */
+> +	*temp = last_temp * 100;
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-linus
+This looks the same as what we do for 8996. Does it make sense to move this
+to tsens-common and reuse in both 8996 and 845?
 
-   HEAD: f3f1a18330ac1b717cd7a32adff38d965f365aa2 fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct regmap_config tsens_config = {
+> +	.reg_bits	= 32,
+> +	.val_bits	= 32,
+> +	.reg_stride	= 4,
+> +};
+> +
+> +
+> +static const struct tsens_ops ops_sdm845 = {
+> +  	.init		= init_common,
+> +	.get_temp	= get_temp_sdm845,
+> +};
+> +
+> +const struct tsens_data data_sdm845 = {
+> +	.ops		= &ops_sdm845,
+> +};
+> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+> index 3f9fe6a..314a20f 100644
+> --- a/drivers/thermal/qcom/tsens.c
+> +++ b/drivers/thermal/qcom/tsens.c
+> @@ -72,6 +72,9 @@ static const struct of_device_id tsens_table[] = {
+>  	}, {
+>  		.compatible = "qcom,msm8996-tsens",
+>  		.data = &data_8996,
+> +	}, {
+> +		.compatible = "qcom,sdm845-tsens",
+> +		.data = &data_sdm845,
+>  	},
+>  	{}
+>  };
+> diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
+> index 911c197..f15660d 100644
+> --- a/drivers/thermal/qcom/tsens.h
+> +++ b/drivers/thermal/qcom/tsens.h
+> @@ -90,5 +90,6 @@ int init_common(struct tsens_device *);
+>  int get_temp_common(struct tsens_device *, int, int *);
+>  
+>  extern const struct tsens_data data_8916, data_8974, data_8960, data_8996;
+> +extern const struct tsens_data data_sdm845;
+>  
+>  #endif /* __QCOM_TSENS_H__ */
+> 
 
-Apologies for the resend I forgot the diffstat and the subject line.
-
-This is the last couple of vfs bits to enable root in a user namespace
-to mount and manipulate a filesystem with backing store (AKA not a
-virtual filesystem like proc, but a filesystem where the unprivileged
-user controls the content).   The target filesystem for this work
-is fuse, and Miklos should be sending you the pull request for the
-fuse bits this merge window.
-
-The two key patches are " evm: Don't update hmacs in user ns mounts" and
-"vfs: Don't allow changing the link count of an inode with an invalid
-uid or gid".  Those close small gaps in the vfs that would be a problem
-if an unprivileged fuse filesystem is mounted.
-
-The rest of the changes are things that are now safe to allow a root
-user in a user namespace to do with a filesystem they have mounted.  The
-most interesting development is that remount is now safe.
-
-Eric W. Biederman (5):
-      vfs: Don't allow changing the link count of an inode with an invalid uid or gid
-      vfs: Allow userns root to call mknod on owned filesystems.
-      fs: Allow superblock owner to replace invalid owners of inodes
-      fs: Allow superblock owner to access do_remount_sb()
-      capabilities: Allow privileged user in s_user_ns to set security.* xattrs
-
-Seth Forshee (2):
-      evm: Don't update hmacs in user ns mounts
-      fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
-
- fs/attr.c                           | 36 ++++++++++++++++++++++++++++--------
- fs/ioctl.c                          |  4 ++--
- fs/namei.c                          | 16 ++++++++++++----
- fs/namespace.c                      |  4 ++--
- security/commoncap.c                |  8 ++++++--
- security/integrity/evm/evm_crypto.c |  3 ++-
- 6 files changed, 52 insertions(+), 19 deletions(-)
-
-Eric
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
