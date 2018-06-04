@@ -1,32 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752082AbeFDR5U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:57:20 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55699 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751401AbeFDR5E (ORCPT
+        id S1752031AbeFDR6L (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:58:11 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40954 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751228AbeFDR5D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:57:04 -0400
-X-Google-Smtp-Source: ADUXVKJ5xAZeaNG5fYYM2cW6+fmpeO/svzxOyB6F2IEKgGvx/lEzOF9F/kGOQKdiHXnFplron55apg==
-Subject: Re: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mon, 4 Jun 2018 13:57:03 -0400
+X-Google-Smtp-Source: ADUXVKK8NPtvjtIww3bIsDw4jy15iOswhh344Be4ohk3XMFZSkq1HgeQBVIzyt+UvJmrvQTpXGsXkg==
+Subject: Re: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        linux-renesas-soc@vger.kernel.org
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
- <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
+ <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
+ <20180604122624.GB21163@dell>
 From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
-Date: Mon, 4 Jun 2018 18:25:18 +0200
+Message-ID: <b3c9a486-002e-a63b-7d2d-2b51ce55b08f@gmail.com>
+Date: Mon, 4 Jun 2018 18:23:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
+In-Reply-To: <20180604122624.GB21163@dell>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -34,47 +34,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 09:39 AM, Geert Uytterhoeven wrote:
-> Hi Marek, Steve,
+On 06/04/2018 02:26 PM, Lee Jones wrote:
+> On Sat, 02 Jun 2018, Marek Vasut wrote:
 > 
-> On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
->> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
->> block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
->> prevent access into that register block.
+>> Convert the regmap_irq table to use REGMAP_IRQ_REG().
 >>
 >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Lee Jones <lee.jones@linaro.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>> V3: New patch
+>> Note: A sed oneliner was used:
+>>       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
+>> ---
+>>  drivers/mfd/da9063-irq.c | 145 ++++++++++-------------------------------------
+>>  1 file changed, 29 insertions(+), 116 deletions(-)
+>>
+>> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+>> index 207bbfe55449..5b406ecfc14a 100644
+>> --- a/drivers/mfd/da9063-irq.c
+>> +++ b/drivers/mfd/da9063-irq.c
+>> @@ -28,125 +28,38 @@
+>>  
+>>  static const struct regmap_irq da9063_irqs[] = {
+>>  	/* DA9063 event A register */
+>> -	[DA9063_IRQ_ONKEY] = {
+>> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>> -		.mask = DA9063_M_ONKEY,
+>> -	},
+>> -	[DA9063_IRQ_ALARM] = {
+>> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>> -		.mask = DA9063_M_ALARM,
+>> -	},
+>> -	[DA9063_IRQ_TICK] = {
+>> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>> -		.mask = DA9063_M_TICK,
+>> -	},
+>> -	[DA9063_IRQ_ADC_RDY] = {
+>> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>> -		.mask = DA9063_M_ADC_RDY,
+>> -	},
+>> -	[DA9063_IRQ_SEQ_RDY] = {
+>> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+>> -		.mask = DA9063_M_SEQ_RDY,
+>> -	},
+>> +	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
+>> +	REGMAP_IRQ_REG(DA9063_IRQ_ALARM, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
+>> +	REGMAP_IRQ_REG(DA9063_IRQ_TICK, DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
+>> +	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
+>> +	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
 > 
-> Thanks for your patch!
+> Nice, but I think checkpatch.pl would complain.
 > 
->> --- a/drivers/mfd/da9063-i2c.c
->> +++ b/drivers/mfd/da9063-i2c.c
->> @@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
-> 
-> Note that the line above doesn't check da9063->type, but da9063->variant_code...
-> 
->>                 da9063_regmap_config.rd_table = &da9063_ad_readable_table;
->>                 da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
->>                 da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
->> +       } else if (da9063->type == PMIC_TYPE_DA9063L) {
-> 
-> ... so this may be slightly confusing.
+> Better to break after the first argument I think.
 
-I know.
-
->> +               da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
->> +               da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
->> +               da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
->>         } else {
->>                 da9063_regmap_config.rd_table = &da9063_bb_readable_table;
->>                 da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
-> 
-> However, da9063->variant_code doesn't seem to have been filled in at this
-> point yet (the call to da9063_device_init() doing so is below, at the end
-> of the probe function!), so commit 9cb42e2a8ed06e91 ("mfd: da9063: Add
-> support for AD silicon variant") never actually handled the AD silicon variant
-> correctly? Or am I missing something?
-
-Ha, that is a good point.
+Doesn't really help the readability, but done.
 
 -- 
 Best regards,
