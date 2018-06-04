@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753027AbeFDHYR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:24:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54406 "EHLO mail.kernel.org"
+        id S1753336AbeFDHYf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:24:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752536AbeFDHBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:55 -0400
+        id S1753056AbeFDHBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>, John Crispin <john@phrozen.org>,
-        linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 36/52] MIPS: lantiq: gphy: Drop reboot/remove reset asserts
-Date: Mon,  4 Jun 2018 08:58:31 +0200
-Message-Id: <20180604065608.017672204@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
+        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 34/52] iio:kfifo_buf: check for uint overflow
+Date: Mon,  4 Jun 2018 08:58:29 +0200
+Message-Id: <20180604065607.936188738@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -31,103 +29,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Kresin <dev@kresin.me>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit 32795631e67e16141aa5e065c28ba03bf17abb90 upstream.
+commit 3d13de4b027d5f6276c0f9d3a264f518747d83f2 upstream.
 
-While doing a global software reset, these bits are not cleared and let
-some bootloader fail to initialise the GPHYs. The bootloader don't
-expect the GPHYs in reset, as they aren't during power on.
+Currently, the following causes a kernel OOPS in memcpy:
 
-The asserts were a workaround for a wrong syscon-reboot mask. With a
-mask set which includes the GPHY resets, these resets aren't required
-any more.
+echo 1073741825 > buffer/length
+echo 1 > buffer/enable
 
-Fixes: 126534141b45 ("MIPS: lantiq: Add a GPHY driver which uses the RCU syscon-mfd")
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
-Cc: John Crispin <john@phrozen.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.14+
-Patchwork: https://patchwork.linux-mips.org/patch/19003/
-[jhogan@kernel.org: Fix build warnings]
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Note that using 1073741824 instead of 1073741825 causes "write error:
+Cannot allocate memory" but no OOPS.
+
+This is because 1073741824 == 2^30 and 1073741825 == 2^30+1. Since kfifo
+rounds up to the nearest power of 2, it will actually call kmalloc with
+roundup_pow_of_two(length) * bytes_per_datum.
+
+Using length == 1073741825 and bytes_per_datum == 2, we get:
+
+kmalloc(roundup_pow_of_two(1073741825) * 2
+or kmalloc(2147483648 * 2)
+or kmalloc(4294967296)
+or kmalloc(UINT_MAX + 1)
+
+so this overflows to 0, causing kmalloc to return ZERO_SIZE_PTR and
+subsequent memcpy to fail once the device is enabled.
+
+Fix this by checking for overflow prior to allocating a kfifo. With this
+check added, the above code returns -EINVAL when enabling the buffer,
+rather than causing an OOPS.
+
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/lantiq/gphy.c |   36 ------------------------------------
- 1 file changed, 36 deletions(-)
+ drivers/iio/buffer/kfifo_buf.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/soc/lantiq/gphy.c
-+++ b/drivers/soc/lantiq/gphy.c
-@@ -30,7 +30,6 @@ struct xway_gphy_priv {
- 	struct clk *gphy_clk_gate;
- 	struct reset_control *gphy_reset;
- 	struct reset_control *gphy_reset2;
--	struct notifier_block gphy_reboot_nb;
- 	void __iomem *membase;
- 	char *fw_name;
- };
-@@ -64,24 +63,6 @@ static const struct of_device_id xway_gp
- };
- MODULE_DEVICE_TABLE(of, xway_gphy_match);
+--- a/drivers/iio/buffer/kfifo_buf.c
++++ b/drivers/iio/buffer/kfifo_buf.c
+@@ -27,6 +27,13 @@ static inline int __iio_allocate_kfifo(s
+ 	if ((length == 0) || (bytes_per_datum == 0))
+ 		return -EINVAL;
  
--static struct xway_gphy_priv *to_xway_gphy_priv(struct notifier_block *nb)
--{
--	return container_of(nb, struct xway_gphy_priv, gphy_reboot_nb);
--}
--
--static int xway_gphy_reboot_notify(struct notifier_block *reboot_nb,
--				   unsigned long code, void *unused)
--{
--	struct xway_gphy_priv *priv = to_xway_gphy_priv(reboot_nb);
--
--	if (priv) {
--		reset_control_assert(priv->gphy_reset);
--		reset_control_assert(priv->gphy_reset2);
--	}
--
--	return NOTIFY_DONE;
--}
--
- static int xway_gphy_load(struct device *dev, struct xway_gphy_priv *priv,
- 			  dma_addr_t *dev_addr)
- {
-@@ -205,14 +186,6 @@ static int xway_gphy_probe(struct platfo
- 	reset_control_deassert(priv->gphy_reset);
- 	reset_control_deassert(priv->gphy_reset2);
- 
--	/* assert the gphy reset because it can hang after a reboot: */
--	priv->gphy_reboot_nb.notifier_call = xway_gphy_reboot_notify;
--	priv->gphy_reboot_nb.priority = -1;
--
--	ret = register_reboot_notifier(&priv->gphy_reboot_nb);
--	if (ret)
--		dev_warn(dev, "Failed to register reboot notifier\n");
--
- 	platform_set_drvdata(pdev, priv);
- 
- 	return ret;
-@@ -220,21 +193,12 @@ static int xway_gphy_probe(struct platfo
- 
- static int xway_gphy_remove(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
- 	struct xway_gphy_priv *priv = platform_get_drvdata(pdev);
--	int ret;
--
--	reset_control_assert(priv->gphy_reset);
--	reset_control_assert(priv->gphy_reset2);
- 
- 	iowrite32be(0, priv->membase);
- 
- 	clk_disable_unprepare(priv->gphy_clk_gate);
- 
--	ret = unregister_reboot_notifier(&priv->gphy_reboot_nb);
--	if (ret)
--		dev_warn(dev, "Failed to unregister reboot notifier\n");
--
- 	return 0;
++	/*
++	 * Make sure we don't overflow an unsigned int after kfifo rounds up to
++	 * the next power of 2.
++	 */
++	if (roundup_pow_of_two(length) > UINT_MAX / bytes_per_datum)
++		return -EINVAL;
++
+ 	return __kfifo_alloc((struct __kfifo *)&buf->kf, length,
+ 			     bytes_per_datum, GFP_KERNEL);
  }
- 
