@@ -1,122 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751699AbeFDFhU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 01:37:20 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46381 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750997AbeFDFhS (ORCPT
+        id S1751518AbeFDFo5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 01:44:57 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38242 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeFDFo4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 01:37:18 -0400
-X-Google-Smtp-Source: ADUXVKJCHv6fuYVmFGL7T9XllBBvti0BXLs6vYK2vh3+H7RHQXjBssnQ2o3H/kJxK8j7YBM1Kd0M75CU3NLswNHsOX4=
+        Mon, 4 Jun 2018 01:44:56 -0400
+X-Google-Smtp-Source: ADUXVKLVZyg4hqxvN5nP6fvyl2oeSJo4Mnt9do9E08ofJlQlqnKrVcVZn34DRO+xZNFNIiTSR2KhRQ==
+Date: Mon, 4 Jun 2018 06:44:52 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: arizona: Don't use regmap_read_poll_timeout
+Message-ID: <20180604054452.GD17993@dell>
+References: <20180511135030.14590-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-In-Reply-To: <000000000000b2a7ea056dc54779@google.com>
-References: <000000000000b2a7ea056dc54779@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 4 Jun 2018 07:36:57 +0200
-Message-ID: <CACT4Y+a7hZ0x16PnyJxrb7akBRNr-TDR8Cvn01G27HmAKVE_vg@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in bpf_csum_update
-To: syzbot <syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180511135030.14590-1-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 1:36 AM, syzbot
-<syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    0512e0134582 Merge tag 'xfs-4.17-fixes-3' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17eb2d7b800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=efae31b384d5badbd620
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=162c6def800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14fe3db7800000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com
->
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in ____bpf_csum_update net/core/filter.c:1679
-> [inline]
-> BUG: KASAN: slab-out-of-bounds in bpf_csum_update+0xb4/0xc0
-> net/core/filter.c:1673
-> Read of size 1 at addr ffff8801d9235b50 by task syz-executor507/4513
->
-> CPU: 0 PID: 4513 Comm: syz-executor507 Not tainted 4.17.0-rc7+ #78
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
->  ____bpf_csum_update net/core/filter.c:1679 [inline]
->  bpf_csum_update+0xb4/0xc0 net/core/filter.c:1673
+On Fri, 11 May 2018, Charles Keepax wrote:
 
-/\/\/\/\/\
-
-Are there any known bugs with unwind through bpf functions?
-
-> Allocated by task 0:
-> (stack is not available)
->
-> Freed by task 0:
-> (stack is not available)
->
-> The buggy address belongs to the object at ffff8801d9235a40
->  which belongs to the cache skbuff_head_cache of size 232
-> The buggy address is located 40 bytes to the right of
->  232-byte region [ffff8801d9235a40, ffff8801d9235b28)
-> The buggy address belongs to the page:
-> page:ffffea0007648d40 count:1 mapcount:0 mapping:ffff8801d9235040 index:0x0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffff8801d9235040 0000000000000000 000000010000000c
-> raw: ffffea00074360a0 ffff8801d944d848 ffff8801d9bdd6c0 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801d9235a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801d9235a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->>
->> ffff8801d9235b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->
->                                                  ^
->  ffff8801d9235b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff8801d9235c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
->
->
+> Some Arizona CODECs have a small timing window where they will
+> NAK an I2C transaction if it happens before the boot done bit is
+> set. This can cause the read of the register containing the boot
+> done bit to fail until it is set. Since regmap_read_poll_timeout
+> will abort polling if a read fails it can't be reliably used to
+> poll the boot done bit over I2C.
+> 
+> Do a partial revert of ef84f885e037 ("mfd: arizona: Refactor
+> arizona_poll_reg"), removing the regmap_read_poll_timeout but
+> leaving the refactoring to make the arizona_poll_reg take more
+> sensible arguments.
+> 
+> Fixes: ef84f885e037 ("mfd: arizona: Refactor arizona_poll_reg")
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000b2a7ea056dc54779%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>  drivers/mfd/arizona-core.c | 29 +++++++++++++++++++++--------
+>  1 file changed, 21 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
+> index 83f1c5a516d9..2ed29ce08dac 100644
+> --- a/drivers/mfd/arizona-core.c
+> +++ b/drivers/mfd/arizona-core.c
+> @@ -240,18 +240,31 @@ static int arizona_poll_reg(struct arizona *arizona,
+>  			    int timeout_ms, unsigned int reg,
+>  			    unsigned int mask, unsigned int target)
+>  {
+> +	ktime_t timeout = ktime_add_us(ktime_get(), timeout_ms * 1000);
+
+USEC_PER_MSEC ?
+
+>  	unsigned int val = 0;
+>  	int ret;
+>  
+> -	ret = regmap_read_poll_timeout(arizona->regmap,
+> -				       reg, val, ((val & mask) == target),
+> -				       ARIZONA_REG_POLL_DELAY_US,
+> -				       timeout_ms * 1000);
+> -	if (ret)
+> -		dev_err(arizona->dev, "Polling reg 0x%x timed out: %x\n",
+> -			reg, val);
+> +	while (true) {
+> +		ret = regmap_read(arizona->regmap, reg, &val);
+>  
+> -	return ret;
+> +		if ((val & mask) == target)
+> +			return 0;
+> +
+> +		if (ktime_compare(ktime_get(), timeout) > 0)
+> +			break;
+> +
+> +		usleep_range(ARIZONA_REG_POLL_DELAY_US / 2,
+> +			     ARIZONA_REG_POLL_DELAY_US);
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(arizona->dev, "Failed polling reg 0x%x: %d\n",
+> +			reg, ret);
+> +		return ret;
+> +	}
+> +
+> +	dev_err(arizona->dev, "Polling reg 0x%x timed out: %x\n", reg, val);
+> +	return -ETIMEDOUT;
+>  }
+>  
+>  static int arizona_wait_for_boot(struct arizona *arizona)
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
