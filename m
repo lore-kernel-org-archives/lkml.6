@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753406AbeFDHWV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54856 "EHLO mail.kernel.org"
+        id S1753418AbeFDHWo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:22:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752714AbeFDHC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:27 -0400
+        id S1753190AbeFDHCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 20/52] tracing: Make the snapshot trigger work with instances
-Date: Mon,  4 Jun 2018 08:58:15 +0200
-Message-Id: <20180604065607.390105804@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 16/52] Input: synaptics - add Intertouch support on X1 Carbon 6th and X280
+Date: Mon,  4 Jun 2018 08:58:11 +0200
+Message-Id: <20180604065607.182986518@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -29,167 +29,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit 2824f5033248600673e3e126a4d135363cbfd9ac upstream.
+commit 5717a09aeaf62d197deba1fc7ccd6bc45f3a9dcc upstream.
 
-The snapshot trigger currently only affects the main ring buffer, even when
-it is used by the instances. This can be confusing as the snapshot trigger
-is listed in the instance.
+Synaptics devices reported it has Intertouch support,
+and it fails via PS/2 as following logs:
 
- > # cd /sys/kernel/tracing
- > # mkdir instances/foo
- > # echo snapshot > instances/foo/events/syscalls/sys_enter_fchownat/trigger
- > # echo top buffer > trace_marker
- > # echo foo buffer > instances/foo/trace_marker
- > # touch /tmp/bar
- > # chown rostedt /tmp/bar
- > # cat instances/foo/snapshot
- # tracer: nop
- #
- #
- # * Snapshot is freed *
- #
- # Snapshot commands:
- # echo 0 > snapshot : Clears and frees snapshot buffer
- # echo 1 > snapshot : Allocates snapshot buffer, if not already allocated.
- #                      Takes a snapshot of the main buffer.
- # echo 2 > snapshot : Clears snapshot buffer (but does not allocate or free)
- #                      (Doesn't have to be '2' works with any number that
- #                       is not a '0' or '1')
+psmouse serio2: Failed to reset mouse on synaptics-pt/serio0
+psmouse serio2: Failed to enable mouse on synaptics-pt/serio0
 
- > # cat snapshot
- # tracer: nop
- #
- #                              _-----=> irqs-off
- #                             / _----=> need-resched
- #                            | / _---=> hardirq/softirq
- #                            || / _--=> preempt-depth
- #                            ||| /     delay
- #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
- #              | |       |   ||||       |         |
-             bash-1189  [000] ....   111.488323: tracing_mark_write: top buffer
+Set these new devices to use SMBus to fix this issue, then they report
+SMBus version 3 is using, patch:
+https://patchwork.kernel.org/patch/9989547/ enabled SMBus ver 3 and
+makes synaptics devices work fine on SMBus mode.
 
-Not only did the snapshot occur in the top level buffer, but the instance
-snapshot buffer should have been allocated, and it is still free.
-
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
 Cc: stable@vger.kernel.org
-Fixes: 85f2b08268c01 ("tracing: Add basic event trigger framework")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace.c                |   12 ++++++------
- kernel/trace/trace.h                |   11 +++++++++++
- kernel/trace/trace_events_trigger.c |   10 ++++++++--
- 3 files changed, 25 insertions(+), 8 deletions(-)
+ drivers/input/mouse/synaptics.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -894,7 +894,7 @@ int __trace_bputs(unsigned long ip, cons
- EXPORT_SYMBOL_GPL(__trace_bputs);
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--static void tracing_snapshot_instance(struct trace_array *tr)
-+void tracing_snapshot_instance(struct trace_array *tr)
- {
- 	struct tracer *tracer = tr->current_trace;
- 	unsigned long flags;
-@@ -950,7 +950,7 @@ static int resize_buffer_duplicate_size(
- 					struct trace_buffer *size_buf, int cpu_id);
- static void set_buffer_entries(struct trace_buffer *buf, unsigned long val);
- 
--static int alloc_snapshot(struct trace_array *tr)
-+int tracing_alloc_snapshot_instance(struct trace_array *tr)
- {
- 	int ret;
- 
-@@ -996,7 +996,7 @@ int tracing_alloc_snapshot(void)
- 	struct trace_array *tr = &global_trace;
- 	int ret;
- 
--	ret = alloc_snapshot(tr);
-+	ret = tracing_alloc_snapshot_instance(tr);
- 	WARN_ON(ret < 0);
- 
- 	return ret;
-@@ -5400,7 +5400,7 @@ static int tracing_set_tracer(struct tra
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
- 	if (t->use_max_tr && !had_max_tr) {
--		ret = alloc_snapshot(tr);
-+		ret = tracing_alloc_snapshot_instance(tr);
- 		if (ret < 0)
- 			goto out;
- 	}
-@@ -6378,7 +6378,7 @@ tracing_snapshot_write(struct file *filp
- 		}
- #endif
- 		if (!tr->allocated_snapshot) {
--			ret = alloc_snapshot(tr);
-+			ret = tracing_alloc_snapshot_instance(tr);
- 			if (ret < 0)
- 				break;
- 		}
-@@ -7099,7 +7099,7 @@ ftrace_trace_snapshot_callback(struct tr
- 		return ret;
- 
-  out_reg:
--	ret = alloc_snapshot(tr);
-+	ret = tracing_alloc_snapshot_instance(tr);
- 	if (ret < 0)
- 		goto out;
- 
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1807,6 +1807,17 @@ static inline void __init trace_event_in
- static inline void trace_event_eval_update(struct trace_eval_map **map, int len) { }
- #endif
- 
-+#ifdef CONFIG_TRACER_SNAPSHOT
-+void tracing_snapshot_instance(struct trace_array *tr);
-+int tracing_alloc_snapshot_instance(struct trace_array *tr);
-+#else
-+static inline void tracing_snapshot_instance(struct trace_array *tr) { }
-+static inline int tracing_alloc_snapshot_instance(struct trace_array *tr)
-+{
-+	return 0;
-+}
-+#endif
-+
- extern struct trace_iterator *tracepoint_print_iter;
- 
- #endif /* _LINUX_KERNEL_TRACE_H */
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -642,6 +642,7 @@ event_trigger_callback(struct event_comm
- 	trigger_data->count = -1;
- 	trigger_data->ops = trigger_ops;
- 	trigger_data->cmd_ops = cmd_ops;
-+	trigger_data->private_data = file;
- 	INIT_LIST_HEAD(&trigger_data->list);
- 	INIT_LIST_HEAD(&trigger_data->named_list);
- 
-@@ -1042,7 +1043,12 @@ static struct event_command trigger_trac
- static void
- snapshot_trigger(struct event_trigger_data *data, void *rec)
- {
--	tracing_snapshot();
-+	struct trace_event_file *file = data->private_data;
-+
-+	if (file)
-+		tracing_snapshot_instance(file->tr);
-+	else
-+		tracing_snapshot();
- }
- 
- static void
-@@ -1064,7 +1070,7 @@ register_snapshot_trigger(char *glob, st
- {
- 	int ret = register_trigger(glob, ops, data, file);
- 
--	if (ret > 0 && tracing_alloc_snapshot() != 0) {
-+	if (ret > 0 && tracing_alloc_snapshot_instance(file->tr) != 0) {
- 		unregister_trigger(glob, ops, data, file);
- 		ret = 0;
- 	}
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -174,6 +174,8 @@ static const char * const smbus_pnp_ids[
+ 	"LEN004a", /* W541 */
+ 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+ 	"LEN0073", /* X1 Carbon G5 (Elantech) */
++	"LEN0092", /* X1 Carbon 6 */
++	"LEN0096", /* X280 */
+ 	"LEN200f", /* T450s */
+ 	NULL
+ };
