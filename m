@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753824AbeFDHEh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:04:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56718 "EHLO mail.kernel.org"
+        id S1753920AbeFDHHb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:07:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751097AbeFDHEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:34 -0400
+        id S1753769AbeFDHEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:04:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.16 41/47] Revert "rt2800: use TXOP_BACKOFF for probe frames"
-Date: Mon,  4 Jun 2018 08:58:53 +0200
-Message-Id: <20180604065551.208215055@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Baofeng Tian <baofeng.tian@intel.com>
+Subject: [PATCH 4.16 42/47] intel_th: Use correct device when freeing buffers
+Date: Mon,  4 Jun 2018 08:58:54 +0200
+Message-Id: <20180604065551.253932513@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -29,44 +30,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stanislaw Gruszka <sgruszka@redhat.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit 52a192362932f333a7ebafd581c4d9b81da2fec8 upstream.
+commit 0ed2424b911f3a058dfea01b78817abed767433d upstream.
 
-This reverts commit fb47ada8dc3c30c8e7b415da155742b49536c61e.
+Commit d5c435df4a890 ("intel_th: msu: Use the real device in case of IOMMU
+domain allocation") changes dma buffer allocation to use the actual
+underlying device, but forgets to change the deallocation path, which leads
+to (if you've got CAP_SYS_RAWIO):
 
-In some situations when we set TXOP_BACKOFF, the probe frame is
-not sent at all. What it worse then sending probe frame as part
-of AMPDU and can degrade 11n performance to 11g rates.
+> # echo 0,0 > /sys/bus/intel_th/devices/0-msc0/nr_pages
+> ------------[ cut here ]------------
+> kernel BUG at ../linux/drivers/iommu/intel-iommu.c:3670!
+> CPU: 3 PID: 231 Comm: sh Not tainted 4.17.0-rc1+ #2729
+> RIP: 0010:intel_unmap+0x11e/0x130
+...
+> Call Trace:
+>  intel_free_coherent+0x3e/0x60
+>  msc_buffer_win_free+0x100/0x160 [intel_th_msu]
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This patch fixes the buffer deallocation code to use the correct device.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: d5c435df4a890 ("intel_th: msu: Use the real device in case of IOMMU domain allocation")
+Reported-by: Baofeng Tian <baofeng.tian@intel.com>
+CC: stable@vger.kernel.org # v4.14+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/ralink/rt2x00/rt2x00queue.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/hwtracing/intel_th/msu.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
-@@ -372,16 +372,15 @@ static void rt2x00queue_create_tx_descri
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -741,8 +741,8 @@ err_nomem:
+ 		/* Reset the page to write-back before releasing */
+ 		set_memory_wb((unsigned long)win->block[i].bdesc, 1);
+ #endif
+-		dma_free_coherent(msc_dev(msc), size, win->block[i].bdesc,
+-				  win->block[i].addr);
++		dma_free_coherent(msc_dev(msc)->parent->parent, size,
++				  win->block[i].bdesc, win->block[i].addr);
+ 	}
+ 	kfree(win);
  
- 	/*
- 	 * Determine IFS values
--	 * - Use TXOP_BACKOFF for probe and management frames except beacons
-+	 * - Use TXOP_BACKOFF for management frames except beacons
- 	 * - Use TXOP_SIFS for fragment bursts
- 	 * - Use TXOP_HTTXOP for everything else
- 	 *
- 	 * Note: rt2800 devices won't use CTS protection (if used)
- 	 * for frames not transmitted with TXOP_HTTXOP
- 	 */
--	if ((ieee80211_is_mgmt(hdr->frame_control) &&
--	     !ieee80211_is_beacon(hdr->frame_control)) ||
--	    (tx_info->flags & IEEE80211_TX_CTL_RATE_CTRL_PROBE))
-+	if (ieee80211_is_mgmt(hdr->frame_control) &&
-+	    !ieee80211_is_beacon(hdr->frame_control))
- 		txdesc->u.ht.txop = TXOP_BACKOFF;
- 	else if (!(tx_info->flags & IEEE80211_TX_CTL_FIRST_FRAGMENT))
- 		txdesc->u.ht.txop = TXOP_SIFS;
+@@ -777,7 +777,7 @@ static void msc_buffer_win_free(struct m
+ 		/* Reset the page to write-back before releasing */
+ 		set_memory_wb((unsigned long)win->block[i].bdesc, 1);
+ #endif
+-		dma_free_coherent(msc_dev(win->msc), PAGE_SIZE,
++		dma_free_coherent(msc_dev(win->msc)->parent->parent, PAGE_SIZE,
+ 				  win->block[i].bdesc, win->block[i].addr);
+ 	}
+ 
