@@ -1,43 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751086AbeFDPf4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 11:35:56 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:48516 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750879AbeFDPfy (ORCPT
+        id S1751238AbeFDPgY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 11:36:24 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37339 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751201AbeFDPgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 11:35:54 -0400
-Date: Mon, 04 Jun 2018 11:35:52 -0400 (EDT)
-Message-Id: <20180604.113552.1136710379930167373.davem@davemloft.net>
-To: salil.mehta@huawei.com
-Cc: yisen.zhuang@huawei.com, lipeng321@huawei.com, mehta.salil@opnsrc.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, wangxi11@huawei.com
-Subject: Re: [PATCH net] net: hns: Fix the process of adding broadcast
- addresses to tcam
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180601170011.22700-1-salil.mehta@huawei.com>
-References: <20180601170011.22700-1-salil.mehta@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 4 Jun 2018 11:36:22 -0400
+X-Google-Smtp-Source: ADUXVKLmlwHnGnrook3Sd5nujW07MH1MxjLqhnkRku8hHzyY/IcbsUBVZDi/g2dlQIOHYZd9OScVDQ==
+Date: Mon, 4 Jun 2018 09:36:16 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Steve Wise <swise@chelsio.com>, Doug Ledford <dledford@redhat.com>,
+        Yuval Shaia <yuval.shaia@oracle.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iw_cxgb4: add INFINIBAND_ADDR_TRANS dependency
+Message-ID: <20180604153616.GA29572@ziepe.ca>
+References: <20180530215826.1343234-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180530215826.1343234-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Salil Mehta <salil.mehta@huawei.com>
-Date: Fri, 1 Jun 2018 18:00:11 +0100
+On Wed, May 30, 2018 at 11:58:18PM +0200, Arnd Bergmann wrote:
+> The newly added fill_res_ep_entry function fails to link if
+> CONFIG_INFINIBAND_ADDR_TRANS is not set:
+> 
+> drivers/infiniband/hw/cxgb4/restrack.o: In function `fill_res_ep_entry':
+> restrack.c:(.text+0x3cc): undefined reference to `rdma_res_to_id'
+> restrack.c:(.text+0x3d0): undefined reference to `rdma_iw_cm_id'
+> 
+> This adds a Kconfig dependency for the driver.
+> 
+> Fixes: 116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Greg Thelen <gthelen@google.com>
+> ---
+>  drivers/infiniband/hw/cxgb4/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-> +		hns_dsaf_setup_mc_mask(dsaf_dev, mac_entry->in_port_num,
-> +			mc_mask, mac_entry->addr);
+Applied to for-next
 
-Please indent things properly when arguments span multiple lines.
-
-The second line here should be precisely after the opennning parenthesis
-of the previous line.
-
-> +		hns_dsaf_setup_mc_mask(dsaf_dev, mac_entry->in_port_num,
-> +			mc_mask, mac_entry->addr);
-
-Likewise.
+Thanks,
+Jason
