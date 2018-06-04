@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752581AbeFDHAU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:00:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53158 "EHLO mail.kernel.org"
+        id S1752752AbeFDH3X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:29:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752537AbeFDHAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:13 -0400
+        id S1752569AbeFDHAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:00:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 17/29] tools include: Move ARRAY_SIZE() to linux/kernel.h
-Date: Mon,  4 Jun 2018 08:58:13 +0200
-Message-Id: <20180604065802.833408447@linuxfoundation.org>
+        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 10/52] Revert "pinctrl: msm: Use dynamic GPIO numbering"
+Date: Mon,  4 Jun 2018 08:58:05 +0200
+Message-Id: <20180604065606.947869233@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
-References: <20180604065802.157744637@linuxfoundation.org>
+In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
+References: <20180604065606.532044490@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -27,58 +28,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 8607c1ee734d12f62c6a46abef13a510e25a1839 upstream.
+This reverts commit bd36ea57d6d58041180c4f7d2c2bf5194c26845d which is
+commit a7aa75a2a7dba32594291a71c3704000a2fd7089 upstream.
 
-To match the kernel, then look for places redefining it to make it use
-this version, which checks that its parameter is an array at build time.
+There's been too many complaints about this.  Personally I think it's
+going to blow up when people hit this in mainline, but hey, it's not my
+systems.  At least we don't have to backport the mess to the stable
+kernels to give them some more life to live unscathed :)
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-txlcf1im83bcbj6kh0wxmyy8@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Timur Tabi <timur@codeaurora.org>
+Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- tools/include/linux/kernel.h |    3 +++
- tools/perf/util/util.h       |    2 --
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/include/linux/kernel.h
-+++ b/tools/include/linux/kernel.h
-@@ -4,6 +4,7 @@
- #include <stdarg.h>
- #include <stddef.h>
- #include <assert.h>
-+#include <linux/compiler.h>
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
+ 		return -EINVAL;
  
- #ifndef UINT_MAX
- #define UINT_MAX	(~0U)
-@@ -76,6 +77,8 @@
- int vscnprintf(char *buf, size_t size, const char *fmt, va_list args);
- int scnprintf(char * buf, size_t size, const char * fmt, ...);
- 
-+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-+
- /*
-  * This looks more complex than it should be. But we need to
-  * get the type for the ~ right in round_down (it needs to be
---- a/tools/perf/util/util.h
-+++ b/tools/perf/util/util.h
-@@ -23,8 +23,6 @@
- #endif
- #endif
- 
--#define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
--
- #ifdef __GNUC__
- #define TYPEOF(x) (__typeof__(x))
- #else
+ 	chip = &pctrl->chip;
+-	chip->base = -1;
++	chip->base = 0;
+ 	chip->ngpio = ngpio;
+ 	chip->label = dev_name(pctrl->dev);
+ 	chip->parent = pctrl->dev;
