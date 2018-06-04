@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753334AbeFDHDJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54912 "EHLO mail.kernel.org"
+        id S1753470AbeFDHDV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:03:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753271AbeFDHCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:33 -0400
+        id S1752720AbeFDHDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>
-Subject: [PATCH 4.14 12/52] xfs: convert XFS_AGFL_SIZE to a helper function
-Date: Mon,  4 Jun 2018 08:58:07 +0200
-Message-Id: <20180604065607.026729570@linuxfoundation.org>
+        stable@vger.kernel.org, Aaron Ma <aaron.ma@canonical.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.16 15/47] Input: synaptics - add Intertouch support on X1 Carbon 6th and X280
+Date: Mon,  4 Jun 2018 08:58:27 +0200
+Message-Id: <20180604065550.120592098@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
-References: <20180604065606.532044490@linuxfoundation.org>
+In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
+References: <20180604065549.468488465@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -26,152 +25,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Aaron Ma <aaron.ma@canonical.com>
 
-commit a78ee256c325ecfaec13cafc41b315bd4e1dd518 upstream.
+commit 5717a09aeaf62d197deba1fc7ccd6bc45f3a9dcc upstream.
 
-The AGFL size calculation is about to get more complex, so lets turn
-the macro into a function first and remove the macro.
+Synaptics devices reported it has Intertouch support,
+and it fails via PS/2 as following logs:
 
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-[darrick: forward port to newer kernel, simplify the helper]
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Brian Foster <bfoster@redhat.com>
+psmouse serio2: Failed to reset mouse on synaptics-pt/serio0
+psmouse serio2: Failed to enable mouse on synaptics-pt/serio0
+
+Set these new devices to use SMBus to fix this issue, then they report
+SMBus version 3 is using, patch:
+https://patchwork.kernel.org/patch/9989547/ enabled SMBus ver 3 and
+makes synaptics devices work fine on SMBus mode.
+
+Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xfs/libxfs/xfs_alloc.c  |   31 ++++++++++++++++++++++++-------
- fs/xfs/libxfs/xfs_alloc.h  |    2 ++
- fs/xfs/libxfs/xfs_format.h |   13 +------------
- fs/xfs/xfs_fsops.c         |    2 +-
- 4 files changed, 28 insertions(+), 20 deletions(-)
+ drivers/input/mouse/synaptics.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -52,6 +52,23 @@ STATIC int xfs_alloc_ag_vextent_size(xfs
- STATIC int xfs_alloc_ag_vextent_small(xfs_alloc_arg_t *,
- 		xfs_btree_cur_t *, xfs_agblock_t *, xfs_extlen_t *, int *);
- 
-+/*
-+ * Size of the AGFL.  For CRC-enabled filesystes we steal a couple of slots in
-+ * the beginning of the block for a proper header with the location information
-+ * and CRC.
-+ */
-+unsigned int
-+xfs_agfl_size(
-+	struct xfs_mount	*mp)
-+{
-+	unsigned int		size = mp->m_sb.sb_sectsize;
-+
-+	if (xfs_sb_version_hascrc(&mp->m_sb))
-+		size -= sizeof(struct xfs_agfl);
-+
-+	return size / sizeof(xfs_agblock_t);
-+}
-+
- unsigned int
- xfs_refc_block(
- 	struct xfs_mount	*mp)
-@@ -540,7 +557,7 @@ xfs_agfl_verify(
- 	if (bp->b_pag && be32_to_cpu(agfl->agfl_seqno) != bp->b_pag->pag_agno)
- 		return false;
- 
--	for (i = 0; i < XFS_AGFL_SIZE(mp); i++) {
-+	for (i = 0; i < xfs_agfl_size(mp); i++) {
- 		if (be32_to_cpu(agfl->agfl_bno[i]) != NULLAGBLOCK &&
- 		    be32_to_cpu(agfl->agfl_bno[i]) >= mp->m_sb.sb_agblocks)
- 			return false;
-@@ -2252,7 +2269,7 @@ xfs_alloc_get_freelist(
- 	bno = be32_to_cpu(agfl_bno[be32_to_cpu(agf->agf_flfirst)]);
- 	be32_add_cpu(&agf->agf_flfirst, 1);
- 	xfs_trans_brelse(tp, agflbp);
--	if (be32_to_cpu(agf->agf_flfirst) == XFS_AGFL_SIZE(mp))
-+	if (be32_to_cpu(agf->agf_flfirst) == xfs_agfl_size(mp))
- 		agf->agf_flfirst = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-@@ -2363,7 +2380,7 @@ xfs_alloc_put_freelist(
- 			be32_to_cpu(agf->agf_seqno), &agflbp)))
- 		return error;
- 	be32_add_cpu(&agf->agf_fllast, 1);
--	if (be32_to_cpu(agf->agf_fllast) == XFS_AGFL_SIZE(mp))
-+	if (be32_to_cpu(agf->agf_fllast) == xfs_agfl_size(mp))
- 		agf->agf_fllast = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-@@ -2381,7 +2398,7 @@ xfs_alloc_put_freelist(
- 
- 	xfs_alloc_log_agf(tp, agbp, logflags);
- 
--	ASSERT(be32_to_cpu(agf->agf_flcount) <= XFS_AGFL_SIZE(mp));
-+	ASSERT(be32_to_cpu(agf->agf_flcount) <= xfs_agfl_size(mp));
- 
- 	agfl_bno = XFS_BUF_TO_AGFL_BNO(mp, agflbp);
- 	blockp = &agfl_bno[be32_to_cpu(agf->agf_fllast)];
-@@ -2414,9 +2431,9 @@ xfs_agf_verify(
- 	if (!(agf->agf_magicnum == cpu_to_be32(XFS_AGF_MAGIC) &&
- 	      XFS_AGF_GOOD_VERSION(be32_to_cpu(agf->agf_versionnum)) &&
- 	      be32_to_cpu(agf->agf_freeblks) <= be32_to_cpu(agf->agf_length) &&
--	      be32_to_cpu(agf->agf_flfirst) < XFS_AGFL_SIZE(mp) &&
--	      be32_to_cpu(agf->agf_fllast) < XFS_AGFL_SIZE(mp) &&
--	      be32_to_cpu(agf->agf_flcount) <= XFS_AGFL_SIZE(mp)))
-+	      be32_to_cpu(agf->agf_flfirst) < xfs_agfl_size(mp) &&
-+	      be32_to_cpu(agf->agf_fllast) < xfs_agfl_size(mp) &&
-+	      be32_to_cpu(agf->agf_flcount) <= xfs_agfl_size(mp)))
- 		return false;
- 
- 	if (be32_to_cpu(agf->agf_levels[XFS_BTNUM_BNO]) < 1 ||
---- a/fs/xfs/libxfs/xfs_alloc.h
-+++ b/fs/xfs/libxfs/xfs_alloc.h
-@@ -26,6 +26,8 @@ struct xfs_trans;
- 
- extern struct workqueue_struct *xfs_alloc_wq;
- 
-+unsigned int xfs_agfl_size(struct xfs_mount *mp);
-+
- /*
-  * Freespace allocation types.  Argument to xfs_alloc_[v]extent.
-  */
---- a/fs/xfs/libxfs/xfs_format.h
-+++ b/fs/xfs/libxfs/xfs_format.h
-@@ -798,24 +798,13 @@ typedef struct xfs_agi {
- 		&(XFS_BUF_TO_AGFL(bp)->agfl_bno[0]) : \
- 		(__be32 *)(bp)->b_addr)
- 
--/*
-- * Size of the AGFL.  For CRC-enabled filesystes we steal a couple of
-- * slots in the beginning of the block for a proper header with the
-- * location information and CRC.
-- */
--#define XFS_AGFL_SIZE(mp) \
--	(((mp)->m_sb.sb_sectsize - \
--	 (xfs_sb_version_hascrc(&((mp)->m_sb)) ? \
--		sizeof(struct xfs_agfl) : 0)) / \
--	  sizeof(xfs_agblock_t))
--
- typedef struct xfs_agfl {
- 	__be32		agfl_magicnum;
- 	__be32		agfl_seqno;
- 	uuid_t		agfl_uuid;
- 	__be64		agfl_lsn;
- 	__be32		agfl_crc;
--	__be32		agfl_bno[];	/* actually XFS_AGFL_SIZE(mp) */
-+	__be32		agfl_bno[];	/* actually xfs_agfl_size(mp) */
- } __attribute__((packed)) xfs_agfl_t;
- 
- #define XFS_AGFL_CRC_OFF	offsetof(struct xfs_agfl, agfl_crc)
---- a/fs/xfs/xfs_fsops.c
-+++ b/fs/xfs/xfs_fsops.c
-@@ -294,7 +294,7 @@ xfs_growfs_data_private(
- 		}
- 
- 		agfl_bno = XFS_BUF_TO_AGFL_BNO(mp, bp);
--		for (bucket = 0; bucket < XFS_AGFL_SIZE(mp); bucket++)
-+		for (bucket = 0; bucket < xfs_agfl_size(mp); bucket++)
- 			agfl_bno[bucket] = cpu_to_be32(NULLAGBLOCK);
- 
- 		error = xfs_bwrite(bp);
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -174,6 +174,8 @@ static const char * const smbus_pnp_ids[
+ 	"LEN004a", /* W541 */
+ 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
+ 	"LEN0073", /* X1 Carbon G5 (Elantech) */
++	"LEN0092", /* X1 Carbon 6 */
++	"LEN0096", /* X280 */
+ 	"LEN200f", /* T450s */
+ 	NULL
+ };
