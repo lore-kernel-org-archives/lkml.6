@@ -1,82 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752540AbeFDLmQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:42:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35392 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751482AbeFDLmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:42:14 -0400
-Subject: Re: [PATCH 4/7] iommu/amd: make sure TLB to be flushed before IOVA
- freed
-To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
-        linux-mediatek <linux-mediatek@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1527752569-18020-1-git-send-email-thunder.leizhen@huawei.com>
- <1527752569-18020-5-git-send-email-thunder.leizhen@huawei.com>
- <ccc47903-d946-13ed-3c68-b264bc44b216@arm.com>
-CC: Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
-        "Guozhu Li" <liguozhu@hisilicon.com>, Xinwei Hu <huxinwei@huawei.com>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5B152573.2080905@huawei.com>
-Date: Mon, 4 Jun 2018 19:41:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <ccc47903-d946-13ed-3c68-b264bc44b216@arm.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1752250AbeFDLog (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:44:36 -0400
+Received: from mga14.intel.com ([192.55.52.115]:7233 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751418AbeFDLoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:44:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="234205007"
+Message-ID: <7bdb658727b364e275c121a3bdd351f183d56cb9.camel@linux.intel.com>
+Subject: Re: [PATCH 0/8] serial: 8250: Add 485 emulation to 8250_dw.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
+        Ed Blake <ed.blake@sondrel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
+        Vignesh R <vigneshr@ti.com>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
+        Aaron Sierra <asierra@xes-inc.com>,
+        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
+        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 04 Jun 2018 14:44:28 +0300
+In-Reply-To: <c14c671c-3240-0170-7c0e-2b195c5b1398@micronovasrl.com>
+References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
+         <65c26f5db1275e958cfe6390e9336568b0158dea.camel@linux.intel.com>
+         <CAJs94EZEEBNZRU3ixkdG9w44xsQDi7MUYAya2dzkAErT=xwqVA@mail.gmail.com>
+         <c14c671c-3240-0170-7c0e-2b195c5b1398@micronovasrl.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-06-04 at 12:42 +0200, Giulio Benetti wrote:
 
+> > > I don't see in Cc list author of rs485 code, who might be
+> > > interested in
+> > > this.
+> > > 
+> > > So, added him here.
+> 
+> Thanks Andy for adding in Cc an reviewing.
+> Dumb question: how did you find him?
 
-On 2018/5/31 21:04, Robin Murphy wrote:
-> On 31/05/18 08:42, Zhen Lei wrote:
->> Although the mapping has already been removed in the page table, it maybe
->> still exist in TLB. Suppose the freed IOVAs is reused by others before the
->> flush operation completed, the new user can not correctly access to its
->> meomory.
-> 
-> This change seems reasonable in isolation, but why is it right in the middle of a series which has nothing to do with x86?
-Because I described more in the previous patch, which may help this patch to be understood well.
+I'm just following mailing lists somehow.
+Though you always can do `git annotate` to see who lately did change
+what.
 
-You're right, I will repost this patch separately.
+> I thought he was between people on get_maintainer.pl output.
 
-> 
-> Robin.
-> 
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->> ---
->>   drivers/iommu/amd_iommu.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
->> index 8fb8c73..93aa389 100644
->> --- a/drivers/iommu/amd_iommu.c
->> +++ b/drivers/iommu/amd_iommu.c
->> @@ -2402,9 +2402,9 @@ static void __unmap_single(struct dma_ops_domain *dma_dom,
->>       }
->>         if (amd_iommu_unmap_flush) {
->> -        dma_ops_free_iova(dma_dom, dma_addr, pages);
->>           domain_flush_tlb(&dma_dom->domain);
->>           domain_flush_complete(&dma_dom->domain);
->> +        dma_ops_free_iova(dma_dom, dma_addr, pages);
->>       } else {
->>           pages = __roundup_pow_of_two(pages);
->>           queue_iova(&dma_dom->iovad, dma_addr >> PAGE_SHIFT, pages, 0);
->>
-> 
-> .
-> 
+Hmm... probably. Never checked myself for this particular case.
 
 -- 
-Thanks!
-BestRegards
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
