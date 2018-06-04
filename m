@@ -1,185 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeFDFey (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 01:34:54 -0400
-Received: from atl4mhob10.registeredsite.com ([209.17.115.48]:43802 "EHLO
-        atl4mhob10.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751356AbeFDFex (ORCPT
+        id S1751699AbeFDFhU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 01:37:20 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46381 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbeFDFhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 01:34:53 -0400
-X-TCPREMOTEIP: 37.74.225.130
-X-Authenticated-UID: mike@milosoftware.com
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk-si514, clk-si544: Implement prepare/unprepare/is_prepared operations
-Date: Mon,  4 Jun 2018 07:34:39 +0200
-Message-Id: <1528090479-20861-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 1.9.1
+        Mon, 4 Jun 2018 01:37:18 -0400
+X-Google-Smtp-Source: ADUXVKJCHv6fuYVmFGL7T9XllBBvti0BXLs6vYK2vh3+H7RHQXjBssnQ2o3H/kJxK8j7YBM1Kd0M75CU3NLswNHsOX4=
+MIME-Version: 1.0
+In-Reply-To: <000000000000b2a7ea056dc54779@google.com>
+References: <000000000000b2a7ea056dc54779@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 4 Jun 2018 07:36:57 +0200
+Message-ID: <CACT4Y+a7hZ0x16PnyJxrb7akBRNr-TDR8Cvn01G27HmAKVE_vg@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in bpf_csum_update
+To: syzbot <syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds prepare/unprepare/is_prepared functionality to the drivers for
-the SI544 and SI514 chips, allowing the clock output to be disabled when
-the clock is not in use.
+On Mon, Jun 4, 2018 at 1:36 AM, syzbot
+<syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    0512e0134582 Merge tag 'xfs-4.17-fixes-3' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17eb2d7b800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=968b0b23c7854c0b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=efae31b384d5badbd620
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=162c6def800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14fe3db7800000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com
+>
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in ____bpf_csum_update net/core/filter.c:1679
+> [inline]
+> BUG: KASAN: slab-out-of-bounds in bpf_csum_update+0xb4/0xc0
+> net/core/filter.c:1673
+> Read of size 1 at addr ffff8801d9235b50 by task syz-executor507/4513
+>
+> CPU: 0 PID: 4513 Comm: syz-executor507 Not tainted 4.17.0-rc7+ #78
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+>  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+>  ____bpf_csum_update net/core/filter.c:1679 [inline]
+>  bpf_csum_update+0xb4/0xc0 net/core/filter.c:1673
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
- drivers/clk/clk-si514.c | 38 +++++++++++++++++++++++++++++++++++++-
- drivers/clk/clk-si544.c | 39 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 75 insertions(+), 2 deletions(-)
+/\/\/\/\/\
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 09b6718..153b3a2 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -74,6 +74,33 @@ static int si514_enable_output(struct clk_si514 *data, bool enable)
- 		SI514_CONTROL_OE, enable ? SI514_CONTROL_OE : 0);
- }
- 
-+static int si514_prepare(struct clk_hw *hw)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
-+
-+	return si514_enable_output(data, true);
-+}
-+
-+static void si514_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
-+
-+	si514_enable_output(data, false);
-+}
-+
-+static int si514_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
-+	unsigned int val;
-+	int err;
-+
-+	err = regmap_read(data->regmap, SI514_REG_CONTROL, &val);
-+	if (err < 0)
-+		return err;
-+
-+	return !!(val & SI514_CONTROL_OE);
-+}
-+
- /* Retrieve clock multiplier and dividers from hardware */
- static int si514_get_muldiv(struct clk_si514 *data,
- 	struct clk_si514_muldiv *settings)
-@@ -235,12 +262,17 @@ static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_si514 *data = to_clk_si514(hw);
- 	struct clk_si514_muldiv settings;
-+	unsigned int old_oe_state;
- 	int err;
- 
- 	err = si514_calc_muldiv(&settings, rate);
- 	if (err)
- 		return err;
- 
-+	err = regmap_read(data->regmap, SI514_REG_CONTROL, &old_oe_state);
-+	if (err)
-+		return err;
-+
- 	si514_enable_output(data, false);
- 
- 	err = si514_set_muldiv(data, &settings);
-@@ -255,12 +287,16 @@ static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
- 	/* Applying a new frequency can take up to 10ms */
- 	usleep_range(10000, 12000);
- 
--	si514_enable_output(data, true);
-+	if (old_oe_state & SI514_CONTROL_OE)
-+		si514_enable_output(data, true);
- 
- 	return err;
- }
- 
- static const struct clk_ops si514_clk_ops = {
-+	.prepare = si514_prepare,
-+	.unprepare = si514_unprepare,
-+	.is_prepared = si514_is_prepared,
- 	.recalc_rate = si514_recalc_rate,
- 	.round_rate = si514_round_rate,
- 	.set_rate = si514_set_rate,
-diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
-index e972ffb..f8ed9d9 100644
---- a/drivers/clk/clk-si544.c
-+++ b/drivers/clk/clk-si544.c
-@@ -86,6 +86,34 @@ static int si544_enable_output(struct clk_si544 *data, bool enable)
- 		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
- }
- 
-+static int si544_prepare(struct clk_hw *hw)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+
-+	return si544_enable_output(data, true);
-+}
-+
-+static void si544_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+
-+	si544_enable_output(data, false);
-+}
-+
-+static int si544_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	unsigned int val;
-+	int err;
-+
-+	err = regmap_read(data->regmap, SI544_REG_OE_STATE, &val);
-+	if (err < 0)
-+		return err;
-+
-+	return !!(val & SI544_OE_STATE_ODC_OE);
-+}
-+
-+
- /* Retrieve clock multiplier and dividers from hardware */
- static int si544_get_muldiv(struct clk_si544 *data,
- 	struct clk_si544_muldiv *settings)
-@@ -273,6 +301,7 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_si544 *data = to_clk_si544(hw);
- 	struct clk_si544_muldiv settings;
-+	unsigned int old_oe_state;
- 	int err;
- 
- 	if (!is_valid_frequency(data, rate))
-@@ -282,6 +311,10 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (err)
- 		return err;
- 
-+	err = regmap_read(data->regmap, SI544_REG_OE_STATE, &old_oe_state);
-+	if (err)
-+		return err;
-+
- 	si544_enable_output(data, false);
- 
- 	/* Allow FCAL for this frequency update */
-@@ -303,12 +336,16 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
- 	/* Applying a new frequency can take up to 10ms */
- 	usleep_range(10000, 12000);
- 
--	si544_enable_output(data, true);
-+	if (old_oe_state & SI544_OE_STATE_ODC_OE)
-+		si544_enable_output(data, true);
- 
- 	return err;
- }
- 
- static const struct clk_ops si544_clk_ops = {
-+	.prepare = si544_prepare,
-+	.unprepare = si544_unprepare,
-+	.is_prepared = si544_is_prepared,
- 	.recalc_rate = si544_recalc_rate,
- 	.round_rate = si544_round_rate,
- 	.set_rate = si544_set_rate,
--- 
-1.9.1
+Are there any known bugs with unwind through bpf functions?
+
+> Allocated by task 0:
+> (stack is not available)
+>
+> Freed by task 0:
+> (stack is not available)
+>
+> The buggy address belongs to the object at ffff8801d9235a40
+>  which belongs to the cache skbuff_head_cache of size 232
+> The buggy address is located 40 bytes to the right of
+>  232-byte region [ffff8801d9235a40, ffff8801d9235b28)
+> The buggy address belongs to the page:
+> page:ffffea0007648d40 count:1 mapcount:0 mapping:ffff8801d9235040 index:0x0
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffff8801d9235040 0000000000000000 000000010000000c
+> raw: ffffea00074360a0 ffff8801d944d848 ffff8801d9bdd6c0 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffff8801d9235a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff8801d9235a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>>
+>> ffff8801d9235b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>
+>                                                  ^
+>  ffff8801d9235b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff8801d9235c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000b2a7ea056dc54779%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
