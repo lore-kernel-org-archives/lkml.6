@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752621AbeFDHAV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:00:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53092 "EHLO mail.kernel.org"
+        id S1752581AbeFDHAU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:00:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752481AbeFDHAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:10 -0400
+        id S1752537AbeFDHAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:00:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, Jiri Slaby <jslaby@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, live-patching@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 26/29] objtool, x86: Add several functions and files to the objtool whitelist
-Date: Mon,  4 Jun 2018 08:58:22 +0200
-Message-Id: <20180604065803.204648624@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 17/29] tools include: Move ARRAY_SIZE() to linux/kernel.h
+Date: Mon,  4 Jun 2018 08:58:13 +0200
+Message-Id: <20180604065802.833408447@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
 References: <20180604065802.157744637@linuxfoundation.org>
@@ -33,283 +31,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit c207aee48037abca71c669cbec407b9891965c34 upstream.
+commit 8607c1ee734d12f62c6a46abef13a510e25a1839 upstream.
 
-In preparation for an objtool rewrite which will have broader checks,
-whitelist functions and files which cause problems because they do
-unusual things with the stack.
+To match the kernel, then look for places redefining it to make it use
+this version, which checks that its parameter is an array at build time.
 
-These whitelists serve as a TODO list for which functions and files
-don't yet have undwarf unwinder coverage.  Eventually most of the
-whitelists can be removed in favor of manual CFI hint annotations or
-objtool improvements.
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: live-patching@vger.kernel.org
-Link: http://lkml.kernel.org/r/7f934a5d707a574bda33ea282e9478e627fb1829.1498659915.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-txlcf1im83bcbj6kh0wxmyy8@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/Makefile           |    2 ++
- arch/x86/crypto/sha1-mb/Makefile   |    2 ++
- arch/x86/crypto/sha256-mb/Makefile |    2 ++
- arch/x86/kernel/Makefile           |    1 +
- arch/x86/kernel/acpi/Makefile      |    2 ++
- arch/x86/kernel/kprobes/opt.c      |    9 ++++++++-
- arch/x86/kernel/reboot.c           |    2 ++
- arch/x86/kvm/svm.c                 |    2 ++
- arch/x86/kvm/vmx.c                 |    3 +++
- arch/x86/lib/msr-reg.S             |    8 ++++----
- arch/x86/net/Makefile              |    2 ++
- arch/x86/platform/efi/Makefile     |    1 +
- arch/x86/power/Makefile            |    2 ++
- arch/x86/xen/Makefile              |    3 +++
- kernel/kexec_core.c                |    4 +++-
- 15 files changed, 39 insertions(+), 6 deletions(-)
+ tools/include/linux/kernel.h |    3 +++
+ tools/perf/util/util.h       |    2 --
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/crypto/Makefile
-+++ b/arch/x86/crypto/Makefile
-@@ -2,6 +2,8 @@
- # Arch-specific CryptoAPI modules.
- #
+--- a/tools/include/linux/kernel.h
++++ b/tools/include/linux/kernel.h
+@@ -4,6 +4,7 @@
+ #include <stdarg.h>
+ #include <stddef.h>
+ #include <assert.h>
++#include <linux/compiler.h>
  
-+OBJECT_FILES_NON_STANDARD := y
+ #ifndef UINT_MAX
+ #define UINT_MAX	(~0U)
+@@ -76,6 +77,8 @@
+ int vscnprintf(char *buf, size_t size, const char *fmt, va_list args);
+ int scnprintf(char * buf, size_t size, const char * fmt, ...);
+ 
++#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
 +
- avx_supported := $(call as-instr,vpxor %xmm0$(comma)%xmm0$(comma)%xmm0,yes,no)
- avx2_supported := $(call as-instr,vpgatherdd %ymm0$(comma)(%eax$(comma)%ymm1\
- 				$(comma)4)$(comma)%ymm2,yes,no)
---- a/arch/x86/crypto/sha1-mb/Makefile
-+++ b/arch/x86/crypto/sha1-mb/Makefile
-@@ -2,6 +2,8 @@
- # Arch-specific CryptoAPI modules.
- #
- 
-+OBJECT_FILES_NON_STANDARD := y
-+
- avx2_supported := $(call as-instr,vpgatherdd %ymm0$(comma)(%eax$(comma)%ymm1\
-                                 $(comma)4)$(comma)%ymm2,yes,no)
- ifeq ($(avx2_supported),yes)
---- a/arch/x86/crypto/sha256-mb/Makefile
-+++ b/arch/x86/crypto/sha256-mb/Makefile
-@@ -2,6 +2,8 @@
- # Arch-specific CryptoAPI modules.
- #
- 
-+OBJECT_FILES_NON_STANDARD := y
-+
- avx2_supported := $(call as-instr,vpgatherdd %ymm0$(comma)(%eax$(comma)%ymm1\
-                                 $(comma)4)$(comma)%ymm2,yes,no)
- ifeq ($(avx2_supported),yes)
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -29,6 +29,7 @@ OBJECT_FILES_NON_STANDARD_head_$(BITS).o
- OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o	:= y
- OBJECT_FILES_NON_STANDARD_mcount_$(BITS).o		:= y
- OBJECT_FILES_NON_STANDARD_test_nx.o			:= y
-+OBJECT_FILES_NON_STANDARD_paravirt_patch_$(BITS).o	:= y
- 
- # If instrumentation of this dir is enabled, boot hangs during first second.
- # Probably could be more selective here, but note that files related to irqs,
---- a/arch/x86/kernel/acpi/Makefile
-+++ b/arch/x86/kernel/acpi/Makefile
-@@ -1,3 +1,5 @@
-+OBJECT_FILES_NON_STANDARD_wakeup_$(BITS).o := y
-+
- obj-$(CONFIG_ACPI)		+= boot.o
- obj-$(CONFIG_ACPI_SLEEP)	+= sleep.o wakeup_$(BITS).o
- obj-$(CONFIG_ACPI_APEI)		+= apei.o
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -28,6 +28,7 @@
- #include <linux/kdebug.h>
- #include <linux/kallsyms.h>
- #include <linux/ftrace.h>
-+#include <linux/frame.h>
- 
- #include <asm/text-patching.h>
- #include <asm/cacheflush.h>
-@@ -91,6 +92,7 @@ static void synthesize_set_arg1(kprobe_o
- }
- 
- asm (
-+			"optprobe_template_func:\n"
- 			".global optprobe_template_entry\n"
- 			"optprobe_template_entry:\n"
- #ifdef CONFIG_X86_64
-@@ -128,7 +130,12 @@ asm (
- 			"	popf\n"
- #endif
- 			".global optprobe_template_end\n"
--			"optprobe_template_end:\n");
-+			"optprobe_template_end:\n"
-+			".type optprobe_template_func, @function\n"
-+			".size optprobe_template_func, .-optprobe_template_func\n");
-+
-+void optprobe_template_func(void);
-+STACK_FRAME_NON_STANDARD(optprobe_template_func);
- 
- #define TMPL_MOVE_IDX \
- 	((long)&optprobe_template_val - (long)&optprobe_template_entry)
---- a/arch/x86/kernel/reboot.c
-+++ b/arch/x86/kernel/reboot.c
-@@ -9,6 +9,7 @@
- #include <linux/sched.h>
- #include <linux/tboot.h>
- #include <linux/delay.h>
-+#include <linux/frame.h>
- #include <acpi/reboot.h>
- #include <asm/io.h>
- #include <asm/apic.h>
-@@ -127,6 +128,7 @@ void __noreturn machine_real_restart(uns
- #ifdef CONFIG_APM_MODULE
- EXPORT_SYMBOL(machine_real_restart);
- #endif
-+STACK_FRAME_NON_STANDARD(machine_real_restart);
- 
  /*
-  * Some Apple MacBook and MacBookPro's needs reboot=p to be able to reboot
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -36,6 +36,7 @@
- #include <linux/slab.h>
- #include <linux/amd-iommu.h>
- #include <linux/hashtable.h>
-+#include <linux/frame.h>
+  * This looks more complex than it should be. But we need to
+  * get the type for the ~ right in round_down (it needs to be
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -23,8 +23,6 @@
+ #endif
+ #endif
  
- #include <asm/apic.h>
- #include <asm/perf_event.h>
-@@ -5111,6 +5112,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 
- 	mark_all_clean(svm->vmcb);
- }
-+STACK_FRAME_NON_STANDARD(svm_vcpu_run);
- 
- static void svm_set_cr3(struct kvm_vcpu *vcpu, unsigned long root)
- {
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -33,6 +33,7 @@
- #include <linux/slab.h>
- #include <linux/tboot.h>
- #include <linux/hrtimer.h>
-+#include <linux/frame.h>
- #include <linux/nospec.h>
- #include "kvm_cache_regs.h"
- #include "x86.h"
-@@ -8698,6 +8699,7 @@ static void vmx_handle_external_intr(str
- 			);
- 	}
- }
-+STACK_FRAME_NON_STANDARD(vmx_handle_external_intr);
- 
- static bool vmx_has_emulated_msr(int index)
- {
-@@ -9138,6 +9140,7 @@ static void __noclone vmx_vcpu_run(struc
- 	vmx_recover_nmi_blocking(vmx);
- 	vmx_complete_interrupts(vmx);
- }
-+STACK_FRAME_NON_STANDARD(vmx_vcpu_run);
- 
- static void vmx_load_vmcs01(struct kvm_vcpu *vcpu)
- {
---- a/arch/x86/lib/msr-reg.S
-+++ b/arch/x86/lib/msr-reg.S
-@@ -13,14 +13,14 @@
- .macro op_safe_regs op
- ENTRY(\op\()_safe_regs)
- 	pushq %rbx
--	pushq %rbp
-+	pushq %r12
- 	movq	%rdi, %r10	/* Save pointer */
- 	xorl	%r11d, %r11d	/* Return value */
- 	movl    (%rdi), %eax
- 	movl    4(%rdi), %ecx
- 	movl    8(%rdi), %edx
- 	movl    12(%rdi), %ebx
--	movl    20(%rdi), %ebp
-+	movl    20(%rdi), %r12d
- 	movl    24(%rdi), %esi
- 	movl    28(%rdi), %edi
- 1:	\op
-@@ -29,10 +29,10 @@ ENTRY(\op\()_safe_regs)
- 	movl    %ecx, 4(%r10)
- 	movl    %edx, 8(%r10)
- 	movl    %ebx, 12(%r10)
--	movl    %ebp, 20(%r10)
-+	movl    %r12d, 20(%r10)
- 	movl    %esi, 24(%r10)
- 	movl    %edi, 28(%r10)
--	popq %rbp
-+	popq %r12
- 	popq %rbx
- 	ret
- 3:
---- a/arch/x86/net/Makefile
-+++ b/arch/x86/net/Makefile
-@@ -1,4 +1,6 @@
- #
- # Arch-specific network modules
- #
-+OBJECT_FILES_NON_STANDARD_bpf_jit.o += y
-+
- obj-$(CONFIG_BPF_JIT) += bpf_jit.o bpf_jit_comp.o
---- a/arch/x86/platform/efi/Makefile
-+++ b/arch/x86/platform/efi/Makefile
-@@ -1,4 +1,5 @@
- OBJECT_FILES_NON_STANDARD_efi_thunk_$(BITS).o := y
-+OBJECT_FILES_NON_STANDARD_efi_stub_$(BITS).o := y
- 
- obj-$(CONFIG_EFI) 		+= quirks.o efi.o efi_$(BITS).o efi_stub_$(BITS).o
- obj-$(CONFIG_ACPI_BGRT) += efi-bgrt.o
---- a/arch/x86/power/Makefile
-+++ b/arch/x86/power/Makefile
-@@ -1,3 +1,5 @@
-+OBJECT_FILES_NON_STANDARD_hibernate_asm_$(BITS).o := y
-+
- # __restore_processor_state() restores %gs after S3 resume and so should not
- # itself be stack-protected
- nostackp := $(call cc-option, -fno-stack-protector)
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@ -1,3 +1,6 @@
-+OBJECT_FILES_NON_STANDARD_xen-asm_$(BITS).o := y
-+OBJECT_FILES_NON_STANDARD_xen-pvh.o := y
-+
- ifdef CONFIG_FUNCTION_TRACER
- # Do not profile debug and lowlevel utilities
- CFLAGS_REMOVE_spinlock.o = -pg
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -38,6 +38,7 @@
- #include <linux/syscore_ops.h>
- #include <linux/compiler.h>
- #include <linux/hugetlb.h>
-+#include <linux/frame.h>
- 
- #include <asm/page.h>
- #include <asm/sections.h>
-@@ -878,7 +879,7 @@ int kexec_load_disabled;
-  * only when panic_cpu holds the current CPU number; this is the only CPU
-  * which processes crash_kexec routines.
-  */
--void __crash_kexec(struct pt_regs *regs)
-+void __noclone __crash_kexec(struct pt_regs *regs)
- {
- 	/* Take the kexec_mutex here to prevent sys_kexec_load
- 	 * running on one cpu from replacing the crash kernel
-@@ -900,6 +901,7 @@ void __crash_kexec(struct pt_regs *regs)
- 		mutex_unlock(&kexec_mutex);
- 	}
- }
-+STACK_FRAME_NON_STANDARD(__crash_kexec);
- 
- void crash_kexec(struct pt_regs *regs)
- {
+-#define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
+-
+ #ifdef __GNUC__
+ #define TYPEOF(x) (__typeof__(x))
+ #else
