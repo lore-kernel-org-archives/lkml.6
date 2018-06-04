@@ -1,47 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753369AbeFDOJd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:09:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:15832 "EHLO mx1.redhat.com"
+        id S1753421AbeFDOKb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:10:31 -0400
+Received: from ozlabs.org ([203.11.71.1]:43649 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753019AbeFDOJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:09:31 -0400
-Date: Mon, 4 Jun 2018 10:09:31 -0400 (EDT)
-From: Bob Peterson <rpeterso@redhat.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <1511027539.39786658.1528121371637.JavaMail.zimbra@redhat.com>
-In-Reply-To: <707773306.39786540.1528121329531.JavaMail.zimbra@redhat.com>
-Subject: [PATCH] MAINTAINERS: Add Andreas Gruenbacher as a maintainer for
- gfs2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.116.15, 10.4.195.13]
-Thread-Topic: MAINTAINERS: Add Andreas Gruenbacher as a maintainer for gfs2
-Thread-Index: aq34eriYfHeFWJxO1y+ov557HbSH+w==
+        id S1753163AbeFDOKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:10:30 -0400
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 9887334b804892f10262fa7f805998d554e04367
+In-Reply-To: <20180228182145.AD1C76F114@po15720vm.idsi0.si.c-s.fr>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Scott Wood <oss@buserror.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/dma: remove unnecessary BUG()
+Message-Id: <40zxfY1vv9z9s0w@ozlabs.org>
+Date: Tue,  5 Jun 2018 00:10:29 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Andreas Gruenbacher as a maintainer for the gfs2 file system
+On Wed, 2018-02-28 at 18:21:45 UTC, Christophe Leroy wrote:
+> Direction is already checked in all calling functions in
+> include/linux/dma-mapping.h and also in called function __dma_sync()
+> 
+> So really no need to check it once more here.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Applied to powerpc next, thanks.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b60179d948bb..f369e975c821 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5941,6 +5941,7 @@ F:	scripts/get_maintainer.pl
- GFS2 FILE SYSTEM
- M:	Steven Whitehouse <swhiteho@redhat.com>
- M:	Bob Peterson <rpeterso@redhat.com>
-+M:	Andreas Gruenbacher <agruenba@redhat.com>
- L:	cluster-devel@redhat.com
- W:	http://sources.redhat.com/cluster/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
+https://git.kernel.org/powerpc/c/9887334b804892f10262fa7f805998
+
+cheers
