@@ -1,106 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751423AbeFDPxd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 11:53:33 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45464 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751282AbeFDPxb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 11:53:31 -0400
-Subject: Re: [PATCH] docs/admin-guide/mm: add high level concepts overview
-To: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20180529113725.GB13092@rapoport-lnx>
- <285dd950-0b25-dba3-60b6-ceac6075fb48@infradead.org>
- <20180604122235.GB15196@rapoport-lnx>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <30155b1b-cc7f-9203-49dc-c1235e204012@infradead.org>
-Date: Mon, 4 Jun 2018 08:53:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751479AbeFDPyp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 11:54:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751010AbeFDPyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 11:54:44 -0400
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-arch@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+Subject: [RFC PATCH -tip v5 12/27] sparc64: kprobes: Remove jprobe implementation
+Date: Tue,  5 Jun 2018 00:54:20 +0900
+Message-Id: <152812765990.10068.4986702684441309090.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152812730943.10068.5166429445118734697.stgit@devbox>
+References: <152812730943.10068.5166429445118734697.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180604122235.GB15196@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 05:22 AM, Mike Rapoport wrote:
-> Hi Randy,
-> 
-> Thanks for the review! I always have trouble with articles :)
-> The patch below addresses most of your comments.
-> 
-> On Fri, Jun 01, 2018 at 05:09:38PM -0700, Randy Dunlap wrote:
->> On 05/29/2018 04:37 AM, Mike Rapoport wrote:
->>> Hi,
->>>
->>> From 2d3ec7ea101a66b1535d5bec4acfc1e0f737fd53 Mon Sep 17 00:00:00 2001
->>> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
->>> Date: Tue, 29 May 2018 14:12:39 +0300
->>> Subject: [PATCH] docs/admin-guide/mm: add high level concepts overview
->>>
->>> The are terms that seem obvious to the mm developers, but may be somewhat
-> 
-> Huh, I afraid it's to late to change the commit message :(
+Remove arch dependent setjump/longjump functions
+and unused fields in kprobe_ctlblk for jprobes
+from arch/sparc.
 
-Sure.
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org
+---
+ arch/sparc/include/asm/kprobes.h |    1 -
+ arch/sparc/kernel/kprobes.c      |   47 --------------------------------------
+ 2 files changed, 48 deletions(-)
 
->>   There are [or: These are]
->>
->>> obscure for, say, less involved readers.
->>>
->>> The concepts overview can be seen as an "extended glossary" that introduces
->>> such terms to the readers of the kernel documentation.
->>>
->>> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
->>> ---
->>>  Documentation/admin-guide/mm/concepts.rst | 222 ++++++++++++++++++++++++++++++
->>>  Documentation/admin-guide/mm/index.rst    |   5 +
->>>  2 files changed, 227 insertions(+)
->>>  create mode 100644 Documentation/admin-guide/mm/concepts.rst
->>>
->>> diff --git a/Documentation/admin-guide/mm/concepts.rst b/Documentation/admin-guide/mm/concepts.rst
->>> new file mode 100644
->>> index 0000000..291699c
->>> --- /dev/null
->>> +++ b/Documentation/admin-guide/mm/concepts.rst
-> 
-> [...]
-> 
->>> +All this makes dealing directly with physical memory quite complex and
->>> +to avoid this complexity a concept of virtual memory was developed.
->>> +
->>> +The virtual memory abstracts the details of physical memory from the
->>
->>        virtual memory {system, implementation} abstracts
->>
->>> +application software, allows to keep only needed information in the
->>
->>                software, allowing the VM to keep only needed information in the
->>
->>> +physical memory (demand paging) and provides a mechanism for the
->>> +protection and controlled sharing of data between processes.
->>> +
-> 
-> My intention was "virtual memory concept allows ... and provides ..."
-> I didn't want to repeat "concept", to I've just omitted it.
-> 
-> Somehow, I don't feel that "system" or "implementation" fit here...
-
-OK.  Thanks for the update.
-
-> Subject: [PATCH] docs/admin-guide/mm/concepts.rst: grammar fixups
-
-> The patch is mostly about adding 'a' and 'the' and updating indentation.
-
-I would say that it's mostly about improving readability.
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-
--- 
-~Randy
+diff --git a/arch/sparc/include/asm/kprobes.h b/arch/sparc/include/asm/kprobes.h
+index 3704490b4488..bfcaa6326c20 100644
+--- a/arch/sparc/include/asm/kprobes.h
++++ b/arch/sparc/include/asm/kprobes.h
+@@ -44,7 +44,6 @@ struct kprobe_ctlblk {
+ 	unsigned long kprobe_status;
+ 	unsigned long kprobe_orig_tnpc;
+ 	unsigned long kprobe_orig_tstate_pil;
+-	struct pt_regs jprobe_saved_regs;
+ 	struct prev_kprobe prev_kprobe;
+ };
+ 
+diff --git a/arch/sparc/kernel/kprobes.c b/arch/sparc/kernel/kprobes.c
+index ab4ba4347941..f555711da8f1 100644
+--- a/arch/sparc/kernel/kprobes.c
++++ b/arch/sparc/kernel/kprobes.c
+@@ -441,53 +441,6 @@ asmlinkage void __kprobes kprobe_trap(unsigned long trap_level,
+ 	exception_exit(prev_state);
+ }
+ 
+-/* Jprobes support.  */
+-int __kprobes setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
+-{
+-	struct jprobe *jp = container_of(p, struct jprobe, kp);
+-	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+-
+-	memcpy(&(kcb->jprobe_saved_regs), regs, sizeof(*regs));
+-
+-	regs->tpc  = (unsigned long) jp->entry;
+-	regs->tnpc = ((unsigned long) jp->entry) + 0x4UL;
+-	regs->tstate |= TSTATE_PIL;
+-
+-	return 1;
+-}
+-
+-void __kprobes jprobe_return(void)
+-{
+-	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+-	register unsigned long orig_fp asm("g1");
+-
+-	orig_fp = kcb->jprobe_saved_regs.u_regs[UREG_FP];
+-	__asm__ __volatile__("\n"
+-"1:	cmp		%%sp, %0\n\t"
+-	"blu,a,pt	%%xcc, 1b\n\t"
+-	" restore\n\t"
+-	".globl		jprobe_return_trap_instruction\n"
+-"jprobe_return_trap_instruction:\n\t"
+-	"ta		0x70"
+-	: /* no outputs */
+-	: "r" (orig_fp));
+-}
+-
+-extern void jprobe_return_trap_instruction(void);
+-
+-int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
+-{
+-	u32 *addr = (u32 *) regs->tpc;
+-	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+-
+-	if (addr == (u32 *) jprobe_return_trap_instruction) {
+-		memcpy(regs, &(kcb->jprobe_saved_regs), sizeof(*regs));
+-		preempt_enable_no_resched();
+-		return 1;
+-	}
+-	return 0;
+-}
+-
+ /* The value stored in the return address register is actually 2
+  * instructions before where the callee will return to.
+  * Sequences usually look something like this
