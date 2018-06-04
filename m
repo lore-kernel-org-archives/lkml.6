@@ -1,65 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751788AbeFDQ3A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:29:00 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:53508 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751765AbeFDQ27 (ORCPT
+        id S1751800AbeFDQ3U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:29:20 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:40698 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbeFDQ1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:28:59 -0400
-Message-ID: <1528129738.7898.109.camel@surriel.com>
-Subject: Re: [PATCH 08/19] sched/numa: Remove unused task_capacity from
- numa_stats
-From: Rik van Riel <riel@surriel.com>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date: Mon, 04 Jun 2018 12:28:58 -0400
-In-Reply-To: <1528106428-19992-9-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-         <1528106428-19992-9-git-send-email-srikar@linux.vnet.ibm.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-iyLhsyeC315BqW4Z/s0s"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Mon, 4 Jun 2018 12:27:43 -0400
+Message-Id: <20180604162224.819273597@linutronix.de>
+User-Agent: quilt/0.65
+Date: Mon, 04 Jun 2018 17:33:59 +0200
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Dmitry Safonov <0x7f454c46@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
+        Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>,
+        stable@vger.kernel.org
+Subject: [patch 7/8] genirq/affinity: Defer affinity setting if irq chip is
+ busy
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline;
+ filename=genirq-affinity--Defer-affinity-setting-if-irq-chip-is-busy.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The case that interrupt affinity setting fails with -EBUSY can be handled
+in the kernel completely by using the already available generic pending
+infrastructure.
 
---=-iyLhsyeC315BqW4Z/s0s
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+If a irq_chip::set_affinity() fails with -EBUSY, handle it like the
+interrupts for which irq_chip::set_affinity() can only be invoked from
+interrupt context. Copy the new affinity mask to irq_desc::pending_mask and
+set the affinity pending bit. The next raised interrupt for the affected
+irq will check the pending bit and try to set the new affinity from the
+handler. This avoids that -EBUSY is returned when an affinity change is
+requested from user space and the previous change has not been cleaned
+up. The new affinity will take effect when the next interrupt is raised
+from the device.
 
-On Mon, 2018-06-04 at 15:30 +0530, Srikar Dronamraju wrote:
-> task_capacity field in struct numa_stats is redundant.
-> Also move nr_running for better packing within the struct.
->=20
-> No functional changes.
->=20
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+---
+ kernel/irq/manage.c |   37 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 35 insertions(+), 2 deletions(-)
 
-Acked-by: Rik van Riel <riel@surriel.com>
-
---=20
-All Rights Reversed.
---=-iyLhsyeC315BqW4Z/s0s
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVaMoACgkQznnekoTE
-3oNSlQgAs0lZ49RHIej+7hRIODVa6i7c1hJCADXuDo1UlkEy6ILZTbkOWMr3Mv4l
-j5r4izBpQjakecpavp6B/hTbpkjOeycyrM6DmgHvY9BeFom1Ba/YtW8b9QFZKEXt
-7JJ/EN1MdCY5PffSo1SOxNzb08CcMDKppQPxkLX7+80B97uybi61zAs3vNvlqeWE
-QqzEghUbI6Px+a/A8xe+rkczpADTDKRxKFgzsgY1MjirPJpdY4OTUqAg8Uu3zapR
-d7FbuLIC4UXRrVj0TvGOuRqjr8Ve/Us3F1M9kVPeARypFfVwPdj8Nt9z8ieHx3Fi
-zkpWDKcSzRA3JFWQadc2x/N5OTNNYA==
-=wt/N
------END PGP SIGNATURE-----
-
---=-iyLhsyeC315BqW4Z/s0s--
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -204,6 +204,39 @@ int irq_do_set_affinity(struct irq_data
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_GENERIC_PENDING_IRQ
++static inline int irq_set_affinity_pending(struct irq_data *data,
++					   const struct cpumask *dest)
++{
++	struct irq_desc *desc = irq_data_to_desc(data);
++
++	irqd_set_move_pending(data);
++	irq_copy_pending(desc, dest);
++	return 0;
++}
++#else
++static inline int irq_set_affinity_pending(struct irq_data *data,
++					   const struct cpumask *dest)
++{
++	return -EBUSY;
++}
++#endif
++
++static int irq_try_set_affinity(struct irq_data *data,
++				const struct cpumask *dest, bool force)
++{
++	int ret = irq_do_set_affinity(data, dest, force);
++
++	/*
++	 * In case that the underlying vector management is busy and the
++	 * architecture supports the generic pending mechanism then utilize
++	 * this to avoid returning an error to user space.
++	 */
++	if (ret == -EBUSY && !force)
++		ret = irq_set_affinity_pending(data, dest);
++	return ret;
++}
++
+ int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
+ 			    bool force)
+ {
+@@ -214,8 +247,8 @@ int irq_set_affinity_locked(struct irq_d
+ 	if (!chip || !chip->irq_set_affinity)
+ 		return -EINVAL;
+ 
+-	if (irq_can_move_pcntxt(data)) {
+-		ret = irq_do_set_affinity(data, mask, force);
++	if (irq_can_move_pcntxt(data) && !irqd_is_setaffinity_pending(data)) {
++		ret = irq_try_set_affinity(data, mask, force);
+ 	} else {
+ 		irqd_set_move_pending(data);
+ 		irq_copy_pending(desc, mask);
