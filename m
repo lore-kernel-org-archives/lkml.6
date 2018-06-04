@@ -1,78 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751430AbeFDQ6V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:58:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751042AbeFDQ6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:58:20 -0400
-Date: Mon, 4 Jun 2018 18:57:56 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
-Message-ID: <20180604165756.GA2004@kroah.com>
-References: <20180604065802.157744637@linuxfoundation.org>
- <20180604161649.GA16269@roeck-us.net>
- <20180604165427.GA26908@roeck-us.net>
+        id S1751498AbeFDQ6g (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:58:36 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:42492 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbeFDQ6e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 12:58:34 -0400
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="14912354"
+From: Radu Pirea <radu.pirea@microchip.com>
+To: <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
+        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
+CC: <linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, Radu Pirea <radu.pirea@microchip.com>
+Subject: [PATCH v5 0/6] Driver for at91 usart in spi mode
+Date: Mon, 4 Jun 2018 19:59:37 +0300
+Message-ID: <20180604165943.31381-1-radu.pirea@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604165427.GA26908@roeck-us.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 09:54:27AM -0700, Guenter Roeck wrote:
-> On Mon, Jun 04, 2018 at 09:16:49AM -0700, Guenter Roeck wrote:
-> > On Mon, Jun 04, 2018 at 08:57:56AM +0200, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 4.9.106 release.
-> > > There are 29 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
-> > > Anything received after that time might be too late.
-> > > 
-> > 
-> > For v4.9.105-30-ge0f8632 (4.9.106-rc1-00030-ge0f8632):
-> > 
-> > Build results:
-> > 	total: 148 pass: 148 fail: 0
-> > Qemu test results:
-> > 	total: 139 pass: 137 fail: 2
-> > Failed tests: 
-> > 	mips64:malta_defconfig:nosmp
-> > 	mips64:malta_defconfig:smp
-> > 
-> > Qemu tests fail with:
-> > 
-> > This architecture does not have kernel memory protection.
-> > random: fast init done
-> > Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
-> > 
-> > ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
-> > 
-> > While tracking this down, I found commit 4e4636cf981b ("objtool: Enclose
-> > contents of unreachable() macro in a block"), which says "... Guenter Roeck
-> > reported a boot failure in mips64 ...". Go figure. Applying commit
-> > 4e4636cf981b on top of v4.9.106-rc1 indeed fixes the problem.
-> > 
-> 
-> An additional note: It appears that neither 009615ab7fd4 ("USB: serial: cp210x:
-> use tcflag_t to fix incompatible pointer type") nor 0fde7ad71ee3 ("sparc64: Fix
-> build warnings with gcc 7") made it into v4.9.106-rc1, even though you mentioned
-> that they did, or at least I think you did. What happened ?
+Hello,
 
-I "switched" trees for 4.9 for this release.  Those patches are still in
-a queue, but I wanted to have this release only be about the objtool
-changes to make it easier to narrow down any potential issues.  I'll do
-a new 4.9 release after this one with those patches in it.
+This is the second version of driver. I added a mfd driver which by
+default probes atmel_serial driver and if in dt is specified to probe
+the spi driver, then the spi-at91-usart driver will be probed. The
+compatible for atmel_serial is now the compatible for at91-usart mfd
+driver and compatilbe for atmel_serial driver was changed in order to
+keep the bindings for serial as they are.
 
-thanks,
+Changes in v1:
+- added spi-at91-usart driver
 
-greg k-h
+Changes in v2:
+- added at91-usart mfd driver
+- modified spi-at91-usart driver to work as mfd driver child
+- modified atmel_serial driver to work as mfd driver child
+
+Changes in v3:
+- fixed spi slaves probing
+
+Changes in v4:
+- modified the spi driver to use cs gpio support form spi subsystem
+- fixed dma transfers for serial driver
+- squashed binding for spi and serial and moved them to mfd/atmel-usart.txt
+
+Changes in v5:
+- fixed usage of stdout-path property with atmel_serial driver
+
+Radu Pirea (6):
+  MAINTAINERS: add at91 usart mfd driver
+  dt-bindings: add binding for atmel-usart in SPI mode
+  mfd: at91-usart: added mfd driver for usart
+  MAINTAINERS: add at91 usart spi driver
+  spi: at91-usart: add driver for at91-usart as spi
+  tty/serial: atmel: changed the driver to work under at91-usart mfd
+
+ .../bindings/{serial => mfd}/atmel-usart.txt  |  25 +-
+ MAINTAINERS                                   |  16 +
+ drivers/mfd/Kconfig                           |   9 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/at91-usart.c                      |  67 +++
+ drivers/spi/Kconfig                           |   9 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-at91-usart.c                  | 436 ++++++++++++++++++
+ drivers/tty/serial/Kconfig                    |   1 +
+ drivers/tty/serial/atmel_serial.c             |  41 +-
+ include/dt-bindings/mfd/at91-usart.h          |  17 +
+ 11 files changed, 604 insertions(+), 19 deletions(-)
+ rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
+ create mode 100644 drivers/mfd/at91-usart.c
+ create mode 100644 drivers/spi/spi-at91-usart.c
+ create mode 100644 include/dt-bindings/mfd/at91-usart.h
+
+-- 
+2.17.1
