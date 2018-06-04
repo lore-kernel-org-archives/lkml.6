@@ -1,109 +1,118 @@
-Return-Path: <linux-next-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti33d1t02-1918895-1528140720-2-10442003243524772216
+Return-Path: <linux-pci-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti33d1t02-1855653-1528134571-2-384573075591836640
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-next-owner@vger.kernel.org
+X-Mail-from: linux-pci-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1528140720; b=eObaVzGO7t2A/TmxyPjJ4e5WmMIYZAMsJ2g+9xE9fy6cM3T6fy
-    AlElvJz6wOSr7V5MwEhXDNnNU2Y36kMfjD8a4bLZzvOFETKN7uO4fv2DPa7jc4+S
-    i9SklIsLDYFA4aC1R7IW25L5fUdPT17N0He4rLRwBUHqzyqoae9PHOFAU/W5yjRc
-    s17sPbj74TG2N2t9JTas3R6WTj1ZiPoIcEde8vdDYmXD3/BgZC/9mWk/98o/om6v
-    ia7ErATBh27FhgX6IjknXunSQBTOEIA+AnKEDwcPcT9mFfWV9yGqRp5DdGLId1o2
-    10oRGuVvt6pkS4tNydTQonm4ZhhaTgvZr9xQ==
+    1528134571; b=G+SUJOyjSZ8H063gvCUyU5IU6sO5OQ88r3YBEovOhNNNwMN+/z
+    +zf9v/uH9XilbicormRIyXXrz+gt9uGvNlpeYNvFvpZPmP8YCKZnIML+OsQDoS7Q
+    VrEk+uuW/JZWvwae1BGdlYu3NT40kMsC87YiC4x23u5h4uy4jbVcYNfuhHdwh7MW
+    MRekDdn7crVORQ2e6DMO1mKqzWIJ9kYSfQsESfc7x3PRNzntigizY9zYKh46RvSd
+    0f/3POjohwzkryNQJfl0AO3zZMykulTmEO12mOwxlFvYF/ZqPnLkyFAfIyhqyX8I
+    HMJfXh1/1ISd0FMFKwLt8U1WiTnzNhN51s2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1528140720;
-    bh=iwfKAISZBG+aMXCcqQo/KTQzlHfvclkaB13qwEb5c/c=; b=hIXX5spOjnGW
-    GWNXE6VO8nTcgRbcd/zX/+cJRHJ2blXl7f4SMZ2YAbzFe6r6sFEU1pw3RaHpfc49
-    cdZ78KgW7aQC689t+EjKNPLG7fbItwZ/Y9xNcT8iO5zRS+2VBmyVaSay5+Fcrwzh
-    ikVr91nlZxqzhTjgQ0dNFo4Ygo9mskBkASYkpA4kGJz6SuFPZen1/Vzw/icHwYwx
-    5ezoe13h0CyXk3hByG0mpHOgXt1rw2yzMM1KX1EmqKu3WSYUuEd8xEJzIwJyCF7Z
-    UGf8hGdWXoJHNwhP7Op4cnAg/chE/MNoLLWQdd8QLLdXgXdS7WDYElL1zHIbr80M
-    1LjwXjI5cg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1528134571; bh=rCqdmVZttoGYeQ6ksHrQJ34bkp2dRo
+    Pt6jjAYsBQgB4=; b=lxo3+ntIMJP3Q12XUl2B+IeAQe7W7LHFkLYMRNQFNpqllg
+    qW1hP1bPk7L59nhDconNgKVpBVF7Q5Y4ugEXxiIU9JwfgoRQN2u5rEnNCyARv+x4
+    lkUwp5/7BS7nXajXsY+z5osNHyKwyjAMuAa7yVrE+96VY4BcWLRM/SBp6FX2/ezS
+    r9H9EEtfrWMJqlE5Rt15CgbxmNi5s7sbJgMQyD/b9dIQRAFNkNbm16XhsE4nH8EO
+    jmqmTauv+MtR4Kt1GG+L5+iWOSuYIrkD6g0CWHi99paP6blaC2Ftha7vMXO4PLFH
+    I7ci+6T3lxsAadiUkkX105I3b2EyYXS9Mdr7Mwrw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=sD+MfTyK header.a=rsa-sha256
+    header.s=default x-bits=1024;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-pci-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=sD+MfTyK header.a=rsa-sha256
+      header.s=default x-bits=1024;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-pci-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB4XjiwKtmBBqt4oP01XExFk5tg5YmPiKAmtvGeS3ZGS0qihOISdkj1sKgTb4I4nSWbnMru7VjgkBkxcL16HnHwprZwtUpKAFl7Exm1OLJ5bYmUmBuFg
-    JlWCQIYfN+WNoVgK8keIc4fCoSp67JQBA3Njr9l1hFBXe0AGLlJhjOQLnocmTwGtSiW9mJmm80jTdJ7pDI2p4+pVIxMzwzkM15FlB4FYeMNFZIjZdat57plJ
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfI8AlzCyPIuqm2matTilk3yzEee+duOWYpn7KckH0Sl2YsHFoPsUk7Xmmh6H+wL24ikhhjmBxbMKn/HYB0MDieJZo+RI7coXCFuIv02FW0VRU3gxYqk0
+    QKbFjLhVY81MYqRX6KxP3QPRyzXp86HkNzUcvJw5wQf/ZfYLIxNNypxvswoVIXqadgRZCC4ZTUWTmM0zsRVRFjnxwyQTOw+KNvzGaZhF6HJuopAizWuNOWbm
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=7mUfYlMuFuIA:10
-    a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=ehT0UVN0Hiigjcx0_lYA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=mGljFQ1qZkSq3r-IPxcA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751201AbeFDTb6 (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 4 Jun 2018 15:31:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43168 "EHLO mail.kernel.org"
+        id S1751017AbeFDRt1 (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 4 Jun 2018 13:49:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751099AbeFDTb5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Jun 2018 15:31:57 -0400
-Date: Mon, 4 Jun 2018 15:31:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mike Snitzer <snitzer@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Jun 4 (md/dm-writecache.c)
-Message-ID: <20180604153155.035a7856@gandalf.local.home>
-In-Reply-To: <7b566935-a03d-ecab-be2a-10e25e4554f6@infradead.org>
-References: <20180604215911.75399f6e@canb.auug.org.au>
-        <0e3fa62d-727e-ccb8-53ae-a6aaa6c506e2@infradead.org>
-        <20180604182259.GA5440@redhat.com>
-        <7b566935-a03d-ecab-be2a-10e25e4554f6@infradead.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1750985AbeFDRt0 (ORCPT <rfc822;linux-pci@vger.kernel.org>);
+        Mon, 4 Jun 2018 13:49:26 -0400
+Date: Mon, 4 Jun 2018 12:49:24 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Mario.Limonciello@dell.com,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v1 0/2] PCI: shpchp: Minor fixes
+Message-ID: <20180604174924.GB30381@bhelgaas-glaptop.roam.corp.google.com>
+References: <152791788214.257724.13044360353832574147.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: linux-next-owner@vger.kernel.org
-X-Mailing-List: linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152791788214.257724.13044360353832574147.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+Sender: linux-pci-owner@vger.kernel.org
+X-Mailing-List: linux-pci@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 4 Jun 2018 11:27:55 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
-
-> > AFAICT, this is the correct fix:
-> > https://patchwork.kernel.org/patch/10438865/
-> > 
-> > Not seen any response to it (Steven and Ingo were emailed, Arnd and LKML
-> > were cc'd).  
+On Sat, Jun 02, 2018 at 12:41:59AM -0500, Bjorn Helgaas wrote:
+> An AMD POGO check in shpchp incorrectly included any device with device ID
+> 0x7458, no matter what the vendor.
 > 
-> Yes, thanks.  That looks good.
+> Also, use pci_info() instead of dbg() for messages related to OSHP.
+> They're important enough that they should appear in dmesg.
+> 
+> I intend to include these along with Mika's shpchp updates.
+> 
+> ---
+> 
+> Bjorn Helgaas (2):
+>       PCI: shpchp: Use dev_printk() for OSHP-related messages
+>       PCI: shpchp: Fix AMD POGO identification
+> 
+> 
+>  drivers/pci/hotplug/acpi_pcihp.c  |   13 ++++++-------
+>  drivers/pci/hotplug/shpchp_ctrl.c |    8 ++++----
+>  2 files changed, 10 insertions(+), 11 deletions(-)
 
-I'm still digging through email. I've been traveling all last week.
-
--- Steve
+I applied these with reviewed-by from Mika and Rafael to pci/hotplug for
+v4.18.
