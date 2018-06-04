@@ -1,79 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752369AbeFDKpv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:45:51 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54706 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752302AbeFDKpu (ORCPT
+        id S1752497AbeFDKqr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:46:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57334 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751782AbeFDKqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:45:50 -0400
-Date: Mon, 4 Jun 2018 11:45:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
-        lgirdwood@gmail.com, bgoswami@codeaurora.org, tiwai@suse.com,
-        perex@perex.cz, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com
-Subject: Re: [PATCH] ASoC: dapm: delete dapm_kcontrol_data paths entry before
- freeing
-Message-ID: <20180604104541.GB7536@sirena.org.uk>
-References: <20180601225334.19064-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="XOIedfhf+7KOe/yw"
-Content-Disposition: inline
-In-Reply-To: <20180601225334.19064-1-srinivas.kandagatla@linaro.org>
-X-Cookie: One Bell System - it works.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Mon, 4 Jun 2018 06:46:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1C4A60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From: Taniya Das <tdas@codeaurora.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        robh@kernel.org
+Cc: Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        skannan@codeaurora.org, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 0/2] cpufreq: qcom-fw: Add support for QCOM cpufreq FW driver
+Date: Mon,  4 Jun 2018 16:16:32 +0530
+Message-Id: <1528109194-16864-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ [v3]
+  * Remove index check from 'qcom_cpufreq_fw_target_index'.
+  * Update the Documentation binding to add the platform specific properties in
+    the CPU nodes, node name "qcom,freq-domain".
+  * Update return value to '0' from -ENODEV from 'qcom_cpufreq_fw_get'.
+  * Update the logic for boost frequency to use local variables instead of
+    cpufreq driver data in 'qcom_read_lut'.
+  * Update the logic in 'qcom_get_related_cpus' to find the related cpus.
+  * Update the reg-names to remove "_base" and also update the binding with the
+    description of these registers.
+  * Update the logic in 'qcom_resources_init' to address the new device tree
+    notation of handling the frequency domain phandles.
 
---XOIedfhf+7KOe/yw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ [v2]
+ * Fixed the alignment issues in "qcom_cpufreq_fw_target_index" for dev_err and
+   also for "qcom_cpu_resources_init".
+ * Removed ret = 0 from qcom_get_related_cpus and added to check for
+   cpu_mask_empty to return -ENOENT.
+ * Fixes qcom_cpu_resources_init function
+   * Remove initialization of 'index'
+   * Check for valid 'c'
+ * Removed initialization of 'prev_cc' from 'qcom_read_lut'.
+ * Remove initialization of 'ret' from function qcom_resources_init and add
+   return -ENODEV based on 'of_get_available_child_count'.
+ * Removed initialization of 'rc' from qcom_cpufreq_fw_driver_probe
+ * Removed module_exit as this driver would not be used as module, also updated
+   the Kconfig to bool from tristate.
+ * Updated the subsystem in device tree bindings.
 
-On Fri, Jun 01, 2018 at 11:53:34PM +0100, Srinivas Kandagatla wrote:
+ [v1]
+   * Fixed compilation reported by Amit K.
 
-> Below is the kernel BUG with SLAB Poisoning
+Taniya Das (2):
+  dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW bindings
+  cpufreq: qcom-fw: Add support for QCOM cpufreq FW driver
 
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-> BUG kmalloc-128 (Tainted: G        W        ): Poison overwritten
-> -------------------------------------------------------------------------=
-----
->=20
-> Disabling lock debugging due to kernel taint
-> INFO: 0xffff80003cf1c310-0xffff80003cf1c31f. First byte 0x10 instead of 0=
-x6b
-> INFO: Allocated in dapm_kcontrol_data_alloc.isra.37+0x34/0x2a8 age=3D6929=
- cpu=3D0 pid=3D50
->  __slab_alloc.isra.24+0x24/0x38
->  kmem_cache_alloc+0x190/0x1d8
+ .../bindings/cpufreq/cpufreq-qcom-fw.txt           | 173 +++++++++++
+ drivers/cpufreq/Kconfig.arm                        |   9 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/qcom-cpufreq-fw.c                  | 318 +++++++++++++++++++++
+ 4 files changed, 501 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-fw.c
 
-Please think hard before including complete backtraces in upstream
-reports, they are very large and contain almost no useful information
-relative to their size so often obscure the relevant content in your
-message. If part of the backtrace is usefully illustrative then it's
-usually better to pull out the relevant sections.
-
---XOIedfhf+7KOe/yw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsVGFQACgkQJNaLcl1U
-h9DFlQf+KuP/lW/iPvlcjQ0oZp8RvCj0F1kfnQuRB5G/+5QM5yzH9aEVgIcK5JYq
-lcWNVkYmd+c8wa8xyWDcObTGfJIzo5cVWqoau4VoemZspU7VgH74X/SSTcynZiTQ
-LYoWZ6b6yIL3yfQUlbB65qxCkxFxza96Lug6keLwbsHiGCrO1yF/izzaE7MPswZV
-oBHlJoEVG5VYpKxBc5BsqUSUVJRX1afbQ6F8iouUgGTttm6fLq5k4prfsojBg46G
-uYHp4O3fNEAtkWR46h9XcogwlsGal4B/hEpZAcLdx89GTrh9192uwhcPaG+Ho2+R
-Y+vuAJgm2G2wsDN4/wmIcOsN52CV2A==
-=v59X
------END PGP SIGNATURE-----
-
---XOIedfhf+7KOe/yw--
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
