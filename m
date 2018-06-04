@@ -1,90 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeFDDjA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 23:39:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59146 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751210AbeFDDi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 23:38:58 -0400
-From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 04 Jun 2018 13:38:46 +1000
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 04/18] rhashtable: detect when object movement might have invalidated a lookup
-In-Reply-To: <20180601160613.7ud25g2ux55k3bma@gondor.apana.org.au>
-References: <152782754287.30340.4395718227884933670.stgit@noble> <152782824943.30340.8224535954517915320.stgit@noble> <20180601160613.7ud25g2ux55k3bma@gondor.apana.org.au>
-Message-ID: <87k1rfp6ex.fsf@notabene.neil.brown.name>
+        id S1751726AbeFDDlG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 23:41:06 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:33989 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751470AbeFDDlE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 23:41:04 -0400
+X-Google-Smtp-Source: ADUXVKLXKqMV+7zhauhe6SIxllh+iv5fDxgRU/o5Ht4R5soB4raoFweyrSguW3ZCCniwouOBGd2P3w==
+Date: Sun, 3 Jun 2018 20:41:00 -0700
+From: Benson Leung <bleung@google.com>
+To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: dmitry.torokhov@gmail.com, bleung@chromium.org
+Subject: [GIT PULL] chrome-platform updates for v4.18
+Message-ID: <20180604034100.GA158510@decatoncale.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 02 2018, Herbert Xu wrote:
+Hi Linus,
 
-> On Fri, Jun 01, 2018 at 02:44:09PM +1000, NeilBrown wrote:
->> Some users of rhashtable might need to change the key
->> of an object and move it to a different location in the table.
->> Other users might want to allocate objects using
->> SLAB_TYPESAFE_BY_RCU which can result in the same memory allocation
->> being used for a different (type-compatible) purpose and similarly
->> end up in a different hash-chain.
->>
->> To support these, we store a unique NULLS_MARKER at the end of
->> each chain, and when a search fails to find a match, we check
->> if the NULLS marker found was the expected one.  If not,
->> the search is repeated.
->>=20
->> The unique NULLS_MARKER is derived from the address of the
->> head of the chain.
->
-> Yes I thinks makes a lot more sense than the existing rhashtable
-> nulls code.  The current rhashtable nulls code harkens back to the
-> time of the old rhashtable implementation where the same chain
-> existed in two different tables and that is no longer the case.
->
->> If an object is removed and re-added to the same hash chain, we won't
->> notice by looking that the NULLS marker.  In this case we must be sure
->
-> This is not currently required by TCP/UDP.  I'd rather not add
-> extra constraints that aren't actually used.
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-I assume you are referring here to the change to insert at the head of
-the chain, rather than at the end.
-This is important for me to be able to use SLAB_TYPESAFE_BY_RCU
-for the kmem_cache.  Without that, I need a new rcu-free callback
-for every different kmem_cache.
-When using SLAB_TYPESAFE_BY_RCU, there is no way to know where
-a freed and re-allocated object might be used again - it could
-be used in the same table with the same hash value.
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git =
+tags/chrome-platform-for-linus-4.18
+
+for you to fetch changes up to 79a3d60300fc28def9b58dc30d86274b47052422:
+
+  platform/chrome: Use to_cros_ec_dev more broadly (2018-05-30 11:53:40 -07=
+00)
+
+----------------------------------------------------------------
+Changes to chrome-platform for v4.18
+
+Further changes from Dmitry related to the removal of platform data from
+atmel_mxt_ts and chromeos_laptop. This time, we have some changes that
+teach chromeos_laptop how to supply acpi properties for some input devices
+so that the peripheral driver doesn't have to do dmi matching on some
+Chromebook platforms.
+
+Also adds the Chromebook Tablet switch driver, which is useful for x86
+convertible Chromebooks.
+
+Other misc. cleanup.
 
 Thanks,
-NeilBrown
+Benson
 
---=-=-=
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      platform: chrome: Add input dependency for tablet switch driver
+
+Benson Leung (2):
+      platform/chrome: chromeos_tbmc - add SPDX identifier
+      Merge branch 'ib-chrome-platform-atmel-mxt-ts-device-properties' into=
+ working-branch-for-4.18
+
+Dmitry Torokhov (3):
+      platform/chrome: cros_ec_lpc: do not try DMI match when ACPI device f=
+ound
+      platform/chrome: chromeos_laptop - supply properties for ACPI devices
+      platform/chrome: chromeos_laptop: fix touchpad button mapping on Celes
+
+Gwendal Grignou (2):
+      platform: chrome: Add Tablet Switch ACPI driver
+      platform/chrome: Use to_cros_ec_dev more broadly
+
+ drivers/platform/chrome/Kconfig            |  11 +
+ drivers/platform/chrome/Makefile           |   1 +
+ drivers/platform/chrome/chromeos_laptop.c  | 315 +++++++++++++++++++++++++=
++---
+ drivers/platform/chrome/chromeos_tbmc.c    | 111 ++++++++++
+ drivers/platform/chrome/cros_ec_lightbar.c |  21 +-
+ drivers/platform/chrome/cros_ec_lpc.c      |  13 +-
+ drivers/platform/chrome/cros_ec_sysfs.c    |   2 -
+ drivers/platform/chrome/cros_ec_vbc.c      |   9 +-
+ include/linux/mfd/cros_ec.h                |   2 +
+ 9 files changed, 428 insertions(+), 57 deletions(-)
+ create mode 100644 drivers/platform/chrome/chromeos_tbmc.c
+
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
+
+--CE+1k2dSO48ffgeK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsUtEYACgkQOeye3VZi
-gbnJzw/9E3yArpPPJiNiuoT4TsqGwH2v2iO8Qd2lfOTp43Y2MPCmgsxGsstwT0Lr
-SXlzelx1tjlhzTebWbDB3d/oHWBUMcEJKqqez+r0LFQq+qHIBjjgizi0R0mxBbfg
-ADOPtzK7ONFG5/s8aYHb7OHhNO8cLE2mvHXhv1iu/EzxDqoI4xAtviI8EZegCGup
-PQwMGFczxtX7kJ/c1ENqDxBQSWVGOjZQ5NvtlQYgoszIj28UuY7ln/4x9Fg3bMNv
-bq4ZsBGod+rR/y+w7e3HG1/6rp6vbqlBS4thrqecD50nV3pNR36nLjJ4CaTqmzgZ
-sDDohnjCa4UVtYl8JNiI7g7sRZYbejf4BLMq8cEowyvZZiMwxgWGolW8v/whOxp4
-RYFcmaSfU9jP8njQOunkRUvT2JfNe9/Ab9dMwkC+HPK603JnV6BASHtC4bwZtyAM
-afM5+0qD4o2kGxDYUDSD+XgRwGpV4w94IGdax/vtH3lTG3/utIJAV2TKaGmXpP4A
-NGI4D8qjEWekICaX8+ZSOcMamFiOhvNtyPRaPdV2S0TOKOXmOlZiVlDwYK7iwLHd
-OjJMfgduEHS9ACp1b/uvqpj1j4Tx0bOYzm+A+AUU2BJMiH3rZLzmVoAfDrm3HQFR
-hgp36mVDVZUEh1tHTLbvAsyl0/1clpW7ZAy5Vic4yXxYOicwX7U=
-=skn/
+iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlsUtMwACgkQHwn1ewov
+5lhSrg//bUo2NmfiS/xpaxafCVpd5CpQLk/MCdcDcDXh6ySX7CreN2ZUk3S9xEdX
+UUgUirM9x19xiajWnFOsJPxFe648YfxjKVQKNZ0zQBIShARM7tafhrZpWCKkLke5
+uVC97vZzNflfvZjxj+2cQVcil4ixgIw3gpFa8HpfjMCSSC4rwbEvtIav1sj1d+qF
+/W8ZAd1MqoP6SEXHifTGXHvXj9zyCT9B4k0lepiot69KtK31J5nSzHitwpKGmlVC
+RFwE00sydwJDsQ8hyyqg7+/mYPtPraTV8nJbfyKzE3pgpuiPWjWtyrKrtevc1Dre
+I2p2HGzf+dh2usP5B/2cQw1cd9izBozeB+EwssPG5qMtiZuFf2h6IqPFaIRcnJXd
++c912uuBVLNLIkdGh06jxyzFfy9N3jPMu+GHdyKnOihfT66f4FPbq9XQqBWvARLE
+aDdVr3j56gJXmdplCjLFqEfXg8yNpWRWXInLyIGPe10r7P5Xvz6h1hBOo8tzoILa
+QqxpQ+0vwY9ftGrE++q4GKWXtdiEU59n2pWuZ5hPfjOkPjUIFOpRxqXrpupAuD1P
+LbBqEQ0YHiPQwLDN8bYsVj/v6wnl11jtAI34iUfdfx784fiyAaRDkg7pIXqKjQdZ
+rCGSQfTsjLLUDG8kYAySsNqZBDl03VmeKkF083z0+oTHASucYaQ=
+=JZJD
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--CE+1k2dSO48ffgeK--
