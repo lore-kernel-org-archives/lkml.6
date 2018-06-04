@@ -1,190 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752116AbeFDKVl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:21:41 -0400
-Received: from mail-cys01nam02on0063.outbound.protection.outlook.com ([104.47.37.63]:6278
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750868AbeFDKVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:21:39 -0400
-From: Javier Gonzalez <javier@cnexlabs.com>
-To: "Dziegielewski, Marcin" <marcin.dziegielewski@intel.com>
-CC: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@fb.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Konopko, Igor J" <igor.j.konopko@intel.com>
-Subject: Re: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
- equals to 0
-Thread-Topic: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
- equals to 0
-Thread-Index: AQHT9nNowv/ltW4OykevBDGzU2j6naRP61UAgAADYQA=
-Date: Mon, 4 Jun 2018 10:21:34 +0000
-Message-ID: <3B216FC2-D5EB-4A36-8946-27307DA3D1B1@cnexlabs.com>
-References: <20180528085841.26684-1-mb@lightnvm.io>
- <20180528085841.26684-19-mb@lightnvm.io>
- <54B2CCDB-B869-4087-8AE2-2AC73381B1FF@cnexlabs.com>
- <9FC4315EA6BEAA449828D92CF173A10D3E382351@IRSMSX109.ger.corp.intel.com>
-In-Reply-To: <9FC4315EA6BEAA449828D92CF173A10D3E382351@IRSMSX109.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB572;7:sF0CEe9M1/nC9TNlQArQ1wkgIWGYhkyaBX6Yjmq9AV1d4S4TqYkRAku3IMiV0PWFjMPAIkotDVJEfaGXlTDHTAkxNSjP9X4OdCUFflDT342JUhU1/22FIrEXZ/t8rCDTqolE9wicO6iyu8RmNRKuFea9Tb6DP0lziLxn8mBMs1wjqeuqJGMbVwXM7Z/42GHZi6PyZcgVDepsIV8VJD2bjrpYxHOH9kUi2dSLUCcYtVxk/2CQlpSsh6fyTnbLjQ3I
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CO2PR06MB572;
-x-ms-traffictypediagnostic: CO2PR06MB572:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com;
-x-microsoft-antispam-prvs: <CO2PR06MB572F91EFDAF627AC37F1B99BA670@CO2PR06MB572.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(67672495146484)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:CO2PR06MB572;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB572;
-x-forefront-prvs: 069373DFB6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(346002)(39830400003)(396003)(376002)(366004)(189003)(199004)(68736007)(81156014)(476003)(81166006)(2906002)(6916009)(6436002)(99286004)(2900100001)(5660300001)(6486002)(486006)(102836004)(33656002)(186003)(316002)(2616005)(26005)(446003)(6506007)(229853002)(5250100002)(53546011)(54906003)(8936002)(3280700002)(93886005)(53936002)(82746002)(6512007)(76176011)(25786009)(106356001)(478600001)(3660700001)(7736002)(305945005)(8676002)(11346002)(36756003)(3846002)(97736004)(83716003)(6116002)(66066001)(6246003)(105586002)(86362001)(4326008)(14454004)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB572;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: L3TyMarZDI40Pefanl48ATVWXG10+x1bLbw2VdH4pIjDtlDbvx4fNJdgp+h+NbxSF+amkwNlzUirdzEYaMUsUcCzmxi7XE858aN2YPimfJ3kcVUEcVookZ80GpKErnGdHOKFiX745yzquAQV3o7dpMVXWLtGRGWavpp+hAX0ceeWQlxIWZhV5yU5rQFNV+Qq
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A422B7705D2D504FA7305A68A153EF66@namprd06.prod.outlook.com>
+        id S1751949AbeFDKWz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:22:55 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41606 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbeFDKWx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:22:53 -0400
+X-Google-Smtp-Source: ADUXVKLCQtrGNBDpbgvsJ+NIdkqXu3Db4O3h3KStk1STj4k2+LBjbljY05cCHmpIyw6Ivpg1rGdF0w==
+Date: Mon, 4 Jun 2018 12:22:38 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] gnss: add new GNSS subsystem
+Message-ID: <20180604102238.GC13775@localhost>
+References: <20180601082259.17563-1-johan@kernel.org>
+ <20180601093311.GA31639@amd>
+ <20180601094959.GA13775@localhost>
+ <20180601102612.GC31639@amd>
+ <20180601122217.GB13775@localhost>
+ <20180601162645.GA30792@amd>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 038c8fec-6a3b-452e-68e8-08d5ca04f34a
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 038c8fec-6a3b-452e-68e8-08d5ca04f34a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2018 10:21:35.0088
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB572
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601162645.GA30792@amd>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w54ALmp3004091
 
-> On 4 Jun 2018, at 12.09, Dziegielewski, Marcin <marcin.dziegielewski@intel.com> wrote:
+On Fri, Jun 01, 2018 at 06:26:46PM +0200, Pavel Machek wrote:
+> Hi!
 > 
+> > > So you have serial line + pm + protocol type. Nothing GNSS specific
+> > > really, it would be useful to (for example) say this is modem with AT
+> > > commands. Or this is QMI modem.
+> > 
+> > It's a matter of finding the right abstraction level. A user space
+> > location service will now have easy access to the class of devices it
+> > cares about, without having to go through a list of other random devices
+> > which happen to use a similar underlying interface (e.g. a modem or
+> > whatever).
 > 
-> Frist of all I want to say sorry for late response - I was on holiday.
+> udev solves device discovery pretty well; I don't think that's good
+> thing to optimize for.
+
+It's about grouping related devices together, devices which share some
+common functionality. In this case, providing location data from some
+satellite system. I really don't understand how you can find having a
+class type named "gnss" for this to be controversial in any way.
+
+> (And.. I'd really prefer /dev/nmeaX and /dev/sirfX in that situation;
+> and yes that makes it _even easier_ for location service to find right
+> devices). 
+
+As I've already explained, you may not know which protocol is currently
+active when the device start and you typically switch from NMEA to a
+vendor protocol during runtime (e.g. for configuration or to access raw
+GNSS data).
+
+Trying to encode the GNSS protocol in the character-device node name is
+just a bad idea.
+
+> > Point is, you can't write a subsystem for everything. If it later turns
+> > out some part of the code can be shared internally, fine.
 > 
->> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
->> Sent: Monday, May 28, 2018 1:03 PM
->> To: Matias Bjørling <mb@lightnvm.io>
->> Cc: Jens Axboe <axboe@fb.com>; linux-block@vger.kernel.org; linux-
->> kernel@vger.kernel.org; Dziegielewski, Marcin
->> <marcin.dziegielewski@intel.com>; Konopko, Igor J
->> <igor.j.konopko@intel.com>
->> Subject: Re: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
->> equals to 0
->> 
->>> On 28 May 2018, at 10.58, Matias Bjørling <mb@lightnvm.io> wrote:
->>> 
->>> From: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
->>> 
->>> Some devices can expose mw_cunits equal to 0, it can cause creation of
->>> too small write buffer and cause performance to drop on write
->>> workloads.
->>> 
->>> To handle that, we use the default value for MLC and beacause it
->>> covers both 1.2 and 2.0 OC specification, setting up mw_cunits in
->>> nvme_nvm_setup_12 function isn't longer necessary.
->>> 
->>> Signed-off-by: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
->>> Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
->>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->>> ---
->>> drivers/lightnvm/pblk-init.c | 10 +++++++++-
->>> drivers/nvme/host/lightnvm.c |  1 -
->>> 2 files changed, 9 insertions(+), 2 deletions(-)
->>> 
->>> diff --git a/drivers/lightnvm/pblk-init.c
->>> b/drivers/lightnvm/pblk-init.c index d65d2f972ccf..0f277744266b 100644
->>> --- a/drivers/lightnvm/pblk-init.c
->>> +++ b/drivers/lightnvm/pblk-init.c
->>> @@ -356,7 +356,15 @@ static int pblk_core_init(struct pblk *pblk)
->>> 	atomic64_set(&pblk->nr_flush, 0);
->>> 	pblk->nr_flush_rst = 0;
->>> 
->>> -	pblk->pgs_in_buffer = geo->mw_cunits * geo->all_luns;
->>> +	if (geo->mw_cunits) {
->>> +		pblk->pgs_in_buffer = geo->mw_cunits * geo->all_luns;
->>> +	} else {
->>> +		pblk->pgs_in_buffer = (geo->ws_opt << 3) * geo->all_luns;
->>> +		/*
->>> +		 * Some devices can expose mw_cunits equal to 0, so let's
->> use
->>> +		 * here default safe value for MLC.
->>> +		 */
->>> +	}
->>> 
->>> 	pblk->min_write_pgs = geo->ws_opt * (geo->csecs / PAGE_SIZE);
->>> 	max_write_ppas = pblk->min_write_pgs * geo->all_luns; diff --git
->>> a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c index
->>> 41279da799ed..c747792da915 100644
->>> --- a/drivers/nvme/host/lightnvm.c
->>> +++ b/drivers/nvme/host/lightnvm.c
->>> @@ -338,7 +338,6 @@ static int nvme_nvm_setup_12(struct
->> nvme_nvm_id12
->>> *id,
->>> 
->>> 	geo->ws_min = sec_per_pg;
->>> 	geo->ws_opt = sec_per_pg;
->>> -	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC safe values
->> */
->>> /* Do not impose values for maximum number of open blocks as it is
->>> 	 * unspecified in 1.2. Users of 1.2 must be aware of this and
->>> eventually
->>> --
->>> 2.11.0
->> 
->> By doing this, 1.2 future users (beyond pblk), will fail to have a valid
->> mw_cunits value. It's ok to deal with the 0 case in pblk, but I believe that we
->> should have the default value for 1.2 either way.
+> True. But you can pick reasonable name for the subsystem :-).
+
+I find naming a subsystem for GNSS receivers "gnss" to be very
+reasonable. ;)
+
+> > > > Finally, the GNSS subsystem is clearly not serial (as in UART) specific
+> > > > and works just as fine with I2C, SPI, USB, iomem, rproc or whatever
+> > > > interface the GNSS uses.
+> > > 
+> > > Ok, true. It is "we pass tty-like data across". Again, it would be
+> > > useful for AT commands, too, and yes, they go over serials and usbs
+> > > and more, too. 
+> > 
+> > Modems and GNSS devices would have different characteristics for buffers
+> > and throughput for starters.
+> > 
+> > The GNSS interface uses a synchronous writes for commands to the
+> > receiver, something which may not be appropriate for an outgoing data
+> > channel, for example.
 > 
-> I'm not sure. From my understanding, setting of default value was
-> workaround for pblk case, am I right ?.
-
-The default value covers the MLC case directly at the lightnvm layer, as
-opposed to doing it directly in pblk. Since pblk is the only user now,
-you can argue that all changes in the lightnvm layer are to solve pblk
-issues, but the idea is that the geometry should be generic.
-
-> In my opinion any user of 1.2
-> spec should be aware that there is not mw_cunit value. From my point
-> of view, leaving here 0 (and decision what do with it to lightnvm
-> user) is more safer way, but maybe I'm wrong. I believe that it is
-> topic to wider discussion with maintainers.
+> Well, these days AT modems really have separate channels for commands
+> and data.
 > 
-
-1.2 and 2.0 have different geometries, but when we designed the common
-nvm_geo structure, the idea was to abstract both specs and allow the
-upper layers to use the geometry transparently. 
-
-Specifically in pblk, I would prefer to keep it in such a way that we don't
-need to media specific policies (e.g., set default values for MLC
-memories), as a general design principle. We already do some geometry
-version checks to avoid dereferencing unnecessary pointers on the fast
-path, which I would eventually like to remove.
-
->> A more generic way of doing this would be to have a default value for
->> 2.0 too, in case mw_cunits is reported as 0.
+> > As mentioned in the cover letter, we may eventually want to add support
+> > for some kinds of configuration from within the kernel (e.g. protocol
+> > and line speed changes).
 > 
-> Since 0 is correct value and users can make different decisions based
-> on it, I think we shouldn't overwrite it by default value. Is it make
-> sense?
+> I believe we'll eventually want "real" GPS drivers, with common
+> interface. input was in this situation before...
 
-Here I meant at a pblk level - I should have specified it. At the
-geometry level, we should not change it. 
+As we also already discussed, there's nothing preventing you from trying
+to move gpsd into the kernel later. I doubt this is something we want,
+and it may turn out not to be feasible for other reasons.
 
-The case I am thinking is if mw_cuints repoints 0, but ws_min > 0. In
-this case, we still need a host side buffer to serve < ws_min I/Os, even
-though the device does not require the buffer to guarantee reads.
+And as you already acknowledged, this series does solve a problem we
+have today.
 
->> Javier
+> > > > > This will never handle devices like Nokia N900, where GPS is connected
+> > > > > over netlink.
+> > > > 
+> > > > Marcel already suggested adding a ugnss interface, which would allow
+> > > > feeding GNSS data through the generic GNSS interface from user space for
+> > > > use cases where it's not (yet) feasible to implement a kernel
+> > > > driver.
+> > > 
+> > > Yes, and ugnss would be at wrong layer for N900. First, lets take a
+> > > look at N900 gps driver:
+> > > https://github.com/postmarketOS/gps-nokia-n900
+> > > 
+> > > Got it? I'll eventually like to see it in the kernel, but your "GNSS"
+> > > subsystem is unsuitable for it, as it does not talk well-known
+> > > protocol.
+> > 
+> > Seriously? If you can't be arsed to summarise your use case, why would I
+> > bother reading your random user space code?
 > 
-> Thanks,
-> Marcin 
+> You are trying to push subsystem to kernel. I believe asking you to do
+> little research is not unexpected.
 
-Javier
+Waving your hands, saying this will never work, and pointing to some 600
+lines of user-space code for an old phone isn't an argument. That is, at
+best, just you being lazy.
+
+> Anyway, it is trivial binary protocol over packets that are used for
+> modem communication. Handling it is like 40? lines of code.
+
+Ok, so I did read the damn thing along with the overview of the N900 GPS
+hardware and reverse-engineered protocol (why didn't you point me to
+those instead?) and I'm still not sure what the point you're trying to
+make is.
+
+The n900 service you link to above, parses phonet data, does some
+*floating point* calculations and generates NMEA sentences which it
+feeds to a pseudo terminal whose slave side is opened by gpsd.
+
+That NMEA data could just as easily be fed through a different kernel
+subsystem, namely gnss instead of tty, where it could be accessed
+through a common interface (for now, a raw gnss interface, with some
+associated meta data). [ And from what I can tell, ugnss would also
+allow you to get rid of some hacks related to finding out when the GNSS
+is opened and needs to be powered on. ]
+
+So the ugnss interface looks like it will work for N900 just as it will
+for other phones.
+
+> > > I'd like to see "datapipe" devices (what you currently call GNSS) and
+> > > "gps" devices, which would have common interface to the userland.
+> > 
+> > You keep talking about this "gps" interface, which based on your
+> > earlier comments I assume you mean a NMEA 0183 interface? Again,
+> > converting a vendor-specific binary protocol may not be feasible. Please
+> > try to be more be specific.
+> 
+> I'm pretty sure we should have one protocol for communicating position
+> data to userland. I don't want to go into details at the moment, as
+> they are not important at the moment (and we could spend lot of time
+> discussing details).
+> 
+> NMEA would not be my first choice, really. I'd propose something very
+> similar to existing /dev/input/eventX, but with wider data types.
+
+Fine, you pursue that idea if you want then. I can see many problems
+with trying to so, but the point is, this series doesn't prevent you
+from doing so.
+
+If you think you'll one day be able to parse and repackage the various
+vendor protocols within the kernel, you can consider the raw gnss
+interface as an intermediate step (which may continue to exist in
+parallel just as say hidraw).
+
+As I've already mentioned, I considered naming the device nodes
+/dev/gnssraw0 partly because it would leave /dev/gnss namespace free for
+any such future development. I ultimately found that idea to be too
+implausible for it to be worth the potential confusion arising from the
+fact that "raw" GNSS data is already has an established meaning.
+
+But in the end, this is just name bike shedding.
+
+> > > N900 would not have any datapipe devices, but would have /dev/gps0
+> > > exposing common GPS interface.
+> > > 
+> > > Droid4 would have /dev/datapipe0 (usb, AT protocol), /dev/datapipe1
+> > > (usb, QMI protocol), /dev/datapipe2 (gsmtty over serial, custom AT
+> > > protocol), /dev/datapipe3 (gsmtty over serial, NMEA wrapped in AT
+> > > protocol) (and more, it is complex hardware). And if we really wanted,
+> > > we'd have /dev/gps0, too, exposing common GPS interface.
+> > > 
+> > > Your devices would have /dev/datapipe0 with sirf or ublox or nmea
+> > > protocol. In we really wanted, we'd have /dev/gps0, too, again,
+> > > exposing common GPS interface.
+> > 
+> > This does not seem like the right abstraction level and doesn't appear
+> > to provide much more than what we currently have with ttys.
+> 
+> I don't see what you are saying here. I've described your proposal but
+> replaced /dev/gnss0 with /dev/datapipe0.
+
+You're grouping unrelated devices into a new class with the descriptive
+name "datapipe" (sarcasm).
+
+Maybe one day we'll have a QMI subsystem, for example, but until someone
+determines what that may end up looking like, I think we should stick
+with the character device and tty abstractions we already have.
+
+> > > I believe we really want to use your code for AT commands, too. And we
+> > > really should keep GNSS/GPS names for future layer that actually
+> > > provides single interface for userland.
+> > 
+> > Specifics, please. What would such an interface look like? I'm pretty
+> > sure, we do not want to move every GNSS middleware protocol handler into
+> > the kernel.
+> 
+> Maybe we don't want to move _every_ GNSS protocol handler into kernel,
+> but I'm pretty sure we need to move _some_ of them there. It is
+> certainly best place for Nokia N900's protocol.
+> 
+> And I'm trying to make sure we have suitable names available when that
+> happens.
+
+If that's the concern, we could reconsider naming the raw protocol
+interface /dev/gnnsraw0 as mentioned above.
+
+Thanks,
+Johan
