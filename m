@@ -1,174 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753054AbeFDNOG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:14:06 -0400
-Received: from gate.crashing.org ([63.228.1.57]:35375 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752429AbeFDNOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:14:05 -0400
-Message-ID: <e7ceddbec11711a89282e9b70b7fd3c8af10b030.camel@kernel.crashing.org>
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
-Date: Mon, 04 Jun 2018 23:11:52 +1000
-In-Reply-To: <20180604153558-mutt-send-email-mst@kernel.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
-         <20180523213703-mutt-send-email-mst@kernel.org>
-         <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
-         <20180604153558-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
+        id S1753159AbeFDNOr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:14:47 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:35939 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbeFDNOp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:14:45 -0400
+Subject: Re: INFO: task hung in blk_queue_enter
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        syzbot <syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>, oleksandr@natalenko.name,
+        ming.lei@redhat.com, martin@lichtvoll.de,
+        Hannes Reinecke <hare@suse.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>, keith.busch@intel.com,
+        linux-ext4@vger.kernel.org
+References: <b9c33b04-08d7-87a1-3d93-d81a84e6af12@I-love.SAKURA.ne.jp>
+ <43327033306c3dd2f7c3717d64ce22415b6f3451.camel@wdc.com>
+ <CACT4Y+ZJwvROpBmKWF08fTd2AH=dO-a5+dzCzZua_vVFjiCRBw@mail.gmail.com>
+ <6db16aa3a7c56b6dcca2d10b4e100a780c740081.camel@wdc.com>
+ <201805220652.BFH82351.SMQFFOJOtFOVLH@I-love.SAKURA.ne.jp>
+ <201805222020.FEJ82897.OFtJMFHOVLQOSF@I-love.SAKURA.ne.jp>
+ <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp>
+ <CACT4Y+bd8oc3Y5o+mxwktefGc07aU8N25doQRDvD8g8v3TyaZw@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <09a33861-2ddc-1a13-19f6-2a1998ca3ec5@i-love.sakura.ne.jp>
+Date: Mon, 4 Jun 2018 22:13:23 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CACT4Y+bd8oc3Y5o+mxwktefGc07aU8N25doQRDvD8g8v3TyaZw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-04 at 15:43 +0300, Michael S. Tsirkin wrote:
-> On Thu, May 24, 2018 at 08:27:04AM +1000, Benjamin Herrenschmidt wrote:
-> > On Wed, 2018-05-23 at 21:50 +0300, Michael S. Tsirkin wrote:
-> > 
-> > > I re-read that discussion and I'm still unclear on the
-> > > original question, since I got several apparently
-> > > conflicting answers.
-> > > 
-> > > I asked:
-> > > 
-> > > 	Why isn't setting VIRTIO_F_IOMMU_PLATFORM on the
-> > > 	hypervisor side sufficient?
-> > 
-> > I thought I had replied to this...
-> > 
-> > There are a couple of reasons:
-> > 
-> > - First qemu doesn't know that the guest will switch to "secure mode"
-> > in advance. There is no difference between a normal and a secure
-> > partition until the partition does the magic UV call to "enter secure
-> > mode" and qemu doesn't see any of it. So who can set the flag here ?
+On 2018/06/04 20:46, Dmitry Vyukov wrote:
+> On Fri, Jun 1, 2018 at 12:10 PM, Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> Tetsuo Handa wrote:
+>>> Since sum of percpu_count did not change after percpu_ref_kill(), this is
+>>> not a race condition while folding percpu counter values into atomic counter
+>>> value. That is, for some reason, someone who is responsible for calling
+>>> percpu_ref_put(&q->q_usage_counter) (presumably via blk_queue_exit()) is
+>>> unable to call percpu_ref_put().
+>>> But I don't know how to find someone who is failing to call percpu_ref_put()...
+>>
+>> I found the someone. It was already there in the backtrace...
 > 
-> The user should set it. You just tell user "to be able to use with
-> feature X, enable IOMMU".
-
-That's completely backwards. The user has no idea what that stuff is.
-And it would have to percolate all the way up the management stack,
-libvirt, kimchi, whatever else ... that's just nonsense.
-
-Especially since, as I explained in my other email, this is *not* a
-qemu problem and thus the solution shouldn't be messing around with
-qemu.
-
+> Nice!
 > 
-> > - Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
-> > vhost) go through the emulated MMIO for every access to the guest,
-> > which adds additional overhead.
-> > 
-> > Cheers,
-> > Ben.
+> Do I understand it correctly that this bug is probably the root cause
+> of a whole lot of syzbot "task hung" reports? E.g. this one too?
+> https://syzkaller.appspot.com/bug?id=cdc4add60bb95a4da3fec27c5fe6d75196b7f976
+> I guess we will need to sweep close everything related to
+> filesystems/block devices when this is committed?
 > 
-> There are several answers to this.  One is that we are working hard to
-> make overhead small when the mappings are static (which they would be if
-> there's no actual IOMMU). So maybe especially given you are using
-> a bounce buffer on top it's not so bad - did you try to
-> benchmark?
-> 
-> Another is that given the basic functionality is in there, optimizations
-> can possibly wait until per-device quirks in DMA API are supported.
 
-The point is that requiring specific qemu command line arguments isn't
-going to fly. We have additional problems due to the fact that our
-firmware (SLOF) inside qemu doesn't currently deal with iommu's etc...
-though those can be fixed.
+I can't tell it. We still have lockdep warning for loop module. Also, I suspect
+that hung tasks waiting for page bit might be related to binder module.
 
-Overall, however, this seems to be the most convoluted way of achieving
-things, require user interventions where none should be needed etc...
-
-Again, what's wrong with a 2 lines hook instead that solves it all and
-completely avoids involving qemu ?
-
-Ben.
-
-> 
-> > > 
-> > > 
-> > > >  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
-> > > >  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
-> > > >  drivers/virtio/virtio_ring.c           | 10 ++++++++++
-> > > >  3 files changed, 27 insertions(+)
-> > > > 
-> > > > diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
-> > > > index 8fa3945..056e578 100644
-> > > > --- a/arch/powerpc/include/asm/dma-mapping.h
-> > > > +++ b/arch/powerpc/include/asm/dma-mapping.h
-> > > > @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
-> > > >  #define ARCH_HAS_DMA_MMAP_COHERENT
-> > > >  
-> > > >  #endif /* __KERNEL__ */
-> > > > +
-> > > > +#define platform_forces_virtio_dma platform_forces_virtio_dma
-> > > > +
-> > > > +struct virtio_device;
-> > > > +
-> > > > +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
-> > > >  #endif	/* _ASM_DMA_MAPPING_H */
-> > > > diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-> > > > index 06f0296..a2ec15a 100644
-> > > > --- a/arch/powerpc/platforms/pseries/iommu.c
-> > > > +++ b/arch/powerpc/platforms/pseries/iommu.c
-> > > > @@ -38,6 +38,7 @@
-> > > >  #include <linux/of.h>
-> > > >  #include <linux/iommu.h>
-> > > >  #include <linux/rculist.h>
-> > > > +#include <linux/virtio.h>
-> > > >  #include <asm/io.h>
-> > > >  #include <asm/prom.h>
-> > > >  #include <asm/rtas.h>
-> > > > @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
-> > > >  __setup("multitce=", disable_multitce);
-> > > >  
-> > > >  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
-> > > > +
-> > > > +bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> > > > +{
-> > > > +	/*
-> > > > +	 * On protected guest platforms, force virtio core to use DMA
-> > > > +	 * MAP API for all virtio devices. But there can also be some
-> > > > +	 * exceptions for individual devices like virtio balloon.
-> > > > +	 */
-> > > > +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
-> > > > +}
-> > > 
-> > > Isn't this kind of slow?  vring_use_dma_api is on
-> > > data path and supposed to be very fast.
-> > > 
-> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > index 21d464a..47ea6c3 100644
-> > > > --- a/drivers/virtio/virtio_ring.c
-> > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > @@ -141,8 +141,18 @@ struct vring_virtqueue {
-> > > >   * unconditionally on data path.
-> > > >   */
-> > > >  
-> > > > +#ifndef platform_forces_virtio_dma
-> > > > +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
-> > > > +{
-> > > > +	return false;
-> > > > +}
-> > > > +#endif
-> > > > +
-> > > >  static bool vring_use_dma_api(struct virtio_device *vdev)
-> > > >  {
-> > > > +	if (platform_forces_virtio_dma(vdev))
-> > > > +		return true;
-> > > > +
-> > > >  	if (!virtio_has_iommu_quirk(vdev))
-> > > >  		return true;
-> > > >  
-> > > > -- 
-> > > > 2.9.3
+Since we are about to merge "kernel/hung_task.c: show all hung tasks before panic"
+patch, we might be able to get more hints after 4.18-rc1.
