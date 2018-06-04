@@ -1,85 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751439AbeFDSDR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 14:03:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751354AbeFDSDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 14:03:12 -0400
-From: Jeff Layton <jlayton@kernel.org>
-To: viro@ZenIV.linux.org.uk, dhowells@redhat.com
-Cc: willy@infradead.org, andres@anarazel.de, cmaiolino@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/5] samples: extend test-fsinfo to access error_state
-Date: Mon,  4 Jun 2018 14:03:04 -0400
-Message-Id: <20180604180304.9662-6-jlayton@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180604180304.9662-1-jlayton@kernel.org>
-References: <20180604180304.9662-1-jlayton@kernel.org>
+        id S1751482AbeFDSDY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 14:03:24 -0400
+Received: from sonic306-26.consmr.mail.gq1.yahoo.com ([98.137.68.89]:41073
+        "EHLO sonic306-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751445AbeFDSDV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 14:03:21 -0400
+X-YMail-OSG: VQ5nwasVM1lW9NSawEqwV.HIxm9CbN0su7gjOiZ37BZ3PpR8GS6dKfud06uLafw
+ JvxEwXhQqE8RijSONj5HgxnBNmcsNjr42Zjlo8rllyo_AW9WcxHHUaL1PgPwpfFCETX2lEATVAZ8
+ BZR9hGkheSzvO1jemgZKEKVtbee3tyex_FdadEVKtFi9Qjg4HvortC3YJOSZZkYVC4_oE9o0b14U
+ o64R6hjgAg4H3nPyXslG09SvGcwn4qmgXQgxPRtQKywATWhSmxXz2wzHNqdHjjk1CpxYP7aq0a2P
+ ScN4yUShCf59lJdDV3EFYECeJ4WKy8lroJG2N72_d_Ogl7ljAZrkgT6hODonUE_UGOwArYcGY22i
+ eIOqdLcp9qwegUrJ3EEmNJUN6Ue0ikW1sUSaIn3I33vb6oBrRiVnvtNb7H29F8yp2e.Eii37pXrA
+ nUMFgryh5ul3pxlguQCUHHhkqEOBtdY6ul5dlKokhVHa_IVxuyjz6i0Q4JKxT6RxilRla1Ckydpu
+ tDPldH03S9SMi2lqsx1xCNkVXlErpnK.Sg7yFysMHzL1JwTkbPAeT4dzkEY5MbsElnGkQTzUpcPS
+ M259vxw2DEUSZHcRrGMLVdKLCw_5zYecZYfdyikRh56LkZYzTetW9TL9Nc1WrkRzg1QlweqtkPRm
+ u5LbQWaF7I9mgZUk2zvMPfDU.1zqpRefbMR5wY727aojjGWGQqF_mpE_IqSw4UBkM
+Subject: Re: [PATCH] proc: prevent a task from writing on its own /proc/*/mem
+To: Steve Kemp <steve.backup.kemp@gmail.com>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1527346246-1334-1-git-send-email-s.mesoraca16@gmail.com>
+ <CAGXu5j+PHzDwnJxJwMJ=WuhacDn_vJWe9xZx+Kbsh28vxOGRiA@mail.gmail.com>
+ <CA+55aFx6DBp+d33_fytOGPWw11xg_L0MdGp1M2e5Obc0N9kMRQ@mail.gmail.com>
+ <CAJHCu1Ky09DWskcD4nVW5u1C5faWMv1A4kcxWzdiap7+G1SPkg@mail.gmail.com>
+ <CABxV-EWN8ag2zk2CDxWyC3+DvuM3ADbf=qGm4uczK8YnOd5JBQ@mail.gmail.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <8dc3efeb-ddf7-ca15-d70f-b6c32dea4eb6@schaufler-ca.com>
+Date: Mon, 4 Jun 2018 11:03:18 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CABxV-EWN8ag2zk2CDxWyC3+DvuM3ADbf=qGm4uczK8YnOd5JBQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+On 6/4/2018 9:57 AM, Steve Kemp wrote:
+>> A configurable LSM is probably the right way to do this.
+> I wonder how many out of tree LSM there are?  Looking at the mainline
+> kernel the only "small" LSM bundled is YAMA, and it seems that most of
+> the patches proposing new ones eventually die out.
 
-Add support for error_state struct to test-fsinfo sample program.
+LoadPin is upstream.
 
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
----
- samples/statx/test-fsinfo.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> I appreciate that there are probably a lot of "toy" or "local" modules
+> out there for specific fields, companies, or products, but it does
+> seem odd that there are so few discussed publicly.
 
-diff --git a/samples/statx/test-fsinfo.c b/samples/statx/test-fsinfo.c
-index 9d70c422da11..b383a6ec81a0 100644
---- a/samples/statx/test-fsinfo.c
-+++ b/samples/statx/test-fsinfo.c
-@@ -60,6 +60,7 @@ static const __u8 fsinfo_buffer_sizes[fsinfo_attr__nr] = {
- 	FSINFO_STRING		(name_encoding),
- 	FSINFO_STRING		(name_codepage),
- 	FSINFO_STRUCT		(io_size),
-+	FSINFO_STRUCT		(error_state),
- };
- 
- #define FSINFO_NAME(N) [fsinfo_attr_##N] = #N
-@@ -84,6 +85,7 @@ static const char *fsinfo_attr_names[fsinfo_attr__nr] = {
- 	FSINFO_NAME(name_encoding),
- 	FSINFO_NAME(name_codepage),
- 	FSINFO_NAME(io_size),
-+	FSINFO_NAME(error_state),
- };
- 
- union reply {
-@@ -98,6 +100,7 @@ union reply {
- 	struct fsinfo_volume_uuid uuid;
- 	struct fsinfo_server_address srv_addr;
- 	struct fsinfo_io_size io_size;
-+	struct fsinfo_error_state error_state;
- };
- 
- static void dump_hex(unsigned int *data, int from, int to)
-@@ -303,6 +306,15 @@ static void dump_attr_io_size(union reply *r, int size)
- 	printf("bs=%u\n", f->block_size);
- }
- 
-+static void dump_attr_error_state(union reply *r, int size)
-+{
-+	struct fsinfo_error_state *f = &r->error_state;
-+
-+	printf("err_cookie=0x%x err_last=%u\n",
-+			f->wb_error_cookie,
-+			f->wb_error_last);
-+}
-+
- /*
-  *
-  */
-@@ -320,6 +332,7 @@ static const dumper_t fsinfo_attr_dumper[fsinfo_attr__nr] = {
- 	FSINFO_DUMPER(volume_uuid),
- 	FSINFO_DUMPER(server_address),
- 	FSINFO_DUMPER(io_size),
-+	FSINFO_DUMPER(error_state),
- };
- 
- static void dump_fsinfo(enum fsinfo_attribute attr, __u8 about,
--- 
-2.17.0
+Minor modules like Yama and LoadPin are constrained by not being
+able to use security blobs. That seriously limits the sort of thing
+you can do with them. It often makes more sense to get the behavior
+in mainline under CONFIG_SOMETHING than to provide a minor LSM in
+that case.
+
+> (The last two I remember were S.A.R.A and something relating to
+> xattr-attributes being used to whitelist execution.)
+
+Anything that would have to be a major (blob using) module has
+a very tough time because you have to displace an existing major
+module (SELinux, AppArmor, Smack, TOMOYO) in order to use it.
+When we get infrastructure managed security blobs upstream most
+of the proposed modules could be used in conjunction with the
+existing installed modules. Some would have to wait for the
+complete stacking solution, but that's limited to use of networking
+facilities.
+
+There's also renewed interest in minor modules being dynamically
+loadable, so they can be added on a running system as new and
+interesting threats get newer and more interesting mitigations.
+
+We don't make it easy for new modules. Some of that is an
+artifact of the infrastructure, and some is based on caution.
+
+> Steve
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
