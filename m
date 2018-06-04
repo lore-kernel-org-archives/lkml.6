@@ -1,81 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751547AbeFDP6h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 11:58:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58886 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750723AbeFDP6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 11:58:36 -0400
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-arch@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        linux-mips@linux-mips.org
-Subject: [RFC PATCH -tip v5 20/27] MIPS: kprobes: Don't call the ->break_handler() in MIPS kprobes code
-Date: Tue,  5 Jun 2018 00:58:12 +0900
-Message-Id: <152812789186.10068.4347487945198034534.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152812730943.10068.5166429445118734697.stgit@devbox>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        id S1751518AbeFDP7o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 11:59:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:36140 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeFDP7k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 11:59:40 -0400
+Date: Mon, 4 Jun 2018 16:59:37 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-afs@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH][RFC] open_tree(2) (was Re: [PATCH 30/32] vfs: Allow
+ cloning of a mount tree with open(O_PATH|O_CLONE_MOUNT) [ver #8])
+Message-ID: <20180604155937.GI30522@ZenIV.linux.org.uk>
+References: <152720691829.9073.10564431140980997005.stgit@warthog.procyon.org.uk>
+ <20180601062654.GA32397@infradead.org>
+ <7067.1527841663@warthog.procyon.org.uk>
+ <20180602030913.GU30522@ZenIV.linux.org.uk>
+ <20180602034255.GV30522@ZenIV.linux.org.uk>
+ <21804.1527954321@warthog.procyon.org.uk>
+ <20180602174957.GX30522@ZenIV.linux.org.uk>
+ <20180603005532.GZ30522@ZenIV.linux.org.uk>
+ <CAELBmZCXMkCY+Lkz2xmhUiK_5oDctZzozHP-cXv9vp7qWsOtVQ@mail.gmail.com>
+ <20180604155205.GH30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604155205.GH30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't call the ->break_handler() from the MIPS kprobes code,
-because it was only used by jprobes which got removed.
+On Mon, Jun 04, 2018 at 04:52:05PM +0100, Al Viro wrote:
+> On Mon, Jun 04, 2018 at 12:34:44PM +0200, Miklos Szeredi wrote:
+> 
+> > fsopen = create fsfd
+> > fsmount = fsfd -> mountfd & set attr on mountfd & attach mountfd
+> > fspick = path -> fsfd
+> > move_mount = attach mountfd or move existing
+> > fsinfo = info from path
+> > open_tree = new mountfd from path or clone
+> > mount_setattr = set attr on mountfd
+> > 
+> > Notice that fsmount() encompasses mount_setattr() + move_mount()
+> > functionality.   Split those out and leave fsmount() to actually do
+> > the "fsfd ->mountfd" translation?
+> 
+> Might make sense.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
----
- arch/mips/kernel/kprobes.c |   21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+FWIW, to make it clear: fsmount(2) in this series actually does *NOT*
+attach it to the tree.  Commit message definitely needs updating - as it
+is, it's
 
-diff --git a/arch/mips/kernel/kprobes.c b/arch/mips/kernel/kprobes.c
-index efdcd0b1ce12..7fd277bc59b9 100644
---- a/arch/mips/kernel/kprobes.c
-+++ b/arch/mips/kernel/kprobes.c
-@@ -326,19 +326,13 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
- 				preempt_enable_no_resched();
- 			}
- 			return 1;
--		} else {
--			if (addr->word != breakpoint_insn.word) {
--				/*
--				 * The breakpoint instruction was removed by
--				 * another cpu right after we hit, no further
--				 * handling of this interrupt is appropriate
--				 */
--				ret = 1;
--				goto no_kprobe;
--			}
--			p = __this_cpu_read(current_kprobe);
--			if (p->break_handler && p->break_handler(p, regs))
--				goto ss_probe;
-+		} else if (addr->word != breakpoint_insn.word) {
-+			/*
-+			 * The breakpoint instruction was removed by
-+			 * another cpu right after we hit, no further
-+			 * handling of this interrupt is appropriate
-+			 */
-+			ret = 1;
- 		}
- 		goto no_kprobe;
- 	}
-@@ -367,7 +361,6 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
- 		return 1;
- 	}
- 
--ss_probe:
- 	prepare_singlestep(p, regs, kcb);
- 	if (kcb->flags & SKIP_DELAYSLOT) {
- 		kcb->kprobe_status = KPROBE_HIT_SSDONE;
++SYSCALL_DEFINE5(fsmount, int, fs_fd, unsigned int, flags, unsigned int, ms_flags,
++               void *, reserved4, void *, reserved5)
+
+PS: IMO these reserved... arguments are in bad taste; if anyone has good reasons
+for that practice in ABI design, I'd like to hear those.
