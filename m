@@ -1,36 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753638AbeFDOKq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:10:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:37345 "EHLO ozlabs.org"
+        id S1753659AbeFDOKu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:10:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:35251 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753554AbeFDOKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:10:42 -0400
+        id S1753617AbeFDOKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:10:46 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 56b04d568f880a48d892e840cfaf4efc0f0ce39b
-In-Reply-To: <20180424160425.DB9946C5A7@po15720vm.idsi0.si.c-s.fr>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+X-powerpc-patch-commit: 589b1f7e4b0db4c31cef3b55f7514857bfc4b093
+In-Reply-To: <20180425112707.16392-1-yuehaibing@huawei.com>
+To: YueHaibing <yuehaibing@huawei.com>, <benh@kernel.crashing.org>,
+        <paulus@samba.org>, <geoff@infradead.org>, <joe@perches.com>
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>, linuxppc-dev@lists.ozlabs.org,
+Cc: YueHaibing <yuehaibing@huawei.com>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [v2] powerpc/signal32: Use fault_in_pages_readable() to prefault user context
-Message-Id: <40zxfn11K0z9s2t@ozlabs.org>
-Date: Tue,  5 Jun 2018 00:10:40 +1000 (AEST)
+Subject: Re: powerpc/xics: add missing of_node_put() in error path
+Message-Id: <40zxfr2Pzrz9s4Y@ozlabs.org>
+Date: Tue,  5 Jun 2018 00:10:41 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-24 at 16:04:25 UTC, Christophe Leroy wrote:
-> Use fault_in_pages_readable() to prefault user context
-> instead of open coding
+On Wed, 2018-04-25 at 11:27:07 UTC, YueHaibing wrote:
+> The device node obtained with of_find_compatible_node() should be
+> released by calling of_node_put().  But it was not released when
+> of_get_property() failed.
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Reviewed-by: Mathieu Malaterre <malat@debian.org>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/56b04d568f880a48d892e840cfaf4e
+https://git.kernel.org/powerpc/c/589b1f7e4b0db4c31cef3b55f75148
 
 cheers
