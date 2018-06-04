@@ -1,99 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751778AbeFDVQe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:16:34 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39413 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeFDVQc (ORCPT
+        id S1751459AbeFDVTu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:19:50 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42204 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbeFDVTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:16:32 -0400
-X-Google-Smtp-Source: ADUXVKJkIbcF1wdVxDfkjReQKfVVdVi762eKJrVLg39V9hEdbLvM009NdqCf4D9zxBBMoaMzngICvg==
-Subject: Re: [PATCH 1/2] soc: bcm: brcmstb: pm: Add support for newer rev B3.0
- controllers
-To: Rob Herring <robh@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Doug Berger <opendmb@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180511220242.837-1-f.fainelli@gmail.com>
- <20180511220242.837-2-f.fainelli@gmail.com>
- <20180522223024.GA7817@rob-hp-laptop>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <23b65eba-89ee-75e6-589a-deb2cd2ff2d2@gmail.com>
-Date: Mon, 4 Jun 2018 14:16:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 4 Jun 2018 17:19:48 -0400
+X-Google-Smtp-Source: ADUXVKLV+R7f5TujJBPnKWboYpkvU/MuWQxKjLfRsKC8A6VGAs+B5dTRo7HOqykqfN9Y+LFb0324og==
+Date: Mon, 4 Jun 2018 14:19:44 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+Message-ID: <20180604211944.GE164893@dtor-ws>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+ <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
+ <20180601184330.GD222005@dtor-ws>
+ <CAO-hwJJPGJzgX+7H1nnpd=OkLZu0q0TuKhvroJ1K3jtnv7t6dg@mail.gmail.com>
+ <20180604173339.GB164893@dtor-ws>
+ <CAO-hwJ+nzC=i1Jv_yu4vLL6Quw=850HJkOZBKCjFaZaw0-GWOQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180522223024.GA7817@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO-hwJ+nzC=i1Jv_yu4vLL6Quw=850HJkOZBKCjFaZaw0-GWOQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22/2018 03:30 PM, Rob Herring wrote:
-> On Fri, May 11, 2018 at 03:02:41PM -0700, Florian Fainelli wrote:
->> From: Doug Berger <opendmb@gmail.com>
->>
->> Update the Device Tree binding document and add a matching entry for the
->> MEMC DDR controller revision B3.0 which is found on chips like 7278A0
->> and newer.
->>
->> Signed-off-by: Doug Berger <opendmb@gmail.com>
->> [florian: tweak commit message, make it apply to upstream kernel]
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->>  Documentation/devicetree/bindings/arm/bcm/brcm,brcmstb.txt | 1 +
->>  drivers/soc/bcm/brcmstb/pm/pm-arm.c                        | 4 ++++
->>  2 files changed, 5 insertions(+)
+On Mon, Jun 04, 2018 at 10:42:31PM +0200, Benjamin Tissoires wrote:
+> On Mon, Jun 4, 2018 at 7:33 PM, Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> > On Mon, Jun 04, 2018 at 03:18:12PM +0200, Benjamin Tissoires wrote:
+> >> On Fri, Jun 1, 2018 at 8:43 PM, Dmitry Torokhov
+> >> <dmitry.torokhov@gmail.com> wrote:
+> >> > On Fri, Jun 01, 2018 at 04:16:09PM +0200, Benjamin Tissoires wrote:
+> >> >> On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
+> >> >> <dmitry.torokhov@gmail.com> wrote:
+> >> >> > According to Microsoft specification [1] for Precision Touchpads (and
+> >> >> > Touchscreens) the devices use "confidence" reports to signal accidental
+> >> >> > touches, or contacts that are "too large to be a finger". Instead of
+> >> >> > simply marking contact inactive in this case (which causes issues if
+> >> >> > contact was originally proper and we lost confidence in it later, as
+> >> >> > this results in accidental clicks, drags, etc), let's report such
+> >> >> > contacts as MT_TOOL_PALM and let userspace decide what to do.
+> >> >> > Additionally, let's report contact size for such touches as maximum
+> >> >> > allowed for major/minor, which should help userspace that is not yet
+> >> >> > aware of MT_TOOL_PALM to still perform palm rejection.
+> >> >> >
+> >> >> > An additional complication, is that some firmwares do not report
+> >> >> > non-confident touches as active. To cope with this we delay release of
+> >> >> > such contact (i.e. if contact was active we first report it as still
+> >> >> > active MT+TOOL_PALM and then synthesize the release event in a separate
+> >> >> > frame).
+> >> >>
+> >> >> I am not sure I agree with this part. The spec says that "Once a
+> >> >> device has determined that a contact is unintentional, it should clear
+> >> >> the confidence bit for that contact report and all subsequent
+> >> >> reports."
+> >> >> So in theory the spec says that if a touch has been detected as a
+> >> >> palm, the flow of events should not stop (tested on the PTP of the
+> >> >> Dell XPS 9360).
+> >> >>
+> >> >> However, I interpret a firmware that send (confidence 1, tip switch 1)
+> >> >> and then (confidence 0, tip switch 0) a simple release, and the
+> >> >> confidence bit should not be relayed.
+> >> >
+> >> > This unfortunately leads to false clicks: you start with finger, so
+> >> > confidence is 1, then you transition the same touch to palm (use your
+> >> > thumb and "roll" your hand until heel of it comes into contact with the
+> >> > screen). The firmware reports "no-confidence" and "release" in the same
+> >> > report and userspace seeing release does not pay attention to confidence
+> >> > (i.e. it does exactly "simple release" logic) and this results in UI
+> >> > interpreting this as a click. With splitting no-confidence
+> >> > (MT_TOOL_PALM) and release event into separate frames we help userspace
+> >> > to recognize that the contact should be discarded.
+> >>
+> >> After further thoughts, I would consider this to be a firmware bug,
+> >> and not how the firmware is supposed to be reporting palm.
+> >> For the precision touchpads, the spec says that the device "should
+> >> clear the confidence bit for that contact report and all subsequent
+> >> reports.". And it is how the Dell device I have here reports palms.
+> >> The firmware is not supposed to cut the event stream.
+> >>
+> >> There is a test for that:
+> >> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/hck/dn456905%28v%3dvs.85%29
+> >> which tells me that I am right here for PTP.
+> >>
+> >> The touchscreen spec is blurrier however.
+> >
+> > OK, that is great to know.
+> >
+> >>
+> >> >
+> >> >>
+> >> >> Do you have any precise example of reports where you need that feature?
+> >> >
+> >> > It was observed on Pixelbooks which use Wacom digitizers IIRC.
+> >>
+> >> Pixelbooks + Wacom means that it was likely a touchscreen. I am right
+> >> guessing the device did not went through Microsoft certification
+> >> process?
+> >
+> > That would be correct ;) At least the firmware that is shipping with
+> > Pixlebooks hasn't, I do now if anyone else sourced these Wacom parts for
+> > their MSWin devices.
+> >
+> >>
+> >> I am in favor of splitting the patch in 2. One for the generic
+> >> processing of confidence bit, and one for this spurious release. For
+> >> the spurious release, I'm more in favor of explicitly quirking the
+> >> devices in need of such quirk.
+> >
+> > Hmm, I am not sure about having specific quirk. It will be hard for
+> > users to accurately diagnose the issue if firmware is broken in this way
+> > so we could add a new quirk for a new device.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> Side note: this should really move out of bindings/arm/ to 
-> bindings/memory-controllers/ or at least to its own file.
+> One thing we can do is keep the quirked mechanism as default in
+> hid-multitouch, but remove it in hid-core. If people need the quirk,
+> they can just use hid-multitouch instead (talking about the long run
+> here).
 
-Good idea, thanks, will do that.
+Hmm, I am confused. My patch did not touch hid-core or hid-input, only
+hid-multitouch... So we are already doing what you are proposing?..
+
+> 
+> However, I really believe this might only be required for a handful of
+> devices, and probably only touchscreens. So I would be tempted to not
+> make it default and see how many bug reports we have.
+
+Up to you but it is hard to detect for users. If just sometimes there
+are stray clicks...
+
+Thanks.
+
 -- 
--- 
-Florian
+Dmitry
