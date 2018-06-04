@@ -1,121 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeFDKe1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:34:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:41416 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751187AbeFDKeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:34:25 -0400
-Subject: Re: [RFC PATCH 2/8] coresight: Fix remote endpoint parsing
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Matt Sealey <matt.sealey@arm.com>,
-        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
-        John Horley <john.horley@arm.com>, Mike Leach <mike.leach@linaro.org>,
-        coresight@lists.linaro.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
- <1527858967-16047-3-git-send-email-suzuki.poulose@arm.com>
- <20180601193837.GB9838@xps15>
- <CANLsYkzY-1z4NBmZECczMisDixgPb2UkJL0k9_LmDNEiqUS1=g@mail.gmail.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <005ec90b-6697-1b33-de01-b5f2a6c509cf@arm.com>
-Date: Mon, 4 Jun 2018 11:34:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752298AbeFDKek (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:34:40 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:40930 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFDKei (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:34:38 -0400
+X-Google-Smtp-Source: ADUXVKIqmgl76FBE1ansLCenPG7WVUAknDCpxGjwTHQJywkaeFdhsm7GFnvsTJI0XF7o+QmfHNOiFhLLXclEsbEHX/M=
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkzY-1z4NBmZECczMisDixgPb2UkJL0k9_LmDNEiqUS1=g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <65c26f5db1275e958cfe6390e9336568b0158dea.camel@linux.intel.com>
+References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com> <65c26f5db1275e958cfe6390e9336568b0158dea.camel@linux.intel.com>
+From: "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date: Mon, 4 Jun 2018 13:34:17 +0300
+X-Google-Sender-Auth: nayw_SBRuV7kUq5bRBO_n91jYb4
+Message-ID: <CAJs94EZEEBNZRU3ixkdG9w44xsQDi7MUYAya2dzkAErT=xwqVA@mail.gmail.com>
+Subject: Re: [PATCH 0/8] serial: 8250: Add 485 emulation to 8250_dw.
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
+        Ed Blake <ed.blake@sondrel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
+        Vignesh R <vigneshr@ti.com>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
+        Aaron Sierra <asierra@xes-inc.com>,
+        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
+        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/01/2018 08:46 PM, Mathieu Poirier wrote:
-> On 1 June 2018 at 13:38, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->> On Fri, Jun 01, 2018 at 02:16:01PM +0100, Suzuki K Poulose wrote:
->>> When parsing the remote endpoint of an output port, we do :
->>>       rport = of_graph_get_remote_port(ep);
->>>       rparent = of_graph_get_remote_port_parent(ep);
->>>
->>> and then parse the "remote_port" as if it was the remote endpoint,
->>> which is wrong. The code worked fine because we used endpoint number
->>> as the port number. Let us fix it and optimise a bit as:
->>>
->>>       remote_ep = of_graph_get_remote_endpoint(ep);
->>>       if (remote_ep)
->>>          remote_parent = of_graph_get_port_parent(remote_ep);
->>>
->>> and then, parse the remote_ep for the port/endpoint details.
->>>
->>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> ---
->>>   drivers/hwtracing/coresight/of_coresight.c | 19 ++++++++++---------
->>>   1 file changed, 10 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
->>> index 7c37544..e0deab0 100644
->>> --- a/drivers/hwtracing/coresight/of_coresight.c
->>> +++ b/drivers/hwtracing/coresight/of_coresight.c
->>> @@ -128,7 +128,7 @@ of_get_coresight_platform_data(struct device *dev,
->>>        struct device *rdev;
->>>        struct device_node *ep = NULL;
->>>        struct device_node *rparent = NULL;
->>> -     struct device_node *rport = NULL;
->>> +     struct device_node *rep = NULL;
->>>
->>>        pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
->>>        if (!pdata)
->>> @@ -169,16 +169,17 @@ of_get_coresight_platform_data(struct device *dev,
->>>                        pdata->outports[i] = endpoint.port;
->>>
->>>                        /*
->>> -                      * Get a handle on the remote port and parent
->>> -                      * attached to it.
->>> +                      * Get a handle on the remote endpoint and the device
->>> +                      * it is attached to.
->>>                         */
->>> -                     rparent = of_graph_get_remote_port_parent(ep);
->>> -                     rport = of_graph_get_remote_port(ep);
->>> -
->>> -                     if (!rparent || !rport)
->>> +                     rep = of_graph_get_remote_endpoint(ep);
->>> +                     if (!rep)
->>> +                             continue;
->>> +                     rparent = of_graph_get_port_parent(rep);
->>> +                     if (!rparent)
->>>                                continue;
->>>
->>> -                     if (of_graph_parse_endpoint(rport, &rendpoint))
->>> +                     if (of_graph_parse_endpoint(rep, &rendpoint))
->>>                                continue;
+2018-06-04 13:12 GMT+03:00 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
+> On Fri, 2018-06-01 at 14:40 +0200, Giulio Benetti wrote:
+>> Need to handle rs485 with 8250_dw port.
 >>
->> You are correct and I'm out to lunch.
+>> Use existing em485 emulation layer for 8250 taking care to fix some
+>> bug
+>> and taking care especially of RTS_AFTER_SEND case.
 >>
->>>
->>>                        rdev = of_coresight_get_endpoint_device(rparent);
->>> @@ -186,7 +187,7 @@ of_get_coresight_platform_data(struct device *dev,
->>>                                return ERR_PTR(-EPROBE_DEFER);
->>>
->>>                        pdata->child_names[i] = dev_name(rdev);
->>> -                     pdata->child_ports[i] = rendpoint.id;
->>> +                     pdata->child_ports[i] = rendpoint.port;
+>
+> I don't see in Cc list author of rs485 code, who might be interested in
+> this.
+>
+> So, added him here.
+>
+
+Hi, Andy
+
+Nice to see you there. I will look through the code later.
+I always thought that DW has its own hardware rs485 support.
+
+>> Giulio Benetti (8):
+>>   serial: 8250_dw: add em485 support
+>>   serial: 8250_dw: allow enable rs485 at boot time
+>>   serial: 8250: Copy em485 from port to real port.
+>>   serial: 8250: Handle case port doesn't have TEMT interrupt using
+>>     em485.
+>>   serial: 8250_dw: treat rpm suspend with -EBUSY if RS485 ON and
+>>     RTS_AFTER_SEND
+>>   serial: 8250: Copy mctrl when register port.
+>>   serial: 8250: Make em485_rts_after_send() set mctrl according to rts
+>>     state.
+>>   serial: core: Mask mctrl with TIOCM_RTS too if rs485 on and
+>>     RTS_AFTER_SEND set.
 >>
->> You need to do a of_node_put() here for both rep and rparent.
-> 
-> Same thing for the "continue" and error condition above.
+>>  drivers/tty/serial/8250/8250.h      |  2 +-
+>>  drivers/tty/serial/8250/8250_core.c |  2 ++
+>>  drivers/tty/serial/8250/8250_dw.c   | 41
+>> ++++++++++++++++++++++++++++-
+>>  drivers/tty/serial/8250/8250_omap.c |  2 +-
+>>  drivers/tty/serial/8250/8250_port.c | 33 ++++++++++++++++-------
+>>  drivers/tty/serial/serial_core.c    | 12 ++++++++-
+>>  include/linux/serial_8250.h         |  1 +
+>>  7 files changed, 79 insertions(+), 14 deletions(-)
+>>
+>
+> --
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Intel Finland Oy
+>
 
 
-Mathieu,
 
-Thanks for pointing that out. I see that we were missing them for the
-existing code as well. I will clean all this up.
-
-Cheers
-Suzuki
+-- 
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
