@@ -1,51 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751364AbeFDUAt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:00:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36234 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751085AbeFDUAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:00:47 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="54690249"
-Date: Mon, 4 Jun 2018 23:00:43 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:TPM DEVICE DRIVER"
-        <tpmdd-devel@lists.sourceforge.net>
-Subject: Re: [PATCH v2 0/2] fixes for v4.4
-Message-ID: <20180604200043.GF2691@linux.intel.com>
-References: <20180530204440.27299-1-jarkko.sakkinen@linux.intel.com>
- <20180602131858.GF31493@kroah.com>
+        id S1751232AbeFDUC3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:02:29 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41276 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbeFDUC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 16:02:27 -0400
+X-Google-Smtp-Source: ADUXVKIQqxevhbA5XUs3WaD6TyhGcRHN34JsSfkN6Q4Nqy5y+HhSeES/YP6lOctWukQIknl14YA6Sw==
+Date: Mon, 4 Jun 2018 13:02:24 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Suman Anna <s-anna@ti.com>,
+        Loic Pallardy <loic.pallardy@st.com>
+Cc: linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-remoteproc@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
+Message-ID: <20180604200224.GA9960@builder>
+References: <1524159181-351878-1-git-send-email-mst@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180602131858.GF31493@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1524159181-351878-1-git-send-email-mst@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 02, 2018 at 03:18:58PM +0200, Greg KH wrote:
-> On Wed, May 30, 2018 at 11:44:38PM +0300, Jarkko Sakkinen wrote:
-> > Decided to add Enric's commit because it is also a bug fix instead
-> > of modifying Chris commit.
+On Thu 19 Apr 10:35 PDT 2018, Michael S. Tsirkin wrote:
+
+> virtio is using barriers to order memory accesses, thus
+> dma_wmb/rmb is a good match.
 > 
-> Why just 4.4 and not also 4.9?  I don't want to take patches that would
-> cause a regression for people moving from 4.4 to 4.9, so can you also
-> provide 4.9 backports of this?  If so, I will be glad to queue up both
-> sets of patches.
+> Build-tested on x86: Before
+> 
+> [mst@tuck linux]$ size drivers/virtio/virtio_ring.o
+>    text    data     bss     dec     hex filename
+>   11392     820       0   12212    2fb4 drivers/virtio/virtio_ring.o
+> 
+> After
+> mst@tuck linux]$ size drivers/virtio/virtio_ring.o
+>    text    data     bss     dec     hex filename
+>   11284     820       0   12104    2f48 drivers/virtio/virtio_ring.o
+> 
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: linux-remoteproc@vger.kernel.org
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-Yes, I can do this. I'll check the v4.4 change with the original author
-as I have to put the check in the original patch into different place
-before sending anything (I do not have any POWER systes available to
-test it myself).
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-/Jarkko
+Regards,
+Bjorn
+
+> ---
+> 
+> It's good in theory, but could one of RPMSG maintainers please review
+> and ack this patch? Or even better test it?
+> 
+> All these barriers are useless on Intel anyway ...
+> 
+>  include/linux/virtio_ring.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
+> index bbf3252..fab0213 100644
+> --- a/include/linux/virtio_ring.h
+> +++ b/include/linux/virtio_ring.h
+> @@ -35,7 +35,7 @@ static inline void virtio_rmb(bool weak_barriers)
+>  	if (weak_barriers)
+>  		virt_rmb();
+>  	else
+> -		rmb();
+> +		dma_rmb();
+>  }
+>  
+>  static inline void virtio_wmb(bool weak_barriers)
+> @@ -43,7 +43,7 @@ static inline void virtio_wmb(bool weak_barriers)
+>  	if (weak_barriers)
+>  		virt_wmb();
+>  	else
+> -		wmb();
+> +		dma_wmb();
+>  }
+>  
+>  static inline void virtio_store_mb(bool weak_barriers,
+> -- 
+> MST
