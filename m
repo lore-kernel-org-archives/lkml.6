@@ -1,91 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeFDUF6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:05:58 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:53898 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbeFDUF5 (ORCPT
+        id S1751341AbeFDUG7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:06:59 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:51960 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751052AbeFDUG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:05:57 -0400
-Message-ID: <1528142755.7898.122.camel@surriel.com>
-Subject: Re: [PATCH 16/19] sched/numa: Detect if node actively handling
- migration
-From: Rik van Riel <riel@surriel.com>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date: Mon, 04 Jun 2018 16:05:55 -0400
-In-Reply-To: <1528106428-19992-17-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-         <1528106428-19992-17-git-send-email-srikar@linux.vnet.ibm.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-QvcmWrj+G+DSdPGPn/WV"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+        Mon, 4 Jun 2018 16:06:57 -0400
+Date: Mon, 04 Jun 2018 16:06:56 -0400 (EDT)
+Message-Id: <20180604.160656.1908177448752194104.davem@davemloft.net>
+To: dhowells@redhat.com
+Cc: netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rxrpc: Fix handling of call quietly cancelled out
+ on server
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <152798865948.5814.10196893914153717731.stgit@warthog.procyon.org.uk>
+References: <152798865948.5814.10196893914153717731.stgit@warthog.procyon.org.uk>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: David Howells <dhowells@redhat.com>
+Date: Sun, 03 Jun 2018 02:17:39 +0100
 
---=-QvcmWrj+G+DSdPGPn/WV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> Sometimes an in-progress call will stop responding on the fileserver when
+> the fileserver quietly cancels the call with an internally marked abort
+> (RX_CALL_DEAD), without sending an ABORT to the client.
+> 
+> This causes the client's call to eventually expire from lack of incoming
+> packets directed its way, which currently leads to it being cancelled
+> locally with ETIME.  Note that it's not currently clear as to why this
+> happens as it's really hard to reproduce.
+> 
+> The rotation policy implement by kAFS, however, doesn't differentiate
+> between ETIME meaning we didn't get any response from the server and ETIME
+> meaning the call got cancelled mid-flow.  The latter leads to an oops when
+> fetching data as the rotation partially resets the afs_read descriptor,
+> which can result in a cleared page pointer being dereferenced because that
+> page has already been filled.
+ ...
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-On Mon, 2018-06-04 at 15:30 +0530, Srikar Dronamraju wrote:
-
-> @@ -1554,6 +1562,9 @@ static void task_numa_compare(struct
-> task_numa_env *env,
->  	if (READ_ONCE(dst_rq->numa_migrate_on))
->  		return;
-> =20
-> +	if (*move && READ_ONCE(pgdat->active_node_migrate))
-> +		*move =3D false;
-
-Why not do this check in task_numa_find_cpu?
-
-That way you won't have to pass this in as a
-pointer, and you also will not have to recalculate
-NODE_DATA(cpu_to_node(env->dst_cpu)) for every CPU.
-
->  	/*
-> +	 * If the numa importance is less than SMALLIMP,
-
-              ^^^ numa improvement
-
-> +	 * task migration might only result in ping pong
-> +	 * of tasks and also hurt performance due to cache
-> +	 * misses.
-> +	 */
-> +	if (imp < SMALLIMP || imp <=3D env->best_imp + SMALLIMP / 2)
-> +		goto unlock;
-
-I can see a use for the first test, but why limit the
-search for the best score once you are past the
-threshold?
-
-I don't understand the use for that second test.
-
-What workload benefits from it?
-
---=20
-All Rights Reversed.
---=-QvcmWrj+G+DSdPGPn/WV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVm6MACgkQznnekoTE
-3oOSnwf/bbTYHVhtD7SxCuBW1Fl5XvQVaF+EgGecbI9e1HkXEthcT/HVQC58WIWR
-8a0lgBmcrmSOnIRIJX6fbSOcaQrR2OWUdV29S6sznZm/sf7W/0YMh3lEudJNDy/E
-E9BcFMBnkIaq5b2e/pgIfeYnw802OowC0/gOXQ8xD8OUA2eHIhEaflFX20Xw7zPG
-L4jW2UP7GprEYBGiGcakhu+qL/MdQCLJbdS89ANKBDykoWVdRtdhp983oIFuZ0TB
-ysGv/IdOoMXu9ojb1Wp+0390MoLhcjO5dBUaxi0rFOWTgzpTIBg5cWldDYM2a6WN
-5qaI5dnnHaKcLjDjjYlWgXHelHDvVQ==
-=pR+q
------END PGP SIGNATURE-----
-
---=-QvcmWrj+G+DSdPGPn/WV--
+Applied, thanks David.
