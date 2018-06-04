@@ -1,100 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeFDJzt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 05:55:49 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43078 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751769AbeFDJzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:55:46 -0400
-Date: Mon, 4 Jun 2018 11:55:43 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 5/6 v2] mtd: rawnand: ams-delta: use GPIO lookup table
-Message-ID: <20180604115543.3be75717@bbrezillon>
-In-Reply-To: <1582841.uoaVdad1fL@z50>
-References: <CAHp75Ved2nw1JKnXT2Jxnw4XLsby1eVJU6cfBjE2sp4LP4Kwmg@mail.gmail.com>
-        <1543045.tPZatK9yHU@z50>
-        <20180530195220.3527f0fc@bbrezillon>
-        <1582841.uoaVdad1fL@z50>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752157AbeFDJzm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 05:55:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41370 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751769AbeFDJzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 05:55:40 -0400
+Subject: Re: [Qemu-devel] [RFC v2 0/2] kvm "fake DAX" device flushing
+To: Igor Mammedov <imammedo@redhat.com>, Pankaj Gupta <pagupta@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, linux-mm@kvack.org,
+        kwolf@redhat.com, haozhong.zhang@intel.com, jack@suse.cz,
+        xiaoguangrong.eric@gmail.com, riel@surriel.com,
+        niteshnarayanlal@hotmail.com, ross.zwisler@intel.com,
+        lcapitulino@redhat.com, hch@infradead.org, mst@redhat.com,
+        stefanha@redhat.com, marcel@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, nilal@redhat.com
+References: <20180425112415.12327-1-pagupta@redhat.com>
+ <20180601142410.5c986f13@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <a36137df-d2f6-39d5-318e-9006415b8ca2@redhat.com>
+Date: Mon, 4 Jun 2018 11:55:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180601142410.5c986f13@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 May 2018 22:39:03 +0200
-Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-
-> On Wednesday, May 30, 2018 7:52:20 PM CEST Boris Brezillon wrote:
-> > On Wed, 30 May 2018 19:43:09 +0200
-> > 
-> > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:  
-> > > On Wednesday, May 30, 2018 11:05:00 AM CEST Boris Brezillon wrote:  
-> > > > Hi Janusz,  
-> > > 
-> > > Hi Boris,
-> > >   
-> > > > On Sat, 26 May 2018 00:20:45 +0200
-> > > > 
-> > > > Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:  
-> > > > > ...
-> > > > > Changes since v1:
-> > > > > - fix handling of devm_gpiod_get_optional() return values - thanks to
-> > > > > 
-> > > > >   Andy Shevchenko.  
-> > > > 
-> > > > Can you put the changelog after the "---" separator so that it does not
-> > > > appear in the final commit message?  
-> > > 
-> > > Yes, sure, sorry for that.
-> > >   
-> > > > > +err_gpiod:
-> > > > > +	if (err == -ENODEV || err == -ENOENT)
-> > > > > +		err = -EPROBE_DEFER;  
-> > > > 
-> > > > Hm, isn't it better to make gpiod_find() return ERR_PTR(-EPROBE_DEFER)
-> > > > here [1]? At least, ENOENT should not be turned into EPROBE_DEFER,
-> > > > because it's returned when there's no entry matching the requested gpio
-> > > > in the lookup table, and deferring the probe won't solve this problem.  
-> > > 
-> > > ENOENT is also returned when no matching lookup table is found. That may
-> > > happen if consumer dev_name stored in the table differs from dev_name
-> > > assigned to the consumer by its bus, the platform bus in this case. For
-> > > that reason I think the consumer dev_name should be initialized in the
-> > > table after the device is registered, when its actual dev_name can be
-> > > obtained. If that device registration happens after the driver is already
-> > > registered, e.g., at late_initcall, the device is probed before its
-> > > lookup table is ready. For that reason returning EPROBE_DEFER seems
-> > > better to me even in the ENOENT case.  
-> > Sorry, I don't get it. Aren't GPIO lookup tables supposed to be declared
-> > in board files, especially if the GPIO is used by a platform device?
-> > When would you have a lookup table registered later in the init/boot
-> > process?  
+On 01.06.2018 14:24, Igor Mammedov wrote:
+> On Wed, 25 Apr 2018 16:54:12 +0530
+> Pankaj Gupta <pagupta@redhat.com> wrote:
 > 
-> When e.g. I'd like to register my GPIO consumer platform device at 
-> late_initcall for some reason, and I'm not sure what exact dev_name my 
-> consomer will be registered with by the platform bus.
+> [...]
+>> - Qemu virtio-pmem device
+>>   It exposes a persistent memory range to KVM guest which 
+>>   at host side is file backed memory and works as persistent 
+>>   memory device. In addition to this it provides virtio 
+>>   device handling of flushing interface. KVM guest performs
+>>   Qemu side asynchronous sync using this interface.
+> a random high level question,
+> Have you considered using a separate (from memory itself)
+> virtio device as controller for exposing some memory, async flushing.
+> And then just slaving pc-dimm devices to it with notification/ACPI
+> code suppressed so that guest won't touch them?
 
-You should know the name before the device is registered.
+I don't think slaving pc-dimm would be the right thing to do (e.g.
+slots, pcdimm vs nvdimm, bus(less), etc..). However the general idea is
+interesting for virtio-pmem (as we might have a bigger number of disks).
 
-> In that case I think I 
-> should assign dev_name to the lookup table after the consumer device is 
-> registered and its exact dev_name can be obtained, then register the table,
+We could have something like a virtio-pmem-bus to which you attach
+virtio-pmem devices. By specifying the mapping, e.g. the thread that
+will be used for async flushes will be implicit.
 
-I'm pretty sure it's not supposed to work like that. Resources attached
-to a device should be defined before the device is registered, not
-after, simply because when you call platform_device_register(), the
-device might be directly bind to the driver before the
-platform_device_register() calls return, and the driver will fail to
-probe the device if it doesn't find the GPIO it needs.
+> 
+> That way it might be more scale-able, you consume only 1 PCI slot
+> for controller vs multiple for virtio-pmem devices.>
+> 
+>> Changes from previous RFC[1]:
+>>
+>> - Reuse existing 'pmem' code for registering persistent 
+>>   memory and other operations instead of creating an entirely 
+>>   new block driver.
+>> - Use VIRTIO driver to register memory information with 
+>>   nvdimm_bus and create region_type accordingly. 
+>> - Call VIRTIO flush from existing pmem driver.
+>>
+>> Details of project idea for 'fake DAX' flushing interface is 
+>> shared [2] & [3].
+>>
+>> Pankaj Gupta (2):
+>>    Add virtio-pmem guest driver
+>>    pmem: device flush over VIRTIO
+>>
+>> [1] https://marc.info/?l=linux-mm&m=150782346802290&w=2
+>> [2] https://www.spinics.net/lists/kvm/msg149761.html
+>> [3] https://www.spinics.net/lists/kvm/msg153095.html  
+>>
+>>  drivers/nvdimm/region_devs.c     |    7 ++
+>>  drivers/virtio/Kconfig           |   12 +++
+>>  drivers/virtio/Makefile          |    1 
+>>  drivers/virtio/virtio_pmem.c     |  118 +++++++++++++++++++++++++++++++++++++++
+>>  include/linux/libnvdimm.h        |    4 +
+>>  include/uapi/linux/virtio_ids.h  |    1 
+>>  include/uapi/linux/virtio_pmem.h |   58 +++++++++++++++++++
+>>  7 files changed, 201 insertions(+)
+>>
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
