@@ -1,38 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751473AbeFDQa4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:30:56 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34224 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751093AbeFDQaz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:30:55 -0400
-X-Google-Smtp-Source: ADUXVKLnlzPSRd7ZGKWEP2hXGzSLx2SyFBdz/XzCDFS0LtF2WylgRk7TXRWSYUtE5YnvpDCi1ygNUGMCIX7D3YHkuCw=
+        id S1751501AbeFDQcg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:32:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40428 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751093AbeFDQcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 12:32:31 -0400
+Date: Mon, 4 Jun 2018 19:32:25 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: bhelgaas@google.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        linux-pci@vger.kernel.org, dan.daly@intel.com, mark.d.rustad@intel.com,
+        alexander.h.duyck@intel.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com
+Subject: Re: [PATCH v3] virtio_pci: support enabling VFs
+Message-ID: <20180604192222-mutt-send-email-mst@kernel.org>
+References: <20180601040239.1151-1-tiwei.bie@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJX1YtZNdwiwPmj5gGTqURjvLqa5g7Ly_h+TEZfNJSW=mrqRiQ@mail.gmail.com>
-References: <20180601183144.17374-1-xiyou.wangcong@gmail.com> <CAJX1YtZNdwiwPmj5gGTqURjvLqa5g7Ly_h+TEZfNJSW=mrqRiQ@mail.gmail.com>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Mon, 4 Jun 2018 09:30:34 -0700
-Message-ID: <CAM_iQpV2PJZUQEcXh=TpHRZzLEqGLDAQ1j1_ibPY_kNfbWoAEQ@mail.gmail.com>
-Subject: Re: [PATCH] infiniband: fix a possible use-after-free bug
-To: Gi-Oh Kim <gi-oh.kim@profitbricks.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Noam Rathaus <noamr@beyondsecurity.com>,
-        Sean Hefty <sean.hefty@intel.com>, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601040239.1151-1-tiwei.bie@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 9:23 AM, Gi-Oh Kim <gi-oh.kim@profitbricks.com> wrote:
-> Hi,
->
-> Your patch is reasonable to me.
-> Can I ask a question for that?
-> Could it be solved by asymmetric locking as following?
+On Fri, Jun 01, 2018 at 12:02:39PM +0800, Tiwei Bie wrote:
+> There is a new feature bit allocated in virtio spec to
+> support SR-IOV (Single Root I/O Virtualization):
+> 
+> https://github.com/oasis-tcs/virtio-spec/issues/11
+> 
+> This patch enables the support for this feature bit in
+> virtio driver.
+> 
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> ---
 
-Maybe, if you are sure taking file->mut is safe in that place.
+OK but what about freeze/restore functions?
 
-Can you double check atomic_inc_not_zero(&mc->ctx->ref)?
-I am too far away from familiar with infiniband. ;)
+I also wonder about kexec - virtio.c currently does:
+
+        /* We always start by resetting the device, in case a previous
+         * driver messed it up.  This also tests that code path a little. */
+        dev->config->reset(dev);
+
+Do we need to do something like this for sriov?
+
+I also wonder whether PCI core should disable sriov for us.
+
+
+I wish there was a patch emulating this without vDPA for QEMU,
+would make it easy to test your patches. Do you happen
+to have something like this?
+
+Thanks,
+
+
+> v3:
+> - Drop the acks;
+> 
+> v2:
+> - Disable VFs when unbinding the driver (Alex, MST);
+> - Don't use pci_sriov_configure_simple (Alex);
+> 
+>  drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
+>  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
+>  include/uapi/linux/virtio_config.h |  7 ++++++-
+>  3 files changed, 50 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> index 48d4d1cf1cb6..1d4467b2dc31 100644
+> --- a/drivers/virtio/virtio_pci_common.c
+> +++ b/drivers/virtio/virtio_pci_common.c
+> @@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+>  	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+>  	struct device *dev = get_device(&vp_dev->vdev.dev);
+>  
+> +	pci_disable_sriov(pci_dev);
+> +
+>  	unregister_virtio_device(&vp_dev->vdev);
+>  
+>  	if (vp_dev->ioaddr)
+> @@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+>  	put_device(dev);
+>  }
+>  
+> +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
+> +{
+> +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+> +	struct virtio_device *vdev = &vp_dev->vdev;
+> +	int ret;
+> +
+> +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
+> +		return -EBUSY;
+> +
+> +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
+> +		return -EINVAL;
+> +
+> +	if (pci_vfs_assigned(pci_dev))
+> +		return -EPERM;
+> +
+> +	if (num_vfs == 0) {
+> +		pci_disable_sriov(pci_dev);
+> +		return 0;
+> +	}
+> +
+> +	ret = pci_enable_sriov(pci_dev, num_vfs);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return num_vfs;
+> +}
+> +
+>  static struct pci_driver virtio_pci_driver = {
+>  	.name		= "virtio-pci",
+>  	.id_table	= virtio_pci_id_table,
+> @@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
+>  #ifdef CONFIG_PM_SLEEP
+>  	.driver.pm	= &virtio_pci_pm_ops,
+>  #endif
+> +	.sriov_configure = virtio_pci_sriov_configure,
+>  };
+>  
+>  module_pci_driver(virtio_pci_driver);
+> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> index 2555d80f6eec..07571daccfec 100644
+> --- a/drivers/virtio/virtio_pci_modern.c
+> +++ b/drivers/virtio/virtio_pci_modern.c
+> @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
+>  	return features;
+>  }
+>  
+> +static void vp_transport_features(struct virtio_device *vdev, u64 features)
+> +{
+> +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> +	struct pci_dev *pci_dev = vp_dev->pci_dev;
+> +
+> +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
+> +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
+> +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
+> +}
+> +
+>  /* virtio config->finalize_features() implementation */
+>  static int vp_finalize_features(struct virtio_device *vdev)
+>  {
+>  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> +	u64 features = vdev->features;
+>  
+>  	/* Give virtio_ring a chance to accept features. */
+>  	vring_transport_features(vdev);
+>  
+> +	/* Give virtio_pci a chance to accept features. */
+> +	vp_transport_features(vdev, features);
+> +
+>  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
+>  		dev_err(&vdev->dev, "virtio: device uses modern interface "
+>  			"but does not have VIRTIO_F_VERSION_1\n");
+> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> index 308e2096291f..b7c1f4e7d59e 100644
+> --- a/include/uapi/linux/virtio_config.h
+> +++ b/include/uapi/linux/virtio_config.h
+> @@ -49,7 +49,7 @@
+>   * transport being used (eg. virtio_ring), the rest are per-device feature
+>   * bits. */
+>  #define VIRTIO_TRANSPORT_F_START	28
+> -#define VIRTIO_TRANSPORT_F_END		34
+> +#define VIRTIO_TRANSPORT_F_END		38
+>  
+>  #ifndef VIRTIO_CONFIG_NO_LEGACY
+>  /* Do we get callbacks when the ring is completely used, even if we've
+> @@ -71,4 +71,9 @@
+>   * this is for compatibility with legacy systems.
+>   */
+>  #define VIRTIO_F_IOMMU_PLATFORM		33
+> +
+> +/*
+> + * Does the device support Single Root I/O Virtualization?
+> + */
+> +#define VIRTIO_F_SR_IOV			37
+>  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+> -- 
+> 2.17.0
