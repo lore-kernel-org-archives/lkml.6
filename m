@@ -1,85 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeFDKMS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:12:18 -0400
-Received: from mga09.intel.com ([134.134.136.24]:8104 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752315AbeFDKMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:12:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="234187004"
-Message-ID: <65c26f5db1275e958cfe6390e9336568b0158dea.camel@linux.intel.com>
-Subject: Re: [PATCH 0/8] serial: 8250: Add 485 emulation to 8250_dw.
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Matwey V.Kornilov" <matwey@sai.msu.ru>
-Cc: Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Vignesh R <vigneshr@ti.com>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 04 Jun 2018 13:12:07 +0300
-In-Reply-To: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
-References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752509AbeFDKMx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:12:53 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39088 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751989AbeFDKMw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:12:52 -0400
+X-Google-Smtp-Source: ADUXVKKblgbrJlMUHKYzUxvq8MybD7Qtderu/i4ZTwYh3iNRvDKfGcNpLYO/e80T7zRalb4VijMTMA==
+Date: Mon, 4 Jun 2018 12:12:47 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Alessio Balsini <alessio.balsini@santannapisa.it>
+Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
+Message-ID: <20180604101247.GB2731@localhost.localdomain>
+References: <CAKfTPtDCkzPMt6XrXRcURXm=53LABiwbFd3JMQkJDWpTprycRQ@mail.gmail.com>
+ <20180528152243.GD1293@localhost.localdomain>
+ <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
+ <20180531102735.GM30654@e110439-lin>
+ <CAKfTPtCeoimTehLktVk4WiTEM5h9KW_4yvuxGof8p6ZOgsRE2Q@mail.gmail.com>
+ <20180601135307.GA28550@linaro.org>
+ <20180601174526.GA105687@joelaf.mtv.corp.google.com>
+ <CAKfTPtBu5D=P3ib6fqfVLz9yQXN19ipRQAz5L6s1+ewnVTrHmg@mail.gmail.com>
+ <20180604070438.GA2731@localhost.localdomain>
+ <CAKfTPtD9KQTeeP0BNyhnqh=UXL0T_jK0PcvWWBjoyj0VC8TkRg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtD9KQTeeP0BNyhnqh=UXL0T_jK0PcvWWBjoyj0VC8TkRg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-01 at 14:40 +0200, Giulio Benetti wrote:
-> Need to handle rs485 with 8250_dw port.
+On 04/06/18 09:14, Vincent Guittot wrote:
+> On 4 June 2018 at 09:04, Juri Lelli <juri.lelli@redhat.com> wrote:
+> > Hi Vincent,
+> >
+> > On 04/06/18 08:41, Vincent Guittot wrote:
+> >> On 1 June 2018 at 19:45, Joel Fernandes <joelaf@google.com> wrote:
+> >> > On Fri, Jun 01, 2018 at 03:53:07PM +0200, Vincent Guittot wrote:
+> >
+> > [...]
+> >
+> >> > IMO I feel its overkill to account dl_avg when we already have DL's running
+> >> > bandwidth we can use. I understand it may be too instanenous, but perhaps we
+> >>
+> >> We keep using dl bandwidth which is quite correct for dl needs but
+> >> doesn't reflect how it has disturbed other classes
+> >>
+> >> > can fix CFS's problems within CFS itself and not have to do this kind of
+> >> > extra external accounting ?
+> >
+> > I would also keep accounting for waiting time due to higher prio classes
+> > all inside CFS. My impression, when discussing it with you on IRC, was
+> > that we should be able to do that by not decaying cfs.util_avg when CFS
+> > is preempted (creating a new signal for it). Is not this enough?
 > 
-> Use existing em485 emulation layer for 8250 taking care to fix some
-> bug
-> and taking care especially of RTS_AFTER_SEND case.
+> We don't just want to not decay a signal but increase the signal to
+> reflect the amount of preemption
+
+OK.
+
+> Then, we can't do that in a current signal. So you would like to add
+> another metrics in cfs_rq ?
+
+Since it's CFS related, I'd say it should fit in CFS.
+
+> The place doesn't really matter to be honest in cfs_rq or in dl_rq but
+> you will not prevent to add call in dl class to start/stop the
+> accounting of the preemption
 > 
-
-I don't see in Cc list author of rs485 code, who might be interested in
-this.
-
-So, added him here.
-
-> Giulio Benetti (8):
->   serial: 8250_dw: add em485 support
->   serial: 8250_dw: allow enable rs485 at boot time
->   serial: 8250: Copy em485 from port to real port.
->   serial: 8250: Handle case port doesn't have TEMT interrupt using
->     em485.
->   serial: 8250_dw: treat rpm suspend with -EBUSY if RS485 ON and
->     RTS_AFTER_SEND
->   serial: 8250: Copy mctrl when register port.
->   serial: 8250: Make em485_rts_after_send() set mctrl according to rts
->     state.
->   serial: core: Mask mctrl with TIOCM_RTS too if rs485 on and
->     RTS_AFTER_SEND set.
+> >
+> > I feel we should try to keep cross-class accounting/interaction at a
+> > minimum.
 > 
->  drivers/tty/serial/8250/8250.h      |  2 +-
->  drivers/tty/serial/8250/8250_core.c |  2 ++
->  drivers/tty/serial/8250/8250_dw.c   | 41
-> ++++++++++++++++++++++++++++-
->  drivers/tty/serial/8250/8250_omap.c |  2 +-
->  drivers/tty/serial/8250/8250_port.c | 33 ++++++++++++++++-------
->  drivers/tty/serial/serial_core.c    | 12 ++++++++-
->  include/linux/serial_8250.h         |  1 +
->  7 files changed, 79 insertions(+), 14 deletions(-)
-> 
+> accounting for cross class preemption can't be done without
+> cross-class accounting
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Mmm, can't we distinguish in, say, pick_next_task_fair() if prev was of
+higher prio class and act accordingly?
+
+Thanks,
+
+- Juri
