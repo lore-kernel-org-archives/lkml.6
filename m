@@ -1,135 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753060AbeFDKCo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:02:44 -0400
-Received: from mout1.freenet.de ([195.4.92.91]:39524 "EHLO mout1.freenet.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753041AbeFDKCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:02:41 -0400
-Subject: Re: Spectre mitigation doesn't seem to work at all?!
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <141672d1-8dcb-9a84-7f8f-60c7a2c58b07@01019freenet.de>
- <20180604081502.GE12258@hirez.programming.kicks-ass.net>
- <d8fbee2d-305a-9fc0-356e-b8d4cbd59dbd@maya.org>
- <20180604091931.sziimdeei54jgwzn@salmiak>
-From: Andreas Hartmann <andihartmann@01019freenet.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andihartmann@01019freenet.de; keydata=
- xsDiBDz/vtQRBAC+OSpes1p57fA8ENLYy3Nl/CpEvtRoDdhy7DPyc1+adE57vpK52naRfaZB
- f0RSMvIZwJYggMio+emiN5Du7kL9y2IEjmHBvp/1x68dEwswHP9X4hJmHmyOJL3IB2WsvEdh
- QF97913bWX34MYCeuOoSJ1OWvBLGfNs0zv70HOTfJwCgricyy8N1itEryLwoeu5HWz0SmDED
- /2IiuDhPZ332i0Ylp40RQb2Wb0xBvpscVeRZDItsYYbJ/Sgmso1sn93sFFWmmrvGUyg3MNCt
- +u+7P8Wg3VXte8cHbNwdzNtXHTfYyTcgZXC4xJN2akZt4pdR531mXyP2kFxmKtAEmW6bNpvV
- oNnkgZVWvoT4BHLloLzA62JUEgFJA/9dHilAVS3Ezv5ECB02Lt2vNNzMvPlyNbxBhWnrb6VC
- mFMCRg9bOK2io1zYb8C4gEpJ33wl8hEBxOWfCOEEKesAUCjViosNvxqGNtGWjk5p1O2QBWE2
- D6u5+itACQRqhmmgNl+dK6Of2yGG9GxOYWozIELEfL9ZB4xQ7A2tDFR0Zs1HQW5kcmVhcyBI
- YXJ0bWFubiAod2VpbCBkZXIgUmVjaG5lciBuZXUgaGVpc3N0KSA8YW5kcmVhc0BkdWFsYy5t
- YXlhLm9yZz7CYAQTEQIAIAUCTMsY3gIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEBhU
- mcTgYeNVT1QAoJ4cJ2jl6Jgmi+PmWCXPk4m8lgAGAKCjkxgK/PjE3+cNsLa/xEpReqYwRs7A
- TQQ8/77WEAQAqBBex8oxPC1srpaSFbq8NCM/Gy7SKucKsQPqG/De46WQESbmnMElVft2xCBC
- rOJ7E02k10h/twe0yQnNdXMJDMDM0w0EEyX9ljekIr3SFbXpU2S4wUl3C6CW2hizUgOyLsg0
- chpfGMB9+wiVycyjZahafoc14wuuDj5BqWEOCccAAwcD/14lh1PTPKx4hs7ITtFZh5TI6+5f
- xAWIBBUeQL+GEt+CKwyNc/hWp8YTPJ3SAedmDrEMX+2yPO95KeIfg6bnnIVvI/aTR/vJFsWK
- GKMx+KaKx+IEwuhCpNIMUASpJWRvVlo3lMIvqAMJIBj79uKq/X9fppblcJst29QVO6aWf3Gh
- wkYEGBECAAYFAjz/vtYACgkQGFSZxOBh41VBAgCfZRiPCQ+jNvdT5iR2fEblqTtBrF0An0nb
- M8B1Lpkm44214BbtIQKneVrY
-Message-ID: <9a977dda-c6c8-1193-58f8-d51d135e0d8a@01019freenet.de>
-Date: Mon, 4 Jun 2018 12:00:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180604091931.sziimdeei54jgwzn@salmiak>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Spam-score: -3.1
-X-Spamreport: Action: no action
- Symbol: MIME_GOOD(-0.10)
- Symbol: MID_RHS_MATCH_FROM(0.00)
- Symbol: FROM_EQ_ENVFROM(0.00)
- Symbol: RCVD_VIA_SMTP_AUTH(0.00)
- Symbol: NEURAL_HAM(-3.00)
- Symbol: FROM_HAS_DN(0.00)
- Symbol: RCPT_COUNT_THREE(0.00)
- Symbol: SUBJECT_ENDS_EXCLAIM(0.00)
- Symbol: RCVD_COUNT_TWO(0.00)
- Symbol: RCVD_TLS_ALL(0.00)
- Symbol: TO_DN_ALL(0.00)
- Symbol: TO_MATCH_ENVRCPT_ALL(0.00)
- Symbol: SUBJECT_HAS_QUESTION(0.00)
- Symbol: ASN(0.00)
- Message-ID: 9a977dda-c6c8-1193-58f8-d51d135e0d8a@01019freenet.de
-X-FN-Spambar: 
-X-Originated-At: 2003:de:53d7:1800:5054:ff:fe15:ac42!47940
+        id S1752714AbeFDKB0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:01:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39730 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752656AbeFDKBR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:01:17 -0400
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 10/19] sched/numa: Stop multiple tasks from moving to the cpu at the same time
+Date: Mon,  4 Jun 2018 15:30:19 +0530
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18060410-4275-0000-0000-000002895C9E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060410-4276-0000-0000-0000379070FB
+Message-Id: <1528106428-19992-11-git-send-email-srikar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806040123
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+Task migration under numa balancing can happen in parallel. More than
+one task might choose to migrate to the same cpu at the same time. This
+can result in
+- During task swap, choosing a task that was not part of the evaluation.
+- During task swap, task which just got moved into its preferred node,
+  moving to a completely different node.
+- During task swap, task failing to move to the preferred node, will have
+  to wait an extra interval for the next migrate opportunity.
+- During task movement, multiple task movements can cause load imbalance.
 
-On 06/04/2018 at 11:19 AM Mark Rutland wrote:
-> On Mon, Jun 04, 2018 at 10:50:07AM +0200, Andreas Hartmann wrote:
->> Hello Peter,
->>
->> thanks for your answer! I appreciate it!
->>
->> On 06/04/2018 at 10:15 AM Peter Zijlstra wrote:
->>> On Fri, Jun 01, 2018 at 02:19:38PM +0200, Andreas Hartmann wrote:
->>>
->>>> I tested the spectre mitigation of different machines and kernels with
->>>> https://github.com/crozone/SpectrePoC
->>>>
->>>> You can see the results below.
->>>
->>>> My question: Did I miss something?
->>>
->>> Yes.
->>>
->>>> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
->>>> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
->>>> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
->>>
->>>                               ^^^^^^^^                         ^^^^^^^^
->>>
->>> The POC is a v1 on itself. V1 needs to be fixed for every individual
->>> executable (worse, for every individual location in the code, and we're
->>> still finding them). The kernel mitigation status for v1 only indicates
->>> the kernel itself has mitigations (for some locations).
->>>
->>> The POC is meant to test effectiveness of these mitigations, either the
->>> original LFENCE or the dependent instruction thing, but you have to
->>> enable one or the other.
->>
->> Ok, this means every program running on the machine has to care itself
->> to be spectre v1 - safe.
-> 
-> Correct. Primiarily this matters for things like JITs, where untrusted code may
-> be run in the same address space as sensitive data.
-> 
->> A malicious program most probably won't care about that. Therefore, my
->> next question is: which memory regions can be exploited by a malicious
->> program? The complete physical memory or only the memory provided to the
->> malicious program? Should be the latter if this approach should have any
->> impact.
-> 
-> Assuming you have a CPU which is not vulnerable to meltdown / variant-3, or you
-> have mitigated this, (e.g. with KPTI), a malicious program can only access data
-> within its own address space.
-> 
-> Spectre variant-1 alone only gives access to memory in the address space of the
-> program itself.
+This problem is more likely if there are more cores per node or more
+nodes in the system.
 
-Thanks Mark! Now I've a better understanding about the effects the
-different vulnerabilities around Spectre and Meltdown do have and I'm
-now hopefully able to better estimate them.
+Use a per run-queue variable to check if numa-balance is active on the
+run-queue.
 
-As I'm mostly using AMD-CPUs (like Ryzen 1 e.g.) for virtualization, I
-should be secure by default regarding unwanted global memory access from
-the VM to the host memory, because the Ryzen 1 CPU is not affected by
-Meltdown at all.
+Testcase       Time:         Min         Max         Avg      StdDev
+numa01.sh      Real:      414.64      819.20      556.08      147.70
+numa01.sh       Sys:       77.52      205.04      139.40       52.05
+numa01.sh      User:    37043.24    61757.88    45517.48     9290.38
+numa02.sh      Real:       60.80       63.32       61.63        0.88
+numa02.sh       Sys:       17.35       39.37       25.71        7.33
+numa02.sh      User:     5213.79     5374.73     5268.90       55.09
+numa03.sh      Real:      780.09      948.64      831.43       63.02
+numa03.sh       Sys:      104.96      136.92      116.31       11.34
+numa03.sh      User:    60465.42    73339.78    64368.03     4700.14
+numa04.sh      Real:      412.60      681.92      521.29       96.64
+numa04.sh       Sys:      210.32      314.10      251.77       37.71
+numa04.sh      User:    34026.38    45581.20    38534.49     4198.53
+numa05.sh      Real:      394.79      439.63      411.35       16.87
+numa05.sh       Sys:      238.32      330.09      292.31       38.32
+numa05.sh      User:    33456.45    34876.07    34138.62      609.45
 
+Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
+numa01.sh      Real:      434.84      676.90      550.53      106.24 	 1.008%
+numa01.sh       Sys:      125.98      217.34      179.41       30.35 	 -22.3%
+numa01.sh      User:    38318.48    53789.56    45864.17     6620.80 	 -0.75%
+numa02.sh      Real:       60.06       61.27       60.59        0.45 	 1.716%
+numa02.sh       Sys:       14.25       17.86       16.09        1.28 	 59.78%
+numa02.sh      User:     5190.13     5225.67     5209.24       13.19 	 1.145%
+numa03.sh      Real:      748.21      960.25      823.15       73.51 	 1.005%
+numa03.sh       Sys:       96.68      122.10      110.42       11.29 	 5.334%
+numa03.sh      User:    58222.16    72595.27    63552.22     5048.87 	 1.283%
+numa04.sh      Real:      433.08      630.55      499.30       68.15 	 4.404%
+numa04.sh       Sys:      245.22      386.75      306.09       63.32 	 -17.7%
+numa04.sh      User:    35014.68    46151.72    38530.26     3924.65 	 0.010%
+numa05.sh      Real:      394.77      410.07      401.41        5.99 	 2.476%
+numa05.sh       Sys:      212.40      301.82      256.23       35.41 	 14.08%
+numa05.sh      User:    33224.86    34201.40    33665.61      313.40 	 1.405%
 
-Regards,
-Andreas
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+---
+ kernel/sched/fair.c  | 17 +++++++++++++++++
+ kernel/sched/sched.h |  1 +
+ 2 files changed, 18 insertions(+)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 46d773c..3e19e32 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1478,6 +1478,16 @@ struct task_numa_env {
+ static void task_numa_assign(struct task_numa_env *env,
+ 			     struct task_struct *p, long imp)
+ {
++	struct rq *rq = cpu_rq(env->dst_cpu);
++
++	if (xchg(&rq->numa_migrate_on, 1))
++		return;
++
++	if (env->best_cpu != -1) {
++		rq = cpu_rq(env->best_cpu);
++		WRITE_ONCE(rq->numa_migrate_on, 0);
++	}
++
+ 	if (env->best_task)
+ 		put_task_struct(env->best_task);
+ 	if (p)
+@@ -1533,6 +1543,9 @@ static void task_numa_compare(struct task_numa_env *env,
+ 	long moveimp = imp;
+ 	int dist = env->dist;
+ 
++	if (READ_ONCE(dst_rq->numa_migrate_on))
++		return;
++
+ 	rcu_read_lock();
+ 	cur = task_rcu_dereference(&dst_rq->curr);
+ 	if (cur && ((cur->flags & PF_EXITING) || is_idle_task(cur)))
+@@ -1699,6 +1712,7 @@ static int task_numa_migrate(struct task_struct *p)
+ 		.best_cpu = -1,
+ 	};
+ 	struct sched_domain *sd;
++	struct rq *best_rq;
+ 	unsigned long taskweight, groupweight;
+ 	int nid, ret, dist;
+ 	long taskimp, groupimp;
+@@ -1803,14 +1817,17 @@ static int task_numa_migrate(struct task_struct *p)
+ 	 */
+ 	p->numa_scan_period = task_scan_start(p);
+ 
++	best_rq = cpu_rq(env.best_cpu);
+ 	if (env.best_task == NULL) {
+ 		ret = migrate_task_to(p, env.best_cpu);
++		WRITE_ONCE(best_rq->numa_migrate_on, 0);
+ 		if (ret != 0)
+ 			trace_sched_stick_numa(p, env.src_cpu, env.best_cpu);
+ 		return ret;
+ 	}
+ 
+ 	ret = migrate_swap(p, env.best_task, env.best_cpu, env.src_cpu);
++	WRITE_ONCE(best_rq->numa_migrate_on, 0);
+ 
+ 	if (ret != 0)
+ 		trace_sched_stick_numa(p, env.src_cpu, task_cpu(env.best_task));
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 211841e..55bc6e1 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -756,6 +756,7 @@ struct rq {
+ #ifdef CONFIG_NUMA_BALANCING
+ 	unsigned int		nr_numa_running;
+ 	unsigned int		nr_preferred_running;
++	unsigned int		numa_migrate_on;
+ #endif
+ 	#define CPU_LOAD_IDX_MAX 5
+ 	unsigned long		cpu_load[CPU_LOAD_IDX_MAX];
+-- 
+1.8.3.1
