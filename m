@@ -1,169 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeFDDlg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 23:41:36 -0400
-Received: from mail-by2nam01on0040.outbound.protection.outlook.com ([104.47.34.40]:24775
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751444AbeFDDle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 23:41:34 -0400
-From: Rajan Vaja <RAJANV@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jolly Shah <JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
- CLK_OF_DECLARE_DRIVER
-Thread-Topic: [PATCH] clk: clk-fixed-factor: Use new macro
- CLK_OF_DECLARE_DRIVER
-Thread-Index: AQHTtuf/CFgaaA2KSEWVdsmwI1dm/aPIOgOAgAAMc1CACWfIAIABDRAggEtTqACALvxzAIAC8Ytw
-Date: Mon, 4 Jun 2018 03:41:27 +0000
-Message-ID: <CY1PR02MB2091426610FC0037BB9EF61BB7670@CY1PR02MB2091.namprd02.prod.outlook.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
- <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
- <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
- <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
- <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
-In-Reply-To: <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=RAJANV@xilinx.com;
-x-originating-ip: [149.199.62.254]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY1PR02MB2140;7:1iC+LGXH/jjMTG52Ahu9no8c3cpJys/z3uwkLe580zCLng2URsq0+Lkar5Ztv3ROzSBCdWzER7es+55+KpQk/uhLALXOCKaT8wqMBLr8ZHGYJfa4ZcpJjWKpZd2SVlOAJl2KsmpfFlNifRQfMeGW28VYhXV4xR3axHgPS3iR8AigiLo22hVGwqFWraPre9phvzN0k9LJJgOIGc6GXmg1C3zTlEbTOTVxnNkgemDUvhnxFDk9ZyLcQEZhfcBw2WcF
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39850400004)(396003)(346002)(39380400002)(376002)(366004)(51914003)(13464003)(199004)(189003)(7736002)(105586002)(3280700002)(3660700001)(106356001)(2906002)(97736004)(33656002)(6116002)(3846002)(86362001)(2900100001)(478600001)(66066001)(4326008)(68736007)(45080400002)(53936002)(72206003)(6246003)(966005)(14454004)(9686003)(25786009)(229853002)(54906003)(6916009)(5660300001)(8936002)(99286004)(5250100002)(8676002)(11346002)(476003)(446003)(81166006)(486006)(26005)(76176011)(93886005)(186003)(53546011)(6506007)(55016002)(305945005)(74316002)(316002)(6306002)(7696005)(6436002)(81156014)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR02MB2140;H:CY1PR02MB2091.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY1PR02MB2140;
-x-ms-traffictypediagnostic: CY1PR02MB2140:
-x-microsoft-antispam-prvs: <CY1PR02MB21402052DA97B7687EFC3424B7670@CY1PR02MB2140.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(192813158149592);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY1PR02MB2140;BCL:0;PCL:0;RULEID:;SRVR:CY1PR02MB2140;
-x-forefront-prvs: 069373DFB6
-x-microsoft-antispam-message-info: s67fSAWh8y4GOghDB6/FL4RJfvi+6DfZKRaFqxoUL57qImZI4PajG+Qh519TBoaQZnjMrZB3rYaTw7/s4R4i/IblgSIXZkBELtnygYWqBJuje5AbtJ25pm6BAHflRtvAgOpsBr8oqPEOrVRF6EbuS7noknR/Ymmnd81WOTJpRtoL/GPuR4qfEXi05lRkR7AU
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1751688AbeFDDpK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 23:45:10 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:54066 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751470AbeFDDpI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 23:45:08 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Containers <containers@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Date: Sun, 03 Jun 2018 22:45:01 -0500
+Message-ID: <878t7vp64i.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: dddc243f-3ef5-46d2-5395-08d5c9cd0e0b
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dddc243f-3ef5-46d2-5395-08d5c9cd0e0b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2018 03:41:28.0301
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR02MB2140
+Content-Type: text/plain
+X-XM-SPF: eid=1fPgQd-0008Dq-4b;;;mid=<878t7vp64i.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+BkLaQZKl0murUv8AxUwIlHIbl4S8j1C4=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 XMSubMetaSx_00 1+ Sexy Words
+        *  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 203 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.3 (1.6%), b_tie_ro: 2.3 (1.1%), parse: 0.82 (0.4%),
+        extract_message_metadata: 3.3 (1.6%), get_uri_detail_list: 1.49 (0.7%),
+        tests_pri_-1000: 3.5 (1.7%), tests_pri_-950: 1.18 (0.6%), tests_pri_-900:
+        0.96 (0.5%), tests_pri_-400: 18 (8.7%), check_bayes: 17 (8.2%), b_tokenize: 5
+        (2.5%), b_tok_get_all: 5 (2.7%), b_comp_prob: 1.76 (0.9%), b_tok_touch_all:
+        2.5 (1.2%), b_finish: 0.62 (0.3%), tests_pri_0: 158 (77.9%),
+        check_dkim_signature: 0.42 (0.2%), check_dkim_adsp: 24 (11.8%),
+        tests_pri_500: 5 (2.7%), rewrite_mail: 0.00 (0.0%)
+Subject: [GIT PULL] userns 
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w543fgpg008978
 
-Hi Stephen,
 
-Thanks for the reply. 
+Linus,
 
-> -----Original Message-----
-> From: Stephen Boyd [mailto:sboyd@kernel.org]
-> Sent: 02 June 2018 12:11 PM
-> To: Rajan Vaja <RAJANV@xilinx.com>
-> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Shah
-> <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
-> mturquette@baylibre.com
-> Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
-> CLK_OF_DECLARE_DRIVER
-> 
-> Quoting Rajan Vaja (2018-05-03 02:18:30)
-> > Hi Stephen,
-> >
-> > > -----Original Message-----
-> > > From: Rajan Vaja
-> > > Sent: 16 March 2018 05:20 PM
-> > > To: 'Stephen Boyd' <sboyd@kernel.org>
-> > > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Shah
-> > > <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
-> > > mturquette@baylibre.com
-> > > Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
-> > > CLK_OF_DECLARE_DRIVER
-> > >
-> > > Hi Stephen,
-> > >
-> > > Thanks for the comment.
-> > >
-> > > > -----Original Message-----
-> > > > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > > > Sent: 16 March 2018 12:17 AM
-> > > > To: Rajan Vaja <RAJANV@xilinx.com>
-> > > > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Shah
-> > > > <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
-> > > > mturquette@baylibre.com
-> > > > Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
-> > > > CLK_OF_DECLARE_DRIVER
-> > > >
-> > > > Quoting Rajan Vaja (2018-03-09 11:27:40)
-> > > > > > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > > > > >
-> > > > > > Is the intent to register the clk twice? I believe things are working as
-> > > > > > intended without this patch, so maybe you can explain a little more
-> what
-> > > > > > you're trying to fix.
-> > > > > [Rajan] Yes. During of_clk_init() if some DT fixed factor clock has
-> > > > > parent which is neither mentioned in output-clock-names of clock
-> > > > > controller nor registered as clock provider, of_clk_init() will try to
-> > > > > forcefully register in second loop.
-> > > > >
-> > > > >                         if (force || parent_ready(clk_provider->np)) {
-> > > > >
-> > > > >                                 /* Don't populate platform devices */
-> > > > >                                 of_node_set_flag(clk_provider->np,
-> > > > >                                                  OF_POPULATED);
-> > > > >
-> > > > > So registration of this DT fixed-factor clock would fail as parent
-> > > > > would be NULL as below (called from _of_fixed_factor_clk_setup()):
-> > > > > parent_name = of_clk_get_parent_name(node, 0);
-> > > > >
-> > > > > On the other hand, even if registration failed, that node will be
-> > > > > marked as OF_POPULATED, so probe of clk-fixed-factor.c will also not
-> > > > > be called and that DT fixed-factor clock would never be registered.
-> > > > >
-> > > > > Same thing is discussed at  https://lkml.org/lkml/2017/6/5/681 .
-> > > >
-> > > > Ok. I believe the answer is to fix the DT to describe the parent chain
-> > > > properly with clock-output-names. Otherwise, we have no good way of
-> > > > figuring out what the name should be.
-> > > [Rajan] clock DT binding doc says that clock-output-names property
-> > > is optional and sometimes not recommended.
-> > > I think this patch fixes the issue we have which mandates to add clock-
-> output-
-> > > names
-> > > property (for this particular case). Also, IIUC platform driver probe in clk-
-> fixed-
-> > > factor.c
-> > > will never be called unless we use CLK_OF_DECLARE_DRIVER.
-> > > I completely agree that proper solution would be to stop using strings to
-> > > describe clock topology.
-> > [Rajan] Any comments on this?
-> > Unless we have proper solution ready, we need to have some mechanism to
-> handle this scenario.
-> > clock-output-names is optional and without this, it mandates to use clock-
-> output-names.
-> >
-> 
-> I couldn't read your outlook sent email and I was too busy to go
-> translate it. Some bug in my MUA it seems.
-> 
-> Can you add the output-names property? In this case it's practically
-> mandatory, so if you can't do it I'd like to hear why not.
-[Rajan] In our case, we are firmware maintains clock database and driver query clocks
-from firmware and registers clock based on information received from firmware. So
-output clock names are not fixed. 
-https://patchwork.kernel.org/patch/10439893/ - dt-bindings: clock: Add bindings for ZynqMP clock driver
-https://patchwork.kernel.org/patch/10439891/ - drivers: clk: Add ZynqMP clock driver
+Please pull the userns-linus branch from the git tree:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-linus
+
+   HEAD: f3f1a18330ac1b717cd7a32adff38d965f365aa2 fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
+
+This is the last couple of vfs bits to enable root in a user namespace
+to mount and manipulate a filesystem with backing store (AKA not a
+virtual filesystem like proc, but a filesystem where the unprivileged
+user controls the content).   The target filesystem for this work
+is fuse, and Miklos should be sending you the pull request for the
+fuse bits this merge window.
+
+The two key patches are " evm: Don't update hmacs in user ns mounts" and
+"vfs: Don't allow changing the link count of an inode with an invalid
+uid or gid".  Those close small gaps in the vfs that would be a problem
+if an unprivileged fuse filesystem is mounted.
+
+The rest of the changes are things that are now safe to allow a root
+user in a user namespace to do with a filesystem they have mounted.  The
+most interesting development is that remount is now safe.
+
+Eric W. Biederman (5):
+      vfs: Don't allow changing the link count of an inode with an invalid uid or gid
+      vfs: Allow userns root to call mknod on owned filesystems.
+      fs: Allow superblock owner to replace invalid owners of inodes
+      fs: Allow superblock owner to access do_remount_sb()
+      capabilities: Allow privileged user in s_user_ns to set security.* xattrs
+
+Seth Forshee (2):
+      evm: Don't update hmacs in user ns mounts
+      fs: Allow CAP_SYS_ADMIN in s_user_ns to freeze and thaw filesystems
+
+Eric
