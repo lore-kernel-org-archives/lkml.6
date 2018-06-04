@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752961AbeFDHXr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:23:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54484 "EHLO mail.kernel.org"
+        id S1753027AbeFDHYR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:24:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753108AbeFDHCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:00 -0400
+        id S1752536AbeFDHBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 38/52] MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
-Date: Mon,  4 Jun 2018 08:58:33 +0200
-Message-Id: <20180604065608.103095961@linuxfoundation.org>
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>, John Crispin <john@phrozen.org>,
+        linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.14 36/52] MIPS: lantiq: gphy: Drop reboot/remove reset asserts
+Date: Mon,  4 Jun 2018 08:58:31 +0200
+Message-Id: <20180604065608.017672204@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -30,57 +31,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Mathias Kresin <dev@kresin.me>
 
-commit 28e4213dd331e944e7fca1954a946829162ed9d4 upstream.
+commit 32795631e67e16141aa5e065c28ba03bf17abb90 upstream.
 
-Having PR_FP_MODE_FRE (i.e. Config5.FRE) set without PR_FP_MODE_FR (i.e.
-Status.FR) is not supported as the lone purpose of Config5.FRE is to
-emulate Status.FR=0 handling on FPU hardware that has Status.FR=1
-hardwired[1][2].  Also we do not handle this case elsewhere, and assume
-throughout our code that TIF_HYBRID_FPREGS and TIF_32BIT_FPREGS cannot
-be set both at once for a task, leading to inconsistent behaviour if
-this does happen.
+While doing a global software reset, these bits are not cleared and let
+some bootloader fail to initialise the GPHYs. The bootloader don't
+expect the GPHYs in reset, as they aren't during power on.
 
-Return unsuccessfully then from prctl(2) PR_SET_FP_MODE calls requesting
-PR_FP_MODE_FRE to be set with PR_FP_MODE_FR clear.  This corresponds to
-modes allowed by `mips_set_personality_fp'.
+The asserts were a workaround for a wrong syscon-reboot mask. With a
+mask set which includes the GPHY resets, these resets aren't required
+any more.
 
-References:
-
-[1] "MIPS Architecture For Programmers, Vol. III: MIPS32 / microMIPS32
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00090, Revision 6.02, July 10, 2015, Table 9.69
-    "Config5 Register Field Descriptions", p. 262
-
-[2] "MIPS Architecture For Programmers, Volume III: MIPS64 / microMIPS64
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00091, Revision 6.03, December 22, 2015, Table
-    9.72 "Config5 Register Field Descriptions", p. 288
-
-Fixes: 9791554b45a2 ("MIPS,prctl: add PR_[GS]ET_FP_MODE prctl options for MIPS")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
+Fixes: 126534141b45 ("MIPS: lantiq: Add a GPHY driver which uses the RCU syscon-mfd")
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: John Crispin <john@phrozen.org>
 Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.0+
-Patchwork: https://patchwork.linux-mips.org/patch/19327/
+Cc: <stable@vger.kernel.org> # 4.14+
+Patchwork: https://patchwork.linux-mips.org/patch/19003/
+[jhogan@kernel.org: Fix build warnings]
 Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/process.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/soc/lantiq/gphy.c |   36 ------------------------------------
+ 1 file changed, 36 deletions(-)
 
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -721,6 +721,10 @@ int mips_set_process_fp_mode(struct task
- 	if (value & ~known_bits)
- 		return -EOPNOTSUPP;
+--- a/drivers/soc/lantiq/gphy.c
++++ b/drivers/soc/lantiq/gphy.c
+@@ -30,7 +30,6 @@ struct xway_gphy_priv {
+ 	struct clk *gphy_clk_gate;
+ 	struct reset_control *gphy_reset;
+ 	struct reset_control *gphy_reset2;
+-	struct notifier_block gphy_reboot_nb;
+ 	void __iomem *membase;
+ 	char *fw_name;
+ };
+@@ -64,24 +63,6 @@ static const struct of_device_id xway_gp
+ };
+ MODULE_DEVICE_TABLE(of, xway_gphy_match);
  
-+	/* Setting FRE without FR is not supported.  */
-+	if ((value & (PR_FP_MODE_FR | PR_FP_MODE_FRE)) == PR_FP_MODE_FRE)
-+		return -EOPNOTSUPP;
-+
- 	/* Avoid inadvertently triggering emulation */
- 	if ((value & PR_FP_MODE_FR) && raw_cpu_has_fpu &&
- 	    !(raw_current_cpu_data.fpu_id & MIPS_FPIR_F64))
+-static struct xway_gphy_priv *to_xway_gphy_priv(struct notifier_block *nb)
+-{
+-	return container_of(nb, struct xway_gphy_priv, gphy_reboot_nb);
+-}
+-
+-static int xway_gphy_reboot_notify(struct notifier_block *reboot_nb,
+-				   unsigned long code, void *unused)
+-{
+-	struct xway_gphy_priv *priv = to_xway_gphy_priv(reboot_nb);
+-
+-	if (priv) {
+-		reset_control_assert(priv->gphy_reset);
+-		reset_control_assert(priv->gphy_reset2);
+-	}
+-
+-	return NOTIFY_DONE;
+-}
+-
+ static int xway_gphy_load(struct device *dev, struct xway_gphy_priv *priv,
+ 			  dma_addr_t *dev_addr)
+ {
+@@ -205,14 +186,6 @@ static int xway_gphy_probe(struct platfo
+ 	reset_control_deassert(priv->gphy_reset);
+ 	reset_control_deassert(priv->gphy_reset2);
+ 
+-	/* assert the gphy reset because it can hang after a reboot: */
+-	priv->gphy_reboot_nb.notifier_call = xway_gphy_reboot_notify;
+-	priv->gphy_reboot_nb.priority = -1;
+-
+-	ret = register_reboot_notifier(&priv->gphy_reboot_nb);
+-	if (ret)
+-		dev_warn(dev, "Failed to register reboot notifier\n");
+-
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	return ret;
+@@ -220,21 +193,12 @@ static int xway_gphy_probe(struct platfo
+ 
+ static int xway_gphy_remove(struct platform_device *pdev)
+ {
+-	struct device *dev = &pdev->dev;
+ 	struct xway_gphy_priv *priv = platform_get_drvdata(pdev);
+-	int ret;
+-
+-	reset_control_assert(priv->gphy_reset);
+-	reset_control_assert(priv->gphy_reset2);
+ 
+ 	iowrite32be(0, priv->membase);
+ 
+ 	clk_disable_unprepare(priv->gphy_clk_gate);
+ 
+-	ret = unregister_reboot_notifier(&priv->gphy_reboot_nb);
+-	if (ret)
+-		dev_warn(dev, "Failed to unregister reboot notifier\n");
+-
+ 	return 0;
+ }
+ 
