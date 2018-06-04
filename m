@@ -1,79 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeFDD7v (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 23:59:51 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35640 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751273AbeFDD7u (ORCPT
+        id S1750938AbeFDEEu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 00:04:50 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:39308 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750723AbeFDEEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 23:59:50 -0400
-X-Google-Smtp-Source: ADUXVKI+PzQSXYGJksTrdNpvq+YFNp0Krrbq50HiQG1gexQVTJYFOcyswGfkAu2YJlyfPzWjuFA8Fw==
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [lustre-devel] [PATCH] staging: lustre: delete the filesystem
- from the tree.
-From: Alexey Lyashkov <alexey.lyashkov@gmail.com>
-In-Reply-To: <87h8mjp5o0.fsf@notabene.neil.brown.name>
-Date: Mon, 4 Jun 2018 06:59:45 +0300
-Cc: "Dilger, Andreas" <andreas.dilger@intel.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "Drokin, Oleg" <oleg.drokin@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "selinux@tycho.nsa.gov" <selinux@tycho.nsa.gov>,
-        fsdevel <linux-fsdevel@vger.kernel.org>,
-        lustre-devel <lustre-devel@lists.lustre.org>
-Message-Id: <FE290581-D17D-4CEC-9AE2-B79DCBBD0823@gmail.com>
-References: <20180601091133.GA27521@kroah.com>
- <20180601114151.GA25225@infradead.org>
- <E5BF8501-35EB-4DDF-ADBE-6016CF31A502@dilger.ca>
- <29ACF5A8-7608-46BB-8191-E3FEB77D0F24@cray.com>
- <87h8mmrt6b.fsf@notabene.neil.brown.name>
- <58123CDD-8424-4E1D-A11F-0F899970A49B@intel.com>
- <87h8mjp5o0.fsf@notabene.neil.brown.name>
-To: NeilBrown <neilb@suse.com>
-X-Mailer: Apple Mail (2.3273)
+        Mon, 4 Jun 2018 00:04:48 -0400
+X-Google-Smtp-Source: ADUXVKI4DbB4z+8Sl645eLjTpqg367ZjVFTOflWqb0Cbt+r3JWycdqxwAuBU0QjCy5gHIo5hZHIdpnN/xocX7iE0BFo=
+MIME-Version: 1.0
+In-Reply-To: <20180516045518.6876-1-ganapatrao.kulkarni@cavium.com>
+References: <20180516045518.6876-1-ganapatrao.kulkarni@cavium.com>
+From: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date: Mon, 4 Jun 2018 09:34:47 +0530
+Message-ID: <CAKTKpr4NycrojxFFZ+SvP0YYHrhTMyDfLi9qHG9i8ekkbUjZoA@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] Add ThunderX2 SoC Performance Monitoring Unit driver
+To: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <Will.Deacon@arm.com>, jnair@caviumnetworks.com,
+        Robert Richter <Robert.Richter@cavium.com>, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w543xub6012463
 
+Hi Mark,
 
-> 4 июня 2018 г., в 6:54, NeilBrown <neilb@suse.com> написал(а):
-> 
-> On Sun, Jun 03 2018, Dilger, Andreas wrote:
-> 
->> On Jun 1, 2018, at 17:19, NeilBrown <neilb@suse.com> wrote:
->>> 
->>> On Fri, Jun 01 2018, Doug Oucharek wrote:
->>> 
->>>> Would it makes sense to land LNet and LNDs on their own first?  Get
->>>> the networking house in order first before layering on the file
->>>> system?
->>> 
->>> I'd like to turn that question on it's head:
->>> Do we need LNet and LNDs?  What value do they provide?
->>> (this is a genuine question, not being sarcastic).
->>> 
->>> It is a while since I tried to understand LNet, and then it was a
->>> fairly superficial look, but I think it is an abstraction layer
->>> that provides packet-based send/receive with some numa-awareness
->>> and routing functionality.  It sits over sockets (TCP) and IB and
->>> provides a uniform interface.
->> 
->> LNet is originally based on a high-performance networking stack called
->> Portals (v3, http://www.cs.sandia.gov/Portals/), with additions for LNet
->> routing to allow cross-network bridging.
->> 
->> A critical part of LNet is that it is for RDMA and not packet-based
->> messages.  Everything in Lustre is structured around RDMA.  Of course,
->> RDMA is not possible with TCP
+can you please share your review comments?
 
-To be clear. Soft IB (aka Soft RoCE) driver is part of OFED stack from 4.8(or 4.9).
-So RDMA API now is possible with TCP networks.
+On Wed, May 16, 2018 at 10:25 AM, Ganapatrao Kulkarni
+<ganapatrao.kulkarni@cavium.com> wrote:
+> This patchset adds PMU driver for Cavium's ThunderX2 SoC UNCORE devices.
+> The SoC has PMU support in L3 cache controller (L3C) and in the
+> DDR4 Memory Controller (DMC).
+>
+> v5:
+>      -Incroporated review comments from Mark Rutland[2]
+> v4:
+>      -Incroporated review comments from Mark Rutland[1]
+>
+> [1] https://www.spinics.net/lists/arm-kernel/msg588563.html
+> [2] https://lkml.org/lkml/2018/4/26/376
+>
+> v3:
+>      - fixed warning reported by kbuild robot
+>
+> v2:
+>      - rebased to 4.12-rc1
+>      - Removed Arch VULCAN dependency.
+>      - update SMC call parameters as per latest firmware.
+>
+> v1:
+>      -Initial patch
+>
+> Ganapatrao Kulkarni (2):
+>   perf: uncore: Adding documentation for ThunderX2 pmu uncore driver
+>   ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU driver
+>
+>  Documentation/perf/thunderx2-pmu.txt |  66 +++
+>  drivers/perf/Kconfig                 |   8 +
+>  drivers/perf/Makefile                |   1 +
+>  drivers/perf/thunderx2_pmu.c         | 965 +++++++++++++++++++++++++++++++++++
+>  include/linux/cpuhotplug.h           |   1 +
+>  5 files changed, 1041 insertions(+)
+>  create mode 100644 Documentation/perf/thunderx2-pmu.txt
+>  create mode 100644 drivers/perf/thunderx2_pmu.c
+>
+> --
+> 2.9.4
+>
 
-
-Alex
+thanks
+Ganapat
