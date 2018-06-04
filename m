@@ -1,69 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752692AbeFDMsf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:48:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55363 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752453AbeFDMsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:48:33 -0400
-Date: Mon, 4 Jun 2018 14:48:30 +0200
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Mike Snitzer <snitzer@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.de>, Laurence Oberman <loberman@redhat.com>,
-        Ewan Milne <emilne@redhat.com>, James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>, axboe@kernel.dk
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-Message-ID: <20180604124829.pnpzt6vgijmrtfty@linux-x5ow.site>
-References: <20180525135813.GB9591@redhat.com>
- <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
- <20180530220206.GA7037@redhat.com>
- <20180531163311.GA30954@lst.de>
- <20180531181757.GB11848@redhat.com>
- <yq17enjut3q.fsf@oracle.com>
- <20180601042441.GB14244@redhat.com>
- <0a0d4ff8-fe06-5869-cd18-a8c99b5e86f6@grimberg.me>
- <20180603160626.GA4361@redhat.com>
- <29bfbc6c-861d-0348-2f8b-e803acad43ea@grimberg.me>
+        id S1752793AbeFDMus (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:50:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752611AbeFDMur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:50:47 -0400
+Date: Mon, 4 Jun 2018 15:50:46 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: David Gibson <david@gibson.dropbear.id.au>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, jasowang@redhat.com, mpe@ellerman.id.au,
+        hch@infradead.org
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180604154355-mutt-send-email-mst@kernel.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
+ <20180604085742.GQ4251@umbus>
+ <d5df613d6347fe2f9bb6ea65bc6f6be05650ca6f.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <29bfbc6c-861d-0348-2f8b-e803acad43ea@grimberg.me>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <d5df613d6347fe2f9bb6ea65bc6f6be05650ca6f.camel@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 02:46:47PM +0300, Sagi Grimberg wrote:
-> I agree with Christoph that changing personality on the fly is going to
-> be painful. This opt-in will need to be one-host at connect time. For
-> that, we will probably need to also expose an argument in nvme-cli too.
-> Changing the mpath personality will need to involve disconnecting the
-> controller and connecting again with the argument toggled. I think this
-> is the only sane way to do this.
+On Mon, Jun 04, 2018 at 07:48:54PM +1000, Benjamin Herrenschmidt wrote:
+> On Mon, 2018-06-04 at 18:57 +1000, David Gibson wrote:
+> > 
+> > > - First qemu doesn't know that the guest will switch to "secure mode"
+> > > in advance. There is no difference between a normal and a secure
+> > > partition until the partition does the magic UV call to "enter secure
+> > > mode" and qemu doesn't see any of it. So who can set the flag here ?
+> > 
+> > This seems weird to me.  As a rule HV calls should go through qemu -
+> > or be allowed to go directly to KVM *by* qemu.
+> 
+> It's not an HV call, it's a UV call, qemu won't see it, qemu isn't
+> trusted. Now the UV *will* reflect that to the HV via some synthetized
+> HV calls, and we *could* have those do a pass by qemu, however, so far,
+> our entire design doesn't rely on *any* qemu knowledge whatsoever and
+> it would be sad to add it just for that purpose.
 
-If we still want to make it dynamically, yes. I've raised this concern
-while working on the patch as well.
+It's a temporary work-around. I think that the long-term fix is to
+support per-device quirks and have the DMA API DTRT for virtio.
 
-> Another path we can make progress in is user visibility. We have
-> topology in place and you mentioned primary path (which we could
-> probably add). What else do you need for multipath-tools to support
-> nvme?
-
-I think the first priority is getting nvme notion into multipath-tools
-like I said elsewhere and then see. Martin Wilck was already working
-on patches for this.
-
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+> Additionally, this is rather orthogonal, see my other email, the
+> problem we are trying to solve is *not* a qemu problem and it doesn't
+> make sense to leak that into qemu.
+> 
+> >   We generally reserve
+> > the latter for hot path things.  Since this isn't a hot path, having
+> > the call handled directly by the kernel seems wrong.
+> >
+> > Unless a "UV call" is something different I don't know about.
+> 
+> Yes, a UV call goes to the Ultravisor, not the Hypervisor. The
+> Hypervisor isn't trusted.
+> 
+> > > - Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
+> > > vhost) go through the emulated MMIO for every access to the guest,
+> > > which adds additional overhead.
+> > 
+> Ben.
