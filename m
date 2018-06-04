@@ -1,87 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751362AbeFDQ1n (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 12:27:43 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40679 "EHLO
+        id S1751750AbeFDQ2s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 12:28:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:40707 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751151AbeFDQ1l (ORCPT
+        with ESMTP id S1751332AbeFDQ1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 12:27:41 -0400
-Message-Id: <20180604153352.480513443@linutronix.de>
+        Mon, 4 Jun 2018 12:27:44 -0400
+Message-Id: <20180604162224.908136099@linutronix.de>
 User-Agent: quilt/0.65
-Date: Mon, 04 Jun 2018 17:33:52 +0200
+Date: Mon, 04 Jun 2018 17:34:00 +0200
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>, Dmitry Safonov <0x7f454c46@gmail.com>,
         Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
         Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>
-Subject: [patch 0/8] x86/apic: Prevent data corruption and make affinity
- setting more robust
+Subject: [patch 8/8] x86/apic/vector: Print APIC control bits in debugfs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline;
+ filename=x86-apic-vector--Print-APIC-control-bits-in-debugfs.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several people observed the WARN_ON() in irq_matrix_free() which triggers
-when the caller tries to free an vector which is not in the allocation
-range. Song provided the trace information which allowed to decode the root
-cause.
+Extend the debugability of the vector management by adding the state bits
+to the debugfs output.
 
-The rework of the vector allocation mechanism failed to preserve a sanity
-check, which prevents setting a new target vector/CPU when the previous
-affinity change has not fully completed.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/kernel/apic/vector.c |   27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-As a result a half finished affinity change can be overwritten, which can
-cause the leak of a irq descriptor pointer on the previous target CPU and
-double enqueue of the hlist head into the cleanup lists of two or more
-CPUs. After one CPU cleaned up its vector the next CPU will invoke the
-cleanup handler with vector 0, which triggers the out of range warning in
-the matrix allocator.
-
-The fix for that issue is simple, but it exposes a different long standing
-problem, which was harder to trigger before the vector management code got
-reworked:
-
-  The fact that affinity settings can return -EBUSY is not handled well by
-  tools despite the fact that this possibility existed for a long time.
-
-So just applying the fix will cause some tools just to malfunction and
-while we might get away with pointing fingers and telling them that they
-should have handled this years ago, this will not solve anything.
-
-After thinking about it for quite a while, it turned out that the existing
-generic pending infrastructure, which defers affinity updates to the next
-raised interrupt context (to handle non irq remapped oddities), can be
-utilized to avoid the EBUSY return to user space completely.
-
-In course of that it turned out that the pending mechanics did not handle
--EBUSY properly either. In case of moving the interrupt and getting the
--EBUSY return value (unlikely but possible), the pending affinity change was
-silently dropped.
-
-In hindsight, we should have never tried to return -EBUSY back to user
-space as it's completely undefined what user space is supposed to do about
-it due to the dependency on the next interrupt to arrive before retrying
-which can take forever.
-
-The following patch set addresses these issues and handles the busy case
-completely in the kernel. The interrupts might not move immediately, but
-that's the case for the non interrupt remapped ones by default, so this
-should not come as a surprise.
-
-Thanks,
-
-	tglx
-
-8<-------------
- arch/x86/include/asm/apic.h         |    2 +
- arch/x86/kernel/apic/io_apic.c      |    2 -
- arch/x86/kernel/apic/vector.c       |   48 ++++++++++++++++++++++++------------
- arch/x86/platform/uv/uv_irq.c       |    7 -----
- drivers/iommu/amd_iommu.c           |    2 -
- drivers/iommu/intel_irq_remapping.c |    2 -
- drivers/iommu/irq_remapping.c       |    5 ---
- drivers/iommu/irq_remapping.h       |    2 -
- kernel/irq/manage.c                 |   37 ++++++++++++++++++++++++++-
- kernel/irq/migration.c              |   24 +++++++++++++-----
- 10 files changed, 91 insertions(+), 40 deletions(-)
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -588,8 +588,7 @@ static int x86_vector_alloc_irqs(struct
+ static void x86_vector_debug_show(struct seq_file *m, struct irq_domain *d,
+ 				  struct irq_data *irqd, int ind)
+ {
+-	unsigned int cpu, vector, prev_cpu, prev_vector;
+-	struct apic_chip_data *apicd;
++	struct apic_chip_data apicd;
+ 	unsigned long flags;
+ 	int irq;
+ 
+@@ -605,24 +604,26 @@ static void x86_vector_debug_show(struct
+ 		return;
+ 	}
+ 
+-	apicd = irqd->chip_data;
+-	if (!apicd) {
++	if (!irqd->chip_data) {
+ 		seq_printf(m, "%*sVector: Not assigned\n", ind, "");
+ 		return;
+ 	}
+ 
+ 	raw_spin_lock_irqsave(&vector_lock, flags);
+-	cpu = apicd->cpu;
+-	vector = apicd->vector;
+-	prev_cpu = apicd->prev_cpu;
+-	prev_vector = apicd->prev_vector;
++	memcpy(&apicd, irqd->chip_data, sizeof(apicd));
+ 	raw_spin_unlock_irqrestore(&vector_lock, flags);
+-	seq_printf(m, "%*sVector: %5u\n", ind, "", vector);
+-	seq_printf(m, "%*sTarget: %5u\n", ind, "", cpu);
+-	if (prev_vector) {
+-		seq_printf(m, "%*sPrevious vector: %5u\n", ind, "", prev_vector);
+-		seq_printf(m, "%*sPrevious target: %5u\n", ind, "", prev_cpu);
++
++	seq_printf(m, "%*sVector: %5u\n", ind, "", apicd.vector);
++	seq_printf(m, "%*sTarget: %5u\n", ind, "", apicd.cpu);
++	if (apicd.prev_vector) {
++		seq_printf(m, "%*sPrevious vector: %5u\n", ind, "", apicd.prev_vector);
++		seq_printf(m, "%*sPrevious target: %5u\n", ind, "", apicd.prev_cpu);
+ 	}
++	seq_printf(m, "%*smove_in_progress: %u\n", ind, "", apicd.move_in_progress ? 1 : 0);
++	seq_printf(m, "%*sis_managed:       %u\n", ind, "", apicd.is_managed ? 1 : 0);
++	seq_printf(m, "%*scan_reserve:      %u\n", ind, "", apicd.can_reserve ? 1 : 0);
++	seq_printf(m, "%*shas_reserved:     %u\n", ind, "", apicd.has_reserved ? 1 : 0);
++	seq_printf(m, "%*scleanup_pending:  %u\n", ind, "", !hlist_unhashed(&apicd.clist));
+ }
+ #endif
+ 
