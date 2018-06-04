@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753251AbeFDH0c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:26:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53926 "EHLO mail.kernel.org"
+        id S1753051AbeFDH1J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:27:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752872AbeFDHBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:22 -0400
+        id S1751930AbeFDHBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 25/52] dma-buf: remove redundant initialization of sg_table
-Date: Mon,  4 Jun 2018 08:58:20 +0200
-Message-Id: <20180604065607.580878314@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 22/52] cfg80211: further limit wiphy names to 64 bytes
+Date: Mon,  4 Jun 2018 08:58:17 +0200
+Message-Id: <20180604065607.465692735@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -31,37 +31,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 531beb067c6185aceabfdee0965234c6a8fd133b upstream.
+commit 814596495dd2b9d4aab92d8f89cf19060d25d2ea upstream.
 
-sg_table is being initialized and is never read before it is updated
-again later on, hence making the initialization redundant. Remove
-the initialization.
+wiphy names were recently limited to 128 bytes by commit a7cfebcb7594
+("cfg80211: limit wiphy names to 128 bytes").  As it turns out though,
+this isn't sufficient because dev_vprintk_emit() needs the syslog header
+string "SUBSYSTEM=ieee80211\0DEVICE=+ieee80211:$devname" to fit into 128
+bytes.  This triggered the "device/subsystem name too long" WARN when
+the device name was >= 90 bytes.  As before, this was reproduced by
+syzbot by sending an HWSIM_CMD_NEW_RADIO command to the MAC80211_HWSIM
+generic netlink family.
 
-Detected by clang scan-build:
-"warning: Value stored to 'sg_table' during its initialization is
-never read"
+Fix it by further limiting wiphy names to 64 bytes.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20170914230516.6056-1-colin.king@canonical.com
-Cc: Guenter Roeck <linux@roeck-us.net>
+Reported-by: syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com
+Fixes: a7cfebcb7594 ("cfg80211: limit wiphy names to 128 bytes")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma-buf/dma-buf.c |    2 +-
+ include/uapi/linux/nl80211.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -625,7 +625,7 @@ EXPORT_SYMBOL_GPL(dma_buf_detach);
- struct sg_table *dma_buf_map_attachment(struct dma_buf_attachment *attach,
- 					enum dma_data_direction direction)
- {
--	struct sg_table *sg_table = ERR_PTR(-EINVAL);
-+	struct sg_table *sg_table;
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2604,7 +2604,7 @@ enum nl80211_attrs {
+ #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+ #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
  
- 	might_sleep();
+-#define NL80211_WIPHY_NAME_MAXLEN		128
++#define NL80211_WIPHY_NAME_MAXLEN		64
  
+ #define NL80211_MAX_SUPP_RATES			32
+ #define NL80211_MAX_SUPP_HT_RATES		77
