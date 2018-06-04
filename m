@@ -1,45 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeFDHkn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:40:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60002 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751354AbeFDHkm (ORCPT
+        id S1751998AbeFDHms (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:42:48 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37594 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFDHmr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:40:42 -0400
-Date: Mon, 4 Jun 2018 09:40:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, yamada.masahiro@socionext.com
-Subject: Re: [PATCH v2 0/9] Rewrite asm-generic/bitops/{atomic,lock}.h and
- use on arm64
-Message-ID: <20180604074029.GN12217@hirez.programming.kicks-ass.net>
-References: <1527869189-31512-1-git-send-email-will.deacon@arm.com>
+        Mon, 4 Jun 2018 03:42:47 -0400
+X-Google-Smtp-Source: ADUXVKKPri6cI55wMeTJK7YPpV3ABdSvVs49Q+yhphibwn0gpU4a7U3hU5V8xW0//TTmjCZ7LVbijw==
+Date: Mon, 4 Jun 2018 08:42:43 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Gwendal Grignou <gwendal@chromium.org>
+Cc: bleung@chromium.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] cros_ec: Use devm_kzalloc for private data
+Message-ID: <20180604074243.GJ25455@dell>
+References: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
+ <20180530165422.51178-1-gwendal@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1527869189-31512-1-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180530165422.51178-1-gwendal@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 01, 2018 at 05:06:20PM +0100, Will Deacon wrote:
-> Hi all,
-> 
-> This patch series has previously been posted in RFC form here:
-> 
->   RFCv1: https://www.spinics.net/lists/arm-kernel/msg634719.html
->   RFCv2: https://www.spinics.net/lists/arm-kernel/msg636875.html
->      v1: https://www.spinics.net/lists/arm-kernel/msg655262.html
-> 
-> The only change since v1 is that some of the fetch ops are replaced
-> by non-value-returning ops for some of the atomic bitops.
-> 
+On Wed, 30 May 2018, Gwendal Grignou wrote:
 
-Looks good,
+> Use dev_kzmalloc, remove .release entry point.
+> 
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+> ---
+> Change sinc v1:
+> - Readd __remove to avoid a warning when loaded as a module.
+> 
+>  drivers/mfd/cros_ec_dev.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Applied, thanks.
 
-How do you want to route this, through tip or the arm64 tree?
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
