@@ -1,126 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751726AbeFDDlG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 23:41:06 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33989 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751470AbeFDDlE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 23:41:04 -0400
-X-Google-Smtp-Source: ADUXVKLXKqMV+7zhauhe6SIxllh+iv5fDxgRU/o5Ht4R5soB4raoFweyrSguW3ZCCniwouOBGd2P3w==
-Date: Sun, 3 Jun 2018 20:41:00 -0700
-From: Benson Leung <bleung@google.com>
-To: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: dmitry.torokhov@gmail.com, bleung@chromium.org
-Subject: [GIT PULL] chrome-platform updates for v4.18
-Message-ID: <20180604034100.GA158510@decatoncale.mtv.corp.google.com>
+        id S1751822AbeFDDlg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 23:41:36 -0400
+Received: from mail-by2nam01on0040.outbound.protection.outlook.com ([104.47.34.40]:24775
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751444AbeFDDle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 23:41:34 -0400
+From: Rajan Vaja <RAJANV@xilinx.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jolly Shah <JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Thread-Topic: [PATCH] clk: clk-fixed-factor: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Thread-Index: AQHTtuf/CFgaaA2KSEWVdsmwI1dm/aPIOgOAgAAMc1CACWfIAIABDRAggEtTqACALvxzAIAC8Ytw
+Date: Mon, 4 Jun 2018 03:41:27 +0000
+Message-ID: <CY1PR02MB2091426610FC0037BB9EF61BB7670@CY1PR02MB2091.namprd02.prod.outlook.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+ <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
+ <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
+In-Reply-To: <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=RAJANV@xilinx.com;
+x-originating-ip: [149.199.62.254]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY1PR02MB2140;7:1iC+LGXH/jjMTG52Ahu9no8c3cpJys/z3uwkLe580zCLng2URsq0+Lkar5Ztv3ROzSBCdWzER7es+55+KpQk/uhLALXOCKaT8wqMBLr8ZHGYJfa4ZcpJjWKpZd2SVlOAJl2KsmpfFlNifRQfMeGW28VYhXV4xR3axHgPS3iR8AigiLo22hVGwqFWraPre9phvzN0k9LJJgOIGc6GXmg1C3zTlEbTOTVxnNkgemDUvhnxFDk9ZyLcQEZhfcBw2WcF
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39850400004)(396003)(346002)(39380400002)(376002)(366004)(51914003)(13464003)(199004)(189003)(7736002)(105586002)(3280700002)(3660700001)(106356001)(2906002)(97736004)(33656002)(6116002)(3846002)(86362001)(2900100001)(478600001)(66066001)(4326008)(68736007)(45080400002)(53936002)(72206003)(6246003)(966005)(14454004)(9686003)(25786009)(229853002)(54906003)(6916009)(5660300001)(8936002)(99286004)(5250100002)(8676002)(11346002)(476003)(446003)(81166006)(486006)(26005)(76176011)(93886005)(186003)(53546011)(6506007)(55016002)(305945005)(74316002)(316002)(6306002)(7696005)(6436002)(81156014)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR02MB2140;H:CY1PR02MB2091.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY1PR02MB2140;
+x-ms-traffictypediagnostic: CY1PR02MB2140:
+x-microsoft-antispam-prvs: <CY1PR02MB21402052DA97B7687EFC3424B7670@CY1PR02MB2140.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY1PR02MB2140;BCL:0;PCL:0;RULEID:;SRVR:CY1PR02MB2140;
+x-forefront-prvs: 069373DFB6
+x-microsoft-antispam-message-info: s67fSAWh8y4GOghDB6/FL4RJfvi+6DfZKRaFqxoUL57qImZI4PajG+Qh519TBoaQZnjMrZB3rYaTw7/s4R4i/IblgSIXZkBELtnygYWqBJuje5AbtJ25pm6BAHflRtvAgOpsBr8oqPEOrVRF6EbuS7noknR/Ymmnd81WOTJpRtoL/GPuR4qfEXi05lRkR7AU
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-MS-Office365-Filtering-Correlation-Id: dddc243f-3ef5-46d2-5395-08d5c9cd0e0b
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dddc243f-3ef5-46d2-5395-08d5c9cd0e0b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2018 03:41:28.0301
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR02MB2140
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w543fgpg008978
 
+Hi Stephen,
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the reply. 
 
-Hi Linus,
-
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git =
-tags/chrome-platform-for-linus-4.18
-
-for you to fetch changes up to 79a3d60300fc28def9b58dc30d86274b47052422:
-
-  platform/chrome: Use to_cros_ec_dev more broadly (2018-05-30 11:53:40 -07=
-00)
-
-----------------------------------------------------------------
-Changes to chrome-platform for v4.18
-
-Further changes from Dmitry related to the removal of platform data from
-atmel_mxt_ts and chromeos_laptop. This time, we have some changes that
-teach chromeos_laptop how to supply acpi properties for some input devices
-so that the peripheral driver doesn't have to do dmi matching on some
-Chromebook platforms.
-
-Also adds the Chromebook Tablet switch driver, which is useful for x86
-convertible Chromebooks.
-
-Other misc. cleanup.
-
-Thanks,
-Benson
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      platform: chrome: Add input dependency for tablet switch driver
-
-Benson Leung (2):
-      platform/chrome: chromeos_tbmc - add SPDX identifier
-      Merge branch 'ib-chrome-platform-atmel-mxt-ts-device-properties' into=
- working-branch-for-4.18
-
-Dmitry Torokhov (3):
-      platform/chrome: cros_ec_lpc: do not try DMI match when ACPI device f=
-ound
-      platform/chrome: chromeos_laptop - supply properties for ACPI devices
-      platform/chrome: chromeos_laptop: fix touchpad button mapping on Celes
-
-Gwendal Grignou (2):
-      platform: chrome: Add Tablet Switch ACPI driver
-      platform/chrome: Use to_cros_ec_dev more broadly
-
- drivers/platform/chrome/Kconfig            |  11 +
- drivers/platform/chrome/Makefile           |   1 +
- drivers/platform/chrome/chromeos_laptop.c  | 315 +++++++++++++++++++++++++=
-+---
- drivers/platform/chrome/chromeos_tbmc.c    | 111 ++++++++++
- drivers/platform/chrome/cros_ec_lightbar.c |  21 +-
- drivers/platform/chrome/cros_ec_lpc.c      |  13 +-
- drivers/platform/chrome/cros_ec_sysfs.c    |   2 -
- drivers/platform/chrome/cros_ec_vbc.c      |   9 +-
- include/linux/mfd/cros_ec.h                |   2 +
- 9 files changed, 428 insertions(+), 57 deletions(-)
- create mode 100644 drivers/platform/chrome/chromeos_tbmc.c
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlsUtMwACgkQHwn1ewov
-5lhSrg//bUo2NmfiS/xpaxafCVpd5CpQLk/MCdcDcDXh6ySX7CreN2ZUk3S9xEdX
-UUgUirM9x19xiajWnFOsJPxFe648YfxjKVQKNZ0zQBIShARM7tafhrZpWCKkLke5
-uVC97vZzNflfvZjxj+2cQVcil4ixgIw3gpFa8HpfjMCSSC4rwbEvtIav1sj1d+qF
-/W8ZAd1MqoP6SEXHifTGXHvXj9zyCT9B4k0lepiot69KtK31J5nSzHitwpKGmlVC
-RFwE00sydwJDsQ8hyyqg7+/mYPtPraTV8nJbfyKzE3pgpuiPWjWtyrKrtevc1Dre
-I2p2HGzf+dh2usP5B/2cQw1cd9izBozeB+EwssPG5qMtiZuFf2h6IqPFaIRcnJXd
-+c912uuBVLNLIkdGh06jxyzFfy9N3jPMu+GHdyKnOihfT66f4FPbq9XQqBWvARLE
-aDdVr3j56gJXmdplCjLFqEfXg8yNpWRWXInLyIGPe10r7P5Xvz6h1hBOo8tzoILa
-QqxpQ+0vwY9ftGrE++q4GKWXtdiEU59n2pWuZ5hPfjOkPjUIFOpRxqXrpupAuD1P
-LbBqEQ0YHiPQwLDN8bYsVj/v6wnl11jtAI34iUfdfx784fiyAaRDkg7pIXqKjQdZ
-rCGSQfTsjLLUDG8kYAySsNqZBDl03VmeKkF083z0+oTHASucYaQ=
-=JZJD
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
+> -----Original Message-----
+> From: Stephen Boyd [mailto:sboyd@kernel.org]
+> Sent: 02 June 2018 12:11 PM
+> To: Rajan Vaja <RAJANV@xilinx.com>
+> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Shah
+> <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
+> mturquette@baylibre.com
+> Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+> CLK_OF_DECLARE_DRIVER
+> 
+> Quoting Rajan Vaja (2018-05-03 02:18:30)
+> > Hi Stephen,
+> >
+> > > -----Original Message-----
+> > > From: Rajan Vaja
+> > > Sent: 16 March 2018 05:20 PM
+> > > To: 'Stephen Boyd' <sboyd@kernel.org>
+> > > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Shah
+> > > <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
+> > > mturquette@baylibre.com
+> > > Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+> > > CLK_OF_DECLARE_DRIVER
+> > >
+> > > Hi Stephen,
+> > >
+> > > Thanks for the comment.
+> > >
+> > > > -----Original Message-----
+> > > > From: Stephen Boyd [mailto:sboyd@kernel.org]
+> > > > Sent: 16 March 2018 12:17 AM
+> > > > To: Rajan Vaja <RAJANV@xilinx.com>
+> > > > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Shah
+> > > > <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
+> > > > mturquette@baylibre.com
+> > > > Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+> > > > CLK_OF_DECLARE_DRIVER
+> > > >
+> > > > Quoting Rajan Vaja (2018-03-09 11:27:40)
+> > > > > > From: Stephen Boyd [mailto:sboyd@kernel.org]
+> > > > > >
+> > > > > > Is the intent to register the clk twice? I believe things are working as
+> > > > > > intended without this patch, so maybe you can explain a little more
+> what
+> > > > > > you're trying to fix.
+> > > > > [Rajan] Yes. During of_clk_init() if some DT fixed factor clock has
+> > > > > parent which is neither mentioned in output-clock-names of clock
+> > > > > controller nor registered as clock provider, of_clk_init() will try to
+> > > > > forcefully register in second loop.
+> > > > >
+> > > > >                         if (force || parent_ready(clk_provider->np)) {
+> > > > >
+> > > > >                                 /* Don't populate platform devices */
+> > > > >                                 of_node_set_flag(clk_provider->np,
+> > > > >                                                  OF_POPULATED);
+> > > > >
+> > > > > So registration of this DT fixed-factor clock would fail as parent
+> > > > > would be NULL as below (called from _of_fixed_factor_clk_setup()):
+> > > > > parent_name = of_clk_get_parent_name(node, 0);
+> > > > >
+> > > > > On the other hand, even if registration failed, that node will be
+> > > > > marked as OF_POPULATED, so probe of clk-fixed-factor.c will also not
+> > > > > be called and that DT fixed-factor clock would never be registered.
+> > > > >
+> > > > > Same thing is discussed at  https://lkml.org/lkml/2017/6/5/681 .
+> > > >
+> > > > Ok. I believe the answer is to fix the DT to describe the parent chain
+> > > > properly with clock-output-names. Otherwise, we have no good way of
+> > > > figuring out what the name should be.
+> > > [Rajan] clock DT binding doc says that clock-output-names property
+> > > is optional and sometimes not recommended.
+> > > I think this patch fixes the issue we have which mandates to add clock-
+> output-
+> > > names
+> > > property (for this particular case). Also, IIUC platform driver probe in clk-
+> fixed-
+> > > factor.c
+> > > will never be called unless we use CLK_OF_DECLARE_DRIVER.
+> > > I completely agree that proper solution would be to stop using strings to
+> > > describe clock topology.
+> > [Rajan] Any comments on this?
+> > Unless we have proper solution ready, we need to have some mechanism to
+> handle this scenario.
+> > clock-output-names is optional and without this, it mandates to use clock-
+> output-names.
+> >
+> 
+> I couldn't read your outlook sent email and I was too busy to go
+> translate it. Some bug in my MUA it seems.
+> 
+> Can you add the output-names property? In this case it's practically
+> mandatory, so if you can't do it I'd like to hear why not.
+[Rajan] In our case, we are firmware maintains clock database and driver query clocks
+from firmware and registers clock based on information received from firmware. So
+output clock names are not fixed. 
+https://patchwork.kernel.org/patch/10439893/ - dt-bindings: clock: Add bindings for ZynqMP clock driver
+https://patchwork.kernel.org/patch/10439891/ - drivers: clk: Add ZynqMP clock driver
