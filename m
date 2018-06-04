@@ -1,58 +1,237 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751510AbeFDV7M (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:59:12 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43487 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbeFDV7L (ORCPT
+        id S1751611AbeFDWDw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 18:03:52 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:56393 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeFDWDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:59:11 -0400
-X-Google-Smtp-Source: ADUXVKKuqi2uUPzPHsyJY21DjC41RQFzmBZS+XhLM8jiy1Ch8ppfYQNJtsi51MkFcTEIPzm/fgbvTifXWIIQUXjkAsw=
+        Mon, 4 Jun 2018 18:03:50 -0400
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Shuah Khan <shuah@kernel.org>
+Subject: [GIT PULL] cpupower update for Linux 4.18-rc1
+Message-ID: <559de2f1-fdf6-7010-2e01-d20765551065@kernel.org>
+Date: Mon, 4 Jun 2018 16:03:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
-References: <20180525125322.15398-1-jthumshirn@suse.de> <20180525130535.GA24239@lst.de>
- <20180525135813.GB9591@redhat.com> <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
-From: Roland Dreier <roland@purestorage.com>
-Date: Mon, 4 Jun 2018 14:58:49 -0700
-Message-ID: <CAL1RGDV0eT4juuMwHWkjqc2oTsk-CHRJ0A90veXxLsVZYa5esQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
-        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed;
+ boundary="------------73ED410EA6EFE97E134D4DB7"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Moreover, I also wanted to point out that fabrics array vendors are
-> building products that rely on standard nvme multipathing (and probably
-> multipathing over dispersed namespaces as well), and keeping a knob that
-> will keep nvme users with dm-multipath will probably not help them
-> educate their customers as well... So there is another angle to this.
+This is a multi-part message in MIME format.
+--------------73ED410EA6EFE97E134D4DB7
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-As a vendor who is building an NVMe-oF storage array, I can say that
-clarity around how Linux wants to handle NVMe multipath would
-definitely be appreciated.  It would be great if we could all converge
-around the upstream native driver but right now it doesn't look
-adequate - having only a single active path is not the best way to use
-a multi-controller storage system.  Unfortunately it looks like we're
-headed to a world where people have to write separate "best practices"
-documents to cover RHEL, SLES and other vendors.
+Hi Rafael,
 
-We plan to implement all the fancy NVMe standards like ANA, but it
-seems that there is still a requirement to let the host side choose
-policies about how to use paths (round-robin vs least queue depth for
-example).  Even in the modern SCSI world with VPD pages and ALUA,
-there are still knobs that are needed.  Maybe NVMe will be different
-and we can find defaults that work in all cases but I have to admit
-I'm skeptical...
+If it isn't too late, please pull this update. A fix came in last
+week to refine the cpupower monitor command.
 
- - R.
+This cpupower update for 4.18-rc1 consists of two minor fixes.
+
+diff is attached.
+
+thanks,
+-- Shuah
+
+----------------------------------------------------------------
+
+The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
+
+  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-4.18-rc1
+
+for you to fetch changes up to f9652d5cae04eb5e85303c087f5842d320499c65:
+
+  cpupower : Fix header name to read idle state name (2018-05-29 10:48:33 -0600)
+
+----------------------------------------------------------------
+linux-cpupower-4.18-rc1
+
+This cpupower update for 4.18-rc1 consists of two minor fixes.
+
+----------------------------------------------------------------
+Abhishek Goel (1):
+      cpupower : Fix header name to read idle state name
+
+Colin Ian King (1):
+      cpupower: fix spelling mistake: "logilename" -> "logfilename"
+
+ tools/power/cpupower/bench/parse.c                 |  2 +-
+ .../cpupower/utils/idle_monitor/cpuidle_sysfs.c    | 15 ++++++++++
+ .../cpupower/utils/idle_monitor/cpupower-monitor.c | 35 ++++++++++++----------
+ .../cpupower/utils/idle_monitor/cpupower-monitor.h |  9 ++++++
+ 4 files changed, 45 insertions(+), 16 deletions(-)
+----------------------------------------------------------------
+
+--------------73ED410EA6EFE97E134D4DB7
+Content-Type: text/x-patch;
+ name="linux-cpupower-4.18-rc1.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="linux-cpupower-4.18-rc1.diff"
+
+diff --git a/tools/power/cpupower/bench/parse.c b/tools/power/cpupower/bench/parse.c
+index 9b65f052081f..9ba8a44ad2a7 100644
+--- a/tools/power/cpupower/bench/parse.c
++++ b/tools/power/cpupower/bench/parse.c
+@@ -104,7 +104,7 @@ FILE *prepare_output(const char *dirname)
+ 			dirname, time(NULL));
+ 	}
+ 
+-	dprintf("logilename: %s\n", filename);
++	dprintf("logfilename: %s\n", filename);
+ 
+ 	output = fopen(filename, "w+");
+ 	if (output == NULL) {
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+index 5b3205f16217..5b8c4956ff9a 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpuidle_sysfs.c
+@@ -126,6 +126,20 @@ void fix_up_intel_idle_driver_name(char *tmp, int num)
+ 	}
+ }
+ 
++#ifdef __powerpc__
++void map_power_idle_state_name(char *tmp)
++{
++	if (!strncmp(tmp, "stop0_lite", CSTATE_NAME_LEN))
++		strcpy(tmp, "stop0L");
++	else if (!strncmp(tmp, "stop1_lite", CSTATE_NAME_LEN))
++		strcpy(tmp, "stop1L");
++	else if (!strncmp(tmp, "stop2_lite", CSTATE_NAME_LEN))
++		strcpy(tmp, "stop2L");
++}
++#else
++void map_power_idle_state_name(char *tmp) { }
++#endif
++
+ static struct cpuidle_monitor *cpuidle_register(void)
+ {
+ 	int num;
+@@ -145,6 +159,7 @@ static struct cpuidle_monitor *cpuidle_register(void)
+ 		if (tmp == NULL)
+ 			continue;
+ 
++		map_power_idle_state_name(tmp);
+ 		fix_up_intel_idle_driver_name(tmp, num);
+ 		strncpy(cpuidle_cstates[num].name, tmp, CSTATE_NAME_LEN - 1);
+ 		free(tmp);
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+index 05f953f0f0a0..051da0a7c454 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.c
+@@ -70,36 +70,43 @@ void print_n_spaces(int n)
+ 		printf(" ");
+ }
+ 
+-/* size of s must be at least n + 1 */
++/*s is filled with left and right spaces
++ *to make its length atleast n+1
++ */
+ int fill_string_with_spaces(char *s, int n)
+ {
++	char *temp;
+ 	int len = strlen(s);
+-	if (len > n)
++
++	if (len >= n)
+ 		return -1;
++
++	temp = malloc(sizeof(char) * (n+1));
+ 	for (; len < n; len++)
+ 		s[len] = ' ';
+ 	s[len] = '\0';
++	snprintf(temp, n+1, " %s", s);
++	strcpy(s, temp);
++	free(temp);
+ 	return 0;
+ }
+ 
++#define MAX_COL_WIDTH 6
+ void print_header(int topology_depth)
+ {
+ 	int unsigned mon;
+ 	int state, need_len;
+ 	cstate_t s;
+ 	char buf[128] = "";
+-	int percent_width = 4;
+ 
+ 	fill_string_with_spaces(buf, topology_depth * 5 - 1);
+ 	printf("%s|", buf);
+ 
+ 	for (mon = 0; mon < avail_monitors; mon++) {
+-		need_len = monitors[mon]->hw_states_num * (percent_width + 3)
++		need_len = monitors[mon]->hw_states_num * (MAX_COL_WIDTH + 1)
+ 			- 1;
+-		if (mon != 0) {
+-			printf("|| ");
+-			need_len--;
+-		}
++		if (mon != 0)
++			printf("||");
+ 		sprintf(buf, "%s", monitors[mon]->name);
+ 		fill_string_with_spaces(buf, need_len);
+ 		printf("%s", buf);
+@@ -107,23 +114,21 @@ void print_header(int topology_depth)
+ 	printf("\n");
+ 
+ 	if (topology_depth > 2)
+-		printf("PKG |");
++		printf(" PKG|");
+ 	if (topology_depth > 1)
+ 		printf("CORE|");
+ 	if (topology_depth > 0)
+-		printf("CPU |");
++		printf(" CPU|");
+ 
+ 	for (mon = 0; mon < avail_monitors; mon++) {
+ 		if (mon != 0)
+-			printf("|| ");
+-		else
+-			printf(" ");
++			printf("||");
+ 		for (state = 0; state < monitors[mon]->hw_states_num; state++) {
+ 			if (state != 0)
+-				printf(" | ");
++				printf("|");
+ 			s = monitors[mon]->hw_states[state];
+ 			sprintf(buf, "%s", s.name);
+-			fill_string_with_spaces(buf, percent_width);
++			fill_string_with_spaces(buf, MAX_COL_WIDTH);
+ 			printf("%s", buf);
+ 		}
+ 		printf(" ");
+diff --git a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+index 9e43f3371fbc..2ae50b499e0a 100644
+--- a/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
++++ b/tools/power/cpupower/utils/idle_monitor/cpupower-monitor.h
+@@ -15,7 +15,16 @@
+ 
+ #define MONITORS_MAX 20
+ #define MONITOR_NAME_LEN 20
++
++/* CSTATE_NAME_LEN is limited by header field width defined
++ * in cpupower-monitor.c. Header field width is defined to be
++ * sum of percent width and two spaces for padding.
++ */
++#ifdef __powerpc__
++#define CSTATE_NAME_LEN 7
++#else
+ #define CSTATE_NAME_LEN 5
++#endif
+ #define CSTATE_DESC_LEN 60
+ 
+ int cpu_count;
+
+--------------73ED410EA6EFE97E134D4DB7--
