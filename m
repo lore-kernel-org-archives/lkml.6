@@ -1,20 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeFDISi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 04:18:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39405 "EHLO mx2.suse.de"
+        id S1752097AbeFDISk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 04:18:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39403 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751854AbeFDISg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751482AbeFDISg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 04:18:36 -0400
 From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
         linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Make elf2ecoff work on 64bit host machines
-Date: Mon,  4 Jun 2018 10:18:25 +0200
-Message-Id: <20180604081825.11995-2-tbogendoerfer@suse.de>
+Subject: [PATCH v2] Make elf2ecoff work on 64bit host machines
+Date: Mon,  4 Jun 2018 10:18:24 +0200
+Message-Id: <20180604081825.11995-1-tbogendoerfer@suse.de>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180604081825.11995-1-tbogendoerfer@suse.de>
-References: <20180604081825.11995-1-tbogendoerfer@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -24,9 +22,12 @@ on 64bit host machines
 
 Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 ---
+
+v2: include stdint.h and use inttypes.h for printf formats
+
  arch/mips/boot/ecoff.h     | 58 +++++++++++++++++++++++-----------------------
- arch/mips/boot/elf2ecoff.c | 29 +++++++++++------------
- 2 files changed, 43 insertions(+), 44 deletions(-)
+ arch/mips/boot/elf2ecoff.c | 31 +++++++++++++------------
+ 2 files changed, 45 insertions(+), 44 deletions(-)
 
 diff --git a/arch/mips/boot/ecoff.h b/arch/mips/boot/ecoff.h
 index b3e73c22c345..9eb4167ef979 100644
@@ -109,10 +110,19 @@ index b3e73c22c345..9eb4167ef979 100644
  #define AOUTHSZ sizeof(AOUTHDR)
  
 diff --git a/arch/mips/boot/elf2ecoff.c b/arch/mips/boot/elf2ecoff.c
-index 266c8137e859..8322282f93b0 100644
+index 266c8137e859..b66eb3129e15 100644
 --- a/arch/mips/boot/elf2ecoff.c
 +++ b/arch/mips/boot/elf2ecoff.c
-@@ -55,8 +55,8 @@
+@@ -43,6 +43,8 @@
+ #include <limits.h>
+ #include <netinet/in.h>
+ #include <stdlib.h>
++#include <stdint.h>
++#include <inttypes.h>
+ 
+ #include "ecoff.h"
+ 
+@@ -55,8 +57,8 @@
  /* -------------------------------------------------------------------- */
  
  struct sect {
@@ -123,7 +133,7 @@ index 266c8137e859..8322282f93b0 100644
  };
  
  int *symTypeTable;
-@@ -153,16 +153,16 @@ static char *saveRead(int file, off_t offset, off_t len, char *name)
+@@ -153,16 +155,16 @@ static char *saveRead(int file, off_t offset, off_t len, char *name)
  }
  
  #define swab16(x) \
@@ -147,7 +157,7 @@ index 266c8137e859..8322282f93b0 100644
  
  static void convert_elf_hdr(Elf32_Ehdr * e)
  {
-@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
+@@ -274,7 +276,7 @@ int main(int argc, char *argv[])
  	struct aouthdr eah;
  	struct scnhdr esecs[6];
  	int infile, outfile;
@@ -156,16 +166,16 @@ index 266c8137e859..8322282f93b0 100644
  	int addflag = 0;
  	int nosecs;
  
-@@ -518,7 +518,7 @@ int main(int argc, char *argv[])
+@@ -518,7 +520,7 @@ int main(int argc, char *argv[])
  
  		for (i = 0; i < nosecs; i++) {
  			printf
 -			    ("Section %d: %s phys %lx  size %lx	 file offset %lx\n",
-+			    ("Section %d: %s phys %x  size %x	 file offset %x\n",
++			    ("Section %d: %s phys %"PRIx32"  size %"PRIx32"	 file offset %x\n",
  			     i, esecs[i].s_name, esecs[i].s_paddr,
  			     esecs[i].s_size, esecs[i].s_scnptr);
  		}
-@@ -564,17 +564,16 @@ int main(int argc, char *argv[])
+@@ -564,17 +566,16 @@ int main(int argc, char *argv[])
  		   the section can be loaded before copying. */
  		if (ph[i].p_type == PT_LOAD && ph[i].p_filesz) {
  			if (cur_vma != ph[i].p_vaddr) {
@@ -176,7 +186,7 @@ index 266c8137e859..8322282f93b0 100644
  				if (gap > 65536) {
  					fprintf(stderr,
 -						"Intersegment gap (%ld bytes) too large.\n",
-+						"Intersegment gap (%d bytes) too large.\n",
++						"Intersegment gap (%"PRId32" bytes) too large.\n",
  						gap);
  					exit(1);
  				}
