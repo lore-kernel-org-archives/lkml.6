@@ -1,42 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751385AbeFDRu0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:50:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41298 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750985AbeFDRuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:50:25 -0400
-Date: Mon, 4 Jun 2018 12:50:19 -0500
-From: David Teigland <teigland@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] dlm updates for 4.18
-Message-ID: <20180604175019.GA25169@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.8.3 (2017-05-23)
+        id S1751361AbeFDRwq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:52:46 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:38183 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeFDRwo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 13:52:44 -0400
+Message-ID: <1528134761.2289.45.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in
+ QCA4019 with eth decap mode
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Sriram R <srirrama@codeaurora.org>
+Cc: stable@vger.kernel.org,
+        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Date: Mon, 04 Jun 2018 18:52:41 +0100
+In-Reply-To: <20180514064755.718467503@linuxfoundation.org>
+References: <20180514064754.853201981@linuxfoundation.org>
+         <20180514064755.718467503@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Mon, 2018-05-14 at 08:48 +0200, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+> 
+> commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
+> 
+> Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
+> rx_hdr_status is not padded to align in 4-byte boundary. Define a
+> new hw_params field to handle different alignment behaviour between
+> different hw. This patch fixes improper retrieval of rfc1042 header
+> with QCA4019. This patch along with "ath10k: Properly remove padding
+> from the start of rx payload" will fix traffic failure in ethernet
+> decap mode for QCA4019.
+> 
+> Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+> Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+> Signed-off-by: Sriram R <srirrama@codeaurora.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[...]
 
-Please pull dlm updates from tag:
+I'm curious as to why this backport doesn't include the change to
+ath10k_htt_rx_h_find_rfc1042().  I understand that the addition of the
+new field is a dependency for the following patch, but shouldn't the
+fix included in the upstream commit also be applied to 4.4?
 
-git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-4.18
+Ben.
 
-These three commits fix and clean up the flags dlm was
-using on its SCTP sockets.  The result improves the
-performance and fixes some bad connection delays.
-
-Thanks,
-Dave
-
-Gang He (3):
-      dlm: fix a clerical error when set SCTP_NODELAY
-      dlm: make sctp_connect_to_sock() return in specified time
-      dlm: remove O_NONBLOCK flag in sctp_connect_to_sock
-
- fs/dlm/lowcomms.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
