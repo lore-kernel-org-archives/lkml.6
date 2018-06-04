@@ -1,60 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750997AbeFDRM3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:12:29 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:51289 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbeFDRM1 (ORCPT
+        id S1751203AbeFDRNG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:13:06 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:41245 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751103AbeFDRNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:12:27 -0400
-X-Google-Smtp-Source: ADUXVKKntpe3ATlzcae+YGSuQB+STIuJw+5htZvvye+RMfwOS9Ggf3hCIbA4xEmUggja9PxT9AkSnbhPf6j5KUHwnaw=
+        Mon, 4 Jun 2018 13:13:04 -0400
+X-Google-Smtp-Source: ADUXVKJOfs+rWNXKagAKMfXhwGl8nkVOewRUQEKhaJE5dlsGDrBQhDnwez7ZUc7EQvR9DbTgYLX0WOYrs0uUhV+fbew=
 MIME-Version: 1.0
-In-Reply-To: <20180604085900.GN25455@dell>
-References: <20180530031704.18597-1-fparent@baylibre.com> <20180530031704.18597-2-fparent@baylibre.com>
- <20180604085900.GN25455@dell>
+In-Reply-To: <20180530031704.18597-1-fparent@baylibre.com>
+References: <20180530031704.18597-1-fparent@baylibre.com>
 From: Fabien Parent <fparent@baylibre.com>
-Date: Mon, 4 Jun 2018 10:12:26 -0700
-Message-ID: <CAOwMV_xyqj027+iRAQtZ5Hv8NDUc6s9OfS0vAkumUyyc4LUjzw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mfd: cros: add charger port count command definition
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+Date: Mon, 4 Jun 2018 10:13:03 -0700
+Message-ID: <CAOwMV_y91U=teT5aC1+cHrPdxRZNRDEjCNs2UXEeEP=MeQE1-g@mail.gmail.com>
+Subject: Re: [PATCH 0/3] power: supply: cros: add support for dedicated port
+ and expose connected ports
+To: Sebastian Reichel <sre@kernel.org>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Enric Balletbo Serra <eballetbo@gmail.com>,
-        Guillaume Pain <gpain@baylibre.com>
+        Guillaume Pain <gpain@baylibre.com>,
+        Fabien Parent <fparent@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w54HCYms031592
 
-On Mon, Jun 4, 2018 at 1:59 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Tue, 29 May 2018, Fabien Parent wrote:
->
->> A new more command has been added to the ChromeOS embedded controller
->> that allows to get the number of charger port count. Unlike
->> EC_CMD_USB_PD_PORTS, this new command also includes the dedicated
->> port if present.
->>
->> This command will be used to expose the dedicated charger port
->> in the ChromeOS charger driver.
->>
->> Signed-off-by: Fabien Parent <fparent@baylibre.com>
->> ---
->>  include/linux/mfd/cros_ec_commands.h | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->
-> Does not want to apply.  I didn't investigate why.
->
-> Please rebase and resend?
++ Lee Jones for the mfd patch.
 
-Sorry, I forgot to add you as "to:" to the patch series.
-This patch applies on top of https://lkml.org/lkml/2018/5/2/590
-([PATCH v4 1/3] mfd: cros_ec: Add USBPD charger commands and struct
-definitions)
-
+On Tue, May 29, 2018 at 8:17 PM, Fabien Parent <fparent@baylibre.com> wrote:
+> Dear all,
+>
+> This patch series adds support for an optional dedicated port
+> to the ChromeOS power supply driver and adds a new property that expose
+> when a power supply is connected. The series was tested on ChromeOS "Fizz"
+> hardware.
+>
+> This patch series depends on the following patch serie which adds
+> the ChromeOS power supply driver:
+>  * https://lkml.org/lkml/2018/5/2/585 [PATCH v4 0/3] mfd/power: cros_ec: add
+>    support for USBPD charger driver
+>
+> The ChromeOS power supply driver also depends on the following patches to be
+> applied:
+>  * https://lkml.org/lkml/2018/4/23/602 ([PATCH v8 0/6] typec: tcpm: Add
+>    sink side support for PPS)
+>  * https://lkml.org/lkml/2018/4/18/229 ([RESEND PATCH v5 4/7] mfd:
+>    cros_ec_dev: Register cros-ec-rtc driver as a subdevice.)
+>
+> Best Regards,
+> Fabien
+>
+> Fabien Parent (3):
+>   mfd: cros: add charger port count command definition
+>   power: supply: cros: add support for dedicated port
+>   power: supply: cros: add property to detect connected ports
+>
+>  drivers/power/supply/cros_usbpd-charger.c | 129 +++++++++++++++++++---
+>  include/linux/mfd/cros_ec_commands.h      |  10 ++
+>  2 files changed, 124 insertions(+), 15 deletions(-)
+>
 > --
-> Lee Jones [李琼斯]
-> Linaro Services Technical Lead
-> Linaro.org │ Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+> 2.17.0
+>
