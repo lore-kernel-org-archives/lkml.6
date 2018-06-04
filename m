@@ -1,182 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751300AbeFDUfi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:35:38 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:46692 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751103AbeFDUfg (ORCPT
+        id S1751230AbeFDUhd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:37:33 -0400
+Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:52052 "EHLO
+        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750879AbeFDUhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:35:36 -0400
-X-Google-Smtp-Source: ADUXVKJ8jaiPeLlDXnNXc602LBFRmRYUvkU415XP6cEULrH+3F+Upgq8AaAXAMKEVgOld4EJE0unNwH6Q+gTP+HvAjk=
+        Mon, 4 Jun 2018 16:37:32 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FGAQBwohVbmGOa6ERcGgEBAQEBAgEBA?=
+ =?us-ascii?q?QEIAQEBAYQXgQ0oCphfgXmUS4F4C4RsAoIRITUXAQIBAQEBAQECAQECEAEBAQE?=
+ =?us-ascii?q?BCAsLBigvgjUiglMBAQEEJxM/DAQCAQgRBAEBHwkHRgkIAgQBDQUIgxqCAahOM?=
+ =?us-ascii?q?4hBgWiIQoITgQ+DDYpHAphuBwKOW4FEg3iHZpEfgUMCggdwUIJDgiAOCY4Xb41?=
+ =?us-ascii?q?/gRkBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2FGAQBwohVbmGOa6ERcGgEBAQEBAgEBAQEIAQEBAYQXgQ0?=
+ =?us-ascii?q?oCphfgXmUS4F4C4RsAoIRITUXAQIBAQEBAQECAQECEAEBAQEBCAsLBigvgjUig?=
+ =?us-ascii?q?lMBAQEEJxM/DAQCAQgRBAEBHwkHRgkIAgQBDQUIgxqCAahOM4hBgWiIQoITgQ+?=
+ =?us-ascii?q?DDYpHAphuBwKOW4FEg3iHZpEfgUMCggdwUIJDgiAOCY4Xb41/gRkBAQ?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.187
+X-IronPort-AV: E=Sophos;i="5.49,477,1520917200";
+   d="scan'208";a="201079798"
+X-DLP: DLP_GlobalPCIDSS
+To: <benjamin.tissoires@redhat.com>, <jikos@kernel.org>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] HID: core: allow concurrent registration of drivers
+Thread-Topic: [PATCH] HID: core: allow concurrent registration of drivers
+Thread-Index: AQHT+NV5fk+195GLLUuRdr+lgJ0afaRQlLQQ
+Date: Mon, 4 Jun 2018 20:37:30 +0000
+Message-ID: <4635b69c79704cc3beee5f97d9e739f2@ausx13mpc120.AMER.DELL.COM>
+References: <20180531114929.30545-1-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180531114929.30545-1-benjamin.tissoires@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-In-Reply-To: <20180601151419.15820-2-bastiangermann@fishpost.de>
-References: <8afcabf0-94c2-8068-5252-491494108a0c@roeck-us.net>
- <20180601151419.15820-1-bastiangermann@fishpost.de> <20180601151419.15820-2-bastiangermann@fishpost.de>
-From: Luca Tettamanti <kronos.it@gmail.com>
-Date: Mon, 4 Jun 2018 21:35:35 +0100
-Message-ID: <CAKPcRGq6eFrWGmL9xuac8jtu+xBc+VQ+J_x2fK+J_mr98Yx1Ag@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] hwmon: (asus_atk0110) Replace deprecated device
- register call
-To: Bastian Germann <bastiangermann@fishpost.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
-        linux-hwmon@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w54Kbbf4011054
 
-On 1 June 2018 at 16:14, Bastian Germann <bastiangermann@fishpost.de> wrote:
-> Make the asus_atk0110 driver use hwmon_device_register_with_groups instead
-> of the deprecated hwmon_device_register.
-> Construct the expected attribute_group array from the sensor list which
-> contains all needed attributes.
-> Remove the manual sysfs file creation and deletion that are now taken care
-> of by the (un)register calls via the attribute_group array.
->
-> Signed-off-by: Bastian Germann <bastiangermann@fishpost.de>
+Benjamin,
 
-Thank you for cleaning this up!
+I had to make a minor change since I didn't see
+>  #define HID_STAT_DUP_DETECTED	BIT(2)
+In Linus's tree.
 
-L.
+I tested with master today though and it seems to be working now with your patch across
+several boot attempts.
 
+Tested-by: Mario Limonciello <mario.limonciello@dell.com>
+
+Thanks,
+
+> -----Original Message-----
+> From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com]
+> Sent: Thursday, May 31, 2018 6:49 AM
+> To: Jiri Kosina; Limonciello, Mario
+> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Benjamin Tissoires
+> Subject: [PATCH] HID: core: allow concurrent registration of drivers
+> 
+> Detected on the Dell XPS 9365.
+> The laptop has 2 devices that benefit from the hid-generic auto-unbinding.
+> When those 2 devices are presented to the userspace, udev loads both
+> wacom and hid-multitouch. When this happens, the code in
+> __hid_bus_reprobe_drivers() is called concurrently and the second device
+> gets reprobed twice.
+> An other bug in the power_supply subsystem prevent to remove the wacom
+> driver if it just finished its initialization, which basically kills
+> the wacom node.
+> 
+> Fixes c17a7476e4c4 ("HID: core: rewrite the hid-generic automatic unbind")
+> 
+> Cc: stable@vger.kernel.org # v4.17
+> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 > ---
->  drivers/hwmon/asus_atk0110.c | 75 ++++++++++++------------------------
->  1 file changed, 25 insertions(+), 50 deletions(-)
->
-> diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
-> index 975c43d446f8..33748cc07acc 100644
-> --- a/drivers/hwmon/asus_atk0110.c
-> +++ b/drivers/hwmon/asus_atk0110.c
-> @@ -125,6 +125,8 @@ struct atk_data {
->         int temperature_count;
->         int fan_count;
->         struct list_head sensor_list;
-> +       struct attribute_group attr_group;
-> +       const struct attribute_group *attr_groups[2];
->
->         struct {
->                 struct dentry *root;
-> @@ -262,14 +264,6 @@ static ssize_t atk_limit2_show(struct device *dev,
->         return sprintf(buf, "%lld\n", value);
->  }
->
-> -static ssize_t atk_name_show(struct device *dev,
-> -                               struct device_attribute *attr, char *buf)
-> -{
-> -       return sprintf(buf, "atk0110\n");
-> -}
-> -static struct device_attribute atk_name_attr =
-> -               __ATTR(name, 0444, atk_name_show, NULL);
-> -
->  static void atk_init_attribute(struct device_attribute *attr, char *name,
->                 sysfs_show_func show)
->  {
-> @@ -1193,42 +1187,30 @@ static int atk_enumerate_new_hwmon(struct atk_data *data)
->         return err;
->  }
->
-> -static int atk_create_files(struct atk_data *data)
-> +static int atk_init_attribute_groups(struct atk_data *data)
->  {
-> +       struct device *dev = &data->acpi_dev->dev;
->         struct atk_sensor_data *s;
-> -       int err;
-> +       struct attribute **attrs;
-> +       int i = 0;
-> +       int len = (data->voltage_count + data->temperature_count
-> +                       + data->fan_count) * 4 + 1;
+> 
+> Hi Mario,
+> 
+> can you please test this on your faulty XPS?
+> I think it'll fix the issue, but I can not reproduce, so better wait for
+> your confirmation.
+> 
+> Jiri, ideally I would love to see this in v4.17 final, but Mario seems
+> to be on PTO until next week. I guess we'll just push this in v4.17.1
+> then. Also, if you can double check that it makes sense, that would be
+> nice :)
+> 
+> Cheers,
+> Benjamin
+> 
+>  drivers/hid/hid-core.c | 5 ++++-
+>  include/linux/hid.h    | 3 ++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 2f7367b1de00..7afed0c0f9e5 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -1960,6 +1960,8 @@ static int hid_device_probe(struct device *dev)
+>  	}
+>  	hdev->io_started = false;
+> 
+> +	clear_bit(ffs(HID_STAT_REPROBED), &hdev->status);
 > +
-> +       attrs = devm_kcalloc(dev, len, sizeof(struct attribute *), GFP_KERNEL);
-> +       if (!attrs)
-> +               return -ENOMEM;
->
->         list_for_each_entry(s, &data->sensor_list, list) {
-> -               err = device_create_file(data->hwmon_dev, &s->input_attr);
-> -               if (err)
-> -                       return err;
-> -               err = device_create_file(data->hwmon_dev, &s->label_attr);
-> -               if (err)
-> -                       return err;
-> -               err = device_create_file(data->hwmon_dev, &s->limit1_attr);
-> -               if (err)
-> -                       return err;
-> -               err = device_create_file(data->hwmon_dev, &s->limit2_attr);
-> -               if (err)
-> -                       return err;
-> +               attrs[i++] = &s->input_attr.attr;
-> +               attrs[i++] = &s->label_attr.attr;
-> +               attrs[i++] = &s->limit1_attr.attr;
-> +               attrs[i++] = &s->limit2_attr.attr;
->         }
->
-> -       err = device_create_file(data->hwmon_dev, &atk_name_attr);
-> +       data->attr_group.attrs = attrs;
-> +       data->attr_groups[0] = &data->attr_group;
->
-> -       return err;
-> -}
-> -
-> -static void atk_remove_files(struct atk_data *data)
-> -{
-> -       struct atk_sensor_data *s;
-> -
-> -       list_for_each_entry(s, &data->sensor_list, list) {
-> -               device_remove_file(data->hwmon_dev, &s->input_attr);
-> -               device_remove_file(data->hwmon_dev, &s->label_attr);
-> -               device_remove_file(data->hwmon_dev, &s->limit1_attr);
-> -               device_remove_file(data->hwmon_dev, &s->limit2_attr);
-> -       }
-> -       device_remove_file(data->hwmon_dev, &atk_name_attr);
-> +       return 0;
->  }
->
->  static void atk_free_sensors(struct atk_data *data)
-> @@ -1245,24 +1227,15 @@ static void atk_free_sensors(struct atk_data *data)
->  static int atk_register_hwmon(struct atk_data *data)
->  {
->         struct device *dev = &data->acpi_dev->dev;
-> -       int err;
->
->         dev_dbg(dev, "registering hwmon device\n");
-> -       data->hwmon_dev = hwmon_device_register(dev);
-> +       data->hwmon_dev = hwmon_device_register_with_groups(dev, "atk0110",
-> +                                                           data,
-> +                                                           data->attr_groups);
->         if (IS_ERR(data->hwmon_dev))
->                 return PTR_ERR(data->hwmon_dev);
->
-> -       dev_dbg(dev, "populating sysfs directory\n");
-> -       err = atk_create_files(data);
-> -       if (err)
-> -               goto remove;
-> -
->         return 0;
-> -remove:
-> -       /* Cleanup the registered files */
-> -       atk_remove_files(data);
-> -       hwmon_device_unregister(data->hwmon_dev);
-> -       return err;
->  }
->
->  static int atk_probe_if(struct atk_data *data)
-> @@ -1397,6 +1370,9 @@ static int atk_add(struct acpi_device *device)
->                 goto out;
->         }
->
-> +       err = atk_init_attribute_groups(data);
-> +       if (err)
-> +               goto out;
->         err = atk_register_hwmon(data);
->         if (err)
->                 goto cleanup;
-> @@ -1423,7 +1399,6 @@ static int atk_remove(struct acpi_device *device)
->
->         atk_debugfs_cleanup(data);
->
-> -       atk_remove_files(data);
->         atk_free_sensors(data);
->         hwmon_device_unregister(data->hwmon_dev);
->
+>  	if (!hdev->driver) {
+>  		id = hid_match_device(hdev, hdrv);
+>  		if (id == NULL) {
+> @@ -2223,7 +2225,8 @@ static int __hid_bus_reprobe_drivers(struct device *dev,
+> void *data)
+>  	struct hid_device *hdev = to_hid_device(dev);
+> 
+>  	if (hdev->driver == hdrv &&
+> -	    !hdrv->match(hdev, hid_ignore_special_drivers))
+> +	    !hdrv->match(hdev, hid_ignore_special_drivers) &&
+> +	    !test_and_set_bit(ffs(HID_STAT_REPROBED), &hdev->status))
+>  		return device_reprobe(dev);
+> 
+>  	return 0;
+> diff --git a/include/linux/hid.h b/include/linux/hid.h
+> index ee2510019033..aee281522c6d 100644
+> --- a/include/linux/hid.h
+> +++ b/include/linux/hid.h
+> @@ -517,6 +517,7 @@ struct hid_output_fifo {
+>  #define HID_STAT_ADDED		BIT(0)
+>  #define HID_STAT_PARSED		BIT(1)
+>  #define HID_STAT_DUP_DETECTED	BIT(2)
+> +#define HID_STAT_REPROBED	BIT(3)
+> 
+>  struct hid_input {
+>  	struct list_head list;
+> @@ -585,7 +586,7 @@ struct hid_device {
+> 		/* device report descriptor */
+>  	bool battery_avoid_query;
+>  #endif
+> 
+> -	unsigned int status;						/* see
+> STAT flags above */
+> +	unsigned long status;						/* see
+> STAT flags above */
+>  	unsigned claimed;						/*
+> Claimed by hidinput, hiddev? */
+>  	unsigned quirks;						/* Various
+> quirks the device can pull on us */
+>  	bool io_started;						/* If IO has started
+> */
 > --
-> 2.17.1
->
+> 2.14.3
