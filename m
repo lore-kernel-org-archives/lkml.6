@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753929AbeFDHGz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:06:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56988 "EHLO mail.kernel.org"
+        id S1753824AbeFDHEh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:04:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753849AbeFDHEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:52 -0400
+        id S1751097AbeFDHEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:04:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.16 23/47] drm/amd/powerplay: Fix enum mismatch
-Date: Mon,  4 Jun 2018 08:58:35 +0200
-Message-Id: <20180604065550.464995518@linuxfoundation.org>
+        stable@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.16 41/47] Revert "rt2800: use TXOP_BACKOFF for probe frames"
+Date: Mon,  4 Jun 2018 08:58:53 +0200
+Message-Id: <20180604065551.208215055@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -30,72 +29,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
 
-commit 42b5122e828a6ccd9952ad3116343dc032d33efe upstream.
+commit 52a192362932f333a7ebafd581c4d9b81da2fec8 upstream.
 
-In several locations the driver uses AMD_CG_STATE_UNGATE (type enum
-amd_clockgating_state) instead of AMD_PG_STATE_UNGATE (type enum
-amd_powergating_stat) and vice versa. Both constants have the same
-value, so this doesn't cause any problems, but we still want to pass
-the correct type.
+This reverts commit fb47ada8dc3c30c8e7b415da155742b49536c61e.
 
-Fixing the mismatch resolves multiple warnings like this when building
-with clang:
+In some situations when we set TXOP_BACKOFF, the probe frame is
+not sent at all. What it worse then sending probe frame as part
+of AMPDU and can degrade 11n performance to 11g rates.
 
-drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/cz_clockpowergating.c:169:7:
-  error: implicit conversion from enumeration type 'enum
-  amd_powergating_state' to different enumeration type 'enum
-  amd_clockgating_state' [-Werror,-Wenum-conversion]
-    AMD_PG_STATE_UNGATE);
-
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c   |    8 ++++----
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c |    2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ralink/rt2x00/rt2x00queue.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
-@@ -166,10 +166,10 @@ void cz_dpm_powergate_uvd(struct pp_hwmg
- 		cz_dpm_powerup_uvd(hwmgr);
- 		cgs_set_clockgating_state(hwmgr->device,
- 						AMD_IP_BLOCK_TYPE_UVD,
--						AMD_PG_STATE_UNGATE);
-+						AMD_CG_STATE_UNGATE);
- 		cgs_set_powergating_state(hwmgr->device,
- 						AMD_IP_BLOCK_TYPE_UVD,
--						AMD_CG_STATE_UNGATE);
-+						AMD_PG_STATE_UNGATE);
- 		cz_dpm_update_uvd_dpm(hwmgr, false);
- 	}
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
+@@ -372,16 +372,15 @@ static void rt2x00queue_create_tx_descri
  
-@@ -197,11 +197,11 @@ void cz_dpm_powergate_vce(struct pp_hwmg
- 		cgs_set_clockgating_state(
- 					hwmgr->device,
- 					AMD_IP_BLOCK_TYPE_VCE,
--					AMD_PG_STATE_UNGATE);
-+					AMD_CG_STATE_UNGATE);
- 		cgs_set_powergating_state(
- 					hwmgr->device,
- 					AMD_IP_BLOCK_TYPE_VCE,
--					AMD_CG_STATE_UNGATE);
-+					AMD_PG_STATE_UNGATE);
- 		cz_dpm_update_vce_dpm(hwmgr);
- 		cz_enable_disable_vce_dpm(hwmgr, true);
- 	}
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c
-@@ -162,7 +162,7 @@ void smu7_powergate_uvd(struct pp_hwmgr
- 				AMD_CG_STATE_UNGATE);
- 		cgs_set_powergating_state(hwmgr->device,
- 						AMD_IP_BLOCK_TYPE_UVD,
--						AMD_CG_STATE_UNGATE);
-+						AMD_PG_STATE_UNGATE);
- 		smu7_update_uvd_dpm(hwmgr, false);
- 	}
- 
+ 	/*
+ 	 * Determine IFS values
+-	 * - Use TXOP_BACKOFF for probe and management frames except beacons
++	 * - Use TXOP_BACKOFF for management frames except beacons
+ 	 * - Use TXOP_SIFS for fragment bursts
+ 	 * - Use TXOP_HTTXOP for everything else
+ 	 *
+ 	 * Note: rt2800 devices won't use CTS protection (if used)
+ 	 * for frames not transmitted with TXOP_HTTXOP
+ 	 */
+-	if ((ieee80211_is_mgmt(hdr->frame_control) &&
+-	     !ieee80211_is_beacon(hdr->frame_control)) ||
+-	    (tx_info->flags & IEEE80211_TX_CTL_RATE_CTRL_PROBE))
++	if (ieee80211_is_mgmt(hdr->frame_control) &&
++	    !ieee80211_is_beacon(hdr->frame_control))
+ 		txdesc->u.ht.txop = TXOP_BACKOFF;
+ 	else if (!(tx_info->flags & IEEE80211_TX_CTL_FIRST_FRAGMENT))
+ 		txdesc->u.ht.txop = TXOP_SIFS;
