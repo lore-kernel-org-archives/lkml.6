@@ -1,108 +1,376 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752294AbeFDLjG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:39:06 -0400
-Received: from mga07.intel.com ([134.134.136.100]:28773 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750868AbeFDLjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:39:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
-   d="scan'208";a="229740607"
-Message-ID: <2a2f547d787db9d593bb7fe3ad9c833836e23749.camel@linux.intel.com>
-Subject: Re: [PATCH 4/8] serial: 8250: Handle case port doesn't have TEMT
- interrupt using em485.
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Vignesh R <vigneshr@ti.com>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
-        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 04 Jun 2018 14:38:58 +0300
-In-Reply-To: <4a7148d5-ab2c-425d-afdc-08ddd3c522c2@micronovasrl.com>
-References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
-         <20180601124021.102970-5-giulio.benetti@micronovasrl.com>
-         <3a66327727d9bf2ce5adf8ef0f1fcc1fffeaa4ec.camel@linux.intel.com>
-         <4a7148d5-ab2c-425d-afdc-08ddd3c522c2@micronovasrl.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752496AbeFDLkm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:40:42 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751590AbeFDLkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 07:40:39 -0400
+From: Dongjiu Geng <gengdongjiu@huawei.com>
+To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
+        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <james.morse@arm.com>, <gengdongjiu@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>
+Subject: [PATCH v2 2/2] arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
+Date: Tue, 5 Jun 2018 03:45:42 +0800
+Message-ID: <1528141542-44048-3-git-send-email-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528141542-44048-1-git-send-email-gengdongjiu@huawei.com>
+References: <1528141542-44048-1-git-send-email-gengdongjiu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.143.28.90]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-04 at 12:50 +0200, Giulio Benetti wrote:
-> Hi,
-> 
-> Il 04/06/2018 12:17, Andy Shevchenko ha scritto:
-> > On Fri, 2018-06-01 at 14:40 +0200, Giulio Benetti wrote:
-> > > Some 8250 ports only have TEMT interrupt, so current
-> > > implementation
-> > > can't work for ports without it. The only chance to make it work
-> > > is to
-> > > loop-read on LSR register.
-> > > 
-> > > With NO TEMT interrupt check if both TEMT and THRE are set looping
-> > > on
-> > > LSR register.
-> > > --- a/drivers/tty/serial/8250/8250_dw.c
-> > > +++ b/drivers/tty/serial/8250/8250_dw.c
-> > > -		int ret = serial8250_em485_init(up);
-> > > +		int ret = serial8250_em485_init(up, false);
-> > 
-> > Is true for all possible DW configured types? Or it's your
-> > particular
-> > case?
-> > 
-> 
-> I've checked on Synopsis Designware 8250 datasheet and it's not
-> supported.
-> Here is datasheet I went through:
-> https://linux-sunxi.org/images/d/d2/Dw_apb_uart_db.pdf
-> 
-> There seems not to be TEMT interrupt, I use it under sunxi SoC and on 
-> their datasheet(A20 for example), they don't report that interrupt
-> too.
-> So it seems to be valid for all DW configured types, anyway I don't
-> know 
-> how many IP reviews there could be of that peripheral.
+For the migrating VMs, user space may need to know the exception
+state. For example, in the machine A, KVM make an SError pending,
+when migrate to B, KVM also needs to pend an SError.
 
-This is an excerpt from the document you referred to:
+This new IOCTL exports user-invisible states related to SError.
+Together with appropriate user space changes, user space can get/set
+the SError exception state to do migrate/snapshot/suspend.
 
---- 8< --- 8< ---
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+--
+change since v1:
+Address Marc's comments, thanks Marc's review
+1. serror_has_esr always true when ARM64_HAS_RAS_EXTN is set
+2. remove Spurious blank line in kvm_arm_vcpu_set_events()
+3. rename pend_guest_serror() to kvm_set_sei_esr()
+4. Make kvm_arm_vcpu_get_events() did all the work rather than having this split responsibility.
+5.  using sizeof(events) instead of sizeof(struct kvm_vcpu_events)
 
-6 TEMT R Transmitter Empty bit. If in FIFO mode (FIFO_MODE != NONE) and
-FIFOs enabled (FCR[0] set to one), this bit is set whenever the
-Transmitter Shift Register and the FIFO are both empty. If in non-FIFO
-mode or FIFOs are disabled, this bit is set whenever the Transmitter
-Holding Register and the Transmitter Shift Register are both empty.
+this series patch is separated from https://www.spinics.net/lists/kvm/msg168917.html
+The user space patch is here: https://lists.gnu.org/archive/html/qemu-devel/2018-05/msg06965.html
 
-Reset Value: 0x1
+change since V12:
+1. change (vcpu->arch.hcr_el2 & HCR_VSE) to !!(vcpu->arch.hcr_el2 & HCR_VSE) in kvm_arm_vcpu_get_events()
 
---- 8< --- 8< ---
+Change since V11:
+Address James's comments, thanks James
+1. Align the struct of kvm_vcpu_events to 64 bytes
+2. Avoid exposing the stale ESR value in the kvm_arm_vcpu_get_events()
+3. Change variables 'injected' name to 'serror_pending' in the kvm_arm_vcpu_set_events()
+4. Change to sizeof(events) from sizeof(struct kvm_vcpu_events) in kvm_arch_vcpu_ioctl()
 
+Change since V10:
+Address James's comments, thanks James
+1. Merge the helper function with the user.
+2. Move the ISS_MASK into pend_guest_serror() to clear top bits
+3. Make kvm_vcpu_events struct align to 4 bytes
+4. Add something check in the kvm_arm_vcpu_set_events()
+5. Check kvm_arm_vcpu_get/set_events()'s return value.
+6. Initialise kvm_vcpu_events to 0 so that padding transferred to user-space doesn't
+   contain kernel stack.
+---
+ Documentation/virtual/kvm/api.txt    | 31 ++++++++++++++++++++++++++++---
+ arch/arm/include/asm/kvm_host.h      |  6 ++++++
+ arch/arm/kvm/guest.c                 | 12 ++++++++++++
+ arch/arm64/include/asm/kvm_emulate.h |  5 +++++
+ arch/arm64/include/asm/kvm_host.h    |  7 +++++++
+ arch/arm64/include/uapi/asm/kvm.h    | 13 +++++++++++++
+ arch/arm64/kvm/guest.c               | 36 ++++++++++++++++++++++++++++++++++++
+ arch/arm64/kvm/inject_fault.c        |  6 +++---
+ arch/arm64/kvm/reset.c               |  1 +
+ virt/kvm/arm/arm.c                   | 19 +++++++++++++++++++
+ 10 files changed, 130 insertions(+), 6 deletions(-)
 
-If I'm reading this correctly the support is there. Or otherwise, care
-to point exact paragraph needs to be read and checked?
-
-> I've tried to subscribe at Synopsis to obtain latest Datasheet but it 
-> ask me an active ID I don't have.
-> 
-
+diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+index fdac969..8896737 100644
+--- a/Documentation/virtual/kvm/api.txt
++++ b/Documentation/virtual/kvm/api.txt
+@@ -835,11 +835,13 @@ struct kvm_clock_data {
+ 
+ Capability: KVM_CAP_VCPU_EVENTS
+ Extended by: KVM_CAP_INTR_SHADOW
+-Architectures: x86
++Architectures: x86, arm, arm64
+ Type: vm ioctl
+ Parameters: struct kvm_vcpu_event (out)
+ Returns: 0 on success, -1 on error
+ 
++X86:
++
+ Gets currently pending exceptions, interrupts, and NMIs as well as related
+ states of the vcpu.
+ 
+@@ -881,15 +883,32 @@ Only two fields are defined in the flags field:
+ - KVM_VCPUEVENT_VALID_SMM may be set in the flags field to signal that
+   smi contains a valid state.
+ 
++ARM, ARM64:
++
++Gets currently pending SError exceptions as well as related states of the vcpu.
++
++struct kvm_vcpu_events {
++	struct {
++		__u8 serror_pending;
++		__u8 serror_has_esr;
++		/* Align it to 8 bytes */
++		__u8 pad[6];
++		__u64 serror_esr;
++	} exception;
++	__u32 reserved[12];
++};
++
+ 4.32 KVM_SET_VCPU_EVENTS
+ 
+-Capability: KVM_CAP_VCPU_EVENTS
++Capebility: KVM_CAP_VCPU_EVENTS
+ Extended by: KVM_CAP_INTR_SHADOW
+-Architectures: x86
++Architectures: x86, arm, arm64
+ Type: vm ioctl
+ Parameters: struct kvm_vcpu_event (in)
+ Returns: 0 on success, -1 on error
+ 
++X86:
++
+ Set pending exceptions, interrupts, and NMIs as well as related states of the
+ vcpu.
+ 
+@@ -910,6 +929,12 @@ shall be written into the VCPU.
+ 
+ KVM_VCPUEVENT_VALID_SMM can only be set if KVM_CAP_X86_SMM is available.
+ 
++ARM, ARM64:
++
++Set pending SError exceptions as well as related states of the vcpu.
++
++See KVM_GET_VCPU_EVENTS for the data structure.
++
+ 
+ 4.33 KVM_GET_DEBUGREGS
+ 
+diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+index c7c28c8..39f9901 100644
+--- a/arch/arm/include/asm/kvm_host.h
++++ b/arch/arm/include/asm/kvm_host.h
+@@ -213,6 +213,12 @@ unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
+ int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *indices);
+ int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
+ int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
++int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events);
++
++int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events);
++
+ unsigned long kvm_call_hyp(void *hypfn, ...);
+ void force_vm_exit(const cpumask_t *mask);
+ 
+diff --git a/arch/arm/kvm/guest.c b/arch/arm/kvm/guest.c
+index a18f33e..c685f0e 100644
+--- a/arch/arm/kvm/guest.c
++++ b/arch/arm/kvm/guest.c
+@@ -261,6 +261,18 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+ 	return -EINVAL;
+ }
+ 
++int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events)
++{
++	return -EINVAL;
++}
++
++int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events)
++{
++	return -EINVAL;
++}
++
+ int __attribute_const__ kvm_target_cpu(void)
+ {
+ 	switch (read_cpuid_part()) {
+diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+index 1dab3a9..18f61ff 100644
+--- a/arch/arm64/include/asm/kvm_emulate.h
++++ b/arch/arm64/include/asm/kvm_emulate.h
+@@ -81,6 +81,11 @@ static inline unsigned long *vcpu_hcr(struct kvm_vcpu *vcpu)
+ 	return (unsigned long *)&vcpu->arch.hcr_el2;
+ }
+ 
++static inline unsigned long vcpu_get_vsesr(struct kvm_vcpu *vcpu)
++{
++	return vcpu->arch.vsesr_el2;
++}
++
+ static inline void vcpu_set_vsesr(struct kvm_vcpu *vcpu, u64 vsesr)
+ {
+ 	vcpu->arch.vsesr_el2 = vsesr;
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 469de8a..357304a 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -335,6 +335,11 @@ unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
+ int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *indices);
+ int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
+ int kvm_arm_set_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg);
++int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events);
++
++int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events);
+ 
+ #define KVM_ARCH_WANT_MMU_NOTIFIER
+ int kvm_unmap_hva(struct kvm *kvm, unsigned long hva);
+@@ -363,6 +368,8 @@ void handle_exit_early(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ int kvm_perf_init(void);
+ int kvm_perf_teardown(void);
+ 
++void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 syndrome);
++
+ struct kvm_vcpu *kvm_mpidr_to_vcpu(struct kvm *kvm, unsigned long mpidr);
+ 
+ void __kvm_set_tpidr_el2(u64 tpidr_el2);
+diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
+index 04b3256..df4faee 100644
+--- a/arch/arm64/include/uapi/asm/kvm.h
++++ b/arch/arm64/include/uapi/asm/kvm.h
+@@ -39,6 +39,7 @@
+ #define __KVM_HAVE_GUEST_DEBUG
+ #define __KVM_HAVE_IRQ_LINE
+ #define __KVM_HAVE_READONLY_MEM
++#define __KVM_HAVE_VCPU_EVENTS
+ 
+ #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
+ 
+@@ -153,6 +154,18 @@ struct kvm_sync_regs {
+ struct kvm_arch_memory_slot {
+ };
+ 
++/* for KVM_GET/SET_VCPU_EVENTS */
++struct kvm_vcpu_events {
++	struct {
++		__u8 serror_pending;
++		__u8 serror_has_esr;
++		/* Align it to 8 bytes */
++		__u8 pad[6];
++		__u64 serror_esr;
++	} exception;
++	__u32 reserved[12];
++};
++
+ /* If you need to interpret the index values, here is the key: */
+ #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
+ #define KVM_REG_ARM_COPROC_SHIFT	16
+diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+index 56a0260..542ec2d 100644
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@ -289,6 +289,42 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+ 	return -EINVAL;
+ }
+ 
++int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events)
++{
++	memset(&events, 0, sizeof(events));
++
++	events->exception.serror_pending = !!(vcpu->arch.hcr_el2 & HCR_VSE);
++	events->exception.serror_has_esr =
++					cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
++
++	if (events->exception.serror_pending &&
++		events->exception.serror_has_esr)
++		events->exception.serror_esr = vcpu_get_vsesr(vcpu);
++	else
++		events->exception.serror_esr = 0;
++
++	return 0;
++}
++
++int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
++			struct kvm_vcpu_events *events)
++{
++	bool serror_pending = events->exception.serror_pending;
++	bool has_esr = events->exception.serror_has_esr;
++
++	if (serror_pending && has_esr) {
++		if (!cpus_have_const_cap(ARM64_HAS_RAS_EXTN))
++			return -EINVAL;
++
++		kvm_set_sei_esr(vcpu, events->exception.serror_esr);
++	} else if (serror_pending) {
++		kvm_inject_vabt(vcpu);
++	}
++
++	return 0;
++}
++
+ int __attribute_const__ kvm_target_cpu(void)
+ {
+ 	unsigned long implementor = read_cpuid_implementor();
+diff --git a/arch/arm64/kvm/inject_fault.c b/arch/arm64/kvm/inject_fault.c
+index d8e7165..a55e91d 100644
+--- a/arch/arm64/kvm/inject_fault.c
++++ b/arch/arm64/kvm/inject_fault.c
+@@ -164,9 +164,9 @@ void kvm_inject_undefined(struct kvm_vcpu *vcpu)
+ 		inject_undef64(vcpu);
+ }
+ 
+-static void pend_guest_serror(struct kvm_vcpu *vcpu, u64 esr)
++void kvm_set_sei_esr(struct kvm_vcpu *vcpu, u64 esr)
+ {
+-	vcpu_set_vsesr(vcpu, esr);
++	vcpu_set_vsesr(vcpu, esr & ESR_ELx_ISS_MASK);
+ 	*vcpu_hcr(vcpu) |= HCR_VSE;
+ }
+ 
+@@ -184,5 +184,5 @@ static void pend_guest_serror(struct kvm_vcpu *vcpu, u64 esr)
+  */
+ void kvm_inject_vabt(struct kvm_vcpu *vcpu)
+ {
+-	pend_guest_serror(vcpu, ESR_ELx_ISV);
++	kvm_set_sei_esr(vcpu, ESR_ELx_ISV);
+ }
+diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+index 38c8a64..20e919a 100644
+--- a/arch/arm64/kvm/reset.c
++++ b/arch/arm64/kvm/reset.c
+@@ -82,6 +82,7 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		break;
+ 	case KVM_CAP_SET_GUEST_DEBUG:
+ 	case KVM_CAP_VCPU_ATTRIBUTES:
++	case KVM_CAP_VCPU_EVENTS:
+ 		r = 1;
+ 		break;
+ 	default:
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index a4c1b76..79ecba9 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1107,6 +1107,25 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 		r = kvm_arm_vcpu_has_attr(vcpu, &attr);
+ 		break;
+ 	}
++	case KVM_GET_VCPU_EVENTS: {
++		struct kvm_vcpu_events events;
++
++		if (kvm_arm_vcpu_get_events(vcpu, &events))
++			return -EINVAL;
++
++		if (copy_to_user(argp, &events, sizeof(events)))
++			return -EFAULT;
++
++		return 0;
++	}
++	case KVM_SET_VCPU_EVENTS: {
++		struct kvm_vcpu_events events;
++
++		if (copy_from_user(&events, argp, sizeof(events)))
++			return -EFAULT;
++
++		return kvm_arm_vcpu_set_events(vcpu, &events);
++	}
+ 	default:
+ 		r = -EINVAL;
+ 	}
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.7.4
