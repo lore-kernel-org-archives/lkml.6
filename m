@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752672AbeFDHcH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:32:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52508 "EHLO mail.kernel.org"
+        id S1752591AbeFDHcb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:32:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752167AbeFDG7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 02:59:30 -0400
+        id S1751367AbeFDG7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:59:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>
-Subject: [PATCH 4.9 07/29] radix tree test suite: Remove types.h
-Date: Mon,  4 Jun 2018 08:58:03 +0200
-Message-Id: <20180604065802.454111781@linuxfoundation.org>
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.9 05/29] tools: enable endian checks for all sparse builds
+Date: Mon,  4 Jun 2018 08:58:01 +0200
+Message-Id: <20180604065802.370138169@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
 References: <20180604065802.157744637@linuxfoundation.org>
@@ -28,47 +28,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-commit 12ea65390bd5a46f8a70f068eb0d48922576a781 upstream.
+commit 376a5fb34b04524af501a0c5979c5920be940e05 upstream.
 
-Move the pieces we still need to tools/include and update a few implicit
-includes.
+We dropped need for __CHECK_ENDIAN__ for linux,
+this mirrors this for tools.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-[ Just take the tools/include/linux/* portions of this patch - gregkh]
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/include/linux/compiler.h |    4 ++++
- tools/include/linux/spinlock.h |    5 +++++
- 2 files changed, 9 insertions(+)
+ tools/include/linux/types.h |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/tools/include/linux/compiler.h
-+++ b/tools/include/linux/compiler.h
-@@ -25,6 +25,8 @@
+--- a/tools/include/linux/types.h
++++ b/tools/include/linux/types.h
+@@ -42,11 +42,7 @@ typedef __s8  s8;
+ #else
+ #define __bitwise__
  #endif
+-#ifdef __CHECK_ENDIAN__
+ #define __bitwise __bitwise__
+-#else
+-#define __bitwise
+-#endif
  
+ #define __force
  #define __user
-+#define __rcu
-+#define __read_mostly
- 
- #ifndef __attribute_const__
- # define __attribute_const__
-@@ -54,6 +56,8 @@
- # define unlikely(x)		__builtin_expect(!!(x), 0)
- #endif
- 
-+#define uninitialized_var(x) x = *(&(x))
-+
- #define ACCESS_ONCE(x) (*(volatile typeof(x) *)&(x))
- 
- #include <linux/types.h>
---- /dev/null
-+++ b/tools/include/linux/spinlock.h
-@@ -0,0 +1,5 @@
-+#define spinlock_t		pthread_mutex_t
-+#define DEFINE_SPINLOCK(x)	pthread_mutex_t x = PTHREAD_MUTEX_INITIALIZER;
-+
-+#define spin_lock_irqsave(x, f)		(void)f, pthread_mutex_lock(x)
-+#define spin_unlock_irqrestore(x, f)	(void)f, pthread_mutex_unlock(x)
