@@ -1,106 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeFDMVi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:21:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54277 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752543AbeFDMVg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:21:36 -0400
-X-Google-Smtp-Source: ADUXVKLqb0X826UAhiDcJGosDI9ddMwP6FzeRa8gVEhKQg0nsWezyskRFtFQPNFf/vDR39oCRSiA9Q==
-Date: Mon, 4 Jun 2018 14:21:32 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/asm changes for v4.18
-Message-ID: <20180604122132.GA3337@gmail.com>
+        id S1752723AbeFDMVt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:21:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752432AbeFDMVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:21:48 -0400
+Date: Mon, 4 Jun 2018 14:21:24 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
+Message-ID: <20180604122124.GA2738@kroah.com>
+References: <20180604065802.157744637@linuxfoundation.org>
+ <a4a96a37-0958-ca4e-ea32-826a29db1476@roeck-us.net>
+ <20180604112706.GA16847@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180604112706.GA16847@kroah.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Mon, Jun 04, 2018 at 01:27:06PM +0200, Greg Kroah-Hartman wrote:
+> On Mon, Jun 04, 2018 at 03:15:23AM -0700, Guenter Roeck wrote:
+> > On 06/03/2018 11:57 PM, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 4.9.106 release.
+> > > There are 29 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
+> > > Anything received after that time might be too late.
+> > > 
+> > 
+> > Are you testing us ?
+> > 
+> > Building x86_64:tools/perf ... failed
+> > --------------
+> > Error log:
+> > make[4]: execvp: ./check-headers.sh: Permission denied
+> > make[4]: *** [sub-make] Error 127
+> 
+> Heh, no, I wasn't, but thanks for checking.
+> 
+> > Something went wrong with the patch creating the file. In the original
+> > commit it is created as 755, in the backport it is created as 644.
+> 
+> Ugh, quilt does not keep the permissions of files :(
+> 
+> I thought I had figured that out in the past, let me try to go remember
+> what I did before...
+> 
+> There's also a .sh file in the objtool directory that is not the proper
+> permissions as well...
 
-Please pull the latest x86-asm-for-linus git tree from:
+Ok, hand editing patch files are always so much fun...  Anyway, this is
+fixed up now in the -rc1 git tree I pushed out again.  Let me know if
+that fails.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-for-linus
+And thanks for testing the build of perf now :)
 
-   # HEAD: 6469a0ee0a06b2ea1f5afbb1d5a3feed017d4c7a x86/io: Define readq()/writeq() to use 64-bit type
+thanks,
 
-Two smaller changes:
-
- - better support (non-atomic) 64-bit readq()/writeq() variants (Andy Shevchenko)
-
- - __clear_user() micro-optimization (Alexey Dobriyan)
-
- Thanks,
-
-	Ingo
-
------------------->
-Alexey Dobriyan (1):
-      x86/asm/64: Micro-optimize __clear_user() - Use immediate constants
-
-Andy Shevchenko (1):
-      x86/io: Define readq()/writeq() to use 64-bit type
-
-
- arch/x86/include/asm/io.h  | 8 ++++----
- arch/x86/lib/usercopy_64.c | 9 ++++-----
- 2 files changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index f6e5b9375d8c..6de64840dd22 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -94,10 +94,10 @@ build_mmio_write(__writel, "l", unsigned int, "r", )
- 
- #ifdef CONFIG_X86_64
- 
--build_mmio_read(readq, "q", unsigned long, "=r", :"memory")
--build_mmio_read(__readq, "q", unsigned long, "=r", )
--build_mmio_write(writeq, "q", unsigned long, "r", :"memory")
--build_mmio_write(__writeq, "q", unsigned long, "r", )
-+build_mmio_read(readq, "q", u64, "=r", :"memory")
-+build_mmio_read(__readq, "q", u64, "=r", )
-+build_mmio_write(writeq, "q", u64, "r", :"memory")
-+build_mmio_write(__writeq, "q", u64, "r", )
- 
- #define readq_relaxed(a)	__readq(a)
- #define writeq_relaxed(v, a)	__writeq(v, a)
-diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
-index 75d3776123cc..a624dcc4de10 100644
---- a/arch/x86/lib/usercopy_64.c
-+++ b/arch/x86/lib/usercopy_64.c
-@@ -23,13 +23,13 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
- 	asm volatile(
- 		"	testq  %[size8],%[size8]\n"
- 		"	jz     4f\n"
--		"0:	movq %[zero],(%[dst])\n"
--		"	addq   %[eight],%[dst]\n"
-+		"0:	movq $0,(%[dst])\n"
-+		"	addq   $8,%[dst]\n"
- 		"	decl %%ecx ; jnz   0b\n"
- 		"4:	movq  %[size1],%%rcx\n"
- 		"	testl %%ecx,%%ecx\n"
- 		"	jz     2f\n"
--		"1:	movb   %b[zero],(%[dst])\n"
-+		"1:	movb   $0,(%[dst])\n"
- 		"	incq   %[dst]\n"
- 		"	decl %%ecx ; jnz  1b\n"
- 		"2:\n"
-@@ -40,8 +40,7 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
- 		_ASM_EXTABLE(0b,3b)
- 		_ASM_EXTABLE(1b,2b)
- 		: [size8] "=&c"(size), [dst] "=&D" (__d0)
--		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr),
--		  [zero] "r" (0UL), [eight] "r" (8UL));
-+		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr));
- 	clac();
- 	return size;
- }
+greg k-h
