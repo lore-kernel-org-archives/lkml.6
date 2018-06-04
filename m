@@ -1,100 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751518AbeFDFo5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 01:44:57 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38242 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750731AbeFDFo4 (ORCPT
+        id S1751600AbeFDFqm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 01:46:42 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:60914 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750723AbeFDFql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 01:44:56 -0400
-X-Google-Smtp-Source: ADUXVKLVZyg4hqxvN5nP6fvyl2oeSJo4Mnt9do9E08ofJlQlqnKrVcVZn34DRO+xZNFNIiTSR2KhRQ==
-Date: Mon, 4 Jun 2018 06:44:52 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: arizona: Don't use regmap_read_poll_timeout
-Message-ID: <20180604054452.GD17993@dell>
-References: <20180511135030.14590-1-ckeepax@opensource.cirrus.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180511135030.14590-1-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 4 Jun 2018 01:46:41 -0400
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+X-Original-SENDERIP: 10.177.226.38
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+From: Hoeun Ryu <hoeun.ryu@lge.com.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Cc: Hoeun Ryu <hoeun.ryu@lge.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] panic: move bust_spinlocks(0) after console_flush_on_panic() to avoid deadlocks
+Date: Mon,  4 Jun 2018 14:45:57 +0900
+Message-Id: <1528091179-3015-1-git-send-email-hoeun.ryu@lge.com.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 May 2018, Charles Keepax wrote:
+From: Hoeun Ryu <hoeun.ryu@lge.com>
 
-> Some Arizona CODECs have a small timing window where they will
-> NAK an I2C transaction if it happens before the boot done bit is
-> set. This can cause the read of the register containing the boot
-> done bit to fail until it is set. Since regmap_read_poll_timeout
-> will abort polling if a read fails it can't be reliably used to
-> poll the boot done bit over I2C.
-> 
-> Do a partial revert of ef84f885e037 ("mfd: arizona: Refactor
-> arizona_poll_reg"), removing the regmap_read_poll_timeout but
-> leaving the refactoring to make the arizona_poll_reg take more
-> sensible arguments.
-> 
-> Fixes: ef84f885e037 ("mfd: arizona: Refactor arizona_poll_reg")
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->  drivers/mfd/arizona-core.c | 29 +++++++++++++++++++++--------
->  1 file changed, 21 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mfd/arizona-core.c b/drivers/mfd/arizona-core.c
-> index 83f1c5a516d9..2ed29ce08dac 100644
-> --- a/drivers/mfd/arizona-core.c
-> +++ b/drivers/mfd/arizona-core.c
-> @@ -240,18 +240,31 @@ static int arizona_poll_reg(struct arizona *arizona,
->  			    int timeout_ms, unsigned int reg,
->  			    unsigned int mask, unsigned int target)
->  {
-> +	ktime_t timeout = ktime_add_us(ktime_get(), timeout_ms * 1000);
+ Many console device drivers hold the uart_port->lock spinlock with irq enabled
+(using spin_lock()) while the device drivers are writing characters to their devices,
+but the device drivers just try to hold the spin lock (using spin_trylock()) if
+"oops_in_progress" is equal or greater than 1 to avoid deadlocks.
 
-USEC_PER_MSEC ?
+ There is a case ocurring a deadlock related to the lock and oops_in_progress. A CPU
+could be stopped by smp_send_stop() while it was holding the port lock because irq was
+enabled. Once a CPU stops, it doesn't respond interrupts anymore and the lock stays
+locked forever.
 
->  	unsigned int val = 0;
->  	int ret;
->  
-> -	ret = regmap_read_poll_timeout(arizona->regmap,
-> -				       reg, val, ((val & mask) == target),
-> -				       ARIZONA_REG_POLL_DELAY_US,
-> -				       timeout_ms * 1000);
-> -	if (ret)
-> -		dev_err(arizona->dev, "Polling reg 0x%x timed out: %x\n",
-> -			reg, val);
-> +	while (true) {
-> +		ret = regmap_read(arizona->regmap, reg, &val);
->  
-> -	return ret;
-> +		if ((val & mask) == target)
-> +			return 0;
-> +
-> +		if (ktime_compare(ktime_get(), timeout) > 0)
-> +			break;
-> +
-> +		usleep_range(ARIZONA_REG_POLL_DELAY_US / 2,
-> +			     ARIZONA_REG_POLL_DELAY_US);
-> +	}
-> +
-> +	if (ret) {
-> +		dev_err(arizona->dev, "Failed polling reg 0x%x: %d\n",
-> +			reg, ret);
-> +		return ret;
-> +	}
-> +
-> +	dev_err(arizona->dev, "Polling reg 0x%x timed out: %x\n", reg, val);
-> +	return -ETIMEDOUT;
->  }
->  
->  static int arizona_wait_for_boot(struct arizona *arizona)
+ console_flush_on_panic() is called during panic() and it eventually holds the uart
+lock but the lock is held by another stopped CPU and it is a deadlock. By moving
+bust_spinlocks(0) after console_flush_on_panic(), let the console device drivers
+think the Oops is still in progress to call spin_trylock() instead of spin_lock() to
+avoid the deadlock.
 
+Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
+---
+ kernel/panic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 42e4874..b4063b6 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -233,8 +233,6 @@ void panic(const char *fmt, ...)
+ 	if (_crash_kexec_post_notifiers)
+ 		__crash_kexec(NULL);
+ 
+-	bust_spinlocks(0);
+-
+ 	/*
+ 	 * We may have ended up stopping the CPU holding the lock (in
+ 	 * smp_send_stop()) while still having some valuable data in the console
+@@ -246,6 +244,8 @@ void panic(const char *fmt, ...)
+ 	debug_locks_off();
+ 	console_flush_on_panic();
+ 
++	bust_spinlocks(0);
++
+ 	if (!panic_blink)
+ 		panic_blink = no_blink;
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.1.4
