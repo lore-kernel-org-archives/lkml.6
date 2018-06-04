@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeFDKRo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:17:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56974 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751854AbeFDKRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:17:43 -0400
-Date: Mon, 4 Jun 2018 12:17:41 +0200
-From: Miroslav Lichvar <mlichvar@redhat.com>
-To: John Stultz <john.stultz@linaro.org>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>
-Subject: Re: [PATCHv1] timekeeping: Update multiplier when NTP frequency is
- set directly
-Message-ID: <20180604101741.GB27828@localhost>
-References: <20180529105343.26870-1-mlichvar@redhat.com>
- <CALAqxLWV2d6yTeAK7j31Nvu33TqLmPLNDvzzSu0TSnDEUhVc1A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALAqxLWV2d6yTeAK7j31Nvu33TqLmPLNDvzzSu0TSnDEUhVc1A@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752379AbeFDKRu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:17:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:10332 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752222AbeFDKRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:17:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="54559516"
+Message-ID: <3a66327727d9bf2ce5adf8ef0f1fcc1fffeaa4ec.camel@linux.intel.com>
+Subject: Re: [PATCH 4/8] serial: 8250: Handle case port doesn't have TEMT
+ interrupt using em485.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>, Kees Cook <keescook@chromium.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
+        Ed Blake <ed.blake@sondrel.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
+        Vignesh R <vigneshr@ti.com>,
+        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
+        Aaron Sierra <asierra@xes-inc.com>,
+        Rafael Gago <rafael.gago@gmail.com>, Joel Stanley <joel@jms.id.au>,
+        Sean Wang <sean.wang@mediatek.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 04 Jun 2018 13:17:41 +0300
+In-Reply-To: <20180601124021.102970-5-giulio.benetti@micronovasrl.com>
+References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
+         <20180601124021.102970-5-giulio.benetti@micronovasrl.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 10:42:05AM -0700, John Stultz wrote:
-> On Tue, May 29, 2018 at 3:53 AM, Miroslav Lichvar <mlichvar@redhat.com> wrote:
-> > -void update_wall_time(void)
-> > +static void timekeeping_advance(bool force_update)
+On Fri, 2018-06-01 at 14:40 +0200, Giulio Benetti wrote:
+> Some 8250 ports only have TEMT interrupt, so current implementation
+> can't work for ports without it. The only chance to make it work is to
+> loop-read on LSR register.
 > 
-> This is kind of a nit, but mind switching out bool for an enum?  Using
-> something like TK_ADV_NORMAL and TK_ADV_FORCE?
-> 
-> > +void update_wall_time(void)
-> > +{
-> > +       timekeeping_advance(false);
-> > +}
-> 
-> The enum makes usage like timekeeping_advance(false) a little less
-> opaque to the reader ("Wait, don't advance? Let me go look at the
-> function").
-> 
-> We got bitten by this earlier when we had the old
-> "timekeeping_update(tk, true, false, true)" usage.
+> With NO TEMT interrupt check if both TEMT and THRE are set looping on
+> LSR register.
 
-Ok. That make sense. I'll send a v2.
+> --- a/drivers/tty/serial/8250/8250_dw.c
+> +++ b/drivers/tty/serial/8250/8250_dw.c
 
-Thanks,
+> -		int ret = serial8250_em485_init(up);
+> +		int ret = serial8250_em485_init(up, false);
+
+Is true for all possible DW configured types? Or it's your particular
+case?
 
 -- 
-Miroslav Lichvar
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
