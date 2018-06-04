@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753415AbeFDHDR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:03:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55362 "EHLO mail.kernel.org"
+        id S1753507AbeFDHTQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:19:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752782AbeFDHDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:09 -0400
+        id S1753404AbeFDHDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
-        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 10/47] Revert "pinctrl: msm: Use dynamic GPIO numbering"
-Date: Mon,  4 Jun 2018 08:58:22 +0200
-Message-Id: <20180604065549.920453047@linuxfoundation.org>
+        stable@vger.kernel.org, Edvard Holst <edvard.holst@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.16 14/47] Input: synaptics - Lenovo Thinkpad X1 Carbon G5 (2017) with Elantech trackpoints should use RMI
+Date: Mon,  4 Jun 2018 08:58:26 +0200
+Message-Id: <20180604065550.080137980@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -32,34 +29,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Edvard Holst <edvard.holst@gmail.com>
 
-This reverts commit 7d8e0341b2b93fb505cd75e8e0d4f1911d0fa0fe which is
-commit a7aa75a2a7dba32594291a71c3704000a2fd7089 upstream.
+commit 15e2cffec3aa0d47a8d75ae80e1b136bfb5dff30 upstream.
 
-There's been too many complaints about this.  Personally I think it's
-going to blow up when people hit this in mainline, but hey, it's not my
-systems.  At least we don't have to backport the mess to the stable
-kernels to give them some more life to live unscathed :)
+Lenovo use two different trackpoints in the fifth generation Thinkpad X1
+Carbon. Both are accessible over SMBUS/RMI but the pnpIDs are missing.
+This patch is for the Elantech trackpoint specifically which also
+reports SMB version 3 so rmi_smbus needs to be updated in order to
+handle it.
 
-Reported-by: Timur Tabi <timur@codeaurora.org>
-Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+For the record, I was not the first one to come up with this patch as it
+has been floating around the internet for a while now. However, I have
+spent significant time with testing and my efforts to find the original
+author of the patch have been unsuccessful.
+
+Signed-off-by: Edvard Holst <edvard.holst@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -818,7 +818,7 @@ static int msm_gpio_init(struct msm_pinc
- 		return -EINVAL;
- 
- 	chip = &pctrl->chip;
--	chip->base = -1;
-+	chip->base = 0;
- 	chip->ngpio = ngpio;
- 	chip->label = dev_name(pctrl->dev);
- 	chip->parent = pctrl->dev;
+---
+ drivers/input/mouse/synaptics.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -173,6 +173,7 @@ static const char * const smbus_pnp_ids[
+ 	"LEN0046", /* X250 */
+ 	"LEN004a", /* W541 */
+ 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
++	"LEN0073", /* X1 Carbon G5 (Elantech) */
+ 	"LEN200f", /* T450s */
+ 	NULL
+ };
