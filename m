@@ -1,135 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752997AbeFDKEY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:04:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752497AbeFDKBE (ORCPT
+        id S1752964AbeFDKEW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:04:22 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45264 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752498AbeFDKBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 06:01:04 -0400
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 05/19] sched/numa: Use task faults only if numa_group is not yet setup
-Date: Mon,  4 Jun 2018 15:30:14 +0530
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18060410-0008-0000-0000-00000243736A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060410-0009-0000-0000-000021A9323E
-Message-Id: <1528106428-19992-6-git-send-email-srikar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040123
+X-Google-Smtp-Source: ADUXVKL0GvZzxLm4hZ41tYInz3Sna1RFXHDIHPEJnNMPEqbOSZej/BD4JOkop5HL7il9hvsKKXGvlw==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v5 4/4] ARM: dts: imx: add missing compatible and clock properties for EPIT
+Date: Mon,  4 Jun 2018 12:00:35 +0200
+Message-Id: <20180604100035.19558-5-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180604100035.19558-1-peron.clem@gmail.com>
+References: <20180604100035.19558-1-peron.clem@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When numa_group faults are available, task_numa_placement only uses
-numa_group faults to evaluate preferred node. However it still accounts
-task faults and even evaluates the preferred node just based on task
-faults just to discard it in favour of preferred node chosen on the
-basis of numa_group.
+From: Colin Didier <colin.didier@devialet.com>
 
-Instead use task faults only if numa_group is not set.
+Add missing compatible and clock properties for EPIT node.
 
-Testcase       Time:         Min         Max         Avg      StdDev
-numa01.sh      Real:      506.35      794.46      599.06      104.26
-numa01.sh       Sys:      150.37      223.56      195.99       24.94
-numa01.sh      User:    43450.69    61752.04    49281.50     6635.33
-numa02.sh      Real:       60.33       62.40       61.31        0.90
-numa02.sh       Sys:       18.12       31.66       24.28        5.89
-numa02.sh      User:     5203.91     5325.32     5260.29       49.98
-numa03.sh      Real:      696.47      853.62      745.80       57.28
-numa03.sh       Sys:       85.68      123.71       97.89       13.48
-numa03.sh      User:    55978.45    66418.63    59254.94     3737.97
-numa04.sh      Real:      444.05      514.83      497.06       26.85
-numa04.sh       Sys:      230.39      375.79      316.23       48.58
-numa04.sh      User:    35403.12    41004.10    39720.80     2163.08
-numa05.sh      Real:      423.09      460.41      439.57       13.92
-numa05.sh       Sys:      287.38      480.15      369.37       68.52
-numa05.sh      User:    34732.12    38016.80    36255.85     1070.51
-
-Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-numa01.sh      Real:      478.45      565.90      515.11       30.87 	 16.29%
-numa01.sh       Sys:      207.79      271.04      232.94       21.33 	 -15.8%
-numa01.sh      User:    39763.93    47303.12    43210.73     2644.86 	 14.04%
-numa02.sh      Real:       60.00       61.46       60.78        0.49 	 0.871%
-numa02.sh       Sys:       15.71       25.31       20.69        3.42 	 17.35%
-numa02.sh      User:     5175.92     5265.86     5235.97       32.82 	 0.464%
-numa03.sh      Real:      776.42      834.85      806.01       23.22 	 -7.47%
-numa03.sh       Sys:      114.43      128.75      121.65        5.49 	 -19.5%
-numa03.sh      User:    60773.93    64855.25    62616.91     1576.39 	 -5.36%
-numa04.sh      Real:      456.93      511.95      482.91       20.88 	 2.930%
-numa04.sh       Sys:      178.09      460.89      356.86       94.58 	 -11.3%
-numa04.sh      User:    36312.09    42553.24    39623.21     2247.96 	 0.246%
-numa05.sh      Real:      393.98      493.48      436.61       35.59 	 0.677%
-numa05.sh       Sys:      164.49      329.15      265.87       61.78 	 38.92%
-numa05.sh      User:    33182.65    36654.53    35074.51     1187.71 	 3.368%
-
-Ideally this change shouldn't have affected performance.
-
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- kernel/sched/fair.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/imx25.dtsi   |  8 ++++++--
+ arch/arm/boot/dts/imx6qdl.dtsi | 10 ++++++++--
+ arch/arm/boot/dts/imx6sl.dtsi  | 14 ++++++++++----
+ arch/arm/boot/dts/imx6sx.dtsi  | 10 ++++++++--
+ arch/arm/boot/dts/imx6ul.dtsi  | 10 ++++++++--
+ 5 files changed, 40 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 94091e6..e7c07aa 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2072,8 +2072,8 @@ static int preferred_group_nid(struct task_struct *p, int nid)
+diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
+index cf70df20b19c..15fd4308dad8 100644
+--- a/arch/arm/boot/dts/imx25.dtsi
++++ b/arch/arm/boot/dts/imx25.dtsi
+@@ -396,15 +396,19 @@
+ 			};
  
- static void task_numa_placement(struct task_struct *p)
- {
--	int seq, nid, max_nid = -1, max_group_nid = -1;
--	unsigned long max_faults = 0, max_group_faults = 0;
-+	int seq, nid, max_nid = -1;
-+	unsigned long max_faults = 0;
- 	unsigned long fault_types[2] = { 0, 0 };
- 	unsigned long total_faults;
- 	u64 runtime, period;
-@@ -2152,15 +2152,15 @@ static void task_numa_placement(struct task_struct *p)
- 			}
- 		}
+ 			epit1: timer@53f94000 {
+-				compatible = "fsl,imx25-epit";
++				compatible = "fsl,imx25-epit", "fsl,imx31-epit";
+ 				reg = <0x53f94000 0x4000>;
+ 				interrupts = <28>;
++				clocks = <&clks 83>;
++				status = "disabled";
+ 			};
  
--		if (faults > max_faults) {
--			max_faults = faults;
-+		if (!p->numa_group) {
-+			if (faults > max_faults) {
-+				max_faults = faults;
-+				max_nid = nid;
-+			}
-+		} else if (group_faults > max_faults) {
-+			max_faults = group_faults;
- 			max_nid = nid;
- 		}
--
--		if (group_faults > max_group_faults) {
--			max_group_faults = group_faults;
--			max_group_nid = nid;
--		}
- 	}
+ 			epit2: timer@53f98000 {
+-				compatible = "fsl,imx25-epit";
++				compatible = "fsl,imx25-epit", "fsl,imx31-epit";
+ 				reg = <0x53f98000 0x4000>;
+ 				interrupts = <27>;
++				clocks = <&clks 84>;
++				status = "disabled";
+ 			};
  
- 	update_task_scan_period(p, fault_types[0], fault_types[1]);
-@@ -2168,7 +2168,7 @@ static void task_numa_placement(struct task_struct *p)
- 	if (p->numa_group) {
- 		numa_group_count_active_nodes(p->numa_group);
- 		spin_unlock_irq(group_lock);
--		max_nid = preferred_group_nid(p, max_group_nid);
-+		max_nid = preferred_group_nid(p, max_nid);
- 	}
+ 			gpio4: gpio@53f9c000 {
+diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+index c003e62bf290..65c4ee07454c 100644
+--- a/arch/arm/boot/dts/imx6qdl.dtsi
++++ b/arch/arm/boot/dts/imx6qdl.dtsi
+@@ -843,14 +843,20 @@
+ 				};
+ 			};
  
- 	if (max_faults) {
+-			epit1: epit@20d0000 { /* EPIT1 */
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6QDL_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 { /* EPIT2 */
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6QDL_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
+diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
+index ab6a7e2e7e8f..6229bbef7ccc 100644
+--- a/arch/arm/boot/dts/imx6sl.dtsi
++++ b/arch/arm/boot/dts/imx6sl.dtsi
+@@ -671,14 +671,20 @@
+ 				};
+ 			};
+ 
+-			epit1: epit@20d0000 {
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6sl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+-				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SL_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 {
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6sl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+-				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
++				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SL_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index 49c7205b8db8..2b30559d3270 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -736,14 +736,20 @@
+ 				};
+ 			};
+ 
+-			epit1: epit@20d0000 {
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6sx-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SX_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 {
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6sx-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SX_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 1241972b16ba..d5f765da1ee2 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -658,14 +658,20 @@
+ 				};
+ 			};
+ 
+-			epit1: epit@20d0000 {
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6ul-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 {
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6ul-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
 -- 
-1.8.3.1
+2.17.0
