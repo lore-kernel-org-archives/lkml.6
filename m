@@ -1,93 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753384AbeFDOhe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:37:34 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:50934 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751354AbeFDOhc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:37:32 -0400
-Message-ID: <1528123050.7898.99.camel@surriel.com>
-Subject: Re: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
-From: Rik van Riel <riel@surriel.com>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date: Mon, 04 Jun 2018 10:37:30 -0400
-In-Reply-To: <20180604125939.GB38574@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-         <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
-         <20180604122336.GS12217@hirez.programming.kicks-ass.net>
-         <20180604125939.GB38574@linux.vnet.ibm.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-yx+VoeBPYZ/jkcI2Rzj0"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        id S1753413AbeFDOkt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:40:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47890 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751782AbeFDOks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:40:48 -0400
+Subject: Re: [Cluster-devel] [PATCH v2] MAINTAINERS: Add Andreas Gruenbacher
+ as a maintainer for gfs2
+To: Bob Peterson <rpeterso@redhat.com>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+References: <819640525.39798623.1528122982163.JavaMail.zimbra@redhat.com>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <4dc4458c-e469-66f8-0cd5-ef363bd0f8e5@redhat.com>
+Date: Mon, 4 Jun 2018 15:40:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <819640525.39798623.1528122982163.JavaMail.zimbra@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-yx+VoeBPYZ/jkcI2Rzj0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2018-06-04 at 05:59 -0700, Srikar Dronamraju wrote:
-> * Peter Zijlstra <peterz@infradead.org> [2018-06-04 14:23:36]:
->=20
-> > OK, the above matches the description, but I'm puzzled by the
-> > remainder:
-> >=20
-> > >=20
-> > > -		if (ng->active_nodes > 1 &&
-> > > numa_is_active_node(env.dst_nid, ng))
-> > > -			sched_setnuma(p, env.dst_nid);
-> > > +		if (nid !=3D p->numa_preferred_nid)
-> > > +			sched_setnuma(p, nid);
-> > >  	}
-> >=20
-> > That seems to entirely loose the active_node thing, or are you
-> > saying
-> > best_cpu already includes that? (Changelog could use a little help
-> > there
-> > I suppose)
->=20
-> I think checking for active_nodes before calling sched_setnuma was a
-> mistake.
->=20
-> Before this change, we may be retaining numa_preferred_nid to be the
-> source node while we select another node with better numa affinity to
-> run on.=20
+On 04/06/18 15:36, Bob Peterson wrote:
+> Add Andreas Gruenbacher as a maintainer for the gfs2 file system
+> and remove Steve Whitehouse.
+>
+> Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b60179d948bb..73745884a595 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5939,8 +5939,8 @@ S:	Maintained
+>   F:	scripts/get_maintainer.pl
+>   
+>   GFS2 FILE SYSTEM
+> -M:	Steven Whitehouse <swhiteho@redhat.com>
+>   M:	Bob Peterson <rpeterso@redhat.com>
+> +M:	Andreas Gruenbacher <agruenba@redhat.com>
+>   L:	cluster-devel@redhat.com
+>   W:	http://sources.redhat.com/cluster/
+>   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
+>
 
-Sometimes workloads are so large they get spread
-around to multiple NUMA nodes.
-
-In that case, you do NOT want all the tasks of
-that workload (numa group) to try squeezing onto
-the same load, only to have the load balancer
-randomly move tasks off of that node again later.
-
-How do you keep that from happening?
-
---=20
-All Rights Reversed.
---=-yx+VoeBPYZ/jkcI2Rzj0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVTqoACgkQznnekoTE
-3oMv6gf/e+XjU8bS5G/mkPOc9AlMIK8KPBAMWH56QdxipZk7O8kbBOXSgMCNOcBf
-l862+/CK6bTBky/Ol2ztzCVbvK0vqLHljZantJ3da5rjqq70zR45+FKmHmS67AjE
-MRhUnyR0y0AU/QLJ/q5qK1F01zUColATBstisDl/qDWAarOI7Jl+fYqSKMzvjlV1
-IlYbGXRybYzUj5xuCGnflGrYu1LoLvPVqFvNTdR50I1MGeGKXw9ZrW5ESo7yI9wT
-w4FsCJqh+pcgvyksSrYsFzQpF3M+/2emQ+FPL6NzhVeFlR9MAbD2T4q1yvjwUZar
-8MScwgjxLj8W58d6vAFDW37MFYW9fQ==
-=36/e
------END PGP SIGNATURE-----
-
---=-yx+VoeBPYZ/jkcI2Rzj0--
+Acked-by: Steven Whitehouse <swhiteho@redhat.com>
