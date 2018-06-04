@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeFDHBQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:01:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53776 "EHLO mail.kernel.org"
+        id S1752861AbeFDHBT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:01:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752254AbeFDHBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:11 -0400
+        id S1752828AbeFDHBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 4.14 13/52] xfs: detect agfl count corruption and reset agfl
-Date: Mon,  4 Jun 2018 08:58:08 +0200
-Message-Id: <20180604065607.063822292@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 23/52] kbuild: clang: remove crufty HOSTCFLAGS
+Date: Mon,  4 Jun 2018 08:58:18 +0200
+Message-Id: <20180604065607.502037987@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -30,228 +31,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brian Foster <bfoster@redhat.com>
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
 
-commit a27ba2607e60312554cbcd43fc660b2c7f29dc9c upstream.
+commit df16aaac26e92e97ab7234d3f93c953466adc4b5 upstream.
 
-The struct xfs_agfl v5 header was originally introduced with
-unexpected padding that caused the AGFL to operate with one less
-slot than intended. The header has since been packed, but the fix
-left an incompatibility for users who upgrade from an old kernel
-with the unpacked header to a newer kernel with the packed header
-while the AGFL happens to wrap around the end. The newer kernel
-recognizes one extra slot at the physical end of the AGFL that the
-previous kernel did not. The new kernel will eventually attempt to
-allocate a block from that slot, which contains invalid data, and
-cause a crash.
+When compiling with `make CC=clang HOSTCC=clang`, I was seeing warnings
+that clang did not recognize -fno-delete-null-pointer-checks for HOSTCC
+targets.  These were added in commit 61163efae020 ("kbuild: LLVMLinux:
+Add Kbuild support for building kernel with Clang").
 
-This condition can be detected by comparing the active range of the
-AGFL to the count. While this detects a padding mismatch, it can
-also trigger false positives for unrelated flcount corruption. Since
-we cannot distinguish a size mismatch due to padding from unrelated
-corruption, we can't trust the AGFL enough to simply repopulate the
-empty slot.
+Clang does not support -fno-delete-null-pointer-checks, so adding it to
+HOSTCFLAGS if HOSTCC is clang does not make sense.
 
-Instead, avoid unnecessarily complex detection logic and and use a
-solution that can handle any form of flcount corruption that slips
-through read verifiers: distrust the entire AGFL and reset it to an
-empty state. Any valid blocks within the AGFL are intentionally
-leaked. This requires xfs_repair to rectify (which was already
-necessary based on the state the AGFL was found in). The reset
-mitigates the side effect of the padding mismatch problem from a
-filesystem crash to a free space accounting inconsistency. The
-generic approach also means that this patch can be safely backported
-to kernels with or without a packed struct xfs_agfl.
+It's not clear why the other warnings were disabled, and just for
+HOSTCFLAGS, but I can remove them, add -Werror to HOSTCFLAGS and compile
+with clang just fine.
 
-Check the AGF for an invalid freelist count on initial read from
-disk. If detected, set a flag on the xfs_perag to indicate that a
-reset is required before the AGFL can be used. In the first
-transaction that attempts to use a flagged AGFL, reset it to empty,
-warn the user about the inconsistency and allow the freelist fixup
-code to repopulate the AGFL with new blocks. The xfs_perag flag is
-cleared to eliminate the need for repeated checks on each block
-allocation operation.
-
-This allows kernels that include the packing fix commit 96f859d52bcb
-("libxfs: pack the agfl header structure so XFS_AGFL_SIZE is correct")
-to handle older unpacked AGFL formats without a filesystem crash.
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by Dave Chiluk <chiluk+linuxxfs@indeed.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xfs/libxfs/xfs_alloc.c |   94 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_mount.h        |    1 
- fs/xfs/xfs_trace.h        |    9 +++-
- 3 files changed, 103 insertions(+), 1 deletion(-)
+ Makefile |    5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -2057,6 +2057,93 @@ xfs_alloc_space_available(
- }
+--- a/Makefile
++++ b/Makefile
+@@ -369,11 +369,6 @@ HOSTCXXFLAGS := -O2 $(HOST_LFS_CFLAGS)
+ HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS)
+ HOST_LOADLIBES := $(HOST_LFS_LIBS)
  
- /*
-+ * Check the agfl fields of the agf for inconsistency or corruption. The purpose
-+ * is to detect an agfl header padding mismatch between current and early v5
-+ * kernels. This problem manifests as a 1-slot size difference between the
-+ * on-disk flcount and the active [first, last] range of a wrapped agfl. This
-+ * may also catch variants of agfl count corruption unrelated to padding. Either
-+ * way, we'll reset the agfl and warn the user.
-+ *
-+ * Return true if a reset is required before the agfl can be used, false
-+ * otherwise.
-+ */
-+static bool
-+xfs_agfl_needs_reset(
-+	struct xfs_mount	*mp,
-+	struct xfs_agf		*agf)
-+{
-+	uint32_t		f = be32_to_cpu(agf->agf_flfirst);
-+	uint32_t		l = be32_to_cpu(agf->agf_fllast);
-+	uint32_t		c = be32_to_cpu(agf->agf_flcount);
-+	int			agfl_size = xfs_agfl_size(mp);
-+	int			active;
-+
-+	/* no agfl header on v4 supers */
-+	if (!xfs_sb_version_hascrc(&mp->m_sb))
-+		return false;
-+
-+	/*
-+	 * The agf read verifier catches severe corruption of these fields.
-+	 * Repeat some sanity checks to cover a packed -> unpacked mismatch if
-+	 * the verifier allows it.
-+	 */
-+	if (f >= agfl_size || l >= agfl_size)
-+		return true;
-+	if (c > agfl_size)
-+		return true;
-+
-+	/*
-+	 * Check consistency between the on-disk count and the active range. An
-+	 * agfl padding mismatch manifests as an inconsistent flcount.
-+	 */
-+	if (c && l >= f)
-+		active = l - f + 1;
-+	else if (c)
-+		active = agfl_size - f + l + 1;
-+	else
-+		active = 0;
-+
-+	return active != c;
-+}
-+
-+/*
-+ * Reset the agfl to an empty state. Ignore/drop any existing blocks since the
-+ * agfl content cannot be trusted. Warn the user that a repair is required to
-+ * recover leaked blocks.
-+ *
-+ * The purpose of this mechanism is to handle filesystems affected by the agfl
-+ * header padding mismatch problem. A reset keeps the filesystem online with a
-+ * relatively minor free space accounting inconsistency rather than suffer the
-+ * inevitable crash from use of an invalid agfl block.
-+ */
-+static void
-+xfs_agfl_reset(
-+	struct xfs_trans	*tp,
-+	struct xfs_buf		*agbp,
-+	struct xfs_perag	*pag)
-+{
-+	struct xfs_mount	*mp = tp->t_mountp;
-+	struct xfs_agf		*agf = XFS_BUF_TO_AGF(agbp);
-+
-+	ASSERT(pag->pagf_agflreset);
-+	trace_xfs_agfl_reset(mp, agf, 0, _RET_IP_);
-+
-+	xfs_warn(mp,
-+	       "WARNING: Reset corrupted AGFL on AG %u. %d blocks leaked. "
-+	       "Please unmount and run xfs_repair.",
-+	         pag->pag_agno, pag->pagf_flcount);
-+
-+	agf->agf_flfirst = 0;
-+	agf->agf_fllast = cpu_to_be32(xfs_agfl_size(mp) - 1);
-+	agf->agf_flcount = 0;
-+	xfs_alloc_log_agf(tp, agbp, XFS_AGF_FLFIRST | XFS_AGF_FLLAST |
-+				    XFS_AGF_FLCOUNT);
-+
-+	pag->pagf_flcount = 0;
-+	pag->pagf_agflreset = false;
-+}
-+
-+/*
-  * Decide whether to use this allocation group for this allocation.
-  * If so, fix up the btree freelist's size.
-  */
-@@ -2117,6 +2204,10 @@ xfs_alloc_fix_freelist(
- 		}
- 	}
- 
-+	/* reset a padding mismatched agfl before final free space check */
-+	if (pag->pagf_agflreset)
-+		xfs_agfl_reset(tp, agbp, pag);
-+
- 	/* If there isn't enough total space or single-extent, reject it. */
- 	need = xfs_alloc_min_freelist(mp, pag);
- 	if (!xfs_alloc_space_available(args, need, flags))
-@@ -2273,6 +2364,7 @@ xfs_alloc_get_freelist(
- 		agf->agf_flfirst = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, -1);
- 	xfs_trans_agflist_delta(tp, -1);
- 	pag->pagf_flcount--;
-@@ -2384,6 +2476,7 @@ xfs_alloc_put_freelist(
- 		agf->agf_fllast = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, 1);
- 	xfs_trans_agflist_delta(tp, 1);
- 	pag->pagf_flcount++;
-@@ -2589,6 +2682,7 @@ xfs_alloc_read_agf(
- 		pag->pagb_count = 0;
- 		pag->pagb_tree = RB_ROOT;
- 		pag->pagf_init = 1;
-+		pag->pagf_agflreset = xfs_agfl_needs_reset(mp, agf);
- 	}
- #ifdef DEBUG
- 	else if (!XFS_FORCED_SHUTDOWN(mp)) {
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -353,6 +353,7 @@ typedef struct xfs_perag {
- 	char		pagi_inodeok;	/* The agi is ok for inodes */
- 	uint8_t		pagf_levels[XFS_BTNUM_AGF];
- 					/* # of levels in bno & cnt btree */
-+	bool		pagf_agflreset; /* agfl requires reset before use */
- 	uint32_t	pagf_flcount;	/* count of blocks in freelist */
- 	xfs_extlen_t	pagf_freeblks;	/* total free blocks */
- 	xfs_extlen_t	pagf_longest;	/* longest free space */
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -1513,7 +1513,7 @@ TRACE_EVENT(xfs_extent_busy_trim,
- 		  __entry->tlen)
- );
- 
--TRACE_EVENT(xfs_agf,
-+DECLARE_EVENT_CLASS(xfs_agf_class,
- 	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags,
- 		 unsigned long caller_ip),
- 	TP_ARGS(mp, agf, flags, caller_ip),
-@@ -1569,6 +1569,13 @@ TRACE_EVENT(xfs_agf,
- 		  __entry->longest,
- 		  (void *)__entry->caller_ip)
- );
-+#define DEFINE_AGF_EVENT(name) \
-+DEFINE_EVENT(xfs_agf_class, name, \
-+	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags, \
-+		 unsigned long caller_ip), \
-+	TP_ARGS(mp, agf, flags, caller_ip))
-+DEFINE_AGF_EVENT(xfs_agf);
-+DEFINE_AGF_EVENT(xfs_agfl_reset);
- 
- TRACE_EVENT(xfs_free_extent,
- 	TP_PROTO(struct xfs_mount *mp, xfs_agnumber_t agno, xfs_agblock_t agbno,
+-ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
+-HOSTCFLAGS  += -Wno-unused-value -Wno-unused-parameter \
+-		-Wno-missing-field-initializers -fno-delete-null-pointer-checks
+-endif
+-
+ # Make variables (CC, etc...)
+ AS		= $(CROSS_COMPILE)as
+ LD		= $(CROSS_COMPILE)ld
