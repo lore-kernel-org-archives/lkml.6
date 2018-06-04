@@ -1,76 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753052AbeFDMY1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:24:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40174 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753006AbeFDMYT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:24:19 -0400
-Date: Mon, 4 Jun 2018 14:24:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 05/19] sched/numa: Use task faults only if numa_group is
- not yet setup
-Message-ID: <20180604122408.GT12217@hirez.programming.kicks-ass.net>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1528106428-19992-6-git-send-email-srikar@linux.vnet.ibm.com>
+        id S1752713AbeFDM0O (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:26:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51253 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751473AbeFDM0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:26:13 -0400
+Date: Mon, 4 Jun 2018 14:26:10 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Greg Thelen <gthelen@google.com>, Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/2] mm: propagate memory effective protection on setting
+ memory.min/low
+Message-ID: <20180604122610.GM19202@dhcp22.suse.cz>
+References: <20180522132528.23769-1-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528106428-19992-6-git-send-email-srikar@linux.vnet.ibm.com>
+In-Reply-To: <20180522132528.23769-1-guro@fb.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 03:30:14PM +0530, Srikar Dronamraju wrote:
-> When numa_group faults are available, task_numa_placement only uses
-> numa_group faults to evaluate preferred node. However it still accounts
-> task faults and even evaluates the preferred node just based on task
-> faults just to discard it in favour of preferred node chosen on the
-> basis of numa_group.
+On Tue 22-05-18 14:25:27, Roman Gushchin wrote:
+> Explicitly propagate effective memory min/low values down by the tree.
 > 
-> Instead use task faults only if numa_group is not set.
+> If there is the global memory pressure, it's not really necessary.
+> Effective memory guarantees will be propagated automatically
+> as we traverse memory cgroup tree in the reclaim path.
 > 
-> Testcase       Time:         Min         Max         Avg      StdDev
-> numa01.sh      Real:      506.35      794.46      599.06      104.26
-> numa01.sh       Sys:      150.37      223.56      195.99       24.94
-> numa01.sh      User:    43450.69    61752.04    49281.50     6635.33
-> numa02.sh      Real:       60.33       62.40       61.31        0.90
-> numa02.sh       Sys:       18.12       31.66       24.28        5.89
-> numa02.sh      User:     5203.91     5325.32     5260.29       49.98
-> numa03.sh      Real:      696.47      853.62      745.80       57.28
-> numa03.sh       Sys:       85.68      123.71       97.89       13.48
-> numa03.sh      User:    55978.45    66418.63    59254.94     3737.97
-> numa04.sh      Real:      444.05      514.83      497.06       26.85
-> numa04.sh       Sys:      230.39      375.79      316.23       48.58
-> numa04.sh      User:    35403.12    41004.10    39720.80     2163.08
-> numa05.sh      Real:      423.09      460.41      439.57       13.92
-> numa05.sh       Sys:      287.38      480.15      369.37       68.52
-> numa05.sh      User:    34732.12    38016.80    36255.85     1070.51
-> 
-> Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-> numa01.sh      Real:      478.45      565.90      515.11       30.87 	 16.29%
-> numa01.sh       Sys:      207.79      271.04      232.94       21.33 	 -15.8%
-> numa01.sh      User:    39763.93    47303.12    43210.73     2644.86 	 14.04%
-> numa02.sh      Real:       60.00       61.46       60.78        0.49 	 0.871%
-> numa02.sh       Sys:       15.71       25.31       20.69        3.42 	 17.35%
-> numa02.sh      User:     5175.92     5265.86     5235.97       32.82 	 0.464%
-> numa03.sh      Real:      776.42      834.85      806.01       23.22 	 -7.47%
-> numa03.sh       Sys:      114.43      128.75      121.65        5.49 	 -19.5%
-> numa03.sh      User:    60773.93    64855.25    62616.91     1576.39 	 -5.36%
-> numa04.sh      Real:      456.93      511.95      482.91       20.88 	 2.930%
-> numa04.sh       Sys:      178.09      460.89      356.86       94.58 	 -11.3%
-> numa04.sh      User:    36312.09    42553.24    39623.21     2247.96 	 0.246%
-> numa05.sh      Real:      393.98      493.48      436.61       35.59 	 0.677%
-> numa05.sh       Sys:      164.49      329.15      265.87       61.78 	 38.92%
-> numa05.sh      User:    33182.65    36654.53    35074.51     1187.71 	 3.368%
-> 
-> Ideally this change shouldn't have affected performance.
+> But if there is no global memory pressure, effective memory protection
+> still matters for local (memcg-scoped) memory pressure.
+> So, we have to update effective limits in the subtree,
+> if a user changes memory.min and memory.low values.
 
-Ideally you go on here to explain why it does in fact do affect
-performance.. :-)
+Please be explicit about the exact problem. Ideally with a memcg tree example.
+
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Cc: Greg Thelen <gthelen@google.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  mm/memcontrol.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index ab5673dbfc4e..b9cd0bb63759 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5374,7 +5374,7 @@ static int memory_min_show(struct seq_file *m, void *v)
+>  static ssize_t memory_min_write(struct kernfs_open_file *of,
+>  				char *buf, size_t nbytes, loff_t off)
+>  {
+> -	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
+> +	struct mem_cgroup *iter, *memcg = mem_cgroup_from_css(of_css(of));
+>  	unsigned long min;
+>  	int err;
+>  
+> @@ -5385,6 +5385,11 @@ static ssize_t memory_min_write(struct kernfs_open_file *of,
+>  
+>  	page_counter_set_min(&memcg->memory, min);
+>  
+> +	rcu_read_lock();
+> +	for_each_mem_cgroup_tree(iter, memcg)
+> +		mem_cgroup_protected(NULL, iter);
+> +	rcu_read_unlock();
+> +
+>  	return nbytes;
+>  }
+>  
+> @@ -5404,7 +5409,7 @@ static int memory_low_show(struct seq_file *m, void *v)
+>  static ssize_t memory_low_write(struct kernfs_open_file *of,
+>  				char *buf, size_t nbytes, loff_t off)
+>  {
+> -	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
+> +	struct mem_cgroup *iter, *memcg = mem_cgroup_from_css(of_css(of));
+>  	unsigned long low;
+>  	int err;
+>  
+> @@ -5415,6 +5420,11 @@ static ssize_t memory_low_write(struct kernfs_open_file *of,
+>  
+>  	page_counter_set_low(&memcg->memory, low);
+>  
+> +	rcu_read_lock();
+> +	for_each_mem_cgroup_tree(iter, memcg)
+> +		mem_cgroup_protected(NULL, iter);
+> +	rcu_read_unlock();
+> +
+>  	return nbytes;
+>  }
+>  
+> -- 
+> 2.14.3
+
+-- 
+Michal Hocko
+SUSE Labs
