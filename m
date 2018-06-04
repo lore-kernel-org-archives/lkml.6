@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752104AbeFDG7K (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 02:59:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752047AbeFDG7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752057AbeFDG7D (ORCPT <rfc822;w@1wt.eu>);
         Mon, 4 Jun 2018 02:59:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751520AbeFDG7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:59:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH 4.9 12/29] perf tools: Force fixdep compilation at the start of the build
-Date: Mon,  4 Jun 2018 08:58:08 +0200
-Message-Id: <20180604065802.643141551@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 11/29] tools include: Adopt kernels refcount.h
+Date: Mon,  4 Jun 2018 08:58:07 +0200
+Message-Id: <20180604065802.606741436@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
 References: <20180604065802.157744637@linuxfoundation.org>
@@ -31,238 +33,198 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit abb26210a39522a6645bce3f438ed9a26bedb11b upstream.
+commit 73a9bf95ed1c05698ecabe2f28c47aedfa61b52b upstream.
 
-The fixdep tool needs to be built before everything else, because it fixes
-every object dependency file.
+To aid in catching bugs when using atomics as a reference count.
 
-We handle this currently by making all objects to depend on fixdep, which is
-error prone and is easily forgotten when new object is added.
+This is a trimmed down version with just what is used by tools/ at
+this point.
 
-Instead of this, this patch force fixdep tool to be built as the first target
-in the separate make session. This way we don't need to handle extra fixdep
-dependencies and we are certain there's no fixdep race with any parallel make
-job.
+After this, the patches submitted by Elena for tools/ doing the
+conversion from atomic_ to recount_ methods can be applied and tested.
 
-Committer notes:
+To activate it, buint perf with:
 
-Testing it:
+  make DEBUG=1 -C tools/perf
 
-Before:
-
-  $ rm -rf /tmp/build/perf/ ; mkdir -p /tmp/build/perf ; make -k O=/tmp/build/perf -C tools/perf install-bin
-  make: Entering directory '/home/acme/git/linux/tools/perf'
-    BUILD:   Doing 'make -j4' parallel build
-
-  Auto-detecting system features:
-  ...                         dwarf: [ on  ]
-  ...            dwarf_getlocations: [ on  ]
-  ...                         glibc: [ on  ]
-  ...                          gtk2: [ on  ]
-  ...                      libaudit: [ on  ]
-  ...                        libbfd: [ on  ]
-  ...                        libelf: [ on  ]
-  ...                       libnuma: [ on  ]
-  ...        numa_num_possible_cpus: [ on  ]
-  ...                       libperl: [ on  ]
-  ...                     libpython: [ on  ]
-  ...                      libslang: [ on  ]
-  ...                     libcrypto: [ on  ]
-  ...                     libunwind: [ on  ]
-  ...            libdw-dwarf-unwind: [ on  ]
-  ...                          zlib: [ on  ]
-  ...                          lzma: [ on  ]
-  ...                     get_cpuid: [ on  ]
-  ...                           bpf: [ on  ]
-
-    GEN      /tmp/build/perf/common-cmds.h
-    HOSTCC   /tmp/build/perf/fixdep.o
-    HOSTLD   /tmp/build/perf/fixdep-in.o
-    LINK     /tmp/build/perf/fixdep
-    MKDIR    /tmp/build/perf/pmu-events/
-    HOSTCC   /tmp/build/perf/pmu-events/json.o
-    MKDIR    /tmp/build/perf/pmu-events/
-    HOSTCC   /tmp/build/perf/pmu-events/jsmn.o
-    HOSTCC   /tmp/build/perf/pmu-events/jevents.o
-    HOSTLD   /tmp/build/perf/pmu-events/jevents-in.o
-    PERF_VERSION = 4.9.rc8.g868cd5
-    CC       /tmp/build/perf/perf-read-vdso32
-  <SNIP>
-
-After:
-
-  $ rm -rf /tmp/build/perf/ ; mkdir -p /tmp/build/perf ; make -k O=/tmp/build/perf -C tools/perf install-bin
-  make: Entering directory '/home/acme/git/linux/tools/perf'
-    BUILD:   Doing 'make -j4' parallel build
-    HOSTCC   /tmp/build/perf/fixdep.o
-    HOSTLD   /tmp/build/perf/fixdep-in.o
-    LINK     /tmp/build/perf/fixdep
-
-  Auto-detecting system features:
-  ...                         dwarf: [ on  ]
-  ...            dwarf_getlocations: [ on  ]
-  ...                         glibc: [ on  ]
-  ...                          gtk2: [ on  ]
-  ...                      libaudit: [ on  ]
-  ...                        libbfd: [ on  ]
-  ...                        libelf: [ on  ]
-  ...                       libnuma: [ on  ]
-  ...        numa_num_possible_cpus: [ on  ]
-  ...                       libperl: [ on  ]
-  ...                     libpython: [ on  ]
-  ...                      libslang: [ on  ]
-  ...                     libcrypto: [ on  ]
-  ...                     libunwind: [ on  ]
-  ...            libdw-dwarf-unwind: [ on  ]
-  ...                          zlib: [ on  ]
-  ...                          lzma: [ on  ]
-  ...                     get_cpuid: [ on  ]
-  ...                           bpf: [ on  ]
-
-    GEN      /tmp/build/perf/common-cmds.h
-    MKDIR    /tmp/build/perf/fd/
-    CC       /tmp/build/perf/fd/array.o
-    LD       /tmp/build/perf/fd/libapi-in.o
-    MKDIR    /tmp/build/perf/fs/
-    CC       /tmp/build/perf/event-parse.o
-    CC       /tmp/build/perf/fs/fs.o
-    PERF_VERSION = 4.9.rc8.g57a92f
-    CC       /tmp/build/perf/event-plugin.o
-    MKDIR    /tmp/build/perf/fs/
-    CC       /tmp/build/perf/fs/tracing_path.o
-  <SNIP>
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Elena Reshetova <elena.reshetova@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Link: http://lkml.kernel.org/r/1481030331-31944-3-git-send-email-jolsa@kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-dqtxsumns9ov0l9r5x398f19@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/Makefile.perf |   50 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 38 insertions(+), 12 deletions(-)
+ tools/include/linux/refcount.h |  151 +++++++++++++++++++++++++++++++++++++++++
+ tools/perf/MANIFEST            |    1 
+ 2 files changed, 152 insertions(+)
 
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -177,6 +177,35 @@ ifeq ($(filter-out $(NON_CONFIG_TARGETS)
- endif
- endif
- 
-+# The fixdep build - we force fixdep tool to be built as
-+# the first target in the separate make session not to be
-+# disturbed by any parallel make jobs. Once fixdep is done
-+# we issue the requested build with FIXDEP=1 variable.
-+#
-+# The fixdep build is disabled for $(NON_CONFIG_TARGETS)
-+# targets, because it's not necessary.
+--- /dev/null
++++ b/tools/include/linux/refcount.h
+@@ -0,0 +1,151 @@
++#ifndef _TOOLS_LINUX_REFCOUNT_H
++#define _TOOLS_LINUX_REFCOUNT_H
 +
-+ifdef FIXDEP
-+  force_fixdep := 0
-+else
-+  force_fixdep := $(config)
-+endif
++/*
++ * Variant of atomic_t specialized for reference counts.
++ *
++ * The interface matches the atomic_t interface (to aid in porting) but only
++ * provides the few functions one should use for reference counting.
++ *
++ * It differs in that the counter saturates at UINT_MAX and will not move once
++ * there. This avoids wrapping the counter and causing 'spurious'
++ * use-after-free issues.
++ *
++ * Memory ordering rules are slightly relaxed wrt regular atomic_t functions
++ * and provide only what is strictly required for refcounts.
++ *
++ * The increments are fully relaxed; these will not provide ordering. The
++ * rationale is that whatever is used to obtain the object we're increasing the
++ * reference count on will provide the ordering. For locked data structures,
++ * its the lock acquire, for RCU/lockless data structures its the dependent
++ * load.
++ *
++ * Do note that inc_not_zero() provides a control dependency which will order
++ * future stores against the inc, this ensures we'll never modify the object
++ * if we did not in fact acquire a reference.
++ *
++ * The decrements will provide release order, such that all the prior loads and
++ * stores will be issued before, it also provides a control dependency, which
++ * will order us against the subsequent free().
++ *
++ * The control dependency is against the load of the cmpxchg (ll/sc) that
++ * succeeded. This means the stores aren't fully ordered, but this is fine
++ * because the 1->0 transition indicates no concurrency.
++ *
++ * Note that the allocator is responsible for ordering things between free()
++ * and alloc().
++ *
++ */
 +
-+export srctree OUTPUT RM CC CXX LD AR CFLAGS CXXFLAGS V BISON FLEX AWK
-+export HOSTCC HOSTLD HOSTAR
++#include <linux/atomic.h>
++#include <linux/kernel.h>
 +
-+include $(srctree)/tools/build/Makefile.include
++#ifdef NDEBUG
++#define REFCOUNT_WARN(cond, str) (void)(cond)
++#define __refcount_check
++#else
++#define REFCOUNT_WARN(cond, str) BUG_ON(cond)
++#define __refcount_check	__must_check
++#endif
 +
-+ifeq ($(force_fixdep),1)
-+goals := $(filter-out all sub-make, $(MAKECMDGOALS))
++typedef struct refcount_struct {
++	atomic_t refs;
++} refcount_t;
 +
-+$(goals) all: sub-make
++#define REFCOUNT_INIT(n)	{ .refs = ATOMIC_INIT(n), }
 +
-+sub-make: fixdep
-+	$(Q)$(MAKE) FIXDEP=1 -f Makefile.perf $(goals)
++static inline void refcount_set(refcount_t *r, unsigned int n)
++{
++	atomic_set(&r->refs, n);
++}
 +
-+else # force_fixdep
++static inline unsigned int refcount_read(const refcount_t *r)
++{
++	return atomic_read(&r->refs);
++}
 +
- # Set FEATURE_TESTS to 'all' so all possible feature checkers are executed.
- # Without this setting the output feature dump file misses some features, for
- # example, liberty. Select all checkers so we won't get an incomplete feature
-@@ -348,10 +377,6 @@ strip: $(PROGRAMS) $(OUTPUT)perf
- 
- PERF_IN := $(OUTPUT)perf-in.o
- 
--export srctree OUTPUT RM CC LD AR CFLAGS V BISON FLEX AWK
--export HOSTCC HOSTLD HOSTAR
--include $(srctree)/tools/build/Makefile.include
--
- JEVENTS       := $(OUTPUT)pmu-events/jevents
- JEVENTS_IN    := $(OUTPUT)pmu-events/jevents-in.o
- 
-@@ -470,7 +495,7 @@ $(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(
- 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $(LIBTRACEEVENT_DYNAMIC_LIST_LDFLAGS) \
- 		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBS) -o $@
- 
--$(GTK_IN): fixdep FORCE
-+$(GTK_IN): FORCE
- 	$(Q)$(MAKE) $(build)=gtk
- 
- $(OUTPUT)libperf-gtk.so: $(GTK_IN) $(PERFLIBS)
-@@ -515,7 +540,7 @@ endif
- __build-dir = $(subst $(OUTPUT),,$(dir $@))
- build-dir   = $(if $(__build-dir),$(__build-dir),.)
- 
--prepare: $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)common-cmds.h fixdep archheaders
-+prepare: $(OUTPUT)PERF-VERSION-FILE $(OUTPUT)common-cmds.h archheaders
- 
- $(OUTPUT)%.o: %.c prepare FORCE
- 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=$(build-dir) $@
-@@ -555,7 +580,7 @@ $(patsubst perf-%,%.o,$(PROGRAMS)): $(wi
- 
- LIBPERF_IN := $(OUTPUT)libperf-in.o
- 
--$(LIBPERF_IN): prepare fixdep FORCE
-+$(LIBPERF_IN): prepare FORCE
- 	$(Q)$(MAKE) $(build)=libperf
- 
- $(LIB_FILE): $(LIBPERF_IN)
-@@ -563,10 +588,10 @@ $(LIB_FILE): $(LIBPERF_IN)
- 
- LIBTRACEEVENT_FLAGS += plugin_dir=$(plugindir_SQ)
- 
--$(LIBTRACEEVENT): fixdep FORCE
-+$(LIBTRACEEVENT): FORCE
- 	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) $(OUTPUT)libtraceevent.a
- 
--libtraceevent_plugins: fixdep FORCE
-+libtraceevent_plugins: FORCE
- 	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) plugins
- 
- $(LIBTRACEEVENT_DYNAMIC_LIST): libtraceevent_plugins
-@@ -579,21 +604,21 @@ $(LIBTRACEEVENT)-clean:
- install-traceevent-plugins: libtraceevent_plugins
- 	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) install_plugins
- 
--$(LIBAPI): fixdep FORCE
-+$(LIBAPI): FORCE
- 	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) $(OUTPUT)libapi.a
- 
- $(LIBAPI)-clean:
- 	$(call QUIET_CLEAN, libapi)
- 	$(Q)$(MAKE) -C $(LIB_DIR) O=$(OUTPUT) clean >/dev/null
- 
--$(LIBBPF): fixdep FORCE
-+$(LIBBPF): FORCE
- 	$(Q)$(MAKE) -C $(BPF_DIR) O=$(OUTPUT) $(OUTPUT)libbpf.a FEATURES_DUMP=$(FEATURE_DUMP_EXPORT)
- 
- $(LIBBPF)-clean:
- 	$(call QUIET_CLEAN, libbpf)
- 	$(Q)$(MAKE) -C $(BPF_DIR) O=$(OUTPUT) clean >/dev/null
- 
--$(LIBSUBCMD): fixdep FORCE
-+$(LIBSUBCMD): FORCE
- 	$(Q)$(MAKE) -C $(SUBCMD_DIR) O=$(OUTPUT) $(OUTPUT)libsubcmd.a
- 
- $(LIBSUBCMD)-clean:
-@@ -790,3 +815,4 @@ FORCE:
- .PHONY: $(GIT-HEAD-PHONY) TAGS tags cscope FORCE prepare
- .PHONY: libtraceevent_plugins archheaders
- 
-+endif # force_fixdep
++/*
++ * Similar to atomic_inc_not_zero(), will saturate at UINT_MAX and WARN.
++ *
++ * Provides no memory ordering, it is assumed the caller has guaranteed the
++ * object memory to be stable (RCU, etc.). It does provide a control dependency
++ * and thereby orders future stores. See the comment on top.
++ */
++static inline __refcount_check
++bool refcount_inc_not_zero(refcount_t *r)
++{
++	unsigned int old, new, val = atomic_read(&r->refs);
++
++	for (;;) {
++		new = val + 1;
++
++		if (!val)
++			return false;
++
++		if (unlikely(!new))
++			return true;
++
++		old = atomic_cmpxchg_relaxed(&r->refs, val, new);
++		if (old == val)
++			break;
++
++		val = old;
++	}
++
++	REFCOUNT_WARN(new == UINT_MAX, "refcount_t: saturated; leaking memory.\n");
++
++	return true;
++}
++
++/*
++ * Similar to atomic_inc(), will saturate at UINT_MAX and WARN.
++ *
++ * Provides no memory ordering, it is assumed the caller already has a
++ * reference on the object, will WARN when this is not so.
++ */
++static inline void refcount_inc(refcount_t *r)
++{
++	REFCOUNT_WARN(!refcount_inc_not_zero(r), "refcount_t: increment on 0; use-after-free.\n");
++}
++
++/*
++ * Similar to atomic_dec_and_test(), it will WARN on underflow and fail to
++ * decrement when saturated at UINT_MAX.
++ *
++ * Provides release memory ordering, such that prior loads and stores are done
++ * before, and provides a control dependency such that free() must come after.
++ * See the comment on top.
++ */
++static inline __refcount_check
++bool refcount_sub_and_test(unsigned int i, refcount_t *r)
++{
++	unsigned int old, new, val = atomic_read(&r->refs);
++
++	for (;;) {
++		if (unlikely(val == UINT_MAX))
++			return false;
++
++		new = val - i;
++		if (new > val) {
++			REFCOUNT_WARN(new > val, "refcount_t: underflow; use-after-free.\n");
++			return false;
++		}
++
++		old = atomic_cmpxchg_release(&r->refs, val, new);
++		if (old == val)
++			break;
++
++		val = old;
++	}
++
++	return !new;
++}
++
++static inline __refcount_check
++bool refcount_dec_and_test(refcount_t *r)
++{
++	return refcount_sub_and_test(1, r);
++}
++
++
++#endif /* _ATOMIC_LINUX_REFCOUNT_H */
+--- a/tools/perf/MANIFEST
++++ b/tools/perf/MANIFEST
+@@ -78,6 +78,7 @@ tools/include/uapi/linux/perf_event.h
+ tools/include/linux/poison.h
+ tools/include/linux/rbtree.h
+ tools/include/linux/rbtree_augmented.h
++tools/include/linux/refcount.h
+ tools/include/linux/string.h
+ tools/include/linux/stringify.h
+ tools/include/linux/types.h
