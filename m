@@ -1,51 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753793AbeFDOLR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:11:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:58977 "EHLO ozlabs.org"
+        id S1753807AbeFDOLV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:11:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:51115 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753770AbeFDOLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:11:14 -0400
+        id S1751473AbeFDOLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:11:18 -0400
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 1c38976334c0efce1b285369a6037f205e196299
-In-Reply-To: <20180528060834.72DE86F377@po14934vm.idsi0.si.c-s.fr>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
+X-powerpc-patch-commit: a377514519b9a20fa1ea9adddbb4129573129cef
+In-Reply-To: <20180528131914.32231-1-msuchanek@suse.de>
+To: Michal Suchanek <msuchanek@suse.de>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
+        Paul Mackerras <paulus@samba.org>, Michal Suchanek <msuchanek@suse.de>,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Neuling <mikey@neuling.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: powerpc/Makefile: set -mcpu=860 flag for the 8xx
-Message-Id: <40zxgL3MdHz9s7X@ozlabs.org>
-Date: Tue,  5 Jun 2018 00:11:07 +1000 (AEST)
+Subject: Re: powerpc/64s: Enhance the information in cpu_show_spectre_v1()
+Message-Id: <40zxgS4kkwz9s5R@ozlabs.org>
+Date: Tue,  5 Jun 2018 00:11:08 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-28 at 06:08:34 UTC, Christophe Leroy wrote:
-> When compiled with GCC 8.1, vmlinux is significantly bigger than
-> with GCC 4.8.
+On Mon, 2018-05-28 at 13:19:14 UTC, Michal Suchanek wrote:
+> We now have barrier_nospec as mitigation so print it in
+> cpu_show_spectre_v1 when enabled.
 > 
-> When looking at the generated code with objdump, we notice that
-> all functions and loops when a 16 bytes alignment. This significantly
-> increases the size of the kernel. It is pointless and even
-> counterproductive as on the 8xx 'nop' also consumes one clock cycle.
-> 
-> Size of vmlinux with GCC 4.8:
->    text	   data	    bss	    dec	    hex	filename
-> 5801948	1626076	 457796	7885820	 7853fc	vmlinux
-> 
-> Size of vmlinux with GCC 8.1:
->    text	   data	    bss	    dec	    hex	filename
-> 6764592	1630652	 456476	8851720	 871108	vmlinux
-> 
-> Size of vmlinux with GCC 8.1 and this patch:
->    text	   data	    bss	    dec	    hex	filename
-> 6331544	1631756	 456476	8419776	 8079c0	vmlinux
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/1c38976334c0efce1b285369a6037f
+https://git.kernel.org/powerpc/c/a377514519b9a20fa1ea9adddbb412
 
 cheers
