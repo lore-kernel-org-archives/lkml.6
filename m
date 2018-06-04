@@ -1,82 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752094AbeFDR5f (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:57:35 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:53658 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751824AbeFDR5c (ORCPT
+        id S1752082AbeFDR5U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:57:20 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55699 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751401AbeFDR5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:57:32 -0400
-Message-ID: <1528135046.7898.111.camel@surriel.com>
-Subject: Re: [PATCH 10/19] sched/numa: Stop multiple tasks from moving to
- the cpu at the same time
-From: Rik van Riel <riel@surriel.com>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date: Mon, 04 Jun 2018 13:57:26 -0400
-In-Reply-To: <1528106428-19992-11-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-         <1528106428-19992-11-git-send-email-srikar@linux.vnet.ibm.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-NxKfD/2Y+rhlAfibarDd"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Mon, 4 Jun 2018 13:57:04 -0400
+X-Google-Smtp-Source: ADUXVKJ5xAZeaNG5fYYM2cW6+fmpeO/svzxOyB6F2IEKgGvx/lEzOF9F/kGOQKdiHXnFplron55apg==
+Subject: Re: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
+ <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
+Date: Mon, 4 Jun 2018 18:25:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/04/2018 09:39 AM, Geert Uytterhoeven wrote:
+> Hi Marek, Steve,
+> 
+> On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
+>> block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
+>> prevent access into that register block.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/mfd/da9063-i2c.c
+>> +++ b/drivers/mfd/da9063-i2c.c
+>> @@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+> 
+> Note that the line above doesn't check da9063->type, but da9063->variant_code...
+> 
+>>                 da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+>>                 da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+>>                 da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
+>> +       } else if (da9063->type == PMIC_TYPE_DA9063L) {
+> 
+> ... so this may be slightly confusing.
 
---=-NxKfD/2Y+rhlAfibarDd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I know.
 
-On Mon, 2018-06-04 at 15:30 +0530, Srikar Dronamraju wrote:
-> Task migration under numa balancing can happen in parallel. More than
-> one task might choose to migrate to the same cpu at the same time.
-> This
-> can result in
-> - During task swap, choosing a task that was not part of the
-> evaluation.
-> - During task swap, task which just got moved into its preferred
-> node,
->   moving to a completely different node.
-> - During task swap, task failing to move to the preferred node, will
-> have
->   to wait an extra interval for the next migrate opportunity.
-> - During task movement, multiple task movements can cause load
-> imbalance.
->=20
-> This problem is more likely if there are more cores per node or more
-> nodes in the system.
->=20
-> Use a per run-queue variable to check if numa-balance is active on
-> the
-> run-queue.
+>> +               da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
+>> +               da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
+>> +               da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+>>         } else {
+>>                 da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+>>                 da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
+> 
+> However, da9063->variant_code doesn't seem to have been filled in at this
+> point yet (the call to da9063_device_init() doing so is below, at the end
+> of the probe function!), so commit 9cb42e2a8ed06e91 ("mfd: da9063: Add
+> support for AD silicon variant") never actually handled the AD silicon variant
+> correctly? Or am I missing something?
 
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
->=20
+Ha, that is a good point.
 
-Reviewed-by: Rik van Riel <riel@surriel.com>
---=20
-All Rights Reversed.
---=-NxKfD/2Y+rhlAfibarDd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlsVfYYACgkQznnekoTE
-3oORwQf9HinMxuLzwEr+rQosWD7nhA08dAWtHbKMtJw+HJqs254cIKwjb54vqzgz
-POShG1qGKkEis34DSfiVwFH+SCIvBPrOFK0kBR4Jg7diu26Rv+QrdMnxSASvZNlr
-hd41tMxCzEkPrdfh0hRwI1j4DFRprChJnQ33PWAjGEkyN4YPYdt+pS09hcURkFIZ
-Vu5JU7UmtSM2gePkHQiQ2eNdTOzvQUUjuKZPWThkJpv6KJKt9xgn2MYmIjqMsRj9
-iKom7sP7O7ArvWVaQd5MN2Fdp5k6CkFyX2ObMGXeQSSrDE8+gA8jxQAl1M3+dBvm
-68IHC1qeYQmM+HQmx4Ty6xGf6thiKA==
-=zGt/
------END PGP SIGNATURE-----
-
---=-NxKfD/2Y+rhlAfibarDd--
+-- 
+Best regards,
+Marek Vasut
