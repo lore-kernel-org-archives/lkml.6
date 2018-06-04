@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeFDGrU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 02:47:20 -0400
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:57536 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751242AbeFDGrS (ORCPT
+        id S1751896AbeFDGrT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 02:47:19 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:44061 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751097AbeFDGrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Jun 2018 02:47:18 -0400
 X-Original-SENDERIP: 156.147.1.151
@@ -16,85 +16,83 @@ To: peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org
 Cc: tglx@linutronix.de, raistlin@linux.it, linux-kernel@vger.kernel.org,
         juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
         joel@joelfernandes.org
-Subject: [PATCH v5 1/2] sched/deadline: Add cpudl_maximum_dl() for better readability
-Date: Mon,  4 Jun 2018 15:45:50 +0900
-Message-Id: <1528094751-19559-1-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu to -1 when the heap is empty
+Date: Mon,  4 Jun 2018 15:45:51 +0900
+Message-Id: <1528094751-19559-2-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528094751-19559-1-git-send-email-byungchul.park@lge.com>
+References: <1528094751-19559-1-git-send-email-byungchul.park@lge.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes from v4
- - Fix a typo in cpudl_init() of the 2nd patch
+Hello Steven and Daniel,
 
-Changes from v3
- - Rebase onto the latest tip/sched/core
- - Apply what Joel suggests, to set cp->elements[0].cpu to -1
-   when the heap becomes empty in cpudl_clear()
+I've changed the 2nd patch a little bit to consider cpudl_clear()
+additionally. Can I keep your Acked-by on?
 
-Changes from v2
- - Run spellchecker over the text and fix typos
- - Add acked-by Daniel
+(I temporarily removed the Acked-by you gave me.)
 
-Changes from v1
- - Enhance commit msg
- - Prevent WARN in cpumask_test_cpu() in cpudl_find() when best_cpu == -1
-
------8<-----
->From 13efb279e8189e454062854fb1ce2df407543630 Mon Sep 17 00:00:00 2001
-From: Byungchul Park <byungchul.park@lge.com>
-Date: Mon, 4 Jun 2018 15:12:50 +0900
-Subject: [PATCH v5 1/2] sched/deadline: Add cpudl_maximum_dl() for better
- readability
-
-Current code uses cpudl_maximum() to get the root node's cpu, while it
-directly accesses the root node to get the root node's dl. It would be
-more readable and consistent between them if we provide the same way to
-access them. So add a function for dl as we did it for cpu.
-
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+
+-----8<-----
+>From 1e368d276186c22f9da298206c718b33e805828d Mon Sep 17 00:00:00 2001
+From: Byungchul Park <byungchul.park@lge.com>
+Date: Mon, 4 Jun 2018 15:05:08 +0900
+Subject: [PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu to -1 when the
+ heap is empty
+
+Currently, migrating tasks to cpu0 unconditionally happens when the
+heap is empty, since cp->elements[0].cpu is initialized to 0(=cpu0).
+We have to distinguish between the empty case and cpu0 to avoid the
+unnecessary migrations. Therefore, it has to return an invalid value
+e.i. -1 in the case the heap is empty.
+
+Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+Suggested-by: Joel Fernandes <joelaf@google.com>
 ---
- kernel/sched/cpudeadline.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ kernel/sched/cpudeadline.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-index 5031645..ae4fbdc 100644
+index ae4fbdc..a200b36 100644
 --- a/kernel/sched/cpudeadline.c
 +++ b/kernel/sched/cpudeadline.c
-@@ -105,11 +105,16 @@ static void cpudl_heapify(struct cpudl *cp, int idx)
- 		cpudl_heapify_down(cp, idx);
- }
- 
--static inline int cpudl_maximum(struct cpudl *cp)
-+static inline int cpudl_maximum_cpu(struct cpudl *cp)
- {
- 	return cp->elements[0].cpu;
- }
- 
-+static inline u64 cpudl_maximum_dl(struct cpudl *cp)
-+{
-+	return cp->elements[0].dl;
-+}
-+
- /*
-  * cpudl_find - find the best (later-dl) CPU in the system
-  * @cp: the cpudl max-heap context
-@@ -127,12 +132,12 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
- 	    cpumask_and(later_mask, cp->free_cpus, &p->cpus_allowed)) {
- 		return 1;
- 	} else {
--		int best_cpu = cpudl_maximum(cp);
-+		int best_cpu = cpudl_maximum_cpu(cp);
+@@ -136,6 +136,10 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
  
  		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
  
++		/* The heap tree is empty, just return. */
++		if (best_cpu == -1)
++			return 0;
++
  		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
--		    dl_time_before(dl_se->deadline, cp->elements[0].dl)) {
-+		    dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
+ 		    dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
  			if (later_mask)
- 				cpumask_set_cpu(best_cpu, later_mask);
+@@ -172,6 +176,13 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+ 		 * This could happen if a rq_offline_dl is
+ 		 * called for a CPU without -dl tasks running.
+ 		 */
++	} else if (cp->size == 1){
++		/* Only one element in the heap, clear it. */
++		cp->elements[0].cpu = -1;
++		cp->elements[cpu].idx = IDX_INVALID;
++		cp->size = 0;
++
++		cpumask_set_cpu(cpu, cp->free_cpus);
+ 	} else {
+ 		new_cpu = cp->elements[cp->size - 1].cpu;
+ 		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
+@@ -267,6 +278,9 @@ int cpudl_init(struct cpudl *cp)
+ 	for_each_possible_cpu(i)
+ 		cp->elements[i].idx = IDX_INVALID;
+ 
++	/* Mark heap as initially empty. */
++	cp->elements[0].cpu = -1;
++
+ 	return 0;
+ }
  
 -- 
 1.9.1
