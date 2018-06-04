@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753199AbeFDHCR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:02:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54670 "EHLO mail.kernel.org"
+        id S1753301AbeFDHCj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:02:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753168AbeFDHCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:14 -0400
+        id S1752720AbeFDHCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 42/52] IB/core: Fix error code for invalid GID entry
-Date: Mon,  4 Jun 2018 08:58:37 +0200
-Message-Id: <20180604065608.281621228@linuxfoundation.org>
+        stable@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 44/52] Revert "rt2800: use TXOP_BACKOFF for probe frames"
+Date: Mon,  4 Jun 2018 08:58:39 +0200
+Message-Id: <20180604065608.360936425@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -31,46 +29,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
 
-commit a840c93ca7582bb6c88df2345a33f979b7a67874 upstream.
+commit 52a192362932f333a7ebafd581c4d9b81da2fec8 upstream.
 
-When a GID entry is invalid EAGAIN is returned. This is an incorrect error
-code, there is nothing that will make this GID entry valid again in
-bounded time.
+This reverts commit fb47ada8dc3c30c8e7b415da155742b49536c61e.
 
-Some user space tools fail incorrectly if EAGAIN is returned here, and
-this represents a small ABI change from earlier kernels.
+In some situations when we set TXOP_BACKOFF, the probe frame is
+not sent at all. What it worse then sending probe frame as part
+of AMPDU and can degrade 11n performance to 11g rates.
 
-The first patch in the Fixes list makes entries that were valid before
-to become invalid, allowing this code to trigger, while the second patch
-in the Fixes list introduced the wrong EAGAIN.
-
-Therefore revert the return result to EINVAL which matches the historical
-expectations of the ibv_query_gid_type() API of the libibverbs user space
-library.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 598ff6bae689 ("IB/core: Refactor GID modify code for RoCE")
-Fixes: 03db3a2d81e6 ("IB/core: Add RoCE GID table management")
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/cache.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ralink/rt2x00/rt2x00queue.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/infiniband/core/cache.c
-+++ b/drivers/infiniband/core/cache.c
-@@ -434,7 +434,7 @@ static int __ib_cache_gid_get(struct ib_
- 		return -EINVAL;
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00queue.c
+@@ -372,16 +372,15 @@ static void rt2x00queue_create_tx_descri
  
- 	if (table->data_vec[index].props & GID_TABLE_ENTRY_INVALID)
--		return -EAGAIN;
-+		return -EINVAL;
- 
- 	memcpy(gid, &table->data_vec[index].gid, sizeof(*gid));
- 	if (attr) {
+ 	/*
+ 	 * Determine IFS values
+-	 * - Use TXOP_BACKOFF for probe and management frames except beacons
++	 * - Use TXOP_BACKOFF for management frames except beacons
+ 	 * - Use TXOP_SIFS for fragment bursts
+ 	 * - Use TXOP_HTTXOP for everything else
+ 	 *
+ 	 * Note: rt2800 devices won't use CTS protection (if used)
+ 	 * for frames not transmitted with TXOP_HTTXOP
+ 	 */
+-	if ((ieee80211_is_mgmt(hdr->frame_control) &&
+-	     !ieee80211_is_beacon(hdr->frame_control)) ||
+-	    (tx_info->flags & IEEE80211_TX_CTL_RATE_CTRL_PROBE))
++	if (ieee80211_is_mgmt(hdr->frame_control) &&
++	    !ieee80211_is_beacon(hdr->frame_control))
+ 		txdesc->u.ht.txop = TXOP_BACKOFF;
+ 	else if (!(tx_info->flags & IEEE80211_TX_CTL_FIRST_FRAGMENT))
+ 		txdesc->u.ht.txop = TXOP_SIFS;
