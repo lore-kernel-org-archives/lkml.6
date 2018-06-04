@@ -1,88 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753775AbeFDHPT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:15:19 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52826 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752250AbeFDHPQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:15:16 -0400
-X-Google-Smtp-Source: ADUXVKJnU4BlCY5ip0cPb6Kqhv1Lwh7dRb/7PCWQy2/G/rAClq3ZvGoeqKqf3ka5s7LjhEn/8pnkoH+qUZALuFIe5No=
+        id S1753829AbeFDHPh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:15:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56032 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753620AbeFDHDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:52 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Thomas Hellstrom <thellstrom@vmware.com>,
+        Brian Paul <brianp@vmware.com>, Sinclair Yeh <syeh@vmware.com>
+Subject: [PATCH 4.16 09/47] drm/vmwgfx: Fix host logging / guestinfo reading error paths
+Date: Mon,  4 Jun 2018 08:58:21 +0200
+Message-Id: <20180604065549.875848533@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
+References: <20180604065549.468488465@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180604070438.GA2731@localhost.localdomain>
-References: <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
- <20180528101234.GA1293@localhost.localdomain> <CAKfTPtDCkzPMt6XrXRcURXm=53LABiwbFd3JMQkJDWpTprycRQ@mail.gmail.com>
- <20180528152243.GD1293@localhost.localdomain> <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
- <20180531102735.GM30654@e110439-lin> <CAKfTPtCeoimTehLktVk4WiTEM5h9KW_4yvuxGof8p6ZOgsRE2Q@mail.gmail.com>
- <20180601135307.GA28550@linaro.org> <20180601174526.GA105687@joelaf.mtv.corp.google.com>
- <CAKfTPtBu5D=P3ib6fqfVLz9yQXN19ipRQAz5L6s1+ewnVTrHmg@mail.gmail.com> <20180604070438.GA2731@localhost.localdomain>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 4 Jun 2018 09:14:55 +0200
-Message-ID: <CAKfTPtD9KQTeeP0BNyhnqh=UXL0T_jK0PcvWWBjoyj0VC8TkRg@mail.gmail.com>
-Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Alessio Balsini <alessio.balsini@santannapisa.it>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 June 2018 at 09:04, Juri Lelli <juri.lelli@redhat.com> wrote:
-> Hi Vincent,
->
-> On 04/06/18 08:41, Vincent Guittot wrote:
->> On 1 June 2018 at 19:45, Joel Fernandes <joelaf@google.com> wrote:
->> > On Fri, Jun 01, 2018 at 03:53:07PM +0200, Vincent Guittot wrote:
->
-> [...]
->
->> > IMO I feel its overkill to account dl_avg when we already have DL's running
->> > bandwidth we can use. I understand it may be too instanenous, but perhaps we
->>
->> We keep using dl bandwidth which is quite correct for dl needs but
->> doesn't reflect how it has disturbed other classes
->>
->> > can fix CFS's problems within CFS itself and not have to do this kind of
->> > extra external accounting ?
->
-> I would also keep accounting for waiting time due to higher prio classes
-> all inside CFS. My impression, when discussing it with you on IRC, was
-> that we should be able to do that by not decaying cfs.util_avg when CFS
-> is preempted (creating a new signal for it). Is not this enough?
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-We don't just want to not decay a signal but increase the signal to
-reflect the amount of preemption
-Then, we can't do that in a current signal. So you would like to add
-another metrics in cfs_rq ?
-The place doesn't really matter to be honest in cfs_rq or in dl_rq but
-you will not prevent to add call in dl class to start/stop the
-accounting of the preemption
+------------------
 
->
-> I feel we should try to keep cross-class accounting/interaction at a
-> minimum.
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-accounting for cross class preemption can't be done without
-cross-class accounting
+commit f37230c0ad481091bc136788ff8b37dc86300c6d upstream.
 
-Regards,
-Vincent
+The error paths were leaking opened channels.
+Fix by using dedicated error paths.
 
->
-> Thanks,
->
-> - Juri
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Brian Paul <brianp@vmware.com>
+Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg.c |   48 +++++++++++++++++++++++-------------
+ 1 file changed, 31 insertions(+), 17 deletions(-)
+
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+@@ -329,8 +329,6 @@ int vmw_host_get_guestinfo(const char *g
+ 	struct rpc_channel channel;
+ 	char *msg, *reply = NULL;
+ 	size_t reply_len = 0;
+-	int ret = 0;
+-
+ 
+ 	if (!vmw_msg_enabled)
+ 		return -ENODEV;
+@@ -344,15 +342,14 @@ int vmw_host_get_guestinfo(const char *g
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
+-	    vmw_send_msg(&channel, msg) ||
+-	    vmw_recv_msg(&channel, (void *) &reply, &reply_len) ||
+-	    vmw_close_channel(&channel)) {
+-		DRM_ERROR("Failed to get %s", guest_info_param);
++	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM))
++		goto out_open;
+ 
+-		ret = -EINVAL;
+-	}
++	if (vmw_send_msg(&channel, msg) ||
++	    vmw_recv_msg(&channel, (void *) &reply, &reply_len))
++		goto out_msg;
+ 
++	vmw_close_channel(&channel);
+ 	if (buffer && reply && reply_len > 0) {
+ 		/* Remove reply code, which are the first 2 characters of
+ 		 * the reply
+@@ -369,7 +366,17 @@ int vmw_host_get_guestinfo(const char *g
+ 	kfree(reply);
+ 	kfree(msg);
+ 
+-	return ret;
++	return 0;
++
++out_msg:
++	vmw_close_channel(&channel);
++	kfree(reply);
++out_open:
++	*length = 0;
++	kfree(msg);
++	DRM_ERROR("Failed to get %s", guest_info_param);
++
++	return -EINVAL;
+ }
+ 
+ 
+@@ -400,15 +407,22 @@ int vmw_host_log(const char *log)
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM) ||
+-	    vmw_send_msg(&channel, msg) ||
+-	    vmw_close_channel(&channel)) {
+-		DRM_ERROR("Failed to send log\n");
++	if (vmw_open_channel(&channel, RPCI_PROTOCOL_NUM))
++		goto out_open;
+ 
+-		ret = -EINVAL;
+-	}
++	if (vmw_send_msg(&channel, msg))
++		goto out_msg;
++
++	vmw_close_channel(&channel);
++	kfree(msg);
++
++	return 0;
+ 
++out_msg:
++	vmw_close_channel(&channel);
++out_open:
+ 	kfree(msg);
++	DRM_ERROR("Failed to send log\n");
+ 
+-	return ret;
++	return -EINVAL;
+ }
