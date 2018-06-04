@@ -1,188 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeFDCKO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 22:10:14 -0400
-Received: from ZXSHCAS2.zhaoxin.com ([203.148.12.82]:58910 "EHLO
-        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751373AbeFDCKN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 22:10:13 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: "'Borislav Petkov'" <bp@alien8.de>
-CC: <tony.luck@intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>,
-        <hpa@zytor.com>, <gregkh@linuxfoudation.org>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
-        <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
-        <lukelin@viacpu.com>, <timguo@zhaoxin.com>
-Subject: Re: [PATCH] x86/mce: add CMCI support for Centaur CPUs
-Date: Mon, 4 Jun 2018 10:09:59 +0800
-Message-ID: <000001d3fba9$23d5df20$6b819d60$@zhaoxin.com>
+        id S1751775AbeFDCQi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 22:16:38 -0400
+Received: from mga02.intel.com ([134.134.136.20]:46984 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751373AbeFDCQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 22:16:37 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,473,1520924400";
+   d="scan'208";a="56257134"
+Date: Mon, 4 Jun 2018 10:06:15 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: NeilBrown <neilb@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, changbin.du@intel.com,
+        akpm@linux-foundation.org, tglx@linutronix.de, pombredanne@nexb.com,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] scripts/faddr2line: show the code context
+Message-ID: <20180604020614.ov3yeijsiciejyvp@intel.com>
+References: <1521444205-2259-1-git-send-email-changbin.du@intel.com>
+ <20180529160332.GD12258@hirez.programming.kicks-ass.net>
+ <20180529162636.GW12235@hirez.programming.kicks-ass.net>
+ <20180529170710.q33dcw5l7a4bwd4t@treble>
+ <20180529172430.GB12180@hirez.programming.kicks-ass.net>
+ <87sh6aunn7.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdP7pK2W/DP9kgHBQ5+eP6bQ1aJlLw==
-Content-Language: zh-cn
-X-Originating-IP: [10.29.8.88]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sh6aunn7.fsf@notabene.neil.brown.name>
+User-Agent: NeoMutt/20180323-6-5ca392
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Mail-----
-> Sender: Borislav Petkov [mailto:bp@alien8.de]
-> Time: 2018年6月1日 17:38
-> Receiver: David Wang <davidwang@zhaoxin.com>
-> CC: tony.luck@intel.com; mingo@redhat.com; tglx@linutronix.de;
-> hpa@zytor.com; gregkh@linuxfoudation.org; x86@kernel.org;
-> linux-kernel@vger.kernel.org; linux-edac@vger.kernel.org;
-> brucechang@via-alliance.com; cooperyan@zhaoxin.com;
-> qiyuanwang@zhaoxin.com; benjaminpan@viatech.com; lukelin@viacpu.com;
-> timguo@zhaoxin.com
-> Topic : Re: [PATCH] x86/mce: add CMCI support for Centaur CPUs
+On Wed, May 30, 2018 at 08:01:48AM +1000, NeilBrown wrote:
+> On Tue, May 29 2018, Peter Zijlstra wrote:
 > 
-> On Thu, May 31, 2018 at 11:28:58AM +0800, David Wang wrote:
-> > Newer Centaur support CMCI mechanism, which is compatible with INTEL
-> CMCI.
+> > On Tue, May 29, 2018 at 12:07:10PM -0500, Josh Poimboeuf wrote:
+> >> Yeah, this change really should have been an optional arg.  It hurt the
+> >> readability and compactness of the output.  The above looks good to me.
+> >> 
+> >> Care to send a proper patch?  If you send it to Linus he might apply it
+> >> directly as he did with my original patches.
 > >
-> > Signed-off-by: David Wang <davidwang@zhaoxin.com>
 > > ---
-> >  arch/x86/Kconfig                 | 12 ++++++++++++
-> >  arch/x86/kernel/cpu/mcheck/mce.c |  6 ++++++
-> >  2 files changed, 18 insertions(+)
+> > From: Peter Zijlstra (Intel) <peterz@infraded.org>
 > >
-> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig index
-> > dda87a3..1adff5f 100644
-> > --- a/arch/x86/Kconfig
-> > +++ b/arch/x86/Kconfig
-> > @@ -1130,6 +1130,18 @@ config X86_MCE_AMD
-> >  	   Additional support for AMD specific MCE features such as
-> >  	   the DRAM Error Threshold.
+> > Commit 6870c0165feaa5 ("scripts/faddr2line: show the code context")
+> > radically altered the output format of the faddr2line tool. And while
+> > the new list output format might have merrit it broke my vim usage and
+> > was hard to read.
 > >
-> > +config X86_MCE_CENTAUR
-> > +	def_bool y
-> > +	prompt "CENTAUR MCE features"
-> > +	depends on CPU_SUP_CENTAUR && X86_MCE_INTEL
-> > +	help
-> > +	   Additional support for Centaur specific MCE features such as
-> > +	   MCE broadcasting and CMCI support.
-> > +	   New Centaur CPU support MCE broadcasting.
-> > +	   New Centaur CPU support CMCI which is fully compliant with Intel
-> CMCI.
-> > +
-> > +	   If unsure, say N here.
-> > +
-> >  config X86_ANCIENT_MCE
-> >  	bool "Support for old Pentium 5 / WinChip machine checks"
-> >  	depends on X86_32 && X86_MCE
-> > diff --git a/arch/x86/kernel/cpu/mcheck/mce.c
-> > b/arch/x86/kernel/cpu/mcheck/mce.c
-> > index cd76380..2ebafc7 100644
-> > --- a/arch/x86/kernel/cpu/mcheck/mce.c
-> > +++ b/arch/x86/kernel/cpu/mcheck/mce.c
-> > @@ -1727,6 +1727,7 @@ static void __mcheck_cpu_init_early(struct
-> cpuinfo_x86 *c)
-> >  	}
+> > Make the new format optional; using a '--list' argument and attempt to
+> > make the output slightly easier to read by adding a little whitespace to
+> > separate the different files and explicitly mark the line in question.
+> 
+> Not commenting on your code but on the original patch.....
+> I've recently noticed that ADDR2LINE sometimes outputs
+>   (discriminator 2)
+> or similar at the end of the line.  This messes up the parsing.
+> 
+> I hacked it to work so I could keep debugging with
+> 
+> -		local file_lines=$(${ADDR2LINE} -fpie $objfile $addr | sed "s; $dir_prefix\(\./\)*; ;")
+> +		local file_lines=$(${ADDR2LINE} -fpie $objfile $addr | sed -e "s; $dir_prefix\(\./\)*; ;" -e "s/(discriminator [0-9]*)//")
+> 
+> but someone should probably find out exactly what sort of messages
+> ADDR2LINE produces, and make sure they are all parsed correctly.
+> (maybe that someone should be me, but not today).
+> 
+Hi, I have fixed it by commit 78eb0c6356 ("scripts/faddr2line: fix error when
+addr2line output contains discriminator") and it is already in the mainline now.
+Thank you!
+
+> Thanks,
+> NeilBrown
+> 
+> 
+> >
+> > Cc: Changbin Du <changbin.du@intel.com>
+> > Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> > Fixes: 6870c0165feaa5 ("scripts/faddr2line: show the code context")
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  scripts/faddr2line | 18 ++++++++++++++++--
+> >  1 file changed, 16 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/scripts/faddr2line b/scripts/faddr2line
+> > index 1876a741087c..a0149db00be7 100755
+> > --- a/scripts/faddr2line
+> > +++ b/scripts/faddr2line
+> > @@ -56,7 +56,7 @@ command -v ${SIZE} >/dev/null 2>&1 || die "size isn't installed"
+> >  command -v ${NM} >/dev/null 2>&1 || die "nm isn't installed"
+> >  
+> >  usage() {
+> > -	echo "usage: faddr2line <object file> <func+offset> <func+offset>..." >&2
+> > +	echo "usage: faddr2line [--list] <object file> <func+offset> <func+offset>..." >&2
+> >  	exit 1
 > >  }
-> >
-> > +#ifdef CONFIG_X86_MCE_CENTAUR
-> >  static void mce_centaur_feature_init(struct cpuinfo_x86 *c)  {
-> >  	struct mca_config *cfg = &mca_cfg;
-> > @@ -1740,7 +1741,12 @@ static void mce_centaur_feature_init(struct
-> cpuinfo_x86 *c)
-> >  		if (cfg->monarch_timeout < 0)
-> >  			cfg->monarch_timeout = USEC_PER_SEC;
-> >  	}
-> > +	mce_intel_feature_init(c);
-> > +	mce_adjust_timer = cmci_intel_adjust_timer;
-> 
-> So far so good but above says "New Centaur CPU[s]" but you're calling
-> mce_intel_feature_init() unconditionally here, for *all* centaur CPUs.
-> Ditto for setting the CMCI handler.
+> >  
+> > @@ -166,15 +166,25 @@ __faddr2line() {
+> >  		local file_lines=$(${ADDR2LINE} -fpie $objfile $addr | sed "s; $dir_prefix\(\./\)*; ;")
+> >  		[[ -z $file_lines ]] && return
+> >  
+> > +		if [[ $LIST = 0 ]]; then
+> > +			echo "$file_lines" | while read -r line
+> > +			do
+> > +				echo $line
+> > +			done
+> > +			DONE=1;
+> > +			return
+> > +		fi
+> > +
+> >  		# show each line with context
+> >  		echo "$file_lines" | while read -r line
+> >  		do
+> > +			echo
+> >  			echo $line
+> >  			n=$(echo $line | sed 's/.*:\([0-9]\+\).*/\1/g')
+> >  			n1=$[$n-5]
+> >  			n2=$[$n+5]
+> >  			f=$(echo $line | sed 's/.*at \(.\+\):.*/\1/g')
+> > -			awk 'NR>=strtonum("'$n1'") && NR<=strtonum("'$n2'") {printf("%d\t%s\n", NR, $0)}' $f
+> > +			awk 'NR>=strtonum("'$n1'") && NR<=strtonum("'$n2'") { if (NR=='$n') printf(">%d<", NR); else printf(" %d ", NR); printf("\t%s\n", $0)}' $f
+> >  		done
+> >  
+> >  		DONE=1
+> > @@ -185,6 +195,10 @@ __faddr2line() {
+> >  [[ $# -lt 2 ]] && usage
+> >  
+> >  objfile=$1
+> > +
+> > +LIST=0
+> > +[[ "$objfile" == "--list" ]] && LIST=1 && shift && objfile=$1
+> > +
+> >  [[ ! -f $objfile ]] && die "can't find objfile $objfile"
+> >  shift
+> >  
 
-	There is a check for CMCI support or not In cmci_supported() function which will be called by mce_intel_feature_init.
 
-		return !!(cap & MCG_CMCI_P);
-	So, I didn't add Family/Model/Stepping check.
 
-	But, I am sorry to add another patch just as following:
-
-	@@ -85,7 +85,8 @@ static int cmci_supported(int *banks)
-         * initialization is vendor keyed and this
-         * makes sure none of the backdoors are entered otherwise.
-         */
--       if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-+       if ((boot_cpu_data.x86_vendor != X86_VENDOR_INTEL &&
-+               boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR))
-                return 0;
-        if (!boot_cpu_has(X86_FEATURE_APIC) || lapic_get_maxlvt() < 6)
-                return 0;
-
-	I will send patch v4 later to include this patch.
-	Thank you.
-> 
-> Also mce_intel_feature_init() does more things than init CMCI so I think you
-> wanna limit that to only intel_init_cmci(). IOW, something like the hunk below.
-> 
-> And frankly I'm not crazy about adding centaur code to mce_intel.c but since it
-> is copying functionality, I think we should copy the sw support in the kernel too
-> instead of adding a mce_centaur.c duplicate. For now at least...
-> 
-> Thx.
-> 
-> ---
-> diff --git a/arch/x86/kernel/cpu/mcheck/mce_intel.c
-> b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-> index d05be307d081..77d8a9b996a6 100644
-> --- a/arch/x86/kernel/cpu/mcheck/mce_intel.c
-> +++ b/arch/x86/kernel/cpu/mcheck/mce_intel.c
-> @@ -506,8 +506,15 @@ static void intel_ppin_init(struct cpuinfo_x86 *c)
-> 
->  void mce_intel_feature_init(struct cpuinfo_x86 *c)  {
-> -	intel_init_thermal(c);
->  	intel_init_cmci();
-> +
-> +	/*
-> +	 * Some Centaur variants support CMCI.
-> +	 */
-> +	if (c->x86_vendor == X86_VENDOR_CENTAUR)
-> +		return;
-> +
-> +	intel_init_thermal(c);
->  	intel_init_lmce();
->  	intel_ppin_init(c);
->  }
-> 
-	OK. I will send patch V4 to fix this problem, just like:
-	
-void mce_intel_feature_init(struct cpuinfo_x86 *c)
- {
--       intel_init_thermal(c);
--       intel_init_cmci();
--       intel_init_lmce();
--       intel_ppin_init(c);
-+
-+       switch (c->x86_vendor) {
-+       case X86_VENDOR_INTEL:
-+               intel_init_thermal(c);
-+               intel_init_cmci();
-+               intel_init_lmce();
-+               intel_ppin_init(c);
-+               break;
-+       case X86_VENDOR_CENTAUR:
-+               intel_init_cmci();
-+               break;
-+       default:
-+               break;
-+       }
- }
-	Thank you.
-
-> --
-> Regards/Gruss,
->     Boris.
-> 
-> ECO tip #101: Trim your mails when you reply.
-> --
+-- 
+Thanks,
+Changbin Du
