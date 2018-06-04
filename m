@@ -1,196 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751766AbeFDAPE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 20:15:04 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44632 "EHLO
+        id S1751638AbeFDASR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 20:18:17 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42652 "EHLO
         mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751716AbeFDAPD (ORCPT
+        with ESMTP id S1751444AbeFDASP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 20:15:03 -0400
-X-Google-Smtp-Source: ADUXVKJIYdHZq4CNq89ze+1o3blQasoNBFsnvx48VYipj0AEvjcZ/oPYVWHLrD3si7SeLmAr267stA==
-Date: Sun, 3 Jun 2018 18:14:59 -0600
+        Sun, 3 Jun 2018 20:18:15 -0400
+X-Google-Smtp-Source: ADUXVKLycmwNyf5ghmJ57Uf/wEyr6bsagxsmkZjVO07KrsWGuBGHvgeJhGW3b05/nZodkcDaFn8q1w==
+Date: Sun, 3 Jun 2018 18:18:12 -0600
 From: Tycho Andersen <tycho@tycho.ws>
-To: Alban Crequy <alban.crequy@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
+To: Jann Horn <jannh@google.com>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
         Kees Cook <keescook@chromium.org>,
         Andy Lutomirski <luto@amacapital.net>, Oleg Nesterov <oleg@redhat.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         "Serge E. Hallyn" <serge@hallyn.com>, christian.brauner@ubuntu.com,
-        tyhicks@canonical.com, Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        me@tobin.cc
-Subject: Re: [PATCH v3 4/4] seccomp: add support for passing fds via
- USER_NOTIF
-Message-ID: <20180604001459.GD15998@cisco>
+        Tyler Hicks <tyhicks@canonical.com>, suda.akihiro@lab.ntt.co.jp,
+        "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: [PATCH v3 1/4] seccomp: add a return code to trap to userspace
+Message-ID: <20180604001812.GE15998@cisco>
 References: <20180531144949.24995-1-tycho@tycho.ws>
- <20180531144949.24995-5-tycho@tycho.ws>
- <CAMXgnP7cggXh0M403gqWALm0=Cq0JHJiDoE-q++BbL2hCZHX-g@mail.gmail.com>
+ <20180531144949.24995-2-tycho@tycho.ws>
+ <CAG48ez3x9HSkLZc-da6zjPbckyfdPvwyQa3p9P6EzQ5sGk53eg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMXgnP7cggXh0M403gqWALm0=Cq0JHJiDoE-q++BbL2hCZHX-g@mail.gmail.com>
+In-Reply-To: <CAG48ez3x9HSkLZc-da6zjPbckyfdPvwyQa3p9P6EzQ5sGk53eg@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alban,
+Hi Jann,
 
-On Sat, Jun 02, 2018 at 09:14:09PM +0200, Alban Crequy wrote:
-> On Thu, 31 May 2018 at 16:52, Tycho Andersen <tycho@tycho.ws> wrote:
+On Sun, Jun 03, 2018 at 08:41:01PM +0200, Jann Horn wrote:
+> On Sun, Jun 3, 2018 at 2:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
 > >
-> > The idea here is that the userspace handler should be able to pass an fd
-> > back to the trapped task, for example so it can be returned from socket().
+> > This patch introduces a means for syscalls matched in seccomp to notify
+> > some other task that a particular filter has been triggered.
 > >
-> > I've proposed one API here, but I'm open to other options. In particular,
-> > this only lets you return an fd from a syscall, which may not be enough in
-> > all cases. For example, if an fd is written to an output parameter instead
-> > of returned, the current API can't handle this. Another case is that
-> > netlink takes as input fds sometimes (IFLA_NET_NS_FD, e.g.). If netlink
-> > ever decides to install an fd and output it, we wouldn't be able to handle
-> > this either.
+> > The motivation for this is primarily for use with containers. For example,
+> > if a container does an init_module(), we obviously don't want to load this
+> > untrusted code, which may be compiled for the wrong version of the kernel
+> > anyway. Instead, we could parse the module image, figure out which module
+> > the container is trying to load and load it on the host.
 > >
-> > Still, the vast majority of interesting cases are covered by this API, so
-> > perhaps it is Enough.
+> > As another example, containers cannot mknod(), since this checks
+> > capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
+> > /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
+> > coding some whitelist in the kernel. Another example is mount(), which has
+> > many security restrictions for good reason, but configuration or runtime
+> > knowledge could potentially be used to relax these restrictions.
 > >
-> > I've left it as a separate commit for two reasons:
-> >   * It illustrates the way in which we would grow struct seccomp_notif and
-> >     struct seccomp_notif_resp without using netlink
-> >   * It shows just how little code is needed to accomplish this :)
+> > This patch adds functionality that is already possible via at least two
+> > other means that I know about, both of which involve ptrace(): first, one
+> > could ptrace attach, and then iterate through syscalls via PTRACE_SYSCALL.
+> > Unfortunately this is slow, so a faster version would be to install a
+> > filter that does SECCOMP_RET_TRACE, which triggers a PTRACE_EVENT_SECCOMP.
+> > Since ptrace allows only one tracer, if the container runtime is that
+> > tracer, users inside the container (or outside) trying to debug it will not
+> > be able to use ptrace, which is annoying. It also means that older
+> > distributions based on Upstart cannot boot inside containers using ptrace,
+> > since upstart itself uses ptrace to start services.
 > >
-> > v2: new in v2
-> > v3: no changes
+> > The actual implementation of this is fairly small, although getting the
+> > synchronization right was/is slightly complex.
 > >
-> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> > CC: Kees Cook <keescook@chromium.org>
-> > CC: Andy Lutomirski <luto@amacapital.net>
-> > CC: Oleg Nesterov <oleg@redhat.com>
-> > CC: Eric W. Biederman <ebiederm@xmission.com>
-> > CC: "Serge E. Hallyn" <serge@hallyn.com>
-> > CC: Christian Brauner <christian.brauner@ubuntu.com>
-> > CC: Tyler Hicks <tyhicks@canonical.com>
-> > CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-> > ---
-> >  include/uapi/linux/seccomp.h                  |   2 +
-> >  kernel/seccomp.c                              |  49 +++++++-
-> >  tools/testing/selftests/seccomp/seccomp_bpf.c | 112 ++++++++++++++++++
-> >  3 files changed, 161 insertions(+), 2 deletions(-)
+> > Finally, it's worth noting that the classic seccomp TOCTOU of reading
+> > memory data from the task still applies here, but can be avoided with
+> > careful design of the userspace handler: if the userspace handler reads all
+> > of the task memory that is necessary before applying its security policy,
+> > the tracee's subsequent memory edits will not be read by the tracer.
+> [...]
+> > @@ -857,13 +1020,28 @@ static long seccomp_set_mode_filter(unsigned int flags,
+> >         if (IS_ERR(prepared))
+> >                 return PTR_ERR(prepared);
 > >
-> > diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> > index 8160e6cad528..3124427219cb 100644
-> > --- a/include/uapi/linux/seccomp.h
-> > +++ b/include/uapi/linux/seccomp.h
-> > @@ -71,6 +71,8 @@ struct seccomp_notif_resp {
-> >         __u64 id;
-> >         __s32 error;
-> >         __s64 val;
-> > +       __u8 return_fd;
-> > +       __u32 fd;
-> >  };
-> >
-> >  #endif /* _UAPI_LINUX_SECCOMP_H */
-> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> > index 6dc99c65c2f4..2ee958b3efde 100644
-> > --- a/kernel/seccomp.c
-> > +++ b/kernel/seccomp.c
-> > @@ -77,6 +77,8 @@ struct seccomp_knotif {
-> >         /* The return values, only valid when in SECCOMP_NOTIFY_REPLIED */
-> >         int error;
-> >         long val;
-> > +       struct file *file;
-> > +       unsigned int flags;
-> >
-> >         /* Signals when this has entered SECCOMP_NOTIFY_REPLIED */
-> >         struct completion ready;
-> > @@ -780,10 +782,32 @@ static void seccomp_do_user_notification(int this_syscall,
-> >                         goto remove_list;
-> >         }
-> >
-> > -       ret = n.val;
-> > -       err = n.error;
-> > +       if (n.file) {
-> > +               int fd;
-> > +
-> > +               fd = get_unused_fd_flags(n.flags);
-> > +               if (fd < 0) {
-> > +                       err = fd;
-> > +                       ret = -1;
-> > +                       goto remove_list;
+> > +       if (flags & SECCOMP_FILTER_FLAG_GET_LISTENER) {
+> > +               listener = get_unused_fd_flags(O_RDWR);
+> 
+> I think you want either 0 or O_CLOEXEC here?
+
+Do we? I suppose it makes sense to be able to set CLOEXEC, but I could
+imagine a case where a handler wanted to fork+exec to handle
+something. I'm happy to make the change, but it's not obvious to me
+that it's what we want by default.
+
+> > +out_put_fd:
+> > +       if (flags & SECCOMP_FILTER_FLAG_GET_LISTENER) {
+> > +               if (ret < 0) {
+> > +                       fput(listener_f);
+> > +                       put_unused_fd(listener);
+> > +               } else {
+> > +                       fd_install(listener, listener_f);
+> > +                       ret = listener;
 > > +               }
+> > +       }
+> >  out_free:
+> >         seccomp_filter_free(prepared);
+> >         return ret;
+> [...]
+> > +static __poll_t seccomp_notify_poll(struct file *file,
+> > +                                   struct poll_table_struct *poll_tab)
+> > +{
+> > +       struct seccomp_filter *filter = file->private_data;
+> > +       __poll_t ret = 0;
+> > +       struct seccomp_knotif *cur;
 > > +
-> > +               ret = fd;
-> > +               err = 0;
+> > +       ret = mutex_lock_interruptible(&filter->notify_lock);
+> > +       if (ret < 0)
+> > +               return ret;
 > > +
-> > +               fd_install(fd, n.file);
-> > +               /* Don't fput, since fd has a reference now */
-> > +               n.file = NULL;
-> 
-> Do we want the cgroup classid and netprio to be applied here, before
-> the fd_install? I am looking at similar code in net/core/scm.c
-> scm_detach_fds():
->                 sock = sock_from_file(fp[i], &err);
->                 if (sock) {
->                         sock_update_netprioidx(&sock->sk->sk_cgrp_data);
->                         sock_update_classid(&sock->sk->sk_cgrp_data);
->                 }
-> 
-> The listener process might live in a different cgroup with a different
-> classid & netprio, so it might not be applied as the app might expect.
-
-Thanks, I hadn't really thought about this. I think doing what
-SCM_RIGHTS does makes sense -- the operation is essentially the same.
-
-> Also, should we update the struct sock_cgroup_data of the socket, in
-> order to make the BPF helper function bpf_skb_under_cgroup() work wrt
-> the cgroup of the target process instead of the listener process? I am
-> looking at cgroup_sk_alloc(). I don't know what's the correct
-> behaviour we want here.
-
-SCM_RIGHTS seems to omit this (I assume you mean the val field of
-struct sock_cgroup_data, which seems to be a pointer to struct
-cgroup*), any idea why?
-
-> > +       } else {
-> > +               ret = n.val;
-> > +               err = n.error;
+> > +       list_for_each_entry(cur, &filter->notifications, list) {
+> > +               if (cur->state == SECCOMP_NOTIFY_INIT)
+> > +                       ret |= EPOLLIN | EPOLLRDNORM;
+> > +               if (cur->state == SECCOMP_NOTIFY_SENT)
+> > +                       ret |= EPOLLOUT | EPOLLWRNORM;
 > > +       }
 > > +
-> >
-> >  remove_list:
-> > +       if (n.file)
-> > +               fput(n.file);
+> > +       mutex_unlock(&filter->notify_lock);
 > > +
-> >         list_del(&n.list);
-> >  out:
-> >         mutex_unlock(&match->notify_lock);
-> > @@ -1598,6 +1622,27 @@ static ssize_t seccomp_notify_write(struct file *file, const char __user *buf,
-> >         knotif->state = SECCOMP_NOTIFY_REPLIED;
-> >         knotif->error = resp.error;
-> >         knotif->val = resp.val;
-> > +
-> > +       if (resp.return_fd) {
-> > +               struct fd fd;
-> > +
-> > +               /*
-> > +                * This is a little hokey: we need a real fget() (i.e. not
-> > +                * __fget_light(), which is what fdget does), but we also need
-> > +                * the flags from strcut fd. So, we get it, put it, and get it
-> > +                * again for real.
-> > +                */
-> > +               fd = fdget(resp.fd);
-> > +               knotif->flags = fd.flags;
-> > +               fdput(fd);
-> > +
-> > +               knotif->file = fget(resp.fd);
-> > +               if (!knotif->file) {
-> > +                       ret = -EBADF;
-> > +                       goto out;
+> > +       return ret;
+> > +}
 > 
-> Should the "knotif->state = SECCOMP_NOTIFY_REPLIED" and other changes
-> be done after the error case here? In case of bad fd, it seems to
-> return -EBADF the first time and -EINVAL the next time because the
-> state would have been changed to SECCOMP_NOTIFY_REPLIED already.
+> I don't think f_op->poll handlers work like this. AFAIK you're
+> supposed to use something like poll_wait() to connect the caller to
+> something like a waitqueue head, so that as soon as the file becomes
+> ready for reading/writing, any waiting task is notified. See
+> eventfd_poll() in fs/eventfd.c for a simple example. AFAICS in the
+> current code, seccomp_notify_poll() only works if an event is pending
+> at the time seccomp_notify_poll() is called.
 
-Yes, good catch, thanks!
+Arg. I was trying to avoid adding yet another piece of
+synchronization, but perhaps it's not possible. Thanks for pointing
+this out.
 
 Tycho
