@@ -1,55 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752117AbeFDKeQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:34:16 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42729 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751814AbeFDKeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:34:14 -0400
-From: YueHaibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <kvalo@codeaurora.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] atmel: use memdup_user to simplify the code
-Date: Mon, 4 Jun 2018 18:32:10 +0800
-Message-ID: <20180604103210.23984-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1752220AbeFDKe1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:34:27 -0400
+Received: from foss.arm.com ([217.140.101.70]:41416 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751187AbeFDKeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:34:25 -0400
+Subject: Re: [RFC PATCH 2/8] coresight: Fix remote endpoint parsing
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Matt Sealey <matt.sealey@arm.com>,
+        Charles Garcia-Tobin <charles.garcia-tobin@arm.com>,
+        John Horley <john.horley@arm.com>, Mike Leach <mike.leach@linaro.org>,
+        coresight@lists.linaro.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
+ <1527858967-16047-3-git-send-email-suzuki.poulose@arm.com>
+ <20180601193837.GB9838@xps15>
+ <CANLsYkzY-1z4NBmZECczMisDixgPb2UkJL0k9_LmDNEiqUS1=g@mail.gmail.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <005ec90b-6697-1b33-de01-b5f2a6c509cf@arm.com>
+Date: Mon, 4 Jun 2018 11:34:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CANLsYkzY-1z4NBmZECczMisDixgPb2UkJL0k9_LmDNEiqUS1=g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use existing memdup_user() helper function instead of open-coding
+On 06/01/2018 08:46 PM, Mathieu Poirier wrote:
+> On 1 June 2018 at 13:38, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>> On Fri, Jun 01, 2018 at 02:16:01PM +0100, Suzuki K Poulose wrote:
+>>> When parsing the remote endpoint of an output port, we do :
+>>>       rport = of_graph_get_remote_port(ep);
+>>>       rparent = of_graph_get_remote_port_parent(ep);
+>>>
+>>> and then parse the "remote_port" as if it was the remote endpoint,
+>>> which is wrong. The code worked fine because we used endpoint number
+>>> as the port number. Let us fix it and optimise a bit as:
+>>>
+>>>       remote_ep = of_graph_get_remote_endpoint(ep);
+>>>       if (remote_ep)
+>>>          remote_parent = of_graph_get_port_parent(remote_ep);
+>>>
+>>> and then, parse the remote_ep for the port/endpoint details.
+>>>
+>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> ---
+>>>   drivers/hwtracing/coresight/of_coresight.c | 19 ++++++++++---------
+>>>   1 file changed, 10 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
+>>> index 7c37544..e0deab0 100644
+>>> --- a/drivers/hwtracing/coresight/of_coresight.c
+>>> +++ b/drivers/hwtracing/coresight/of_coresight.c
+>>> @@ -128,7 +128,7 @@ of_get_coresight_platform_data(struct device *dev,
+>>>        struct device *rdev;
+>>>        struct device_node *ep = NULL;
+>>>        struct device_node *rparent = NULL;
+>>> -     struct device_node *rport = NULL;
+>>> +     struct device_node *rep = NULL;
+>>>
+>>>        pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+>>>        if (!pdata)
+>>> @@ -169,16 +169,17 @@ of_get_coresight_platform_data(struct device *dev,
+>>>                        pdata->outports[i] = endpoint.port;
+>>>
+>>>                        /*
+>>> -                      * Get a handle on the remote port and parent
+>>> -                      * attached to it.
+>>> +                      * Get a handle on the remote endpoint and the device
+>>> +                      * it is attached to.
+>>>                         */
+>>> -                     rparent = of_graph_get_remote_port_parent(ep);
+>>> -                     rport = of_graph_get_remote_port(ep);
+>>> -
+>>> -                     if (!rparent || !rport)
+>>> +                     rep = of_graph_get_remote_endpoint(ep);
+>>> +                     if (!rep)
+>>> +                             continue;
+>>> +                     rparent = of_graph_get_port_parent(rep);
+>>> +                     if (!rparent)
+>>>                                continue;
+>>>
+>>> -                     if (of_graph_parse_endpoint(rport, &rendpoint))
+>>> +                     if (of_graph_parse_endpoint(rep, &rendpoint))
+>>>                                continue;
+>>
+>> You are correct and I'm out to lunch.
+>>
+>>>
+>>>                        rdev = of_coresight_get_endpoint_device(rparent);
+>>> @@ -186,7 +187,7 @@ of_get_coresight_platform_data(struct device *dev,
+>>>                                return ERR_PTR(-EPROBE_DEFER);
+>>>
+>>>                        pdata->child_names[i] = dev_name(rdev);
+>>> -                     pdata->child_ports[i] = rendpoint.id;
+>>> +                     pdata->child_ports[i] = rendpoint.port;
+>>
+>> You need to do a of_node_put() here for both rep and rparent.
+> 
+> Same thing for the "continue" and error condition above.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/wireless/atmel/atmel.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/wireless/atmel/atmel.c b/drivers/net/wireless/atmel/atmel.c
-index d122386..30b479a 100644
---- a/drivers/net/wireless/atmel/atmel.c
-+++ b/drivers/net/wireless/atmel/atmel.c
-@@ -2657,14 +2657,9 @@ static int atmel_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
- 			break;
- 		}
- 
--		if (!(new_firmware = kmalloc(com.len, GFP_KERNEL))) {
--			rc = -ENOMEM;
--			break;
--		}
--
--		if (copy_from_user(new_firmware, com.data, com.len)) {
--			kfree(new_firmware);
--			rc = -EFAULT;
-+		new_firmware = memdup_user(com.data, com.len);
-+		if (IS_ERR(new_firmware)) {
-+			rc = PTR_ERR(new_firmware);
- 			break;
- 		}
- 
--- 
-2.7.0
+Mathieu,
+
+Thanks for pointing that out. I see that we were missing them for the
+existing code as well. I will clean all this up.
+
+Cheers
+Suzuki
