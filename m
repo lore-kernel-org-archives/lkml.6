@@ -1,66 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753265AbeFDNtB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:49:01 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56946 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753063AbeFDNs7 (ORCPT
+        id S1753367AbeFDNt1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:49:27 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34715 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753063AbeFDNtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:48:59 -0400
-Date: Mon, 4 Jun 2018 06:48:52 -0700
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 04/19] sched/numa: Set preferred_node based on best_cpu
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1528106428-19992-5-git-send-email-srikar@linux.vnet.ibm.com>
- <20180604122336.GS12217@hirez.programming.kicks-ass.net>
- <20180604125939.GB38574@linux.vnet.ibm.com>
- <20180604133953.GU12217@hirez.programming.kicks-ass.net>
+        Mon, 4 Jun 2018 09:49:24 -0400
+X-Google-Smtp-Source: ADUXVKIfK2T0E42AsnFDlz/QRdgfZ732E82QqGYfUxD0swIgYmUGWMPGVOF3KDsxTX/OpWlJGLdd0A==
+Date: Mon, 4 Jun 2018 06:49:20 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: netdev@vger.kernel.org, madalin.bucur@nxp.com,
+        Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/10] dpaa_eth: add support for hardware timestamping
+Message-ID: <20180604134920.ezhe6jz5ntpnqyzj@localhost>
+References: <20180604070837.19265-1-yangbo.lu@nxp.com>
+ <20180604070837.19265-10-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180604133953.GU12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18060413-0028-0000-0000-000002CC862E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060413-0029-0000-0000-000023830C51
-Message-Id: <20180604134852.GA30328@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040163
+In-Reply-To: <20180604070837.19265-10-yangbo.lu@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Peter Zijlstra <peterz@infradead.org> [2018-06-04 15:39:53]:
+On Mon, Jun 04, 2018 at 03:08:36PM +0800, Yangbo Lu wrote:
 
-> > >
-> > > That seems to entirely loose the active_node thing, or are you saying
-> > > best_cpu already includes that? (Changelog could use a little help there
-> > > I suppose)
-> > 
-> > I think checking for active_nodes before calling sched_setnuma was a
-> > mistake.
-> > 
-> > Before this change, we may be retaining numa_preferred_nid to be the
-> > source node while we select another node with better numa affinity to
-> > run on. So we are creating a situation where we force a thread to run on
-> > a node which is not going to be its preferred_node. So in the course of
-> > regular load balancing, this task might then be moved to set
-> > preferred_node which is actually not the preferred_node.
-> 
-> Then your Changelog had better explain all that, no?
-> 
+> +if FSL_DPAA_ETH
+> +config FSL_DPAA_ETH_TS
+> +	bool "DPAA hardware timestamping support"
+> +	select PTP_1588_CLOCK_QORIQ
+> +	default n
+> +	help
+> +	  Enable DPAA hardware timestamping support.
+> +	  This option is useful for applications to get
+> +	  hardware time stamps on the Ethernet packets
+> +	  using the SO_TIMESTAMPING API.
+> +endif
 
-I had mentioned
-"Modify to set the preferred node based of best_cpu."
-I will update that to describe the situation.
+You should drop this #ifdef.  In general, if a MAC supports time
+stamping and PHC, then the driver support should simply be compiled
+in.
+
+[ When time stamping incurs a large run time performance penalty to
+  non-PTP users, then it might make sense to have a Kconfig option to
+  disable it, but that doesn't appear to be the case here. ]
+
+> @@ -1615,6 +1635,24 @@ static int dpaa_eth_refill_bpools(struct dpaa_priv *priv)
+>  	skbh = (struct sk_buff **)phys_to_virt(addr);
+>  	skb = *skbh;
+>  
+> +#ifdef CONFIG_FSL_DPAA_ETH_TS
+> +	if (priv->tx_tstamp &&
+> +	    skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+
+This condition fits on one line easily.
+
+> +		struct skb_shared_hwtstamps shhwtstamps;
+> +		u64 ns;
+
+Local variables belong at the top of the function.
+
+> +		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
+> +
+> +		if (!dpaa_get_tstamp_ns(priv->net_dev, &ns,
+> +					priv->mac_dev->port[TX],
+> +					(void *)skbh)) {
+> +			shhwtstamps.hwtstamp = ns_to_ktime(ns);
+> +			skb_tstamp_tx(skb, &shhwtstamps);
+> +		} else {
+> +			dev_warn(dev, "dpaa_get_tstamp_ns failed!\n");
+> +		}
+> +	}
+> +#endif
+>  	if (unlikely(qm_fd_get_format(fd) == qm_fd_sg)) {
+>  		nr_frags = skb_shinfo(skb)->nr_frags;
+>  		dma_unmap_single(dev, addr, qm_fd_get_offset(fd) +
+> @@ -2086,6 +2124,14 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+>  	if (unlikely(err < 0))
+>  		goto skb_to_fd_failed;
+>  
+> +#ifdef CONFIG_FSL_DPAA_ETH_TS
+> +	if (priv->tx_tstamp &&
+> +	    skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+
+One line please.
+
+> +		fd.cmd |= FM_FD_CMD_UPD;
+> +		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
+> +	}
+> +#endif
+> +
+>  	if (likely(dpaa_xmit(priv, percpu_stats, queue_mapping, &fd) == 0))
+>  		return NETDEV_TX_OK;
+>  
+
+Thanks,
+Richard
