@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753327AbeFDHCs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54978 "EHLO mail.kernel.org"
+        id S1753334AbeFDHDJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:03:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753291AbeFDHCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:02:38 -0400
+        id S1753271AbeFDHCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Baofeng Tian <baofeng.tian@intel.com>
-Subject: [PATCH 4.14 45/52] intel_th: Use correct device when freeing buffers
-Date: Mon,  4 Jun 2018 08:58:40 +0200
-Message-Id: <20180604065608.398842427@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Brian Foster <bfoster@redhat.com>
+Subject: [PATCH 4.14 12/52] xfs: convert XFS_AGFL_SIZE to a helper function
+Date: Mon,  4 Jun 2018 08:58:07 +0200
+Message-Id: <20180604065607.026729570@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -30,56 +30,148 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit 0ed2424b911f3a058dfea01b78817abed767433d upstream.
+commit a78ee256c325ecfaec13cafc41b315bd4e1dd518 upstream.
 
-Commit d5c435df4a890 ("intel_th: msu: Use the real device in case of IOMMU
-domain allocation") changes dma buffer allocation to use the actual
-underlying device, but forgets to change the deallocation path, which leads
-to (if you've got CAP_SYS_RAWIO):
+The AGFL size calculation is about to get more complex, so lets turn
+the macro into a function first and remove the macro.
 
-> # echo 0,0 > /sys/bus/intel_th/devices/0-msc0/nr_pages
-> ------------[ cut here ]------------
-> kernel BUG at ../linux/drivers/iommu/intel-iommu.c:3670!
-> CPU: 3 PID: 231 Comm: sh Not tainted 4.17.0-rc1+ #2729
-> RIP: 0010:intel_unmap+0x11e/0x130
-...
-> Call Trace:
->  intel_free_coherent+0x3e/0x60
->  msc_buffer_win_free+0x100/0x160 [intel_th_msu]
-
-This patch fixes the buffer deallocation code to use the correct device.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: d5c435df4a890 ("intel_th: msu: Use the real device in case of IOMMU domain allocation")
-Reported-by: Baofeng Tian <baofeng.tian@intel.com>
-CC: stable@vger.kernel.org # v4.14+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+[darrick: forward port to newer kernel, simplify the helper]
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Brian Foster <bfoster@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/msu.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/xfs/libxfs/xfs_alloc.c  |   31 ++++++++++++++++++++++++-------
+ fs/xfs/libxfs/xfs_alloc.h  |    2 ++
+ fs/xfs/libxfs/xfs_format.h |   13 +------------
+ fs/xfs/xfs_fsops.c         |    2 +-
+ 4 files changed, 28 insertions(+), 20 deletions(-)
 
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -741,8 +741,8 @@ err_nomem:
- 		/* Reset the page to write-back before releasing */
- 		set_memory_wb((unsigned long)win->block[i].bdesc, 1);
- #endif
--		dma_free_coherent(msc_dev(msc), size, win->block[i].bdesc,
--				  win->block[i].addr);
-+		dma_free_coherent(msc_dev(msc)->parent->parent, size,
-+				  win->block[i].bdesc, win->block[i].addr);
- 	}
- 	kfree(win);
+--- a/fs/xfs/libxfs/xfs_alloc.c
++++ b/fs/xfs/libxfs/xfs_alloc.c
+@@ -52,6 +52,23 @@ STATIC int xfs_alloc_ag_vextent_size(xfs
+ STATIC int xfs_alloc_ag_vextent_small(xfs_alloc_arg_t *,
+ 		xfs_btree_cur_t *, xfs_agblock_t *, xfs_extlen_t *, int *);
  
-@@ -777,7 +777,7 @@ static void msc_buffer_win_free(struct m
- 		/* Reset the page to write-back before releasing */
- 		set_memory_wb((unsigned long)win->block[i].bdesc, 1);
- #endif
--		dma_free_coherent(msc_dev(win->msc), PAGE_SIZE,
-+		dma_free_coherent(msc_dev(win->msc)->parent->parent, PAGE_SIZE,
- 				  win->block[i].bdesc, win->block[i].addr);
- 	}
++/*
++ * Size of the AGFL.  For CRC-enabled filesystes we steal a couple of slots in
++ * the beginning of the block for a proper header with the location information
++ * and CRC.
++ */
++unsigned int
++xfs_agfl_size(
++	struct xfs_mount	*mp)
++{
++	unsigned int		size = mp->m_sb.sb_sectsize;
++
++	if (xfs_sb_version_hascrc(&mp->m_sb))
++		size -= sizeof(struct xfs_agfl);
++
++	return size / sizeof(xfs_agblock_t);
++}
++
+ unsigned int
+ xfs_refc_block(
+ 	struct xfs_mount	*mp)
+@@ -540,7 +557,7 @@ xfs_agfl_verify(
+ 	if (bp->b_pag && be32_to_cpu(agfl->agfl_seqno) != bp->b_pag->pag_agno)
+ 		return false;
  
+-	for (i = 0; i < XFS_AGFL_SIZE(mp); i++) {
++	for (i = 0; i < xfs_agfl_size(mp); i++) {
+ 		if (be32_to_cpu(agfl->agfl_bno[i]) != NULLAGBLOCK &&
+ 		    be32_to_cpu(agfl->agfl_bno[i]) >= mp->m_sb.sb_agblocks)
+ 			return false;
+@@ -2252,7 +2269,7 @@ xfs_alloc_get_freelist(
+ 	bno = be32_to_cpu(agfl_bno[be32_to_cpu(agf->agf_flfirst)]);
+ 	be32_add_cpu(&agf->agf_flfirst, 1);
+ 	xfs_trans_brelse(tp, agflbp);
+-	if (be32_to_cpu(agf->agf_flfirst) == XFS_AGFL_SIZE(mp))
++	if (be32_to_cpu(agf->agf_flfirst) == xfs_agfl_size(mp))
+ 		agf->agf_flfirst = 0;
+ 
+ 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
+@@ -2363,7 +2380,7 @@ xfs_alloc_put_freelist(
+ 			be32_to_cpu(agf->agf_seqno), &agflbp)))
+ 		return error;
+ 	be32_add_cpu(&agf->agf_fllast, 1);
+-	if (be32_to_cpu(agf->agf_fllast) == XFS_AGFL_SIZE(mp))
++	if (be32_to_cpu(agf->agf_fllast) == xfs_agfl_size(mp))
+ 		agf->agf_fllast = 0;
+ 
+ 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
+@@ -2381,7 +2398,7 @@ xfs_alloc_put_freelist(
+ 
+ 	xfs_alloc_log_agf(tp, agbp, logflags);
+ 
+-	ASSERT(be32_to_cpu(agf->agf_flcount) <= XFS_AGFL_SIZE(mp));
++	ASSERT(be32_to_cpu(agf->agf_flcount) <= xfs_agfl_size(mp));
+ 
+ 	agfl_bno = XFS_BUF_TO_AGFL_BNO(mp, agflbp);
+ 	blockp = &agfl_bno[be32_to_cpu(agf->agf_fllast)];
+@@ -2414,9 +2431,9 @@ xfs_agf_verify(
+ 	if (!(agf->agf_magicnum == cpu_to_be32(XFS_AGF_MAGIC) &&
+ 	      XFS_AGF_GOOD_VERSION(be32_to_cpu(agf->agf_versionnum)) &&
+ 	      be32_to_cpu(agf->agf_freeblks) <= be32_to_cpu(agf->agf_length) &&
+-	      be32_to_cpu(agf->agf_flfirst) < XFS_AGFL_SIZE(mp) &&
+-	      be32_to_cpu(agf->agf_fllast) < XFS_AGFL_SIZE(mp) &&
+-	      be32_to_cpu(agf->agf_flcount) <= XFS_AGFL_SIZE(mp)))
++	      be32_to_cpu(agf->agf_flfirst) < xfs_agfl_size(mp) &&
++	      be32_to_cpu(agf->agf_fllast) < xfs_agfl_size(mp) &&
++	      be32_to_cpu(agf->agf_flcount) <= xfs_agfl_size(mp)))
+ 		return false;
+ 
+ 	if (be32_to_cpu(agf->agf_levels[XFS_BTNUM_BNO]) < 1 ||
+--- a/fs/xfs/libxfs/xfs_alloc.h
++++ b/fs/xfs/libxfs/xfs_alloc.h
+@@ -26,6 +26,8 @@ struct xfs_trans;
+ 
+ extern struct workqueue_struct *xfs_alloc_wq;
+ 
++unsigned int xfs_agfl_size(struct xfs_mount *mp);
++
+ /*
+  * Freespace allocation types.  Argument to xfs_alloc_[v]extent.
+  */
+--- a/fs/xfs/libxfs/xfs_format.h
++++ b/fs/xfs/libxfs/xfs_format.h
+@@ -798,24 +798,13 @@ typedef struct xfs_agi {
+ 		&(XFS_BUF_TO_AGFL(bp)->agfl_bno[0]) : \
+ 		(__be32 *)(bp)->b_addr)
+ 
+-/*
+- * Size of the AGFL.  For CRC-enabled filesystes we steal a couple of
+- * slots in the beginning of the block for a proper header with the
+- * location information and CRC.
+- */
+-#define XFS_AGFL_SIZE(mp) \
+-	(((mp)->m_sb.sb_sectsize - \
+-	 (xfs_sb_version_hascrc(&((mp)->m_sb)) ? \
+-		sizeof(struct xfs_agfl) : 0)) / \
+-	  sizeof(xfs_agblock_t))
+-
+ typedef struct xfs_agfl {
+ 	__be32		agfl_magicnum;
+ 	__be32		agfl_seqno;
+ 	uuid_t		agfl_uuid;
+ 	__be64		agfl_lsn;
+ 	__be32		agfl_crc;
+-	__be32		agfl_bno[];	/* actually XFS_AGFL_SIZE(mp) */
++	__be32		agfl_bno[];	/* actually xfs_agfl_size(mp) */
+ } __attribute__((packed)) xfs_agfl_t;
+ 
+ #define XFS_AGFL_CRC_OFF	offsetof(struct xfs_agfl, agfl_crc)
+--- a/fs/xfs/xfs_fsops.c
++++ b/fs/xfs/xfs_fsops.c
+@@ -294,7 +294,7 @@ xfs_growfs_data_private(
+ 		}
+ 
+ 		agfl_bno = XFS_BUF_TO_AGFL_BNO(mp, bp);
+-		for (bucket = 0; bucket < XFS_AGFL_SIZE(mp); bucket++)
++		for (bucket = 0; bucket < xfs_agfl_size(mp); bucket++)
+ 			agfl_bno[bucket] = cpu_to_be32(NULLAGBLOCK);
+ 
+ 		error = xfs_bwrite(bp);
