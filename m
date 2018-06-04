@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752952AbeFDHB1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:01:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53972 "EHLO mail.kernel.org"
+        id S1752975AbeFDHBa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:01:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752828AbeFDHBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:25 -0400
+        id S1752828AbeFDHB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <groeck@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.14 26/52] drm/amd/powerplay: Fix enum mismatch
-Date: Mon,  4 Jun 2018 08:58:21 +0200
-Message-Id: <20180604065607.625995346@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Guenter Roeck <groeck@chromium.org>, Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 27/52] rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
+Date: Mon,  4 Jun 2018 08:58:22 +0200
+Message-Id: <20180604065607.659479716@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -32,70 +32,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 42b5122e828a6ccd9952ad3116343dc032d33efe upstream.
+commit fb239c1209bb0f0b4830cc72507cc2f2d63fadbd upstream.
 
-In several locations the driver uses AMD_CG_STATE_UNGATE (type enum
-amd_clockgating_state) instead of AMD_PG_STATE_UNGATE (type enum
-amd_powergating_stat) and vice versa. Both constants have the same
-value, so this doesn't cause any problems, but we still want to pass
-the correct type.
+In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
+is assigned to itself in an if ... else statement, apparently only to
+document that the branch condition is handled and that a previously read
+value should be returned unmodified. The self-assignment causes clang to
+raise the following warning:
 
-Fixing the mismatch resolves multiple warnings like this when building
-with clang:
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
+  error: explicitly assigning value of variable of type 'u32'
+    (aka 'unsigned int') to itself [-Werror,-Wself-assign]
+  writeVal = writeVal;
 
-drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/cz_clockpowergating.c:169:7:
-  error: implicit conversion from enumeration type 'enum
-  amd_powergating_state' to different enumeration type 'enum
-  amd_clockgating_state' [-Werror,-Wenum-conversion]
-    AMD_PG_STATE_UNGATE);
+Delete the branch with the self-assignment.
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c   |    8 ++++----
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c |    2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/cz_clockpowergating.c
-@@ -176,10 +176,10 @@ int cz_dpm_powergate_uvd(struct pp_hwmgr
- 		cz_dpm_powerup_uvd(hwmgr);
- 		cgs_set_clockgating_state(hwmgr->device,
- 						AMD_IP_BLOCK_TYPE_UVD,
--						AMD_PG_STATE_UNGATE);
-+						AMD_CG_STATE_UNGATE);
- 		cgs_set_powergating_state(hwmgr->device,
- 						AMD_IP_BLOCK_TYPE_UVD,
--						AMD_CG_STATE_UNGATE);
-+						AMD_PG_STATE_UNGATE);
- 		cz_dpm_update_uvd_dpm(hwmgr, false);
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+@@ -299,9 +299,6 @@ static void _rtl92c_get_txpower_writeval
+ 			writeVal = 0x00000000;
+ 		if (rtlpriv->dm.dynamic_txhighpower_lvl == TXHIGHPWRLEVEL_BT1)
+ 			writeVal = writeVal - 0x06060606;
+-		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
+-			 TXHIGHPWRLEVEL_BT2)
+-			writeVal = writeVal;
+ 		*(p_outwriteval + rf) = writeVal;
  	}
- 
-@@ -208,11 +208,11 @@ int cz_dpm_powergate_vce(struct pp_hwmgr
- 		cgs_set_clockgating_state(
- 					hwmgr->device,
- 					AMD_IP_BLOCK_TYPE_VCE,
--					AMD_PG_STATE_UNGATE);
-+					AMD_CG_STATE_UNGATE);
- 		cgs_set_powergating_state(
- 					hwmgr->device,
- 					AMD_IP_BLOCK_TYPE_VCE,
--					AMD_CG_STATE_UNGATE);
-+					AMD_PG_STATE_UNGATE);
- 		cz_dpm_update_vce_dpm(hwmgr);
- 		cz_enable_disable_vce_dpm(hwmgr, true);
- 		return 0;
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_clockpowergating.c
-@@ -162,7 +162,7 @@ int smu7_powergate_uvd(struct pp_hwmgr *
- 				AMD_CG_STATE_UNGATE);
- 		cgs_set_powergating_state(hwmgr->device,
- 						AMD_IP_BLOCK_TYPE_UVD,
--						AMD_CG_STATE_UNGATE);
-+						AMD_PG_STATE_UNGATE);
- 		smu7_update_uvd_dpm(hwmgr, false);
- 	}
- 
+ }
