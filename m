@@ -1,72 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753607AbeFDOxV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:53:21 -0400
-Received: from mail-sn1nam01on0059.outbound.protection.outlook.com ([104.47.32.59]:57264
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S1753683AbeFDOyP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:54:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48282 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751784AbeFDOxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:53:19 -0400
-From: "Tayar, Tomer" <Tomer.Tayar@cavium.com>
-To: YueHaibing <yuehaibing@huawei.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "Elior, Ariel" <Ariel.Elior@cavium.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dept-Eng Everest Linux L2 <Dept-EngEverestLinuxL2@cavium.com>
-Subject: RE: [PATCH net-next] qed: use dma_zalloc_coherent instead of
- allocator/memset
-Thread-Topic: [PATCH net-next] qed: use dma_zalloc_coherent instead of
- allocator/memset
-Thread-Index: AQHT/AV/Ocq0yZYsKUaAAM+tQdR0LqRQLa5Q
-Date: Mon, 4 Jun 2018 14:53:15 +0000
-Message-ID: <BN3PR07MB254752026445D0C36508C97180670@BN3PR07MB2547.namprd07.prod.outlook.com>
-References: <20180604131031.24476-1-yuehaibing@huawei.com>
-In-Reply-To: <20180604131031.24476-1-yuehaibing@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tomer.Tayar@cavium.com;
-x-originating-ip: [31.168.140.228]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN3PR07MB2483;7:NAPehwIjB52lTaCODhlQ0fhaPBGVYj14wHROkdTXKanLFQXVT43hVRF+JiDXh0jRS0Fm5dtjnQ7RjqlH2QmgeiRNA29Vz3/ZY8bb+W8Sy9PZbiC06MJCzWzr9Fs/SLmSqkuk6SUgB2JP2UaMwpfmFCSOZ6obj3l8c/1t0pPUSBfGw+RWwXHVFoLpFWb25V2LQQFBaEErrbAYdNutSzeY3QBfYpzlb80/I8qnYqahDxj08Vd0A+Yh8Q6BqICLQuk7
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN3PR07MB2483;
-x-ms-traffictypediagnostic: BN3PR07MB2483:
-x-microsoft-antispam-prvs: <BN3PR07MB2483A8E127EA8119AD01A89380670@BN3PR07MB2483.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(50582790962513);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BN3PR07MB2483;BCL:0;PCL:0;RULEID:;SRVR:BN3PR07MB2483;
-x-forefront-prvs: 069373DFB6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39380400002)(366004)(39850400004)(199004)(189003)(107886003)(6246003)(6436002)(99286004)(55016002)(33656002)(2906002)(72206003)(106356001)(105586002)(3660700001)(316002)(3280700002)(229853002)(8936002)(97736004)(14454004)(5660300001)(74316002)(25786009)(86362001)(478600001)(53936002)(5250100002)(305945005)(66066001)(7736002)(102836004)(2501003)(68736007)(110136005)(54906003)(6506007)(4326008)(2900100001)(6116002)(76176011)(7696005)(3846002)(186003)(9686003)(446003)(486006)(6636002)(11346002)(81156014)(81166006)(558084003)(476003)(26005)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR07MB2483;H:BN3PR07MB2547.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: iFQ3GCp5vERJW+ciEa9BUvfiOfg2FbgIjK1o4jq1vVk1Ls81sQShukjvUK/eF3KhwmyubVewgYCRvc98Ozx5THnKPJMqy4GL1vF4jRwQkE96DzzXrekWE/3Og6m+iFJYKGO3aahvVIHS8OgQNNG2hS4h4sFBe5AdXsZuFNt89bO2giWzH/UeZV8/w/4/yONT
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1753656AbeFDOyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:54:14 -0400
+Date: Mon, 4 Jun 2018 09:54:12 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Jessica Yu <jeyu@kernel.org>
+Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: [PATCH] module: exclude SHN_UNDEF symbols from kallsyms api
+Message-ID: <20180604145412.ko2jduwi4qplbwyz@treble>
+References: <20180602173209.merjb4o5a3wsdnbh@treble>
+ <20180604080528.4z6rbhapbhn7xf5e@d217.suse.de>
+ <20180604095416.rlthplerswzznyoc@d217.suse.de>
+ <20180604130131.slyhtgyywffusf67@d217.suse.de>
+ <20180604131648.eykjibc3iubckeiu@treble>
+ <20180604140510.jovmjhamo24mzh3l@d217.suse.de>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: bbca400d-a447-48c9-ba2f-08d5ca2ae6f8
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbca400d-a447-48c9-ba2f-08d5ca2ae6f8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2018 14:53:15.4079
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR07MB2483
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180604140510.jovmjhamo24mzh3l@d217.suse.de>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w54ErQDw023438
 
-From: YueHaibing [mailto:yuehaibing@huawei.com]
-Sent: Monday, June 04, 2018 4:11 PM
-
-> Use dma_zalloc_coherent instead of dma_alloc_coherent
-> followed by memset 0.
+On Mon, Jun 04, 2018 at 04:05:11PM +0200, Jessica Yu wrote:
+> +++ Josh Poimboeuf [04/06/18 08:16 -0500]:
+> > On Mon, Jun 04, 2018 at 03:01:31PM +0200, Jessica Yu wrote:
+> > > +++ Jessica Yu [04/06/18 11:54 +0200]:
+> > > > +++ Jessica Yu [04/06/18 10:05 +0200]:
+> > > > > +++ Josh Poimboeuf [02/06/18 12:32 -0500]:
+> > > > > > Hi Jessica,
+> > > > > >
+> > > > > > I found a bug:
+> > > > > >
+> > > > > > [root@f25 ~]# modprobe livepatch-sample
+> > > > > > [root@f25 ~]# grep ' u ' /proc/kallsyms
+> > > > > > ffffffff81161080 u klp_enable_patch	[livepatch_sample]
+> > > > > > ffffffff81a01800 u __fentry__	[livepatch_sample]
+> > > > > > ffffffff81161250 u klp_unregister_patch	[livepatch_sample]
+> > > > > > ffffffff81161870 u klp_register_patch	[livepatch_sample]
+> > > > > > ffffffff8131f0b0 u seq_printf	[livepatch_sample]
+> > > > > >
+> > > > > > Notice that livepatch modules' undefined symbols are showing up in
+> > > > > > /proc/kallsyms.  This can confuse klp_find_object_symbol() which can
+> > > > > > cause subtle bugs in livepatch.
+> > > > > >
+> > > > > > I stared at the module kallsyms code for a bit, but I don't see the bug.
+> > > > > > Maybe it has something to do with how we save the symbol table in
+> > > > > > copy_module_elf().  Any ideas?
+> > > > >
+> > > > > Hi Josh!
+> > > > >
+> > > > > This is because we preserve the entire symbol table for livepatch
+> > > > > modules, including the SHN_UNDEF symbols. IIRC, this is so that we can
+> > > > > still apply relocations properly with apply_relocate_add() after a
+> > > > > to-be-patched object is loaded. Normally we don't save these SHN_UNDEF
+> > > > > symbols for modules so they do not appear in /proc/kallsyms.
+> > > >
+> > > > Hm, if having the full symtab in kallsyms is causing trouble, one
+> > > > possibility would be to just have the module kallsyms code simply
+> > > > skip/ignore undef symbols. That's what we technically do for normal
+> > > > modules anyway (we normally cut undef syms out of the symtab). Haven't
+> > > > tested this idea but does that sound like it'd help?
+> > > 
+> > > See if the following patch (untested) helps. It does not fix the
+> > > /proc/kallsyms lookup, that requires a separate patch. But it should
+> > > exclude the undef symbols from module_kallsyms_on_each_symbol() and
+> > > thus also from klp_find_object_symbol().
+> > 
+> > That seems like it would work.  But wouldn't it be more robust if we
+> > don't store the SHN_UNDEF symbols to start with?  Really it's only the
+> > SHN_LIVEPATCH symbols that we need to keep, right?
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Hm, didn't we have a reason for preserving the original symbol tables?
+> It's not that we're storing the undef symbols on purpose, it's just
+> that in the case of a livepatch module we keep *all* the symbols.
+> IIRC, the original reasoning was that we needed to keep the original
+> symtab indices in place, otherwise apply_relocate() (which uses the
+> original symbol index encoded in the relocation) won't work.
+> Selectively copying only SHN_LIVEPATCH symbols when building the
+> module's symbol table will unfortunately mess the symbol indices up :/
+> Under these restrictions, it just seemed easier to make kallsyms
+> ignore undef symbols.
 
-Thanks
-Acked-by: Tomer Tayar <Tomer.Tayar@cavium.com>
+Ah, you're right.  I'll try out your patch.
+
+-- 
+Josh
