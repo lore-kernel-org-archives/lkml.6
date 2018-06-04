@@ -1,92 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751687AbeFDVdx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:33:53 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37991 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeFDVdt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:33:49 -0400
-X-Google-Smtp-Source: ADUXVKLE+YgcFHSt/PgGqJAQGqKQs3qWRFJsvc2Ap8hO7bARm1vNBPc03SfxlwqAxkHdPBg4wOOuIQ==
-Subject: Re: [PATCH] arm64: dts: stingray: Add otp device node
-To: Scott Branden <scott.branden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1527106630-4760-1-git-send-email-scott.branden@broadcom.com>
- <c9219029-6e45-1889-6326-470d2bc9e46c@gmail.com>
- <f6f3e76e-eac9-797d-fea5-eac64327ec7f@broadcom.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <efaf0373-2959-b238-e5f3-ae7e16534384@gmail.com>
-Date: Mon, 4 Jun 2018 14:33:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <f6f3e76e-eac9-797d-fea5-eac64327ec7f@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751772AbeFDVeM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:34:12 -0400
+Received: from ns.pmeerw.net ([84.19.176.117]:46532 "EHLO ns.pmeerw.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751723AbeFDVeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 17:34:10 -0400
+From: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Subject: [PATCH] rfkill: Fixes and cleanup of header file
+Date: Mon,  4 Jun 2018 23:34:06 +0200
+Message-Id: <20180604213406.31016-1-pmeerw@pmeerw.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 02:30 PM, Scott Branden wrote:
-> Hi Florian,
-> 
-> 
-> On 18-06-04 02:24 PM, Florian Fainelli wrote:
->> On 05/23/2018 01:17 PM, Scott Branden wrote:
->>> Add otp device node for Stingray SOC.
->>>
->>> Fixes: 2fa9e9e29ea2 ("arm64: dts: Add GPIO DT nodes for Stingray SOC")
->>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->> Applied to devicetree-arm64/next with s/otp/OTP/ and removing the Fixes
->> line since that is not a bug fix AFAICT.
-> It fixes the issue that OTP is not active as it is missing the device node?
+Fixes kerneldoc parameter names to match implementation,
+rfkill_set_hw_state(), rfkill_set_sw_state().
+Fix description of rfkill_resume_polling().
+Fix typos in documentation of rfkill_find_type().
+Consistently start kerneldoc description with uppercase
+letter.
 
-By that token, any peripheral that is being added at some point in the
-lifetime of this DTS would qualify as a bugfix when it is in fact
-feature/peripheral enabling.
+Signed-off-by: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+---
+ include/linux/rfkill.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-I could not see the relationship between the commit being provided in
-the "Fixes:" tag and OTP, am I missing something?
+diff --git a/include/linux/rfkill.h b/include/linux/rfkill.h
+index e6a0031d1b1f..8ad2487a86d5 100644
+--- a/include/linux/rfkill.h
++++ b/include/linux/rfkill.h
+@@ -66,7 +66,7 @@ struct rfkill_ops {
+ 
+ #if defined(CONFIG_RFKILL) || defined(CONFIG_RFKILL_MODULE)
+ /**
+- * rfkill_alloc - allocate rfkill structure
++ * rfkill_alloc - Allocate rfkill structure
+  * @name: name of the struct -- the string is not copied internally
+  * @parent: device that has rf switch on it
+  * @type: type of the switch (RFKILL_TYPE_*)
+@@ -112,7 +112,7 @@ void rfkill_pause_polling(struct rfkill *rfkill);
+ /**
+  * rfkill_resume_polling(struct rfkill *rfkill)
+  *
+- * Pause polling -- say transmitter is off for other reasons.
++ * Resume polling
+  * NOTE: not necessary for suspend/resume -- in that case the
+  * core stops polling anyway
+  */
+@@ -130,7 +130,7 @@ void rfkill_resume_polling(struct rfkill *rfkill);
+ void rfkill_unregister(struct rfkill *rfkill);
+ 
+ /**
+- * rfkill_destroy - free rfkill structure
++ * rfkill_destroy - Free rfkill structure
+  * @rfkill: rfkill structure to be destroyed
+  *
+  * Destroys the rfkill structure.
+@@ -140,7 +140,7 @@ void rfkill_destroy(struct rfkill *rfkill);
+ /**
+  * rfkill_set_hw_state - Set the internal rfkill hardware block state
+  * @rfkill: pointer to the rfkill class to modify.
+- * @state: the current hardware block state to set
++ * @blocked: the current hardware block state to set
+  *
+  * rfkill drivers that get events when the hard-blocked state changes
+  * use this function to notify the rfkill core (and through that also
+@@ -161,7 +161,7 @@ bool rfkill_set_hw_state(struct rfkill *rfkill, bool blocked);
+ /**
+  * rfkill_set_sw_state - Set the internal rfkill software block state
+  * @rfkill: pointer to the rfkill class to modify.
+- * @state: the current software block state to set
++ * @blocked: the current software block state to set
+  *
+  * rfkill drivers that get events when the soft-blocked state changes
+  * (yes, some platforms directly act on input but allow changing again)
+@@ -183,7 +183,7 @@ bool rfkill_set_sw_state(struct rfkill *rfkill, bool blocked);
+ /**
+  * rfkill_init_sw_state - Initialize persistent software block state
+  * @rfkill: pointer to the rfkill class to modify.
+- * @state: the current software block state to set
++ * @blocked: the current software block state to set
+  *
+  * rfkill drivers that preserve their software block state over power off
+  * use this function to notify the rfkill core (and through that also
+@@ -208,17 +208,17 @@ void rfkill_init_sw_state(struct rfkill *rfkill, bool blocked);
+ void rfkill_set_states(struct rfkill *rfkill, bool sw, bool hw);
+ 
+ /**
+- * rfkill_blocked - query rfkill block
++ * rfkill_blocked - Query rfkill block state
+  *
+  * @rfkill: rfkill struct to query
+  */
+ bool rfkill_blocked(struct rfkill *rfkill);
+ 
+ /**
+- * rfkill_find_type - Helpper for finding rfkill type by name
++ * rfkill_find_type - Helper for finding rfkill type by name
+  * @name: the name of the type
+  *
+- * Returns enum rfkill_type that conrresponds the name.
++ * Returns enum rfkill_type that corresponds to the name.
+  */
+ enum rfkill_type rfkill_find_type(const char *name);
+ 
+@@ -296,7 +296,7 @@ static inline enum rfkill_type rfkill_find_type(const char *name)
+ const char *rfkill_get_led_trigger_name(struct rfkill *rfkill);
+ 
+ /**
+- * rfkill_set_led_trigger_name -- set the LED trigger name
++ * rfkill_set_led_trigger_name - Set the LED trigger name
+  * @rfkill: rfkill struct
+  * @name: LED trigger name
+  *
 -- 
-Florian
+2.11.0
