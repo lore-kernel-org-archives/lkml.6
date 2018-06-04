@@ -1,118 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeFDJIl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 05:08:41 -0400
-Received: from mail-hk2apc01on0110.outbound.protection.outlook.com ([104.47.124.110]:6711
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752126AbeFDJIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 05:08:36 -0400
-From: Tianyu Lan <Tianyu.Lan@microsoft.com>
-CC: Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>
-Subject: [RFC Patch 2/3] KVM: Add tlb remote flush callback in kvm_x86_ops.
-Thread-Topic: [RFC Patch 2/3] KVM: Add tlb remote flush callback in
- kvm_x86_ops.
-Thread-Index: AQHT++OaghvAztGQfkKjrBIBb1LvJQ==
-Date: Mon, 4 Jun 2018 09:08:28 +0000
-Message-ID: <20180604090749.489-3-Tianyu.Lan@microsoft.com>
-References: <20180604090749.489-1-Tianyu.Lan@microsoft.com>
-In-Reply-To: <20180604090749.489-1-Tianyu.Lan@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tianyu.Lan@microsoft.com;
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SG2P15301MB0094;7:kl9FhTUo5/kUDulPw9SPTyJFQ2G8RNUb6n4bLwEIsEoVZucn/cWhnxEfcti/iFxrWdrjMh7933Pp/8YelVOoCHuL9gCozjmXLUUH6hxUcMe642fSstAjAVt2Nc3nvkuarHdf1IigZRSoI94W6X6Cc0C2YlSCrQKEc4JrZL7eEXfNPoWefig+Y5L3NQLMBUQDSePwF9ClkW7TJ+yMqOf6GNpbhJWxo6g4TClZ77SoKemd48RPllqdvkz1ayrqVnCI;20:nvsUf+N5PzkTG93RdOjdbSDenE/OghbBK6BjBHKoZ3tIr32bLSETNPBTktQjX1xtKe/zwQhcVWkLz3kI8jKnPwKvo4HKVlzxMGH0B6bjTV4lfLilX1Pw/ZMaXp3kR32K2J55CeA/wkTR9Zp4dJU2Cb6nLtG3x0ze2H1hIZ4eDbk=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(2017052603328)(7193020);SRVR:SG2P15301MB0094;
-x-ms-traffictypediagnostic: SG2P15301MB0094:
-x-microsoft-antispam-prvs: <SG2P15301MB0094F68619D70C5B9FBD6B7C92670@SG2P15301MB0094.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SG2P15301MB0094;BCL:0;PCL:0;RULEID:;SRVR:SG2P15301MB0094;
-x-forefront-prvs: 069373DFB6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(39380400002)(376002)(346002)(189003)(199004)(1076002)(5250100002)(6436002)(10290500003)(2906002)(6486002)(3846002)(53936002)(6116002)(86362001)(86612001)(36756003)(25786009)(72206003)(478600001)(6512007)(10090500001)(109986005)(76176011)(106356001)(59450400001)(99286004)(68736007)(5660300001)(81166006)(81156014)(4326008)(6506007)(26005)(8936002)(8676002)(105586002)(7736002)(446003)(2616005)(11346002)(97736004)(14454004)(305945005)(2900100001)(66066001)(3660700001)(3280700002)(486006)(476003)(1671002)(22452003)(316002)(102836004)(59246006)(54906003)(22906009);DIR:OUT;SFP:1102;SCL:1;SRVR:SG2P15301MB0094;H:SG2P15301MB0062.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: UF3sYdohWzJGDCGuKQkwnAmWOSFs8pLfIFo9rX86EvJaELDsDYcbKVG9hmce2lY724yLE4tJ5PgAIMgDAa1WqQ8b8xDS3t89Z4dodRjqeoMnOYeAZCzXUj6g74g7hfkKlYnzvpF8W6+Lwi7KGGqjwMVg95/M6e6pPQi7RtHorUScHTNiH4xmGLmkAskC9Ps5
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1752266AbeFDJKn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 05:10:43 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:37038 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751854AbeFDJKl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 05:10:41 -0400
+X-Google-Smtp-Source: ADUXVKIuCLbrclcB1M4WjzGd7f+9ZNk3OmWvzhjUut++sRvFZCfYw6/oBMvtdA/mkeQESuU6CPnLmumitLnrM3+0NzU=
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 1f61d2cd-c07f-4a15-c575-08d5c9fabcf0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f61d2cd-c07f-4a15-c575-08d5c9fabcf0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2018 09:08:28.7008
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2P15301MB0094
-To: unlisted-recipients:; (no To-header on input)
+References: <20180530120327.27681-1-peron.clem@gmail.com> <20180530120327.27681-6-peron.clem@gmail.com>
+ <a4042956-24e1-6132-4606-b5b8f4e30023@mentor.com> <CAJiuCcefvMg6r=06O8m1TYa0hat_dHydcoJ7PN58qUru1K8zMQ@mail.gmail.com>
+ <f71fe02d-23a7-a475-52df-62c17089549b@mentor.com>
+In-Reply-To: <f71fe02d-23a7-a475-52df-62c17089549b@mentor.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Mon, 4 Jun 2018 11:10:28 +0200
+Message-ID: <CAJiuCcfUq-aBL9WMmEzDpU5KKCnO0v0O_07BQnAvmkHKptcMLw@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] ARM: dts: imx6qdl: add missing compatible and
+ clock properties for EPIT
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w5499iDg032378
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w549AnKL032393
 
-This patch is to provide a way for platforms to register tlb remote flush
-callback and this helps to optimize operation of tlb flush among vcpus for
-nested virtualization case.
+Hi Vladimir,
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/x86/include/asm/kvm_host.h |  1 +
- virt/kvm/kvm_main.c             | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+On Thu, 31 May 2018 at 10:54, Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
+>
+> Hi Clément,
+>
+> On 05/31/2018 11:41 AM, Clément Péron wrote:
+> > Hi Vladimir,
+> >
+> > On Thu, 31 May 2018 at 10:33, Vladimir Zapolskiy
+> > <vladimir_zapolskiy@mentor.com> wrote:
+> >>
+> >> On 05/30/2018 03:03 PM, Clément Péron wrote:
+> >>> From: Colin Didier <colin.didier@devialet.com>
+> >>>
+> >>> Add missing compatible and clock properties for EPIT node.
+> >>>
+> >>> Signed-off-by: Colin Didier <colin.didier@devialet.com>
+> >>> Signed-off-by: Clément Peron <clement.peron@devialet.com>
+> >>> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> >>> ---
+> >>>  arch/arm/boot/dts/imx6qdl.dtsi | 10 ++++++++++
+> >>>  1 file changed, 10 insertions(+)
+> >>>
+> >>> diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+> >>> index c003e62bf290..0feec516847a 100644
+> >>> --- a/arch/arm/boot/dts/imx6qdl.dtsi
+> >>> +++ b/arch/arm/boot/dts/imx6qdl.dtsi
+> >>> @@ -844,13 +844,23 @@
+> >>>                       };
+> >>>
+> >>>                       epit1: epit@20d0000 { /* EPIT1 */
+> >>
+> >> epit1: timer@20d0000 { ...
+> >>
+> >> And /* EPIT1 */ comment can be removed, it is quite clear from the same
+> >> line context.
+> >>
+> >> Formally it is a subject to another patch, but I think this can be
+> >> accepted as a part of this one.
+> >
+> > Should I also update other boards ?
+> > I only did it for imx6qdl.dtsi, but the EPIT is present in other boards
+> > but i can't test it myself.
+> >
+>
+> Sure, please do it, why not, it is quite a safe modification.
+>
+> One change per one dtsi file will suffice, and I see that imx25.dtsi
+> already contains the requested change, however probably you may
+> want to update its compatible = "fsl,imx25-epit" line.
+>
+> Regarding compatibles for other imx6* SoCs, I think all of them should
+> be documented in fsl,imxepit.txt and then added to the correspondent
+> dtsi files one per SoC.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 0ebe659f2802..aaad43916f9d 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -973,6 +973,7 @@ struct kvm_x86_ops {
- 	void (*set_rflags)(struct kvm_vcpu *vcpu, unsigned long rflags);
- 
- 	void (*tlb_flush)(struct kvm_vcpu *vcpu, bool invalidate_gpa);
-+	int  (*tlb_remote_flush)(struct kvm *kvm);
- 
- 	void (*run)(struct kvm_vcpu *vcpu);
- 	int (*handle_exit)(struct kvm_vcpu *vcpu);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index c5f6a552e486..31e2b54c6049 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -251,11 +251,21 @@ bool kvm_make_all_cpus_request(struct kvm *kvm, unsigned int req)
- #ifndef CONFIG_HAVE_KVM_ARCH_TLB_FLUSH_ALL
- void kvm_flush_remote_tlbs(struct kvm *kvm)
- {
-+	long dirty_count;
-+
-+	/*
-+	 * Call tlb_remote_flush first and go back old way when
-+	 * return failure.
-+	 */
-+	if (kvm_x86_ops->tlb_remote_flush &&
-+	    !kvm_x86_ops->tlb_remote_flush(kvm))
-+		return;
-+
- 	/*
- 	 * Read tlbs_dirty before setting KVM_REQ_TLB_FLUSH in
- 	 * kvm_make_all_cpus_request.
- 	 */
--	long dirty_count = smp_load_acquire(&kvm->tlbs_dirty);
-+	dirty_count = smp_load_acquire(&kvm->tlbs_dirty);
- 
- 	/*
- 	 * We want to publish modifications to the page tables before reading
--- 
-2.14.3
+Nvidia UART doc did this :
+        - For other Tegra, must contain '"nvidia,<chip>-uart",
+          "nvidia,tegra20-uart"' where <chip> is tegra30, tegra114, tegra124,
+
+I will follow this.
+
+>
+> And I forgot the outcome of one former discussion with Uwe Kleine-König,
+> but if my bad memory serves me, we agreed that i.MX25 was released later
+> than i.MX31, so the most generic (the last value in the list) compatible
+> should be a compatible with i.MX31 like in
+>
+>         imx25.dtsi:367: compatible = "fsl,imx25-gpt", "fsl,imx31-gpt";
+>
+> --
+> With best wishes,
+> Vladimir
+
+Regards,
+Clement
