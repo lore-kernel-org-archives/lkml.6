@@ -1,77 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753846AbeFDHEq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:04:46 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36175 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753307AbeFDHEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:42 -0400
-X-Google-Smtp-Source: ADUXVKL50VNhJec9aQ23k4cxMLwXcurvto7kJ0bUWbZDH8I0UUmSCsYp3bSCkNWT2zwMp8DcYuLKaQ==
-Date: Mon, 4 Jun 2018 09:04:38 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Alessio Balsini <alessio.balsini@santannapisa.it>
-Subject: Re: [PATCH v5 05/10] cpufreq/schedutil: get max utilization
-Message-ID: <20180604070438.GA2731@localhost.localdomain>
-References: <1527253951-22709-6-git-send-email-vincent.guittot@linaro.org>
- <20180528101234.GA1293@localhost.localdomain>
- <CAKfTPtDCkzPMt6XrXRcURXm=53LABiwbFd3JMQkJDWpTprycRQ@mail.gmail.com>
- <20180528152243.GD1293@localhost.localdomain>
- <CAKfTPtAY26HZ00R02RuW2kvZLvZxHGvh-kbfrqv-hPumdknvWg@mail.gmail.com>
- <20180531102735.GM30654@e110439-lin>
- <CAKfTPtCeoimTehLktVk4WiTEM5h9KW_4yvuxGof8p6ZOgsRE2Q@mail.gmail.com>
- <20180601135307.GA28550@linaro.org>
- <20180601174526.GA105687@joelaf.mtv.corp.google.com>
- <CAKfTPtBu5D=P3ib6fqfVLz9yQXN19ipRQAz5L6s1+ewnVTrHmg@mail.gmail.com>
+        id S1753814AbeFDHEb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:04:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753769AbeFDHE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:04:28 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.16 22/47] cfg80211: further limit wiphy names to 64 bytes
+Date: Mon,  4 Jun 2018 08:58:34 +0200
+Message-Id: <20180604065550.423209404@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
+References: <20180604065549.468488465@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtBu5D=P3ib6fqfVLz9yQXN19ipRQAz5L6s1+ewnVTrHmg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-On 04/06/18 08:41, Vincent Guittot wrote:
-> On 1 June 2018 at 19:45, Joel Fernandes <joelaf@google.com> wrote:
-> > On Fri, Jun 01, 2018 at 03:53:07PM +0200, Vincent Guittot wrote:
+------------------
 
-[...]
+From: Eric Biggers <ebiggers@google.com>
 
-> > IMO I feel its overkill to account dl_avg when we already have DL's running
-> > bandwidth we can use. I understand it may be too instanenous, but perhaps we
-> 
-> We keep using dl bandwidth which is quite correct for dl needs but
-> doesn't reflect how it has disturbed other classes
-> 
-> > can fix CFS's problems within CFS itself and not have to do this kind of
-> > extra external accounting ?
+commit 814596495dd2b9d4aab92d8f89cf19060d25d2ea upstream.
 
-I would also keep accounting for waiting time due to higher prio classes
-all inside CFS. My impression, when discussing it with you on IRC, was
-that we should be able to do that by not decaying cfs.util_avg when CFS
-is preempted (creating a new signal for it). Is not this enough?
+wiphy names were recently limited to 128 bytes by commit a7cfebcb7594
+("cfg80211: limit wiphy names to 128 bytes").  As it turns out though,
+this isn't sufficient because dev_vprintk_emit() needs the syslog header
+string "SUBSYSTEM=ieee80211\0DEVICE=+ieee80211:$devname" to fit into 128
+bytes.  This triggered the "device/subsystem name too long" WARN when
+the device name was >= 90 bytes.  As before, this was reproduced by
+syzbot by sending an HWSIM_CMD_NEW_RADIO command to the MAC80211_HWSIM
+generic netlink family.
 
-I feel we should try to keep cross-class accounting/interaction at a
-minimum.
+Fix it by further limiting wiphy names to 64 bytes.
 
-Thanks,
+Reported-by: syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com
+Fixes: a7cfebcb7594 ("cfg80211: limit wiphy names to 128 bytes")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-- Juri
+---
+ include/uapi/linux/nl80211.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2618,7 +2618,7 @@ enum nl80211_attrs {
+ #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+ #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
+ 
+-#define NL80211_WIPHY_NAME_MAXLEN		128
++#define NL80211_WIPHY_NAME_MAXLEN		64
+ 
+ #define NL80211_MAX_SUPP_RATES			32
+ #define NL80211_MAX_SUPP_HT_RATES		77
