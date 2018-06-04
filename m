@@ -1,104 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeFDG57 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 02:57:59 -0400
-Received: from ozlabs.org ([203.11.71.1]:34471 "EHLO ozlabs.org"
+        id S1751976AbeFDG6v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 02:58:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751210AbeFDG55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 02:57:57 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 4 Jun 2018 16:57:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>, Marc Zyngier <marc.zyngier@arm.com>
-Subject: linux-next: manual merge of the kvm tree with the arm64 tree
-Message-ID: <20180604165754.6ae09612@canb.auug.org.au>
+        id S1751047AbeFDG6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:58:49 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 01/29] objtool: Improve detection of BUG() and other dead ends
+Date: Mon,  4 Jun 2018 08:57:57 +0200
+Message-Id: <20180604065802.213578010@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
+References: <20180604065802.157744637@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n14b8pRqBLK8xIB1HUr7aGp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/n14b8pRqBLK8xIB1HUr7aGp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Hi all,
+------------------
 
-Today's linux-next merge of the kvm tree got a conflict in:
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-  arch/arm64/include/asm/processor.h
+commit d1091c7fa3d52ebce4dd3f15d04155b3469b2f90 upstream.
 
-between commit:
+The BUG() macro's use of __builtin_unreachable() via the unreachable()
+macro tells gcc that the instruction is a dead end, and that it's safe
+to assume the current code path will not execute past the previous
+instruction.
 
-  94b07c1f8c39 ("arm64: signal: Report signal frame size to userspace via a=
-uxv")
+On x86, the BUG() macro is implemented with the 'ud2' instruction.  When
+objtool's branch analysis sees that instruction, it knows the current
+code path has come to a dead end.
 
-from the arm64 tree and commit:
+Peter Zijlstra has been working on a patch to change the WARN macros to
+use 'ud2'.  That patch will break objtool's assumption that 'ud2' is
+always a dead end.
 
-  9a6e594869b2 ("arm64/sve: Move sve_pffr() to fpsimd.h and make inline")
+Generally it's best for objtool to avoid making those kinds of
+assumptions anyway.  The more ignorant it is of kernel code internals,
+the better.
 
-from the kvm tree.
+So create a more generic way for objtool to detect dead ends by adding
+an annotation to the unreachable() macro.  The annotation stores a
+pointer to the end of the unreachable code path in an '__unreachable'
+section.  Objtool can read that section to find the dead ends.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Tested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/41a6d33971462ebd944a1c60ad4bf5be86c17b77.1487712920.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---=20
-Cheers,
-Stephen Rothwell
+---
+ arch/x86/kernel/vmlinux.lds.S   |    1 
+ include/linux/compiler-gcc.h    |   13 ++++++++
+ tools/objtool/arch.h            |    5 +--
+ tools/objtool/arch/x86/decode.c |    3 --
+ tools/objtool/builtin-check.c   |   60 +++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 71 insertions(+), 11 deletions(-)
 
-diff --cc arch/arm64/include/asm/processor.h
-index 65ab83e8926e,c99e657fdd57..000000000000
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@@ -246,9 -246,17 +248,20 @@@ void cpu_enable_pan(const struct arm64_
-  void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__u=
-nused);
-  void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused);
- =20
- +extern unsigned long __ro_after_init signal_minsigstksz; /* sigframe size=
- */
- +extern void __init minsigstksz_setup(void);
- +
-+ /*
-+  * Not at the top of the file due to a direct #include cycle between
-+  * <asm/fpsimd.h> and <asm/processor.h>.  Deferring this #include
-+  * ensures that contents of processor.h are visible to fpsimd.h even if
-+  * processor.h is included first.
-+  *
-+  * These prctl helpers are the only things in this file that require
-+  * fpsimd.h.  The core code expects them to be in this header.
-+  */
-+ #include <asm/fpsimd.h>
-+=20
-  /* Userspace interface for PR_SVE_{SET,GET}_VL prctl()s: */
-  #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
-  #define SVE_GET_VL()	sve_get_current_vl()
-
---Sig_/n14b8pRqBLK8xIB1HUr7aGp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsU4vIACgkQAVBC80lX
-0Gx1Hgf+Ph8fFxTVvh9AKFpeQTS673VhL4JB27NP6xUd8p8rBup+hxuF7yZaW8vg
-sqUJIADyG/mDNpXwRxiBXR/60pIW918u9fnJMkUl+NO3uUgfVZHoILr0UzEsJZ+G
-yAd4fDdyTSWx2R3XbREN6IJmx6uWtfipPbIJBWptAohqdNnTtmVqR49UCtCkw3nz
-N+KRw8IDCeOGKPRS7UrGqbQJPMd+MRzchuNmeaacAbmA8pY5klXIOC7rPcEpSy22
-TetTxARN5PAuChDTnVeAualNbChd30f5aPzXjbjxcXEgmeYCn/gm1rS1N6ZkmDIO
-fnkpSBIDNxzRaV3CUERRfFpGeSBH5g==
-=8UjV
------END PGP SIGNATURE-----
-
---Sig_/n14b8pRqBLK8xIB1HUr7aGp--
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -353,6 +353,7 @@ SECTIONS
+ 	/DISCARD/ : {
+ 		*(.eh_frame)
+ 		*(__func_stack_frame_non_standard)
++		*(__unreachable)
+ 	}
+ }
+ 
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -203,6 +203,17 @@
+ #endif
+ #endif
+ 
++#ifdef CONFIG_STACK_VALIDATION
++#define annotate_unreachable() ({					\
++	asm("1:\t\n"							\
++	    ".pushsection __unreachable, \"a\"\t\n"			\
++	    ".long 1b\t\n"						\
++	    ".popsection\t\n");						\
++})
++#else
++#define annotate_unreachable()
++#endif
++
+ /*
+  * Mark a position in code as unreachable.  This can be used to
+  * suppress control flow warnings after asm blocks that transfer
+@@ -212,7 +223,7 @@
+  * this in the preprocessor, but we can live with this because they're
+  * unreleased.  Really, we need to have autoconf for the kernel.
+  */
+-#define unreachable() __builtin_unreachable()
++#define unreachable() annotate_unreachable(); __builtin_unreachable()
+ 
+ /* Mark a function definition as prohibited from being cloned. */
+ #define __noclone	__attribute__((__noclone__, __optimize__("no-tracer")))
+--- a/tools/objtool/arch.h
++++ b/tools/objtool/arch.h
+@@ -31,9 +31,8 @@
+ #define INSN_CALL_DYNAMIC	8
+ #define INSN_RETURN		9
+ #define INSN_CONTEXT_SWITCH	10
+-#define INSN_BUG		11
+-#define INSN_NOP		12
+-#define INSN_OTHER		13
++#define INSN_NOP		11
++#define INSN_OTHER		12
+ #define INSN_LAST		INSN_OTHER
+ 
+ int arch_decode_instruction(struct elf *elf, struct section *sec,
+--- a/tools/objtool/arch/x86/decode.c
++++ b/tools/objtool/arch/x86/decode.c
+@@ -118,9 +118,6 @@ int arch_decode_instruction(struct elf *
+ 			 op2 == 0x35)
+ 			/* sysenter, sysret */
+ 			*type = INSN_CONTEXT_SWITCH;
+-		else if (op2 == 0x0b || op2 == 0xb9)
+-			/* ud2 */
+-			*type = INSN_BUG;
+ 		else if (op2 == 0x0d || op2 == 0x1f)
+ 			/* nopl/nopw */
+ 			*type = INSN_NOP;
+--- a/tools/objtool/builtin-check.c
++++ b/tools/objtool/builtin-check.c
+@@ -51,7 +51,7 @@ struct instruction {
+ 	unsigned int len, state;
+ 	unsigned char type;
+ 	unsigned long immediate;
+-	bool alt_group, visited, ignore_alts;
++	bool alt_group, visited, dead_end, ignore_alts;
+ 	struct symbol *call_dest;
+ 	struct instruction *jump_dest;
+ 	struct list_head alts;
+@@ -330,6 +330,54 @@ static int decode_instructions(struct ob
+ }
+ 
+ /*
++ * Find all uses of the unreachable() macro, which are code path dead ends.
++ */
++static int add_dead_ends(struct objtool_file *file)
++{
++	struct section *sec;
++	struct rela *rela;
++	struct instruction *insn;
++	bool found;
++
++	sec = find_section_by_name(file->elf, ".rela__unreachable");
++	if (!sec)
++		return 0;
++
++	list_for_each_entry(rela, &sec->rela_list, list) {
++		if (rela->sym->type != STT_SECTION) {
++			WARN("unexpected relocation symbol type in .rela__unreachable");
++			return -1;
++		}
++		insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (insn)
++			insn = list_prev_entry(insn, list);
++		else if (rela->addend == rela->sym->sec->len) {
++			found = false;
++			list_for_each_entry_reverse(insn, &file->insn_list, list) {
++				if (insn->sec == rela->sym->sec) {
++					found = true;
++					break;
++				}
++			}
++
++			if (!found) {
++				WARN("can't find unreachable insn at %s+0x%x",
++				     rela->sym->sec->name, rela->addend);
++				return -1;
++			}
++		} else {
++			WARN("can't find unreachable insn at %s+0x%x",
++			     rela->sym->sec->name, rela->addend);
++			return -1;
++		}
++
++		insn->dead_end = true;
++	}
++
++	return 0;
++}
++
++/*
+  * Warnings shouldn't be reported for ignored functions.
+  */
+ static void add_ignores(struct objtool_file *file)
+@@ -905,6 +953,10 @@ static int decode_sections(struct objtoo
+ 	if (ret)
+ 		return ret;
+ 
++	ret = add_dead_ends(file);
++	if (ret)
++		return ret;
++
+ 	add_ignores(file);
+ 
+ 	ret = add_nospec_ignores(file);
+@@ -1103,13 +1155,13 @@ static int validate_branch(struct objtoo
+ 
+ 			return 0;
+ 
+-		case INSN_BUG:
+-			return 0;
+-
+ 		default:
+ 			break;
+ 		}
+ 
++		if (insn->dead_end)
++			return 0;
++
+ 		insn = next_insn_same_sec(file, insn);
+ 		if (!insn) {
+ 			WARN("%s: unexpected end of section", sec->name);
