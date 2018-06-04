@@ -1,83 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeFDLqx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 07:46:53 -0400
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:36516 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752706AbeFDLqv (ORCPT
+        id S1752630AbeFDLtB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 07:49:01 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35612 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751814AbeFDLs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 07:46:51 -0400
-X-Google-Smtp-Source: ADUXVKIeczZtxqzqiSAEL+bBNbL06tcfit5e4RZHxxTvQ3KD8s77Zw9RfnJq04m5DUUOdt8jqTS0Gg==
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>, Hannes Reinecke <hare@suse.de>,
-        Laurence Oberman <loberman@redhat.com>, Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>, axboe@kernel.dk
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com>
- <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
- <20180530220206.GA7037@redhat.com> <20180531163311.GA30954@lst.de>
- <20180531181757.GB11848@redhat.com> <yq17enjut3q.fsf@oracle.com>
- <20180601042441.GB14244@redhat.com>
- <0a0d4ff8-fe06-5869-cd18-a8c99b5e86f6@grimberg.me>
- <20180603160626.GA4361@redhat.com>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <29bfbc6c-861d-0348-2f8b-e803acad43ea@grimberg.me>
-Date: Mon, 4 Jun 2018 14:46:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 4 Jun 2018 07:48:56 -0400
+X-Google-Smtp-Source: ADUXVKIzAR4YDfV85pKEIA4Y36UCM36eghY2jVuFjhMuYEnvJPsPNN+mN+X6+BRrNjaoeJr9TR1JAcAmnjAQ42pIwtU=
 MIME-Version: 1.0
-In-Reply-To: <20180603160626.GA4361@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
+References: <cover.1527909627.git.fthain@telegraphics.com.au>
+ <f32f4e3a0fd736152f768b7a00bfc731daba1629.1527909627.git.fthain@telegraphics.com.au>
+ <7ce9a8c3996506ae6f9ab16b3cf73c287e205a89.1527909627.git.fthain@telegraphics.com.au>
+ <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Jun 2018 13:48:55 +0200
+X-Google-Sender-Auth: XzMtV8mwRtphqDM1m1t9U_RrH00
+Message-ID: <CAMuHMdV6sKMLGhWLELqJWXS8Vj5Cnh82NE8MYOwU6EDWvoSTrg@mail.gmail.com>
+Subject: Re: [PATCH 03/11] macintosh/via-pmu: Don't clear shift register
+ interrupt flag twice
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[so much for putting out flames... :/]
+On Sat, Jun 2, 2018 at 5:27 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+> Clearing the interrupt flag twice in succession creates a theoretical
+> race condition. Fix this.
 
-> This projecting onto me that I've not been keeping the conversation
-> technical is in itself hostile.  Sure I get frustrated and lash out (as
-> I'm _sure_ you'll feel in this reply)
+I would add that the caller of pmu_sr_intr() has already cleared the flag,
+so the casual reviewer doesn't have to hunt for it.
 
-You're right, I do feel this is lashing out. And I don't appreciate it.
-Please stop it. We're not going to make progress otherwise.
+> Tested-by: Stan Johnson <userm57@yahoo.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
->> Can you (or others) please try and articulate why a "fine grained"
->> multipathing is an absolute must? At the moment, I just don't
->> understand.
-> 
-> Already made the point multiple times in this thread [3][4][5][1].
-> Hint: it is about the users who have long-standing expertise and
-> automation built around dm-multipath and multipath-tools.  BUT those
-> same users may need/want to simultaneously use native NVMe multipath on
-> the same host.  Dismissing this point or acting like I haven't
-> articulated it just illustrates to me continuing this conversation is
-> not going to be fruitful.
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-The vast majority of the points are about the fact that people still
-need to be able to use multipath-tools, which they still can today.
-Personally, I question the existence of this user base you are referring
-to which would want to maintain both dm-multipath and nvme personalities 
-at the same time on the same host. But I do want us to make progress, so
-I will have take this need as a given.
+Gr{oetje,eeting}s,
 
-I agree with Christoph that changing personality on the fly is going to
-be painful. This opt-in will need to be one-host at connect time. For
-that, we will probably need to also expose an argument in nvme-cli too.
-Changing the mpath personality will need to involve disconnecting the
-controller and connecting again with the argument toggled. I think this
-is the only sane way to do this.
+                        Geert
 
-Another path we can make progress in is user visibility. We have
-topology in place and you mentioned primary path (which we could
-probably add). What else do you need for multipath-tools to support
-nvme?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
