@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751727AbeFDGkn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 02:40:43 -0400
+        id S1751947AbeFDGku (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 02:40:50 -0400
 Received: from mga06.intel.com ([134.134.136.31]:24439 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750731AbeFDGkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 02:40:41 -0400
+        id S1751921AbeFDGkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 02:40:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,475,1520924400";
-   d="scan'208";a="64069201"
+   d="scan'208";a="64069228"
 From: "Hean-Loong, Ong" <hean.loong.ong@intel.com>
 To: Rob Herring <robh+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
         Daniel Vetter <daniel.vetter@intel.com>,
@@ -19,45 +19,41 @@ To: Rob Herring <robh+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
         hean.loong.ong@intel.com, Ong@vger.kernel.org
-Subject: [PATCHv9 0/3] Intel FPGA Video and Image Processing Suite
-Date: Mon,  4 Jun 2018 14:40:01 +0800
-Message-Id: <1528094404-3542-1-git-send-email-hean.loong.ong@intel.com>
+Subject: [PATCHv9 2/3] ARM:socfpga-defconfig Intel FPGA Video and Image Processing Suite
+Date: Mon,  4 Jun 2018 14:40:03 +0800
+Message-Id: <1528094404-3542-3-git-send-email-hean.loong.ong@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528094404-3542-1-git-send-email-hean.loong.ong@intel.com>
+References: <1528094404-3542-1-git-send-email-hean.loong.ong@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ong, Hean Loong <hean.loong.ong@intel.com>
+From: Ong Hean Loong <hean.loong.ong@intel.com>
 
-The FPGA FrameBuffer Soft IP could be seen  as the GPU and the DRM driver patch here is allocating memory for information to be streamed from the ARM/Linux to the display port.
-Basically the driver just wraps the information such as the pixels to be drawn by the FPGA FrameBuffer 2.
+Intel FPGA Video and Image Processing Suite Frame Buffer II
+driver config for Arria 10 devkit and its variants
 
-The piece of hardware in discussion is the SoC FPGA where Linux runs on the ARM chip and the FGPA is driven by its NIOS soft core with its own proprietary firmware.
+Signed-off-by: Ong, Hean Loong <hean.loong.ong@intel.com>
+---
+ arch/arm/configs/socfpga_defconfig |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-For example the application from the ARM Linux would have to write information on the /dev/fb0 with the information stored in the SDRAM to be fetched by the FPGA framebuffer IP and displayed on the Display Port Monitor.
-
-Ong Hean Loong (2):
-  ARM:socfpga-defconfig Intel FPGA Video and Image Processing Suite
-  ARM:drm ivip Intel FPGA Video and Image Processing Suite
-
-Ong, Hean Loong (1):
-  ARM:dt-bindings:display Intel FPGA Video and Image Processing Suite
-
- .../devicetree/bindings/display/altr,vip-fb2.txt   |   99 ++++++++++
- arch/arm/configs/socfpga_defconfig                 |    5 +
- drivers/gpu/drm/Kconfig                            |    2 +
- drivers/gpu/drm/Makefile                           |    1 +
- drivers/gpu/drm/ivip/Kconfig                       |   14 ++
- drivers/gpu/drm/ivip/Makefile                      |    9 +
- drivers/gpu/drm/ivip/intel_vip_conn.c              |   95 ++++++++++
- drivers/gpu/drm/ivip/intel_vip_core.c              |  161 ++++++++++++++++
- drivers/gpu/drm/ivip/intel_vip_drv.h               |   52 ++++++
- drivers/gpu/drm/ivip/intel_vip_of.c                |  193 ++++++++++++++++++++
- 10 files changed, 631 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/altr,vip-fb2.txt
- create mode 100644 drivers/gpu/drm/ivip/Kconfig
- create mode 100644 drivers/gpu/drm/ivip/Makefile
- create mode 100644 drivers/gpu/drm/ivip/intel_vip_conn.c
- create mode 100644 drivers/gpu/drm/ivip/intel_vip_core.c
- create mode 100644 drivers/gpu/drm/ivip/intel_vip_drv.h
- create mode 100644 drivers/gpu/drm/ivip/intel_vip_of.c
+diff --git a/arch/arm/configs/socfpga_defconfig b/arch/arm/configs/socfpga_defconfig
+index 371fca4..21d8d2b 100644
+--- a/arch/arm/configs/socfpga_defconfig
++++ b/arch/arm/configs/socfpga_defconfig
+@@ -112,6 +112,11 @@ CONFIG_MFD_ALTERA_A10SR=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
++CONFIG_DRM=m
++CONFIG_DRM_IVIP=m
++CONFIG_DRM_IVIP_OF=m
++CONFIG_FB=y
++CONFIG_FB_SIMPLE=y
+ CONFIG_USB=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_DWC2=y
+-- 
+1.7.1
