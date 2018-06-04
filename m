@@ -1,24 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753859AbeFDHEx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:04:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56958 "EHLO mail.kernel.org"
+        id S1753911AbeFDHFI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:05:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753279AbeFDHEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:04:49 -0400
+        id S1753903AbeFDHFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:05:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Ivan Kalvachev <ikalvachev@gmail.com>,
-        "Huang, Ying" <ying.huang@intel.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 47/47] mm: fix the NULL mapping case in __isolate_lru_page()
-Date: Mon,  4 Jun 2018 08:58:59 +0200
-Message-Id: <20180604065551.482797482@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
+        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.16 27/47] iio:buffer: make length types match kfifo types
+Date: Mon,  4 Jun 2018 08:58:39 +0200
+Message-Id: <20180604065550.621777181@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -34,45 +29,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hugh Dickins <hughd@google.com>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit 145e1a71e090575c74969e3daa8136d1e5b99fc8 upstream.
+commit c043ec1ca5baae63726aae32abbe003192bc6eec upstream.
 
-George Boole would have noticed a slight error in 4.16 commit
-69d763fc6d3a ("mm: pin address_space before dereferencing it while
-isolating an LRU page").  Fix it, to match both the comment above it,
-and the original behaviour.
+Currently, we use int for buffer length and bytes_per_datum. However,
+kfifo uses unsigned int for length and size_t for element size. We need
+to make sure these matches or we will have bugs related to overflow (in
+the range between INT_MAX and UINT_MAX for length, for example).
 
-Although anonymous pages are not marked PageDirty at first, we have an
-old habit of calling SetPageDirty when a page is removed from swap
-cache: so there's a category of ex-swap pages that are easily
-migratable, but were inadvertently excluded from compaction's async
-migration in 4.16.
+In addition, set_bytes_per_datum uses size_t while bytes_per_datum is an
+int, which would cause bugs for large values of bytes_per_datum.
 
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1805302014001.12558@eggly.anvils
-Fixes: 69d763fc6d3a ("mm: pin address_space before dereferencing it while isolating an LRU page")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Reported-by:  Ivan Kalvachev <ikalvachev@gmail.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Change buffer length to use unsigned int and bytes_per_datum to use
+size_t.
+
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iio/buffer/industrialio-buffer-dma.c |    2 +-
+ drivers/iio/buffer/kfifo_buf.c               |    4 ++--
+ include/linux/iio/buffer_impl.h              |    6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1392,7 +1392,7 @@ int __isolate_lru_page(struct page *page
- 				return ret;
+--- a/drivers/iio/buffer/industrialio-buffer-dma.c
++++ b/drivers/iio/buffer/industrialio-buffer-dma.c
+@@ -587,7 +587,7 @@ EXPORT_SYMBOL_GPL(iio_dma_buffer_set_byt
+  * Should be used as the set_length callback for iio_buffer_access_ops
+  * struct for DMA buffers.
+  */
+-int iio_dma_buffer_set_length(struct iio_buffer *buffer, int length)
++int iio_dma_buffer_set_length(struct iio_buffer *buffer, unsigned int length)
+ {
+ 	/* Avoid an invalid state */
+ 	if (length < 2)
+--- a/drivers/iio/buffer/kfifo_buf.c
++++ b/drivers/iio/buffer/kfifo_buf.c
+@@ -22,7 +22,7 @@ struct iio_kfifo {
+ #define iio_to_kfifo(r) container_of(r, struct iio_kfifo, buffer)
  
- 			mapping = page_mapping(page);
--			migrate_dirty = mapping && mapping->a_ops->migratepage;
-+			migrate_dirty = !mapping || mapping->a_ops->migratepage;
- 			unlock_page(page);
- 			if (!migrate_dirty)
- 				return ret;
+ static inline int __iio_allocate_kfifo(struct iio_kfifo *buf,
+-				int bytes_per_datum, int length)
++			size_t bytes_per_datum, unsigned int length)
+ {
+ 	if ((length == 0) || (bytes_per_datum == 0))
+ 		return -EINVAL;
+@@ -67,7 +67,7 @@ static int iio_set_bytes_per_datum_kfifo
+ 	return 0;
+ }
+ 
+-static int iio_set_length_kfifo(struct iio_buffer *r, int length)
++static int iio_set_length_kfifo(struct iio_buffer *r, unsigned int length)
+ {
+ 	/* Avoid an invalid state */
+ 	if (length < 2)
+--- a/include/linux/iio/buffer_impl.h
++++ b/include/linux/iio/buffer_impl.h
+@@ -53,7 +53,7 @@ struct iio_buffer_access_funcs {
+ 	int (*request_update)(struct iio_buffer *buffer);
+ 
+ 	int (*set_bytes_per_datum)(struct iio_buffer *buffer, size_t bpd);
+-	int (*set_length)(struct iio_buffer *buffer, int length);
++	int (*set_length)(struct iio_buffer *buffer, unsigned int length);
+ 
+ 	int (*enable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
+ 	int (*disable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
+@@ -72,10 +72,10 @@ struct iio_buffer_access_funcs {
+  */
+ struct iio_buffer {
+ 	/** @length: Number of datums in buffer. */
+-	int length;
++	unsigned int length;
+ 
+ 	/**  @bytes_per_datum: Size of individual datum including timestamp. */
+-	int bytes_per_datum;
++	size_t bytes_per_datum;
+ 
+ 	/**
+ 	 * @access: Buffer access functions associated with the
