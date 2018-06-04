@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753809AbeFDPFF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 11:05:05 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39606 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753606AbeFDPFB (ORCPT
+        id S1753884AbeFDPFK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 11:05:10 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:35602 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753410AbeFDPFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 11:05:01 -0400
-X-Google-Smtp-Source: ADUXVKJaBhQYFuWwT2cN5OYTBvH6L9sdVa/k2/PAcE1LXuJk8HiSCB7+I5i8ruWtCFYWaBADp56eHw==
+        Mon, 4 Jun 2018 11:05:06 -0400
+X-Google-Smtp-Source: ADUXVKJQ2Q0dwMNS/F9OEA2So/JgMPTzVUFzh6lPNlruK9rdeVHxFndNXxdyfR5eqGTjn1EGJCEiyA==
 From: mrnuke <mr.nuke.me@gmail.com>
 X-Google-Original-From: mrnuke <mrnuke@austins740xd.dell>
 To: linux-acpi@vger.kernel.org, tony.luck@intel.com
@@ -25,9 +25,9 @@ Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
         "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
         Dongjiu Geng <gengdongjiu@huawei.com>, linux-edac@vger.kernel.org,
         linux-kernel@vger.kernel.org, devel@acpica.org
-Subject: [PATCH v8 1/3] acpi: apei: Rename GHES_SEV_PANIC to GHES_SEV_FATAL
-Date: Mon,  4 Jun 2018 10:04:38 -0500
-Message-Id: <20180604150443.1265-2-mrnuke@austins740xd.dell>
+Subject: [PATCH v8 2/3] acpi: apei: Rename ghes_severity() to ghes_cper_severity()
+Date: Mon,  4 Jun 2018 10:04:39 -0500
+Message-Id: <20180604150443.1265-3-mrnuke@austins740xd.dell>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180604150443.1265-1-mrnuke@austins740xd.dell>
 References: <20180604150443.1265-1-mrnuke@austins740xd.dell>
@@ -37,105 +37,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 
-'GHES_SEV_PANIC' implies that the kernel must panic. That was true
-many years ago when fatal errors could not be handled and recovered.
-However, this is no longer the case with PCIe AER and DPC errors. The
-latter class of errors are contained at the hardware level.
-'GHES_SEV_PANIC' is confusing because it implies a policy to crash the
-system on fatal errors. Drop this questionable policy, and rename the
-enum to 'GHES_SEV_FATAL' to better convey the meaning.
+ghes_severity() is a misnomer in this case, as it implies the severity
+of the entire GHES structure. Instead, it maps one CPER value to one
+GHES_SEV* value. ghes_cper_severity() is clearer.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
- arch/x86/kernel/cpu/mcheck/mce-apei.c |  2 +-
- drivers/acpi/apei/ghes.c              | 11 +++++------
- drivers/edac/ghes_edac.c              |  2 +-
- include/acpi/ghes.h                   |  2 +-
- 4 files changed, 8 insertions(+), 9 deletions(-)
+ drivers/acpi/apei/ghes.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-apei.c b/arch/x86/kernel/cpu/mcheck/mce-apei.c
-index 2eee85379689..cbec89f5cdf0 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-apei.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-apei.c
-@@ -53,7 +53,7 @@ void apei_mce_report_mem_error(int severity, struct cper_sec_mem_err *mem_err)
- 	if (severity >= GHES_SEV_RECOVERABLE)
- 		m.status |= MCI_STATUS_UC;
- 
--	if (severity >= GHES_SEV_PANIC) {
-+	if (severity >= GHES_SEV_FATAL) {
- 		m.status |= MCI_STATUS_PCC;
- 		m.tsc = rdtsc();
- 	}
 diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 1efefe919555..26a41bbe222b 100644
+index 26a41bbe222b..1b22e18168f5 100644
 --- a/drivers/acpi/apei/ghes.c
 +++ b/drivers/acpi/apei/ghes.c
-@@ -281,10 +281,10 @@ static inline int ghes_severity(int severity)
- 	case CPER_SEV_RECOVERABLE:
- 		return GHES_SEV_RECOVERABLE;
- 	case CPER_SEV_FATAL:
--		return GHES_SEV_PANIC;
-+		return GHES_SEV_FATAL;
- 	default:
- 		/* Unknown, go panic */
--		return GHES_SEV_PANIC;
-+		return GHES_SEV_FATAL;
- 	}
+@@ -271,7 +271,7 @@ static void ghes_fini(struct ghes *ghes)
+ 		unmap_gen_v2(ghes);
  }
  
-@@ -425,8 +425,7 @@ static void ghes_handle_memory_failure(struct acpi_hest_generic_data *gdata, int
-  * GHES_SEV_RECOVERABLE -> AER_NONFATAL
-  * GHES_SEV_RECOVERABLE && CPER_SEC_RESET -> AER_FATAL
-  *     These both need to be reported and recovered from by the AER driver.
-- * GHES_SEV_PANIC does not make it to this handling since the kernel must
-- *     panic.
-+ * GHES_SEV_FATAL does not make it to this handler
-  */
- static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
+-static inline int ghes_severity(int severity)
++static inline int ghes_cper_severity(int severity)
  {
-@@ -705,7 +704,7 @@ static int ghes_proc(struct ghes *ghes)
+ 	switch (severity) {
+ 	case CPER_SEV_INFORMATIONAL:
+@@ -388,7 +388,7 @@ static void ghes_handle_memory_failure(struct acpi_hest_generic_data *gdata, int
+ #ifdef CONFIG_ACPI_APEI_MEMORY_FAILURE
+ 	unsigned long pfn;
+ 	int flags = -1;
+-	int sec_sev = ghes_severity(gdata->error_severity);
++	int sec_sev = ghes_cper_severity(gdata->error_severity);
+ 	struct cper_sec_mem_err *mem_err = acpi_hest_get_payload(gdata);
+ 
+ 	if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))
+@@ -467,10 +467,10 @@ static void ghes_do_proc(struct ghes *ghes,
+ 	guid_t *fru_id = &NULL_UUID_LE;
+ 	char *fru_text = "";
+ 
+-	sev = ghes_severity(estatus->error_severity);
++	sev = ghes_cper_severity(estatus->error_severity);
+ 	apei_estatus_for_each_section(estatus, gdata) {
+ 		sec_type = (guid_t *)gdata->section_type;
+-		sec_sev = ghes_severity(gdata->error_severity);
++		sec_sev = ghes_cper_severity(gdata->error_severity);
+ 		if (gdata->validation_bits & CPER_SEC_VALID_FRU_ID)
+ 			fru_id = (guid_t *)gdata->fru_id;
+ 
+@@ -511,7 +511,7 @@ static void __ghes_print_estatus(const char *pfx,
+ 	char pfx_seq[64];
+ 
+ 	if (pfx == NULL) {
+-		if (ghes_severity(estatus->error_severity) <=
++		if (ghes_cper_severity(estatus->error_severity) <=
+ 		    GHES_SEV_CORRECTED)
+ 			pfx = KERN_WARNING;
+ 		else
+@@ -533,7 +533,7 @@ static int ghes_print_estatus(const char *pfx,
+ 	static DEFINE_RATELIMIT_STATE(ratelimit_uncorrected, 5*HZ, 2);
+ 	struct ratelimit_state *ratelimit;
+ 
+-	if (ghes_severity(estatus->error_severity) <= GHES_SEV_CORRECTED)
++	if (ghes_cper_severity(estatus->error_severity) <= GHES_SEV_CORRECTED)
+ 		ratelimit = &ratelimit_corrected;
+ 	else
+ 		ratelimit = &ratelimit_uncorrected;
+@@ -704,9 +704,8 @@ static int ghes_proc(struct ghes *ghes)
  	if (rc)
  		goto out;
  
--	if (ghes_severity(ghes->estatus->error_severity) >= GHES_SEV_PANIC) {
-+	if (ghes_severity(ghes->estatus->error_severity) >= GHES_SEV_FATAL) {
+-	if (ghes_severity(ghes->estatus->error_severity) >= GHES_SEV_FATAL) {
++	if (ghes_cper_severity(ghes->estatus->error_severity) >= GHES_SEV_FATAL)
  		__ghes_panic(ghes);
- 	}
+-	}
  
-@@ -946,7 +945,7 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
+ 	if (!ghes_estatus_cached(ghes->estatus)) {
+ 		if (ghes_print_estatus(NULL, ghes->generic, ghes->estatus))
+@@ -944,7 +943,7 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
+ 			ret = NMI_HANDLED;
  		}
  
- 		sev = ghes_severity(ghes->estatus->error_severity);
--		if (sev >= GHES_SEV_PANIC) {
-+		if (sev >= GHES_SEV_FATAL) {
+-		sev = ghes_severity(ghes->estatus->error_severity);
++		sev = ghes_cper_severity(ghes->estatus->error_severity);
+ 		if (sev >= GHES_SEV_FATAL) {
  			oops_begin();
  			ghes_print_queued_estatus();
- 			__ghes_panic(ghes);
-diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-index 68b6ee18bea6..8455758327d4 100644
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -220,7 +220,7 @@ void ghes_edac_report_mem_error(struct ghes *ghes, int sev,
- 	case GHES_SEV_RECOVERABLE:
- 		type = HW_EVENT_ERR_UNCORRECTED;
- 		break;
--	case GHES_SEV_PANIC:
-+	case GHES_SEV_FATAL:
- 		type = HW_EVENT_ERR_FATAL;
- 		break;
- 	default:
-diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
-index 8feb0c866ee0..322f7ede24bd 100644
---- a/include/acpi/ghes.h
-+++ b/include/acpi/ghes.h
-@@ -49,7 +49,7 @@ enum {
- 	GHES_SEV_NO = 0x0,
- 	GHES_SEV_CORRECTED = 0x1,
- 	GHES_SEV_RECOVERABLE = 0x2,
--	GHES_SEV_PANIC = 0x3,
-+	GHES_SEV_FATAL = 0x3,
- };
- 
- /* From drivers/edac/ghes_edac.c */
 -- 
 2.14.3
