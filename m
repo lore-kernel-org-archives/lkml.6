@@ -1,92 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751135AbeFDRHc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:07:32 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37043 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750779AbeFDRHa (ORCPT
+        id S1750997AbeFDRM3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:12:29 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:51289 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeFDRM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:07:30 -0400
-X-Google-Smtp-Source: ADUXVKKMgkOckcYcBNJazdQEQYMaJroIhi1Gh8NWwmmlNIy3oVOJvH1DRjsYd4QGKkrYA/SePtpd6g==
-Subject: Re: [PATCH v2 3/9] xen/balloon: Share common memory reservation
- routines
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-4-andr2000@gmail.com>
- <4fd46fd8-f936-1514-06e4-34c5d3ed8960@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <9a22d84c-6ea8-905b-ee77-2b71d68857fd@gmail.com>
-Date: Mon, 4 Jun 2018 20:07:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 4 Jun 2018 13:12:27 -0400
+X-Google-Smtp-Source: ADUXVKKntpe3ATlzcae+YGSuQB+STIuJw+5htZvvye+RMfwOS9Ggf3hCIbA4xEmUggja9PxT9AkSnbhPf6j5KUHwnaw=
 MIME-Version: 1.0
-In-Reply-To: <4fd46fd8-f936-1514-06e4-34c5d3ed8960@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180604085900.GN25455@dell>
+References: <20180530031704.18597-1-fparent@baylibre.com> <20180530031704.18597-2-fparent@baylibre.com>
+ <20180604085900.GN25455@dell>
+From: Fabien Parent <fparent@baylibre.com>
+Date: Mon, 4 Jun 2018 10:12:26 -0700
+Message-ID: <CAOwMV_xyqj027+iRAQtZ5Hv8NDUc6s9OfS0vAkumUyyc4LUjzw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mfd: cros: add charger port count command definition
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Enric Balletbo Serra <eballetbo@gmail.com>,
+        Guillaume Pain <gpain@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w54HCYms031592
 
-On 06/04/2018 07:37 PM, Boris Ostrovsky wrote:
-> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
->> diff --git a/include/xen/mem-reservation.h b/include/xen/mem-reservation.h
->> new file mode 100644
->> index 000000000000..a727d65a1e61
->> --- /dev/null
->> +++ b/include/xen/mem-reservation.h
->> @@ -0,0 +1,65 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +
->> +/*
->> + * Xen memory reservation utilities.
->> + *
->> + * Copyright (c) 2003, B Dragovic
->> + * Copyright (c) 2003-2004, M Williamson, K Fraser
->> + * Copyright (c) 2005 Dan M. Smith, IBM Corporation
->> + * Copyright (c) 2010 Daniel Kiper
->> + * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
->> + */
->> +
->> +#ifndef _XENMEM_RESERVATION_H
->> +#define _XENMEM_RESERVATION_H
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/slab.h>
->> +
->> +#include <asm/xen/hypercall.h>
->> +#include <asm/tlb.h>
->> +
->> +#include <xen/interface/memory.h>
->> +#include <xen/page.h>
->> +
->> +#ifdef CONFIG_XEN_SCRUB_PAGES
->> +void xenmem_reservation_scrub_page(struct page *page);
->> +#else
->> +static inline void xenmem_reservation_scrub_page(struct page *page)
->> +{
->> +}
->> +#endif
+On Mon, Jun 4, 2018 at 1:59 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Tue, 29 May 2018, Fabien Parent wrote:
 >
-> Given that this is a wrapper around a single call I'd prefer
+>> A new more command has been added to the ChromeOS embedded controller
+>> that allows to get the number of charger port count. Unlike
+>> EC_CMD_USB_PD_PORTS, this new command also includes the dedicated
+>> port if present.
+>>
+>> This command will be used to expose the dedicated charger port
+>> in the ChromeOS charger driver.
+>>
+>> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+>> ---
+>>  include/linux/mfd/cros_ec_commands.h | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
 >
-> inline void xenmem_reservation_scrub_page(struct page *page)
-> {
-> #ifdef CONFIG_XEN_SCRUB_PAGES
->      clear_highpage(page);
-> #endif
-> }
+> Does not want to apply.  I didn't investigate why.
 >
-Ok, will change
->
-> -boris
->
->
-Thank you,
-Oleksandr
+> Please rebase and resend?
+
+Sorry, I forgot to add you as "to:" to the patch series.
+This patch applies on top of https://lkml.org/lkml/2018/5/2/590
+([PATCH v4 1/3] mfd: cros_ec: Add USBPD charger commands and struct
+definitions)
+
+> --
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
