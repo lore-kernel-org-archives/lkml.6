@@ -1,74 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751864AbeFDBCA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 21:02:00 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8685 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751593AbeFDBB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 21:01:59 -0400
-Subject: Re: [PATCH 4/8] scsi: libsas: trigger a new revalidation to discover
- the device
-To: John Garry <john.garry@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20180529022309.21071-1-yanaijie@huawei.com>
- <20180529022309.21071-5-yanaijie@huawei.com>
- <013c5c91-9792-7951-95ed-22daae2e2dbe@huawei.com>
- <5B109A79.6060907@huawei.com>
- <6b030b96-9733-f6b5-e8af-d1d488c52fb4@huawei.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-From: Jason Yan <yanaijie@huawei.com>
-Message-ID: <5B148F72.3000000@huawei.com>
-Date: Mon, 4 Jun 2018 09:01:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        id S1751892AbeFDBCQ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 21:02:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43192 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751593AbeFDBCP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 21:02:15 -0400
+Date: Mon, 4 Jun 2018 02:02:13 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] vfs, pile 2
+Message-ID: <20180604010213.GE30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <6b030b96-9733-f6b5-e8af-d1d488c52fb4@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+	More shrink_dcache_parent()-related stuff - killing the main
+source of potentially contended calls of that on large subtrees.
 
+The following changes since commit 4faa99965e027cc057c5145ce45fa772caa04e8d:
 
-On 2018/6/1 18:02, John Garry wrote:
-> I mean that since libsas does disocovery/revalidation for all expander
-> PHYS for a single event, than all discovery/revalidation should be
-> synchronised with that same event. I don't mean that for a given
-> expander PHY which originated a broadcast event, the
-> revalidation/discovery for that PHY should be synchronised with that
-> same event. Like you said, I don't think it's possible.
->
-> On another point, one of the reasons to synchronise event processing was
-> so events are not lost and are processed in order. In principle, by
-> chaining these bcast events we lose that, since other PHY events may be
-> queued before we queue the new artificial bcast events.
->
+  fix io_destroy()/aio_complete() race (2018-05-23 22:53:22 -0400)
 
-I got what you mean. I will try to keep the principle of synchronised 
-event processing.
+are available in the git repository at:
 
->>
->> But if you mean we shall do this device removing and rediscovering in
->> one revalidation if it is not a "flutter", I think we can wrap a new
->> function for sas_revalidate_domain(), such as:
->>
->>
->> while (need_to_revalidate_again)
->>     need_to_revalidate_again = sas_revalidate_domain()
->>
->> In this way the sas_port adding/removing is packed in one loop, we won't
->> have the annoyance of "duplicate filename" warning. What do you
->> think?
->
-> Something like that, where all the discovery/revalidation and related
-> device + port processing is done before we complete the revalidation
-> event processing. A single revalidation event may defer do device+port
-> processing multiple times.
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.rmdir
+
+for you to fetch changes up to 8767712f26d18ac4541e2d0d7be17c40a5911ce4:
+
+  rmdir(),rename(): do shrink_dcache_parent() only on success (2018-05-27 16:23:51 -0400)
+
+----------------------------------------------------------------
+Al Viro (1):
+      rmdir(),rename(): do shrink_dcache_parent() only on success
+
+ fs/namei.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
