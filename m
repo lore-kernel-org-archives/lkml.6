@@ -1,37 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753968AbeFDOPX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 10:15:23 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:47190 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753899AbeFDOPV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 10:15:21 -0400
-Date: Mon, 04 Jun 2018 10:15:19 -0400 (EDT)
-Message-Id: <20180604.101519.1313033740038335042.davem@davemloft.net>
-To: rvarsha016@gmail.com
-Cc: tariqt@mellanox.com, der.herr@hofr.at, lukas.bulwahn@gmail.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: mlx4: Remove unnecessary parentheses
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180601020049.3704-1-rvarsha016@gmail.com>
-References: <20180601020049.3704-1-rvarsha016@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1753555AbeFDOKi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 10:10:38 -0400
+Received: from ozlabs.org ([203.11.71.1]:38629 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753443AbeFDOKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 10:10:34 -0400
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 55a0edf083022e402042255a0afb03d0b3a63a9b
+In-Reply-To: <20180410063435.272F8653BC@po15720vm.idsi0.si.c-s.fr>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Scott Wood <oss@buserror.net>
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: powerpc/64: optimises from64to32()
+Message-Id: <40zxfc4bqmz9s2t@ozlabs.org>
+Date: Tue,  5 Jun 2018 00:10:32 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Varsha Rao <rvarsha016@gmail.com>
-Date: Fri,  1 Jun 2018 07:30:49 +0530
+On Tue, 2018-04-10 at 06:34:35 UTC, Christophe Leroy wrote:
+> The current implementation of from64to32() gives a poor result:
+> 
+> 0000000000000270 <.from64to32>:
+>  270:	38 00 ff ff 	li      r0,-1
+>  274:	78 69 00 22 	rldicl  r9,r3,32,32
+>  278:	78 00 00 20 	clrldi  r0,r0,32
+>  27c:	7c 60 00 38 	and     r0,r3,r0
+>  280:	7c 09 02 14 	add     r0,r9,r0
+>  284:	78 09 00 22 	rldicl  r9,r0,32,32
+>  288:	7c 00 4a 14 	add     r0,r0,r9
+>  28c:	78 03 00 20 	clrldi  r3,r0,32
+>  290:	4e 80 00 20 	blr
+> 
+> This patch modifies from64to32() to operate in the same
+> spirit as csum_fold()
+> 
+> It swaps the two 32-bit halves of sum then it adds it with the
+> unswapped sum. If there is a carry from adding the two 32-bit halves,
+> it will carry from the lower half into the upper half, giving us the
+> correct sum in the upper half.
+> 
+> The resulting code is:
+> 
+> 0000000000000260 <.from64to32>:
+>  260:	78 60 00 02 	rotldi  r0,r3,32
+>  264:	7c 60 1a 14 	add     r3,r0,r3
+>  268:	78 63 00 22 	rldicl  r3,r3,32,32
+>  26c:	4e 80 00 20 	blr
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-> This patch fixes the clang warning of extraneous parentheses, with the
-> following coccinelle script.
- ...
-> Suggested-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+Applied to powerpc next, thanks.
 
-Applied to net-next, thanks.
+https://git.kernel.org/powerpc/c/55a0edf083022e402042255a0afb03
+
+cheers
