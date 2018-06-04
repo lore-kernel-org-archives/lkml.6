@@ -1,60 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeFDKA6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:00:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39136 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752116AbeFDKAz (ORCPT
+        id S1752557AbeFDKBG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:01:06 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39010 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752372AbeFDKBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:00:55 -0400
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 01/19] sched/numa: Remove redundant field.
-Date: Mon,  4 Jun 2018 15:30:10 +0530
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18060410-0008-0000-0000-000002437364
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060410-0009-0000-0000-000021A93238
-Message-Id: <1528106428-19992-2-git-send-email-srikar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=818 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040123
+        Mon, 4 Jun 2018 06:01:00 -0400
+X-Google-Smtp-Source: ADUXVKJk3z7XLH4dm5yBYrNKtZ1QyduWmOF3vLQOb5ZGmKyaIGoZ9+c4yoscU6ptLoEDet16bjsz8w==
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v5 0/4] Reintroduce i.MX EPIT Timer
+Date: Mon,  4 Jun 2018 12:00:31 +0200
+Message-Id: <20180604100035.19558-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-numa_entry is a list_head defined in task_struct, but never used.
+From: Clément Peron <clement.peron@devialet.com>
 
-No functional change
+As suggested in the commit message we have added the device tree support,
+proper bindings and we moved the driver into the correct folder.
 
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
----
- include/linux/sched.h | 1 -
- 1 file changed, 1 deletion(-)
+Moreover we made some changes like use of relaxed IO accesor,
+implement sched_clock, delay_timer and reduce the clockevents min_delta.
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index c241370..d1d43be 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1016,7 +1016,6 @@ struct task_struct {
- 	u64				last_sum_exec_runtime;
- 	struct callback_head		numa_work;
- 
--	struct list_head		numa_entry;
- 	struct numa_group		*numa_group;
- 
- 	/*
+Changes since v4:
+- removed ipg clk
+- change in dt epit to timer
+- add introduction in doc
+- add all compatibles in doc
+- update epit entry for other i.MX device-trees
+
+Changes since v3:
+- Clean Kconfig
+- Rename imx6q-epit to imx31-epit
+- Update doc and bindings
+- Indent and fix
+
+Changes since v2 (Thanks Fabio Estevam):
+- Removed unused ckil clock
+- Add out_iounmap
+- Check and handle if clk_prepare_enable failed
+- Fix comment typo
+
+Changes since v1 (Thanks Vladimir Zapolskiy):
+- Add OF dependency in Kconfig
+- Sort header
+- Use BIT macro
+- Remove useless comments
+- Fix incorrect indent
+- Fix memory leak
+- Add check and handle possible returned error
+
+Clément Peron (2):
+  ARM: imx: remove inexistant EPIT timer init
+  dt-bindings: timer: add i.MX EPIT timer binding
+
+Colin Didier (2):
+  clocksource: add driver for i.MX EPIT timer
+  ARM: dts: imx: add missing compatible and clock properties for EPIT
+
+ .../devicetree/bindings/timer/fsl,imxepit.txt |  21 ++
+ arch/arm/boot/dts/imx25.dtsi                  |   8 +-
+ arch/arm/boot/dts/imx6qdl.dtsi                |  10 +-
+ arch/arm/boot/dts/imx6sl.dtsi                 |  14 +-
+ arch/arm/boot/dts/imx6sx.dtsi                 |  10 +-
+ arch/arm/boot/dts/imx6ul.dtsi                 |  10 +-
+ arch/arm/mach-imx/common.h                    |   1 -
+ drivers/clocksource/Kconfig                   |  11 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-imx-epit.c          | 265 ++++++++++++++++++
+ 10 files changed, 338 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+ create mode 100644 drivers/clocksource/timer-imx-epit.c
+
 -- 
-1.8.3.1
+2.17.0
