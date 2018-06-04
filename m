@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753474AbeFDHUi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:20:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55260 "EHLO mail.kernel.org"
+        id S1753597AbeFDHVV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:21:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751482AbeFDHDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:03:00 -0400
+        id S1753291AbeFDHCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:02:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
         Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 43/52] mm/huge_memory.c: __split_huge_page() use atomic ClearPageDirty()
-Date: Mon,  4 Jun 2018 08:58:38 +0200
-Message-Id: <20180604065608.323299892@linuxfoundation.org>
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 49/52] powerpc/mm/slice: Remove intermediate bitmap copy
+Date: Mon,  4 Jun 2018 08:58:44 +0200
+Message-Id: <20180604065608.565231214@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -33,50 +31,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hugh Dickins <hughd@google.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 2d077d4b59924acd1f5180c6fb73b57f4771fde6 upstream.
+commit 326691ad4f179e6edc7eb1271e618dd673e4736d upstream.
 
-Swapping load on huge=always tmpfs (with khugepaged tuned up to be very
-eager, but I'm not sure that is relevant) soon hung uninterruptibly,
-waiting for page lock in shmem_getpage_gfp()'s find_lock_entry(), most
-often when "cp -a" was trying to write to a smallish file.  Debug showed
-that the page in question was not locked, and page->mapping NULL by now,
-but page->index consistent with having been in a huge page before.
+bitmap_or() and bitmap_andnot() can work properly with dst identical
+to src1 or src2. There is no need of an intermediate result bitmap
+that is copied back to dst in a second step.
 
-Reproduced in minutes on a 4.15 kernel, even with 4.17's 605ca5ede764
-("mm/huge_memory.c: reorder operations in __split_huge_page_tail()") added
-in; but took hours to reproduce on a 4.17 kernel (no idea why).
-
-The culprit proved to be the __ClearPageDirty() on tails beyond i_size in
-__split_huge_page(): the non-atomic __bitoperation may have been safe when
-4.8's baa355fd3314 ("thp: file pages support for split_huge_page()")
-introduced it, but liable to erase PageWaiters after 4.10's 62906027091f
-("mm: add PageWaiters indicating tasks are waiting for a page bit").
-
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1805291841070.3197@eggly.anvils
-Fixes: 62906027091f ("mm: add PageWaiters indicating tasks are waiting for a page bit")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/huge_memory.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/mm/slice.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2388,7 +2388,7 @@ static void __split_huge_page(struct pag
- 		__split_huge_page_tail(head, i, lruvec, list);
- 		/* Some pages can be beyond i_size: drop them from page cache */
- 		if (head[i].index >= end) {
--			__ClearPageDirty(head + i);
-+			ClearPageDirty(head + i);
- 			__delete_from_page_cache(head + i, NULL);
- 			if (IS_ENABLED(CONFIG_SHMEM) && PageSwapBacked(head))
- 				shmem_uncharge(head->mapping->host, 1);
+--- a/arch/powerpc/mm/slice.c
++++ b/arch/powerpc/mm/slice.c
+@@ -379,21 +379,17 @@ static unsigned long slice_find_area(str
+ 
+ static inline void slice_or_mask(struct slice_mask *dst, struct slice_mask *src)
+ {
+-	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
+-
+ 	dst->low_slices |= src->low_slices;
+-	bitmap_or(result, dst->high_slices, src->high_slices, SLICE_NUM_HIGH);
+-	bitmap_copy(dst->high_slices, result, SLICE_NUM_HIGH);
++	bitmap_or(dst->high_slices, dst->high_slices, src->high_slices,
++		  SLICE_NUM_HIGH);
+ }
+ 
+ static inline void slice_andnot_mask(struct slice_mask *dst, struct slice_mask *src)
+ {
+-	DECLARE_BITMAP(result, SLICE_NUM_HIGH);
+-
+ 	dst->low_slices &= ~src->low_slices;
+ 
+-	bitmap_andnot(result, dst->high_slices, src->high_slices, SLICE_NUM_HIGH);
+-	bitmap_copy(dst->high_slices, result, SLICE_NUM_HIGH);
++	bitmap_andnot(dst->high_slices, dst->high_slices, src->high_slices,
++		      SLICE_NUM_HIGH);
+ }
+ 
+ #ifdef CONFIG_PPC_64K_PAGES
