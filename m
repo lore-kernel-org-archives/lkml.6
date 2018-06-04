@@ -1,52 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753213AbeFDN2V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:28:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753057AbeFDN2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:28:20 -0400
-Message-ID: <242535dbd409c1183c6a28ec9462970d37df93a9.camel@kernel.org>
-Subject: [GIT PULL] fasync fix for v4.18
-From: Jeff Layton <jlayton@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Bruce Fields <bfields@fieldses.org>
-Date: Mon, 04 Jun 2018 09:28:18 -0400
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753186AbeFDNc6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:32:58 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:11746 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753023AbeFDNc4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:32:56 -0400
+X-IronPort-AV: E=Sophos;i="5.49,476,1520924400";
+   d="scan'208";a="14899615"
+Date: Mon, 4 Jun 2018 15:31:58 +0200
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+To: Nicholas Mc Guire <hofrat@opentech.at>
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: Re: [PATCH] media: atmel-isi: move of_node_put() to cover success
+ branch as well
+Message-ID: <20180604133158.jnys4jliy4d7rwpi@rfolt0960.corp.atmel.com>
+Mail-Followup-To: Nicholas Mc Guire <hofrat@opentech.at>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+References: <1527859814-30410-1-git-send-email-hofrat@opentech.at>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1527859814-30410-1-git-send-email-hofrat@opentech.at>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit fff75eb2a08c2ac96404a2d79685668f3cf5a7a3:
+On Fri, Jun 01, 2018 at 01:30:14PM +0000, Nicholas Mc Guire wrote:
+> From: Nicholas Mc Guire <hofrat@osadl.org>
+> 
+> The of_node_put() was only covering the error branch but missed the 
+> success branch so the refcount for ep which 
+> of_graph_get_remote_port_parent() incremented on success would was
+> not being decremented.
+> 
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-  Merge tag 'errseq-v4.17' of git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux (2018-04-30 16:53:40 -0700)
+Thanks
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/locks-v4.18-1
-
-for you to fetch changes up to 7a107c0f55a3b4c6f84a4323df5610360bde1684:
-
-  fasync: Fix deadlock between task-context and interrupt-context kill_fasync() (2018-05-01 07:39:50 -0400)
-
-----------------------------------------------------------------
-
-Just a single fix for a deadlock in the fasync handling code that Kirill
-observed while testing. The fix is to change the fa_lock to be rwlock_t,
-and use a read lock in kill_fasync_rcu.
-
-----------------------------------------------------------------
-Kirill Tkhai (1):
-      fasync: Fix deadlock between task-context and interrupt-context kill_fasync()
-
- fs/fcntl.c         | 15 +++++++--------
- include/linux/fs.h |  2 +-
- 2 files changed, 8 insertions(+), 9 deletions(-)
-
--- 
-Jeff Layton <jlayton@kernel.org>
+> ---
+> 
+> This patch is on top of: "media: atmel-isi: drop unnecessary while loop"
+> 
+> Patch was compile tested with: x86_64_defconfig + CONFIG_MEDIA_SUPPORT=y
+> MEDIA_CAMERA_SUPPORT=y, CONFIG_MEDIA_CONTROLLER=y, V4L_PLATFORM_DRIVERS=y
+> OF=y, CONFIG_COMPILE_TEST=y, CONFIG_VIDEO_ATMEL_ISI=y
+> 
+> Compile testing atmel-isi.c shows some sparse warnings. Seems to be due to
+> sizeof operator being applied to a union (not related to the function being
+> changed though).
+> 
+> Patch is against 4.17-rc7 (localversion-next is next-20180531)
+> 
+>  drivers/media/platform/atmel/atmel-isi.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/atmel/atmel-isi.c b/drivers/media/platform/atmel/atmel-isi.c
+> index 85fc7b9..e8db4df 100644
+> --- a/drivers/media/platform/atmel/atmel-isi.c
+> +++ b/drivers/media/platform/atmel/atmel-isi.c
+> @@ -1111,10 +1111,9 @@ static int isi_graph_parse(struct atmel_isi *isi, struct device_node *node)
+>  		return -EINVAL;
+>  
+>  	remote = of_graph_get_remote_port_parent(ep);
+> -	if (!remote) {
+> -		of_node_put(ep);
+> +	of_node_put(ep);
+> +	if (!remote)
+>  		return -EINVAL;
+> -	}
+>  
+>  	/* Remote node to connect */
+>  	isi->entity.node = remote;
+> -- 
+> 2.1.4
+> 
