@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752641AbeFDHAX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:00:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53040 "EHLO mail.kernel.org"
+        id S1752661AbeFDHA1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:00:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752502AbeFDHAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:08 -0400
+        id S1751597AbeFDHAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:00:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, David Laight <David.Laight@ACULAB.COM>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        damian <damian.tometzki@icloud.com>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 25/29] objtool: Fix "noreturn" detection for recursive sibling calls
-Date: Mon,  4 Jun 2018 08:58:21 +0200
-Message-Id: <20180604065803.162646747@linuxfoundation.org>
+        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Ivan Kalvachev <ikalvachev@gmail.com>,
+        "Huang, Ying" <ying.huang@intel.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 02/52] mm: fix the NULL mapping case in __isolate_lru_page()
+Date: Mon,  4 Jun 2018 08:57:57 +0200
+Message-Id: <20180604065606.633831004@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
-References: <20180604065802.157744637@linuxfoundation.org>
+In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
+References: <20180604065606.532044490@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -29,62 +30,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Hugh Dickins <hughd@google.com>
 
-commit 0afd0d9e0e7879d666c1df2fa1bea4d8716909fe upstream.
+commit 145e1a71e090575c74969e3daa8136d1e5b99fc8 upstream.
 
-Objtool has some crude logic for detecting static "noreturn" functions
-(aka "dead ends").  This is necessary for being able to correctly follow
-GCC code flow when such functions are called.
+George Boole would have noticed a slight error in 4.16 commit
+69d763fc6d3a ("mm: pin address_space before dereferencing it while
+isolating an LRU page").  Fix it, to match both the comment above it,
+and the original behaviour.
 
-It's remotely possible for two functions to call each other via sibling
-calls.  If they don't have RET instructions, objtool's noreturn
-detection logic goes into a recursive loop:
+Although anonymous pages are not marked PageDirty at first, we have an
+old habit of calling SetPageDirty when a page is removed from swap
+cache: so there's a category of ex-swap pages that are easily
+migratable, but were inadvertently excluded from compaction's async
+migration in 4.16.
 
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
-
-Instead of reporting an error in this case, consider the functions to be
-non-dead-ends.
-
-Reported-and-tested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: damian <damian.tometzki@icloud.com>
-Link: http://lkml.kernel.org/r/7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1805302014001.12558@eggly.anvils
+Fixes: 69d763fc6d3a ("mm: pin address_space before dereferencing it while isolating an LRU page")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Acked-by: Minchan Kim <minchan@kernel.org>
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Reported-by:  Ivan Kalvachev <ikalvachev@gmail.com>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/check.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ mm/vmscan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -207,9 +207,13 @@ static int __dead_end_function(struct ob
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1451,7 +1451,7 @@ int __isolate_lru_page(struct page *page
+ 				return ret;
  
- 				/* local sibling call */
- 				if (recursion == 5) {
--					WARN_FUNC("infinite recursion (objtool bug!)",
--						  dest->sec, dest->offset);
--					return -1;
-+					/*
-+					 * Infinite recursion: two functions
-+					 * have sibling calls to each other.
-+					 * This is a very rare case.  It means
-+					 * they aren't dead ends.
-+					 */
-+					return 0;
- 				}
- 
- 				return __dead_end_function(file, dest->func,
+ 			mapping = page_mapping(page);
+-			migrate_dirty = mapping && mapping->a_ops->migratepage;
++			migrate_dirty = !mapping || mapping->a_ops->migratepage;
+ 			unlock_page(page);
+ 			if (!migrate_dirty)
+ 				return ret;
