@@ -1,135 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752782AbeFDKBe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 06:01:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44014 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752680AbeFDKBa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 06:01:30 -0400
-From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 15/19] sched/numa: Use group_weights to identify if migration degrades locality
-Date: Mon,  4 Jun 2018 15:30:24 +0530
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18060410-0028-0000-0000-000002CC7161
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060410-0029-0000-0000-00002382F621
-Message-Id: <1528106428-19992-16-git-send-email-srikar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-04_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=859 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806040123
+        id S1753060AbeFDKCo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 06:02:44 -0400
+Received: from mout1.freenet.de ([195.4.92.91]:39524 "EHLO mout1.freenet.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753041AbeFDKCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 06:02:41 -0400
+Subject: Re: Spectre mitigation doesn't seem to work at all?!
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <141672d1-8dcb-9a84-7f8f-60c7a2c58b07@01019freenet.de>
+ <20180604081502.GE12258@hirez.programming.kicks-ass.net>
+ <d8fbee2d-305a-9fc0-356e-b8d4cbd59dbd@maya.org>
+ <20180604091931.sziimdeei54jgwzn@salmiak>
+From: Andreas Hartmann <andihartmann@01019freenet.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=andihartmann@01019freenet.de; keydata=
+ xsDiBDz/vtQRBAC+OSpes1p57fA8ENLYy3Nl/CpEvtRoDdhy7DPyc1+adE57vpK52naRfaZB
+ f0RSMvIZwJYggMio+emiN5Du7kL9y2IEjmHBvp/1x68dEwswHP9X4hJmHmyOJL3IB2WsvEdh
+ QF97913bWX34MYCeuOoSJ1OWvBLGfNs0zv70HOTfJwCgricyy8N1itEryLwoeu5HWz0SmDED
+ /2IiuDhPZ332i0Ylp40RQb2Wb0xBvpscVeRZDItsYYbJ/Sgmso1sn93sFFWmmrvGUyg3MNCt
+ +u+7P8Wg3VXte8cHbNwdzNtXHTfYyTcgZXC4xJN2akZt4pdR531mXyP2kFxmKtAEmW6bNpvV
+ oNnkgZVWvoT4BHLloLzA62JUEgFJA/9dHilAVS3Ezv5ECB02Lt2vNNzMvPlyNbxBhWnrb6VC
+ mFMCRg9bOK2io1zYb8C4gEpJ33wl8hEBxOWfCOEEKesAUCjViosNvxqGNtGWjk5p1O2QBWE2
+ D6u5+itACQRqhmmgNl+dK6Of2yGG9GxOYWozIELEfL9ZB4xQ7A2tDFR0Zs1HQW5kcmVhcyBI
+ YXJ0bWFubiAod2VpbCBkZXIgUmVjaG5lciBuZXUgaGVpc3N0KSA8YW5kcmVhc0BkdWFsYy5t
+ YXlhLm9yZz7CYAQTEQIAIAUCTMsY3gIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJEBhU
+ mcTgYeNVT1QAoJ4cJ2jl6Jgmi+PmWCXPk4m8lgAGAKCjkxgK/PjE3+cNsLa/xEpReqYwRs7A
+ TQQ8/77WEAQAqBBex8oxPC1srpaSFbq8NCM/Gy7SKucKsQPqG/De46WQESbmnMElVft2xCBC
+ rOJ7E02k10h/twe0yQnNdXMJDMDM0w0EEyX9ljekIr3SFbXpU2S4wUl3C6CW2hizUgOyLsg0
+ chpfGMB9+wiVycyjZahafoc14wuuDj5BqWEOCccAAwcD/14lh1PTPKx4hs7ITtFZh5TI6+5f
+ xAWIBBUeQL+GEt+CKwyNc/hWp8YTPJ3SAedmDrEMX+2yPO95KeIfg6bnnIVvI/aTR/vJFsWK
+ GKMx+KaKx+IEwuhCpNIMUASpJWRvVlo3lMIvqAMJIBj79uKq/X9fppblcJst29QVO6aWf3Gh
+ wkYEGBECAAYFAjz/vtYACgkQGFSZxOBh41VBAgCfZRiPCQ+jNvdT5iR2fEblqTtBrF0An0nb
+ M8B1Lpkm44214BbtIQKneVrY
+Message-ID: <9a977dda-c6c8-1193-58f8-d51d135e0d8a@01019freenet.de>
+Date: Mon, 4 Jun 2018 12:00:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180604091931.sziimdeei54jgwzn@salmiak>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Spam-score: -3.1
+X-Spamreport: Action: no action
+ Symbol: MIME_GOOD(-0.10)
+ Symbol: MID_RHS_MATCH_FROM(0.00)
+ Symbol: FROM_EQ_ENVFROM(0.00)
+ Symbol: RCVD_VIA_SMTP_AUTH(0.00)
+ Symbol: NEURAL_HAM(-3.00)
+ Symbol: FROM_HAS_DN(0.00)
+ Symbol: RCPT_COUNT_THREE(0.00)
+ Symbol: SUBJECT_ENDS_EXCLAIM(0.00)
+ Symbol: RCVD_COUNT_TWO(0.00)
+ Symbol: RCVD_TLS_ALL(0.00)
+ Symbol: TO_DN_ALL(0.00)
+ Symbol: TO_MATCH_ENVRCPT_ALL(0.00)
+ Symbol: SUBJECT_HAS_QUESTION(0.00)
+ Symbol: ASN(0.00)
+ Message-ID: 9a977dda-c6c8-1193-58f8-d51d135e0d8a@01019freenet.de
+X-FN-Spambar: 
+X-Originated-At: 2003:de:53d7:1800:5054:ff:fe15:ac42!47940
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On NUMA_BACKPLANE and NUMA_GLUELESS_MESH systems, tasks/memory should be
-consolidated to the closest group of nodes. In such a case, relying on
-group_fault metric may not always help to consolidate. There can always
-be a case where a node closer to the preferred node may have lesser
-faults than a node further away from the preferred node. In such a case,
-moving to node with more faults might avoid numa consolidation.
+Hello Mark,
 
-Using group_weight would help to consolidate task/memory around the
-preferred_node.
+On 06/04/2018 at 11:19 AM Mark Rutland wrote:
+> On Mon, Jun 04, 2018 at 10:50:07AM +0200, Andreas Hartmann wrote:
+>> Hello Peter,
+>>
+>> thanks for your answer! I appreciate it!
+>>
+>> On 06/04/2018 at 10:15 AM Peter Zijlstra wrote:
+>>> On Fri, Jun 01, 2018 at 02:19:38PM +0200, Andreas Hartmann wrote:
+>>>
+>>>> I tested the spectre mitigation of different machines and kernels with
+>>>> https://github.com/crozone/SpectrePoC
+>>>>
+>>>> You can see the results below.
+>>>
+>>>> My question: Did I miss something?
+>>>
+>>> Yes.
+>>>
+>>>> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
+>>>> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
+>>>> Build: ... INTEL_MITIGATION_DISABLED LINUX_KERNEL_MITIGATION_DISABLED
+>>>
+>>>                               ^^^^^^^^                         ^^^^^^^^
+>>>
+>>> The POC is a v1 on itself. V1 needs to be fixed for every individual
+>>> executable (worse, for every individual location in the code, and we're
+>>> still finding them). The kernel mitigation status for v1 only indicates
+>>> the kernel itself has mitigations (for some locations).
+>>>
+>>> The POC is meant to test effectiveness of these mitigations, either the
+>>> original LFENCE or the dependent instruction thing, but you have to
+>>> enable one or the other.
+>>
+>> Ok, this means every program running on the machine has to care itself
+>> to be spectre v1 - safe.
+> 
+> Correct. Primiarily this matters for things like JITs, where untrusted code may
+> be run in the same address space as sensitive data.
+> 
+>> A malicious program most probably won't care about that. Therefore, my
+>> next question is: which memory regions can be exploited by a malicious
+>> program? The complete physical memory or only the memory provided to the
+>> malicious program? Should be the latter if this approach should have any
+>> impact.
+> 
+> Assuming you have a CPU which is not vulnerable to meltdown / variant-3, or you
+> have mitigated this, (e.g. with KPTI), a malicious program can only access data
+> within its own address space.
+> 
+> Spectre variant-1 alone only gives access to memory in the address space of the
+> program itself.
 
-While here, to be on the conservative side, don't override migrate thread
-degrades locality logic for CPU_NEWLY_IDLE load balancing.
+Thanks Mark! Now I've a better understanding about the effects the
+different vulnerabilities around Spectre and Meltdown do have and I'm
+now hopefully able to better estimate them.
 
-Note: Similar problems exist with should_numa_migrate_memory and will be
-dealt separately.
+As I'm mostly using AMD-CPUs (like Ryzen 1 e.g.) for virtualization, I
+should be secure by default regarding unwanted global memory access from
+the VM to the host memory, because the Ryzen 1 CPU is not affected by
+Meltdown at all.
 
-Testcase       Time:         Min         Max         Avg      StdDev
-numa01.sh      Real:      490.04      774.86      596.26       96.46
-numa01.sh       Sys:      151.52      242.88      184.82       31.71
-numa01.sh      User:    41418.41    60844.59    48776.09     6564.27
-numa02.sh      Real:       60.14       62.94       60.98        1.00
-numa02.sh       Sys:       16.11       30.77       21.20        5.28
-numa02.sh      User:     5184.33     5311.09     5228.50       44.24
-numa03.sh      Real:      790.95      856.35      826.41       24.11
-numa03.sh       Sys:      114.93      118.85      117.05        1.63
-numa03.sh      User:    60990.99    64959.28    63470.43     1415.44
-numa04.sh      Real:      434.37      597.92      504.87       59.70
-numa04.sh       Sys:      237.63      397.40      289.74       55.98
-numa04.sh      User:    34854.87    41121.83    38572.52     2615.84
-numa05.sh      Real:      386.77      448.90      417.22       22.79
-numa05.sh       Sys:      149.23      379.95      303.04       79.55
-numa05.sh      User:    32951.76    35959.58    34562.18     1034.05
 
-Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-numa01.sh      Real:      493.19      672.88      597.51       59.38 	 -0.20%
-numa01.sh       Sys:      150.09      245.48      207.76       34.26 	 -11.0%
-numa01.sh      User:    41928.51    53779.17    48747.06     3901.39 	 0.059%
-numa02.sh      Real:       60.63       62.87       61.22        0.83 	 -0.39%
-numa02.sh       Sys:       16.64       27.97       20.25        4.06 	 4.691%
-numa02.sh      User:     5222.92     5309.60     5254.03       29.98 	 -0.48%
-numa03.sh      Real:      821.52      902.15      863.60       32.41 	 -4.30%
-numa03.sh       Sys:      112.04      130.66      118.35        7.08 	 -1.09%
-numa03.sh      User:    62245.16    69165.14    66443.04     2450.32 	 -4.47%
-numa04.sh      Real:      414.53      519.57      476.25       37.00 	 6.009%
-numa04.sh       Sys:      181.84      335.67      280.41       54.07 	 3.327%
-numa04.sh      User:    33924.50    39115.39    37343.78     1934.26 	 3.290%
-numa05.sh      Real:      408.30      441.45      417.90       12.05 	 -0.16%
-numa05.sh       Sys:      233.41      381.60      295.58       57.37 	 2.523%
-numa05.sh      User:    33301.31    35972.50    34335.19      938.94 	 0.661%
-
-Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
----
- kernel/sched/fair.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6b72240..c388ecf 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7222,8 +7222,8 @@ static int task_hot(struct task_struct *p, struct lb_env *env)
- static int migrate_degrades_locality(struct task_struct *p, struct lb_env *env)
- {
- 	struct numa_group *numa_group = rcu_dereference(p->numa_group);
--	unsigned long src_faults, dst_faults;
--	int src_nid, dst_nid;
-+	unsigned long src_weight, dst_weight;
-+	int src_nid, dst_nid, dist;
- 
- 	if (!static_branch_likely(&sched_numa_balancing))
- 		return -1;
-@@ -7250,18 +7250,19 @@ static int migrate_degrades_locality(struct task_struct *p, struct lb_env *env)
- 		return 0;
- 
- 	/* Leaving a core idle is often worse than degrading locality. */
--	if (env->idle != CPU_NOT_IDLE)
-+	if (env->idle == CPU_IDLE)
- 		return -1;
- 
-+	dist = node_distance(src_nid, dst_nid);
- 	if (numa_group) {
--		src_faults = group_faults(p, src_nid);
--		dst_faults = group_faults(p, dst_nid);
-+		src_weight = group_weight(p, src_nid, dist);
-+		dst_weight = group_weight(p, dst_nid, dist);
- 	} else {
--		src_faults = task_faults(p, src_nid);
--		dst_faults = task_faults(p, dst_nid);
-+		src_weight = task_weight(p, src_nid, dist);
-+		dst_weight = task_weight(p, dst_nid, dist);
- 	}
- 
--	return dst_faults < src_faults;
-+	return dst_weight < src_weight;
- }
- 
- #else
--- 
-1.8.3.1
+Regards,
+Andreas
