@@ -1,97 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753306AbeFDNLP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 09:11:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58970 "EHLO mx2.suse.de"
+        id S1753054AbeFDNOG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 09:14:06 -0400
+Received: from gate.crashing.org ([63.228.1.57]:35375 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753040AbeFDNLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 09:11:06 -0400
-Date: Mon, 4 Jun 2018 15:11:04 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
-        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
-Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-Message-ID: <20180604131104.GS19202@dhcp22.suse.cz>
-References: <20180523232246.20445-1-qing.huang@oracle.com>
- <20180525.102321.858995452200286788.davem@davemloft.net>
- <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
- <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
- <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
- <20180531065405.GH15278@dhcp22.suse.cz>
- <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
- <20180531085532.GK15278@dhcp22.suse.cz>
- <20180531091022.GL15278@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180531091022.GL15278@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752429AbeFDNOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 09:14:05 -0400
+Message-ID: <e7ceddbec11711a89282e9b70b7fd3c8af10b030.camel@kernel.crashing.org>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org
+Date: Mon, 04 Jun 2018 23:11:52 +1000
+In-Reply-To: <20180604153558-mutt-send-email-mst@kernel.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+         <20180523213703-mutt-send-email-mst@kernel.org>
+         <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
+         <20180604153558-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-05-18 11:10:22, Michal Hocko wrote:
-> On Thu 31-05-18 10:55:32, Michal Hocko wrote:
-> > On Thu 31-05-18 04:35:31, Eric Dumazet wrote:
-> [...]
-> > > I merely copied/pasted from alloc_skb_with_frags() :/
+On Mon, 2018-06-04 at 15:43 +0300, Michael S. Tsirkin wrote:
+> On Thu, May 24, 2018 at 08:27:04AM +1000, Benjamin Herrenschmidt wrote:
+> > On Wed, 2018-05-23 at 21:50 +0300, Michael S. Tsirkin wrote:
 > > 
-> > I will have a look at it. Thanks!
+> > > I re-read that discussion and I'm still unclear on the
+> > > original question, since I got several apparently
+> > > conflicting answers.
+> > > 
+> > > I asked:
+> > > 
+> > > 	Why isn't setting VIRTIO_F_IOMMU_PLATFORM on the
+> > > 	hypervisor side sufficient?
+> > 
+> > I thought I had replied to this...
+> > 
+> > There are a couple of reasons:
+> > 
+> > - First qemu doesn't know that the guest will switch to "secure mode"
+> > in advance. There is no difference between a normal and a secure
+> > partition until the partition does the magic UV call to "enter secure
+> > mode" and qemu doesn't see any of it. So who can set the flag here ?
 > 
-> OK, so this is an example of an incremental development ;).
+> The user should set it. You just tell user "to be able to use with
+> feature X, enable IOMMU".
+
+That's completely backwards. The user has no idea what that stuff is.
+And it would have to percolate all the way up the management stack,
+libvirt, kimchi, whatever else ... that's just nonsense.
+
+Especially since, as I explained in my other email, this is *not* a
+qemu problem and thus the solution shouldn't be messing around with
+qemu.
+
 > 
-> __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
-> high order allocations") to prevent from OOM killer. Yet this was
-> not enough because fb05e7a89f50 ("net: don't wait for order-3 page
-> allocation") didn't want an excessive reclaim for non-costly orders
-> so it made it completely NOWAIT while it preserved __GFP_NORETRY in
-> place which is now redundant. Should I send a patch?
+> > - Second, when using VIRTIO_F_IOMMU_PLATFORM, we also make qemu (or
+> > vhost) go through the emulated MMIO for every access to the guest,
+> > which adds additional overhead.
+> > 
+> > Cheers,
+> > Ben.
+> 
+> There are several answers to this.  One is that we are working hard to
+> make overhead small when the mappings are static (which they would be if
+> there's no actual IOMMU). So maybe especially given you are using
+> a bounce buffer on top it's not so bad - did you try to
+> benchmark?
+> 
+> Another is that given the basic functionality is in there, optimizations
+> can possibly wait until per-device quirks in DMA API are supported.
 
-Just in case you are interested
----
->From 5010543ed6f73e4c00367801486dca8d5c63b2ce Mon Sep 17 00:00:00 2001
-From: Michal Hocko <mhocko@suse.com>
-Date: Mon, 4 Jun 2018 15:07:37 +0200
-Subject: [PATCH] net: cleanup gfp mask in alloc_skb_with_frags
+The point is that requiring specific qemu command line arguments isn't
+going to fly. We have additional problems due to the fact that our
+firmware (SLOF) inside qemu doesn't currently deal with iommu's etc...
+though those can be fixed.
 
-alloc_skb_with_frags uses __GFP_NORETRY for non-sleeping allocations
-which is just a noop and a little bit confusing.
+Overall, however, this seems to be the most convoluted way of achieving
+things, require user interventions where none should be needed etc...
 
-__GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
-high order allocations") to prevent from the OOM killer. Yet this was
-not enough because fb05e7a89f50 ("net: don't wait for order-3 page
-allocation") didn't want an excessive reclaim for non-costly orders
-so it made it completely NOWAIT while it preserved __GFP_NORETRY in
-place which is now redundant.
+Again, what's wrong with a 2 lines hook instead that solves it all and
+completely avoids involving qemu ?
 
-Drop the pointless __GFP_NORETRY because this function is used as
-copy&paste source for other places.
+Ben.
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- net/core/skbuff.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 857e4e6f751a..c1f22adc30de 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -5239,8 +5239,7 @@ struct sk_buff *alloc_skb_with_frags(unsigned long header_len,
- 			if (npages >= 1 << order) {
- 				page = alloc_pages((gfp_mask & ~__GFP_DIRECT_RECLAIM) |
- 						   __GFP_COMP |
--						   __GFP_NOWARN |
--						   __GFP_NORETRY,
-+						   __GFP_NOWARN,
- 						   order);
- 				if (page)
- 					goto fill_page;
--- 
-2.17.0
-
--- 
-Michal Hocko
-SUSE Labs
+> 
+> > > 
+> > > 
+> > > >  arch/powerpc/include/asm/dma-mapping.h |  6 ++++++
+> > > >  arch/powerpc/platforms/pseries/iommu.c | 11 +++++++++++
+> > > >  drivers/virtio/virtio_ring.c           | 10 ++++++++++
+> > > >  3 files changed, 27 insertions(+)
+> > > > 
+> > > > diff --git a/arch/powerpc/include/asm/dma-mapping.h b/arch/powerpc/include/asm/dma-mapping.h
+> > > > index 8fa3945..056e578 100644
+> > > > --- a/arch/powerpc/include/asm/dma-mapping.h
+> > > > +++ b/arch/powerpc/include/asm/dma-mapping.h
+> > > > @@ -115,4 +115,10 @@ extern u64 __dma_get_required_mask(struct device *dev);
+> > > >  #define ARCH_HAS_DMA_MMAP_COHERENT
+> > > >  
+> > > >  #endif /* __KERNEL__ */
+> > > > +
+> > > > +#define platform_forces_virtio_dma platform_forces_virtio_dma
+> > > > +
+> > > > +struct virtio_device;
+> > > > +
+> > > > +extern bool platform_forces_virtio_dma(struct virtio_device *vdev);
+> > > >  #endif	/* _ASM_DMA_MAPPING_H */
+> > > > diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+> > > > index 06f0296..a2ec15a 100644
+> > > > --- a/arch/powerpc/platforms/pseries/iommu.c
+> > > > +++ b/arch/powerpc/platforms/pseries/iommu.c
+> > > > @@ -38,6 +38,7 @@
+> > > >  #include <linux/of.h>
+> > > >  #include <linux/iommu.h>
+> > > >  #include <linux/rculist.h>
+> > > > +#include <linux/virtio.h>
+> > > >  #include <asm/io.h>
+> > > >  #include <asm/prom.h>
+> > > >  #include <asm/rtas.h>
+> > > > @@ -1396,3 +1397,13 @@ static int __init disable_multitce(char *str)
+> > > >  __setup("multitce=", disable_multitce);
+> > > >  
+> > > >  machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
+> > > > +
+> > > > +bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > > +{
+> > > > +	/*
+> > > > +	 * On protected guest platforms, force virtio core to use DMA
+> > > > +	 * MAP API for all virtio devices. But there can also be some
+> > > > +	 * exceptions for individual devices like virtio balloon.
+> > > > +	 */
+> > > > +	return (of_find_compatible_node(NULL, NULL, "ibm,ultravisor") != NULL);
+> > > > +}
+> > > 
+> > > Isn't this kind of slow?  vring_use_dma_api is on
+> > > data path and supposed to be very fast.
+> > > 
+> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > index 21d464a..47ea6c3 100644
+> > > > --- a/drivers/virtio/virtio_ring.c
+> > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > @@ -141,8 +141,18 @@ struct vring_virtqueue {
+> > > >   * unconditionally on data path.
+> > > >   */
+> > > >  
+> > > > +#ifndef platform_forces_virtio_dma
+> > > > +static inline bool platform_forces_virtio_dma(struct virtio_device *vdev)
+> > > > +{
+> > > > +	return false;
+> > > > +}
+> > > > +#endif
+> > > > +
+> > > >  static bool vring_use_dma_api(struct virtio_device *vdev)
+> > > >  {
+> > > > +	if (platform_forces_virtio_dma(vdev))
+> > > > +		return true;
+> > > > +
+> > > >  	if (!virtio_has_iommu_quirk(vdev))
+> > > >  		return true;
+> > > >  
+> > > > -- 
+> > > > 2.9.3
