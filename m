@@ -1,96 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751201AbeFDRE7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 13:04:59 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:40758 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751091AbeFDRE5 (ORCPT
+        id S1751135AbeFDRHc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 13:07:32 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37043 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeFDRHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 13:04:57 -0400
-Date: Mon, 4 Jun 2018 10:04:55 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
-Message-ID: <20180604170455.GB27519@roeck-us.net>
-References: <20180604065802.157744637@linuxfoundation.org>
- <20180604161649.GA16269@roeck-us.net>
- <20180604165427.GA26908@roeck-us.net>
- <20180604165756.GA2004@kroah.com>
+        Mon, 4 Jun 2018 13:07:30 -0400
+X-Google-Smtp-Source: ADUXVKKMgkOckcYcBNJazdQEQYMaJroIhi1Gh8NWwmmlNIy3oVOJvH1DRjsYd4QGKkrYA/SePtpd6g==
+Subject: Re: [PATCH v2 3/9] xen/balloon: Share common memory reservation
+ routines
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-4-andr2000@gmail.com>
+ <4fd46fd8-f936-1514-06e4-34c5d3ed8960@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <9a22d84c-6ea8-905b-ee77-2b71d68857fd@gmail.com>
+Date: Mon, 4 Jun 2018 20:07:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604165756.GA2004@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <4fd46fd8-f936-1514-06e4-34c5d3ed8960@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 06:57:56PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Jun 04, 2018 at 09:54:27AM -0700, Guenter Roeck wrote:
-> > On Mon, Jun 04, 2018 at 09:16:49AM -0700, Guenter Roeck wrote:
-> > > On Mon, Jun 04, 2018 at 08:57:56AM +0200, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 4.9.106 release.
-> > > > There are 29 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > 
-> > > For v4.9.105-30-ge0f8632 (4.9.106-rc1-00030-ge0f8632):
-> > > 
-> > > Build results:
-> > > 	total: 148 pass: 148 fail: 0
-> > > Qemu test results:
-> > > 	total: 139 pass: 137 fail: 2
-> > > Failed tests: 
-> > > 	mips64:malta_defconfig:nosmp
-> > > 	mips64:malta_defconfig:smp
-> > > 
-> > > Qemu tests fail with:
-> > > 
-> > > This architecture does not have kernel memory protection.
-> > > random: fast init done
-> > > Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
-> > > 
-> > > ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000a
-> > > 
-> > > While tracking this down, I found commit 4e4636cf981b ("objtool: Enclose
-> > > contents of unreachable() macro in a block"), which says "... Guenter Roeck
-> > > reported a boot failure in mips64 ...". Go figure. Applying commit
-> > > 4e4636cf981b on top of v4.9.106-rc1 indeed fixes the problem.
-> > > 
-> > 
-> > An additional note: It appears that neither 009615ab7fd4 ("USB: serial: cp210x:
-> > use tcflag_t to fix incompatible pointer type") nor 0fde7ad71ee3 ("sparc64: Fix
-> > build warnings with gcc 7") made it into v4.9.106-rc1, even though you mentioned
-> > that they did, or at least I think you did. What happened ?
-> 
-> I "switched" trees for 4.9 for this release.  Those patches are still in
-> a queue, but I wanted to have this release only be about the objtool
-> changes to make it easier to narrow down any potential issues.  I'll do
-> a new 4.9 release after this one with those patches in it.
-> 
-
-NP. I just sent you a couple of additional gcc releated patches. Hope this will
-be the final set.
-
-Thanks,
-Guenter
+On 06/04/2018 07:37 PM, Boris Ostrovsky wrote:
+> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>> diff --git a/include/xen/mem-reservation.h b/include/xen/mem-reservation.h
+>> new file mode 100644
+>> index 000000000000..a727d65a1e61
+>> --- /dev/null
+>> +++ b/include/xen/mem-reservation.h
+>> @@ -0,0 +1,65 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +/*
+>> + * Xen memory reservation utilities.
+>> + *
+>> + * Copyright (c) 2003, B Dragovic
+>> + * Copyright (c) 2003-2004, M Williamson, K Fraser
+>> + * Copyright (c) 2005 Dan M. Smith, IBM Corporation
+>> + * Copyright (c) 2010 Daniel Kiper
+>> + * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+>> + */
+>> +
+>> +#ifndef _XENMEM_RESERVATION_H
+>> +#define _XENMEM_RESERVATION_H
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include <asm/xen/hypercall.h>
+>> +#include <asm/tlb.h>
+>> +
+>> +#include <xen/interface/memory.h>
+>> +#include <xen/page.h>
+>> +
+>> +#ifdef CONFIG_XEN_SCRUB_PAGES
+>> +void xenmem_reservation_scrub_page(struct page *page);
+>> +#else
+>> +static inline void xenmem_reservation_scrub_page(struct page *page)
+>> +{
+>> +}
+>> +#endif
+>
+> Given that this is a wrapper around a single call I'd prefer
+>
+> inline void xenmem_reservation_scrub_page(struct page *page)
+> {
+> #ifdef CONFIG_XEN_SCRUB_PAGES
+>      clear_highpage(page);
+> #endif
+> }
+>
+Ok, will change
+>
+> -boris
+>
+>
+Thank you,
+Oleksandr
