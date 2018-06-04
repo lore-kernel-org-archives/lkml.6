@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753026AbeFDHBj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:01:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54134 "EHLO mail.kernel.org"
+        id S1753070AbeFDHBu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:01:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752978AbeFDHBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:01:36 -0400
+        id S1753029AbeFDHBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:01:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 30/52] kbuild: clang: disable unused variable warnings only when constant
-Date: Mon,  4 Jun 2018 08:58:25 +0200
-Message-Id: <20180604065607.775425030@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
+        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 33/52] iio:buffer: make length types match kfifo types
+Date: Mon,  4 Jun 2018 08:58:28 +0200
+Message-Id: <20180604065607.894763050@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -30,48 +29,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sodagudi Prasad <psodagud@codeaurora.org>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit 0a5f41767444cc3b4fc5573921ab914b4f78baaa upstream.
+commit c043ec1ca5baae63726aae32abbe003192bc6eec upstream.
 
-Currently, GCC disables -Wunused-const-variable, but not
--Wunused-variable, so warns unused variables if they are
-non-constant.
+Currently, we use int for buffer length and bytes_per_datum. However,
+kfifo uses unsigned int for length and size_t for element size. We need
+to make sure these matches or we will have bugs related to overflow (in
+the range between INT_MAX and UINT_MAX for length, for example).
 
-While, Clang does not warn unused variables at all regardless of
-the const qualifier because -Wno-unused-const-variable is implied
-by the stronger option -Wno-unused-variable.
+In addition, set_bytes_per_datum uses size_t while bytes_per_datum is an
+int, which would cause bugs for large values of bytes_per_datum.
 
-Disable -Wunused-const-variable instead of -Wunused-variable so that
-GCC and Clang work in the same way.
+Change buffer length to use unsigned int and bytes_per_datum to use
+size_t.
 
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Makefile |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/iio/buffer/industrialio-buffer-dma.c |    2 +-
+ drivers/iio/buffer/kfifo_buf.c               |    4 ++--
+ include/linux/iio/buffer_impl.h              |    6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -706,7 +706,6 @@ KBUILD_CFLAGS += $(stackp-flag)
+--- a/drivers/iio/buffer/industrialio-buffer-dma.c
++++ b/drivers/iio/buffer/industrialio-buffer-dma.c
+@@ -587,7 +587,7 @@ EXPORT_SYMBOL_GPL(iio_dma_buffer_set_byt
+  * Should be used as the set_length callback for iio_buffer_access_ops
+  * struct for DMA buffers.
+  */
+-int iio_dma_buffer_set_length(struct iio_buffer *buffer, int length)
++int iio_dma_buffer_set_length(struct iio_buffer *buffer, unsigned int length)
+ {
+ 	/* Avoid an invalid state */
+ 	if (length < 2)
+--- a/drivers/iio/buffer/kfifo_buf.c
++++ b/drivers/iio/buffer/kfifo_buf.c
+@@ -22,7 +22,7 @@ struct iio_kfifo {
+ #define iio_to_kfifo(r) container_of(r, struct iio_kfifo, buffer)
  
- ifeq ($(cc-name),clang)
- KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
--KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
- KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
-@@ -724,9 +723,9 @@ else
- # These warnings generated too much noise in a regular build.
- # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
- KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
--KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
- endif
+ static inline int __iio_allocate_kfifo(struct iio_kfifo *buf,
+-				int bytes_per_datum, int length)
++			size_t bytes_per_datum, unsigned int length)
+ {
+ 	if ((length == 0) || (bytes_per_datum == 0))
+ 		return -EINVAL;
+@@ -67,7 +67,7 @@ static int iio_set_bytes_per_datum_kfifo
+ 	return 0;
+ }
  
-+KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
- ifdef CONFIG_FRAME_POINTER
- KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
- else
+-static int iio_set_length_kfifo(struct iio_buffer *r, int length)
++static int iio_set_length_kfifo(struct iio_buffer *r, unsigned int length)
+ {
+ 	/* Avoid an invalid state */
+ 	if (length < 2)
+--- a/include/linux/iio/buffer_impl.h
++++ b/include/linux/iio/buffer_impl.h
+@@ -53,7 +53,7 @@ struct iio_buffer_access_funcs {
+ 	int (*request_update)(struct iio_buffer *buffer);
+ 
+ 	int (*set_bytes_per_datum)(struct iio_buffer *buffer, size_t bpd);
+-	int (*set_length)(struct iio_buffer *buffer, int length);
++	int (*set_length)(struct iio_buffer *buffer, unsigned int length);
+ 
+ 	int (*enable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
+ 	int (*disable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
+@@ -72,10 +72,10 @@ struct iio_buffer_access_funcs {
+  */
+ struct iio_buffer {
+ 	/** @length: Number of datums in buffer. */
+-	int length;
++	unsigned int length;
+ 
+ 	/**  @bytes_per_datum: Size of individual datum including timestamp. */
+-	int bytes_per_datum;
++	size_t bytes_per_datum;
+ 
+ 	/**
+ 	 * @access: Buffer access functions associated with the
