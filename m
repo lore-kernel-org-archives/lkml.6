@@ -1,50 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753974AbeFDHQN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:16:13 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:35498 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751942AbeFDHQK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:16:10 -0400
-X-Google-Smtp-Source: ADUXVKII5WJLkKJ4o03aywhbDvTv3z/6hYz0/pSVGo+PDgumXdhi5e9XHhEtr2e1PdFb0C4Z2d2axgFI9eLoClNC2hw=
+        id S1753865AbeFDHQE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:16:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753598AbeFDHDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:03:47 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Johannes Hirte <johannes.hirte@datenkhaos.de>,
+        Borislav Petkov <bp@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Yazen Ghannam <yazen.ghannam@amd.com>
+Subject: [PATCH 4.16 07/47] x86/MCE/AMD: Cache SMCA MISC block addresses
+Date: Mon,  4 Jun 2018 08:58:19 +0200
+Message-Id: <20180604065549.794683686@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
+References: <20180604065549.468488465@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Jun 2018 09:16:07 +0200
-X-Google-Sender-Auth: _42qT7C4okUrV3Vyo26gxfAefoQ
-Message-ID: <CAMuHMdX0Z9hEtuhnW1G-Si5mREM-JP5UTOqvjji9W00Pr1hKyw@mail.gmail.com>
-Subject: Re: [PATCH v3 01/10] mfd: da9063: Fix failpath in core
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> In case mfd_add_devices() fails, da9063_irq_exit() is not called to
-> undo the IRQchip setup done by da9063_irq_init(). Fix this by adding
-> the missing fail path.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+------------------
 
-Gr{oetje,eeting}s,
+From: Borislav Petkov <bp@suse.de>
 
-                        Geert
+commit 78ce241099bb363b19dbd0245442e66c8de8f567 upstream.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+... into a global, two-dimensional array and service subsequent reads from
+that cache to avoid rdmsr_on_cpu() calls during CPU hotplug (IPIs with IRQs
+disabled).
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+In addition, this fixes a KASAN slab-out-of-bounds read due to wrong usage
+of the bank->blocks pointer.
+
+Fixes: 27bd59502702 ("x86/mce/AMD: Get address from already initialized block")
+Reported-by: Johannes Hirte <johannes.hirte@datenkhaos.de>
+Tested-by: Johannes Hirte <johannes.hirte@datenkhaos.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Link: http://lkml.kernel.org/r/20180414004230.GA2033@probook
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c |   29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
+
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -94,6 +94,11 @@ static struct smca_bank_name smca_names[
+ 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
+ };
+ 
++static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
++{
++	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
++};
++
+ const char *smca_get_name(enum smca_bank_types t)
+ {
+ 	if (t >= N_SMCA_BANK_TYPES)
+@@ -443,20 +448,26 @@ static u32 smca_get_block_address(unsign
+ 	if (!block)
+ 		return MSR_AMD64_SMCA_MCx_MISC(bank);
+ 
++	/* Check our cache first: */
++	if (smca_bank_addrs[bank][block] != -1)
++		return smca_bank_addrs[bank][block];
++
+ 	/*
+ 	 * For SMCA enabled processors, BLKPTR field of the first MISC register
+ 	 * (MCx_MISC0) indicates presence of additional MISC regs set (MISC1-4).
+ 	 */
+ 	if (rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_CONFIG(bank), &low, &high))
+-		return addr;
++		goto out;
+ 
+ 	if (!(low & MCI_CONFIG_MCAX))
+-		return addr;
++		goto out;
+ 
+ 	if (!rdmsr_safe_on_cpu(cpu, MSR_AMD64_SMCA_MCx_MISC(bank), &low, &high) &&
+ 	    (low & MASK_BLKPTR_LO))
+-		return MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
++		addr = MSR_AMD64_SMCA_MCx_MISCy(bank, block - 1);
+ 
++out:
++	smca_bank_addrs[bank][block] = addr;
+ 	return addr;
+ }
+ 
+@@ -468,18 +479,6 @@ static u32 get_block_address(unsigned in
+ 	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
+ 		return addr;
+ 
+-	/* Get address from already initialized block. */
+-	if (per_cpu(threshold_banks, cpu)) {
+-		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
+-
+-		if (bankp && bankp->blocks) {
+-			struct threshold_block *blockp = &bankp->blocks[block];
+-
+-			if (blockp)
+-				return blockp->address;
+-		}
+-	}
+-
+ 	if (mce_flags.smca)
+ 		return smca_get_block_address(cpu, bank, block);
+ 
