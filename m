@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752661AbeFDHA1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:00:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53250 "EHLO mail.kernel.org"
+        id S1752705AbeFDHAh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:00:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751597AbeFDHAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:00:25 -0400
+        id S1750899AbeFDHAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:00:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Ivan Kalvachev <ikalvachev@gmail.com>,
-        "Huang, Ying" <ying.huang@intel.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 02/52] mm: fix the NULL mapping case in __isolate_lru_page()
-Date: Mon,  4 Jun 2018 08:57:57 +0200
-Message-Id: <20180604065606.633831004@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 05/52] objtool: Detect RIP-relative switch table references
+Date: Mon,  4 Jun 2018 08:58:00 +0200
+Message-Id: <20180604065606.756161664@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065606.532044490@linuxfoundation.org>
 References: <20180604065606.532044490@linuxfoundation.org>
@@ -34,45 +32,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hugh Dickins <hughd@google.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 145e1a71e090575c74969e3daa8136d1e5b99fc8 upstream.
+commit 6f5ec2993b1f39aed12fa6fd56e8dc2272ee8a33 upstream.
 
-George Boole would have noticed a slight error in 4.16 commit
-69d763fc6d3a ("mm: pin address_space before dereferencing it while
-isolating an LRU page").  Fix it, to match both the comment above it,
-and the original behaviour.
+Typically a switch table can be found by detecting a .rodata access
+followed an indirect jump:
 
-Although anonymous pages are not marked PageDirty at first, we have an
-old habit of calling SetPageDirty when a page is removed from swap
-cache: so there's a category of ex-swap pages that are easily
-migratable, but were inadvertently excluded from compaction's async
-migration in 4.16.
+    1969:	4a 8b 0c e5 00 00 00 	mov    0x0(,%r12,8),%rcx
+    1970:	00
+			196d: R_X86_64_32S	.rodata+0x438
+    1971:	e9 00 00 00 00       	jmpq   1976 <dispc_runtime_suspend+0xb6a>
+			1972: R_X86_64_PC32	__x86_indirect_thunk_rcx-0x4
 
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1805302014001.12558@eggly.anvils
-Fixes: 69d763fc6d3a ("mm: pin address_space before dereferencing it while isolating an LRU page")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Reported-by:  Ivan Kalvachev <ikalvachev@gmail.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Randy Dunlap reported a case (seen with GCC 4.8) where the .rodata
+access uses RIP-relative addressing:
+
+    19bd:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 19c4 <dispc_runtime_suspend+0xbb8>
+			19c0: R_X86_64_PC32	.rodata+0x45c
+    19c4:	e9 00 00 00 00       	jmpq   19c9 <dispc_runtime_suspend+0xbbd>
+			19c5: R_X86_64_PC32	__x86_indirect_thunk_rdi-0x4
+
+In this case the relocation addend needs to be adjusted accordingly in
+order to find the location of the switch table.
+
+The fix is for case 3 (as described in the comments), but also make the
+existing case 1 & 2 checks more precise by only adjusting the addend for
+R_X86_64_PC32 relocations.
+
+This fixes the following warnings:
+
+  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
+  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/objtool/check.c |   33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1451,7 +1451,7 @@ int __isolate_lru_page(struct page *page
- 				return ret;
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -898,24 +898,24 @@ static struct rela *find_switch_table(st
+ {
+ 	struct rela *text_rela, *rodata_rela;
+ 	struct instruction *orig_insn = insn;
++	unsigned long table_offset;
  
- 			mapping = page_mapping(page);
--			migrate_dirty = mapping && mapping->a_ops->migratepage;
-+			migrate_dirty = !mapping || mapping->a_ops->migratepage;
- 			unlock_page(page);
- 			if (!migrate_dirty)
- 				return ret;
++	/* case 1 & 2 */
+ 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
+ 	if (text_rela && text_rela->sym == file->rodata->sym &&
+ 	    !find_symbol_containing(file->rodata, text_rela->addend)) {
+ 
+-		/* case 1 */
+-		rodata_rela = find_rela_by_dest(file->rodata,
+-						text_rela->addend);
+-		if (rodata_rela)
+-			return rodata_rela;
++		table_offset = text_rela->addend;
++		if (text_rela->type == R_X86_64_PC32) {
++			/* case 2 */
++			table_offset += 4;
++			file->ignore_unreachables = true;
++		}
+ 
+-		/* case 2 */
+-		rodata_rela = find_rela_by_dest(file->rodata,
+-						text_rela->addend + 4);
++		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
+ 		if (!rodata_rela)
+ 			return NULL;
+ 
+-		file->ignore_unreachables = true;
+ 		return rodata_rela;
+ 	}
+ 
+@@ -949,18 +949,21 @@ static struct rela *find_switch_table(st
+ 		if (!text_rela || text_rela->sym != file->rodata->sym)
+ 			continue;
+ 
++		table_offset = text_rela->addend;
++		if (text_rela->type == R_X86_64_PC32)
++			table_offset += 4;
++
+ 		/*
+ 		 * Make sure the .rodata address isn't associated with a
+ 		 * symbol.  gcc jump tables are anonymous data.
+ 		 */
+-		if (find_symbol_containing(file->rodata, text_rela->addend))
++		if (find_symbol_containing(file->rodata, table_offset))
+ 			continue;
+ 
+-		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
+-		if (!rodata_rela)
+-			continue;
+-
+-		return rodata_rela;
++		/* mov [rodata addr], %reg */
++		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
++		if (rodata_rela)
++			return rodata_rela;
+ 	}
+ 
+ 	return NULL;
