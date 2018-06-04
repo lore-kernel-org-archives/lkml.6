@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753911AbeFDHFI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 03:05:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57154 "EHLO mail.kernel.org"
+        id S1753943AbeFDHFP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 03:05:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753903AbeFDHFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 03:05:03 -0400
+        id S1753929AbeFDHFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 03:05:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
-        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.16 27/47] iio:buffer: make length types match kfifo types
-Date: Mon,  4 Jun 2018 08:58:39 +0200
-Message-Id: <20180604065550.621777181@linuxfoundation.org>
+        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.16 20/47] nvme: fix extended data LBA supported setting
+Date: Mon,  4 Jun 2018 08:58:32 +0200
+Message-Id: <20180604065550.343547377@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
 References: <20180604065549.468488465@linuxfoundation.org>
@@ -29,84 +29,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Max Gurtovoy <maxg@mellanox.com>
 
-commit c043ec1ca5baae63726aae32abbe003192bc6eec upstream.
+commit c97f414c54a255f4f05a50a2625efaeee406e134 upstream.
 
-Currently, we use int for buffer length and bytes_per_datum. However,
-kfifo uses unsigned int for length and size_t for element size. We need
-to make sure these matches or we will have bugs related to overflow (in
-the range between INT_MAX and UINT_MAX for length, for example).
+This value depands on the metadata support value, so reorder the
+initialization to fit.
 
-In addition, set_bytes_per_datum uses size_t while bytes_per_datum is an
-int, which would cause bugs for large values of bytes_per_datum.
-
-Change buffer length to use unsigned int and bytes_per_datum to use
-size_t.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: b5be3b392 ("nvme: always unregister the integrity profile in __nvme_revalidate_disk")
+Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/buffer/industrialio-buffer-dma.c |    2 +-
- drivers/iio/buffer/kfifo_buf.c               |    4 ++--
- include/linux/iio/buffer_impl.h              |    6 +++---
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/nvme/host/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iio/buffer/industrialio-buffer-dma.c
-+++ b/drivers/iio/buffer/industrialio-buffer-dma.c
-@@ -587,7 +587,7 @@ EXPORT_SYMBOL_GPL(iio_dma_buffer_set_byt
-  * Should be used as the set_length callback for iio_buffer_access_ops
-  * struct for DMA buffers.
-  */
--int iio_dma_buffer_set_length(struct iio_buffer *buffer, int length)
-+int iio_dma_buffer_set_length(struct iio_buffer *buffer, unsigned int length)
- {
- 	/* Avoid an invalid state */
- 	if (length < 2)
---- a/drivers/iio/buffer/kfifo_buf.c
-+++ b/drivers/iio/buffer/kfifo_buf.c
-@@ -22,7 +22,7 @@ struct iio_kfifo {
- #define iio_to_kfifo(r) container_of(r, struct iio_kfifo, buffer)
- 
- static inline int __iio_allocate_kfifo(struct iio_kfifo *buf,
--				int bytes_per_datum, int length)
-+			size_t bytes_per_datum, unsigned int length)
- {
- 	if ((length == 0) || (bytes_per_datum == 0))
- 		return -EINVAL;
-@@ -67,7 +67,7 @@ static int iio_set_bytes_per_datum_kfifo
- 	return 0;
- }
- 
--static int iio_set_length_kfifo(struct iio_buffer *r, int length)
-+static int iio_set_length_kfifo(struct iio_buffer *r, unsigned int length)
- {
- 	/* Avoid an invalid state */
- 	if (length < 2)
---- a/include/linux/iio/buffer_impl.h
-+++ b/include/linux/iio/buffer_impl.h
-@@ -53,7 +53,7 @@ struct iio_buffer_access_funcs {
- 	int (*request_update)(struct iio_buffer *buffer);
- 
- 	int (*set_bytes_per_datum)(struct iio_buffer *buffer, size_t bpd);
--	int (*set_length)(struct iio_buffer *buffer, int length);
-+	int (*set_length)(struct iio_buffer *buffer, unsigned int length);
- 
- 	int (*enable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
- 	int (*disable)(struct iio_buffer *buffer, struct iio_dev *indio_dev);
-@@ -72,10 +72,10 @@ struct iio_buffer_access_funcs {
-  */
- struct iio_buffer {
- 	/** @length: Number of datums in buffer. */
--	int length;
-+	unsigned int length;
- 
- 	/**  @bytes_per_datum: Size of individual datum including timestamp. */
--	int bytes_per_datum;
-+	size_t bytes_per_datum;
- 
- 	/**
- 	 * @access: Buffer access functions associated with the
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1446,8 +1446,8 @@ static void __nvme_revalidate_disk(struc
+ 	if (ns->lba_shift == 0)
+ 		ns->lba_shift = 9;
+ 	ns->noiob = le16_to_cpu(id->noiob);
+-	ns->ext = ns->ms && (id->flbas & NVME_NS_FLBAS_META_EXT);
+ 	ns->ms = le16_to_cpu(id->lbaf[id->flbas & NVME_NS_FLBAS_LBA_MASK].ms);
++	ns->ext = ns->ms && (id->flbas & NVME_NS_FLBAS_META_EXT);
+ 	/* the PI implementation requires metadata equal t10 pi tuple size */
+ 	if (ns->ms == sizeof(struct t10_pi_tuple))
+ 		ns->pi_type = id->dps & NVME_NS_DPS_PI_MASK;
