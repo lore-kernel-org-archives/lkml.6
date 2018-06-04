@@ -1,98 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752578AbeFDMUN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 08:20:13 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44321 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750868AbeFDMUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 08:20:11 -0400
-Subject: Re: [PATCH 5/7] iommu/dma: add support for non-strict mode
-To: kbuild test robot <lkp@intel.com>
-References: <1527752569-18020-6-git-send-email-thunder.leizhen@huawei.com>
- <201806020106.eRUp2Ehc%fengguang.wu@intel.com>
-CC: <kbuild-all@01.org>, Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
-        linux-mediatek <linux-mediatek@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>, Libin <huawei.libin@huawei.com>,
-        Guozhu Li <liguozhu@hisilicon.com>, Xinwei Hu <huxinwei@huawei.com>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5B152E4D.4040205@huawei.com>
-Date: Mon, 4 Jun 2018 20:19:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1752683AbeFDMVi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 08:21:38 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54277 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752543AbeFDMVg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 08:21:36 -0400
+X-Google-Smtp-Source: ADUXVKLqb0X826UAhiDcJGosDI9ddMwP6FzeRa8gVEhKQg0nsWezyskRFtFQPNFf/vDR39oCRSiA9Q==
+Date: Mon, 4 Jun 2018 14:21:32 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] x86/asm changes for v4.18
+Message-ID: <20180604122132.GA3337@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <201806020106.eRUp2Ehc%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
+
+Please pull the latest x86-asm-for-linus git tree from:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-for-linus
+
+   # HEAD: 6469a0ee0a06b2ea1f5afbb1d5a3feed017d4c7a x86/io: Define readq()/writeq() to use 64-bit type
+
+Two smaller changes:
+
+ - better support (non-atomic) 64-bit readq()/writeq() variants (Andy Shevchenko)
+
+ - __clear_user() micro-optimization (Alexey Dobriyan)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Alexey Dobriyan (1):
+      x86/asm/64: Micro-optimize __clear_user() - Use immediate constants
+
+Andy Shevchenko (1):
+      x86/io: Define readq()/writeq() to use 64-bit type
 
 
-On 2018/6/2 1:51, kbuild test robot wrote:
-> Hi Zhen,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v4.17-rc7 next-20180601]
-> [cannot apply to iommu/next]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Zhen-Lei/add-non-strict-mode-support-for-arm-smmu-v3/20180602-000418
-> config: x86_64-randconfig-x008-201821 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers//iommu/amd_iommu.c: In function 'amd_iommu_capable':
->>> drivers//iommu/amd_iommu.c:3053:2: warning: enumeration value 'IOMMU_CAP_NON_STRICT' not handled in switch [-Wswitch]
->      switch (cap) {
->      ^~~~~~
-> 
-> vim +/IOMMU_CAP_NON_STRICT +3053 drivers//iommu/amd_iommu.c
-> 
-> 645c4c8d arch/x86/kernel/amd_iommu.c Joerg Roedel 2008-12-02  3050  
-> ab636481 drivers/iommu/amd_iommu.c   Joerg Roedel 2014-09-05  3051  static bool amd_iommu_capable(enum iommu_cap cap)
-> dbb9fd86 arch/x86/kernel/amd_iommu.c Sheng Yang   2009-03-18  3052  {
-> 80a506b8 arch/x86/kernel/amd_iommu.c Joerg Roedel 2010-07-27 @3053  	switch (cap) {
-> 80a506b8 arch/x86/kernel/amd_iommu.c Joerg Roedel 2010-07-27  3054  	case IOMMU_CAP_CACHE_COHERENCY:
-> ab636481 drivers/iommu/amd_iommu.c   Joerg Roedel 2014-09-05  3055  		return true;
-> bdddadcb drivers/iommu/amd_iommu.c   Joerg Roedel 2012-07-02  3056  	case IOMMU_CAP_INTR_REMAP:
-> ab636481 drivers/iommu/amd_iommu.c   Joerg Roedel 2014-09-05  3057  		return (irq_remapping_enabled == 1);
-> cfdeec22 drivers/iommu/amd_iommu.c   Will Deacon  2014-10-27  3058  	case IOMMU_CAP_NOEXEC:
-It seems that it's better to change this to 'default'.
+ arch/x86/include/asm/io.h  | 8 ++++----
+ arch/x86/lib/usercopy_64.c | 9 ++++-----
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
-> cfdeec22 drivers/iommu/amd_iommu.c   Will Deacon  2014-10-27  3059  		return false;
-> 80a506b8 arch/x86/kernel/amd_iommu.c Joerg Roedel 2010-07-27  3060  	}
-> 80a506b8 arch/x86/kernel/amd_iommu.c Joerg Roedel 2010-07-27  3061  
-> ab636481 drivers/iommu/amd_iommu.c   Joerg Roedel 2014-09-05  3062  	return false;
-> dbb9fd86 arch/x86/kernel/amd_iommu.c Sheng Yang   2009-03-18  3063  }
-> dbb9fd86 arch/x86/kernel/amd_iommu.c Sheng Yang   2009-03-18  3064  
-> 
-> :::::: The code at line 3053 was first introduced by commit
-> :::::: 80a506b8fdcfa868bb53eb740f928217d0966fc1 x86/amd-iommu: Export cache-coherency capability
-> 
-> :::::: TO: Joerg Roedel <joerg.roedel@amd.com>
-> :::::: CC: Joerg Roedel <joerg.roedel@amd.com>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-> 
-
--- 
-Thanks!
-BestRegards
+diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
+index f6e5b9375d8c..6de64840dd22 100644
+--- a/arch/x86/include/asm/io.h
++++ b/arch/x86/include/asm/io.h
+@@ -94,10 +94,10 @@ build_mmio_write(__writel, "l", unsigned int, "r", )
+ 
+ #ifdef CONFIG_X86_64
+ 
+-build_mmio_read(readq, "q", unsigned long, "=r", :"memory")
+-build_mmio_read(__readq, "q", unsigned long, "=r", )
+-build_mmio_write(writeq, "q", unsigned long, "r", :"memory")
+-build_mmio_write(__writeq, "q", unsigned long, "r", )
++build_mmio_read(readq, "q", u64, "=r", :"memory")
++build_mmio_read(__readq, "q", u64, "=r", )
++build_mmio_write(writeq, "q", u64, "r", :"memory")
++build_mmio_write(__writeq, "q", u64, "r", )
+ 
+ #define readq_relaxed(a)	__readq(a)
+ #define writeq_relaxed(v, a)	__writeq(v, a)
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index 75d3776123cc..a624dcc4de10 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -23,13 +23,13 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
+ 	asm volatile(
+ 		"	testq  %[size8],%[size8]\n"
+ 		"	jz     4f\n"
+-		"0:	movq %[zero],(%[dst])\n"
+-		"	addq   %[eight],%[dst]\n"
++		"0:	movq $0,(%[dst])\n"
++		"	addq   $8,%[dst]\n"
+ 		"	decl %%ecx ; jnz   0b\n"
+ 		"4:	movq  %[size1],%%rcx\n"
+ 		"	testl %%ecx,%%ecx\n"
+ 		"	jz     2f\n"
+-		"1:	movb   %b[zero],(%[dst])\n"
++		"1:	movb   $0,(%[dst])\n"
+ 		"	incq   %[dst]\n"
+ 		"	decl %%ecx ; jnz  1b\n"
+ 		"2:\n"
+@@ -40,8 +40,7 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
+ 		_ASM_EXTABLE(0b,3b)
+ 		_ASM_EXTABLE(1b,2b)
+ 		: [size8] "=&c"(size), [dst] "=&D" (__d0)
+-		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr),
+-		  [zero] "r" (0UL), [eight] "r" (8UL));
++		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr));
+ 	clac();
+ 	return size;
+ }
