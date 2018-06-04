@@ -1,57 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751508AbeFDVCQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:02:16 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:47383 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751093AbeFDVCN (ORCPT
+        id S1751582AbeFDVCX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:02:23 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:52482 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751093AbeFDVCU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:02:13 -0400
-From: Nadav Amit <namit@vmware.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Nadav Amit <namit@vmware.com>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] usb: fix uvc_alloc_entity() allocation alignment
-Date: Mon, 4 Jun 2018 06:47:13 -0700
-Message-ID: <20180604134713.101064-1-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 4 Jun 2018 17:02:20 -0400
+Date: Mon, 04 Jun 2018 17:02:18 -0400 (EDT)
+Message-Id: <20180604.170218.217162049102812570.davem@davemloft.net>
+To: rdunlap@infradead.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH] net: skbuff.h: drop unneeded <linux/slab.h>
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <86ee9a53-3136-7a2c-e59a-57d4d078188f@infradead.org>
+References: <86ee9a53-3136-7a2c-e59a-57d4d078188f@infradead.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The use of ALIGN() in uvc_alloc_entity() is incorrect, since the size of
-(entity->pads) is not a power of two. As a stop-gap, until a better
-solution is adapted, use roundup() instead.
+From: Randy Dunlap <rdunlap@infradead.org>
+Date: Sat, 2 Jun 2018 21:40:19 -0700
 
-Found by a static assertion. Compile-tested only.
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> <linux/skbuff.h> does not use nor need <linux/slab.h>, so drop this
+> header file from skbuff.h.
+> 
+> <linux/skbuff.h> is currently #included in around 1200 C source and
+> header files, making it the 31st most-used header file.
+> 
+> Build tested [allmodconfig] on 20 arch-es.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-Fixes: 4ffc2d89f38a ("uvcvideo: Register subdevices for each entity")
-
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- drivers/media/usb/uvc/uvc_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 2469b49b2b30..6b989d41c034 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -909,7 +909,7 @@ static struct uvc_entity *uvc_alloc_entity(u16 type, u8 id,
- 	unsigned int size;
- 	unsigned int i;
- 
--	extra_size = ALIGN(extra_size, sizeof(*entity->pads));
-+	extra_size = roundup(extra_size, sizeof(*entity->pads));
- 	num_inputs = (type & UVC_TERM_OUTPUT) ? num_pads : num_pads - 1;
- 	size = sizeof(*entity) + extra_size + sizeof(*entity->pads) * num_pads
- 	     + num_inputs;
--- 
-2.17.0
+Applied, thanks Randy.
