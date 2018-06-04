@@ -1,90 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751828AbeFDAbJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 3 Jun 2018 20:31:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40691 "EHLO mx2.suse.de"
+        id S1751855AbeFDAbX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 3 Jun 2018 20:31:23 -0400
+Received: from ozlabs.org ([203.11.71.1]:53601 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751780AbeFDAbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Jun 2018 20:31:08 -0400
-From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Mon, 04 Jun 2018 10:30:55 +1000
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tom Herbert <tom@quantonium.net>
-Subject: Re: [PATCH 10/18] rhashtable: remove rhashtable_walk_peek()
-In-Reply-To: <20180602154851.pfy4wryezuhxp76v@gondor.apana.org.au>
-References: <152782754287.30340.4395718227884933670.stgit@noble> <152782824964.30340.6329146982899668633.stgit@noble> <20180602154851.pfy4wryezuhxp76v@gondor.apana.org.au>
-Message-ID: <87y3fvpf40.fsf@notabene.neil.brown.name>
+        id S1751780AbeFDAbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Jun 2018 20:31:21 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 4 Jun 2018 10:31:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: linux-next: manual merge of the overlayfs tree with Linus' tree
+Message-ID: <20180604103042.43fe18fe@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ObuA55/wXhkXoZl=D3CUkEq"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+--Sig_/ObuA55/wXhkXoZl=D3CUkEq
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 02 2018, Herbert Xu wrote:
+Hi Miklos,
 
-> On Fri, Jun 01, 2018 at 02:44:09PM +1000, NeilBrown wrote:
->> This function has a somewhat confused behavior that is not properly
->> described by the documentation.
->> Sometimes is returns the previous object, sometimes it returns the
->> next one.
->> Sometimes it changes the iterator, sometimes it doesn't.
->>=20
->> This function is not currently used and is not worth keeping, so
->> remove it.
->>=20
->> A future patch will introduce a new function with a
->> simpler interface which can meet the same need that
->> this was added for.
->>=20
->> Signed-off-by: NeilBrown <neilb@suse.com>
->
-> Please keep Tom Herbert in the loop.  IIRC he had an issue with
-> this patch.
+Today's linux-next merge of the overlayfs tree got a conflict in:
 
-Yes you are right - sorry for forgetting to add Tom.
+  fs/open.c
 
-My understanding of where this issue stands is that Tom raised issue and
-asked for clarification, I replied, nothing further happened.
+between commit:
 
-It summary, my position is that:
-=2D most users of my new rhashtable_walk_prev() will use it like
-   rhasthable_talk_prev() ?: rhashtable_walk_next()
-  which is close to what rhashtable_walk_peek() does
-=2D I know of no use-case that could not be solved if we only had
-  the combined operation
-=2D BUT it is hard to document the combined operation, as it really
-  does two things.  If it is hard to document, then it might be
-  hard to understand.
+  af04fadcaa93 ("Revert "fs: fold open_check_o_direct into do_dentry_open"")
 
-So provide the most understandable/maintainable solution, I think
-we should provide rhashtable_walk_prev() as a separate interface.
+from Linus' tree and commit:
 
-Thanks,
-NeilBronw
+  e0e3f7de6435 ("vfs: simplify dentry_open()")
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+from the overlayfs tree.
+
+I have no idea how to fix this up ... so I just used the overlayfs
+version for now.  I assume that this will need more work before being
+merged into Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ObuA55/wXhkXoZl=D3CUkEq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsUiD8ACgkQOeye3VZi
-gbkffBAAlSQ2AhyyzxieA7FU8JyJKigEVXGXQpyCiyw0MQDhORq3h6ee59N0/28f
-bZ3m07NlDO4TsII2CElhdQ2nwR51QCy+id8gnV2w2wr1c//9ksiUbCY44o7stdiz
-u3ktzUNE/qEwD0qthP3qYMI480qFP22rdV8Oeo3XkV9kpl2C6uD3iu/81ntqxcJ3
-XIHGwoTZTXlEUro93nitLfNc8pg7VJZSv4MJFLvFGwGP8r0WCXA1RCGg+wAGUDPN
-6f6ir7NMio/2CplRtPL6ro1PSeggK9+DmKPdsgwIblFqtaZCvJotEwyU1FUODQOg
-5HNQhIjn6ggLEWggYXEs9N0JEdCwq4ZyzDZI2D3iWmHVj29XReUQogLfGHFTbIGG
-OBY1WbMPbo5QdReH/8EcPC5ufn+xjXxiQFQouCfZi7Fwzak9VPNir+BQIsi0ZDej
-BbaFimVdgNDX2AIV5DsQbjwcU9eQ22fTyuAOOm3UPpFk3ftpqma9RDhTcaMpoyuN
-ZADrQWFBkoQzjtfvUmil3JEQ6KXK1ocB3MXBste+L3WLt4BWMLDctR73FXxbgPtB
-D49Wdu5mxAbDXzxagLfsb7jjPVvo71ioZP5WDEPJKM/EnJWhcd/F1bka1SpToeJr
-4TkH4e9tOm9KvHETXKVrKw94beD0uN0pJL8pgkeXsLabgdQhjAQ=
-=6adA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUiEgACgkQAVBC80lX
+0Gx/eAf+MVEZvCWUex0LVL9GBbwVQBVfNghccQM4gMc1VMQ5T8TXYpcdn2muQmRP
+8LIH5lB86d52AbtM6EfOiH/g2+0yz1rFehjd5tgM1kZMPR0JB/DsWUlcPAyEHPUQ
+jJlO2cdXVxz5knCTbXLKATQRurPxBsq68xHzDMr0mH1LFS/LspWgDr81spG+3k3T
+w/tCIkXkxL1Sk75nx9GChTCAaVngWcC6yqvw3/uKcJ+zvjTrIVZUcLXqpgrLvar3
+LX81nN6G3xXqbuFDaRlXOz9SNcVnmy8/Xn26R1PqNoSMvOKwSJ97DQ6Wx+HQ/aOm
+cNCZCmmU+bIbGyhqHFOqIoznkiUl/w==
+=XTWb
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--Sig_/ObuA55/wXhkXoZl=D3CUkEq--
