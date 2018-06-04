@@ -1,145 +1,294 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751459AbeFDVTu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 17:19:50 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42204 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751187AbeFDVTs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 17:19:48 -0400
-X-Google-Smtp-Source: ADUXVKLV+R7f5TujJBPnKWboYpkvU/MuWQxKjLfRsKC8A6VGAs+B5dTRo7HOqykqfN9Y+LFb0324og==
-Date: Mon, 4 Jun 2018 14:19:44 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
-        Jason Gerecke <killertofu@gmail.com>,
-        Dennis Kempin <denniskempin@google.com>,
-        Andrew de los Reyes <adlr@google.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
- non-confident touches
-Message-ID: <20180604211944.GE164893@dtor-ws>
-References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
- <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
- <20180601184330.GD222005@dtor-ws>
- <CAO-hwJJPGJzgX+7H1nnpd=OkLZu0q0TuKhvroJ1K3jtnv7t6dg@mail.gmail.com>
- <20180604173339.GB164893@dtor-ws>
- <CAO-hwJ+nzC=i1Jv_yu4vLL6Quw=850HJkOZBKCjFaZaw0-GWOQ@mail.gmail.com>
+        id S1751582AbeFDVWV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 17:22:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751213AbeFDVWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 17:22:19 -0400
+Date: Mon, 4 Jun 2018 14:22:18 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+Cc: "Vinayak Holikatti <vinholikatti@gmail.com>; \"James E.J. Bottomley\"
+        <jejb@linux.vnet.ibm.com>; \"Martin K. Petersen\""
+        <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        "linux-scsi@vger.kernel.org; Manjunath M Bettegowda
+        <manjumb@synopsys.com>; Prabu Thangamuthu <prabut@synopsys.com>; Tejas
+        Joglekar <joglekar@synopsys.com>; Joao Pinto"
+        <Joao.Pinto@synopsys.com>
+Subject: Re: [PATCH 5/5] scsi: ufs: Add hooks in UFS HC driver for crypto
+ support
+Message-ID: <20180604212218.GB72668@jaegeuk-macbookpro.roam.corp.google.com>
+References: <51bd1b68-1ab2-af04-99f4-07e08852c401@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAO-hwJ+nzC=i1Jv_yu4vLL6Quw=850HJkOZBKCjFaZaw0-GWOQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <51bd1b68-1ab2-af04-99f4-07e08852c401@synopsys.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 10:42:31PM +0200, Benjamin Tissoires wrote:
-> On Mon, Jun 4, 2018 at 7:33 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> > On Mon, Jun 04, 2018 at 03:18:12PM +0200, Benjamin Tissoires wrote:
-> >> On Fri, Jun 1, 2018 at 8:43 PM, Dmitry Torokhov
-> >> <dmitry.torokhov@gmail.com> wrote:
-> >> > On Fri, Jun 01, 2018 at 04:16:09PM +0200, Benjamin Tissoires wrote:
-> >> >> On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
-> >> >> <dmitry.torokhov@gmail.com> wrote:
-> >> >> > According to Microsoft specification [1] for Precision Touchpads (and
-> >> >> > Touchscreens) the devices use "confidence" reports to signal accidental
-> >> >> > touches, or contacts that are "too large to be a finger". Instead of
-> >> >> > simply marking contact inactive in this case (which causes issues if
-> >> >> > contact was originally proper and we lost confidence in it later, as
-> >> >> > this results in accidental clicks, drags, etc), let's report such
-> >> >> > contacts as MT_TOOL_PALM and let userspace decide what to do.
-> >> >> > Additionally, let's report contact size for such touches as maximum
-> >> >> > allowed for major/minor, which should help userspace that is not yet
-> >> >> > aware of MT_TOOL_PALM to still perform palm rejection.
-> >> >> >
-> >> >> > An additional complication, is that some firmwares do not report
-> >> >> > non-confident touches as active. To cope with this we delay release of
-> >> >> > such contact (i.e. if contact was active we first report it as still
-> >> >> > active MT+TOOL_PALM and then synthesize the release event in a separate
-> >> >> > frame).
-> >> >>
-> >> >> I am not sure I agree with this part. The spec says that "Once a
-> >> >> device has determined that a contact is unintentional, it should clear
-> >> >> the confidence bit for that contact report and all subsequent
-> >> >> reports."
-> >> >> So in theory the spec says that if a touch has been detected as a
-> >> >> palm, the flow of events should not stop (tested on the PTP of the
-> >> >> Dell XPS 9360).
-> >> >>
-> >> >> However, I interpret a firmware that send (confidence 1, tip switch 1)
-> >> >> and then (confidence 0, tip switch 0) a simple release, and the
-> >> >> confidence bit should not be relayed.
-> >> >
-> >> > This unfortunately leads to false clicks: you start with finger, so
-> >> > confidence is 1, then you transition the same touch to palm (use your
-> >> > thumb and "roll" your hand until heel of it comes into contact with the
-> >> > screen). The firmware reports "no-confidence" and "release" in the same
-> >> > report and userspace seeing release does not pay attention to confidence
-> >> > (i.e. it does exactly "simple release" logic) and this results in UI
-> >> > interpreting this as a click. With splitting no-confidence
-> >> > (MT_TOOL_PALM) and release event into separate frames we help userspace
-> >> > to recognize that the contact should be discarded.
-> >>
-> >> After further thoughts, I would consider this to be a firmware bug,
-> >> and not how the firmware is supposed to be reporting palm.
-> >> For the precision touchpads, the spec says that the device "should
-> >> clear the confidence bit for that contact report and all subsequent
-> >> reports.". And it is how the Dell device I have here reports palms.
-> >> The firmware is not supposed to cut the event stream.
-> >>
-> >> There is a test for that:
-> >> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/hck/dn456905%28v%3dvs.85%29
-> >> which tells me that I am right here for PTP.
-> >>
-> >> The touchscreen spec is blurrier however.
-> >
-> > OK, that is great to know.
-> >
-> >>
-> >> >
-> >> >>
-> >> >> Do you have any precise example of reports where you need that feature?
-> >> >
-> >> > It was observed on Pixelbooks which use Wacom digitizers IIRC.
-> >>
-> >> Pixelbooks + Wacom means that it was likely a touchscreen. I am right
-> >> guessing the device did not went through Microsoft certification
-> >> process?
-> >
-> > That would be correct ;) At least the firmware that is shipping with
-> > Pixlebooks hasn't, I do now if anyone else sourced these Wacom parts for
-> > their MSWin devices.
-> >
-> >>
-> >> I am in favor of splitting the patch in 2. One for the generic
-> >> processing of confidence bit, and one for this spurious release. For
-> >> the spurious release, I'm more in favor of explicitly quirking the
-> >> devices in need of such quirk.
-> >
-> > Hmm, I am not sure about having specific quirk. It will be hard for
-> > users to accurately diagnose the issue if firmware is broken in this way
-> > so we could add a new quirk for a new device.
+Hi Ladvine,
+
+On 05/28, Ladvine D Almeida wrote:
 > 
-> One thing we can do is keep the quirked mechanism as default in
-> hid-multitouch, but remove it in hid-core. If people need the quirk,
-> they can just use hid-multitouch instead (talking about the long run
-> here).
-
-Hmm, I am confused. My patch did not touch hid-core or hid-input, only
-hid-multitouch... So we are already doing what you are proposing?..
-
+> This patch adds the crypto support in the UFS Host Controller
+> driver like allocation of the crypto resources, registration of
+> crypto algorithm, preparing UTRD requests for inline encryption job,
+> freeing the resources during exit stage.
+> The crypto support is enabled in the UFS Host Controller driver only if the
+> crypto capability is detected in the hardware during the init stage.
+> The changes done for the UFS HC crypto support are guarded with
+> CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION.
 > 
-> However, I really believe this might only be required for a handful of
-> devices, and probably only touchscreens. So I would be tempted to not
-> make it default and see how many bug reports we have.
+> Signed-off-by: Ladvine D Almeida <ladvine@synopsys.com>
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 63 ++++++++++++++++++++++++++++++++++++++++++-----
+>  drivers/scsi/ufs/ufshcd.h | 29 ++++++++++++++++++++++
+>  2 files changed, 86 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 00e7905..7bac5a3 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -1839,6 +1839,10 @@ static inline void ufshcd_hba_capabilities(struct ufs_hba *hba)
+>  	hba->nutrs = (hba->capabilities & MASK_TRANSFER_REQUESTS_SLOTS) + 1;
+>  	hba->nutmrs =
+>  	((hba->capabilities & MASK_TASK_MANAGEMENT_REQUEST_SLOTS) >> 16) + 1;
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	/* read crypto capabilities of host controller */
+> +	ufshcd_read_crypto_capabilities(hba);
+> +#endif
+>  }
+>  
+>  /**
+> @@ -2076,7 +2080,7 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+>  {
+>  	struct utp_transfer_req_desc *req_desc = lrbp->utr_descriptor_ptr;
+>  	u32 data_direction;
+> -	u32 dword_0;
+> +	u32 dword_0 = 0;
+>  
+>  	if (cmd_dir == DMA_FROM_DEVICE) {
+>  		data_direction = UTP_DEVICE_TO_HOST;
+> @@ -2094,10 +2098,22 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+>  	if (lrbp->intr_cmd)
+>  		dword_0 |= UTP_REQ_DESC_INT_CMD;
+>  
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+>  	/* Transfer request descriptor header fields */
+> -	req_desc->header.dword_0 = cpu_to_le32(dword_0);
+> -	/* dword_1 is reserved, hence it is set to 0 */
+> +	if (lrbp->ccfg_idx >= 0) {
+> +		dword_0 |= (UTP_REQ_CRYPT_EN_CMD | (lrbp->ccfg_idx & 0xff));
+> +		req_desc->header.dword_1 = lrbp->lba & 0xffffffff;
+> +		req_desc->header.dword_3 = (lrbp->lba >> 32) & 0xffffffff;
 
-Up to you but it is hard to detect for users. If just sometimes there
-are stray clicks...
+Please assign a logical value to DUN. (e.g., inode_number << 32 | page->offset)
+Otherwise upper layers like F2FS won't be able to move any block from one LBA to
+another LBA without the key. We couldn't do upstream tho, it'd be doable to add
+one DUN value in bio structure and manage its sequentiality by disallowing bio
+merges, which looks like requiring to modify ufshcd_prepare_for_crypto().
 
-Thanks.
+Thanks,
 
--- 
-Dmitry
+> +	} else {
+> +		req_desc->header.dword_1 = 0;
+> +		req_desc->header.dword_3 = 0;
+> +	}
+> +#else
+>  	req_desc->header.dword_1 = 0;
+> +	req_desc->header.dword_3 = 0;
+> +#endif
+> +	req_desc->header.dword_0 = cpu_to_le32(dword_0);
+> +
+>  	/*
+>  	 * assigning invalid value for command status. Controller
+>  	 * updates OCS on command completion, with the command
+> @@ -2105,8 +2121,6 @@ static void ufshcd_prepare_req_desc_hdr(struct ufshcd_lrb *lrbp,
+>  	 */
+>  	req_desc->header.dword_2 =
+>  		cpu_to_le32(OCS_INVALID_COMMAND_STATUS);
+> -	/* dword_3 is reserved, hence it is set to 0 */
+> -	req_desc->header.dword_3 = 0;
+>  
+>  	req_desc->prd_table_length = 0;
+>  }
+> @@ -2355,6 +2369,12 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+>  	lrbp->lun = ufshcd_scsi_to_upiu_lun(cmd->device->lun);
+>  	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba) ? true : false;
+>  	lrbp->req_abort_skip = false;
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	lrbp->lba = 0;
+> +	lrbp->ccfg_idx = -1;
+> +	/* prepare block for crypto */
+> +	ufshcd_prepare_for_crypto(hba, lrbp);
+> +#endif
+>  
+>  	ufshcd_comp_scsi_upiu(hba, lrbp);
+>  
+> @@ -3215,6 +3235,7 @@ static inline int ufshcd_read_unit_desc_param(struct ufs_hba *hba,
+>  static int ufshcd_memory_alloc(struct ufs_hba *hba)
+>  {
+>  	size_t utmrdl_size, utrdl_size, ucdl_size;
+> +	int ret = 0;
+>  
+>  	/* Allocate memory for UTP command descriptors */
+>  	ucdl_size = (sizeof(struct utp_transfer_cmd_desc) * hba->nutrs);
+> @@ -3233,6 +3254,7 @@ static int ufshcd_memory_alloc(struct ufs_hba *hba)
+>  	    WARN_ON(hba->ucdl_dma_addr & (PAGE_SIZE - 1))) {
+>  		dev_err(hba->dev,
+>  			"Command Descriptor Memory allocation failed\n");
+> +		ret = -ENOMEM;
+>  		goto out;
+>  	}
+>  
+> @@ -3249,6 +3271,7 @@ static int ufshcd_memory_alloc(struct ufs_hba *hba)
+>  	    WARN_ON(hba->utrdl_dma_addr & (PAGE_SIZE - 1))) {
+>  		dev_err(hba->dev,
+>  			"Transfer Descriptor Memory allocation failed\n");
+> +		ret = -ENOMEM;
+>  		goto out;
+>  	}
+>  
+> @@ -3265,6 +3288,7 @@ static int ufshcd_memory_alloc(struct ufs_hba *hba)
+>  	    WARN_ON(hba->utmrdl_dma_addr & (PAGE_SIZE - 1))) {
+>  		dev_err(hba->dev,
+>  		"Task Management Descriptor Memory allocation failed\n");
+> +		ret = -ENOMEM;
+>  		goto out;
+>  	}
+>  
+> @@ -3274,11 +3298,21 @@ static int ufshcd_memory_alloc(struct ufs_hba *hba)
+>  				GFP_KERNEL);
+>  	if (!hba->lrb) {
+>  		dev_err(hba->dev, "LRB Memory allocation failed\n");
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	/* Allocate memory for crypto operations */
+> +	if (ufshcd_is_encryption_supported(hba))
+> +		ret = ufshcd_crypto_memory_alloc(hba);
+> +	if (ret != 0) {
+> +		dev_err(hba->dev, "Crypto Memory allocation failed\n");
+>  		goto out;
+>  	}
+> +#endif
+>  	return 0;
+>  out:
+> -	return -ENOMEM;
+> +	return ret;
+>  }
+>  
+>  /**
+> @@ -4208,6 +4242,19 @@ static int ufshcd_link_startup(struct ufs_hba *hba)
+>  		goto out;
+>  
+>  	ret = ufshcd_make_hba_operational(hba);
+> +	if (ret)
+> +		goto out;
+> +
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	/* Enable algorithm if crypto capability is present */
+> +	if (ufshcd_is_encryption_supported(hba))
+> +		ret = ufshcd_enable_crypt_alg(hba);
+> +	if (ret) {
+> +		dev_err(hba->dev, "Crypto setup failed (%d)\n",
+> +			ret);
+> +		ret = 0;
+> +	}
+> +#endif
+>  out:
+>  	if (ret) {
+>  		dev_err(hba->dev, "link startup failed %d\n", ret);
+> @@ -7661,6 +7708,10 @@ EXPORT_SYMBOL(ufshcd_shutdown);
+>   */
+>  void ufshcd_remove(struct ufs_hba *hba)
+>  {
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	ufshcd_disable_crypt_alg(hba);
+> +	ufshcd_remove_crypto_memory(hba);
+> +#endif
+>  	ufs_sysfs_remove_nodes(hba->dev);
+>  	scsi_remove_host(hba->host);
+>  	/* disable interrupts */
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 8110dcd..b1356ca 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -68,6 +68,9 @@
+>  
+>  #include "ufs.h"
+>  #include "ufshci.h"
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	#include "ufshcd-crypto.h"
+> +#endif
+>  
+>  #define UFSHCD "ufshcd"
+>  #define UFSHCD_DRIVER_VERSION "0.2"
+> @@ -168,6 +171,8 @@ struct ufs_pm_lvl_states {
+>   * @issue_time_stamp: time stamp for debug purposes
+>   * @compl_time_stamp: time stamp for statistics
+>   * @req_abort_skip: skip request abort task flag
+> + * @lba: LBA value for crypto engine
+> + * @ccfg_idx: key configuration index for crypto engine
+>   */
+>  struct ufshcd_lrb {
+>  	struct utp_transfer_req_desc *utr_descriptor_ptr;
+> @@ -193,6 +198,10 @@ struct ufshcd_lrb {
+>  	ktime_t compl_time_stamp;
+>  
+>  	bool req_abort_skip;
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	u64 lba;
+> +	int ccfg_idx;
+> +#endif
+>  };
+>  
+>  /**
+> @@ -499,6 +508,8 @@ struct ufs_stats {
+>   * @urgent_bkops_lvl: keeps track of urgent bkops level for device
+>   * @is_urgent_bkops_lvl_checked: keeps track if the urgent bkops level for
+>   *  device is known or not.
+> + * @cc: stores the crypto capability information.
+> + * @ccxp: stores the crypto configuration information.
+>   */
+>  struct ufs_hba {
+>  	void __iomem *mmio_base;
+> @@ -683,6 +694,17 @@ struct ufs_hba {
+>  
+>  	struct rw_semaphore clk_scaling_lock;
+>  	struct ufs_desc_size desc_size;
+> +
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +	/*
+> +	 * Thus capability allows the host controller to perform
+> +	 * inline encryption once it is configured.
+> +	 */
+> +#define UFSHCD_CAP_INLINE_ENCRYPTION (1 << 6)
+> +
+> +	struct ufshcd_ccap cc;
+> +	struct ufshcd_x_crypto_cap *ccxp;
+> +#endif
+>  };
+>  
+>  /* Returns true if clocks can be gated. Otherwise false */
+> @@ -717,6 +739,13 @@ return true;
+>  #endif
+>  }
+>  
+> +#ifdef CONFIG_SCSI_UFSHCD_INLINE_ENCRYPTION
+> +static inline int ufshcd_is_encryption_supported(struct ufs_hba *hba)
+> +{
+> +	return hba->caps & UFSHCD_CAP_INLINE_ENCRYPTION;
+> +}
+> +#endif
+> +
+>  #define ufshcd_writel(hba, val, reg)	\
+>  	writel((val), (hba)->mmio_base + (reg))
+>  #define ufshcd_readl(hba, reg)	\
+> -- 
+> 2.7.4
