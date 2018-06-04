@@ -1,163 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeFDXSB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 19:18:01 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42410 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751998AbeFDXRY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 19:17:24 -0400
-X-Google-Smtp-Source: ADUXVKK4YVJ5nlXqAbaixtdWS7BQm5YH4JkRhTnrmMP35f/LF7fEWHM4oiYmQmigj3khpWMrTaScZw==
-Date: Mon, 04 Jun 2018 16:17:22 -0700 (PDT)
-X-Google-Original-Date: Mon, 04 Jun 2018 15:50:06 PDT (-0700)
-Subject: Re: [PATCHv2 15/16] atomics/treewide: make unconditional inc/dec ops optional
-In-Reply-To: <20180529154346.3168-16-mark.rutland@arm.com>
-CC: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        boqun.feng@gmail.com, peterz@infradead.org,
-        Will Deacon <will.deacon@arm.com>
-From: Palmer Dabbelt <palmer@sifive.com>
-To: mark.rutland@arm.com
-Message-ID: <mhng-eab5effb-66ad-4609-b380-c4b0a35c1dd0@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1752124AbeFDXYT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 19:24:19 -0400
+Received: from mga05.intel.com ([192.55.52.43]:50318 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751625AbeFDXYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 19:24:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,477,1520924400";
+   d="scan'208";a="45261480"
+Date: Mon, 4 Jun 2018 17:24:16 -0600
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Mike Snitzer <snitzer@redhat.com>, Toshi Kani <toshi.kani@hpe.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, dm-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.orgw
+Subject: Re: [PATCH v2 5/7] dm: remove DM_TYPE_DAX_BIO_BASED dm_queue_mode
+Message-ID: <20180604232416.GB10666@linux.intel.com>
+Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Mike Snitzer <snitzer@redhat.com>, Toshi Kani <toshi.kani@hpe.com>,
+        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-xfs@vger.kernel.orgw
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-6-ross.zwisler@linux.intel.com>
+ <20180601220443.GB18712@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601220443.GB18712@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 May 2018 08:43:45 PDT (-0700), mark.rutland@arm.com wrote:
-> Many of the inc/dec ops are mandatory, but for most architectures inc/dec are
-> simply trivial wrappers around their corresponding add/sub ops.
->
-> Let's make all the inc/dec ops optional, so that we can get rid of these
-> boilerplate wrappers.
->
-> The instrumented atomics are updated accordingly.
->
-> There should be no functional change as a result of this patch.
->
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/alpha/include/asm/atomic.h           | 12 -----
->  arch/arc/include/asm/atomic.h             | 11 -----
->  arch/arm/include/asm/atomic.h             | 11 -----
->  arch/arm64/include/asm/atomic.h           | 24 ----------
->  arch/h8300/include/asm/atomic.h           |  7 ---
->  arch/hexagon/include/asm/atomic.h         |  6 ---
->  arch/ia64/include/asm/atomic.h            |  9 ----
->  arch/m68k/include/asm/atomic.h            |  5 +-
->  arch/mips/include/asm/atomic.h            | 38 ----------------
->  arch/parisc/include/asm/atomic.h          | 12 -----
->  arch/powerpc/include/asm/atomic.h         |  4 ++
->  arch/riscv/include/asm/atomic.h           | 76 -------------------------------
->  arch/s390/include/asm/atomic.h            |  8 ----
->  arch/sh/include/asm/atomic.h              |  6 ---
->  arch/sparc/include/asm/atomic_32.h        |  5 --
->  arch/sparc/include/asm/atomic_64.h        | 12 -----
->  arch/x86/include/asm/atomic.h             |  5 +-
->  arch/x86/include/asm/atomic64_32.h        |  4 ++
->  arch/x86/include/asm/atomic64_64.h        |  5 +-
->  arch/xtensa/include/asm/atomic.h          | 32 -------------
->  include/asm-generic/atomic-instrumented.h | 24 ++++++++++
->  include/asm-generic/atomic.h              | 13 ------
->  include/asm-generic/atomic64.h            |  5 --
->  include/linux/atomic.h                    | 48 +++++++++++++++++++
->  24 files changed, 86 insertions(+), 296 deletions(-)
-> [...]
-> diff --git a/arch/riscv/include/asm/atomic.h b/arch/riscv/include/asm/atomic.h
-> index 68eef0a805ca..512b89485790 100644
-> --- a/arch/riscv/include/asm/atomic.h
-> +++ b/arch/riscv/include/asm/atomic.h
-> @@ -209,82 +209,6 @@ ATOMIC_OPS(xor, xor, i)
->  #undef ATOMIC_FETCH_OP
->  #undef ATOMIC_OP_RETURN
->
-> -#define ATOMIC_OP(op, func_op, I, c_type, prefix)			\
-> -static __always_inline							\
-> -void atomic##prefix##_##op(atomic##prefix##_t *v)			\
-> -{									\
-> -	atomic##prefix##_##func_op(I, v);				\
-> -}
-> -
-> -#define ATOMIC_FETCH_OP(op, func_op, I, c_type, prefix)			\
-> -static __always_inline							\
-> -c_type atomic##prefix##_fetch_##op##_relaxed(atomic##prefix##_t *v)	\
-> -{									\
-> -	return atomic##prefix##_fetch_##func_op##_relaxed(I, v);	\
-> -}									\
-> -static __always_inline							\
-> -c_type atomic##prefix##_fetch_##op(atomic##prefix##_t *v)		\
-> -{									\
-> -	return atomic##prefix##_fetch_##func_op(I, v);			\
-> -}
-> -
-> -#define ATOMIC_OP_RETURN(op, asm_op, c_op, I, c_type, prefix)		\
-> -static __always_inline							\
-> -c_type atomic##prefix##_##op##_return_relaxed(atomic##prefix##_t *v)	\
-> -{									\
-> -        return atomic##prefix##_fetch_##op##_relaxed(v) c_op I;		\
-> -}									\
-> -static __always_inline							\
-> -c_type atomic##prefix##_##op##_return(atomic##prefix##_t *v)		\
-> -{									\
-> -        return atomic##prefix##_fetch_##op(v) c_op I;			\
-> -}
-> -
-> -#ifdef CONFIG_GENERIC_ATOMIC64
-> -#define ATOMIC_OPS(op, asm_op, c_op, I)					\
-> -        ATOMIC_OP(       op, asm_op,       I,  int,   )			\
-> -        ATOMIC_FETCH_OP( op, asm_op,       I,  int,   )			\
-> -        ATOMIC_OP_RETURN(op, asm_op, c_op, I,  int,   )
-> -#else
-> -#define ATOMIC_OPS(op, asm_op, c_op, I)					\
-> -        ATOMIC_OP(       op, asm_op,       I,  int,   )			\
-> -        ATOMIC_FETCH_OP( op, asm_op,       I,  int,   )			\
-> -        ATOMIC_OP_RETURN(op, asm_op, c_op, I,  int,   )			\
-> -        ATOMIC_OP(       op, asm_op,       I, long, 64)			\
-> -        ATOMIC_FETCH_OP( op, asm_op,       I, long, 64)			\
-> -        ATOMIC_OP_RETURN(op, asm_op, c_op, I, long, 64)
-> -#endif
-> -
-> -ATOMIC_OPS(inc, add, +,  1)
-> -ATOMIC_OPS(dec, add, +, -1)
-> -
-> -#define atomic_inc_return_relaxed	atomic_inc_return_relaxed
-> -#define atomic_dec_return_relaxed	atomic_dec_return_relaxed
-> -#define atomic_inc_return		atomic_inc_return
-> -#define atomic_dec_return		atomic_dec_return
-> -
-> -#define atomic_fetch_inc_relaxed	atomic_fetch_inc_relaxed
-> -#define atomic_fetch_dec_relaxed	atomic_fetch_dec_relaxed
-> -#define atomic_fetch_inc		atomic_fetch_inc
-> -#define atomic_fetch_dec		atomic_fetch_dec
-> -
-> -#ifndef CONFIG_GENERIC_ATOMIC64
-> -#define atomic64_inc_return_relaxed	atomic64_inc_return_relaxed
-> -#define atomic64_dec_return_relaxed	atomic64_dec_return_relaxed
-> -#define atomic64_inc_return		atomic64_inc_return
-> -#define atomic64_dec_return		atomic64_dec_return
-> -
-> -#define atomic64_fetch_inc_relaxed	atomic64_fetch_inc_relaxed
-> -#define atomic64_fetch_dec_relaxed	atomic64_fetch_dec_relaxed
-> -#define atomic64_fetch_inc		atomic64_fetch_inc
-> -#define atomic64_fetch_dec		atomic64_fetch_dec
-> -#endif
-> -
-> -#undef ATOMIC_OPS
-> -#undef ATOMIC_OP
-> -#undef ATOMIC_FETCH_OP
-> -#undef ATOMIC_OP_RETURN
-> -
->  /* This is required to provide a full barrier on success. */
->  static __always_inline int atomic_fetch_add_unless(atomic_t *v, int a, int u)
->  {
+On Fri, Jun 01, 2018 at 06:04:43PM -0400, Mike Snitzer wrote:
+> On Tue, May 29 2018 at  3:51pm -0400,
+> Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+> 
+> > The DM_TYPE_DAX_BIO_BASED dm_queue_mode was introduced to prevent DM
+> > devices that could possibly support DAX from transitioning into DM devices
+> > that cannot support DAX.
+> > 
+> > For example, the following transition will currently fail:
+> > 
+> >  dm-linear: [fsdax pmem][fsdax pmem] => [fsdax pmem][fsdax raw]
+> > 	      DM_TYPE_DAX_BIO_BASED       DM_TYPE_BIO_BASED
+> > 
+> > but these will both succeed:
+> > 
+> >  dm-linear: [fsdax pmem][brd ramdisk] => [fsdax pmem][fsdax raw]
+> >  	      DM_TYPE_DAX_BIO_BASED        DM_TYPE_BIO_BASED
+> > 
+> 
+> I fail to see how this succeeds given
+> drivers/md/dm-ioctl.c:is_valid_type() only allows transitions from:
+> 
+> DM_TYPE_BIO_BASED => DM_TYPE_DAX_BIO_BASED
 
-As far as the RISC-V stuff goes: this works for me, as I always like to have 
-less code in the arch port.
+Right, sorry, that was a typo.  What I meant was:
 
-Acked-by: Palmer Dabbelt <palmer@sifive.com>
+> For example, the following transition will currently fail:
+> 
+>  dm-linear: [fsdax pmem][fsdax pmem] => [fsdax pmem][fsdax raw]
+>               DM_TYPE_DAX_BIO_BASED       DM_TYPE_BIO_BASED
+> 
+> but these will both succeed:
+> 
+>  dm-linear: [fsdax pmem][brd ramdisk] => [fsdax pmem][fsdax raw]
+>                 DM_TYPE_BIO_BASED        DM_TYPE_BIO_BASED
+> 
+>  dm-linear: [fsdax pmem][fsdax raw] => [fsdax pmem][fsdax pmem]
+>                 DM_TYPE_BIO_BASED        DM_TYPE_DAX_BIO_BASED
 
-Thanks!
+So we allow 2 of the 3 transitions, but the reason that we disallow the third
+isn't fully clear to me.
+
+> >  dm-linear: [fsdax pmem][fsdax raw] => [fsdax pmem][fsdax pmem]
+> >  		DM_TYPE_BIO_BASED        DM_TYPE_DAX_BIO_BASED
+> > 
+> > This seems arbitrary, as really the choice on whether to use DAX happens at
+> > filesystem mount time.  There's no guarantee that the in the first case
+> > (double fsdax pmem) we were using the dax mount option with our file
+> > system.
+> > 
+> > Instead, get rid of DM_TYPE_DAX_BIO_BASED and all the special casing around
+> > it, and instead make the request queue's QUEUE_FLAG_DAX be our one source
+> > of truth.  If this is set, we can use DAX, and if not, not.  We keep this
+> > up to date in table_load() as the table changes.  As with regular block
+> > devices the filesystem will then know at mount time whether DAX is a
+> > supported mount option or not.
+> 
+> If you don't think you need this specialization that is fine.. but DM
+> devices supporting suspending (as part of table reloads) so is there any
+> risk that there will be inflight IO (say if someone did 'dmsetup suspend
+> --noflush').. and then upon reload the device type changed out from
+> under us.. anyway, I don't have all the PMEM DAX stuff paged back into
+> my head yet.
+> 
+> But this just seems like we really shouldn't be allowing the
+> transition from what was DM_TYPE_DAX_BIO_BASED back to DM_TYPE_BIO_BASED
+
+I admit I don't fully understand all the ways that DM supports suspending and
+resuming devices.  Is there actually a case where we can change out the DM
+devices while I/O is running, and somehow end up trying to issue a DAX I/O to
+a device that doesn't support DAX?
+
+Toshi, do you have a test case that shows this somehow?
