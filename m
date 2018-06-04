@@ -1,361 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751598AbeFDUcQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 16:32:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33028 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751398AbeFDUcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 16:32:01 -0400
-Date: Mon, 4 Jun 2018 16:30:48 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Steve Grubb <sgrubb@redhat.com>
-Cc: linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, eparis@parisplace.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [RFC PATCH ghak32 V2 01/13] audit: add container id
-Message-ID: <20180604203048.fn3uvzdpcypuue3i@madcap2.tricolour.ca>
-References: <cover.1521179281.git.rgb@redhat.com>
- <20180517170053.7d4afa87@ivy-bridge>
- <20180601210455.boz3tjqeqcx3kucg@madcap2.tricolour.ca>
- <36399691.WpcOE4jDTJ@x2>
- <20180604202301.2id5xpjqqotqq5j4@madcap2.tricolour.ca>
+        id S1751300AbeFDUfi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 16:35:38 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46692 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751103AbeFDUfg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 16:35:36 -0400
+X-Google-Smtp-Source: ADUXVKJ8jaiPeLlDXnNXc602LBFRmRYUvkU415XP6cEULrH+3F+Upgq8AaAXAMKEVgOld4EJE0unNwH6Q+gTP+HvAjk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604202301.2id5xpjqqotqq5j4@madcap2.tricolour.ca>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180601151419.15820-2-bastiangermann@fishpost.de>
+References: <8afcabf0-94c2-8068-5252-491494108a0c@roeck-us.net>
+ <20180601151419.15820-1-bastiangermann@fishpost.de> <20180601151419.15820-2-bastiangermann@fishpost.de>
+From: Luca Tettamanti <kronos.it@gmail.com>
+Date: Mon, 4 Jun 2018 21:35:35 +0100
+Message-ID: <CAKPcRGq6eFrWGmL9xuac8jtu+xBc+VQ+J_x2fK+J_mr98Yx1Ag@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] hwmon: (asus_atk0110) Replace deprecated device
+ register call
+To: Bastian Germann <bastiangermann@fishpost.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
+        linux-hwmon@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-04 16:23, Richard Guy Briggs wrote:
-> On 2018-06-04 12:09, Steve Grubb wrote:
-> > On Friday, June 1, 2018 5:04:55 PM EDT Richard Guy Briggs wrote:
-> > > Re: [RFC PATCH ghak32 V2 01/13] audit: add container id
-> > > 
-> > > From:	Richard Guy Briggs <rgb@redhat.com>
-> > > To:	Me
-> > > CC:	linux-api@vger.kernel.org, containers@lists.linux-foundation.org, LKML
-> > > <linux-kernel@vger.kernel.org>, eparis@parisplace.org, ... Date:	6/1/18
-> > > 5:04 PM
-> > > 
-> > > On 2018-05-17 17:00, Steve Grubb wrote:
-> > > > On Fri, 16 Mar 2018 05:00:28 -0400
-> > > > 
-> > > > Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > Implement the proc fs write to set the audit container ID of a
-> > > > > process, emitting an AUDIT_CONTAINER record to document the event.
-> > > > > 
-> > > > > This is a write from the container orchestrator task to a proc entry
-> > > > > of the form /proc/PID/containerid where PID is the process ID of the
-> > > > > newly created task that is to become the first task in a container,
-> > > > > or an additional task added to a container.
-> > > > > 
-> > > > > The write expects up to a u64 value (unset: 18446744073709551615).
-> > > > > 
-> > > > > This will produce a record such as this:
-> > > > > type=CONTAINER msg=audit(1519903238.968:261): op=set pid=596 uid=0
-> > > > > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 auid=0
-> > > > > tty=pts0 ses=1 opid=596 old-contid=18446744073709551615 contid=123455
-> > > > > res=0
-> > > > 
-> > > > The was one thing I was wondering about. Currently when we set the
-> > > > loginuid, the record is AUDIT_LOGINUID. The corollary is that when we
-> > > > set the container id, the event should be AUDIT_CONTAINERID or
-> > > > AUDIT_CONTAINER_ID.
-> > > > 
-> > > > During syscall events, the path info is returned in a a record simply
-> > > > called AUDIT_PATH, cwd info is returned in AUDIT_CWD. So, rather than
-> > > > calling the record that gets attached to everything
-> > > > AUDIT_CONTAINER_INFO, how about simply AUDIT_CONTAINER.
-> > > > 
-> > > > > The "op" field indicates an initial set.  The "pid" to "ses" fields
-> > > > > are the orchestrator while the "opid" field is the object's PID, the
-> > > > > process being "contained".  Old and new container ID values are given
-> > > > > in the "contid" fields, while res indicates its success.
-> > > > > 
-> > > > > It is not permitted to self-set, unset or re-set the container ID.  A
-> > > > > child inherits its parent's container ID, but then can be set only
-> > > > > once after.
-> > > > > 
-> > > > > See: https://github.com/linux-audit/audit-kernel/issues/32
-> > > > > 
-> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > ---
-> > > > > fs/proc/base.c             | 37 ++++++++++++++++++++
-> > > > > include/linux/audit.h      | 16 +++++++++
-> > > > > include/linux/init_task.h  |  4 ++-
-> > > > > include/linux/sched.h      |  1 +
-> > > > > include/uapi/linux/audit.h |  2 ++
-> > > > > kernel/auditsc.c           | 84
-> > > > > ++++++++++++++++++++++++++++++++++++++++++++++ 6 files changed, 143
-> > > > > insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > > > index 60316b5..6ce4fbe 100644
-> > > > > --- a/fs/proc/base.c
-> > > > > +++ b/fs/proc/base.c
-> > > > > @@ -1299,6 +1299,41 @@ static ssize_t proc_sessionid_read(struct file
-> > > > > * file, char __user * buf, .read                = proc_sessionid_read,
-> > > > > .llseek         = generic_file_llseek,
-> > > > > };
-> > > > > +
-> > > > > +static ssize_t proc_containerid_write(struct file *file, const char
-> > > > > __user *buf,
-> > > > > +                                  size_t count, loff_t *ppos)
-> > > > > +{
-> > > > > +       struct inode *inode = file_inode(file);
-> > > > > +       u64 containerid;
-> > > > > +       int rv;
-> > > > > +       struct task_struct *task = get_proc_task(inode);
-> > > > > +
-> > > > > +       if (!task)
-> > > > > +               return -ESRCH;
-> > > > > +       if (*ppos != 0) {
-> > > > > +               /* No partial writes. */
-> > > > > +               put_task_struct(task);
-> > > > > +               return -EINVAL;
-> > > > > +       }
-> > > > > +
-> > > > > +       rv = kstrtou64_from_user(buf, count, 10, &containerid);
-> > > > > +       if (rv < 0) {
-> > > > > +               put_task_struct(task);
-> > > > > +               return rv;
-> > > > > +       }
-> > > > > +
-> > > > > +       rv = audit_set_containerid(task, containerid);
-> > > > > +       put_task_struct(task);
-> > > > > +       if (rv < 0)
-> > > > > +               return rv;
-> > > > > +       return count;
-> > > > > +}
-> > > > > +
-> > > > > +static const struct file_operations proc_containerid_operations = {
-> > > > > +       .write          = proc_containerid_write,
-> > > > > +       .llseek         = generic_file_llseek,
-> > > > > +};
-> > > > > +
-> > > > > #endif
-> > > > > 
-> > > > > #ifdef CONFIG_FAULT_INJECTION
-> > > > > @@ -2961,6 +2996,7 @@ static int proc_pid_patch_state(struct seq_file
-> > > > > *m, struct pid_namespace *ns, #ifdef CONFIG_AUDITSYSCALL
-> > > > > REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
-> > > > > REG("sessionid",  S_IRUGO, proc_sessionid_operations),
-> > > > > +       REG("containerid", S_IWUSR, proc_containerid_operations),
-> > > > > #endif
-> > > > > #ifdef CONFIG_FAULT_INJECTION
-> > > > > REG("make-it-fail", S_IRUGO|S_IWUSR,
-> > > > > proc_fault_inject_operations), @@ -3355,6 +3391,7 @@ static int
-> > > > > proc_tid_comm_permission(struct inode *inode, int mask) #ifdef
-> > > > > CONFIG_AUDITSYSCALL REG("loginuid",  S_IWUSR|S_IRUGO,
-> > > > > proc_loginuid_operations), REG("sessionid",  S_IRUGO,
-> > > > > proc_sessionid_operations),
-> > > > > +       REG("containerid", S_IWUSR, proc_containerid_operations),
-> > > > > #endif
-> > > > > #ifdef CONFIG_FAULT_INJECTION
-> > > > > REG("make-it-fail", S_IRUGO|S_IWUSR,
-> > > > > proc_fault_inject_operations), diff --git a/include/linux/audit.h
-> > > > > b/include/linux/audit.h index af410d9..fe4ba3f 100644
-> > > > > --- a/include/linux/audit.h
-> > > > > +++ b/include/linux/audit.h
-> > > > > @@ -29,6 +29,7 @@
-> > > > > 
-> > > > > #define AUDIT_INO_UNSET ((unsigned long)-1)
-> > > > > #define AUDIT_DEV_UNSET ((dev_t)-1)
-> > > > > +#define INVALID_CID AUDIT_CID_UNSET
-> > > > > 
-> > > > > struct audit_sig_info {
-> > > > > uid_t           uid;
-> > > > > @@ -321,6 +322,7 @@ static inline void audit_ptrace(struct
-> > > > > task_struct *t) extern int auditsc_get_stamp(struct audit_context
-> > > > > *ctx, struct timespec64 *t, unsigned int *serial);
-> > > > > extern int audit_set_loginuid(kuid_t loginuid);
-> > > > > +extern int audit_set_containerid(struct task_struct *tsk, u64
-> > > > > containerid);
-> > > > > static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
-> > > > > {
-> > > > > @@ -332,6 +334,11 @@ static inline unsigned int
-> > > > > audit_get_sessionid(struct task_struct *tsk) return tsk->sessionid;
-> > > > > }
-> > > > > 
-> > > > > +static inline u64 audit_get_containerid(struct task_struct *tsk)
-> > > > > +{
-> > > > > +       return tsk->containerid;
-> > > > > +}
-> > > > > +
-> > > > > extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
-> > > > > extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid,
-> > > > > gid_t gid, umode_t mode); extern void __audit_bprm(struct
-> > > > > linux_binprm *bprm); @@ -517,6 +524,10 @@ static inline unsigned int
-> > > > > audit_get_sessionid(struct task_struct *tsk) {
-> > > > > return -1;
-> > > > > }
-> > > > > +static inline kuid_t audit_get_containerid(struct task_struct *tsk)
-> > > > > +{
-> > > > > +       return INVALID_CID;
-> > > > > +}
-> > > > > static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
-> > > > > { }
-> > > > > static inline void audit_ipc_set_perm(unsigned long qbytes, uid_t
-> > > > > uid, @@ -581,6 +592,11 @@ static inline bool
-> > > > > audit_loginuid_set(struct task_struct *tsk) return
-> > > > > uid_valid(audit_get_loginuid(tsk)); }
-> > > > > 
-> > > > > +static inline bool audit_containerid_set(struct task_struct *tsk)
-> > > > > +{
-> > > > > +       return audit_get_containerid(tsk) != INVALID_CID;
-> > > > > +}
-> > > > > +
-> > > > > static inline void audit_log_string(struct audit_buffer *ab, const
-> > > > > char *buf) {
-> > > > > audit_log_n_string(ab, buf, strlen(buf));
-> > > > > diff --git a/include/linux/init_task.h b/include/linux/init_task.h
-> > > > > index 6a53262..046bd0a 100644
-> > > > > --- a/include/linux/init_task.h
-> > > > > +++ b/include/linux/init_task.h
-> > > > > @@ -18,6 +18,7 @@
-> > > > > #include <linux/sched/rt.h>
-> > > > > #include <linux/livepatch.h>
-> > > > > #include <linux/mm_types.h>
-> > > > > +#include <linux/audit.h>
-> > > > > 
-> > > > > #include <asm/thread_info.h>
-> > > > > 
-> > > > > @@ -120,7 +121,8 @@
-> > > > > #ifdef CONFIG_AUDITSYSCALL
-> > > > > #define INIT_IDS \
-> > > > > .loginuid = INVALID_UID, \
-> > > > > -       .sessionid = (unsigned int)-1,
-> > > > > +       .sessionid = (unsigned int)-1, \
-> > > > > +       .containerid = INVALID_CID,
-> > > > > #else
-> > > > > #define INIT_IDS
-> > > > > #endif
-> > > > > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > > > > index d258826..1b82191 100644
-> > > > > --- a/include/linux/sched.h
-> > > > > +++ b/include/linux/sched.h
-> > > > > @@ -796,6 +796,7 @@ struct task_struct {
-> > > > > #ifdef CONFIG_AUDITSYSCALL
-> > > > > kuid_t                          loginuid;
-> > > > > unsigned int                    sessionid;
-> > > > > +       u64                             containerid;
-> > > > > #endif
-> > > > > struct seccomp                  seccomp;
-> > > > > 
-> > > > > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> > > > > index 4e61a9e..921a71f 100644
-> > > > > --- a/include/uapi/linux/audit.h
-> > > > > +++ b/include/uapi/linux/audit.h
-> > > > > @@ -71,6 +71,7 @@
-> > > > > #define AUDIT_TTY_SET           1017    /* Set TTY auditing
-> > > > > status */ #define AUDIT_SET_FEATURE     1018    /* Turn an
-> > > > > audit feature on or off */ #define AUDIT_GET_FEATURE
-> > > > > 1019    /* Get which features are enabled */ +#define
-> > > > > AUDIT_CONTAINER         1020    /* Define the container id
-> > > > > and information */ #define AUDIT_FIRST_USER_MSG 1100    /*
-> > > > > Userspace messages mostly uninteresting to kernel */ #define
-> > > > > AUDIT_USER_AVC          1107    /* We filter this
-> > > > > differently */ @@ -465,6 +466,7 @@ struct audit_tty_status { };
-> > > > > 
-> > > > > #define AUDIT_UID_UNSET (unsigned int)-1
-> > > > > +#define AUDIT_CID_UNSET ((u64)-1)
-> > > > > 
-> > > > > /* audit_rule_data supports filter rules with both integer and string
-> > > > > * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
-> > > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > > > index 4e0a4ac..29c8482 100644
-> > > > > --- a/kernel/auditsc.c
-> > > > > +++ b/kernel/auditsc.c
-> > > > > @@ -2073,6 +2073,90 @@ int audit_set_loginuid(kuid_t loginuid)
-> > > > > return rc;
-> > > > > }
-> > > > > 
-> > > > > +static int audit_set_containerid_perm(struct task_struct *task, u64
-> > > > > containerid) +{
-> > > > > +       struct task_struct *parent;
-> > > > > +       u64 pcontainerid, ccontainerid;
-> > > > > +
-> > > > > +       /* Don't allow to set our own containerid */
-> > > > > +       if (current == task)
-> > > > > +               return -EPERM;
-> > > > > +       /* Don't allow the containerid to be unset */
-> > > > > +       if (!cid_valid(containerid))
-> > > > > +               return -EINVAL;
-> > > > > +       /* if we don't have caps, reject */
-> > > > > +       if (!capable(CAP_AUDIT_CONTROL))
-> > > > > +               return -EPERM;
-> > > > > +       /* if containerid is unset, allow */
-> > > > > +       if (!audit_containerid_set(task))
-> > > > > +               return 0;
-> > > > > +       /* it is already set, and not inherited from the parent,
-> > > > > reject */
-> > > > > +       ccontainerid = audit_get_containerid(task);
-> > > > > +       rcu_read_lock();
-> > > > > +       parent = rcu_dereference(task->real_parent);
-> > > > > +       rcu_read_unlock();
-> > > > > +       task_lock(parent);
-> > > > > +       pcontainerid = audit_get_containerid(parent);
-> > > > > +       task_unlock(parent);
-> > > > > +       if (ccontainerid != pcontainerid)
-> > > > > +               return -EPERM;
-> > > > > +       return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static void audit_log_set_containerid(struct task_struct *task, u64
-> > > > > oldcontainerid,
-> > > > > +                                     u64 containerid, int rc)
-> > > > > +{
-> > > > > +       struct audit_buffer *ab;
-> > > > > +       uid_t uid;
-> > > > > +       struct tty_struct *tty;
-> > > > > +
-> > > > > +       if (!audit_enabled)
-> > > > > +               return;
-> > > > > +
-> > > > > +       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONTAINER);
-> > > > > +       if (!ab)
-> > > > > +               return;
-> > > > > +
-> > > > > +       uid = from_kuid(&init_user_ns, task_uid(current));
-> > > > > +       tty = audit_get_tty(current);
-> > > > > +
-> > > > > +       audit_log_format(ab, "op=set pid=%d uid=%u",
-> > > > > task_tgid_nr(current), uid);
-> > > > > +       audit_log_task_context(ab);
-> > > > > +       audit_log_format(ab, " auid=%u tty=%s ses=%u opid=%d
-> > > > > old-contid=%llu contid=%llu res=%d",
-> > > > 
-> > > > The preferred ordering would be: op, opid, old-contid, contid, pid, uid,
-> > > > tty, ses, subj, comm, exe, res. This groups the searchable fields
-> > > > together using the most common ordering so that parsing is simple.
-> > > 
-> > > Where would you like auid?  It appears that just before uid would be the
-> > > right place, if not in place of uid, but this is just a guess since it
-> > > isn't consistent.
-> > 
-> > 
-> > Just after the uid is the proper place. The most common sequence is:
-> > pid, uid, auid, tty, session, subject context, comm, exe.
-> 
-> Not according to:
-> 	http://people.redhat.com/sgrubb/audit/record-fields.html
+On 1 June 2018 at 16:14, Bastian Germann <bastiangermann@fishpost.de> wrote:
+> Make the asus_atk0110 driver use hwmon_device_register_with_groups instead
+> of the deprecated hwmon_device_register.
+> Construct the expected attribute_group array from the sensor list which
+> contains all needed attributes.
+> Remove the manual sysfs file creation and deletion that are now taken care
+> of by the (un)register calls via the attribute_group array.
+>
+> Signed-off-by: Bastian Germann <bastiangermann@fishpost.de>
 
-Ok, maybe I spoke a bit quickly...  Most of the inital ones I saw were
-in the reverse order, but there is a clump about 3/4 of the way down
-which includes VIRT and USER events.
+Thank you for cleaning this up!
 
-> > -Steve
-> 
-> - RGB
+L.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> ---
+>  drivers/hwmon/asus_atk0110.c | 75 ++++++++++++------------------------
+>  1 file changed, 25 insertions(+), 50 deletions(-)
+>
+> diff --git a/drivers/hwmon/asus_atk0110.c b/drivers/hwmon/asus_atk0110.c
+> index 975c43d446f8..33748cc07acc 100644
+> --- a/drivers/hwmon/asus_atk0110.c
+> +++ b/drivers/hwmon/asus_atk0110.c
+> @@ -125,6 +125,8 @@ struct atk_data {
+>         int temperature_count;
+>         int fan_count;
+>         struct list_head sensor_list;
+> +       struct attribute_group attr_group;
+> +       const struct attribute_group *attr_groups[2];
+>
+>         struct {
+>                 struct dentry *root;
+> @@ -262,14 +264,6 @@ static ssize_t atk_limit2_show(struct device *dev,
+>         return sprintf(buf, "%lld\n", value);
+>  }
+>
+> -static ssize_t atk_name_show(struct device *dev,
+> -                               struct device_attribute *attr, char *buf)
+> -{
+> -       return sprintf(buf, "atk0110\n");
+> -}
+> -static struct device_attribute atk_name_attr =
+> -               __ATTR(name, 0444, atk_name_show, NULL);
+> -
+>  static void atk_init_attribute(struct device_attribute *attr, char *name,
+>                 sysfs_show_func show)
+>  {
+> @@ -1193,42 +1187,30 @@ static int atk_enumerate_new_hwmon(struct atk_data *data)
+>         return err;
+>  }
+>
+> -static int atk_create_files(struct atk_data *data)
+> +static int atk_init_attribute_groups(struct atk_data *data)
+>  {
+> +       struct device *dev = &data->acpi_dev->dev;
+>         struct atk_sensor_data *s;
+> -       int err;
+> +       struct attribute **attrs;
+> +       int i = 0;
+> +       int len = (data->voltage_count + data->temperature_count
+> +                       + data->fan_count) * 4 + 1;
+> +
+> +       attrs = devm_kcalloc(dev, len, sizeof(struct attribute *), GFP_KERNEL);
+> +       if (!attrs)
+> +               return -ENOMEM;
+>
+>         list_for_each_entry(s, &data->sensor_list, list) {
+> -               err = device_create_file(data->hwmon_dev, &s->input_attr);
+> -               if (err)
+> -                       return err;
+> -               err = device_create_file(data->hwmon_dev, &s->label_attr);
+> -               if (err)
+> -                       return err;
+> -               err = device_create_file(data->hwmon_dev, &s->limit1_attr);
+> -               if (err)
+> -                       return err;
+> -               err = device_create_file(data->hwmon_dev, &s->limit2_attr);
+> -               if (err)
+> -                       return err;
+> +               attrs[i++] = &s->input_attr.attr;
+> +               attrs[i++] = &s->label_attr.attr;
+> +               attrs[i++] = &s->limit1_attr.attr;
+> +               attrs[i++] = &s->limit2_attr.attr;
+>         }
+>
+> -       err = device_create_file(data->hwmon_dev, &atk_name_attr);
+> +       data->attr_group.attrs = attrs;
+> +       data->attr_groups[0] = &data->attr_group;
+>
+> -       return err;
+> -}
+> -
+> -static void atk_remove_files(struct atk_data *data)
+> -{
+> -       struct atk_sensor_data *s;
+> -
+> -       list_for_each_entry(s, &data->sensor_list, list) {
+> -               device_remove_file(data->hwmon_dev, &s->input_attr);
+> -               device_remove_file(data->hwmon_dev, &s->label_attr);
+> -               device_remove_file(data->hwmon_dev, &s->limit1_attr);
+> -               device_remove_file(data->hwmon_dev, &s->limit2_attr);
+> -       }
+> -       device_remove_file(data->hwmon_dev, &atk_name_attr);
+> +       return 0;
+>  }
+>
+>  static void atk_free_sensors(struct atk_data *data)
+> @@ -1245,24 +1227,15 @@ static void atk_free_sensors(struct atk_data *data)
+>  static int atk_register_hwmon(struct atk_data *data)
+>  {
+>         struct device *dev = &data->acpi_dev->dev;
+> -       int err;
+>
+>         dev_dbg(dev, "registering hwmon device\n");
+> -       data->hwmon_dev = hwmon_device_register(dev);
+> +       data->hwmon_dev = hwmon_device_register_with_groups(dev, "atk0110",
+> +                                                           data,
+> +                                                           data->attr_groups);
+>         if (IS_ERR(data->hwmon_dev))
+>                 return PTR_ERR(data->hwmon_dev);
+>
+> -       dev_dbg(dev, "populating sysfs directory\n");
+> -       err = atk_create_files(data);
+> -       if (err)
+> -               goto remove;
+> -
+>         return 0;
+> -remove:
+> -       /* Cleanup the registered files */
+> -       atk_remove_files(data);
+> -       hwmon_device_unregister(data->hwmon_dev);
+> -       return err;
+>  }
+>
+>  static int atk_probe_if(struct atk_data *data)
+> @@ -1397,6 +1370,9 @@ static int atk_add(struct acpi_device *device)
+>                 goto out;
+>         }
+>
+> +       err = atk_init_attribute_groups(data);
+> +       if (err)
+> +               goto out;
+>         err = atk_register_hwmon(data);
+>         if (err)
+>                 goto cleanup;
+> @@ -1423,7 +1399,6 @@ static int atk_remove(struct acpi_device *device)
+>
+>         atk_debugfs_cleanup(data);
+>
+> -       atk_remove_files(data);
+>         atk_free_sensors(data);
+>         hwmon_device_unregister(data->hwmon_dev);
+>
+> --
+> 2.17.1
+>
