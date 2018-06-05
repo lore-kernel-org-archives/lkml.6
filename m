@@ -1,156 +1,377 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752019AbeFESsP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:48:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47750 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751816AbeFESsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:48:14 -0400
-Date: Tue, 5 Jun 2018 14:48:11 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Airlie <airlied@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>, Christoph Hellwig <hch@lst.de>,
-        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/5] mm: rework hmm to use devm_memremap_pages
-Message-ID: <20180605184811.GC4423@redhat.com>
-References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180524001026.GA3527@redhat.com>
- <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com>
- <CAPM=9tzMJq=KC+ijoj-JGmc1R3wbshdwtfR3Zpmyaw3jYJ9+gw@mail.gmail.com>
- <CAPcyv4g2XQtuYGPu8HMbPj6wXqGwxiL5jDRznf5fmW4WgC2DTw@mail.gmail.com>
- <CAPM=9twm=17t=2=M27ELB=vZWzpqM7GuwCUsC891jJ0t3JM4vg@mail.gmail.com>
- <CAPcyv4jTty4k1xXCOWbeRjzv-KjxNH1L4oOkWW1EbJt66jF4_w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4jTty4k1xXCOWbeRjzv-KjxNH1L4oOkWW1EbJt66jF4_w@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752067AbeFESsd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:48:33 -0400
+Received: from mail02.ausil.us ([74.119.218.151]:36720 "EHLO mail.ausil.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751816AbeFESsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 14:48:31 -0400
+From: Dennis Gilmore <dennis@ausil.us>
+To: linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
+        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Dennis Gilmore <dennis@ausil.us>
+Subject: [PATCH V3] ARM: dts: armada388-helios4
+Date: Tue,  5 Jun 2018 13:48:10 -0500
+Message-Id: <20180605184810.29602-1-dennis@ausil.us>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 04:33:49PM -0700, Dan Williams wrote:
-> On Tue, May 29, 2018 at 4:00 PM, Dave Airlie <airlied@gmail.com> wrote:
-> > On 30 May 2018 at 08:31, Dan Williams <dan.j.williams@intel.com> wrote:
-> >> On Tue, May 29, 2018 at 3:22 PM, Dave Airlie <airlied@gmail.com> wrote:
-> >>>
-> >>> On 24 May 2018 at 13:18, Dan Williams <dan.j.williams@intel.com> wrote:
-> >>> > On Wed, May 23, 2018 at 5:10 PM, Jerome Glisse <jglisse@redhat.com> wrote:
-> >>> >> On Mon, May 21, 2018 at 03:35:14PM -0700, Dan Williams wrote:
-> >>> >>> Hi Andrew, please consider this series for 4.18.
-> >>> >>>
-> >>> >>> For maintainability, as ZONE_DEVICE continues to attract new users,
-> >>> >>> it is useful to keep all users consolidated on devm_memremap_pages() as
-> >>> >>> the interface for create "device pages".
-> >>> >>>
-> >>> >>> The devm_memremap_pages() implementation was recently reworked to make
-> >>> >>> it more generic for arbitrary users, like the proposed peer-to-peer
-> >>> >>> PCI-E enabling. HMM pre-dated this rework and opted to duplicate
-> >>> >>> devm_memremap_pages() as hmm_devmem_pages_create().
-> >>> >>>
-> >>> >>> Rework HMM to be a consumer of devm_memremap_pages() directly and fix up
-> >>> >>> the licensing on the exports given the deep dependencies on the mm.
-> >>> >>
-> >>> >> I am on PTO right now so i won't be able to quickly review it all
-> >>> >> but forcing GPL export is problematic for me now. I rather have
-> >>> >> device driver using "sane" common helpers than creating their own
-> >>> >> crazy thing.
-> >>> >
-> >>> > Sane drivers that need this level of deep integration with Linux
-> >>> > memory management need to be upstream. Otherwise, HMM is an
-> >>> > unprecedented departure from the norms of Linux kernel development.
-> >>>
-> >>> Isn't it the author of code choice what EXPORT_SYMBOL to use? and
-> >>> isn't the agreement that if something is EXPORT_SYMBOL now, changing
-> >>> underlying exports isn't considered a good idea. We've seen this before
-> >>> with the refcount fun,
-> >>>
-> >>> See d557d1b58b3546bab2c5bc2d624c5709840e6b10
-> >>>
-> >>> Not commenting on the legality or what derived works are considered,
-> >>> since really the markings are just an indication of the authors opinion,
-> >>> and at this stage I think are actually meaningless, since we've diverged
-> >>> considerably from the advice given to Linus back when this started.
-> >>
-> >> Yes, and in this case devm_memremap_pages() was originally written by
-> >> Christoph and I:
-> >>
-> >>     41e94a851304 add devm_memremap_pages
-> >
-> > So you wrote some code in 2015 (3 years ago) and you've now decided
-> > to change the EXPORT marker on it? what changed in 3 years, and why
-> > would changing that marker 3 years later have any effect on your original
-> > statement that it was an EXPORT_SYMBOL.
-> >
-> > Think what EXPORT_SYMBOL vs GPL means, it isn't a bit stick that magically
-> > makes things into derived works. If something wasn't a derived work for 3 years
-> > using that API, then it isn't a derived work now 3 years later because you
-> > changed the marker. Retrospectively changing the markers doesn't really
-> > make any sense legally or otherwise.
-> 
-> It honestly was an oversight, and as we've gone on to add deeper and
-> deeper ties into the mm and filesystems [1] I realized this symbol was
-> mis-labeled.  It would be one thing if this was just some random
-> kernel leaf / library function, but this capability when turned on
-> causes the entire kernel to be recompiled as things like the
-> definition of put_page() changes. It's deeply integrated with how
-> Linux manages memory.
+The helios4 is a Armada388 based nas board designed by SolidRun and
+based on their SOM. It is sold by kobol.io the dts file came from
+https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
+I added a SPDX license line to match the clearfog it says it was based
+on and a compatible line for "kobol,helios4"
 
-I am personaly on the fence on deciding GPL versus non GPL export
-base on subjective view of what is deeply integrated and what is
-not. I think one can argue that every single linux kernel function
-is deeply integrated within the kernel, starting with all device
-drivers functions. One could similarly argue that nothing is ...
+Signed-off-by: Dennis Gilmore <dennis@ausil.us>
 
-I see more value in consistency of symbol export over time. Once
-we pick one it should stay that way.
+---
 
+changes since first submission
+change solidrun to kobol in compatible line based on feedback
 
-> >> HMM started off by duplicating devm_memremap_pages() which is fixed up
-> >> by this series:
-> >
-> > Just looking in my current tree hmm_devmem_pages_create and
-> > devm_memremap_pages don't look like duplicates, they might have
-> > code but they definitely aren't one for one copies. I'm not sure you can
-> > just say Jerome copied that code in, you've now refactored the code
-> > so HMM can use it and are changing the symbol exports underneath it,
-> 
-> The initial patches for HMM used devm_memremap_pages() directly, and
-> during review I asked for the exact same arrangement as implemented
-> here, i.e. for the dev_pagemap structure to be a sub-structure of the
-> HMM data [2]. At some point along the way we lost that review
-> feedback. It was not until Christoph and Logan recently reworked
-> devm_memermap_pages() that I realized that HMM had unnecessarily
-> diverged.
-> 
-> > Again if Christoph believes all uses of this are a derived work he didn't
-> > indicate it 3 years ago, but neither does the mark make any legal difference
-> > in this case, since everything in the kernel is GPL, and if you
-> > consider something
-> > a derived work or not is well into legal land.
-> >
-> > I'd rather anyways the original author of HMM wishes were respected
-> > on his code, or at least you wait until he gets back from holidays before
-> > pushing to merge this.
-> 
-> To be clear this only affects the usage of the ZONE_DEVICE facility,
-> I'm not touching the other pieces of HMM that are original to HMM. I
-> didn't realize Jerome was on vacation when I sent the patches, and I
-> think it is otherwise healthy to have this discussion in the meantime.
+changes since v2
 
-While HMM is a toolbox and i intend to use some part of HMM to replace
-some existing GUP user. Biggest user of HMM will use all the tools in
-the HMM box. Thus having a mix of GPL and non GPL defeat its usefulness
-for out of tree drivers.
+remove commented out nodes based on feedback
+---
+ arch/arm/boot/dts/Makefile               |   1 +
+ arch/arm/boot/dts/armada-388-helios4.dts | 313 +++++++++++++++++++++++
+ 2 files changed, 314 insertions(+)
+ create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
 
-I still want to review this patchset, i am going through a backlog of
-urgent emails so i probably won't be able to review before a day or two.
-
-I am just strongly against changing to GPL only export.
-
-Cheers,
-Jérôme
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 7e2424957809..490bfd586198 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
+ 	armada-388-clearfog-pro.dtb \
+ 	armada-388-db.dtb \
+ 	armada-388-gp.dtb \
++	armada-388-helios4.dtb \
+ 	armada-388-rd.dtb
+ dtb-$(CONFIG_MACH_ARMADA_39X) += \
+ 	armada-398-db.dtb
+diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
+new file mode 100644
+index 000000000000..59048740ae06
+--- /dev/null
++++ b/arch/arm/boot/dts/armada-388-helios4.dts
+@@ -0,0 +1,313 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Device Tree file for Helios4
++ * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
++ *
++ *  Copyright (C) 2017
++ *
++ */
++
++/dts-v1/;
++#include "armada-388.dtsi"
++#include "armada-38x-solidrun-microsom.dtsi"
++
++/ {
++	model = "Helios4";
++	compatible = "kobol,helios4", "marvell,armada388",
++		"marvell,armada385", "marvell,armada380";
++
++	memory {
++		device_type = "memory";
++		reg = <0x00000000 0x80000000>; /* 2 GB */
++	};
++
++	aliases {
++		/* So that mvebu u-boot can update the MAC addresses */
++		ethernet1 = &eth0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	reg_12v: regulator-12v {
++		compatible = "regulator-fixed";
++		regulator-name = "power_brick_12V";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "3P3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		vin-supply = <&reg_12v>;
++	};
++
++	reg_5p0v_hdd: regulator-5v-hdd {
++		compatible = "regulator-fixed";
++		regulator-name = "5V_HDD";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		vin-supply = <&reg_12v>;
++	};
++
++	reg_5p0v_usb: regulator-5v-usb {
++		compatible = "regulator-fixed";
++		regulator-name = "USB-PWR";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-boot-on;
++		regulator-always-on;
++		enable-active-high;
++		gpio = <&expander0 6 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&reg_12v>;
++	};
++
++	system-leds {
++		compatible = "gpio-leds";
++		status-led {
++			label = "helios4:green:status";
++			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "heartbeat";
++			default-state = "on";
++		};
++
++		fault-led {
++			label = "helios4:red:fault";
++			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
++			default-state = "keep";
++		};
++	};
++
++	io-leds {
++		compatible = "gpio-leds";
++		sata1-led {
++			label = "helios4:green:ata1";
++			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata1";
++			default-state = "off";
++		};
++		sata2-led {
++			label = "helios4:green:ata2";
++			gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata2";
++			default-state = "off";
++		};
++		sata3-led {
++			label = "helios4:green:ata3";
++			gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata3";
++			default-state = "off";
++		};
++		sata4-led {
++			label = "helios4:green:ata4";
++			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata4";
++			default-state = "off";
++		};
++		usb-led {
++			label = "helios4:green:usb";
++			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "usb-host";
++			default-state = "off";
++		};
++	};
++
++	fan1: j10-pwm {
++		compatible = "pwm-fan";
++		pwms = <&gpio1 9 40000>;	/* Target freq:25 kHz */
++	};
++
++	fan2: j17-pwm {
++		compatible = "pwm-fan";
++		pwms = <&gpio1 23 40000>;	/* Target freq:25 kHz */
++	};
++
++	usb2_phy: usb2-phy {
++		compatible = "usb-nop-xceiv";
++		vbus-regulator = <&reg_5p0v_usb>;
++	};
++
++	usb3_phy: usb3-phy {
++		compatible = "usb-nop-xceiv";
++	};
++
++	soc {
++		internal-regs {
++			i2c@11000 {
++				clock-frequency = <400000>;
++				pinctrl-0 = <&i2c0_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++
++				/*
++				 * PCA9655 GPIO expander, up to 1MHz clock.
++				 *  0-Board Revision bit 0 #
++				 *  1-Board Revision bit 1 #
++				 *  5-USB3 overcurrent
++				 *  6-USB3 power
++				 */
++				expander0: gpio-expander@20 {
++					/*
++					 * This is how it should be:
++					 * compatible = "onnn,pca9655",
++					 *	 "nxp,pca9555";
++					 * but you can't do this because of
++					 * the way I2C works.
++					 */
++					compatible = "nxp,pca9555";
++					gpio-controller;
++					#gpio-cells = <2>;
++					reg = <0x20>;
++					pinctrl-names = "default";
++					pinctrl-0 = <&pca0_pins>;
++					interrupt-parent = <&gpio0>;
++					interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
++					interrupt-controller;
++					#interrupt-cells = <2>;
++
++					board_rev_bit_0 {
++						gpio-hog;
++						gpios = <0 GPIO_ACTIVE_LOW>;
++						input;
++						line-name = "board-rev-0";
++					};
++					board_rev_bit_1 {
++						gpio-hog;
++						gpios = <1 GPIO_ACTIVE_LOW>;
++						input;
++						line-name = "board-rev-1";
++					};
++					usb3_ilimit {
++						gpio-hog;
++						gpios = <5 GPIO_ACTIVE_HIGH>;
++						input;
++						line-name = "usb-overcurrent-status";
++					};
++				};
++
++				temp_sensor: temp@4c {
++					compatible = "ti,lm75";
++					reg = <0x4c>;
++					vcc-supply = <&reg_3p3v>;
++				};
++			};
++
++			i2c@11100 {
++				/*
++				 * External I2C Bus for user peripheral
++				 */
++				clock-frequency = <400000>;
++				pinctrl-0 = <&helios_i2c1_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++			};
++
++			sata@a8000 {
++				status = "okay";
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				sata0: sata-port@0 {
++					reg = <0>;
++				};
++
++				sata1: sata-port@1 {
++					reg = <1>;
++				};
++			};
++
++			sata@e0000 {
++				status = "okay";
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				sata2: sata-port@0 {
++					reg = <0>;
++				};
++
++				sata3: sata-port@1 {
++					reg = <1>;
++				};
++			};
++
++			spi@10680 {
++				pinctrl-0 = <&spi1_pins
++					     &microsom_spi1_cs_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++			};
++
++			sdhci@d8000 {
++				bus-width = <4>;
++				cd-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
++				no-1-8-v;
++				pinctrl-0 = <&helios_sdhci_pins
++					     &helios_sdhci_cd_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++				vmmc = <&reg_3p3v>;
++				wp-inverted;
++			};
++
++			usb@58000 {
++				usb-phy = <&usb2_phy>;
++				status = "okay";
++			};
++
++			usb3@f0000 {
++				status = "okay";
++			};
++
++			usb3@f8000 {
++				status = "okay";
++			};
++
++			pinctrl@18000 {
++				pca0_pins: pca0-pins {
++					marvell,pins = "mpp23";
++					marvell,function = "gpio";
++				};
++				microsom_phy0_int_pins: microsom-phy0-int-pins {
++					marvell,pins = "mpp18";
++					marvell,function = "gpio";
++				};
++				helios_i2c1_pins: i2c1-pins {
++					marvell,pins = "mpp26", "mpp27";
++					marvell,function = "i2c1";
++				};
++				helios_sdhci_cd_pins: helios-sdhci-cd-pins {
++					marvell,pins = "mpp20";
++					marvell,function = "gpio";
++				};
++				helios_sdhci_pins: helios-sdhci-pins {
++					marvell,pins = "mpp21", "mpp28",
++						       "mpp37", "mpp38",
++						       "mpp39", "mpp40";
++					marvell,function = "sd0";
++				};
++				helios_led_pins: helios-led-pins {
++					marvell,pins = "mpp24", "mpp25",
++						       "mpp49", "mpp50",
++						       "mpp52", "mpp53",
++						       "mpp54";
++					marvell,function = "gpio";
++				};
++				helios_fan_pins: helios-fan-pins {
++					marvell,pins = "mpp41", "mpp43",
++						       "mpp48", "mpp55";
++					marvell,function = "gpio";
++				};
++				microsom_spi1_cs_pins: spi1-cs-pins {
++					marvell,pins = "mpp59";
++					marvell,function = "spi1";
++				};
++			};
++		};
++	};
++};
+-- 
+2.17.1
