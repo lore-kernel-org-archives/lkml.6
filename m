@@ -1,159 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751508AbeFED5y (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 23:57:54 -0400
-Received: from mail-he1eur01on0070.outbound.protection.outlook.com ([104.47.0.70]:50549
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751386AbeFED5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 23:57:52 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=mika.penttila@nextfour.com;
-Subject: Re: [PATCH 6/6] x86/vdso: Move out the CPU number store
-To: "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Andy Lutomirski <luto@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1528140269-26205-1-git-send-email-chang.seok.bae@intel.com>
- <1528140269-26205-7-git-send-email-chang.seok.bae@intel.com>
-From: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>
-Message-ID: <8a41304a-3517-003a-badf-1ba8f7ababe4@nextfour.com>
-Date: Tue, 5 Jun 2018 06:57:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751518AbeFED7k (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 23:59:40 -0400
+Received: from h2.hallyn.com ([78.46.35.8]:41352 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751386AbeFED7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 23:59:38 -0400
+Date: Mon, 4 Jun 2018 22:59:36 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Tycho Andersen <tycho@tycho.ws>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] uart: fix race between uart_put_char() and
+ uart_shutdown()
+Message-ID: <20180605035936.GA19642@mail.hallyn.com>
+References: <20180605000127.5495-1-tycho@tycho.ws>
 MIME-Version: 1.0
-In-Reply-To: <1528140269-26205-7-git-send-email-chang.seok.bae@intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [194.157.170.35]
-X-ClientProxiedBy: HE1P195CA0001.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::11)
- To AM4PR07MB3329.eurprd07.prod.outlook.com (2603:10a6:205:a::10)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR07MB3329;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3329;3:CrmLpfj8RC1hqlG+Uyf2lTlX2d9fEzyx9ORSI9VWI+GtUxKW3piM6TNIOvhkH3VSEcFgV4tQZO47qNJdeLlLOb47ieqj6qk0kzaPzxhDRjA7uY80c+kT0XS9itAzhdpl1MyXHnupegbudIW+rZD20YjjUSJERYTYsGQt4jacgfYFAyD9U85x7Zo0bFTV+MOF7pmT00WJQm7/Zxk9xUxSrlYXQTDvcOy2NphxNviy5XiKE7+B5QhouDTpqN+4tXFa;25:jy+8JVFimqCQbnxD9mRPQq8yc8nUxueeVy90lMZ8dDfcwmy0pB91a/Ir5gnWsk6J7HAsmq+TMQgAEyuk1gCEMYnDnQ5RNlsjuh1HemL1bkDA5ZxyVLKDbBHBbl53KDM9ruarbhQil+DFxDrMo4XhjJ7Mpdsueue+/dnfifPVUvBUYoFlwr2FwO3ubX0mzlZpj+fiHnA8C0ZWkqcl1sFFmxHQXNHQNxDljeccgcnvkwigGe+ZTivgrnUyFQ4cx9QYfd/NueVevp71y8JFbvGl/XrnKUmV7sEQMQwmCSW+faGZ/DKOMvF8YjAWcb2IMoczFtTjJUyW/ERvrY0G12PjFw==;31:FJ5Kc25EFFukgsR6vd1YUHZHWh6EN4fbNmy1wdaR47GnQoOMxeNK0KjTRpRs/Amr914X/a6jxk+xW+RWhcoZDB94InI3/e9EV6n9FsaDM/hOf9ZdgpBZ5N3EQrYx8HqTjA6IqhF63KTayTt7uIA2KWjjvW+xhCbVFYIXlUy6JzxoQqt038wjAt57++9H2ShRGei5pU3wuufDWAEu3uC5d6A0XN8XgPCbPbk6mCHdyP4=
-X-MS-TrafficTypeDiagnostic: AM4PR07MB3329:
-X-Microsoft-Antispam-PRVS: <AM4PR07MB33291BAF55BA42B97499E94183660@AM4PR07MB3329.eurprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(228905959029699);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(2016111802025)(6043046)(6072148)(201708071742011)(7699016);SRVR:AM4PR07MB3329;BCL:0;PCL:0;RULEID:;SRVR:AM4PR07MB3329;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3329;4:yYwYXTzyrk4gCze9QNrl276m+mJ/bTNgrie396imC461piXDh6/Ds4lU+DB5SYBfEExeFguHaMXRyN9fql2qIiR3PXlSynq0TM/gBGz9GZyFHocOlGG4KDg/56prCHXJwWj/7nY0MTZev+IxZHvBvg9kd1L2nQzpT1Ca20l3cuWjdM7pg/ONKXEQXw59AEezJPnPILYFkvj0t2lDr/+T0SvErgXiT3zROG//W9h51bGZHcwp5WT5+RorffUQ1zQKmRB1qxxUf00ecY4V2zGOMjnJmiDQ8+dm8E8xRMnIyW72UdOyXdfFfXRUT7QOogMX
-X-Forefront-PRVS: 0694C54398
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39830400003)(376002)(396003)(346002)(366004)(39380400002)(189003)(199004)(229853002)(31686004)(6486002)(105586002)(64126003)(106356001)(7416002)(2906002)(58126008)(97736004)(6666003)(110136005)(8936002)(478600001)(316002)(65826007)(16576012)(50466002)(25786009)(54906003)(6246003)(53936002)(4326008)(5660300001)(68736007)(305945005)(486006)(7736002)(476003)(81156014)(446003)(11346002)(77096007)(2616005)(956004)(26005)(36756003)(6116002)(81166006)(3846002)(76176011)(31696002)(386003)(53546011)(2486003)(52116002)(86362001)(59450400001)(8676002)(186003)(52146003)(23676004)(230700001)(16526019)(65806001)(66066001)(65956001)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR07MB3329;H:[10.10.10.110];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTRQUjA3TUIzMzI5OzIzOkYxYjRHSUp0WUhicVk5VXA2STdOVlQwSGw4?=
- =?utf-8?B?M3hpWmdFeUZibEFUcjFibFh2TGdsUms0RDFEZW0wK3JsMFZqTUJrMEErVFFt?=
- =?utf-8?B?bXZrOVJ0aVZrY3lJa21pVGhhQjRobi91T1NENm9oS0hqMlhCQWtUa1pOQjNV?=
- =?utf-8?B?cHdGYU9hZ2FzRVZHL2h2bll5VkF4bEUveVloR3N6SW5makd3a3Bla1VVb1hM?=
- =?utf-8?B?M09jaGRxS3VGVGhYTmJIajZNRmxscjJBR2NNYUdLT3AyMThPMDFzM0FxdFZs?=
- =?utf-8?B?eWpiZFErQzVKUHpvbzlIWVBybEMzOUJBaWdwaDZxNHUzNjhXUXdqZXp1MkdE?=
- =?utf-8?B?cEUyNTUxTy9UVUs3NDBsVXVaSEVoak5zdWZxaUtndVRNazZqZXltamlYSUpl?=
- =?utf-8?B?YmlleUNTVnNncE5CM2hPUTd0ejVOU1JCczZhdUdINTY5UG1uQ2IvNlJ1MlFF?=
- =?utf-8?B?S1lEM1IrNmtiVHhaS1Y1aThMMno2SkpNSjRpc0VnL1dyYUpGQ1NuWk5wMWIr?=
- =?utf-8?B?OXZBc09reVNFZi9LRUFtOVk3SDRYRjV3UTlERDFzdG9yY3hDdjFKMDRxcVRD?=
- =?utf-8?B?QURtZVdhbkZNZThISVM0VUlSUE83dzAvczFiV0RQamYzS3QvaUJUbjQ3bHNE?=
- =?utf-8?B?QXpROWs4ZGZxM1FDSUlXaU9kUDQ3a3lCcjlWaEpsSnNEZHJnNk5uVzBqZjd1?=
- =?utf-8?B?U2pYSHZSNTBBUTZBSUFML08reFdxRGQzUTNBKzZibU9VOHdrYU94RHRNeHE4?=
- =?utf-8?B?akI0NnUyd0ZsT0crT0lJRDkzTEh2QXEvTUo0Zk50TDZxT0k0OXFHa3BFNXdO?=
- =?utf-8?B?YWxyZGZiWnNVMmZxWXlLd09vOTJ3ZHhtUG1xV0dUOXVYWEJiSjNHRjFMK3FY?=
- =?utf-8?B?dnVRaGE0S0U2Y0kvOFVVVndtK1hZaENnRGxBTC84MStWTW5RV04yVU0rNFNW?=
- =?utf-8?B?bVlHaTk0TDI2OTZQRTlJd2loQSszdnpLbjhsVVg5YnNPQWE2VmJXOHErSnBo?=
- =?utf-8?B?b2tZRk5YN0ZWa1pUWTI3d012WjV2cW1sMk1SNWtEMGlmSjYrbDI0Y3lJd2N3?=
- =?utf-8?B?dXMyZSsyOG01eWRwNk9LYklpVEVWSVlCVERoczM3bWw3ckExakhXRytSWHlM?=
- =?utf-8?B?MFdMWFN5bUJobFp3bzVoZkRsRG9yTjI5cGxESUtCVmQ2b1pKQ1FaYXpjNlo3?=
- =?utf-8?B?cDJsYU1RdGlhdGdpTmdoeXNzcHdZOVBKeFpmbXZyaEVpdVhNMFFRSDJINlQv?=
- =?utf-8?B?OHZlbElLdUwwdnJ5azFrNXBkNEMxWlo1aWhvMnFkMmpnenZSUDExNHFPeU51?=
- =?utf-8?B?SUtDYUJiWnZKSFk3V3Mwcmt1cEZacXhTOVVWVG1TdzRZSittZUl1MmFycGJO?=
- =?utf-8?B?RExKcktBK2N6RHBQc21aeDZ6Y29nUFRBRjUvYWx1NTk3WTBTOXJLR3VBeHp5?=
- =?utf-8?B?N2pGdmxKZDRxeEhWcFVpNEpObHJEdDc5TWI4RlMvdW1UeUhmcmhTUUw0aTFM?=
- =?utf-8?B?eWd3S3BWUXh5aXlVVzdpWisxWDlCdTdxNnR3WnJGOGxCenhmUmJoZGlXRWFG?=
- =?utf-8?B?Qjh1VHN2Um1vVXlSOGhweEZIaFhXQXNGSWRxTU1PRnBYemduYSswaGkvb3FV?=
- =?utf-8?B?c0N4WVJhZEl1MTQvU0YwdkNGTzh3Nk51S09aenlJekUxWkNoUmpkeWQrOTZJ?=
- =?utf-8?B?ZFgwbEpycWJyeUMxZ3d2WEIwM2xSYzNxaWJVUzZsYnVTSG1DdWh2SVlwbGJH?=
- =?utf-8?B?VmtsSWt0Y1l2RVI0NXVRcjI3SytCMTEzZEV6Y2MwVGZYZ1hLSTJ5YUJqM3BY?=
- =?utf-8?B?bUIxNEE0dHk1azJSbk52cGpqaXRBK1BoWFdYTlJubWNhU2hMMDU1Zk9reG12?=
- =?utf-8?B?bTBxMkhVbFo3TUt1Sk1WQlI1RERPMm1jTWY4bStLQ1lxTmJuYXdOZkM3ZnUz?=
- =?utf-8?B?ampibkZVd3h3bkR4UkFpTU1FVGJ0Nkt3cWFzYVgxc0RKRzU0MVJUdVhCWXBM?=
- =?utf-8?B?RG9kZkdSUk0wUUsxcGduSnljSk9hVVMyY0wwdz09?=
-X-Microsoft-Antispam-Message-Info: NOpIGEQhm6qXyQrDwEeFRTOhii18HuGNIG4e5er1bf6eMQ6Dp5on3Kqff/mfBpI1VriNuu4/88i2Rji8XAuM0RFdNyLTI0XUaOYrpYCogvdZkiFaTB2nwXVTXhErBwR6mRAFBLA6jZI7dUCc9Ze9hIJVqBfo5CdhbfFMEB3TPkBOQPqITzNPQWYvu842YVJF
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3329;6:HB3o7k8z44TK4zXxLdyny7AacPjkZz6B4I7EHEFNcmi0Yh1j1XfWNqZYuNEW2iG7Pbp9QlHMkcF7vedlRz6LgKzulBUT5T3L8+Xm0iLAVicayRtMI+6uyVyJ7h8I/EkscyoLxjpvOCmCqBURhKv1pJvexY7smjzjLdyOHhNXHyb6VnhLLudpqOlCvwou/GARgibrgDs0uhib2OkLrnZBVgJtxSBo6TgBQ1b3KA6Ym/zTZMdhRx6fEEA3oUt1EXN0ZBSnSAcdzEj/m+ElCCoSQv5tAg961+ZBYpgc/P0360jG0krsc9WyjGtG4TC3Gk/li7nq99Xf7xb0yfBafjND1FThDPXMWZA4Wafdj/ZF0SuJS+nfxwmDgStzHTUlMLWw7TnQqMyMht4EXFlvjhgpQm5iNm0Qll2ZI+vdvBLK+mTaUlom54DRU4dHdRIOxlwA+7WEC1+Ny2ilZgOrcCuB1A==;5:g0/q47jehFBWSE0FDZwZSzs6q+MTcIpguh/CnXo1XbLIqtUt1ogNh/W4q+ke323t+WU7pQuh6h/dLQPw80MbYRICPmv6CwXwu3HySwG8eeceR1ELQNkRt/mgrI9vYD4pbkwFeVeeN8zSmKfEhGM2bu/8nZx8NIkvOgYhPRIYSOw=;24:UBxmUTf667GOmz1GwMkJ8zz11lOQe6JLu165k9THqeE9w1SMj65UQrXPq0NoJ8VJrTMdXqGnk/aGxpTr4Xg8RUqUQZcGznCs4NxCKc9rrpw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR07MB3329;7:Aw4i1++5PiNUUx0mEbUvRaFw2FjTcRz/Sa9TXvwnmOCS8x4iRCww8X0wz5hh1NJ28c3ou+j8EsotKM49NgtXr6iQLxNf1618mjIumX7XUwp7Nb76O02dZXbSfVQB8tCrSnG86ozSEa8c4ssdyTxIj0RQJlGf+lELmD0UchTp5L0q65iP/vOfexns9J3fycxRwdye+7nL9lBsgKk9HrKwQ+xkto1Rf6riDkKS4PYlRXd4tu7QsVkhEknhUTZBC3dV
-X-MS-Office365-Filtering-Correlation-Id: 3a4acfc1-2c1d-40ed-9d80-08d5ca988095
-X-OriginatorOrg: nextfour.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2018 03:57:46.1422 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a4acfc1-2c1d-40ed-9d80-08d5ca988095
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 972e95c2-9290-4a02-8705-4014700ea294
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR07MB3329
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605000127.5495-1-tycho@tycho.ws>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 10:24 PM, Chang S. Bae wrote:
-> The CPU (and node) number will be written, as early enough,
-> to the segment limit of per CPU data and TSC_AUX MSR entry.
-> The information has been retrieved by vgetcpu in user space
-> and will be also loaded from the paranoid entry, when
-> FSGSBASE enabled. So, it is moved out from vDSO to the CPU
-> initialization path where IST setup is serialized.
+Quoting Tycho Andersen (tycho@tycho.ws):
+> We have reports of the following crash:
 > 
-> Now, redundant setting of the segment in entry/vdso/vma.c
-> was removed; a substantial code removal. It removes a
-> hotplug notifier, makes a facility useful to both the kernel
-> and userspace unconditionally available much sooner, and
-> unification with i386. (Thanks to HPA for suggesting the
-> cleanup)
+>     PID: 7 TASK: ffff88085c6d61c0 CPU: 1 COMMAND: "kworker/u25:0"
+>     #0 [ffff88085c6db710] machine_kexec at ffffffff81046239
+>     #1 [ffff88085c6db760] crash_kexec at ffffffff810fc248
+>     #2 [ffff88085c6db830] oops_end at ffffffff81008ae7
+>     #3 [ffff88085c6db860] no_context at ffffffff81050b8f
+>     #4 [ffff88085c6db8b0] __bad_area_nosemaphore at ffffffff81050d75
+>     #5 [ffff88085c6db900] bad_area_nosemaphore at ffffffff81050e83
+>     #6 [ffff88085c6db910] __do_page_fault at ffffffff8105132e
+>     #7 [ffff88085c6db9b0] do_page_fault at ffffffff8105152c
+>     #8 [ffff88085c6db9c0] page_fault at ffffffff81a3f122
+>     [exception RIP: uart_put_char+149]
+>     RIP: ffffffff814b67b5 RSP: ffff88085c6dba78 RFLAGS: 00010006
+>     RAX: 0000000000000292 RBX: ffffffff827c5120 RCX: 0000000000000081
+>     RDX: 0000000000000000 RSI: 000000000000005f RDI: ffffffff827c5120
+>     RBP: ffff88085c6dba98 R8: 000000000000012c R9: ffffffff822ea320
+>     R10: ffff88085fe4db04 R11: 0000000000000001 R12: ffff881059f9c000
+>     R13: 0000000000000001 R14: 000000000000005f R15: 0000000000000fba
+>     ORIG_RAX: ffffffffffffffff CS: 0010 SS: 0018
+>     #9 [ffff88085c6dbaa0] tty_put_char at ffffffff81497544
+>     #10 [ffff88085c6dbac0] do_output_char at ffffffff8149c91c
+>     #11 [ffff88085c6dbae0] __process_echoes at ffffffff8149cb8b
+>     #12 [ffff88085c6dbb30] commit_echoes at ffffffff8149cdc2
+>     #13 [ffff88085c6dbb60] n_tty_receive_buf_fast at ffffffff8149e49b
+>     #14 [ffff88085c6dbbc0] __receive_buf at ffffffff8149ef5a
+>     #15 [ffff88085c6dbc20] n_tty_receive_buf_common at ffffffff8149f016
+>     #16 [ffff88085c6dbca0] n_tty_receive_buf2 at ffffffff8149f194
+>     #17 [ffff88085c6dbcb0] flush_to_ldisc at ffffffff814a238a
+>     #18 [ffff88085c6dbd50] process_one_work at ffffffff81090be2
+>     #19 [ffff88085c6dbe20] worker_thread at ffffffff81091b4d
+>     #20 [ffff88085c6dbeb0] kthread at ffffffff81096384
+>     #21 [ffff88085c6dbf50] ret_from_fork at ffffffff81a3d69f​
 > 
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
+> after slogging through some dissasembly:
+> 
+> ffffffff814b6720 <uart_put_char>:
+> ffffffff814b6720:	55                   	push   %rbp
+> ffffffff814b6721:	48 89 e5             	mov    %rsp,%rbp
+> ffffffff814b6724:	48 83 ec 20          	sub    $0x20,%rsp
+> ffffffff814b6728:	48 89 1c 24          	mov    %rbx,(%rsp)
+> ffffffff814b672c:	4c 89 64 24 08       	mov    %r12,0x8(%rsp)
+> ffffffff814b6731:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
+> ffffffff814b6736:	4c 89 74 24 18       	mov    %r14,0x18(%rsp)
+> ffffffff814b673b:	e8 b0 8e 58 00       	callq  ffffffff81a3f5f0 <mcount>
+> ffffffff814b6740:	4c 8b a7 88 02 00 00 	mov    0x288(%rdi),%r12
+> ffffffff814b6747:	45 31 ed             	xor    %r13d,%r13d
+> ffffffff814b674a:	41 89 f6             	mov    %esi,%r14d
+> ffffffff814b674d:	49 83 bc 24 70 01 00 	cmpq   $0x0,0x170(%r12)
+> ffffffff814b6754:	00 00
+> ffffffff814b6756:	49 8b 9c 24 80 01 00 	mov    0x180(%r12),%rbx
+> ffffffff814b675d:	00
+> ffffffff814b675e:	74 2f                	je     ffffffff814b678f <uart_put_char+0x6f>
+> ffffffff814b6760:	48 89 df             	mov    %rbx,%rdi
+> ffffffff814b6763:	e8 a8 67 58 00       	callq  ffffffff81a3cf10 <_raw_spin_lock_irqsave>
+> ffffffff814b6768:	41 8b 8c 24 78 01 00 	mov    0x178(%r12),%ecx
+> ffffffff814b676f:	00
+> ffffffff814b6770:	89 ca                	mov    %ecx,%edx
+> ffffffff814b6772:	f7 d2                	not    %edx
+> ffffffff814b6774:	41 03 94 24 7c 01 00 	add    0x17c(%r12),%edx
+> ffffffff814b677b:	00
+> ffffffff814b677c:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
+> ffffffff814b6782:	75 23                	jne    ffffffff814b67a7 <uart_put_char+0x87>
+> ffffffff814b6784:	48 89 c6             	mov    %rax,%rsi
+> ffffffff814b6787:	48 89 df             	mov    %rbx,%rdi
+> ffffffff814b678a:	e8 e1 64 58 00       	callq  ffffffff81a3cc70 <_raw_spin_unlock_irqrestore>
+> ffffffff814b678f:	44 89 e8             	mov    %r13d,%eax
+> ffffffff814b6792:	48 8b 1c 24          	mov    (%rsp),%rbx
+> ffffffff814b6796:	4c 8b 64 24 08       	mov    0x8(%rsp),%r12
+> ffffffff814b679b:	4c 8b 6c 24 10       	mov    0x10(%rsp),%r13
+> ffffffff814b67a0:	4c 8b 74 24 18       	mov    0x18(%rsp),%r14
+> ffffffff814b67a5:	c9                   	leaveq
+> ffffffff814b67a6:	c3                   	retq
+> ffffffff814b67a7:	49 8b 94 24 70 01 00 	mov    0x170(%r12),%rdx
+> ffffffff814b67ae:	00
+> ffffffff814b67af:	48 63 c9             	movslq %ecx,%rcx
+> ffffffff814b67b2:	41 b5 01             	mov    $0x1,%r13b
+> ffffffff814b67b5:	44 88 34 0a          	mov    %r14b,(%rdx,%rcx,1)
+> ffffffff814b67b9:	41 8b 94 24 78 01 00 	mov    0x178(%r12),%edx
+> ffffffff814b67c0:	00
+> ffffffff814b67c1:	83 c2 01             	add    $0x1,%edx
+> ffffffff814b67c4:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
+> ffffffff814b67ca:	41 89 94 24 78 01 00 	mov    %edx,0x178(%r12)
+> ffffffff814b67d1:	00
+> ffffffff814b67d2:	eb b0                	jmp    ffffffff814b6784 <uart_put_char+0x64>
+> ffffffff814b67d4:	66 66 66 2e 0f 1f 84 	data32 data32 nopw %cs:0x0(%rax,%rax,1)
+> ffffffff814b67db:	00 00 00 00 00
+> 
+> for our build, this is crashing at:
+> 
+>     circ->buf[circ->head] = c;
+> 
+> Looking in uart_port_startup(), it seems that circ->buf (state->xmit.buf)
+> protected by the "per-port mutex", which based on uart_port_check() is
+> state->port.mutex. Indeed, the lock acquired in uart_put_char() is
+> uport->lock, i.e. not the same lock.
+> 
+> Anyway, since the lock is not acquired, if uart_shutdown() is called, the
+> last chunk of that function may release state->xmit.buf before its assigned
+> to null, and cause the race above.
+> 
+> To fix it, we simply also acquire state->port.mutex.
+> 
+> Unfortunately, I don't have any insightful thoughts about how to test this.
+> Ideas are appreciated :)
+
+I wonder whether there is something we can do with qemu -serial pipe: ?
+
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
 > ---
-
-> diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
-> index ea554f8..e716e94 100644
-> --- a/arch/x86/kernel/setup_percpu.c
-> +++ b/arch/x86/kernel/setup_percpu.c
-> @@ -155,12 +155,21 @@ static void __init pcpup_populate_pte(unsigned long addr)
->  
->  static inline void setup_percpu_segment(int cpu)
->  {
-> -#ifdef CONFIG_X86_32
-> -	struct desc_struct d = GDT_ENTRY_INIT(0x8092, per_cpu_offset(cpu),
-> -					      0xFFFFF);
-> +#ifdef CONFIG_NUMA
-> +	unsigned long node = early_cpu_to_node(cpu);
-> +#else
-> +	unsigned long node = 0;
-> +#endif
-> +	struct desc_struct d = GDT_ENTRY_INIT(0x0, per_cpu_offset(cpu),
-> +			   make_lsl_tscp(cpu, node));
-> +
-> +	d.type = 5;	/* R0 data, expand down, accessed */
-> +	d.dpl = 3;	/* Visible to user code */
-> +	d.s = 1;	/* Not a system segment */
-> +	d.p = 1;	/* Present */
-> +	d.d = 1;	/* 32-bit */
->  
->  	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_PERCPU, &d, DESCTYPE_S);
-> -#endif
->  }
-
-
-This won't work on X86-32 because it actually uses the segment limit with fs: access. So there 
-is a reason why the lsl based method is X86-64 only.
-
-
--Mika
-
->  
->  void __init setup_per_cpu_areas(void)
+>  drivers/tty/serial/serial_core.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> index 0466f9f08a91..883a8c15510c 100644
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -532,9 +532,15 @@ static int uart_put_char(struct tty_struct *tty, unsigned char c)
+>  	unsigned long flags;
+>  	int ret = 0;
+>  
+> +	/*
+> +	 * state->xmit.buf is protected by state->port.mutex, see the note in
+> +	 * uart_port_startup()
+> +	 */
+> +	mutex_lock(&state->port.mutex);
+> +
+>  	circ = &state->xmit;
+>  	if (!circ->buf)
+> -		return 0;
+> +		goto out;
+>  
+>  	port = uart_port_lock(state, flags);
+>  	if (port && uart_circ_chars_free(circ) != 0) {
+> @@ -543,6 +549,9 @@ static int uart_put_char(struct tty_struct *tty, unsigned char c)
+>  		ret = 1;
+>  	}
+>  	uart_port_unlock(port, flags);
+> +
+> +out:
+> +	mutex_unlock(&state->port.mutex);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.17.0
