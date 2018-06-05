@@ -1,88 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752363AbeFETIM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:08:12 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:38726 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751968AbeFETIL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:08:11 -0400
-X-Google-Smtp-Source: ADUXVKLR+irgySyvG4afOyCFJaU5Ba7pCI8wYwRq3B2W+sEgOzMdZ0Stq0sWNnsvygQmvpqwByXBNw==
-Date: Tue, 5 Jun 2018 12:08:07 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org
-Subject: [GIT PULL 1/2] libata changes for v4.18-rc1
-Message-ID: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1752390AbeFETIm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:08:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:60452 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752035AbeFETIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 15:08:40 -0400
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: Sudeep.Holla@arm.com
+Cc: Will.Deacon@arm.com, Catalin.Marinas@arm.com, Robin.Murphy@arm.com,
+        Morten.Rasmussen@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, geert@linux-m68k.org,
+        linux-acpi@vger.kernel.org, ard.biesheuvel@linaro.org,
+        Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH] arm64: topology: Avoid checking numa mask for scheduler MC selection
+Date: Tue,  5 Jun 2018 14:08:37 -0500
+Message-Id: <20180605190837.493505-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+The numa mask subset check has problems if !CONFIG_NUMA, over hotplug
+operations or during early boot. Lets disable the NUMA siblings checks
+for the time being, as NUMA in socket machines have LLC's that will
+assure that the scheduler topology isn't "borken".
 
-These two are fixes which missed v4.17.  I tried to merge these into
-libata/for-4.18 but couldn't make "git request-pull" not generate huge
-spurious diffstat without merging v4.17 in the middle, so I'm sending
-them out as two spearate pull request.  Pulling into master should be
-clean for both.
+Futher, as a defensive mechanism during hotplug, lets assure that the
+LLC siblings are also masked.
 
-One is to remove an incorrect power management blacklist entry and the
-other to fix a cdb buffer overrun which has been there for a very long
-time.
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+---
+ arch/arm64/kernel/topology.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-The following changes since commit 4544e403eb25552aed7f0ee181a7a506b8800403:
-
-  ahci: Add PCI ID for Cannon Lake PCH-LP AHCI (2018-05-24 07:03:32 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-4.17-fixes
-
-for you to fetch changes up to 2cfce3a86b64b53f0a70e92a6a659c720c319b45:
-
-  libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk (2018-05-31 08:45:37 -0700)
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      libata: zpodd: small read overflow in eject_tray()
-
-Hans de Goede (1):
-      libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
-
- drivers/ata/libata-core.c  | 3 ---
- drivers/ata/libata-zpodd.c | 2 +-
- 2 files changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 346b163..9bfd2f7 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4557,9 +4557,6 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
- 	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 7415c166281f..f845a8617812 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -215,13 +215,8 @@ EXPORT_SYMBOL_GPL(cpu_topology);
  
--	/* Sandisk devices which are known to not handle LPM well */
--	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
--
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
-diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
-index de4ddd0..b3ed8f9 100644
---- a/drivers/ata/libata-zpodd.c
-+++ b/drivers/ata/libata-zpodd.c
-@@ -35,7 +35,7 @@ struct zpodd {
- static int eject_tray(struct ata_device *dev)
+ const struct cpumask *cpu_coregroup_mask(int cpu)
  {
- 	struct ata_taskfile tf;
--	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
-+	static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_START_STOP_UNIT,
- 		0, 0, 0,
- 		0x02,     /* LoEj */
- 		0, 0, 0, 0, 0, 0, 0,
+-	const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
++	const cpumask_t *core_mask = &cpu_topology[cpu].core_sibling;
+ 
+-	/* Find the smaller of NUMA, core or LLC siblings */
+-	if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
+-		/* not numa in package, lets use the package siblings */
+-		core_mask = &cpu_topology[cpu].core_sibling;
+-	}
+ 	if (cpu_topology[cpu].llc_id != -1) {
+ 		if (cpumask_subset(&cpu_topology[cpu].llc_siblings, core_mask))
+ 			core_mask = &cpu_topology[cpu].llc_siblings;
+@@ -239,8 +234,10 @@ static void update_siblings_masks(unsigned int cpuid)
+ 	for_each_possible_cpu(cpu) {
+ 		cpu_topo = &cpu_topology[cpu];
+ 
+-		if (cpuid_topo->llc_id == cpu_topo->llc_id)
++		if (cpuid_topo->llc_id == cpu_topo->llc_id) {
+ 			cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
++			cpumask_set_cpu(cpuid, &cpu_topo->llc_siblings);
++		}
+ 
+ 		if (cpuid_topo->package_id != cpu_topo->package_id)
+ 			continue;
 -- 
-tejun
+2.14.3
