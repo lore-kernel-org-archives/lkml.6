@@ -1,377 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeFESsd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:48:33 -0400
-Received: from mail02.ausil.us ([74.119.218.151]:36720 "EHLO mail.ausil.us"
+        id S1751937AbeFESt6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:49:58 -0400
+Received: from anholt.net ([50.246.234.109]:40434 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751816AbeFESsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:48:31 -0400
-From: Dennis Gilmore <dennis@ausil.us>
-To: linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
-        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Dennis Gilmore <dennis@ausil.us>
-Subject: [PATCH V3] ARM: dts: armada388-helios4
-Date: Tue,  5 Jun 2018 13:48:10 -0500
-Message-Id: <20180605184810.29602-1-dennis@ausil.us>
-X-Mailer: git-send-email 2.17.1
+        id S1751816AbeFESt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 14:49:57 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: Kevin Quigley <kevin@kquigley.co.uk>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-kernel@vger.kernel.org,
+        James Hughes <james.hughes@raspberrypi.org>,
+        Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH] drm/vc4: Enable the DSI module and link before other enables.
+In-Reply-To: <20180605082532eucas1p21328ec5bea7d588c81480829f862bdfd~1NhnMydDJ0562405624eucas1p2l@eucas1p2.samsung.com>
+References: <CGME20180604194448epcas1p29627759e2d8c0b1388c6700a7da77a45@epcas1p2.samsung.com> <20180604194437.13790-1-eric@anholt.net> <20180605082532eucas1p21328ec5bea7d588c81480829f862bdfd~1NhnMydDJ0562405624eucas1p2l@eucas1p2.samsung.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Tue, 05 Jun 2018 11:49:53 -0700
+Message-ID: <87lgbtt6em.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helios4 is a Armada388 based nas board designed by SolidRun and
-based on their SOM. It is sold by kobol.io the dts file came from
-https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
-I added a SPDX license line to match the clearfog it says it was based
-on and a compatible line for "kobol,helios4"
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: Dennis Gilmore <dennis@ausil.us>
+Andrzej Hajda <a.hajda@samsung.com> writes:
 
----
+> On 04.06.2018 21:44, Eric Anholt wrote:
+>> We want the DSI PHY to be enabled and the DSI module clocked before a
+>> panel or bridge's prepare() function, since most DSI panel drivers
+>> with a prepare() hook are doing DCS transactions inside of them.
+>>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>> Cc: Kevin Quigley <kevin@kquigley.co.uk>
+>> Cc: James Hughes <james.hughes@raspberrypi.org>
+>> Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+>> ---
+>>
+>> I'm not sure it makes sense to enable CRTCs before encoders on vc4 at
+>> all.  Why start scanning pixels before the encoder is ready to hear
+>> about VSTART?  However, this patch will hopefully unblock people
+>> trying to attach other panels to rpi
+>
+> But this patch is about enabling encoder before panel/bridge prepare. Or
+> am I missing something.
+> Anyway I would be more precise here, MIPI-DSI bus is used for two things:
+> - control bus - accessing DSI device (configuration/detection,...),
+> - video data bus - sending video stream.
+>
+> I suspect in prepare/pre_enable phase of DSI panel/bridge only control
+> bus should be functional, video stream transfer does not make sense.
+> So the best solution (I guess) would be to split DSI-encoder enable
+> sequence into control bus enable and video transfer enable parts and
+> call the former before 1st transfer request from device and the latter
+> in encoder enable callback. Of course there will be a problem then with
+> disabling sequence, ie stopping video stream should be performed in
+> encoder's disable, but when we should disable control bus? If we do it
+> in encoder's disable callback we could not perform transfers in
+> post_disable cb of the bridge - in most cases (maybe all currently
+> present in kernel) it will work, but it does not look ideal.
+> All this recalls me discussion that hardwiring bridge callbacks into drm
+> core is problematic and maybe it would be better to call downstream
+> callbacks explicitly from upstream element - the callback order should
+> depend on the local bus protocol, and should not be fixed in drm core.
 
-changes since first submission
-change solidrun to kobol in compatible line based on feedback
+It does seem like for DSI encoders they generally would need to be able
+to control when the call down to the bridge happens.  However, from my
+experience with panels, drivers are bad about calling both prepare and
+enable, if their particular panel only cares about one of them.  So, how
+about:
 
-changes since v2
+- encoders can call drm_bridge_disable_midlayer_calls() (any naming
+  suggestions?) to flag this bridge as not wanting the calls from the
+  atomic helpers.
 
-remove commented out nodes based on feedback
----
- arch/arm/boot/dts/Makefile               |   1 +
- arch/arm/boot/dts/armada-388-helios4.dts | 313 +++++++++++++++++++++++
- 2 files changed, 314 insertions(+)
- create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
+- atomic helpers WARN if bridge midlayer_calls flag was set and
+  drm_bridge_pre_enable/enable/disable/post_disable failed to be called
+  by the encoder
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 7e2424957809..490bfd586198 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
- 	armada-388-clearfog-pro.dtb \
- 	armada-388-db.dtb \
- 	armada-388-gp.dtb \
-+	armada-388-helios4.dtb \
- 	armada-388-rd.dtb
- dtb-$(CONFIG_MACH_ARMADA_39X) += \
- 	armada-398-db.dtb
-diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
-new file mode 100644
-index 000000000000..59048740ae06
---- /dev/null
-+++ b/arch/arm/boot/dts/armada-388-helios4.dts
-@@ -0,0 +1,313 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Device Tree file for Helios4
-+ * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
-+ *
-+ *  Copyright (C) 2017
-+ *
-+ */
-+
-+/dts-v1/;
-+#include "armada-388.dtsi"
-+#include "armada-38x-solidrun-microsom.dtsi"
-+
-+/ {
-+	model = "Helios4";
-+	compatible = "kobol,helios4", "marvell,armada388",
-+		"marvell,armada385", "marvell,armada380";
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x00000000 0x80000000>; /* 2 GB */
-+	};
-+
-+	aliases {
-+		/* So that mvebu u-boot can update the MAC addresses */
-+		ethernet1 = &eth0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	reg_12v: regulator-12v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "power_brick_12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_12v>;
-+	};
-+
-+	reg_5p0v_hdd: regulator-5v-hdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V_HDD";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_12v>;
-+	};
-+
-+	reg_5p0v_usb: regulator-5v-usb {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB-PWR";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		enable-active-high;
-+		gpio = <&expander0 6 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&reg_12v>;
-+	};
-+
-+	system-leds {
-+		compatible = "gpio-leds";
-+		status-led {
-+			label = "helios4:green:status";
-+			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "on";
-+		};
-+
-+		fault-led {
-+			label = "helios4:red:fault";
-+			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
-+			default-state = "keep";
-+		};
-+	};
-+
-+	io-leds {
-+		compatible = "gpio-leds";
-+		sata1-led {
-+			label = "helios4:green:ata1";
-+			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata1";
-+			default-state = "off";
-+		};
-+		sata2-led {
-+			label = "helios4:green:ata2";
-+			gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata2";
-+			default-state = "off";
-+		};
-+		sata3-led {
-+			label = "helios4:green:ata3";
-+			gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata3";
-+			default-state = "off";
-+		};
-+		sata4-led {
-+			label = "helios4:green:ata4";
-+			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata4";
-+			default-state = "off";
-+		};
-+		usb-led {
-+			label = "helios4:green:usb";
-+			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "usb-host";
-+			default-state = "off";
-+		};
-+	};
-+
-+	fan1: j10-pwm {
-+		compatible = "pwm-fan";
-+		pwms = <&gpio1 9 40000>;	/* Target freq:25 kHz */
-+	};
-+
-+	fan2: j17-pwm {
-+		compatible = "pwm-fan";
-+		pwms = <&gpio1 23 40000>;	/* Target freq:25 kHz */
-+	};
-+
-+	usb2_phy: usb2-phy {
-+		compatible = "usb-nop-xceiv";
-+		vbus-regulator = <&reg_5p0v_usb>;
-+	};
-+
-+	usb3_phy: usb3-phy {
-+		compatible = "usb-nop-xceiv";
-+	};
-+
-+	soc {
-+		internal-regs {
-+			i2c@11000 {
-+				clock-frequency = <400000>;
-+				pinctrl-0 = <&i2c0_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+
-+				/*
-+				 * PCA9655 GPIO expander, up to 1MHz clock.
-+				 *  0-Board Revision bit 0 #
-+				 *  1-Board Revision bit 1 #
-+				 *  5-USB3 overcurrent
-+				 *  6-USB3 power
-+				 */
-+				expander0: gpio-expander@20 {
-+					/*
-+					 * This is how it should be:
-+					 * compatible = "onnn,pca9655",
-+					 *	 "nxp,pca9555";
-+					 * but you can't do this because of
-+					 * the way I2C works.
-+					 */
-+					compatible = "nxp,pca9555";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					reg = <0x20>;
-+					pinctrl-names = "default";
-+					pinctrl-0 = <&pca0_pins>;
-+					interrupt-parent = <&gpio0>;
-+					interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
-+					interrupt-controller;
-+					#interrupt-cells = <2>;
-+
-+					board_rev_bit_0 {
-+						gpio-hog;
-+						gpios = <0 GPIO_ACTIVE_LOW>;
-+						input;
-+						line-name = "board-rev-0";
-+					};
-+					board_rev_bit_1 {
-+						gpio-hog;
-+						gpios = <1 GPIO_ACTIVE_LOW>;
-+						input;
-+						line-name = "board-rev-1";
-+					};
-+					usb3_ilimit {
-+						gpio-hog;
-+						gpios = <5 GPIO_ACTIVE_HIGH>;
-+						input;
-+						line-name = "usb-overcurrent-status";
-+					};
-+				};
-+
-+				temp_sensor: temp@4c {
-+					compatible = "ti,lm75";
-+					reg = <0x4c>;
-+					vcc-supply = <&reg_3p3v>;
-+				};
-+			};
-+
-+			i2c@11100 {
-+				/*
-+				 * External I2C Bus for user peripheral
-+				 */
-+				clock-frequency = <400000>;
-+				pinctrl-0 = <&helios_i2c1_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+			};
-+
-+			sata@a8000 {
-+				status = "okay";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sata0: sata-port@0 {
-+					reg = <0>;
-+				};
-+
-+				sata1: sata-port@1 {
-+					reg = <1>;
-+				};
-+			};
-+
-+			sata@e0000 {
-+				status = "okay";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sata2: sata-port@0 {
-+					reg = <0>;
-+				};
-+
-+				sata3: sata-port@1 {
-+					reg = <1>;
-+				};
-+			};
-+
-+			spi@10680 {
-+				pinctrl-0 = <&spi1_pins
-+					     &microsom_spi1_cs_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+			};
-+
-+			sdhci@d8000 {
-+				bus-width = <4>;
-+				cd-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
-+				no-1-8-v;
-+				pinctrl-0 = <&helios_sdhci_pins
-+					     &helios_sdhci_cd_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+				vmmc = <&reg_3p3v>;
-+				wp-inverted;
-+			};
-+
-+			usb@58000 {
-+				usb-phy = <&usb2_phy>;
-+				status = "okay";
-+			};
-+
-+			usb3@f0000 {
-+				status = "okay";
-+			};
-+
-+			usb3@f8000 {
-+				status = "okay";
-+			};
-+
-+			pinctrl@18000 {
-+				pca0_pins: pca0-pins {
-+					marvell,pins = "mpp23";
-+					marvell,function = "gpio";
-+				};
-+				microsom_phy0_int_pins: microsom-phy0-int-pins {
-+					marvell,pins = "mpp18";
-+					marvell,function = "gpio";
-+				};
-+				helios_i2c1_pins: i2c1-pins {
-+					marvell,pins = "mpp26", "mpp27";
-+					marvell,function = "i2c1";
-+				};
-+				helios_sdhci_cd_pins: helios-sdhci-cd-pins {
-+					marvell,pins = "mpp20";
-+					marvell,function = "gpio";
-+				};
-+				helios_sdhci_pins: helios-sdhci-pins {
-+					marvell,pins = "mpp21", "mpp28",
-+						       "mpp37", "mpp38",
-+						       "mpp39", "mpp40";
-+					marvell,function = "sd0";
-+				};
-+				helios_led_pins: helios-led-pins {
-+					marvell,pins = "mpp24", "mpp25",
-+						       "mpp49", "mpp50",
-+						       "mpp52", "mpp53",
-+						       "mpp54";
-+					marvell,function = "gpio";
-+				};
-+				helios_fan_pins: helios-fan-pins {
-+					marvell,pins = "mpp41", "mpp43",
-+						       "mpp48", "mpp55";
-+					marvell,function = "gpio";
-+				};
-+				microsom_spi1_cs_pins: spi1-cs-pins {
-+					marvell,pins = "mpp59";
-+					marvell,function = "spi1";
-+				};
-+			};
-+		};
-+	};
-+};
--- 
-2.17.1
+- drm_bridge_detach() clears disable_midlayer_calls flag for the next
+  encoder
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsW21EACgkQtdYpNtH8
+nugQUg//QG8RdjfWVnErEusS3Hgz6j3s13xE2CYARmN71xz8wIrezEjJCcS7BFnE
+6RIhGKBpityf29/bmEsIMGey+jkW0FgshAY3Z0v+q0dvj0hmge9qsMBSxRm4RCHL
+mIXPa8KLndCUpiFKNLrwG7yNAo6aR3fn5E2Pdt+9wh1Ry8Mod+uSJH3s0SxL4+/s
+66VmO2BlCnJKt1wWPNQ5qM+PqEapjpLmJvA3czN6NnvOlUasasr6eb8wIeTKHuTo
+rg3iT7DqLvITRXidRv4ZMLPRZLhqnpObp3ApyEElToMFaYDgvu5VkMLJbzqA4+U3
+cXGnjx9TV+D3iQG092GUV6GqFGI99OxGeGbx9A2NlUPuKlObo0HbFmX8qWWKBgCK
+QsM+AYanClEFrofAyhLWY9RyvsRGS407cVpoy/tmpaZrais9oS862p1r4Ga1L9oB
+8bHQPHazAOuRj9TkYr3yiIPTr4Kn/gKyZFymOo6pGgL6kezXcy8fLm/EW73bWJdB
+nYchbQd7ri/TPJWCcN8wBlxH7DSqECPeRyr9QSjfhO8yOWW1oiWi7bsuA6BdLVh3
+qmImGeM0PK6wNbIAWsrGIAoJyIhqVLgI0leOomKJ13KWQDZly4EO4mNpsx9C8g7U
+yPME2kVFijK0+Xda/OR8xwp9ULyzzShfuKYkxK5wdBBMqbj1pXE=
+=zJgH
+-----END PGP SIGNATURE-----
+--=-=-=--
