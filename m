@@ -1,73 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeFELoU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:44:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:50607 "EHLO
+        id S1751949AbeFELpB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:45:01 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:35525 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751819AbeFELoT (ORCPT
+        with ESMTP id S1751622AbeFELpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:44:19 -0400
+        Tue, 5 Jun 2018 07:45:00 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ludovic Barre <ludovic.barre@st.com>,
-        Rob Herring <robh@kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] irqchip/stm32: fix non-SMP build warning
-Date: Tue,  5 Jun 2018 13:43:34 +0200
-Message-Id: <20180605114347.1347128-1-arnd@arndb.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ilia Lin <ilialin@codeaurora.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: kryo: allow building as a loadable module
+Date: Tue,  5 Jun 2018 13:44:24 +0200
+Message-Id: <20180605114453.1381941-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:6KhzIBMf76MS69gmFQuvp4KMTEktmb+ApIpuBYw4tviDx0ahOme
- vcb2BXFtT4pmNFiKdx90jvC0YcF2xKseqEjvcp2INK98lNR4mnxXgqd2e5744SgHP9EHzFe
- gG/UNdHlcAF9FeVS5+HBTV+V+ZiM8IfCeC5CGLfQd37WohtpO3bxJH1AvU5YgOreV5lXsRl
- 1uV8HLzq9mZ7scTf61azw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QU+Pqz4ZbB8=:ltzrkOP3CEU+rTY3Fylymv
- LHTr5y7Yjibv11H+S1QUAqdM2r3TbbR0VK8QHV3Y3aMC6dEZS6BHCZ2WL4muKBNxbyBxMbR3P
- 9MvAPJsnxlfQYiyLxtRSlnl5nO12TWqXdMcwbeY/aqMQXulHqHUCUKdvBeE+3mTV0mtzPeWa7
- 4KraApxodNRyAhfvBboYfGPZ6E9c4z4NQX9mq7n40cKQBaiqOhXly+W9/PuyQjYtUURjjvKAS
- T3AAHS5gXriOXy++mIGm0YeldH8E6496vYHlNe7hPeYEK4UCPgtSmekdxt2hSJdXY/fDMTFiI
- jGmwFIDMD+sKJ2h7jL6HlKX3OfFCycefSV7zuwzBOk35DI1tTXHNgcpg58SLMfoRqK4KKZoey
- VPbo57n2IJ7+w+eq4q3/IQEW1ZGnSTqi04HzVceNSY7QWHZ8PUsJfUTwkXtl/18josa+WPP9i
- 8m8pow5x7PMIxOjC6gf+fRDF2Vr3IkoiAPydcQUeWtTX0FX5c9pOTSjm3FIYLzm4jpRYDez80
- wRkewUKFijpMKzItiJj4IUY42WTYk14da7USGN6Zz6sWazLrrN6y5jV4OKyXy7LWGAYfoDT0z
- X9hhcv7xfUpUXbCq3AnrPGeVxHn2FXkh6i/rZkkbgd5D9IsNobe+jDfvU0s9tqHJdWRk/x4Kh
- gPEgaqFJbFNgng6snXMoQfSACD/WEVggYnSNZGGAlagUbEk3Khr5uFdx2sbw+jrUSwwU=
+X-Provags-ID: V03:K1:57oeEaoE/TbPh/0dlaPflkcfFNDoLJDYCe39vyxhDNMXhYQ8z2G
+ ePuq7sirlnx72JycXkgqQ4ARmhO/C6AiRGBzd/AeoAviZSqmiwhslA0SqOGIVegPVUYMwTQ
+ I35KdQlWDcr5grWU43whyOcjcPbWga++nQV9cMunv6yu5uoI/NvScB1RhY/t8vKNfAyIbAz
+ H8dhlP5RuE9MgQCP2Vr6g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5nrw9W4fa2A=:yAHiVx//zvMMRoNRNyV9CK
+ Z2snSL36sFna4psMvjUiRi/7lllDRUActZ81k7iSq9L8fW+7cNigDpO42C13m5ARexgO35ZqI
+ 0nHOPzAmr5k/WAhNaYsG0RjedxXwVsVwwym+neN/0/qEKamwsXfRKnRfzzaFxJnSuB/kRi9Ng
+ GXTKK9h0jiV7bhT0M8CSWHITTfnNOQcL/WgYZuI0yI0XyYS5jzB27/fOnb2fdFgl/h3WxzfEi
+ zWrg0u7PkfQ+iXtBp5yJvIoh8IhXm0YQcqjuZpiyCB4wXMak8GATq6qadrgS2d/JL5/PQ736x
+ KMgddP8eaS/fiDtDoYdlTykVeYCBF+bQQ1aDoWe7Y4ixXMYXRh9j1p+432lXOJYc8xCUK8vBG
+ qI/V/Jo9XrWCe8E+hGk78sIwVYvnQd9g6ZloDHDGEy1GNQtJC+TV3xBZ4XIYHaDDAI86IiQNu
+ 7XCHwsTyHrcaIk95g4JDhVKSSWi5OBRHx1sKBV1ALmkKnHZEdWqxLYqVDZH97MGEJ54DOBArg
+ hq3MqLXr7DcojOEVYzeY4jf4ycEYiQYYG5ECt/l5/CmWlwOUosCrLKBhIuPsLJra0hlG1ls3a
+ 9s1NtgXG+e1qUHiS+PhfuVZJ/ZP5lT7PrG4ghIpbW/DKtz7Q0RuhzwMLanwdZNTbMQUw+B0Mr
+ BiGARe9+G4zLVy7Pv479CuHwP3REFCYQh/BSrMVPJNWnpXgerEgTWgYHmqQR0YSHUVrw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without CONFIG_SMP, we get a harmless compile-time warning:
+Building the kryo cpufreq driver while QCOM_SMEM is a loadable module
+results in a link error:
 
-drivers/irqchip/irq-stm32-exti.c:495:12: error: 'stm32_exti_h_set_affinity' defined but not used [-Werror=unused-function]
+drivers/cpufreq/qcom-cpufreq-kryo.o: In function `qcom_cpufreq_kryo_probe':
+qcom-cpufreq-kryo.c:(.text+0xbc): undefined reference to `qcom_smem_get'
 
-The #ifdef is inconsistent here, and it's better to use an IS_ENABLED() check
-that lets the compiler silently drop that function.
+The problem is that Kconfig ignores interprets the dependency as met
+when the dependent symbol is a 'bool' one. By making it 'tristate',
+it will be forced to be a module here, which builds successfully.
 
-Fixes: 927abfc4461e ("irqchip/stm32: Add stm32mp1 support with hierarchy domain")
+Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/irqchip/irq-stm32-exti.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/cpufreq/Kconfig.arm | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-index 5089c1e2838d..3a7e8905a97e 100644
---- a/drivers/irqchip/irq-stm32-exti.c
-+++ b/drivers/irqchip/irq-stm32-exti.c
-@@ -552,9 +552,7 @@ static struct irq_chip stm32_exti_h_chip = {
- 	.irq_set_type		= stm32_exti_h_set_type,
- 	.irq_set_wake		= stm32_exti_h_set_wake,
- 	.flags			= IRQCHIP_MASK_ON_SUSPEND,
--#ifdef CONFIG_SMP
--	.irq_set_affinity	= stm32_exti_h_set_affinity,
--#endif
-+	.irq_set_affinity	= IS_ENABLED(CONFIG_SMP) ? stm32_exti_h_set_affinity : NULL,
- };
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index c7ce928fbf1f..52f5f1a2040c 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -125,7 +125,7 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	default ARCH_OMAP2PLUS
  
- static int stm32_exti_h_domain_alloc(struct irq_domain *dm,
+ config ARM_QCOM_CPUFREQ_KRYO
+-	bool "Qualcomm Kryo based CPUFreq"
++	tristate "Qualcomm Kryo based CPUFreq"
+ 	depends on ARM64
+ 	depends on QCOM_QFPROM
+ 	depends on QCOM_SMEM
 -- 
 2.9.0
