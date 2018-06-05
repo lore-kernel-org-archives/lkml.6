@@ -1,79 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751550AbeFEEwO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 00:52:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36284 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751498AbeFEEwN (ORCPT
+        id S1751570AbeFEEx4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 00:53:56 -0400
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:41735 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750788AbeFEExz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 00:52:13 -0400
-Date: Mon, 4 Jun 2018 21:52:08 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
-        jasowang@redhat.com, mpe@ellerman.id.au, hch@infradead.org,
-        luto@amacapital.net
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-Message-ID: <20180605045207.GA28447@infradead.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
- <20180523213703-mutt-send-email-mst@kernel.org>
- <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
- <20180604153558-mutt-send-email-mst@kernel.org>
- <e7ceddbec11711a89282e9b70b7fd3c8af10b030.camel@kernel.crashing.org>
- <20180604184035-mutt-send-email-mst@kernel.org>
- <6164442a718645a754879eac5c4c5fad9283c211.camel@kernel.crashing.org>
+        Tue, 5 Jun 2018 00:53:55 -0400
+X-Google-Smtp-Source: ADUXVKKpFqixvgXhESuukkI6u7YavjZydrhjs/BmmFuj3hNKaZUF9DXUcBFQlcouQ2qItTBnJFbcPV7auoYk30151S4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6164442a718645a754879eac5c4c5fad9283c211.camel@kernel.crashing.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+From: shankarapailoor <shankarapailoor@gmail.com>
+Date: Mon, 4 Jun 2018 21:53:53 -0700
+Message-ID: <CAB+yDabFuBpT5UU1Hy0s4kY5UKJzA84=6fNieNcdTjjZNq5SHQ@mail.gmail.com>
+Subject: general protection fault in sockfs_setattr
+To: davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+        netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 09:26:56AM +1000, Benjamin Herrenschmidt wrote:
-> Sorry Michael, that doesn't click. Yes of course virtio is implemented
-> in qemu, but the problem we are trying to solve is *not* a qemu problem
-> (the fact that the Linux drivers bypass the DMA API is wrong, needs
-> fixing, and isnt a qemu problem). The fact that the secure guests need
-> bounce buffering is not a qemu problem either.
-> 
-> Whether qemu chose to use an iommu or not is, and should remain an
-> orthogonal problem.
+Hi,
 
-Agreed.  We have a problem with qemu (old qemu only?) punching a hole
-into the VM abstraction by deciding that even if firmware tables
-claim use of an IOMMU for a PCI bus it expects virtio to use physiscal
-addresses.  So far so bad.  The answer to that should have been to
-quirk the affected qemu versions and move on.  Instead we now have
-virtio not use the DMA API by default and are creating a worse problem.
+I have been fuzzing Linux 4.17-rc7 with Syzkaller and found the
+following crash: https://pastebin.com/ixX3RB9j
 
-Let's fix this issue ASAP and quirk the buggy implementations instead
-of letting everyone else suffer.  
+Syzkaller isolated the cause of the bug to the following program:
 
-> The DMA API itself isn't the one that needs to learn "per-device
-> quirks", it's just plumbing into arch backends. The "quirk" is at the
-> point of establishing the backend for a given device.
-> 
-> We can go a good way down that path simply by having virtio in Linux
-> start with putting *itself* its own direct ops in there when
-> VIRTIO_F_IOMMU_PLATFORM is not set, and removing all the special casing
-> in the rest of the driver.
+socketpair$unix(0x1, 0x1, 0x0,
+&(0x7f0000000000)={<r0=>0xffffffffffffffff, <r1=>0xffffffffffffffff})
+getresuid(&(0x7f0000000080)=<r2=>0x0, &(0x7f00000000c0),
+&(0x7f0000000700))r3 = getegid()
+fchownat(r0, &(0x7f0000000040)='\x00', r2, r3, 0x1000)
+dup3(r1, r0, 0x80000)
 
-Yes.  And we have all the infrastructure for that now.  A few RDMA
-drivers quirk to virt_dma_ops, and virtio could quirk to dma_direct_ops
-anytime now.  In fact given how much time we are spending arguing here
-I'm going to give it a spin today.
 
-> Once that's done, we have a single point of establishing the dma ops,
-> we can quirk in there if needed, that's rather nicely contained, or put
-> an arch hook, or whatever is necessary.
+The problematic area appears to be here:
 
-Yes.
+static int sockfs_setattr(struct dentry *dentry, struct iattr *iattr)
+{
+    int err = simple_setattr(dentry, iattr);
+
+    if (!err && (iattr->ia_valid & ATTR_UID)) {
+         struct socket *sock = SOCKET_I(d_inode(dentry));
+
+         sock->sk->sk_uid = iattr->ia_uid; //KASAN GPF
+    }
+    return err;
+}
+
+If dup3 is called concurrently with fchownat then can sock->sk be NULL?
+
+-- 
+Regards,
+Shankara Pailoor
