@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752252AbeFEVHf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:07:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33244 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751951AbeFEVHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:07:34 -0400
+        id S1752694AbeFEVHw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:07:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:33700 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752665AbeFEVHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:07:49 -0400
 From: Kim Phillips <kim.phillips@arm.com>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>,
@@ -31,126 +31,137 @@ Cc: Leo Yan <leo.yan@linaro.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Kim Phillips <kim.phillips@arm.com>
-Subject: [PATCH v4 00/14] coresight: allow to build components as modules
-Date: Tue,  5 Jun 2018 16:06:56 -0500
-Message-Id: <20180605210710.22227-1-kim.phillips@arm.com>
+Subject: [PATCH v4 14/14] coresight: allow the coresight core driver to be built as a module
+Date: Tue,  5 Jun 2018 16:07:10 -0500
+Message-Id: <20180605210710.22227-15-kim.phillips@arm.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180605210710.22227-1-kim.phillips@arm.com>
+References: <20180605210710.22227-1-kim.phillips@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to build coresight as modules.  This enhances developer
-efficiency by allowing the development to take place exclusively
-on the target, and without needing to reboot in between changes.
+Allow to build coresight as a module.  This enhances
+coresight developer efficiency by allowing the development to
+take place exclusively on the target, and without needing to
+reboot in between changes.
 
-depends on:
- - "amba: Export amba_bustype"
-   https://patchwork.kernel.org/patch/10387433/
-   Queued for 4.18 here:
-   http://git.armlinux.org.uk/cgit/linux-arm.git/commit/?h=for-next&id=e9ac68c34f70a0c8d51ee63d259f7c8e79b362c1 
+- Kconfig becomes a tristate, to allow =m
+- append -core to source file name to allow module to
+  be called coresight by the Makefile
+- modules can have only one init/exit, so we add the core bus
+  register/unregister function calls to the etm_perf init/exit
+  functions, since coresight.c does not have etm_pmu defined.
+- add a MODULE_DEVICE_TABLE for autoloading on boot
 
- - "coresight: Don't use contextID with PID namespaces"
-   https://www.spinics.net/lists/arm-kernel/msg652755.html
-   Queued for 4.18 here:
-   http://git.linaro.org/kernel/coresight.git/log/?h=next
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+---
+ drivers/hwtracing/coresight/Kconfig             |  5 ++++-
+ drivers/hwtracing/coresight/Makefile            |  7 +++++--
+ .../coresight/{coresight.c => coresight-core.c} |  6 ------
+ .../hwtracing/coresight/coresight-etm-perf.c    | 17 ++++++++++++++++-
+ 4 files changed, 25 insertions(+), 10 deletions(-)
+ rename drivers/hwtracing/coresight/{coresight.c => coresight-core.c} (99%)
 
-those depends plus this series, available here:
- - git://linux-arm.org/linux-kp.git, coresight-modules branch
-
-Changes from v3:
- - rebased on coresight/next
- - re-split per-module-wise (Mathieu P)
-   - some unnecessary changes were removed as a consequence
-   - git bisectability maintained
- - module get/put in coresight_build_path/release_path, respectively
-   instead of enable/disable functions (Suzuki P)
-   - this prevents drivers from being unloaded when they are part of
-     the path in use, either by sysfs or perf mode.
- - rename few source files e.g., coresight.c -> coresight-core.c in
-   order to have the resultant module be more intuitively called coresight.ko
-   instead of coresight-core.ko.
-
-Changes from v2:
- - split into multiple patches, for reviewer clarity (Greg K-H)
-
-Changes from v1:
- - remove depends on coresight that are in the if CORESIGHT block
-   (Randy Dunlap)
- - rebased and removed coresight_vpid_to_pid relocation on this
-   new series this patch now depends on:
-        https://www.spinics.net/lists/arm-kernel/msg652755.html
-   That new series eliminates patch 2/4 from this series (patches
-   1 and 4 of this series remain the same).
- - actually call tmc_read_unprepare() in tmc_remove() this time,
-   instead of open-coding the kfree, dma_free_coherent calls.
-
-Changes from versions previously sent to coresight mailing list:
-
- - tmc_remove: free buffer used by TMC-ETR and TMC-ETF by calling
-   tmc_read_unprepare()
- - fixed an unbalanced pm_runtime_enable in coresight-replicator
- - etm[4]_remove():  call cpuhp_remove_state_nocalls() and
-   etm_perf_symlink(.., false) to clear up cpuhp and symlink state
- - add module parent checks for all enable/disable functions, source
-   and sink modules
-   - refactored device ptr dereferences by introducing a new parent_dev
-     variable
- - corrected replicator author
- - whitespace fix in funnel driver
-
- - added user Kconfig help text with the names of the modules.
- - Addressed Mathieu's comments:
-   - renamed coresight-link-sink-tmc coresight-tmc-core
-   - prevent ability to crash the system by removing drivers from an
-     active path by adding try_module_get() and module_put() calls in
-     funnel and replicator drivers' enable and disable functions (thanks for
-     figuring that out, Mathieu).
-
- - Addressed most of Mathieu's comments:
-   - rm __inits causing linker section mismatch errors
-   - barrier_pkt made static, moved to coresight_priv.h
-   - rm unnecessary tmc_* EXPORT_SYMBOL leftovers
-   - add some missing MODULE_AUTHORs
-
-
-Kim Phillips (14):
-  coresight: cpu_debug: minor module fixups
-  coresight: use IS_ENABLED for CONFIGs that may be modules
-  coresight: move shared barrier_pkt[] to coresight_priv.h
-  coresight: export coresight_timeout and etm_perf_symlink
-  coresight: get/put module in coresight_build/release_path
-  coresight: allow stm to be built as a module
-  coresight: allow dynamic-replicator to be built as a module
-  coresight: allow etm3x to be built as a module
-  coresight: allow etm4x to be built as a module
-  coresight: allow etb to be built as a module
-  coresight: allow tpiu to be built as a module
-  coresight: allow tmc to be built as a module
-  coresight: allow funnel and replicator drivers to be built as modules
-  coresight: allow the coresight core driver to be built as a module
-
- drivers/hwtracing/coresight/Kconfig           | 48 +++++++++++++++----
- drivers/hwtracing/coresight/Makefile          | 20 ++++----
- .../{coresight.c => coresight-core.c}         | 23 ++++-----
- .../hwtracing/coresight/coresight-cpu-debug.c |  2 +
- .../coresight/coresight-dynamic-replicator.c  | 19 +++++++-
- drivers/hwtracing/coresight/coresight-etb10.c | 20 +++++++-
- .../hwtracing/coresight/coresight-etm-perf.c  | 18 ++++++-
- .../hwtracing/coresight/coresight-etm-perf.h  |  2 +-
- ...resight-etm3x.c => coresight-etm3x-core.c} | 24 +++++++++-
- ...resight-etm4x.c => coresight-etm4x-core.c} | 25 +++++++++-
- .../hwtracing/coresight/coresight-funnel.c    | 18 ++++++-
- drivers/hwtracing/coresight/coresight-priv.h  | 10 +++-
- .../coresight/coresight-replicator.c          | 22 ++++++++-
- drivers/hwtracing/coresight/coresight-stm.c   | 20 +++++++-
- .../{coresight-tmc.c => coresight-tmc-core.c} | 22 ++++++++-
- drivers/hwtracing/coresight/coresight-tpiu.c  | 19 +++++++-
- include/linux/coresight.h                     |  2 +-
- 17 files changed, 270 insertions(+), 44 deletions(-)
- rename drivers/hwtracing/coresight/{coresight.c => coresight-core.c} (98%)
- rename drivers/hwtracing/coresight/{coresight-etm3x.c => coresight-etm3x-core.c} (97%)
- rename drivers/hwtracing/coresight/{coresight-etm4x.c => coresight-etm4x-core.c} (97%)
- rename drivers/hwtracing/coresight/{coresight-tmc.c => coresight-tmc-core.c} (95%)
-
+diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+index 181a44ea2d61..c05b265f7731 100644
+--- a/drivers/hwtracing/coresight/Kconfig
++++ b/drivers/hwtracing/coresight/Kconfig
+@@ -2,7 +2,7 @@
+ # Coresight configuration
+ #
+ menuconfig CORESIGHT
+-	bool "CoreSight Tracing Support"
++	tristate "CoreSight Tracing Support"
+ 	select ARM_AMBA
+ 	select PERF_EVENTS
+ 	help
+@@ -12,6 +12,9 @@ menuconfig CORESIGHT
+ 	  specification and configure the right series of components when a
+ 	  trace source gets enabled.
+ 
++	  To compile this driver as a module, choose M here: the
++	  module will be called coresight.
++
+ if CORESIGHT
+ config CORESIGHT_LINKS_AND_SINKS
+ 	tristate "CoreSight Link and Sink drivers"
+diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+index 45d7a0f34170..ed2d4bcb017b 100644
+--- a/drivers/hwtracing/coresight/Makefile
++++ b/drivers/hwtracing/coresight/Makefile
+@@ -2,8 +2,11 @@
+ #
+ # Makefile for CoreSight drivers.
+ #
+-obj-$(CONFIG_CORESIGHT) += coresight.o coresight-etm-perf.o
+-obj-$(CONFIG_OF) += of_coresight.o
++obj-$(CONFIG_CORESIGHT) += coresight.o
++coresight-objs := coresight-core.o  coresight-etm-perf.o
++ifeq ($(CONFIG_OF), y)
++coresight-objs += of_coresight.o
++endif
+ obj-$(CONFIG_CORESIGHT_LINK_AND_SINK_TMC) += coresight-tmc.o
+ coresight-tmc-objs := coresight-tmc-core.o coresight-tmc-etf.o \
+ 		      coresight-tmc-etr.o
+diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight-core.c
+similarity index 99%
+rename from drivers/hwtracing/coresight/coresight.c
+rename to drivers/hwtracing/coresight/coresight-core.c
+index 1c941351f1d1..f96258de1e9b 100644
+--- a/drivers/hwtracing/coresight/coresight.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -948,12 +948,6 @@ struct bus_type coresight_bustype = {
+ 	.name	= "coresight",
+ };
+ 
+-static int __init coresight_init(void)
+-{
+-	return bus_register(&coresight_bustype);
+-}
+-postcore_initcall(coresight_init);
+-
+ struct coresight_device *coresight_register(struct coresight_desc *desc)
+ {
+ 	int i;
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index 0fe7e43ea1c4..ceac9aee4a82 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -472,6 +472,10 @@ static int __init etm_perf_init(void)
+ {
+ 	int ret;
+ 
++	ret = bus_register(&coresight_bustype);
++	if (ret)
++		return ret;
++
+ 	etm_pmu.capabilities		= PERF_PMU_CAP_EXCLUSIVE;
+ 
+ 	etm_pmu.attr_groups		= etm_pmu_attr_groups;
+@@ -494,4 +498,15 @@ static int __init etm_perf_init(void)
+ 
+ 	return ret;
+ }
+-device_initcall(etm_perf_init);
++postcore_initcall(etm_perf_init);
++
++static void __exit etm_perf_exit(void)
++{
++	perf_pmu_unregister(&etm_pmu);
++	bus_unregister(&coresight_bustype);
++}
++module_exit(etm_perf_exit);
++
++MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
++MODULE_DESCRIPTION("Arm CoreSight tracer driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.0
