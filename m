@@ -1,66 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751481AbeFEInl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:43:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751354AbeFEInj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:43:39 -0400
-From: Jessica Yu <jeyu@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, live-patching@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH] module: exclude SHN_UNDEF symbols from kallsyms api
-Date: Tue,  5 Jun 2018 10:42:23 +0200
-Message-Id: <20180605084223.20556-1-jeyu@kernel.org>
-X-Mailer: git-send-email 2.16.3
+        id S1751625AbeFEIpQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:45:16 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36567 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751506AbeFEIpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:45:12 -0400
+X-Google-Smtp-Source: ADUXVKL6JfewyLvE/dXrld+8UKfsEDPvjQGdenJs9Cxc6/et5upYOT+LANp1ZjcoEpN7unUIHYavzA==
+Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware
+ device
+To: Tomasz Figa <tfiga@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
+ <CAAFQd5D39CkA=GucUs7YOHwsdj0gbk55BiY_gSvArY_RH4uDkg@mail.gmail.com>
+ <2cf4f7e8-f9e6-d62b-45a8-2c348af4aafe@linaro.org>
+ <CAAFQd5BFq+pdEpBmpw5QsO+m+fsAhexhqA_uJg1G39Mpv5E3HQ@mail.gmail.com>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <fd74c277-e8d3-a026-fbd2-914a029e8efe@linaro.org>
+Date: Tue, 5 Jun 2018 11:45:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAAFQd5BFq+pdEpBmpw5QsO+m+fsAhexhqA_uJg1G39Mpv5E3HQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Livepatch modules are special in that we preserve their entire symbol
-tables in order to be able to apply relocations after module load. The
-unwanted side effect of this is that undefined (SHN_UNDEF) symbols of
-livepatch modules are accessible via the kallsyms api and this can
-confuse symbol resolution in livepatch (klp_find_object_symbol()) and
-cause subtle bugs in livepatch.
+Cc: Arnd
 
-Have the module kallsyms api skip over SHN_UNDEF symbols. These symbols
-are usually not available for normal modules anyway as we cut down their
-symbol tables to just the core (non-undefined) symbols, so this should
-really just affect livepatch modules. Note that this patch doesn't
-affect the display of undefined symbols in /proc/kallsyms.
+On 06/05/2018 07:08 AM, Tomasz Figa wrote:
+> On Mon, Jun 4, 2018 at 10:56 PM Stanimir Varbanov
+> <stanimir.varbanov@linaro.org> wrote:
+>>
+>> Hi Tomasz,
+>>
+>> On 06/04/2018 04:18 PM, Tomasz Figa wrote:
+>>> Hi Vikash,
+>>>
+>>> On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>>>> +static int __init venus_init(void)
+>>>> +{
+>>>> +       int ret;
+>>>> +
+>>>> +       ret = platform_driver_register(&qcom_video_firmware_driver);
+>>>> +       if (ret)
+>>>> +               return ret;
+>>>
+>>> Do we really need this firmware driver? As far as I can see, the
+>>> approach used here should work even without any driver bound to the
+>>> firmware device.
+>>
+>> We need device/driver bind because we need to call dma_configure() which
+>> internally doing iommus sID parsing.
+> 
+> I can see some drivers calling of_dma_configure() directly:
+> https://elixir.bootlin.com/linux/latest/ident/of_dma_configure
+> 
+> I'm not sure if it's more elegant, but should at least require less code.
 
-Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
----
- kernel/module.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+I think that in this case of non-TZ where we do iommu mapping by hand we
+can use shared-dma-pool reserved memory see how venus_boot has been
+implemented in the beginning [1].
 
-diff --git a/kernel/module.c b/kernel/module.c
-index c9bea7f2b43e..dfa61490b37d 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -4070,7 +4070,7 @@ static unsigned long mod_find_symname(struct module *mod, const char *name)
- 
- 	for (i = 0; i < kallsyms->num_symtab; i++)
- 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
--		    kallsyms->symtab[i].st_info != 'U')
-+		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
- 			return kallsyms->symtab[i].st_value;
- 	return 0;
- }
-@@ -4116,6 +4116,10 @@ int module_kallsyms_on_each_symbol(int (*fn)(void *, const char *,
- 		if (mod->state == MODULE_STATE_UNFORMED)
- 			continue;
- 		for (i = 0; i < kallsyms->num_symtab; i++) {
-+
-+			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
-+				continue;
-+
- 			ret = fn(data, symname(kallsyms, i),
- 				 mod, kallsyms->symtab[i].st_value);
- 			if (ret != 0)
+Arnd what do you think?
+
+Some background, we have a use-case where the memory for firmware needs
+to be mapped by the venus driver by hand instead of TZ firmware calls.
+I.e. we want to support both, iommu mapping from the driver and mapping
+done by TZ firmware. How we will differentiate what mapping (TZ or
+non-TZ) will be used is a separate issue.
+
+> 
+> By the way, can we really assume that probe of firmware platform
+> device really completes before we call venus_boot()?
+
+I'd say we cannot.
+
 -- 
-2.16.3
+regards,
+Stan
+
+[1] https://lkml.org/lkml/2017/4/28/214
