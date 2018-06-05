@@ -1,259 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751842AbeFEPkD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:40:03 -0400
+        id S1752138AbeFEPkJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:40:09 -0400
 Received: from mga07.intel.com ([134.134.136.100]:51542 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751952AbeFEPkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:40:02 -0400
+        id S1751890AbeFEPkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:40:06 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="205516787"
+   d="scan'208";a="205516815"
 From: kan.liang@linux.intel.com
 To: peterz@infradead.org, tglx@linutronix.de, acme@kernel.org,
         mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc: eranian@google.com, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 1/2] perf/x86/intel/lbr: Fix incomplete LBR call stack
-Date: Tue,  5 Jun 2018 08:38:45 -0700
-Message-Id: <1528213126-4312-1-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH 2/2] perf/x86/intel/lbr: Optimizing context switch for LBR call stack
+Date: Tue,  5 Jun 2018 08:38:46 -0700
+Message-Id: <1528213126-4312-2-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528213126-4312-1-git-send-email-kan.liang@linux.intel.com>
+References: <1528213126-4312-1-git-send-email-kan.liang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-LBR has a limited stack size. If a task has a deeper call stack than
-LBR's stack size, only the overflowed part is reported. A complete call
-stack may not be reconstructed by perf tool.
+Context switches with perf LBR call stack context are fairly expensive
+because they do a lot of MSR writes. Currently we unconditionally do the
+expensive operation when LBR call stack is enabled. It's not necessary
+for some common cases, e.g task -> other kernel thread -> same task.
+The LBR registers are not changed, hence they don't need to be
+rewritten/restored.
 
-Current code doesn't access all LBR registers. It only read the ones
-below the TOS. The LBR registers above the TOS will be discarded
-unconditionally.
-
-When a CALL is captured, the TOS is incremented by 1 , modulo max LBR
-stack size. The LBR HW only records the call stack information to the
-register which the TOS points to. It will not touch other LBR
-registers. So the registers above the TOS probably still store the valid
-call stack information for an overflowed call stack, which need to be
-reported.
-
-To retrieve complete call stack information, we need to start from TOS,
-read all LBR registers until an invalid entry is detected.
-0s can be used to detect the invalid entry, because
-- When a RET is captured, the HW zeros the LBR register which TOS points
-  to, then decreases the TOS.
-- The LBR registers are reset to 0 when adding a new LBR event or
-  scheduling an existing LBR event.
-- A taken branch at IP 0 is not expected
-
-The context switch code is also modified to save/restore all valid LBR
-registers. Furthermore, the LBR registers, which don't have valid call
-stack information, need to be reset in restore, because they may be
-polluted while swapped out.
-
-Here is a small test program, tchain_deep.
-Its call stack is deeper than 32.
-
-noinline void f33(void)
-{
-        int i;
-        for (i = 0; i < 10000000;) {
-
-                if(i%2)
-                        i++;
-                else
-                        i++;
-        }
-}
-noinline void f32(void)
-{
-        f33();
-}
-noinline void f31(void)
-{
-        f32();
-}
-
-... ...
-
-noinline void f1(void)
-{
-        f2();
-}
-int main()
-{
-        f1();
-}
-
-Here is the test result on SKX. The max stack size of SKX is 32.
-
-Without the patch:
- $perf record -e cycles --call-graph lbr -- ./tchain_deep
- $perf report --stdio
- #
- # Children      Self  Command      Shared Object     Symbol
- # ........  ........  ...........  ................  .................
- #
-   100.00%    99.99%  tchain_deep    tchain_deep       [.] f33
-            |
-             --99.99%--f30
-                       f31
-                       f32
-                       f33
-
-With the patch:
- $perf record -e cycles --call-graph lbr -- ./tchain_deep
- $perf report --stdio
- # Children      Self  Command      Shared Object     Symbol
- # ........  ........  ...........  ................  ..................
- #
-    99.99%     0.00%  tchain_deep    tchain_deep       [.] f1
-            |
-            ---f1
-               f2
-               f3
-               f4
-               f5
-               f6
-               f7
-               f8
-               f9
-               f10
-               f11
-               f12
-               f13
-               f14
-               f15
-               f16
-               f17
-               f18
-               f19
-               f20
-               f21
-               f22
-               f23
-               f24
-               f25
-               f26
-               f27
-               f28
-               f29
-               f30
-               f31
-               f32
-               f33
+Introducing per-cpu variables to track the last LBR call stack context.
+If the same context is scheduled in, the rewrite/restore is not
+required, with the following two exceptions:
+- The LBR registers may be modified by a normal LBR event, i.e., adding
+  a new LBR event or scheduling an existing LBR event. In both cases,
+  the LBR registers are reset first. The last LBR call stack information
+  is cleared in intel_pmu_lbr_reset(). Restoring the LBR registers is
+  required.
+- The LBR registers are initialized to zero in C6.
+  If the LBR registers which TOS points is cleared, C6 must be entered
+  while swapped out. Restoring the LBR registers is required as well.
+These exceptions are not common.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/intel/lbr.c  | 32 ++++++++++++++++++++++++++------
- arch/x86/events/perf_event.h |  1 +
- 2 files changed, 27 insertions(+), 6 deletions(-)
+ arch/x86/events/intel/lbr.c  | 24 +++++++++++++++++++++++-
+ arch/x86/events/perf_event.h |  4 ++++
+ 2 files changed, 27 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index cf372b9..a417004 100644
+index a417004..f3e006b 100644
 --- a/arch/x86/events/intel/lbr.c
 +++ b/arch/x86/events/intel/lbr.c
-@@ -346,7 +346,7 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
+@@ -216,6 +216,8 @@ static void intel_pmu_lbr_reset_64(void)
  
- 	mask = x86_pmu.lbr_nr - 1;
- 	tos = task_ctx->tos;
--	for (i = 0; i < tos; i++) {
-+	for (i = 0; i < task_ctx->valid_lbrs; i++) {
- 		lbr_idx = (tos - i) & mask;
- 		wrlbr_from(lbr_idx, task_ctx->lbr_from[i]);
- 		wrlbr_to  (lbr_idx, task_ctx->lbr_to[i]);
-@@ -354,6 +354,15 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
- 		if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_INFO)
- 			wrmsrl(MSR_LBR_INFO_0 + lbr_idx, task_ctx->lbr_info[i]);
- 	}
+ void intel_pmu_lbr_reset(void)
+ {
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
 +
-+	for (; i < x86_pmu.lbr_nr; i++) {
-+		lbr_idx = (tos - i) & mask;
-+		wrlbr_from(lbr_idx, 0);
-+		wrlbr_to(lbr_idx, 0);
-+		if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_INFO)
-+			wrmsrl(MSR_LBR_INFO_0 + lbr_idx, 0);
+ 	if (!x86_pmu.lbr_nr)
+ 		return;
+ 
+@@ -223,6 +225,9 @@ void intel_pmu_lbr_reset(void)
+ 		intel_pmu_lbr_reset_32();
+ 	else
+ 		intel_pmu_lbr_reset_64();
++
++	cpuc->last_task_ctx = NULL;
++	cpuc->last_log_id = 0;
+ }
+ 
+ /*
+@@ -334,6 +339,7 @@ static inline u64 rdlbr_to(unsigned int idx)
+ 
+ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
+ {
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	int i;
+ 	unsigned lbr_idx, mask;
+ 	u64 tos;
+@@ -344,8 +350,20 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
+ 		return;
+ 	}
+ 
+-	mask = x86_pmu.lbr_nr - 1;
+ 	tos = task_ctx->tos;
++	/*
++	 * Does not restore the LBR registers, if
++	 * - No one else touched them, and
++	 * - Did not enter C6
++	 */
++	if ((task_ctx == cpuc->last_task_ctx) &&
++	    (task_ctx->log_id == cpuc->last_log_id) &&
++	    rdlbr_from(tos)) {
++		task_ctx->lbr_stack_state = LBR_NONE;
++		return;
 +	}
 +
- 	wrmsrl(x86_pmu.lbr_tos, tos);
- 	task_ctx->lbr_stack_state = LBR_NONE;
- }
-@@ -361,7 +370,7 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
++	mask = x86_pmu.lbr_nr - 1;
+ 	for (i = 0; i < task_ctx->valid_lbrs; i++) {
+ 		lbr_idx = (tos - i) & mask;
+ 		wrlbr_from(lbr_idx, task_ctx->lbr_from[i]);
+@@ -369,6 +387,7 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
+ 
  static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
  {
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
  	unsigned lbr_idx, mask;
--	u64 tos;
-+	u64 tos, from;
+ 	u64 tos, from;
  	int i;
- 
- 	if (task_ctx->lbr_callstack_users == 0) {
-@@ -371,13 +380,17 @@ static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
- 
- 	mask = x86_pmu.lbr_nr - 1;
- 	tos = intel_pmu_lbr_tos();
--	for (i = 0; i < tos; i++) {
-+	for (i = 0; i < x86_pmu.lbr_nr; i++) {
- 		lbr_idx = (tos - i) & mask;
--		task_ctx->lbr_from[i] = rdlbr_from(lbr_idx);
-+		from = rdlbr_from(lbr_idx);
-+		if (!from)
-+			break;
-+		task_ctx->lbr_from[i] = from;
- 		task_ctx->lbr_to[i]   = rdlbr_to(lbr_idx);
- 		if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_INFO)
- 			rdmsrl(MSR_LBR_INFO_0 + lbr_idx, task_ctx->lbr_info[i]);
- 	}
-+	task_ctx->valid_lbrs = i;
+@@ -393,6 +412,9 @@ static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
+ 	task_ctx->valid_lbrs = i;
  	task_ctx->tos = tos;
  	task_ctx->lbr_stack_state = LBR_VALID;
- }
-@@ -531,7 +544,7 @@ static void intel_pmu_lbr_read_32(struct cpu_hw_events *cpuc)
-  */
- static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
- {
--	bool need_info = false;
-+	bool need_info = false, call_stack = false;
- 	unsigned long mask = x86_pmu.lbr_nr - 1;
- 	int lbr_format = x86_pmu.intel_cap.lbr_format;
- 	u64 tos = intel_pmu_lbr_tos();
-@@ -542,7 +555,7 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
- 	if (cpuc->lbr_sel) {
- 		need_info = !(cpuc->lbr_sel->config & LBR_NO_INFO);
- 		if (cpuc->lbr_sel->config & LBR_CALL_STACK)
--			num = tos;
-+			call_stack = true;
- 	}
- 
- 	for (i = 0; i < num; i++) {
-@@ -555,6 +568,13 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
- 		from = rdlbr_from(lbr_idx);
- 		to   = rdlbr_to(lbr_idx);
- 
-+		/*
-+		 * Read LBR call stack entries
-+		 * until invalid entry (0s) is detected.
-+		 */
-+		if (call_stack && !from)
-+			break;
 +
- 		if (lbr_format == LBR_FORMAT_INFO && need_info) {
- 			u64 info;
++	cpuc->last_task_ctx = task_ctx;
++	cpuc->last_log_id = ++task_ctx->log_id;
+ }
  
+ void intel_pmu_lbr_sched_task(struct perf_event_context *ctx, bool sched_in)
 diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 9f37114..6b72a92 100644
+index 6b72a92..2430398 100644
 --- a/arch/x86/events/perf_event.h
 +++ b/arch/x86/events/perf_event.h
-@@ -648,6 +648,7 @@ struct x86_perf_task_context {
- 	u64 lbr_to[MAX_LBR_ENTRIES];
- 	u64 lbr_info[MAX_LBR_ENTRIES];
- 	int tos;
-+	int valid_lbrs;
+@@ -163,6 +163,7 @@ struct intel_excl_cntrs {
+ 	unsigned	core_id;	/* per-core: core id */
+ };
+ 
++struct x86_perf_task_context;
+ #define MAX_LBR_ENTRIES		32
+ 
+ enum {
+@@ -214,6 +215,8 @@ struct cpu_hw_events {
+ 	struct perf_branch_entry	lbr_entries[MAX_LBR_ENTRIES];
+ 	struct er_account		*lbr_sel;
+ 	u64				br_sel;
++	struct x86_perf_task_context	*last_task_ctx;
++	int				last_log_id;
+ 
+ 	/*
+ 	 * Intel host/guest exclude bits
+@@ -651,6 +654,7 @@ struct x86_perf_task_context {
+ 	int valid_lbrs;
  	int lbr_callstack_users;
  	int lbr_stack_state;
++	int log_id;
  };
+ 
+ #define x86_add_quirk(func_)						\
 -- 
 2.7.4
