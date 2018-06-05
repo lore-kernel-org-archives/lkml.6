@@ -1,18 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752046AbeFEQHC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:07:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49678 "EHLO mx1.redhat.com"
+        id S1752098AbeFEQHJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:07:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49688 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751745AbeFEQHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:07:00 -0400
-Subject: [PATCH 0/5] afs: Fixes and development
+        id S1751745AbeFEQHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:07:07 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/5] afs: Handle CONFIG_PROC_FS=n
 From: David Howells <dhowells@redhat.com>
 To: viro@ZenIV.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 05 Jun 2018 17:06:58 +0100
-Message-ID: <152821481874.16494.4047053234419671609.stgit@warthog.procyon.org.uk>
+Date: Tue, 05 Jun 2018 17:07:05 +0100
+Message-ID: <152821482528.16494.1230190248948500113.stgit@warthog.procyon.org.uk>
+In-Reply-To: <152821481874.16494.4047053234419671609.stgit@warthog.procyon.org.uk>
+References: <152821481874.16494.4047053234419671609.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,54 +27,72 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The AFS filesystem depends at the moment on /proc for configuration and
+also presents information that way - however, this causes a compilation
+failure if procfs is disabled.
 
-Hi Al,
+Fix it so that the procfs bits aren't compiled in if procfs is disabled.
 
-Here's a set of AFS patches, one fixes, but mostly development.  The fix is:
+This means that you can't configure the AFS filesystem directly, but it is
+still usable provided that an up-to-date keyutils is installed to look up
+cells by SRV or AFSDB DNS records.
 
- (1) Fix AFS to build if CONFIG_PROC_FS=n.
-
-and the development patches:
-
- (1) Make AFS show all of a server's addresses in /proc/fs/afs/servers.
-
- (2) Allow DNS upcalls to ask for IPv6 addresses.
-
- (3) Add directories to the dynamic root pseudo-superblock to represent the
-     names of known cells.
-
-     This needs checking as it adds a VFS function to look up a dentry
-     without creating one if it doesn't exist.  This is used to find a
-     dentry if it exists so that we can delete it.
-
- (4) Optimise the handling of change notifications from the server
-     (callback breaks) to avoid doing a volume lookup for every callback
-     broken if there are two or more with the same volume ID.
-
-The patches can be found here also:
-
-	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-next
-
-David
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
-David Howells (5):
-      afs: Handle CONFIG_PROC_FS=n
-      afs: Show all of a server's addresses in /proc/fs/afs/servers
-      afs: Enable IPv6 DNS lookups
-      afs: Display manually added cells in dynamic root mount
-      afs: Optimise callback breaking by not repeating volume lookup
 
+ fs/afs/Makefile   |    4 ++--
+ fs/afs/internal.h |    8 ++++++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
- fs/afs/Makefile       |    4 +-
- fs/afs/addr_list.c    |    2 -
- fs/afs/callback.c     |  110 ++++++++++++++++++++++++++++++++++++-------
- fs/afs/cell.c         |   12 +++--
- fs/afs/dynroot.c      |  126 ++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/afs/internal.h     |   30 +++++++++++-
- fs/afs/main.c         |    2 -
- fs/afs/proc.c         |   10 +++-
- fs/afs/server.c       |    2 -
- fs/afs/super.c        |   19 ++++++-
- fs/namei.c            |   29 +++++++++++
- include/linux/namei.h |    1 
- 12 files changed, 310 insertions(+), 37 deletions(-)
+diff --git a/fs/afs/Makefile b/fs/afs/Makefile
+index 532acae25453..546874057bd3 100644
+--- a/fs/afs/Makefile
++++ b/fs/afs/Makefile
+@@ -5,7 +5,7 @@
+ 
+ afs-cache-$(CONFIG_AFS_FSCACHE) := cache.o
+ 
+-kafs-objs := \
++kafs-y := \
+ 	$(afs-cache-y) \
+ 	addr_list.o \
+ 	callback.o \
+@@ -21,7 +21,6 @@ kafs-objs := \
+ 	main.o \
+ 	misc.o \
+ 	mntpt.o \
+-	proc.o \
+ 	rotate.o \
+ 	rxrpc.o \
+ 	security.o \
+@@ -34,4 +33,5 @@ kafs-objs := \
+ 	write.o \
+ 	xattr.o
+ 
++kafs-$(CONFIG_PROC_FS) += proc.o
+ obj-$(CONFIG_AFS_FS)  := kafs.o
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index b51fb8587166..bc3d8c87a938 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -870,11 +870,19 @@ extern int afs_get_ipv4_interfaces(struct afs_net *, struct afs_interface *,
+ /*
+  * proc.c
+  */
++#ifdef CONFIG_PROC_FS
+ extern int __net_init afs_proc_init(struct afs_net *);
+ extern void __net_exit afs_proc_cleanup(struct afs_net *);
+ extern int afs_proc_cell_setup(struct afs_cell *);
+ extern void afs_proc_cell_remove(struct afs_cell *);
+ extern void afs_put_sysnames(struct afs_sysnames *);
++#else
++static inline int afs_proc_init(struct afs_net *net) { return 0; }
++static inline void afs_proc_cleanup(struct afs_net *net) {}
++static inline int afs_proc_cell_setup(struct afs_cell *cell) { return 0; }
++static inline void afs_proc_cell_remove(struct afs_cell *cell) {}
++static inline void afs_put_sysnames(struct afs_sysnames *sysnames) {}
++#endif
+ 
+ /*
+  * rotate.c
