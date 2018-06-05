@@ -1,62 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752302AbeFEUIE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:08:04 -0400
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:35781 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752050AbeFEUIC (ORCPT
+        id S1752402AbeFEUJc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 16:09:32 -0400
+Received: from mx1.yrkesakademin.fi ([85.134.45.194]:8058 "EHLO
+        mx1.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752356AbeFEUJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:08:02 -0400
-Date: Tue, 5 Jun 2018 21:08:00 +0100
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Nadav Amit <nadav.amit@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Aaron Lu <aaron.lu@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
- in swap cache
-Message-ID: <20180605200800.emb3yfdtnpjgmxb7@techsingularity.net>
-References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
- <EAD124C4-FFA4-4894-AE8B-33949CD6731B@gmail.com>
+        Tue, 5 Jun 2018 16:09:31 -0400
+Subject: python errors in tools/testing/selftests/tc-testing (was: Linux 4.17)
+To: Linus Torvalds <torvalds@linux-foundation.org>, <bjb@mojatatu.com>
+References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Thomas Backlund <tmb@mageia.org>
+Message-ID: <11f16994-d704-10e3-e4f7-a490b6ae1fad@mageia.org>
+Date: Tue, 5 Jun 2018 23:09:42 +0259
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <EAD124C4-FFA4-4894-AE8B-33949CD6731B@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-WatchGuard-Spam-ID: str=0001.0A0C0205.5B16EDFA.016A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
+X-WatchGuard-Mail-Client-IP: 85.134.45.194
+X-WatchGuard-Mail-From: tmb@mageia.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 12:53:57PM -0700, Nadav Amit wrote:
-> While I do not have a specific reservation regarding the logic, I find the
-> current TLB invalidation scheme hard to follow and inconsistent. I guess
-> should_force_flush() can be extended and used more commonly to make things
-> clearer.
-> 
-> To be more specific and to give an example: Can should_force_flush() be used
-> in zap_pte_range() to set the force_flush instead of the current code?
-> 
->   if (!PageAnon(page)) {
-> 	if (pte_dirty(ptent)) {
-> 		force_flush = 1;
-> 		...
->   	}
-> 
+Compiling 
+/usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/plugin-lib/rootPlugin.py 
+...
+   File 
+"/usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/plugin-lib/rootPlugin.py", 
+line 18
+     print('This script must be run with root privileges', file=sys.stderr)
+                                                               ^
+SyntaxError: invalid syntax
 
-That check is against !PageAnon pages where it's potentially critical
-that the dirty PTE bit be propogated to the page. You could split the
-separate the TLB flush from the dirty page setting but it's not the same
-class of problem and without perf data, it's not clear it's worthwhile.
 
-Note that I also didn't handle the huge page moving because it's already
-naturally batching a larger range with a lower potential factor of TLB
-flushing and has different potential race conditions.
+Caused by:
 
-I agree that the TLB handling would benefit from being simplier but it's
-not a simple search/replace job to deal with the different cases that apply.
+commit f6926e85eee9be08d05170af3a2266b8d7f9cdef
+Author: Brenda J. Butler <bjb@mojatatu.com>
+Date:   Wed Feb 14 14:08:55 2018 -0500
 
--- 
-Mel Gorman
-SUSE Labs
+     tools: tc-testing: rootPlugin
+
+     Move the functionality that checks for root permissions into a plugin.
+
+
+
+and:
+
+Compiling 
+/usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/tdc.py 
+...
+   File 
+"/usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/tdc.py", 
+line 167
+     print('', file=sys.stderr)
+                   ^
+SyntaxError: invalid syntax
+
+
+Caused by:
+
+commit 93707cbabcc8baf2b2b5f4a99c1f08ee83eb7abd
+Author: Brenda J. Butler <bjb@mojatatu.com>
+Date:   Wed Feb 14 14:08:54 2018 -0500
+
+     tools: tc-testing: Introduce plugin architecture
+
+
+
+
+
+And this system has:
+
+$ python3 -V
+Python 3.5.3
+
+$ python -V
+Python 2.7.15
+
+
+--
+
+Thomas
