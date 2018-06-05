@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752952AbeFEVMe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:12:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:33392 "EHLO foss.arm.com"
+        id S1752586AbeFEVHo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:07:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:33460 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752310AbeFEVHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:07:37 -0400
+        id S1751951AbeFEVHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:07:40 -0400
 From: Kim Phillips <kim.phillips@arm.com>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>,
@@ -31,9 +31,9 @@ Cc: Leo Yan <leo.yan@linaro.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Kim Phillips <kim.phillips@arm.com>
-Subject: [PATCH v4 03/14] coresight: move shared barrier_pkt[] to coresight_priv.h
-Date: Tue,  5 Jun 2018 16:06:59 -0500
-Message-Id: <20180605210710.22227-4-kim.phillips@arm.com>
+Subject: [PATCH v4 06/14] coresight: allow stm to be built as a module
+Date: Tue,  5 Jun 2018 16:07:02 -0500
+Message-Id: <20180605210710.22227-7-kim.phillips@arm.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180605210710.22227-1-kim.phillips@arm.com>
 References: <20180605210710.22227-1-kim.phillips@arm.com>
@@ -41,9 +41,11 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-barrier_pkt[] is used in the etb and tmc-etf coresight
-components.  Change barrier_pkt[] to a static definition,
-so as to allow them to be built as modules.
+Allow to build coresight-stm as a module, for ease of development.
+
+- Kconfig becomes a tristate, to allow =m
+- add a stm_remove function, for module unload
+- add a MODULE_DEVICE_TABLE for autoloading on boot
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>
@@ -54,46 +56,78 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-priv.h | 8 +++++++-
- drivers/hwtracing/coresight/coresight.c      | 7 -------
- 2 files changed, 7 insertions(+), 8 deletions(-)
+ drivers/hwtracing/coresight/Kconfig         |  5 ++++-
+ drivers/hwtracing/coresight/coresight-stm.c | 20 +++++++++++++++++++-
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 158c720119dd..e76f19ca9e04 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -57,7 +57,13 @@ static DEVICE_ATTR_RO(name)
- #define coresight_simple_reg64(type, name, lo_off, hi_off)		\
- 	__coresight_simple_func(type, NULL, name, lo_off, hi_off)
+diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+index d1209f5acf76..8c5e5407b7dd 100644
+--- a/drivers/hwtracing/coresight/Kconfig
++++ b/drivers/hwtracing/coresight/Kconfig
+@@ -79,8 +79,8 @@ config CORESIGHT_DYNAMIC_REPLICATOR
+ 	  trace data based on the traceid.
  
--extern const u32 barrier_pkt[4];
-+/*
-+ * When losing synchronisation a new barrier packet needs to be inserted at the
-+ * beginning of the data collected in a buffer.  That way the decoder knows that
-+ * it needs to look for another sync sequence.
-+ */
-+static const u32 barrier_pkt[4] = { 0x7fffffff, 0x7fffffff,
-+				    0x7fffffff, 0x7fffffff };
- #define CORESIGHT_BARRIER_PKT_SIZE (sizeof(barrier_pkt))
+ config CORESIGHT_STM
+-	bool "CoreSight System Trace Macrocell driver"
+ 	depends on (ARM && !(CPU_32v3 || CPU_32v4 || CPU_32v4T)) || ARM64
++	tristate "CoreSight System Trace Macrocell driver"
+ 	select CORESIGHT_LINKS_AND_SINKS
+ 	select STM
+ 	help
+@@ -89,6 +89,9 @@ config CORESIGHT_STM
+ 	  logging useful software events or data coming from various entities
+ 	  in the system, possibly running different OSs
  
- enum etm_addr_type {
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 4969b329511c..0cbc2948defc 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -46,13 +46,6 @@ static DEFINE_PER_CPU(struct list_head *, tracer_path);
-  */
- static struct list_head *stm_path;
++	  To compile this driver as a module, choose M here: the
++	  module will be called coresight-stm.
++
+ config CORESIGHT_CPU_DEBUG
+ 	tristate "CoreSight CPU Debug driver"
+ 	depends on ARM || ARM64
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index c46c70aec1d5..c465e6bc66c8 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -882,6 +882,17 @@ static int stm_probe(struct amba_device *adev, const struct amba_id *id)
+ 	return ret;
+ }
  
--/*
-- * When losing synchronisation a new barrier packet needs to be inserted at the
-- * beginning of the data collected in a buffer.  That way the decoder knows that
-- * it needs to look for another sync sequence.
-- */
--const u32 barrier_pkt[4] = {0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff};
--
- static int coresight_id_match(struct device *dev, void *data)
++static int __exit stm_remove(struct amba_device *adev)
++{
++	struct stm_drvdata *drvdata = dev_get_drvdata(&adev->dev);
++
++	coresight_unregister(drvdata->csdev);
++
++	stm_unregister_device(&drvdata->stm);
++
++	return 0;
++}
++
+ #ifdef CONFIG_PM
+ static int stm_runtime_suspend(struct device *dev)
  {
- 	int trace_id, i_trace_id;
+@@ -922,6 +933,8 @@ static const struct amba_id stm_ids[] = {
+ 	{ 0, 0},
+ };
+ 
++MODULE_DEVICE_TABLE(amba, stm_ids);
++
+ static struct amba_driver stm_driver = {
+ 	.drv = {
+ 		.name   = "coresight-stm",
+@@ -930,7 +943,12 @@ static struct amba_driver stm_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe          = stm_probe,
++	.remove         = stm_remove,
+ 	.id_table	= stm_ids,
+ };
+ 
+-builtin_amba_driver(stm_driver);
++module_amba_driver(stm_driver);
++
++MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
++MODULE_DESCRIPTION("Arm CoreSight System Trace Macrocell driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.0
