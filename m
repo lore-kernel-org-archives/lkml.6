@@ -1,224 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751733AbeFEKFn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:05:43 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40199 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751640AbeFEKFk (ORCPT
+        id S1751828AbeFEKGe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 06:06:34 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:47769 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751792AbeFEKGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:05:40 -0400
-X-Google-Smtp-Source: ADUXVKIbjuJ8dK4T2xqssBuo0TKYlzbDBvqkDhvR3rkr16GKqOiH+xQnZlAfz149PnnvIe0GhKXWSQ==
-Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
- on kbd brightness change
-To: Bastien Nocera <hadess@hadess.net>, Chris Chiu <chiu@endlessm.com>,
-        Darren Hart <dvhart@infradead.org>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Benjamin Berg <benjamin@sipsolutions.net>
-References: <20180604123238.82200-1-chiu@endlessm.com>
- <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
- <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
- <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com>
- <20180605023124.GE47042@localhost.localdomain>
- <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
- <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com>
- <71df09bc89619aba975147e6b07920f1dfc2f46f.camel@hadess.net>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <cd6a5d86-1fdb-2561-1e29-0553be53c41a@redhat.com>
-Date: Tue, 5 Jun 2018 12:05:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 5 Jun 2018 06:06:33 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <nsekhar@ti.com>
+CC: <khilman@kernel.org>, <robh+dt@kernel.org>, <j-keerthy@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ARM: davinci: da850: Fix interrups property for gpio
+Date: Tue, 5 Jun 2018 15:35:52 +0530
+Message-ID: <1528193152-10657-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <71df09bc89619aba975147e6b07920f1dfc2f46f.camel@hadess.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The intc #interrupt-cells is equal to 1. Currently gpio
+node has 2 cells per IRQ which is wrong. Remove the additional
+cell for each of the interrupts.
 
-On 05-06-18 11:58, Bastien Nocera wrote:
-> On Tue, 2018-06-05 at 09:37 +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 05-06-18 05:18, Chris Chiu wrote:
->>> On Tue, Jun 5, 2018 at 10:31 AM, Darren Hart <dvhart@infradead.org>
->>> wrote:
->>>> On Mon, Jun 04, 2018 at 04:23:04PM +0200, Hans de Goede wrote:
->>>>> Hi,
->>>>>
->>>>> On 04-06-18 15:51, Daniel Drake wrote:
->>>>>> On Mon, Jun 4, 2018 at 7:22 AM, Hans de Goede <hdegoede@redha
->>>>>> t.com> wrote:
->>>>>>> Is this really a case of the hardware itself processing the
->>>>>>> keypress and then changing the brightness *itself* ?
->>>>>>>
->>>>>>>    From the "[PATCH 2/2] platform/x86: asus-wmi: Add
->>>>>>> keyboard backlight
->>>>>>> toggle support" patch I get the impression that the driver
->>>>>>> is
->>>>>>> modifying the brightness from within the kernel rather then
->>>>>>> the
->>>>>>> keyboard controller are ACPI embeddec-controller doing it
->>>>>>> itself.
->>>>>>>
->>>>>>> If that is the case then the right fix is for the driver to
->>>>>>> stop
->>>>>>> mucking with the brighness itself, it should simply report
->>>>>>> the
->>>>>>> right keyboard events and export a led interface and then
->>>>>>> userspace
->>>>>>> will do the right thing (and be able to offer flexible
->>>>>>> policies
->>>>>>> to the user).
->>>>>>
->>>>>> Before this modification, the driver reports the brightness
->>>>>> keypresses
->>>>>> to userspace and then userspace can respond by changing the
->>>>>> brightness
->>>>>> level, as you describe.
->>>>>>
->>>>>> You are right in that the hardware doesn't change the
->>>>>> brightness
->>>>>> directly itself, which is the normal usage of
->>>>>> LED_BRIGHT_HW_CHANGED.
->>>>>>
->>>>>> However this approach was suggested by Benjamin Berg and
->>>>>> Bastien
->>>>>> Nocera in the thread: Re: [PATCH v2] platform/x86: asus-wmi:
->>>>>> Add
->>>>>> keyboard backlight toggle support
->>>>>> https://marc.info/?l=linux-kernel&m=152639169210655&w=2
->>>>>>
->>>>>> The issue is that we need to support a new "keyboard
->>>>>> backlight
->>>>>> brightness cycle" key (in the patch that follows this one)
->>>>>> which
->>>>>> doesn't fit into any definitions of keys recognised by the
->>>>>> kernel and
->>>>>> likewise there's no userspace code to handle it.
->>>>>>
->>>>>> If preferred we could leave the standard brightness keys
->>>>>> behaving as
->>>>>> they are (input events) and make the new special key type
->>>>>> directly
->>>>>> handled by the kernel?
->>>>>
->>>>> I'm sorry that Benjamin and Bastien steered you in this
->>>>> direction,
->>>>> IMHO none of it should be handled in the kernel.
->>>>>
->>>>> Anytime any sort of input is directly responded to by the
->>>>> kernel
->>>>> it is a huge PITA to deal with from userspace. The kernel will
->>>>> have
->>>>> a simplistic implementation which almost always is wrong.
->>>>>
->>>>> Benjamin, remember the pain we went through with rfkill hotkey
->>>>> presses being handled in the kernel ?
->>>>>
->>>>> And then there is the whole
->>>>> acpi_video.brightness_switch_enabled
->>>>> debacle, which is an option which defaults to true which causes
->>>>> the kernel to handle LCD brightness key presses, which all
->>>>> distros
->>>>> have been patching to default to off for ages.
->>>>>
->>>>> To give a concrete example, we may want to implement software
->>>>> dimming / auto-off of the kbd backlight when the no keys are
->>>>> touched for x seconds. This would seriously get in the way of
->>>>> that.
->>>>>
->>>>> So sorry, but NACK to this series.
->>>>
->>>> So if instead of modifying the LED value, the kernel platform
->>>> drivers
->>>> converted the TOGGLE into a cycle even by converting to an UP
->>>> event
->>>> based on awareness of the plaform specific max value and the read
->>>> current value, leaving userspace to act on the TOGGLE/UP events -
->>>> would
->>>> that be preferable?
->>>>
->>>> Something like:
->>>>
->>>>           if (code == TOGGLE && ledval < ledmax)
->>>>                   code = UP;
->>>>
->>>>           sparse_keymap_report_event(..., code, ...)
->>>>
->>>> }
->>>> --
->>>> Darren Hart
->>>> VMware Open Source Technology Center
->>>
->>> That's what I was trying to do in  [PATCH v2] platform/x86: asus-
->>> wmi: Add
->>> keyboard backlight toggle support. However, that brought another
->>> problem
->>> discussed in the thread.
->>> https://marc.info/?l=linux-kernel&m=152639169210655&w=2
->>>
->>> So I moved the brightness change in the driver without passing to
->>> userspace.
->>> Per Hans, seems there're some other concerns and I also wonder if
->>> the
->>> TOGGLE event happens in ASUS HID (asus-hid.c) which also convert
->>> and
->>> pass the keycode to userspace but no TOGGLE key support yet What
->>> should
->>> we do then?
->>
->> As I mentioned in my reply to Darren, there are 2 proper solutions to
->> this:
->>
->> 1) Make userspace treat KEY_KBDILLUMTOGGLE as a cycle key, this is
->> what the kbd-backlight on most laptops with a single hotkey (*) does
->> in cases where this is handled in firmware, rather then left to the
->> OS. The handled in firmware is the case which I created the
->> led_classdev_notify_brightness_hw_changed() API for. This would be
->> my preferred solution and I believe that Benjamin is discussing this
->> with Bastien ATM.
-> 
-> It isn't on Macs, at least. Toggle is a toggle, not a cycle key. It
-> turns the keyboard backlight off and on, restoring the backlight level
-> when turned back on.
-> 
->> 2) Add a new KEY_KBDILLUMCYCLE event
-> 
-> Which won't be accessible to Xorg.
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Fixes: 2e38b946dc54 ("ARM: davinci: da850: add GPIO DT node")
+---
+ arch/arm/boot/dts/da850.dtsi | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Ok, so what are you suggestion, do you really want to hardcode
-the cycle behavior in the kernel as these 2 patches are doing,
-without any option to intervene from userspace?
-
-As mentioned before in the thread there are several example
-of the kernel deciding to handle key-presses itself, putting
-policy in the kernel and they have all ended poorly (think
-e.g. rfkill, acpi-video dealing with LC brightnesskey presses
-itself).
-
-I guess one thing we could do here is code out both solutions,
-have a module option which controls if we:
-
-1) Handle this in the kernel as these patches do
-2) Or send a new KEY_KBDILLUMCYCLE event
-
-Combined with a Kconfig option to select which is the default
-behavior. Then Endless can select 1 for now and then in
-Fedora (which defaults to Wayland now) we could default to
-2. once all the code for handling 2 is in place.
-
-This is ugly (on the kernel side) but it might be the best
-compromise we can do.
-
-Regards,
-
-Hans
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index f6f1597..0f4f817 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -549,11 +549,7 @@
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			reg = <0x226000 0x1000>;
+-			interrupts = <42 IRQ_TYPE_EDGE_BOTH
+-				43 IRQ_TYPE_EDGE_BOTH 44 IRQ_TYPE_EDGE_BOTH
+-				45 IRQ_TYPE_EDGE_BOTH 46 IRQ_TYPE_EDGE_BOTH
+-				47 IRQ_TYPE_EDGE_BOTH 48 IRQ_TYPE_EDGE_BOTH
+-				49 IRQ_TYPE_EDGE_BOTH 50 IRQ_TYPE_EDGE_BOTH>;
++			interrupts = <42 43 44 45 46 47 48 49 50>;
+ 			ti,ngpio = <144>;
+ 			ti,davinci-gpio-unbanked = <0>;
+ 			status = "disabled";
+-- 
+1.9.1
