@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751687AbeFEJWw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:22:52 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47944 "EHLO
+        id S1751816AbeFEJXK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:23:10 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47940 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeFEJWX (ORCPT
+        with ESMTP id S1751710AbeFEJWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:22:23 -0400
+        Tue, 5 Jun 2018 05:22:22 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        linux-i2c@vger.kernel.org
-Subject: [PATCH 9/9] i2c: i2c-cros-ec-tunnel: Switch to SPDX identifier.
-Date: Tue,  5 Jun 2018 11:22:09 +0200
-Message-Id: <20180605092209.22887-10-enric.balletbo@collabora.com>
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 8/9] extcon: usbc-cros-ec: Switch to SPDX identifier.
+Date: Tue,  5 Jun 2018 11:22:08 +0200
+Message-Id: <20180605092209.22887-9-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605092209.22887-1-enric.balletbo@collabora.com>
 References: <20180605092209.22887-1-enric.balletbo@collabora.com>
@@ -27,30 +28,36 @@ management.
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/i2c/busses/i2c-cros-ec-tunnel.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/extcon/extcon-usbc-cros-ec.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-index eb76b76f4754..82bcd9a78759 100644
---- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-+++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-@@ -1,13 +1,7 @@
--/*
-- *  Copyright (C) 2013 Google, Inc
+diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
+index 6721ab01fe7d..1a4888f2fe40 100644
+--- a/drivers/extcon/extcon-usbc-cros-ec.c
++++ b/drivers/extcon/extcon-usbc-cros-ec.c
+@@ -1,18 +1,8 @@
+-/**
+- * drivers/extcon/extcon-usbc-cros-ec - ChromeOS Embedded Controller extcon
 - *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License as published by
-- *  the Free Software Foundation; either version 2 of the License, or
-- *  (at your option) any later version.
+- * Copyright (C) 2017 Google, Inc
+- * Author: Benson Leung <bleung@chromium.org>
 - *
-- * Expose an I2C passthrough to the ChromeOS EC.
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
 - */
 +// SPDX-License-Identifier: GPL-2.0+
-+// Expose an I2C passthrough to the ChromeOS EC.
++// ChromeOS Embedded Controller extcon
 +//
-+// Copyright (C) 2013 Google, Inc.
++// Copyright (C) 2012 Google, Inc.
++// Author: Benson Leung <bleung@chromium.org>
  
- #include <linux/module.h>
- #include <linux/i2c.h>
+ #include <linux/extcon-provider.h>
+ #include <linux/kernel.h>
 -- 
 2.17.1
