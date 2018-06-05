@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753075AbeFEREs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33710 "EHLO mail.kernel.org"
+        id S1752960AbeFERVl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:21:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753027AbeFEREp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:45 -0400
+        id S1753032AbeFEREn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 13/61] ASoC: Intel: sst: remove redundant variable dma_dev_name
-Date: Tue,  5 Jun 2018 19:01:34 +0200
-Message-Id: <20180605170118.443210637@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Guenter Roeck <groeck@chromium.org>, Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 12/61] rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
+Date: Tue,  5 Jun 2018 19:01:33 +0200
+Message-Id: <20180605170118.273436790@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -30,42 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 271ef65b5882425d500e969e875c98e47a6b0c86 upstream.
+commit fb239c1209bb0f0b4830cc72507cc2f2d63fadbd upstream.
 
-The pointer dma_dev_name is assigned but never read, it is redundant
-and can therefore be removed.
+In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
+is assigned to itself in an if ... else statement, apparently only to
+document that the branch condition is handled and that a previously read
+value should be returned unmodified. The self-assignment causes clang to
+raise the following warning:
 
-Cleans up clang warning:
-sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
-'dma_dev_name' is never read
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
+  error: explicitly assigning value of variable of type 'u32'
+    (aka 'unsigned int') to itself [-Werror,-Wself-assign]
+  writeVal = writeVal;
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Delete the branch with the self-assignment.
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/common/sst-firmware.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/sound/soc/intel/common/sst-firmware.c
-+++ b/sound/soc/intel/common/sst-firmware.c
-@@ -274,7 +274,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	struct sst_pdata *sst_pdata = sst->pdata;
- 	struct sst_dma *dma;
- 	struct resource mem;
--	const char *dma_dev_name;
- 	int ret = 0;
- 
- 	if (sst->pdata->resindex_dma_base == -1)
-@@ -285,7 +284,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	* is attached to the ADSP IP. */
- 	switch (sst->pdata->dma_engine) {
- 	case SST_DMA_TYPE_DW:
--		dma_dev_name = "dw_dmac";
- 		break;
- 	default:
- 		dev_err(sst->dev, "error: invalid DMA engine %d\n",
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+@@ -304,9 +304,6 @@ static void _rtl92c_get_txpower_writeval
+ 			writeVal = 0x00000000;
+ 		if (rtlpriv->dm.dynamic_txhighpower_lvl == TXHIGHPWRLEVEL_BT1)
+ 			writeVal = writeVal - 0x06060606;
+-		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
+-			 TXHIGHPWRLEVEL_BT2)
+-			writeVal = writeVal;
+ 		*(p_outwriteval + rf) = writeVal;
+ 	}
+ }
