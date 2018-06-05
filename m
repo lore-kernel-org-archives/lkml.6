@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeFERRo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:17:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34610 "EHLO mail.kernel.org"
+        id S1753285AbeFERF2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753298AbeFERFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:32 -0400
+        id S1752058AbeFERFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Subject: [PATCH 4.9 30/61] powerpc/rfi-flush: Differentiate enabled and patched flush types
-Date: Tue,  5 Jun 2018 19:01:51 +0200
-Message-Id: <20180605170119.634313522@linuxfoundation.org>
+Subject: [PATCH 4.9 27/61] powerpc/rfi-flush: Move the logic to avoid a redo into the debugfs code
+Date: Tue,  5 Jun 2018 19:01:48 +0200
+Message-Id: <20180605170119.444665591@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -29,67 +29,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 0063d61ccfc011f379a31acaeba6de7c926fed2c upstream.
+commit 1e2a9fc7496955faacbbed49461d611b704a7505 upstream.
 
-Currently the rfi-flush messages print 'Using <type> flush' for all
-enabled_flush_types, but that is not necessarily true -- as now the
-fallback flush is always enabled on pseries, but the fixup function
-overwrites its nop/branch slot with other flush types, if available.
+rfi_flush_enable() includes a check to see if we're already
+enabled (or disabled), and in that case does nothing.
 
-So, replace the 'Using <type> flush' messages with '<type> flush is
-available'.
+But that means calling setup_rfi_flush() a 2nd time doesn't actually
+work, which is a bit confusing.
 
-Also, print the patched flush types in the fixup function, so users
-can know what is (not) being used (e.g., the slower, fallback flush,
-or no flush type at all if flush is disabled via the debugfs switch).
+Move that check into the debugfs code, where it really belongs.
 
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/setup_64.c    |    6 +++---
- arch/powerpc/lib/feature-fixups.c |    9 ++++++++-
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/setup_64.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 --- a/arch/powerpc/kernel/setup_64.c
 +++ b/arch/powerpc/kernel/setup_64.c
-@@ -755,15 +755,15 @@ static void init_fallback_flush(void)
- void setup_rfi_flush(enum l1d_flush_type types, bool enable)
+@@ -717,9 +717,6 @@ static void do_nothing(void *unused)
+ 
+ void rfi_flush_enable(bool enable)
  {
- 	if (types & L1D_FLUSH_FALLBACK) {
--		pr_info("rfi-flush: Using fallback displacement flush\n");
-+		pr_info("rfi-flush: fallback displacement flush available\n");
- 		init_fallback_flush();
- 	}
+-	if (rfi_flush == enable)
+-		return;
+-
+ 	if (enable) {
+ 		do_rfi_flush_fixups(enabled_flush_types);
+ 		on_each_cpu(do_nothing, NULL, 1);
+@@ -773,13 +770,19 @@ void __init setup_rfi_flush(enum l1d_flu
+ #ifdef CONFIG_DEBUG_FS
+ static int rfi_flush_set(void *data, u64 val)
+ {
++	bool enable;
++
+ 	if (val == 1)
+-		rfi_flush_enable(true);
++		enable = true;
+ 	else if (val == 0)
+-		rfi_flush_enable(false);
++		enable = false;
+ 	else
+ 		return -EINVAL;
  
- 	if (types & L1D_FLUSH_ORI)
--		pr_info("rfi-flush: Using ori type flush\n");
-+		pr_info("rfi-flush: ori type flush available\n");
- 
- 	if (types & L1D_FLUSH_MTTRIG)
--		pr_info("rfi-flush: Using mttrig type flush\n");
-+		pr_info("rfi-flush: mttrig type flush available\n");
- 
- 	enabled_flush_types = types;
- 
---- a/arch/powerpc/lib/feature-fixups.c
-+++ b/arch/powerpc/lib/feature-fixups.c
-@@ -153,7 +153,14 @@ void do_rfi_flush_fixups(enum l1d_flush_
- 		patch_instruction(dest + 2, instrs[2]);
- 	}
- 
--	printk(KERN_DEBUG "rfi-flush: patched %d locations\n", i);
-+	printk(KERN_DEBUG "rfi-flush: patched %d locations (%s flush)\n", i,
-+		(types == L1D_FLUSH_NONE)       ? "no" :
-+		(types == L1D_FLUSH_FALLBACK)   ? "fallback displacement" :
-+		(types &  L1D_FLUSH_ORI)        ? (types & L1D_FLUSH_MTTRIG)
-+							? "ori+mttrig type"
-+							: "ori type" :
-+		(types &  L1D_FLUSH_MTTRIG)     ? "mttrig type"
-+						: "unknown");
++	/* Only do anything if we're changing state */
++	if (enable != rfi_flush)
++		rfi_flush_enable(enable);
++
+ 	return 0;
  }
- #endif /* CONFIG_PPC_BOOK3S_64 */
  
