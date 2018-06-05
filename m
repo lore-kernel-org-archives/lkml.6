@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753085AbeFER6Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:58:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46490 "EHLO mail.kernel.org"
+        id S1753078AbeFER64 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:58:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752825AbeFERwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:52:22 -0400
+        id S1751988AbeFERwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:52:14 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 34/46] perf tests kmod-path: Add tests for vdso32 and vdsox32
-Date: Tue,  5 Jun 2018 14:50:18 -0300
-Message-Id: <20180605175030.32549-35-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 31/46] perf hists: Do not allocate space for callchains for evsels without them
+Date: Tue,  5 Jun 2018 14:50:15 -0300
+Message-Id: <20180605175030.32549-32-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
 References: <20180605175030.32549-1-acme@kernel.org>
@@ -23,47 +24,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Add tests for vdso32 and vdsox32. This will cause the overall test to
-fail because __kmod_path__parse() does not handle vdso32 or vdsox32.
+This is another case were a big switch for callchains,
+symbol_conf.use_callchain, is inconvenient, as we can have both events
+with and without callchains, no point in checking a single switch to
+decide to allocate space for callchains.
 
-Fixes: 1f121b03d058 ("perf tools: Deal with kernel module names in '[]' correctly")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1528117014-30032-2-git-send-email-adrian.hunter@intel.com
+Link: https://lkml.kernel.org/n/tip-62q64m7x7kqpb4g7boqc2nde@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/kmod-path.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ tools/perf/util/hist.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/tests/kmod-path.c b/tools/perf/tests/kmod-path.c
-index 8e57d46109de..148dd31cc201 100644
---- a/tools/perf/tests/kmod-path.c
-+++ b/tools/perf/tests/kmod-path.c
-@@ -127,6 +127,22 @@ int test__kmod_path__parse(struct test *t __maybe_unused, int subtest __maybe_un
- 	M("[vdso]", PERF_RECORD_MISC_KERNEL, false);
- 	M("[vdso]", PERF_RECORD_MISC_USER, false);
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 34864c87cd3c..496913eeed75 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -461,14 +461,19 @@ static struct hist_entry *hist_entry__new(struct hist_entry *template,
+ 					  bool sample_self)
+ {
+ 	struct hist_entry_ops *ops = template->ops;
++	struct perf_evsel *evsel = hists_to_evsel(template->hists);
+ 	size_t callchain_size = 0;
+ 	struct hist_entry *he;
+ 	int err = 0;
  
-+	T("[vdso32]", true      , true     , false, false, "[vdso32]", NULL);
-+	T("[vdso32]", false     , true     , false, false, NULL    , NULL);
-+	T("[vdso32]", true      , false    , false, false, "[vdso32]", NULL);
-+	T("[vdso32]", false     , false    , false, false, NULL    , NULL);
-+	M("[vdso32]", PERF_RECORD_MISC_CPUMODE_UNKNOWN, false);
-+	M("[vdso32]", PERF_RECORD_MISC_KERNEL, false);
-+	M("[vdso32]", PERF_RECORD_MISC_USER, false);
-+
-+	T("[vdsox32]", true      , true     , false, false, "[vdsox32]", NULL);
-+	T("[vdsox32]", false     , true     , false, false, NULL    , NULL);
-+	T("[vdsox32]", true      , false    , false, false, "[vdsox32]", NULL);
-+	T("[vdsox32]", false     , false    , false, false, NULL    , NULL);
-+	M("[vdsox32]", PERF_RECORD_MISC_CPUMODE_UNKNOWN, false);
-+	M("[vdsox32]", PERF_RECORD_MISC_KERNEL, false);
-+	M("[vdsox32]", PERF_RECORD_MISC_USER, false);
-+
- 	/* path         alloc_name  alloc_ext  kmod   comp   name          ext */
- 	T("[vsyscall]", true      , true     , false, false, "[vsyscall]", NULL);
- 	T("[vsyscall]", false     , true     , false, false, NULL        , NULL);
+ 	if (!ops)
+ 		ops = template->ops = &default_ops;
+-
+-	if (symbol_conf.use_callchain)
++	/*
++	 * It is possible to have callchains for some evsels but not for others,
++	 * e.g.:  'perf record -e cycles,cache-misses/max-stack=10/', so lets
++	 * not waste space for that.
++	 */
++	if (symbol_conf.use_callchain && evsel__has_callchain(evsel))
+ 		callchain_size = sizeof(struct callchain_root);
+ 
+ 	he = ops->new(callchain_size);
 -- 
 2.14.3
