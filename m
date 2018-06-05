@@ -1,336 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753069AbeFESC5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:02:57 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:45540 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbeFESB1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:01:27 -0400
-X-Google-Smtp-Source: ADUXVKJmsY4uTzQ9MW2G3NOBys2yPqHVNJi0lffNyMiOpAkdLxBEpqr1XgcK4kN6EtA4ly5VcFg/lw==
-From: Tejun Heo <tj@kernel.org>
-To: axboe@kernel.dk
-Cc: michaelcallahan@fb.com, newella@fb.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Tejun Heo <tj@kernel.org>, Mike Christie <mchristi@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 1/6] block: make bdev_ops->rw_page() take a REQ_OP instead of bool
-Date: Tue,  5 Jun 2018 11:01:15 -0700
-Message-Id: <20180605180120.2726113-2-tj@kernel.org>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180605180120.2726113-1-tj@kernel.org>
-References: <20180605180120.2726113-1-tj@kernel.org>
+        id S1753102AbeFESDM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:03:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752478AbeFERvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:51:38 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 19/46] perf sort: Introduce addr_map_symbol__srcline() to make code more compact
+Date: Tue,  5 Jun 2018 14:50:03 -0300
+Message-Id: <20180605175030.32549-20-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
+References: <20180605175030.32549-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-c11f0c0b5bb9 ("block/mm: make bdev_ops->rw_page() take a bool for
-read/write") replaced @op with boolean @is_write, which limited the
-amount of information going into ->rw_page() and more importantly
-page_endio(), which removed the need to expose block internals to mm.
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Unfortunately, we want to track discards separately and @is_write
-isn't enough information.  This patch updates bdev_ops->rw_page() to
-take REQ_OP instead but leaves page_endio() to take bool @is_write.
-This allows the block part of operations to have enough information
-while not leaking it to mm.
+Since we have 'struct addr_map_symbol' and the srcline sort order keys
+all operate on those, make the code more compact by introducing a
+function that receives a pointer to such struct and expands the
+arguments to map__srcline().
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-j540wq7n3ukkh70gk5be0in5@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/block/brd.c           | 14 +++++++-------
- drivers/block/zram/zram_drv.c | 16 ++++++++--------
- drivers/nvdimm/btt.c          | 12 ++++++------
- drivers/nvdimm/pmem.c         | 13 ++++++-------
- fs/block_dev.c                |  6 ++++--
- fs/mpage.c                    |  4 ++--
- include/linux/blkdev.h        |  2 +-
- 7 files changed, 34 insertions(+), 33 deletions(-)
+ tools/perf/util/sort.c | 37 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index bb97659..df8103d 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -254,20 +254,20 @@ static void copy_from_brd(void *dst, struct brd_device *brd,
-  * Process a single bvec of a bio.
-  */
- static int brd_do_bvec(struct brd_device *brd, struct page *page,
--			unsigned int len, unsigned int off, bool is_write,
-+			unsigned int len, unsigned int off, unsigned int op,
- 			sector_t sector)
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 71096dbfeb88..4ab0b4ab24e4 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -365,19 +365,20 @@ struct sort_entry sort_srcline = {
+ 
+ /* --sort srcline_from */
+ 
++static char *addr_map_symbol__srcline(struct addr_map_symbol *ams)
++{
++	return map__srcline(ams->map, ams->al_addr, ams->sym);
++}
++
+ static int64_t
+ sort__srcline_from_cmp(struct hist_entry *left, struct hist_entry *right)
  {
- 	void *mem;
- 	int err = 0;
- 
--	if (is_write) {
-+	if (op_is_write(op)) {
- 		err = copy_to_brd_setup(brd, sector, len);
- 		if (err)
- 			goto out;
- 	}
- 
- 	mem = kmap_atomic(page);
--	if (!is_write) {
-+	if (!op_is_write(op)) {
- 		copy_from_brd(mem + off, brd, sector, len);
- 		flush_dcache_page(page);
- 	} else {
-@@ -296,7 +296,7 @@ static blk_qc_t brd_make_request(struct request_queue *q, struct bio *bio)
- 		int err;
- 
- 		err = brd_do_bvec(brd, bvec.bv_page, len, bvec.bv_offset,
--					op_is_write(bio_op(bio)), sector);
-+				  bio_op(bio), sector);
- 		if (err)
- 			goto io_error;
- 		sector += len >> SECTOR_SHIFT;
-@@ -310,15 +310,15 @@ static blk_qc_t brd_make_request(struct request_queue *q, struct bio *bio)
+-	if (!left->branch_info->srcline_from) {
+-		left->branch_info->srcline_from = map__srcline(left->branch_info->from.map,
+-							       left->branch_info->from.al_addr,
+-							       left->branch_info->from.sym);
+-	}
+-	if (!right->branch_info->srcline_from) {
+-		right->branch_info->srcline_from = map__srcline(right->branch_info->from.map,
+-								right->branch_info->from.al_addr,
+-								right->branch_info->from.sym);
+-	}
++	if (!left->branch_info->srcline_from)
++		left->branch_info->srcline_from = addr_map_symbol__srcline(&left->branch_info->from);
++
++	if (!right->branch_info->srcline_from)
++		right->branch_info->srcline_from = addr_map_symbol__srcline(&right->branch_info->from);
++
+ 	return strcmp(right->branch_info->srcline_from, left->branch_info->srcline_from);
  }
  
- static int brd_rw_page(struct block_device *bdev, sector_t sector,
--		       struct page *page, bool is_write)
-+		       struct page *page, unsigned int op)
+@@ -399,16 +400,12 @@ struct sort_entry sort_srcline_from = {
+ static int64_t
+ sort__srcline_to_cmp(struct hist_entry *left, struct hist_entry *right)
  {
- 	struct brd_device *brd = bdev->bd_disk->private_data;
- 	int err;
- 
- 	if (PageTransHuge(page))
- 		return -ENOTSUPP;
--	err = brd_do_bvec(brd, page, PAGE_SIZE, 0, is_write, sector);
--	page_endio(page, is_write, err);
-+	err = brd_do_bvec(brd, page, PAGE_SIZE, 0, op, sector);
-+	page_endio(page, op_is_write(op), err);
- 	return err;
+-	if (!left->branch_info->srcline_to) {
+-		left->branch_info->srcline_to = map__srcline(left->branch_info->to.map,
+-							     left->branch_info->to.al_addr,
+-							     left->branch_info->to.sym);
+-	}
+-	if (!right->branch_info->srcline_to) {
+-		right->branch_info->srcline_to = map__srcline(right->branch_info->to.map,
+-							      right->branch_info->to.al_addr,
+-							      right->branch_info->to.sym);
+-	}
++	if (!left->branch_info->srcline_to)
++		left->branch_info->srcline_to = addr_map_symbol__srcline(&left->branch_info->to);
++
++	if (!right->branch_info->srcline_to)
++		right->branch_info->srcline_to = addr_map_symbol__srcline(&right->branch_info->to);
++
+ 	return strcmp(right->branch_info->srcline_to, left->branch_info->srcline_to);
  }
  
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 0f3fadd..dd3da44 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1145,17 +1145,17 @@ static void zram_bio_discard(struct zram *zram, u32 index,
-  * Returns 1 if IO request was successfully submitted.
-  */
- static int zram_bvec_rw(struct zram *zram, struct bio_vec *bvec, u32 index,
--			int offset, bool is_write, struct bio *bio)
-+			int offset, unsigned int op, struct bio *bio)
- {
- 	unsigned long start_time = jiffies;
--	int rw_acct = is_write ? REQ_OP_WRITE : REQ_OP_READ;
-+	int rw_acct = op_is_write(op) ? REQ_OP_WRITE : REQ_OP_READ;
- 	struct request_queue *q = zram->disk->queue;
- 	int ret;
- 
- 	generic_start_io_acct(q, rw_acct, bvec->bv_len >> SECTOR_SHIFT,
- 			&zram->disk->part0);
- 
--	if (!is_write) {
-+	if (!op_is_write(op)) {
- 		atomic64_inc(&zram->stats.num_reads);
- 		ret = zram_bvec_read(zram, bvec, index, offset, bio);
- 		flush_dcache_page(bvec->bv_page);
-@@ -1167,7 +1167,7 @@ static int zram_bvec_rw(struct zram *zram, struct bio_vec *bvec, u32 index,
- 	generic_end_io_acct(q, rw_acct, &zram->disk->part0, start_time);
- 
- 	if (unlikely(ret < 0)) {
--		if (!is_write)
-+		if (!op_is_write(op))
- 			atomic64_inc(&zram->stats.failed_reads);
- 		else
- 			atomic64_inc(&zram->stats.failed_writes);
-@@ -1205,7 +1205,7 @@ static void __zram_make_request(struct zram *zram, struct bio *bio)
- 			bv.bv_len = min_t(unsigned int, PAGE_SIZE - offset,
- 							unwritten);
- 			if (zram_bvec_rw(zram, &bv, index, offset,
--					op_is_write(bio_op(bio)), bio) < 0)
-+					 bio_op(bio), bio) < 0)
- 				goto out;
- 
- 			bv.bv_offset += bv.bv_len;
-@@ -1257,7 +1257,7 @@ static void zram_slot_free_notify(struct block_device *bdev,
- }
- 
- static int zram_rw_page(struct block_device *bdev, sector_t sector,
--		       struct page *page, bool is_write)
-+		       struct page *page, unsigned int op)
- {
- 	int offset, ret;
- 	u32 index;
-@@ -1281,7 +1281,7 @@ static int zram_rw_page(struct block_device *bdev, sector_t sector,
- 	bv.bv_len = PAGE_SIZE;
- 	bv.bv_offset = 0;
- 
--	ret = zram_bvec_rw(zram, &bv, index, offset, is_write, NULL);
-+	ret = zram_bvec_rw(zram, &bv, index, offset, op, NULL);
- out:
- 	/*
- 	 * If I/O fails, just return error(ie, non-zero) without
-@@ -1296,7 +1296,7 @@ static int zram_rw_page(struct block_device *bdev, sector_t sector,
- 
- 	switch (ret) {
- 	case 0:
--		page_endio(page, is_write, 0);
-+		page_endio(page, op_is_write(op), 0);
- 		break;
- 	case 1:
- 		ret = 0;
-diff --git a/drivers/nvdimm/btt.c b/drivers/nvdimm/btt.c
-index 85de805..0360c01 100644
---- a/drivers/nvdimm/btt.c
-+++ b/drivers/nvdimm/btt.c
-@@ -1423,11 +1423,11 @@ static int btt_write_pg(struct btt *btt, struct bio_integrity_payload *bip,
- 
- static int btt_do_bvec(struct btt *btt, struct bio_integrity_payload *bip,
- 			struct page *page, unsigned int len, unsigned int off,
--			bool is_write, sector_t sector)
-+			unsigned int op, sector_t sector)
- {
- 	int ret;
- 
--	if (!is_write) {
-+	if (!op_is_write(op)) {
- 		ret = btt_read_pg(btt, bip, page, off, sector, len);
- 		flush_dcache_page(page);
- 	} else {
-@@ -1464,7 +1464,7 @@ static blk_qc_t btt_make_request(struct request_queue *q, struct bio *bio)
- 		}
- 
- 		err = btt_do_bvec(btt, bip, bvec.bv_page, len, bvec.bv_offset,
--				  op_is_write(bio_op(bio)), iter.bi_sector);
-+				  bio_op(bio), iter.bi_sector);
- 		if (err) {
- 			dev_err(&btt->nd_btt->dev,
- 					"io error in %s sector %lld, len %d,\n",
-@@ -1483,16 +1483,16 @@ static blk_qc_t btt_make_request(struct request_queue *q, struct bio *bio)
- }
- 
- static int btt_rw_page(struct block_device *bdev, sector_t sector,
--		struct page *page, bool is_write)
-+		struct page *page, unsigned int op)
- {
- 	struct btt *btt = bdev->bd_disk->private_data;
- 	int rc;
- 	unsigned int len;
- 
- 	len = hpage_nr_pages(page) * PAGE_SIZE;
--	rc = btt_do_bvec(btt, NULL, page, len, 0, is_write, sector);
-+	rc = btt_do_bvec(btt, NULL, page, len, 0, op, sector);
- 	if (rc == 0)
--		page_endio(page, is_write, 0);
-+		page_endio(page, op_is_write(op), 0);
- 
- 	return rc;
- }
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index e023d6a..90942508 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -120,7 +120,7 @@ static blk_status_t read_pmem(struct page *page, unsigned int off,
- }
- 
- static blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
--			unsigned int len, unsigned int off, bool is_write,
-+			unsigned int len, unsigned int off, unsigned int op,
- 			sector_t sector)
- {
- 	blk_status_t rc = BLK_STS_OK;
-@@ -131,7 +131,7 @@ static blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
- 	if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
- 		bad_pmem = true;
- 
--	if (!is_write) {
-+	if (!op_is_write(op)) {
- 		if (unlikely(bad_pmem))
- 			rc = BLK_STS_IOERR;
- 		else {
-@@ -185,8 +185,7 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
- 	do_acct = nd_iostat_start(bio, &start);
- 	bio_for_each_segment(bvec, bio, iter) {
- 		rc = pmem_do_bvec(pmem, bvec.bv_page, bvec.bv_len,
--				bvec.bv_offset, op_is_write(bio_op(bio)),
--				iter.bi_sector);
-+				bvec.bv_offset, bio_op(bio), iter.bi_sector);
- 		if (rc) {
- 			bio->bi_status = rc;
- 			break;
-@@ -203,13 +202,13 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
- }
- 
- static int pmem_rw_page(struct block_device *bdev, sector_t sector,
--		       struct page *page, bool is_write)
-+		       struct page *page, unsigned int op)
- {
- 	struct pmem_device *pmem = bdev->bd_queue->queuedata;
- 	blk_status_t rc;
- 
- 	rc = pmem_do_bvec(pmem, page, hpage_nr_pages(page) * PAGE_SIZE,
--			  0, is_write, sector);
-+			  0, op, sector);
- 
- 	/*
- 	 * The ->rw_page interface is subtle and tricky.  The core
-@@ -218,7 +217,7 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
- 	 * caused by double completion.
- 	 */
- 	if (rc == 0)
--		page_endio(page, is_write, 0);
-+		page_endio(page, op_is_write(op), 0);
- 
- 	return blk_status_to_errno(rc);
- }
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index bef6934..82ed5e4 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -662,7 +662,8 @@ int bdev_read_page(struct block_device *bdev, sector_t sector,
- 	result = blk_queue_enter(bdev->bd_queue, 0);
- 	if (result)
- 		return result;
--	result = ops->rw_page(bdev, sector + get_start_sect(bdev), page, false);
-+	result = ops->rw_page(bdev, sector + get_start_sect(bdev), page,
-+			      REQ_OP_READ);
- 	blk_queue_exit(bdev->bd_queue);
- 	return result;
- }
-@@ -700,7 +701,8 @@ int bdev_write_page(struct block_device *bdev, sector_t sector,
- 		return result;
- 
- 	set_page_writeback(page);
--	result = ops->rw_page(bdev, sector + get_start_sect(bdev), page, true);
-+	result = ops->rw_page(bdev, sector + get_start_sect(bdev), page,
-+			      REQ_OP_WRITE);
- 	if (result) {
- 		end_page_writeback(page);
- 	} else {
-diff --git a/fs/mpage.c b/fs/mpage.c
-index b7e7f57..b73638d 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -51,8 +51,8 @@ static void mpage_end_io(struct bio *bio)
- 
- 	bio_for_each_segment_all(bv, bio, i) {
- 		struct page *page = bv->bv_page;
--		page_endio(page, op_is_write(bio_op(bio)),
--				blk_status_to_errno(bio->bi_status));
-+		page_endio(page, bio_op(bio),
-+			   blk_status_to_errno(bio->bi_status));
- 	}
- 
- 	bio_put(bio);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index bca3a92..b038366 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1955,7 +1955,7 @@ static inline bool integrity_req_gap_front_merge(struct request *req,
- struct block_device_operations {
- 	int (*open) (struct block_device *, fmode_t);
- 	void (*release) (struct gendisk *, fmode_t);
--	int (*rw_page)(struct block_device *, sector_t, struct page *, bool);
-+	int (*rw_page)(struct block_device *, sector_t, struct page *, unsigned int);
- 	int (*ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
- 	int (*compat_ioctl) (struct block_device *, fmode_t, unsigned, unsigned long);
- 	unsigned int (*check_events) (struct gendisk *disk,
 -- 
-2.9.5
+2.14.3
