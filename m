@@ -1,78 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751710AbeFEGK5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:10:57 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41919 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751603AbeFEGKz (ORCPT
+        id S1751696AbeFEGOt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 02:14:49 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38535 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbeFEGOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 02:10:55 -0400
-X-Google-Smtp-Source: ADUXVKK6E9a9LIGSa+V3gCqWhmfYyMcySsi0q/h2jn4dO++5r4hWNTd/E7xxJCHPxULy1MnRSEQkXw==
-Date: Tue, 5 Jun 2018 08:10:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Janani Sankara Babu <jananis37@gmail.com>
-Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, greybus-dev@lists.linaro.org
-Subject: Re: [greybus-dev] [PATCH] Staging:greybus Fix comparison to NULL
-Message-ID: <20180605061038.GF13775@localhost>
-References: <1528030371-3822-1-git-send-email-jananis37@gmail.com>
- <20180605053236.u57riboa47so66rr@vireshk-i7>
+        Tue, 5 Jun 2018 02:14:47 -0400
+X-Google-Smtp-Source: ADUXVKJ7Yxgjs5DNji4aWHVzDe6xx03SarM33LVvMcJ0LgYcohXpr8UpNUlZTC9Rkw9iF+e58+cQHGqQDxNmiQQEgdY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605053236.u57riboa47so66rr@vireshk-i7>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
+References: <20180604065802.157744637@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 5 Jun 2018 11:44:45 +0530
+Message-ID: <CA+G9fYsjd00toa+mmF9vsKnxtZ9fz5Rk0SHh=DZ0=otTyONjxA@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, Shuah Khan <shuah@kernel.org>,
+        patches@kernelci.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w556Esg1016886
 
-On Tue, Jun 05, 2018 at 11:02:36AM +0530, Viresh Kumar wrote:
-> On 03-06-18, 08:52, Janani Sankara Babu wrote:
-> > This patch replaces comparison of var to NULL with !var
-> > 
-> > Signed-off-by: Janani Sankara Babu <jananis37@gmail.com>
-> > ---
-> >  drivers/staging/greybus/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/staging/greybus/core.c b/drivers/staging/greybus/core.c
-> > index dafa430..5d14a4e 100644
-> > --- a/drivers/staging/greybus/core.c
-> > +++ b/drivers/staging/greybus/core.c
-> > @@ -48,7 +48,7 @@ static bool greybus_match_one_id(struct gb_bundle *bundle,
-> >  static const struct greybus_bundle_id *
-> >  greybus_match_id(struct gb_bundle *bundle, const struct greybus_bundle_id *id)
-> >  {
-> > -	if (id == NULL)
-> > +	if (!id)
-> 
-> It is pretty much personal preference and there is no good reason to
-> accept this patch really.
+On 4 June 2018 at 12:27, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.9.106 release.
+> There are 29 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.106-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I agree with you, Viresh, but greybus is still living in staging which
-makes checkpatch enable the --strict option, thereby forcing its authors
-preferences onto the rest of us.
+Results from Linaro’s test farm.
+No regressions on arm64, arm and x86_64.
 
-I also do understand Greg's point that while --strict is enabled,
-rejecting such patches will probably cause some new submitters to do
-work for nothing, which is not good.
+NOTE: LTP fs "read_all_sys" broken on hikey and this is always reproducible.
+But test PASS on qemu_arm64.
+"read_all_sys" is not a real failure consider this as waiver and will
+investigate.
 
-On the other hand, I at least think we should enforce having a patch
-description that clearly indicates that this is just something to make
-checkpatch happy (reserving the term "fix" for proper fixes, at least if
-not used in conjunction with "checkpatch warning").
+Test log:
+------------
+read_all -d /sys -q -r 10
+incrementing stop
+tst_test.c:1015: INFO: Timeout per run is 0h 15m 00s
+read_all.c:317: BROK: queue_push(workers[j].q, path) timed out
 
-So Janani, would you mind resubmitting this patch with a slightly
-modified commit message, such as:
+Summary
+------------------------------------------------------------------------
 
-	staging: greybus: clean up NULL comparisons
+kernel: 4.9.106-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.9.y
+git commit: b0a024051e17ad3bdd5f6b1e52f5c67fb6087cb9
+git describe: v4.9.105-31-gb0a024051e17
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.105-31-gb0a024051e17
 
-	Replace comparison of var to NULL with !var in order to address
-	a checkpatch (strict) warning.
+No regressions (compared to build v4.9.105)
 
-You could also change the sole remaining comparison to NULL in bundle.c
-in the same patch.
-
-Thanks,
-Johan
+<Full report not generated due to infrastructure issues>
+<end of report>
