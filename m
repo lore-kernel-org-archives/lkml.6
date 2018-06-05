@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753587AbeFERGS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:06:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35402 "EHLO mail.kernel.org"
+        id S1753634AbeFERG1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752036AbeFERGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:14 -0400
+        id S1752271AbeFERGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 43/61] powerpc: Move default security feature flags
-Date: Tue,  5 Jun 2018 19:02:04 +0200
-Message-Id: <20180605170120.423856841@linuxfoundation.org>
+        stable@vger.kernel.org, Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Li Wei <liwei213@huawei.com>
+Subject: [PATCH 4.9 19/61] scsi: ufs: fix failure to read the string descriptor
+Date: Tue,  5 Jun 2018 19:01:40 +0200
+Message-Id: <20180605170118.888128989@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -30,51 +31,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-commit e7347a86830f38dc3e40c8f7e28c04412b12a2e7 upstream.
+commit bde44bb665d049468b6a1a2fa7d666434de4f83f upstream.
 
-This moves the definition of the default security feature flags
-(i.e., enabled by default) closer to the security feature flags.
+While reading variable size descriptors (like string descriptor), some UFS
+devices may report the "LENGTH" (field in "Transaction Specific fields" of
+Query Response UPIU) same as what was requested in Query Request UPIU
+instead of reporting the actual size of the variable size descriptor.
+Although it's safe to ignore the "LENGTH" field for variable size
+descriptors as we can always derive the length of the descriptor from
+the descriptor header fields. Hence this change impose the length match
+check only for fixed size descriptors (for which we always request the
+correct size as part of Query Request UPIU).
 
-This can be used to restore current flags to the default flags.
-
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[Wei Li: Slight tweaks to get the cherry-pick to apply,resolved collisions.]
+Signed-off-by: Li Wei <liwei213@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/include/asm/security_features.h |    8 ++++++++
- arch/powerpc/kernel/security.c               |    7 +------
- 2 files changed, 9 insertions(+), 6 deletions(-)
 
---- a/arch/powerpc/include/asm/security_features.h
-+++ b/arch/powerpc/include/asm/security_features.h
-@@ -63,4 +63,12 @@ static inline bool security_ftr_enabled(
- // Firmware configuration indicates user favours security over performance
- #define SEC_FTR_FAVOUR_SECURITY		0x0000000000000200ull
+---
+ drivers/scsi/ufs/ufshcd.c |   39 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 31 insertions(+), 8 deletions(-)
+
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -2086,18 +2086,41 @@ static int ufshcd_read_desc_param(struct
+ 					desc_id, desc_index, 0, desc_buf,
+ 					&buff_len);
  
+-	if (ret || (buff_len < ufs_query_desc_max_size[desc_id]) ||
+-	    (desc_buf[QUERY_DESC_LENGTH_OFFSET] !=
+-	     ufs_query_desc_max_size[desc_id])
+-	    || (desc_buf[QUERY_DESC_DESC_TYPE_OFFSET] != desc_id)) {
+-		dev_err(hba->dev, "%s: Failed reading descriptor. desc_id %d param_offset %d buff_len %d ret %d",
+-			__func__, desc_id, param_offset, buff_len, ret);
+-		if (!ret)
+-			ret = -EINVAL;
++	if (ret) {
++		dev_err(hba->dev, "%s: Failed reading descriptor. desc_id %d, desc_index %d, param_offset %d, ret %d",
++			__func__, desc_id, desc_index, param_offset, ret);
+ 
+ 		goto out;
+ 	}
+ 
++	/* Sanity check */
++	if (desc_buf[QUERY_DESC_DESC_TYPE_OFFSET] != desc_id) {
++		dev_err(hba->dev, "%s: invalid desc_id %d in descriptor header",
++			__func__, desc_buf[QUERY_DESC_DESC_TYPE_OFFSET]);
++		ret = -EINVAL;
++		goto out;
++	}
 +
-+// Features enabled by default
-+#define SEC_FTR_DEFAULT \
-+	(SEC_FTR_L1D_FLUSH_HV | \
-+	 SEC_FTR_L1D_FLUSH_PR | \
-+	 SEC_FTR_BNDS_CHK_SPEC_BAR | \
-+	 SEC_FTR_FAVOUR_SECURITY)
++	/*
++	 * While reading variable size descriptors (like string descriptor),
++	 * some UFS devices may report the "LENGTH" (field in "Transaction
++	 * Specific fields" of Query Response UPIU) same as what was requested
++	 * in Query Request UPIU instead of reporting the actual size of the
++	 * variable size descriptor.
++	 * Although it's safe to ignore the "LENGTH" field for variable size
++	 * descriptors as we can always derive the length of the descriptor from
++	 * the descriptor header fields. Hence this change impose the length
++	 * match check only for fixed size descriptors (for which we always
++	 * request the correct size as part of Query Request UPIU).
++	 */
++	if ((desc_id != QUERY_DESC_IDN_STRING) &&
++	    (buff_len != desc_buf[QUERY_DESC_LENGTH_OFFSET])) {
++		dev_err(hba->dev, "%s: desc_buf length mismatch: buff_len %d, buff_len(desc_header) %d",
++			__func__, buff_len, desc_buf[QUERY_DESC_LENGTH_OFFSET]);
++		ret = -EINVAL;
++		goto out;
++	}
 +
- #endif /* _ASM_POWERPC_SECURITY_FEATURES_H */
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -11,12 +11,7 @@
- #include <asm/security_features.h>
- 
- 
--unsigned long powerpc_security_features __read_mostly = \
--	SEC_FTR_L1D_FLUSH_HV | \
--	SEC_FTR_L1D_FLUSH_PR | \
--	SEC_FTR_BNDS_CHK_SPEC_BAR | \
--	SEC_FTR_FAVOUR_SECURITY;
--
-+unsigned long powerpc_security_features __read_mostly = SEC_FTR_DEFAULT;
- 
- ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
- {
+ 	if (is_kmalloc)
+ 		memcpy(param_read_buf, &desc_buf[param_offset], param_size);
+ out:
