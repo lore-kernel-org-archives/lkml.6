@@ -1,101 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeFEUoL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:44:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751820AbeFEUoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:44:09 -0400
-Date: Tue, 5 Jun 2018 15:44:07 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] PCI: Clean up resource allocation in
- devm_of_pci_get_host_bridge_resources()
-Message-ID: <20180605204407.GA226399@bhelgaas-glaptop.roam.corp.google.com>
-References: <cover.1526375226.git.jan.kiszka@siemens.com>
- <3aeb2ed038cbce8fe744b614dc19d414555a7e8f.1526375226.git.jan.kiszka@siemens.com>
- <CAHp75VeUbjobse6uLeM4h_xXRUw+YUQUN+EOye67AJy77a5euQ@mail.gmail.com>
- <CAHp75VeM7_8+9QJjOypXaiBhpWP4B5KACdUQ-p3frbS3jPh=OQ@mail.gmail.com>
- <f35b2972-aa40-5397-facb-765cafe7c315@siemens.com>
- <CAHp75VdWhCDYt3jvii92g222WeHTvwX5e8Sthr0pknXvCgwHDA@mail.gmail.com>
+        id S1752132AbeFEUqC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 16:46:02 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:34528 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751842AbeFEUqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 16:46:00 -0400
+X-Google-Smtp-Source: ADUXVKLV/5YFFdUtulYhpI63dA0yDH0DoMQ6G+sQo3wvluzM03z+E7H3HesT0H9o0H0keIJ+OLUhsw==
+Date: Tue, 5 Jun 2018 13:45:56 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
+        akpm@linux-foundation.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Josef Bacik <jbacik@fb.com>
+Subject: Re: [PATCH 06/13] blkcg: add generic throttling mechanism
+Message-ID: <20180605204556.GJ1351649@devbig577.frc2.facebook.com>
+References: <20180605132948.1664-1-josef@toxicpanda.com>
+ <20180605132948.1664-7-josef@toxicpanda.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VdWhCDYt3jvii92g222WeHTvwX5e8Sthr0pknXvCgwHDA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180605132948.1664-7-josef@toxicpanda.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 07:26:57PM +0300, Andy Shevchenko wrote:
-> On Wed, May 16, 2018 at 3:31 PM, Jan Kiszka <jan.kiszka@siemens.com> wrote:
-> > Instead of first allocating and then freeing memory for struct resource
-> > in case we cannot parse a PCI resource from the device tree, work
-> > against a local struct and kmemdup it when we decide to go with it.
-> >
+On Tue, Jun 05, 2018 at 09:29:41AM -0400, Josef Bacik wrote:
+> From: Josef Bacik <jbacik@fb.com>
 > 
-> Bjorn, any comments on this?
+> Since IO can be issued from literally anywhere it's almost impossible to
+> do throttling without having some sort of adverse effect somewhere else
+> in the system because of locking or other dependencies.  The best way to
+> solve this is to do the throttling when we know we aren't holding any
+> other kernel resources.  Do this by tracking throttling in a per-blkg
+> basis, and if we require throttling flag the task that it needs to check
+> before it returns to user space and possibly sleep there.
+> 
+> This is to address the case where a process is doing work that is
+> generating IO that can't be throttled, whether that is directly with a
+> lot of REQ_META IO, or indirectly by allocating so much memory that it
+> is swamping the disk with REQ_SWAP.  We can't use task_add_work as we
+> don't want to induce a memory allocation in the IO path, so simply
+> saving the request queue in the task and flagging it to do the
+> notify_resume thing achieves the same result without the overhead of a
+> memory allocation.
+> 
+> Signed-off-by: Josef Bacik <jbacik@fb.com>
 
-I'm trying to finish up the v4.18 changes now, but I'll look at this later.
-If it's urgent, let me know and I can look sooner.
+Acked-by: Tejun Heo <tj@kernel.org>
 
-> > Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> > ---
-> >  drivers/pci/of.c | 14 ++++++--------
-> >  1 file changed, 6 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> > index b06585a1da75..fc0f906c5c25 100644
-> > --- a/drivers/pci/of.c
-> > +++ b/drivers/pci/of.c
-> > @@ -266,7 +266,7 @@ int devm_of_pci_get_host_bridge_resources(struct device *dev,
-> >                         struct list_head *resources, resource_size_t *io_base)
-> >  {
-> >         struct device_node *dev_node = dev->of_node;
-> > -       struct resource *res;
-> > +       struct resource *res, tmp_res;
-> >         struct resource *bus_range;
-> >         struct of_pci_range range;
-> >         struct of_pci_range_parser parser;
-> > @@ -320,18 +320,16 @@ int devm_of_pci_get_host_bridge_resources(struct device *dev,
-> >                 if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
-> >                         continue;
-> >
-> > -               res = devm_kzalloc(dev, sizeof(struct resource), GFP_KERNEL);
-> > +               err = of_pci_range_to_resource(&range, dev_node, &tmp_res);
-> > +               if (err)
-> > +                       continue;
-> > +
-> > +               res = devm_kmemdup(dev, &tmp_res, sizeof(tmp_res), GFP_KERNEL);
-> >                 if (!res) {
-> >                         err = -ENOMEM;
-> >                         goto failed;
-> >                 }
-> >
-> > -               err = of_pci_range_to_resource(&range, dev_node, res);
-> > -               if (err) {
-> > -                       devm_kfree(dev, res);
-> > -                       continue;
-> > -               }
-> > -
-> >                 if (resource_type(res) == IORESOURCE_IO) {
-> >                         if (!io_base) {
-> >                                 dev_err(dev,
-> > --
-> > 2.13.6
-> 
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+-- 
+tejun
