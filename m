@@ -1,106 +1,385 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751819AbeFEKdo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:33:44 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35840 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751696AbeFEKdj (ORCPT
+        id S1751840AbeFEKdv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 06:33:51 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34412 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751540AbeFEKdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:33:39 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
-Subject: Re: [PATCH] drm/bridge: analogix-anx78xx: Switch to SPDX identifier.
-Date: Tue, 05 Jun 2018 13:33:49 +0300
-Message-ID: <4268268.FVg14MziXp@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <f7f92ca9-adee-42c3-f822-0ce5ce85a69a@collabora.com>
-References: <20180605100051.4023-1-enric.balletbo@collabora.com> <1896069.8N7yzJMC7C@avalon> <f7f92ca9-adee-42c3-f822-0ce5ce85a69a@collabora.com>
+        Tue, 5 Jun 2018 06:33:46 -0400
+X-Google-Smtp-Source: ADUXVKI+Xrh97aDrZ4pF/nW4vB9dOf4Xy7RirTvtgRsrwJ0mFTiijxfxCM5lCBk2DRP2bpPtDBd8Dg==
+From: Tomasz Figa <tfiga@chromium.org>
+To: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        =?UTF-8?q?Pawe=C5=82=20O=C5=9Bciak?= <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>, Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomasz Figa <tfiga@chromium.org>
+Subject: [RFC PATCH 2/2] media: docs-rst: Add encoder UAPI specification to Codec Interfaces
+Date: Tue,  5 Jun 2018 19:33:28 +0900
+Message-Id: <20180605103328.176255-3-tfiga@chromium.org>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+In-Reply-To: <20180605103328.176255-1-tfiga@chromium.org>
+References: <20180605103328.176255-1-tfiga@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+Due to complexity of the video encoding process, the V4L2 drivers of
+stateful encoder hardware require specific sequencies of V4L2 API calls
+to be followed. These include capability enumeration, initialization,
+encoding, encode parameters change and flush.
 
-On Tuesday, 5 June 2018 13:27:06 EEST Enric Balletbo i Serra wrote:
-> On 05/06/18 12:11, Laurent Pinchart wrote:
-> > On Tuesday, 5 June 2018 13:00:50 EEST Enric Balletbo i Serra wrote:
-> >> Adopt the SPDX license identifier headers to ease license compliance
-> >> management.
-> >> 
-> >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/bridge/analogix-anx78xx.c | 24 ++++++++---------------
-> >>  1 file changed, 8 insertions(+), 16 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-> >> b/drivers/gpu/drm/bridge/analogix-anx78xx.c index
-> >> b49043866be6..54d7e7981bed 100644
-> >> --- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-> >> +++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-> >> @@ -1,19 +1,11 @@
-> >> -/*
-> >> - * Copyright(c) 2016, Analogix Semiconductor.
-> >> - *
-> >> - * This program is free software; you can redistribute it and/or modify
-> >> - * it under the terms of the GNU General Public License version 2 and
-> >> - * only version 2 as published by the Free Software Foundation.
-> >> - *
-> >> - * This program is distributed in the hope that it will be useful,
-> >> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> >> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> >> - * GNU General Public License for more details.
-> >> - *
-> >> - * Based on anx7808 driver obtained from chromeos with copyright:
-> >> - * Copyright(c) 2013, Google Inc.
-> >> - *
-> >> - */
-> >> +// SPDX-License-Identifier: GPL-2.0
-> > 
-> > This looks good to m.
-> > 
-> >> +// Driver for ANX78xx SlimPort transmitter.
-> >> +//
-> >> +// Copyright (C) 2016 Analogix Semiconductor.
-> >> +// Copyright (C) 2016 Google, Inc.
-> > 
-> > Should the last line be 2013, not 2016 ?
-> 
-> Yes, my bad.
-> 
-> >> +//
-> >> +// Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > 
-> > I don't think there's a need to convert the whole comment block to
-> > C++-style.
-> 
-> Seems that putting everything as // is Linus Torvalds' preferred style:
-> https://lkml.org/lkml/2017/11/25/133
-> 
-> But if you want I change, I don't mind to use the c style instead, just let
-> me know.
+Specifics of the above have been discussed during Media Workshops at
+LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+Conference Europe 2014 in Düsseldorf. The de facto Codec API that
+originated at those events was later implemented by the drivers we already
+have merged in mainline, such as s5p-mfc or mtk-vcodec.
 
-As usual with coding styles, it's a matter of preferences, feelings, and 
-getting used to changes. I personally dislike C++-style comments in kernel 
-sources. The fact that we have few of them makes them seem out of place, and 
-thus disturb code reading. My preferences might change if the style becomes 
-more prominent and I get used to it. Or maybe not :-)
+The only thing missing was the real specification included as a part of
+Linux Media documentation. Fix it now and document the encoder part of
+the Codec API.
 
-This being said, I'd personally keep changes minimal here, and give the last 
-word to the driver maintainer(s) as for any coding style matter.
+Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+---
+ Documentation/media/uapi/v4l/dev-codec.rst | 313 +++++++++++++++++++++
+ 1 file changed, 313 insertions(+)
 
-> >>  #include <linux/delay.h>
-> >>  #include <linux/err.h>
-> >>  #include <linux/interrupt.h>
-
+diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentation/media/uapi/v4l/dev-codec.rst
+index 0483b10c205e..325a51bb09df 100644
+--- a/Documentation/media/uapi/v4l/dev-codec.rst
++++ b/Documentation/media/uapi/v4l/dev-codec.rst
+@@ -805,3 +805,316 @@ of the driver.
+ To summarize, setting formats and allocation must always start with the
+ OUTPUT queue and the OUTPUT queue is the master that governs the set of
+ supported formats for the CAPTURE queue.
++
++Encoder
++=======
++
++Querying capabilities
++---------------------
++
++1. To enumerate the set of coded formats supported by the driver, the
++   client uses :c:func:`VIDIOC_ENUM_FMT` for CAPTURE. The driver must always
++   return the full set of supported formats, irrespective of the
++   format set on the OUTPUT queue.
++
++2. To enumerate the set of supported raw formats, the client uses
++   :c:func:`VIDIOC_ENUM_FMT` for OUTPUT queue. The driver must return only
++   the formats supported for the format currently set on the
++   CAPTURE queue.
++   In order to enumerate raw formats supported by a given coded
++   format, the client must first set that coded format on the
++   CAPTURE queue and then enumerate the OUTPUT queue.
++
++3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
++   resolutions for a given format, passing its fourcc in
++   :c:type:`v4l2_frmivalenum` ``pixel_format``.
++
++   a. Values returned from :c:func:`VIDIOC_ENUM_FRAMESIZES` for coded formats
++      must be maximums for given coded format for all supported raw
++      formats.
++
++   b. Values returned from :c:func:`VIDIOC_ENUM_FRAMESIZES` for raw formats must
++      be maximums for given raw format for all supported coded
++      formats.
++
++   c. The client should derive the supported resolution for a
++      combination of coded+raw format by calculating the
++      intersection of resolutions returned from calls to
++      :c:func:`VIDIOC_ENUM_FRAMESIZES` for the given coded and raw formats.
++
++4. Supported profiles and levels for given format, if applicable, may be
++   queried using their respective controls via :c:func:`VIDIOC_QUERYCTRL`.
++
++5. The client may use :c:func:`VIDIOC_ENUM_FRAMEINTERVALS` to enumerate maximum
++   supported framerates by the driver/hardware for a given
++   format+resolution combination.
++
++6. Any additional encoder capabilities may be discovered by querying
++   their respective controls.
++
++.. note::
++
++   Full format enumeration requires enumerating all raw formats
++   on the OUTPUT queue for all possible (enumerated) coded formats on
++   CAPTURE queue (setting each format on the CAPTURE queue before each
++   enumeration on the OUTPUT queue.
++
++Initialization
++--------------
++
++1. (optional) Enumerate supported formats and resolutions. See
++   capability enumeration.
++
++2. Set a coded format on the CAPTURE queue via :c:func:`VIDIOC_S_FMT`
++
++   a. Required fields:
++
++      i.  type = CAPTURE
++
++      ii. fmt.pix_mp.pixelformat set to a coded format to be produced
++
++   b. Return values:
++
++      i.  EINVAL: unsupported format.
++
++      ii. Others: per spec
++
++   c. Return fields:
++
++      i. fmt.pix_mp.width, fmt.pix_mp.height should be 0.
++
++   .. note::
++
++      After a coded format is set, the set of raw formats
++      supported as source on the OUTPUT queue may change.
++
++3. (optional) Enumerate supported OUTPUT formats (raw formats for
++   source) for the selected coded format via :c:func:`VIDIOC_ENUM_FMT`.
++
++   a. Required fields:
++
++      i.  type = OUTPUT
++
++      ii. index = per spec
++
++   b. Return values: per spec
++
++   c. Return fields:
++
++      i. pixelformat: raw format supported for the coded format
++         currently selected on the OUTPUT queue.
++
++4. Set a raw format on the OUTPUT queue and visible resolution for the
++   source raw frames via :c:func:`VIDIOC_S_FMT` on the OUTPUT queue.
++
++   a. Required fields:
++
++      i.   type = OUTPUT
++
++      ii.  fmt.pix_mp.pixelformat = raw format to be used as source of
++           encode
++
++      iii. fmt.pix_mp.width, fmt.pix_mp.height = input resolution
++           for the source raw frames
++
++      iv.  num_planes: set to number of planes for pixelformat.
++
++      v.   For each plane p = [0, num_planes-1]:
++           plane_fmt[p].sizeimage, plane_fmt[p].bytesperline: as
++           per spec for input resolution.
++
++   b. Return values: as per spec.
++
++   c. Return fields:
++
++      i.  fmt.pix_mp.width, fmt.pix_mp.height = may be adjusted by
++          driver to match alignment requirements, as required by the
++          currently selected formats.
++
++      ii. For each plane p = [0, num_planes-1]:
++          plane_fmt[p].sizeimage, plane_fmt[p].bytesperline: as
++          per spec for the adjusted input resolution.
++
++   d. Setting the input resolution will reset visible resolution to the
++      adjusted input resolution rounded up to the closest visible
++      resolution supported by the driver. Similarly, coded size will
++      be reset to input resolution rounded up to the closest coded
++      resolution supported by the driver (typically a multiple of
++      macroblock size).
++
++5. (optional) Set visible size for the stream metadata via
++   :c:func:`VIDIOC_S_SELECTION` on the OUTPUT queue.
++
++   a. Required fields:
++
++      i.   type = OUTPUT
++
++      ii.  target = ``V4L2_SEL_TGT_CROP``
++
++      iii. r.left, r.top, r.width, r.height: visible rectangle; this
++           must fit within coded resolution returned from
++           :c:func:`VIDIOC_S_FMT`.
++
++   b. Return values: as per spec.
++
++   c. Return fields:
++
++      i. r.left, r.top, r.width, r.height: visible rectangle adjusted by
++         the driver to match internal constraints.
++
++   d. This resolution must be used as the visible resolution in the
++      stream metadata.
++
++   .. note::
++
++      The driver might not support arbitrary values of the
++      crop rectangle and will adjust it to the closest supported
++      one.
++
++6. Allocate buffers for both OUTPUT and CAPTURE queues via
++   :c:func:`VIDIOC_REQBUFS`. This may be performed in any order.
++
++   a. Required fields:
++
++      i.   count = n, where n > 0.
++
++      ii.  type = OUTPUT or CAPTURE
++
++      iii. memory = as per spec
++
++   b. Return values: Per spec.
++
++   c. Return fields:
++
++      i. count: adjusted to allocated number of buffers
++
++   d. The driver must adjust count to minimum of required number of
++      buffers for given format and count passed. The client must
++      check this value after the ioctl returns to get the number of
++      buffers actually allocated.
++
++   .. note::
++
++      Passing count = 1 is useful for letting the driver choose the
++      minimum according to the selected format/hardware
++      requirements.
++
++   .. note::
++
++      To allocate more than minimum number of buffers (for pipeline
++      depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT)`` or
++      G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_CAPTURE)``, respectively,
++      to get the minimum number of buffers required by the
++      driver/format, and pass the obtained value plus the number of
++      additional buffers needed in count field to :c:func:`VIDIOC_REQBUFS`.
++
++7. Begin streaming on both OUTPUT and CAPTURE queues via
++   :c:func:`VIDIOC_STREAMON`. This may be performed in any order.
++
++Encoding
++--------
++
++This state is reached after a successful initialization sequence. In
++this state, client queues and dequeues buffers to both queues via
++:c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`, as per spec.
++
++Both queues operate independently. The client may queue and dequeue
++buffers to queues in any order and at any rate, also at a rate different
++for each queue. The client may queue buffers within the same queue in
++any order (V4L2 index-wise). It is recommended for the client to operate
++the queues independently for best performance.
++
++Source OUTPUT buffers must contain full raw frames in the selected
++OUTPUT format, exactly one frame per buffer.
++
++Encoding parameter changes
++--------------------------
++
++The client is allowed to use :c:func:`VIDIOC_S_CTRL` to change encoder
++parameters at any time. The driver must apply the new setting starting
++at the next frame queued to it.
++
++This specifically means that if the driver maintains a queue of buffers
++to be encoded and at the time of the call to :c:func:`VIDIOC_S_CTRL` not all the
++buffers in the queue are processed yet, the driver must not apply the
++change immediately, but schedule it for when the next buffer queued
++after the :c:func:`VIDIOC_S_CTRL` starts being processed.
++
++Flush
++-----
++
++Flush is the process of draining the CAPTURE queue of any remaining
++buffers. After the flush sequence is complete, the client has received
++all encoded frames for all OUTPUT buffers queued before the sequence was
++started.
++
++1. Begin flush by issuing :c:func:`VIDIOC_ENCODER_CMD`.
++
++   a. Required fields:
++
++      i. cmd = ``V4L2_ENC_CMD_STOP``
++
++2. The driver must process and encode as normal all OUTPUT buffers
++   queued by the client before the :c:func:`VIDIOC_ENCODER_CMD` was issued.
++
++3. Once all OUTPUT buffers queued before ``V4L2_ENC_CMD_STOP`` are
++   processed:
++
++   a. Once all decoded frames (if any) are ready to be dequeued on the
++      CAPTURE queue, the driver must send a ``V4L2_EVENT_EOS``. The
++      driver must also set ``V4L2_BUF_FLAG_LAST`` in
++      :c:type:`v4l2_buffer` ``flags`` field on the buffer on the CAPTURE queue
++      containing the last frame (if any) produced as a result of
++      processing the OUTPUT buffers queued before
++      ``V4L2_ENC_CMD_STOP``. If no more frames are left to be
++      returned at the point of handling ``V4L2_ENC_CMD_STOP``, the
++      driver must return an empty buffer (with
++      :c:type:`v4l2_buffer` ``bytesused`` = 0) as the last buffer with
++      ``V4L2_BUF_FLAG_LAST`` set instead.
++      Any attempts to dequeue more buffers beyond the buffer
++      marked with ``V4L2_BUF_FLAG_LAST`` will result in a -EPIPE
++      error from :c:func:`VIDIOC_DQBUF`.
++
++4. At this point, encoding is paused and the driver will accept, but not
++   process any newly queued OUTPUT buffers until the client issues
++   ``V4L2_ENC_CMD_START`` or :c:func:`VIDIOC_STREAMON`.
++
++Once the flush sequence is initiated, the client needs to drive it to
++completion, as described by the above steps, unless it aborts the
++process by issuing :c:func:`VIDIOC_STREAMOFF` on OUTPUT queue. The client is not
++allowed to issue ``V4L2_ENC_CMD_START`` or ``V4L2_ENC_CMD_STOP`` again
++while the flush sequence is in progress.
++
++Issuing :c:func:`VIDIOC_STREAMON` on OUTPUT queue will implicitly restart
++encoding. :c:func:`VIDIOC_STREAMON` and :c:func:`VIDIOC_STREAMOFF` on CAPTURE queue will
++not affect the flush sequence, allowing the client to change CAPTURE
++buffer set if needed.
++
++Commit points
++-------------
++
++Setting formats and allocating buffers triggers changes in the behavior
++of the driver.
++
++1. Setting format on CAPTURE queue may change the set of formats
++   supported/advertised on the OUTPUT queue. It also must change the
++   format currently selected on OUTPUT queue if it is not supported
++   by the newly selected CAPTURE format to a supported one.
++
++2. Enumerating formats on OUTPUT queue must only return OUTPUT formats
++   supported for the CAPTURE format currently set.
++
++3. Setting/changing format on OUTPUT queue does not change formats
++   available on CAPTURE queue. An attempt to set OUTPUT format that
++   is not supported for the currently selected CAPTURE format must
++   result in an error (-EINVAL) from :c:func:`VIDIOC_S_FMT`.
++
++4. Enumerating formats on CAPTURE queue always returns a full set of
++   supported coded formats, irrespective of the current format
++   selected on OUTPUT queue.
++
++5. After allocating buffers on a queue, it is not possible to change
++   format on it.
++
++In summary, the CAPTURE (coded format) queue is the master that governs
++the set of supported formats for the OUTPUT queue.
 -- 
-Regards,
-
-Laurent Pinchart
+2.17.1.1185.g55be947832-goog
