@@ -1,71 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752044AbeFENY7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:24:59 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:46670 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeFENY4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:24:56 -0400
-X-Google-Smtp-Source: ADUXVKLBaN3brrikIeoreUDqV2Ab7Km+REmNVwPa8v3qlHhS602r5cutt2Xe+q1FoBnl3otymvMOWEroBcpHuYofNFg=
+        id S1751987AbeFENZR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:25:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751775AbeFENZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 09:25:16 -0400
+Date: Tue, 5 Jun 2018 10:25:14 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH] perf tools: Fix pmu events parsing rule
+Message-ID: <20180605132514.GD4899@kernel.org>
+References: <20180605121416.31645-1-jolsa@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com> <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Jun 2018 15:24:55 +0200
-X-Google-Sender-Auth: jaEf_APHwTzWM_I0Yo8Ow6V4ZnE
-Message-ID: <CAMuHMdU1n0tQgPaEXAn6W1aVCDBjk-h0Mz2kgh2vu4e9CEi0XQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Carlo Caione <carlo@endlessm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605121416.31645-1-jolsa@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 1:28 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> Add a special enable method for the second CA7 of the R9A06G032
-> as well as the default value for the "cpu-release-addr" property.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Em Tue, Jun 05, 2018 at 02:14:16PM +0200, Jiri Olsa escreveu:
+> Currently all the event parsing fails end up
+> in the event_pmu rule, and display misleading
+> help like:
+> 
+>   $ perf stat -e inst kill
+>   event syntax error: 'inst'
+>                        \___ Cannot find PMU `inst'. Missing kernel support?
+>   ...
+> 
+> The reason is that the event_pmu is too strong
+> and match also single string. Changing it to
+> force the '/' separators to be part of the rule,
+> and getting the proper error now:
+> 
+>   $ perf stat -e inst kill
+>   event syntax error: 'inst'
+>                        \___ parser error
+>   Run 'perf list' for a list of valid events
+>   ...
+> 
+> Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+> Link: http://lkml.kernel.org/n/tip-vgf5a8wk0eyayo7omvutwhqo@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks, applied to acme/perf/core, will let it brew there for a while,
+if we have time then I'll try getting it to perf/urgent, better error
+messages are important :-)
 
-> --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -1,3 +1,4 @@
+- Arnaldo
+
+> ---
+>  tools/perf/util/parse-events.y | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+> index e37608a87dba..155d2570274f 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -73,6 +73,7 @@ static void inc_group_count(struct list_head *list,
+>  %type <num> value_sym
+>  %type <head> event_config
+>  %type <head> opt_event_config
+> +%type <head> opt_pmu_config
+>  %type <term> event_term
+>  %type <head> event_pmu
+>  %type <head> event_legacy_symbol
+> @@ -224,7 +225,7 @@ event_def: event_pmu |
+>  	   event_bpf_file
+>  
+>  event_pmu:
+> -PE_NAME opt_event_config
+> +PE_NAME opt_pmu_config
+>  {
+>  	struct list_head *list, *orig_terms, *terms;
+>  
+> @@ -496,6 +497,17 @@ opt_event_config:
+>  	$$ = NULL;
+>  }
+>  
+> +opt_pmu_config:
+> +'/' event_config '/'
+> +{
+> +	$$ = $2;
+> +}
+> +|
+> +'/' '/'
+> +{
+> +	$$ = NULL;
+> +}
 > +
-
-Bogus change
-
->  // SPDX-License-Identifier: GPL-2.0
->  /*
->   * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>  start_terms: event_config
+>  {
+>  	struct parse_events_state *parse_state = _parse_state;
+> -- 
+> 2.13.6
