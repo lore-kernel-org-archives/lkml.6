@@ -1,65 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751833AbeFELtU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:49:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:33629 "EHLO
+        id S1751670AbeFELwu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:52:50 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:52239 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbeFELtT (ORCPT
+        with ESMTP id S1751502AbeFELwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:49:19 -0400
+        Tue, 5 Jun 2018 07:52:49 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dave Martin <dave.martin@arm.com>,
+        Shanker Donthineni <shankerd@codeaurora.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] coresight: include vmalloc.h for vmap/vunmap
-Date: Tue,  5 Jun 2018 13:48:38 +0200
-Message-Id: <20180605114856.1558554-1-arnd@arndb.de>
+Subject: [PATCH] arm64: cpu_errata: include required headers
+Date: Tue,  5 Jun 2018 13:50:07 +0200
+Message-Id: <20180605115227.1621618-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:gukQhIexFdiQMeRI5iU9dh7j+YRVvyG/AU1ZnIXPKh0RITVysMU
- JWpdEoXIhPDC5EIUrdLff9XpK021YEmhdjNRaCfIE/ClmNRU+gjY1JWprT4m4dYfP7PF09a
- g7MU530X9DpkvXDQ8E7+uHMRTI0EEIwszgK3MXiZAI0M4QvgJCAmgYkWCYkqtrY2snNoffP
- PoRMl4HxZydvsEbx9eA9A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nC8z5dUZLXs=:MeBQC+/MsOYdLizBaICKPG
- OK6MSclTQUJXxXZPdMIZpMGbkVZQpZI4h0MN8L/zGAv7g1LLfpIQjwnumLDE/SVe7poD0zGtH
- E4g8rmOoWNWUm77ngngwCqpBsCF4N1OzrdA664YqJaAGEpAGuEBu7IZ55/1PFbFL/D/T8v/SF
- A/AYxyaBcF/UEcyr8M8ik4eZI4Hv2Ry8QTA6KPGe4KTkGBY0J+vaukKaVWgZShOV3/FrsD3Rh
- JaCwaBcQ680wtKCZTT+zJm9Gkloyn/Eyh8poKFn/vm10MVTR/5xT/+S4hQ4ITd9Es4tSmK9sE
- Y4eXhCETxGpbz8xJS74h3lHIU5LAQi52N1mq/Kux8SjG80hiTSNd/5cDQYUdzMkP4b5HMMWqt
- NUB5sYRTpgiuV17wJC2FBYY3+JQnVvt5JmDD5f44VlBoV1nRTptEc9wC4Odmz/Useea5D3KUz
- l3hRMATZkUBnsvP4ZpIBkvyejCrkFLIFmrqwt7Xzc0YS9E2cqCC5I504a92kb8Exkbm8caV0e
- Fdf5EiDxTrOfTKGBvbqEUCFExL+e9n4B/hfMguOEVJATCsYgCBhJISO6rUr5+npsxA8v+/x0Y
- MjwT9jehuG1YF6Phh7owsoMaeHYb6ST3sJXyrIeEB6m29hSI52RFwVmg6otTwzDb+dk45+5Zu
- tPWOk1zXXNMkzh9H5oIZBZGI3vhz7ESX+EtBbnuRE4olonPd+jGV5kNYf8XH3KfkOuEk=
+X-Provags-ID: V03:K1:g3wJ6pLnLlG2xO8vlY3O3nRcSQ+Ics8ht1pA1R1IRSHSMlYk5qu
+ x1BhL0N+fO6M3HyrRdIWT1XmjX7UxjyqNoO+W/mpza73pPl3tgSClgKD29jphIwFgQMahmI
+ HwAhl6TCX3lqiyu/7A4Uu1VM716SKv1fT1EDVWk27XKSurfw/9CwFWhS6ClzfmZV/ykCOiR
+ M7UYbBN0klyaGWjZ5pkhg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vqq2hZigar0=:BEiIM0JodeznDqvtBhpapJ
+ lwWvUJwmknfokmN7qd8mgjoTJ8pmEQ3nZyhupo4nIeI3hPzzgs8nBwW9bfWmqFd5dF1Xyj2uc
+ Lbhvtnai1dAFHjtfDe4zX4RBYH4lrRxnYO1QVo2zPoHVXgnnyFSMCa3dKfzqwd97od6AtRDb2
+ tCgrGjpUcZx9EXYcxM7FoiP07p8N1r1LfjOilSK+HA6Xl2gqntZZcQFKhzoh8tlSiIiKUxj6Y
+ Poaf07Iybu4unV+40TraRN3yCg3llasmJRngqSpnA0OsnE2VTPMsUuw/3LobAbnEXKtTZHSvT
+ U8H/QvpN73hrGbK0ycRB3vscFo37otnXhxLg4n2kDYlDX0T/bwYtHNyUh21nZqXgL/Gq/ZrYc
+ NC7qG8uPcJcq3xRE6Mpcv0xmaOySHwWwOWZ1KUxkorDiqs0mUP8El71Ke9bOF1Bdw0zZmB6/z
+ 7XzHF7Jimb/n4mEGZPoZX08p+wPpLxztzCPMOCncXND6JXdbcpRtTP/CKPSRt/AXzT77wpyPj
+ mxGv5/fqNACbochHQrL9J+TR2G/ZKBs+1j9TRg7oOHUBx6w4/2XMuHcxLxdR1nVOJYQNPkN5T
+ //2h2iuJU/8gjoxGKo84O1v+F3zpSzJw6+n2GV4yw4M6AyqAtZcrKDSc+NecRwuy5Zal5EdbQ
+ ySp0Fq4h1SbP1SIm48wNbhMvtK+faTcQlvWBCPLgI+W5kqFYncYCZwaaN2TiS2u7IpUo=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly introduced code fails to build in some configurations
-unless we include the right headers:
+Without including psci.h and arm-smccc.h, we now get a build failure in
+some configurations:
 
-drivers/hwtracing/coresight/coresight-tmc-etr.c: In function 'tmc_free_table_pages':
-drivers/hwtracing/coresight/coresight-tmc-etr.c:206:3: error: implicit declaration of function 'vunmap'; did you mean 'iounmap'? [-Werror=implicit-function-declaration]
+arch/arm64/kernel/cpu_errata.c: In function 'arm64_update_smccc_conduit':
+arch/arm64/kernel/cpu_errata.c:278:10: error: 'psci_ops' undeclared (first use in this function); did you mean 'sysfs_ops'?
 
-Fixes: 79613ae8715a ("coresight: Add generic TMC sg table framework")
+arch/arm64/kernel/cpu_errata.c: In function 'arm64_set_ssbd_mitigation':
+arch/arm64/kernel/cpu_errata.c:311:3: error: implicit declaration of function 'arm_smccc_1_1_hvc' [-Werror=implicit-function-declaration]
+   arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_2, state, NULL);
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 1 +
- 1 file changed, 1 insertion(+)
+This showed up only recently, but I have not bisected what caused it.
+---
+ arch/arm64/kernel/cpu_errata.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 6164eed0b5fe..3556d9a849e9 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -8,6 +8,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/iommu.h>
- #include <linux/slab.h>
-+#include <linux/vmalloc.h>
- #include "coresight-priv.h"
- #include "coresight-tmc.h"
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 2b9a31a6a16a..1d2b6d768efe 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -16,6 +16,8 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
  
++#include <linux/arm-smccc.h>
++#include <linux/psci.h>
+ #include <linux/types.h>
+ #include <asm/cpu.h>
+ #include <asm/cputype.h>
 -- 
 2.9.0
