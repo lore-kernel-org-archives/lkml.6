@@ -1,127 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeFEV7h (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:59:37 -0400
-Received: from smtprelay0083.hostedemail.com ([216.40.44.83]:46626 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752405AbeFEV7e (ORCPT
+        id S1752682AbeFEWAI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 18:00:08 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:47780 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752044AbeFEWAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:59:34 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 
-X-HE-Tag: net32_8ccf64e335144
-X-Filterd-Recvd-Size: 5529
-Message-ID: <91704f8e949fd48869e1b36b959780cf19e96d44.camel@perches.com>
-Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline
- declarations
-From: Joe Perches <joe@perches.com>
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Greg KH <gregkh@linuxfoundation.org>, hpa@zytor.com,
-        "J. Kiszka" <jan.kiszka@siemens.com>, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, Josh Poimboeuf <jpoimboe@redhat.com>,
-        kirill.shutemov@linux.intel.com, mingo@redhat.com, mjg59@google.com,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, rostedt@goodmis.org,
-        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
-        Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
-        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
-        David Rientjes <rientjes@google.com>
-Date: Tue, 05 Jun 2018 14:59:25 -0700
-In-Reply-To: <CAKwvOd=zuy0BJC3f3EKT_9Mg83qdZxAxw_RJ4okAMKrpKjJRHQ@mail.gmail.com>
-References: <20180605170532.170361-1-ndesaulniers@google.com>
-         <20180605170532.170361-2-ndesaulniers@google.com>
-         <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
-         <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com>
-         <CAKwvOd=zuy0BJC3f3EKT_9Mg83qdZxAxw_RJ4okAMKrpKjJRHQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Tue, 5 Jun 2018 18:00:06 -0400
+Subject: Re: [PATCH 4.4 00/37] 4.4.136-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180605170108.884872354@linuxfoundation.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <4b5ce393-7792-c2bd-803d-becb500f1b47@kernel.org>
+Date: Tue, 5 Jun 2018 15:59:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-05 at 12:50 -0700, Nick Desaulniers wrote:
-> On Tue, Jun 5, 2018 at 12:14 PM Joe Perches <joe@perches.com> wrote:
-> > 
-> > On Tue, 2018-06-05 at 10:23 -0700, Joe Perches wrote:
-> > > Perhaps these are simpler as
-> > > 
-> > > #define __inline__    inline
-> > > #define __inline      inline
-> > 
-> > Currently, there are these uses of inline variants in the kernel
-> > 
-> > $ git grep -w inline | wc -l
-> > 68410
-> > $ git grep -w __inline__ | wc -l
-> > 503
-> > $ git grep -w __inline | wc -l
-> > 57
-> > 
-> > So it seems it's also reasonable to sed all uses of __inline to inline
-> > and perhaps remove __inline eventually altogether.
-> > (perhaps there are still too many __inline__ uses)
+On 06/05/2018 11:01 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.136 release.
+> There are 37 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Yeah, that sounds good. Should I split that into 3 patches:
+> Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> > Excluding scripts and a few other files,
-> > here's a possible patch done with:
-> > 
-> > $ git grep -w --name-only __inline | \
-> >   grep -vP '^(?:arch/alpha/|include/|scripts/)' | \
-> >   xargs sed -r -i -e 's/\b__inline\b/inline/g' \
-> >                   -e 's/\binline\s+static\b/static inline/g'
-> > ---
-> >  Documentation/trace/tracepoint-analysis.rst             |  2 +-
-> >  drivers/staging/rtl8723bs/core/rtw_pwrctrl.c            |  4 ++--
-> >  drivers/staging/rtl8723bs/core/rtw_wlan_util.c          |  2 +-
-> >  drivers/staging/rtl8723bs/include/drv_types.h           |  6 +++---
-> >  drivers/staging/rtl8723bs/include/ieee80211.h           |  6 +++---
-> >  drivers/staging/rtl8723bs/include/osdep_service.h       | 10 +++++-----
-> >  drivers/staging/rtl8723bs/include/osdep_service_linux.h | 14 +++++++-------
-> >  drivers/staging/rtl8723bs/include/rtw_mlme.h            | 14 +++++++-------
-> >  drivers/staging/rtl8723bs/include/rtw_recv.h            | 16 ++++++++--------
-> >  drivers/staging/rtl8723bs/include/sta_info.h            |  2 +-
-> >  drivers/staging/rtl8723bs/include/wifi.h                | 14 +++++++-------
-> >  drivers/staging/rtl8723bs/include/wlan_bssdef.h         |  2 +-
-> >  lib/zstd/mem.h                                          |  2 +-
-> >  13 files changed, 47 insertions(+), 47 deletions(-)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.136-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
 > 
+> thanks,
 > 
-> 1 for documentation, 1 for rtl8723bs, 1 for zstd?
+> greg k-h
+> 
 
-Seems sensible to me.
+Compiled and booted on my test system. No dmesg regressions.
 
-> Follow up set or include in v3?
-
-Your choice.  Probably a follow up would work best.
-
-Also, the remaining __inline uses would be:
-
-arch/alpha/include/asm/compiler.h:#undef __inline
-include/linux/compiler-gcc.h:#define __inline __inline  __attribute__((always_inline,unused)) notrace
-include/linux/compiler-gcc.h:#define __inline __inline  __attribute__((unused)) notrace
-scripts/checkpatch.pl:our $Inline       = qr{inline|__always_inline|noinline|__inline|__inline__};
-scripts/checkpatch.pl:# Check for __inline__ and __inline, prefer inline
-scripts/checkpatch.pl:              $line =~ /\b(__inline__|__inline)\b/) {
-scripts/checkpatch.pl:                          $fixed[$fixlinenr] =~ s/\b(__inline__|__inline)\b/inline/;
-scripts/genksyms/keywords.c:    { "__inline", INLINE_KEYW },
-scripts/kernel-doc:    $prototype =~ s/^__inline +//;
-
-So all of these could be removed/updated appropriately too
+thanks,
+-- Shuah
