@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753095AbeFEREu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33768 "EHLO mail.kernel.org"
+        id S1753156AbeFERE6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:04:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753068AbeFEREs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:48 -0400
+        id S1753087AbeFERE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Benson Leung <bleung@chromium.org>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 14/61] platform/chrome: cros_ec_lpc: remove redundant pointer request
-Date: Tue,  5 Jun 2018 19:01:35 +0200
-Message-Id: <20180605170118.539571494@linuxfoundation.org>
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Johan Hovold <johan@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 03/61] USB: serial: cp210x: use tcflag_t to fix incompatible pointer type
+Date: Tue,  5 Jun 2018 19:01:24 +0200
+Message-Id: <20180605170117.849278044@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -29,41 +29,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-commit d3b56c566d4ba8cae688baf3cca94425d57ea783 upstream.
+commit 009615ab7fd4e43b82a38e4e6adc5e23c1ee567f upstream.
 
-Pointer request is being assigned but never used, so remove it. Cleans
-up the clang warning:
+On sparc32, tcflag_t is unsigned long, unlike all other architectures:
 
-drivers/platform/chrome/cros_ec_lpc.c:68:2: warning: Value stored to
-'request' is never read
+    drivers/usb/serial/cp210x.c: In function 'cp210x_get_termios':
+    drivers/usb/serial/cp210x.c:717:3: warning: passing argument 2 of 'cp210x_get_termios_port' from incompatible pointer type
+       cp210x_get_termios_port(tty->driver_data,
+       ^
+    drivers/usb/serial/cp210x.c:35:13: note: expected 'unsigned int *' but argument is of type 'tcflag_t *'
+     static void cp210x_get_termios_port(struct usb_serial_port *port,
+		 ^
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Benson Leung <bleung@chromium.org>
+Consistently use tcflag_t to fix this.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/chrome/cros_ec_lpc.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/usb/serial/cp210x.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -49,7 +49,6 @@ static int ec_response_timed_out(void)
- static int cros_ec_pkt_xfer_lpc(struct cros_ec_device *ec,
- 				struct cros_ec_command *msg)
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -33,7 +33,7 @@ static int cp210x_open(struct tty_struct
+ static void cp210x_close(struct usb_serial_port *);
+ static void cp210x_get_termios(struct tty_struct *, struct usb_serial_port *);
+ static void cp210x_get_termios_port(struct usb_serial_port *port,
+-	unsigned int *cflagp, unsigned int *baudp);
++	tcflag_t *cflagp, unsigned int *baudp);
+ static void cp210x_change_speed(struct tty_struct *, struct usb_serial_port *,
+ 							struct ktermios *);
+ static void cp210x_set_termios(struct tty_struct *, struct usb_serial_port *,
+@@ -728,7 +728,7 @@ static void cp210x_get_termios(struct tt
+ 			&tty->termios.c_cflag, &baud);
+ 		tty_encode_baud_rate(tty, baud, baud);
+ 	} else {
+-		unsigned int cflag;
++		tcflag_t cflag;
+ 		cflag = 0;
+ 		cp210x_get_termios_port(port, &cflag, &baud);
+ 	}
+@@ -739,10 +739,10 @@ static void cp210x_get_termios(struct tt
+  * This is the heart of cp210x_get_termios which always uses a &usb_serial_port.
+  */
+ static void cp210x_get_termios_port(struct usb_serial_port *port,
+-	unsigned int *cflagp, unsigned int *baudp)
++	tcflag_t *cflagp, unsigned int *baudp)
  {
--	struct ec_host_request *request;
- 	struct ec_host_response response;
- 	u8 sum = 0;
- 	int i;
-@@ -62,8 +61,6 @@ static int cros_ec_pkt_xfer_lpc(struct c
- 	for (i = 0; i < ret; i++)
- 		outb(ec->dout[i], EC_LPC_ADDR_HOST_PACKET + i);
- 
--	request = (struct ec_host_request *)ec->dout;
--
- 	/* Here we go */
- 	outb(EC_COMMAND_PROTOCOL_3, EC_LPC_ADDR_HOST_CMD);
- 
+ 	struct device *dev = &port->dev;
+-	unsigned int cflag;
++	tcflag_t cflag;
+ 	struct cp210x_flow_ctl flow_ctl;
+ 	u32 baud;
+ 	u16 bits;
