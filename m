@@ -1,89 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeFEA2o (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 20:28:44 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:37262 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbeFEA2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 20:28:42 -0400
-Message-Id: <201806050027.w550RfJl010157@www262.sakura.ne.jp>
-Subject: Re: INFO: task hung in =?ISO-2022-JP?B?YmxrX3F1ZXVlX2VudGVy?=
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Bart.VanAssche@wdc.com, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        jthumshirn@suse.de, alan.christopher.jenkins@gmail.com,
-        syzbot+c4f9cebf9d651f6e54de@syzkaller.appspotmail.com,
-        martin.petersen@oracle.com, dan.j.williams@intel.com, hch@lst.de,
-        oleksandr@natalenko.name, ming.lei@redhat.com, martin@lichtvoll.de,
-        hare@suse.com, syzkaller-bugs@googlegroups.com,
-        ross.zwisler@linux.intel.com, keith.busch@intel.com,
-        linux-ext4@vger.kernel.org
+        id S1751451AbeFEAd3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 20:33:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44180 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751046AbeFEAd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 20:33:27 -0400
+Date: Mon, 4 Jun 2018 20:33:26 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/7] dax: change bdev_dax_supported() to support
+ boolean returns
+Message-ID: <20180605003325.GA6898@redhat.com>
+References: <20180529220114.GA13948@linux.intel.com>
+ <20180531191332.GB7825@magnolia>
+ <20180601012657.GQ10363@dastard>
+ <CAPcyv4g6dv9sG9dR-iY+aEfSi2r3ey1dXGbX-nexKsN72t0QMw@mail.gmail.com>
+ <20180601022418.GR10363@dastard>
+ <CAPcyv4iXTsxmQgjoLs2E_8QrLHrFOV_58T7UYf0zPJuB2744qQ@mail.gmail.com>
+ <20180603222038.GS10363@dastard>
+ <20180604002525.GI10363@dastard>
+ <CAPcyv4jL5AKgP3io_hBZxkrKzBZq8wtuqk49L48v=XRiOHdoEw@mail.gmail.com>
+ <CAPcyv4iVU3n3G3Vxf9e6cKuCtQtmrm6+R6vS379NyHX6eTZ5Lg@mail.gmail.com>
 MIME-Version: 1.0
-Date: Tue, 05 Jun 2018 09:27:41 +0900
-References: <25708e84-6f35-04c3-a2e4-6854f0ed9e78@I-love.SAKURA.ne.jp> <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
-In-Reply-To: <dc9862c7-ec16-8b11-04e4-422b435d41ef@kernel.dk>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4iVU3n3G3Vxf9e6cKuCtQtmrm6+R6vS379NyHX6eTZ5Lg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jens Axboe wrote:
-> On 6/1/18 4:10 AM, Tetsuo Handa wrote:
-> > Tetsuo Handa wrote:
-> >> Since sum of percpu_count did not change after percpu_ref_kill(), this is
-> >> not a race condition while folding percpu counter values into atomic counter
-> >> value. That is, for some reason, someone who is responsible for calling
-> >> percpu_ref_put(&q->q_usage_counter) (presumably via blk_queue_exit()) is
-> >> unable to call percpu_ref_put().
-> >> But I don't know how to find someone who is failing to call percpu_ref_put()...
-> > 
-> > I found the someone. It was already there in the backtrace...
-> > 
+On Mon, Jun 04 2018 at  7:40pm -0400,
+Dan Williams <dan.j.williams@intel.com> wrote:
+
+> On Sun, Jun 3, 2018 at 6:48 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+> > On Sun, Jun 3, 2018 at 5:25 PM, Dave Chinner <david@fromorbit.com> wrote:
+> >> On Mon, Jun 04, 2018 at 08:20:38AM +1000, Dave Chinner wrote:
+> >>> On Thu, May 31, 2018 at 09:02:52PM -0700, Dan Williams wrote:
+> >>> > On Thu, May 31, 2018 at 7:24 PM, Dave Chinner <david@fromorbit.com> wrote:
+> >>> > > On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
+> >>> > >> > FWIW, XFS+DAX used to just work on this setup (I hadn't even
+> >>> > >> > installed ndctl until this morning!) but after changing the kernel
+> >>> > >> > it no longer works. That would make it a regression, yes?
+> >>>
+> >>> [....]
+> >>>
+> >>> > >> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
+> >>> > >> has the following dependencies:
+> >>> > >>
+> >>> > >>         depends on MEMORY_HOTPLUG
+> >>> > >>         depends on MEMORY_HOTREMOVE
+> >>> > >>         depends on SPARSEMEM_VMEMMAP
+> >>> > >
+> >>> > > Filesystem DAX now has a dependency on memory hotplug?
+> >>>
+> >>> [....]
+> >>>
+> >>> > > OK, works now I've found the magic config incantantions to turn
+> >>> > > everything I now need on.
+> >>>
+> >>> By enabling these options, my test VM now has a ~30s pause in the
+> >>> boot very soon after the nvdimm subsystem is initialised.
+> >>>
+> >>> [    1.523718] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+> >>> [    1.550353] 00:05: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+> >>> [    1.552175] Non-volatile memory driver v1.3
+> >>> [    2.332045] tsc: Refined TSC clocksource calibration: 2199.909 MHz
+> >>> [    2.333280] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1fb5dcd4620, max_idle_ns: 440795264143 ns
+> >>> [   37.217453] brd: module loaded
+> >>> [   37.225423] loop: module loaded
+> >>> [   37.228441] virtio_blk virtio2: [vda] 10485760 512-byte logical blocks (5.37 GB/5.00 GiB)
+> >>> [   37.245418] virtio_blk virtio3: [vdb] 146800640 512-byte logical blocks (75.2 GB/70.0 GiB)
+> >>> [   37.255794] virtio_blk virtio4: [vdc] 1073741824000 512-byte logical blocks (550 TB/500 TiB)
+> >>> [   37.265403] nd_pmem namespace1.0: unable to guarantee persistence of writes
+> >>> [   37.265618] nd_pmem namespace0.0: unable to guarantee persistence of writes
+> >>>
+> >>> The system does not appear to be consuming CPU, but it is blocking
+> >>> NMIs so I can't get a CPU trace. For a VM that I rely on booting in
+> >>> a few seconds because I reboot it tens of times a day, this is a
+> >>> problem....
+> >>
+> >> And when I turn on KASAN, the kernel fails to boot to a login prompt
+> >> because:
+> >
+> > What's your qemu and kernel command line? I'll take look at this first
+> > thing tomorrow.
 > 
-> Ahh, nicely spotted! One idea would be the one below. For this case,
-> we're recursing, so we can either do a non-block queue enter, or we
-> can just do a live enter.
-> 
+> I was able to reproduce this crash by just turning on KASAN...
+> investigating. It would still help to have your config for our own
+> regression testing purposes it makes sense for us to prioritize
+> "Dave's test config", similar to the priority of not breaking Linus'
+> laptop.
 
-While "block: don't use blocking queue entered for recursive bio submits" was
-already applied, syzbot is still reporting a hung task with same signature but
-different trace.
-
-https://syzkaller.appspot.com/text?tag=CrashLog&x=1432cedf800000
-----------------------------------------
-[  492.512243] INFO: task syz-executor1:20263 blocked for more than 120 seconds.
-[  492.519604]       Not tainted 4.17.0+ #83
-[  492.523793] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  492.531787] syz-executor1   D23384 20263   4574 0x00000004
-[  492.537443] Call Trace:
-[  492.540041]  __schedule+0x801/0x1e30
-[  492.580958]  schedule+0xef/0x430
-[  492.610154]  blk_queue_enter+0x8da/0xdf0
-[  492.716327]  generic_make_request+0x651/0x1790
-[  492.765680]  submit_bio+0xba/0x460
-[  492.793198]  submit_bio_wait+0x134/0x1e0
-[  492.801891]  blkdev_issue_flush+0x204/0x300
-[  492.806236]  blkdev_fsync+0x93/0xd0
-[  492.813620]  vfs_fsync_range+0x140/0x220
-[  492.817702]  vfs_fsync+0x29/0x30
-[  492.821081]  __loop_update_dio+0x4de/0x6a0
-[  492.825341]  lo_ioctl+0xd28/0x2190
-[  492.833442]  blkdev_ioctl+0x9b6/0x2020
-[  492.872146]  block_ioctl+0xee/0x130
-[  492.880139]  do_vfs_ioctl+0x1cf/0x16a0
-[  492.927550]  ksys_ioctl+0xa9/0xd0
-[  492.931036]  __x64_sys_ioctl+0x73/0xb0
-[  492.934952]  do_syscall_64+0x1b1/0x800
-[  492.963624]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  493.212768] 1 lock held by syz-executor1/20263:
-[  493.217448]  #0: 00000000956bf5a3 (&lo->lo_ctl_mutex/1){+.+.}, at: lo_ioctl+0x8d/0x2190
-----------------------------------------
-
-Is it OK to call [__]loop_update_dio() between blk_mq_freeze_queue() and
-blk_mq_unfreeze_queue(), for vfs_fsync() from __loop_update_dio() is calling
-blk_queue_enter() after blk_mq_freeze_queue() started blocking blk_queue_enter()
-by caling atomic_inc_return() and percpu_ref_kill() ?
- 
+Dave, _this_ is when you know you've arrived! ;)
