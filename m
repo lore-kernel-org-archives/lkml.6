@@ -1,69 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753418AbeFERRT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:17:19 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42715 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeFERFj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:39 -0400
-X-Google-Smtp-Source: ADUXVKJtI2gjVJbzcMIDBafmzZBVfd8zlANSBKnBvAPpRmpFGQTFhr8nWYa3vNhy4KpSjqNq/UicXA==
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        aryabinin@virtuozzo.com, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org, hpa@zytor.com,
-        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
-        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
-        ndesaulniers@google.com, pombredanne@nexb.com, rostedt@goodmis.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, tweek@google.com
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com
-Subject: [PATCH v2 0/2] extern inline native_save_fl for paravirt
-Date: Tue,  5 Jun 2018 10:05:30 -0700
-Message-Id: <20180605170532.170361-1-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+        id S1753014AbeFERRo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:17:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753298AbeFERFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:32 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Subject: [PATCH 4.9 30/61] powerpc/rfi-flush: Differentiate enabled and patched flush types
+Date: Tue,  5 Jun 2018 19:01:51 +0200
+Message-Id: <20180605170119.634313522@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+References: <20180605170117.643936916@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-paravirt depends on a custom calling convention (callee saved), but
-expects this from a static inline function that it then forces to be
-outlined. This is problematic because different compilers or flags can
-then add a stack guard that violates the calling conventions.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Uses extern inline with the out-of-line definition in assembly to
-prevent compilers from adding stack guards to the outlined version.
+------------------
 
-Other parts of the codebase overwrite KBUILD_CFLAGS, which is *extremely
-problematic* for extern inline, as the sematics are completely the
-opposite depending on what C standard is used.
-http://blahg.josefsipek.net/?p=529
+From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 
-Changes since v2:
-  Prefer gnu_inline function attribute instead of explicitly setting C
-  standard compiler flag in problematic Makefiles. We should instead
-  carefully evaluate if those Makefiles should be overwriting
-  KBUILD_CFLAGS at all. Dropped the previous first two patches and added
-  a new first patch.
+commit 0063d61ccfc011f379a31acaeba6de7c926fed2c upstream.
 
-Nick Desaulniers (2):
-  compiler-gcc.h: add gnu_inline to all inline declarations
-  x86: paravirt: make native_save_fl extern inline
+Currently the rfi-flush messages print 'Using <type> flush' for all
+enabled_flush_types, but that is not necessarily true -- as now the
+fallback flush is always enabled on pseries, but the fixup function
+overwrites its nop/branch slot with other flush types, if available.
 
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
- include/linux/compiler-gcc.h    | 19 +++++++++++++------
- 4 files changed, 41 insertions(+), 7 deletions(-)
- create mode 100644 arch/x86/kernel/irqflags.S
+So, replace the 'Using <type> flush' messages with '<type> flush is
+available'.
 
--- 
-2.17.1.1185.g55be947832-goog
+Also, print the patched flush types in the fixup function, so users
+can know what is (not) being used (e.g., the slower, fallback flush,
+or no flush type at all if flush is disabled via the debugfs switch).
+
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/powerpc/kernel/setup_64.c    |    6 +++---
+ arch/powerpc/lib/feature-fixups.c |    9 ++++++++-
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -755,15 +755,15 @@ static void init_fallback_flush(void)
+ void setup_rfi_flush(enum l1d_flush_type types, bool enable)
+ {
+ 	if (types & L1D_FLUSH_FALLBACK) {
+-		pr_info("rfi-flush: Using fallback displacement flush\n");
++		pr_info("rfi-flush: fallback displacement flush available\n");
+ 		init_fallback_flush();
+ 	}
+ 
+ 	if (types & L1D_FLUSH_ORI)
+-		pr_info("rfi-flush: Using ori type flush\n");
++		pr_info("rfi-flush: ori type flush available\n");
+ 
+ 	if (types & L1D_FLUSH_MTTRIG)
+-		pr_info("rfi-flush: Using mttrig type flush\n");
++		pr_info("rfi-flush: mttrig type flush available\n");
+ 
+ 	enabled_flush_types = types;
+ 
+--- a/arch/powerpc/lib/feature-fixups.c
++++ b/arch/powerpc/lib/feature-fixups.c
+@@ -153,7 +153,14 @@ void do_rfi_flush_fixups(enum l1d_flush_
+ 		patch_instruction(dest + 2, instrs[2]);
+ 	}
+ 
+-	printk(KERN_DEBUG "rfi-flush: patched %d locations\n", i);
++	printk(KERN_DEBUG "rfi-flush: patched %d locations (%s flush)\n", i,
++		(types == L1D_FLUSH_NONE)       ? "no" :
++		(types == L1D_FLUSH_FALLBACK)   ? "fallback displacement" :
++		(types &  L1D_FLUSH_ORI)        ? (types & L1D_FLUSH_MTTRIG)
++							? "ori+mttrig type"
++							: "ori type" :
++		(types &  L1D_FLUSH_MTTRIG)     ? "mttrig type"
++						: "unknown");
+ }
+ #endif /* CONFIG_PPC_BOOK3S_64 */
+ 
