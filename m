@@ -1,104 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751361AbeFEDL1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 23:11:27 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:34351 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751263AbeFEDL0 (ORCPT
+        id S1751396AbeFEDSf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 23:18:35 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34222 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeFEDSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 23:11:26 -0400
-X-Originating-IP: 96.22.60.141
-Date: Mon, 4 Jun 2018 23:11:20 -0400
-From: Hugo Lefeuvre <hle@owl.eu.com>
-To: Marcus Wolf <linux@wolf-entwicklungen.de>
-Cc: Valentin Vidic <Valentin.Vidic@CARNet.hr>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, hle@owl.eu.com
-Subject: rf69_set_deviation in rf69.c (pi433 driver)
-Message-ID: <20180605031120.GB1981@hle-laptop.local>
+        Mon, 4 Jun 2018 23:18:34 -0400
+X-Google-Smtp-Source: ADUXVKJe75d/8OHPa4+OhO37V0ahIHgam/VSbZyYvJoVh5zTFI15YOmvKtmrB0VWgI5PcrioUCXcQY1mCF8CTW538CU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UHN/qo2QbUvPLonB"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180605023124.GE47042@localhost.localdomain>
+References: <20180604123238.82200-1-chiu@endlessm.com> <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
+ <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
+ <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com> <20180605023124.GE47042@localhost.localdomain>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Tue, 5 Jun 2018 11:18:32 +0800
+Message-ID: <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
+ on kbd brightness change
+To: Darren Hart <dvhart@infradead.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Daniel Drake <drake@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Benjamin Berg <benjamin@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 5, 2018 at 10:31 AM, Darren Hart <dvhart@infradead.org> wrote:
+> On Mon, Jun 04, 2018 at 04:23:04PM +0200, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 04-06-18 15:51, Daniel Drake wrote:
+>> > On Mon, Jun 4, 2018 at 7:22 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+>> > > Is this really a case of the hardware itself processing the
+>> > > keypress and then changing the brightness *itself* ?
+>> > >
+>> > >  From the "[PATCH 2/2] platform/x86: asus-wmi: Add keyboard backlight
+>> > > toggle support" patch I get the impression that the driver is
+>> > > modifying the brightness from within the kernel rather then the
+>> > > keyboard controller are ACPI embeddec-controller doing it itself.
+>> > >
+>> > > If that is the case then the right fix is for the driver to stop
+>> > > mucking with the brighness itself, it should simply report the
+>> > > right keyboard events and export a led interface and then userspace
+>> > > will do the right thing (and be able to offer flexible policies
+>> > > to the user).
+>> >
+>> > Before this modification, the driver reports the brightness keypresses
+>> > to userspace and then userspace can respond by changing the brightness
+>> > level, as you describe.
+>> >
+>> > You are right in that the hardware doesn't change the brightness
+>> > directly itself, which is the normal usage of LED_BRIGHT_HW_CHANGED.
+>> >
+>> > However this approach was suggested by Benjamin Berg and Bastien
+>> > Nocera in the thread: Re: [PATCH v2] platform/x86: asus-wmi: Add
+>> > keyboard backlight toggle support
+>> > https://marc.info/?l=linux-kernel&m=152639169210655&w=2
+>> >
+>> > The issue is that we need to support a new "keyboard backlight
+>> > brightness cycle" key (in the patch that follows this one) which
+>> > doesn't fit into any definitions of keys recognised by the kernel and
+>> > likewise there's no userspace code to handle it.
+>> >
+>> > If preferred we could leave the standard brightness keys behaving as
+>> > they are (input events) and make the new special key type directly
+>> > handled by the kernel?
+>>
+>> I'm sorry that Benjamin and Bastien steered you in this direction,
+>> IMHO none of it should be handled in the kernel.
+>>
+>> Anytime any sort of input is directly responded to by the kernel
+>> it is a huge PITA to deal with from userspace. The kernel will have
+>> a simplistic implementation which almost always is wrong.
+>>
+>> Benjamin, remember the pain we went through with rfkill hotkey
+>> presses being handled in the kernel ?
+>>
+>> And then there is the whole acpi_video.brightness_switch_enabled
+>> debacle, which is an option which defaults to true which causes
+>> the kernel to handle LCD brightness key presses, which all distros
+>> have been patching to default to off for ages.
+>>
+>> To give a concrete example, we may want to implement software
+>> dimming / auto-off of the kbd backlight when the no keys are
+>> touched for x seconds. This would seriously get in the way of that.
+>>
+>> So sorry, but NACK to this series.
+>
+> So if instead of modifying the LED value, the kernel platform drivers
+> converted the TOGGLE into a cycle even by converting to an UP event
+> based on awareness of the plaform specific max value and the read
+> current value, leaving userspace to act on the TOGGLE/UP events - would
+> that be preferable?
+>
+> Something like:
+>
+>         if (code == TOGGLE && ledval < ledmax)
+>                 code = UP;
+>
+>         sparse_keymap_report_event(..., code, ...)
+>
+> }
+> --
+> Darren Hart
+> VMware Open Source Technology Center
 
---UHN/qo2QbUvPLonB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's what I was trying to do in  [PATCH v2] platform/x86: asus-wmi: Add
+keyboard backlight toggle support. However, that brought another problem
+discussed in the thread.
+https://marc.info/?l=linux-kernel&m=152639169210655&w=2
 
-Hi Marcus,
-
-I have been taking a look at the pi433 driver these last days, and started
-working on the remaining TODOs. I just stumbled across the following
-one (drivers/staging/pi433/rf69.c):
-
-245         // TODO: Dependency to bitrate
-246         if (deviation < 600 || deviation > 500000) {
-247                 dev_dbg(&spi->dev, "set_deviation: illegal input param"=
-);
-248                 return -EINVAL;
-249         }
-
-According to the datasheet[0], the deviation should always be smaller
-than 300kHz, and the following equation should be respected:
-
-  (1) FDA + BRF/2 =3D< 500 kHz
-
-Why did you choose 500kHz as max for FDA, instead of 300kHz ? It looks like
-a bug to me.
-
-Concerning the TODO, I can see two solutions currently:
-
-1. Introduce a new rf69_get_bit_rate function which reads REG_BITRATE_MSB
-   and REG_BITRATE_LSB and returns reconstructed BRF.
-   We could use this function in rf69_set_deviation to retrieve the BRF.
-
-+ clean
-+ intuitive
-- heavy / slow
-
-2. Store BRF somewhere in rf69.c, initialize it with the default value
-   (4.8 kb/s) and update it when rf69_set_bit_rate is called.
-
-+ easy
-- dirty, doesn't fit well with the design of rf69.c (do not store
-  anything, simply expose API)
-
-I'd really prefer going for the first one, but I wanted to have your opinion
-on this.
-
-Thanks for your work !
-
-Best regards,
- Hugo
-
-[0] http://www.hoperf.com/upload/rf/RFM69CW-V1.1.pdf
-
-[CC-ing Valentin Vidic, he was quite active on the pi433 driver these
-last months]
-
---=20
-             Hugo Lefeuvre (hle)    |    www.owl.eu.com
-4096/ 9C4F C8BF A4B0 8FC5 48EB 56B8 1962 765B B9A8 BACA
-
---UHN/qo2QbUvPLonB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEE5LpPtQuYJzvmooL3LVy48vb3khkFAlsV/08ACgkQLVy48vb3
-khlVPAgAjghfCSeRglbwClJ4KivU/dh3hwTwITQ1GDDw7wAwfdEd0ReR1T4V8JiZ
-7TYCuqfL4D/e2GZgm6kTwLLPPbPZ4s601xcoHduW57E176kdiKjkZs2yGiIPwYsD
-dStXvnAMuzyz8wDDRRWhcnAr27Tk2lP/5cdZrVrdqDgX0dzdJd/vMGoU7JH04Vtd
-aBnN0M2qq6wP3kK6ba1QL3KH21WPm9hGyvPo4QjdfFvGBxzFcihK/Neam44KLIu3
-faR+nO0k1xkSaaizEwjelZobJ6Fg7THAj/M5UWvTHGqa6Ju/v+9Kha2pGC/wZVmV
-tOur3ksci4fdRCkOmgxVXzETW5gXug==
-=hAVE
------END PGP SIGNATURE-----
-
---UHN/qo2QbUvPLonB--
+So I moved the brightness change in the driver without passing to userspace.
+Per Hans, seems there're some other concerns and I also wonder if the
+TOGGLE event happens in ASUS HID (asus-hid.c) which also convert and
+pass the keycode to userspace but no TOGGLE key support yet What should
+we do then?
