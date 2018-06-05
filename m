@@ -1,55 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeFERjh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:39:37 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:38898 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751788AbeFERjf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:39:35 -0400
-X-Google-Smtp-Source: ADUXVKLhKLaIQndzn20TGCvDoDOvDdm119PC7hBHwWJsMaTLaUCT+tmoej7yYlXjs0RBDETgRrHonHyt+q0q7CQoklc=
+        id S1751871AbeFERny (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:43:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:59546 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751788AbeFERnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:43:53 -0400
+Subject: Re: How to print stack uses of IRQ in ARM64
+To: Vishnu Motghare <vishnumotghare@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <CADSz7_cqdKnmOm07Ykv5L9d2qscfKNmf7Vz=yW2Nf8PWsnsJaA@mail.gmail.com>
+ <CAHp75VcTvMKy8h_2gztav2FOUvE1QG01FByTNmc=x0bdyRx5Dg@mail.gmail.com>
+From: James Morse <james.morse@arm.com>
+Message-ID: <9686668a-2739-309d-fb02-55c8fd2b802d@arm.com>
+Date: Tue, 5 Jun 2018 18:40:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <CAJZ5v0jq45atkapwSjJ4DkHhB1bfOA-Sh1TiA3dPXwKyFTBheA@mail.gmail.com>
- <CA+55aFyoxvrA-7X_8ZfQXd1=GfLT96ZaHAM+o5gKwOOfiy_HDA@mail.gmail.com>
-In-Reply-To: <CA+55aFyoxvrA-7X_8ZfQXd1=GfLT96ZaHAM+o5gKwOOfiy_HDA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 5 Jun 2018 10:39:23 -0700
-Message-ID: <CA+55aFw8yUOweiQSEp-ZHzEeSAGggZ0-Ksy0e4GQgEhKvmwLog@mail.gmail.com>
-Subject: Re: [GIT PULL] Device properties framework update for v4.18-rc1
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHp75VcTvMKy8h_2gztav2FOUvE1QG01FByTNmc=x0bdyRx5Dg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 10:30 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Honestly, this looks questionable to me.
->
-> I'm not talking about the changes themselves - I can live with them.
-> But the _rationale_ is pure and utter garbage, and dangerously so.
+Hi Vishun,
 
-Side note: I've merged it, and it's going through my build tests, so
-it's really not that I hate the code.
+(CC: +linux-arm-kernel list)
 
-But I really find that kind of one-sided rationale that ignores
-reality unacceptable.
+On 05/06/18 14:12, Andy Shevchenko wrote:
+> On Thu, May 31, 2018 at 1:01 PM, Vishnu Motghare
+> <vishnumotghare@gmail.com> wrote:
+>> My understanding is each CPU  getting its own IRQ stack. So is it
+>> possible to print the stack uses of each IRQ handler?
 
-And I find it dangerous, because it *sounds* so "obviously correct" to
-people who don't know any better. If you don't know that gcc
-explicitly says that you should use unions to do type punning to avoid
-aliasing issues, you might believe that union type punning is a bad
-thing from that commit message.
+The stacks are per-cpu not per-handler, so you would get a jumble of different
+interrupt-handlers, mixed up with softirq that runs on the same stack.
 
-So it's dangerously misleading, because lots of people have a
-dangerous reverence for paper over reality.
 
-In programming, "Appeal to Standards" should be considered a potential
-logical fallacy. Standards have their place, but they definitely have
-their caveats too.
+>> like, How much stack is used & how much left free ?
 
-                    Linus
+What would you do with the information?
+
+
+>> like in process context we have API like stack_not_used(struct
+>> task_struct *p) to get the unused stack  of processes.
+
+Isn't this only printed when the process exits?
+When would you print it for an irqstack?
+
+To get this information you would need to mask interrupts, then search backwards
+on the irq-stack to find the 'last' value. I think it would always be more
+useful to take interrupts in that time...
+
+
+>> So, is it possible to get the similar result for IRQ?
+
+Probably, but I don't think its useful.
+If you're debugging a stack-overflow, its much better to use vmap stacks, which
+will give you the function and stack trace that triggered the overflow.
+
+
+Thanks,
+
+James
