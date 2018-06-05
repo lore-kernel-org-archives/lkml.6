@@ -1,59 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751828AbeFEQAq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:00:46 -0400
-Received: from mga09.intel.com ([134.134.136.24]:63161 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751653AbeFEQAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:00:45 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="234858114"
-Date: Tue, 5 Jun 2018 09:00:43 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        id S1751902AbeFEQBF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:01:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40638 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbeFEQBE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:01:04 -0400
+Date: Tue, 5 Jun 2018 18:00:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH V3 02/17] kallsyms, x86: Export addresses of syscall
- trampolines
-Message-ID: <20180605160043.GC7220@tassilo.jf.intel.com>
+Subject: Re: [PATCH V3 00/17] perf tools and x86 PTI entry trampolines
+Message-ID: <20180605160046.GZ12180@hirez.programming.kicks-ass.net>
 References: <1526986485-6562-1-git-send-email-adrian.hunter@intel.com>
- <1526986485-6562-3-git-send-email-adrian.hunter@intel.com>
+ <4017be61-554f-f356-b68d-64981261f8dd@intel.com>
+ <20180605152943.GH4899@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526986485-6562-3-git-send-email-adrian.hunter@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180605152943.GH4899@kernel.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +#ifdef CONFIG_X86_64
-> +int arch_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
-> +		     char *name)
-> +{
-> +	unsigned int cpu, ncpu;
-> +
-> +	if (symnum >= num_possible_cpus())
-> +		return -EINVAL;
-> +
-> +	for (cpu = cpumask_first(cpu_possible_mask), ncpu = 0;
-> +	     cpu < num_possible_cpus() && ncpu < symnum;
-> +	     cpu = cpumask_next(cpu, cpu_possible_mask), ncpu++)
-> +		;
+On Tue, Jun 05, 2018 at 12:29:43PM -0300, Arnaldo Carvalho de Melo wrote:
+> > Arnaldo has queued the tools patches, but there are still 3 kernel patches:
+> > 
+> > 	kallsyms: Simplify update_iter_mod()
+> > 	kallsyms, x86: Export addresses of syscall trampolines
 
-That is max_t(unsigned, cpumask_last(cpu_possible_mask), symnum)
+That one needs a changelog.
 
-Rest and other kernel patches look good to me
+> > 	x86: Add entry trampolines to kcore
+> > 
+> > Are there any further comments on these?  Can they be applied?
+> 
+> Would be interesting to have some acked-by from kernel folks :-\
 
-Acked-by: Andi Kleen <ak@linux.intel.com>
-
--Andi
+Other than that, they look good I tihnk. The updatE_iter_mod thing took
+me a few tries, so maybe something can be done to the changelog there
+too, maybe explicitly mention the rule for the *mod_end things.
