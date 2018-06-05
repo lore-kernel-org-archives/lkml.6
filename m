@@ -1,88 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752630AbeFETOh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:14:37 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:43452 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752132AbeFETOg (ORCPT
+        id S1752774AbeFETPg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:15:36 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:33303 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752682AbeFETP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:14:36 -0400
-X-Google-Smtp-Source: ADUXVKI68rPhTXTYcOGN4RvUIEPMAVFQB8WHK5Hti9vncnsjcOYkTA/Q4xeaZTDH7cPeuU3Iyr6lDtrYoHku3B1RZvA=
+        Tue, 5 Jun 2018 15:15:28 -0400
+X-Google-Smtp-Source: ADUXVKLY4NNjeAIfyNh/HY6iWGz9PxUfW7+6mQe8njh42DoAXM1sdC4Xb6YlP4u9aOtNBpK2w8t0RQ==
+Date: Tue, 5 Jun 2018 12:15:25 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org
+Subject: [GIT PULL 2/2] libata changes for v4.18-rc1
+Message-ID: <20180605191525.GF1351649@devbig577.frc2.facebook.com>
+References: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAB+yDabFuBpT5UU1Hy0s4kY5UKJzA84=6fNieNcdTjjZNq5SHQ@mail.gmail.com>
-References: <CAB+yDabFuBpT5UU1Hy0s4kY5UKJzA84=6fNieNcdTjjZNq5SHQ@mail.gmail.com>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Tue, 5 Jun 2018 12:14:15 -0700
-Message-ID: <CAM_iQpUaK1xaZAKmPY0JnyAmebBJQ5GPJsiG8HgvXLrxNqphZg@mail.gmail.com>
-Subject: Re: general protection fault in sockfs_setattr
-To: shankarapailoor <shankarapailoor@gmail.com>
-Cc: David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 9:53 PM, shankarapailoor
-<shankarapailoor@gmail.com> wrote:
-> Hi,
->
-> I have been fuzzing Linux 4.17-rc7 with Syzkaller and found the
-> following crash: https://pastebin.com/ixX3RB9j
->
-> Syzkaller isolated the cause of the bug to the following program:
->
-> socketpair$unix(0x1, 0x1, 0x0,
-> &(0x7f0000000000)={<r0=>0xffffffffffffffff, <r1=>0xffffffffffffffff})
-> getresuid(&(0x7f0000000080)=<r2=>0x0, &(0x7f00000000c0),
-> &(0x7f0000000700))r3 = getegid()
-> fchownat(r0, &(0x7f0000000040)='\x00', r2, r3, 0x1000)
-> dup3(r1, r0, 0x80000)
->
->
-> The problematic area appears to be here:
->
-> static int sockfs_setattr(struct dentry *dentry, struct iattr *iattr)
-> {
->     int err = simple_setattr(dentry, iattr);
->
->     if (!err && (iattr->ia_valid & ATTR_UID)) {
->          struct socket *sock = SOCKET_I(d_inode(dentry));
->
->          sock->sk->sk_uid = iattr->ia_uid; //KASAN GPF
->     }
->     return err;
-> }
->
-> If dup3 is called concurrently with fchownat then can sock->sk be NULL?
+Hello, Linus.
 
-Although dup3() implies a close(), fd is refcnt'ted, if dup3() runs
-concurrently with fchownat() it should not be closed until whoever
-the last closes it.
+This is the second part of libata pull request.
 
-Or maybe fchownat() doesn't even hold refcnt of fd, since it aims
-to change the file backed.
+* libata has always been limiting the maximum queue depth to 31, 1 set
+  aside mostly for historical reasons.  This didn't use to make much
+  difference but Jens found out that modern hard drives can actually
+  perform measurably better with the extra one queue depth.  Jens
+  updated libata core so that it can make use of full 32 queue depth.
 
+* Damien updated command retry logic in error handling so that it
+  doesn't unnecessarily retry when upper layer (SCSI) is gonna handle
+  them.
 
-Not sure if the following is sufficient, inode might need to be protected
-with some lock...
+* A couple misc changes.
 
-diff --git a/net/socket.c b/net/socket.c
-index f10f1d947c78..6294b4b3132e 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -537,7 +537,10 @@ static int sockfs_setattr(struct dentry *dentry,
-struct iattr *iattr)
-        if (!err && (iattr->ia_valid & ATTR_UID)) {
-                struct socket *sock = SOCKET_I(d_inode(dentry));
+Thanks.
 
--               sock->sk->sk_uid = iattr->ia_uid;
-+               if (sock->sk)
-+                       sock->sk->sk_uid = iattr->ia_uid;
-+               else
-+                       err = -ENOENT;
-        }
+The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
 
-        return err;
+  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-4.18
+
+for you to fetch changes up to 88e10092f6a623b88808f782b6637162b5b658fb:
+
+  sata_fsl: use the right type for tag bitshift (2018-05-14 08:14:21 -0700)
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      ata: hpt37x: Convert to use match_string() helper
+
+Christoph Hellwig (1):
+      sata_nv: don't use block layer bounce buffer
+
+Damien Le Moal (5):
+      libata: Fix comment typo in ata_eh_analyze_tf()
+      libata: Fix ata_err_string()
+      libata: Make ata_dev_set_mode() less verbose
+      libata: Honor RQF_QUIET flag
+      libata: Fix command retry decision
+
+Jens Axboe (10):
+      libata: introduce notion of separate hardware tags
+      libata: convert core and drivers to ->hw_tag usage
+      libata: bump ->qc_active to a 64-bit type
+      libata: use ata_tag_internal() consistently
+      libata: remove assumption that ATA_MAX_QUEUE - 1 is the max
+      sata_nv: set host can_queue count appropriately
+      libata: add extra internal command
+      libata: don't clamp queue depth to ATA_MAX_QUEUE - 1
+      ahci: enable full queue depth of 32
+      sata_fsl: use the right type for tag bitshift
+
+ drivers/ata/acard-ahci.c     |  4 +-
+ drivers/ata/ahci.h           |  2 +-
+ drivers/ata/libahci.c        |  8 ++--
+ drivers/ata/libata-core.c    | 61 ++++++++++++---------------
+ drivers/ata/libata-eh.c      | 56 ++++++++++++++++++++-----
+ drivers/ata/libata-scsi.c    | 19 +++++----
+ drivers/ata/pata_hpt37x.c    | 13 +++---
+ drivers/ata/sata_dwc_460ex.c | 14 +++----
+ drivers/ata/sata_fsl.c       | 10 ++---
+ drivers/ata/sata_mv.c        | 26 ++++++------
+ drivers/ata/sata_nv.c        | 98 +++++++++++++++++++-------------------------
+ drivers/ata/sata_sil24.c     |  6 +--
+ include/linux/libata.h       | 22 +++++-----
+ 13 files changed, 177 insertions(+), 162 deletions(-)
+
+--
+tejun
