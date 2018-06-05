@@ -1,73 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeFELwu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:52:50 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:52239 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751502AbeFELwt (ORCPT
+        id S1751769AbeFELxn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:53:43 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:60654 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751747AbeFELxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:52:49 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: cpu_errata: include required headers
-Date: Tue,  5 Jun 2018 13:50:07 +0200
-Message-Id: <20180605115227.1621618-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:g3wJ6pLnLlG2xO8vlY3O3nRcSQ+Ics8ht1pA1R1IRSHSMlYk5qu
- x1BhL0N+fO6M3HyrRdIWT1XmjX7UxjyqNoO+W/mpza73pPl3tgSClgKD29jphIwFgQMahmI
- HwAhl6TCX3lqiyu/7A4Uu1VM716SKv1fT1EDVWk27XKSurfw/9CwFWhS6ClzfmZV/ykCOiR
- M7UYbBN0klyaGWjZ5pkhg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:vqq2hZigar0=:BEiIM0JodeznDqvtBhpapJ
- lwWvUJwmknfokmN7qd8mgjoTJ8pmEQ3nZyhupo4nIeI3hPzzgs8nBwW9bfWmqFd5dF1Xyj2uc
- Lbhvtnai1dAFHjtfDe4zX4RBYH4lrRxnYO1QVo2zPoHVXgnnyFSMCa3dKfzqwd97od6AtRDb2
- tCgrGjpUcZx9EXYcxM7FoiP07p8N1r1LfjOilSK+HA6Xl2gqntZZcQFKhzoh8tlSiIiKUxj6Y
- Poaf07Iybu4unV+40TraRN3yCg3llasmJRngqSpnA0OsnE2VTPMsUuw/3LobAbnEXKtTZHSvT
- U8H/QvpN73hrGbK0ycRB3vscFo37otnXhxLg4n2kDYlDX0T/bwYtHNyUh21nZqXgL/Gq/ZrYc
- NC7qG8uPcJcq3xRE6Mpcv0xmaOySHwWwOWZ1KUxkorDiqs0mUP8El71Ke9bOF1Bdw0zZmB6/z
- 7XzHF7Jimb/n4mEGZPoZX08p+wPpLxztzCPMOCncXND6JXdbcpRtTP/CKPSRt/AXzT77wpyPj
- mxGv5/fqNACbochHQrL9J+TR2G/ZKBs+1j9TRg7oOHUBx6w4/2XMuHcxLxdR1nVOJYQNPkN5T
- //2h2iuJU/8gjoxGKo84O1v+F3zpSzJw6+n2GV4yw4M6AyqAtZcrKDSc+NecRwuy5Zal5EdbQ
- ySp0Fq4h1SbP1SIm48wNbhMvtK+faTcQlvWBCPLgI+W5kqFYncYCZwaaN2TiS2u7IpUo=
+        Tue, 5 Jun 2018 07:53:42 -0400
+Date: Tue, 5 Jun 2018 12:53:40 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Ilya Matveychikov <matvejchikov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ksys_mount: check for permissions before resource
+ allocation
+Message-ID: <20180605115340.GO30522@ZenIV.linux.org.uk>
+References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+ <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
+ <20180605112641.GN30522@ZenIV.linux.org.uk>
+ <1E519BA2-4198-4255-BAE4-3125C59741A3@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1E519BA2-4198-4255-BAE4-3125C59741A3@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without including psci.h and arm-smccc.h, we now get a build failure in
-some configurations:
+On Tue, Jun 05, 2018 at 03:35:55PM +0400, Ilya Matveychikov wrote:
+> 
+> > On Jun 5, 2018, at 3:26 PM, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> >> 
+> >>> On Jun 5, 2018, at 6:00 AM, Ilya Matveychikov <matvejchikov@gmail.com> wrote:
+> >>> 
+> >>> Early check for mount permissions prevents possible allocation of 3
+> >>> pages from kmalloc() pool by unpriveledged user which can be used for
+> >>> spraying the kernel heap.
+> > 
+> > I'm sorry, but there are arseloads of unpriveleged syscalls that do the same,
+> > starting with read() from procfs files.  So what the hell does it buy?
+> 
+> Means that if all do the same shit no reason to fix it? Sounds weird...
 
-arch/arm64/kernel/cpu_errata.c: In function 'arm64_update_smccc_conduit':
-arch/arm64/kernel/cpu_errata.c:278:10: error: 'psci_ops' undeclared (first use in this function); did you mean 'sysfs_ops'?
+Fix *what*?  You do realize that there's no permission checks to stop e.g.
+stat(2) from copying the pathname in, right?  With user-supplied contents,
+even...
 
-arch/arm64/kernel/cpu_errata.c: In function 'arm64_set_ssbd_mitigation':
-arch/arm64/kernel/cpu_errata.c:311:3: error: implicit declaration of function 'arm_smccc_1_1_hvc' [-Werror=implicit-function-declaration]
-   arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_2, state, NULL);
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-This showed up only recently, but I have not bisected what caused it.
----
- arch/arm64/kernel/cpu_errata.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 2b9a31a6a16a..1d2b6d768efe 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -16,6 +16,8 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
-+#include <linux/arm-smccc.h>
-+#include <linux/psci.h>
- #include <linux/types.h>
- #include <asm/cpu.h>
- #include <asm/cputype.h>
--- 
-2.9.0
+If you depend upon preventing kmalloc'ed temporary allocations filled
+with user-supplied data, you are screwed, plain and simple.  It really can't
+be prevented, in a lot of ways that are much less exotic than mount(2).
+Most of syscall arguments are copied in, before we get any permission
+checks.  It does happen and it will happen - examining them while they are
+still in userland is a nightmare in a lot of respects, starting with
+security.
