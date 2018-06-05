@@ -1,63 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeFEFVn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 01:21:43 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:13919 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751518AbeFEFVb (ORCPT
+        id S1751590AbeFEFck (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 01:32:40 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38644 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751497AbeFEFcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 01:21:31 -0400
-Subject: Re: [PATCH v2 3/7] PCI: cadence: Update cdns_pcie_ep_raise_irq
- function signature
-To: Alan Douglas <adouglas@cadence.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
-References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
- <4994f263efbf6a2cb952d3d9839fb3b1737efde9.1526576613.git.gustavo.pimentel@synopsys.com>
- <aa86d9b7-d715-2a21-6a94-be927e55b51b@ti.com>
- <SN6PR07MB4512F3B395D731FF14EBDB8ED8670@SN6PR07MB4512.namprd07.prod.outlook.com>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <e9de6853-9c55-2dc9-0de0-0faa075714db@ti.com>
-Date: Tue, 5 Jun 2018 10:51:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 5 Jun 2018 01:32:39 -0400
+X-Google-Smtp-Source: ADUXVKL4Ob0ub03C/a/ePm8bWUW4CBMu3HHd0dKLmJUC75uUoZfTOZFSGQswpF70+ED++wTUXwB5HQ==
+Date: Tue, 5 Jun 2018 11:02:36 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Janani Sankara Babu <jananis37@gmail.com>
+Cc: gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [greybus-dev] [PATCH] Staging:greybus Fix comparison to NULL
+Message-ID: <20180605053236.u57riboa47so66rr@vireshk-i7>
+References: <1528030371-3822-1-git-send-email-jananis37@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <SN6PR07MB4512F3B395D731FF14EBDB8ED8670@SN6PR07MB4512.namprd07.prod.outlook.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528030371-3822-1-git-send-email-jananis37@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Monday 04 June 2018 08:38 PM, Alan Douglas wrote:
-> On 31 May 2018 11:51, Kishon Vijay Abraham I  wrote:
->> Hi Alan,
->>
->> On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
->>> Change cdns_pcie_ep_raise_irq() signature, namely the interrupt_num
->>> variable type from u8 to u16 to accommodate 2048 maximum MSI-X
->>> interrupts.
->>>
->>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->>> Acked-by: Alan Douglas <adouglas@cadence.com>
->>
->> Do you want to add MSI-X support to cadence PCIe?
->>
-> I do want to add MSI-X support, in fact I have done some tests with a
-> modified cadence driver with this set, so plan to submit a patch later.
+On 03-06-18, 08:52, Janani Sankara Babu wrote:
+> This patch replaces comparison of var to NULL with !var
 > 
+> Signed-off-by: Janani Sankara Babu <jananis37@gmail.com>
+> ---
+>  drivers/staging/greybus/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/greybus/core.c b/drivers/staging/greybus/core.c
+> index dafa430..5d14a4e 100644
+> --- a/drivers/staging/greybus/core.c
+> +++ b/drivers/staging/greybus/core.c
+> @@ -48,7 +48,7 @@ static bool greybus_match_one_id(struct gb_bundle *bundle,
+>  static const struct greybus_bundle_id *
+>  greybus_match_id(struct gb_bundle *bundle, const struct greybus_bundle_id *id)
+>  {
+> -	if (id == NULL)
+> +	if (!id)
 
-cool, glad to hear!
+It is pretty much personal preference and there is no good reason to accept this
+patch really.
 
-Thanks
-Kishon
+-- 
+viresh
