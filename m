@@ -1,28 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751958AbeFENTX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:19:23 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:37438 "EHLO
+        id S1751997AbeFENTn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:19:43 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46376 "EHLO
         mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbeFENTV (ORCPT
+        with ESMTP id S1751775AbeFENTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:19:21 -0400
-X-Google-Smtp-Source: ADUXVKLfOddLhLLd3Q5UNy8IUwhmTFxbhlhF0kPKEzFuCzS3qbOgisFtNT+fq++5iqDL/wXDyBScCkLNf05dzKirvEk=
+        Tue, 5 Jun 2018 09:19:40 -0400
+X-Google-Smtp-Source: ADUXVKJJeX+VTc8JV1D6YHuQORs+wo8CCVMhnpndR0LaRmJY4mAwT/8DG7eTFdVa219LtCSopfhC0/eDPpV7ZJLV114=
 MIME-Version: 1.0
-In-Reply-To: <1527765086-19873-7-git-send-email-xieyisheng1@huawei.com>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com> <1527765086-19873-7-git-send-email-xieyisheng1@huawei.com>
+In-Reply-To: <1527765086-19873-5-git-send-email-xieyisheng1@huawei.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com> <1527765086-19873-5-git-send-email-xieyisheng1@huawei.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 5 Jun 2018 16:19:20 +0300
-Message-ID: <CAHp75VfDznN0p5pAvVGaR-ntQmpi9kmXyMLhyXT-4XPaFMSV1g@mail.gmail.com>
-Subject: Re: [PATCH v2 06/21] iwlwifi: mvm: use match_string() helper
+Date: Tue, 5 Jun 2018 16:19:39 +0300
+Message-ID: <CAHp75Vd1C1X7V4a9PzfFfCFi92M3iaZP_ahsOtGP7V5Y=1LjiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/21] cxgb4: use match_string() helper
 To: Yisheng Xie <xieyisheng1@huawei.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
+        Ganesh Goudar <ganeshgr@chelsio.com>, netdev <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -35,45 +30,42 @@ On Thu, May 31, 2018 at 2:11 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
 
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Intel Linux Wireless <linuxwifi@intel.com>
-> Cc: Johannes Berg <johannes.berg@intel.com>
-> Cc: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-> Cc: linux-wireless@vger.kernel.org
+> Cc: Ganesh Goudar <ganeshgr@chelsio.com>
 > Cc: netdev@vger.kernel.org
 > Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 > ---
 > v2:
->  - let ret get return value of match_string  - per Andy
+>  - no change from v1.
 >
->  drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
+>  drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
 >
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> index 0e6401c..d7ac511 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c
-> @@ -671,16 +671,11 @@ static ssize_t iwl_dbgfs_bt_cmd_read(struct file *file, char __user *user_buf,
->         };
->         int ret, bt_force_ant_mode;
+> diff --git a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
+> index 9da6f57..bd61610 100644
+> --- a/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
+> +++ b/drivers/net/ethernet/chelsio/cxgb4/cudbg_lib.c
+> @@ -782,17 +782,11 @@ static int cudbg_get_mem_region(struct adapter *padap,
+>         if (rc)
+>                 return rc;
 >
-> -       for (bt_force_ant_mode = 0;
-> -            bt_force_ant_mode < ARRAY_SIZE(modes_str);
-> -            bt_force_ant_mode++) {
-> -               if (!strcmp(buf, modes_str[bt_force_ant_mode]))
+> -       for (i = 0; i < ARRAY_SIZE(cudbg_region); i++) {
+> -               if (!strcmp(cudbg_region[i], region_name)) {
+> -                       found = 1;
+> -                       idx = i;
 > -                       break;
+> -               }
 > -       }
-> -
-> -       if (bt_force_ant_mode >= ARRAY_SIZE(modes_str))
+> -       if (!found)
 > -               return -EINVAL;
-> +       ret = match_string(modes_str, ARRAY_SIZE(modes_str), buf);
-> +       if (ret < 0)
-> +               return ret;
+> +       rc = match_string(cudbg_region, ARRAY_SIZE(cudbg_region), region_name);
+> +       if (rc < 0)
+> +               return rc;
 >
-> +       bt_force_ant_mode = ret;
->         ret = 0;
->         mutex_lock(&mvm->mutex);
->         if (mvm->bt_force_ant_mode == bt_force_ant_mode)
+> -       found = 0;
+> +       idx = rc;
+>         for (i = 0; i < meminfo->mem_c; i++) {
+>                 if (meminfo->mem[i].idx >= ARRAY_SIZE(cudbg_region))
+>                         continue; /* Skip holes */
 > --
 > 1.7.12.4
 >
