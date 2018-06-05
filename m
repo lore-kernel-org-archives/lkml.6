@@ -1,204 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751802AbeFEHA5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:00:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:1872 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751774AbeFEHAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:00:55 -0400
-Subject: Re: [v3] powerpc: fix build failure by disabling attribute-alias
- warning
-To: Michael Ellerman <patch-notifications@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, segher@kernel.crashing.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <40zxgb4SmTz9s7c@ozlabs.org>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <0332913c-04c0-362f-313f-8d42099f168d@c-s.fr>
-Date: Tue, 5 Jun 2018 09:00:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S1751611AbeFEHEV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:04:21 -0400
+Received: from 12.mo3.mail-out.ovh.net ([188.165.41.191]:54830 "EHLO
+        12.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751049AbeFEHEU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 03:04:20 -0400
+Subject: Re: [PATCH v3 1/3] cpufreq: imx6q: check speed grades for i.MX6ULL
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, Stefan Agner <stefan@agner.ch>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org
+References: <20180522062853.24799-1-sebastien.szymanski@armadeus.com>
+ <20180523042953.kcp2h5xtwjrjponn@vireshk-i7>
+From: =?UTF-8?Q?S=c3=a9bastien_Szymanski?=
+        <sebastien.szymanski@armadeus.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=sebastien.szymanski@armadeus.com; prefer-encrypt=mutual;
+ keydata=
+ xsBNBFNfZLEBCACv1lqSePHJNpRgcnER+3emy+Arjz84zFax3XkogjY/e3ZneihIgWrVKe5M
+ ql16pX4KTkzNgMUKz4bG/XwT3kjcrXshxFLlg7KrHMl287C+W+QOUjnjVeRi/su+SPmjz8VD
+ yr11h+ZkVLAWhS+uQJ93jy1NwG8M4t1kBLAVHHD5Vw4FJ+3ouaVYIp1X1Cr8bVKQw33Q1aTd
+ ro0kMBb96B9vNu7ciJZ3gvlaBzUEKOgNnq9KaywuLnqrqr4HUIn5JuxZjCjJzt9kTAKcTfp2
+ cJM8qpp+2FF5qtbkse9fZ6M64qozgOPr9Tk4Amf9fZEUQ6UNw14mmBZuXSzoHe75gI7TABEB
+ AAHNN1PDqWJhc3RpZW4gU1pZTUFOU0tJIDxzZWJhc3RpZW4uc3p5bWFuc2tpQGFybWFkZXVz
+ LmNvbT7CwH8EEwECACkFAlNfZLECGyMFCQlmAYAHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIX
+ gAAKCRCwminogTJk4ss0CACpxtvYO1rCYNtc/j/6fkDsuKKwGtijixHU+C3N+EAJVoHSCdRM
+ /PMtyN1fa+94XbW4LHQpZthkXd4kBpcf0aNtrS51193/YZHK5jLpJlUMKLGgU5VHXguakOOF
+ ZWptlUCEqZaQ4gR8CUxPZi4urNAg/ORxCiVW2oMO/8GRhoZ+r14QNDGFVphbdlk/4YyY3wr7
+ scDKTrRdkGw7kJElAp61I/B2KSbhnvF7U6H646a12/7bm6IEOAWbntoPcBg1h6irlCiNqfxs
+ Zfy3r6rVRy840Dl7ldoUzOs7Eon8lUQilr9UorOHBF4NaBTpyD75DtvjRQsF2qV+R1RGS/Em
+ IvrjzsBNBFNfZLEBCAC6O44V3Xa1wU0buUgI3pVed48hwSU1/7zeJy/1W21v7GnGvjSYw0sc
+ eQwZqLWW0HViMmYkiI1P8Z00RL7Q65emXkrClne2aoromOH0kc8LkKfa3dMqkbsXrK1nsiQd
+ cwknRLy8igEhEbfp8ZDgPiMyeMtai7b51q/ki9QF4EzMPk5MsCiAwkVh0yGGrNdZXRo/NoDi
+ KWHl52qXjSx30+BEMINDXlmB8pycQEFol+Wj5cNLkqQEErAV0BSHt36aL3jEp1yvjxtgQTs3
+ sWL+6+Eu9GurBfbIE0z6XyqlGqqgvrtfm1F+mpUwCoRiicsGhelYqi5YGPD38KIUsgJapU0T
+ ABEBAAHCwGUEGAECAA8FAlNfZLECGwwFCQlmAYAACgkQsJop6IEyZOKWTgf/RbOvtKW77EXW
+ XBzh04rfkW6prOlbJaIMUjVKZZ1D2OOpAxJbq80whJqCoJ+oVh7uAteozgX3U5TnL7fRx6HP
+ zhyidiwKCOXEeTsFrRHEpTOCJYbPz8MTsK14ogz/aUlImt0HbxTaVHz5m65wWM8doCqOj2J9
+ Vf12NNpfTxkotmM0QJQAIcEg10RfT3DLG1a68sdghM5rlz/b8mr/wjtOVxYX1TWKMvilCdQy
+ YT8NNFcBwMEy5Jt2SXpeASY0CIXGwqqCBLqmQMhh3VcmibIbBBB0hIg4f56Vfn7v8ouFmbYS
+ G0Q3TMIWXxYn91KiMXeox+Wsic2Ocw/KpZ/tus0JXQ==
+To: Shawn Guo <shawnguo@kernel.org>
+Message-ID: <717f24e1-3846-7685-b440-0754da883c2a@armadeus.com>
+Date: Tue, 5 Jun 2018 09:07:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <40zxgb4SmTz9s7c@ozlabs.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+In-Reply-To: <20180523042953.kcp2h5xtwjrjponn@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 3747839316250743897
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedthedrjedvgdduuddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 04/06/2018 à 16:11, Michael Ellerman a écrit :
-> On Tue, 2018-05-29 at 16:06:41 UTC, Christophe Leroy wrote:
->> Latest GCC version emit the following warnings
+On 05/23/2018 06:29 AM, Viresh Kumar wrote:
+> On 22-05-18, 08:28, Sébastien Szymanski wrote:
+>> Check the max speed supported from the fuses for i.MX6ULL and update the
+>> operating points table accordingly.
 >>
->> As arch/powerpc code is built with -Werror, this breaks build with
->> GCC 8.1
+>> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+>> ---
 >>
->> This patch inhibits those warnings
->>
->>    CC      arch/powerpc/kernel/syscalls.o
->> In file included from arch/powerpc/kernel/syscalls.c:24:
->> ./include/linux/syscalls.h:233:18: error: 'sys_mmap2' alias between functions of incompatible types 'long int(long unsigned int,  size_t,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)' {aka 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Werror=attribute-alias]
->>    asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
->>                    ^~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:216:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/syscalls.c:65:1: note: in expansion of macro 'SYSCALL_DEFINE6'
->>   SYSCALL_DEFINE6(mmap2, unsigned long, addr, size_t, len,
->>   ^~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:238:18: note: aliased declaration here
->>    asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
->>                    ^~~~~~~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:216:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/syscalls.c:65:1: note: in expansion of macro 'SYSCALL_DEFINE6'
->>   SYSCALL_DEFINE6(mmap2, unsigned long, addr, size_t, len,
->>   ^~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:233:18: error: 'sys_mmap' alias between functions of incompatible types 'long int(long unsigned int,  size_t,  long unsigned int,  long unsigned int,  long unsigned int,  off_t)' {aka 'long int(long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long unsigned int,  long int)'} and 'long int(long int,  long int,  long int,  long int,  long int,  long int)' [-Werror=attribute-alias]
->>    asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
->>                    ^~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:216:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/syscalls.c:72:1: note: in expansion of macro 'SYSCALL_DEFINE6'
->>   SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
->>   ^~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:238:18: note: aliased declaration here
->>    asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
->>                    ^~~~~~~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:216:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/syscalls.c:72:1: note: in expansion of macro 'SYSCALL_DEFINE6'
->>   SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
->>   ^~~~~~~~~~~~~~~
->>    CC      arch/powerpc/kernel/signal_32.o
->> In file included from arch/powerpc/kernel/signal_32.c:31:
->> ./include/linux/compat.h:74:18: error: 'compat_sys_swapcontext' alias between functions of incompatible types 'long int(struct ucontext32 *, struct ucontext32 *, int)' and 'long int(long int,  long int,  long int)' [-Werror=attribute-alias]
->>    asmlinkage long compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
->>                    ^~~~~~~~~~
->> ./include/linux/compat.h:58:2: note: in expansion of macro 'COMPAT_SYSCALL_DEFINEx'
->>    COMPAT_SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~~~~~~
->> arch/powerpc/kernel/signal_32.c:1041:1: note: in expansion of macro 'COMPAT_SYSCALL_DEFINE3'
->>   COMPAT_SYSCALL_DEFINE3(swapcontext, struct ucontext __user *, old_ctx,
->>   ^~~~~~~~~~~~~~~~~~~~~~
->> ./include/linux/compat.h:79:18: note: aliased declaration here
->>    asmlinkage long __se_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
->>                    ^~~~~~~~~~~~~~~
->> ./include/linux/compat.h:58:2: note: in expansion of macro 'COMPAT_SYSCALL_DEFINEx'
->>    COMPAT_SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~~~~~~
->> arch/powerpc/kernel/signal_32.c:1041:1: note: in expansion of macro 'COMPAT_SYSCALL_DEFINE3'
->>   COMPAT_SYSCALL_DEFINE3(swapcontext, struct ucontext __user *, old_ctx,
->>   ^~~~~~~~~~~~~~~~~~~~~~
->>    CC      arch/powerpc/kernel/signal_64.o
->> In file included from arch/powerpc/kernel/signal_64.c:27:
->> ./include/linux/syscalls.h:233:18: error: 'sys_swapcontext' alias between functions of incompatible types 'long int(struct ucontext *, struct ucontext *, long int)' and 'long int(long int,  long int,  long int)' [-Werror=attribute-alias]
->>    asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
->>                    ^~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/signal_64.c:628:1: note: in expansion of macro 'SYSCALL_DEFINE3'
->>   SYSCALL_DEFINE3(swapcontext, struct ucontext __user *, old_ctx,
->>   ^~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:238:18: note: aliased declaration here
->>    asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
->>                    ^~~~~~~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/signal_64.c:628:1: note: in expansion of macro 'SYSCALL_DEFINE3'
->>   SYSCALL_DEFINE3(swapcontext, struct ucontext __user *, old_ctx,
->>   ^~~~~~~~~~~~~~~
->>    CC      arch/powerpc/kernel/rtas.o
->> In file included from arch/powerpc/kernel/rtas.c:29:
->> ./include/linux/syscalls.h:233:18: error: 'sys_rtas' alias between functions of incompatible types 'long int(struct rtas_args *)' and 'long int(long int)' [-Werror=attribute-alias]
->>    asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
->>                    ^~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:211:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE1(name, ...) SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/rtas.c:1054:1: note: in expansion of macro 'SYSCALL_DEFINE1'
->>   SYSCALL_DEFINE1(rtas, struct rtas_args __user *, uargs)
->>   ^~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:238:18: note: aliased declaration here
->>    asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
->>                    ^~~~~~~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:211:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE1(name, ...) SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/rtas.c:1054:1: note: in expansion of macro 'SYSCALL_DEFINE1'
->>   SYSCALL_DEFINE1(rtas, struct rtas_args __user *, uargs)
->>   ^~~~~~~~~~~~~~~
->>    CC      arch/powerpc/kernel/pci_64.o
->> In file included from arch/powerpc/kernel/pci_64.c:23:
->> ./include/linux/syscalls.h:233:18: error: 'sys_pciconfig_iobase' alias between functions of incompatible types 'long int(long int,  long unsigned int,  long unsigned int)' and 'long int(long int,  long int,  long int)' [-Werror=attribute-alias]
->>    asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
->>                    ^~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/pci_64.c:206:1: note: in expansion of macro 'SYSCALL_DEFINE3'
->>   SYSCALL_DEFINE3(pciconfig_iobase, long, which, unsigned long, in_bus,
->>   ^~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:238:18: note: aliased declaration here
->>    asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__)) \
->>                    ^~~~~~~~
->> ./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
->>    __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
->>    ^~~~~~~~~~~~~~~~~
->> ./include/linux/syscalls.h:213:36: note: in expansion of macro 'SYSCALL_DEFINEx'
->>   #define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
->>                                      ^~~~~~~~~~~~~~~
->> arch/powerpc/kernel/pci_64.c:206:1: note: in expansion of macro 'SYSCALL_DEFINE3'
->>   SYSCALL_DEFINE3(pciconfig_iobase, long, which, unsigned long, in_bus,
->>   ^~~~~~~~~~~~~~~
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Changes for v3:
+>>  - none
 > 
-> Applied to powerpc next, thanks.
+> @Sascha and Shawn: Can you guys please Ack this series if there is
+> nothing wrong with it ?
 > 
-> https://git.kernel.org/powerpc/c/2479bfc9bc600dcce7f932d52dcfa8
 
-Oops, you didn't take v4 but v3 which was missing the fix into pci_32.c
+ping...
 
-I'll send you a patch to add the fix in pci_32.c
-
-Christophe
-
-> 
-> cheers
-> 
+-- 
+Sébastien Szymanski
+Software engineer, Armadeus Systems
+Tel: +33 (0)9 72 29 41 44
+Fax: +33 (0)9 72 28 79 26
