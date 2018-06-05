@@ -1,65 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeFEQMl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:12:41 -0400
-Received: from smtprelay0170.hostedemail.com ([216.40.44.170]:46334 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751727AbeFEQMk (ORCPT
+        id S1751951AbeFEQOh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:14:37 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45833 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751727AbeFEQOf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:12:40 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:541:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:2829:2898:3138:3139:3140:3141:3142:3352:3740:3865:3866:3867:3868:3870:3871:3872:3874:4250:4605:5007:6117:7903:9121:9707:10004:10400:10848:11026:11658:11914:12043:12555:12679:12760:13069:13311:13357:13439:14181:14394:14659:14721:21080:21324:21627:30054:30070:30090,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:33,LUA_SUMMARY:none
-X-HE-Tag: anger40_16f6186749844
-X-Filterd-Recvd-Size: 1871
-Message-ID: <7eeefc862194930c773e662cb2152e178441d3b8.camel@perches.com>
-Subject: [PATCH] spdxcheck: Work with current HEAD LICENSES/ directory
-From: Joe Perches <joe@perches.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Date: Tue, 05 Jun 2018 09:12:35 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 5 Jun 2018 12:14:35 -0400
+X-Google-Smtp-Source: ADUXVKJfSeNVOQpiieuqTj7VjZPXy/oM9dCB/Bp1+LgPmh2Q764w3U7Wg1zbiALAQ7osNsEti6rTevI5kuclQOffV8E=
+MIME-Version: 1.0
+In-Reply-To: <c058971b-e072-a7b5-3f6e-d06458099c60@huawei.com>
+References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+ <1526903890-35761-20-git-send-email-xieyisheng1@huawei.com>
+ <CAHp75VfqEdoDZydwFmQaLiUN8cVtH3MbFHf3qixU8xUHXMwt1g@mail.gmail.com> <c058971b-e072-a7b5-3f6e-d06458099c60@huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 5 Jun 2018 19:14:33 +0300
+Message-ID: <CAHp75Vf=DJ2U6_XrBNdbHwHOnDPKe5ZVUtsHzi0WPJAw3bBR7g@mail.gmail.com>
+Subject: Re: [PATCH 19/33] thermal: db8500: use match_string() helper
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55GEg87024315
 
-Depending on how old your -next tree is, it may
-not have a master that has the LICENSES directory.
+On Wed, May 23, 2018 at 10:47 AM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> Hi Andy,
+>
+> On 2018/5/22 6:00, Andy Shevchenko wrote:
+>> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>>> match_string() returns the index of an array for a matching string,
+>>> which can be used intead of open coded variant.
+>>
+>>> +       i = match_string((const char **)trip_point->cdev_name,
+>>
+>> Casting looks ugly. You need to constify the variable itself.
+> When I tried to const cdev_name like:
+> +++ b/include/linux/platform_data/db8500_thermal.h
+> @@ -27,7 +27,7 @@
+>  struct db8500_trip_point {
+>         unsigned long temp;
+>         enum thermal_trip_type type;
+> -       char cdev_name[COOLING_DEV_MAX][THERMAL_NAME_LENGTH];
+> +       char const cdev_name[COOLING_DEV_MAX][THERMAL_NAME_LENGTH]; // const char cdev_name[COOLING_DEV_MAX][THERMAL_NAME_LENGTH] will also the same
+>  };
+>
+> The compiler will also warning:
+> drivers/thermal/db8500_thermal.c: In function ‘db8500_thermal_match_cdev’:
+> drivers/thermal/db8500_thermal.c:53:2: warning: passing argument 1 of ‘match_string’ from incompatible pointer type [enabled by default]
+>   i = match_string(trip_point->cdev_name, COOLING_DEV_MAX, cdev->type);
+>   ^
+> In file included from include/linux/bitmap.h:9:0,
+>                  from include/linux/cpumask.h:12,
+>                  from include/linux/rcupdate.h:44,
+>                  from include/linux/radix-tree.h:28,
+>                  from include/linux/idr.h:15,
+>                  from include/linux/kernfs.h:14,
+>                  from include/linux/sysfs.h:16,
+>                  from kernel/include/linux/kobject.h:20,
+>                  from kernel/include/linux/of.h:17,
+>                  from include/linux/cpu_cooling.h:27,
+>                  from drivers/thermal/db8500_thermal.c:20:
+> include/linux/string.h:184:5: note: expected ‘const char * const*’ but argument is of type ‘const char (*)[20]’
+>
+> Any idea?
 
-Change the lookup to HEAD and find whatever
-LICENSE directory files are used in that branch.
+Yes.
+If you wish to continue, you need to do two patches instead, where in
+first you are changing fixed array size of pointers to dynamic one and
+replace or loops from being by size to ones being NULL terminated.
 
-Miscellanea:
 
-o Remove the checkpatch test as it will have its own
-  SPDX license identifier.
-
-Signed-off-by: Joe Perches <joe@perches.com>
----
- scripts/spdxcheck.py | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
-index 7deaef297f52..a6041f29b18e 100755
---- a/scripts/spdxcheck.py
-+++ b/scripts/spdxcheck.py
-@@ -32,7 +32,7 @@ def read_spdxdata(repo):
- 
-     # The subdirectories of LICENSES in the kernel source
-     license_dirs = [ "preferred", "other", "exceptions" ]
--    lictree = repo.heads.master.commit.tree['LICENSES']
-+    lictree = repo.head.commit.tree['LICENSES']
- 
-     spdx = SPDXdata()
- 
-@@ -199,8 +199,6 @@ def scan_git_tree(tree):
-             continue
-         if el.path.find("license-rules.rst") >= 0:
-             continue
--        if el.path == 'scripts/checkpatch.pl':
--            continue
-         if not os.path.isfile(el.path):
-             continue
-         parser.parse_lines(open(el.path), args.maxlines, el.path)
+-- 
+With Best Regards,
+Andy Shevchenko
