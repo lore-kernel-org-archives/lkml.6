@@ -1,43 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751807AbeFEPKr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:10:47 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:37510 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeFEPKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:10:46 -0400
-Date: Tue, 05 Jun 2018 11:10:42 -0400 (EDT)
-Message-Id: <20180605.111042.973794153148667987.davem@davemloft.net>
-To: arnd@arndb.de
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, lipeng321@huawei.com,
-        liangfuyun1@huawei.com, linyunsheng@huawei.com, shenjian15@huawei.com,
-        wangxi11@huawei.com, netdev@vger.kernel.org,
+        id S1751871AbeFEPLX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:11:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55129 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751832AbeFEPLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:11:22 -0400
+Date: Tue, 5 Jun 2018 17:08:34 +0200
+From: David Sterba <dsterba@suse.cz>
+To: dsterba@suse.cz, Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        torvalds@linux-foundation.org, snitzer@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: hns3: remove unused hclgevf_cfg_func_mta_filter
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180605113904.1193671-1-arnd@arndb.de>
-References: <20180605113904.1193671-1-arnd@arndb.de>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] dm: Use kzalloc for all structs with embedded
+ biosets/mempools
+Message-ID: <20180605150834.zed7tjvmm7livrbe@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        torvalds@linux-foundation.org, snitzer@redhat.com,
+        linux-kernel@vger.kernel.org
+References: <20180605092633.29583-1-kent.overstreet@gmail.com>
+ <e78b0f9f-d4f9-d865-0727-5e1ed074928d@kernel.dk>
+ <20180605143507.2o3qm4r6euvyhe5g@twin.jikos.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605143507.2o3qm4r6euvyhe5g@twin.jikos.cz>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue,  5 Jun 2018 13:38:21 +0200
+On Tue, Jun 05, 2018 at 04:35:07PM +0200, David Sterba wrote:
+> On Tue, Jun 05, 2018 at 08:22:22AM -0600, Jens Axboe wrote:
+> > > I fucked up majorly on the bioset/mempool conversion - I forgot to check that
+> > > everything biosets/mempools were being embedded in was actually being zeroed on
+> > > allocation. Device mapper currently explodes, you'll probably want to apply this
+> > > patch post haste.
+> > > 
+> > > I have now done that auditing, for every single conversion - this patch fixes
+> > > everything I found. There do not seem to be any incorrect ones outside of device
+> > > mapper...
+> > > 
+> > > We'll probably want a second patch that either a) changes
+> > > bioset_init()/mempool_init() to zero the passed in bioset/mempool first, or b)
+> > > my preference, WARN() or BUG() if they're passed memory that isn't zeroed.
+> > 
+> > Odd, haven't seen a crash, but probably requires kasan or poisoning to
+> > trigger anything? Mike's tree also had the changes, since they were based
+> > on the block tree.
+> 
+> eg. fstests/generic/081 crashes (trace below), no KASAN, PAGE_POISONING=y,
+> PAGE_POISONING_NO_SANITY=y.
+> 
+> > I can queue this up and ship it later today. Mike, you want to review
+> > this one?
+> 
+> Would be great to push that soon. The fstests build on several DM targets, the
+> crashes lead to many test failures. I'm going to test the kzalloc fix now.
 
-> The last patch apparently added a complete replacement for this
-> function, but left the old one in place, which now causes a
-> harmless warning:
-> 
-> drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c:731:12: 'hclgevf_cfg_func_mta_filter' defined but not used
-> 
-> I assume it can be removed.
-> 
-> Fixes: 3a678b5806e6 ("net: hns3: Optimize the VF's process of updating multicast MAC")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Tested-by: David Sterba <dsterba@suse.com>
 
-Applied, thanks Arnd.
+on targets snapshot and thin.
