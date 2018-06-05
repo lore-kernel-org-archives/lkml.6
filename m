@@ -1,72 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751844AbeFEMyB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:54:01 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:43277 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751779AbeFEMx7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:53:59 -0400
-X-Google-Smtp-Source: ADUXVKJcMFtL2ofVJ0xXVCwwzAfxwyGnsjiqTr1KGh9NVtTxwbkCFbx/+lt2bsv7T/MMH5Z87nvt9K1vvfIeole4JeM=
+        id S1751784AbeFEM4M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:56:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41275 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751667AbeFEM4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:56:11 -0400
+Date: Tue, 5 Jun 2018 14:56:09 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Maninder Singh <maninder1.s@samsung.com>, sergey.senozhatsky@gmail.com,
+        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
+        pankaj.m@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH 1/2] printk: remove unused flag LOG_NOCONS
+Message-ID: <20180605125609.wfvzjh7ph73pzgta@pathway.suse.cz>
+References: <CGME20180531102133epcas5p2e8d47887c1708836c9b70964983093e2@epcas5p2.samsung.com>
+ <20180531102133epcas5p2e8d47887c1708836c9b70964983093e2~zs4eTmEuv0380103801epcas5p2U@epcas5p2.samsung.com>
+ <20180531121633.acuffu2b66q24c5c@pathway.suse.cz>
+ <20180604173342.0b7a78e6@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20180518095913.nzl3sr5wn6cg4ra5@flea>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com> <20180518095913.nzl3sr5wn6cg4ra5@flea>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Tue, 5 Jun 2018 18:23:57 +0530
-Message-ID: <CAMty3ZC13J+bCWK_=9816Lu-5ctC0UfF4-XR3yNSpHdH8q8Faw@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 00/26] arm64: allwinner: Add A64 DE2
- HDMI support
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604173342.0b7a78e6@gandalf.local.home>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 3:29 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Fri, May 18, 2018 at 03:15:10PM +0530, Jagan Teki wrote:
->> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
->>
->> A64 behaviour similar to Allwinner A83T where
->> Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
->> Mixer1 => TCON1 => HDMI
->> as per Display System Block DiagramAllwinner_A64_User_Manual_V1.1.pdf
->>
->> This is second patch-set followed with previous RFC[1] and first series[2]
->> and merely concentrated on HDMI pipeline through TCON1 and rest will add eventually.
->>
->> This series fixed previous version comments
->> - about documenting fallback compatibles
->> - adding new compatible for mixer1
->> - support for multiple DW HDMI PHY clock parents (thanks, to Jernej)
->>
->> Note:
->> Pine64 boards are unable to get edid by default like other A64 boards,
->> but forcing 'video=HDMI-A-1:1920x1080@60D' kernel command line can
->> create edid with display on penel.
->
-> There's no point in trying to push this without the SRAM issue being
-> solved. It is required, and won't be merged unless this is addressed.
+On Mon 2018-06-04 17:33:42, Steven Rostedt wrote:
+> On Thu, 31 May 2018 14:16:33 +0200
+> Petr Mladek <pmladek@suse.com> wrote:
+> 
+> > >  enum log_flags {
+> > > -	LOG_NOCONS	= 1,	/* already flushed, do not print to console */
+> > > -	LOG_NEWLINE	= 2,	/* text ended with a newline */
+> > > -	LOG_PREFIX	= 4,	/* text started with a prefix */
+> > > -	LOG_CONT	= 8,	/* text is a fragment of a continuation line */
+> > > +	LOG_NEWLINE	= 1,	/* text ended with a newline */
+> > > +	LOG_PREFIX	= 2,	/* text started with a prefix */
+> > > +	LOG_CONT	= 4,	/* text is a fragment of a continuation line */
+> > >  };  
+> > 
+> > Please, do not renumber the bits if there is no real need for it.
+> > The format of the log buffer is read also by external tool like
+> > "crash". It seems that "crash" ignores these flags but...
+> 
+> Then what's the problem for renumbering? I've renumbered internal flags
+> before. No one complained about it.
 
-is SRAM issue resolved? if so may be I will try to test it on top.
+Steven, did you renumber enum log_flags or flags in a different
+subsystem?
 
-Jagan.
+Note that struct printk_log is a bit special because it is used by
+the "crash" tool to implement the dmesg/log command. While "crash"
+tool does not have special handling for most other internal
+structures.
 
--- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+I have double checked "crash" sources and it ignores these flags
+at the moment but it might change in the future => I suggest to
+do not renumber them if there is not a real need.
+
+Best Regards,
+Petr
