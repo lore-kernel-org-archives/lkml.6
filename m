@@ -1,103 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752377AbeFETup convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:50:45 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.66]:23116 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751849AbeFETun (ORCPT
+        id S1752433AbeFETuv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:50:51 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42103 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752386AbeFETur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:50:43 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRWlGSWpSXmKPExsUSt3Opse7El2L
-  RBk2/NCymPnzCZjF39iRGi/tfjzJaXN41h81i68t3TBYPV85hsTi65x6zRd85dwcOj4lndT12
-  zrrL7rFpVSebx51re9g8ni1cz+LxeZNcAFsUa2ZeUn5FAmvG4XML2QqaOCtO3HvE3sD4kL2Lk
-  YtDSGApo0RP40qmLkZODjYBQ4l5b94zgtgiAukS7y4sYAQpYha4zCSxbXMnK0hCWMBaom3Ben
-  aIIhuJ3xt2M0HYRhIzDxwBs1kEVCR2H+wCq+EVCJCY+msVG4gtJFAlMePNE7AaTgFniTn998F
-  mMgrISnxpXM0MYjMLiEvcejIfrEZCQEBiyZ7zzBC2qMTLx/9YIWwFiX2/VrJB2PYSr++9Y+li
-  5ACy9SX6GoshwoYSq6YdYIGwzSWm9jxkhBivI7Fg9yc2CFtbYtnC18wQZwpKnJz5hGUCo/gsJ
-  FfMQtIyC0nLLCQtCxhZVjFaJBVlpmeU5CZm5ugaGhjoGhoa6RpamusaWhjpJVbpJumlluqWpx
-  aX6BrqJZYX6xVX5ibnpOjlpZZsYgRGPAMQ7GBceiH5EKMkB5OSKK/OIrFoIb6k/JTKjMTijPi
-  i0pzU4kOMMhwcShK8fi+AcoJFqempFWmZOcDUA5OW4OBREuHdC5LmLS5IzC3OTIdInWJUlBLn
-  DQVJCIAkMkrz4Npg6e4So6yUMC8j0CFCPAWpRbmZJajyrxjFORiVhHllQabwZOaVwE1/BbSYC
-  WjxswphkMUliQgpqQbGLdWPGENq156PLXs0QaW5V/bKJU1ZxtTJ8zy2Nc70Kf1h97eh/Ptkq4
-  jT64Qniay/m6Vo6dSpfnHt5ismuxryIl9IfZrB0tZeGpu5Sbv4zqq7b/5McWs5ZHdG5L37kic
-  3haS+fHhjE5rDbrCv0qHbZ8Pvy9OlzsoJzz4is+Tsf/HvcQ9/nzz5SYmlOCPRUIu5qDgRAGZh
-  /rFyAwAA
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-2.tower-288.messagelabs.com!1528228241!1694682!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH v3 05/10] mfd: da9063: Add DA9063L type
-Thread-Topic: [PATCH v3 05/10] mfd: da9063: Add DA9063L type
-Thread-Index: AQHT+loymMnBuw7neUi5Vw/AJsI0QaRR9lNg
-Date: Tue, 5 Jun 2018 19:50:40 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AD6DD@SW-EX-MBX02.diasemi.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-5-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-5-marek.vasut+renesas@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.27.121]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 05/06/2018 15:14:00
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 5 Jun 2018 15:50:47 -0400
+X-Google-Smtp-Source: ADUXVKL5qo4R/EXPzmiUuNOh/S+lGC4RtQ3Tg5lFc3oYTniDL6fYfvwa/tyF+G687fQEnamP7ZvS3lUxyDvNI4JBLOk=
 MIME-Version: 1.0
+References: <20180605170532.170361-1-ndesaulniers@google.com>
+ <20180605170532.170361-2-ndesaulniers@google.com> <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
+ <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com>
+In-Reply-To: <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Tue, 5 Jun 2018 12:50:34 -0700
+Message-ID: <CAKwvOd=zuy0BJC3f3EKT_9Mg83qdZxAxw_RJ4okAMKrpKjJRHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline declarations
+To: joe@perches.com
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>, akataria@vmware.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Greg KH <gregkh@linuxfoundation.org>, hpa@zytor.com,
+        "J. Kiszka" <jan.kiszka@siemens.com>, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, Josh Poimboeuf <jpoimboe@redhat.com>,
+        kirill.shutemov@linux.intel.com, mingo@redhat.com, mjg59@google.com,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>, rostedt@goodmis.org,
+        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
+        Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, Kees Cook <keescook@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
+        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02 June 2018 11:12, Marek Vasut wrote,
+On Tue, Jun 5, 2018 at 12:14 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Tue, 2018-06-05 at 10:23 -0700, Joe Perches wrote:
+> > Perhaps these are simpler as
+> >
+> > #define __inline__    inline
+> > #define __inline      inline
+>
+> Currently, there are these uses of inline variants in the kernel
+>
+> $ git grep -w inline | wc -l
+> 68410
+> $ git grep -w __inline__ | wc -l
+> 503
+> $ git grep -w __inline | wc -l
+> 57
+>
+> So it seems it's also reasonable to sed all uses of __inline to inline
+> and perhaps remove __inline eventually altogether.
+> (perhaps there are still too many __inline__ uses)
 
-> Subject: [PATCH v3 05/10] mfd: da9063: Add DA9063L type
-> 
-> Add type for DA9063L, which is a reduced variant of the DA9063
-> without RTC block and with less regulators.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> V2: No change
-> V3: No change
-> ---
->  include/linux/mfd/da9063/core.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-> index eb234582dcb2..c3e917dd1860 100644
-> --- a/include/linux/mfd/da9063/core.h
-> +++ b/include/linux/mfd/da9063/core.h
-> @@ -33,6 +33,7 @@
-> 
->  enum da9063_type {
->  	PMIC_TYPE_DA9063 = 0,
-> +	PMIC_TYPE_DA9063L,
->  };
-> 
->  enum da9063_variant_codes {
-> --
-> 2.16.2
+Yeah, that sounds good. Should I split that into 3 patches:
 
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+> Excluding scripts and a few other files,
+> here's a possible patch done with:
+>
+> $ git grep -w --name-only __inline | \
+>   grep -vP '^(?:arch/alpha/|include/|scripts/)' | \
+>   xargs sed -r -i -e 's/\b__inline\b/inline/g' \
+>                   -e 's/\binline\s+static\b/static inline/g'
+> ---
+>  Documentation/trace/tracepoint-analysis.rst             |  2 +-
+>  drivers/staging/rtl8723bs/core/rtw_pwrctrl.c            |  4 ++--
+>  drivers/staging/rtl8723bs/core/rtw_wlan_util.c          |  2 +-
+>  drivers/staging/rtl8723bs/include/drv_types.h           |  6 +++---
+>  drivers/staging/rtl8723bs/include/ieee80211.h           |  6 +++---
+>  drivers/staging/rtl8723bs/include/osdep_service.h       | 10 +++++-----
+>  drivers/staging/rtl8723bs/include/osdep_service_linux.h | 14 +++++++-------
+>  drivers/staging/rtl8723bs/include/rtw_mlme.h            | 14 +++++++-------
+>  drivers/staging/rtl8723bs/include/rtw_recv.h            | 16 ++++++++--------
+>  drivers/staging/rtl8723bs/include/sta_info.h            |  2 +-
+>  drivers/staging/rtl8723bs/include/wifi.h                | 14 +++++++-------
+>  drivers/staging/rtl8723bs/include/wlan_bssdef.h         |  2 +-
+>  lib/zstd/mem.h                                          |  2 +-
+>  13 files changed, 47 insertions(+), 47 deletions(-)
+
+
+1 for documentation, 1 for rtl8723bs, 1 for zstd?
+
+Follow up set or include in v3?
+-- 
+Thanks,
+~Nick Desaulniers
