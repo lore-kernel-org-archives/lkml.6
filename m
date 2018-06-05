@@ -1,71 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752248AbeFEPhZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:37:25 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:38917 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeFEPhX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:37:23 -0400
-X-Google-Smtp-Source: ADUXVKL90S+UGXjp+1OY3NaovxFwYBtsSTK/8QAqmbhtslzVqsrbnnaBOeMLIuO3ugOmM0HWAq6NZqAZsmIz3FgabWE=
+        id S1752036AbeFEPic (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:38:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57660 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751599AbeFEPib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:38:31 -0400
+Date: Tue, 5 Jun 2018 16:38:26 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+Subject: Re: [PATCH v5 00/10] track CPU utilization
+Message-ID: <20180605153826.GE32302@e110439-lin>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <20180604165047.GU12180@hirez.programming.kicks-ass.net>
+ <CAKfTPtDtx72OgxvA3vxnRiCW_UG24HSJ3oE_8j5Rx3-vP0gCeA@mail.gmail.com>
+ <20180605141809.GV12180@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180523140635.GB27215@amd>
-References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
- <20180523140635.GB27215@amd>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 5 Jun 2018 18:37:21 +0300
-Message-ID: <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605141809.GV12180@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 23, 2018 at 5:06 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
->> The register constants are so far defined in a way that they fit
->> for the pcal9555a when shifted by the number of banks, i.e. are
->> multiplied by 2 in the accessor function.
->>
->> Now, the pcal6524 has 3 banks which means the relative offset
->> is multiplied by 4 for the standard registers.
->>
->> Simply applying the bit shift to the extended registers gives
->> a wrong result, since the base offset is already included in
->> the offset.
->>
->> Therefore, we have to add code to the 24 bit accessor functions
->> that adjusts the register number for these exended registers.
->>
->> The formula finally used was developed and proposed by
->> Andy Shevchenko <andy.shevchenko@gmail.com>.
+On 05-Jun 16:18, Peter Zijlstra wrote:
+> On Mon, Jun 04, 2018 at 08:08:58PM +0200, Vincent Guittot wrote:
+> > On 4 June 2018 at 18:50, Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > So this patch-set tracks the !cfs occupation using the same function,
+> > > which is all good. But what, if instead of using that to compensate the
+> > > OPP selection, we employ that to renormalize the util signal?
+> > >
+> > > If we normalize util against the dynamic (rt_avg affected) cpu_capacity,
+> > > then I think your initial problem goes away. Because while the RT task
+> > > will push the util to .5, it will at the same time push the CPU capacity
+> > > to .5, and renormalized that gives 1.
 
->>       int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
->> +     int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
->> +     int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+And would not that mean also that a 50% task co-scheduled with the
+same 50% RT task, will be reported as a 100% util_avg task?
 
-> Is this reasonable to do on each register access? Compiler will not be
-> able to optimize out fls and shifts, right?
+> > >
+> > >   NOTE: the renorm would then become something like:
+> > >         scale_cpu = arch_scale_cpu_capacity() / rt_frac();
+> 
+> Should probably be:
+> 
+> 	scale_cpu = atch_scale_cpu_capacity() / (1 - rt_frac())
+> 
+> > >
+> > >
+> > > On IRC I mentioned stopping the CFS clock when preempted, and while that
+> > > would result in fixed numbers, Vincent was right in pointing out the
+> > > numbers will be difficult to interpret, since the meaning will be purely
+> > > CPU local and I'm not sure you can actually fix it again with
+> > > normalization.
+> > >
+> > > Imagine, running a .3 RT task, that would push the (always running) CFS
+> > > down to .7, but because we discard all !cfs time, it actually has 1. If
+> > > we try and normalize that we'll end up with ~1.43, which is of course
+> > > completely broken.
+> > >
+> > >
+> > > _However_, all that happens for util, also happens for load. So the above
+> > > scenario will also make the CPU appear less loaded than it actually is.
+> > 
+> > The load will continue to increase because we track runnable state and
+> > not running for the load
+> 
+> Duh yes. So renormalizing it once, like proposed for util would actually
+> do the right thing there too.  Would not that allow us to get rid of
+> much of the capacity magic in the load balance code?
+> 
+> /me thinks more..
+> 
+> Bah, no.. because you don't want this dynamic renormalization part of
+> the sums. So you want to keep it after the fact. :/
+> 
+> > As you mentioned, scale_rt_capacity give the remaining capacity for
+> > cfs and it will behave like cfs util_avg now that it uses PELT. So as
+> > long as cfs util_avg <  scale_rt_capacity(we probably need a margin)
+> > we keep using dl bandwidth + cfs util_avg + rt util_avg for selecting
+> > OPP because we have remaining spare capacity but if  cfs util_avg ==
+> > scale_rt_capacity, we make sure to use max OPP.
 
-On modern CPUs fls() is one assembly command. OTOH, any proposal to do
-this better?
+What will happen for the 50% task of the example above?
 
-What I can see is that bank_shift is invariant to the function, and
-maybe cached.
+> Good point, when cfs-util < cfs-cap then there is idle time and the util
+> number is 'right', when cfs-util == cfs-cap we're overcommitted and
+> should go max.
+
+Again I cannot easily read the example above...
+
+Would that mean that a 50% CFS task, preempted by a 50% RT task (which
+already set OPP to max while RUNNABLE) will end up running at the max
+OPP too?
+
+> Since the util and cap values are aligned that should track nicely.
+
+True... the only potential issue I see is that we are steering PELT
+behaviors towards better driving schedutil to run high-demand
+workloads while _maybe_ affecting quite sensibly the capacity of PELT
+to describe how much CPU a task uses.
+
+Ultimately, utilization has always been a metric on "how much you
+use"... while here it seems to me we are bending it to be something to
+define "how fast you have to run".
 
 -- 
-With Best Regards,
-Andy Shevchenko
+#include <best/regards.h>
+
+Patrick Bellasi
