@@ -1,63 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751993AbeFENXk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:23:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751820AbeFENXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:23:36 -0400
-Date: Tue, 5 Jun 2018 10:23:33 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf stat: Display user and system time
-Message-ID: <20180605132333.GC4899@kernel.org>
-References: <20180605121313.31337-1-jolsa@kernel.org>
+        id S1752015AbeFENYJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:24:09 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:37649 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751832AbeFENYG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 09:24:06 -0400
+X-Google-Smtp-Source: ADUXVKKT62xLrRtrMmfXIy5Dk1tSsFp4RGsNdA87vQUTHOft2XcvtXlHx3Z+IBMz6HiLOEXmzaaHlPED9sWmOdbwl9A=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605121313.31337-1-jolsa@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com> <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Jun 2018 15:24:04 +0200
+X-Google-Sender-Auth: azOBMP08suUoC6j9q-YPp19xOT0
+Message-ID: <CAMuHMdWsaLMkUBhdO6cOCRPTV942dAgssLco2YQZO85dAcYQsw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Carlo Caione <carlo@endlessm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jun 05, 2018 at 02:13:13PM +0200, Jiri Olsa escreveu:
-> Adding the support to read rusage data once the
-> workload is finished and display the system/user
-> time values:
-<SNIP>
-> Those times are the very same displayed by 'time' tool.
-> They are returned by wait4 call via the getrusage struct
-> interface.
+On Tue, Jun 5, 2018 at 1:28 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
+> requires a special enable method to get it started.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Thanks, tested it with:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-      # perf stat --null time perf bench sched pipe
-      # Running 'sched/pipe' benchmark:
-      # Executed 1000000 pipe operations between two processes
-    
-           Total time: 5.526 [sec]
-    
-             5.526534 usecs/op
-               180945 ops/sec
-      1.00user 6.25system 0:05.52elapsed 131%CPU (0avgtext+0avgdata 8056maxresident)k
-      0inputs+0outputs (0major+606minor)pagefaults 0swaps
-    
-       Performance counter stats for 'time perf bench sched pipe':
-    
-             5.530978744 seconds time elapsed
-    
-             1.004037000 seconds user
-             6.259937000 seconds sys
-    
-      #
+> --- /dev/null
+> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * R9A06G032 Second CA7 enabler.
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
+> + * Derived from action,s500-smp
 
-:-)
+actions
 
-- Arnaldo
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
