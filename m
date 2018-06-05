@@ -1,100 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932086AbeFEWMx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 18:12:53 -0400
-Received: from imap.thunk.org ([74.207.234.97]:39548 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752166AbeFEWMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 18:12:51 -0400
-Date: Tue, 5 Jun 2018 18:12:49 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org
-Subject: Re: [GIT PULL] fscrypt updates for 4.18
-Message-ID: <20180605221249.GA1368@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org
-References: <20180605150751.GA9436@thunk.org>
- <CA+55aFxt4968GaU_q+e+D5KhGLGOjvHoZwRF0FKn_mHe4zx=Wg@mail.gmail.com>
+        id S1752581AbeFEWQF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 18:16:05 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:44158 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752365AbeFEWQC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 18:16:02 -0400
+X-Google-Smtp-Source: ADUXVKLPfy/692O6bsTmcLNNDTHG063apG3lGgX6eMkradUgoDQ6/Qj3C7D+p9eskRE8aRUn5yqr2EkPyczXO84nRhQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxt4968GaU_q+e+D5KhGLGOjvHoZwRF0FKn_mHe4zx=Wg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20180508230148.121852-1-rajatja@google.com> <20180510233912.96454-1-rajatja@google.com>
+In-Reply-To: <20180510233912.96454-1-rajatja@google.com>
+From: Rajat Jain <rajatja@google.com>
+Date: Tue, 5 Jun 2018 15:15:25 -0700
+Message-ID: <CACK8Z6H0PE-xBiNxhS+-P=-SyqAzKQi87xQoLGzgh6sgyt8zGA@mail.gmail.com>
+Subject: Re: [PATCH v2] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        Vidya Sagar <vidyas@nvidia.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Patel, Mayurkumar" <mayurkumar.patel@intel.com>
+Cc: Rajat Jain <rajatxjain@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 01:22:41PM -0700, Linus Torvalds wrote:
-> 
-> You have the tag *message* for fscrypt, but then the commit it points
-> to has nothing to do with fscrypt.
-> 
-> I think you tagged the wrong branch.
+Hello Bjorn,
 
-Yeah, sorry.  I used git shortlog when I was examining the branch to
-compose the tag message, and then I have a semi-automated script which
-generates the pull request.  And I failed to check the arguments to
-the script, as well as the output of the script.   :-(
+Just checking to see if this one fell through the cracks? It isn't
+solving any issues, but providing a tool for ASPM tweaking in user
+space, which may be useful.
 
-Trying again, here you go.....
+Thanks,
 
-The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
-
-  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
-
-for you to fetch changes up to e1cc40e5d42acb1d99652babb17e6a5ee4247409:
-
-  fscrypt: log the crypto algorithm implementations (2018-05-20 16:36:00 -0400)
-
-----------------------------------------------------------------
-Add bunch of cleanups, and add support for the Speck128/256
-algorithms.  Yes, Speck is contrversial, but the intention is to use
-them only for the lowest end Android devices, where the alternative
-*really* is no encryption at all for data stored at rest.
-
-----------------------------------------------------------------
-Eric Biggers (18):
-      fscrypt: use unbound workqueue for decryption
-      fs, fscrypt: only define ->s_cop when FS_ENCRYPTION is enabled
-      fscrypt: clean up after fscrypt_prepare_lookup() conversions
-      fscrypt: remove unnecessary NULL check when allocating skcipher
-      fscrypt: remove error messages for skcipher_request_alloc() failure
-      fscrypt: remove stale comment from fscrypt_d_revalidate()
-      fscrypt: don't clear flags on crypto transform
-      fscrypt: don't special-case EOPNOTSUPP from fscrypt_get_encryption_info()
-      fscrypt: drop max_namelen check from fname_decrypt()
-      fscrypt: drop empty name check from fname_decrypt()
-      fscrypt: make fscrypt_operations.max_namelen an integer
-      fscrypt: remove unnecessary check for non-logon key type
-      fscrypt: remove internal key size constants
-      fscrypt: use a common logging function
-      fscrypt: separate key lookup from key derivation
-      fscrypt: only derive the needed portion of the key
-      fscrypt: add Speck128/256 support
-      fscrypt: log the crypto algorithm implementations
-
- Documentation/filesystems/fscrypt.rst |  10 ++
- fs/crypto/crypto.c                    |  47 +++++--
- fs/crypto/fname.c                     |  32 ++---
- fs/crypto/fscrypt_private.h           |  23 ++--
- fs/crypto/hooks.c                     |   5 +-
- fs/crypto/keyinfo.c                   | 286 ++++++++++++++++++++++++-----------------
- fs/ext4/super.c                       |   8 +-
- fs/f2fs/super.c                       |   8 +-
- fs/ubifs/crypto.c                     |  10 +-
- include/linux/fs.h                    |   4 +-
- include/linux/fscrypt_notsupp.h       |  10 --
- include/linux/fscrypt_supp.h          |  16 +--
- include/uapi/linux/fs.h               |   2 +
- 13 files changed, 248 insertions(+), 213 deletions(-)
+Rajat
+On Thu, May 10, 2018 at 4:39 PM Rajat Jain <rajatja@google.com> wrote:
+>
+> Currently, the linux kernel disables ASPM when a device is
+> removed from the kernel. But it is not enabled again when
+> a new device is added on that slot even if it was originally
+> enabled (by the BIOS) when the system booted up (assuming
+> POLICY_DEFAULT).
+>
+> This was earlier discussed here:
+> https://www.spinics.net/lists/linux-pci/msg60212.html
+>
+> And some suggestions from Bjorn here:
+> https://www.spinics.net/lists/linux-pci/msg60541.html
+>
+> This patch picks up one of the suggestion, to remove the
+> CONFIG_PCIEASPM_DEBUG and thus make the code always
+> avilable. This provides control to userspace to control
+> ASPM on a per slot / device basis using sysfs interface.
+>
+> Signed-off-by: Rajat Jain <rajatja@google.com>
+> ---
+> v2: provide function definitions for !CONFIG_PCIEASPM case
+>
+>  drivers/pci/pci.h        | 8 ++------
+>  drivers/pci/pcie/Kconfig | 8 --------
+>  drivers/pci/pcie/aspm.c  | 2 --
+>  3 files changed, 2 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 023f7cf25bff..b953b2349ca1 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -358,17 +358,13 @@ void pcie_aspm_init_link_state(struct pci_dev *pdev);
+>  void pcie_aspm_exit_link_state(struct pci_dev *pdev);
+>  void pcie_aspm_pm_state_change(struct pci_dev *pdev);
+>  void pcie_aspm_powersave_config_link(struct pci_dev *pdev);
+> +void pcie_aspm_create_sysfs_dev_files(struct pci_dev *pdev);
+> +void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev);
+>  #else
+>  static inline void pcie_aspm_init_link_state(struct pci_dev *pdev) { }
+>  static inline void pcie_aspm_exit_link_state(struct pci_dev *pdev) { }
+>  static inline void pcie_aspm_pm_state_change(struct pci_dev *pdev) { }
+>  static inline void pcie_aspm_powersave_config_link(struct pci_dev *pdev) { }
+> -#endif
+> -
+> -#ifdef CONFIG_PCIEASPM_DEBUG
+> -void pcie_aspm_create_sysfs_dev_files(struct pci_dev *pdev);
+> -void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev);
+> -#else
+>  static inline void pcie_aspm_create_sysfs_dev_files(struct pci_dev *pdev) { }
+>  static inline void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev) { }
+>  #endif
+> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> index b12e28b3d8f9..089b9f559d88 100644
+> --- a/drivers/pci/pcie/Kconfig
+> +++ b/drivers/pci/pcie/Kconfig
+> @@ -46,14 +46,6 @@ config PCIEASPM
+>
+>           When in doubt, say Y.
+>
+> -config PCIEASPM_DEBUG
+> -       bool "Debug PCI Express ASPM"
+> -       depends on PCIEASPM
+> -       default n
+> -       help
+> -         This enables PCI Express ASPM debug support. It will add per-device
+> -         interface to control ASPM.
+> -
+>  choice
+>         prompt "Default ASPM policy"
+>         default PCIEASPM_DEFAULT
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index c687c817b47d..8ffc13d42baa 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -1161,7 +1161,6 @@ static int pcie_aspm_get_policy(char *buffer, const struct kernel_param *kp)
+>  module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
+>         NULL, 0644);
+>
+> -#ifdef CONFIG_PCIEASPM_DEBUG
+>  static ssize_t link_state_show(struct device *dev,
+>                 struct device_attribute *attr,
+>                 char *buf)
+> @@ -1264,7 +1263,6 @@ void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev)
+>                 sysfs_remove_file_from_group(&pdev->dev.kobj,
+>                         &dev_attr_clk_ctl.attr, power_group);
+>  }
+> -#endif
+>
+>  static int __init pcie_aspm_disable(char *str)
+>  {
+> --
+> 2.17.0.441.gb46fe60e1d-goog
+>
