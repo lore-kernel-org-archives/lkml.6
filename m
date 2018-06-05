@@ -1,123 +1,259 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeFEPic (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:38:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57660 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751599AbeFEPib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:38:31 -0400
-Date: Tue, 5 Jun 2018 16:38:26 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-Message-ID: <20180605153826.GE32302@e110439-lin>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <20180604165047.GU12180@hirez.programming.kicks-ass.net>
- <CAKfTPtDtx72OgxvA3vxnRiCW_UG24HSJ3oE_8j5Rx3-vP0gCeA@mail.gmail.com>
- <20180605141809.GV12180@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605141809.GV12180@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751842AbeFEPkD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:40:03 -0400
+Received: from mga07.intel.com ([134.134.136.100]:51542 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751952AbeFEPkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:40:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
+   d="scan'208";a="205516787"
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org, tglx@linutronix.de, acme@kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org
+Cc: eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 1/2] perf/x86/intel/lbr: Fix incomplete LBR call stack
+Date: Tue,  5 Jun 2018 08:38:45 -0700
+Message-Id: <1528213126-4312-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-Jun 16:18, Peter Zijlstra wrote:
-> On Mon, Jun 04, 2018 at 08:08:58PM +0200, Vincent Guittot wrote:
-> > On 4 June 2018 at 18:50, Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > > So this patch-set tracks the !cfs occupation using the same function,
-> > > which is all good. But what, if instead of using that to compensate the
-> > > OPP selection, we employ that to renormalize the util signal?
-> > >
-> > > If we normalize util against the dynamic (rt_avg affected) cpu_capacity,
-> > > then I think your initial problem goes away. Because while the RT task
-> > > will push the util to .5, it will at the same time push the CPU capacity
-> > > to .5, and renormalized that gives 1.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-And would not that mean also that a 50% task co-scheduled with the
-same 50% RT task, will be reported as a 100% util_avg task?
+LBR has a limited stack size. If a task has a deeper call stack than
+LBR's stack size, only the overflowed part is reported. A complete call
+stack may not be reconstructed by perf tool.
 
-> > >
-> > >   NOTE: the renorm would then become something like:
-> > >         scale_cpu = arch_scale_cpu_capacity() / rt_frac();
-> 
-> Should probably be:
-> 
-> 	scale_cpu = atch_scale_cpu_capacity() / (1 - rt_frac())
-> 
-> > >
-> > >
-> > > On IRC I mentioned stopping the CFS clock when preempted, and while that
-> > > would result in fixed numbers, Vincent was right in pointing out the
-> > > numbers will be difficult to interpret, since the meaning will be purely
-> > > CPU local and I'm not sure you can actually fix it again with
-> > > normalization.
-> > >
-> > > Imagine, running a .3 RT task, that would push the (always running) CFS
-> > > down to .7, but because we discard all !cfs time, it actually has 1. If
-> > > we try and normalize that we'll end up with ~1.43, which is of course
-> > > completely broken.
-> > >
-> > >
-> > > _However_, all that happens for util, also happens for load. So the above
-> > > scenario will also make the CPU appear less loaded than it actually is.
-> > 
-> > The load will continue to increase because we track runnable state and
-> > not running for the load
-> 
-> Duh yes. So renormalizing it once, like proposed for util would actually
-> do the right thing there too.  Would not that allow us to get rid of
-> much of the capacity magic in the load balance code?
-> 
-> /me thinks more..
-> 
-> Bah, no.. because you don't want this dynamic renormalization part of
-> the sums. So you want to keep it after the fact. :/
-> 
-> > As you mentioned, scale_rt_capacity give the remaining capacity for
-> > cfs and it will behave like cfs util_avg now that it uses PELT. So as
-> > long as cfs util_avg <  scale_rt_capacity(we probably need a margin)
-> > we keep using dl bandwidth + cfs util_avg + rt util_avg for selecting
-> > OPP because we have remaining spare capacity but if  cfs util_avg ==
-> > scale_rt_capacity, we make sure to use max OPP.
+Current code doesn't access all LBR registers. It only read the ones
+below the TOS. The LBR registers above the TOS will be discarded
+unconditionally.
 
-What will happen for the 50% task of the example above?
+When a CALL is captured, the TOS is incremented by 1 , modulo max LBR
+stack size. The LBR HW only records the call stack information to the
+register which the TOS points to. It will not touch other LBR
+registers. So the registers above the TOS probably still store the valid
+call stack information for an overflowed call stack, which need to be
+reported.
 
-> Good point, when cfs-util < cfs-cap then there is idle time and the util
-> number is 'right', when cfs-util == cfs-cap we're overcommitted and
-> should go max.
+To retrieve complete call stack information, we need to start from TOS,
+read all LBR registers until an invalid entry is detected.
+0s can be used to detect the invalid entry, because
+- When a RET is captured, the HW zeros the LBR register which TOS points
+  to, then decreases the TOS.
+- The LBR registers are reset to 0 when adding a new LBR event or
+  scheduling an existing LBR event.
+- A taken branch at IP 0 is not expected
 
-Again I cannot easily read the example above...
+The context switch code is also modified to save/restore all valid LBR
+registers. Furthermore, the LBR registers, which don't have valid call
+stack information, need to be reset in restore, because they may be
+polluted while swapped out.
 
-Would that mean that a 50% CFS task, preempted by a 50% RT task (which
-already set OPP to max while RUNNABLE) will end up running at the max
-OPP too?
+Here is a small test program, tchain_deep.
+Its call stack is deeper than 32.
 
-> Since the util and cap values are aligned that should track nicely.
+noinline void f33(void)
+{
+        int i;
+        for (i = 0; i < 10000000;) {
 
-True... the only potential issue I see is that we are steering PELT
-behaviors towards better driving schedutil to run high-demand
-workloads while _maybe_ affecting quite sensibly the capacity of PELT
-to describe how much CPU a task uses.
+                if(i%2)
+                        i++;
+                else
+                        i++;
+        }
+}
+noinline void f32(void)
+{
+        f33();
+}
+noinline void f31(void)
+{
+        f32();
+}
 
-Ultimately, utilization has always been a metric on "how much you
-use"... while here it seems to me we are bending it to be something to
-define "how fast you have to run".
+... ...
 
+noinline void f1(void)
+{
+        f2();
+}
+int main()
+{
+        f1();
+}
+
+Here is the test result on SKX. The max stack size of SKX is 32.
+
+Without the patch:
+ $perf record -e cycles --call-graph lbr -- ./tchain_deep
+ $perf report --stdio
+ #
+ # Children      Self  Command      Shared Object     Symbol
+ # ........  ........  ...........  ................  .................
+ #
+   100.00%    99.99%  tchain_deep    tchain_deep       [.] f33
+            |
+             --99.99%--f30
+                       f31
+                       f32
+                       f33
+
+With the patch:
+ $perf record -e cycles --call-graph lbr -- ./tchain_deep
+ $perf report --stdio
+ # Children      Self  Command      Shared Object     Symbol
+ # ........  ........  ...........  ................  ..................
+ #
+    99.99%     0.00%  tchain_deep    tchain_deep       [.] f1
+            |
+            ---f1
+               f2
+               f3
+               f4
+               f5
+               f6
+               f7
+               f8
+               f9
+               f10
+               f11
+               f12
+               f13
+               f14
+               f15
+               f16
+               f17
+               f18
+               f19
+               f20
+               f21
+               f22
+               f23
+               f24
+               f25
+               f26
+               f27
+               f28
+               f29
+               f30
+               f31
+               f32
+               f33
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/lbr.c  | 32 ++++++++++++++++++++++++++------
+ arch/x86/events/perf_event.h |  1 +
+ 2 files changed, 27 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index cf372b9..a417004 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -346,7 +346,7 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
+ 
+ 	mask = x86_pmu.lbr_nr - 1;
+ 	tos = task_ctx->tos;
+-	for (i = 0; i < tos; i++) {
++	for (i = 0; i < task_ctx->valid_lbrs; i++) {
+ 		lbr_idx = (tos - i) & mask;
+ 		wrlbr_from(lbr_idx, task_ctx->lbr_from[i]);
+ 		wrlbr_to  (lbr_idx, task_ctx->lbr_to[i]);
+@@ -354,6 +354,15 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
+ 		if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_INFO)
+ 			wrmsrl(MSR_LBR_INFO_0 + lbr_idx, task_ctx->lbr_info[i]);
+ 	}
++
++	for (; i < x86_pmu.lbr_nr; i++) {
++		lbr_idx = (tos - i) & mask;
++		wrlbr_from(lbr_idx, 0);
++		wrlbr_to(lbr_idx, 0);
++		if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_INFO)
++			wrmsrl(MSR_LBR_INFO_0 + lbr_idx, 0);
++	}
++
+ 	wrmsrl(x86_pmu.lbr_tos, tos);
+ 	task_ctx->lbr_stack_state = LBR_NONE;
+ }
+@@ -361,7 +370,7 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
+ static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
+ {
+ 	unsigned lbr_idx, mask;
+-	u64 tos;
++	u64 tos, from;
+ 	int i;
+ 
+ 	if (task_ctx->lbr_callstack_users == 0) {
+@@ -371,13 +380,17 @@ static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
+ 
+ 	mask = x86_pmu.lbr_nr - 1;
+ 	tos = intel_pmu_lbr_tos();
+-	for (i = 0; i < tos; i++) {
++	for (i = 0; i < x86_pmu.lbr_nr; i++) {
+ 		lbr_idx = (tos - i) & mask;
+-		task_ctx->lbr_from[i] = rdlbr_from(lbr_idx);
++		from = rdlbr_from(lbr_idx);
++		if (!from)
++			break;
++		task_ctx->lbr_from[i] = from;
+ 		task_ctx->lbr_to[i]   = rdlbr_to(lbr_idx);
+ 		if (x86_pmu.intel_cap.lbr_format == LBR_FORMAT_INFO)
+ 			rdmsrl(MSR_LBR_INFO_0 + lbr_idx, task_ctx->lbr_info[i]);
+ 	}
++	task_ctx->valid_lbrs = i;
+ 	task_ctx->tos = tos;
+ 	task_ctx->lbr_stack_state = LBR_VALID;
+ }
+@@ -531,7 +544,7 @@ static void intel_pmu_lbr_read_32(struct cpu_hw_events *cpuc)
+  */
+ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
+ {
+-	bool need_info = false;
++	bool need_info = false, call_stack = false;
+ 	unsigned long mask = x86_pmu.lbr_nr - 1;
+ 	int lbr_format = x86_pmu.intel_cap.lbr_format;
+ 	u64 tos = intel_pmu_lbr_tos();
+@@ -542,7 +555,7 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
+ 	if (cpuc->lbr_sel) {
+ 		need_info = !(cpuc->lbr_sel->config & LBR_NO_INFO);
+ 		if (cpuc->lbr_sel->config & LBR_CALL_STACK)
+-			num = tos;
++			call_stack = true;
+ 	}
+ 
+ 	for (i = 0; i < num; i++) {
+@@ -555,6 +568,13 @@ static void intel_pmu_lbr_read_64(struct cpu_hw_events *cpuc)
+ 		from = rdlbr_from(lbr_idx);
+ 		to   = rdlbr_to(lbr_idx);
+ 
++		/*
++		 * Read LBR call stack entries
++		 * until invalid entry (0s) is detected.
++		 */
++		if (call_stack && !from)
++			break;
++
+ 		if (lbr_format == LBR_FORMAT_INFO && need_info) {
+ 			u64 info;
+ 
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 9f37114..6b72a92 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -648,6 +648,7 @@ struct x86_perf_task_context {
+ 	u64 lbr_to[MAX_LBR_ENTRIES];
+ 	u64 lbr_info[MAX_LBR_ENTRIES];
+ 	int tos;
++	int valid_lbrs;
+ 	int lbr_callstack_users;
+ 	int lbr_stack_state;
+ };
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+2.7.4
