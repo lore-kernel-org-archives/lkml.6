@@ -1,237 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751742AbeFEKjX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:39:23 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41072 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751564AbeFEKjV (ORCPT
+        id S1751787AbeFEKq4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 06:46:56 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:45810 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751534AbeFEKqz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:39:21 -0400
-X-Google-Smtp-Source: ADUXVKLgfXMtDCZ4zLM7tWSoKUIBhLRmNcObTnhVpzX1wCr8ETdkgHw+LTihz2TgPjMXMhVhszL+rg==
-Date: Tue, 5 Jun 2018 16:09:17 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>, Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180605103917.pyhhcobdvaivqv6g@vireshk-i7>
-References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Tue, 5 Jun 2018 06:46:55 -0400
+Message-ID: <cfb6ff791a9034f8ade738085475e946b3d7519b.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
+ on kbd brightness change
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Hans de Goede <hdegoede@redhat.com>,
+        Bastien Nocera <hadess@hadess.net>, Chris Chiu <chiu@endlessm.com>,
+        Darren Hart <dvhart@infradead.org>
+Cc: Daniel Drake <drake@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Date: Tue, 05 Jun 2018 12:46:46 +0200
+In-Reply-To: <0443419b-3147-163b-374d-bb8651b08837@redhat.com> (sfid-20180605_123103_271620_F1F8BDCF)
+References: <20180604123238.82200-1-chiu@endlessm.com>
+         <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
+         <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
+         <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com>
+         <20180605023124.GE47042@localhost.localdomain>
+         <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
+         <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com>
+         <71df09bc89619aba975147e6b07920f1dfc2f46f.camel@hadess.net>
+         <cd6a5d86-1fdb-2561-1e29-0553be53c41a@redhat.com>
+         <94789b55b88ae5a296e1fca3b0311318e7b507ee.camel@hadess.net>
+         <0443419b-3147-163b-374d-bb8651b08837@redhat.com>
+         (sfid-20180605_123103_271620_F1F8BDCF)
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-QtbsNiEpvSwUb0UXili9"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-06-18, 11:16, Daniel Lezcano wrote:
-> diff --git a/drivers/powercap/idle_injection.c b/drivers/powercap/idle_injection.c
-> +/**
-> + * idle_injection_wakeup - Wake up all idle injection threads
-> + * @ii_dev: the idle injection device
-> + *
-> + * Every idle injection task belonging to the idle injection device
-> + * and running on an online CPU will be wake up by this call.
-> + */
-> +static void idle_injection_wakeup(struct idle_injection_device *ii_dev)
-> +{
-> +	struct idle_injection_thread *iit;
-> +	int cpu;
-> +
-> +	for_each_cpu_and(cpu, ii_dev->cpumask, cpu_online_mask) {
-> +		atomic_inc(&ii_dev->count);
 
-This may not be sufficient enough in some extremely corner cases, as it is
-possible that the idle_injection_fn() starts running for the first cpu in the
-cpumask right after first iteration of this loop completes. And so
-atomic_dec_and_test() may return true there before idle_injection_fn() task gets
-a chance to run on all cpus in the cpumask. Normally this wouldn't be a big
-problem as the hrtimer can get reprogrammed in that case, but there is a case I
-am worried about. More on this later..
+--=-QtbsNiEpvSwUb0UXili9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +		iit = per_cpu_ptr(&idle_injection_thread, cpu);
-> +		iit->should_run = 1;
-> +		wake_up_process(iit->tsk);
-> +	}
-> +}
-> +
-> +/**
-> + * idle_injection_wakeup_fn - idle injection timer callback
-> + * @timer: a hrtimer structure
-> + *
-> + * This function is called when the idle injection timer expires which
-> + * will wake up the idle injection tasks and these ones, in turn, play
-> + * idle a specified amount of time.
-> + *
-> + * Return: HRTIMER_NORESTART.
-> + */
-> +static enum hrtimer_restart idle_injection_wakeup_fn(struct hrtimer *timer)
-> +{
-> +	struct idle_injection_device *ii_dev =
-> +		container_of(timer, struct idle_injection_device, timer);
-> +
-> +	idle_injection_wakeup(ii_dev);
-> +
-> +	return HRTIMER_NORESTART;
-> +}
-> +
-> +/**
-> + * idle_injection_fn - idle injection routine
-> + * @cpu: the CPU number the tasks belongs to
-> + *
-> + * The idle injection routine will stay idle the specified amount of
-> + * time
-> + */
-> +static void idle_injection_fn(unsigned int cpu)
-> +{
-> +	struct idle_injection_device *ii_dev;
-> +	struct idle_injection_thread *iit;
-> +	int run_duration_ms, idle_duration_ms;
-> +
-> +	ii_dev = per_cpu(idle_injection_device, cpu);
-> +	iit = per_cpu_ptr(&idle_injection_thread, cpu);
-> +
-> +	/*
-> +	 * Boolean used by the smpboot main loop and used as a
-> +	 * flip-flop in this function
-> +	 */
-> +	iit->should_run = 0;
-> +
-> +	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
-> +	if (idle_duration_ms)
-> +		play_idle(idle_duration_ms);
-> +
-> +	/*
-> +	 * The last CPU waking up is in charge of setting the timer. If
-> +	 * the CPU is hotplugged, the timer will move to another CPU
-> +	 * (which may not belong to the same cluster) but that is not a
-> +	 * problem as the timer will be set again by another CPU
-> +	 * belonging to the cluster. This mechanism is self adaptive.
-> +	 */
-> +	if (!atomic_dec_and_test(&ii_dev->count))
-> +		return;
-> +
-> +	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
-> +	if (run_duration_ms) {
-> +		hrtimer_start(&ii_dev->timer, ms_to_ktime(run_duration_ms),
-> +			      HRTIMER_MODE_REL_PINNED);
-> +		return;
-> +	}
-> +
-> +	complete(&ii_dev->stop_complete);
-> +}
+Hey,
 
-Here is the corner case I was talking about. Consider the cpumask contains
-CPU0/1/2/3.
+On Tue, 2018-06-05 at 12:31 +0200, Hans de Goede wrote:
+> On 05-06-18 12:14, Bastien Nocera wrote:
+> > On Tue, 2018-06-05 at 12:05 +0200, Hans de Goede wrote:
+> > > On 05-06-18 11:58, Bastien Nocera wrote:
+> > > > [SNIP]
+> > >=20
+> > > Ok, so what are you suggestion, do you really want to hardcode
+> > > the cycle behavior in the kernel as these 2 patches are doing,
+> > > without any option to intervene from userspace?
+> > >=20
+> > > As mentioned before in the thread there are several example
+> > > of the kernel deciding to handle key-presses itself, putting
+> > > policy in the kernel and they have all ended poorly (think
+> > > e.g. rfkill, acpi-video dealing with LC brightnesskey presses
+> > > itself).
+> > >=20
+> > > I guess one thing we could do here is code out both solutions,
+> > > have a module option which controls if we:
+> > >=20
+> > > 1) Handle this in the kernel as these patches do
+> > > 2) Or send a new KEY_KBDILLUMCYCLE event
+> > >=20
+> > > Combined with a Kconfig option to select which is the default
+> > > behavior. Then Endless can select 1 for now and then in
+> > > Fedora (which defaults to Wayland now) we could default to
+> > > 2. once all the code for handling 2 is in place.
+> > >=20
+> > > This is ugly (on the kernel side) but it might be the best
+> > > compromise we can do.
+> >=20
+> > I don't really mind which option is used, I'm listing the problems with
+> > the different options. If you don't care about Xorg, then definitely go
+> > for adding a new key. Otherwise, processing it in the kernel is the
+> > least ugly, especially given that the key goes through the same driver
+> > that controls the brightness anyway. There's no crazy cross driver
+> > interaction as there was in the other cases you listed.
+>=20
+> Unfortunately not caring about Xorg is not really an option.
+>=20
+> Ok, new idea, how about we make g-s-d behavior upon detecting a
+> KEY_KBDILLUMTOGGLE event configurable, if we're on a Mac do a
+> toggle, otherwise do a cycle.
+>
+> Or we could do this through hwdb, then we could add a hwdb entry
+> for this laptop setting the udev property to do a cycle instead of
+> a toggle on receiving the keypress.
 
-PATH A                                                  PATH B
+If we are adding hwdb entries anyway to control the userspace
+interpretation of the TOGGLE key, then we could also add the new CYCLE
+key and explicitly re-map it to TOGGLE. That requires slightly more
+logic in hwdb, but it does mean that we could theoretically just drop
+the workaround if we ever stop caring about Xorg.
 
-                                                        unregister()
-                                                          -> idle_injection_stop()
+> I guess alternatively I could live with hardcoding this in the
+> kernel as these 2 patches do, but that solves it just for *this*
+> laptop, I've a feeling that if we do that we end up with similar
+> code in all laptop vendor drivers under drivers/platform/x86
+> soon.  Which really is the acpi_video.brightness_event thing
+> again, where the kernel would handle brightness key-presses
+> but only if the acpi_video backlight interface was in use
+> and not on models with a vendor specific or native-hardware
+> backlight driver.  Hmm, so writing this, I'm still quite sure
+> the kernel approach is actually a bad idea.
 
-idle_injection_wakeup()
-  -> Running loop for CPU0
-  -> atomic inc (count == 1)
-  -> wake_up_process(tsk)
-  -> At this point the current task stops
-  running and idle_injection_fn() starts running
-  (maybe on a different CPU)
+Benjamin
+--=-QtbsNiEpvSwUb0UXili9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-                                                        
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEED2NO4vMS33W8E4AFq6ZWhpmFY3AFAlsWahYACgkQq6ZWhpmF
+Y3DsvQ//WIq+C0ldZo05gfwEdsv8hIO/Ih2QBO+tgEXO1QpZ1GIZ3ym+Q758FsxM
+PbtJduBRTyCo8oAKYHr/m3EsQbHrXJ3tS1DpGgUnMwy4zbGGBxHkohccSZYfdazx
+2aP5rpHt6/QWJC5EoJzUpii5/l4lhThXYG9F60Z6m5z6hZ5gPi9BjYyepqmAWKYr
+ZhoNtDbfOupmaCv6SEDomrIz3RpWO4zobUNveG4TAuxwQqhQ7zBqEI8Qdc/4PWqs
+6F/iVQ6VV4N1CkT9H3+6U2fwzVfiNBdIUTWLOi4HBQ6//ozjuIb3xJItEgshVK2B
+VU4GkRhkYj1x1Kg2SpS5tqtw2DaW/YVf8Y8HZMzAjERHP6uc0rSMT4O/LDj4VAKE
+ps6g2dMAr7eK/EpdlwRhH3dzHcuaV2PHlVi7hrnc1G8ckDnb25mSPMIfNCuJ4/6A
+hlpErQrtjzcPhK0o9bCCUjilDZE/2ApThWtBIjXs9XGGn98i2RW5iKhaUrgsgNEb
+zAEp1r/DElvEoF8/fwbZIIuIICtPxo7tEF3yeQVSdO1VfxqJt48wMUM1GFu7LASk
+7ImINXe+o1tRFxL8GhjVRWcn7Tq1yxk8AKXG1R7bk34jkzGEjYAbc3wS+42bcagn
+MUKx2zy7A1EE1d1A8xl7WJ//r+Af13zipCSdddELQImvagfmaCg=
+=KnOm
+-----END PGP SIGNATURE-----
 
-idle_injection_fn()
-  -> atomic_dec_and_test(), returns true
-  as count == 0
-
-
-                                                             -> set-duration to 0
-                                                             -> wait for completion
-
-
-  -> atomic_read(run_duration), returns 0
-  -> complete()
-
-                                                             -> kfree(ii_dev);   
-
-
-But the initial loop idle_injection_wakeup() has only run for CPU0 until now and
-will continue running for other CPUs and will crash as ii_dev is already freed.
-
-Am I still making a mistake here ?
-
-> +static struct idle_injection_device *ii_dev_alloc(void)
-> +{
-> +	struct idle_injection_device *ii_dev;
-> +
-> +	ii_dev = kzalloc(sizeof(*ii_dev), GFP_KERNEL);
-> +	if (!ii_dev)
-> +		return NULL;
-> +
-> +	if (!alloc_cpumask_var(&ii_dev->cpumask, GFP_KERNEL)) {
-> +		kfree(ii_dev);
-> +		return NULL;
-> +	}
-> +
-> +	return ii_dev;
-> +}
-> +
-> +static void ii_dev_free(struct idle_injection_device *ii_dev)
-> +{
-> +	free_cpumask_var(ii_dev->cpumask);
-> +	kfree(ii_dev);
-> +}
-> +
-> +/**
-> + * idle_injection_register - idle injection init routine
-> + * @cpumask: the list of CPUs managed by the idle injection device
-> + *
-> + * This is the initialization function in charge of creating the
-> + * initializing of the timer and allocate the structures. It does not
-> + * starts the idle injection cycles.
-> + *
-> + * Return: NULL if an allocation fails.
-> + */
-> +struct idle_injection_device *idle_injection_register(struct cpumask *cpumask)
-> +{
-> +	struct idle_injection_device *ii_dev;
-> +	int cpu;
-> +
-> +	ii_dev = ii_dev_alloc();
-> +	if (!ii_dev)
-> +		return NULL;
-> +
-> +	cpumask_copy(ii_dev->cpumask, cpumask);
-> +	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> +	ii_dev->timer.function = idle_injection_wakeup_fn;
-> +	init_completion(&ii_dev->stop_complete);
-> +
-> +	for_each_cpu(cpu, ii_dev->cpumask) {
-> +
-> +		if (per_cpu(idle_injection_device, cpu)) {
-> +			pr_err("cpu%d is already registered\n", cpu);
-> +			goto out_rollback_per_cpu;
-> +		}
-> +
-> +		per_cpu(idle_injection_device, cpu) = ii_dev;
-> +	}
-> +
-> +	return ii_dev;
-> +
-> +out_rollback_per_cpu:
-> +	for_each_cpu(cpu, ii_dev->cpumask)
-> +		per_cpu(idle_injection_device, cpu) = NULL;
-
-Maybe move above into ii_dev_free(), as I suggested earlier, as that will remove
-same code from unregister routine as well.
-
--- 
-viresh
+--=-QtbsNiEpvSwUb0UXili9--
