@@ -1,69 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752390AbeFETIm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:08:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:60452 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752035AbeFETIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:08:40 -0400
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: Sudeep.Holla@arm.com
-Cc: Will.Deacon@arm.com, Catalin.Marinas@arm.com, Robin.Murphy@arm.com,
-        Morten.Rasmussen@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, geert@linux-m68k.org,
-        linux-acpi@vger.kernel.org, ard.biesheuvel@linaro.org,
-        Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH] arm64: topology: Avoid checking numa mask for scheduler MC selection
-Date: Tue,  5 Jun 2018 14:08:37 -0500
-Message-Id: <20180605190837.493505-1-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.14.3
+        id S1752264AbeFETJb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:09:31 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35633 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751915AbeFETJa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 15:09:30 -0400
+X-Google-Smtp-Source: ADUXVKIFGoorStCWkgmrNN19zCrjFRxDhDgk8ib1IqDRjmIFf8fcenheMnkEEN3wv5/TvSmbSQLfRUzanbgRFLd8Pr0=
+MIME-Version: 1.0
+In-Reply-To: <1528188743-12798-1-git-send-email-narmstrong@baylibre.com>
+References: <1528188743-12798-1-git-send-email-narmstrong@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 5 Jun 2018 21:09:09 +0200
+Message-ID: <CAFBinCCF7v40PrtL3HVf9X-fEVx7P2uOVePa5wQ_y6s7uLKmnw@mail.gmail.com>
+Subject: Re: [PATCH] ARM64: dts: meson-gxl-s905x-p212: Add phy-supply for usb0
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The numa mask subset check has problems if !CONFIG_NUMA, over hotplug
-operations or during early boot. Lets disable the NUMA siblings checks
-for the time being, as NUMA in socket machines have LLC's that will
-assure that the scheduler topology isn't "borken".
+On Tue, Jun 5, 2018 at 10:52 AM, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> Like LibreTech-CC, the USB0 needs the 5V regulator to be enabled to power the
+> devices on the P212 Reference Design based boards.
+>
+> Fixes: b9f07cb4f41f ("ARM64: dts: meson-gxl-s905x-p212: enable the USB controller")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Futher, as a defensive mechanism during hotplug, lets assure that the
-LLC siblings are also masked.
+out of curiosity: I guess you tested this using u-boot?
+if anyone else is interested: the only other way to test this is by
+ensuring that the hdmi_5v regulator is turned off by Linux (by
+removing it from the HDMI nodes) and then plugging in a USB device ->
+if it doesn't get VBUS then the hdmi_5v regulator is the cause (and
+needs to be kept/turned on by the USB code, just like Neil's patch
+does)
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
----
- arch/arm64/kernel/topology.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 7415c166281f..f845a8617812 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -215,13 +215,8 @@ EXPORT_SYMBOL_GPL(cpu_topology);
- 
- const struct cpumask *cpu_coregroup_mask(int cpu)
- {
--	const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
-+	const cpumask_t *core_mask = &cpu_topology[cpu].core_sibling;
- 
--	/* Find the smaller of NUMA, core or LLC siblings */
--	if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
--		/* not numa in package, lets use the package siblings */
--		core_mask = &cpu_topology[cpu].core_sibling;
--	}
- 	if (cpu_topology[cpu].llc_id != -1) {
- 		if (cpumask_subset(&cpu_topology[cpu].llc_siblings, core_mask))
- 			core_mask = &cpu_topology[cpu].llc_siblings;
-@@ -239,8 +234,10 @@ static void update_siblings_masks(unsigned int cpuid)
- 	for_each_possible_cpu(cpu) {
- 		cpu_topo = &cpu_topology[cpu];
- 
--		if (cpuid_topo->llc_id == cpu_topo->llc_id)
-+		if (cpuid_topo->llc_id == cpu_topo->llc_id) {
- 			cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
-+			cpumask_set_cpu(cpuid, &cpu_topo->llc_siblings);
-+		}
- 
- 		if (cpuid_topo->package_id != cpu_topo->package_id)
- 			continue;
--- 
-2.14.3
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+> index 0cfd701..a1b3101 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+> @@ -189,3 +189,10 @@
+>  &usb0 {
+>         status = "okay";
+>  };
+> +
+> +&usb2_phy0 {
+> +       /*
+> +        * HDMI_5V is also used as supply for the USB VBUS.
+> +        */
+> +       phy-supply = <&hdmi_5v>;
+> +};
+> --
+> 2.7.4
+>
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
