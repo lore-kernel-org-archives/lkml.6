@@ -1,166 +1,156 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3846313-1527887480-2-7614919651808602852
+Return-Path: <linux-next-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti33d1t02-2109092-1528161937-2-11494603461459118341
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-next-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527887480; b=LRE59WiislNl4D3DHfp5FH4c4gV/G1cqZrB3JjqzMgCHnpgtin
-    8m2fRX1BbQ3BRUOuFJ05AuKozob9GQemJBBbPNYQvibgpvY89/NTT/e1K5i2jpjm
-    Q623cxVOvtyX2bCc1pA+lMRjb4YzHU6c0ex11+V/3JsDzDd3YWn8YRZ3/jKbw5yV
-    4l7bLyN659K3nIXvDtx0bsgYllHyZnof/UlEhyvCS1O1oDWbq3UJHSBPR3LY+h5q
-    eqfCiKd5oEMts6q+DFET8utvFk2btXKQPtaczAb2DfTOdjIZmPJsix5R5L1S+GHP
-    DlErxtPbeHhsgOV/m3qnQWHeTGRriQ+SYHBg==
+    1528161937; b=XUOJzZdrKiT3QhCcCcQcZvm05ujv9NvYwV19C12cimRUY5SRGb
+    bJSauhL3Jr3a/sxOiUNXg/9PM6iMviF+o6HrbgI6aRbdUl22JfcNpo1kn3/QOTeK
+    axvyvGq/l8E1bz7ZifOPR6usPNzU75ZDcPHd4GPxj6Vle+Ti5W6K+JDmYmw36kB0
+    lke048hOdaZWkJuoykz3vKHcJ2KcZaN/Y0MVXWfVQ1DEsvP4DaMC41A3UKLXvYV4
+    fOrXOy9kNdMJ77PgdlqxBQ7b3l8cdAPHlMU1TRXU0v9zYrqJHmXedFvWZhAFMHld
+    X4cYAp8eFmAQuBgijgPysJhJz8ehzPKpW2Nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1527887480; bh=b+a0imK0Xv1X4EQX1H75OxTGnOvaH9
-    FKfv4zZAsjnTA=; b=mjKVIsRn1RpDi1k1btz9nQho0f+swkr3ysikWYbAycAJ3F
-    DQpClRu+BayA89Z8u+Zg+8yxqOycjLwodWOUK6ZlO5LC9qzv5Jeu3kfhAFBbnn9X
-    eYT0ATnP4kQBy12E0YTlQieqFC5qsRqADP1ugfRe3SE5xugVBnvn14surU6GGy0r
-    wiGzwZYFfV9OGlXSg/iwXB8y/3LWZaUmWY/Gl/yrV9IRJ3dBh+ycUQUv33p2L4Vq
-    vKAAvlp0cJ8bT2Xboz61s2xHdwXg7Ydfpa0O5HGnlNZpN7Ii10CZvRN2NaRcvF0R
-    cg0r2uaLCwvZuUPeDoXDCcYcYGXIZOdj+a7lH6Qg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1528161937; bh=ykEaogApXXBKo7s84JM0z/A0Sl8ZD5
+    bLkiMideHmoBo=; b=lvyiHCMnUfckXA9oZzDKGs8VY2wQ0JjAKFdvfVIX/ksbZS
+    NHSL5w0rcEgH/4CppUM4HJ9CIBUOFkhOA1If2Nzczjcd8MOtVp+KYXBba1TgQc60
+    Ew+LyQ2pVcbbz34eb7Af262fzC04SU/rLn3KZDs7RWeFoZ8Dyh9pszsDk694qtRJ
+    qZ3l3x9XqLxXkONTL0XZ09/L/OePa1/s+eQjpvswuihyG98xs0I73yhhdovB1PbF
+    B7d5++lQLCD7RrR3fYNXx4miKFBvX4AEeg6V9cIiYu3IqMOHal+p6UoRntx6OsvM
+    gtXQxJm5V2v2HSAi3wMRADO5B/li9REM1otgcEng==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TLCzlzqm
+    header.a=rsa-sha256 header.s=201702 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=canb.auug.org.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
+    header.domain=canb.auug.org.au header.result=pass
+    header_org.domain=auug.org.au header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TLCzlzqm
+      header.a=rsa-sha256 header.s=201702 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=canb.auug.org.au;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
+      header.domain=canb.auug.org.au header.result=pass
+      header_org.domain=auug.org.au header_org.result=pass
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE9S6q4frynRycPijdkjWYpii7Zptumg4BkoK+6E2gRyIQ289P4Od6ln3gBJ4oRmHQTjFdFvumSa2tOtNkMRwQtvOFMsfu2toraeXj5VAiiLKyRBgmYE
-    oWQMgEqmEs3wZfyTgA8Sde5/Phkrixl1HJrN2xlWsCUkkKbZr56Ba0u7rX7NczdmE5QAH5irCSASYW+dJwrrgmOaKjDH0325mE6zcaleoGyMZ8NO2icfLMvz
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=7mUfYlMuFuIA:10
-    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=aN9B2TKZ8pQdcslOI6YA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfBvYH/GAvmySUiK+3wAoyrbegr7yGXM5qoS8xwm65ZUWkXc3zpkFWBwEdXOwyyYXaZ3wBp8bVP89J56+dtOkqhDRfLSH2yumKarY7Y6ZYJQ/KWnGCLS7
+    BC3LYwhZFY5TFHtRo7Ay36/jPHqVcwjgqMD43jqU2cZ+aWwVpesMUqy2GPtiLjSW8vB+CSGS2V20GyRyQPBQEQFX2xLPe2VIDMKIEMZ9vAgwb9PYmlUlBc0s
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=7mUfYlMuFuIA:10 a=7-415B0cAAAA:8
+    a=Lbawxb-lLpeUug0o3FIA:9 a=CjuIK1q_8ugA:10 a=KDzECzq9lCLL6Ub11hkA:9
+    a=VwQbUJbxAAAA:8 a=fT6DY2neKoG22zCxINUA:9 a=x8gzFH9gYPwA:10
+    a=biEYGPWJfzWAr4FL6Ov7:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751235AbeFAVLP (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 1 Jun 2018 17:11:15 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12442 "EHLO mga07.intel.com"
+        id S1751317AbeFEBZe (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 4 Jun 2018 21:25:34 -0400
+Received: from ozlabs.org ([203.11.71.1]:45773 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751135AbeFAVLP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Jun 2018 17:11:15 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,467,1520924400";
-   d="scan'208";a="59663659"
-Date: Fri, 1 Jun 2018 15:11:13 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] dm: fix test for DAX device support
-Message-ID: <20180601211113.GB12821@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Mike Snitzer <snitzer@redhat.com>, Toshi Kani <toshi.kani@hpe.com>,
-        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-xfs@vger.kernel.org
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-4-ross.zwisler@linux.intel.com>
- <20180601201924.GA1144@redhat.com>
- <20180601204604.GB1144@redhat.com>
+        id S1750899AbeFEBZd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Jun 2018 21:25:33 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 5 Jun 2018 11:25:31 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus <torvalds@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the xfs tree with Linus' tree
+Message-ID: <20180605112531.23b392f3@canb.auug.org.au>
+In-Reply-To: <20180605005904.GY10363@dastard>
+References: <20180605103403.3e5b2c91@canb.auug.org.au>
+        <20180605005904.GY10363@dastard>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601204604.GB1144@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa"; protocol="application/pgp-signature"
+Sender: linux-next-owner@vger.kernel.org
+X-Mailing-List: linux-next@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Jun 01, 2018 at 04:46:04PM -0400, Mike Snitzer wrote:
-> On Fri, Jun 01 2018 at  4:19P -0400,
-> Mike Snitzer <snitzer@redhat.com> wrote:
-> 
-> > On Tue, May 29 2018 at  3:51P -0400,
-> > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-> > 
-> > > Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
-> > > flag is set on the device's request queue to decide whether or not the
-> > > device supports filesystem DAX.  This is insufficient because there are
-> > > devices like PMEM namespaces in raw mode which have QUEUE_FLAG_DAX set but
-> > > which don't actually support DAX.
-> > 
-> > Isn't that a PMEM bug then?
-> > 
-> > What is the point of setting QUEUE_FLAG_DAX if it cannot be trusted?
+--Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yup, that seems like a bug.
+Hi Dave,
 
-> > > This means that you could create a dm-linear device, for example, where the
-> > > first part of the dm-linear device was a PMEM namespace in fsdax mode and
-> > > the second part was a PMEM namespace in raw mode.  Both DM and the
-> > > filesystem you put on that dm-linear device would think the whole device
-> > > supports DAX, which would lead to bad behavior once your raw PMEM namespace
-> > > part using DAX needed struct page for something.
-> > 
-> > The PMEM namespace in raw mode shouldn't be setting QUEUE_FLAG_DAX, if
-> > it didn't then the stacked-up linear DM wouldn't 
-> > 
-> > > Fix this by using bdev_dax_supported() like filesystems do at mount time.
-> > > This checks for raw mode and also performs other tests like checking to
-> > > make sure the dax_direct_access() path works.
-> > 
-> > Sorry "This" does those things where?
-> 
-> I see you meant bdev_dax_supported() does these additional checks.
-> 
-> My previous question stands though.  Why is QUEUE_FLAG_DAX getting set
-> if the device hasn't already passed these checks?  Shouldn't setting
-> QUEUE_FLAG_DAX on request_queue depend on bdev_dax_supported() passing?
-> 
-> But looking at the drivers that do set QUEUE_FLAG_DAX: they
-> don't have the bdev readily available.  Anyway, just strikes me as
-> bizarre that a driver can set QUEUE_FLAG_DAX without having to have
-> ensured bdev_dax_supported() passes (even if not programatically, but
-> that the developer has verified the hooks, et al exist).
+On Tue, 5 Jun 2018 10:59:04 +1000 Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Tue, Jun 05, 2018 at 10:34:03AM +1000, Stephen Rothwell wrote:
+> >
+> > Today's linux-next merge of the xfs tree got a conflict in:
+> >=20
+> >   fs/gfs2/bmap.c
+> >=20
+> > between commit:
+> >=20
+> >   628e366df11c ("gfs2: Iomap cleanups and improvements")
+> >=20
+> > from Linus' tree and commit:
+> >=20
+> >   7ee66c03e40a ("iomap: move IOMAP_F_BOUNDARY to gfs2")
+> >=20
+> > from the xfs tree.
+>=20
+> We should have seen this before the gfs2 tree was merged into Linus'
+> tree. Does that mean the gfs2 tree is not being pulled into the
+> linux-next tree?
 
-I agree that it's a bug that QUEUE_FLAG_DAX is set for raw mode namespaces,
-thanks for pointing that out.  I will fix that, but I still think that DM
-should be using bdev_dax_supported() like the filesystems do.  Even beyond the
-raw mode / fsdax mode thing, this does additional checks that are useful. So,
-I think these DM patches are still correct.
+It is pulled in, but the above gfs2 commit was only committed to the
+linux-next included branch overnight and then Linus was asked to pull
+it before I got a chance to build today's linux-next.
 
-> But I'll give up on this line of questioning..
-> 
-> My dilemma now is: how do I take these changes without first rebasing
-> linux-dm.git ontop of Darrick's xfs tree?
-> 
-> I probably should've reviewed faster and been the one to take the entire
-> set (with appropriate acks obviously).
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsV5osACgkQAVBC80lX
+0Gzz/Af/R8kRCCn7j6NYrwbebbUNOJzeT2GtSY1PCf+Jk9pVkY19vL/XrCTRl4CF
+hHL3MPQVwoXniBLNzHNJXLt+Jvth8GG2Z0aXVwk15Qi9VSXWbpQt4XJXA73GzHCK
+42uBHsJXsRWoP9n/q5tDZ+1gApWk+5NZJwhP4emzQcdJjT2dBl0FRKYyQvDXJNgd
+mUAE17UKpHUZqVrMC3/8+4iPCs/lIortOv9V9NCd/p/1mSu4QHI5mi+sCzRmqNJo
+BxccOXwA42ppudSzDQUzmqb9SsIPGUv95b6mYgnJtcfTEAVNH+Dqm9n9ccloPfJr
+Et6B8TS/Ht+5sa4e3uNvhDxHNDMhZQ==
+=V2hG
+-----END PGP SIGNATURE-----
+
+--Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa--
