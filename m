@@ -1,63 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932186AbeFEXU2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 19:20:28 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33162 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932130AbeFEXU0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:20:26 -0400
-X-Google-Smtp-Source: ADUXVKKmlpWUrG83gpc3xMevbj20IYiMuBzTS/7h4rI/qJ03Alf2/jE1eB2Ph8vE4ocD8pLXzHVH0w==
-Date: Wed, 6 Jun 2018 02:20:22 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>
-Subject: Re: x86/asm: __clear_user() micro-optimization (was: "Re: [GIT PULL]
- x86/asm changes for v4.18")
-Message-ID: <20180605232022.GA4468@avx2>
-References: <20180604122132.GA3337@gmail.com>
- <CA+55aFx=zLkZx4h4rcWv79OKQSGJAwC3eS8=zSDgKjyrsbLrNA@mail.gmail.com>
- <20180605150514.GA31065@gmail.com>
- <20180605172243.GA2059@avx2>
- <CA+55aFxTve6FxLuvWyyD88ACOg+3eHKbpWUeuvNZMSB=AFfuqg@mail.gmail.com>
- <20180605224150.GA2051@avx2>
- <CA+55aFwt0SOns=tfsD9GCfbc9-xY04O5AWfKiQTroeH=edO7wQ@mail.gmail.com>
- <CA+55aFxz46_efiQw9Nk_pFbX3AYx+oehPQOk-BDd1Xpbr2Oa3w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxz46_efiQw9Nk_pFbX3AYx+oehPQOk-BDd1Xpbr2Oa3w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752937AbeFEXWZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 19:22:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46790 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752431AbeFEXWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 19:22:22 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
+Subject: [RFC PATCH ghak86 V1] audit: eliminate audit_enabled magic number comparison
+Date: Tue,  5 Jun 2018 19:20:39 -0400
+Message-Id: <490a00a7902582823fe8c532f5dd995a1da61fb1.1528214962.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 04:04:37PM -0700, Linus Torvalds wrote:
-> On Tue, Jun 5, 2018 at 4:01 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Tue, Jun 5, 2018 at 3:41 PM Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> > >
-> > > On my potato performance increase is 33%, sheesh.
-> > > And CPU starts doing 3 instructions per cycle vs 2.
-> >
-> > Whee. That's a shockingly big difference. On my CPU (i7-6700K) it
-> > makes absolutely no difference whether the values are integers or in
-> > registers.
-> 
-> In fact, looking at Agner Fog's instruction lists, I don't see any CPU
-> where it would make a difference, except for the P4 (where the
-> immediate looks like it's a bad idea because it's an extra uop, but it
-> might pack fine and not be noticeable).
-> 
-> But maybe I'm missing something subtle. What CPU, out of morbid interest?
+Remove comparison of audit_enabled to magic numbers outside of audit.
 
-This is Broadwell Xeon E5-2620 v4.
-Which is somewhat strange indeed because it should be modern enough.
+Related: https://github.com/linux-audit/audit-kernel/issues/86
+
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ drivers/tty/tty_audit.c      | 2 +-
+ include/linux/audit.h        | 5 ++++-
+ include/net/xfrm.h           | 2 +-
+ kernel/audit.c               | 3 ---
+ net/netfilter/xt_AUDIT.c     | 2 +-
+ net/netlabel/netlabel_user.c | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
+index e30aa6b..50f567b 100644
+--- a/drivers/tty/tty_audit.c
++++ b/drivers/tty/tty_audit.c
+@@ -92,7 +92,7 @@ static void tty_audit_buf_push(struct tty_audit_buf *buf)
+ {
+ 	if (buf->valid == 0)
+ 		return;
+-	if (audit_enabled == 0) {
++	if (audit_enabled == AUDIT_OFF) {
+ 		buf->valid = 0;
+ 		return;
+ 	}
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 69c7847..9334fbe 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -117,6 +117,9 @@ struct audit_field {
+ 
+ extern void audit_log_session_info(struct audit_buffer *ab);
+ 
++#define AUDIT_OFF	0
++#define AUDIT_ON	1
++#define AUDIT_LOCKED	2
+ #ifdef CONFIG_AUDIT
+ /* These are defined in audit.c */
+ 				/* Public API */
+@@ -202,7 +205,7 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
+ static inline void audit_log_task_info(struct audit_buffer *ab,
+ 				       struct task_struct *tsk)
+ { }
+-#define audit_enabled 0
++#define audit_enabled AUDIT_OFF
+ #endif /* CONFIG_AUDIT */
+ 
+ #ifdef CONFIG_AUDIT_COMPAT_GENERIC
+diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+index 7f2e31a..ce995a1 100644
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@ -734,7 +734,7 @@ static inline struct audit_buffer *xfrm_audit_start(const char *op)
+ {
+ 	struct audit_buffer *audit_buf = NULL;
+ 
+-	if (audit_enabled == 0)
++	if (audit_enabled == AUDIT_OFF)
+ 		return NULL;
+ 	audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
+ 				    AUDIT_MAC_IPSEC_EVENT);
+diff --git a/kernel/audit.c b/kernel/audit.c
+index e7478cb..8442c65 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -83,9 +83,6 @@
+ #define AUDIT_INITIALIZED	1
+ static int	audit_initialized;
+ 
+-#define AUDIT_OFF	0
+-#define AUDIT_ON	1
+-#define AUDIT_LOCKED	2
+ u32		audit_enabled = AUDIT_OFF;
+ bool		audit_ever_enabled = !!AUDIT_OFF;
+ 
+diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
+index f368ee6..af883f1 100644
+--- a/net/netfilter/xt_AUDIT.c
++++ b/net/netfilter/xt_AUDIT.c
+@@ -72,7 +72,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
+ 	struct audit_buffer *ab;
+ 	int fam = -1;
+ 
+-	if (audit_enabled == 0)
++	if (audit_enabled == AUDIT_OFF)
+ 		goto errout;
+ 	ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+ 	if (ab == NULL)
+diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
+index 2f328af..4676f5b 100644
+--- a/net/netlabel/netlabel_user.c
++++ b/net/netlabel/netlabel_user.c
+@@ -101,7 +101,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
+ 	char *secctx;
+ 	u32 secctx_len;
+ 
+-	if (audit_enabled == 0)
++	if (audit_enabled == AUDIT_OFF)
+ 		return NULL;
+ 
+ 	audit_buf = audit_log_start(audit_context(), GFP_ATOMIC, type);
+-- 
+1.8.3.1
