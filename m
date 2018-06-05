@@ -1,109 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeFEHOM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:14:12 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44822 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbeFEHOK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:14:10 -0400
-X-Google-Smtp-Source: ADUXVKKX63XeJHR0YvO/5AtY0WTsPyIegDpHnzL55Fld2PDJLmefD+9yk5cPGHUQnA1HrNzpHBQjg8bn5nQu5/p999g=
+        id S1751534AbeFEHRz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:17:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42030 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751264AbeFEHRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 03:17:54 -0400
+Date: Tue, 5 Jun 2018 09:17:52 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+cc: jikos@kernel.org, jeyu@kernel.org, pmladek@suse.com,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] livepatch: Send a fake signal periodically
+In-Reply-To: <20180604180325.yeewbafxpjkt6gi5@treble>
+Message-ID: <alpine.LSU.2.21.1806050857060.27280@pobox.suse.cz>
+References: <20180604141636.11523-1-mbenes@suse.cz> <20180604141636.11523-2-mbenes@suse.cz> <20180604180325.yeewbafxpjkt6gi5@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180604162224.819273597@linutronix.de>
-References: <20180604162224.819273597@linutronix.de>
-From: Song Liu <liu.song.a23@gmail.com>
-Date: Tue, 5 Jun 2018 00:14:09 -0700
-Message-ID: <CAPhsuW577-zethODoH2a_Z6PVZkhRPu+a7bgL2ZGpYiBNcEwpQ@mail.gmail.com>
-Subject: Re: [patch 7/8] genirq/affinity: Defer affinity setting if irq chip
- is busy
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>, Joerg Roedel <jroedel@suse.de>,
-        Mike Travis <mike.travis@hpe.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> The case that interrupt affinity setting fails with -EBUSY can be handled
-> in the kernel completely by using the already available generic pending
-> infrastructure.
->
-> If a irq_chip::set_affinity() fails with -EBUSY, handle it like the
-> interrupts for which irq_chip::set_affinity() can only be invoked from
-> interrupt context. Copy the new affinity mask to irq_desc::pending_mask and
-> set the affinity pending bit. The next raised interrupt for the affected
-> irq will check the pending bit and try to set the new affinity from the
-> handler. This avoids that -EBUSY is returned when an affinity change is
-> requested from user space and the previous change has not been cleaned
-> up. The new affinity will take effect when the next interrupt is raised
-> from the device.
->
-> Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
+On Mon, 4 Jun 2018, Josh Poimboeuf wrote:
 
-Tested-by: Song Liu <songliubraving@fb.com>
+> On Mon, Jun 04, 2018 at 04:16:35PM +0200, Miroslav Benes wrote:
+> > An administrator may send a fake signal to all remaining blocking tasks
+> > of a running transition by writing to
+> > /sys/kernel/livepatch/<patch>/signal attribute. Let's do it
+> > automatically after 10 seconds. The timeout is chosen deliberately. It
+> > gives the tasks enough time to transition themselves.
+> > 
+> > Theoretically, sending it once should be more than enough. Better be safe
+> > than sorry, so send it periodically.
+> 
+> This is the part I don't understand.  Why do it periodically?
 
-> ---
->  kernel/irq/manage.c |   37 +++++++++++++++++++++++++++++++++++--
->  1 file changed, 35 insertions(+), 2 deletions(-)
->
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -204,6 +204,39 @@ int irq_do_set_affinity(struct irq_data
->         return ret;
->  }
->
-> +#ifdef CONFIG_GENERIC_PENDING_IRQ
-> +static inline int irq_set_affinity_pending(struct irq_data *data,
-> +                                          const struct cpumask *dest)
-> +{
-> +       struct irq_desc *desc = irq_data_to_desc(data);
-> +
-> +       irqd_set_move_pending(data);
-> +       irq_copy_pending(desc, dest);
-> +       return 0;
-> +}
-> +#else
-> +static inline int irq_set_affinity_pending(struct irq_data *data,
-> +                                          const struct cpumask *dest)
-> +{
-> +       return -EBUSY;
-> +}
-> +#endif
-> +
-> +static int irq_try_set_affinity(struct irq_data *data,
-> +                               const struct cpumask *dest, bool force)
-> +{
-> +       int ret = irq_do_set_affinity(data, dest, force);
-> +
-> +       /*
-> +        * In case that the underlying vector management is busy and the
-> +        * architecture supports the generic pending mechanism then utilize
-> +        * this to avoid returning an error to user space.
-> +        */
-> +       if (ret == -EBUSY && !force)
-> +               ret = irq_set_affinity_pending(data, dest);
-> +       return ret;
-> +}
-> +
->  int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
->                             bool force)
->  {
-> @@ -214,8 +247,8 @@ int irq_set_affinity_locked(struct irq_d
->         if (!chip || !chip->irq_set_affinity)
->                 return -EINVAL;
->
-> -       if (irq_can_move_pcntxt(data)) {
-> -               ret = irq_do_set_affinity(data, mask, force);
-> +       if (irq_can_move_pcntxt(data) && !irqd_is_setaffinity_pending(data)) {
-> +               ret = irq_try_set_affinity(data, mask, force);
->         } else {
->                 irqd_set_move_pending(data);
->                 irq_copy_pending(desc, mask);
->
->
+I met (rare!) cases when doing it once was not enough due to a race and 
+the signal was missed. However involved testcases were really artificial.
+ 
+> Instead, might it make sense to just send the signals once, and if that
+> doesn't work, reverse the transition?  Then we could make patching a
+> synchronous operation.  But then, it might be remotely possible that the
+> reverse operation also stalls (e.g., on a kthread).  So, maybe it's best
+> to just leave all these controls in the hands of the user.
+
+And there is 'force' option...
+
+So given all this, I'd call klp_send_signals() once and then leave it up 
+to the user. Would that work for you?
+
+> All that said, a few code review comments:
+> 
+> - AFAICT, it does an 8 second delay instead of a 10 second delay,
+>   because
+
+Not that it matters, because it is still wrong, but it is a 9 second 
+delay (or I miscounted again).
+
+>   a) try_complete_transition() is first called before there's any delay;
+> 
+>   b) the preincrement operator used on signals_cnt.
+> 
+> - I think 15 seconds might be a better default.  I've seen longer
+>   patching delays on a system with 100+ CPUs.
+
+Ok, why not. 
+
+> - If a kthread or idle task is sleeping on a patched function, the
+>   pr_notice("signaling remaining tasks\n") will be repeated continously.
+
+True.
+
+> - It might be cleaner to do it from the delayed work function
+>   (klp_transition_work_fn).
+
+I considered it but then decided to do it in klp_try_complete_transition() 
+under 'if (!complete)'. It belongs right there in my opinion.
+
+Thanks,
+Miroslav
