@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753248AbeFERFW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:05:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34344 "EHLO mail.kernel.org"
+        id S1753306AbeFERFc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752033AbeFERFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:18 -0400
+        id S1752058AbeFERF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "dwmw@amazon.co.uk, boris.ostrovsky@oracle.com, Juergen Gross"
-        <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.9 17/61] x86/amd: dont set X86_BUG_SYSRET_SS_ATTRS when running under Xen
-Date: Tue,  5 Jun 2018 19:01:38 +0200
-Message-Id: <20180605170118.702375842@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Subject: [PATCH 4.9 29/61] powerpc/rfi-flush: Always enable fallback flush on pseries
+Date: Tue,  5 Jun 2018 19:01:50 +0200
+Message-Id: <20180605170119.576721056@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -32,57 +29,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-Upstream commit: def9331a12977770cc6132d79f8e6565871e8e38 ("x86/amd:
-don't set X86_BUG_SYSRET_SS_ATTRS when running under Xen")
+commit 84749a58b6e382f109abf1e734bc4dd43c2c25bb upstream.
 
-When running as Xen pv guest X86_BUG_SYSRET_SS_ATTRS must not be set
-on AMD cpus.
+This ensures the fallback flush area is always allocated on pseries,
+so in case a LPAR is migrated from a patched to an unpatched system,
+it is possible to enable the fallback flush in the target system.
 
-This bug/feature bit is kind of special as it will be used very early
-when switching threads. Setting the bit and clearing it a little bit
-later leaves a critical window where things can go wrong. This time
-window has enlarged a little bit by using setup_clear_cpu_cap() instead
-of the hypervisor's set_cpu_features callback. It seems this larger
-window now makes it rather easy to hit the problem.
-
-The proper solution is to never set the bit in case of Xen.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/amd.c |    5 +++--
- arch/x86/xen/enlighten.c  |    4 +---
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ arch/powerpc/platforms/pseries/setup.c |   10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -857,8 +857,9 @@ static void init_amd(struct cpuinfo_x86
- 		if (cpu_has(c, X86_FEATURE_3DNOW) || cpu_has(c, X86_FEATURE_LM))
- 			set_cpu_cap(c, X86_FEATURE_3DNOWPREFETCH);
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -459,26 +459,18 @@ static void pseries_setup_rfi_flush(void
  
--	/* AMD CPUs don't reset SS attributes on SYSRET */
--	set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
-+	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
-+	if (!cpu_has(c, X86_FEATURE_XENPV))
-+		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
- }
+ 	/* Enable by default */
+ 	enable = true;
++	types = L1D_FLUSH_FALLBACK;
  
- #ifdef CONFIG_X86_32
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -474,10 +474,8 @@ static void __init xen_init_cpuid_mask(v
+ 	rc = plpar_get_cpu_characteristics(&result);
+ 	if (rc == H_SUCCESS) {
+-		types = L1D_FLUSH_NONE;
+-
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
+ 			types |= L1D_FLUSH_MTTRIG;
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
+ 			types |= L1D_FLUSH_ORI;
  
- static void __init xen_init_capabilities(void)
- {
--	if (xen_pv_domain()) {
--		setup_clear_cpu_cap(X86_BUG_SYSRET_SS_ATTRS);
-+	if (xen_pv_domain())
- 		setup_force_cpu_cap(X86_FEATURE_XENPV);
--	}
- }
+-		/* Use fallback if nothing set in hcall */
+-		if (types == L1D_FLUSH_NONE)
+-			types = L1D_FLUSH_FALLBACK;
+-
+ 		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
+ 		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
+ 			enable = false;
+-	} else {
+-		/* Default to fallback if case hcall is not available */
+-		types = L1D_FLUSH_FALLBACK;
+ 	}
  
- static void xen_set_debugreg(int reg, unsigned long val)
+ 	setup_rfi_flush(types, enable);
