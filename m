@@ -1,90 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeFEKWi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:22:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58256 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751442AbeFEKWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:22:37 -0400
-X-Google-Smtp-Source: ADUXVKKHwawTxKjP9wl/UW3JbONgSJHUSbFRywvR1lPplWXjrn2+dRFS0xkqkLbRP6sSnZqg9nnftLt+CJSzZsTBXsI=
+        id S1751710AbeFEK1M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 06:27:12 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48386 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751506AbeFEK1L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 06:27:11 -0400
+Subject: Re: [PATCH] drm/bridge: analogix-anx78xx: Switch to SPDX identifier.
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
+References: <20180605100051.4023-1-enric.balletbo@collabora.com>
+ <1896069.8N7yzJMC7C@avalon>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <f7f92ca9-adee-42c3-f822-0ce5ce85a69a@collabora.com>
+Date: Tue, 5 Jun 2018 12:27:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1528140269-26205-1-git-send-email-chang.seok.bae@intel.com>
- <1528140269-26205-7-git-send-email-chang.seok.bae@intel.com>
- <8a41304a-3517-003a-badf-1ba8f7ababe4@nextfour.com> <51587908-9652-6a8e-0e01-f387e3ae5852@zytor.com>
-In-Reply-To: <51587908-9652-6a8e-0e01-f387e3ae5852@zytor.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 5 Jun 2018 03:22:22 -0700
-X-Gmail-Original-Message-ID: <CALCETrVP9-H+gJihrU4NGzU151qVPJsK3YYZzJf_BtDLz-Pgsg@mail.gmail.com>
-Message-ID: <CALCETrVP9-H+gJihrU4NGzU151qVPJsK3YYZzJf_BtDLz-Pgsg@mail.gmail.com>
-Subject: Re: [PATCH 6/6] x86/vdso: Move out the CPU number store
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        "Bae, Chang Seok" <chang.seok.bae@intel.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1896069.8N7yzJMC7C@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55AMhrf000372
 
-On Mon, Jun 4, 2018 at 10:36 PM H. Peter Anvin <hpa@zytor.com> wrote:
->
-> On 06/04/18 20:57, Mika Penttilä wrote:
-> >
-> > This won't work on X86-32 because it actually uses the segment limit with fs: access. So there
-> > is a reason why the lsl based method is X86-64 only.
-> >
->
-> <thinks out loud>
->
-> Why does that matter in any shape, way, or form?  The LSL instruction
-> doesn't touch any of the segment registers, it just uses a segment
-> selector number.
->
-> <looks at code>
->
-> I see... we have a VERY unfortunate name collision: the x86-64
-> GDT_ENTRY_PERC_PU and the i386 GDT_ENTRY_PERCPU are in fact two
-> completely different things, with the latter being the actual percpu
-> offset used by the kernel.
->
-> So yes, this patch is wrong, because the naming of the x86-64 segment is
-> insane especially in the proximity of the  -- it should be something
-> like GDT_ENTRY_CPU_NUMBER.
->
-> Unfortunately we probably can't use the same GDT entry on x86-32 and
-> x86-64, because entry 15 (selector 0x7b) is USER_DS, which is something
-> we really don't want to screw with.  This means i386 programs that
-> execute LSL directly for whatever reason will have to understand the
-> difference, but most of the other segment numbers differ as well,
-> including user space %cs (USER_CS/USER32_CS) and %ds/%es/%ss (USER_DS).
-> Perhaps we could bump down segments 23-28 by one and put it as 23, that
-> way the CPU_NUMBER segment would always be at %ss+80 for the default
-> (flat, initial) user space %ss.  (We want to specify using %ss rather
-> than %ds, because it is less likely to be changed and because 64 bits,
-> too, have %ss defined, but not %ds.)
->
-> <action item>
->
-> Rename the x86-64 segment to CPU_NUMBER, fixing the naming conflict.
+Hi Laurent,
 
-Yes, agreed.  Probably as its own patch *before* the rest of this cleanup.
+On 05/06/18 12:11, Laurent Pinchart wrote:
+> Hi Enric,
+> 
+> Thank you for the patch.
+> 
+> On Tuesday, 5 June 2018 13:00:50 EEST Enric Balletbo i Serra wrote:
+>> Adopt the SPDX license identifier headers to ease license compliance
+>> management.
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>>  drivers/gpu/drm/bridge/analogix-anx78xx.c | 24 ++++++++---------------
+>>  1 file changed, 8 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c
+>> b/drivers/gpu/drm/bridge/analogix-anx78xx.c index
+>> b49043866be6..54d7e7981bed 100644
+>> --- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
+>> +++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+>> @@ -1,19 +1,11 @@
+>> -/*
+>> - * Copyright(c) 2016, Analogix Semiconductor.
+>> - *
+>> - * This program is free software; you can redistribute it and/or modify
+>> - * it under the terms of the GNU General Public License version 2 and
+>> - * only version 2 as published by the Free Software Foundation.
+>> - *
+>> - * This program is distributed in the hope that it will be useful,
+>> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> - * GNU General Public License for more details.
+>> - *
+>> - * Based on anx7808 driver obtained from chromeos with copyright:
+>> - * Copyright(c) 2013, Google Inc.
+>> - *
+>> - */
+>> +// SPDX-License-Identifier: GPL-2.0
+> 
+> This looks good to m.
+> 
+>> +// Driver for ANX78xx SlimPort transmitter.
+>> +//
+>> +// Copyright (C) 2016 Analogix Semiconductor.
+>> +// Copyright (C) 2016 Google, Inc.
+> 
+> Should the last line be 2013, not 2016 ?
+> 
+Yes, my bad.
 
-> Add 1 to GDT entry numbers 23-28 for i386 (all of these are
-> kernel-internal segments and so have no impact on user space).
-> Add i386 CPU_NUMBER equivalent to x86-64 at GDT entry 23.
-> Document the above relationship between segments.
+>> +//
+>> +// Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
+> I don't think there's a need to convert the whole comment block to C++-style.
+> 
 
-Sure, but also as a standalone patch, please.
+Seems that putting everything as // is Linus Torvalds' preferred style:
+https://lkml.org/lkml/2017/11/25/133
 
->
-> OK, everyone?
->
->         -hpa
+But if you want I change, I don't mind to use the c style instead, just let me know.
+
+Best regards,
+ Enric
+
+>>  #include <linux/delay.h>
+>>  #include <linux/err.h>
+>>  #include <linux/interrupt.h>
+> 
