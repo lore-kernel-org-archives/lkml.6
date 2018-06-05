@@ -1,20 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753833AbeFERMy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:12:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35458 "EHLO mail.kernel.org"
+        id S1753795AbeFERNS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:13:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752186AbeFERGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:17 -0400
+        id S1753539AbeFERGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 44/61] powerpc/pseries: Restore default security feature flags on setup
-Date: Tue,  5 Jun 2018 19:02:05 +0200
-Message-Id: <20180605170120.487069044@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 41/61] powerpc/64s: Wire up cpu_show_spectre_v2()
+Date: Tue,  5 Jun 2018 19:02:02 +0200
+Message-Id: <20180605170120.294001248@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -30,56 +28,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 6232774f1599028a15418179d17f7df47ede770a upstream.
+commit d6fbe1c55c55c6937cbea3531af7da84ab7473c3 upstream.
 
-After migration the security feature flags might have changed (e.g.,
-destination system with unpatched firmware), but some flags are not
-set/clear again in init_cpu_char_feature_flags() because it assumes
-the security flags to be the defaults.
+Add a definition for cpu_show_spectre_v2() to override the generic
+version. This has several permuations, though in practice some may not
+occur we cater for any combination.
 
-Additionally, if the H_GET_CPU_CHARACTERISTICS hypercall fails then
-init_cpu_char_feature_flags() does not run again, which potentially
-might leave the system in an insecure or sub-optimal configuration.
+The most verbose is:
 
-So, just restore the security feature flags to the defaults assumed
-by init_cpu_char_feature_flags() so it can set/clear them correctly,
-and to ensure safe settings are in place in case the hypercall fail.
+  Mitigation: Indirect branch serialisation (kernel only), Indirect
+  branch cache disabled, ori31 speculation barrier enabled
 
-Fixes: f636c14790ea ("powerpc/pseries: Set or clear security feature flags")
-Depends-on: 19887d6a28e2 ("powerpc: Move default security feature flags")
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+We don't treat the ori31 speculation barrier as a mitigation on its
+own, because it has to be *used* by code in order to be a mitigation
+and we don't know if userspace is doing that. So if that's all we see
+we say:
+
+  Vulnerable, ori31 speculation barrier enabled
+
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/setup.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/powerpc/kernel/security.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -453,6 +453,10 @@ static void __init find_and_init_phbs(vo
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -58,3 +58,36 @@ ssize_t cpu_show_spectre_v1(struct devic
  
- static void init_cpu_char_feature_flags(struct h_cpu_char_result *result)
- {
-+	/*
-+	 * The features below are disabled by default, so we instead look to see
-+	 * if firmware has *enabled* them, and set them if so.
-+	 */
- 	if (result->character & H_CPU_CHAR_SPEC_BAR_ORI31)
- 		security_ftr_set(SEC_FTR_SPEC_BAR_ORI31);
- 
-@@ -492,6 +496,13 @@ void pseries_setup_rfi_flush(void)
- 	bool enable;
- 	long rc;
- 
-+	/*
-+	 * Set features to the defaults assumed by init_cpu_char_feature_flags()
-+	 * so it can set/clear again any features that might have changed after
-+	 * migration, and in case the hypercall fails and it is not even called.
-+	 */
-+	powerpc_security_features = SEC_FTR_DEFAULT;
+ 	return sprintf(buf, "Vulnerable\n");
+ }
 +
- 	rc = plpar_get_cpu_characteristics(&result);
- 	if (rc == H_SUCCESS)
- 		init_cpu_char_feature_flags(&result);
++ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	bool bcs, ccd, ori;
++	struct seq_buf s;
++
++	seq_buf_init(&s, buf, PAGE_SIZE - 1);
++
++	bcs = security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED);
++	ccd = security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED);
++	ori = security_ftr_enabled(SEC_FTR_SPEC_BAR_ORI31);
++
++	if (bcs || ccd) {
++		seq_buf_printf(&s, "Mitigation: ");
++
++		if (bcs)
++			seq_buf_printf(&s, "Indirect branch serialisation (kernel only)");
++
++		if (bcs && ccd)
++			seq_buf_printf(&s, ", ");
++
++		if (ccd)
++			seq_buf_printf(&s, "Indirect branch cache disabled");
++	} else
++		seq_buf_printf(&s, "Vulnerable");
++
++	if (ori)
++		seq_buf_printf(&s, ", ori31 speculation barrier enabled");
++
++	seq_buf_printf(&s, "\n");
++
++	return s.len;
++}
