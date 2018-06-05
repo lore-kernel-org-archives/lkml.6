@@ -1,95 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753795AbeFERNS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:13:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753539AbeFERGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:06 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 41/61] powerpc/64s: Wire up cpu_show_spectre_v2()
-Date: Tue,  5 Jun 2018 19:02:02 +0200
-Message-Id: <20180605170120.294001248@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
-References: <20180605170117.643936916@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753865AbeFERN1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:13:27 -0400
+Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:41881 "EHLO
+        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753762AbeFERNZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:13:25 -0400
+Date: Tue, 5 Jun 2018 18:13:19 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: mhocko@kernel.org, vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not in
+ swap cache
+Message-ID: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
+fixed races between mremap and other operations for both file-backed and
+anonymous mappings. The file-backed was the most critical as it allowed the
+possibility that data could be changed on a physical page after page_mkclean
+returned which could trigger data loss or data integrity issues. A customer
+reported that the cost of the TLBs for anonymous regressions was excessive
+and resulting in a 30-50% drop in performance overall since this commit
+on a microbenchmark. Unfortunately I neither have access to the test-case
+nor can I describe what it does other than saying that mremap operations
+dominate heavily.
 
-------------------
+The anonymous page race fix is overkill for two reasons. Pages that are not
+in the swap cache are not going to be issued for IO and if a stale TLB entry
+is used, the write still occurs on the same physical page. Any race with
+mmap replacing the address space is handled by mmap_sem. As anonymous pages
+are often dirty, it can mean that mremap always has to flush even when it is
+not necessary.
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+This patch special cases anonymous pages to only flush if the page is in
+swap cache and can be potentially queued for IO. It uses the page lock to
+serialise against any potential reclaim. If the page is added to the swap
+cache on the reclaim side after the page lock is dropped on the mremap
+side then reclaim will call try_to_unmap_flush_dirty() before issuing
+any IO so there is no data integrity issue. This means that in the common
+case where a workload avoids swap entirely that mremap is a much cheaper
+operation due to the lack of TLB flushes.
 
-commit d6fbe1c55c55c6937cbea3531af7da84ab7473c3 upstream.
+Using another testcase that simply calls mremap heavily with varying number
+of threads, it was found that very broadly speaking that TLB shootdowns
+were reduced by 31% on average throughout the entire test case but your
+milage will vary.
 
-Add a definition for cpu_show_spectre_v2() to override the generic
-version. This has several permuations, though in practice some may not
-occur we cater for any combination.
-
-The most verbose is:
-
-  Mitigation: Indirect branch serialisation (kernel only), Indirect
-  branch cache disabled, ori31 speculation barrier enabled
-
-We don't treat the ori31 speculation barrier as a mitigation on its
-own, because it has to be *used* by code in order to be a mitigation
-and we don't know if userspace is doing that. So if that's all we see
-we say:
-
-  Vulnerable, ori31 speculation barrier enabled
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- arch/powerpc/kernel/security.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ mm/mremap.c | 42 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -58,3 +58,36 @@ ssize_t cpu_show_spectre_v1(struct devic
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 049470aa1e3e..d26c5a00fd9d 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -24,6 +24,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/mm-arch-hooks.h>
+ #include <linux/userfaultfd_k.h>
++#include <linux/mm_inline.h>
  
- 	return sprintf(buf, "Vulnerable\n");
+ #include <asm/cacheflush.h>
+ #include <asm/tlbflush.h>
+@@ -112,6 +113,41 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+ 	return pte;
  }
-+
-+ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr, char *buf)
+ 
++/* Returns true if a TLB must be flushed before PTL is dropped */
++static bool should_force_flush(pte_t *pte)
 +{
-+	bool bcs, ccd, ori;
-+	struct seq_buf s;
++	bool is_swapcache;
++	struct page *page;
 +
-+	seq_buf_init(&s, buf, PAGE_SIZE - 1);
++	if (!pte_present(*pte) || !pte_dirty(*pte))
++		return false;
 +
-+	bcs = security_ftr_enabled(SEC_FTR_BCCTRL_SERIALISED);
-+	ccd = security_ftr_enabled(SEC_FTR_COUNT_CACHE_DISABLED);
-+	ori = security_ftr_enabled(SEC_FTR_SPEC_BAR_ORI31);
++	/*
++	 * If we are remapping a dirty file PTE, make sure to flush TLB
++	 * before we drop the PTL for the old PTE or we may race with
++	 * page_mkclean().
++	 */
++	page = pte_page(*pte);
++	if (page_is_file_cache(page))
++		return true;
 +
-+	if (bcs || ccd) {
-+		seq_buf_printf(&s, "Mitigation: ");
++	/*
++	 * For anonymous pages, only flush swap cache pages that could
++	 * be unmapped and queued for swap since flush_tlb_batched_pending was
++	 * last called. Reclaim itself takes care that the TLB is flushed
++	 * before IO is queued. If a page is not in swap cache and a stale TLB
++	 * is used before mremap is complete then the write hits the same
++	 * physical page and there is no lost data loss. Check under the
++	 * page lock to avoid any potential race with reclaim.
++	 */
++	if (!trylock_page(page))
++		return true;
++	is_swapcache = PageSwapCache(page);
++	unlock_page(page);
 +
-+		if (bcs)
-+			seq_buf_printf(&s, "Indirect branch serialisation (kernel only)");
-+
-+		if (bcs && ccd)
-+			seq_buf_printf(&s, ", ");
-+
-+		if (ccd)
-+			seq_buf_printf(&s, "Indirect branch cache disabled");
-+	} else
-+		seq_buf_printf(&s, "Vulnerable");
-+
-+	if (ori)
-+		seq_buf_printf(&s, ", ori31 speculation barrier enabled");
-+
-+	seq_buf_printf(&s, "\n");
-+
-+	return s.len;
++	return is_swapcache;
 +}
++
+ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 		unsigned long old_addr, unsigned long old_end,
+ 		struct vm_area_struct *new_vma, pmd_t *new_pmd,
+@@ -163,15 +199,11 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 
+ 		pte = ptep_get_and_clear(mm, old_addr, old_pte);
+ 		/*
+-		 * If we are remapping a dirty PTE, make sure
+-		 * to flush TLB before we drop the PTL for the
+-		 * old PTE or we may race with page_mkclean().
+-		 *
+ 		 * This check has to be done after we removed the
+ 		 * old PTE from page tables or another thread may
+ 		 * dirty it after the check and before the removal.
+ 		 */
+-		if (pte_present(pte) && pte_dirty(pte))
++		if (should_force_flush(&pte))
+ 			force_flush = true;
+ 		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
+ 		pte = move_soft_dirty_pte(pte);
