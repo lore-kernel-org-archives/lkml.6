@@ -1,94 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751951AbeFEN3y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:29:54 -0400
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:41855 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751842AbeFEN3v (ORCPT
+        id S1752091AbeFENfH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:35:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57548 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751822AbeFENfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:29:51 -0400
-X-Google-Smtp-Source: ADUXVKLhw+AbcbCQgpcSZZ7acxRS295Tk/n97Vod4R2iS6rLIWgh6iXVWjC7MKMyxVZ+p5UpfHE/Zg==
-From: Josef Bacik <josef@toxicpanda.com>
-To: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
-        akpm@linux-foundation.org, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 00/13][V2] Introduce io.latency io controller for cgroups 
-Date: Tue,  5 Jun 2018 09:29:35 -0400
-Message-Id: <20180605132948.1664-1-josef@toxicpanda.com>
-X-Mailer: git-send-email 2.14.3
+        Tue, 5 Jun 2018 09:35:05 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 01/10] vfio: ccw: Moving state change out of IRQ
+ context
+To: Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.vnet.ibm.com>
+Cc: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1527243678-3140-2-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180604155231.42c139ac.cohuck@redhat.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Tue, 5 Jun 2018 15:34:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180604155231.42c139ac.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18060513-0012-0000-0000-0000027B6119
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060513-0013-0000-0000-000020AC6657
+Message-Id: <5330d3e5-4098-e936-de57-5f4cb2d8f564@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=882 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806050157
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v1->v2:
-- fix how we get the swap device for the page when doing the swap throttling.
-- add a bunch of comments how the throttling works.
-- move the documentation to cgroup-v2.txt
-- address the various other comments.
+On 04/06/2018 15:52, Cornelia Huck wrote:
+> On Fri, 25 May 2018 12:21:09 +0200
+> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+>
+>> Let's move the state change from the IRQ routine to the
+>> workqueue callback.
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+>> ---
+>>   drivers/s390/cio/vfio_ccw_drv.c | 20 +++++++-------------
+>>   drivers/s390/cio/vfio_ccw_fsm.c | 14 ++++++++------
+>>   2 files changed, 15 insertions(+), 19 deletions(-)
+> This causes a change in behaviour for devices in the notoper state.
+>
+> Now:
+> - vfio_ccw_sch_irq is called
 
-==== Original message =====
+This should not be done if the subchannel is not operational.
 
-This series adds a latency based io controller for cgroups.  It is based on the
-same concept as the writeback throttling code, which is watching the overall
-total latency of IO's in a given window and then adjusting the queue depth of
-the group accordingly.  This is meant to be a workload protection controller, so
-whoever has the lowest latency target gets the preferential treatment with no
-thought to fairness or proportionality.  It is meant to be work conserving, so
-as long as nobody is missing their latency targets the disk is fair game.
+> - via the state machine, disabling the subchannel is (re-)triggered
 
-We have been testing this in production for several months now to get the
-behavior right and we are finally at the point that it is working well in all of
-our test cases.  With this patch we protect our main workload (the web server)
-and isolate out the system services (chef/yum/etc).  This works well in the
-normal case, smoothing out weird request per second (RPS) dips that we would see
-when one of the system services would run and compete for IO resources.  This
-also works incredibly well in the runaway task case.
+I removed the fsm_disabled_irq() callback from VFIO_CCW_STATE_NOT_OPER
+because the subchannel is not even initialized at that moment.
+We have no reference to the subchannel.
 
-The runaway task usecase is where we have some task that slowly eats up all of
-the memory on the system (think a memory leak).  Previously this sort of
-workload would push the box into a swapping/oom death spiral that was only
-recovered by rebooting the box.  With this patchset and proper configuration of
-the memory.low and io.latency controllers we're able to survive this test with a
-at most 20% dip in RPS.
+In the previous driver NOT_OPER and STANDBY were quite the same.
+Now NOT_OPER means "we can not operate on this sub channel"
+because we do not have it in a correct state (no ISC, no mediated device,
+the probe is not finiched)
 
-There are a lot of extra patches in here to set everything up.  The following
-are just infrastructure that should be relatively uncontroversial
+Now STANDBY means we have the device ready but is disabled.
+In this case the software infrastructure is ready and if an interrupt comes
+(what should not happen) we will disable the subchannel again.
 
-[PATCH 01/13] block: add bi_blkg to the bio for cgroups
-[PATCH 02/13] block: introduce bio_issue_as_root_blkg
-[PATCH 03/13] blk-cgroup: allow controllers to output their own stats
+>
+> With your patch:
+> - the work function is queued in any case; eventually, it will change
+>    the device's state to idle (unless we don't have an mdev at that
+>    point in time)
+> - completion is signaled
+>
+> I'm not sure that's what we want.
+>
 
-The following simply allow us to tag swap IO and assign the appropriate cgroup
-to the bio's so we can do the appropriate accounting inside the io controller
+Yes it is queued in any case but the IRQ is really treated only if the
+subchannel is in the right state (STANDBY, BUSY, IDLE and QUIESCING).
 
-[PATCH 04/13] blk: introduce REQ_SWAP
-[PATCH 05/13] swap,blkcg: issue swap io with the appropriate context
+In the NOT_OPER state we do not have the mdev not the driver initialized.
 
-This is so that we can induce delays.  The io controller mostly throttles based
-on queue depth, however for cases like REQ_SWAP/REQ_META where we cannot
-throttle without inducing a priority inversion we have a mechanism to "back
-charge" groups for this IO by inducing an artificial delay at user space return
-time.
 
-[PATCH 06/13] blkcg: add generic throttling mechanism
-[PATCH 07/13] memcontrol: schedule throttling if we are congested
-
-This is more moving things around and refactoring, Jens you may want to pay
-close attention to this to make sure I didn't break anything.
-
-[PATCH 08/13] blk-stat: export helpers for modifying blk_rq_stat
-[PATCH 09/13] blk-rq-qos: refactor out common elements of blk-wbt
-[PATCH 10/13] block: remove external dependency on wbt_flags
-[PATCH 11/13] rq-qos: introduce dio_bio callback
-
-And this is the meat of the controller and it's documentation.
-
-[PATCH 12/13] block: introduce blk-iolatency io controller
-[PATCH 13/13] Documentation: add a doc for blk-iolatency
-
-Jens, I'm sending this through your tree since it's mostly block related,
-however there are the two mm related patches, so if somebody from mm could weigh
-in on how we want to handle those that would be great.  Thanks,
-
-Josef
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
