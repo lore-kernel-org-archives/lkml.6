@@ -1,71 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753956AbeFERJ7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:09:59 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45961 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753752AbeFERJo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:09:44 -0400
-X-ME-Proxy: <xmx:18MWWyBlMV3NMfw0MvmCyXnnGghFJIJbqmbQCmuZ1BjgNp7RlNhldw>
-X-ME-Proxy: <xmx:18MWW8vEqzyvedpCd5BgIXId7nI-twr1dAn9V6EmAFtIQrtprLpjRw>
-X-ME-Proxy: <xmx:18MWW3Z178QX-g9nit9Ew_D9PY2UoXqVkLXqXACnGI4hWkf6eOVxTA>
-X-ME-Proxy: <xmx:18MWW_WEC4RT35Ev35NmDHd2CORTuiMUwniVJtIXwg65o8XfYbQmbA>
-X-ME-Proxy: <xmx:18MWW76lzzc5OUfo_bQtFR6BTvbQEm-IWQkfKdMLogGiUPAO-V12mg>
-X-ME-Proxy: <xmx:18MWWyfHeI_Y5GLcRoXzNwM7H5HHxi-acryqmJ9RpESjYQhYQSDZ3Q>
-X-ME-Sender: <xms:18MWW4sBXjmJgLXFBe0uZzZtnAFalbS7cEnG_VFfedrlPnLllLOBng>
-Date: Tue, 5 Jun 2018 19:08:24 +0200
-From: Greg KH <greg@kroah.com>
-To: Gary R Hook <gary.hook@amd.com>
-Cc: iommu@lists.linux-foundation.org, joro@8bytes.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] iommu - Enable debugfs exposure of IOMMU driver
- internals
-Message-ID: <20180605170824.GA11965@kroah.com>
-References: <152761784341.2654.8609366076331539902.stgit@sosgrh1.amd.com>
- <152761819480.2654.5371070582955429468.stgit@sosgrh1.amd.com>
- <20180529184101.GB10618@kroah.com>
- <3249cc11-09d8-2078-28a6-efd3078ca0e9@amd.com>
+        id S1753962AbeFERKL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:10:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753806AbeFERKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:10:08 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.4 33/37] fix io_destroy()/aio_complete() race
+Date: Tue,  5 Jun 2018 19:01:38 +0200
+Message-Id: <20180605170110.835706577@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+References: <20180605170108.884872354@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3249cc11-09d8-2078-28a6-efd3078ca0e9@amd.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 12:01:41PM -0500, Gary R Hook wrote:
-> > > +/**
-> > > + * iommu_debugfs_new_driver_dir - create a vendor directory under debugfs/iommu
-> > > + * @vendor: name of the vendor-specific subdirectory to create
-> > > + *
-> > > + * This function is called by an IOMMU driver to create the top-level debugfs
-> > > + * directory for that driver.
-> > > + *
-> > > + * Return: upon success, a pointer to the dentry for the new directory.
-> > > + *         NULL in case of failure.
-> > > + */
-> > > +struct dentry *iommu_debugfs_new_driver_dir(const char *vendor)
-> > > +{
-> > > +	struct dentry *d_new;
-> > > +
-> > > +	d_new = debugfs_create_dir(vendor, iommu_debugfs_dir);
-> > > +
-> > > +	return d_new;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(iommu_debugfs_new_driver_dir);
-> > 
-> > Why are you wrapping a debugfs call?  Why not just export
-> > iommu_debugfs_dir instead?
-> 
-> It was a choice, as I stated in my other post. It is not a requirement.
-> If you resolutely reject this approach, that's fine. I'll change it, no
-> worries.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Either is fine, but if it stays, it should stay a single line function
-:)
+------------------
 
-thanks,
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-greg k-h
+commit 4faa99965e027cc057c5145ce45fa772caa04e8d upstream.
+
+If io_destroy() gets to cancelling everything that can be cancelled and
+gets to kiocb_cancel() calling the function driver has left in ->ki_cancel,
+it becomes vulnerable to a race with IO completion.  At that point req
+is already taken off the list and aio_complete() does *NOT* spin until
+we (in free_ioctx_users()) releases ->ctx_lock.  As the result, it proceeds
+to kiocb_free(), freing req just it gets passed to ->ki_cancel().
+
+Fix is simple - remove from the list after the call of kiocb_cancel().  All
+instances of ->ki_cancel() already have to cope with the being called with
+iocb still on list - that's what happens in io_cancel(2).
+
+Cc: stable@kernel.org
+Fixes: 0460fef2a921 "aio: use cancellation list lazily"
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/aio.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -628,9 +628,8 @@ static void free_ioctx_users(struct perc
+ 	while (!list_empty(&ctx->active_reqs)) {
+ 		req = list_first_entry(&ctx->active_reqs,
+ 				       struct aio_kiocb, ki_list);
+-
+-		list_del_init(&req->ki_list);
+ 		kiocb_cancel(req);
++		list_del_init(&req->ki_list);
+ 	}
+ 
+ 	spin_unlock_irq(&ctx->ctx_lock);
