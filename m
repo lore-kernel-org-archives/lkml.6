@@ -1,119 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753445AbeFERFy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:05:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753383AbeFERFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:47 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 35/61] powerpc/powernv: Set or clear security feature flags
-Date: Tue,  5 Jun 2018 19:01:56 +0200
-Message-Id: <20180605170119.933550969@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
-References: <20180605170117.643936916@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753497AbeFERGA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:00 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:41238 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753383AbeFERFz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:55 -0400
+From: Richard Weinberger <richard@sigma-star.at>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Richard Weinberger <richard.weinberger@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
+Subject: Re: [GIT PULL] fscrypt updates for 4.18
+Date: Tue, 05 Jun 2018 19:05:52 +0200
+Message-ID: <5151941.CDXohbuWeC@blindfold>
+In-Reply-To: <20180605170208.GE7839@thunk.org>
+References: <20180605150751.GA9436@thunk.org> <30587992.7Od65ROsjm@blindfold> <20180605170208.GE7839@thunk.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Am Dienstag, 5. Juni 2018, 19:02:08 CEST schrieb Theodore Y. Ts'o:
+> On Tue, Jun 05, 2018 at 06:10:24PM +0200, Richard Weinberger wrote:
+> > That's the question. I understand the use case, but I fear attack scenarios
+> > where someone manages to downgrade the crypto of my phone.
+> > This is why I was asking whether Android tells me whether Speck is used or not.
+> > "it does encryption" is clearly not enough.
+> 
+> An attack scenario where someone manages to downgrade the crypto of
+> your phone would require replacing your kernel and your /system
+> partition --- at which point, you've got other problems.  :-)
 
-------------------
+This means Speck is never enabled at kernel level on non-cheap phones?
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+Thanks,
+//richard
 
-commit 77addf6e95c8689e478d607176b399a6242a777e upstream.
-
-Now that we have feature flags for security related things, set or
-clear them based on what we see in the device tree provided by
-firmware.
-
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/platforms/powernv/setup.c |   56 +++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
-
---- a/arch/powerpc/platforms/powernv/setup.c
-+++ b/arch/powerpc/platforms/powernv/setup.c
-@@ -37,9 +37,63 @@
- #include <asm/smp.h>
- #include <asm/tm.h>
- #include <asm/setup.h>
-+#include <asm/security_features.h>
- 
- #include "powernv.h"
- 
-+
-+static bool fw_feature_is(const char *state, const char *name,
-+			  struct device_node *fw_features)
-+{
-+	struct device_node *np;
-+	bool rc = false;
-+
-+	np = of_get_child_by_name(fw_features, name);
-+	if (np) {
-+		rc = of_property_read_bool(np, state);
-+		of_node_put(np);
-+	}
-+
-+	return rc;
-+}
-+
-+static void init_fw_feat_flags(struct device_node *np)
-+{
-+	if (fw_feature_is("enabled", "inst-spec-barrier-ori31,31,0", np))
-+		security_ftr_set(SEC_FTR_SPEC_BAR_ORI31);
-+
-+	if (fw_feature_is("enabled", "fw-bcctrl-serialized", np))
-+		security_ftr_set(SEC_FTR_BCCTRL_SERIALISED);
-+
-+	if (fw_feature_is("enabled", "inst-spec-barrier-ori31,31,0", np))
-+		security_ftr_set(SEC_FTR_L1D_FLUSH_ORI30);
-+
-+	if (fw_feature_is("enabled", "inst-l1d-flush-trig2", np))
-+		security_ftr_set(SEC_FTR_L1D_FLUSH_TRIG2);
-+
-+	if (fw_feature_is("enabled", "fw-l1d-thread-split", np))
-+		security_ftr_set(SEC_FTR_L1D_THREAD_PRIV);
-+
-+	if (fw_feature_is("enabled", "fw-count-cache-disabled", np))
-+		security_ftr_set(SEC_FTR_COUNT_CACHE_DISABLED);
-+
-+	/*
-+	 * The features below are enabled by default, so we instead look to see
-+	 * if firmware has *disabled* them, and clear them if so.
-+	 */
-+	if (fw_feature_is("disabled", "speculation-policy-favor-security", np))
-+		security_ftr_clear(SEC_FTR_FAVOUR_SECURITY);
-+
-+	if (fw_feature_is("disabled", "needs-l1d-flush-msr-pr-0-to-1", np))
-+		security_ftr_clear(SEC_FTR_L1D_FLUSH_PR);
-+
-+	if (fw_feature_is("disabled", "needs-l1d-flush-msr-hv-1-to-0", np))
-+		security_ftr_clear(SEC_FTR_L1D_FLUSH_HV);
-+
-+	if (fw_feature_is("disabled", "needs-spec-barrier-for-bound-checks", np))
-+		security_ftr_clear(SEC_FTR_BNDS_CHK_SPEC_BAR);
-+}
-+
- static void pnv_setup_rfi_flush(void)
- {
- 	struct device_node *np, *fw_features;
-@@ -55,6 +109,8 @@ static void pnv_setup_rfi_flush(void)
- 	of_node_put(np);
- 
- 	if (fw_features) {
-+		init_fw_feat_flags(fw_features);
-+
- 		np = of_get_child_by_name(fw_features, "inst-l1d-flush-trig2");
- 		if (np && of_property_read_bool(np, "enabled"))
- 			type = L1D_FLUSH_MTTRIG;
+-- 
+sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
+ATU66964118 - FN 374287y
