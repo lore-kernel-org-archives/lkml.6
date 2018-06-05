@@ -1,55 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeFERxx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:53:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753076AbeFERws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:52:48 -0400
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>, stable@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 43/46] perf intel-pt: Fix sync_switch INTEL_PT_SS_NOT_TRACING
-Date: Tue,  5 Jun 2018 14:50:27 -0300
-Message-Id: <20180605175030.32549-44-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
-References: <20180605175030.32549-1-acme@kernel.org>
+        id S1753273AbeFERyZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:54:25 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41682 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753238AbeFERyV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:54:21 -0400
+X-Google-Smtp-Source: ADUXVKJszbCPfNYVsFt2C1/cmjFtjOOtyZ16ZaBjzz5lAH8kyJlqCTI6dlkbthsY+tVqSLpewc0ip1i1ynxBHjB3p+c=
+MIME-Version: 1.0
+In-Reply-To: <20180416205150.113915-2-shakeelb@google.com>
+References: <20180416205150.113915-1-shakeelb@google.com> <20180416205150.113915-2-shakeelb@google.com>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Tue, 5 Jun 2018 10:54:18 -0700
+Message-ID: <CALvZod5buYF8O2TWq06f=M1SyJdS0vJrFhkH4FQw2Ga1qv3GsA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] mm: memcg: remote memcg charging for kmem allocations
+To: Michal Hocko <mhocko@kernel.org>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+On Mon, Apr 16, 2018 at 1:51 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> Introduce the memcg variant for kmalloc[_node] and
+> kmem_cache_alloc[_node].  For kmem_cache_alloc, the kernel switches the
+> root kmem cache with the memcg specific kmem cache for __GFP_ACCOUNT
+> allocations to charge those allocations to the memcg.  However, the memcg
+> to charge is extracted from the current task_struct.  This patch
+> introduces the variant of kmem cache allocation functions where the memcg
+> can be provided explicitly by the caller instead of deducing the memcg
+> from the current task.
+>
+> The kmalloc allocations are underlying served using the kmem caches unless
+> the size of the allocation request is larger than KMALLOC_MAX_CACHE_SIZE,
+> in which case, the kmem caches are bypassed and the request is routed
+> directly to page allocator.  So, for __GFP_ACCOUNT kmalloc allocations,
+> the memcg of current task is charged.  This patch introduces memcg variant
+> of kmalloc functions to allow callers to provide memcg for charging.
+>
+> These functions are useful for use-cases where the allocations should be
+> charged to the memcg different from the memcg of the caller.  One such
+> concrete use-case is the allocations for fsnotify event objects where the
+> objects should be charged to the listener instead of the producer.
+>
+> One requirement to call these functions is that the caller must have the
+> reference to the memcg.  Using kmalloc_memcg and kmem_cache_alloc_memcg
+> implicitly assumes that the caller is requesting a __GFP_ACCOUNT
+> allocation.
+>
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched.
+I will send the v6 of this patchset after this merge window. In v6, I
+will make memalloc_memcg_[save|restore] scope API similar to NOFS,
+NOIO and NORECLAIM APIs.
 
-In one case, INTEL_PT_SS_NOT_TRACING state was not correctly
-transitioning to INTEL_PT_SS_TRACING state due to a missing case clause.
-Add it.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1527762225-26024-2-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/intel-pt.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 492986a25ef6..3db7f0ee52a8 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -1521,6 +1521,7 @@ static int intel_pt_sample(struct intel_pt_queue *ptq)
- 
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
- 		switch (ptq->switch_state) {
-+		case INTEL_PT_SS_NOT_TRACING:
- 		case INTEL_PT_SS_UNKNOWN:
- 		case INTEL_PT_SS_EXPECTING_SWITCH_IP:
- 			err = intel_pt_next_tid(pt, ptq);
--- 
-2.14.3
+> ---
+> Changelog since v4:
+> - Removed branch from hot path of memory charging.
+>
+> Changelog since v3:
+> - Added node variant of directed kmem allocation functions.
+>
+> Changelog since v2:
+> - Merge the kmalloc_memcg patch into this patch.
+> - Instead of plumbing memcg throughout, use field in task_struct to pass
+>   the target_memcg.
+>
+> Changelog since v1:
+> - Fixed build for SLOB
+>
