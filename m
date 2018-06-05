@@ -1,288 +1,511 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751869AbeFEJSs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:18:48 -0400
-Received: from mga06.intel.com ([134.134.136.31]:47667 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751822AbeFEJSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:18:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,478,1520924400";
-   d="scan'208";a="60474742"
-From: "Dziegielewski, Marcin" <marcin.dziegielewski@intel.com>
-To: Javier Gonzalez <javier@cnexlabs.com>
-CC: Matias Bjorling <mb@lightnvm.io>, Jens Axboe <axboe@fb.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Konopko, Igor J" <igor.j.konopko@intel.com>
-Subject: RE: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
- equals to 0
-Thread-Topic: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
- equals to 0
-Thread-Index: AQHT9mJJ9Oeppdx29kSrRWdMkH84gaRE6UWAgArugQCAAAZRAIAAExfA///8EwCAAGqKcIAA48AAgAAilnA=
-Date: Tue, 5 Jun 2018 09:18:41 +0000
-Message-ID: <9FC4315EA6BEAA449828D92CF173A10D3E3848A8@IRSMSX109.ger.corp.intel.com>
-References: <20180528085841.26684-1-mb@lightnvm.io>
- <20180528085841.26684-19-mb@lightnvm.io>
- <54B2CCDB-B869-4087-8AE2-2AC73381B1FF@cnexlabs.com>
- <9FC4315EA6BEAA449828D92CF173A10D3E382351@IRSMSX109.ger.corp.intel.com>
- <3B216FC2-D5EB-4A36-8946-27307DA3D1B1@cnexlabs.com>
- <9FC4315EA6BEAA449828D92CF173A10D3E3833ED@IRSMSX109.ger.corp.intel.com>
- <3A87DF02-6471-4B92-9DDC-4E0FD98249A4@cnexlabs.com>
- <9FC4315EA6BEAA449828D92CF173A10D3E38365C@IRSMSX109.ger.corp.intel.com>
- <B1C611B8-2753-48CF-BF7E-74FD3A2D4CFD@cnexlabs.com>
-In-Reply-To: <B1C611B8-2753-48CF-BF7E-74FD3A2D4CFD@cnexlabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGEyODhjNDEtYTU3NC00OTdmLTgwZGUtZDE4ZDA5MGM5YjA4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVzNhaFBHVm45Q05FbHJCSWNMMlRxeTJYa2pFT0NsZkduZ3oyVmI5a3dhZ2ZvWnlWTTNtRTc1clgxeWVzQXpRZSJ9
-x-originating-ip: [163.33.239.181]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1751779AbeFEJVk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:21:40 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38926 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751506AbeFEJVh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 05:21:37 -0400
+X-Google-Smtp-Source: ADUXVKKlfpf5JeirZ8VxeP9LvwladZYdvrj6/GLKpxegpVGq7aUj3hOWnMVzhpvVsDpDp3KTBImRow==
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: rjw@rjwysocki.net
+Cc: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-pm@vger.kernel.org (open list:POWER MANAGEMENT CORE)
+Subject: [PATCH V5] powercap/drivers/idle_injection: Add an idle injection framework
+Date: Tue,  5 Jun 2018 11:16:40 +0200
+Message-Id: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w559Iskh028863
 
-> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
-> Sent: Tuesday, June 5, 2018 9:12 AM
-> To: Dziegielewski, Marcin <marcin.dziegielewski@intel.com>
-> Cc: Matias Bjørling <mb@lightnvm.io>; Jens Axboe <axboe@fb.com>; linux-
-> block@vger.kernel.org; linux-kernel@vger.kernel.org; Konopko, Igor J
-> <igor.j.konopko@intel.com>
-> Subject: Re: [GIT PULL 18/20] lightnvm: pblk: handle case when mw_cunits
-> equals to 0
-> 
-> > On 4 Jun 2018, at 19.17, Dziegielewski, Marcin
-> <marcin.dziegielewski@intel.com> wrote:
-> >
-> >> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
-> >> Sent: Monday, June 4, 2018 1:16 PM
-> >> To: Dziegielewski, Marcin <marcin.dziegielewski@intel.com>
-> >> Cc: Matias Bjørling <mb@lightnvm.io>; Jens Axboe <axboe@fb.com>;
-> >> linux- block@vger.kernel.org; linux-kernel@vger.kernel.org; Konopko,
-> >> Igor J <igor.j.konopko@intel.com>
-> >> Subject: Re: [GIT PULL 18/20] lightnvm: pblk: handle case when
-> >> mw_cunits equals to 0
-> >>
-> >>
-> >>> On 4 Jun 2018, at 13.11, Dziegielewski, Marcin
-> >> <marcin.dziegielewski@intel.com> wrote:
-> >>>> -----Original Message-----
-> >>>> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
-> >>>> Sent: Monday, June 4, 2018 12:22 PM
-> >>>> To: Dziegielewski, Marcin <marcin.dziegielewski@intel.com>
-> >>>> Cc: Matias Bjørling <mb@lightnvm.io>; Jens Axboe <axboe@fb.com>;
-> >>>> linux- block@vger.kernel.org; linux-kernel@vger.kernel.org;
-> >>>> Konopko, Igor J <igor.j.konopko@intel.com>
-> >>>> Subject: Re: [GIT PULL 18/20] lightnvm: pblk: handle case when
-> >>>> mw_cunits equals to 0
-> >>>>
-> >>>>> On 4 Jun 2018, at 12.09, Dziegielewski, Marcin
-> >>>> <marcin.dziegielewski@intel.com> wrote:
-> >>>>> Frist of all I want to say sorry for late response - I was on holiday.
-> >>>>>
-> >>>>>> From: Javier Gonzalez [mailto:javier@cnexlabs.com]
-> >>>>>> Sent: Monday, May 28, 2018 1:03 PM
-> >>>>>> To: Matias Bjørling <mb@lightnvm.io>
-> >>>>>> Cc: Jens Axboe <axboe@fb.com>; linux-block@vger.kernel.org;
-> >>>>>> linux- kernel@vger.kernel.org; Dziegielewski, Marcin
-> >>>>>> <marcin.dziegielewski@intel.com>; Konopko, Igor J
-> >>>>>> <igor.j.konopko@intel.com>
-> >>>>>> Subject: Re: [GIT PULL 18/20] lightnvm: pblk: handle case when
-> >>>>>> mw_cunits equals to 0
-> >>>>>>
-> >>>>>>> On 28 May 2018, at 10.58, Matias Bjørling <mb@lightnvm.io> wrote:
-> >>>>>>>
-> >>>>>>> From: Marcin Dziegielewski <marcin.dziegielewski@intel.com>
-> >>>>>>>
-> >>>>>>> Some devices can expose mw_cunits equal to 0, it can cause
-> >>>>>>> creation of too small write buffer and cause performance to drop
-> >>>>>>> on write workloads.
-> >>>>>>>
-> >>>>>>> To handle that, we use the default value for MLC and beacause it
-> >>>>>>> covers both 1.2 and 2.0 OC specification, setting up mw_cunits
-> >>>>>>> in
-> >>>>>>> nvme_nvm_setup_12 function isn't longer necessary.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Marcin Dziegielewski
-> >>>>>>> <marcin.dziegielewski@intel.com>
-> >>>>>>> Signed-off-by: Igor Konopko <igor.j.konopko@intel.com>
-> >>>>>>> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-> >>>>>>> ---
-> >>>>>>> drivers/lightnvm/pblk-init.c | 10 +++++++++-
-> >>>>>>> drivers/nvme/host/lightnvm.c |  1 -
-> >>>>>>> 2 files changed, 9 insertions(+), 2 deletions(-)
-> >>>>>>>
-> >>>>>>> diff --git a/drivers/lightnvm/pblk-init.c
-> >>>>>>> b/drivers/lightnvm/pblk-init.c index d65d2f972ccf..0f277744266b
-> >>>>>>> 100644
-> >>>>>>> --- a/drivers/lightnvm/pblk-init.c
-> >>>>>>> +++ b/drivers/lightnvm/pblk-init.c
-> >>>>>>> @@ -356,7 +356,15 @@ static int pblk_core_init(struct pblk *pblk)
-> >>>>>>> 	atomic64_set(&pblk->nr_flush, 0);
-> >>>>>>> 	pblk->nr_flush_rst = 0;
-> >>>>>>>
-> >>>>>>> -	pblk->pgs_in_buffer = geo->mw_cunits * geo->all_luns;
-> >>>>>>> +	if (geo->mw_cunits) {
-> >>>>>>> +		pblk->pgs_in_buffer = geo->mw_cunits * geo-
-> >>> all_luns;
-> >>>>>>> +	} else {
-> >>>>>>> +		pblk->pgs_in_buffer = (geo->ws_opt << 3) * geo-
-> >>> all_luns;
-> >>>>>>> +		/*
-> >>>>>>> +		 * Some devices can expose mw_cunits equal to 0, so
-> >> let's
-> >>>>>> use
-> >>>>>>> +		 * here default safe value for MLC.
-> >>>>>>> +		 */
-> >>>>>>> +	}
-> >>>>>>>
-> >>>>>>> 	pblk->min_write_pgs = geo->ws_opt * (geo->csecs /
-> PAGE_SIZE);
-> >>>>>>> 	max_write_ppas = pblk->min_write_pgs * geo->all_luns; diff
-> >>>>>>> --git a/drivers/nvme/host/lightnvm.c
-> >>>>>>> b/drivers/nvme/host/lightnvm.c index
-> >>>>>>> 41279da799ed..c747792da915 100644
-> >>>>>>> --- a/drivers/nvme/host/lightnvm.c
-> >>>>>>> +++ b/drivers/nvme/host/lightnvm.c
-> >>>>>>> @@ -338,7 +338,6 @@ static int nvme_nvm_setup_12(struct
-> >>>>>> nvme_nvm_id12
-> >>>>>>> *id,
-> >>>>>>>
-> >>>>>>> 	geo->ws_min = sec_per_pg;
-> >>>>>>> 	geo->ws_opt = sec_per_pg;
-> >>>>>>> -	geo->mw_cunits = geo->ws_opt << 3;	/* default to MLC
-> >> safe values
-> >>>>>> */
-> >>>>>>> /* Do not impose values for maximum number of open blocks as it
-> is
-> >>>>>>> 	 * unspecified in 1.2. Users of 1.2 must be aware of this and
-> >>>>>>> eventually
-> >>>>>>> --
-> >>>>>>> 2.11.0
-> >>>>>>
-> >>>>>> By doing this, 1.2 future users (beyond pblk), will fail to have
-> >>>>>> a valid mw_cunits value. It's ok to deal with the 0 case in pblk,
-> >>>>>> but I believe that we should have the default value for 1.2 either
-> way.
-> >>>>>
-> >>>>> I'm not sure. From my understanding, setting of default value was
-> >>>>> workaround for pblk case, am I right ?.
-> >>>>
-> >>>> The default value covers the MLC case directly at the lightnvm
-> >>>> layer, as opposed to doing it directly in pblk. Since pblk is the
-> >>>> only user now, you can argue that all changes in the lightnvm layer
-> >>>> are to solve pblk issues, but the idea is that the geometry should be
-> generic.
-> >>>>
-> >>>>> In my opinion any user of 1.2
-> >>>>> spec should be aware that there is not mw_cunit value. From my
-> >>>>> point of view, leaving here 0 (and decision what do with it to
-> >>>>> lightnvm
-> >>>>> user) is more safer way, but maybe I'm wrong. I believe that it is
-> >>>>> topic to wider discussion with maintainers.
-> >>>>
-> >>>> 1.2 and 2.0 have different geometries, but when we designed the
-> >>>> common nvm_geo structure, the idea was to abstract both specs and
-> >>>> allow the upper layers to use the geometry transparently.
-> >>>>
-> >>>> Specifically in pblk, I would prefer to keep it in such a way that
-> >>>> we don't need to media specific policies (e.g., set default values
-> >>>> for MLC memories), as a general design principle. We already do
-> >>>> some geometry version checks to avoid dereferencing unnecessary
-> >>>> pointers on the fast path, which I would eventually like to remove.
-> >>>
-> >>> Ok, now I understand your point of view and agree with that, I will
-> >>> prepare second version of this patch without this change.
-> >>
-> >> Sounds good.
-> >>
-> >>> Thanks for
-> >>> the clarification.
-> >>
-> >> Sure :)
-> >>
-> >>>>>> A more generic way of doing this would be to have a default value
-> >>>>>> for
-> >>>>>> 2.0 too, in case mw_cunits is reported as 0.
-> >>>>>
-> >>>>> Since 0 is correct value and users can make different decisions
-> >>>>> based on it, I think we shouldn't overwrite it by default value.
-> >>>>> Is it make sense?
-> >>>>
-> >>>> Here I meant at a pblk level - I should have specified it. At the
-> >>>> geometry level, we should not change it.
-> >>>>
-> >>>> The case I am thinking is if mw_cuints repoints 0, but ws_min > 0.
-> >>>> In this case, we still need a host side buffer to serve < ws_min
-> >>>> I/Os, even though the device does not require the buffer to guarantee
-> reads.
-> >>>
-> >>> Oh, ok now we are on the same page. In this patch I was trying to
-> >>> address such case. Do you have other idea how to do it or here are
-> >>> you thinking only on value of default variable?
-> >>
-> >> If doing this, I guess that something in the line of what you did
-> >> with increasing the size of the write buffer via a module parameter.
-> >> For example, checking if the size of the write buffer based on
-> >> mw_cuints is enough to cover ws_min, which normally would only be an
-> >> issue when mw_cuints == 0 or when the number of PUs used for the pblk
-> >> instance is very small and mw_cuints < nr_luns * ws_min.
-> >
-> >
-> > I see here two cases:
-> > - when mw_cunits > 0 buffer size should have number of entries at
-> > least max(mw_cunits, ws_min) * nr_luns and here we are taking care of
-> > both cases mw_cunits > ws_min and mw_cunits < ws_min.
-> > - when mw_cunit == 0 buffer size should have number of entries at
-> > least ws_min * nr _luns and we can use the same puseudocode as above.
-> >
-> 
-> Agree.
-> 
-> > Do you see any other case? Could you clarify second case mentioned by
-> > you or maybe did you mean opposite case? If yes, I believe that above
-> > pseudo code will handle such case too.
-> >
-> 
-> Yes, it is the same case.
-> 
-> One thing to consider is whether the buffer should at least be ws_opt *
-> nr_luns for performance reasons. Since the write thread will always try to
-> send ws_opt, in the case that ws_opt > ws_min, then a buffer size of
-> ws_min * nr_luns will not make use of the whole parallelism exposed by the
-> device.
-> 
+Initially, the cpu_cooling device for ARM was changed by adding a new
+policy inserting idle cycles. The intel_powerclamp driver does a
+similar action.
 
-Agree. After I had sent last email I also thought  that should be ws_opt instead of ws_min.
+Instead of implementing idle injections privately in the cpu_cooling
+device, move the idle injection code in a dedicated framework and give
+the opportunity to other frameworks to make use of it.
 
-> Therefore, I would probably go for ws_opt * nr_luns as the default value
-> when mw_cuints * nr_luns < ws_opt * nr_luns (which covers mw_cuints ==
-> 0), and then keep ws_min * nr_luns as the minimum requirement when
-> setting the buffer size manually.
+The framework relies on the smpboot kthreads which handles via its
+main loop the common code for hotplugging and [un]parking.
 
-Sounds good.
-> 
-> Does this cover your use case?
-> 
+This code was previously tested with the cpu cooling device and went
+through several iterations. It results now in split code and API
+exported in the header file. It was tested with the cpu cooling device
+with success.
 
-Yes, I think that cover all cases related to this topic. I will prepare patch in the afternoon.
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Javi Merino <javi.merino@kernel.org>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Kevin Wangtao <kevin.wangtao@linaro.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Rui Zhang <rui.zhang@intel.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+---
+V5:
+   - Move init_completion in the init function (Viresh Kumar)
+   - Increment task count in the wakeup function (Viresh Kumar)
+   - Remove rollback at init time (Viresh Kumar)
 
-Many thanks for perfect cooperation!
-Marcin
-> >>>>>> Javier
-> >>>>>
-> >>>>> Thanks,
-> >>>>> Marcin
-> >>>>
-> >>>> Javier
-> >>> Thanks,
-> >>> Marcin
-> > Thanks!,
-> > Marcin
+V4:
+   - Wait for completion when stopping (Viresh Kumar)
+   - Check init already done and rollback (Viresh Kumar)
+
+V3:
+   - Fixed typos (Viresh Kumar)
+   - Removed extra blank line (Viresh Kumar)
+   - Added full stop (Viresh Kumar)
+   - Fixed Return kerneldoc format (Viresh Kumar)
+   - Fixed multiple kthreads initialization (Viresh Kumar)
+   - Fixed rollbacking the actions in the unregister function (Viresh Kumar)
+   - Make idle injection kthreads name hardcoded
+   - Kthreads are created in the initcall process
+
+ V2: Fixed checkpatch warnings
+---
+ drivers/powercap/Kconfig          |  10 ++
+ drivers/powercap/Makefile         |   1 +
+ drivers/powercap/idle_injection.c | 358 ++++++++++++++++++++++++++++++++++++++
+ include/linux/idle_injection.h    |  29 +++
+ 4 files changed, 398 insertions(+)
+ create mode 100644 drivers/powercap/idle_injection.c
+ create mode 100644 include/linux/idle_injection.h
+
+diff --git a/drivers/powercap/Kconfig b/drivers/powercap/Kconfig
+index 85727ef..a767ef2 100644
+--- a/drivers/powercap/Kconfig
++++ b/drivers/powercap/Kconfig
+@@ -29,4 +29,14 @@ config INTEL_RAPL
+ 	  controller, CPU core (Power Plance 0), graphics uncore (Power Plane
+ 	  1), etc.
+ 
++config IDLE_INJECTION
++	bool "Idle injection framework"
++	depends on CPU_IDLE
++	default n
++	help
++	  This enables support for the idle injection framework. It
++	  provides a way to force idle periods on a set of specified
++	  CPUs for power capping. Idle period can be injected
++	  synchronously on a set of specified CPUs or alternatively
++	  on a per CPU basis.
+ endif
+diff --git a/drivers/powercap/Makefile b/drivers/powercap/Makefile
+index 0a21ef3..c3bbfee 100644
+--- a/drivers/powercap/Makefile
++++ b/drivers/powercap/Makefile
+@@ -1,2 +1,3 @@
+ obj-$(CONFIG_POWERCAP)	+= powercap_sys.o
+ obj-$(CONFIG_INTEL_RAPL) += intel_rapl.o
++obj-$(CONFIG_IDLE_INJECTION) += idle_injection.o
+diff --git a/drivers/powercap/idle_injection.c b/drivers/powercap/idle_injection.c
+new file mode 100644
+index 0000000..37c7b61
+--- /dev/null
++++ b/drivers/powercap/idle_injection.c
+@@ -0,0 +1,358 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2018 Linaro Limited
++ *
++ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ * The idle injection framework proposes a way to force a cpu to enter
++ * an idle state during a specified amount of time for a specified
++ * period.
++ *
++ * It relies on the smpboot kthreads which handles, via its main loop,
++ * the common code for hotplugging and [un]parking.
++ *
++ * At init time, all the kthreads are created and parked.
++ *
++ * A cpumask is specified as parameter for the idle injection
++ * registering function. The kthreads will be synchronized regarding
++ * this cpumask.
++ *
++ * The idle + run duration is specified via the helpers and then the
++ * idle injection can be started at this point.
++ *
++ * A kthread will call play_idle() with the specified idle duration
++ * from above and then will schedule itself. The latest CPU belonging
++ * to the group is in charge of setting the timer for the next idle
++ * injection deadline.
++ *
++ * The task handling the timer interrupt will wakeup all the kthreads
++ * belonging to the cpumask.
++ */
++#define pr_fmt(fmt) "ii_dev: " fmt
++
++#include <linux/cpu.h>
++#include <linux/freezer.h>
++#include <linux/hrtimer.h>
++#include <linux/sched.h>
++#include <linux/slab.h>
++#include <linux/smpboot.h>
++
++#include <uapi/linux/sched/types.h>
++
++/**
++ * struct idle_injection_thread - task on/off switch structure
++ * @tsk: a pointer to a task_struct injecting the idle cycles
++ * @should_run: a integer used as a boolean by the smpboot kthread API
++ */
++struct idle_injection_thread {
++	struct task_struct *tsk;
++	int should_run;
++};
++
++/**
++ * struct idle_injection_device - data for the idle injection
++ * @cpumask: a cpumask containing the list of CPUs managed by the device
++ * @timer: a hrtimer giving the tempo for the idle injection
++ * @count: an atomic to keep track of the last task exiting the idle cycle
++ * @idle_duration_ms: an atomic specifying the idle duration
++ * @run_duration_ms: an atomic specifying the running duration
++ */
++struct idle_injection_device {
++	cpumask_var_t cpumask;
++	struct hrtimer timer;
++	struct completion stop_complete;
++	atomic_t count;
++	atomic_t idle_duration_ms;
++	atomic_t run_duration_ms;
++};
++
++static DEFINE_PER_CPU(struct idle_injection_thread, idle_injection_thread);
++static DEFINE_PER_CPU(struct idle_injection_device *, idle_injection_device);
++
++/**
++ * idle_injection_wakeup - Wake up all idle injection threads
++ * @ii_dev: the idle injection device
++ *
++ * Every idle injection task belonging to the idle injection device
++ * and running on an online CPU will be wake up by this call.
++ */
++static void idle_injection_wakeup(struct idle_injection_device *ii_dev)
++{
++	struct idle_injection_thread *iit;
++	int cpu;
++
++	for_each_cpu_and(cpu, ii_dev->cpumask, cpu_online_mask) {
++		atomic_inc(&ii_dev->count);
++		iit = per_cpu_ptr(&idle_injection_thread, cpu);
++		iit->should_run = 1;
++		wake_up_process(iit->tsk);
++	}
++}
++
++/**
++ * idle_injection_wakeup_fn - idle injection timer callback
++ * @timer: a hrtimer structure
++ *
++ * This function is called when the idle injection timer expires which
++ * will wake up the idle injection tasks and these ones, in turn, play
++ * idle a specified amount of time.
++ *
++ * Return: HRTIMER_NORESTART.
++ */
++static enum hrtimer_restart idle_injection_wakeup_fn(struct hrtimer *timer)
++{
++	struct idle_injection_device *ii_dev =
++		container_of(timer, struct idle_injection_device, timer);
++
++	idle_injection_wakeup(ii_dev);
++
++	return HRTIMER_NORESTART;
++}
++
++/**
++ * idle_injection_fn - idle injection routine
++ * @cpu: the CPU number the tasks belongs to
++ *
++ * The idle injection routine will stay idle the specified amount of
++ * time
++ */
++static void idle_injection_fn(unsigned int cpu)
++{
++	struct idle_injection_device *ii_dev;
++	struct idle_injection_thread *iit;
++	int run_duration_ms, idle_duration_ms;
++
++	ii_dev = per_cpu(idle_injection_device, cpu);
++	iit = per_cpu_ptr(&idle_injection_thread, cpu);
++
++	/*
++	 * Boolean used by the smpboot main loop and used as a
++	 * flip-flop in this function
++	 */
++	iit->should_run = 0;
++
++	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
++	if (idle_duration_ms)
++		play_idle(idle_duration_ms);
++
++	/*
++	 * The last CPU waking up is in charge of setting the timer. If
++	 * the CPU is hotplugged, the timer will move to another CPU
++	 * (which may not belong to the same cluster) but that is not a
++	 * problem as the timer will be set again by another CPU
++	 * belonging to the cluster. This mechanism is self adaptive.
++	 */
++	if (!atomic_dec_and_test(&ii_dev->count))
++		return;
++
++	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
++	if (run_duration_ms) {
++		hrtimer_start(&ii_dev->timer, ms_to_ktime(run_duration_ms),
++			      HRTIMER_MODE_REL_PINNED);
++		return;
++	}
++
++	complete(&ii_dev->stop_complete);
++}
++
++/**
++ * idle_injection_set_duration - idle and run duration helper
++ * @run_duration_ms: an unsigned int giving the running time in milliseconds
++ * @idle_duration_ms: an unsigned int giving the idle time in milliseconds
++ */
++void idle_injection_set_duration(struct idle_injection_device *ii_dev,
++				 unsigned int run_duration_ms,
++				 unsigned int idle_duration_ms)
++{
++	atomic_set(&ii_dev->run_duration_ms, run_duration_ms);
++	atomic_set(&ii_dev->idle_duration_ms, idle_duration_ms);
++}
++
++/**
++ * idle_injection_get_duration - idle and run duration helper
++ * @run_duration_ms: a pointer to an unsigned int to store the running time
++ * @idle_duration_ms: a pointer to an unsigned int to store the idle time
++ */
++void idle_injection_get_duration(struct idle_injection_device *ii_dev,
++				 unsigned int *run_duration_ms,
++				 unsigned int *idle_duration_ms)
++{
++	*run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
++	*idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
++}
++
++/**
++ * idle_injection_start - starts the idle injections
++ * @ii_dev: a pointer to an idle_injection_device structure
++ *
++ * The function starts the idle injection cycles by first waking up
++ * all the tasks the ii_dev is attached to and let them handle the
++ * idle-run periods.
++ *
++ * Return: -EINVAL if the idle or the running durations are not set.
++ */
++int idle_injection_start(struct idle_injection_device *ii_dev)
++{
++	if (!atomic_read(&ii_dev->idle_duration_ms))
++		return -EINVAL;
++
++	if (!atomic_read(&ii_dev->run_duration_ms))
++		return -EINVAL;
++
++	pr_debug("Starting injecting idle cycles on CPUs '%*pbl'\n",
++		 cpumask_pr_args(ii_dev->cpumask));
++
++	idle_injection_wakeup(ii_dev);
++
++	return 0;
++}
++
++/**
++ * idle_injection_stop - stops the idle injections
++ * @ii_dev: a pointer to an idle injection_device structure
++ *
++ * The function stops the idle injection by resetting the idle and
++ * running durations and wait for the threads to complete. If we are
++ * in the process of injecting an idle cycle, then this will wait the
++ * end of the cycle.
++ */
++void idle_injection_stop(struct idle_injection_device *ii_dev)
++{
++	pr_debug("Stopping injecting idle cycles on CPUs '%*pbl'\n",
++		 cpumask_pr_args(ii_dev->cpumask));
++
++	idle_injection_set_duration(ii_dev, 0, 0);
++
++	wait_for_completion_interruptible(&ii_dev->stop_complete);
++}
++
++/**
++ * idle_injection_setup - initialize the current task as a RT task
++ * @cpu: the CPU number where the kthread is running on (not used)
++ *
++ * Called one time, this function is in charge of setting the task
++ * scheduler parameters.
++ */
++static void idle_injection_setup(unsigned int cpu)
++{
++	struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO / 2 };
++
++	set_freezable();
++
++	sched_setscheduler(current, SCHED_FIFO, &param);
++}
++
++/**
++ * idle_injection_should_run - function helper for the smpboot API
++ * @cpu: the CPU number where the kthread is running on
++ *
++ * Return: a boolean telling if the thread can run.
++ */
++static int idle_injection_should_run(unsigned int cpu)
++{
++	struct idle_injection_thread *iit =
++		per_cpu_ptr(&idle_injection_thread, cpu);
++
++	return iit->should_run;
++}
++
++static struct idle_injection_device *ii_dev_alloc(void)
++{
++	struct idle_injection_device *ii_dev;
++
++	ii_dev = kzalloc(sizeof(*ii_dev), GFP_KERNEL);
++	if (!ii_dev)
++		return NULL;
++
++	if (!alloc_cpumask_var(&ii_dev->cpumask, GFP_KERNEL)) {
++		kfree(ii_dev);
++		return NULL;
++	}
++
++	return ii_dev;
++}
++
++static void ii_dev_free(struct idle_injection_device *ii_dev)
++{
++	free_cpumask_var(ii_dev->cpumask);
++	kfree(ii_dev);
++}
++
++/**
++ * idle_injection_register - idle injection init routine
++ * @cpumask: the list of CPUs managed by the idle injection device
++ *
++ * This is the initialization function in charge of creating the
++ * initializing of the timer and allocate the structures. It does not
++ * starts the idle injection cycles.
++ *
++ * Return: NULL if an allocation fails.
++ */
++struct idle_injection_device *idle_injection_register(struct cpumask *cpumask)
++{
++	struct idle_injection_device *ii_dev;
++	int cpu;
++
++	ii_dev = ii_dev_alloc();
++	if (!ii_dev)
++		return NULL;
++
++	cpumask_copy(ii_dev->cpumask, cpumask);
++	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	ii_dev->timer.function = idle_injection_wakeup_fn;
++	init_completion(&ii_dev->stop_complete);
++
++	for_each_cpu(cpu, ii_dev->cpumask) {
++
++		if (per_cpu(idle_injection_device, cpu)) {
++			pr_err("cpu%d is already registered\n", cpu);
++			goto out_rollback_per_cpu;
++		}
++
++		per_cpu(idle_injection_device, cpu) = ii_dev;
++	}
++
++	return ii_dev;
++
++out_rollback_per_cpu:
++	for_each_cpu(cpu, ii_dev->cpumask)
++		per_cpu(idle_injection_device, cpu) = NULL;
++
++	ii_dev_free(ii_dev);
++
++	return NULL;
++}
++
++/**
++ * idle_injection_unregister - Unregister the idle injection device
++ * @ii_dev: a pointer to an idle injection device
++ *
++ * The function is in charge of stopping the idle injections,
++ * unregister the kthreads and free the allocated memory in the
++ * register function.
++ */
++void idle_injection_unregister(struct idle_injection_device *ii_dev)
++{
++	int cpu;
++
++	idle_injection_stop(ii_dev);
++
++	for_each_cpu(cpu, ii_dev->cpumask)
++		per_cpu(idle_injection_device, cpu) = NULL;
++
++	ii_dev_free(ii_dev);
++}
++
++static struct smp_hotplug_thread idle_injection_threads = {
++	.store = &idle_injection_thread.tsk,
++	.setup = idle_injection_setup,
++	.thread_fn = idle_injection_fn,
++	.thread_comm = "idle_inject/%u",
++	.thread_should_run = idle_injection_should_run,
++};
++
++static int __init idle_injection_init(void)
++{
++	return smpboot_register_percpu_thread(&idle_injection_threads);
++}
++early_initcall(idle_injection_init);
+diff --git a/include/linux/idle_injection.h b/include/linux/idle_injection.h
+new file mode 100644
+index 0000000..ffd20d7
+--- /dev/null
++++ b/include/linux/idle_injection.h
+@@ -0,0 +1,29 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2018 Linaro Ltd
++ *
++ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ */
++#ifndef __IDLE_INJECTION_H__
++#define __IDLE_INJECTION_H__
++
++/* private idle injection device structure */
++struct idle_injection_device;
++
++struct idle_injection_device *idle_injection_register(struct cpumask *cpumask);
++
++void idle_injection_unregister(struct idle_injection_device *ii_dev);
++
++int idle_injection_start(struct idle_injection_device *ii_dev);
++
++void idle_injection_stop(struct idle_injection_device *ii_dev);
++
++void idle_injection_set_duration(struct idle_injection_device *ii_dev,
++				 unsigned int run_duration_ms,
++				 unsigned int idle_duration_ms);
++
++void idle_injection_get_duration(struct idle_injection_device *ii_dev,
++				 unsigned int *run_duration_ms,
++				 unsigned int *idle_duration_ms);
++#endif /* __IDLE_INJECTION_H__ */
+-- 
+2.7.4
