@@ -1,89 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753481AbeFERF6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:05:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752976AbeFERFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:55 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 37/61] powerpc/64s: Enhance the information in cpu_show_meltdown()
-Date: Tue,  5 Jun 2018 19:01:58 +0200
-Message-Id: <20180605170120.052252607@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
-References: <20180605170117.643936916@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1753422AbeFERFx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:53 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33116 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751819AbeFERFs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:48 -0400
+X-Google-Smtp-Source: ADUXVKJxnSSTUPTiadiile5wgZeOh/BrjUAks4VS2Jlc51HzVhseutqkdGQuYB8YBioSi3pwLeY6XA==
+From: Nick Desaulniers <ndesaulniers@google.com>
+To: akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, akataria@vmware.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org, hpa@zytor.com,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
+        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
+        ndesaulniers@google.com, pombredanne@nexb.com, rostedt@goodmis.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, tweek@google.com
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com
+Subject: [PATCH v2 2/2] x86: paravirt: make native_save_fl extern inline
+Date: Tue,  5 Jun 2018 10:05:32 -0700
+Message-Id: <20180605170532.170361-3-ndesaulniers@google.com>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+In-Reply-To: <20180605170532.170361-1-ndesaulniers@google.com>
+References: <20180605170532.170361-1-ndesaulniers@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+native_save_fl() is marked static inline, but by using it as
+a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
 
-------------------
+paravirt's use of native_save_fl() also requires that no GPRs other than
+%rax are clobbered.
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+Compilers have different heuristics which they use to emit stack guard
+code, the emittance of which can break paravirt's callee saved assumption
+by clobbering %rcx.
 
-commit ff348355e9c72493947be337bb4fae4fc1a41eba upstream.
+Marking a function definition extern inline means that if this version
+cannot be inlined, then the out-of-line version will be preferred. By
+having the out-of-line version be implemented in assembly, it cannot be
+instrumented with a stack protector, which might violate custom calling
+conventions that code like paravirt rely on.
 
-Now that we have the security feature flags we can make the
-information displayed in the "meltdown" file more informative.
+The semantics of extern inline has changed since gnu89. This means that
+folks using GCC versions >= 5.1 may see symbol redefinition errors at
+link time for subdirs that override KBUILD_CFLAGS (making the C standard
+used implicit) regardless of this patch. This has been cleaned up
+earlier in the patch set, but is left as a note in the commit message
+for future travelers.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reports:
+https://lkml.org/lkml/2018/5/7/534
+https://github.com/ClangBuiltLinux/linux/issues/16
+
+Discussion:
+https://bugs.llvm.org/show_bug.cgi?id=37512
+https://lkml.org/lkml/2018/5/24/1371
+
+Thanks to the many folks that participated in the discussion.
+
+Debugged-by: Alistair Strachan <astrachan@google.com>
+Debugged-by: Matthias Kaehlcke <mka@chromium.org>
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Suggested-by: Tom Stellar <tstellar@redhat.com>
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
 ---
- arch/powerpc/kernel/security.c |   30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+No changes in v2, but here's the discussion of v1:
+https://patchwork.kernel.org/patch/10444075/
 
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -6,6 +6,7 @@
+ arch/x86/include/asm/irqflags.h |  2 +-
+ arch/x86/kernel/Makefile        |  1 +
+ arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/kernel/irqflags.S
+
+diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+index 89f08955fff7..c4fc17220df9 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -13,7 +13,7 @@
+  * Interrupt control:
+  */
  
- #include <linux/kernel.h>
- #include <linux/device.h>
-+#include <linux/seq_buf.h>
- 
- #include <asm/security_features.h>
- 
-@@ -19,8 +20,33 @@ unsigned long powerpc_security_features
- 
- ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+-static inline unsigned long native_save_fl(void)
++extern inline unsigned long native_save_fl(void)
  {
--	if (rfi_flush)
--		return sprintf(buf, "Mitigation: RFI Flush\n");
-+	bool thread_priv;
-+
-+	thread_priv = security_ftr_enabled(SEC_FTR_L1D_THREAD_PRIV);
-+
-+	if (rfi_flush || thread_priv) {
-+		struct seq_buf s;
-+		seq_buf_init(&s, buf, PAGE_SIZE - 1);
-+
-+		seq_buf_printf(&s, "Mitigation: ");
-+
-+		if (rfi_flush)
-+			seq_buf_printf(&s, "RFI Flush");
-+
-+		if (rfi_flush && thread_priv)
-+			seq_buf_printf(&s, ", ");
-+
-+		if (thread_priv)
-+			seq_buf_printf(&s, "L1D private per thread");
-+
-+		seq_buf_printf(&s, "\n");
-+
-+		return s.len;
-+	}
-+
-+	if (!security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV) &&
-+	    !security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR))
-+		return sprintf(buf, "Not affected\n");
+ 	unsigned long flags;
  
- 	return sprintf(buf, "Vulnerable\n");
- }
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 02d6f5cf4e70..8824d01c0c35 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -61,6 +61,7 @@ obj-y			+= alternative.o i8253.o hw_breakpoint.o
+ obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
+ obj-y			+= pci-iommu_table.o
+ obj-y			+= resource.o
++obj-y			+= irqflags.o
+ 
+ obj-y				+= process.o
+ obj-y				+= fpu/
+diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
+new file mode 100644
+index 000000000000..937bd08c3f79
+--- /dev/null
++++ b/arch/x86/kernel/irqflags.S
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <asm/asm.h>
++#include <asm/export.h>
++#include <linux/linkage.h>
++
++/*
++ * unsigned long native_save_fl(void)
++ */
++ENTRY(native_save_fl)
++	pushf
++	pop %_ASM_AX
++	ret
++ENDPROC(native_save_fl)
++EXPORT_SYMBOL(native_save_fl)
++
++/*
++ * void native_restore_fl(unsigned long flags)
++ * %rdi: flags
++ */
++ENTRY(native_restore_fl)
++	push %_ASM_DI
++	popf
++	ret
++ENDPROC(native_restore_fl)
++EXPORT_SYMBOL(native_restore_fl)
+-- 
+2.17.1.1185.g55be947832-goog
