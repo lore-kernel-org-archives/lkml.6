@@ -1,79 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751696AbeFEGOt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:14:49 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:38535 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbeFEGOr (ORCPT
+        id S1751842AbeFEGQt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 02:16:49 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:37245 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751619AbeFEGQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 02:14:47 -0400
-X-Google-Smtp-Source: ADUXVKJ7Yxgjs5DNji4aWHVzDe6xx03SarM33LVvMcJ0LgYcohXpr8UpNUlZTC9Rkw9iF+e58+cQHGqQDxNmiQQEgdY=
+        Tue, 5 Jun 2018 02:16:46 -0400
+From: Nishanth Menon <nm@ti.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Suman Anna <s-anna@ti.com>
+Subject: [RFC PATCH 1/8] mailbox: ti-msgmgr: Get rid of unused structure members
+Date: Tue, 5 Jun 2018 01:16:22 -0500
+Message-ID: <20180605061629.4759-2-nm@ti.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180605061629.4759-1-nm@ti.com>
+References: <20180605061629.4759-1-nm@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180604065802.157744637@linuxfoundation.org>
-References: <20180604065802.157744637@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 5 Jun 2018 11:44:45 +0530
-Message-ID: <CA+G9fYsjd00toa+mmF9vsKnxtZ9fz5Rk0SHh=DZ0=otTyONjxA@mail.gmail.com>
-Subject: Re: [PATCH 4.9 00/29] 4.9.106-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, Shuah Khan <shuah@kernel.org>,
-        patches@kernelci.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w556Esg1016886
 
-On 4 June 2018 at 12:27, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.9.106 release.
-> There are 29 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed Jun  6 06:57:52 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.106-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Though q_proxies and q_slices do describe the hardware configuration,
+they are not necessary for operation given that the values are
+always default. Hence drop the same.
 
-Results from Linaro’s test farm.
-No regressions on arm64, arm and x86_64.
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+ drivers/mailbox/ti-msgmgr.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-NOTE: LTP fs "read_all_sys" broken on hikey and this is always reproducible.
-But test PASS on qemu_arm64.
-"read_all_sys" is not a real failure consider this as waiver and will
-investigate.
-
-Test log:
-------------
-read_all -d /sys -q -r 10
-incrementing stop
-tst_test.c:1015: INFO: Timeout per run is 0h 15m 00s
-read_all.c:317: BROK: queue_push(workers[j].q, path) timed out
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.9.106-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.9.y
-git commit: b0a024051e17ad3bdd5f6b1e52f5c67fb6087cb9
-git describe: v4.9.105-31-gb0a024051e17
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.105-31-gb0a024051e17
-
-No regressions (compared to build v4.9.105)
-
-<Full report not generated due to infrastructure issues>
-<end of report>
+diff --git a/drivers/mailbox/ti-msgmgr.c b/drivers/mailbox/ti-msgmgr.c
+index 78753a87ba4d..7cd5f9c9c97f 100644
+--- a/drivers/mailbox/ti-msgmgr.c
++++ b/drivers/mailbox/ti-msgmgr.c
+@@ -42,8 +42,6 @@ struct ti_msgmgr_valid_queue_desc {
+  * @queue_count:	Number of Queues
+  * @max_message_size:	Message size in bytes
+  * @max_messages:	Number of messages
+- * @q_slices:		Number of queue engines
+- * @q_proxies:		Number of queue proxies per page
+  * @data_first_reg:	First data register for proxy data region
+  * @data_last_reg:	Last data register for proxy data region
+  * @tx_polled:		Do I need to use polled mechanism for tx
+@@ -58,8 +56,6 @@ struct ti_msgmgr_desc {
+ 	u8 queue_count;
+ 	u8 max_message_size;
+ 	u8 max_messages;
+-	u8 q_slices;
+-	u8 q_proxies;
+ 	u8 data_first_reg;
+ 	u8 data_last_reg;
+ 	bool tx_polled;
+@@ -494,8 +490,6 @@ static const struct ti_msgmgr_desc k2g_desc = {
+ 	.queue_count = 64,
+ 	.max_message_size = 64,
+ 	.max_messages = 128,
+-	.q_slices = 1,
+-	.q_proxies = 1,
+ 	.data_first_reg = 16,
+ 	.data_last_reg = 31,
+ 	.tx_polled = false,
+-- 
+2.15.1
