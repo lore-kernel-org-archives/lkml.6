@@ -1,113 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752072AbeFEPTj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:19:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:52987 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752030AbeFEPTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:19:35 -0400
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 0a4ec6aa035a52c422eceb2ed51ed88392a3d6c2
-In-Reply-To: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
-To: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Stewart Smith <stewart@linux.vnet.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: cpuidle:powernv: Make the snooze timeout dynamic.
-Message-Id: <410b7m522wz9s47@ozlabs.org>
-Date: Wed,  6 Jun 2018 01:19:32 +1000 (AEST)
+        id S1752178AbeFEPUV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:20:21 -0400
+Received: from mail-it0-f47.google.com ([209.85.214.47]:51580 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751726AbeFEPUS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:20:18 -0400
+X-Google-Smtp-Source: ADUXVKKUFITR6fsZw4G9xnwF7Byl73O7glZoPZlbQONvDhhOH9m/NXiKU1xAQvzUVgm03bTVM5Ring==
+Subject: Re: [PATCH][next] lightnvm: pblk: fix resource leak of invalid_bitmap
+To: Colin King <colin.king@canonical.com>,
+        Matias Bjorling <mb@lightnvm.io>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180605151456.20359-1-colin.king@canonical.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <5b0a3b83-5e7d-679e-f2a4-a9305da7c472@kernel.dk>
+Date: Tue, 5 Jun 2018 09:20:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180605151456.20359-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-31 at 12:15:09 UTC, "Gautham R. Shenoy" wrote:
-> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+On 6/5/18 9:14 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The commit 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of
-> snooze to deeper idle state") introduced a timeout for the snooze idle
-> state so that it could be eventually be promoted to a deeper idle
-> state. The snooze timeout value is static and set to the target
-> residency of the next idle state, which would train the cpuidle
-> governor to pick the next idle state eventually.
+> Currently the error exit path when the emeta could not be
+> interpreted is via fail_free_ws and this fails to free
+> invalid_bitmap.  Fix this by adding another exit label and
+> exiting via this to kfree invalid_bitmap.
 > 
-> The unfortunate side-effect of this is that if the next idle state(s)
-> is disabled, the CPU will forever remain in snooze, despite the fact
-> that the system is completely idle, and other deeper idle states are
-> available.
-> 
-> This patch fixes the issue by dynamically setting the snooze timeout
-> to the target residency of the next enabled state on the device.
-> 
-> Before Patch
-> Reviewed-by: Balbir Singh <bsingharora@gmail.com>
-> 
-> ==================
-> POWER8 : Only nap disabled.
->  $cpupower monitor sleep 30
-> sleep took 30.01297 seconds and exited with status 0
->               |Idle_Stats
-> PKG |CORE|CPU | snoo | Nap  | Fast
->    0|   8|   0| 96.41|  0.00|  0.00
->    0|   8|   1| 96.43|  0.00|  0.00
->    0|   8|   2| 96.47|  0.00|  0.00
->    0|   8|   3| 96.35|  0.00|  0.00
->    0|   8|   4| 96.37|  0.00|  0.00
->    0|   8|   5| 96.37|  0.00|  0.00
->    0|   8|   6| 96.47|  0.00|  0.00
->    0|   8|   7| 96.47|  0.00|  0.00
-> 
-> POWER9: Shallow states (stop0lite, stop1lite, stop2lite, stop0, stop1,
-> stop2) disabled:
-> $cpupower monitor sleep 30
-> sleep took 30.05033 seconds and exited with status 0
->               |Idle_Stats
-> PKG |CORE|CPU | snoo | stop | stop | stop | stop | stop | stop | stop | stop
->    0|  16|   0| 89.79|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
->    0|  16|   1| 90.12|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
->    0|  16|   2| 90.21|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
->    0|  16|   3| 90.29|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00
-> 
-> After Patch
-> ======================
-> POWER8 : Only nap disabled.
-> $ cpupower monitor sleep 30
-> sleep took 30.01200 seconds and exited with status 0
->               |Idle_Stats
-> PKG |CORE|CPU | snoo | Nap  | Fast
->    0|   8|   0| 16.58|  0.00| 77.21
->    0|   8|   1| 18.42|  0.00| 75.38
->    0|   8|   2|  4.70|  0.00| 94.09
->    0|   8|   3| 17.06|  0.00| 81.73
->    0|   8|   4|  3.06|  0.00| 95.73
->    0|   8|   5|  7.00|  0.00| 96.80
->    0|   8|   6|  1.00|  0.00| 98.79
->    0|   8|   7|  5.62|  0.00| 94.17
-> 
-> POWER9: Shallow states (stop0lite, stop1lite, stop2lite, stop0, stop1,
-> stop2) disabled:
-> 
-> $cpupower monitor sleep 30
-> sleep took 30.02110 seconds and exited with status 0
->               |Idle_Stats
-> PKG |CORE|CPU | snoo | stop | stop | stop | stop | stop | stop | stop | stop
->    0|   0|   0|  0.69|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  9.39| 89.70
->    0|   0|   1|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.05| 93.21
->    0|   0|   2|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00| 89.93
->    0|   0|   3|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00|  0.00| 93.26
-> 
-> Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+> Detected by CoverityScan, CID#1469659 ("Resource leak")
 
-Applied to powerpc next, thanks.
+Looks good, applied.
 
-https://git.kernel.org/powerpc/c/0a4ec6aa035a52c422eceb2ed51ed8
-
-cheers
+-- 
+Jens Axboe
