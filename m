@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753843AbeFERHQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:07:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36468 "EHLO mail.kernel.org"
+        id S1753861AbeFERHU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:07:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753409AbeFERHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:07:12 -0400
+        id S1753409AbeFERHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:07:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.9 52/61] stm class: Use vmalloc for the master map
-Date: Tue,  5 Jun 2018 19:02:13 +0200
-Message-Id: <20180605170121.004287720@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 54/61] IB/core: Fix error code for invalid GID entry
+Date: Tue,  5 Jun 2018 19:02:15 +0200
+Message-Id: <20180605170121.124219670@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -29,60 +31,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Parav Pandit <parav@mellanox.com>
 
-commit b5e2ced9bf81393034072dd4d372f6b430bc1f0a upstream.
+commit a840c93ca7582bb6c88df2345a33f979b7a67874 upstream.
 
-Fengguang is running into a warning from the buddy allocator:
+When a GID entry is invalid EAGAIN is returned. This is an incorrect error
+code, there is nothing that will make this GID entry valid again in
+bounded time.
 
-> swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #262
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> Call Trace:
-...
->  __kmalloc+0x14b/0x180: ____cache_alloc at mm/slab.c:3127
->  stm_register_device+0xf3/0x5c0: stm_register_device at drivers/hwtracing/stm/core.c:695
-...
+Some user space tools fail incorrectly if EAGAIN is returned here, and
+this represents a small ABI change from earlier kernels.
 
-Which is basically a result of the stm class trying to allocate ~512kB
-for the dummy_stm with its default parameters. There's no reason, however,
-for it not to be vmalloc()ed instead, which is what this patch does.
+The first patch in the Fixes list makes entries that were valid before
+to become invalid, allowing this code to trigger, while the second patch
+in the Fixes list introduced the wrong EAGAIN.
 
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: stable@vger.kernel.org # v4.4+
+Therefore revert the return result to EINVAL which matches the historical
+expectations of the ibv_query_gid_type() API of the libibverbs user space
+library.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 598ff6bae689 ("IB/core: Refactor GID modify code for RoCE")
+Fixes: 03db3a2d81e6 ("IB/core: Add RoCE GID table management")
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/stm/core.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/core/cache.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -682,7 +682,7 @@ static void stm_device_release(struct de
- {
- 	struct stm_device *stm = to_stm_device(dev);
- 
--	kfree(stm);
-+	vfree(stm);
- }
- 
- int stm_register_device(struct device *parent, struct stm_data *stm_data,
-@@ -699,7 +699,7 @@ int stm_register_device(struct device *p
+--- a/drivers/infiniband/core/cache.c
++++ b/drivers/infiniband/core/cache.c
+@@ -437,7 +437,7 @@ static int __ib_cache_gid_get(struct ib_
  		return -EINVAL;
  
- 	nmasters = stm_data->sw_end - stm_data->sw_start + 1;
--	stm = kzalloc(sizeof(*stm) + nmasters * sizeof(void *), GFP_KERNEL);
-+	stm = vzalloc(sizeof(*stm) + nmasters * sizeof(void *));
- 	if (!stm)
- 		return -ENOMEM;
+ 	if (table->data_vec[index].props & GID_TABLE_ENTRY_INVALID)
+-		return -EAGAIN;
++		return -EINVAL;
  
-@@ -752,7 +752,7 @@ err_device:
- 	/* matches device_initialize() above */
- 	put_device(&stm->dev);
- err_free:
--	kfree(stm);
-+	vfree(stm);
- 
- 	return err;
- }
+ 	memcpy(gid, &table->data_vec[index].gid, sizeof(*gid));
+ 	if (attr) {
