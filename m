@@ -1,38 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeFEVZt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:25:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751818AbeFEVZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:25:47 -0400
-X-Google-Smtp-Source: ADUXVKJMNq8g/Nd0Hyq1nO2J+F5pVrsTXpVL2yfJlElDn6eEXCajeEwubcqVwEUhQXd51U4gHSixDZ8ip1lkpB+ecks=
+        id S1752398AbeFEV21 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:28:27 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33717 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751689AbeFEV2Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:28:25 -0400
+X-Google-Smtp-Source: ADUXVKLIFektEARUdjVSrftB1AYNGEahRft8X3e+BuW7TYy0TtbuJP8+qHpZKsX5P6lupnGAFM8YdA==
+Subject: Re: [PATCH V2] xfs: fix string handling in get/set functions
+To: Eric Sandeen <sandeen@sandeen.net>, Arnd Bergmann <arnd@arndb.de>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org
+References: <20180525151421.2317292-1-arnd@arndb.de>
+ <7aad9fc3-ed65-a016-d477-5d830e31cb43@sandeen.net>
+Cc: Eric Sandeen <sandeen@redhat.com>, Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+From: Martin Sebor <msebor@gmail.com>
+Message-ID: <3623eb64-1549-f3ad-d50b-dfe98781b119@gmail.com>
+Date: Tue, 5 Jun 2018 15:28:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <1525229431-3087-12-git-send-email-hao.wu@intel.com>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com> <1525229431-3087-12-git-send-email-hao.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Tue, 5 Jun 2018 16:25:05 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRhsTKHJfVBPQL5PwXQF=Tvb_y+V3uE8AicgFrzKZse3A@mail.gmail.com>
-Message-ID: <CANk1AXRhsTKHJfVBPQL5PwXQF=Tvb_y+V3uE8AicgFrzKZse3A@mail.gmail.com>
-Subject: Re: [PATCH v5 11/28] fpga: dfl: add dfl_fpga_check_port_id function.
-To: Wu Hao <hao.wu@intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7aad9fc3-ed65-a016-d477-5d830e31cb43@sandeen.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
-
-Hi Hao,
-
-> This patch adds one common function in DFL framework. It uses
-> port_ops get_id callback to get port id and compare it with given
-> value. This function could be used as match function of the
-> dfl_fpga_cdev_find_port function.
+On 06/05/2018 01:49 PM, Eric Sandeen wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
+> [sandeen: fix subject, avoid copy-out of uninit data in getlabel]
+>
+> gcc-8 reports two warnings for the newly added getlabel/setlabel code:
+>
+> fs/xfs/xfs_ioctl.c: In function 'xfs_ioc_getlabel':
+> fs/xfs/xfs_ioctl.c:1822:38: error: argument to 'sizeof' in 'strncpy' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+>   strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
+>                                       ^
+> In function 'strncpy',
+>     inlined from 'xfs_ioc_setlabel' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1863:2,
+>     inlined from 'xfs_file_ioctl' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1918:10:
+> include/linux/string.h:254:9: error: '__builtin_strncpy' output may be truncated copying 12 bytes from a string of length 12 [-Werror=stringop-truncation]
+>   return __builtin_strncpy(p, q, size);
+>
+> In both cases, part of the problem is that one of the strncpy()
+> arguments is a fixed-length character array with zero-padding rather
+> than a zero-terminated string. In the first one case, we also get an
+> odd warning about sizeof-pointer-memaccess, which doesn't seem right
+> (the sizeof is for an array that happens to be the same as the second
+> strncpy argument).
+>
+> To work around the bogus warning, I use a plain 'XFSLABEL_MAX' for
+> the strncpy() length when copying the label in getlabel. For setlabel(),
+> using memcpy() with the correct length that is already known avoids
+> the second warning and is slightly simpler.
+>
+> In a related issue, it appears that we accidentally skip the trailing
+> \0 when copying a 12-character label back to user space in getlabel().
+> Using the correct sizeof() argument here copies the extra character.
+>
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85602
+> Fixes: f7664b31975b ("xfs: implement online get/set fs label")
+> Cc: Eric Sandeen <sandeen@redhat.com>
+> Cc: Martin Sebor <msebor@gmail.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+>
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 82f7c83c1dad..596e176c19a6 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -1828,13 +1828,13 @@ xfs_ioc_getlabel(
+>  	/* Paranoia */
+>  	BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
+>
+> +	/* 1 larger than sb_fname, so this ensures a trailing NUL char */
+> +	memset(label, 0, sizeof(label));
+>  	spin_lock(&mp->m_sb_lock);
+> -	strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
+> +	strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
+>  	spin_unlock(&mp->m_sb_lock);
+
+I don't see this code in my copy of the kernel so I may be missing
+some context but assuming label is at least one byte larger than
+sb_fname then the following would be how GCC expects strncpy to be
+used in this case:
+
+   char label[sizeof sbp->sb_fname + 1];
+   strncpy (label, sbp->sb_fname, sizeof label - 1);
+   label[sizeof label - 1] = '\0';
+
+Since strncpy() zeroes out the destination past the first nul this
+should also obviate the call to memset() above that GCC unfortunately
+doesn't eliminate (I just opened bug 86061 to add this optimization).
+
+Martin
+
+>
+> -	/* xfs on-disk label is 12 chars, be sure we send a null to user */
+> -	label[XFSLABEL_MAX] = '\0';
+> -	if (copy_to_user(user_label, label, sizeof(sbp->sb_fname)))
+> +	if (copy_to_user(user_label, label, sizeof(label)))
+>  		return -EFAULT;
+>  	return 0;
+>  }
+> @@ -1870,7 +1870,7 @@ xfs_ioc_setlabel(
+>
+>  	spin_lock(&mp->m_sb_lock);
+>  	memset(sbp->sb_fname, 0, sizeof(sbp->sb_fname));
+> -	strncpy(sbp->sb_fname, label, sizeof(sbp->sb_fname));
+> +	memcpy(sbp->sb_fname, label, len);
+>  	spin_unlock(&mp->m_sb_lock);
+>
+>  	/*
+>
