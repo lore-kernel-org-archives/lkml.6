@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753005AbeFEREg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33454 "EHLO mail.kernel.org"
+        id S1753029AbeFEREk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:04:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752982AbeFEREc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:32 -0400
+        id S1752044AbeFEREh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.4 30/37] hwtracing: stm: fix build error on some arches
-Date: Tue,  5 Jun 2018 19:01:35 +0200
-Message-Id: <20180605170110.648071432@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 10/61] cfg80211: further limit wiphy names to 64 bytes
+Date: Tue,  5 Jun 2018 19:01:31 +0200
+Message-Id: <20180605170118.175467429@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
-References: <20180605170108.884872354@linuxfoundation.org>
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+References: <20180605170117.643936916@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -25,35 +27,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 806e30873f0e74d9d41b0ef761bd4d3e55c7d510 upstream.
+commit 814596495dd2b9d4aab92d8f89cf19060d25d2ea upstream.
 
-Commit b5e2ced9bf81 ("stm class: Use vmalloc for the master map") caused
-a build error on some arches as vmalloc.h was not explicitly included.
+wiphy names were recently limited to 128 bytes by commit a7cfebcb7594
+("cfg80211: limit wiphy names to 128 bytes").  As it turns out though,
+this isn't sufficient because dev_vprintk_emit() needs the syslog header
+string "SUBSYSTEM=ieee80211\0DEVICE=+ieee80211:$devname" to fit into 128
+bytes.  This triggered the "device/subsystem name too long" WARN when
+the device name was >= 90 bytes.  As before, this was reproduced by
+syzbot by sending an HWSIM_CMD_NEW_RADIO command to the MAC80211_HWSIM
+generic netlink family.
 
-Fix that by adding it to the list of includes.
+Fix it by further limiting wiphy names to 64 bytes.
 
-Fixes: b5e2ced9bf81 ("stm class: Use vmalloc for the master map")
-Reported-by: kbuild test robot <lkp@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Reported-by: syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com
+Fixes: a7cfebcb7594 ("cfg80211: limit wiphy names to 128 bytes")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/stm/core.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/uapi/linux/nl80211.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -26,6 +26,7 @@
- #include <linux/stm.h>
- #include <linux/fs.h>
- #include <linux/mm.h>
-+#include <linux/vmalloc.h>
- #include "stm.h"
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2379,7 +2379,7 @@ enum nl80211_attrs {
+ #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
+ #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
  
- #include <uapi/linux/stm.h>
+-#define NL80211_WIPHY_NAME_MAXLEN		128
++#define NL80211_WIPHY_NAME_MAXLEN		64
+ 
+ #define NL80211_MAX_SUPP_RATES			32
+ #define NL80211_MAX_SUPP_HT_RATES		77
