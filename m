@@ -1,103 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752433AbeFETuv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:50:51 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:42103 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752386AbeFETur (ORCPT
+        id S1752333AbeFETvo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:51:44 -0400
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:57887 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751965AbeFETvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:50:47 -0400
-X-Google-Smtp-Source: ADUXVKL5qo4R/EXPzmiUuNOh/S+lGC4RtQ3Tg5lFc3oYTniDL6fYfvwa/tyF+G687fQEnamP7ZvS3lUxyDvNI4JBLOk=
+        Tue, 5 Jun 2018 15:51:42 -0400
+Date: Tue, 5 Jun 2018 20:51:40 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, mhocko@kernel.org,
+        vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
+ in swap cache
+Message-ID: <20180605195140.afc7xzgbre26m76l@techsingularity.net>
+References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
+ <bfc2e579-915f-24db-0ff0-29bd9148b8c0@intel.com>
+ <20180605191245.3owve7gfut22tyob@techsingularity.net>
+ <ecb75c29-3d1b-3b5e-ec9d-59c4f6c1ef08@intel.com>
 MIME-Version: 1.0
-References: <20180605170532.170361-1-ndesaulniers@google.com>
- <20180605170532.170361-2-ndesaulniers@google.com> <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
- <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com>
-In-Reply-To: <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Tue, 5 Jun 2018 12:50:34 -0700
-Message-ID: <CAKwvOd=zuy0BJC3f3EKT_9Mg83qdZxAxw_RJ4okAMKrpKjJRHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline declarations
-To: joe@perches.com
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Greg KH <gregkh@linuxfoundation.org>, hpa@zytor.com,
-        "J. Kiszka" <jan.kiszka@siemens.com>, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, Josh Poimboeuf <jpoimboe@redhat.com>,
-        kirill.shutemov@linux.intel.com, mingo@redhat.com, mjg59@google.com,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, rostedt@goodmis.org,
-        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
-        Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
-        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <ecb75c29-3d1b-3b5e-ec9d-59c4f6c1ef08@intel.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 12:14 PM Joe Perches <joe@perches.com> wrote:
->
-> On Tue, 2018-06-05 at 10:23 -0700, Joe Perches wrote:
-> > Perhaps these are simpler as
-> >
-> > #define __inline__    inline
-> > #define __inline      inline
->
-> Currently, there are these uses of inline variants in the kernel
->
-> $ git grep -w inline | wc -l
-> 68410
-> $ git grep -w __inline__ | wc -l
-> 503
-> $ git grep -w __inline | wc -l
-> 57
->
-> So it seems it's also reasonable to sed all uses of __inline to inline
-> and perhaps remove __inline eventually altogether.
-> (perhaps there are still too many __inline__ uses)
+On Tue, Jun 05, 2018 at 12:49:18PM -0700, Dave Hansen wrote:
+> >> I usually try to make the non-pte-modifying functions take a pte_t
+> >> instead of 'pte_t *' to make it obvious that there no modification going
+> >> on.  Any reason not to do that here?
+> > 
+> > No, it was just a minor saving on stack usage.
+> 
+> We're just splitting hairs now :) but, realistically, this little helper
+> will get inlined anyway, so it probably all generates the same code.
+> 
 
-Yeah, that sounds good. Should I split that into 3 patches:
+I expect so and your point is valid that it should be obvious that no
+modifications can take place.
 
-> Excluding scripts and a few other files,
-> here's a possible patch done with:
->
-> $ git grep -w --name-only __inline | \
->   grep -vP '^(?:arch/alpha/|include/|scripts/)' | \
->   xargs sed -r -i -e 's/\b__inline\b/inline/g' \
->                   -e 's/\binline\s+static\b/static inline/g'
-> ---
->  Documentation/trace/tracepoint-analysis.rst             |  2 +-
->  drivers/staging/rtl8723bs/core/rtw_pwrctrl.c            |  4 ++--
->  drivers/staging/rtl8723bs/core/rtw_wlan_util.c          |  2 +-
->  drivers/staging/rtl8723bs/include/drv_types.h           |  6 +++---
->  drivers/staging/rtl8723bs/include/ieee80211.h           |  6 +++---
->  drivers/staging/rtl8723bs/include/osdep_service.h       | 10 +++++-----
->  drivers/staging/rtl8723bs/include/osdep_service_linux.h | 14 +++++++-------
->  drivers/staging/rtl8723bs/include/rtw_mlme.h            | 14 +++++++-------
->  drivers/staging/rtl8723bs/include/rtw_recv.h            | 16 ++++++++--------
->  drivers/staging/rtl8723bs/include/sta_info.h            |  2 +-
->  drivers/staging/rtl8723bs/include/wifi.h                | 14 +++++++-------
->  drivers/staging/rtl8723bs/include/wlan_bssdef.h         |  2 +-
->  lib/zstd/mem.h                                          |  2 +-
->  13 files changed, 47 insertions(+), 47 deletions(-)
+> ...
+> >> BTW, do you want to add a tiny comment about why we do the
+> >> trylock_page()?  I assume it's because we don't want to wait on finding
+> >> an exact answer: we just assume it is in the swap cache if the page is
+> >> locked and flush regardless.
+> > 
+> > It's really because calling lock_page while holding a spinlock is
+> > eventually going to ruin your day.
+> 
+> Hah, yeah, that'll do it.  Could you comment this, too?
+> 
 
+Yep, I made the change after reading your mail. This is how it currently
+stands
 
-1 for documentation, 1 for rtl8723bs, 1 for zstd?
+---8<---
+mremap: Avoid excessive TLB flushing for anonymous pages that are not in swap cache
 
-Follow up set or include in v3?
+Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
+fixed races between mremap and other operations for both file-backed and
+anonymous mappings. The file-backed was the most critical as it allowed the
+possibility that data could be changed on a physical page after page_mkclean
+returned which could trigger data loss or data integrity issues. A customer
+reported that the cost of the TLBs for anonymous regressions was excessive
+and resulting in a 30-50% drop in performance overall since this commit
+on a microbenchmark. Unfortunately I neither have access to the test-case
+nor can I describe what it does other than saying that mremap operations
+dominate heavily.
+
+The anonymous page race fix is overkill for two reasons. Pages that are
+not in the swap cache are not going to be issued for IO and if a stale TLB
+entry is used, the write still occurs on the same physical page. Any race
+with mmap replacing the address space is handled by mmap_sem. As anonymous
+pages are often dirty, it can mean that mremap always has to flush even
+when it is not necessary.
+
+This patch special cases anonymous pages to only flush ranges under the
+page table lock if the page is in swap cache and can be potentially queued
+for IO. Note that the full flush of the range being mremapped is still
+flushed so TLB flushes are not eliminated entirely.
+
+It uses the page lock to serialise against any potential reclaim. If the
+page is added to the swap cache on the reclaim side after the page lock is
+dropped on the mremap side then reclaim will call try_to_unmap_flush_dirty()
+before issuing any IO so there is no data integrity issue. This means that
+in the common case where a workload avoids swap entirely that mremap is
+a much cheaper operation due to the lack of TLB flushes.
+
+Using another testcase that simply calls mremap heavily with varying number
+of threads, it was found that very broadly speaking that TLB shootdowns
+were reduced by 31% on average throughout the entire test case but your
+milage will vary.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/mremap.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 40 insertions(+), 5 deletions(-)
+
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 049470aa1e3e..5b9767b0446e 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -24,6 +24,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/mm-arch-hooks.h>
+ #include <linux/userfaultfd_k.h>
++#include <linux/mm_inline.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/tlbflush.h>
+@@ -112,6 +113,44 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+ 	return pte;
+ }
+ 
++/* Returns true if a TLB must be flushed before PTL is dropped */
++static bool should_force_flush(pte_t pte)
++{
++	bool is_swapcache;
++	struct page *page;
++
++	if (!pte_present(pte) || !pte_dirty(pte))
++		return false;
++
++	/*
++	 * If we are remapping a dirty file PTE, make sure to flush TLB
++	 * before we drop the PTL for the old PTE or we may race with
++	 * page_mkclean().
++	 */
++	page = pte_page(pte);
++	if (page_is_file_cache(page))
++		return true;
++
++	/*
++	 * For anonymous pages, only flush swap cache pages that could
++	 * be unmapped and queued for swap since flush_tlb_batched_pending was
++	 * last called. Reclaim itself takes care that the TLB is flushed
++	 * before IO is queued. If a page is not in swap cache and a stale TLB
++	 * is used before mremap is complete then the write hits the same
++	 * physical page and there is no lost data loss.
++	 *
++	 * Check under the page lock to avoid any potential race with reclaim.
++	 * trylock is necessary as spinlocks are currently held. In the unlikely
++	 * event of contention, flush the TLB to be safe.
++	 */
++	if (!trylock_page(page))
++		return true;
++	is_swapcache = PageSwapCache(page);
++	unlock_page(page);
++
++	return is_swapcache;
++}
++
+ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 		unsigned long old_addr, unsigned long old_end,
+ 		struct vm_area_struct *new_vma, pmd_t *new_pmd,
+@@ -163,15 +202,11 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 
+ 		pte = ptep_get_and_clear(mm, old_addr, old_pte);
+ 		/*
+-		 * If we are remapping a dirty PTE, make sure
+-		 * to flush TLB before we drop the PTL for the
+-		 * old PTE or we may race with page_mkclean().
+-		 *
+ 		 * This check has to be done after we removed the
+ 		 * old PTE from page tables or another thread may
+ 		 * dirty it after the check and before the removal.
+ 		 */
+-		if (pte_present(pte) && pte_dirty(pte))
++		if (should_force_flush(pte))
+ 			force_flush = true;
+ 		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
+ 		pte = move_soft_dirty_pte(pte);
+
 -- 
-Thanks,
-~Nick Desaulniers
+Mel Gorman
+SUSE Labs
