@@ -1,108 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752087AbeFEOHo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:07:44 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49684 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751654AbeFEOHn (ORCPT
+        id S1752096AbeFEOJ5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:09:57 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:33434 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751654AbeFEOJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:07:43 -0400
-Message-ID: <ffd6b9a1da2de45b6dc7298958a7d71bc5a22358.camel@collabora.com>
-Subject: Re: [PATCH] uvcvideo: Also validate buffers in BULK mode
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Reply-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 05 Jun 2018 10:07:38 -0400
-In-Reply-To: <2206409.jVpTcjFX6j@avalon>
-References: <20180605002415.11421-1-nicolas.dufresne@collabora.com>
-         <2206409.jVpTcjFX6j@avalon>
-Organization: Collabora Ltd.
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-Cl/GM62iaC0kqJcvIt3T"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
+        Tue, 5 Jun 2018 10:09:54 -0400
+X-Google-Smtp-Source: ADUXVKIloIKngSKEEsSPXOoZnnpXht7OPmKOs+gFsFB0pBGVNX+W+tLnL7/palRCBlbIpYcvyUn4X+uKf0wVF71UQSE=
+MIME-Version: 1.0
+In-Reply-To: <1528206938-2702-1-git-send-email-sudeep.holla@arm.com>
+References: <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
+ <1528206938-2702-1-git-send-email-sudeep.holla@arm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Jun 2018 16:09:52 +0200
+X-Google-Sender-Auth: cclmjl-JfkAa7L0CiaZ8FTISiyY
+Message-ID: <CAMuHMdVPRLt34SUDsbbHvEG2OzvbJoT6id7Rb_2j32=zb1TuKg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] Revert "arm64: topology: divorce MC scheduling domain
+ from core_siblings"
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Sudeep,
 
---=-Cl/GM62iaC0kqJcvIt3T
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 5, 2018 at 3:55 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> This reverts commit 37c3ec2d810f87eac73822f76b30391a83bded19.
+>
+> Currently on ARM64 platforms, we don't update the CPU topology masks
+> on each hotplug operation. However, the updates to cpu_coregroup_mask
 
-Le mardi 05 juin 2018 =C3=A0 11:52 +0300, Laurent Pinchart a =C3=A9crit :
-> Hi Nicolas,
->=20
-> Thank you for the patch.
->=20
-> On Tuesday, 5 June 2018 03:24:15 EEST Nicolas Dufresne wrote:
-> > Just like for ISOC, validate the decoded BULK buffer size when possible=
-.
-> > This avoids sending corrupted or partial buffers to userspace, which ma=
-y
-> > lead to application crash or run-time failure.
-> >=20
-> > Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> > ---
-> >  drivers/media/usb/uvc/uvc_video.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c
-> > b/drivers/media/usb/uvc/uvc_video.c index aa0082fe5833..46df4d01e31b 10=
-0644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -1307,8 +1307,10 @@ static void uvc_video_decode_bulk(struct urb *ur=
-b,
-> > struct uvc_streaming *stream, if (stream->bulk.header_size =3D=3D 0 &&
-> > !stream->bulk.skip_payload) { do {
-> >  			ret =3D uvc_video_decode_start(stream, buf, mem, len);
-> > -			if (ret =3D=3D -EAGAIN)
-> > +			if (ret =3D=3D -EAGAIN) {
-> > +				uvc_video_validate_buffer(stream, buf);
-> >  				uvc_video_next_buffers(stream, &buf, &meta_buf);
->=20
-> Wouldn't it be simpler to move the uvc_video_validate_buffer() call to=
-=20
-> uvc_video_next_buffers() ?
+I would add
 
-Sounds like a good idea, it will prevent forgetting about it if this
-code get extended.
+    "leading to e.g. a system hang during system suspend."
 
->=20
-> > +			}
-> >  		} while (ret =3D=3D -EAGAIN);
-> >=20
-> >  		/* If an error occurred skip the rest of the payload. */
-> > @@ -1342,8 +1344,10 @@ static void uvc_video_decode_bulk(struct urb *ur=
-b,
-> > struct uvc_streaming *stream, if (!stream->bulk.skip_payload && buf !=
-=3D
-> > NULL) {
-> >  			uvc_video_decode_end(stream, buf, stream->bulk.header,
-> >  				stream->bulk.payload_size);
-> > -			if (buf->state =3D=3D UVC_BUF_STATE_READY)
-> > +			if (buf->state =3D=3D UVC_BUF_STATE_READY) {
-> > +				uvc_video_validate_buffer(stream, buf);
-> >  				uvc_video_next_buffers(stream, &buf, &meta_buf);
-> > +			}
-> >  		}
-> >=20
-> >  		stream->bulk.header_size =3D 0;
->=20
->=20
---=-Cl/GM62iaC0kqJcvIt3T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+to avoid people thinking this is purely a small bookkeeping issue without  any
+percussions.
 
------BEGIN PGP SIGNATURE-----
+> done as part of ACPI PPTT support, in particular the commit being
+> reverted makes use of cpumask_of_node which returns the cpu_oneline_mask
+> instead of core_sibling as core_sibling masks are not updated for CPU
+> hotplug operations and the comparision to find NUMA in package or LLC
+> siblings fails.
+>
+> The original commit is technically correct and since it depends on the
+> not yet supported feature, let's revert this for now. We can put it back
+> once we have the support for CPU topology masks update on hotplug merged.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCWxaZKgAKCRBxUwItrAao
-HO4aAJ461FpHH/Pbfo3HHoZJF6DMOs6USgCbB7ZSyvD3FaJ9c4pcYKU1zR9B70s=
-=mc5c
------END PGP SIGNATURE-----
+Thanks!
 
---=-Cl/GM62iaC0kqJcvIt3T--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
