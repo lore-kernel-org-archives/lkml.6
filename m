@@ -1,74 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751366AbeFEAIz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 20:08:55 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:45305 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbeFEAIx (ORCPT
+        id S1751361AbeFEAQq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 20:16:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36339 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbeFEAQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 20:08:53 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w5508dvO012237
-X-Nifty-SrcIP: [209.85.213.43]
-X-Google-Smtp-Source: ADUXVKIoNMggRyxcRZoPgEcAJ4oFc+shY7TIbAtVJn0pnppksxD45dlDO8qmRW2K5uNxAnpQgEz6DQ6/KP+ipiIjpjk=
+        Mon, 4 Jun 2018 20:16:45 -0400
+X-Google-Smtp-Source: ADUXVKKQZ624J0LsYIQ12gkopcX0GMSJhZUJj0cfGxI4KyiIIlWdcjal+g5eG8jDRBY9Z8ahlzlwnGe1Noc8lyH5tQk=
 MIME-Version: 1.0
-In-Reply-To: <dbd4d0dc92ba45dcae81cbab8ab8ba29@agner.ch>
-References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
- <1527499328-13213-25-git-send-email-yamada.masahiro@socionext.com> <dbd4d0dc92ba45dcae81cbab8ab8ba29@agner.ch>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 5 Jun 2018 09:07:58 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ9t-eRRb_mYunEAocaYksOTr=4sw+pExhMd9AvMx+zOw@mail.gmail.com>
-Message-ID: <CAK7LNAQ9t-eRRb_mYunEAocaYksOTr=4sw+pExhMd9AvMx+zOw@mail.gmail.com>
-Subject: Re: [PATCH v5 24/31] kconfig: add CC_IS_GCC and GCC_VERSION
-To: Stefan Agner <stefan@agner.ch>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Nicholas Piggin <npiggin@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kbuild-owner@vger.kernel.org
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180604205455.2325754-4-stefanb@linux.vnet.ibm.com>
+References: <20180604205455.2325754-1-stefanb@linux.vnet.ibm.com> <20180604205455.2325754-4-stefanb@linux.vnet.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 4 Jun 2018 20:16:42 -0400
+Message-ID: <CAHC9VhSRZJVUdyCCp9YtVofyKYy60qXQZD5z2OqQKQ-h4s9fCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] ima: Do not audit if CONFIG_INTEGRITY_AUDIT is not set
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        linux-audit@redhat.com, sgrubb@redhat.com,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan
+On Mon, Jun 4, 2018 at 4:54 PM, Stefan Berger
+<stefanb@linux.vnet.ibm.com> wrote:
+> If Integrity is not auditing, IMA shouldn't audit, either.
+>
+> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> ---
+>  security/integrity/ima/Kconfig      |  1 +
+>  security/integrity/ima/ima_policy.c |  6 +++++-
+>  security/integrity/integrity.h      | 15 +++++++++++++++
+>  3 files changed, 21 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 6a8f67714c83..94c2151331aa 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -12,6 +12,7 @@ config IMA
+>         select TCG_TIS if TCG_TPM && X86
+>         select TCG_CRB if TCG_TPM && ACPI
+>         select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
+> +       select INTEGRITY_AUDIT if AUDIT
+>         help
+>           The Trusted Computing Group(TCG) runtime Integrity
+>           Measurement Architecture(IMA) maintains a list of hash
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 3fcf0935468c..bc99713dfe57 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -628,6 +628,9 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+>  static void ima_log_string_op(struct audit_buffer *ab, char *key, char *value,
+>                               bool (*rule_operator)(kuid_t, kuid_t))
+>  {
+> +       if (!ab)
+> +               return;
+> +
+>         if (rule_operator == &uid_gt)
+>                 audit_log_format(ab, "%s>", key);
+>         else if (rule_operator == &uid_lt)
+> @@ -649,7 +652,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>         bool uid_token;
+>         int result = 0;
+>
+> -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_RULE);
+> +       ab = integrity_audit_log_start(NULL, GFP_KERNEL,
+> +                                      AUDIT_INTEGRITY_RULE);
 
-2018-06-05 6:49 GMT+09:00 Stefan Agner <stefan@agner.ch>:
-> Hi Masahiro,
->
-> On 28.05.2018 11:22, Masahiro Yamada wrote:
->> This will be useful to specify the required compiler version,
->> like this:
->>
->> config FOO
->>         bool "Use Foo"
->>         depends on GCC_VERSION >= 40800
->>         help
->>           This feature requires GCC 4.8 or newer.
->>
->
-> I tried using CC_IS_GCC today while using clang. It seems that it is set
-> to y despite I am using CC=clang.
->
-> .config looks like this after config:
->
-> ...
-> CONFIG_CC_IS_GCC=y
-> CONFIG_GCC_VERSION=40201
-> CONFIG_CC_IS_CLANG=y
-> CONFIG_CLANG_VERSION=60000
-> ...
->
->
-> I am using clang 6.0.0 on Arch Linux, which seems to return a version
-> when using gcc-version.sh:
-> ./scripts/gcc-version.sh clang | sed 's/^0*//'
-> 402
->
-> I guess that should not be the case?
->
+There was a lot of confusion here, so this is understandable, but you
+should pass "audit_context()"[1] as the first parameter instead of
+NULL.  Other than that this patch looks fine.
 
+[1] In Linus' tree at the moment you would need to use
+current->audit_context, but the audit PR heading to Linus during this
+merge window will introduce the "audit_context()" function which is
+preferable as we may need to change things around a bit in the near
+future.
 
-What will 'clang --version' print on your machine?
+>         entry->uid = INVALID_UID;
+>         entry->fowner = INVALID_UID;
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 0bb372eed62a..e60473b13a8d 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -15,6 +15,7 @@
+>  #include <linux/integrity.h>
+>  #include <crypto/sha.h>
+>  #include <linux/key.h>
+> +#include <linux/audit.h>
+>
+>  /* iint action cache flags */
+>  #define IMA_MEASURE            0x00000001
+> @@ -199,6 +200,13 @@ static inline void evm_load_x509(void)
+>  void integrity_audit_msg(int audit_msgno, struct inode *inode,
+>                          const unsigned char *fname, const char *op,
+>                          const char *cause, int result, int info);
+> +
+> +static inline struct audit_buffer *
+> +integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
+> +{
+> +       return audit_log_start(ctx, gfp_mask, type);
+> +}
+> +
+>  #else
+>  static inline void integrity_audit_msg(int audit_msgno, struct inode *inode,
+>                                        const unsigned char *fname,
+> @@ -206,4 +214,11 @@ static inline void integrity_audit_msg(int audit_msgno, struct inode *inode,
+>                                        int result, int info)
+>  {
+>  }
+> +
+> +static inline struct audit_buffer *
+> +integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
+> +{
+> +       return NULL;
+> +}
+> +
+>  #endif
+> --
+> 2.13.6
+
+-- 
+paul moore
+www.paul-moore.com
