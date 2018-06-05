@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751775AbeFEMuP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:50:15 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42338 "EHLO
+        id S1751869AbeFEMvO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:51:14 -0400
+Received: from mail.efficios.com ([167.114.142.138]:42448 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751622AbeFEMuM (ORCPT
+        with ESMTP id S1751656AbeFEMvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:50:12 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com F4123225DF2
-Date: Tue, 5 Jun 2018 08:50:10 -0400 (EDT)
+        Tue, 5 Jun 2018 08:51:12 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 87150225E49
+Date: Tue, 5 Jun 2018 08:51:11 -0400 (EDT)
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -33,34 +33,34 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Message-ID: <1448764618.5559.1528203010706.JavaMail.zimbra@efficios.com>
-In-Reply-To: <871sdlbyg7.fsf@concordia.ellerman.id.au>
-References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com> <20180602124408.8430-10-mathieu.desnoyers@efficios.com> <871sdlbyg7.fsf@concordia.ellerman.id.au>
-Subject: Re: [RFC PATCH for 4.18 09/16] powerpc: Add syscall detection for
- restartable sequences
+Message-ID: <570482053.5560.1528203071391.JavaMail.zimbra@efficios.com>
+In-Reply-To: <874lihbykr.fsf@concordia.ellerman.id.au>
+References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com> <20180602124408.8430-11-mathieu.desnoyers@efficios.com> <874lihbykr.fsf@concordia.ellerman.id.au>
+Subject: Re: [RFC PATCH for 4.18 10/16] powerpc: Wire up restartable
+ sequences system call
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [167.114.142.138]
 X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: powerpc: Add syscall detection for restartable sequences
-Thread-Index: qcBGBTzudiyKVIaDBFIUXs/uvjDCmA==
+Thread-Topic: powerpc: Wire up restartable sequences system call
+Thread-Index: pN6BzPNNAeLWTVSDZTr/PQsyIxZcyA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 5, 2018, at 1:21 AM, Michael Ellerman mpe@ellerman.id.au wrote:
+----- On Jun 5, 2018, at 1:18 AM, Michael Ellerman mpe@ellerman.id.au wrote:
 
 > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> writes:
+> 
 >> From: Boqun Feng <boqun.feng@gmail.com>
 >>
->> Syscalls are not allowed inside restartable sequences, so add a call to
->> rseq_syscall() at the very beginning of system call exiting path for
->> CONFIG_DEBUG_RSEQ=y kernel. This could help us to detect whether there
->> is a syscall issued inside restartable sequences.
+>> Wire up the rseq system call on powerpc.
 >>
->> [ Tested on 64-bit powerpc kernel by Mathieu Desnoyers. Still needs to
->>   be tested on 32-bit powerpc kernel. ]
+>> This provides an ABI improving the speed of a user-space getcpu
+>> operation on powerpc by skipping the getcpu system call on the fast
+>> path, as well as improving the speed of user-space operations on per-cpu
+>> data compared to using load-reservation/store-conditional atomics.
 >>
 >> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 >> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -71,23 +71,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 >> CC: linuxppc-dev@lists.ozlabs.org
 >> ---
->>  arch/powerpc/kernel/entry_32.S | 7 +++++++
->>  arch/powerpc/kernel/entry_64.S | 8 ++++++++
->>  2 files changed, 15 insertions(+)
+>>  arch/powerpc/include/asm/systbl.h      | 1 +
+>>  arch/powerpc/include/asm/unistd.h      | 2 +-
+>>  arch/powerpc/include/uapi/asm/unistd.h | 1 +
+>>  3 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> I don't _love_ the #ifdefs in here, but they look correct and there's
-> not really a better option until we rewrite the syscall handler in C.
+> Looks fine to me.
 > 
-> The rseq selftests passed for me with this applied and enabled. So if
-> you like here's some tags:
+> I don't have any other new syscalls in my next, so this should not
+> conflict with anything for 4.18.
 > 
-> Tested-by: Michael Ellerman <mpe@ellerman.id.au>
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-> 
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-Adding you ack to the series.
-
-Thanks!
+Added your ack to the series, thanks!
 
 Mathieu
 
