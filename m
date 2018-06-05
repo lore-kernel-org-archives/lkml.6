@@ -1,285 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752104AbeFETsw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:48:52 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.3]:12125 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751895AbeFETsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:48:50 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHKsWRWlGSWpSXmKPExsUSt3Opsa7CS7F
-  og8mzVCymPnzCZjF39iRGi/tfjzJaXN41h81i68t3TBYPV85hsTi65x6zRd85dwcOj4lndT12
-  zrrL7rFpVSebx51re9g8ni1cz+LxeZNcAFsUa2ZeUn5FAmtGY9875oKlFhWX+n+yNjA+Nuhi5
-  OIQEljKKLH90UvGLkZODjYBQ4l5b96D2SIC6RLvLixgBCliFrjMJLFtcycrSEJYwFZi0eL5zB
-  BFdhIPWv6xQdhGEv8+HWUCsVkEVCTeHXwCFucVCJBYf2wOUC8H0LYqic/fDUHCnALOEl9fbgf
-  bxSggK/GlcTXYSGYBcYlbT+aDjZEQEJBYsuc8M4QtKvHy8T9WCFtBYt+vlWwQtr3E63vvWCBs
-  fYlHjx8xQtiGEqumHYCKm0tM7XnICDFfR2LB7k9sELa2xLKFr5khzhSUODnzCcsERvFZSM6Yh
-  aRlFpKWWUhaFjCyrGI0TyrKTM8oyU3MzNE1NDDQNTQ00jW0NNE1M9dLrNJN1Est1S1PLS7RNd
-  RLLC/WK67MTc5J0ctLLdnECIx3BiDYwXjsW/IhRkkOJiVRXp1FYtFCfEn5KZUZicUZ8UWlOan
-  FhxhlODiUJHg5XwDlBItS01Mr0jJzgIkHJi3BwaMkwnv+OVCat7ggMbc4Mx0idYpRUUqcNxSk
-  TwAkkVGaB9cGS3aXGGWlhHkZgQ4R4ilILcrNLEGVf8UozsGoJMybBTKeJzOvBG76K6DFTECLn
-  1UIgywuSURISTUwGtpvT/v36s7FlJ9Ot3/xFHw7YbVE9niyXpf/oTXZRnIBzfM/3Oh28+stq2
-  HbmH+3ImjZzdUv/7/1XtU499LXld3PH7jfT7GpmnqI+b1BBQuDc839n0pnfDeYJ+gEp211M1v
-  s9CnsR7/fRXZthZUdnnUferY4xxW052gprwpu/Fw4RXhy/DoHJZbijERDLeai4kQAqDbCzXED
-  AAA=
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-5.tower-268.messagelabs.com!1528228128!1244339!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-From: Steve Twiss <stwiss.opensource@diasemi.com>
-To: Marek Vasut <marek.vasut@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
-Thread-Topic: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
-Thread-Index: AQHT+lov59vIktDgN0a/0w/aY7SLqaRR6nJw
-Date: Tue, 5 Jun 2018 19:48:47 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AD6BF@SW-EX-MBX02.diasemi.com>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.27.121]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 05/06/2018 15:14:00
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752230AbeFETt0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:49:26 -0400
+Received: from mga04.intel.com ([192.55.52.120]:31893 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751902AbeFETtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 15:49:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
+   d="scan'208";a="62049840"
+Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
+ in swap cache
+To: Mel Gorman <mgorman@techsingularity.net>
+References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
+ <bfc2e579-915f-24db-0ff0-29bd9148b8c0@intel.com>
+ <20180605191245.3owve7gfut22tyob@techsingularity.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, mhocko@kernel.org,
+        vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <ecb75c29-3d1b-3b5e-ec9d-59c4f6c1ef08@intel.com>
+Date: Tue, 5 Jun 2018 12:49:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180605191245.3owve7gfut22tyob@techsingularity.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02 June 2018 11:12, Marek Vasut wrote,
+On 06/05/2018 12:12 PM, Mel Gorman wrote:
+> That's fair enough. I updated part of the changelog to read
+> 
+> This patch special cases anonymous pages to only flush ranges under the
+> page table lock if the page is in swap cache and can be potentially queued
+> for IO. Note that the full flush of the range being mremapped is still
+> flushed so TLB flushes are not eliminated entirely.
+> 
+> Does that work for you?
 
-> Subject: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
-> 
-> Convert the regmap_irq table to use REGMAP_IRQ_REG().
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V3: New patch
-> Note: A sed oneliner was used:
->       sed -i "/\[DA9063_IRQ_/
-> {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* =
-> \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
-> ---
->  drivers/mfd/da9063-irq.c | 145 ++++++++++-------------------------------------
->  1 file changed, 29 insertions(+), 116 deletions(-)
-> 
-> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-> index 207bbfe55449..5b406ecfc14a 100644
-> --- a/drivers/mfd/da9063-irq.c
-> +++ b/drivers/mfd/da9063-irq.c
-> @@ -28,125 +28,38 @@
-> 
->  static const struct regmap_irq da9063_irqs[] = {
->  	/* DA9063 event A register */
-> -	[DA9063_IRQ_ONKEY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ONKEY,
-> -	},
-> -	[DA9063_IRQ_ALARM] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ALARM,
-> -	},
-> -	[DA9063_IRQ_TICK] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_TICK,
-> -	},
-> -	[DA9063_IRQ_ADC_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_ADC_RDY,
-> -	},
-> -	[DA9063_IRQ_SEQ_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
-> -		.mask = DA9063_M_SEQ_RDY,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ALARM,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_TICK, DA9063_REG_EVENT_A_OFFSET,
-> DA9063_M_TICK),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-> DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
->  	/* DA9063 event B register */
-> -	[DA9063_IRQ_WAKE] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_WAKE,
-> -	},
-> -	[DA9063_IRQ_TEMP] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_TEMP,
-> -	},
-> -	[DA9063_IRQ_COMP_1V2] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_COMP_1V2,
-> -	},
-> -	[DA9063_IRQ_LDO_LIM] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_LDO_LIM,
-> -	},
-> -	[DA9063_IRQ_REG_UVOV] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_UVOV,
-> -	},
-> -	[DA9063_IRQ_DVC_RDY] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_DVC_RDY,
-> -	},
-> -	[DA9063_IRQ_VDD_MON] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_VDD_MON,
-> -	},
-> -	[DA9063_IRQ_WARN] = {
-> -		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
-> -		.mask = DA9063_M_VDD_WARN,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-> DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
->  	/* DA9063 event C register */
-> -	[DA9063_IRQ_GPI0] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI0,
-> -	},
-> -	[DA9063_IRQ_GPI1] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI1,
-> -	},
-> -	[DA9063_IRQ_GPI2] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI2,
-> -	},
-> -	[DA9063_IRQ_GPI3] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI3,
-> -	},
-> -	[DA9063_IRQ_GPI4] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI4,
-> -	},
-> -	[DA9063_IRQ_GPI5] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI5,
-> -	},
-> -	[DA9063_IRQ_GPI6] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI6,
-> -	},
-> -	[DA9063_IRQ_GPI7] = {
-> -		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
-> -		.mask = DA9063_M_GPI7,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI0, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI0),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI1, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI1),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI2, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI2),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI3, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI3),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI4, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI4),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI5, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI5),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI6, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI6),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI7, DA9063_REG_EVENT_C_OFFSET,
-> DA9063_M_GPI7),
->  	/* DA9063 event D register */
-> -	[DA9063_IRQ_GPI8] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI8,
-> -	},
-> -	[DA9063_IRQ_GPI9] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI9,
-> -	},
-> -	[DA9063_IRQ_GPI10] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI10,
-> -	},
-> -	[DA9063_IRQ_GPI11] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI11,
-> -	},
-> -	[DA9063_IRQ_GPI12] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI12,
-> -	},
-> -	[DA9063_IRQ_GPI13] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI13,
-> -	},
-> -	[DA9063_IRQ_GPI14] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI14,
-> -	},
-> -	[DA9063_IRQ_GPI15] = {
-> -		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
-> -		.mask = DA9063_M_GPI15,
-> -	},
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI8, DA9063_REG_EVENT_D_OFFSET,
-> DA9063_M_GPI8),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI9, DA9063_REG_EVENT_D_OFFSET,
-> DA9063_M_GPI9),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-> +	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-> DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
->  };
-> 
->  static const struct regmap_irq_chip da9063_irq_chip = {
-> --
-> 2.16.2
+Looks good, thanks.
 
-Hi Marek,
+>> I usually try to make the non-pte-modifying functions take a pte_t
+>> instead of 'pte_t *' to make it obvious that there no modification going
+>> on.  Any reason not to do that here?
+> 
+> No, it was just a minor saving on stack usage.
 
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+We're just splitting hairs now :) but, realistically, this little helper
+will get inlined anyway, so it probably all generates the same code.
 
-Regards,
-Steve
+...
+>> BTW, do you want to add a tiny comment about why we do the
+>> trylock_page()?  I assume it's because we don't want to wait on finding
+>> an exact answer: we just assume it is in the swap cache if the page is
+>> locked and flush regardless.
+> 
+> It's really because calling lock_page while holding a spinlock is
+> eventually going to ruin your day.
+
+Hah, yeah, that'll do it.  Could you comment this, too?
