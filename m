@@ -1,50 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752025AbeFEPdw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:33:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57542 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751599AbeFEPdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:33:50 -0400
-Date: Tue, 5 Jun 2018 16:34:21 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-arch@vger.kernel.org,
+        id S1752207AbeFEPeF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:34:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:57562 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751886AbeFEPeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:34:03 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH -tip v5 06/27] arm64: kprobes: Remove jprobe
- implementation
-Message-ID: <20180605153420.GA26352@arm.com>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
- <152812748464.10068.10380156315388629319.stgit@devbox>
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 2/3] ACPI / PPTT: fix build when CONFIG_ACPI_PPTT is
+ not enabled
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+References: <1528209304-3280-1-git-send-email-sudeep.holla@arm.com>
+ <1528209304-3280-2-git-send-email-sudeep.holla@arm.com>
+ <CAJZ5v0gqQNHCuaeduQ8oQtGNUQcZxK171nDfyMNi1VVfnVsMqQ@mail.gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <83b1b038-c4c1-0199-2cb0-fb5343f0e3f5@arm.com>
+Date: Tue, 5 Jun 2018 16:33:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152812748464.10068.10380156315388629319.stgit@devbox>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAJZ5v0gqQNHCuaeduQ8oQtGNUQcZxK171nDfyMNi1VVfnVsMqQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 12:51:24AM +0900, Masami Hiramatsu wrote:
-> Remove arch dependent setjump/longjump functions
-> and unused fields in kprobe_ctlblk for jprobes
-> from arch/arm64.
+
+
+On 05/06/18 16:00, Rafael J. Wysocki wrote:
+> On Tue, Jun 5, 2018 at 4:35 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> Though CONFIG_ACPI_PPTT is selected by platforms and nor user visible,
+>> it may be useful to support the build with CONFIG_ACPI_PPTT disabled.
+>>
+>> This patch adds the missing dummy/boiler plate implementation to fix
+>> the build.
+>>
+>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>> ---
+>>  include/linux/acpi.h      | 15 +++++++++++++++
+>>  include/linux/cacheinfo.h |  2 +-
+>>  2 files changed, 16 insertions(+), 1 deletion(-)
+>>
+>> Hi Rafael,
+>>
+>> If you are fine with this, can you provide Ack, so that we route this
+>> through ARM64 tree where most of the ACPI PPTT support is present.
+>>
+>> Regards,
+>> Sudeep
+>>
+>> v1->v2:
+>>         - removed duplicate definition for acpi_find_last_cache_level
+>>
+>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>> index 8f2cdb0eca71..4b35a66383f9 100644
+>> --- a/include/linux/acpi.h
+>> +++ b/include/linux/acpi.h
+>> @@ -1299,8 +1299,23 @@ static inline int lpit_read_residency_count_address(u64 *address)
+>>  }
+>>  #endif
+>>
+>> +#ifdef CONFIG_ACPI_PPTT
+>>  int find_acpi_cpu_topology(unsigned int cpu, int level);
+>>  int find_acpi_cpu_topology_package(unsigned int cpu);
+>>  int find_acpi_cpu_cache_topology(unsigned int cpu, int level);
+>> +#else
+>> +static inline int find_acpi_cpu_topology(unsigned int cpu, int level)
+>> +{
+>> +       return -EINVAL;
 > 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> ---
->  arch/arm64/include/asm/kprobes.h   |    1 -
->  arch/arm64/kernel/probes/kprobes.c |   68 ------------------------------------
->  2 files changed, 69 deletions(-)
+> Why -EINVAL?
+> 
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+I am not sure either. I used to return -ENOTSUPP, but IIRC someone
+suggested to use it only for syscalls. Also I just based it on other
+existing functions in acpi.h
 
-Will
+I am open for any alternatives if you think that is better here.
+-- 
+Regards,
+Sudeep
