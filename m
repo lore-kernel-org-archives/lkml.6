@@ -1,196 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751600AbeFEIgA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:36:00 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:6475 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751296AbeFEIf5 (ORCPT
+        id S1751730AbeFEIgM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:36:12 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:35796 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751554AbeFEIgJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:35:57 -0400
-X-IronPort-AV: E=Sophos;i="5.49,478,1520866800";
-   d="scan'208";a="283073094"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
-Date: Tue,  5 Jun 2018 09:29:57 +0100
-Message-Id: <1528187462-47093-2-git-send-email-michel.pollet@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+        Tue, 5 Jun 2018 04:36:09 -0400
+Date: Tue, 5 Jun 2018 11:35:51 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Thibaut Robert <thibaut.robert@gmail.com>
+Cc: Ajay Singh <ajay.kathat@microchip.com>, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Aditya Shankar <aditya.shankar@microchip.com>
+Subject: Re: [PATCH 1/1] staging: wilc1000: Use common structs to parse ip
+ packets
+Message-ID: <20180605083551.n6kmljbfxfc7vv2c@mwanda>
+References: <20180529190839.12818-1-thibaut.robert@gmail.com>
+ <20180530112904.x4vcpkdmqhpc7xll@mwanda>
+ <20180604105549.04031722@ajaysk-VirtualBox>
+ <20180604192702.GA32753@L80496>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180604192702.GA32753@L80496>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8914 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=737
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806050103
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the constants necessary to use the renesas,r9a06g032-sysctrl node.
+On Mon, Jun 04, 2018 at 09:27:02PM +0200, Thibaut Robert wrote:
+> Le lundi 04 juin 2018 à 10:55:49 (+0530), Ajay Singh a écrit :
+> > 
+> > Thank you for submitting the patches.
+> > 
+> > The modification in this patch looks okay to me.
+> > Please resend this by including changes as suggested by Dan.
+> > I can do the modification and resubmit this patch by including review
+> > comments, if its okay with you.
+> > 
+> Sorry, I would like to address the comments, but still had no time to do it correctly. I
+> am doing this as a hobby and am still learning so forgive me for the delay. 
+> If you can wait a little bit more, I'll resend an updated version.
+> 
+> Thanks for your time !
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- include/dt-bindings/clock/r9a06g032-sysctrl.h | 148 ++++++++++++++++++++++++++
- 1 file changed, 148 insertions(+)
- create mode 100644 include/dt-bindings/clock/r9a06g032-sysctrl.h
+When you're a kernel dev, you sometimes do get the feeling that everyone
+is waiting for you.  We're not.  There is no rush.  We read through your
+email and reply and then it's gone from our mind like dust in the wind.
+There is never a rush and you will never run out of more work to do.
 
-diff --git a/include/dt-bindings/clock/r9a06g032-sysctrl.h b/include/dt-bindings/clock/r9a06g032-sysctrl.h
-new file mode 100644
-index 0000000..90c0f3d
---- /dev/null
-+++ b/include/dt-bindings/clock/r9a06g032-sysctrl.h
-@@ -0,0 +1,148 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * R9A06G032 sysctrl IDs
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ */
-+
-+#ifndef __DT_BINDINGS_R9A06G032_SYSCTRL_H__
-+#define __DT_BINDINGS_R9A06G032_SYSCTRL_H__
-+
-+#define R9A06G032_CLK_PLL_USB		1
-+#define R9A06G032_CLK_48		1	/* AKA CLK_PLL_USB */
-+#define R9A06G032_MSEBIS_CLK		3	/* AKA CLKOUT_D16 */
-+#define R9A06G032_MSEBIM_CLK		3	/* AKA CLKOUT_D16 */
-+#define R9A06G032_CLK_DDRPHY_PLLCLK	5	/* AKA CLKOUT_D1OR2 */
-+#define R9A06G032_CLK50			6	/* AKA CLKOUT_D20 */
-+#define R9A06G032_CLK25			7	/* AKA CLKOUT_D40 */
-+#define R9A06G032_CLK125		9	/* AKA CLKOUT_D8 */
-+#define R9A06G032_CLK_P5_PG1		17	/* AKA DIV_P5_PG */
-+#define R9A06G032_CLK_REF_SYNC		21	/* AKA DIV_REF_SYNC */
-+#define R9A06G032_CLK_25_PG4		26
-+#define R9A06G032_CLK_25_PG5		27
-+#define R9A06G032_CLK_25_PG6		28
-+#define R9A06G032_CLK_25_PG7		29
-+#define R9A06G032_CLK_25_PG8		30
-+#define R9A06G032_CLK_ADC		31
-+#define R9A06G032_CLK_ECAT100		32
-+#define R9A06G032_CLK_HSR100		33
-+#define R9A06G032_CLK_I2C0		34
-+#define R9A06G032_CLK_I2C1		35
-+#define R9A06G032_CLK_MII_REF		36
-+#define R9A06G032_CLK_NAND		37
-+#define R9A06G032_CLK_NOUSBP2_PG6	38
-+#define R9A06G032_CLK_P1_PG2		39
-+#define R9A06G032_CLK_P1_PG3		40
-+#define R9A06G032_CLK_P1_PG4		41
-+#define R9A06G032_CLK_P4_PG3		42
-+#define R9A06G032_CLK_P4_PG4		43
-+#define R9A06G032_CLK_P6_PG1		44
-+#define R9A06G032_CLK_P6_PG2		45
-+#define R9A06G032_CLK_P6_PG3		46
-+#define R9A06G032_CLK_P6_PG4		47
-+#define R9A06G032_CLK_PCI_USB		48
-+#define R9A06G032_CLK_QSPI0		49
-+#define R9A06G032_CLK_QSPI1		50
-+#define R9A06G032_CLK_RGMII_REF		51
-+#define R9A06G032_CLK_RMII_REF		52
-+#define R9A06G032_CLK_SDIO0		53
-+#define R9A06G032_CLK_SDIO1		54
-+#define R9A06G032_CLK_SERCOS100		55
-+#define R9A06G032_CLK_SLCD		56
-+#define R9A06G032_CLK_SPI0		57
-+#define R9A06G032_CLK_SPI1		58
-+#define R9A06G032_CLK_SPI2		59
-+#define R9A06G032_CLK_SPI3		60
-+#define R9A06G032_CLK_SPI4		61
-+#define R9A06G032_CLK_SPI5		62
-+#define R9A06G032_CLK_SWITCH		63
-+#define R9A06G032_HCLK_ECAT125		65
-+#define R9A06G032_HCLK_PINCONFIG	66
-+#define R9A06G032_HCLK_SERCOS		67
-+#define R9A06G032_HCLK_SGPIO2		68
-+#define R9A06G032_HCLK_SGPIO3		69
-+#define R9A06G032_HCLK_SGPIO4		70
-+#define R9A06G032_HCLK_TIMER0		71
-+#define R9A06G032_HCLK_TIMER1		72
-+#define R9A06G032_HCLK_USBF		73
-+#define R9A06G032_HCLK_USBH		74
-+#define R9A06G032_HCLK_USBPM		75
-+#define R9A06G032_CLK_48_PG_F		76
-+#define R9A06G032_CLK_48_PG4		77
-+#define R9A06G032_CLK_DDRPHY_PCLK	81	/* AKA CLK_REF_SYNC_D4 */
-+#define R9A06G032_CLK_FW		81	/* AKA CLK_REF_SYNC_D4 */
-+#define R9A06G032_CLK_CRYPTO		81	/* AKA CLK_REF_SYNC_D4 */
-+#define R9A06G032_CLK_A7MP		84	/* AKA DIV_CA7 */
-+#define R9A06G032_HCLK_CAN0		85
-+#define R9A06G032_HCLK_CAN1		86
-+#define R9A06G032_HCLK_DELTASIGMA	87
-+#define R9A06G032_HCLK_PWMPTO		88
-+#define R9A06G032_HCLK_RSV		89
-+#define R9A06G032_HCLK_SGPIO0		90
-+#define R9A06G032_HCLK_SGPIO1		91
-+#define R9A06G032_RTOS_MDC		92
-+#define R9A06G032_CLK_CM3		93
-+#define R9A06G032_CLK_DDRC		94
-+#define R9A06G032_CLK_ECAT25		95
-+#define R9A06G032_CLK_HSR50		96
-+#define R9A06G032_CLK_HW_RTOS		97
-+#define R9A06G032_CLK_SERCOS50		98
-+#define R9A06G032_HCLK_ADC		99
-+#define R9A06G032_HCLK_CM3		100
-+#define R9A06G032_HCLK_CRYPTO_EIP150	101
-+#define R9A06G032_HCLK_CRYPTO_EIP93	102
-+#define R9A06G032_HCLK_DDRC		103
-+#define R9A06G032_HCLK_DMA0		104
-+#define R9A06G032_HCLK_DMA1		105
-+#define R9A06G032_HCLK_GMAC0		106
-+#define R9A06G032_HCLK_GMAC1		107
-+#define R9A06G032_HCLK_GPIO0		108
-+#define R9A06G032_HCLK_GPIO1		109
-+#define R9A06G032_HCLK_GPIO2		110
-+#define R9A06G032_HCLK_HSR		111
-+#define R9A06G032_HCLK_I2C0		112
-+#define R9A06G032_HCLK_I2C1		113
-+#define R9A06G032_HCLK_LCD		114
-+#define R9A06G032_HCLK_MSEBI_M		115
-+#define R9A06G032_HCLK_MSEBI_S		116
-+#define R9A06G032_HCLK_NAND		117
-+#define R9A06G032_HCLK_PG_I		118
-+#define R9A06G032_HCLK_PG19		119
-+#define R9A06G032_HCLK_PG20		120
-+#define R9A06G032_HCLK_PG3		121
-+#define R9A06G032_HCLK_PG4		122
-+#define R9A06G032_HCLK_QSPI0		123
-+#define R9A06G032_HCLK_QSPI1		124
-+#define R9A06G032_HCLK_ROM		125
-+#define R9A06G032_HCLK_RTC		126
-+#define R9A06G032_HCLK_SDIO0		127
-+#define R9A06G032_HCLK_SDIO1		128
-+#define R9A06G032_HCLK_SEMAP		129
-+#define R9A06G032_HCLK_SPI0		130
-+#define R9A06G032_HCLK_SPI1		131
-+#define R9A06G032_HCLK_SPI2		132
-+#define R9A06G032_HCLK_SPI3		133
-+#define R9A06G032_HCLK_SPI4		134
-+#define R9A06G032_HCLK_SPI5		135
-+#define R9A06G032_HCLK_SWITCH		136
-+#define R9A06G032_HCLK_SWITCH_RG	137
-+#define R9A06G032_HCLK_UART0		138
-+#define R9A06G032_HCLK_UART1		139
-+#define R9A06G032_HCLK_UART2		140
-+#define R9A06G032_HCLK_UART3		141
-+#define R9A06G032_HCLK_UART4		142
-+#define R9A06G032_HCLK_UART5		143
-+#define R9A06G032_HCLK_UART6		144
-+#define R9A06G032_HCLK_UART7		145
-+#define R9A06G032_CLK_UART0		146
-+#define R9A06G032_CLK_UART1		147
-+#define R9A06G032_CLK_UART2		148
-+#define R9A06G032_CLK_UART3		149
-+#define R9A06G032_CLK_UART4		150
-+#define R9A06G032_CLK_UART5		151
-+#define R9A06G032_CLK_UART6		152
-+#define R9A06G032_CLK_UART7		153
-+
-+#endif /* __DT_BINDINGS_R9A06G032_SYSCTRL_H__ */
--- 
-2.7.4
+Plus the merge window is open so Greg won't even look at it for the next
+several weeks.
+
+Take all the time you need.
+
+I normally write a patch, then wait until morning so I can review it
+with fresh eyes before sending it.  If I wait longer than a day, though,
+I forget what the issue is and I have to retest it from scratch.  After
+one day in my outbox a patch gets old and boring so those are low
+quality.  If it's a cleanup patch, I'll probably just delete it instead.
+
+regards,
+dan carpenter
