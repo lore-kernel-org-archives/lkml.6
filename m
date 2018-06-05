@@ -1,93 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751869AbeFEMvO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:51:14 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42448 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751656AbeFEMvM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:51:12 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 87150225E49
-Date: Tue, 5 Jun 2018 08:51:11 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>, Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Message-ID: <570482053.5560.1528203071391.JavaMail.zimbra@efficios.com>
-In-Reply-To: <874lihbykr.fsf@concordia.ellerman.id.au>
-References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com> <20180602124408.8430-11-mathieu.desnoyers@efficios.com> <874lihbykr.fsf@concordia.ellerman.id.au>
-Subject: Re: [RFC PATCH for 4.18 10/16] powerpc: Wire up restartable
- sequences system call
+        id S1751750AbeFEMwl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:52:41 -0400
+Received: from foss.arm.com ([217.140.101.70]:55462 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751625AbeFEMwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:52:40 -0400
+Date: Tue, 5 Jun 2018 13:52:36 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 4/7] atomics: add common header generation files
+Message-ID: <20180605125236.6d6tcfsql7q2hrnl@lakrids.cambridge.arm.com>
+References: <20180529180746.29684-1-mark.rutland@arm.com>
+ <20180529180746.29684-5-mark.rutland@arm.com>
+ <20180605122537.GJ12258@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: powerpc: Wire up restartable sequences system call
-Thread-Index: pN6BzPNNAeLWTVSDZTr/PQsyIxZcyA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605122537.GJ12258@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 5, 2018, at 1:18 AM, Michael Ellerman mpe@ellerman.id.au wrote:
-
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> writes:
+On Tue, Jun 05, 2018 at 02:25:37PM +0200, Peter Zijlstra wrote:
+> On Tue, May 29, 2018 at 07:07:43PM +0100, Mark Rutland wrote:
+> > +++ b/scripts/atomic/atomics.tbl
+> > @@ -0,0 +1,41 @@
+> > +# name	meta	args...
+> > +#
+> > +# Where meta contains a string of variants to generate.
+> > +# Upper-case implies _{acquire,release,relaxed} variants.
+> > +# Valid meta values are:
+> > +# * B/b	- bool: returns bool
+> > +# * v	- void: returns void
+> > +# * I/i	- int: returns base type
+> > +# * R	- return: returns base type (has _return variants)
+> > +# * F/f	- fetch: returns base type (has fetch_ variants)
+> > +# * l	- load: returns base type (has _acquire order variant)
+> > +# * s	- store: returns void (has _release order variant)
+> > +#
+> > +# Where args contains list of type[:name], where type is:
+> > +# * cv	- const pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
+> > +# * v	- pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
+> > +# * i	- base type (int/s64/long)
+> > +# * I	- pointer to base type (int/s64/long)
 > 
->> From: Boqun Feng <boqun.feng@gmail.com>
->>
->> Wire up the rseq system call on powerpc.
->>
->> This provides an ABI improving the speed of a user-space getcpu
->> operation on powerpc by skipping the getcpu system call on the fast
->> path, as well as improving the speed of user-space operations on per-cpu
->> data compared to using load-reservation/store-conditional atomics.
->>
->> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> CC: Paul Mackerras <paulus@samba.org>
->> CC: Michael Ellerman <mpe@ellerman.id.au>
->> CC: Peter Zijlstra <peterz@infradead.org>
->> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
->> CC: linuxppc-dev@lists.ozlabs.org
->> ---
->>  arch/powerpc/include/asm/systbl.h      | 1 +
->>  arch/powerpc/include/asm/unistd.h      | 2 +-
->>  arch/powerpc/include/uapi/asm/unistd.h | 1 +
->>  3 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> Looks fine to me.
-> 
-> I don't have any other new syscalls in my next, so this should not
-> conflict with anything for 4.18.
-> 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> I thought we agreed to make that 'p' instead of 'I'.
 
-Added your ack to the series, thanks!
+Whoops; I'd left that as a cleanup and never folded it in.
 
-Mathieu
+Fixed up now.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Thanks,
+Mark
