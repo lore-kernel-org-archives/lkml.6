@@ -1,72 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751511AbeFEIcr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:32:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47759 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751296AbeFEIcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:32:45 -0400
-Date: Tue, 5 Jun 2018 10:32:41 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
-        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
-Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
-Message-ID: <20180605083241.GU19202@dhcp22.suse.cz>
-References: <20180525.102321.858995452200286788.davem@davemloft.net>
- <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
- <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
- <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
- <20180531065405.GH15278@dhcp22.suse.cz>
- <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
- <20180531085532.GK15278@dhcp22.suse.cz>
- <20180531091022.GL15278@dhcp22.suse.cz>
- <20180604131104.GS19202@dhcp22.suse.cz>
- <1908601f-2eda-d739-9c4d-430a002b1a05@gmail.com>
+        id S1751661AbeFEIde (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:33:34 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39524 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751590AbeFEIda (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:33:30 -0400
+X-Google-Smtp-Source: ADUXVKKK7s9ScOw9kC4zO1F4fVvhPllzY/IqzGYrs+xahrCPkN1oYt8k8xqHkLzOXVe6Y2mVWC9Wsg==
+Date: Tue, 5 Jun 2018 10:33:25 +0200
+From: Thibaut Robert <thibaut.robert@gmail.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
+ warnings
+Message-ID: <20180605083325.GA6965@L80496>
+References: <20180529191143.13081-1-thibaut.robert@gmail.com>
+ <20180530111725.gmigyddsp2i6mgzw@mwanda>
+ <20180604193250.GB32753@L80496>
+ <20180605073631.cvp2iuef4yb636jz@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1908601f-2eda-d739-9c4d-430a002b1a05@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605073631.cvp2iuef4yb636jz@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 04-06-18 06:22:26, Eric Dumazet wrote:
-> 
-> 
-> On 06/04/2018 06:11 AM, Michal Hocko wrote:
-> > On Thu 31-05-18 11:10:22, Michal Hocko wrote:
-> 
-> > Just in case you are interested
-> > ---
-> > From 5010543ed6f73e4c00367801486dca8d5c63b2ce Mon Sep 17 00:00:00 2001
-> > From: Michal Hocko <mhocko@suse.com>
-> > Date: Mon, 4 Jun 2018 15:07:37 +0200
-> > Subject: [PATCH] net: cleanup gfp mask in alloc_skb_with_frags
+Le mardi 05 juin 2018 à 10:36:31 (+0300), Dan Carpenter a écrit :
+> On Mon, Jun 04, 2018 at 09:32:50PM +0200, Thibaut Robert wrote:
+> > Le mercredi 30 mai 2018 à 14:17:25 (+0300), Dan Carpenter a écrit :
+> > > On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
+> > > > diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > > > index e248702ee519..745bf5ca2622 100644
+> > > > --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > > > +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > > > @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
+> > > >  
+> > > >  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
+> > > >  
+> > > > -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
+> > > > +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
+> > > 
+> > > "buff" comes from the network, it's going to be little endian, not cpu
+> > > endian.  The rest of the function treats it as CPU endian but I'm pretty
+> > > sure it's wrong...
+> > buff comes from the network but we are looking at single byte here.
+> > ieee80211_is_action expects an le16, so we I added this to extend an u8
+> > to an le16. Is this incorrect ?
 > > 
-> > alloc_skb_with_frags uses __GFP_NORETRY for non-sleeping allocations
-> > which is just a noop and a little bit confusing.
-> > 
-> > __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
-> > high order allocations") to prevent from the OOM killer. Yet this was
-> > not enough because fb05e7a89f50 ("net: don't wait for order-3 page
-> > allocation") didn't want an excessive reclaim for non-costly orders
-> > so it made it completely NOWAIT while it preserved __GFP_NORETRY in
-> > place which is now redundant.
-> > 
-> > Drop the pointless __GFP_NORETRY because this function is used as
-> > copy&paste source for other places.
-> > 
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
+> > Or maybe we the buff has the second byte ? but that I can't tell. 
 > 
-> Reviewed-by: Eric Dumazet <edumazet@google.com>
+> You raise a good point that I hadn't seen. The original code is clearly
+> buggy.  But your fix isn't correct either...  The other thing to
+> consider is that cpu_to_le16() is basically a cast to u16 on x86 so it's
+> a no-op here.
+The sparse warning is clearly spotting a real issue. I tried to at least
+have big endian handle correctly the 0-255 case. I am willing to drop
+the change (since I agree it's not very satisfying and will mask an issue), 
+but may I ask you to explain how it is wrong ? How would you correctly expand 
+an u8 to __le16 ? I think in big endian we need to swap the bytes.
 
-Thanks! What is the proper process now? Should I resend or somebody can
-pick it up from this thread?
--- 
-Michal Hocko
-SUSE Labs
+> 
+> Really the right thing is to not treat buff as an array of u8 but a
+> struct.  The code assumes that frame_type is 0-255 but probably it's
+> supposed to go up to U16_MAX.
+> 
+> struct whatever {
+> 	__le16 frame_type;
+> 	...
+> 
+> There probably is already a struct like that, but I don't know what it
+> is.  I don't know this code at all, I'm just guessing.
+> 
+I was thinking the same. I don't know whether this buf contains a
+standard struct or something hw-specific. I'll try to dig further and
+submit a separate patch if I can. Maybe Aditya can give more information
+?
+
+
+> regards,
+> dan carpenter
+> 
+
+Regards,
+Thibaut
