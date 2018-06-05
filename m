@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeFEJWZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:22:25 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47952 "EHLO
+        id S1751853AbeFEJWY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:22:24 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47912 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbeFEJWW (ORCPT
+        with ESMTP id S1751494AbeFEJWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:22:22 -0400
+        Tue, 5 Jun 2018 05:22:19 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Subject: [PATCH 6/9] Input: cros_ec_keyb - Switch to SPDX identifier.
-Date: Tue,  5 Jun 2018 11:22:06 +0200
-Message-Id: <20180605092209.22887-7-enric.balletbo@collabora.com>
+        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>, Kees Cook <keescook@chromium.org>,
+        Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>
+Subject: [PATCH 2/9] platform/chrome: pstore: Switch to SPDX identifier.
+Date: Tue,  5 Jun 2018 11:22:02 +0200
+Message-Id: <20180605092209.22887-3-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605092209.22887-1-enric.balletbo@collabora.com>
 References: <20180605092209.22887-1-enric.balletbo@collabora.com>
@@ -28,42 +29,29 @@ management.
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/input/keyboard/cros_ec_keyb.c | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+ drivers/platform/chrome/chromeos_pstore.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index 79eb29550c34..342513ec0ede 100644
---- a/drivers/input/keyboard/cros_ec_keyb.c
-+++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -1,25 +1,7 @@
+diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
+index b0693fdec8c6..4d3d3459e2f9 100644
+--- a/drivers/platform/chrome/chromeos_pstore.c
++++ b/drivers/platform/chrome/chromeos_pstore.c
+@@ -1,12 +1,7 @@
 -/*
-- * ChromeOS EC keyboard driver
+- *  chromeos_pstore.c - Driver to instantiate Chromebook ramoops device
 - *
-- * Copyright (C) 2012 Google, Inc
+- *  Copyright (C) 2013 Google, Inc.
 - *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * This driver uses the Chrome OS EC byte-level message-based protocol for
-- * communicating the keyboard state (which keys are pressed) from a keyboard EC
-- * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-- * but everything else (including deghosting) is done here.  The main
-- * motivation for this is to keep the EC firmware as simple as possible, since
-- * it cannot be easily upgraded and EC flash/IRAM space is relatively
-- * expensive.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation, version 2 of the License.
 - */
 +// SPDX-License-Identifier: GPL-2.0+
-+// ChromeOS EC keyboard driver
++// Driver to instantiate Chromebook ramoops device.
 +//
-+// Copyright (C) 2012 Google, Inc.
++// Copyright (C) 2013 Google, Inc.
  
- #include <linux/module.h>
- #include <linux/bitops.h>
+ #include <linux/acpi.h>
+ #include <linux/dmi.h>
 -- 
 2.17.1
