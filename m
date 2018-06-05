@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeFEQfh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:35:37 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38289 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeFEQff (ORCPT
+        id S1752096AbeFEQfp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:35:45 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37712 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751791AbeFEQfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:35:35 -0400
-X-Google-Smtp-Source: ADUXVKLZjyZYDQdWssnia7HjiMOFGhJMKGEbh9ZLJF8FSTlJl6EMWNvyJCkei4iAg+Il/fPFUa/ySA==
+        Tue, 5 Jun 2018 12:35:42 -0400
+X-Google-Smtp-Source: ADUXVKJVNQFURnivj3hruBgMDFvmEuT2ul4BIZluxG1+SwpJx7WwrAXpDMfBX1FwWeamqTUaPBiaoQ==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: matthias.bgg@gmail.com, robh+dt@kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -16,40 +16,37 @@ Cc: linux-arm-kernel@lists.infradead.org,
         daniel.thompson@linaro.org, amit.kucheria@linaro.org,
         manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 0/2] Add Mediatek X20 Development Board support
-Date: Tue,  5 Jun 2018 22:04:40 +0530
-Message-Id: <20180605163442.4812-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: arm: mediatek: Document Mediatek X20 Development Board
+Date: Tue,  5 Jun 2018 22:04:41 +0530
+Message-Id: <20180605163442.4812-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180605163442.4812-1-manivannan.sadhasivam@linaro.org>
+References: <20180605163442.4812-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree support for Mediatek X20 Development Board by Archermind.
-This board is based on the Deca-Core MT6797 SoC from Mediatek and is
-one of the 96Boards Consumer Edition platform.
+Document Mediatek X20 Development Board which is a 96Boards Consumer
+Edition platform based on MT6797 SoC.
 
-With this devicetree change, board can boot into initramfs.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/mediatek.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-More information about this board can be found in 96Boards product page:
-https://www.96boards.org/product/mediatek-x20/
-
-Thanks,
-Mani
-
-Changes in v2:
-
-* Added documentation for board compatible
-* Dropped vendor documetation patch since it got applied
-
-Manivannan Sadhasivam (2):
-  dt-bindings: arm: mediatek: Document Mediatek X20 Development Board
-  arm64: dts: Add Mediatek X20 Development Board support
-
- .../devicetree/bindings/arm/mediatek.txt      |  3 ++
- arch/arm64/boot/dts/mediatek/Makefile         |  1 +
- .../boot/dts/mediatek/mt6797-x20-dev.dts      | 33 +++++++++++++++++++
- 3 files changed, 37 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
+index 7d21ab37c19c..356df1ee11b9 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek.txt
+@@ -47,6 +47,9 @@ Supported boards:
+ - Evaluation board for MT6797(Helio X20):
+     Required root node properties:
+       - compatible = "mediatek,mt6797-evb", "mediatek,mt6797";
++- Mediatek X20 Development Board:
++    Required root node properties:
++      - compatible = "archermind,mt6797-x20-dev", "mediatek,mt6797";
+ - Reference board variant 1 for MT7622:
+     Required root node properties:
+       - compatible = "mediatek,mt7622-rfb1", "mediatek,mt7622";
 -- 
 2.17.0
