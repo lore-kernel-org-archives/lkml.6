@@ -1,19 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752845AbeFEREM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33008 "EHLO mail.kernel.org"
+        id S1752875AbeFERET (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:04:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752801AbeFEREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:09 -0400
+        id S1752004AbeFEREP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sachin Grover <sgrover@codeaurora.org>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.4 09/37] selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
-Date: Tue,  5 Jun 2018 19:01:14 +0200
-Message-Id: <20180605170109.459868529@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Michal Marek <mmarek@suse.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.4 32/37] Kbuild: change CC_OPTIMIZE_FOR_SIZE definition
+Date: Tue,  5 Jun 2018 19:01:37 +0200
+Message-Id: <20180605170110.766880991@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -29,50 +31,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sachin Grover <sgrover@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit efe3de79e0b52ca281ef6691480c8c68c82a4657 upstream.
+commit 877417e6ffb9578e8580abf76a71e15732473456 upstream.
 
-Call trace:
- [<ffffff9203a8d7a8>] dump_backtrace+0x0/0x428
- [<ffffff9203a8dbf8>] show_stack+0x28/0x38
- [<ffffff920409bfb8>] dump_stack+0xd4/0x124
- [<ffffff9203d187e8>] print_address_description+0x68/0x258
- [<ffffff9203d18c00>] kasan_report.part.2+0x228/0x2f0
- [<ffffff9203d1927c>] kasan_report+0x5c/0x70
- [<ffffff9203d1776c>] check_memory_region+0x12c/0x1c0
- [<ffffff9203d17cdc>] memcpy+0x34/0x68
- [<ffffff9203d75348>] xattr_getsecurity+0xe0/0x160
- [<ffffff9203d75490>] vfs_getxattr+0xc8/0x120
- [<ffffff9203d75d68>] getxattr+0x100/0x2c8
- [<ffffff9203d76fb4>] SyS_fgetxattr+0x64/0xa0
- [<ffffff9203a83f70>] el0_svc_naked+0x24/0x28
+CC_OPTIMIZE_FOR_SIZE disables the often useful -Wmaybe-unused warning,
+because that causes a ridiculous amount of false positives when combined
+with -Os.
 
-If user get root access and calls security.selinux setxattr() with an
-embedded NUL on a file and then if some process performs a getxattr()
-on that file with a length greater than the actual length of the string,
-it would result in a panic.
+This means a lot of warnings don't show up in testing by the developers
+that should see them with an 'allmodconfig' kernel that has
+CC_OPTIMIZE_FOR_SIZE enabled, but only later in randconfig builds
+that don't.
 
-To fix this, add the actual length of the string to the security context
-instead of the length passed by the userspace process.
+This changes the Kconfig logic around CC_OPTIMIZE_FOR_SIZE to make
+it a 'choice' statement defaulting to CC_OPTIMIZE_FOR_PERFORMANCE
+that gets added for this purpose. The allmodconfig and allyesconfig
+kernels now default to -O2 with the maybe-unused warning enabled.
 
-Signed-off-by: Sachin Grover <sgrover@codeaurora.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Michal Marek <mmarek@suse.com>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/ss/services.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ init/Kconfig |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -1441,7 +1441,7 @@ static int security_context_to_sid_core(
- 				      scontext_len, &context, def_sid);
- 	if (rc == -EINVAL && force) {
- 		context.str = str;
--		context.len = scontext_len;
-+		context.len = strlen(str) + 1;
- 		str = NULL;
- 	} else if (rc)
- 		goto out_unlock;
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1308,6 +1308,17 @@ source "usr/Kconfig"
+ 
+ endif
+ 
++choice
++	prompt "Compiler optimization level"
++	default CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
++
++config CC_OPTIMIZE_FOR_PERFORMANCE
++	bool "Optimize for performance"
++	help
++	  This is the default optimization level for the kernel, building
++	  with the "-O2" compiler flag for best performance and most
++	  helpful compile-time warnings.
++
+ config CC_OPTIMIZE_FOR_SIZE
+ 	bool "Optimize for size"
+ 	help
+@@ -1316,6 +1327,8 @@ config CC_OPTIMIZE_FOR_SIZE
+ 
+ 	  If unsure, say N.
+ 
++endchoice
++
+ config SYSCTL
+ 	bool
+ 
