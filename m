@@ -1,104 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752709AbeFEVoz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:44:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34450 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751780AbeFEVox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:44:53 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: mathieu.poirier@linaro.org, robh@kernel.org, frowand.list@gmail.com,
-        mark.rutland@arm.com, sudeep.holla@arm.com, arm@kernel.org,
-        linux-kernel@vger.kernel.org, matt.sealey@arm.com, john.horley@arm.com,
-        charles.garcia-tobin@arm.com, coresight@lists.linaro.org,
-        devicetree@vger.kernel.org, mike.leach@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 03/20] coresight: Fix remote endpoint parsing
-Date: Tue,  5 Jun 2018 22:43:14 +0100
-Message-Id: <1528235011-30691-4-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+        id S1753190AbeFEVsk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:48:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:35147 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753129AbeFEVsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:48:37 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 6 Jun 2018 07:48:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
+Message-ID: <20180606074829.2c8687e7@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NUJCacTjC_M013vPBX2+1u+"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When parsing the remote endpoint of an output port, we do :
-     rport = of_graph_get_remote_port(ep);
-     rparent = of_graph_get_remote_port_parent(ep);
+--Sig_/NUJCacTjC_M013vPBX2+1u+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-and then parse the "remote_port" as if it was the remote endpoint,
-which is wrong. The code worked fine because we used endpoint number
-as the port number. Let us fix it and optimise a bit as:
+Hi Mauro,
 
-     remote_ep = of_graph_get_remote_endpoint(ep);
-     if (remote_ep)
-        remote_parent = of_graph_get_port_parent(remote_ep);
+Commit
 
-and then, parse the remote_ep for the port/endpoint details.
+  f2809d20b925 ("media: omap2: fix compile-testing with FB_OMAP2=3Dm")
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/coresight/of_coresight.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+is missing a Signed-off-by from its committer.
 
-diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-index 8a23c63..ada4f07 100644
---- a/drivers/hwtracing/coresight/of_coresight.c
-+++ b/drivers/hwtracing/coresight/of_coresight.c
-@@ -129,7 +129,7 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
- 	int ret = 0;
- 	struct of_endpoint endpoint, rendpoint;
- 	struct device_node *rparent = NULL;
--	struct device_node *rport = NULL;
-+	struct device_node *rep = NULL;
- 	struct device *rdev = NULL;
- 
- 	do {
-@@ -144,16 +144,16 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
- 		if (of_graph_parse_endpoint(ep, &endpoint))
- 			break;
- 		/*
--		 * Get a handle on the remote port and parent
--		 * attached to it.
-+		 * Get a handle on the remote endpoint and the device it is
-+		 * attached to.
- 		 */
--		rparent = of_graph_get_remote_port_parent(ep);
-+		rep = of_graph_get_remote_endpoint(ep);
-+		if (!rep)
-+			break;
-+		rparent = of_graph_get_port_parent(rep);
- 		if (!rparent)
- 			break;
--		rport = of_graph_get_remote_port(ep);
--		if (!rport)
--			break;
--		if (of_graph_parse_endpoint(rport, &rendpoint))
-+		if (of_graph_parse_endpoint(rep, &rendpoint))
- 			break;
- 
- 		/* If the remote device is not available, defer probing */
-@@ -165,15 +165,15 @@ static int of_coresight_parse_endpoint(struct device_node *ep,
- 
- 		pdata->outports[*i] = endpoint.port;
- 		pdata->child_names[*i] = dev_name(rdev);
--		pdata->child_ports[*i] = rendpoint.id;
-+		pdata->child_ports[*i] = rendpoint.port;
- 		/* Move the index */
- 		(*i)++;
- 	} while (0);
- 
- 	if (rparent)
- 		of_node_put(rparent);
--	if (rport)
--		of_node_put(rport);
-+	if (rep)
-+		of_node_put(rep);
- 
- 	return ret;
- }
--- 
-2.7.4
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NUJCacTjC_M013vPBX2+1u+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXBS0ACgkQAVBC80lX
+0Gxrlgf/bwcr4xb5Z+HUMHSeoACRYrEuyvU6k34ZOqMUAtmdoAzAouJamoXTM+HA
+EPZiAZHE9fgfIdwAAPN60MXLQOMpJqp5E8b1cgm07b9txRzeaCnwYJKa/GsDX7dJ
++2E0A50XaleDLhH05sgrzGDsTNj/+KSuuJy3ZS9VWVCMC+KQVELsi/nZ0boNmRq6
+kTzlxEFKWgOggtmnivER38HW2+jeFg8sgU9m1vJfzjmFR6RIaHSaMgtSrbW7SLuv
+uSFsoPCp58tjxK96ihy/cRpBrpE6FMJY/Wav8rc7whYw99tloNcqRHV6Um3POxvg
+W7mc+aOguxvByZ/fOxsKVnlEBgyUMA==
+=BAa6
+-----END PGP SIGNATURE-----
+
+--Sig_/NUJCacTjC_M013vPBX2+1u+--
