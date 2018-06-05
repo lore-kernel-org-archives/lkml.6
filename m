@@ -1,51 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752694AbeFEPAo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:00:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:57030 "EHLO foss.arm.com"
+        id S1751718AbeFEPCL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:02:11 -0400
+Received: from imap.thunk.org ([74.207.234.97]:37656 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752057AbeFEPAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:00:42 -0400
-Subject: Re: [PATCH v2 0/5] arm64: perf: Support for chained counters
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        mark.rutland@arm.com, robin.murphy@arm.com
-References: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
-From: Julien Thierry <julien.thierry@arm.com>
-Message-ID: <3cbe09d3-7878-d53d-0918-dfb38ac89353@arm.com>
-Date: Tue, 5 Jun 2018 16:00:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751282AbeFEPCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:02:09 -0400
+Date: Tue, 5 Jun 2018 11:02:07 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: torvalds@linux-foundation.org
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ext4 updates for 4.18
+Message-ID: <20180605150207.GA9057@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        torvalds@linux-foundation.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
 
+  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
 
-On 29/05/18 11:55, Suzuki K Poulose wrote:
-> This series adds support for counting PMU events using 64bit counters
-> for arm64 PMU.
-> 
-> The Arm v8 PMUv3 supports combining two adjacent 32bit counters
-> (low even and hig odd counters) to count a given "event" in 64bit mode.
-> This series adds the support for 64bit events in the core arm_pmu driver
-> infrastructure and adds the support for armv8 64bit kernel PMU to use
-> chained counters to count in 64bit mode. For CPU cycles, we use the cycle
-> counter in 64bit mode, when requested. If the cycle counter is not available,
-> we fall back to chaining the counters.
-> 
-> Tested on Juno, Fast models. Applies on 4.17-rc4
-> 
+are available in the Git repository at:
 
-For the series:
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+for you to fetch changes up to 4f2f76f751433908364ccff82f437a57d0e6e9b7:
 
--- 
-Julien Thierry
+  ext4: fix fencepost error in check for inode count overflow during resize (2018-05-25 12:51:25 -0400)
+
+----------------------------------------------------------------
+A lot of cleanups and bug fixes, especially dealing with corrupted
+file systems.
+
+----------------------------------------------------------------
+Amir Goldstein (3):
+      vfs: add the sb_start_intwrite_trylock() helper
+      ext4: factor out helper ext4_sample_last_mounted()
+      ext4: do not update s_last_mounted of a frozen fs
+
+Eryu Guan (2):
+      ext4: use XATTR_CREATE in ext4_initxattrs()
+      ext4: use raw i_version value for ea_inode
+
+Jaegeuk Kim (1):
+      ext4: handle errors on ext4_commit_super
+
+Jan Kara (2):
+      ext4: fix hole length detection in ext4_ind_map_blocks()
+      ext4: fix fencepost error in check for inode count overflow during resize
+
+Konstantin Khlebnikov (1):
+      ext4: report delalloc reserve as non-free in statfs for project quota
+
+Luis R. Rodriguez (1):
+      ext4: add verifier check for symlink with append/immutable flags
+
+Lukas Czerner (1):
+      ext4: update mtime in ext4_punch_hole even if no blocks are released
+
+Mathieu Malaterre (1):
+      ext4: make function ‘ext4_getfsmap_find_fixed_metadata’ static
+
+Sean Fu (1):
+      ext4: remove NULL check before calling kmem_cache_destroy()
+
+Souptick Joarder (1):
+      fs: ext4: add new return type vm_fault_t
+
+Theodore Ts'o (3):
+      ext4: do not allow external inodes for inline data
+      ext4: bubble errors from ext4_find_inline_data_nolock() up to ext4_iget()
+      ext4: correctly handle a zero-length xattr with a non-zero e_value_offs
+
+Wang Long (1):
+      jbd2: remove NULL check before calling kmem_cache_destroy()
+
+Wang Shilong (5):
+      ext4: fix wrong return value in ext4_read_inode_bitmap()
+      ext4: add new ext4_mark_group_bitmap_corrupted() helper
+      ext4: mark inode bitmap corrupted when found
+      ext4: mark block bitmap corrupted when found
+      jbd2: remove bunch of empty lines with jbd2 debug
+
+ fs/ext4/balloc.c         | 33 +++++++-------------
+ fs/ext4/ext4.h           |  7 +++++
+ fs/ext4/extents_status.c |  3 +-
+ fs/ext4/file.c           | 93 ++++++++++++++++++++++++++++++++-----------------------
+ fs/ext4/fsmap.c          |  4 +--
+ fs/ext4/ialloc.c         | 35 +++++++++------------
+ fs/ext4/indirect.c       | 14 ++++++---
+ fs/ext4/inline.c         |  6 ++++
+ fs/ext4/inode.c          | 77 +++++++++++++++++++++++++++++++--------------
+ fs/ext4/mballoc.c        | 23 +++++++-------
+ fs/ext4/resize.c         |  2 +-
+ fs/ext4/super.c          | 68 +++++++++++++++++++++++++++++++---------
+ fs/ext4/xattr.c          |  2 +-
+ fs/ext4/xattr_security.c |  2 +-
+ fs/jbd2/journal.c        | 20 +++++-------
+ fs/jbd2/revoke.c         | 12 +++----
+ fs/jbd2/transaction.c    |  6 ++--
+ include/linux/fs.h       |  5 +++
+ 18 files changed, 245 insertions(+), 167 deletions(-)
