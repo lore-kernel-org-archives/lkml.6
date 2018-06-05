@@ -1,88 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751966AbeFEMNy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:13:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41860 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751908AbeFEMNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751937AbeFEMNx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:13:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37885 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751904AbeFEMNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 5 Jun 2018 08:13:51 -0400
-Message-ID: <cdf6ffd450b0566ce4f0024155144e1d84503eea.camel@redhat.com>
-Subject: Re: [PATCH] netfilter: provide udp*_lib_lookup for nf_tproxy
-From: Paolo Abeni <pabeni@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>, Pablo Neira Ayuso <pablo@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: =?ISO-8859-1?Q?M=E1t=E9?= Eckl <ecklm94@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Eric Dumazet <edumazet@google.com>, David Ahern <dsahern@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 05 Jun 2018 14:13:47 +0200
-In-Reply-To: <20180605114056.1239571-1-arnd@arndb.de>
-References: <20180605114056.1239571-1-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Date: Tue, 5 Jun 2018 14:13:48 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@vger.kernel.org, Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+        kernel-team@fb.com, cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v13 0/7] cgroup-aware OOM killer
+Message-ID: <20180605121348.GD19202@dhcp22.suse.cz>
+References: <20171130152824.1591-1-guro@fb.com>
+ <20180605114729.GB19202@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605114729.GB19202@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-05 at 13:40 +0200, Arnd Bergmann wrote:
-> It is now possible to enable the libified nf_tproxy modules without
-> also enabling NETFILTER_XT_TARGET_TPROXY, which throws off the
-> ifdef logic in the udp core code:
-> 
-> net/ipv6/netfilter/nf_tproxy_ipv6.o: In function `nf_tproxy_get_sock_v6':
-> nf_tproxy_ipv6.c:(.text+0x1a8): undefined reference to `udp6_lib_lookup'
-> net/ipv4/netfilter/nf_tproxy_ipv4.o: In function `nf_tproxy_get_sock_v4':
-> nf_tproxy_ipv4.c:(.text+0x3d0): undefined reference to `udp4_lib_lookup'
-> 
-> We can actually simplify the conditions now to provide the two functions
-> exactly when they are needed.
-> 
-> Fixes: 45ca4e0cf273 ("netfilter: Libify xt_TPROXY")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  net/ipv4/udp.c | 4 +---
->  net/ipv6/udp.c | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-> index 4f16e5d71875..3365362cac88 100644
-> --- a/net/ipv4/udp.c
-> +++ b/net/ipv4/udp.c
-> @@ -544,9 +544,7 @@ EXPORT_SYMBOL_GPL(udp4_lib_lookup_skb);
->  /* Must be called under rcu_read_lock().
->   * Does increment socket refcount.
->   */
-> -#if IS_ENABLED(CONFIG_NETFILTER_XT_MATCH_SOCKET) || \
-> -    IS_ENABLED(CONFIG_NETFILTER_XT_TARGET_TPROXY) || \
-> -    IS_ENABLED(CONFIG_NF_SOCKET_IPV4)
-> +#if IS_ENABLED(CONFIG_NF_TPROXY_IPV4) || IS_ENABLED(CONFIG_NF_SOCKET_IPV4)
->  struct sock *udp4_lib_lookup(struct net *net, __be32 saddr, __be16 sport,
->  			     __be32 daddr, __be16 dport, int dif)
->  {
-> diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-> index 967acff95bbe..164afd31aebf 100644
-> --- a/net/ipv6/udp.c
-> +++ b/net/ipv6/udp.c
-> @@ -285,9 +285,7 @@ EXPORT_SYMBOL_GPL(udp6_lib_lookup_skb);
->  /* Must be called under rcu_read_lock().
->   * Does increment socket refcount.
->   */
-> -#if IS_ENABLED(CONFIG_NETFILTER_XT_MATCH_SOCKET) || \
-> -    IS_ENABLED(CONFIG_NETFILTER_XT_TARGET_TPROXY) || \
-> -    IS_ENABLED(CONFIG_NF_SOCKET_IPV6)
-> +#if IS_ENABLED(CONFIG_NF_TPROXY_IPV6) || IS_ENABLED(CONFIG_NF_SOCKET_IPV6)
->  struct sock *udp6_lib_lookup(struct net *net, const struct in6_addr *saddr, __be16 sport,
->  			     const struct in6_addr *daddr, __be16 dport, int dif)
->  {
+On Tue 05-06-18 13:47:29, Michal Hocko wrote:
+> It seems that this is still in limbo mostly because of David's concerns.
+> So let me reiterate them and provide my POV once more (and the last
+> time) just to help Andrew make a decision:
 
-LGTM,
+Sorry, I forgot to add reference to the email with the full David's
+reasoning. Here it is http://lkml.kernel.org/r/alpine.DEB.2.10.1801091556490.173445@chino.kir.corp.google.com
+ 
+> 1) comparision root with tail memcgs during the OOM killer is not fair
+> because we are comparing tasks with memcgs.
+> 
+> This is true, but I do not think this matters much for workloads which
+> are going to use the feature. Why? Because the main consumers of the new
+> feature seem to be containers which really need some fairness when
+> comparing _workloads_ rather than processes. Those are unlikely to
+> contain any significant memory consumers in the root memcg. That would
+> be mostly common infrastructure.
+> 
+> Is this is fixable? Yes, we would need to account in the root memcgs.
+> Why are we not doing that now? Because it has some negligible
+> performance overhead. Are there other ways? Yes we can approximate root
+> memcg memory consumption but I would rather wait for somebody seeing
+> that as a real problem rather than add hacks now without a strong
+> reason.
+> 
+> 
+> 2) Evading the oom killer by attaching processes to child cgroups which
+> basically means that a task can split up the workload into smaller
+> memcgs to hide their real memory consumption.
+> 
+> Again true but not really anything new. Processes can already fork and
+> split up the memory consumption. Moreover it doesn't even require any
+> special privileges to do so unlike creating a sub memcg. Is this
+> fixable? Yes, untrusted workloads can setup group oom evaluation at the
+> delegation layer so all subgroups would be considered together.
+> 
+> 3) Userspace has zero control over oom kill selection in leaf mem
+> cgroups.
+> 
+> Again true but this is something that needs a good evaluation to not end
+> up in the fiasko we have seen with oom_score*. Current users demanding
+> this feature can live without any prioritization so blocking the whole
+> feature seems unreasonable.
+> 
+> 4) Future extensibility to be backward compatible.
+> 
+> David is wrong here IMHO. Any prioritization or oom selection policy
+> controls added in future are orthogonal to the oom_group concept added
+> by this patchset. Allowing memcg to be an oom entity is something that
+> we really want longterm. Global CGRP_GROUP_OOM is the most restrictive
+> semantic and softening it will be possible by a adding a new knob to
+> tell whether a memcg/hierarchy is a workload or a set of tasks.
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-Acked-by: Paolo Abeni <pabeni@redhat.com>
-
-Thanks,
-
-Paolo
+-- 
+Michal Hocko
+SUSE Labs
