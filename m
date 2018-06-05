@@ -1,78 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751865AbeFELj3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:39:29 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:52863 "EHLO
+        id S1751788AbeFELlW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:41:22 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:36225 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751644AbeFELj1 (ORCPT
+        with ESMTP id S1751644AbeFELlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:39:27 -0400
+        Tue, 5 Jun 2018 07:41:20 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-To: Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
-        Peng Li <lipeng321@huawei.com>, Fuyun Liang <liangfuyun1@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>, Xi Wang <wangxi11@huawei.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: hns3: remove unused hclgevf_cfg_func_mta_filter
-Date: Tue,  5 Jun 2018 13:38:21 +0200
-Message-Id: <20180605113904.1193671-1-arnd@arndb.de>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: =?UTF-8?q?M=C3=A1t=C3=A9=20Eckl?= <ecklm94@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Eric Dumazet <edumazet@google.com>, David Ahern <dsahern@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] netfilter: provide udp*_lib_lookup for nf_tproxy
+Date: Tue,  5 Jun 2018 13:40:34 +0200
+Message-Id: <20180605114056.1239571-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:Iez9VtF5xpSUk0xVaNPN3uwcHsRcB+ASrfN5hZ9WSxgGw5Sg9nm
- u7+ReGD43u72apA0yhua6H103J0L7Ig7TDyQI5PzjY9xg/PRNByAKJDz36d3TeRF/1fzDc5
- mVsK936l/3TYs7vW3qYzJFHVaekiR0UhBFBQCQZl41Kwxg8LR4vmvbpQZ+aZG94TO7fr2/1
- k01nIeqWdiMuKNsffTKyA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:d3XsoAC7Jw4=:JwCYlinR7duiEHy/lfhUvk
- D7/3FQrg3YNX48JV8hOFV8nTtinHGEV9X6K4yQuA/k5LWwey2rfj7gSdhztSux514aOXpEuXB
- 6xvZjzwadvEPPt/k8jLicQaOQFMgfWXGzRPIsV7Usdbh5TKa/T4VSX7p0qk1ej1gng2t/dRKc
- YhTGOTHfruzVEIUaiy28mkty6DTIlWBFMlHzBx8op1Ua9jNttsUyHT4MFGYe3dHr8XaaIosXk
- XLZA+FoH3vOeTt9ZJ+qOPhUxgaf1NXaMfRqspv08iVY9DKkNee1UCT+LWHXIjbtuX5TrVYlAj
- vS8S0V68UNdXy3OKwkVBuy1DVVZhRGk4bN8snhRX+dyz5AHoWK22ZqkHupttX4tag33sWe0X9
- 8ILmRNg5wY7EW564DhmrhQahPzkMopxf+EpVMsMx4QLaJywn1iQ/Wurrts3VzThdZlvpJ9kG3
- KTuGzESArtDN5GASluvypgb8ZWyrIUetQ3lk/9MMlNAJlNADgUWWqqGX5SCVXHMd3RHMdXhf3
- UaLhAHCOJaL5AAD+aaIidP9/uJpabkZhgs7je/FskGLt/SSYa2qMYQM4qrMhP0lgxZggV3n6V
- R4vX8Wj9OB0lh0qEDHy4KVRxQHfwwXgv40Y0rEZmZSUin98RaQ5uPcQ1DvsSF/8gVJiQ+Zcd1
- rJCKWv78NtPOAZcigfS3ySICu2sx1Ox62oCMIIJ80WwFTRSoXS2CXkFz/L5NrXMdN2oc=
+X-Provags-ID: V03:K1:wYkpbO36jcC5A4WjzmMP9ax+aFAXTqmEryXoaUE8v855ScIsXaI
+ SD2me0ADicawpT0vfjCl0Yi711ekZ69d/voZqW0rhSUjyhSQBo/pO2OQDaOgqMCq9hxw7vi
+ N4Ek5nuXl/0Ijs7IS7z98Vurm6OpSxVLtFXeXM+T4vpGDtsUvc2Xlq31Ccq4nASVre2qP6X
+ VaudNr0cm52fayeCDigew==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:B+qjXnKI+lE=:BBYuU06P97XgNzKq7TIrTw
+ M6/XPLAntVIV+NJWyvACbD04cab0C7Hnzxi+T27OCCFagjLjfv/0nrrOVVlkmQg/JkrpCaTty
+ GC9lPBFHs7rk0jJfYy6a7sXGM8iD2KJag0MA28py0nLWpamJZrYp1pe/fTAsREIOMlpk7RsWj
+ qCoSfxRVhMaIeG/THpfz15XE3Pe817eSKd1NfxDCsqmMOEFKwFvb0tphwy7kF0gmC3u2oRZ1E
+ s0LEjpitQ1RaTGJb2W+PeTFrPEUDQLEVSV8XVt7M0MER3bbCdxGpoS5ZWidBLMMMvGda0yz3K
+ xICup0VgAS6hjfq9z7P9T+meLWkE9NdrR9j5zh0Bmptqje1f/kdI/GGjhFw02ViFF0dNiYmkc
+ zlGiAIyCpf1PjLgtgsGaIlViuuIjChgJDK+JiRwKaAESph1betUU5oEdMecc/sRZIYuz4n31d
+ q2AXlEWQuxPtGL8bxLUxH+VkPrRI6GWGxYiCovjpDfiMzLD1vFJuKvE8GWGcrJi2AHBCAn1QT
+ 6GcEHGJLKYjxWDzuGhIf5/1lwLfeLQMjDwlUewERZlD64KleyXNglu4Oy4d15Rr9CyBYT60WS
+ Gwc0DJYjcXe/9n1Aa1IXkEEphMs8PQ63wQtHVJ1Qqymfp0rf9mt/kcsvlip67JtmPAovvoGgS
+ T2oshrkpLj52SBmFUA2k00zsnF1HPWLg9Ads/q6rWmtCMOyHqxfBR/zfT1mjx3NVwq+s=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last patch apparently added a complete replacement for this
-function, but left the old one in place, which now causes a
-harmless warning:
+It is now possible to enable the libified nf_tproxy modules without
+also enabling NETFILTER_XT_TARGET_TPROXY, which throws off the
+ifdef logic in the udp core code:
 
-drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c:731:12: 'hclgevf_cfg_func_mta_filter' defined but not used
+net/ipv6/netfilter/nf_tproxy_ipv6.o: In function `nf_tproxy_get_sock_v6':
+nf_tproxy_ipv6.c:(.text+0x1a8): undefined reference to `udp6_lib_lookup'
+net/ipv4/netfilter/nf_tproxy_ipv4.o: In function `nf_tproxy_get_sock_v4':
+nf_tproxy_ipv4.c:(.text+0x3d0): undefined reference to `udp4_lib_lookup'
 
-I assume it can be removed.
+We can actually simplify the conditions now to provide the two functions
+exactly when they are needed.
 
-Fixes: 3a678b5806e6 ("net: hns3: Optimize the VF's process of updating multicast MAC")
+Fixes: 45ca4e0cf273 ("netfilter: Libify xt_TPROXY")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ net/ipv4/udp.c | 4 +---
+ net/ipv6/udp.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index dd8e8e6718dc..bc8a5760d959 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -728,17 +728,6 @@ static void hclgevf_reset_tqp_stats(struct hnae3_handle *handle)
- 	}
- }
- 
--static int hclgevf_cfg_func_mta_filter(struct hnae3_handle *handle, bool en)
--{
--	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
--	u8 msg[2] = {0};
--
--	msg[0] = en;
--	return hclgevf_send_mbx_msg(hdev, HCLGE_MBX_SET_MULTICAST,
--				    HCLGE_MBX_MAC_VLAN_MC_FUNC_MTA_ENABLE,
--				    msg, 1, false, NULL, 0);
--}
--
- static int hclgevf_cfg_func_mta_type(struct hclgevf_dev *hdev)
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 4f16e5d71875..3365362cac88 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -544,9 +544,7 @@ EXPORT_SYMBOL_GPL(udp4_lib_lookup_skb);
+ /* Must be called under rcu_read_lock().
+  * Does increment socket refcount.
+  */
+-#if IS_ENABLED(CONFIG_NETFILTER_XT_MATCH_SOCKET) || \
+-    IS_ENABLED(CONFIG_NETFILTER_XT_TARGET_TPROXY) || \
+-    IS_ENABLED(CONFIG_NF_SOCKET_IPV4)
++#if IS_ENABLED(CONFIG_NF_TPROXY_IPV4) || IS_ENABLED(CONFIG_NF_SOCKET_IPV4)
+ struct sock *udp4_lib_lookup(struct net *net, __be32 saddr, __be16 sport,
+ 			     __be32 daddr, __be16 dport, int dif)
  {
- 	u8 resp_msg = HCLGEVF_MTA_TYPE_SEL_MAX;
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index 967acff95bbe..164afd31aebf 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -285,9 +285,7 @@ EXPORT_SYMBOL_GPL(udp6_lib_lookup_skb);
+ /* Must be called under rcu_read_lock().
+  * Does increment socket refcount.
+  */
+-#if IS_ENABLED(CONFIG_NETFILTER_XT_MATCH_SOCKET) || \
+-    IS_ENABLED(CONFIG_NETFILTER_XT_TARGET_TPROXY) || \
+-    IS_ENABLED(CONFIG_NF_SOCKET_IPV6)
++#if IS_ENABLED(CONFIG_NF_TPROXY_IPV6) || IS_ENABLED(CONFIG_NF_SOCKET_IPV6)
+ struct sock *udp6_lib_lookup(struct net *net, const struct in6_addr *saddr, __be16 sport,
+ 			     const struct in6_addr *daddr, __be16 dport, int dif)
+ {
 -- 
 2.9.0
