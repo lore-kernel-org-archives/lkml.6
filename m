@@ -1,166 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751814AbeFEJeR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:34:17 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45335 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751774AbeFEJeO (ORCPT
+        id S1751864AbeFEJeo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:34:44 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48056 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751834AbeFEJem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:34:14 -0400
-X-Google-Smtp-Source: ADUXVKKPMzpHIyPXyh0F25ynjabPVtcFa6yILwDg1ih07qBb1e8b0qGVa0PVoKaySIgbBateGykN7g==
-From: Jun Yao <yaojun8558363@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH v2 3/3] arm64/mm: migrate swapper_pg_dir and tramp_pg_dir
-Date: Tue,  5 Jun 2018 17:33:50 +0800
-Message-Id: <20180605093350.24504-4-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180605093350.24504-1-yaojun8558363@gmail.com>
-References: <20180605093350.24504-1-yaojun8558363@gmail.com>
+        Tue, 5 Jun 2018 05:34:42 -0400
+Subject: Re: [PATCH 8/9] extcon: usbc-cros-ec: Switch to SPDX identifier.
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+References: <20180605092209.22887-1-enric.balletbo@collabora.com>
+ <CGME20180605092225epcas5p3fd3b4614d8715ad6b5862a6d73beec15@epcas5p3.samsung.com>
+ <20180605092209.22887-9-enric.balletbo@collabora.com>
+ <5B165834.7000705@samsung.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <69b78abb-a057-025a-46ec-6c73bac2faff@collabora.com>
+Date: Tue, 5 Jun 2018 11:34:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <5B165834.7000705@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Migrate swapper_pg_dir and tramp_pg_dir. And their virtual addresses
-do not correlate with kernel's address.
 
-Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
----
- arch/arm64/mm/mmu.c | 75 ++++++++++++++++++++++++++++-----------------
- 1 file changed, 47 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index fcb425b0fcab..3ffcff2d7dcd 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -58,6 +58,9 @@ EXPORT_SYMBOL(kimage_voffset);
- volatile phys_addr_t __section(".mmuoff.data.read")
- __pa_swapper_pg_dir;
- pgd_t *new_swapper_pg_dir = swapper_pg_dir;
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+pgd_t *new_tramp_pg_dir;
-+#endif
- 
- /*
-  * Empty_zero_page is a special page that is used for zero-initialized data
-@@ -81,19 +84,14 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- }
- EXPORT_SYMBOL(phys_mem_access_prot);
- 
--static phys_addr_t __init early_pgtable_alloc(void)
-+static void __init clear_page_phys(phys_addr_t phys)
- {
--	phys_addr_t phys;
--	void *ptr;
--
--	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
--
- 	/*
- 	 * The FIX_{PGD,PUD,PMD} slots may be in active use, but the FIX_PTE
- 	 * slot will be free, so we can (ab)use the FIX_PTE slot to initialise
- 	 * any level of table.
- 	 */
--	ptr = pte_set_fixmap(phys);
-+	void *ptr = pte_set_fixmap(phys);
- 
- 	memset(ptr, 0, PAGE_SIZE);
- 
-@@ -102,6 +100,14 @@ static phys_addr_t __init early_pgtable_alloc(void)
- 	 * table walker
- 	 */
- 	pte_clear_fixmap();
-+}
-+
-+static phys_addr_t __init early_pgtable_alloc(void)
-+{
-+	phys_addr_t phys;
-+
-+	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
-+	clear_page_phys(phys);
- 
- 	return phys;
- }
-@@ -555,6 +561,10 @@ static int __init map_entry_trampoline(void)
- 	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
- 			     prot, pgd_pgtable_alloc, 0);
- 
-+	memcpy(new_tramp_pg_dir, tramp_pg_dir, PGD_SIZE);
-+	memblock_free(__pa_symbol(tramp_pg_dir),
-+		__pa_symbol(swapper_pg_dir) - __pa_symbol(tramp_pg_dir));
-+
- 	/* Map both the text and data into the kernel page table */
- 	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
- 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
-@@ -632,38 +642,47 @@ static void __init map_kernel(pgd_t *pgdp)
-  */
- void __init paging_init(void)
- {
--	phys_addr_t pgd_phys = early_pgtable_alloc();
--	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
-+	phys_addr_t pgd_phys;
-+	pgd_t *pgdp;
-+	phys_addr_t mem_size;
-+
-+	mem_size = __pa_symbol(swapper_pg_dir) + PAGE_SIZE
-+			- (__pa_symbol(idmap_pg_dir) + IDMAP_DIR_SIZE);
-+
-+	if (mem_size == PAGE_SIZE) {
-+		pgd_phys = early_pgtable_alloc();
-+		__pa_swapper_pg_dir = pgd_phys;
-+	} else {
-+		phys_addr_t p;
-+
-+		pgd_phys = memblock_alloc(mem_size, PAGE_SIZE);
-+
-+		for (p = pgd_phys; p < pgd_phys + mem_size; p += PAGE_SIZE)
-+			clear_page_phys(p);
-+
-+		#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+		new_tramp_pg_dir = __va(pgd_phys);
-+		#endif
-+		__pa_swapper_pg_dir = pgd_phys + mem_size - PAGE_SIZE;
-+	}
- 
--	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
- 	__flush_dcache_area((void *)&__pa_swapper_pg_dir,
- 			    sizeof(__pa_swapper_pg_dir));
- 
-+	new_swapper_pg_dir = __va(__pa_swapper_pg_dir);
-+
-+	pgdp = pgd_set_fixmap(__pa_swapper_pg_dir);
-+
- 	map_kernel(pgdp);
- 	map_mem(pgdp);
- 
--	/*
--	 * We want to reuse the original swapper_pg_dir so we don't have to
--	 * communicate the new address to non-coherent secondaries in
--	 * secondary_entry, and so cpu_switch_mm can generate the address with
--	 * adrp+add rather than a load from some global variable.
--	 *
--	 * To do this we need to go via a temporary pgd.
--	 */
--	cpu_replace_ttbr1(pgd_phys);
--	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
- 	cpu_replace_ttbr1(__pa_swapper_pg_dir);
-+	init_mm.pgd = new_swapper_pg_dir;
- 
- 	pgd_clear_fixmap();
--	memblock_free(pgd_phys, PAGE_SIZE);
- 
--	/*
--	 * We only reuse the PGD from the swapper_pg_dir, not the pud + pmd
--	 * allocated with it.
--	 */
--	memblock_free(__pa_symbol(swapper_pg_dir) + PAGE_SIZE,
--		      __pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir)
--		      - PAGE_SIZE);
-+	memblock_free(__pa_symbol(swapper_pg_dir),
-+		__pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir));
- }
- 
- /*
--- 
-2.17.0
+On 05/06/18 11:30, Chanwoo Choi wrote:
+> On 2018년 06월 05일 18:22, Enric Balletbo i Serra wrote:
+>> Adopt the SPDX license identifier headers to ease license compliance
+>> management.
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>>  drivers/extcon/extcon-usbc-cros-ec.c | 20 +++++---------------
+>>  1 file changed, 5 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
+>> index 6721ab01fe7d..1a4888f2fe40 100644
+>> --- a/drivers/extcon/extcon-usbc-cros-ec.c
+>> +++ b/drivers/extcon/extcon-usbc-cros-ec.c
+>> @@ -1,18 +1,8 @@
+>> -/**
+>> - * drivers/extcon/extcon-usbc-cros-ec - ChromeOS Embedded Controller extcon> - *
+>> - * Copyright (C) 2017 Google, Inc
+>> - * Author: Benson Leung <bleung@chromium.org>
+>> - *
+>> - * This software is licensed under the terms of the GNU General Public
+>> - * License version 2, as published by the Free Software Foundation, and
+>> - * may be copied, distributed, and modified under those terms.
+>> - *
+>> - * This program is distributed in the hope that it will be useful,
+>> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> - * GNU General Public License for more details.
+>> - */
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +// ChromeOS Embedded Controller extcon
+>> +//
+>> +// Copyright (C) 2012 Google, Inc.
+> 
+> 2012 is right?
+
+No, sorry, copy paste error.
+> The original copyright has '2017' year information.
+> 
+
+Should be 2017.
+
+>> +// Author: Benson Leung <bleung@chromium.org>
+>>  
+>>  #include <linux/extcon-provider.h>
+>>  #include <linux/kernel.h>
+>>
+> 
+> 
