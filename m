@@ -1,62 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752058AbeFEQK3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:10:29 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:40010 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751783AbeFEQK2 (ORCPT
+        id S1751884AbeFEQMe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:12:34 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:37921 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751727AbeFEQMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:10:28 -0400
-From: Richard Weinberger <richard@sigma-star.at>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Richard Weinberger <richard.weinberger@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
-Subject: Re: [GIT PULL] fscrypt updates for 4.18
-Date: Tue, 05 Jun 2018 18:10:24 +0200
-Message-ID: <30587992.7Od65ROsjm@blindfold>
-In-Reply-To: <20180605153501.GC7839@thunk.org>
-References: <20180605150751.GA9436@thunk.org> <CAFLxGvysjYbCpkqbVqD8Q1v3isGnRrNo5KdUn7TgCVt9WxzE2g@mail.gmail.com> <20180605153501.GC7839@thunk.org>
+        Tue, 5 Jun 2018 12:12:32 -0400
+X-Google-Smtp-Source: ADUXVKJJCv2isaYxAdktQDdWBhxJJ07xeerATNmw1e1Jy49hGtzZVp0BP76J+Cz3qBjyOkd0aQ2UeUFjp0uf2EVLu1o=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <83b1b038-c4c1-0199-2cb0-fb5343f0e3f5@arm.com>
+References: <1528209304-3280-1-git-send-email-sudeep.holla@arm.com>
+ <1528209304-3280-2-git-send-email-sudeep.holla@arm.com> <CAJZ5v0gqQNHCuaeduQ8oQtGNUQcZxK171nDfyMNi1VVfnVsMqQ@mail.gmail.com>
+ <83b1b038-c4c1-0199-2cb0-fb5343f0e3f5@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 5 Jun 2018 18:12:30 +0200
+X-Google-Sender-Auth: TO0OWuR_6tbjmT8CHfH0k8En2d0
+Message-ID: <CAJZ5v0hrJs1Oo-uA560qisZ4no4mbgbH+2fza+5B0ErGGYPTHw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] ACPI / PPTT: fix build when CONFIG_ACPI_PPTT is
+ not enabled
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 5. Juni 2018, 17:35:01 CEST schrieb Theodore Y. Ts'o:
-> On Tue, Jun 05, 2018 at 05:13:35PM +0200, Richard Weinberger wrote:
-> > > Add bunch of cleanups, and add support for the Speck128/256
-> > > algorithms.  Yes, Speck is contrversial, but the intention is to use
-> > > them only for the lowest end Android devices, where the alternative
-> > > *really* is no encryption at all for data stored at rest.
-> > 
-> > Will Android tell me that Speck is being used?
-> 
-> Well, today Android doesn't tell you, "Your files aren't being
-> encrypted" in some big dialog box.  :-)  
-> 
-> Whether a phone is using no encryption or not, and what encryption
-> algorithm, is fundamentally a property of the phone.  It's used to
-> encrypt data at rest on the phone, so this isn't a data interchange
-> issue.  I'm sure there will be some way of finding out --- by looking
-> at the source code for that phone, if nothing else.
-> 
-> But I suspect that if you are buying a phone in a first world country,
-> you're never going to see a phone with Speck on it --- unless you
-> build your own AOSP build and deliberately enable it for yourself,
-> anyway.  :-)
+On Tue, Jun 5, 2018 at 5:33 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> On 05/06/18 16:00, Rafael J. Wysocki wrote:
+>> On Tue, Jun 5, 2018 at 4:35 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>> Though CONFIG_ACPI_PPTT is selected by platforms and nor user visible,
+>>> it may be useful to support the build with CONFIG_ACPI_PPTT disabled.
+>>>
+>>> This patch adds the missing dummy/boiler plate implementation to fix
+>>> the build.
+>>>
+>>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>>> ---
+>>>  include/linux/acpi.h      | 15 +++++++++++++++
+>>>  include/linux/cacheinfo.h |  2 +-
+>>>  2 files changed, 16 insertions(+), 1 deletion(-)
+>>>
+>>> Hi Rafael,
+>>>
+>>> If you are fine with this, can you provide Ack, so that we route this
+>>> through ARM64 tree where most of the ACPI PPTT support is present.
+>>>
+>>> Regards,
+>>> Sudeep
+>>>
+>>> v1->v2:
+>>>         - removed duplicate definition for acpi_find_last_cache_level
+>>>
+>>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>>> index 8f2cdb0eca71..4b35a66383f9 100644
+>>> --- a/include/linux/acpi.h
+>>> +++ b/include/linux/acpi.h
+>>> @@ -1299,8 +1299,23 @@ static inline int lpit_read_residency_count_address(u64 *address)
+>>>  }
+>>>  #endif
+>>>
+>>> +#ifdef CONFIG_ACPI_PPTT
+>>>  int find_acpi_cpu_topology(unsigned int cpu, int level);
+>>>  int find_acpi_cpu_topology_package(unsigned int cpu);
+>>>  int find_acpi_cpu_cache_topology(unsigned int cpu, int level);
+>>> +#else
+>>> +static inline int find_acpi_cpu_topology(unsigned int cpu, int level)
+>>> +{
+>>> +       return -EINVAL;
+>>
+>> Why -EINVAL?
+>>
+>
+> I am not sure either. I used to return -ENOTSUPP, but IIRC someone
+> suggested to use it only for syscalls. Also I just based it on other
+> existing functions in acpi.h
+>
+> I am open for any alternatives if you think that is better here.
 
-That's the question. I understand the use case, but I fear attack scenarios
-where someone manages to downgrade the crypto of my phone.
-This is why I was asking whether Android tells me whether Speck is used or not.
-"it does encryption" is clearly not enough.
+It would be good to make it consistent with the error codes returned
+by the functions when they are present.
 
-Thanks,
-//richard
-
-P.s. Sorry for hijacking this PR. :-)
-
--- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+Anyway, it's fine by me if that's consistent with the other acpi.h stubs.
