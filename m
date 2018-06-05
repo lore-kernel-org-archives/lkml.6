@@ -1,74 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751662AbeFEG7M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:59:12 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42344 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751368AbeFEG7L (ORCPT
+        id S1751735AbeFEHAD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:00:03 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55585 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751534AbeFEHAB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 02:59:11 -0400
-X-Google-Smtp-Source: ADUXVKKapf/ctfpqA315ZiRbEwqxVJXiC0U+B1x72FovKUY2wlycP3iccBATurwFY+SgaW2qyROWVQ==
-Date: Tue, 5 Jun 2018 07:59:07 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Gwendal Grignou <gwendal@chromium.org>
-Cc: bleung@chromium.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cros_ec: Use devm_kzalloc for private data
-Message-ID: <20180605065907.GE21163@dell>
-References: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
- <20180530165422.51178-1-gwendal@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180530165422.51178-1-gwendal@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 5 Jun 2018 03:00:01 -0400
+X-Google-Smtp-Source: ADUXVKInIv4Q82aCcOImMkd6jN0tg7SidPomSXCHys2jY1lYQsMYbIdZc/kzopWXLsdWgyEgVsowYA==
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] ksys_mount: check for permissions before resource
+ allocation
+From: Ilya Matveychikov <matvejchikov@gmail.com>
+In-Reply-To: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+Date: Tue, 5 Jun 2018 10:59:51 +0400
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Message-Id: <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
+References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+To: linux-kernel@vger.kernel.org
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55709FV020751
 
-On Wed, 30 May 2018, Gwendal Grignou wrote:
+Just CC’ed to some of maintainers.
 
-> Use dev_kzmalloc, remove .release entry point.
+$ perl scripts/get_maintainer.pl fs/0001-ksys_mount-check-for-permissions-before-resource-all.patch
+Alexander Viro <viro@zeniv.linux.org.uk> (maintainer:FILESYSTEMS (VFS and infrastructure))
+linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure))
+linux-kernel@vger.kernel.org (open list)
+
+> On Jun 5, 2018, at 6:00 AM, Ilya Matveychikov <matvejchikov@gmail.com> wrote:
 > 
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+> Early check for mount permissions prevents possible allocation of 3
+> pages from kmalloc() pool by unpriveledged user which can be used for
+> spraying the kernel heap.
+> 
+> Signed-off-by: Ilya V. Matveychikov <matvejchikov@gmail.com>
 > ---
-> Change sinc v1:
-> - Readd __remove to avoid a warning when loaded as a module.
+> fs/namespace.c | 3 +++
+> 1 file changed, 3 insertions(+)
 > 
->  drivers/mfd/cros_ec_dev.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 5f75969adff1..1ef8feb2de2a 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -3046,6 +3046,9 @@ int ksys_mount(char __user *dev_name, char __user *dir_name, char __user *type,
+> 	char *kernel_dev;
+> 	void *options;
 > 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index 1d6dc5c7a19d..81466264f7fc 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -262,12 +262,7 @@ static const struct file_operations fops = {
->  #endif
->  };
->  
-> -static void __remove(struct device *dev)
-> -{
-> -	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
-> -					      class_dev);
-> -	kfree(ec);
-> -}
-> +static void __remove(struct device *dev) { }
-
-I missed this line when reviewing.
-
-Why are you keeping the function around?
-
-As a result, we now suffer with a build warning:
-
-  drivers/mfd/cros_ec_dev.c:265:13: warning: '__remove' defined but not used [-Wunused-function]
-   static void __remove(struct device *dev) { }
-
-Can I just remove the line?  What are the ramifications of doing so?
-
-Please reply swiftly, so resolve this issue in good time.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> +	if (!may_mount())
+> +		return -EPERM;
+> +
+> 	kernel_type = copy_mount_string(type);
+> 	ret = PTR_ERR(kernel_type);
+> 	if (IS_ERR(kernel_type))
+> --
+> 2.17.0
+> 
