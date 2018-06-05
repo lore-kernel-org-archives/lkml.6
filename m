@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeFENaC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:30:02 -0400
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:37489 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752007AbeFEN36 (ORCPT
+        id S1752095AbeFENaN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:30:13 -0400
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:39168 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752055AbeFENaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:29:58 -0400
-X-Google-Smtp-Source: ADUXVKKacsC2CTZurrbQkuSU2tudcpeo0l5FG4FmGApmwKUxqgdOuhQE3cWBFZid4mS1hbecT8lq+w==
+        Tue, 5 Jun 2018 09:30:03 -0400
+X-Google-Smtp-Source: ADUXVKJUwn3QEpQ49eZeDzbKIVGFhaDvPGwrgyZJPxx09zlsKULzvjE0WL9z/vNTaw9ejzcVe9MBBQ==
 From: Josef Bacik <josef@toxicpanda.com>
 To: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
         akpm@linux-foundation.org, hannes@cmpxchg.org,
         linux-kernel@vger.kernel.org, tj@kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 05/13] swap,blkcg: issue swap io with the appropriate context
-Date: Tue,  5 Jun 2018 09:29:40 -0400
-Message-Id: <20180605132948.1664-6-josef@toxicpanda.com>
+Cc: Josef Bacik <jbacik@fb.com>
+Subject: [PATCH 08/13] blk-stat: export helpers for modifying blk_rq_stat
+Date: Tue,  5 Jun 2018 09:29:43 -0400
+Message-Id: <20180605132948.1664-9-josef@toxicpanda.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180605132948.1664-1-josef@toxicpanda.com>
 References: <20180605132948.1664-1-josef@toxicpanda.com>
@@ -23,83 +24,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Josef Bacik <jbacik@fb.com>
 
-For backcharging we need to know who the page belongs to when swapping
-it out.
+We need to use blk_rq_stat in the blkcg qos stuff, so export some of
+these helpers so they can be used by other things.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Josef Bacik <jbacik@fb.com>
+Acked-by: Tejun Heo <tj@kernel.org>
 ---
- block/bio.c         | 24 ++++++++++++++++++++++++
- include/linux/bio.h |  7 +++++++
- mm/page_io.c        |  1 +
- 3 files changed, 32 insertions(+)
+ block/blk-stat.c | 16 ++++++++--------
+ block/blk-stat.h |  4 ++++
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 57c4b1986e76..c77fe1b4caa8 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -2005,6 +2005,30 @@ EXPORT_SYMBOL(bioset_create);
+diff --git a/block/blk-stat.c b/block/blk-stat.c
+index 175c143ac5b9..7587b1c3caaf 100644
+--- a/block/blk-stat.c
++++ b/block/blk-stat.c
+@@ -17,7 +17,7 @@ struct blk_queue_stats {
+ 	bool enable_accounting;
+ };
  
- #ifdef CONFIG_BLK_CGROUP
+-static void blk_stat_init(struct blk_rq_stat *stat)
++void blk_rq_stat_init(struct blk_rq_stat *stat)
+ {
+ 	stat->min = -1ULL;
+ 	stat->max = stat->nr_samples = stat->mean = 0;
+@@ -25,7 +25,7 @@ static void blk_stat_init(struct blk_rq_stat *stat)
+ }
  
-+#ifdef CONFIG_MEMCG
-+/**
-+ * bio_associate_blkcg_from_page - associate a bio with the page's blkcg
-+ * @bio: target bio
-+ * @page: the page to lookup the blkcg from
-+ *
-+ * Associate @bio with the blkcg from @page's owning memcg.  This works like
-+ * every other associate function wrt references.
-+ */
-+int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
-+{
-+	struct cgroup_subsys_state *blkcg_css;
-+
-+	if (unlikely(bio->bi_css))
-+		return -EBUSY;
-+	if (!page->mem_cgroup)
-+		return 0;
-+	blkcg_css = cgroup_get_e_css(page->mem_cgroup->css.cgroup,
-+				     &io_cgrp_subsys);
-+	bio->bi_css = blkcg_css;
-+	return 0;
-+}
-+#endif /* CONFIG_MEMCG */
-+
- /**
-  * bio_associate_blkcg - associate a bio with the specified blkcg
-  * @bio: target bio
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index f2f3f1428e81..eef1e8877048 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -545,6 +545,13 @@ do {						\
- #define bio_dev(bio) \
- 	disk_devt((bio)->bi_disk)
+ /* src is a per-cpu stat, mean isn't initialized */
+-static void blk_stat_sum(struct blk_rq_stat *dst, struct blk_rq_stat *src)
++void blk_rq_stat_sum(struct blk_rq_stat *dst, struct blk_rq_stat *src)
+ {
+ 	if (!src->nr_samples)
+ 		return;
+@@ -39,7 +39,7 @@ static void blk_stat_sum(struct blk_rq_stat *dst, struct blk_rq_stat *src)
+ 	dst->nr_samples += src->nr_samples;
+ }
  
-+#if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
-+int bio_associate_blkcg_from_page(struct bio *bio, struct page *page);
-+#else
-+static inline int bio_associate_blkcg_from_page(struct bio *bio,
-+						struct page *page) {  return 0; }
-+#endif
-+
- #ifdef CONFIG_BLK_CGROUP
- int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
- int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
-diff --git a/mm/page_io.c b/mm/page_io.c
-index a552cb37e220..aafd19ec1db4 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -339,6 +339,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
- 		goto out;
+-static void __blk_stat_add(struct blk_rq_stat *stat, u64 value)
++void blk_rq_stat_add(struct blk_rq_stat *stat, u64 value)
+ {
+ 	stat->min = min(stat->min, value);
+ 	stat->max = max(stat->max, value);
+@@ -69,7 +69,7 @@ void blk_stat_add(struct request *rq, u64 now)
+ 			continue;
+ 
+ 		stat = &get_cpu_ptr(cb->cpu_stat)[bucket];
+-		__blk_stat_add(stat, value);
++		blk_rq_stat_add(stat, value);
+ 		put_cpu_ptr(cb->cpu_stat);
  	}
- 	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
-+	bio_associate_blkcg_from_page(bio, page);
- 	count_swpout_vm_event(page);
- 	set_page_writeback(page);
- 	unlock_page(page);
+ 	rcu_read_unlock();
+@@ -82,15 +82,15 @@ static void blk_stat_timer_fn(struct timer_list *t)
+ 	int cpu;
+ 
+ 	for (bucket = 0; bucket < cb->buckets; bucket++)
+-		blk_stat_init(&cb->stat[bucket]);
++		blk_rq_stat_init(&cb->stat[bucket]);
+ 
+ 	for_each_online_cpu(cpu) {
+ 		struct blk_rq_stat *cpu_stat;
+ 
+ 		cpu_stat = per_cpu_ptr(cb->cpu_stat, cpu);
+ 		for (bucket = 0; bucket < cb->buckets; bucket++) {
+-			blk_stat_sum(&cb->stat[bucket], &cpu_stat[bucket]);
+-			blk_stat_init(&cpu_stat[bucket]);
++			blk_rq_stat_sum(&cb->stat[bucket], &cpu_stat[bucket]);
++			blk_rq_stat_init(&cpu_stat[bucket]);
+ 		}
+ 	}
+ 
+@@ -143,7 +143,7 @@ void blk_stat_add_callback(struct request_queue *q,
+ 
+ 		cpu_stat = per_cpu_ptr(cb->cpu_stat, cpu);
+ 		for (bucket = 0; bucket < cb->buckets; bucket++)
+-			blk_stat_init(&cpu_stat[bucket]);
++			blk_rq_stat_init(&cpu_stat[bucket]);
+ 	}
+ 
+ 	spin_lock(&q->stats->lock);
+diff --git a/block/blk-stat.h b/block/blk-stat.h
+index 78399cdde9c9..f4a1568e81a4 100644
+--- a/block/blk-stat.h
++++ b/block/blk-stat.h
+@@ -159,4 +159,8 @@ static inline void blk_stat_activate_msecs(struct blk_stat_callback *cb,
+ 	mod_timer(&cb->timer, jiffies + msecs_to_jiffies(msecs));
+ }
+ 
++void blk_rq_stat_add(struct blk_rq_stat *, u64);
++void blk_rq_stat_sum(struct blk_rq_stat *, struct blk_rq_stat *);
++void blk_rq_stat_init(struct blk_rq_stat *);
++
+ #endif
 -- 
 2.14.3
