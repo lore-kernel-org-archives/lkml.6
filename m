@@ -1,124 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751250AbeFDX5V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 19:57:21 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40609 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeFDX5U (ORCPT
+        id S1751273AbeFEAC5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 20:02:57 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:38263 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbeFEACz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 19:57:20 -0400
-X-Google-Smtp-Source: ADUXVKKPJbYKyOklpeFe7QegQXHHgOGas1DC4hEaBHBJPLPrgmCqaB3DWHudsm7zrvLc4YLv0J0wbC8VFnPQxgrwtVE=
+        Mon, 4 Jun 2018 20:02:55 -0400
+X-Google-Smtp-Source: ADUXVKIjlQd3SQ9fU9ayTp5Hwnd2K4WieuFinmftngpCbCO7AYJFFjCDIAhO5cPXVi2zoBYHBbSrMw==
+From: Tycho Andersen <tycho@tycho.ws>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Serge E . Hallyn" <serge@hallyn.com>, Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] uart: fix race between uart_put_char() and uart_shutdown()
+Date: Mon,  4 Jun 2018 18:01:27 -0600
+Message-Id: <20180605000127.5495-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180602175358.wfdlx6dvnxypspya@madcap2.tricolour.ca>
-References: <c390a53d148593016df96e880a35e64f42edcf91.1527726830.git.rgb@redhat.com>
- <CAHC9VhQji1JrZ-QHMJ-965s+a5UJx-wRqpEdb84r=v+t1oH-qw@mail.gmail.com>
- <20180531163811.7m7c3q75duqkicl4@madcap2.tricolour.ca> <CAHC9VhTABDT0FKb=vY4G06aY9Ky+NctArCRo8-iUQF6=eWKy1g@mail.gmail.com>
- <20180602175358.wfdlx6dvnxypspya@madcap2.tricolour.ca>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 4 Jun 2018 19:57:17 -0400
-Message-ID: <CAHC9VhR-TaSDbowz6FGGSvdxLTJG9so92C9wXyE04uygBazkhQ@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak86 V1] audit: use audit_enabled as a boolean where convenient
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 2, 2018 at 1:53 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-06-01 18:15, Paul Moore wrote:
->> On Thu, May 31, 2018 at 12:38 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> > On 2018-05-31 11:48, Paul Moore wrote:
->> >> On Thu, May 31, 2018 at 11:13 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> >> > Most uses of audit_enabled don't care about the distinction between
->> >> > AUDIT_ON and AUDIT_LOCKED, so using audit_enabled as a boolean makes
->> >> > more sense and is easier to read. Most uses of audit_enabled treat it as
->> >> > a boolean, so switch the remaining AUDIT_OFF usage to simply use
->> >> > audit_enabled as a boolean where applicable.
->> >> >
->> >> > See: https://github.com/linux-audit/audit-kernel/issues/86
->> >> >
->> >> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->> >> > ---
->> >> >  drivers/tty/tty_audit.c      | 2 +-
->> >> >  include/net/xfrm.h           | 2 +-
->> >> >  kernel/audit.c               | 8 ++++----
->> >> >  net/netfilter/xt_AUDIT.c     | 2 +-
->> >> >  net/netlabel/netlabel_user.c | 2 +-
->> >> >  5 files changed, 8 insertions(+), 8 deletions(-)
->> >>
->> >> I'm not sure I like this idea.  Yes, technically this change is
->> >> functionally equivalent but I worry that this will increase the chance
->> >> that non-audit folks will mistake audit_enabled as a true/false value
->> >> when it is not.  It might work now, but I worry about some subtle
->> >> problem in the future.
->> >
->> > Would you prefer a patch to change the majority (18) of uses of
->> > audit_enabled to be of the form "audit_enabled == AUDIT_OFF" (or
->> > "audit_enabled != AUDIT_OFF")?
->> >
->> > I prefer the approach in this patch because it makes the code smaller
->> > and significantly easier to read, but either way, I'd like all uses to
->> > be consistent so that it is easier to read all the code similarly.
->> >
->> >> If you are bothered by the comparison to 0 (magic numbers), you could
->> >> move the AUDIT_OFF/AUDIT_ON/AUDIT_LOCKED definitions into
->> >> include/linux/audit.h and convert the "audit_enabled == 0" to
->> >> "audit_enabled == AUDIT_OFF".
->> >
->> > I'd be fine doing that if you really dislike this patch's approach.
->>
->> Like I said, I'm don't really care for the boolean-like approach of
->> this first patch.
->
-> That doesn't really address the original issue though.
+We have reports of the following crash:
 
-To be honest, there really isn't an issue to begin with, at least not
-in my mind.  Sure, I understand you think all non-audit users of
-audit_enabled should treat audit_enabled as a boolean; at this point
-in time, I don't think that is necessary or desirable.
+    PID: 7 TASK: ffff88085c6d61c0 CPU: 1 COMMAND: "kworker/u25:0"
+    #0 [ffff88085c6db710] machine_kexec at ffffffff81046239
+    #1 [ffff88085c6db760] crash_kexec at ffffffff810fc248
+    #2 [ffff88085c6db830] oops_end at ffffffff81008ae7
+    #3 [ffff88085c6db860] no_context at ffffffff81050b8f
+    #4 [ffff88085c6db8b0] __bad_area_nosemaphore at ffffffff81050d75
+    #5 [ffff88085c6db900] bad_area_nosemaphore at ffffffff81050e83
+    #6 [ffff88085c6db910] __do_page_fault at ffffffff8105132e
+    #7 [ffff88085c6db9b0] do_page_fault at ffffffff8105152c
+    #8 [ffff88085c6db9c0] page_fault at ffffffff81a3f122
+    [exception RIP: uart_put_char+149]
+    RIP: ffffffff814b67b5 RSP: ffff88085c6dba78 RFLAGS: 00010006
+    RAX: 0000000000000292 RBX: ffffffff827c5120 RCX: 0000000000000081
+    RDX: 0000000000000000 RSI: 000000000000005f RDI: ffffffff827c5120
+    RBP: ffff88085c6dba98 R8: 000000000000012c R9: ffffffff822ea320
+    R10: ffff88085fe4db04 R11: 0000000000000001 R12: ffff881059f9c000
+    R13: 0000000000000001 R14: 000000000000005f R15: 0000000000000fba
+    ORIG_RAX: ffffffffffffffff CS: 0010 SS: 0018
+    #9 [ffff88085c6dbaa0] tty_put_char at ffffffff81497544
+    #10 [ffff88085c6dbac0] do_output_char at ffffffff8149c91c
+    #11 [ffff88085c6dbae0] __process_echoes at ffffffff8149cb8b
+    #12 [ffff88085c6dbb30] commit_echoes at ffffffff8149cdc2
+    #13 [ffff88085c6dbb60] n_tty_receive_buf_fast at ffffffff8149e49b
+    #14 [ffff88085c6dbbc0] __receive_buf at ffffffff8149ef5a
+    #15 [ffff88085c6dbc20] n_tty_receive_buf_common at ffffffff8149f016
+    #16 [ffff88085c6dbca0] n_tty_receive_buf2 at ffffffff8149f194
+    #17 [ffff88085c6dbcb0] flush_to_ldisc at ffffffff814a238a
+    #18 [ffff88085c6dbd50] process_one_work at ffffffff81090be2
+    #19 [ffff88085c6dbe20] worker_thread at ffffffff81091b4d
+    #20 [ffff88085c6dbeb0] kthread at ffffffff81096384
+    #21 [ffff88085c6dbf50] ret_from_fork at ffffffff81a3d69f​
 
-> Without any elaboration, I am not able to guess why you don't like this
-> or what possible future subtleties would cause a problem.
+after slogging through some dissasembly:
 
-As I said previously: "I worry that this will increase the chance that
-non-audit folks will mistake audit_enabled as a true/false value when
-it is not.  It might work now, but I worry about some subtle problem
-in the future.".
+ffffffff814b6720 <uart_put_char>:
+ffffffff814b6720:	55                   	push   %rbp
+ffffffff814b6721:	48 89 e5             	mov    %rsp,%rbp
+ffffffff814b6724:	48 83 ec 20          	sub    $0x20,%rsp
+ffffffff814b6728:	48 89 1c 24          	mov    %rbx,(%rsp)
+ffffffff814b672c:	4c 89 64 24 08       	mov    %r12,0x8(%rsp)
+ffffffff814b6731:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
+ffffffff814b6736:	4c 89 74 24 18       	mov    %r14,0x18(%rsp)
+ffffffff814b673b:	e8 b0 8e 58 00       	callq  ffffffff81a3f5f0 <mcount>
+ffffffff814b6740:	4c 8b a7 88 02 00 00 	mov    0x288(%rdi),%r12
+ffffffff814b6747:	45 31 ed             	xor    %r13d,%r13d
+ffffffff814b674a:	41 89 f6             	mov    %esi,%r14d
+ffffffff814b674d:	49 83 bc 24 70 01 00 	cmpq   $0x0,0x170(%r12)
+ffffffff814b6754:	00 00
+ffffffff814b6756:	49 8b 9c 24 80 01 00 	mov    0x180(%r12),%rbx
+ffffffff814b675d:	00
+ffffffff814b675e:	74 2f                	je     ffffffff814b678f <uart_put_char+0x6f>
+ffffffff814b6760:	48 89 df             	mov    %rbx,%rdi
+ffffffff814b6763:	e8 a8 67 58 00       	callq  ffffffff81a3cf10 <_raw_spin_lock_irqsave>
+ffffffff814b6768:	41 8b 8c 24 78 01 00 	mov    0x178(%r12),%ecx
+ffffffff814b676f:	00
+ffffffff814b6770:	89 ca                	mov    %ecx,%edx
+ffffffff814b6772:	f7 d2                	not    %edx
+ffffffff814b6774:	41 03 94 24 7c 01 00 	add    0x17c(%r12),%edx
+ffffffff814b677b:	00
+ffffffff814b677c:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
+ffffffff814b6782:	75 23                	jne    ffffffff814b67a7 <uart_put_char+0x87>
+ffffffff814b6784:	48 89 c6             	mov    %rax,%rsi
+ffffffff814b6787:	48 89 df             	mov    %rbx,%rdi
+ffffffff814b678a:	e8 e1 64 58 00       	callq  ffffffff81a3cc70 <_raw_spin_unlock_irqrestore>
+ffffffff814b678f:	44 89 e8             	mov    %r13d,%eax
+ffffffff814b6792:	48 8b 1c 24          	mov    (%rsp),%rbx
+ffffffff814b6796:	4c 8b 64 24 08       	mov    0x8(%rsp),%r12
+ffffffff814b679b:	4c 8b 6c 24 10       	mov    0x10(%rsp),%r13
+ffffffff814b67a0:	4c 8b 74 24 18       	mov    0x18(%rsp),%r14
+ffffffff814b67a5:	c9                   	leaveq
+ffffffff814b67a6:	c3                   	retq
+ffffffff814b67a7:	49 8b 94 24 70 01 00 	mov    0x170(%r12),%rdx
+ffffffff814b67ae:	00
+ffffffff814b67af:	48 63 c9             	movslq %ecx,%rcx
+ffffffff814b67b2:	41 b5 01             	mov    $0x1,%r13b
+ffffffff814b67b5:	44 88 34 0a          	mov    %r14b,(%rdx,%rcx,1)
+ffffffff814b67b9:	41 8b 94 24 78 01 00 	mov    0x178(%r12),%edx
+ffffffff814b67c0:	00
+ffffffff814b67c1:	83 c2 01             	add    $0x1,%edx
+ffffffff814b67c4:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
+ffffffff814b67ca:	41 89 94 24 78 01 00 	mov    %edx,0x178(%r12)
+ffffffff814b67d1:	00
+ffffffff814b67d2:	eb b0                	jmp    ffffffff814b6784 <uart_put_char+0x64>
+ffffffff814b67d4:	66 66 66 2e 0f 1f 84 	data32 data32 nopw %cs:0x0(%rax,%rax,1)
+ffffffff814b67db:	00 00 00 00 00
 
-> Can you explain the problem with "non-audit folks will mistake
-> audit_enabled as a true/false value when it is not"?
+for our build, this is crashing at:
 
-See the "it might work but ..." part above.
+    circ->buf[circ->head] = c;
 
-> While I realize people change their opinions given a broader context,
-> and the origninal reply was ambiguous, I went ahead with this patch
-> based on your "Sounds good." from:
->         https://www.redhat.com/archives/linux-audit/2018-April/msg00089.html
+Looking in uart_port_startup(), it seems that circ->buf (state->xmit.buf)
+protected by the "per-port mutex", which based on uart_port_check() is
+state->port.mutex. Indeed, the lock acquired in uart_put_char() is
+uport->lock, i.e. not the same lock.
 
-I think the confusion comes from what was meant by "clean them all
-up".  We obviously have different understandings of what "cleaning"
-meant.
+Anyway, since the lock is not acquired, if uart_shutdown() is called, the
+last chunk of that function may release state->xmit.buf before its assigned
+to null, and cause the race above.
 
-> Would you accept a patch that defines a function by the same name as the
-> global variable that returns a boolean (and localizes and renames the
-> existing global with a "__" prefix?
+To fix it, we simply also acquire state->port.mutex.
 
-At this point I think I've been clear that I don't like treating it as
-a boolean, regardless of if it is wrapped in a function or not.  Why?
-Well, it's not a boolean for starters.
+Unfortunately, I don't have any insightful thoughts about how to test this.
+Ideas are appreciated :)
 
-If you wanted to submit a patch that would swap out 0 for AUDIT_OFF I
-would accept that.
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ drivers/tty/serial/serial_core.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-> I'm not willing to offer a patch to make the existing boolean usage harder to read to bring it all into similar usage.
-
-Okay ... ?  Patch submission has always been voluntary as far as I can
-tell; if you aren't willing to submit a patch, that's fine.
-
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 0466f9f08a91..883a8c15510c 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -532,9 +532,15 @@ static int uart_put_char(struct tty_struct *tty, unsigned char c)
+ 	unsigned long flags;
+ 	int ret = 0;
+ 
++	/*
++	 * state->xmit.buf is protected by state->port.mutex, see the note in
++	 * uart_port_startup()
++	 */
++	mutex_lock(&state->port.mutex);
++
+ 	circ = &state->xmit;
+ 	if (!circ->buf)
+-		return 0;
++		goto out;
+ 
+ 	port = uart_port_lock(state, flags);
+ 	if (port && uart_circ_chars_free(circ) != 0) {
+@@ -543,6 +549,9 @@ static int uart_put_char(struct tty_struct *tty, unsigned char c)
+ 		ret = 1;
+ 	}
+ 	uart_port_unlock(port, flags);
++
++out:
++	mutex_unlock(&state->port.mutex);
+ 	return ret;
+ }
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.17.0
