@@ -1,82 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751999AbeFESKv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:10:51 -0400
-Received: from mx2.yrkesakademin.fi ([85.134.45.195]:28641 "EHLO
-        mx2.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751830AbeFESKu (ORCPT
+        id S1752016AbeFESLp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:11:45 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38306 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFESLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:10:50 -0400
-Subject: Re: building in 32bit chroot on x86_64 host broken - IGNORE
-From: Thomas Backlund <tmb@mageia.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
+        Tue, 5 Jun 2018 14:11:44 -0400
+X-Google-Smtp-Source: ADUXVKI1FfpGNc8lSN+mb9W4bZo/U3/6d9h+MdNK/Ci+TbFJnT2NPG6fgmw3e9I+G1MfgxCLQpGc2AnG5/y6AUuIFek=
+MIME-Version: 1.0
 References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
  <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org>
-Message-ID: <48aa249f-22e8-924c-120c-8384eff9efb4@mageia.org>
-Date: Tue, 5 Jun 2018 21:11:01 +0259
-MIME-Version: 1.0
 In-Reply-To: <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-WatchGuard-Spam-ID: str=0001.0A0C0202.5B16D22A.0143,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
-X-WatchGuard-Mail-Client-IP: 85.134.45.195
-X-WatchGuard-Mail-From: tmb@mageia.org
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 5 Jun 2018 11:11:32 -0700
+Message-ID: <CA+55aFwJAbr8_Xs0ZX9K2iAr8bf=ZgNnKTLopQe6jPCgEBemrA@mail.gmail.com>
+Subject: Re: building in 32bit chroot on x86_64 host broken (was: Linux 4.17)
+To: tmb@mageia.org, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Den 2018-06-05 kl. 20:52, skrev Thomas Backlund:
-> 
-> I have a 32bit x86 and a 64bit x86_64 install on the system.
-> 
-> With linux source up to 4.16.x I could do:
-> 
-> setarch i686 (or use command linux32)
-> chroot /path/to/32bit/
-> (/dev, /proc, /sys, /run is bind mounted in the chroot)
-> 
-> Then I could build a 32bit kernel in the chroot without booting the 
-> 32bit system...
-> 
-> (host is running a 4.14 longterm kernel)
-> 
-> but building from 4.17 source in the chroot I get:
-> 
-> 
-> $ uname -m
-> i686
-> $ make oldconfig
-> scripts/kconfig/conf  --oldconfig Kconfig
-> *
-> * Restart config...
-> *
-> *
-> * Linux/x86 4.17.0 Kernel Configuration
-> *
-> 64-bit kernel (64BIT) [Y/n/?] (NEW)
-> 
-> 
-> 
-> 
-> So it does not pick up 32bit anymore ...
-> 
+On Tue, Jun 5, 2018 at 10:51 AM Thomas Backlund <tmb@mageia.org> wrote:
+>
 > Is this intentional ? If so, why ? If not, how can I fix it ?
-> 
 
+It shouldn't be intentional. And I don't see anythin ghaving changed
+in this area. We still have
 
-Never mind...
+  config 64BIT
+        bool "64-bit kernel" if ARCH = "x86"
+        default ARCH != "i386"
 
-For some reason I seem to have lost this  in the .config update to 4.17:
+which is what it was in 4.16 too.
 
-# CONFIG_64BIT is not set
+Of course, we also have (in the main Makefile)
 
+  SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
 
-Re-adding it restores proper behaviour...
+and
 
-Sorry for the noise...
+  ARCH            ?= $(SUBARCH)
 
---
-Thomas
+so if you don't set ARCH explicitly, it will always translate "i686"
+into "x86", so it will default to 64-bit.
+
+None of this is new to 4.17, though. Are you sure you didn't use to
+have an ARCH=i386 somewhere?
+
+Because this works for me:
+
+    make ARCH=i386 oldconfig
+
+and it's how I have done cross-builds before (although honestly, I
+don't do them very often).
+
+But adding Masahiro to the cc in case he sees something I've missed.
+
+Of course, doing a bisect on *when* it broke for you would be good
+too. You don't need to actually build the kernel, you can just bisect
+the configuration phase (and even automate it with "git bisect run" if
+you want to).
+
+                 Linus
