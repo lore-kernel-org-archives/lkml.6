@@ -1,107 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751804AbeFELUq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:20:46 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33044 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751632AbeFELUp (ORCPT
+        id S1751699AbeFEL0o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:26:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59858 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeFEL0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:20:45 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40758883"
-Subject: Re: [patch 2/8] genirq/generic_pending: Do not lose pending affinity
- update
-To: Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-CC: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Dmitry Safonov <0x7f454c46@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
-        Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>,
-        <stable@vger.kernel.org>
-References: <20180604162224.386544292@linutronix.de>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <74a8cfe1-56e4-6082-1d53-a76faf5105eb@cn.fujitsu.com>
-Date: Tue, 5 Jun 2018 19:20:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Tue, 5 Jun 2018 07:26:43 -0400
+Date: Tue, 5 Jun 2018 12:26:41 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Ilya Matveychikov <matvejchikov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ksys_mount: check for permissions before resource
+ allocation
+Message-ID: <20180605112641.GN30522@ZenIV.linux.org.uk>
+References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+ <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180604162224.386544292@linutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 561244B40410.A8475
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-At 06/04/2018 11:33 PM, Thomas Gleixner wrote:
-> The generic pending interrupt mechanism moves interrupts from the interrupt
-> handler on the original target CPU to the new destination CPU. This is
-> required for x86 and ia64 due to the way the interrupt delivery and
-> acknowledge works if the interrupts are not remapped.
+On Tue, Jun 05, 2018 at 10:59:51AM +0400, Ilya Matveychikov wrote:
+> Just CC’ed to some of maintainers.
 > 
-> However that update can fail for various reasons. Some of them are valid
-> reasons to discard the pending update, but the case, when the previous move
-> has not been fully cleaned up is not a legit reason to fail.
+> $ perl scripts/get_maintainer.pl fs/0001-ksys_mount-check-for-permissions-before-resource-all.patch
+> Alexander Viro <viro@zeniv.linux.org.uk> (maintainer:FILESYSTEMS (VFS and infrastructure))
+> linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure))
+> linux-kernel@vger.kernel.org (open list)
 > 
-> Check the return value of irq_do_set_affinity() for -EBUSY, which indicates
-> a pending cleanup, and rearm the pending move in the irq dexcriptor so it's
+> > On Jun 5, 2018, at 6:00 AM, Ilya Matveychikov <matvejchikov@gmail.com> wrote:
+> > 
+> > Early check for mount permissions prevents possible allocation of 3
+> > pages from kmalloc() pool by unpriveledged user which can be used for
+> > spraying the kernel heap.
 
-s/dexcriptor/descriptor
-
-> tried again when the next interrupt arrives.
-> 
-> Fixes: 996c591227d9 ("x86/irq: Plug vector cleanup race")
-> Signed-off-by: Thomas Gleixner<tglx@linutronix.de>
-> Cc:stable@vger.kernel.org
-> ---
->   kernel/irq/migration.c |   24 ++++++++++++++++++------
->   1 file changed, 18 insertions(+), 6 deletions(-)
-> 
-> --- a/kernel/irq/migration.c
-> +++ b/kernel/irq/migration.c
-> @@ -38,17 +38,18 @@ bool irq_fixup_move_pending(struct irq_d
->   void irq_move_masked_irq(struct irq_data *idata)
->   {
->   	struct irq_desc *desc = irq_data_to_desc(idata);
-> -	struct irq_chip *chip = desc->irq_data.chip;
-> +	struct irq_data *data = &desc->irq_data;
-> +	struct irq_chip *chip = data->chip;
->   
-> -	if (likely(!irqd_is_setaffinity_pending(&desc->irq_data)))
-> +	if (likely(!irqd_is_setaffinity_pending(data)))
->   		return;
->   
-> -	irqd_clr_move_pending(&desc->irq_data);
-> +	irqd_clr_move_pending(data);
->   
->   	/*
->   	 * Paranoia: cpu-local interrupts shouldn't be calling in here anyway.
->   	 */
-> -	if (irqd_is_per_cpu(&desc->irq_data)) {
-> +	if (irqd_is_per_cpu(data)) {
->   		WARN_ON(1);
->   		return;
->   	}
-> @@ -73,9 +74,20 @@ void irq_move_masked_irq(struct irq_data
->   	 * For correct operation this depends on the caller
->   	 * masking the irqs.
->   	 */
-> -	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids)
-> -		irq_do_set_affinity(&desc->irq_data, desc->pending_mask, false);
-> +	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids) {
-> +		int ret;
->   
-> +		ret = irq_do_set_affinity(data, desc->pending_mask, false);
-> +		/*
-> +		 * If the there is a cleanup pending in the underlying
-
-s/If the there is/If there is/
-
-Thanks,
-	dou
+I'm sorry, but there are arseloads of unpriveleged syscalls that do the same,
+starting with read() from procfs files.  So what the hell does it buy?
