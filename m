@@ -1,175 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751838AbeFEM4z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:56:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39560 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751732AbeFEM4x (ORCPT
+        id S1751866AbeFEM5D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:57:03 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40810 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751732AbeFEM46 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:56:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8AFAC6037B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH] remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
-To: Vinod <vkoul@kernel.org>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, sibis@codeaurora.org
-References: <1528177361-8883-1-git-send-email-sricharan@codeaurora.org>
- <20180605061919.GQ16230@vkoul-mobl>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <3a4c102b-7228-153a-c588-b1bf00291fa8@codeaurora.org>
-Date: Tue, 5 Jun 2018 18:26:46 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Tue, 5 Jun 2018 08:56:58 -0400
+X-Google-Smtp-Source: ADUXVKKa+np8Yxt15+om1gXUyAs7C+1Hqp9ez6P2Vt/tv+RMIHW7+nNDSrvjmkEK2/5Wy5iB9Rn/hQ==
+Reply-To: minyard@acm.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        "openipmi-developer@lists.sourceforge.net"
+        <openipmi-developer@lists.sourceforge.net>
+From: Corey Minyard <minyard@acm.org>
+Subject: [GIT PULL] IPMI updates for 4.18
+Message-ID: <368f4f3b-a422-59ca-0a2e-8484cf7313d0@acm.org>
+Date: Tue, 5 Jun 2018 07:56:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180605061919.GQ16230@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+The following changes since commit a27fc14219f2e3c4a46ba9177b04d9b52c875532:
 
-On 6/5/2018 11:49 AM, Vinod wrote:
-> On 05-06-18, 11:12, Sricharan R wrote:
-> 
->> +config QCOM_Q6V5_WCSS
->> +	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
->> +	depends on OF && ARCH_QCOM
->> +	depends on QCOM_SMEM
->> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
->> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
-> 
-> Is there a reason why it depends on RPMSG_QCOM_GLINK_SMEM=n? What would
-> happen if distro wants both this and RPMSG_QCOM_GLINK_SMEM
-> 
-  RPMSG_QCOM_GLINK_SMEM=n should be for the COMPILE_TEST. Probably that
-  means that it should be corrected here and for ADSP, Q6V5_PIL as well.
-  Bjorn, is that correct ?, should it be, below ?
- 
-  depends on (RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)) || (RPMSG_QCOM_GLINK_SMEM || (COMPILE_TEST && RPMSG_QCOM_GLINK_SMEM=n))
+   Merge branch 'parisc-4.17-3' of 
+git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux 
+(2018-04-16 14:07:39 -0700)
 
->> +/* QDSP6SS Register Offsets */
->> +#define QDSP6SS_RESET_REG		0x014
->> +#define QDSP6SS_GFMUX_CTL_REG		0x020
->> +#define QDSP6SS_PWR_CTL_REG		0x030
->> +#define QDSP6SS_MEM_PWR_CTL		0x0B0
->> +
->> +/* AXI Halt Register Offsets */
->> +#define AXI_HALTREQ_REG			0x0
->> +#define AXI_HALTACK_REG			0x4
->> +#define AXI_IDLE_REG			0x8
->> +
->> +#define HALT_ACK_TIMEOUT_MS		100
->> +
->> +/* QDSP6SS_RESET */
->> +#define Q6SS_STOP_CORE			BIT(0)
->> +#define Q6SS_CORE_ARES			BIT(1)
->> +#define Q6SS_BUS_ARES_ENABLE		BIT(2)
-> 
-> Wouldn't it be nice if the defines are all consistent, some of them are
-> QDSP6SS_xxx, some Q6SS_ some are not
-> 
-> Please do pick one and make it consistent :)
-> 
+are available in the git repository at:
 
- ok.
+   https://github.com/cminyard/linux-ipmi.git tags/for-linus-4.18
 
->> +/* QDSP6v56 parameters */
->> +#define QDSP6v56_LDO_BYP		BIT(25)
->> +#define QDSP6v56_BHS_ON		BIT(24)
->> +#define QDSP6v56_CLAMP_WL		BIT(21)
->> +#define QDSP6v56_CLAMP_QMC_MEM		BIT(22)
->> +#define HALT_CHECK_MAX_LOOPS		200
->> +#define QDSP6SS_XO_CBCR		0x0038
-> 
-> GENMASK() perhaps?
-> 
+for you to fetch changes up to 048f7c3e352eeef50ed2c14dd89683f8a3af2f9b:
 
- ok.
+   ipmi: Properly release srcu locks on error conditions (2018-05-24 
+15:08:30 -0500)
 
->> +static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
->> +{
->> +	int ret;
->> +	u32 val;
->> +	int i;
-> 
->         int ret, i;
-> 
->> +static int q6v5_wcss_start(struct rproc *rproc)
->> +{
->> +	struct q6v5_wcss *wcss = rproc->priv;
->> +	int ret;
->> +
->> +	qcom_q6v5_prepare(&wcss->q6v5);
->> +
->> +	/* Release Q6 and WCSS reset */
->> +	ret = reset_control_deassert(wcss->wcss_reset);
->> +	if (ret) {
->> +		dev_err(wcss->dev, "wcss_reset failed\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = reset_control_deassert(wcss->wcss_q6_reset);
->> +	if (ret) {
->> +		dev_err(wcss->dev, "wcss_q6_reset failed\n");
->> +		goto wcss_reset;
->> +	}
->> +
->> +	/* Lithium configuration - clock gating and bus arbitration */
->> +	ret = regmap_update_bits(wcss->halt_map,
->> +				 wcss->halt_nc + TCSR_GLOBAL_CFG0,
->> +				 0x1F, 0x14);
-> 
-> magic numbers??
-> 
+----------------------------------------------------------------
+It's been a busy release for the IPMI driver.  Some notable changes:
 
- ok, will find out what it is for this one and below.
- But atleast from register map could not find out and
- these are sort of hardcoded sequences coming from the hw
- folks. So will have to reach out to them to find the specifics.
+A user was running into timeout issues doing maintenance commands over
+the IPMB network behind an IPMI controller.  Extend the maintenance
+mode concept to messages over IPMB and allow the timeouts to be tuned.
 
->> +static int q6v5_wcss_powerdown(struct q6v5_wcss *wcss)
->> +{
->> +	int ret;
->> +	u32 val;
->> +
->> +	/* 1 - Assert WCSS/Q6 HALTREQ */
->> +	q6v5_wcss_halt_axi_port(wcss, wcss->halt_map, wcss->halt_wcss);
->> +
->> +	/* 2 - Enable WCSSAON_CONFIG */
->> +	val = readl(wcss->rmb_base + SSCAON_CONFIG);
->> +	val |= SSCAON_ENABLE;
->> +	writel(val, wcss->rmb_base + SSCAON_CONFIG);
->> +
->> +	/* 3 - Set SSCAON_CONFIG */
->> +	val |= BIT(15);
->> +	val &= ~BIT(16);
->> +	val &= ~BIT(17);
->> +	val &= ~BIT(18);
-> 
-> wouldn't it be nice to define these bits?
-> 
->> +static int q6v5_q6_powerdown(struct q6v5_wcss *wcss)
->> +{
->> +	int ret;
->> +	u32 val;
->> +	int i;
-> 
->         int ret, i;
-> 
+Lots of cleanup, style fixing, some bugfixes, and such.
 
-Regards,
- Sricharan
+At least one user was having trouble with the way the IPMI driver would
+lock the i2c driver module it used.  The IPMI driver was not designed
+for hotplug.  However, hotplug is a reality now, so the IPMI driver
+was modified to support hotplug.
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+The proc interface code is now completely removed.  Long live sysfs!
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+----------------------------------------------------------------
+Avi Fishman (1):
+       ipmi: NPCM7xx KCS BMC: enable interrupt to the host
+
+Corey Minyard (32):
+       ipmi: Add a way to tune some timeouts
+       ipmi: Add a maintenance mode for IPMB messages
+       ipmi:watchdog: Rework locking and handling
+       ipmi:watchdog: Replace printk() with pr_xxx()
+       ipmi: Add a panic handler for IPMI users
+       ipmi:watchdog: Use the IPMI panic handler instead of the system one
+       ipmi: Clean up some debug code
+       ipmi:devintf: Clean up some coding style issues
+       ipmi: Clean up comments in include files.
+       ipmi: Break up i_ipmi_request
+       ipmi: Clean up some style issues in the message handler
+       ipmi_devintf: Small lock rework
+       ipmi: Add shutdown functions for users and interfaces
+       ipmi: Rename ipmi_user_t to struct ipmi_user *
+       ipmi: Change ipmi_smi_t to struct ipmi_smi *
+       ipmi: Fix some counter issues
+       ipmi: Rework locking and shutdown for hot remove
+       ipmi_si: Convert over to a shutdown handler
+       ipmi_ssif: Convert over to a shutdown handler
+       ipmi: Remove condition on interface shutdown
+       ipmi_ssif: Remove usecount handling
+       ipmi: Remove usecount function from interfaces
+       ipmi_devintf: Add an error return on invalid ioctls
+       ipmi: ipmi_unregister_smi() cannot fail, have it return void
+       ipmi: Get rid of ipmi_user_t and ipmi_smi_t in include files
+       ipmi_ssif: Get rid of unused intf_num
+       ipmi: Remove smi->intf checks
+       ipmi_si: Rename intf_num to si_num
+       ipmi_si: Clean up shutdown a bit
+       ipmi: Remove the proc interface
+       ipmi:bt: Set the timeout before doing a capabilities check
+       ipmi: Properly release srcu locks on error conditions
+
+Gustavo A. R. Silva (1):
+       ipmi_ssif: Fix uninitialized variable issue
+
+Haiyue Wang (1):
+       ipmi: add an NPCM7xx KCS BMC driver
+
+  .../devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt   |   39 +
+  drivers/char/ipmi/Kconfig                          |   23 +-
+  drivers/char/ipmi/Makefile                         |    1 +
+  drivers/char/ipmi/ipmi_bt_sm.c                     |    3 +-
+  drivers/char/ipmi/ipmi_devintf.c                   |  129 +-
+  drivers/char/ipmi/ipmi_msghandler.c                | 2123 
++++++++++-----------
+  drivers/char/ipmi/ipmi_poweroff.c                  |   32 +-
+  drivers/char/ipmi/ipmi_si_intf.c                   |  198 +-
+  drivers/char/ipmi/ipmi_ssif.c                      |  183 +-
+  drivers/char/ipmi/ipmi_watchdog.c                  |  407 ++--
+  drivers/char/ipmi/kcs_bmc_npcm7xx.c                |  215 ++
+  include/linux/ipmi.h                               |  153 +-
+  include/linux/ipmi_smi.h                           |  129 +-
+  13 files changed, 1752 insertions(+), 1883 deletions(-)
+  create mode 100644 
+Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
+  create mode 100644 drivers/char/ipmi/kcs_bmc_npcm7xx.c
