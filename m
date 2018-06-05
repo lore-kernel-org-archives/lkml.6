@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752800AbeFEREJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32970 "EHLO mail.kernel.org"
+        id S1752845AbeFEREM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:04:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751858AbeFEREH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:07 -0400
+        id S1752801AbeFEREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.4 08/37] tracing: Fix crash when freeing instances with event triggers
-Date: Tue,  5 Jun 2018 19:01:13 +0200
-Message-Id: <20180605170109.387156770@linuxfoundation.org>
+        stable@vger.kernel.org, Sachin Grover <sgrover@codeaurora.org>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.4 09/37] selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
+Date: Tue,  5 Jun 2018 19:01:14 +0200
+Message-Id: <20180605170109.459868529@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -29,68 +29,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Sachin Grover <sgrover@codeaurora.org>
 
-commit 86b389ff22bd6ad8fd3cb98e41cd271886c6d023 upstream.
+commit efe3de79e0b52ca281ef6691480c8c68c82a4657 upstream.
 
-If a instance has an event trigger enabled when it is freed, it could cause
-an access of free memory. Here's the case that crashes:
+Call trace:
+ [<ffffff9203a8d7a8>] dump_backtrace+0x0/0x428
+ [<ffffff9203a8dbf8>] show_stack+0x28/0x38
+ [<ffffff920409bfb8>] dump_stack+0xd4/0x124
+ [<ffffff9203d187e8>] print_address_description+0x68/0x258
+ [<ffffff9203d18c00>] kasan_report.part.2+0x228/0x2f0
+ [<ffffff9203d1927c>] kasan_report+0x5c/0x70
+ [<ffffff9203d1776c>] check_memory_region+0x12c/0x1c0
+ [<ffffff9203d17cdc>] memcpy+0x34/0x68
+ [<ffffff9203d75348>] xattr_getsecurity+0xe0/0x160
+ [<ffffff9203d75490>] vfs_getxattr+0xc8/0x120
+ [<ffffff9203d75d68>] getxattr+0x100/0x2c8
+ [<ffffff9203d76fb4>] SyS_fgetxattr+0x64/0xa0
+ [<ffffff9203a83f70>] el0_svc_naked+0x24/0x28
 
- # cd /sys/kernel/tracing
- # mkdir instances/foo
- # echo snapshot > instances/foo/events/initcall/initcall_start/trigger
- # rmdir instances/foo
+If user get root access and calls security.selinux setxattr() with an
+embedded NUL on a file and then if some process performs a getxattr()
+on that file with a length greater than the actual length of the string,
+it would result in a panic.
 
-Would produce:
+To fix this, add the actual length of the string to the security context
+instead of the length passed by the userspace process.
 
- general protection fault: 0000 [#1] PREEMPT SMP PTI
- Modules linked in: tun bridge ...
- CPU: 5 PID: 6203 Comm: rmdir Tainted: G        W         4.17.0-rc4-test+ #933
- Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
- RIP: 0010:clear_event_triggers+0x3b/0x70
- RSP: 0018:ffffc90003783de0 EFLAGS: 00010286
- RAX: 0000000000000000 RBX: 6b6b6b6b6b6b6b2b RCX: 0000000000000000
- RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8800c7130ba0
- RBP: ffffc90003783e00 R08: ffff8801131993f8 R09: 0000000100230016
- R10: ffffc90003783d80 R11: 0000000000000000 R12: ffff8800c7130ba0
- R13: ffff8800c7130bd8 R14: ffff8800cc093768 R15: 00000000ffffff9c
- FS:  00007f6f4aa86700(0000) GS:ffff88011eb40000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007f6f4a5aed60 CR3: 00000000cd552001 CR4: 00000000001606e0
- Call Trace:
-  event_trace_del_tracer+0x2a/0xc5
-  instance_rmdir+0x15c/0x200
-  tracefs_syscall_rmdir+0x52/0x90
-  vfs_rmdir+0xdb/0x160
-  do_rmdir+0x16d/0x1c0
-  __x64_sys_rmdir+0x17/0x20
-  do_syscall_64+0x55/0x1a0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-This was due to the call the clears out the triggers when an instance is
-being deleted not removing the trigger from the link list.
-
+Signed-off-by: Sachin Grover <sgrover@codeaurora.org>
 Cc: stable@vger.kernel.org
-Fixes: 85f2b08268c01 ("tracing: Add basic event trigger framework")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_trigger.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ security/selinux/ss/services.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -469,9 +469,10 @@ clear_event_triggers(struct trace_array
- 	struct trace_event_file *file;
- 
- 	list_for_each_entry(file, &tr->events, list) {
--		struct event_trigger_data *data;
--		list_for_each_entry_rcu(data, &file->triggers, list) {
-+		struct event_trigger_data *data, *n;
-+		list_for_each_entry_safe(data, n, &file->triggers, list) {
- 			trace_event_trigger_enable_disable(file, 0);
-+			list_del_rcu(&data->list);
- 			if (data->ops->free)
- 				data->ops->free(data->ops, data);
- 		}
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -1441,7 +1441,7 @@ static int security_context_to_sid_core(
+ 				      scontext_len, &context, def_sid);
+ 	if (rc == -EINVAL && force) {
+ 		context.str = str;
+-		context.len = scontext_len;
++		context.len = strlen(str) + 1;
+ 		str = NULL;
+ 	} else if (rc)
+ 		goto out_unlock;
