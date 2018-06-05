@@ -1,44 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeFEJDx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:03:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50182 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751696AbeFEJDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:03:51 -0400
-Date: Tue, 5 Jun 2018 11:03:49 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, kernel-team@fb.com, linux-kernel@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>, Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 2/2] mm: don't skip memory guarantee calculations
-Message-ID: <20180605090349.GW19202@dhcp22.suse.cz>
-References: <20180522132528.23769-1-guro@fb.com>
- <20180522132528.23769-2-guro@fb.com>
- <20180604122953.GN19202@dhcp22.suse.cz>
- <20180604162259.GA3404@castle>
+        id S1751601AbeFEJF5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:05:57 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39894 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751296AbeFEJF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 05:05:56 -0400
+Subject: Re: [PATCH v2 21/21] sparc64: use match_string() helper
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-22-git-send-email-xieyisheng1@huawei.com>
+ <CAHp75VeM8+pWEx=XNOGAb=Fdh+rh3WOn2i4m7ObhcVdcXKVa3A@mail.gmail.com>
+ <6fefc785-b6b7-e24f-2559-76ce70544717@huawei.com>
+ <CAHp75Vc-BDtz62zS2_Chi=UgZJw7vvUzJ34CEHd-RCjqnOjBew@mail.gmail.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        <sparclinux@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <0eb48f06-2046-0b5e-4f16-4ebf3bd056b2@huawei.com>
+Date: Tue, 5 Jun 2018 17:05:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604162259.GA3404@castle>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAHp75Vc-BDtz62zS2_Chi=UgZJw7vvUzJ34CEHd-RCjqnOjBew@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 04-06-18 17:23:06, Roman Gushchin wrote:
-[...]
-> I'm happy to discuss any concrete issues/concerns, but I really see
-> no reasons to drop it from the mm tree now and start the discussion
-> from scratch.
+Hi Andy,
 
-I do not think this is ready for the current merge window. Sorry! I
-would really prefer to see the whole thing in one series to have a
-better picture.
+On 2018/6/4 18:06, Andy Shevchenko wrote:
+> On Mon, Jun 4, 2018 at 4:06 AM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>> Hi Andy,
+>>
+>> On 2018/6/1 19:34, Andy Shevchenko wrote:
+>>> On Thu, May 31, 2018 at 2:11 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>>>> match_string() returns the index of an array for a matching string,
+>>>> which can be used instead of open coded variant.
+>>>
+>>>> @@ -512,10 +512,9 @@ static unsigned long __init mdesc_cpu_hwcap_list(void)
+>>>>                                 break;
+>>>>                         }
+>>>>                 }
+>>>
+>>> It seems previous loop also can be replaced.
+>>
+>> No, because the there is an NULL in the middle of the array hwcaps:
+>>  static const char *hwcaps[] = {
+>>           "flush", "stbar", "swap", "muldiv", "v9",
+>>           "ultra3", "blkinit", "n2",
+>>
+>>           /* These strings are as they appear in the machine description
+>>            * 'hwcap-list' property for cpu nodes.
+>>            */
+>>           "mul32", "div32", "fsmuld", "v8plus", "popc", "vis", "vis2",
+>>           "ASIBlkInit", "fmaf", "vis3", "hpc", "random", "trans", "fjfmau",
+>>           "ima", "cspare", "pause", "cbcond", NULL /*reserved for crypto */,
+>>           "adp",
+>>   };
+> 
+> Actually you can.
+> What you need is to add string literal instead of NULL and make an
+> additional condition after match_string() in all users (not to many),
+> something like
+> 
+> i = match_string();
+> if (i < 0)
+>  ...
+> if (BIT(i) == HWCAP_SPARC_CRYPTO) // or !=
 
--- 
-Michal Hocko
-SUSE Labs
+OK, I get your point.
+
+Thanks
+Yisheng
+>  ...
+> 
