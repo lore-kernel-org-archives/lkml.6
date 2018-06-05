@@ -1,90 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752746AbeFEVMb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:12:31 -0400
-Received: from foss.arm.com ([217.140.101.70]:33434 "EHLO foss.arm.com"
+        id S1752976AbeFEVMn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:12:43 -0400
+Received: from imap.thunk.org ([74.207.234.97]:39342 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752396AbeFEVHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:07:39 -0400
-From: Kim Phillips <kim.phillips@arm.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>,
-        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Rik van Riel <riel@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kim Phillips <kim.phillips@arm.com>
-Subject: [PATCH v4 05/14] coresight: get/put module in coresight_build/release_path
-Date: Tue,  5 Jun 2018 16:07:01 -0500
-Message-Id: <20180605210710.22227-6-kim.phillips@arm.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180605210710.22227-1-kim.phillips@arm.com>
-References: <20180605210710.22227-1-kim.phillips@arm.com>
+        id S1752708AbeFEVMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:12:41 -0400
+Date: Tue, 5 Jun 2018 17:12:38 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Richard Weinberger <richard@sigma-star.at>
+Cc: Richard Weinberger <richard.weinberger@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
+Subject: Re: [GIT PULL] fscrypt updates for 4.18
+Message-ID: <20180605211238.GH7839@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Richard Weinberger <richard@sigma-star.at>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
+References: <20180605150751.GA9436@thunk.org>
+ <30587992.7Od65ROsjm@blindfold>
+ <20180605170208.GE7839@thunk.org>
+ <5151941.CDXohbuWeC@blindfold>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5151941.CDXohbuWeC@blindfold>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Increment the refcnt for driver modules in current use by calling
-module_get in coresight_build_path and module_put in release_path.
+On Tue, Jun 05, 2018 at 07:05:52PM +0200, Richard Weinberger wrote:
+> > An attack scenario where someone manages to downgrade the crypto of
+> > your phone would require replacing your kernel and your /system
+> > partition --- at which point, you've got other problems.  :-)
+> 
+> This means Speck is never enabled at kernel level on non-cheap phones?
 
-This prevents driver modules from being unloaded when they are in use,
-either in sysfs or perf mode.
+No.  And even if it were, the /system partition is going to request
+that the kernel encrypt files using one and only encryption algorithm:
+namely, AES.
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
----
- drivers/hwtracing/coresight/coresight.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Things aren't as configurable on an Android phone as you might be used
+to on a laptop.  Some manufacturers use ext4; some manufacturers
+decide they want to use f2fs.  They make that decision not you, and
+only the file system utilities for that one file system are compiled
+into the system.
 
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 338f1719641c..1c941351f1d1 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -465,6 +465,12 @@ static int _coresight_build_path(struct coresight_device *csdev,
- 
- 	node->csdev = csdev;
- 	list_add(&node->link, path);
-+
-+	if (!try_module_get(csdev->dev.parent->driver->owner)) {
-+		dev_err(&csdev->dev, "could not get coresight driver module\n");
-+		return -ENODEV;
-+	}
-+
- 	pm_runtime_get_sync(csdev->dev.parent);
- 
- 	return 0;
-@@ -510,6 +516,9 @@ void coresight_release_path(struct list_head *path)
- 		csdev = nd->csdev;
- 
- 		pm_runtime_put_sync(csdev->dev.parent);
-+
-+		module_put(csdev->dev.parent->driver->owner);
-+
- 		list_del(&nd->link);
- 		kfree(nd);
- 	}
--- 
-2.17.0
+Similarly, you don't get to choose what crypto algorithm you use;
+that's decided for you by the manufacturer.  Which is good; it's one
+less thing that hte attacker can spoof, and one less thing for users
+to potentially get wrong.
+
+					- Ted
