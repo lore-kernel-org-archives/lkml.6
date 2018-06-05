@@ -1,63 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeFELex (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:34:53 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:58333 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751534AbeFELev (ORCPT
+        id S1751735AbeFELgB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:36:01 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33868 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751534AbeFELf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:34:51 -0400
-X-IronPort-AV: E=Sophos;i="5.49,478,1520866800";
-   d="scan'208";a="283089230"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Carlo Caione <carlo@endlessm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
-Date: Tue,  5 Jun 2018 12:28:48 +0100
-Message-Id: <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+        Tue, 5 Jun 2018 07:35:59 -0400
+X-Google-Smtp-Source: ADUXVKKu/3H3cET6bwR1LPaKC4C7ROBjJioGs3kpAdAVA7x6F4nH6bqUFYwe5222Tv2OojU8iM6iew==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] ksys_mount: check for permissions before resource
+ allocation
+From: Ilya Matveychikov <matvejchikov@gmail.com>
+In-Reply-To: <20180605112641.GN30522@ZenIV.linux.org.uk>
+Date: Tue, 5 Jun 2018 15:35:55 +0400
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Message-Id: <1E519BA2-4198-4255-BAE4-3125C59741A3@gmail.com>
+References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+ <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
+ <20180605112641.GN30522@ZenIV.linux.org.uk>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55Ba52G004426
 
-Add a special enable method for the second CA7 of the R9A06G032
-as well as the default value for the "cpu-release-addr" property.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+> On Jun 5, 2018, at 3:26 PM, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+>> 
+>>> On Jun 5, 2018, at 6:00 AM, Ilya Matveychikov <matvejchikov@gmail.com> wrote:
+>>> 
+>>> Early check for mount permissions prevents possible allocation of 3
+>>> pages from kmalloc() pool by unpriveledged user which can be used for
+>>> spraying the kernel heap.
+> 
+> I'm sorry, but there are arseloads of unpriveleged syscalls that do the same,
+> starting with read() from procfs files.  So what the hell does it buy?
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 40827bb..9d7e74a 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -1,3 +1,4 @@
-+
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-@@ -30,6 +31,8 @@
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
- 			clocks = <&sysctrl R9A06G032_CLK_A7MP>;
-+			enable-method = "renesas,r9a06g032-smp";
-+			cpu-release-addr = <0x4000c204>;
- 		};
- 	};
- 
--- 
-2.7.4
+Means that if all do the same shit no reason to fix it? Sounds weird...
