@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751856AbeFEGRn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:17:43 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:37248 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbeFEGQs (ORCPT
+        id S1751778AbeFEGRm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 02:17:42 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:42687 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751818AbeFEGQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 5 Jun 2018 02:16:48 -0400
 From: Nishanth Menon <nm@ti.com>
@@ -13,9 +13,9 @@ To: Jassi Brar <jassisinghbrar@gmail.com>,
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
         Tero Kristo <t-kristo@ti.com>, Suman Anna <s-anna@ti.com>
-Subject: [RFC PATCH 3/8] mailbox: ti-msgmgr: Change message count mask to be descriptor based
-Date: Tue, 5 Jun 2018 01:16:24 -0500
-Message-ID: <20180605061629.4759-4-nm@ti.com>
+Subject: [RFC PATCH 5/8] dt-bindings: mailbox: ti,message-manager: Add support for secure proxy threads
+Date: Tue, 5 Jun 2018 01:16:26 -0500
+Message-ID: <20180605061629.4759-6-nm@ti.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180605061629.4759-1-nm@ti.com>
 References: <20180605061629.4759-1-nm@ti.com>
@@ -26,122 +26,114 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change mask used to extract the message count to be descriptor based.
+Secure Proxy is another communication scheme in Texas Instrument's
+devices intended to provide an unique communication path from various
+processors in the System on Chip(SoC) to a central System Controller.
 
-This is to support changes for count location for various SoC
-solutions.
+Secure proxy is, in effect, an evolution of current generation Message
+Manager hardware block found in K2G devices. However the following
+changes have taken place:
+
+Secure Proxy instance exposes "threads" or "proxies" which is
+primary representation of "a" communication channel. Each thread is
+preconfigured by System controller configuration based on SoC usage
+requirements. Secure proxy by itself represents a single "queue" of
+communication but allows the proxies to be independently operated.
+
+Each Secure proxy thread can uniquely have their own error and threshold
+interrupts allowing for more fine control of IRQ handling.
+
+Provide an hardware description of the same for device tree
+representation.
+
+See AM65x Technical Reference Manual (SPRUID7, April 2018)
+for further details: http://www.ti.com/lit/pdf/spruid7
 
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- drivers/mailbox/ti-msgmgr.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ .../bindings/mailbox/ti,message-manager.txt        | 58 +++++++++++++++++++---
+ 1 file changed, 50 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mailbox/ti-msgmgr.c b/drivers/mailbox/ti-msgmgr.c
-index 7221590c409c..2952339a8446 100644
---- a/drivers/mailbox/ti-msgmgr.c
-+++ b/drivers/mailbox/ti-msgmgr.c
-@@ -44,6 +44,7 @@ struct ti_msgmgr_valid_queue_desc {
-  * @max_messages:	Number of messages
-  * @data_first_reg:	First data register for proxy data region
-  * @data_last_reg:	Last data register for proxy data region
-+ * @status_cnt_mask:	Mask for getting the status value
-  * @tx_polled:		Do I need to use polled mechanism for tx
-  * @tx_poll_timeout_ms: Timeout in ms if polled
-  * @valid_queues:	List of Valid queues that the processor can access
-@@ -58,6 +59,7 @@ struct ti_msgmgr_desc {
- 	u8 max_messages;
- 	u8 data_first_reg;
- 	u8 data_last_reg;
-+	u32 status_cnt_mask;
- 	bool tx_polled;
- 	int tx_poll_timeout_ms;
- 	const struct ti_msgmgr_valid_queue_desc *valid_queues;
-@@ -116,20 +118,24 @@ struct ti_msgmgr_inst {
+diff --git a/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt b/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
+index ebf0e3710cee..de796e90cac6 100644
+--- a/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
++++ b/Documentation/devicetree/bindings/mailbox/ti,message-manager.txt
+@@ -7,22 +7,40 @@ manager is broken up into queues in different address regions that are called
+ "proxies" - each instance is unidirectional and is instantiated at SoC
+ integration level to indicate receive or transmit path.
  
- /**
-  * ti_msgmgr_queue_get_num_messages() - Get the number of pending messages
-+ * @d:		Description of message manager
-  * @qinst:	Queue instance for which we check the number of pending messages
-  *
-  * Return: number of messages pending in the queue (0 == no pending messages)
-  */
--static inline int ti_msgmgr_queue_get_num_messages(struct ti_queue_inst *qinst)
-+static inline int
-+ti_msgmgr_queue_get_num_messages(const struct ti_msgmgr_desc *d,
-+				 struct ti_queue_inst *qinst)
- {
- 	u32 val;
-+	u32 status_cnt_mask = d->status_cnt_mask;
++This can also be used to describe Texas Instrument's Secure Proxy
++controller that allows for individually configurable "threads" or
++"proxies" which allow for independent communication scheme.
++
+ Message Manager Device Node:
+ ===========================
+ Required properties:
+ --------------------
+-- compatible:		Shall be: "ti,k2g-message-manager"
+-- reg-names 		queue_proxy_region - Map the queue proxy region.
+-			queue_state_debug_region - Map the queue state debug
+-			region.
++- compatible:		Shall be one of: "ti,k2g-message-manager",
++			"ti,am654-secure-proxy"
++- reg-names 		for ti,k2g-message-manager, the following shall exist:
++				queue_proxy_region - Map the queue proxy region.
++				queue_state_debug_region - Map the queue state
++					debug region.
++			for ti,am654-secure-proxy, the following shall exist:
++				target_data - Map the proxy data region
++				rt - Map the realtime status region
++				scfg - Map the configuration region
+ - reg:			Contains the register map per reg-names.
+-- #mbox-cells		Shall be 2. Contains the queue ID and proxy ID in that
+-		        order referring to the transfer path.
++- #mbox-cells		for ti,k2g-message-manager, Shall be 2. Contains the
++			queue ID and proxy ID in the following order referring
++			to the transfer path:
++				queue_proxy_region - Map the queue proxy region.
++				queue_state_debug_region - Map the queue state
++					debug region.
++			for ti,am654-secure-proxy, Shall be 1 and shall refer
++		        to the transfer path called thread.
+ - interrupt-names:	Contains interrupt names matching the rx transfer path
+ 			for a given SoC. Receive interrupts shall be of the
+-			format: "rx_<QID>".
+-			For ti,k2g-message-manager, this shall contain:
++			format:
++			For ti,k2g-message-manager, this shall be: "rx_<QID>"
++			and shall contain:
+ 				"rx_005", "rx_057"
++			for ti,am654-secure-proxy, this shall be: "rx_<PID>".
+ - interrupts:		Contains the interrupt information corresponding to
+ 			interrupt-names property.
  
- 	/*
- 	 * We cannot use relaxed operation here - update may happen
- 	 * real-time.
- 	 */
--	val = readl(qinst->queue_state) & Q_STATE_ENTRY_COUNT_MASK;
--	val >>= __ffs(Q_STATE_ENTRY_COUNT_MASK);
-+	val = readl(qinst->queue_state) & status_cnt_mask;
-+	val >>= __ffs(status_cnt_mask);
- 
- 	return val;
- }
-@@ -167,8 +173,9 @@ static irqreturn_t ti_msgmgr_queue_rx_interrupt(int irq, void *p)
- 		return IRQ_NONE;
- 	}
- 
-+	desc = inst->desc;
- 	/* Do I actually have messages to read? */
--	msg_count = ti_msgmgr_queue_get_num_messages(qinst);
-+	msg_count = ti_msgmgr_queue_get_num_messages(desc, qinst);
- 	if (!msg_count) {
- 		/* Shared IRQ? */
- 		dev_dbg(dev, "Spurious event - 0 pending data!\n");
-@@ -181,7 +188,6 @@ static irqreturn_t ti_msgmgr_queue_rx_interrupt(int irq, void *p)
- 	 * of how many bytes I should be reading. Let the client figure this
- 	 * out.. I just read the full message and pass it on..
- 	 */
--	desc = inst->desc;
- 	message.len = desc->max_message_size;
- 	message.buf = (u8 *)qinst->rx_buff;
- 
-@@ -224,12 +230,14 @@ static irqreturn_t ti_msgmgr_queue_rx_interrupt(int irq, void *p)
- static bool ti_msgmgr_queue_peek_data(struct mbox_chan *chan)
- {
- 	struct ti_queue_inst *qinst = chan->con_priv;
-+	struct device *dev = chan->mbox->dev;
-+	struct ti_msgmgr_inst *inst = dev_get_drvdata(dev);
- 	int msg_count;
- 
- 	if (qinst->is_tx)
- 		return false;
- 
--	msg_count = ti_msgmgr_queue_get_num_messages(qinst);
-+	msg_count = ti_msgmgr_queue_get_num_messages(inst->desc, qinst);
- 
- 	return msg_count ? true : false;
- }
-@@ -243,12 +251,14 @@ static bool ti_msgmgr_queue_peek_data(struct mbox_chan *chan)
- static bool ti_msgmgr_last_tx_done(struct mbox_chan *chan)
- {
- 	struct ti_queue_inst *qinst = chan->con_priv;
-+	struct device *dev = chan->mbox->dev;
-+	struct ti_msgmgr_inst *inst = dev_get_drvdata(dev);
- 	int msg_count;
- 
- 	if (!qinst->is_tx)
- 		return false;
- 
--	msg_count = ti_msgmgr_queue_get_num_messages(qinst);
-+	msg_count = ti_msgmgr_queue_get_num_messages(inst->desc, qinst);
- 
- 	/* if we have any messages pending.. */
- 	return msg_count ? false : true;
-@@ -523,6 +533,7 @@ static const struct ti_msgmgr_desc k2g_desc = {
- 	.max_messages = 128,
- 	.data_first_reg = 16,
- 	.data_last_reg = 31,
-+	.status_cnt_mask = Q_STATE_ENTRY_COUNT_MASK,
- 	.tx_polled = false,
- 	.valid_queues = k2g_valid_queues,
- 	.num_valid_queues = ARRAY_SIZE(k2g_valid_queues),
+@@ -48,3 +66,27 @@ Example(K2G):
+ 			<&msgmgr 0 0>;
+ 		[...]
+ 	};
++
++Example(AM654):
++------------
++
++	secure_proxy: secure_proxy@32c00000 {
++		compatible = "ti,am654-secure-proxy";
++		#mbox-cells = <1>;
++		reg-names = "target_data", "rt", "scfg";
++		reg = <0x0 0x32c00000 0x0 0x100000>,
++		      <0x0 0x32400000 0x0 0x100000>,
++		      <0x0 0x32800000 0x0 0x100000>;
++		interrupt-names = "rx_011";
++		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	dmsc: dmsc {
++		[...]
++		mbox-names = "rx", "tx";
++		# RX Thread ID is 11
++		# TX Thread ID is 13
++		mboxes= <&secure_proxy 11>,
++			<&secure_proxy 13>;
++		[...]
++	};
 -- 
 2.15.1
