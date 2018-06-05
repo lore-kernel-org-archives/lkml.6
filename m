@@ -1,49 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751824AbeFEIw3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:52:29 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55319 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751661AbeFEIw1 (ORCPT
+        id S1751769AbeFEIxZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:53:25 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58302 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751532AbeFEIxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:52:27 -0400
-X-Google-Smtp-Source: ADUXVKK7NLkEceoyt0CG4NLimeFA6NdpeCyLf2xK7PpfZt0zfzBSIZM27DcmKEUSuWAjXtawXDrSXg==
-From: Neil Armstrong <narmstrong@baylibre.com>
-To: khilman@baylibre.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM64: dts: meson-gxl-s905x-p212: Add phy-supply for usb0
-Date: Tue,  5 Jun 2018 10:52:23 +0200
-Message-Id: <1528188743-12798-1-git-send-email-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 5 Jun 2018 04:53:24 -0400
+Date: Tue, 5 Jun 2018 11:53:04 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Thibaut Robert <thibaut.robert@gmail.com>
+Cc: devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Aditya Shankar <aditya.shankar@microchip.com>
+Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
+ warnings
+Message-ID: <20180605085304.jycb5l3gomwlujq5@mwanda>
+References: <20180529191143.13081-1-thibaut.robert@gmail.com>
+ <20180530111725.gmigyddsp2i6mgzw@mwanda>
+ <20180604193250.GB32753@L80496>
+ <20180605073631.cvp2iuef4yb636jz@mwanda>
+ <20180605083325.GA6965@L80496>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605083325.GA6965@L80496>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8914 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806050108
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like LibreTech-CC, the USB0 needs the 5V regulator to be enabled to power the
-devices on the P212 Reference Design based boards.
+On Tue, Jun 05, 2018 at 10:33:25AM +0200, Thibaut Robert wrote:
+> Le mardi 05 juin 2018 à 10:36:31 (+0300), Dan Carpenter a écrit :
+> > On Mon, Jun 04, 2018 at 09:32:50PM +0200, Thibaut Robert wrote:
+> > > Le mercredi 30 mai 2018 à 14:17:25 (+0300), Dan Carpenter a écrit :
+> > > > On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
+> > > > > diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > > > > index e248702ee519..745bf5ca2622 100644
+> > > > > --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > > > > +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > > > > @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
+> > > > >  
+> > > > >  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
+> > > > >  
+> > > > > -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
+> > > > > +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
+> > > > 
+> > > > "buff" comes from the network, it's going to be little endian, not cpu
+> > > > endian.  The rest of the function treats it as CPU endian but I'm pretty
+> > > > sure it's wrong...
+> > > buff comes from the network but we are looking at single byte here.
+> > > ieee80211_is_action expects an le16, so we I added this to extend an u8
+> > > to an le16. Is this incorrect ?
+> > > 
+> > > Or maybe we the buff has the second byte ? but that I can't tell. 
+> > 
+> > You raise a good point that I hadn't seen. The original code is clearly
+> > buggy.  But your fix isn't correct either...  The other thing to
+> > consider is that cpu_to_le16() is basically a cast to u16 on x86 so it's
+> > a no-op here.
+> The sparse warning is clearly spotting a real issue. I tried to at least
+> have big endian handle correctly the 0-255 case. I am willing to drop
+> the change (since I agree it's not very satisfying and will mask an issue), 
+> but may I ask you to explain how it is wrong ? How would you correctly expand 
+> an u8 to __le16 ? I think in big endian we need to swap the bytes.
 
-Fixes: b9f07cb4f41f ("ARM64: dts: meson-gxl-s905x-p212: enable the USB controller")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+You're right that on big endian we would need to swap the bytes and
+cpu_to_le16() does that.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-index 0cfd701..a1b3101 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-@@ -189,3 +189,10 @@
- &usb0 {
- 	status = "okay";
- };
-+
-+&usb2_phy0 {
-+	/*
-+	 * HDMI_5V is also used as supply for the USB VBUS.
-+	 */
-+	phy-supply = <&hdmi_5v>;
-+};
--- 
-2.7.4
+regards,
+dan carpenter
