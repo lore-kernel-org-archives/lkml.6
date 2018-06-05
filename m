@@ -1,79 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751906AbeFEM5L (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:57:11 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33190 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751622AbeFEM5J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:57:09 -0400
-Subject: Re: [PATCH -next] ocxl: Fix missing unlock on error in
- afu_ioctl_enable_p9_wait()
-To: Wei Yongjun <weiyongjun1@huawei.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Alastair D'Silva" <alastair@d-silva.org>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <1528190181-15745-1-git-send-email-weiyongjun1@huawei.com>
-From: Frederic Barrat <fbarrat@linux.ibm.com>
-Date: Tue, 5 Jun 2018 14:57:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751792AbeFEM7p (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:59:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41657 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751755AbeFEM7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:59:44 -0400
+Date: Tue, 5 Jun 2018 14:59:43 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Joe Perches <joe@perches.com>
+Cc: Maninder Singh <maninder1.s@samsung.com>, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+        a.sahrawat@samsung.com, pankaj.m@samsung.com, v.narang@samsung.com
+Subject: Re: [PATCH 1/2] printk: remove unused flag LOG_NOCONS
+Message-ID: <20180605125943.i3ly72liuqyopuqm@pathway.suse.cz>
+References: <CGME20180531102133epcas5p2e8d47887c1708836c9b70964983093e2@epcas5p2.samsung.com>
+ <20180531102133epcas5p2e8d47887c1708836c9b70964983093e2~zs4eTmEuv0380103801epcas5p2U@epcas5p2.samsung.com>
+ <20180531121633.acuffu2b66q24c5c@pathway.suse.cz>
+ <f42f8c4aeceb9025bc63716ec43e3a07a36dca8d.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <1528190181-15745-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18060512-0016-0000-0000-000001D85A2B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060512-0017-0000-0000-0000322B6020
-Message-Id: <eb4f541f-cd2a-2af6-0770-fc8cc4f4063b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806050150
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f42f8c4aeceb9025bc63716ec43e3a07a36dca8d.camel@perches.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 05/06/2018 à 11:16, Wei Yongjun a écrit :
-> Add the missing unlock before return from function
-> afu_ioctl_enable_p9_wait() in the error handling case.
+On Thu 2018-05-31 08:12:23, Joe Perches wrote:
+> On Thu, 2018-05-31 at 14:16 +0200, Petr Mladek wrote:
+> > On Thu 2018-05-31 15:47:51, Maninder Singh wrote:
+> > > This patch removes unused flag LOG_NOCONS for printk.
+> > > usage of this flag is removed long back with below commit.
+> > 
+> > Make sense.
+> > 
+> > > "5c2992ee7fd8a29d04125dc0aa3522784c5fa5eb"
+> > > printk: remove console flushing special cases for
+> > >  partial buffered lines
+> []
+> > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> []
+> > > @@ -349,10 +349,9 @@ enum con_msg_format_flags {
+> > >   */
+> > >  
+> > >  enum log_flags {
+> > > -	LOG_NOCONS	= 1,	/* already flushed, do not print to console */
+> > > -	LOG_NEWLINE	= 2,	/* text ended with a newline */
+> > > -	LOG_PREFIX	= 4,	/* text started with a prefix */
+> > > -	LOG_CONT	= 8,	/* text is a fragment of a continuation line */
+> > > +	LOG_NEWLINE	= 1,	/* text ended with a newline */
+> > > +	LOG_PREFIX	= 2,	/* text started with a prefix */
+> > > +	LOG_CONT	= 4,	/* text is a fragment of a continuation line */
+> > >  };
+> > 
+> > Please, do not renumber the bits if there is no real need for it.
+> > The format of the log buffer is read also by external tool like
+> > "crash". It seems that "crash" ignores these flags but...
 > 
-> Fixes: e948e06fc63a ("ocxl: Expose the thread_id needed for wait on POWER9")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
->   drivers/misc/ocxl/file.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
-> index 33ae46c..e6a6074 100644
-> --- a/drivers/misc/ocxl/file.c
-> +++ b/drivers/misc/ocxl/file.c
-> @@ -139,8 +139,10 @@ static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
->   		// Locks both status & tidr
->   		mutex_lock(&ctx->status_mutex);
->   		if (!ctx->tidr) {
-> -			if (set_thread_tidr(current))
-> +			if (set_thread_tidr(current)) {
-> +				mutex_unlock(&ctx->status_mutex);
->   				return -ENOENT;
-> +			}
+> Hmm, if it's not an internal interface, then these
+> definitions should probably be removed from this file
+> and exposed in a uapi file.
 
-O_o   Thanks for fixing it
+"crash" is not a typical userspace tool. We break it regularly.
+We do not need to put the API into the stone because of "crash".
+On the other hand, we also need not break it if it can be avoided
+easily.
 
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-
-
->   			ctx->tidr = current->thread.tidr;
->   		}
-> 
+Best Regards,
+Petr
