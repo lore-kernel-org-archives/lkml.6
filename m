@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753102AbeFESDM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:03:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45984 "EHLO mail.kernel.org"
+        id S1752843AbeFESDu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:03:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeFERvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:51:38 -0400
+        id S1752382AbeFERv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:51:29 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 19/46] perf sort: Introduce addr_map_symbol__srcline() to make code more compact
-Date: Tue,  5 Jun 2018 14:50:03 -0300
-Message-Id: <20180605175030.32549-20-acme@kernel.org>
+Subject: [PATCH 16/46] perf annotate: Add comment about annotated_src->nr_histograms
+Date: Tue,  5 Jun 2018 14:50:00 -0300
+Message-Id: <20180605175030.32549-17-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
 References: <20180605175030.32549-1-acme@kernel.org>
@@ -26,79 +26,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since we have 'struct addr_map_symbol' and the srcline sort order keys
-all operate on those, make the code more compact by introducing a
-function that receives a pointer to such struct and expands the
-arguments to map__srcline().
+When we have multiple groups in an evlist, say:
+
+  $ perf stat -e '{cycles,instructions},{cache-references,cache-misses}' sleep 1
+
+   Performance counter stats for 'sleep 1':
+
+           343,134      cycles:u
+           249,292      instructions:u            #    0.73  insn per cycle
+            15,556      cache-references:u
+             8,925      cache-misses:u            #   57.373 % of all cache refs
+
+       1.000957550 seconds time elapsed
+
+  $
+
+Then the perf_evsel instances for the two group leaders ("cycles" and
+"cache-references") will have evsel->nr_members set to 2, while all the
+evsel->evlist->nr_entries will be set to 4, so we can't use
+evsel->evlist->nr_entries everywhere, as event groups need to be taken
+into account.
+
+But this probably requires us to audit at least the forced-group code,
+where we want all of the events to be in a "group", to see them all in
+the screen, one column for each, even knowing that they were not
+necessarily scheduled to count at the same time by the kernel perf
+subsystem.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-j540wq7n3ukkh70gk5be0in5@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-2g0vwqnc49wl4ttjk8dvpgcc@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/sort.c | 37 +++++++++++++++++--------------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+ tools/perf/util/annotate.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
-index 71096dbfeb88..4ab0b4ab24e4 100644
---- a/tools/perf/util/sort.c
-+++ b/tools/perf/util/sort.c
-@@ -365,19 +365,20 @@ struct sort_entry sort_srcline = {
- 
- /* --sort srcline_from */
- 
-+static char *addr_map_symbol__srcline(struct addr_map_symbol *ams)
-+{
-+	return map__srcline(ams->map, ams->al_addr, ams->sym);
-+}
-+
- static int64_t
- sort__srcline_from_cmp(struct hist_entry *left, struct hist_entry *right)
- {
--	if (!left->branch_info->srcline_from) {
--		left->branch_info->srcline_from = map__srcline(left->branch_info->from.map,
--							       left->branch_info->from.al_addr,
--							       left->branch_info->from.sym);
--	}
--	if (!right->branch_info->srcline_from) {
--		right->branch_info->srcline_from = map__srcline(right->branch_info->from.map,
--								right->branch_info->from.al_addr,
--								right->branch_info->from.sym);
--	}
-+	if (!left->branch_info->srcline_from)
-+		left->branch_info->srcline_from = addr_map_symbol__srcline(&left->branch_info->from);
-+
-+	if (!right->branch_info->srcline_from)
-+		right->branch_info->srcline_from = addr_map_symbol__srcline(&right->branch_info->from);
-+
- 	return strcmp(right->branch_info->srcline_from, left->branch_info->srcline_from);
- }
- 
-@@ -399,16 +400,12 @@ struct sort_entry sort_srcline_from = {
- static int64_t
- sort__srcline_to_cmp(struct hist_entry *left, struct hist_entry *right)
- {
--	if (!left->branch_info->srcline_to) {
--		left->branch_info->srcline_to = map__srcline(left->branch_info->to.map,
--							     left->branch_info->to.al_addr,
--							     left->branch_info->to.sym);
--	}
--	if (!right->branch_info->srcline_to) {
--		right->branch_info->srcline_to = map__srcline(right->branch_info->to.map,
--							      right->branch_info->to.al_addr,
--							      right->branch_info->to.sym);
--	}
-+	if (!left->branch_info->srcline_to)
-+		left->branch_info->srcline_to = addr_map_symbol__srcline(&left->branch_info->to);
-+
-+	if (!right->branch_info->srcline_to)
-+		right->branch_info->srcline_to = addr_map_symbol__srcline(&right->branch_info->to);
-+
- 	return strcmp(right->branch_info->srcline_to, left->branch_info->srcline_to);
- }
- 
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 7ad503fbff74..3dc4ca1d6c08 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -202,6 +202,10 @@ struct cyc_hist {
+ /** struct annotated_source - symbols with hits have this attached as in sannotation
+  *
+  * @histograms: Array of addr hit histograms per event being monitored
++ * nr_histograms: This may not be the same as evsel->evlist->nr_entries if
++ * 		  we have more than a group in a evlist, where we will want
++ * 		  to see each group separately, that is why symbol__annotate2()
++ * 		  sets src->nr_histograms to evsel->nr_members.
+  * @lines: If 'print_lines' is specified, per source code line percentages
+  * @source: source parsed from a disassembler like objdump -dS
+  * @cyc_hist: Average cycles per basic block
 -- 
 2.14.3
