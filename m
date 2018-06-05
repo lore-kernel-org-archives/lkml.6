@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeFEPUV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:20:21 -0400
-Received: from mail-it0-f47.google.com ([209.85.214.47]:51580 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751726AbeFEPUS (ORCPT
+        id S1751926AbeFEPUu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:20:50 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39336 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751656AbeFEPUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:20:18 -0400
-X-Google-Smtp-Source: ADUXVKKUFITR6fsZw4G9xnwF7Byl73O7glZoPZlbQONvDhhOH9m/NXiKU1xAQvzUVgm03bTVM5Ring==
-Subject: Re: [PATCH][next] lightnvm: pblk: fix resource leak of invalid_bitmap
-To: Colin King <colin.king@canonical.com>,
-        Matias Bjorling <mb@lightnvm.io>, linux-block@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180605151456.20359-1-colin.king@canonical.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <5b0a3b83-5e7d-679e-f2a4-a9305da7c472@kernel.dk>
-Date: Tue, 5 Jun 2018 09:20:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 5 Jun 2018 11:20:48 -0400
+Subject: Re: [PATCH] media: radio: aimslab: restore RADIO_ISA dependency
+To: Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180605113420.1092324-1-arnd@arndb.de>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ceb6201f-4542-faf2-4956-8e7a4cb13b90@infradead.org>
+Date: Tue, 5 Jun 2018 08:20:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180605151456.20359-1-colin.king@canonical.com>
+In-Reply-To: <20180605113420.1092324-1-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -27,17 +27,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/5/18 9:14 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On 06/05/2018 04:33 AM, Arnd Bergmann wrote:
+> The patch that allowed all the ISA drivers to build across architectures
+> accidentally removed one 'select' statement, which now causes a rare
+> randconfig build failure in case all the other drivers are disabled:
 > 
-> Currently the error exit path when the emeta could not be
-> interpreted is via fail_free_ws and this fails to free
-> invalid_bitmap.  Fix this by adding another exit label and
-> exiting via this to kfree invalid_bitmap.
+> drivers/media/radio/radio-aimslab.o:(.data+0x0): undefined reference to `radio_isa_match'
+> drivers/media/radio/radio-aimslab.o:(.data+0x4): undefined reference to `radio_isa_probe'
+> drivers/media/radio/radio-aimslab.o:(.data+0x8): undefined reference to `radio_isa_remove'
 > 
-> Detected by CoverityScan, CID#1469659 ("Resource leak")
+> This puts the statement back where it belongs.
+> 
+> Fixes: 258c524bdaab ("media: radio: allow building ISA drivers with COMPILE_TEST")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/media/radio/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/radio/Kconfig b/drivers/media/radio/Kconfig
+> index 8fa403c7149e..39b04ad924c0 100644
+> --- a/drivers/media/radio/Kconfig
+> +++ b/drivers/media/radio/Kconfig
+> @@ -257,6 +257,7 @@ config RADIO_RTRACK
+>  	tristate "AIMSlab RadioTrack (aka RadioReveal) support"
+>  	depends on ISA || COMPILE_TEST
+>  	depends on VIDEO_V4L2
+> +	select RADIO_ISA
+>  	---help---
+>  	  Choose Y here if you have one of these FM radio cards, and then fill
+>  	  in the port address below.
+> 
 
-Looks good, applied.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+https://marc.info/?l=linux-next&m=152778594005254&w=2
+
+
+thanks,
 -- 
-Jens Axboe
+~Randy
