@@ -1,48 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752034AbeFEMmp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:42:45 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37711 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751783AbeFEMmn (ORCPT
+        id S1751897AbeFEMnY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:43:24 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39493 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751622AbeFEMnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:42:43 -0400
-X-Google-Smtp-Source: ADUXVKJk8dBzke6m3ySa7qAJs8H3XaIklh7k4qmefP0eb/q8fu+CZkSTe1zNAUEdFRA5B/Epf+/iBQ==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] ksys_mount: check for permissions before resource
- allocation
-From: Ilya Matveychikov <matvejchikov@gmail.com>
-In-Reply-To: <20180605122829.y4vicefcfvzpqraw@twin.jikos.cz>
-Date: Tue, 5 Jun 2018 16:42:38 +0400
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Message-Id: <707FB500-5592-45B8-9279-36BE74CDBBCE@gmail.com>
-References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
- <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
- <20180605112641.GN30522@ZenIV.linux.org.uk>
- <1E519BA2-4198-4255-BAE4-3125C59741A3@gmail.com>
- <20180605115340.GO30522@ZenIV.linux.org.uk>
- <0F38EDA5-DEC3-48A1-9375-47949C26DAE8@gmail.com>
- <20180605122829.y4vicefcfvzpqraw@twin.jikos.cz>
-To: dsterba@suse.cz
-X-Mailer: Apple Mail (2.3445.6.18)
+        Tue, 5 Jun 2018 08:43:23 -0400
+X-Google-Smtp-Source: ADUXVKJhQSR1ChhxexrFzXOz0rlXoey/BqhXFtsBL7HgPBEcP1s8bfI28H2EyCnFPjfDcpaU0NTbtK5X/rMO0hSSmMo=
+MIME-Version: 1.0
+In-Reply-To: <20180604113708.11554-1-thierry.escande@linaro.org>
+References: <20180604113708.11554-1-thierry.escande@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 5 Jun 2018 15:43:22 +0300
+Message-ID: <CAHp75VdUFH7wQ2qC=uMs_ybiiZsmzpJH6Q2q-dV9aH-zOcERwg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] lib/test_printf.c: call wait_for_random_bytes()
+ before plain %p tests
+To: Thierry Escande <thierry.escande@linaro.org>,
+        Petr Mladek <pmladek@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55Cgodf008599
+
++Cc: Petr. I suppose test_printf is going through his tree as well as
+vsnprintf itself. At least it logically makes sense.
+
+On Mon, Jun 4, 2018 at 2:37 PM, Thierry Escande
+<thierry.escande@linaro.org> wrote:
+> If the test_printf module is loaded before the crng is initialized, the
+> plain 'p' tests will fail because the printed address will not be hashed
+> and the buffer will contain '(ptrval)' instead.
+> This patch adds a call to wait_for_random_bytes() before plain 'p' tests
+> to make sure the crng is initialized.
+>
+> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+> Acked-by: Tobin C. Harding <me@tobin.cc>
+> ---
+>  lib/test_printf.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/lib/test_printf.c b/lib/test_printf.c
+> index 71ebfa43ad05..839be9385a8a 100644
+> --- a/lib/test_printf.c
+> +++ b/lib/test_printf.c
+> @@ -260,6 +260,13 @@ plain(void)
+>  {
+>         int err;
+>
+> +       /*
+> +        * Make sure crng is ready. Otherwise we get "(ptrval)" instead
+> +        * of a hashed address when printing '%p' in plain_hash() and
+> +        * plain_format().
+> +        */
+> +       wait_for_random_bytes();
+> +
+>         err = plain_hash();
+>         if (err) {
+>                 pr_warn("plain 'p' does not appear to be hashed\n");
+> --
+> 2.14.1
+>
 
 
-> On Jun 5, 2018, at 4:28 PM, David Sterba <dsterba@suse.cz> wrote:
-> 
->> BTW, sys_umount() has this check in the right place - before doing anything.
->> So, why not to have the same logic for mount/umount?
-> 
-> What if the check is not equivalent to the one done later? may_mount
-> needs namespace, it will be available at umount time but not necessarily
-> during mount due to the security hooks.
 
-Might be the issue, you’re right. I can’t tell it for sure as I’m not so
-familiar with linux/fs code.
+-- 
+With Best Regards,
+Andy Shevchenko
