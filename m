@@ -1,133 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751473AbeFEByu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 21:54:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36656 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751297AbeFEByt (ORCPT
+        id S1751453AbeFEB7J (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 21:59:09 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:33806 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751297AbeFEB7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 21:54:49 -0400
-Date: Mon, 4 Jun 2018 18:54:44 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: andy.shevchenko@gmail.com, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com
-Subject: Re: [PATCH v4 8/8] Documentation/ABI: Add documentation mlxreg-io
- sysfs interfaces
-Message-ID: <20180605015444.GB47042@localhost.localdomain>
-References: <1527584347-167548-1-git-send-email-vadimp@mellanox.com>
- <1527584347-167548-3-git-send-email-vadimp@mellanox.com>
+        Mon, 4 Jun 2018 21:59:08 -0400
+X-Google-Smtp-Source: ADUXVKI+gfmI/g08w5COJekCIGomQznHJj5ZoQxy19Vgjk9EF4VYNXgihgOw0rcKrxbodriaxAi4oUk99ut0qOa3cww=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527584347-167548-3-git-send-email-vadimp@mellanox.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <20180604122132.GA3337@gmail.com>
+In-Reply-To: <20180604122132.GA3337@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 4 Jun 2018 18:58:56 -0700
+Message-ID: <CA+55aFx=zLkZx4h4rcWv79OKQSGJAwC3eS8=zSDgKjyrsbLrNA@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/asm changes for v4.18
+To: Ingo Molnar <mingo@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 08:59:07AM +0000, Vadim Pasternak wrote:
-> Add documentation for mlxreg-io driver sysfs interfaces for user space
-> access to system's power resets control, reset causes monitoring,
-> programmable devices version reading and devices selection control.
-> 
-> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+On Mon, Jun 4, 2018 at 5:21 AM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>  - __clear_user() micro-optimization (Alexey Dobriyan)
 
-Hi Vadim,
+Was this actually tested?
 
-You mentioned that these can vary by platform, I presume that means that
-any given platform will present a subset of these attributes - but that
-all possible attributes are documented here. Is that correct?
+I think one reason people avoided the constant was that on some
+microarchitecture it ended up being a separate uop just for the
+constant generation, because it wouldn't fit in a single uop.
 
-> ---
-> v4:
->  Comments pointed out by Greg:
->  Add Documentation/ABI/ entries for the new sysfs files.
-> ---
->  Documentation/ABI/stable/sysfs-driver-mlxreg-io | 51 +++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/ABI/stable/sysfs-driver-mlxreg-io
-> 
-> diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-> new file mode 100644
-> index 0000000..fcd659e
-> --- /dev/null
-> +++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-> @@ -0,0 +1,51 @@
-> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
-> +							cause_aux_pwr_or_ref
-> +							cause_asic_thermal
-> +							cause_hotswap_or_wd
-> +							cause_fw_reset
-> +							cause_long_pb
-> +							cause_main_pwr_fail
-> +							cause_short_pb
-> +							cause_sw_reset
+I'm pretty sure that used to be the case for P4, for example.
 
-These property names do not seem to follow any kind of logical pattern
-with respect to abbreviation. Starting with "cause_" made me think they
-were event generators at first... Of course, who wants to be able to
-generate an asic thermal shutdown from sysfs... ;-)
+Afaik there have also been issues with decoding instructions that have
+both an immediate and a memory offset.
 
-The only thing that might make more sense to *me* would be to replace
-"cause" with "reset". Not required. I'll leave it to you, you may have
-good reason for the names chosen.
+I suspect none of this is an issue on modern cores, but there really
+at least historically were cases where
 
-> +Date:		May 2018
-> +KernelVersion:	4.18
-> +Contact:	Vadim Pasternak <vadimpmellanox.com>
-> +Description:	These files show the system reset cause, as following: power
-> +		auxiliary outage or power refresh, ASIC thermal shutdown,
-> +		hotswap or watchdog, firmware reset, long press power button,
-> +		short press power button, software reset. Value 1 in file means
-> +		this is reset cause, 0 - otherwise. Only one of the above
-> +		causes could be 1 at the same time, representing only last
-> +		reset cause.
-> +
-> +		The files are read only.
-> +
-> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
-> +							cpld1_version
-> +							cpld2_version
-> +Date:		May 2018
-> +KernelVersion:	4.18
-> +Contact:	Vadim Pasternak <vadimpmellanox.com>
-> +Description:	These files show with which CPLD versions have been burned
-> +		on carrier and switch boards.
-> +
-> +		The files are read only.
-> +
-> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/select_iio
-> +Date:		May 2018
-> +KernelVersion:	4.18
-> +Contact:	Vadim Pasternak <vadimpmellanox.com>
-> +Description:	This file allows iio devices selection.
-> +
-> +		The file is read/write.
-> +
+   mov %reg,mem
 
-Some description is appropriate here for what values it accepts and how
-it is intended to be used.
+was better than
 
-> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu1_on
-> +		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu2_on
-> +		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/pwr_cycle
-> +Date:		May 2018
-> +KernelVersion:	4.18
-> +Contact:	Vadim Pasternak <vadimpmellanox.com>
-> +Description:	These files allow assert system's power cycling and PS units
-> +		on/off switching.
+   mov $imm,mem
 
-This Description is awkward. Consider:
+if %reg already had the right value, so it's not at all 100% obvious
+that the micro-optimization really _optimizes_ anything.
 
-These files allow asserting system power cycling and switching power
-supply units on and off.
+Any time people do this, they should add numbers.
 
-> +		The files are write only.
-
-Please provide usage and resulting behavior.
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+            Linus
