@@ -1,62 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeFEP2B (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:28:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57478 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751665AbeFEP17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:27:59 -0400
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2 3/3] arm64: disable ACPI PPTT support temporarily
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1528209304-3280-1-git-send-email-sudeep.holla@arm.com>
- <1528209304-3280-3-git-send-email-sudeep.holla@arm.com>
- <CAJZ5v0hn+sya29bZJzksDEDt2QPZDY36Hwn=ckw3ikTGp7T1Zw@mail.gmail.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <a93212e3-7965-9ae2-34b0-407f04590567@arm.com>
-Date: Tue, 5 Jun 2018 16:27:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751791AbeFEP3t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:29:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751599AbeFEP3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:29:48 -0400
+Date: Tue, 5 Jun 2018 12:29:43 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH V3 00/17] perf tools and x86 PTI entry trampolines
+Message-ID: <20180605152943.GH4899@kernel.org>
+References: <1526986485-6562-1-git-send-email-adrian.hunter@intel.com>
+ <4017be61-554f-f356-b68d-64981261f8dd@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hn+sya29bZJzksDEDt2QPZDY36Hwn=ckw3ikTGp7T1Zw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4017be61-554f-f356-b68d-64981261f8dd@intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/06/18 16:02, Rafael J. Wysocki wrote:
-> On Tue, Jun 5, 2018 at 4:35 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> Currently, ARM64 doesn't support updating the CPU topology masks on
->> CPU hotplug operations. ACPI PPTT support rely on that missing feature
->> which is technically not incorrect. Instead of reverting all the PPTT
->> support, let's keep it simple and disable ACPI PPTT support on ARM64
->> for time-being until the topology updates are added for CPU hotplug
->> operations.
+Em Thu, May 31, 2018 at 03:09:38PM +0300, Adrian Hunter escreveu:
+> On 22/05/18 13:54, Adrian Hunter wrote:
+> > Hi
+> > 
+> > Here is V3 of patches to support x86 PTI entry trampolines in perf tools.
+> > 
+> > Patches also here:
+> > 	http://git.infradead.org/users/ahunter/linux-perf.git/shortlog/refs/heads/perf-tools-kpti-v3
+> > 	git://git.infradead.org/users/ahunter/linux-perf.git perf-tools-kpti-v3
+> > 
 > 
-> When is that going to happen?
-> > Nobody else uses PPTT now.
+> Arnaldo has queued the tools patches, but there are still 3 kernel patches:
 > 
+> 	kallsyms: Simplify update_iter_mod()
+> 	kallsyms, x86: Export addresses of syscall trampolines
+> 	x86: Add entry trampolines to kcore
+> 
+> Are there any further comments on these?  Can they be applied?
 
-No we need it on ARM64. I have even the fixes for the original issue
-but it's bit invasive and too late as we are already in the merge
-window. It needs to be tested on NUMA platforms, I have asked for that
-explicitly.
+Would be interesting to have some acked-by from kernel folks :-\
 
--- 
-Regards,
-Sudeep
+- Arnaldo
