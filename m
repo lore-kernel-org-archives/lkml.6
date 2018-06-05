@@ -1,152 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751709AbeFEGAY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:00:24 -0400
-Received: from mga12.intel.com ([192.55.52.136]:51543 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751539AbeFEGAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 02:00:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,477,1520924400";
-   d="scan'208";a="46484721"
-Subject: Re: [PATCH v3]: perf record: enable arbitrary event names thru name=
- modifier
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <c194b060-761d-0d50-3b21-bb4ed680002d@linux.intel.com>
- <20180604075600.GA10484@krava> <20180604135849.GE3397@kernel.org>
- <3269ec8e-88b0-8254-6419-da1896c083df@linux.intel.com>
- <20180604142340.GJ3397@kernel.org>
- <ed38dfcc-be73-e1d7-4eb5-862468955766@linux.intel.com>
- <20180604145844.GL3397@kernel.org>
- <80a37269-e54d-0992-712a-ee72555a04d4@linux.intel.com>
- <20180604191659.GM3397@kernel.org>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <34a15f46-0358-930b-4b73-29290d15280f@linux.intel.com>
-Date: Tue, 5 Jun 2018 09:00:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751804AbeFEGC3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 02:02:29 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:15465 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751729AbeFEGCZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 02:02:25 -0400
+From: Nishanth Menon <nm@ti.com>
+To: Santosh Shilimkar <ssantosh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>
+CC: <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Russell King <linux@armlinux.org.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>, Nishanth Menon <nm@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: [RFC PATCH 3/6] serial: 8250_omap: Add support for AM654 UART controller
+Date: Tue, 5 Jun 2018 01:01:22 -0500
+Message-ID: <20180605060125.9518-4-nm@ti.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180605060125.9518-1-nm@ti.com>
+References: <20180605060125.9518-1-nm@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180604191659.GM3397@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 04.06.2018 22:16, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Jun 04, 2018 at 06:22:43PM +0300, Alexey Budankov escreveu:
->> On 04.06.2018 17:58, Arnaldo Carvalho de Melo wrote:
->>> Em Mon, Jun 04, 2018 at 05:51:03PM +0300, Alexey Budankov escreveu:
->>>> event names quoted there. If such cases were pointed out then they also 
->>>> could be addressed along with the unit/regression testing mentioned above.
-> 
->>> So lests stick to just the unit/regression testing, can you take a look
->>> at that?
->  
->> Sure. Is it enough to run perf record with some quoted event name to make 
->> sure it runs successfully?
-> 
-> I mentioned tools/perf/tests/attr/, for checking if the perf_event_attr
-> was setup the way you intended, and tools/perf/tests/parse-events.c,
-> which probably is what we want here, see, for instance, this cset I've
-> added recently to have we testing intel_pt event parsing:
-> 
-> $ git show b3f58c8da64bc63bd0c0a06a4e2cf258a3d20be6
-> commit b3f58c8da64bc63bd0c0a06a4e2cf258a3d20be6
-> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date:   Fri May 11 11:48:54 2018 -0300
-> 
->     perf tests parse-events: Add intel_pt parse test
->     
->     To avoid regressions such as the one fixed by 4a35a9027f64 ("Revert
->     "perf pmu: Fix pmu events parsing rule""), where '-e intel_pt//u' got
->     broken, with this new entry in this 'perf tests' subtest, we would have
->     caught it before pushing upstream.
->     
->     Acked-by: Jiri Olsa <jolsa@kernel.org>
->     Cc: Adrian Hunter <adrian.hunter@intel.com>
->     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->     Cc: Andi Kleen <ak@linux.intel.com>
->     Cc: David Ahern <dsahern@gmail.com>
->     Cc: Jiri Olsa <jolsa@kernel.org>
->     Cc: Kan Liang <kan.liang@linux.intel.com>
->     Cc: Namhyung Kim <namhyung@kernel.org>
->     Cc: Peter Zijlstra <peterz@infradead.org>
->     Cc: Wang Nan <wangnan0@huawei.com>
->     Link: https://lkml.kernel.org/n/tip-kw62fys9bwdgsp722so2ln1l@git.kernel.org
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-> index 18b06444f230..6829dd416a99 100644
-> --- a/tools/perf/tests/parse-events.c
-> +++ b/tools/perf/tests/parse-events.c
-> @@ -1309,6 +1309,14 @@ static int test__checkevent_config_cache(struct perf_evlist *evlist)
->  	return 0;
->  }
->  
-> +static int test__intel_pt(struct perf_evlist *evlist)
-> +{
-> +	struct perf_evsel *evsel = perf_evlist__first(evlist);
-> +
-> +	TEST_ASSERT_VAL("wrong name setting", strcmp(evsel->name, "intel_pt//u") == 0);
-> +	return 0;
-> +}
-> +
->  static int count_tracepoints(void)
->  {
->  	struct dirent *events_ent;
-> @@ -1637,6 +1645,11 @@ static struct evlist_test test__events[] = {
->  		.check = test__checkevent_config_cache,
->  		.id    = 51,
->  	},
-> +	{
-> +		.name  = "intel_pt//u",
-> +		.check = test__intel_pt,
-> +		.id    = 52,
-> +	},
->  };
->  
->  static struct evlist_test test__events_pmu[] = {
-> 
-> See also this one:
-> 
-> static int
-> test__checkevent_breakpoint_len_rw_modifier(struct perf_evlist *evlist)
-> {
->         struct perf_evsel *evsel = perf_evlist__first(evlist);
-> 
->         TEST_ASSERT_VAL("wrong exclude_user", !evsel->attr.exclude_user);
->         TEST_ASSERT_VAL("wrong exclude_kernel", evsel->attr.exclude_kernel);
->         TEST_ASSERT_VAL("wrong exclude_hv", evsel->attr.exclude_hv);
->         TEST_ASSERT_VAL("wrong precise_ip", !evsel->attr.precise_ip);
-> 
->         return test__checkevent_breakpoint_rw(evlist);
-> }
->         {
->                 .name  = "mem:0/4:rw:u",
->                 .check = test__checkevent_breakpoint_len_rw_modifier,
->                 .id    = 44
->         },
-> 
-> 
-> I.e. have as many TEST_ASSERT_VAL as you need, checking how parsing the
-> event name ends up setting up the evsel, evlist and perf_event_attr.
+AM654 uses a UART controller that is compatible (partially) with
+existing 8250 UART, however, has a few differences with respect to DMA
+support and control paths. Introduce a base definition that allows us
+to build up the differences in follow on patches.
 
-Ok, I see. But please expect delay in delivery since I am on vacations till 06/18.
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+ Documentation/devicetree/bindings/serial/omap_serial.txt | 1 +
+ drivers/tty/serial/8250/8250_omap.c                      | 1 +
+ 2 files changed, 2 insertions(+)
 
-Thanks,
-Alexey
-
-> 
-> - Arnaldo
-> 
+diff --git a/Documentation/devicetree/bindings/serial/omap_serial.txt b/Documentation/devicetree/bindings/serial/omap_serial.txt
+index 4b0f05adb228..c35d5ece1156 100644
+--- a/Documentation/devicetree/bindings/serial/omap_serial.txt
++++ b/Documentation/devicetree/bindings/serial/omap_serial.txt
+@@ -1,6 +1,7 @@
+ OMAP UART controller
+ 
+ Required properties:
++- compatible : should be "ti,am654-uart" for AM654 controllers
+ - compatible : should be "ti,omap2-uart" for OMAP2 controllers
+ - compatible : should be "ti,omap3-uart" for OMAP3 controllers
+ - compatible : should be "ti,omap4-uart" for OMAP4 controllers
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 1b337fee07ed..a019286f8bb6 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1115,6 +1115,7 @@ static const u8 am3352_habit = OMAP_DMA_TX_KICK | UART_ERRATA_CLOCK_DISABLE;
+ static const u8 dra742_habit = UART_ERRATA_CLOCK_DISABLE;
+ 
+ static const struct of_device_id omap8250_dt_ids[] = {
++	{ .compatible = "ti,am654-uart" },
+ 	{ .compatible = "ti,omap2-uart" },
+ 	{ .compatible = "ti,omap3-uart" },
+ 	{ .compatible = "ti,omap4-uart", .data = &omap4_habit, },
+-- 
+2.15.1
