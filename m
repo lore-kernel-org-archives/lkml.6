@@ -1,78 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751584AbeFEFVc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 01:21:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:46999 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751433AbeFEFVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 01:21:30 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Watson <davejwatson@fb.com>
-Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
-        Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
-        Ben Maurer <bmaurer@fb.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC PATCH for 4.18 09/16] powerpc: Add syscall detection for restartable sequences
-In-Reply-To: <20180602124408.8430-10-mathieu.desnoyers@efficios.com>
-References: <20180602124408.8430-1-mathieu.desnoyers@efficios.com> <20180602124408.8430-10-mathieu.desnoyers@efficios.com>
-Date: Tue, 05 Jun 2018 15:21:28 +1000
-Message-ID: <871sdlbyg7.fsf@concordia.ellerman.id.au>
+        id S1751670AbeFEFVn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 01:21:43 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:13919 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751518AbeFEFVb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 01:21:31 -0400
+Subject: Re: [PATCH v2 3/7] PCI: cadence: Update cdns_pcie_ep_raise_irq
+ function signature
+To: Alan Douglas <adouglas@cadence.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+References: <cover.1526576613.git.gustavo.pimentel@synopsys.com>
+ <4994f263efbf6a2cb952d3d9839fb3b1737efde9.1526576613.git.gustavo.pimentel@synopsys.com>
+ <aa86d9b7-d715-2a21-6a94-be927e55b51b@ti.com>
+ <SN6PR07MB4512F3B395D731FF14EBDB8ED8670@SN6PR07MB4512.namprd07.prod.outlook.com>
+CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <e9de6853-9c55-2dc9-0de0-0faa075714db@ti.com>
+Date: Tue, 5 Jun 2018 10:51:16 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <SN6PR07MB4512F3B395D731FF14EBDB8ED8670@SN6PR07MB4512.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> writes:
-> From: Boqun Feng <boqun.feng@gmail.com>
->
-> Syscalls are not allowed inside restartable sequences, so add a call to
-> rseq_syscall() at the very beginning of system call exiting path for
-> CONFIG_DEBUG_RSEQ=y kernel. This could help us to detect whether there
-> is a syscall issued inside restartable sequences.
->
-> [ Tested on 64-bit powerpc kernel by Mathieu Desnoyers. Still needs to
->   be tested on 32-bit powerpc kernel. ]
->
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> CC: Paul Mackerras <paulus@samba.org>
-> CC: Michael Ellerman <mpe@ellerman.id.au>
-> CC: Peter Zijlstra <peterz@infradead.org>
-> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> CC: linuxppc-dev@lists.ozlabs.org
-> ---
->  arch/powerpc/kernel/entry_32.S | 7 +++++++
->  arch/powerpc/kernel/entry_64.S | 8 ++++++++
->  2 files changed, 15 insertions(+)
 
-I don't _love_ the #ifdefs in here, but they look correct and there's
-not really a better option until we rewrite the syscall handler in C.
 
-The rseq selftests passed for me with this applied and enabled. So if
-you like here's some tags:
+On Monday 04 June 2018 08:38 PM, Alan Douglas wrote:
+> On 31 May 2018 11:51, Kishon Vijay Abraham I  wrote:
+>> Hi Alan,
+>>
+>> On Thursday 17 May 2018 10:39 PM, Gustavo Pimentel wrote:
+>>> Change cdns_pcie_ep_raise_irq() signature, namely the interrupt_num
+>>> variable type from u8 to u16 to accommodate 2048 maximum MSI-X
+>>> interrupts.
+>>>
+>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>> Acked-by: Alan Douglas <adouglas@cadence.com>
+>>
+>> Do you want to add MSI-X support to cadence PCIe?
+>>
+> I do want to add MSI-X support, in fact I have done some tests with a
+> modified cadence driver with this set, so plan to submit a patch later.
+> 
 
-Tested-by: Michael Ellerman <mpe@ellerman.id.au>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+cool, glad to hear!
 
-cheers
+Thanks
+Kishon
