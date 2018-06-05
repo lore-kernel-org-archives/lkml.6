@@ -1,90 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752186AbeFEUqM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:46:12 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:32885 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751842AbeFEUqJ (ORCPT
+        id S1752442AbeFEUqb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 16:46:31 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:35195 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752217AbeFEUq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:46:09 -0400
-X-Google-Smtp-Source: ADUXVKKWYmKrsAeFe+Uo+EU0T5I1yv4/Neh2mlxHSpPFlh8tNUxWQn3ptHCUCGLkShb1EYECdl4SFg==
-Date: Tue, 5 Jun 2018 13:46:08 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>, connoro@google.com,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
-Message-ID: <20180605204608.GA3510@joelaf.mtv.corp.google.com>
-References: <20180604160600.22052-1-patrick.bellasi@arm.com>
- <20180604160600.22052-3-patrick.bellasi@arm.com>
- <CAKfTPtD8RDxT=-oO2VYJRbtwoEyEKEAau-Ad-bAd8L2T2zKWEg@mail.gmail.com>
- <20180605151129.GC32302@e110439-lin>
- <20180605153105.GM16081@localhost.localdomain>
- <20180605165431.GF32302@e110439-lin>
+        Tue, 5 Jun 2018 16:46:26 -0400
+X-Google-Smtp-Source: ADUXVKKoMArEpKk2mcV7tayljRmHsU4A/z6gNdDBbamdUAetPJNl6mC8E3gPqnVDmjM5f33EbprJvg==
+Date: Tue, 5 Jun 2018 13:46:22 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
+        akpm@linux-foundation.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 07/13] memcontrol: schedule throttling if we are congested
+Message-ID: <20180605204622.GK1351649@devbig577.frc2.facebook.com>
+References: <20180605132948.1664-1-josef@toxicpanda.com>
+ <20180605132948.1664-8-josef@toxicpanda.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180605165431.GF32302@e110439-lin>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180605132948.1664-8-josef@toxicpanda.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 05:54:31PM +0100, Patrick Bellasi wrote:
-> On 05-Jun 17:31, Juri Lelli wrote:
-> > On 05/06/18 16:11, Patrick Bellasi wrote:
-> > 
-> > [...]
-> > 
-> > > If I run an experiment with your example above, while using the
-> > > performance governor to rule out any possible scale invariance
-> > > difference, here is what I measure:
-> > > 
-> > >    Task1 (40ms delayed by the following Task2):
-> > >                                mean          std     max
-> > >       running_avg        455.387449    22.940168   492.0
-> > >       util_avg           433.233288    17.395477   458.0
-> > > 
-> > >    Task2 (waking up at same time of Task1 and running before):
-> > >                                mean          std     max
-> > >       running_avg        430.281834    22.405175   455.0
-> > >       util_avg           421.745331    22.098873   456.0
-> > > 
-> > > and if I compare Task1 above with another experiment where Task1 is
-> > > running alone:
-> > > 
-> > >    Task1 (running alone):
-> > >                                mean          std     min
-> > >       running_avg        460.257895    22.103704   460.0
-> > >       util_avg           435.119737    17.647556   461.0
-> > 
-> > Wait, why again in this last case running_avg != util_avg? :)
+On Tue, Jun 05, 2018 at 09:29:42AM -0400, Josef Bacik wrote:
+> From: Tejun Heo <tj@kernel.org>
 > 
-> I _think_ it's mostly due to the rouding errors we have because of the
-> reasons I've explained in the reply to Joel:
+> Memory allocations can induce swapping via kswapd or direct reclaim.  If
+> we are having IO done for us by kswapd and don't actually go into direct
+> reclaim we may never get scheduled for throttling.  So instead check to
+> see if our cgroup is congested, and if so schedule the throttling.
+> Before we return to user space the throttling stuff will only throttle
+> if we actually required it.
 > 
->    https://lkml.org/lkml/2018/6/5/559
->    20180605152156.GD32302@e110439-lin
-> 
-> at the end, while commenting about the division overhead.
-> 
-> I should try the above examples while tracking the full signal at
-> ___update_load_avg() time.
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-Is that the only issue? I think if a CFS task is blocked by another CFS task
-due to preemption, then with your patch we would account the CFS blocked time
-as well into the blocked task's running utilization, which seems incorrect.
-Or did I miss something?
+Acked-by: Tejun Heo <tj@kernel.org>
 
-thanks,
+Thanks.
 
- - Joel
+-- 
+tejun
