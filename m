@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932101AbeFEWt7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 18:49:59 -0400
-Received: from mx.kolabnow.com ([95.128.36.41]:60834 "EHLO mx.kolabnow.com"
+        id S932119AbeFEWuE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 18:50:04 -0400
+Received: from mx.kolabnow.com ([95.128.36.42]:34848 "EHLO mx.kolabnow.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752365AbeFEWt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 18:49:57 -0400
+        id S1752365AbeFEWuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 18:50:01 -0400
 X-Spam-Flag: NO
 X-Spam-Score: -1
 From: Federico Vaga <federico.vaga@vaga.pv.it>
@@ -13,56 +13,81 @@ To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alessia Mantegazza <amantegazza@vaga.pv.it>,
         Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH 2/6] doc:sphinx: fix parse-header description
-Date: Wed,  6 Jun 2018 00:48:59 +0200
-Message-Id: <20180605224903.9483-3-federico.vaga@vaga.pv.it>
+Subject: [PATCH 3/6] doc: move away translations from top-level index
+Date: Wed,  6 Jun 2018 00:49:00 +0200
+Message-Id: <20180605224903.9483-4-federico.vaga@vaga.pv.it>
 In-Reply-To: <20180605224903.9483-1-federico.vaga@vaga.pv.it>
 References: <20180605224903.9483-1-federico.vaga@vaga.pv.it>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The description speaks about the option ``--man`` but it
-does not exist. Instead, there is the option ``--usage``
-
-    $ ./Documentation/sphinx/parse-headers.pl --man
-    Unknown option: man
-    Usage:
-        parse_headers.pl [<options>] <C_FILE> <OUT_FILE> [<EXCEPTIONS_FILE>]
-
-        Where <options> can be: --debug, --help or --man.
+In translations/ we have now a dedicated index.rst where we add/remove
+references to translations. Translations are in English alphabetical
+order.
 
 Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
 ---
- Documentation/doc-guide/parse-headers.rst | 2 +-
- Documentation/sphinx/parse-headers.pl     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ Documentation/index.rst              | 24 ++++--------------------
+ Documentation/translations/index.rst | 12 ++++++++++++
+ 2 files changed, 16 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/translations/index.rst
 
-diff --git a/Documentation/doc-guide/parse-headers.rst b/Documentation/doc-guide/parse-headers.rst
-index 684490c68acb..24cfaa15dd81 100644
---- a/Documentation/doc-guide/parse-headers.rst
-+++ b/Documentation/doc-guide/parse-headers.rst
-@@ -32,7 +32,7 @@ SYNOPSIS
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index 3b99ab931d41..f7ab4d6a281e 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -101,29 +101,13 @@ implementation.
  
- \ **parse_headers.pl**\  [<options>] <C_FILE> <OUT_FILE> [<EXCEPTIONS_FILE>]
+    sh/index
  
--Where <options> can be: --debug, --help or --man.
-+Where <options> can be: --debug, --help or --usage.
+-Korean translations
+--------------------
++Translations
++------------
  
+ .. toctree::
+-   :maxdepth: 1
+-
+-   translations/ko_KR/index
+-
+-Chinese translations
+---------------------
+-
+-.. toctree::
+-   :maxdepth: 1
+-
+-   translations/zh_CN/index
+-
+-Japanese translations
+----------------------
+-
+-.. toctree::
+-   :maxdepth: 1
++   :maxdepth: 2
  
- OPTIONS
-diff --git a/Documentation/sphinx/parse-headers.pl b/Documentation/sphinx/parse-headers.pl
-index d410f47567e9..c518050ffc3f 100755
---- a/Documentation/sphinx/parse-headers.pl
-+++ b/Documentation/sphinx/parse-headers.pl
-@@ -344,7 +344,7 @@ enums and defines and create cross-references to a Sphinx book.
+-   translations/ja_JP/index
++   translations/index
  
- B<parse_headers.pl> [<options>] <C_FILE> <OUT_FILE> [<EXCEPTIONS_FILE>]
- 
--Where <options> can be: --debug, --help or --man.
-+Where <options> can be: --debug, --help or --usage.
- 
- =head1 OPTIONS
- 
+ Indices and tables
+ ==================
+diff --git a/Documentation/translations/index.rst b/Documentation/translations/index.rst
+new file mode 100644
+index 000000000000..4969c58920ef
+--- /dev/null
++++ b/Documentation/translations/index.rst
+@@ -0,0 +1,12 @@
++.. _translations:
++
++============
++Translations
++============
++
++.. toctree::
++   :maxdepth: 1
++
++   zh_CN/index
++   ko_KR/index
++   ja_JP/index
 -- 
 2.14.4
