@@ -1,71 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932148AbeFEXqT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 19:46:19 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:52474 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932097AbeFEXqR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:46:17 -0400
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] uvcvideo: Also validate buffers in BULK mode
-Date: Tue,  5 Jun 2018 19:46:07 -0400
-Message-Id: <20180605234607.5334-1-nicolas.dufresne@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <2206409.jVpTcjFX6j@avalon>
-References: <2206409.jVpTcjFX6j@avalon>
-To: unlisted-recipients:; (no To-header on input)
+        id S932141AbeFEXsr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 19:48:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:45629 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752444AbeFEXsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 19:48:46 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 6 Jun 2018 09:48:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: merge window
+Message-ID: <20180606094843.6980d508@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SA3goG=MrB_lZ9KutUO7TKv"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like for ISOC, validate the decoded BULK buffer size when possible.
-This avoids sending corrupted or partial buffers to userspace, which may
-lead to application crash or run-time failure.
+--Sig_/SA3goG=MrB_lZ9KutUO7TKv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
----
- drivers/media/usb/uvc/uvc_video.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Hi all,
 
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index aa0082fe5833..025ffac196f3 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -1234,6 +1234,7 @@ static void uvc_video_next_buffers(struct uvc_streaming *stream,
- 		*meta_buf = uvc_queue_next_buffer(&stream->meta.queue,
- 						  *meta_buf);
- 	}
-+	uvc_video_validate_buffer(stream, *video_buf);
- 	*video_buf = uvc_queue_next_buffer(&stream->queue, *video_buf);
- }
- 
-@@ -1258,10 +1259,8 @@ static void uvc_video_decode_isoc(struct urb *urb, struct uvc_streaming *stream,
- 		do {
- 			ret = uvc_video_decode_start(stream, buf, mem,
- 				urb->iso_frame_desc[i].actual_length);
--			if (ret == -EAGAIN) {
--				uvc_video_validate_buffer(stream, buf);
-+			if (ret == -EAGAIN)
- 				uvc_video_next_buffers(stream, &buf, &meta_buf);
--			}
- 		} while (ret == -EAGAIN);
- 
- 		if (ret < 0)
-@@ -1277,10 +1276,8 @@ static void uvc_video_decode_isoc(struct urb *urb, struct uvc_streaming *stream,
- 		uvc_video_decode_end(stream, buf, mem,
- 			urb->iso_frame_desc[i].actual_length);
- 
--		if (buf->state == UVC_BUF_STATE_READY) {
--			uvc_video_validate_buffer(stream, buf);
-+		if (buf->state == UVC_BUF_STATE_READY)
- 			uvc_video_next_buffers(stream, &buf, &meta_buf);
--		}
- 	}
- }
- 
--- 
-2.17.1
+Please do *not* add any v4.19 related material to your linux-next
+included branches until after v4.18-rc1 has been released i.e. during
+the current merge window.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SA3goG=MrB_lZ9KutUO7TKv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXIVsACgkQAVBC80lX
+0GxdOQgAkKFbdsbA2kP/lVV6OCAaot7iRziAZwn5IyEitpgnr9eSRgS0TG8OaIID
+TtePPEEJ2ElIwKcrd2f4vBy98e78UFxyEIHNwBEd0bT+OvRFWOwKKxYjRFCYTIEO
+O3rEpmn76BzvJL76SyzvyHEFSyLMLW0/FoABmFUKr+cRjQyjBrnVu90+uoGpvoNq
+BG8Oe8/9Hm/QjjmRs20EVlp0Wixevzn0OtTLqKXRo1GR7O+GwmNRMuesBBl8busn
+zvSYpQN1ldABFOuIzzo/7CmqJ3zO4TnBrDKQ+e8IhWd7uihPN1TpckXutZI4egXd
+ub5gpUOPc9ndoMT6cB95TcECwwy/4g==
+=Uazg
+-----END PGP SIGNATURE-----
+
+--Sig_/SA3goG=MrB_lZ9KutUO7TKv--
