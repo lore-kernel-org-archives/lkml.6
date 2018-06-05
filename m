@@ -1,305 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751856AbeFEL6P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:58:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39886 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751664AbeFEL6N (ORCPT
+        id S1751901AbeFEL6u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:58:50 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46920 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751653AbeFEL6r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:58:13 -0400
+        Tue, 5 Jun 2018 07:58:47 -0400
+X-Google-Smtp-Source: ADUXVKLnJMtAmTBZntxYgTtsiXBZlUFUMtbZh/PuOohWZ17WBjWTJ9cFpv09m7JWCpolX5FIRKa8Dg==
+Subject: Re: [PATCH] mmc: tegra: Use sdhci_pltfm_clk_get_max_clock
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Aapo Vienamo <avienamo@nvidia.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
+ <20180605092801.GC20649@ulmo>
+From: Peter Geis <pgwipeout@gmail.com>
+Message-ID: <13e3239e-3cd5-70ab-ba37-94a938ba5acd@gmail.com>
+Date: Tue, 5 Jun 2018 07:58:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180605092801.GC20649@ulmo>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Tue, 05 Jun 2018 07:58:09 -0400
-From: okaya@codeaurora.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-pci@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoffer Dall <cdall@linaro.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thymo van Beers <thymovanbeers@gmail.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Juergen Gross <jgross@suse.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@suse.de>,
-        Mikulas Patocka <mpatocka@redhat.com>, Petr Tesarik <ptesarik@suse.cz>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>, Ram Pai <linuxram@us.ibm.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V4] PCI: move early dump functionality from x86 arch into
- the common code
-In-Reply-To: <CAHp75VdD0Ds6dFdYWF8YpY04hiKY-LmfOU7+dPs7PkTOjbRKbw@mail.gmail.com>
-References: <1528164985-14099-1-git-send-email-okaya@codeaurora.org>
- <CAHp75VdD0Ds6dFdYWF8YpY04hiKY-LmfOU7+dPs7PkTOjbRKbw@mail.gmail.com>
-Message-ID: <78bfd7951abae5cd5043c2c6f513a224@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-05 05:12, Andy Shevchenko wrote:
-> On Tue, Jun 5, 2018 at 5:16 AM, Sinan Kaya <okaya@codeaurora.org> 
-> wrote:
->> Move early dump functionality into common code so that it is available 
->> for
->> all archtiectures. No need to carry arch specific reads around as the 
->> read
->> hooks are already initialized by the time pci_setup_device() is 
->> getting
->> called during scan.
->> 
-> 
-> Makes sense.
-> 
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> 
-> One style comment below, though.
-> 
-> If you wait a bit, I perhaps would be able to test on x86.
 
-Sure, no rush. This is a nice to have feature with no urgency.
 
-> 
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+On 06/05/2018 05:28 AM, Thierry Reding wrote:
+> On Mon, Jun 04, 2018 at 06:35:40PM +0300, Aapo Vienamo wrote:
+>> The sdhci get_max_clock callback is set to sdhci_pltfm_clk_get_max_clock
+>> and tegra_sdhci_get_max_clock is removed. It appears that the
+>> shdci-tegra specific callback was originally introduced due to the
+>> requirement that the host clock has to be twice the bus clock on DDR50
+>> mode. As far as I can tell the only effect the removal has on DDR50 mode
+>> is in cases where the parent clock is unable to supply the requested
+>> clock rate, causing the DDR50 mode to run at a lower frequency.
+>> Currently the DDR50 mode isn't enabled on any of the SoCs and would also
+>> require configuring the SDHCI clock divider register to function
+>> properly.
+>>
+>> The problem with tegra_sdhci_get_max_clock is that it divides the clock
+>> rate by two and thus artificially limits the maximum frequency of faster
+>> signaling modes which don't have the host-bus frequency ratio requirement
+>> of DDR50 such as SDR104 and HS200. Furthermore, the call to
+>> clk_round_rate() may return an error which isn't handled by
+>> tegra_sdhci_get_max_clock.
+>>
+>> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 >> ---
->>  Documentation/admin-guide/kernel-parameters.txt |  2 +-
->>  arch/x86/include/asm/pci-direct.h               |  4 ---
->>  arch/x86/kernel/setup.c                         |  5 ---
->>  arch/x86/pci/common.c                           |  4 ---
->>  arch/x86/pci/early.c                            | 44 
->> -------------------------
->>  drivers/pci/pci.c                               |  5 +++
->>  drivers/pci/pci.h                               |  1 +
->>  drivers/pci/probe.c                             | 19 +++++++++++
->>  8 files changed, 26 insertions(+), 58 deletions(-)
->> 
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt 
->> b/Documentation/admin-guide/kernel-parameters.txt
->> index e490902..e64f1d8 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -2995,7 +2995,7 @@
->>                         See also Documentation/blockdev/paride.txt.
->> 
->>         pci=option[,option...]  [PCI] various PCI subsystem options:
->> -               earlydump       [X86] dump PCI config space before the 
->> kernel
->> +               earlydump       dump PCI config space before the 
->> kernel
->>                                 changes anything
->>                 off             [X86] don't probe for the PCI bus
->>                 bios            [X86-32] force use of PCI BIOS, don't 
->> access
->> diff --git a/arch/x86/include/asm/pci-direct.h 
->> b/arch/x86/include/asm/pci-direct.h
->> index e1084f7..94597a3 100644
->> --- a/arch/x86/include/asm/pci-direct.h
->> +++ b/arch/x86/include/asm/pci-direct.h
->> @@ -15,8 +15,4 @@ extern void write_pci_config_byte(u8 bus, u8 slot, 
->> u8 func, u8 offset, u8 val);
->>  extern void write_pci_config_16(u8 bus, u8 slot, u8 func, u8 offset, 
->> u16 val);
->> 
->>  extern int early_pci_allowed(void);
->> -
->> -extern unsigned int pci_early_dump_regs;
->> -extern void early_dump_pci_device(u8 bus, u8 slot, u8 func);
->> -extern void early_dump_pci_devices(void);
->>  #endif /* _ASM_X86_PCI_DIRECT_H */
->> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
->> index 2f86d88..480f250 100644
->> --- a/arch/x86/kernel/setup.c
->> +++ b/arch/x86/kernel/setup.c
->> @@ -991,11 +991,6 @@ void __init setup_arch(char **cmdline_p)
->>                 setup_clear_cpu_cap(X86_FEATURE_APIC);
->>         }
->> 
->> -#ifdef CONFIG_PCI
->> -       if (pci_early_dump_regs)
->> -               early_dump_pci_devices();
->> -#endif
->> -
->>         e820__reserve_setup_data();
->>         e820__finish_early_params();
->> 
->> diff --git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
->> index 563049c..d4ec117 100644
->> --- a/arch/x86/pci/common.c
->> +++ b/arch/x86/pci/common.c
->> @@ -22,7 +22,6 @@
->>  unsigned int pci_probe = PCI_PROBE_BIOS | PCI_PROBE_CONF1 | 
->> PCI_PROBE_CONF2 |
->>                                 PCI_PROBE_MMCONF;
->> 
->> -unsigned int pci_early_dump_regs;
->>  static int pci_bf_sort;
->>  int pci_routeirq;
->>  int noioapicquirk;
->> @@ -599,9 +598,6 @@ char *__init pcibios_setup(char *str)
->>                 pci_probe |= PCI_BIG_ROOT_WINDOW;
->>                 return NULL;
->>  #endif
->> -       } else if (!strcmp(str, "earlydump")) {
->> -               pci_early_dump_regs = 1;
->> -               return NULL;
->>         } else if (!strcmp(str, "routeirq")) {
->>                 pci_routeirq = 1;
->>                 return NULL;
->> diff --git a/arch/x86/pci/early.c b/arch/x86/pci/early.c
->> index e5f753c..f5fc953 100644
->> --- a/arch/x86/pci/early.c
->> +++ b/arch/x86/pci/early.c
->> @@ -57,47 +57,3 @@ int early_pci_allowed(void)
->>                         PCI_PROBE_CONF1;
->>  }
->> 
->> -void early_dump_pci_device(u8 bus, u8 slot, u8 func)
+>>   drivers/mmc/host/sdhci-tegra.c | 15 ++-------------
+>>   1 file changed, 2 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+>> index 970d38f6..c8745b5 100644
+>> --- a/drivers/mmc/host/sdhci-tegra.c
+>> +++ b/drivers/mmc/host/sdhci-tegra.c
+>> @@ -234,17 +234,6 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+>>   	sdhci_set_uhs_signaling(host, timing);
+>>   }
+>>   
+>> -static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
 >> -{
->> -       u32 value[256 / 4];
->> -       int i;
+>> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 >> -
->> -       pr_info("pci 0000:%02x:%02x.%d config space:\n", bus, slot, 
->> func);
->> -
->> -       for (i = 0; i < 256; i += 4)
->> -               value[i / 4] = read_pci_config(bus, slot, func, i);
->> -
->> -       print_hex_dump(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, 
->> value, 256, false);
+>> -	/*
+>> -	 * DDR modes require the host to run at double the card frequency, so
+>> -	 * the maximum rate we can support is half of the module input clock.
+>> -	 */
+>> -	return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
 >> -}
->> -
->> -void early_dump_pci_devices(void)
->> -{
->> -       unsigned bus, slot, func;
->> -
->> -       if (!early_pci_allowed())
->> -               return;
->> -
->> -       for (bus = 0; bus < 256; bus++) {
->> -               for (slot = 0; slot < 32; slot++) {
->> -                       for (func = 0; func < 8; func++) {
->> -                               u32 class;
->> -                               u8 type;
->> -
->> -                               class = read_pci_config(bus, slot, 
->> func,
->> -                                                       
->> PCI_CLASS_REVISION);
->> -                               if (class == 0xffffffff)
->> -                                       continue;
->> -
->> -                               early_dump_pci_device(bus, slot, 
->> func);
->> -
->> -                               if (func == 0) {
->> -                                       type = 
->> read_pci_config_byte(bus, slot,
->> -                                                                   
->> func,
->> -                                                              
->> PCI_HEADER_TYPE);
->> -                                       if (!(type & 0x80))
->> -                                               break;
->> -                               }
->> -                       }
->> -               }
->> -       }
->> -}
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index 97acba7..04052dc 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -115,6 +115,9 @@ static bool pcie_ari_disabled;
->>  /* If set, the PCIe ATS capability will not be used. */
->>  static bool pcie_ats_disabled;
->> 
->> +/* If set, the PCI config space of each device is printed during 
->> boot. */
->> +bool pci_early_dump;
->> +
->>  bool pci_ats_disabled(void)
->>  {
->>         return pcie_ats_disabled;
->> @@ -5805,6 +5808,8 @@ static int __init pci_setup(char *str)
->>                                 pcie_ats_disabled = true;
->>                         } else if (!strcmp(str, "noaer")) {
->>                                 pci_no_aer();
->> +                       } else if (!strcmp(str, "earlydump")) {
->> +                               pci_early_dump = true;
->>                         } else if (!strncmp(str, "realloc=", 8)) {
->>                                 pci_realloc_get_opt(str + 8);
->>                         } else if (!strncmp(str, "realloc", 7)) {
->> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
->> index c358e7a0..c33265e 100644
->> --- a/drivers/pci/pci.h
->> +++ b/drivers/pci/pci.h
->> @@ -7,6 +7,7 @@
->>  #define PCI_VSEC_ID_INTEL_TBT  0x1234  /* Thunderbolt */
->> 
->>  extern const unsigned char pcie_link_speed[];
->> +extern bool pci_early_dump;
->> 
->>  bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
->> 
->> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
->> index 56771f3..3678f0a 100644
->> --- a/drivers/pci/probe.c
->> +++ b/drivers/pci/probe.c
->> @@ -1545,6 +1545,23 @@ static int pci_intx_mask_broken(struct pci_dev 
->> *dev)
->>         return 0;
->>  }
->> 
->> +static void early_dump_pci_device(struct pci_dev *pdev)
->> +{
->> +       u32 value[256 / 4];
->> +       int i;
->> +
->> +       if (!pci_early_dump)
->> +               return;
->> +
->> +       pci_info(pdev, "config space:\n");
->> +
->> +       for (i = 0; i < 256; i += 4)
->> +               pci_read_config_dword(pdev, i, &value[i / 4]);
->> +
 > 
->> +       print_hex_dump(KERN_INFO, "", DUMP_PREFIX_OFFSET, 16, 1, 
->> value,
->> +                      256, false);
+> sdhci_pltfm_clk_get_max_clock() returns the current frequency of the
+> clock, which may not be an accurate maximum.
 > 
-> Logically better either to move value to second line, or move 256 on
-> the first line.
+> Also, even if we don't support DDR modes now, we may want to enable them
+> in the future, at which point we'll need to move to something similar to
+> the above again, albeit maybe with some of the issues that you mentioned
+> fixed.
 > 
->> +}
->> +
->>  /**
->>   * pci_setup_device - Fill in class and map information of a device
->>   * @dev: the device structure to fill
->> @@ -1594,6 +1611,8 @@ int pci_setup_device(struct pci_dev *dev)
->>         pci_printk(KERN_DEBUG, dev, "[%04x:%04x] type %02x class 
->> %#08x\n",
->>                    dev->vendor, dev->device, dev->hdr_type, 
->> dev->class);
->> 
->> +       early_dump_pci_device(dev);
->> +
->>         /* Need to have dev->class ready */
->>         dev->cfg_size = pci_cfg_space_size(dev);
->> 
->> --
->> 2.7.4
->> 
+> I wonder if we have access to the target mode in this function, because
+> it seems to me like we'd need to take that into account when determining
+> the maximum clock rate. Or perhaps the double-rate aspect is already
+> dealt with in other parts of the MMC subsystem, so the value we should
+> return here may not even need to take the mode into account.
+> 
+> All of the above said, it is true that we don't enable DDR modes as of
+> now, and this patch seems like it shouldn't break anything either, so:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> I also gave this a brief run on Jetson TK1 and things seem to work fine,
+> so:
+> 
+> Tested-by: Thierry Reding <treding@nvidia.com>
+> 
+I am currently testing this in my Ouya project, to see if it makes a 
+difference in my eMMC stability above 30Mhz.
+As a drop in replacement it works.
+I'll be cranking up the speed later.
