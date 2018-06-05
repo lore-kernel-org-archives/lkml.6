@@ -1,126 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751952AbeFESSY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:18:24 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6655 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751786AbeFESSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:18:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="230160311"
-Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
- in swap cache
-To: Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
-Cc: mhocko@kernel.org, vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <bfc2e579-915f-24db-0ff0-29bd9148b8c0@intel.com>
-Date: Tue, 5 Jun 2018 11:18:18 -0700
+        id S1752034AbeFESTF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:19:05 -0400
+Received: from verain.settrans.net ([93.93.131.233]:44814 "EHLO
+        verain.settrans.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbeFESTD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 14:19:03 -0400
+Subject: Re: [linux-sunxi] Re: [PATCH v2] arm: sun4i: Add support for Pengpod
+ 1000 tablet
+To: maxime.ripard@bootlin.com
+Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180602160313.26763-1-rah@settrans.net>
+ <20180604081302.hcn7j36gt6xeyquq@flea>
+ <313a74ea-0be6-cff1-6b2f-06a4b0b7ba8d@settrans.net>
+ <20180605145038.qptdlcphdbnw6jyg@flea>
+From: Bob Ham <rah@settrans.net>
+Message-ID: <e2787b2a-230d-ea3c-89b9-316ddcd20f67@settrans.net>
+Date: Tue, 5 Jun 2018 19:18:48 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
-Content-Type: text/plain; charset=US-ASCII
-Content-Language: en-US
-Content-Transfer-Encoding: 7BIT
+In-Reply-To: <20180605145038.qptdlcphdbnw6jyg@flea>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="jCWhrdhzfOkfSBXiEngMyxOhQfBV0IV10"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 10:13 AM, Mel Gorman wrote:
-> The anonymous page race fix is overkill for two reasons. Pages that are not
-> in the swap cache are not going to be issued for IO and if a stale TLB entry
-> is used, the write still occurs on the same physical page. Any race with
-> mmap replacing the address space is handled by mmap_sem. As anonymous pages
-> are often dirty, it can mean that mremap always has to flush even when it is
-> not necessary.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--jCWhrdhzfOkfSBXiEngMyxOhQfBV0IV10
+Content-Type: multipart/mixed; boundary="Q9ft8ANUDvW8vI5wFvSibA02DDaroqPVO";
+ protected-headers="v1"
+From: Bob Ham <rah@settrans.net>
+To: maxime.ripard@bootlin.com
+Cc: Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ devicetree@vger.kernel.org, linux-sunxi@googlegroups.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <e2787b2a-230d-ea3c-89b9-316ddcd20f67@settrans.net>
+Subject: Re: [linux-sunxi] Re: [PATCH v2] arm: sun4i: Add support for Pengpod
+ 1000 tablet
+References: <20180602160313.26763-1-rah@settrans.net>
+ <20180604081302.hcn7j36gt6xeyquq@flea>
+ <313a74ea-0be6-cff1-6b2f-06a4b0b7ba8d@settrans.net>
+ <20180605145038.qptdlcphdbnw6jyg@flea>
+In-Reply-To: <20180605145038.qptdlcphdbnw6jyg@flea>
 
-This looks fine to me.  One nit on the description: I found myself
-wondering if we skip the flush under the ptl where the flush is
-eventually done.  That code is a bit out of the context, so we don't see
-it in the patch.
+--Q9ft8ANUDvW8vI5wFvSibA02DDaroqPVO
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
 
-We have two modes of flushing during move_ptes():
-1. The flush_tlb_range() while holding the ptl in move_ptes().
-2. A flush_tlb_range() at the end of move_table_tables(), driven by
-  'need_flush' which will be set any time move_ptes() does *not* flush.
+On 05/06/18 15:50, Maxime Ripard wrote:
+> On Mon, Jun 04, 2018 at 06:33:02PM +0100, Bob Ham wrote:
+>> On 04/06/18 09:13, Maxime Ripard wrote:
+>>> On Sat, Jun 02, 2018 at 05:03:13PM +0100, Bob Ham wrote:
+>>
+>>>> + * This file is dual-licensed: you can use it either under the term=
+s
+>>>> + * of the GPL or the X11 license, at your option. Note that this du=
+al
+>>>> + * licensing only applies to this file, and not this project as a
+>>>> + * whole.
+>>
+>>>> + *     The above copyright notice and this permission notice shall =
+be
+>>>> + *     included in all copies or substantial portions of the Softwa=
+re.
+>>
+>>> And this is redundant with the SPDX header.
+>>
+>> The X11 license notice states explicitly that the notice has to be
+>> included in the file.  Wouldn't removing it be a violation of the lice=
+nse?
+>=20
+> The SPDX header is explicitly here to remove the license text and
+> create a tag that is in a indirect reference to the license text in
+> LICENSES. It's not going away.
 
-This patch broadens the scope where move_ptes() does not flush and
-shifts the burden to the flush inside move_table_tables().
+Well, the top bit that I quoted above says that the licenses refer to
+only that one file in particular and not the project as a whole.  Then
+the X11 license states that the notice can't be removed from 'this
+software and associated documentation files (the "Software")' which
+would seem to refer to the single file.  Therefore, removing the notice
+from the single file and replacing it with an SPDX header would seem to
+violate the license.
 
-Right?
+It's a fine point but it makes me nervous.  I originally based my .dts
+on sun4i-a10-inet1.dts.  I've CC'd the original copyright holder, Hans
+de Goede.  Hans, are you willing to give permission for the license
+notice to be replaced with just an SPDX header indicating the dual
+licensing?
 
-Other minor nits:
+While we're at it, there are a number of other files with the same
+license text.  Hans, are you prepared to give permission for your other
+license notices to be replaced with SPDX headers?
 
-> +/* Returns true if a TLB must be flushed before PTL is dropped */
-> +static bool should_force_flush(pte_t *pte)
-> +{
+Thanks,
 
-I usually try to make the non-pte-modifying functions take a pte_t
-instead of 'pte_t *' to make it obvious that there no modification going
-on.  Any reason not to do that here?
+Bob
 
-> +	if (!trylock_page(page))
-> +		return true;
-> +	is_swapcache = PageSwapCache(page);
-> +	unlock_page(page);
-> +
-> +	return is_swapcache;
-> +}
+--=20
+Bob Ham <rah@settrans.net>
 
-I was hoping we didn't have to go as far as taking the page lock, but I
-guess the proof is in the pudding that this tradeoff is worth it.
+for (;;) { ++pancakes; }
 
-BTW, do you want to add a tiny comment about why we do the
-trylock_page()?  I assume it's because we don't want to wait on finding
-an exact answer: we just assume it is in the swap cache if the page is
-locked and flush regardless.
+
+--Q9ft8ANUDvW8vI5wFvSibA02DDaroqPVO--
+
+--jCWhrdhzfOkfSBXiEngMyxOhQfBV0IV10
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+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
+=taMu
+-----END PGP SIGNATURE-----
+
+--jCWhrdhzfOkfSBXiEngMyxOhQfBV0IV10--
