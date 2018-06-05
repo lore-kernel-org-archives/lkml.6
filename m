@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752365AbeFERv0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:51:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45824 "EHLO mail.kernel.org"
+        id S1752423AbeFERvb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:51:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752298AbeFERvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:51:23 -0400
+        id S1752369AbeFERv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:51:26 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 14/46] perf annotate: Replace symbol__alloc_hists() with symbol__hists()
-Date: Tue,  5 Jun 2018 14:49:58 -0300
-Message-Id: <20180605175030.32549-15-acme@kernel.org>
+Subject: [PATCH 15/46] perf tools: Ditch the symbol_conf.nr_events global
+Date: Tue,  5 Jun 2018 14:49:59 -0300
+Message-Id: <20180605175030.32549-16-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
 References: <20180605175030.32549-1-acme@kernel.org>
@@ -26,121 +26,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Its a bit shorter, so ditch the old symbol__alloc_hists() function.
+Since over time the places where we need to pass this got reduced
+because we can obtain it from evsel->evlist->nr_entries, no need to have
+this global anymore.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-m7tienxk7dijh5ln62yln1m9@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-ovhikrfj8pzdv93yq3gt6sei@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-top.c          |  8 +-------
- tools/perf/ui/browsers/annotate.c |  2 +-
- tools/perf/util/annotate.c        | 21 ++-------------------
- tools/perf/util/annotate.h        |  2 +-
- 4 files changed, 5 insertions(+), 28 deletions(-)
+ tools/perf/builtin-kvm.c | 2 --
+ tools/perf/builtin-top.c | 2 --
+ tools/perf/util/header.c | 4 ----
+ tools/perf/util/symbol.h | 1 -
+ 4 files changed, 9 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index bc71e899096d..04fe04885e99 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -123,14 +123,9 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+index 72e2ca096bf5..2b1ef704169f 100644
+--- a/tools/perf/builtin-kvm.c
++++ b/tools/perf/builtin-kvm.c
+@@ -1438,8 +1438,6 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
+ 		goto out;
  	}
  
- 	notes = symbol__annotation(sym);
--	if (notes->src != NULL) {
--		pthread_mutex_lock(&notes->lock);
--		goto out_assign;
--	}
+-	symbol_conf.nr_events = kvm->evlist->nr_entries;
 -
- 	pthread_mutex_lock(&notes->lock);
+ 	if (perf_evlist__create_maps(kvm->evlist, &kvm->opts.target) < 0)
+ 		usage_with_options(live_usage, live_options);
  
--	if (symbol__alloc_hist(sym) < 0) {
-+	if (!symbol__hists(sym, top->evlist->nr_entries)) {
- 		pthread_mutex_unlock(&notes->lock);
- 		pr_err("Not enough memory for annotating '%s' symbol!\n",
- 		       sym->name);
-@@ -140,7 +135,6 @@ static int perf_top__parse_source(struct perf_top *top, struct hist_entry *he)
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 04fe04885e99..4284840022a3 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1462,8 +1462,6 @@ int cmd_top(int argc, const char **argv)
+ 		goto out_delete_evlist;
+ 	}
  
- 	err = symbol__annotate(sym, map, evsel, 0, NULL);
- 	if (err == 0) {
--out_assign:
- 		top->sym_filter_entry = he;
- 	} else {
- 		char msg[BUFSIZ];
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 8be40fa903aa..3bfe17e176fe 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -410,7 +410,7 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
- 	notes = symbol__annotation(dl->ops.target.sym);
- 	pthread_mutex_lock(&notes->lock);
+-	symbol_conf.nr_events = top.evlist->nr_entries;
+-
+ 	if (top.delay_secs < 1)
+ 		top.delay_secs = 1;
  
--	if (notes->src == NULL && symbol__alloc_hist(dl->ops.target.sym) < 0) {
-+	if (!symbol__hists(dl->ops.target.sym, evsel->evlist->nr_entries)) {
- 		pthread_mutex_unlock(&notes->lock);
- 		ui__warning("Not enough memory for annotating '%s' symbol!\n",
- 			    dl->ops.target.sym->name);
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 7c194b04a2da..bcd5d3e17b85 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -689,7 +689,7 @@ static struct annotated_source *annotated_source__new(void)
- 	return src;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index a8bff2178fbc..2625cc38a0d6 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3312,8 +3312,6 @@ int perf_session__read_header(struct perf_session *session)
+ 		lseek(fd, tmp, SEEK_SET);
+ 	}
+ 
+-	symbol_conf.nr_events = nr_attrs;
+-
+ 	perf_header__process_sections(header, fd, &session->tevent,
+ 				      perf_file_section__process);
+ 
+@@ -3739,8 +3737,6 @@ int perf_event__process_attr(struct perf_tool *tool __maybe_unused,
+ 		perf_evlist__id_add(evlist, evsel, 0, i, event->attr.id[i]);
+ 	}
+ 
+-	symbol_conf.nr_events = evlist->nr_entries;
+-
+ 	return 0;
  }
  
--static void annotated_source__delete(struct annotated_source *src)
-+static __maybe_unused void annotated_source__delete(struct annotated_source *src)
- {
- 	if (src == NULL)
- 		return;
-@@ -729,23 +729,6 @@ static int annotated_source__alloc_histograms(struct annotated_source *src,
- 	return src->histograms ? 0 : -1;
- }
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index 1a16438eb3ce..1be9a6bad967 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -90,7 +90,6 @@ struct intlist;
  
--int symbol__alloc_hist(struct symbol *sym)
--{
--	size_t size = symbol__size(sym);
--	struct annotation *notes = symbol__annotation(sym);
--
--	notes->src = annotated_source__new();
--	if (notes->src == NULL)
--		return -1;
--
--	if (annotated_source__alloc_histograms(notes->src, size, symbol_conf.nr_events) < 0) {
--		annotated_source__delete(notes->src);
--		notes->src = NULL;
--		return -1;
--	}
--	return 0;
--}
--
- /* The cycles histogram is lazily allocated. */
- static int symbol__alloc_hist_cycles(struct symbol *sym)
- {
-@@ -868,7 +851,7 @@ static struct cyc_hist *symbol__cycles_hist(struct symbol *sym)
- 	return notes->src->cycles_hist;
- }
- 
--static struct annotated_source *symbol__hists(struct symbol *sym, int nr_hists)
-+struct annotated_source *symbol__hists(struct symbol *sym, int nr_hists)
- {
- 	struct annotation *notes = symbol__annotation(sym);
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 2a73f9084930..7ad503fbff74 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -292,7 +292,7 @@ int addr_map_symbol__account_cycles(struct addr_map_symbol *ams,
- int hist_entry__inc_addr_samples(struct hist_entry *he, struct perf_sample *sample,
- 				 struct perf_evsel *evsel, u64 addr);
- 
--int symbol__alloc_hist(struct symbol *sym);
-+struct annotated_source *symbol__hists(struct symbol *sym, int nr_hists);
- void symbol__annotate_zero_histograms(struct symbol *sym);
- 
- int symbol__annotate(struct symbol *sym, struct map *map,
+ struct symbol_conf {
+ 	unsigned short	priv_size;
+-	unsigned short	nr_events;
+ 	bool		try_vmlinux_path,
+ 			init_annotation,
+ 			force,
 -- 
 2.14.3
