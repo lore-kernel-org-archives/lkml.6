@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752268AbeFERDG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:03:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59840 "EHLO mail.kernel.org"
+        id S1752418AbeFERDQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752152AbeFERDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:00 -0400
+        id S1752271AbeFERDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 12/37] ASoC: Intel: sst: remove redundant variable dma_dev_name
-Date: Tue,  5 Jun 2018 19:01:17 +0200
-Message-Id: <20180605170109.621810630@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH 4.4 17/37] i2c: rcar: remove unused IOERROR state
+Date: Tue,  5 Jun 2018 19:01:22 +0200
+Message-Id: <20180605170109.915139152@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -30,42 +32,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 271ef65b5882425d500e969e875c98e47a6b0c86 upstream.
+commit 90f779e565bdc18dd4f79d81cf11f43a7266010b upstream.
 
-The pointer dma_dev_name is assigned but never read, it is redundant
-and can therefore be removed.
-
-Cleans up clang warning:
-sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
-'dma_dev_name' is never read
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/common/sst-firmware.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/i2c/busses/i2c-rcar.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/sound/soc/intel/common/sst-firmware.c
-+++ b/sound/soc/intel/common/sst-firmware.c
-@@ -260,7 +260,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	struct sst_pdata *sst_pdata = sst->pdata;
- 	struct sst_dma *dma;
- 	struct resource mem;
--	const char *dma_dev_name;
- 	int ret = 0;
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -94,7 +94,6 @@
+ #define RCAR_IRQ_ACK_RECV	(~(MAT | MDR) & 0xFF)
  
- 	if (sst->pdata->resindex_dma_base == -1)
-@@ -271,7 +270,6 @@ int sst_dma_new(struct sst_dsp *sst)
- 	* is attached to the ADSP IP. */
- 	switch (sst->pdata->dma_engine) {
- 	case SST_DMA_TYPE_DW:
--		dma_dev_name = "dw_dmac";
- 		break;
- 	default:
- 		dev_err(sst->dev, "error: invalid DMA engine %d\n",
+ #define ID_LAST_MSG	(1 << 0)
+-#define ID_IOERROR	(1 << 1)
+ #define ID_DONE		(1 << 2)
+ #define ID_ARBLOST	(1 << 3)
+ #define ID_NACK		(1 << 4)
+@@ -541,11 +540,6 @@ static int rcar_i2c_master_xfer(struct i
+ 			break;
+ 		}
+ 
+-		if (rcar_i2c_flags_has(priv, ID_IOERROR)) {
+-			ret = -EIO;
+-			break;
+-		}
+-
+ 		ret = i + 1; /* The number of transfer */
+ 	}
+ out:
