@@ -1,79 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751653AbeFEHgt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:36:49 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44516 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbeFEHgr (ORCPT
+        id S1751819AbeFEHhh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:37:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51665 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751502AbeFEHhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:36:47 -0400
-Date: Tue, 5 Jun 2018 10:36:31 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Thibaut Robert <thibaut.robert@gmail.com>
-Cc: Aditya Shankar <aditya.shankar@microchip.com>,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
- warnings
-Message-ID: <20180605073631.cvp2iuef4yb636jz@mwanda>
-References: <20180529191143.13081-1-thibaut.robert@gmail.com>
- <20180530111725.gmigyddsp2i6mgzw@mwanda>
- <20180604193250.GB32753@L80496>
+        Tue, 5 Jun 2018 03:37:35 -0400
+X-Google-Smtp-Source: ADUXVKKijGyHe7da9ypustH75F/XJuGSvSx5WL3ew6fm6443FoqkreWQNr5udz+NMnkKx1mRVI94AA==
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
+ on kbd brightness change
+To: Chris Chiu <chiu@endlessm.com>, Darren Hart <dvhart@infradead.org>
+Cc: Daniel Drake <drake@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Benjamin Berg <benjamin@sipsolutions.net>
+References: <20180604123238.82200-1-chiu@endlessm.com>
+ <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
+ <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
+ <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com>
+ <20180605023124.GE47042@localhost.localdomain>
+ <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com>
+Date: Tue, 5 Jun 2018 09:37:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180604193250.GB32753@L80496>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8914 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806050093
+In-Reply-To: <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 09:32:50PM +0200, Thibaut Robert wrote:
-> Le mercredi 30 mai 2018 à 14:17:25 (+0300), Dan Carpenter a écrit :
-> > On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
-> > > diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > > index e248702ee519..745bf5ca2622 100644
-> > > --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > > +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > > @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
-> > >  
-> > >  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
-> > >  
-> > > -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
-> > > +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
-> > 
-> > "buff" comes from the network, it's going to be little endian, not cpu
-> > endian.  The rest of the function treats it as CPU endian but I'm pretty
-> > sure it's wrong...
-> buff comes from the network but we are looking at single byte here.
-> ieee80211_is_action expects an le16, so we I added this to extend an u8
-> to an le16. Is this incorrect ?
+Hi,
+
+On 05-06-18 05:18, Chris Chiu wrote:
+> On Tue, Jun 5, 2018 at 10:31 AM, Darren Hart <dvhart@infradead.org> wrote:
+>> On Mon, Jun 04, 2018 at 04:23:04PM +0200, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 04-06-18 15:51, Daniel Drake wrote:
+>>>> On Mon, Jun 4, 2018 at 7:22 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+>>>>> Is this really a case of the hardware itself processing the
+>>>>> keypress and then changing the brightness *itself* ?
+>>>>>
+>>>>>   From the "[PATCH 2/2] platform/x86: asus-wmi: Add keyboard backlight
+>>>>> toggle support" patch I get the impression that the driver is
+>>>>> modifying the brightness from within the kernel rather then the
+>>>>> keyboard controller are ACPI embeddec-controller doing it itself.
+>>>>>
+>>>>> If that is the case then the right fix is for the driver to stop
+>>>>> mucking with the brighness itself, it should simply report the
+>>>>> right keyboard events and export a led interface and then userspace
+>>>>> will do the right thing (and be able to offer flexible policies
+>>>>> to the user).
+>>>>
+>>>> Before this modification, the driver reports the brightness keypresses
+>>>> to userspace and then userspace can respond by changing the brightness
+>>>> level, as you describe.
+>>>>
+>>>> You are right in that the hardware doesn't change the brightness
+>>>> directly itself, which is the normal usage of LED_BRIGHT_HW_CHANGED.
+>>>>
+>>>> However this approach was suggested by Benjamin Berg and Bastien
+>>>> Nocera in the thread: Re: [PATCH v2] platform/x86: asus-wmi: Add
+>>>> keyboard backlight toggle support
+>>>> https://marc.info/?l=linux-kernel&m=152639169210655&w=2
+>>>>
+>>>> The issue is that we need to support a new "keyboard backlight
+>>>> brightness cycle" key (in the patch that follows this one) which
+>>>> doesn't fit into any definitions of keys recognised by the kernel and
+>>>> likewise there's no userspace code to handle it.
+>>>>
+>>>> If preferred we could leave the standard brightness keys behaving as
+>>>> they are (input events) and make the new special key type directly
+>>>> handled by the kernel?
+>>>
+>>> I'm sorry that Benjamin and Bastien steered you in this direction,
+>>> IMHO none of it should be handled in the kernel.
+>>>
+>>> Anytime any sort of input is directly responded to by the kernel
+>>> it is a huge PITA to deal with from userspace. The kernel will have
+>>> a simplistic implementation which almost always is wrong.
+>>>
+>>> Benjamin, remember the pain we went through with rfkill hotkey
+>>> presses being handled in the kernel ?
+>>>
+>>> And then there is the whole acpi_video.brightness_switch_enabled
+>>> debacle, which is an option which defaults to true which causes
+>>> the kernel to handle LCD brightness key presses, which all distros
+>>> have been patching to default to off for ages.
+>>>
+>>> To give a concrete example, we may want to implement software
+>>> dimming / auto-off of the kbd backlight when the no keys are
+>>> touched for x seconds. This would seriously get in the way of that.
+>>>
+>>> So sorry, but NACK to this series.
+>>
+>> So if instead of modifying the LED value, the kernel platform drivers
+>> converted the TOGGLE into a cycle even by converting to an UP event
+>> based on awareness of the plaform specific max value and the read
+>> current value, leaving userspace to act on the TOGGLE/UP events - would
+>> that be preferable?
+>>
+>> Something like:
+>>
+>>          if (code == TOGGLE && ledval < ledmax)
+>>                  code = UP;
+>>
+>>          sparse_keymap_report_event(..., code, ...)
+>>
+>> }
+>> --
+>> Darren Hart
+>> VMware Open Source Technology Center
 > 
-> Or maybe we the buff has the second byte ? but that I can't tell. 
+> That's what I was trying to do in  [PATCH v2] platform/x86: asus-wmi: Add
+> keyboard backlight toggle support. However, that brought another problem
+> discussed in the thread.
+> https://marc.info/?l=linux-kernel&m=152639169210655&w=2
+> 
+> So I moved the brightness change in the driver without passing to userspace.
+> Per Hans, seems there're some other concerns and I also wonder if the
+> TOGGLE event happens in ASUS HID (asus-hid.c) which also convert and
+> pass the keycode to userspace but no TOGGLE key support yet What should
+> we do then?
 
-You raise a good point that I hadn't seen. The original code is clearly
-buggy.  But your fix isn't correct either...  The other thing to
-consider is that cpu_to_le16() is basically a cast to u16 on x86 so it's
-a no-op here.
+As I mentioned in my reply to Darren, there are 2 proper solutions to this:
 
-Really the right thing is to not treat buff as an array of u8 but a
-struct.  The code assumes that frame_type is 0-255 but probably it's
-supposed to go up to U16_MAX.
+1) Make userspace treat KEY_KBDILLUMTOGGLE as a cycle key, this is
+what the kbd-backlight on most laptops with a single hotkey (*) does
+in cases where this is handled in firmware, rather then left to the
+OS. The handled in firmware is the case which I created the
+led_classdev_notify_brightness_hw_changed() API for. This would be
+my preferred solution and I believe that Benjamin is discussing this
+with Bastien ATM.
 
-struct whatever {
-	__le16 frame_type;
-	...
+2) Add a new KEY_KBDILLUMCYCLE event and send that for the TOGGLE code
+on these laptops.
 
-There probably is already a struct like that, but I don't know what it
-is.  I don't know this code at all, I'm just guessing.
+Yes both will take time to get into end-users hand, but so will a
+kernel-only solution. In the mean time endless can always carry
+downstream patches to make things work right now (while waiting for
+the changes to trickle down from upstream).
 
-regards,
-dan carpenter
+Regards,
+
+Hans
