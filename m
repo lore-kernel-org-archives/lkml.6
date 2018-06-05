@@ -1,108 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751953AbeFEQUO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:20:14 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:37923 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751748AbeFEQUM (ORCPT
+        id S1751921AbeFEQVt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:21:49 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:42160 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751748AbeFEQVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:20:12 -0400
-X-Google-Smtp-Source: ADUXVKLCQGswZRIKGtaU5ybY1zhzSXa7UztXKI5ghTIvCI607O0t4nsiN4mOfeh0LBHLIDXo5XFkYQqwKCS4IrKVFTc=
+        Tue, 5 Jun 2018 12:21:47 -0400
+X-Google-Smtp-Source: ADUXVKLrU6II8S+uMImQ8y90rASeD9HT+ok/GwOLwdYPAgC0Blx02Z6/Mz5km2befm23TFPd2c4QfsBErWwH3SMkBIg=
 MIME-Version: 1.0
-In-Reply-To: <ec94a230-2798-8001-d3c5-902ea6f1855b@arm.com>
-References: <1528209304-3280-1-git-send-email-sudeep.holla@arm.com>
- <1528209304-3280-2-git-send-email-sudeep.holla@arm.com> <CAJZ5v0gqQNHCuaeduQ8oQtGNUQcZxK171nDfyMNi1VVfnVsMqQ@mail.gmail.com>
- <83b1b038-c4c1-0199-2cb0-fb5343f0e3f5@arm.com> <CAJZ5v0hrJs1Oo-uA560qisZ4no4mbgbH+2fza+5B0ErGGYPTHw@mail.gmail.com>
- <ec94a230-2798-8001-d3c5-902ea6f1855b@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 5 Jun 2018 18:20:11 +0200
-X-Google-Sender-Auth: v2NZOsPGtqXVELJAcgYwVltySRM
-Message-ID: <CAJZ5v0hWkZ4dHNHXHCAOtDcbEbiHJsRvR=B7=DbmE6ZOk-51cQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] ACPI / PPTT: fix build when CONFIG_ACPI_PPTT is
- not enabled
+In-Reply-To: <1526907189-10031-1-git-send-email-sudeep.holla@arm.com>
+References: <1526898749-17263-1-git-send-email-sudeep.holla@arm.com> <1526907189-10031-1-git-send-email-sudeep.holla@arm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 5 Jun 2018 19:21:46 +0300
+Message-ID: <CAHp75Vd_rQFX1s6jCbj-uLC3K70sSD=s0rt3sWme_f2m90NE5A@mail.gmail.com>
+Subject: Re: [PATCH v2] drivers: base: cacheinfo: use OF property_read_u32
+ instead of get_property,read_number
 To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
         Jeremy Linton <jeremy.linton@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        Catalin Marinas <Catalin.Marinas@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 6:18 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+On Mon, May 21, 2018 at 3:53 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> of_property_read_u32 searches for a property in a device node and read
+> a 32-bit value from it. Instead of using of_get_property to get the
+> property and then read 32-bit value using of_read_number, we can
+> simplify it by using of_property_read_u32.
 >
->
-> On 05/06/18 17:12, Rafael J. Wysocki wrote:
->> On Tue, Jun 5, 2018 at 5:33 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>
->>>
->>> On 05/06/18 16:00, Rafael J. Wysocki wrote:
->>>> On Tue, Jun 5, 2018 at 4:35 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>>> Though CONFIG_ACPI_PPTT is selected by platforms and nor user visible,
->>>>> it may be useful to support the build with CONFIG_ACPI_PPTT disabled.
->>>>>
->>>>> This patch adds the missing dummy/boiler plate implementation to fix
->>>>> the build.
->>>>>
->>>>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->>>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>>>> ---
->>>>>  include/linux/acpi.h      | 15 +++++++++++++++
->>>>>  include/linux/cacheinfo.h |  2 +-
->>>>>  2 files changed, 16 insertions(+), 1 deletion(-)
->>>>>
->>>>> Hi Rafael,
->>>>>
->>>>> If you are fine with this, can you provide Ack, so that we route this
->>>>> through ARM64 tree where most of the ACPI PPTT support is present.
->>>>>
->>>>> Regards,
->>>>> Sudeep
->>>>>
->>>>> v1->v2:
->>>>>         - removed duplicate definition for acpi_find_last_cache_level
->>>>>
->>>>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
->>>>> index 8f2cdb0eca71..4b35a66383f9 100644
->>>>> --- a/include/linux/acpi.h
->>>>> +++ b/include/linux/acpi.h
->>>>> @@ -1299,8 +1299,23 @@ static inline int lpit_read_residency_count_address(u64 *address)
->>>>>  }
->>>>>  #endif
->>>>>
->>>>> +#ifdef CONFIG_ACPI_PPTT
->>>>>  int find_acpi_cpu_topology(unsigned int cpu, int level);
->>>>>  int find_acpi_cpu_topology_package(unsigned int cpu);
->>>>>  int find_acpi_cpu_cache_topology(unsigned int cpu, int level);
->>>>> +#else
->>>>> +static inline int find_acpi_cpu_topology(unsigned int cpu, int level)
->>>>> +{
->>>>> +       return -EINVAL;
->>>>
->>>> Why -EINVAL?
->>>>
->>>
->>> I am not sure either. I used to return -ENOTSUPP, but IIRC someone
->>> suggested to use it only for syscalls. Also I just based it on other
->>> existing functions in acpi.h
->>>
->>> I am open for any alternatives if you think that is better here.
->>
->> It would be good to make it consistent with the error codes returned
->> by the functions when they are present.
->>
->> Anyway, it's fine by me if that's consistent with the other acpi.h stubs.
->>
->
-> Thanks, indeed I copied it from existing stubs.
->
-> Can I take this as official Ack ?
 
-Yes, please.
+LGTM.
+Thanks!
+
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/base/cacheinfo.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
+>
+> Hi Andy,
+>
+> Ignore my comment on compile errors error with Werror=incompatible-pointer-types
+> I was so hung up on _u64 version and didn't realise that we were using 32-bit
+> with of_read_number originally.
+>
+> Regards,
+> Sudeep
+>
+> v1->v2:
+>         - Replaced use of of_property_read_u64 with of_property_read_u32
+>         - Also removed the local variables as Andy initially suggested
+>
+> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+> index 2880e2ab01f5..5d5b5988e88b 100644
+> --- a/drivers/base/cacheinfo.c
+> +++ b/drivers/base/cacheinfo.c
+> @@ -74,52 +74,48 @@ static inline int get_cacheinfo_idx(enum cache_type type)
+>  static void cache_size(struct cacheinfo *this_leaf, struct device_node *np)
+>  {
+>         const char *propname;
+> -       const __be32 *cache_size;
+>         int ct_idx;
+>
+>         ct_idx = get_cacheinfo_idx(this_leaf->type);
+>         propname = cache_type_info[ct_idx].size_prop;
+>
+> -       cache_size = of_get_property(np, propname, NULL);
+> -       if (cache_size)
+> -               this_leaf->size = of_read_number(cache_size, 1);
+> +       if (of_property_read_u32(np, propname, &this_leaf->size))
+> +               this_leaf->size = 0;
+>  }
+>
+>  /* not cache_line_size() because that's a macro in include/linux/cache.h */
+>  static void cache_get_line_size(struct cacheinfo *this_leaf,
+>                                 struct device_node *np)
+>  {
+> -       const __be32 *line_size;
+>         int i, lim, ct_idx;
+>
+>         ct_idx = get_cacheinfo_idx(this_leaf->type);
+>         lim = ARRAY_SIZE(cache_type_info[ct_idx].line_size_props);
+>
+>         for (i = 0; i < lim; i++) {
+> +               int ret;
+> +               u32 line_size;
+>                 const char *propname;
+>
+>                 propname = cache_type_info[ct_idx].line_size_props[i];
+> -               line_size = of_get_property(np, propname, NULL);
+> -               if (line_size)
+> +               ret = of_property_read_u32(np, propname, &line_size);
+> +               if (!ret) {
+> +                       this_leaf->coherency_line_size = line_size;
+>                         break;
+> +               }
+>         }
+> -
+> -       if (line_size)
+> -               this_leaf->coherency_line_size = of_read_number(line_size, 1);
+>  }
+>
+>  static void cache_nr_sets(struct cacheinfo *this_leaf, struct device_node *np)
+>  {
+>         const char *propname;
+> -       const __be32 *nr_sets;
+>         int ct_idx;
+>
+>         ct_idx = get_cacheinfo_idx(this_leaf->type);
+>         propname = cache_type_info[ct_idx].nr_sets_prop;
+>
+> -       nr_sets = of_get_property(np, propname, NULL);
+> -       if (nr_sets)
+> -               this_leaf->number_of_sets = of_read_number(nr_sets, 1);
+> +       if (of_property_read_u32(np, propname, &this_leaf->number_of_sets))
+> +               this_leaf->number_of_sets = 0;
+>  }
+>
+>  static void cache_associativity(struct cacheinfo *this_leaf)
+> --
+> 2.7.4
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
