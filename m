@@ -1,81 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751864AbeFEQyi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:54:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58584 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751688AbeFEQyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:54:36 -0400
-Date: Tue, 5 Jun 2018 17:54:31 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
-Message-ID: <20180605165431.GF32302@e110439-lin>
-References: <20180604160600.22052-1-patrick.bellasi@arm.com>
- <20180604160600.22052-3-patrick.bellasi@arm.com>
- <CAKfTPtD8RDxT=-oO2VYJRbtwoEyEKEAau-Ad-bAd8L2T2zKWEg@mail.gmail.com>
- <20180605151129.GC32302@e110439-lin>
- <20180605153105.GM16081@localhost.localdomain>
+        id S1751881AbeFEQ41 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:56:27 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:38888 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeFEQ4Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:56:25 -0400
+X-Google-Smtp-Source: ADUXVKJtN2Kj1b2CyO1E6NRPVKQ8NKX8a0ERelErw3hoYR5H++EGHbiZmjFldfjTM2rIJkvqFXvE8tWa8tUr8gt4HAQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605153105.GM16081@localhost.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180529221625.33541-1-thgarnie@google.com> <20180529221625.33541-22-thgarnie@google.com>
+ <20180604161612.6d48d8d2@gandalf.local.home> <CAJcbSZG1dVBVeOjEDeTm4mwXS60wMi-5ej_FB+YyS7iwXoebOQ@mail.gmail.com>
+ <20180604174431.4aabfbf1@gandalf.local.home>
+In-Reply-To: <20180604174431.4aabfbf1@gandalf.local.home>
+From: Thomas Garnier <thgarnie@google.com>
+Date: Tue, 5 Jun 2018 09:56:14 -0700
+Message-ID: <CAJcbSZGc7PjLTaoosZFPHpzfDGteE0fWrYS9g_GMBxMAegjfwQ@mail.gmail.com>
+Subject: Re: [PATCH v4 21/27] x86/ftrace: Adapt function tracing for PIE support
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Guenter Roeck <linux@roeck-us.net>, nixiaoming <nixiaoming@huawei.com>,
+        James Hogan <jhogan@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-Jun 17:31, Juri Lelli wrote:
-> On 05/06/18 16:11, Patrick Bellasi wrote:
-> 
-> [...]
-> 
-> > If I run an experiment with your example above, while using the
-> > performance governor to rule out any possible scale invariance
-> > difference, here is what I measure:
-> > 
-> >    Task1 (40ms delayed by the following Task2):
-> >                                mean          std     max
-> >       running_avg        455.387449    22.940168   492.0
-> >       util_avg           433.233288    17.395477   458.0
-> > 
-> >    Task2 (waking up at same time of Task1 and running before):
-> >                                mean          std     max
-> >       running_avg        430.281834    22.405175   455.0
-> >       util_avg           421.745331    22.098873   456.0
-> > 
-> > and if I compare Task1 above with another experiment where Task1 is
-> > running alone:
-> > 
-> >    Task1 (running alone):
-> >                                mean          std     min
-> >       running_avg        460.257895    22.103704   460.0
-> >       util_avg           435.119737    17.647556   461.0
-> 
-> Wait, why again in this last case running_avg != util_avg? :)
+On Mon, Jun 4, 2018 at 2:44 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Mon, 4 Jun 2018 14:06:03 -0700
+> Thomas Garnier <thgarnie@google.com> wrote:
+>
+> > On Mon, Jun 4, 2018 at 1:16 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >
+> > > On Tue, 29 May 2018 15:15:22 -0700
+> > > Thomas Garnier <thgarnie@google.com> wrote:
+> > >
+> > > > When using -fPIE/PIC with function tracing, the compiler generates a
+> > > > call through the GOT (call *__fentry__@GOTPCREL). This instruction
+> > > > takes 6 bytes instead of 5 on the usual relative call.
+> > > >
+> > > > If PIE is enabled, replace the 6th byte of the GOT call by a 1-byte nop
+> > > > so ftrace can handle the previous 5-bytes as before.
+> > > >
+> > > > Position Independent Executable (PIE) support will allow to extend the
+> > > > KASLR randomization range 0xffffffff80000000.
+> > >
+> > > I thought you were going to write a update to recordmcount.c to handle
+> > > this at compile time?
+> >
+> > I can correctly calculate the start of the call instruction with
+> > recordmcount (no need for addr-1) but I still need to handle the
+> > different size of the instructions. I don't think I can completely
+> > replace the GOT call with a relative call. Maybe I am missing
+> > something on the way recordmcount is used? Should it replace all
+> > mcount locations with a nop slide? Why is it done at runtime too then?
+>
+> Because we need to figure out the "ideal nop" thus we need to change it
+> regardless.
 
-I _think_ it's mostly due to the rouding errors we have because of the
-reasons I've explained in the reply to Joel:
+I see what you mean looking at the different ideal_nops based on configurations.
 
-   https://lkml.org/lkml/2018/6/5/559
-   20180605152156.GD32302@e110439-lin
+>
+> We could have recordmcount.c replace everything with the default nop
+> (I've thought of that before), and then we could update with the ideal
+> nop at run time, if that helps with this.
 
-at the end, while commenting about the division overhead.
+I don't think that's necessary. In proposed implementation of PIE,
+kernel modules would not use a GOT call. In the current implementation
+the __fentry__ call is always GOT based (6-bytes). I will simplify the
+runtime implementation in the next patch set to just swap the expected
+size and ideal_nop when PIE is enabled.
 
-I should try the above examples while tracking the full signal at
-___update_load_avg() time.
+>
+> -- Steve
+
+
 
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Thomas
