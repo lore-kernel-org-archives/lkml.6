@@ -1,305 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753329AbeFERS4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:18:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753209AbeFERFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:16 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/61] 4.9.107-stable review
-Date: Tue,  5 Jun 2018 19:01:21 +0200
-Message-Id: <20180605170117.643936916@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.107-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.107-rc1
-X-KernelTest-Deadline: 2018-06-07T17:01+00:00
+        id S1752323AbeFERFP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:15 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44071 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751946AbeFERFI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:08 -0400
+X-Google-Smtp-Source: ADUXVKKhShcXZLE4oTaOO99ZyRpfMK9LZ+UU8OOvAYfDPrV1lh9gzd8oeAzdtmOYxgGHuXnHnm4Fag==
+Date: Tue, 5 Jun 2018 10:05:03 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Peter Hutterer <peter.hutterer@who-t.net>,
+        Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
+        Jason Gerecke <killertofu@gmail.com>,
+        Dennis Kempin <denniskempin@google.com>,
+        Andrew de los Reyes <adlr@google.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
+ non-confident touches
+Message-ID: <20180605170503.GC202428@dtor-ws>
+References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
+ <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
+ <20180601184330.GD222005@dtor-ws>
+ <CAO-hwJJPGJzgX+7H1nnpd=OkLZu0q0TuKhvroJ1K3jtnv7t6dg@mail.gmail.com>
+ <20180604173339.GB164893@dtor-ws>
+ <CAO-hwJ+nzC=i1Jv_yu4vLL6Quw=850HJkOZBKCjFaZaw0-GWOQ@mail.gmail.com>
+ <20180604211944.GE164893@dtor-ws>
+ <20180604225539.GA13447@jelly>
+ <CAO-hwJLzc_bVDLKTExTZLSEYON3zu54Q0COe57xGGQ5AS6OPRw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAO-hwJLzc_bVDLKTExTZLSEYON3zu54Q0COe57xGGQ5AS6OPRw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.107 release.
-There are 61 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Thu Jun  7 17:00:59 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.107-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.107-rc1
-
-Aleksey Makarov <aleksey.makarov@linaro.org>
-    serial: pl011: add console matching function
-
-David S. Miller <davem@davemloft.net>
-    sparc64: Don't clibber fixed registers in __multi4.
-
-Hugh Dickins <hughd@google.com>
-    mm: fix the NULL mapping case in __isolate_lru_page()
-
-Al Viro <viro@zeniv.linux.org.uk>
-    fix io_destroy()/aio_complete() race
-
-David S. Miller <davem@davemloft.net>
-    sparc64: Fix build warnings with gcc 7.
-
-Ondrej Zary <linux@rainbow-software.org>
-    drm/i915: Disable LVDS on Radiant P845
-
-Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-    drm/psr: Fix missed entry in PSR setup time table.
-
-Parav Pandit <parav@mellanox.com>
-    IB/core: Fix error code for invalid GID entry
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    hwtracing: stm: fix build error on some arches
-
-Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    stm class: Use vmalloc for the master map
-
-Bart Van Assche <bart.vanassche@wdc.com>
-    scsi: scsi_transport_srp: Fix shost to rport translation
-
-Maciej W. Rozycki <macro@mips.com>
-    MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
-
-Maciej W. Rozycki <macro@mips.com>
-    MIPS: ptrace: Fix PTRACE_PEEKUSR requests for 64-bit FGRs
-
-Martin Kelly <mkelly@xevo.com>
-    iio:kfifo_buf: check for uint overflow
-
-Sarah Newman <srn@prgmr.com>
-    net/mlx4_en: fix potential use-after-free with dma_unmap_page
-
-Nicholas Piggin <npiggin@gmail.com>
-    powerpc/64s: Add support for a store forwarding barrier at kernel entry/exit
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/64s: Fix section mismatch warnings from setup_rfi_flush()
-
-Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-    powerpc/pseries: Restore default security feature flags on setup
-
-Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-    powerpc: Move default security feature flags
-
-Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-    powerpc/pseries: Fix clearing of security feature flags
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/64s: Wire up cpu_show_spectre_v2()
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/64s: Wire up cpu_show_spectre_v1()
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/pseries: Use the security flags in pseries_setup_rfi_flush()
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/powernv: Use the security flags in pnv_setup_rfi_flush()
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/64s: Enhance the information in cpu_show_meltdown()
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/64s: Move cpu_show_meltdown()
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/powernv: Set or clear security feature flags
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/pseries: Set or clear security feature flags
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc: Add security feature flags for Spectre/Meltdown
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/pseries: Add new H_GET_CPU_CHARACTERISTICS flags
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/rfi-flush: Call setup_rfi_flush() after LPM migration
-
-Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-    powerpc/rfi-flush: Differentiate enabled and patched flush types
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/rfi-flush: Always enable fallback flush on pseries
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/rfi-flush: Make it possible to call setup_rfi_flush() again
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/rfi-flush: Move the logic to avoid a redo into the debugfs code
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/powernv: Support firmware disable of RFI flush
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/pseries: Support firmware disable of RFI flush
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/rfi-flush: Move out of HARDLOCKUP_DETECTOR #ifdef
-
-Mark Rutland <mark.rutland@arm.com>
-    arm64/cpufeature: don't use mutex in bringup path
-
-Suzuki K Poulose <suzuki.poulose@arm.com>
-    arm64: Add hypervisor safe helper for checking constant capabilities
-
-Potomski, MichalX <michalx.potomski@intel.com>
-    scsi: ufs: Factor out ufshcd_read_desc_param
-
-Tomas Winkler <tomas.winkler@intel.com>
-    scsi: ufs: refactor device descriptor reading
-
-Subhash Jadavani <subhashj@codeaurora.org>
-    scsi: ufs: fix failure to read the string descriptor
-
-Eric Dumazet <edumazet@google.com>
-    tcp: avoid integer overflows in tcp_rcv_space_adjust()
-
-Juergen Gross <jgross@suse.com>
-    x86/amd: don't set X86_BUG_SYSRET_SS_ATTRS when running under Xen
-
-Juergen Gross <jgross@suse.com>
-    xen: set cpu capabilities from xen_start_kernel()
-
-Juergen Gross <jgross@suse.com>
-    x86/amd: revert commit 944e0fc51a89c9827b9
-
-Colin Ian King <colin.king@canonical.com>
-    platform/chrome: cros_ec_lpc: remove redundant pointer request
-
-Colin Ian King <colin.king@canonical.com>
-    ASoC: Intel: sst: remove redundant variable dma_dev_name
-
-Matthias Kaehlcke <mka@chromium.org>
-    rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
-
-Colin Ian King <colin.king@canonical.com>
-    dma-buf: remove redundant initialization of sg_table
-
-Eric Biggers <ebiggers@google.com>
-    cfg80211: further limit wiphy names to 64 bytes
-
-Sachin Grover <sgrover@codeaurora.org>
-    selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
-
-Steven Rostedt (VMware) <rostedt@goodmis.org>
-    tracing: Fix crash when freeing instances with event triggers
-
-Benjamin Tissoires <benjamin.tissoires@redhat.com>
-    Input: elan_i2c_smbus - fix corrupted stack
-
-Mimi Zohar <zohar@linux.vnet.ibm.com>
-    Revert "ima: limit file hash setting by user to fix and log modes"
-
-Brian Foster <bfoster@redhat.com>
-    xfs: detect agfl count corruption and reset agfl
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "pinctrl: msm: Use dynamic GPIO numbering"
-
-Geert Uytterhoeven <geert@linux-m68k.org>
-    USB: serial: cp210x: use tcflag_t to fix incompatible pointer type
-
-Michael Neuling <mikey@neuling.org>
-    powerpc/64s: Clear PCR on boot
-
-Will Deacon <will.deacon@arm.com>
-    arm64: lse: Add early clobbers to some input/output asm operands
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/arm64/include/asm/atomic_lse.h                |  22 +-
- arch/arm64/include/asm/cpufeature.h                |  27 +-
- arch/arm64/include/asm/kvm_host.h                  |  10 +-
- arch/arm64/include/asm/kvm_mmu.h                   |   2 +-
- arch/arm64/include/asm/mmu.h                       |   2 +-
- arch/arm64/kernel/cpufeature.c                     |  28 ++-
- arch/arm64/kernel/process.c                        |   2 +-
- arch/mips/kernel/process.c                         |   4 +
- arch/mips/kernel/ptrace.c                          |   2 +-
- arch/mips/kernel/ptrace32.c                        |   2 +-
- arch/powerpc/include/asm/exception-64s.h           |  29 +++
- arch/powerpc/include/asm/feature-fixups.h          |  19 ++
- arch/powerpc/include/asm/hvcall.h                  |   3 +
- arch/powerpc/include/asm/security_features.h       |  85 +++++++
- arch/powerpc/include/asm/setup.h                   |   2 +-
- arch/powerpc/kernel/Makefile                       |   2 +-
- arch/powerpc/kernel/cpu_setup_power.S              |   6 +
- arch/powerpc/kernel/exceptions-64s.S               |  16 +-
- arch/powerpc/kernel/security.c                     | 237 ++++++++++++++++++
- arch/powerpc/kernel/setup_64.c                     |  37 ++-
- arch/powerpc/kernel/vmlinux.lds.S                  |  14 ++
- arch/powerpc/lib/feature-fixups.c                  | 124 +++++++++-
- arch/powerpc/platforms/powernv/setup.c             |  92 +++++--
- arch/powerpc/platforms/pseries/mobility.c          |   3 +
- arch/powerpc/platforms/pseries/pseries.h           |   2 +
- arch/powerpc/platforms/pseries/setup.c             |  81 ++++--
- arch/sparc/kernel/ds.c                             |   2 +-
- arch/sparc/lib/multi3.S                            |  24 +-
- arch/x86/xen/enlighten.c                           |  14 +-
- drivers/dma-buf/dma-buf.c                          |   2 +-
- drivers/gpu/drm/drm_dp_helper.c                    |   1 +
- drivers/gpu/drm/i915/intel_lvds.c                  |   8 +
- drivers/hwtracing/stm/core.c                       |   7 +-
- drivers/iio/buffer/kfifo_buf.c                     |   7 +
- drivers/infiniband/core/cache.c                    |   2 +-
- drivers/input/mouse/elan_i2c_smbus.c               |  22 +-
- drivers/irqchip/irq-gic-v3.c                       |  13 +-
- drivers/net/ethernet/mellanox/mlx4/en_rx.c         |  32 ++-
- .../net/wireless/realtek/rtlwifi/rtl8192cu/rf.c    |   3 -
- drivers/pinctrl/qcom/pinctrl-msm.c                 |   2 +-
- drivers/platform/chrome/cros_ec_lpc.c              |   3 -
- drivers/scsi/scsi_transport_srp.c                  |  22 +-
- drivers/scsi/ufs/ufs.h                             |  34 +--
- drivers/scsi/ufs/ufs_quirks.h                      |  28 +--
- drivers/scsi/ufs/ufshcd.c                          | 272 +++++++++++++++------
- drivers/scsi/ufs/ufshcd.h                          |  16 ++
- drivers/tty/serial/amba-pl011.c                    |  55 +++++
- drivers/usb/serial/cp210x.c                        |   8 +-
- fs/aio.c                                           |   3 +-
- fs/xfs/libxfs/xfs_alloc.c                          |  94 +++++++
- fs/xfs/xfs_mount.h                                 |   1 +
- fs/xfs/xfs_trace.h                                 |   9 +-
- include/linux/tcp.h                                |   2 +-
- include/uapi/linux/nl80211.h                       |   2 +-
- kernel/trace/trace_events_trigger.c                |   5 +-
- mm/vmscan.c                                        |   2 +-
- net/ipv4/tcp_input.c                               |  10 +-
- security/integrity/ima/ima_appraise.c              |   8 +-
- security/selinux/ss/services.c                     |   2 +-
- sound/soc/intel/common/sst-firmware.c              |   2 -
- 61 files changed, 1277 insertions(+), 297 deletions(-)
+On Tue, Jun 05, 2018 at 03:50:15PM +0200, Benjamin Tissoires wrote:
+> On Tue, Jun 5, 2018 at 12:55 AM, Peter Hutterer
+> <peter.hutterer@who-t.net> wrote:
+> > On Mon, Jun 04, 2018 at 02:19:44PM -0700, Dmitry Torokhov wrote:
+> >> On Mon, Jun 04, 2018 at 10:42:31PM +0200, Benjamin Tissoires wrote:
+> >> > On Mon, Jun 4, 2018 at 7:33 PM, Dmitry Torokhov
+> >> > <dmitry.torokhov@gmail.com> wrote:
+> >> > > On Mon, Jun 04, 2018 at 03:18:12PM +0200, Benjamin Tissoires wrote:
+> >> > >> On Fri, Jun 1, 2018 at 8:43 PM, Dmitry Torokhov
+> >> > >> <dmitry.torokhov@gmail.com> wrote:
+> >> > >> > On Fri, Jun 01, 2018 at 04:16:09PM +0200, Benjamin Tissoires wrote:
+> >> > >> >> On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
+> >> > >> >> <dmitry.torokhov@gmail.com> wrote:
+> >> > >> >> > According to Microsoft specification [1] for Precision Touchpads (and
+> >> > >> >> > Touchscreens) the devices use "confidence" reports to signal accidental
+> >> > >> >> > touches, or contacts that are "too large to be a finger". Instead of
+> >> > >> >> > simply marking contact inactive in this case (which causes issues if
+> >> > >> >> > contact was originally proper and we lost confidence in it later, as
+> >> > >> >> > this results in accidental clicks, drags, etc), let's report such
+> >> > >> >> > contacts as MT_TOOL_PALM and let userspace decide what to do.
+> >> > >> >> > Additionally, let's report contact size for such touches as maximum
+> >> > >> >> > allowed for major/minor, which should help userspace that is not yet
+> >> > >> >> > aware of MT_TOOL_PALM to still perform palm rejection.
+> >> > >> >> >
+> >> > >> >> > An additional complication, is that some firmwares do not report
+> >> > >> >> > non-confident touches as active. To cope with this we delay release of
+> >> > >> >> > such contact (i.e. if contact was active we first report it as still
+> >> > >> >> > active MT+TOOL_PALM and then synthesize the release event in a separate
+> >> > >> >> > frame).
+> >> > >> >>
+> >> > >> >> I am not sure I agree with this part. The spec says that "Once a
+> >> > >> >> device has determined that a contact is unintentional, it should clear
+> >> > >> >> the confidence bit for that contact report and all subsequent
+> >> > >> >> reports."
+> >> > >> >> So in theory the spec says that if a touch has been detected as a
+> >> > >> >> palm, the flow of events should not stop (tested on the PTP of the
+> >> > >> >> Dell XPS 9360).
+> >> > >> >>
+> >> > >> >> However, I interpret a firmware that send (confidence 1, tip switch 1)
+> >> > >> >> and then (confidence 0, tip switch 0) a simple release, and the
+> >> > >> >> confidence bit should not be relayed.
+> >> > >> >
+> >> > >> > This unfortunately leads to false clicks: you start with finger, so
+> >> > >> > confidence is 1, then you transition the same touch to palm (use your
+> >> > >> > thumb and "roll" your hand until heel of it comes into contact with the
+> >> > >> > screen). The firmware reports "no-confidence" and "release" in the same
+> >> > >> > report and userspace seeing release does not pay attention to confidence
+> >> > >> > (i.e. it does exactly "simple release" logic) and this results in UI
+> >> > >> > interpreting this as a click. With splitting no-confidence
+> >> > >> > (MT_TOOL_PALM) and release event into separate frames we help userspace
+> >> > >> > to recognize that the contact should be discarded.
+> >> > >>
+> >> > >> After further thoughts, I would consider this to be a firmware bug,
+> >> > >> and not how the firmware is supposed to be reporting palm.
+> >> > >> For the precision touchpads, the spec says that the device "should
+> >> > >> clear the confidence bit for that contact report and all subsequent
+> >> > >> reports.". And it is how the Dell device I have here reports palms.
+> >> > >> The firmware is not supposed to cut the event stream.
+> >> > >>
+> >> > >> There is a test for that:
+> >> > >> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/hck/dn456905%28v%3dvs.85%29
+> >> > >> which tells me that I am right here for PTP.
+> >> > >>
+> >> > >> The touchscreen spec is blurrier however.
+> >> > >
+> >> > > OK, that is great to know.
+> >> > >
+> >> > >>
+> >> > >> >
+> >> > >> >>
+> >> > >> >> Do you have any precise example of reports where you need that feature?
+> >> > >> >
+> >> > >> > It was observed on Pixelbooks which use Wacom digitizers IIRC.
+> >> > >>
+> >> > >> Pixelbooks + Wacom means that it was likely a touchscreen. I am right
+> >> > >> guessing the device did not went through Microsoft certification
+> >> > >> process?
+> >> > >
+> >> > > That would be correct ;) At least the firmware that is shipping with
+> >> > > Pixlebooks hasn't, I do now if anyone else sourced these Wacom parts for
+> >> > > their MSWin devices.
+> >> > >
+> >> > >>
+> >> > >> I am in favor of splitting the patch in 2. One for the generic
+> >> > >> processing of confidence bit, and one for this spurious release. For
+> >> > >> the spurious release, I'm more in favor of explicitly quirking the
+> >> > >> devices in need of such quirk.
+> >> > >
+> >> > > Hmm, I am not sure about having specific quirk. It will be hard for
+> >> > > users to accurately diagnose the issue if firmware is broken in this way
+> >> > > so we could add a new quirk for a new device.
+> >> >
+> >> > One thing we can do is keep the quirked mechanism as default in
+> >> > hid-multitouch, but remove it in hid-core. If people need the quirk,
+> >> > they can just use hid-multitouch instead (talking about the long run
+> >> > here).
+> >>
+> >> Hmm, I am confused. My patch did not touch hid-core or hid-input, only
+> >> hid-multitouch... So we are already doing what you are proposing?..
+> >>
+> >> >
+> >> > However, I really believe this might only be required for a handful of
+> >> > devices, and probably only touchscreens. So I would be tempted to not
+> >> > make it default and see how many bug reports we have.
+> >>
+> >> Up to you but it is hard to detect for users. If just sometimes there
+> >> are stray clicks...
+> >
+> > fwiw, from my POV, if you give me MT_TOOL_PALM in the same frame as the
+> > ABS_MT_TRACKING_ID -1 I can work that into libinput to do the right thing.
+> 
+> This would be a one line change in the kernel, so you got my attention :)
+
+Umm, there are other input stacks beyond libinput.
+
+> 
+> > Not 100% whether that already works anyway but probably not. I'd prefer it
+> > being fixed in the kernel though, less work for me :)
+> 
+> What do you mean by "fixed"?
+> Is it incorrect to send a tool while tracking ID is set to -1?
+> From what I read on multi-touch-protocol.rst this shouldn't be
+> violating the protocol, and this would save quite a mess in the kernel
+> in which we need to add an artificial event in the queue for the
+> release.
+
+Well, we say "A non-negative tracking id is interpreted as a contact,
+and the value -1 denotes an unused slot." Unless you are a protocol
+lawyer, the most sensible way of interpreting it is to ignore whatever
+is transmitted for the slot once receiving tracking ID of -1.
+
+Given that this is particular firmware quirk that sends confidence and
+release in the same report, I'd prefer if we had a quirk in driver
+rather than pushing the responsibility to userspace.
+
+Thanks.
+
+-- 
+Dmitry
