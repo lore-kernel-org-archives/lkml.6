@@ -1,87 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751716AbeFEIpk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:45:40 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36672 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751495AbeFEIpi (ORCPT
+        id S1751755AbeFEIqS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:46:18 -0400
+Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:36849 "EHLO
+        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751442AbeFEIqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:45:38 -0400
-Date: Tue, 5 Jun 2018 14:15:30 +0530
-From: Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Stewart Smith <stewart@linux.vnet.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] cpuidle:powernv: Make the snooze timeout dynamic.
-Reply-To: ego@linux.vnet.ibm.com
-References: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
- <87fu22bxlf.fsf@concordia.ellerman.id.au>
+        Tue, 5 Jun 2018 04:46:17 -0400
+Date: Tue, 5 Jun 2018 09:46:15 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 03/19] sched/numa: Simplify load_too_imbalanced
+Message-ID: <20180605084615.4pzrkqkdt7j6pgym@techsingularity.net>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <87fu22bxlf.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18060508-0020-0000-0000-00000E198E2C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009133; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01042577; UDB=6.00533873; IPR=6.00821707;
- MB=3.00021472; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-05 08:45:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060508-0021-0000-0000-000061C3491D
-Message-Id: <20180605084529.GA5656@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=970 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806050106
+In-Reply-To: <1528106428-19992-4-git-send-email-srikar@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Michael,
-
-On Mon, Jun 04, 2018 at 09:27:40PM +1000, Michael Ellerman wrote:
-> "Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
+On Mon, Jun 04, 2018 at 03:30:12PM +0530, Srikar Dronamraju wrote:
+> Currently load_too_imbalance() cares about the slope of imbalance.
+> It doesn't care of the direction of the imbalance.
 > 
-> > From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-> >
-> > The commit 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of
-> > snooze to deeper idle state") introduced a timeout for the snooze idle
-> > state so that it could be eventually be promoted to a deeper idle
-> > state. The snooze timeout value is static and set to the target
-> > residency of the next idle state, which would train the cpuidle
-> > governor to pick the next idle state eventually.
-> >
-> > The unfortunate side-effect of this is that if the next idle state(s)
-> > is disabled, the CPU will forever remain in snooze, despite the fact
-> > that the system is completely idle, and other deeper idle states are
-> > available.
+> However this may not work if nodes that are being compared have
+> dissimilar capacities. Few nodes might have more cores than other nodes
+> in the system. Also unlike traditional load balance at a NUMA sched
+> domain, multiple requests to migrate from the same source node to same
+> destination node may run in parallel. This can cause huge load
+> imbalance. This is specially true on a larger machines with either large
+> cores per node or more number of nodes in the system. Hence allow
+> move/swap only if the imbalance is going to reduce.
 > 
-> That sounds like a bug, I'll add?
->
-
-Yes, this is a bug-fix for a customer scenario which we encountered
-recently.
-
-> Fixes: 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of snooze to deeper idle state")
-> Cc: stable@vger.kernel.org # v4.2+
-
-This patch applies cleanly from v4.13 onwards. Prior to that there are
-some (minor) conflicts.
-
-Should I spin a version separately for the prior stable versions ?
-
+> Testcase       Time:         Min         Max         Avg      StdDev
+> numa01.sh      Real:      516.14      892.41      739.84      151.32
+> numa01.sh       Sys:      153.16      192.99      177.70       14.58
+> numa01.sh      User:    39821.04    69528.92    57193.87    10989.48
+> numa02.sh      Real:       60.91       62.35       61.58        0.63
+> numa02.sh       Sys:       16.47       26.16       21.20        3.85
+> numa02.sh      User:     5227.58     5309.61     5265.17       31.04
+> numa03.sh      Real:      739.07      917.73      795.75       64.45
+> numa03.sh       Sys:       94.46      136.08      109.48       14.58
+> numa03.sh      User:    57478.56    72014.09    61764.48     5343.69
+> numa04.sh      Real:      442.61      715.43      530.31       96.12
+> numa04.sh       Sys:      224.90      348.63      285.61       48.83
+> numa04.sh      User:    35836.84    47522.47    40235.41     3985.26
+> numa05.sh      Real:      386.13      489.17      434.94       43.59
+> numa05.sh       Sys:      144.29      438.56      278.80      105.78
+> numa05.sh      User:    33255.86    36890.82    34879.31     1641.98
 > 
-> cheers
+> Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
+> numa01.sh      Real:      435.78      653.81      534.58       83.20 	 38.39%
+> numa01.sh       Sys:      121.93      187.18      145.90       23.47 	 21.79%
+> numa01.sh      User:    37082.81    51402.80    43647.60     5409.75 	 31.03%
+> numa02.sh      Real:       60.64       61.63       61.19        0.40 	 0.637%
+> numa02.sh       Sys:       14.72       25.68       19.06        4.03 	 11.22%
+> numa02.sh      User:     5210.95     5266.69     5233.30       20.82 	 0.608%
+> numa03.sh      Real:      746.51      808.24      780.36       23.88 	 1.972%
+> numa03.sh       Sys:       97.26      108.48      105.07        4.28 	 4.197%
+> numa03.sh      User:    58956.30    61397.05    60162.95     1050.82 	 2.661%
+> numa04.sh      Real:      465.97      519.27      484.81       19.62 	 9.385%
+> numa04.sh       Sys:      304.43      359.08      334.68       20.64 	 -14.6%
+> numa04.sh      User:    37544.16    41186.15    39262.44     1314.91 	 2.478%
+> numa05.sh      Real:      411.57      457.20      433.29       16.58 	 0.380%
+> numa05.sh       Sys:      230.05      435.48      339.95       67.58 	 -17.9%
+> numa05.sh      User:    33325.54    36896.31    35637.84     1222.64 	 -2.12%
 > 
+> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+
+-- 
+Mel Gorman
+SUSE Labs
