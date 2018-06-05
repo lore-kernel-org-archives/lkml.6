@@ -1,89 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752448AbeFETSt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:18:49 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:44313 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751982AbeFETSs (ORCPT
+        id S1751900AbeFETWC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:22:02 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:42194 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751807AbeFETWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:18:48 -0400
-X-Google-Smtp-Source: ADUXVKLt3UZldy79bUmo4cw6q0OmX0KeSIOX2sAYMLVzcbundS1ltMQ7lvgI0IxDdaQYTdE4lwYHlw==
-Subject: Re: [RFC/RFT PATCH 0/6] Asynchronous UVC
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com
-Cc: Olivier BRAUN <olivier.braun@stereolabs.com>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-References: <cover.67dff754d6d314373ac0a04777b3b1d785fc5dd4.1515010476.git-series.kieran.bingham@ideasonboard.com>
- <b18d0633-cb04-639b-4ade-55b6839da0b3@boundarydevices.com>
- <239ae307-9c8d-ab95-34c0-3a179d2899bd@ideasonboard.com>
-From: Troy Kisky <troy.kisky@boundarydevices.com>
-Message-ID: <283ce407-deff-de1d-e28f-4c0795c60885@boundarydevices.com>
-Date: Tue, 5 Jun 2018 12:18:45 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 5 Jun 2018 15:22:00 -0400
+X-Google-Smtp-Source: ADUXVKJGW9HKBUxSYdz+se09AwAqOFElera1aPmL2KSWQmu22QFazcc6pyZNLzWWpbWsVQP4xRxWqw==
+Date: Tue, 5 Jun 2018 12:21:57 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
+Subject: [GIT PULL] cgroup changes for v4.18-rc1
+Message-ID: <20180605192157.GG1351649@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <239ae307-9c8d-ab95-34c0-3a179d2899bd@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/5/2018 2:01 AM, Kieran Bingham wrote:
-> Hi Troy
-> 
-> On 03/01/18 21:13, Troy Kisky wrote:
->> On 1/3/2018 12:32 PM, Kieran Bingham wrote:
->>> From: Kieran Bingham <kieran.bingham@ideasonboard.com>
->>>
->>> The Linux UVC driver has long provided adequate performance capabilities for
->>> web-cams and low data rate video devices in Linux while resolutions were low.
->>>
->>> Modern USB cameras are now capable of high data rates thanks to USB3 with
->>> 1080p, and even 4k capture resolutions supported.
->>>
->>> Cameras such as the Stereolabs ZED or the Logitech Brio can generate more data
->>> than an embedded ARM core is able to process on a single core, resulting in
->>> frame loss.
->>>
->>> A large part of this performance impact is from the requirement to
->>> ‘memcpy’ frames out from URB packets to destination frames. This unfortunate
->>> requirement is due to the UVC protocol allowing a variable length header, and
->>> thus it is not possible to provide the target frame buffers directly.
->>
->>
->> I have a rather large patch that does provide frame buffers directly for bulk
->> cameras. It cannot be used with ISOC cameras.  But it is currently for 4.1.
->> I'll be porting it to 4.9 in a few days if you'd like to see it.
-> 
-> 
-> How did you get on with this porting activity?
-> 
-> Is it possible to share any of this work with the mailing lists ?
+Hello, Linus.
 
+cgroup changes for v4.18.
 
-This is pretty ugly all squashed together but here is the 4.9 patch
+* For cpustat, cgroup has a percpu hierarchical stat mechanism which
+  propagates up the hierarchy lazily.  This pull request contains
+  commits to factor out and generalize the mechanism so that it can be
+  used for other cgroup stats too.  The original intention was to
+  update memcg stats to use it but memcg went for a different
+  approach, so still the only user is cpustat.  The factoring out and
+  generalization still make sense and it's likely that this can be
+  used for other purposes in the future.
 
-It does a bit more than 0 copy. I'll just post a link, because I doubt anyone
-else wants to look.
+* cgroup uses file modified events to notify certain events.  A rate
+  limiting mechanism is added.
 
-https://github.com/boundarydevices/linux-imx6/commit/5cbb48a3332a6e8aad4a1359b1b5eb05eb0fff96
+* Other misc changes.
 
-HTH
-Troy
+Thanks.
 
-> 
-> (If you have not ported to v4.9 - I think it would be useful even to post the
-> v4.1 patch and we can look at what's needed for getting it ported to mainline)
-> 
-> --
-> Regards
-> 
-> Kieran
-> 
-> 
->>
->> BR
->> Troy
+The following changes since commit fe03a7594d86e0754f05e604cd803a6a9aae3c1c:
+
+  Merge tag 'acpi-4.17-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm (2018-04-26 11:06:36 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-4.18
+
+for you to fetch changes up to d8742e22902186e30c346b1ba881cb52942ae3e4:
+
+  cgroup: css_set_lock should nest inside tasklist_lock (2018-05-23 11:04:54 -0700)
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      rdmacg: Convert to use match_string() helper
+
+Tejun Heo (12):
+      cgroup: Explicitly remove core interface files
+      cgroup: Limit event generation frequency
+      cgroup: Rename kernel/cgroup/stat.c to kernel/cgroup/rstat.c
+      cgroup: Rename stat to rstat
+      cgroup: Distinguish base resource stat implementation from rstat
+      cgroup: Reorganize kernel/cgroup/rstat.c
+      cgroup: Factor out and expose cgroup_rstat_*() interface functions
+      cgroup: Replace cgroup_rstat_mutex with a spinlock
+      cgroup: Add cgroup_subsys->css_rstat_flush()
+      cgroup: Add memory barriers to plug cgroup_rstat_updated() race window
+      cgroup: Make cgroup_rstat_updated() ready for root cgroup usage
+      cgroup: css_set_lock should nest inside tasklist_lock
+
+ include/linux/cgroup-defs.h     |  52 +++--
+ include/linux/cgroup.h          |  12 +-
+ kernel/cgroup/Makefile          |   2 +-
+ kernel/cgroup/cgroup-internal.h |  11 +-
+ kernel/cgroup/cgroup.c          | 105 +++++++---
+ kernel/cgroup/rdma.c            |  35 ++--
+ kernel/cgroup/rstat.c           | 416 ++++++++++++++++++++++++++++++++++++++++
+ kernel/cgroup/stat.c            | 338 --------------------------------
+ 8 files changed, 554 insertions(+), 417 deletions(-)
+ create mode 100644 kernel/cgroup/rstat.c
+ delete mode 100644 kernel/cgroup/stat.c
+
+-- 
+tejun
