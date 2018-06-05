@@ -1,113 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932110AbeFEXMw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 19:12:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:56123 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752467AbeFEXKi (ORCPT
+        id S932517AbeFEXPM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 19:15:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33114 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932352AbeFEXPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:10:38 -0400
-X-Google-Smtp-Source: ADUXVKJo5targwRil0ap5eq26OH5LbsJvkHBS05Zd48nXpryNZADBDRVaj3mXmR9WI9WCpFiteLxeA==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 05/12] mfd: da9063: Rename PMIC_DA9063 to PMIC_CHIP_ID_DA9063
-Date: Wed,  6 Jun 2018 01:10:06 +0200
-Message-Id: <20180605231013.1803-5-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
-References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+        Tue, 5 Jun 2018 19:15:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ACDB760555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skannan@codeaurora.org
+Subject: Re: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
+To: Joel Fernandes <joel@joelfernandes.org>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>, connoro@google.com,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
+        Todd Kjos <tkjos@google.com>
+References: <20180604160600.22052-1-patrick.bellasi@arm.com>
+ <20180604160600.22052-3-patrick.bellasi@arm.com>
+ <CAKfTPtD8RDxT=-oO2VYJRbtwoEyEKEAau-Ad-bAd8L2T2zKWEg@mail.gmail.com>
+ <20180605151129.GC32302@e110439-lin>
+ <20180605153105.GM16081@localhost.localdomain>
+ <20180605165431.GF32302@e110439-lin>
+ <20180605204608.GA3510@joelaf.mtv.corp.google.com>
+From: Saravana Kannan <skannan@codeaurora.org>
+Message-ID: <af0e3158-d97c-b546-ea51-03b77d4cd501@codeaurora.org>
+Date: Tue, 5 Jun 2018 16:15:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605204608.GA3510@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PMIC_DA9063 is a complete misnomer, it denotes the value of the
-DA9063 chip ID register, so rename it as such. It is also the value
-of chip ID register of DA9063L though, so drop the enum as all the
-DA9063 "models" share the same chip ID and thus the distinction will
-have to be made using DT or otherwise.
+On 06/05/2018 01:46 PM, Joel Fernandes wrote:
+> On Tue, Jun 05, 2018 at 05:54:31PM +0100, Patrick Bellasi wrote:
+>> On 05-Jun 17:31, Juri Lelli wrote:
+>>> On 05/06/18 16:11, Patrick Bellasi wrote:
+>>>
+>>> [...]
+>>>
+>>>> If I run an experiment with your example above, while using the
+>>>> performance governor to rule out any possible scale invariance
+>>>> difference, here is what I measure:
+>>>>
+>>>>     Task1 (40ms delayed by the following Task2):
+>>>>                                 mean          std     max
+>>>>        running_avg        455.387449    22.940168   492.0
+>>>>        util_avg           433.233288    17.395477   458.0
+>>>>
+>>>>     Task2 (waking up at same time of Task1 and running before):
+>>>>                                 mean          std     max
+>>>>        running_avg        430.281834    22.405175   455.0
+>>>>        util_avg           421.745331    22.098873   456.0
+>>>>
+>>>> and if I compare Task1 above with another experiment where Task1 is
+>>>> running alone:
+>>>>
+>>>>     Task1 (running alone):
+>>>>                                 mean          std     min
+>>>>        running_avg        460.257895    22.103704   460.0
+>>>>        util_avg           435.119737    17.647556   461.0
+>>> Wait, why again in this last case running_avg != util_avg? :)
+>> I _think_ it's mostly due to the rouding errors we have because of the
+>> reasons I've explained in the reply to Joel:
+>>
+>>     https://lkml.org/lkml/2018/6/5/559
+>>     20180605152156.GD32302@e110439-lin
+>>
+>> at the end, while commenting about the division overhead.
+>>
+>> I should try the above examples while tracking the full signal at
+>> ___update_load_avg() time.
+> Is that the only issue? I think if a CFS task is blocked by another CFS task
+> due to preemption, then with your patch we would account the CFS blocked time
+> as well into the blocked task's running utilization, which seems incorrect.
+> Or did I miss something?
+This is my concern too. This will negatively affect any task packing 
+because more tasks are going to be runnable but not running and that 
+going to increase the over all frequency (I'm assuming you want to use 
+this for frequency guidance eventually?).
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V2: No change
-V3: No change
-V4: No change
----
- drivers/mfd/da9063-core.c            | 2 +-
- drivers/mfd/da9063-i2c.c             | 2 +-
- drivers/regulator/da9063-regulator.c | 2 +-
- include/linux/mfd/da9063/core.h      | 4 +---
- 4 files changed, 4 insertions(+), 6 deletions(-)
+-Saravana
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 61ffee5eac2c..a21a771f6177 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -192,7 +192,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- 		dev_err(da9063->dev, "Cannot read chip model id.\n");
- 		return -EIO;
- 	}
--	if (model != PMIC_DA9063) {
-+	if (model != PMIC_CHIP_ID_DA9063) {
- 		dev_err(da9063->dev, "Invalid chip model id: 0x%02x\n", model);
- 		return -ENODEV;
- 	}
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 981805a2c521..7f84030c8d53 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -280,7 +280,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
- }
- 
- static const struct i2c_device_id da9063_i2c_id[] = {
--	{"da9063", PMIC_DA9063},
-+	{ "da9063", PMIC_CHIP_ID_DA9063 },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 6a8f9cd69f52..87c884ae0064 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
- 	{
- 		.regulator_info = da9063_regulator_info,
- 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
--		.dev_model = PMIC_DA9063,
-+		.dev_model = PMIC_CHIP_ID_DA9063,
- 	},
- 	{ }
- };
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index 2622e9822086..5fed1c874926 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -29,9 +29,7 @@
- #define DA9063_DRVNAME_RTC		"da9063-rtc"
- #define DA9063_DRVNAME_VIBRATION	"da9063-vibration"
- 
--enum da9063_models {
--	PMIC_DA9063 = 0x61,
--};
-+#define PMIC_CHIP_ID_DA9063		0x61
- 
- enum da9063_variant_codes {
- 	PMIC_DA9063_AD = 0x3,
 -- 
-2.16.2
+Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
