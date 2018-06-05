@@ -1,111 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751685AbeFELbS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:31:18 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:61529 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751572AbeFELbR (ORCPT
+        id S1751723AbeFELeB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:34:01 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:56237 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751534AbeFELd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:31:17 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="40759063"
-Subject: Re: [patch 3/8] x86/apic: Provide apic_ack_irq()
-To: Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-CC: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Dmitry Safonov <0x7f454c46@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
-        Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>,
-        <stable@vger.kernel.org>
-References: <20180604162224.471925894@linutronix.de>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <94117bd8-352b-1077-e8ae-8722d7ec213f@cn.fujitsu.com>
-Date: Tue, 5 Jun 2018 19:31:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180604162224.471925894@linutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: C23954B41E80.AA595
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+        Tue, 5 Jun 2018 07:33:59 -0400
+X-IronPort-AV: E=Sophos;i="5.49,478,1520866800";
+   d="scan'208";a="283089193"
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@endlessm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 0/3] Renesas R9A06G032 SMP enabler
+Date: Tue,  5 Jun 2018 12:28:45 +0100
+Message-Id: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+*WARNING -- this requires the base R9A06G032 support patches
+already posted
 
-At 06/04/2018 11:33 PM, Thomas Gleixner wrote:
-> apic_ack_edge() is explicitely for handling interrupt affinity cleanup when
-> interrupt remapping is not available or disable.
-> 
-> Remapped interrupts and also some of the platform specific special
-> interrupts, e.g. UV, invoke ack_APIC_irq() directly.
-> 
-> To address the issue of failing an affinity update with -EBUSY the delayed
-> affinity mechanism can be reused, but ack_APIC_irq() does not handle
-> that. Adding this to ack_APIC_irq() is not possible, because that function
-> is also used for exceptions and directly handled interrupts like IPIs.
-> 
-> Create a new function, which just contains the conditional invocation of
-> irq_move_irq() and the final ack_APIC_irq(). Making the invocation of
-> irq_move_irq() conditional avoids the out of line call if the pending bit
-> is not set.
-> 
-> Reuse the new function in apic_ack_edge().
-> 
-> Preparatory change for the real fix
-> 
-> Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
-> Signed-off-by: Thomas Gleixner<tglx@linutronix.de>
-> Cc:stable@vger.kernel.org
-> ---
->   arch/x86/include/asm/apic.h   |    2 ++
->   arch/x86/kernel/apic/vector.c |   10 ++++++++--
->   2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> --- a/arch/x86/include/asm/apic.h
-> +++ b/arch/x86/include/asm/apic.h
-> @@ -436,6 +436,8 @@ static inline void apic_set_eoi_write(vo
->   
->   #endif /* CONFIG_X86_LOCAL_APIC */
->   
-> +extern void apic_ack_irq(struct irq_data *data);
-> +
->   static inline void ack_APIC_irq(void)
->   {
->   	/*
-> --- a/arch/x86/kernel/apic/vector.c
-> +++ b/arch/x86/kernel/apic/vector.c
-> @@ -809,11 +809,17 @@ static int apic_retrigger_irq(struct irq
->   	return 1;
->   }
->   
-> +void apic_ack_irq(struct irq_data *irqd)
-> +{
-> +	if (unlikely(irqd_is_setaffinity_pending(irqd)))
+This patch series is for enabling the second CA7 of the R9A06G032.
+It's based on a spin_table method, and it reuses the same binding
+property as that driver.
 
-Affinity pending is also judged in
+v4:
+  + Geert's comments adressed.
+  + Renamed symbols to r9a06g032 to match the rest of patchset
+  + Rebased on base patch v8
+v3:
+  + Removed mentions of rz/?n1d?
+  + Rebased on base patch v7
+v2:
+  + Added suggestions from Florian Fainelli
+  + Use __pa_symbol()
+  + Simplified logic in prepare_cpu()
+  + Reordered the patches
+  + Rebased on RZN1 Base patch v5
 
-> +		irq_move_irq(irqd);
+Michel Pollet (3):
+  dt-bindings: cpu: Add Renesas R9A06G032 SMP enable method.
+  arm: shmobile: Add the R9A06G032 SMP enabler driver
+  ARM: dts: Renesas R9A06G032 SMP enable method
 
-If we can remove the if(...) statement here
+ Documentation/devicetree/bindings/arm/cpus.txt |  1 +
+ arch/arm/boot/dts/r9a06g032.dtsi               |  3 +
+ arch/arm/mach-shmobile/Makefile                |  1 +
+ arch/arm/mach-shmobile/smp-r9a06g032.c         | 79 ++++++++++++++++++++++++++
+ 4 files changed, 84 insertions(+)
+ create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
 
-Thanks,
-	dou
-
-> +	ack_APIC_irq();
-> +}
-> +
->   void apic_ack_edge(struct irq_data *irqd)
->   {
->   	irq_complete_move(irqd_cfg(irqd));
-> -	irq_move_irq(irqd);
-> -	ack_APIC_irq();
-> +	apic_ack_irq(irqd);
->   }
->   
->   static struct irq_chip lapic_controller = {
+-- 
+2.7.4
