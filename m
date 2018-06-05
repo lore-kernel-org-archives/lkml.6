@@ -1,108 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeFECxp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 22:53:45 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55870 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751451AbeFECxo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 22:53:44 -0400
-Smtp-Origin-Hostprefix: devbig
-From: Alexei Starovoitov <ast@kernel.org>
-Smtp-Origin-Hostname: devbig007.ftw2.facebook.com
-To: "David S . Miller" <davem@davemloft.net>
-CC: <daniel@iogearbox.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>, <arnd@arndb.de>,
-        <yamada.masahiro@socionext.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH net-next] bpfilter: switch to CC from HOSTCC
-Date: Mon, 4 Jun 2018 19:53:41 -0700
-Message-ID: <20180605025341.3965492-1-ast@kernel.org>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        id S1751547AbeFEC4I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 22:56:08 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:34086 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751386AbeFEC4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 22:56:07 -0400
+Date: Tue, 5 Jun 2018 05:56:02 +0300
+From: Baruch Siach <baruch@tkos.co.il>
+To: Dennis Gilmore <dennis@ausil.us>
+Cc: linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
+        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: armada388-helios4
+Message-ID: <20180605025602.dt5nhl65ak7ij4n7@tarshish>
+References: <20180605011343.14999-1-dennis@ausil.us>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605011343.14999-1-dennis@ausil.us>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-check that CC can build executables and use that compiler instead of HOSTCC
+Hi Dennis,
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
----
- Makefile               |  5 +++++
- net/Makefile           |  4 ++++
- net/bpfilter/Makefile  |  2 ++
- scripts/cc-can-link.sh | 11 +++++++++++
- 4 files changed, 22 insertions(+)
- create mode 100755 scripts/cc-can-link.sh
+On Mon, Jun 04, 2018 at 08:13:43PM -0500, Dennis Gilmore wrote:
+> The helios4 is a Armada388 based nas board designed by SolidRun and
+> based on their SOM. It is sold by kobol.io the dts file came from
+> https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
+> I added a SPDX license line to match the clearfog it says it was based
+> on and a compatible line for "solidrun,helios4"
+> 
+> Signed-off-by: Dennis Gilmore <dennis@ausil.us>
+> ---
+>  arch/arm/boot/dts/Makefile               |   1 +
+>  arch/arm/boot/dts/armada-388-helios4.dts | 315 +++++++++++++++++++++++
+>  2 files changed, 316 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 7e2424957809..490bfd586198 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
+>  	armada-388-clearfog-pro.dtb \
+>  	armada-388-db.dtb \
+>  	armada-388-gp.dtb \
+> +	armada-388-helios4.dtb \
+>  	armada-388-rd.dtb
+>  dtb-$(CONFIG_MACH_ARMADA_39X) += \
+>  	armada-398-db.dtb
+> diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
+> new file mode 100644
+> index 000000000000..a6d6996e1378
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/armada-388-helios4.dts
+> @@ -0,0 +1,315 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Device Tree file for Helios4
+> + * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
+> + *
+> + *  Copyright (C) 2017
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +#include "armada-388.dtsi"
+> +#include "armada-38x-solidrun-microsom.dtsi"
+> +
+> +/ {
+> +	model = "Helios4";
+> +	compatible = "solidrun,helios4", "marvell,armada388",
 
-diff --git a/Makefile b/Makefile
-index 56ba070dfa09..62c110084fae 100644
---- a/Makefile
-+++ b/Makefile
-@@ -510,6 +510,11 @@ ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $
-   KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
- endif
- 
-+ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/cc-can-link.sh $(CC)), y)
-+  CC_CAN_LINK := y
-+  export CC_CAN_LINK
-+endif
-+
- ifeq ($(config-targets),1)
- # ===========================================================================
- # *config targets only - make sure prerequisites are updated, and descend
-diff --git a/net/Makefile b/net/Makefile
-index bdaf53925acd..13ec0d5415c7 100644
---- a/net/Makefile
-+++ b/net/Makefile
-@@ -20,7 +20,11 @@ obj-$(CONFIG_TLS)		+= tls/
- obj-$(CONFIG_XFRM)		+= xfrm/
- obj-$(CONFIG_UNIX)		+= unix/
- obj-$(CONFIG_NET)		+= ipv6/
-+ifneq ($(CC_CAN_LINK),y)
-+$(warning CC cannot link executables. Skipping bpfilter.)
-+else
- obj-$(CONFIG_BPFILTER)		+= bpfilter/
-+endif
- obj-$(CONFIG_PACKET)		+= packet/
- obj-$(CONFIG_NET_KEY)		+= key/
- obj-$(CONFIG_BRIDGE)		+= bridge/
-diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
-index 3f3cb87c668f..aafa72001fcd 100644
---- a/net/bpfilter/Makefile
-+++ b/net/bpfilter/Makefile
-@@ -6,6 +6,8 @@
- hostprogs-y := bpfilter_umh
- bpfilter_umh-objs := main.o
- HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
-+HOSTCC := $(CC)
-+
- ifeq ($(CONFIG_BPFILTER_UMH), y)
- # builtin bpfilter_umh should be compiled with -static
- # since rootfs isn't mounted at the time of __init
-diff --git a/scripts/cc-can-link.sh b/scripts/cc-can-link.sh
-new file mode 100755
-index 000000000000..208eb2825dab
---- /dev/null
-+++ b/scripts/cc-can-link.sh
-@@ -0,0 +1,11 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+cat << "END" | $@ -x c - -o /dev/null >/dev/null 2>&1 && echo "y"
-+#include <stdio.h>
-+int main(void)
-+{
-+	printf("");
-+	return 0;
-+}
-+END
+SolidRun is not the producer of the Helios4 carrier board. So I think 
+"kobol,helios4" makes more sense. This is just like the "auvidea,h100" 
+compatible string for Auvidea H100 which is also using a SolidRun SOM.
+
+baruch
+
+> +		"marvell,armada385", "marvell,armada380";
+> +
+
 -- 
-2.9.5
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
