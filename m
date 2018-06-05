@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753183AbeFERFG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:05:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34002 "EHLO mail.kernel.org"
+        id S1753196AbeFERFN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752423AbeFERFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:02 -0400
+        id S1752024AbeFERFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chiluk <chiluk+linuxxfs@indeed.com>
-Subject: [PATCH 4.9 05/61] xfs: detect agfl count corruption and reset agfl
-Date: Tue,  5 Jun 2018 19:01:26 +0200
-Message-Id: <20180605170117.940122817@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        KT Liao <kt.liao@emc.com.tw>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 07/61] Input: elan_i2c_smbus - fix corrupted stack
+Date: Tue,  5 Jun 2018 19:01:28 +0200
+Message-Id: <20180605170118.035656903@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -31,229 +31,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brian Foster <bfoster@redhat.com>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-commit a27ba2607e60312554cbcd43fc660b2c7f29dc9c upstream.
+commit 40f7090bb1b4ec327ea1e1402ff5783af5b35195 upstream.
 
-The struct xfs_agfl v5 header was originally introduced with
-unexpected padding that caused the AGFL to operate with one less
-slot than intended. The header has since been packed, but the fix
-left an incompatibility for users who upgrade from an old kernel
-with the unpacked header to a newer kernel with the packed header
-while the AGFL happens to wrap around the end. The newer kernel
-recognizes one extra slot at the physical end of the AGFL that the
-previous kernel did not. The new kernel will eventually attempt to
-allocate a block from that slot, which contains invalid data, and
-cause a crash.
+New ICs (like the one on the Lenovo T480s) answer to
+ETP_SMBUS_IAP_VERSION_CMD 4 bytes instead of 3. This corrupts the stack
+as i2c_smbus_read_block_data() uses the values returned by the i2c
+device to know how many data it need to return.
 
-This condition can be detected by comparing the active range of the
-AGFL to the count. While this detects a padding mismatch, it can
-also trigger false positives for unrelated flcount corruption. Since
-we cannot distinguish a size mismatch due to padding from unrelated
-corruption, we can't trust the AGFL enough to simply repopulate the
-empty slot.
+i2c_smbus_read_block_data() can read up to 32 bytes (I2C_SMBUS_BLOCK_MAX)
+and there is no safeguard on how many bytes are provided in the return
+value. Ensure we always have enough space for any future firmware.
+Also 0-initialize the values to prevent any access to uninitialized memory.
 
-Instead, avoid unnecessarily complex detection logic and and use a
-solution that can handle any form of flcount corruption that slips
-through read verifiers: distrust the entire AGFL and reset it to an
-empty state. Any valid blocks within the AGFL are intentionally
-leaked. This requires xfs_repair to rectify (which was already
-necessary based on the state the AGFL was found in). The reset
-mitigates the side effect of the padding mismatch problem from a
-filesystem crash to a free space accounting inconsistency. The
-generic approach also means that this patch can be safely backported
-to kernels with or without a packed struct xfs_agfl.
-
-Check the AGF for an invalid freelist count on initial read from
-disk. If detected, set a flag on the xfs_perag to indicate that a
-reset is required before the AGFL can be used. In the first
-transaction that attempts to use a flagged AGFL, reset it to empty,
-warn the user about the inconsistency and allow the freelist fixup
-code to repopulate the AGFL with new blocks. The xfs_perag flag is
-cleared to eliminate the need for repeated checks on each block
-allocation operation.
-
-This allows kernels that include the packing fix commit 96f859d52bcb
-("libxfs: pack the agfl header structure so XFS_AGFL_SIZE is correct")
-to handle older unpacked AGFL formats without a filesystem crash.
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by Dave Chiluk <chiluk+linuxxfs@indeed.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Dave Chiluk <chiluk+linuxxfs@indeed.com>
+Cc: <stable@vger.kernel.org> # v4.4.x, v4.9.x, v4.14.x, v4.15.x, v4.16.x
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Acked-by: KT Liao <kt.liao@emc.com.tw>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xfs/libxfs/xfs_alloc.c |   94 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_mount.h        |    1 
- fs/xfs/xfs_trace.h        |    9 +++-
- 3 files changed, 103 insertions(+), 1 deletion(-)
+ drivers/input/mouse/elan_i2c_smbus.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -2035,6 +2035,93 @@ xfs_alloc_space_available(
- }
+--- a/drivers/input/mouse/elan_i2c_smbus.c
++++ b/drivers/input/mouse/elan_i2c_smbus.c
+@@ -130,7 +130,7 @@ static int elan_smbus_get_baseline_data(
+ 					bool max_baseline, u8 *value)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
  
- /*
-+ * Check the agfl fields of the agf for inconsistency or corruption. The purpose
-+ * is to detect an agfl header padding mismatch between current and early v5
-+ * kernels. This problem manifests as a 1-slot size difference between the
-+ * on-disk flcount and the active [first, last] range of a wrapped agfl. This
-+ * may also catch variants of agfl count corruption unrelated to padding. Either
-+ * way, we'll reset the agfl and warn the user.
-+ *
-+ * Return true if a reset is required before the agfl can be used, false
-+ * otherwise.
-+ */
-+static bool
-+xfs_agfl_needs_reset(
-+	struct xfs_mount	*mp,
-+	struct xfs_agf		*agf)
-+{
-+	uint32_t		f = be32_to_cpu(agf->agf_flfirst);
-+	uint32_t		l = be32_to_cpu(agf->agf_fllast);
-+	uint32_t		c = be32_to_cpu(agf->agf_flcount);
-+	int			agfl_size = XFS_AGFL_SIZE(mp);
-+	int			active;
-+
-+	/* no agfl header on v4 supers */
-+	if (!xfs_sb_version_hascrc(&mp->m_sb))
-+		return false;
-+
-+	/*
-+	 * The agf read verifier catches severe corruption of these fields.
-+	 * Repeat some sanity checks to cover a packed -> unpacked mismatch if
-+	 * the verifier allows it.
-+	 */
-+	if (f >= agfl_size || l >= agfl_size)
-+		return true;
-+	if (c > agfl_size)
-+		return true;
-+
-+	/*
-+	 * Check consistency between the on-disk count and the active range. An
-+	 * agfl padding mismatch manifests as an inconsistent flcount.
-+	 */
-+	if (c && l >= f)
-+		active = l - f + 1;
-+	else if (c)
-+		active = agfl_size - f + l + 1;
-+	else
-+		active = 0;
-+
-+	return active != c;
-+}
-+
-+/*
-+ * Reset the agfl to an empty state. Ignore/drop any existing blocks since the
-+ * agfl content cannot be trusted. Warn the user that a repair is required to
-+ * recover leaked blocks.
-+ *
-+ * The purpose of this mechanism is to handle filesystems affected by the agfl
-+ * header padding mismatch problem. A reset keeps the filesystem online with a
-+ * relatively minor free space accounting inconsistency rather than suffer the
-+ * inevitable crash from use of an invalid agfl block.
-+ */
-+static void
-+xfs_agfl_reset(
-+	struct xfs_trans	*tp,
-+	struct xfs_buf		*agbp,
-+	struct xfs_perag	*pag)
-+{
-+	struct xfs_mount	*mp = tp->t_mountp;
-+	struct xfs_agf		*agf = XFS_BUF_TO_AGF(agbp);
-+
-+	ASSERT(pag->pagf_agflreset);
-+	trace_xfs_agfl_reset(mp, agf, 0, _RET_IP_);
-+
-+	xfs_warn(mp,
-+	       "WARNING: Reset corrupted AGFL on AG %u. %d blocks leaked. "
-+	       "Please unmount and run xfs_repair.",
-+	         pag->pag_agno, pag->pagf_flcount);
-+
-+	agf->agf_flfirst = 0;
-+	agf->agf_fllast = cpu_to_be32(XFS_AGFL_SIZE(mp) - 1);
-+	agf->agf_flcount = 0;
-+	xfs_alloc_log_agf(tp, agbp, XFS_AGF_FLFIRST | XFS_AGF_FLLAST |
-+				    XFS_AGF_FLCOUNT);
-+
-+	pag->pagf_flcount = 0;
-+	pag->pagf_agflreset = false;
-+}
-+
-+/*
-  * Decide whether to use this allocation group for this allocation.
-  * If so, fix up the btree freelist's size.
-  */
-@@ -2095,6 +2182,10 @@ xfs_alloc_fix_freelist(
- 		}
- 	}
+ 	error = i2c_smbus_read_block_data(client,
+ 					  max_baseline ?
+@@ -149,7 +149,7 @@ static int elan_smbus_get_version(struct
+ 				  bool iap, u8 *version)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
  
-+	/* reset a padding mismatched agfl before final free space check */
-+	if (pag->pagf_agflreset)
-+		xfs_agfl_reset(tp, agbp, pag);
-+
- 	/* If there isn't enough total space or single-extent, reject it. */
- 	need = xfs_alloc_min_freelist(mp, pag);
- 	if (!xfs_alloc_space_available(args, need, flags))
-@@ -2251,6 +2342,7 @@ xfs_alloc_get_freelist(
- 		agf->agf_flfirst = 0;
+ 	error = i2c_smbus_read_block_data(client,
+ 					  iap ? ETP_SMBUS_IAP_VERSION_CMD :
+@@ -169,7 +169,7 @@ static int elan_smbus_get_sm_version(str
+ 				     u8 *ic_type, u8 *version)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
  
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, -1);
- 	xfs_trans_agflist_delta(tp, -1);
- 	pag->pagf_flcount--;
-@@ -2362,6 +2454,7 @@ xfs_alloc_put_freelist(
- 		agf->agf_fllast = 0;
+ 	error = i2c_smbus_read_block_data(client,
+ 					  ETP_SMBUS_SM_VERSION_CMD, val);
+@@ -186,7 +186,7 @@ static int elan_smbus_get_sm_version(str
+ static int elan_smbus_get_product_id(struct i2c_client *client, u16 *id)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
  
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, 1);
- 	xfs_trans_agflist_delta(tp, 1);
- 	pag->pagf_flcount++;
-@@ -2568,6 +2661,7 @@ xfs_alloc_read_agf(
- 		pag->pagb_count = 0;
- 		pag->pagb_tree = RB_ROOT;
- 		pag->pagf_init = 1;
-+		pag->pagf_agflreset = xfs_agfl_needs_reset(mp, agf);
- 	}
- #ifdef DEBUG
- 	else if (!XFS_FORCED_SHUTDOWN(mp)) {
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -368,6 +368,7 @@ typedef struct xfs_perag {
- 	char		pagi_inodeok;	/* The agi is ok for inodes */
- 	__uint8_t	pagf_levels[XFS_BTNUM_AGF];
- 					/* # of levels in bno & cnt btree */
-+	bool		pagf_agflreset; /* agfl requires reset before use */
- 	__uint32_t	pagf_flcount;	/* count of blocks in freelist */
- 	xfs_extlen_t	pagf_freeblks;	/* total free blocks */
- 	xfs_extlen_t	pagf_longest;	/* longest free space */
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -1516,7 +1516,7 @@ TRACE_EVENT(xfs_trans_commit_lsn,
- 		  __entry->lsn)
- );
+ 	error = i2c_smbus_read_block_data(client,
+ 					  ETP_SMBUS_UNIQUEID_CMD, val);
+@@ -203,7 +203,7 @@ static int elan_smbus_get_checksum(struc
+ 				   bool iap, u16 *csum)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
  
--TRACE_EVENT(xfs_agf,
-+DECLARE_EVENT_CLASS(xfs_agf_class,
- 	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags,
- 		 unsigned long caller_ip),
- 	TP_ARGS(mp, agf, flags, caller_ip),
-@@ -1572,6 +1572,13 @@ TRACE_EVENT(xfs_agf,
- 		  __entry->longest,
- 		  (void *)__entry->caller_ip)
- );
-+#define DEFINE_AGF_EVENT(name) \
-+DEFINE_EVENT(xfs_agf_class, name, \
-+	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags, \
-+		 unsigned long caller_ip), \
-+	TP_ARGS(mp, agf, flags, caller_ip))
-+DEFINE_AGF_EVENT(xfs_agf);
-+DEFINE_AGF_EVENT(xfs_agfl_reset);
+ 	error = i2c_smbus_read_block_data(client,
+ 					  iap ? ETP_SMBUS_FW_CHECKSUM_CMD :
+@@ -224,7 +224,7 @@ static int elan_smbus_get_max(struct i2c
+ {
+ 	int ret;
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
  
- TRACE_EVENT(xfs_free_extent,
- 	TP_PROTO(struct xfs_mount *mp, xfs_agnumber_t agno, xfs_agblock_t agbno,
+ 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_RANGE_CMD, val);
+ 	if (ret != 3) {
+@@ -244,7 +244,7 @@ static int elan_smbus_get_resolution(str
+ {
+ 	int ret;
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_RESOLUTION_CMD, val);
+ 	if (ret != 3) {
+@@ -265,7 +265,7 @@ static int elan_smbus_get_num_traces(str
+ {
+ 	int ret;
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	ret = i2c_smbus_read_block_data(client, ETP_SMBUS_XY_TRACENUM_CMD, val);
+ 	if (ret != 3) {
+@@ -292,7 +292,7 @@ static int elan_smbus_iap_get_mode(struc
+ {
+ 	int error;
+ 	u16 constant;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client, ETP_SMBUS_IAP_CTRL_CMD, val);
+ 	if (error < 0) {
+@@ -343,7 +343,7 @@ static int elan_smbus_prepare_fw_update(
+ 	int len;
+ 	int error;
+ 	enum tp_mode mode;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 	u8 cmd[4] = {0x0F, 0x78, 0x00, 0x06};
+ 	u16 password;
+ 
+@@ -417,7 +417,7 @@ static int elan_smbus_write_fw_block(str
+ 	struct device *dev = &client->dev;
+ 	int error;
+ 	u16 result;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	/*
+ 	 * Due to the limitation of smbus protocol limiting
