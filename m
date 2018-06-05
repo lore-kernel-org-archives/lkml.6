@@ -1,76 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeFEPFV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:05:21 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:44589 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751688AbeFEPFS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:05:18 -0400
-X-Google-Smtp-Source: ADUXVKJ62ayiBkQqtwBIS2HKD6VBEKRKhDDpR45LDHcK41aP3AHElO2C4TbbvtfzpGnW/U5YGTjoWA==
-Date: Tue, 5 Jun 2018 17:05:14 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>
-Subject: Re: x86/asm: __clear_user() micro-optimization (was: "Re: [GIT PULL]
- x86/asm changes for v4.18")
-Message-ID: <20180605150514.GA31065@gmail.com>
-References: <20180604122132.GA3337@gmail.com>
- <CA+55aFx=zLkZx4h4rcWv79OKQSGJAwC3eS8=zSDgKjyrsbLrNA@mail.gmail.com>
+        id S1751853AbeFEPHy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:07:54 -0400
+Received: from imap.thunk.org ([74.207.234.97]:37682 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751701AbeFEPHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:07:53 -0400
+Date: Tue, 5 Jun 2018 11:07:51 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Subject: [GIT PULL] fscrypt updates for 4.18
+Message-ID: <20180605150751.GA9436@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+55aFx=zLkZx4h4rcWv79OKQSGJAwC3eS8=zSDgKjyrsbLrNA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
 
-> On Mon, Jun 4, 2018 at 5:21 AM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >  - __clear_user() micro-optimization (Alexey Dobriyan)
-> 
-> Was this actually tested?
+are available in the Git repository at:
 
-I'm not sure - Alexey?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
 
-> I think one reason people avoided the constant was that on some
-> microarchitecture it ended up being a separate uop just for the
-> constant generation, because it wouldn't fit in a single uop.
-> 
-> I'm pretty sure that used to be the case for P4, for example.
-> 
-> Afaik there have also been issues with decoding instructions that have
-> both an immediate and a memory offset.
-> 
-> I suspect none of this is an issue on modern cores, but there really
-> at least historically were cases where
-> 
->    mov %reg,mem
-> 
-> was better than
-> 
->    mov $imm,mem
-> 
-> if %reg already had the right value, so it's not at all 100% obvious
-> that the micro-optimization really _optimizes_ anything.
-> 
-> Any time people do this, they should add numbers.
+for you to fetch changes up to 4f2f76f751433908364ccff82f437a57d0e6e9b7:
 
-Ok, fair point and agreed - if Alexey sends some measurements to back the change 
-I'll keep this, otherwise queue up a revert.
+  ext4: fix fencepost error in check for inode count overflow during resize (2018-05-25 12:51:25 -0400)
 
-Thanks,
+----------------------------------------------------------------
+Add bunch of cleanups, and add support for the Speck128/256
+algorithms.  Yes, Speck is contrversial, but the intention is to use
+them only for the lowest end Android devices, where the alternative
+*really* is no encryption at all for data stored at rest.
 
-	Ingo
+----------------------------------------------------------------
+Amir Goldstein (3):
+      vfs: add the sb_start_intwrite_trylock() helper
+      ext4: factor out helper ext4_sample_last_mounted()
+      ext4: do not update s_last_mounted of a frozen fs
+
+Eryu Guan (2):
+      ext4: use XATTR_CREATE in ext4_initxattrs()
+      ext4: use raw i_version value for ea_inode
+
+Jaegeuk Kim (1):
+      ext4: handle errors on ext4_commit_super
+
+Jan Kara (2):
+      ext4: fix hole length detection in ext4_ind_map_blocks()
+      ext4: fix fencepost error in check for inode count overflow during resize
+
+Konstantin Khlebnikov (1):
+      ext4: report delalloc reserve as non-free in statfs for project quota
+
+Luis R. Rodriguez (1):
+      ext4: add verifier check for symlink with append/immutable flags
+
+Lukas Czerner (1):
+      ext4: update mtime in ext4_punch_hole even if no blocks are released
+
+Mathieu Malaterre (1):
+      ext4: make function ‘ext4_getfsmap_find_fixed_metadata’ static
+
+Sean Fu (1):
+      ext4: remove NULL check before calling kmem_cache_destroy()
+
+Souptick Joarder (1):
+      fs: ext4: add new return type vm_fault_t
+
+Theodore Ts'o (3):
+      ext4: do not allow external inodes for inline data
+      ext4: bubble errors from ext4_find_inline_data_nolock() up to ext4_iget()
+      ext4: correctly handle a zero-length xattr with a non-zero e_value_offs
+
+Wang Long (1):
+      jbd2: remove NULL check before calling kmem_cache_destroy()
+
+Wang Shilong (5):
+      ext4: fix wrong return value in ext4_read_inode_bitmap()
+      ext4: add new ext4_mark_group_bitmap_corrupted() helper
+      ext4: mark inode bitmap corrupted when found
+      ext4: mark block bitmap corrupted when found
+      jbd2: remove bunch of empty lines with jbd2 debug
+
+ fs/ext4/balloc.c         | 33 +++++++-------------
+ fs/ext4/ext4.h           |  7 +++++
+ fs/ext4/extents_status.c |  3 +-
+ fs/ext4/file.c           | 93 ++++++++++++++++++++++++++++++++-----------------------
+ fs/ext4/fsmap.c          |  4 +--
+ fs/ext4/ialloc.c         | 35 +++++++++------------
+ fs/ext4/indirect.c       | 14 ++++++---
+ fs/ext4/inline.c         |  6 ++++
+ fs/ext4/inode.c          | 77 +++++++++++++++++++++++++++++++--------------
+ fs/ext4/mballoc.c        | 23 +++++++-------
+ fs/ext4/resize.c         |  2 +-
+ fs/ext4/super.c          | 68 +++++++++++++++++++++++++++++++---------
+ fs/ext4/xattr.c          |  2 +-
+ fs/ext4/xattr_security.c |  2 +-
+ fs/jbd2/journal.c        | 20 +++++-------
+ fs/jbd2/revoke.c         | 12 +++----
+ fs/jbd2/transaction.c    |  6 ++--
+ include/linux/fs.h       |  5 +++
+ 18 files changed, 245 insertions(+), 167 deletions(-)
