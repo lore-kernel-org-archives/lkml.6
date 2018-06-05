@@ -1,77 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeFESwW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:52:22 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37251 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751812AbeFESwU (ORCPT
+        id S1752000AbeFESyl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:54:41 -0400
+Received: from mailrelay4-1.pub.mailoutpod1-cph3.one.com ([46.30.210.185]:10992
+        "EHLO mailrelay4-1.pub.mailoutpod1-cph3.one.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751823AbeFESyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:52:20 -0400
-X-Google-Smtp-Source: ADUXVKJwshZN3w2+Kb7Kr5vtweCse+VzzKaMh13g/53WV6WK+yA7vskZCbmUF+vS+7JkqXN6cn/O5Q==
-Date: Tue, 5 Jun 2018 11:52:16 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Fabio Estevam <festevam@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Tue, 5 Jun 2018 14:54:39 -0400
+X-HalOne-Cookie: a1baff992037b3e5f4264410afd75ae66ee173c7
+X-HalOne-ID: e4c83567-68f1-11e8-a32f-d0431ea8bb10
+Subject: Re: [RFC/PATCH] Input: make input_report_slot_state() return boolean
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] Input: cros_ec_keyb - Switch to SPDX identifier.
-Message-ID: <20180605185216.GG202428@dtor-ws>
-References: <20180605175429.9072-1-enric.balletbo@collabora.com>
- <20180605175429.9072-6-enric.balletbo@collabora.com>
- <CAOMZO5ByhMV9_gRHLmGiSNJtCvKEOk==ZMz2O2=tokZh2ps4xg@mail.gmail.com>
- <7085d0bb-557c-0796-d3ae-756e000a7950@collabora.com>
- <CAOMZO5Cod=jo5gC1ibQx5ZHU5xtUZDvfZt899=nPLgH4bhy+_g@mail.gmail.com>
- <20180605182919.GF202428@dtor-ws>
- <776dc8b6-aa98-aeb0-320a-04294894ad2e@collabora.com>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org
+References: <20180605171604.GA221901@dtor-ws>
+From: Henrik Rydberg <rydberg@bitmath.org>
+Message-ID: <4d841422-9bc1-1558-d8fb-a450cbec5279@bitmath.org>
+Date: Tue, 5 Jun 2018 20:54:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <776dc8b6-aa98-aeb0-320a-04294894ad2e@collabora.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180605171604.GA221901@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 08:45:44PM +0200, Enric Balletbo i Serra wrote:
-> Hi Dmitry,
-> 
-> On 05/06/18 20:29, Dmitry Torokhov wrote:
-> > On Tue, Jun 05, 2018 at 03:16:40PM -0300, Fabio Estevam wrote:
-> >> Hi Enric,
-> >>
-> >> On Tue, Jun 5, 2018 at 3:14 PM, Enric Balletbo i Serra
-> >> <enric.balletbo@collabora.com> wrote:
-> >>
-> >>> Right, but the module license is set to GPL which means GNU Public License v2 or
-> >>> later, see [1]. So, there is a mismatch. In such cases I assumed GPL-2.0+ as the
-> >>> default. These mismatches are common so I think that should be fine for the
-> >>> authors, if someone is disagree just let me know and I will change.
-> >>
-> >> Ok, but I think you should add this explanation in the commit log to
-> >> make it clearer.
-> > 
-> > If there is a conflict between the license notice and MODULE_LICENSE()
-> > we should go by the license notice. The license note is usually approved
-> > by companies, whereas MIODULE_LICENSE()s get moved, adjusted, etc.
-> > 
-> > For ChromeOS kernel changes license notice is GPL v2 as documented at:
-> > 
-> > https://www.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-faq
-> > 
-> > section "Which copyright header should I use?"
-> > 
-> 
-> Many thanks to share and clarify this.
-> 
-> There is lots of mismatches so I'll send another version fixing this and
-> changing all to GPL v2. I assume I should also modify the MODULE_LICENSE when
-> it's wrong.
+On 06/05/2018 07:16 PM, Dmitry Torokhov wrote:
 
-I'd have a round of changes having MODULE_LICENSE() match the license
-notice, and then separate patches for changing over to SPDX tags.
+> Let's make input_report_slot_state() return boolean representing whether
+> the contact is active or not. This will allow writing code like:
+>
+> 	if (input_mt_report_slot_state(input, obj->mt_tool,
+> 					obj->type != RMI_2D_OBJECT_NONE) {
+>
+> 		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
+> 		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
+> 		...
+> 	}
+>
+> instead of:
+>
+> 	input_mt_report_slot_state(input, obj->mt_tool,
+> 				   obj->type != RMI_2D_OBJECT_NONE);
+> 	if (obj->type != RMI_2D_OBJECT_NONE) {
+> 		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
+> 		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
+> 		...
+> 	}
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>   drivers/input/input-mt.c | 10 +++++++---
+>   include/linux/input/mt.h |  2 +-
+>   2 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
+> index 7ca4b318ed419..4a69716e54614 100644
+> --- a/drivers/input/input-mt.c
+> +++ b/drivers/input/input-mt.c
+> @@ -131,8 +131,10 @@ EXPORT_SYMBOL(input_mt_destroy_slots);
+>    * inactive, or if the tool type is changed, a new tracking id is
+>    * assigned to the slot. The tool type is only reported if the
+>    * corresponding absbit field is set.
+> + *
+> + * Returns true if contact is active.
+>    */
+> -void input_mt_report_slot_state(struct input_dev *dev,
+> +bool input_mt_report_slot_state(struct input_dev *dev,
+>   				unsigned int tool_type, bool active)
+>   {
+>   	struct input_mt *mt = dev->mt;
+> @@ -140,14 +142,14 @@ void input_mt_report_slot_state(struct input_dev *dev,
+>   	int id;
+>   
+>   	if (!mt)
+> -		return;
+> +		return false;
+>   
+>   	slot = &mt->slots[mt->slot];
+>   	slot->frame = mt->frame;
+>   
+>   	if (!active) {
+>   		input_event(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
+> -		return;
+> +		return false;
+>   	}
+>   
+>   	id = input_mt_get_value(slot, ABS_MT_TRACKING_ID);
+> @@ -156,6 +158,8 @@ void input_mt_report_slot_state(struct input_dev *dev,
+>   
+>   	input_event(dev, EV_ABS, ABS_MT_TRACKING_ID, id);
+>   	input_event(dev, EV_ABS, ABS_MT_TOOL_TYPE, tool_type);
+> +
+> +	return true;
+>   }
+>   EXPORT_SYMBOL(input_mt_report_slot_state);
+>   
+> diff --git a/include/linux/input/mt.h b/include/linux/input/mt.h
+> index d7188de4db968..3f4bf60b0bb55 100644
+> --- a/include/linux/input/mt.h
+> +++ b/include/linux/input/mt.h
+> @@ -100,7 +100,7 @@ static inline bool input_is_mt_axis(int axis)
+>   	return axis == ABS_MT_SLOT || input_is_mt_value(axis);
+>   }
+>   
+> -void input_mt_report_slot_state(struct input_dev *dev,
+> +bool input_mt_report_slot_state(struct input_dev *dev,
+>   				unsigned int tool_type, bool active);
+>   
+>   void input_mt_report_finger_count(struct input_dev *dev, int count);
+   Reviewed-by: Henrik Rydberg <rydberg@bitmath.org>
 
-Thanks.
+Thanks, Dmitry.
 
--- 
-Dmitry
+Henrik
