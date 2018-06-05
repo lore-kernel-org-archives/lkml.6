@@ -1,159 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751925AbeFENuS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:50:18 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:34644 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751750AbeFENuQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:50:16 -0400
-X-Google-Smtp-Source: ADUXVKIZHFBEDTNWvsWAVZtQZc/AQai/aAf8Kdv47nHLkV8qt+o1G2adqaRJ4vocD1DHaKntyB7GU418i3cFut0ZboU=
+        id S1751652AbeFENwU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:52:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56092 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751197AbeFENwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 09:52:19 -0400
+Date: Tue, 5 Jun 2018 14:52:15 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: Re: [PATCH v5 00/10] track CPU utilization
+Message-ID: <20180605135215.GD12193@e108498-lin.cambridge.arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
+ <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
+ <CAKfTPtBduambCpfeNHuaqnayUoB8J224LDHcdG9EjH8kpJApnQ@mail.gmail.com>
+ <20180605131224.GC12193@e108498-lin.cambridge.arm.com>
+ <CAKfTPtCMzZK2QdOqWzFQZTPav1Gk99ujWGbWJYkKKPAMxijmiQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180604225539.GA13447@jelly>
-References: <20170811004500.13740-1-dmitry.torokhov@gmail.com>
- <CAO-hwJJ8E4mQqu0RYaZrmawud4wbSVE4GHEvg7oxUzEc-B5nvQ@mail.gmail.com>
- <20180601184330.GD222005@dtor-ws> <CAO-hwJJPGJzgX+7H1nnpd=OkLZu0q0TuKhvroJ1K3jtnv7t6dg@mail.gmail.com>
- <20180604173339.GB164893@dtor-ws> <CAO-hwJ+nzC=i1Jv_yu4vLL6Quw=850HJkOZBKCjFaZaw0-GWOQ@mail.gmail.com>
- <20180604211944.GE164893@dtor-ws> <20180604225539.GA13447@jelly>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Tue, 5 Jun 2018 15:50:15 +0200
-Message-ID: <CAO-hwJLzc_bVDLKTExTZLSEYON3zu54Q0COe57xGGQ5AS6OPRw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] HID: multitouch: report MT_TOOL_PALM for
- non-confident touches
-To: Peter Hutterer <peter.hutterer@who-t.net>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
-        Jason Gerecke <killertofu@gmail.com>,
-        Dennis Kempin <denniskempin@google.com>,
-        Andrew de los Reyes <adlr@google.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtCMzZK2QdOqWzFQZTPav1Gk99ujWGbWJYkKKPAMxijmiQ@mail.gmail.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 12:55 AM, Peter Hutterer
-<peter.hutterer@who-t.net> wrote:
-> On Mon, Jun 04, 2018 at 02:19:44PM -0700, Dmitry Torokhov wrote:
->> On Mon, Jun 04, 2018 at 10:42:31PM +0200, Benjamin Tissoires wrote:
->> > On Mon, Jun 4, 2018 at 7:33 PM, Dmitry Torokhov
->> > <dmitry.torokhov@gmail.com> wrote:
->> > > On Mon, Jun 04, 2018 at 03:18:12PM +0200, Benjamin Tissoires wrote:
->> > >> On Fri, Jun 1, 2018 at 8:43 PM, Dmitry Torokhov
->> > >> <dmitry.torokhov@gmail.com> wrote:
->> > >> > On Fri, Jun 01, 2018 at 04:16:09PM +0200, Benjamin Tissoires wrote:
->> > >> >> On Fri, Aug 11, 2017 at 2:44 AM, Dmitry Torokhov
->> > >> >> <dmitry.torokhov@gmail.com> wrote:
->> > >> >> > According to Microsoft specification [1] for Precision Touchpads (and
->> > >> >> > Touchscreens) the devices use "confidence" reports to signal accidental
->> > >> >> > touches, or contacts that are "too large to be a finger". Instead of
->> > >> >> > simply marking contact inactive in this case (which causes issues if
->> > >> >> > contact was originally proper and we lost confidence in it later, as
->> > >> >> > this results in accidental clicks, drags, etc), let's report such
->> > >> >> > contacts as MT_TOOL_PALM and let userspace decide what to do.
->> > >> >> > Additionally, let's report contact size for such touches as maximum
->> > >> >> > allowed for major/minor, which should help userspace that is not yet
->> > >> >> > aware of MT_TOOL_PALM to still perform palm rejection.
->> > >> >> >
->> > >> >> > An additional complication, is that some firmwares do not report
->> > >> >> > non-confident touches as active. To cope with this we delay release of
->> > >> >> > such contact (i.e. if contact was active we first report it as still
->> > >> >> > active MT+TOOL_PALM and then synthesize the release event in a separate
->> > >> >> > frame).
->> > >> >>
->> > >> >> I am not sure I agree with this part. The spec says that "Once a
->> > >> >> device has determined that a contact is unintentional, it should clear
->> > >> >> the confidence bit for that contact report and all subsequent
->> > >> >> reports."
->> > >> >> So in theory the spec says that if a touch has been detected as a
->> > >> >> palm, the flow of events should not stop (tested on the PTP of the
->> > >> >> Dell XPS 9360).
->> > >> >>
->> > >> >> However, I interpret a firmware that send (confidence 1, tip switch 1)
->> > >> >> and then (confidence 0, tip switch 0) a simple release, and the
->> > >> >> confidence bit should not be relayed.
->> > >> >
->> > >> > This unfortunately leads to false clicks: you start with finger, so
->> > >> > confidence is 1, then you transition the same touch to palm (use your
->> > >> > thumb and "roll" your hand until heel of it comes into contact with the
->> > >> > screen). The firmware reports "no-confidence" and "release" in the same
->> > >> > report and userspace seeing release does not pay attention to confidence
->> > >> > (i.e. it does exactly "simple release" logic) and this results in UI
->> > >> > interpreting this as a click. With splitting no-confidence
->> > >> > (MT_TOOL_PALM) and release event into separate frames we help userspace
->> > >> > to recognize that the contact should be discarded.
->> > >>
->> > >> After further thoughts, I would consider this to be a firmware bug,
->> > >> and not how the firmware is supposed to be reporting palm.
->> > >> For the precision touchpads, the spec says that the device "should
->> > >> clear the confidence bit for that contact report and all subsequent
->> > >> reports.". And it is how the Dell device I have here reports palms.
->> > >> The firmware is not supposed to cut the event stream.
->> > >>
->> > >> There is a test for that:
->> > >> https://docs.microsoft.com/en-us/previous-versions/windows/hardware/hck/dn456905%28v%3dvs.85%29
->> > >> which tells me that I am right here for PTP.
->> > >>
->> > >> The touchscreen spec is blurrier however.
->> > >
->> > > OK, that is great to know.
->> > >
->> > >>
->> > >> >
->> > >> >>
->> > >> >> Do you have any precise example of reports where you need that feature?
->> > >> >
->> > >> > It was observed on Pixelbooks which use Wacom digitizers IIRC.
->> > >>
->> > >> Pixelbooks + Wacom means that it was likely a touchscreen. I am right
->> > >> guessing the device did not went through Microsoft certification
->> > >> process?
->> > >
->> > > That would be correct ;) At least the firmware that is shipping with
->> > > Pixlebooks hasn't, I do now if anyone else sourced these Wacom parts for
->> > > their MSWin devices.
->> > >
->> > >>
->> > >> I am in favor of splitting the patch in 2. One for the generic
->> > >> processing of confidence bit, and one for this spurious release. For
->> > >> the spurious release, I'm more in favor of explicitly quirking the
->> > >> devices in need of such quirk.
->> > >
->> > > Hmm, I am not sure about having specific quirk. It will be hard for
->> > > users to accurately diagnose the issue if firmware is broken in this way
->> > > so we could add a new quirk for a new device.
->> >
->> > One thing we can do is keep the quirked mechanism as default in
->> > hid-multitouch, but remove it in hid-core. If people need the quirk,
->> > they can just use hid-multitouch instead (talking about the long run
->> > here).
->>
->> Hmm, I am confused. My patch did not touch hid-core or hid-input, only
->> hid-multitouch... So we are already doing what you are proposing?..
->>
->> >
->> > However, I really believe this might only be required for a handful of
->> > devices, and probably only touchscreens. So I would be tempted to not
->> > make it default and see how many bug reports we have.
->>
->> Up to you but it is hard to detect for users. If just sometimes there
->> are stray clicks...
->
-> fwiw, from my POV, if you give me MT_TOOL_PALM in the same frame as the
-> ABS_MT_TRACKING_ID -1 I can work that into libinput to do the right thing.
+On Tuesday 05 Jun 2018 at 15:18:38 (+0200), Vincent Guittot wrote:
+> On 5 June 2018 at 15:12, Quentin Perret <quentin.perret@arm.com> wrote:
+> > On Tuesday 05 Jun 2018 at 13:59:56 (+0200), Vincent Guittot wrote:
+> >> On 5 June 2018 at 12:57, Quentin Perret <quentin.perret@arm.com> wrote:
+> >> > Hi Vincent,
+> >> >
+> >> > On Tuesday 05 Jun 2018 at 10:36:26 (+0200), Vincent Guittot wrote:
+> >> >> Hi Quentin,
+> >> >>
+> >> >> On 25 May 2018 at 15:12, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+> >> >> > This patchset initially tracked only the utilization of RT rq. During
+> >> >> > OSPM summit, it has been discussed the opportunity to extend it in order
+> >> >> > to get an estimate of the utilization of the CPU.
+> >> >> >
+> >> >> > - Patches 1-3 correspond to the content of patchset v4 and add utilization
+> >> >> >   tracking for rt_rq.
+> >> >> >
+> >> >> > When both cfs and rt tasks compete to run on a CPU, we can see some frequency
+> >> >> > drops with schedutil governor. In such case, the cfs_rq's utilization doesn't
+> >> >> > reflect anymore the utilization of cfs tasks but only the remaining part that
+> >> >> > is not used by rt tasks. We should monitor the stolen utilization and take
+> >> >> > it into account when selecting OPP. This patchset doesn't change the OPP
+> >> >> > selection policy for RT tasks but only for CFS tasks
+> >> >> >
+> >> >> > A rt-app use case which creates an always running cfs thread and a rt threads
+> >> >> > that wakes up periodically with both threads pinned on same CPU, show lot of
+> >> >> > frequency switches of the CPU whereas the CPU never goes idles during the
+> >> >> > test. I can share the json file that I used for the test if someone is
+> >> >> > interested in.
+> >> >> >
+> >> >> > For a 15 seconds long test on a hikey 6220 (octo core cortex A53 platfrom),
+> >> >> > the cpufreq statistics outputs (stats are reset just before the test) :
+> >> >> > $ cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
+> >> >> > without patchset : 1230
+> >> >> > with patchset : 14
+> >> >>
+> >> >> I have attached the rt-app json file that I use for this test
+> >> >
+> >> > Thank you very much ! I did a quick test with a much simpler fix to this
+> >> > RT-steals-time-from-CFS issue using just the existing scale_rt_capacity().
+> >> > I get the following results on Hikey960:
+> >> >
+> >> > Without patch:
+> >> >    cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
+> >> >    12
+> >> >    cat /sys/devices/system/cpu/cpufreq/policy4/stats/total_trans
+> >> >    640
+> >> > With patch
+> >> >    cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
+> >> >    8
+> >> >    cat /sys/devices/system/cpu/cpufreq/policy4/stats/total_trans
+> >> >    12
+> >> >
+> >> > Yes the rt_avg stuff is out of sync with the PELT signal, but do you think
+> >> > this is an actual issue for realistic use-cases ?
+> >>
+> >> yes I think that it's worth syncing and consolidating things on the
+> >> same metric. The result will be saner and more robust as we will have
+> >> the same behavior
+> >
+> > TBH I'm not disagreeing with that, the PELT-everywhere approach feels
+> > cleaner in a way, but do you have a use-case in mind where this will
+> > definitely help ?
+> >
+> > I mean, yes the rt_avg is a slow response to the RT pressure, but is
+> > this always a problem ? Ramping down slower might actually help in some
+> > cases no ?
+> 
+> I would say no because when one will decrease the other one will not
+> increase at the same pace and we will have some wrong behavior or
+> decision
 
-This would be a one line change in the kernel, so you got my attention :)
+I think I get your point. Yes, sometimes, the slow-moving rt_avg can be
+off a little bit (which can be good or bad, depending in the case) if your
+RT task runs a lot with very changing behaviour. And again, I'm not
+fundamentally against the idea of having extra complexity for RT/IRQ PELT
+signals _if_ we have a use-case. But is there a real use-case where we
+really need all of that ? That's a true question, I honestly don't have
+the answer :-)
 
-> Not 100% whether that already works anyway but probably not. I'd prefer it
-> being fixed in the kernel though, less work for me :)
-
-What do you mean by "fixed"?
-Is it incorrect to send a tool while tracking ID is set to -1?
->From what I read on multi-touch-protocol.rst this shouldn't be
-violating the protocol, and this would save quite a mess in the kernel
-in which we need to add an artificial event in the queue for the
-release.
-
-Cheers,
-Benjamin
+> 
+> >
+> >>
+> >> >
+> >> > What about the diff below (just a quick hack to show the idea) applied
+> >> > on tip/sched/core ?
+> >> >
+> >> > ---8<---
+> >> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> >> > index a8ba6d1f262a..23a4fb1c2c25 100644
+> >> > --- a/kernel/sched/cpufreq_schedutil.c
+> >> > +++ b/kernel/sched/cpufreq_schedutil.c
+> >> > @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+> >> >         sg_cpu->util_dl  = cpu_util_dl(rq);
+> >> >  }
+> >> >
+> >> > +unsigned long scale_rt_capacity(int cpu);
+> >> >  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> >> >  {
+> >> >         struct rq *rq = cpu_rq(sg_cpu->cpu);
+> >> > +       int cpu = sg_cpu->cpu;
+> >> > +       unsigned long util, dl_bw;
+> >> >
+> >> >         if (rq->rt.rt_nr_running)
+> >> >                 return sg_cpu->max;
+> >> > @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> >> >          * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+> >> >          * ready for such an interface. So, we only do the latter for now.
+> >> >          */
+> >> > -       return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+> >> > +       util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
+> >> > +       util >>= SCHED_CAPACITY_SHIFT;
+> >> > +       util = arch_scale_cpu_capacity(NULL, cpu) - util;
+> >> > +       util += sg_cpu->util_cfs;
+> >> > +       dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> >> > +
+> >> > +       /* Make sure to always provide the reserved freq to DL. */
+> >> > +       return max(util, dl_bw);
+> >> >  }
+> >> >
+> >> >  static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
+> >> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> >> > index f01f0f395f9a..0e87cbe47c8b 100644
+> >> > --- a/kernel/sched/fair.c
+> >> > +++ b/kernel/sched/fair.c
+> >> > @@ -7868,7 +7868,7 @@ static inline int get_sd_load_idx(struct sched_domain *sd,
+> >> >         return load_idx;
+> >> >  }
+> >> >
+> >> > -static unsigned long scale_rt_capacity(int cpu)
+> >> > +unsigned long scale_rt_capacity(int cpu)
+> >> >  {
+> >> >         struct rq *rq = cpu_rq(cpu);
+> >> >         u64 total, used, age_stamp, avg;
+> >> > --->8---
+> >> >
+> >> >
+> >> >
+> >> >>
+> >> >> >
+> >> >> > If we replace the cfs thread of rt-app by a sysbench cpu test, we can see
+> >> >> > performance improvements:
+> >> >> >
+> >> >> > - Without patchset :
+> >> >> > Test execution summary:
+> >> >> >     total time:                          15.0009s
+> >> >> >     total number of events:              4903
+> >> >> >     total time taken by event execution: 14.9972
+> >> >> >     per-request statistics:
+> >> >> >          min:                                  1.23ms
+> >> >> >          avg:                                  3.06ms
+> >> >> >          max:                                 13.16ms
+> >> >> >          approx.  95 percentile:              12.73ms
+> >> >> >
+> >> >> > Threads fairness:
+> >> >> >     events (avg/stddev):           4903.0000/0.00
+> >> >> >     execution time (avg/stddev):   14.9972/0.00
+> >> >> >
+> >> >> > - With patchset:
+> >> >> > Test execution summary:
+> >> >> >     total time:                          15.0014s
+> >> >> >     total number of events:              7694
+> >> >> >     total time taken by event execution: 14.9979
+> >> >> >     per-request statistics:
+> >> >> >          min:                                  1.23ms
+> >> >> >          avg:                                  1.95ms
+> >> >> >          max:                                 10.49ms
+> >> >> >          approx.  95 percentile:              10.39ms
+> >> >> >
+> >> >> > Threads fairness:
+> >> >> >     events (avg/stddev):           7694.0000/0.00
+> >> >> >     execution time (avg/stddev):   14.9979/0.00
+> >> >> >
+> >> >> > The performance improvement is 56% for this use case.
+> >> >> >
+> >> >> > - Patches 4-5 add utilization tracking for dl_rq in order to solve similar
+> >> >> >   problem as with rt_rq
+> >> >> >
+> >> >> > - Patches 6 uses dl and rt utilization in the scale_rt_capacity() and remove
+> >> >> >   dl and rt from sched_rt_avg_update
+> >> >> >
+> >> >> > - Patches 7-8 add utilization tracking for interrupt and use it select OPP
+> >> >> >   A test with iperf on hikey 6220 gives:
+> >> >> >     w/o patchset            w/ patchset
+> >> >> >     Tx 276 Mbits/sec        304 Mbits/sec +10%
+> >> >> >     Rx 299 Mbits/sec        328 Mbits/sec +09%
+> >> >> >
+> >> >> >     8 iterations of iperf -c server_address -r -t 5
+> >> >> >     stdev is lower than 1%
+> >> >> >     Only WFI idle state is enable (shallowest arm idle state)
+> >> >> >
+> >> >> > - Patches 9 removes the unused sched_avg_update code
+> >> >> >
+> >> >> > - Patch 10 removes the unused sched_time_avg_ms
+> >> >> >
+> >> >> > Change since v3:
+> >> >> > - add support of periodic update of blocked utilization
+> >> >> > - rebase on lastest tip/sched/core
+> >> >> >
+> >> >> > Change since v2:
+> >> >> > - move pelt code into a dedicated pelt.c file
+> >> >> > - rebase on load tracking changes
+> >> >> >
+> >> >> > Change since v1:
+> >> >> > - Only a rebase. I have addressed the comments on previous version in
+> >> >> >   patch 1/2
+> >> >> >
+> >> >> > Vincent Guittot (10):
+> >> >> >   sched/pelt: Move pelt related code in a dedicated file
+> >> >> >   sched/rt: add rt_rq utilization tracking
+> >> >> >   cpufreq/schedutil: add rt utilization tracking
+> >> >> >   sched/dl: add dl_rq utilization tracking
+> >> >> >   cpufreq/schedutil: get max utilization
+> >> >> >   sched: remove rt and dl from sched_avg
+> >> >> >   sched/irq: add irq utilization tracking
+> >> >> >   cpufreq/schedutil: take into account interrupt
+> >> >> >   sched: remove rt_avg code
+> >> >> >   proc/sched: remove unused sched_time_avg_ms
+> >> >> >
+> >> >> >  include/linux/sched/sysctl.h     |   1 -
+> >> >> >  kernel/sched/Makefile            |   2 +-
+> >> >> >  kernel/sched/core.c              |  38 +---
+> >> >> >  kernel/sched/cpufreq_schedutil.c |  24 ++-
+> >> >> >  kernel/sched/deadline.c          |   7 +-
+> >> >> >  kernel/sched/fair.c              | 381 +++----------------------------------
+> >> >> >  kernel/sched/pelt.c              | 395 +++++++++++++++++++++++++++++++++++++++
+> >> >> >  kernel/sched/pelt.h              |  63 +++++++
+> >> >> >  kernel/sched/rt.c                |  10 +-
+> >> >> >  kernel/sched/sched.h             |  57 ++++--
+> >> >> >  kernel/sysctl.c                  |   8 -
+> >> >> >  11 files changed, 563 insertions(+), 423 deletions(-)
+> >> >> >  create mode 100644 kernel/sched/pelt.c
+> >> >> >  create mode 100644 kernel/sched/pelt.h
+> >> >> >
+> >> >> > --
+> >> >> > 2.7.4
+> >> >> >
+> >> >
+> >> >
