@@ -1,111 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeFEHjb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:39:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53836 "EHLO mail.kernel.org"
+        id S1751800AbeFEHlF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:41:05 -0400
+Received: from mga11.intel.com ([192.55.52.93]:14303 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751458AbeFEHja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:39:30 -0400
-Date: Tue, 5 Jun 2018 09:39:27 +0200
-From: Jessica Yu <jeyu@kernel.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH] module: exclude SHN_UNDEF symbols from kallsyms api
-Message-ID: <20180605073927.ygfa3ucdwnec57e5@d217.suse.de>
-References: <20180602173209.merjb4o5a3wsdnbh@treble>
- <20180604080528.4z6rbhapbhn7xf5e@d217.suse.de>
- <20180604095416.rlthplerswzznyoc@d217.suse.de>
- <20180604130131.slyhtgyywffusf67@d217.suse.de>
- <20180604131648.eykjibc3iubckeiu@treble>
- <20180604140510.jovmjhamo24mzh3l@d217.suse.de>
- <20180604145412.ko2jduwi4qplbwyz@treble>
- <20180604225605.khmlg7pn7fnu5de6@treble>
- <20180604230226.5saxrc75vreg4n2y@treble>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180604230226.5saxrc75vreg4n2y@treble>
-X-OS: Linux d217 4.12.14-lp150.10-default x86_64
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S1751499AbeFEHlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 03:41:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,478,1520924400";
+   d="scan'208";a="56617025"
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc: wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com
+Subject: [RFC v6 0/5] virtio: support packed ring
+Date: Tue,  5 Jun 2018 15:40:41 +0800
+Message-Id: <20180605074046.20709-1-tiwei.bie@intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Josh Poimboeuf [04/06/18 18:02 -0500]:
->On Mon, Jun 04, 2018 at 05:56:05PM -0500, Josh Poimboeuf wrote:
->> On Mon, Jun 04, 2018 at 09:54:12AM -0500, Josh Poimboeuf wrote:
->> > On Mon, Jun 04, 2018 at 04:05:11PM +0200, Jessica Yu wrote:
->> > > +++ Josh Poimboeuf [04/06/18 08:16 -0500]:
->> > > > On Mon, Jun 04, 2018 at 03:01:31PM +0200, Jessica Yu wrote:
->> > > > > +++ Jessica Yu [04/06/18 11:54 +0200]:
->> > > > > > +++ Jessica Yu [04/06/18 10:05 +0200]:
->> > > > > > > +++ Josh Poimboeuf [02/06/18 12:32 -0500]:
->> > > > > > > > Hi Jessica,
->> > > > > > > >
->> > > > > > > > I found a bug:
->> > > > > > > >
->> > > > > > > > [root@f25 ~]# modprobe livepatch-sample
->> > > > > > > > [root@f25 ~]# grep ' u ' /proc/kallsyms
->> > > > > > > > ffffffff81161080 u klp_enable_patch	[livepatch_sample]
->> > > > > > > > ffffffff81a01800 u __fentry__	[livepatch_sample]
->> > > > > > > > ffffffff81161250 u klp_unregister_patch	[livepatch_sample]
->> > > > > > > > ffffffff81161870 u klp_register_patch	[livepatch_sample]
->> > > > > > > > ffffffff8131f0b0 u seq_printf	[livepatch_sample]
->> > > > > > > >
->> > > > > > > > Notice that livepatch modules' undefined symbols are showing up in
->> > > > > > > > /proc/kallsyms.  This can confuse klp_find_object_symbol() which can
->> > > > > > > > cause subtle bugs in livepatch.
->> > > > > > > >
->> > > > > > > > I stared at the module kallsyms code for a bit, but I don't see the bug.
->> > > > > > > > Maybe it has something to do with how we save the symbol table in
->> > > > > > > > copy_module_elf().  Any ideas?
->> > > > > > >
->> > > > > > > Hi Josh!
->> > > > > > >
->> > > > > > > This is because we preserve the entire symbol table for livepatch
->> > > > > > > modules, including the SHN_UNDEF symbols. IIRC, this is so that we can
->> > > > > > > still apply relocations properly with apply_relocate_add() after a
->> > > > > > > to-be-patched object is loaded. Normally we don't save these SHN_UNDEF
->> > > > > > > symbols for modules so they do not appear in /proc/kallsyms.
->> > > > > >
->> > > > > > Hm, if having the full symtab in kallsyms is causing trouble, one
->> > > > > > possibility would be to just have the module kallsyms code simply
->> > > > > > skip/ignore undef symbols. That's what we technically do for normal
->> > > > > > modules anyway (we normally cut undef syms out of the symtab). Haven't
->> > > > > > tested this idea but does that sound like it'd help?
->> > > > >
->> > > > > See if the following patch (untested) helps. It does not fix the
->> > > > > /proc/kallsyms lookup, that requires a separate patch. But it should
->> > > > > exclude the undef symbols from module_kallsyms_on_each_symbol() and
->> > > > > thus also from klp_find_object_symbol().
->> > > >
->> > > > That seems like it would work.  But wouldn't it be more robust if we
->> > > > don't store the SHN_UNDEF symbols to start with?  Really it's only the
->> > > > SHN_LIVEPATCH symbols that we need to keep, right?
->> > >
->> > > Hm, didn't we have a reason for preserving the original symbol tables?
->> > > It's not that we're storing the undef symbols on purpose, it's just
->> > > that in the case of a livepatch module we keep *all* the symbols.
->> > > IIRC, the original reasoning was that we needed to keep the original
->> > > symtab indices in place, otherwise apply_relocate() (which uses the
->> > > original symbol index encoded in the relocation) won't work.
->> > > Selectively copying only SHN_LIVEPATCH symbols when building the
->> > > module's symbol table will unfortunately mess the symbol indices up :/
->> > > Under these restrictions, it just seemed easier to make kallsyms
->> > > ignore undef symbols.
->> >
->> > Ah, you're right.  I'll try out your patch.
->>
->> I can confirm that your patch fixes the issue.  Thanks!
->
->BTW you can add my
->
->Reported-by: Josh Poimboeuf <jpoimboe@redhat.com>
->Tested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Hello everyone,
 
-Thanks for testing! Will clean up the patch and formally repost it.
-It'll be queued up in modules-next after the merge window.
+This RFC implements packed ring support in virtio driver.
 
-Thanks,
+Some functional tests have been done with Jason's
+packed ring implementation in vhost (RFC v5):
 
-Jessica
+https://lwn.net/Articles/755862/
+
+Both of ping and netperf worked as expected.
+
+TODO:
+- Refinements (for code and commit log);
+- More tests and bug fixes if any;
+- Send the formal patch set;
+
+RFC v5 -> RFC v6:
+- Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
+- Define wrap counter as bool (Jason);
+- Use ALIGN() in vring_init_packed() (Jason);
+- Avoid using pointer to track `next` in detach_buf_packed() (Jason);
+- Add comments for barriers (Jason);
+- Don't enable RING_PACKED on ccw for now (noticed by Jason);
+- Refine the memory barrier in virtqueue_poll();
+- Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
+- Remove the hacks in virtqueue_enable_cb_prepare_packed();
+
+RFC v4 -> RFC v5:
+- Save DMA addr, etc in desc state (Jason);
+- Track used wrap counter;
+
+RFC v3 -> RFC v4:
+- Make ID allocation support out-of-order (Jason);
+- Various fixes for EVENT_IDX support;
+
+RFC v2 -> RFC v3:
+- Split into small patches (Jason);
+- Add helper virtqueue_use_indirect() (Jason);
+- Just set id for the last descriptor of a list (Jason);
+- Calculate the prev in virtqueue_add_packed() (Jason);
+- Fix/improve desc suppression code (Jason/MST);
+- Refine the code layout for XXX_split/packed and wrappers (MST);
+- Fix the comments and API in uapi (MST);
+- Remove the BUG_ON() for indirect (Jason);
+- Some other refinements and bug fixes;
+
+RFC v1 -> RFC v2:
+- Add indirect descriptor support - compile test only;
+- Add event suppression supprt - compile test only;
+- Move vring_packed_init() out of uapi (Jason, MST);
+- Merge two loops into one in virtqueue_add_packed() (Jason);
+- Split vring_unmap_one() for packed ring and split ring (Jason);
+- Avoid using '%' operator (Jason);
+- Rename free_head -> next_avail_idx (Jason);
+- Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+- Some other refinements and bug fixes;
+
+Thanks!
+
+Tiwei Bie (5):
+  virtio: add packed ring definitions
+  virtio_ring: support creating packed ring
+  virtio_ring: add packed ring support
+  virtio_ring: add event idx support in packed ring
+  virtio_ring: enable packed ring
+
+ drivers/s390/virtio/virtio_ccw.c   |    8 +
+ drivers/virtio/virtio_ring.c       | 1361 ++++++++++++++++++++++------
+ include/linux/virtio_ring.h        |    8 +-
+ include/uapi/linux/virtio_config.h |    5 +-
+ include/uapi/linux/virtio_ring.h   |   36 +
+ 5 files changed, 1141 insertions(+), 277 deletions(-)
+
+-- 
+2.17.0
