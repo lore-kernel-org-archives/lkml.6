@@ -1,86 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeFEN2H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:28:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55934 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751820AbeFEN2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:28:06 -0400
-Date: Tue, 5 Jun 2018 14:28:02 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrea Parri <parri.andrea@gmail.com>
-Subject: Re: [PATCH 2/7] atomics/treewide: rework ordering barriers
-Message-ID: <20180605132802.lqkmbroqmcxergrr@lakrids.cambridge.arm.com>
-References: <20180529180746.29684-1-mark.rutland@arm.com>
- <20180529180746.29684-3-mark.rutland@arm.com>
- <20180605121623.GI12258@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605121623.GI12258@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1752067AbeFENaC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:30:02 -0400
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:37489 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbeFEN36 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 09:29:58 -0400
+X-Google-Smtp-Source: ADUXVKKacsC2CTZurrbQkuSU2tudcpeo0l5FG4FmGApmwKUxqgdOuhQE3cWBFZid4mS1hbecT8lq+w==
+From: Josef Bacik <josef@toxicpanda.com>
+To: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
+        akpm@linux-foundation.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 05/13] swap,blkcg: issue swap io with the appropriate context
+Date: Tue,  5 Jun 2018 09:29:40 -0400
+Message-Id: <20180605132948.1664-6-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180605132948.1664-1-josef@toxicpanda.com>
+References: <20180605132948.1664-1-josef@toxicpanda.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 02:16:23PM +0200, Peter Zijlstra wrote:
-> On Tue, May 29, 2018 at 07:07:41PM +0100, Mark Rutland wrote:
-> > +#ifndef __atomic_mb__after_acquire
-> > +#define __atomic_mb__after_acquire	smp_mb__after_atomic
-> > +#endif
-> > +
-> > +#ifndef __atomic_mb__before_release
-> > +#define __atomic_mb__before_release	smp_mb__before_atomic
-> > +#endif
-> > +
-> > +#ifndef __atomic_mb__before_fence
-> > +#define __atomic_mb__before_fence	smp_mb__before_atomic
-> > +#endif
-> > +
-> > +#ifndef __atomic_mb__after_fence
-> > +#define __atomic_mb__after_fence	smp_mb__after_atomic
-> > +#endif
-> 
-> I really _really_ dislike those names.. because they imply providing an
-> MB before/after something else.
-> 
-> But that is exactly what they do not.
-> 
-> How about:
-> 
-> 	__atomic_acquire_fence
-> 	__atomic_release_fence
->
-> for the acquire/release things,
+From: Tejun Heo <tj@kernel.org>
 
-Sure, those sound fine to me.
+For backcharging we need to know who the page belongs to when swapping
+it out.
 
-> and simply using smp_mb__{before,after}_atomic for the full fence, its
-> exactly what they were made for.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Josef Bacik <jbacik@fb.com>
+---
+ block/bio.c         | 24 ++++++++++++++++++++++++
+ include/linux/bio.h |  7 +++++++
+ mm/page_io.c        |  1 +
+ 3 files changed, 32 insertions(+)
 
-The snag is arch/alpha, whare we have:
-
-/*
- * To ensure dependency ordering is preserved for the _relaxed and
- * _release atomics, an smp_read_barrier_depends() is unconditionally
- * inserted into the _relaxed variants, which are used to build the
- * barriered versions. To avoid redundant back-to-back fences, we can
- * define the _acquire and _fence versions explicitly.
- */
-#define __atomic_op_acquire(op, args...)        op##_relaxed(args)
-#define __atomic_op_fence                       __atomic_op_release
-
-... where alpha's smp_read_barrier_depends() is the same as
-smp_mb_after_atomic().
-
-Since alpha's non-value-returning atomics do not have the
-smp_read_barrier_depends(), I can't just define an empty
-smp_mb_after_atomic().
-
-Thoughts?
-
-Thanks,
-Mark.
+diff --git a/block/bio.c b/block/bio.c
+index 57c4b1986e76..c77fe1b4caa8 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -2005,6 +2005,30 @@ EXPORT_SYMBOL(bioset_create);
+ 
+ #ifdef CONFIG_BLK_CGROUP
+ 
++#ifdef CONFIG_MEMCG
++/**
++ * bio_associate_blkcg_from_page - associate a bio with the page's blkcg
++ * @bio: target bio
++ * @page: the page to lookup the blkcg from
++ *
++ * Associate @bio with the blkcg from @page's owning memcg.  This works like
++ * every other associate function wrt references.
++ */
++int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
++{
++	struct cgroup_subsys_state *blkcg_css;
++
++	if (unlikely(bio->bi_css))
++		return -EBUSY;
++	if (!page->mem_cgroup)
++		return 0;
++	blkcg_css = cgroup_get_e_css(page->mem_cgroup->css.cgroup,
++				     &io_cgrp_subsys);
++	bio->bi_css = blkcg_css;
++	return 0;
++}
++#endif /* CONFIG_MEMCG */
++
+ /**
+  * bio_associate_blkcg - associate a bio with the specified blkcg
+  * @bio: target bio
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index f2f3f1428e81..eef1e8877048 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -545,6 +545,13 @@ do {						\
+ #define bio_dev(bio) \
+ 	disk_devt((bio)->bi_disk)
+ 
++#if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
++int bio_associate_blkcg_from_page(struct bio *bio, struct page *page);
++#else
++static inline int bio_associate_blkcg_from_page(struct bio *bio,
++						struct page *page) {  return 0; }
++#endif
++
+ #ifdef CONFIG_BLK_CGROUP
+ int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css);
+ int bio_associate_blkg(struct bio *bio, struct blkcg_gq *blkg);
+diff --git a/mm/page_io.c b/mm/page_io.c
+index a552cb37e220..aafd19ec1db4 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -339,6 +339,7 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+ 		goto out;
+ 	}
+ 	bio->bi_opf = REQ_OP_WRITE | REQ_SWAP | wbc_to_write_flags(wbc);
++	bio_associate_blkcg_from_page(bio, page);
+ 	count_swpout_vm_event(page);
+ 	set_page_writeback(page);
+ 	unlock_page(page);
+-- 
+2.14.3
