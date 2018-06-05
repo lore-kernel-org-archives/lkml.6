@@ -1,57 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752146AbeFEOKA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:10:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56474 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751654AbeFEOJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:09:58 -0400
-Date: Tue, 5 Jun 2018 15:09:54 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-Message-ID: <20180605140954.GF12193@e108498-lin.cambridge.arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
- <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
- <CAKfTPtBduambCpfeNHuaqnayUoB8J224LDHcdG9EjH8kpJApnQ@mail.gmail.com>
- <20180605131224.GC12193@e108498-lin.cambridge.arm.com>
- <CAKfTPtCMzZK2QdOqWzFQZTPav1Gk99ujWGbWJYkKKPAMxijmiQ@mail.gmail.com>
- <20180605135215.GD12193@e108498-lin.cambridge.arm.com>
- <CAKfTPtBW2um0o4cdS-j_9FZ_OK9hL1F=fBuQ9a9Bsdc40LiHTA@mail.gmail.com>
+        id S1752241AbeFEOKS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:10:18 -0400
+Received: from mga11.intel.com ([192.55.52.93]:31170 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752051AbeFEOJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 10:09:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,478,1520924400";
+   d="scan'208";a="53983663"
+Subject: Re: [PATCH] perf tools: Fix object code reading for PTI entry
+ trampolines
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+References: <1528183800-21577-1-git-send-email-adrian.hunter@intel.com>
+ <20180605134142.GE4899@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <00606a96-4e6b-6c98-c560-db722f4cd865@intel.com>
+Date: Tue, 5 Jun 2018 17:08:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtBW2um0o4cdS-j_9FZ_OK9hL1F=fBuQ9a9Bsdc40LiHTA@mail.gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180605134142.GE4899@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 05 Jun 2018 at 15:55:43 (+0200), Vincent Guittot wrote:
-> On 5 June 2018 at 15:52, Quentin Perret <quentin.perret@arm.com> wrote:
-> > On Tuesday 05 Jun 2018 at 15:18:38 (+0200), Vincent Guittot wrote:
-> >> On 5 June 2018 at 15:12, Quentin Perret <quentin.perret@arm.com> wrote:
-> >> I would say no because when one will decrease the other one will not
-> >> increase at the same pace and we will have some wrong behavior or
-> >> decision
-> >
-> > I think I get your point. Yes, sometimes, the slow-moving rt_avg can be
-> > off a little bit (which can be good or bad, depending in the case) if your
-> > RT task runs a lot with very changing behaviour. And again, I'm not
-> > fundamentally against the idea of having extra complexity for RT/IRQ PELT
-> > signals _if_ we have a use-case. But is there a real use-case where we
-> > really need all of that ? That's a true question, I honestly don't have
-> > the answer :-)
+On 05/06/18 16:41, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Jun 05, 2018 at 10:30:00AM +0300, Adrian Hunter escreveu:
+>> Fix object code reading and the "Object code reading" test for PTI entry
+>> trampolines.
+>>
+>> perf tools uses map__rip_2objdump() to calculate objdump virtual addresses.
+>> map__rip_2objdump() needs to be amended to deal with PTI entry trampolines.
+>> Also the "Object code reading" test will not create maps for the PTI entry
+>> trampolines unless the machine environment exists to show that the arch is
+>> x86_64.
 > 
-> The iperf test result is another example of the benefit
+> So, I split it into two patches, right at the "Also" part in your
+> description:
+> 
+> [acme@seventh perf]$ git log --oneline -2
+> 36800a71b000 (HEAD -> perf/core) perf map: Consider PTI entry trampolines in rip_2objdump()
+> 2f6777b74f6d perf test code-reading: Fix perf_env setup for PTI entry trampolines
+> [acme@seventh perf]$
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/log/?h=perf/core
+> 
+> And this test fails way less often, but still does, for instance:
+> 
+> # while true ; do perf test -v object 2>out.txt ; grep -i fail out.txt && break ; done
+> dso__data_read_offset failed
+> Object code reading: FAILED!
+> #
+> [root@seventh ~]# tail out.txt 
+> File is: /proc/kcore
+> On file address is: 0x7fff892300df
+> kcore map tested already - skipping
+> Reading object code for memory address: 0x4a020f
+> File is: /home/acme/bin/perf (deleted)
+> On file address is: 0xa020f
+> dso__data_read_offset failed
+> test child finished with -1
+> ---- end ----
+> Object code reading: FAILED!
+> [root@seventh ~]#
+> 
+> I start that loop and then try running 'make -C tools/perf O=/tmp/build/perf install-bin',
+> to generate some load.
 
-The iperf test result ? The sysbench test you mean ?
+So is it related to the "deleted" in "File is: /home/acme/bin/perf (deleted)"?
+
+> 
+> But now at least on a quiet system it works.
+> 
+> - Arnaldo
+> 
