@@ -1,55 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751852AbeFES2s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:28:48 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:40746 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751769AbeFES2q (ORCPT
+        id S1751912AbeFES3Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:29:25 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39585 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751769AbeFES3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:28:46 -0400
-Date: Tue, 05 Jun 2018 14:28:40 -0400 (EDT)
-Message-Id: <20180605.142840.2277897500494503602.davem@davemloft.net>
-To: tom.hromatka@oracle.com
-Cc: sparclinux@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, shuah@kernel.org,
-        linux-kselftest@vger.kernel.org, allen.pais@oracle.com,
-        khalid.aziz@oracle.com, shannon.nelson@oracle.com,
-        anthony.yznaga@oracle.com
-Subject: Re: [PATCH v6 0/2] sparc64: Add privileged ADI driver
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180426165409.716764-1-tom.hromatka@oracle.com>
-References: <20180426165409.716764-1-tom.hromatka@oracle.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 5 Jun 2018 14:29:23 -0400
+X-Google-Smtp-Source: ADUXVKJTzYZujJ6As9UAzwhgNl9FbtnLuiYouhf+Qpgfqgazpxa1zjYrk7iR36yYpkBKuxvz2/+AFw==
+Date: Tue, 5 Jun 2018 11:29:19 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] Input: cros_ec_keyb - Switch to SPDX identifier.
+Message-ID: <20180605182919.GF202428@dtor-ws>
+References: <20180605175429.9072-1-enric.balletbo@collabora.com>
+ <20180605175429.9072-6-enric.balletbo@collabora.com>
+ <CAOMZO5ByhMV9_gRHLmGiSNJtCvKEOk==ZMz2O2=tokZh2ps4xg@mail.gmail.com>
+ <7085d0bb-557c-0796-d3ae-756e000a7950@collabora.com>
+ <CAOMZO5Cod=jo5gC1ibQx5ZHU5xtUZDvfZt899=nPLgH4bhy+_g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOMZO5Cod=jo5gC1ibQx5ZHU5xtUZDvfZt899=nPLgH4bhy+_g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Hromatka <tom.hromatka@oracle.com>
-Date: Thu, 26 Apr 2018 10:54:07 -0600
-
-> ADI is a feature supported on SPARC M7 and newer processors to allow
-> hardware to catch rogue accesses to memory. ADI is supported for data
-> fetches only and not instruction fetches. An app can enable ADI on its
-> data pages, set version tags on them and use versioned addresses to
-> access the data pages. Upper bits of the address contain the version
-> tag. On M7 processors, upper four bits (bits 63-60) contain the version
-> tag. If a rogue app attempts to access ADI enabled data pages, its
-> access is blocked and processor generates an exception. Please see
-> Documentation/sparc/adi.txt for further details.
+On Tue, Jun 05, 2018 at 03:16:40PM -0300, Fabio Estevam wrote:
+> Hi Enric,
 > 
-> This patchset implements a char driver to read/write ADI versions from
-> privileged user space processes.  Intended consumers are makedumpfile
-> and crash.
+> On Tue, Jun 5, 2018 at 3:14 PM, Enric Balletbo i Serra
+> <enric.balletbo@collabora.com> wrote:
+> 
+> > Right, but the module license is set to GPL which means GNU Public License v2 or
+> > later, see [1]. So, there is a mismatch. In such cases I assumed GPL-2.0+ as the
+> > default. These mismatches are common so I think that should be fine for the
+> > authors, if someone is disagree just let me know and I will change.
+> 
+> Ok, but I think you should add this explanation in the commit log to
+> make it clearer.
 
-Series applied, but there is one thing I am not happy with.
+If there is a conflict between the license notice and MODULE_LICENSE()
+we should go by the license notice. The license note is usually approved
+by companies, whereas MIODULE_LICENSE()s get moved, adjusted, etc.
 
-The hard coded ADI block size.
+For ChromeOS kernel changes license notice is GPL v2 as documented at:
 
-This value is at least theoretically dynamic, and that is why
-it is passed into userspace programs via the ELF AUX vector
-at exec() time.
+https://www.chromium.org/chromium-os/how-tos-and-troubleshooting/kernel-faq
 
-So they should really fetch it from there.
+section "Which copyright header should I use?"
+
+Thanks.
+
+-- 
+Dmitry
