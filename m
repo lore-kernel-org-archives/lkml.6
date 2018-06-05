@@ -1,123 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751919AbeFEPaJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:30:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48368 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751833AbeFEPaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:30:08 -0400
-Date: Tue, 5 Jun 2018 10:30:03 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: kbuild test robot <lkp@intel.com>,
-        Michal Januszewski <spock@gentoo.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        kbuild-all@01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: include/linux/string.h:246:9: warning: '__builtin_strncpy'
- output truncated before terminating nul copying 4 bytes from a string of the
- same length
-Message-ID: <20180605153003.epf37ivdbewv256i@treble>
-References: <201805290939.AjijeyJf%fengguang.wu@intel.com>
- <CAHp75Ve-OjbeVjWUGkXbyh-PXn8L12Sb56EBq-n5z5sicUh7Sg@mail.gmail.com>
+        id S1751978AbeFEPbL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:31:11 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38277 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751759AbeFEPbJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:31:09 -0400
+X-Google-Smtp-Source: ADUXVKIdruyU0Tg8n11r4b0tHt4M6b4TQ+OjR9z5ddcBGn/v3C5gDEzfLHHIfj4XEdeddPMqYNMa2w==
+Date: Tue, 5 Jun 2018 17:31:05 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
+Message-ID: <20180605153105.GM16081@localhost.localdomain>
+References: <20180604160600.22052-1-patrick.bellasi@arm.com>
+ <20180604160600.22052-3-patrick.bellasi@arm.com>
+ <CAKfTPtD8RDxT=-oO2VYJRbtwoEyEKEAau-Ad-bAd8L2T2zKWEg@mail.gmail.com>
+ <20180605151129.GC32302@e110439-lin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75Ve-OjbeVjWUGkXbyh-PXn8L12Sb56EBq-n5z5sicUh7Sg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180605151129.GC32302@e110439-lin>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 06:19:07PM +0300, Andy Shevchenko wrote:
-> On Tue, May 29, 2018 at 4:35 AM, kbuild test robot <lkp@intel.com> wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > head:   786b71f5b754273ccef6d9462e52062b3e1f9877
-> > commit: 854e55ad289ef8888e7991f0ada85d5846f5afb9 objtool, perf: Fix GCC 8 -Wrestrict error
-> > date:   2 months ago
-> > config: x86_64-randconfig-s4-05290856 (attached as .config)
-> > compiler: gcc-8 (Debian 8.1.0-3) 8.1.0
-> > reproduce:
-> >         git checkout 854e55ad289ef8888e7991f0ada85d5846f5afb9
-> >         # save the attached .config to linux build tree
-> >         make ARCH=x86_64
-> >
-> 
-> I guess it's easy to fix by
-> 
-> --- a/drivers/video/fbdev/uvesafb.c
-> +++ b/drivers/video/fbdev/uvesafb.c
-> @@ -422,7 +422,7 @@ static int uvesafb_vbe_getinfo(struct uvesafb_ktask *task,
->        task->t.flags = TF_VBEIB;
->        task->t.buf_len = sizeof(struct vbe_ib);
->        task->buf = &par->vbe_ib;
-> -       strncpy(par->vbe_ib.vbe_signature, "VBE2", 4);
-> +       snprintf(par->vbe_ib.vbe_signature,
-> sizeof(par->vbe_ib.vbe_signature), "VBE2");
-> 
-> The question is do we want this to just shut up a compiler? It's
-> obviously false positive.
+On 05/06/18 16:11, Patrick Bellasi wrote:
 
-What about just changing it to a memcpy?  Seems like that would be
-cleaner anyway, since the whole point of strncpy is to add the
-terminating NULL, which isn't need here.
+[...]
 
+> If I run an experiment with your example above, while using the
+> performance governor to rule out any possible scale invariance
+> difference, here is what I measure:
 > 
-> > All warnings (new ones prefixed by >>):
-> >
-> >    In file included from include/linux/bitmap.h:9,
-> >                     from include/linux/cpumask.h:12,
-> >                     from arch/x86/include/asm/cpumask.h:5,
-> >                     from arch/x86/include/asm/msr.h:11,
-> >                     from arch/x86/include/asm/processor.h:21,
-> >                     from arch/x86/include/asm/cpufeature.h:5,
-> >                     from arch/x86/include/asm/thread_info.h:53,
-> >                     from include/linux/thread_info.h:38,
-> >                     from arch/x86/include/asm/preempt.h:7,
-> >                     from include/linux/preempt.h:81,
-> >                     from include/linux/spinlock.h:51,
-> >                     from include/linux/seqlock.h:36,
-> >                     from include/linux/time.h:6,
-> >                     from include/linux/stat.h:19,
-> >                     from include/linux/module.h:10,
-> >                     from drivers/video/fbdev/uvesafb.c:12:
-> >    In function 'strncpy',
-> >        inlined from 'uvesafb_vbe_getinfo' at drivers/video/fbdev/uvesafb.c:425:2:
-> >>> include/linux/string.h:246:9: warning: '__builtin_strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]
-> >      return __builtin_strncpy(p, q, size);
-> >             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > vim +/__builtin_strncpy +246 include/linux/string.h
-> >
-> > 6974f0c4 Daniel Micay 2017-07-12  237
-> > 6974f0c4 Daniel Micay 2017-07-12  238  #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
-> > 6974f0c4 Daniel Micay 2017-07-12  239  __FORTIFY_INLINE char *strncpy(char *p, const char *q, __kernel_size_t size)
-> > 6974f0c4 Daniel Micay 2017-07-12  240  {
-> > 6974f0c4 Daniel Micay 2017-07-12  241   size_t p_size = __builtin_object_size(p, 0);
-> > 6974f0c4 Daniel Micay 2017-07-12  242   if (__builtin_constant_p(size) && p_size < size)
-> > 6974f0c4 Daniel Micay 2017-07-12  243           __write_overflow();
-> > 6974f0c4 Daniel Micay 2017-07-12  244   if (p_size < size)
-> > 6974f0c4 Daniel Micay 2017-07-12  245           fortify_panic(__func__);
-> > 6974f0c4 Daniel Micay 2017-07-12 @246   return __builtin_strncpy(p, q, size);
-> > 6974f0c4 Daniel Micay 2017-07-12  247  }
-> > 6974f0c4 Daniel Micay 2017-07-12  248
-> >
-> > :::::: The code at line 246 was first introduced by commit
-> > :::::: 6974f0c4555e285ab217cee58b6e874f776ff409 include/linux/string.h: add the option of fortified string.h functions
-> >
-> > :::::: TO: Daniel Micay <danielmicay@gmail.com>
-> > :::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-> >
-> > ---
-> > 0-DAY kernel test infrastructure                Open Source Technology Center
-> > https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>    Task1 (40ms delayed by the following Task2):
+>                                mean          std     max
+>       running_avg        455.387449    22.940168   492.0
+>       util_avg           433.233288    17.395477   458.0
 > 
+>    Task2 (waking up at same time of Task1 and running before):
+>                                mean          std     max
+>       running_avg        430.281834    22.405175   455.0
+>       util_avg           421.745331    22.098873   456.0
 > 
+> and if I compare Task1 above with another experiment where Task1 is
+> running alone:
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+>    Task1 (running alone):
+>                                mean          std     min
+>       running_avg        460.257895    22.103704   460.0
+>       util_avg           435.119737    17.647556   461.0
 
--- 
-Josh
+Wait, why again in this last case running_avg != util_avg? :)
