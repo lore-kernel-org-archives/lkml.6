@@ -1,60 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751547AbeFEEp6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 00:45:58 -0400
-Received: from muru.com ([72.249.23.125]:46070 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751320AbeFEEp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 00:45:57 -0400
-Date: Mon, 4 Jun 2018 21:45:54 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Maciej Purski <m.purski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        Carlos Hernandez <ceh@ti.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: Regression in Linux next again
-Message-ID: <20180605044554.GC5738@atomide.com>
-References: <20180530144505.GB5705@atomide.com>
- <CGME20180604135952eucas1p292f7bcec405e6a1a6261031df36cad32@eucas1p2.samsung.com>
- <1528120764-14316-1-git-send-email-m.purski@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528120764-14316-1-git-send-email-m.purski@samsung.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1751507AbeFEEvD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 00:51:03 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45849 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750788AbeFEEvC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 00:51:02 -0400
+X-Google-Smtp-Source: ADUXVKK/snK9reGVhPIBr1AdkJEorcQnQxFBvosPHFOY3cbnCUuzaZVNsBNw2YTqDOD5u+74LkYBMw==
+From: Alexandre Courbot <acourbot@chromium.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: [PATCH] media: venus: keep resolution when adjusting format
+Date: Tue,  5 Jun 2018 13:50:46 +0900
+Message-Id: <20180605045046.200011-1-acourbot@chromium.org>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+When checking a format for validity, the resolution is reset to 1280x720
+whenever the pixel format is not supported. This behavior can mislead
+user-space into believing that this is the only resolution supported,
+and looks strange considering that if we try/set the same format with
+just the pixel format changed to a valid one, the call will this time
+succeed without altering the resolution.
 
-* Maciej Purski <m.purski@samsung.com> [180604 14:02]:
-> Tony, please apply this patchset and test it on your Beaglebone. It'd be
-> great if you could try to find out, which patch causes failure. They should
-> be appliable on the current next.
+Resolution is managed independently of the pixel format, so remove this
+reset.
 
-It seems beagle-x15 boots for me except with the last patch in the
-series with compile issue fixed. With that applied after modules
-get loaded it just hangs with:
+Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+---
+ drivers/media/platform/qcom/venus/vdec.c | 2 --
+ drivers/media/platform/qcom/venus/venc.c | 2 --
+ 2 files changed, 4 deletions(-)
 
-[   25.925607] regulator_resolve_supply: 1608
-[   25.930620] regulator_resolve_supply: 1608
-[   26.098449] lib80211: common routines for IEEE802.11 drivers
-[   26.446713] cfg80211: Loading compiled-in X.509 certificates for regulatory database
-[   26.514834] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[   26.525311] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
-[   26.534250] cfg80211: failed to load regulatory.db
-[   26.998736] regulator_set_voltage: 3381
-[   27.007662] _regulator_do_set_voltage: 2913
-[   27.012593] regulator_set_voltage: 3381
-[   27.016969] _regulator_do_set_voltage: 2913
-[   27.022847] regulator_set_voltage: 3381
-
-Not sure what module gets loaded at that point, I'll test again
-with initcall_debug once you post a compiling version of your last
-patch.
-
-Regards,
-
-Tony
+diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+index 49bbd1861d3a..f89a91d43cc9 100644
+--- a/drivers/media/platform/qcom/venus/vdec.c
++++ b/drivers/media/platform/qcom/venus/vdec.c
+@@ -173,8 +173,6 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 		else
+ 			return NULL;
+ 		fmt = find_format(inst, pixmp->pixelformat, f->type);
+-		pixmp->width = 1280;
+-		pixmp->height = 720;
+ 	}
+ 
+ 	pixmp->width = clamp(pixmp->width, inst->cap_width.min,
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index 6b2ce479584e..11dafc7848c5 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -297,8 +297,6 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+ 		else
+ 			return NULL;
+ 		fmt = find_format(inst, pixmp->pixelformat, f->type);
+-		pixmp->width = 1280;
+-		pixmp->height = 720;
+ 	}
+ 
+ 	pixmp->width = clamp(pixmp->width, inst->cap_width.min,
+-- 
+2.17.1.1185.g55be947832-goog
