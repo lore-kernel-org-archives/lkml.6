@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752909AbeFEVMd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:12:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:33428 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752318AbeFEVHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:07:38 -0400
+        id S1752778AbeFEVN1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:13:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33310 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751989AbeFEVHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:07:34 -0400
 From: Kim Phillips <kim.phillips@arm.com>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>,
@@ -31,9 +31,9 @@ Cc: Leo Yan <leo.yan@linaro.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Kim Phillips <kim.phillips@arm.com>
-Subject: [PATCH v4 04/14] coresight: export coresight_timeout and etm_perf_symlink
-Date: Tue,  5 Jun 2018 16:07:00 -0500
-Message-Id: <20180605210710.22227-5-kim.phillips@arm.com>
+Subject: [PATCH v4 01/14] coresight: cpu_debug: minor module fixups
+Date: Tue,  5 Jun 2018 16:06:57 -0500
+Message-Id: <20180605210710.22227-2-kim.phillips@arm.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180605210710.22227-1-kim.phillips@arm.com>
 References: <20180605210710.22227-1-kim.phillips@arm.com>
@@ -41,12 +41,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export these symbols for use by other coresight components,
-so they can be built as modules.
-
-coresight_timeout is used by the coresight stm, etm4x, tmc,
-tpiu, and etb10 modules, and etm_perf_symlink is needed by
-the etm3x/4x modules.
+ - provide the name of the module in the Kconfig help section
+ - define a MODULE_DEVICE_TABLE in order to be autoloaded on boot
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>
@@ -57,33 +53,34 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-etm-perf.c | 1 +
- drivers/hwtracing/coresight/coresight.c          | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/hwtracing/coresight/Kconfig               | 3 +++
+ drivers/hwtracing/coresight/coresight-cpu-debug.c | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 677695635211..0fe7e43ea1c4 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -466,6 +466,7 @@ int etm_perf_symlink(struct coresight_device *csdev, bool link)
+diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+index ef9cb3c164e1..d1209f5acf76 100644
+--- a/drivers/hwtracing/coresight/Kconfig
++++ b/drivers/hwtracing/coresight/Kconfig
+@@ -103,4 +103,7 @@ config CORESIGHT_CPU_DEBUG
+ 	  properly, please refer Documentation/trace/coresight-cpu-debug.txt
+ 	  for detailed description and the example for usage.
  
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(etm_perf_symlink);
++	  To compile this driver as a module, choose M here: the
++	  module will be called coresight-cpu-debug.
++
+ endif
+diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+index 45b2460f3166..1efe9626eb6c 100644
+--- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
++++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+@@ -671,6 +671,8 @@ static const struct amba_id debug_ids[] = {
+ 	{ 0, 0 },
+ };
  
- static int __init etm_perf_init(void)
- {
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 0cbc2948defc..338f1719641c 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -933,6 +933,7 @@ int coresight_timeout(void __iomem *addr, u32 offset, int position, int value)
- 
- 	return -EAGAIN;
- }
-+EXPORT_SYMBOL_GPL(coresight_timeout);
- 
- struct bus_type coresight_bustype = {
- 	.name	= "coresight",
++MODULE_DEVICE_TABLE(amba, debug_ids);
++
+ static struct amba_driver debug_driver = {
+ 	.drv = {
+ 		.name   = "coresight-cpu-debug",
 -- 
 2.17.0
