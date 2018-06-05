@@ -1,95 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeFESoC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:44:02 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43039 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeFESoA (ORCPT
+        id S1752010AbeFESoz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:44:55 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:48968 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751886AbeFESov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:44:00 -0400
-X-Google-Smtp-Source: ADUXVKLEk+dm859FweHmlsjDn4c55D9tauTBOFbb4h8vUggG1sEQbaOdTLcsT1i3mvunsi0HMs0uqN32RPtVWiO/zFQ=
+        Tue, 5 Jun 2018 14:44:51 -0400
+X-AuditID: 0a3aad16-bcfff70000000413-16-5b16da1a1985
+From: Mark Jonas <mark.jonas@de.bosch.com>
+To: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+CC: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <hs@denx.de>, <yi.zhu5@cn.bosch.com>,
+        Mark Jonas <mark.jonas@de.bosch.com>
+Subject: [PATCH 0/5] can: enable multi-queue for SocketCAN devices
+Date: Tue, 5 Jun 2018 20:43:55 +0200
+Message-ID: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180605181526.GA214655@decatoncale.mtv.corp.google.com>
-References: <20180605175429.9072-1-enric.balletbo@collabora.com>
- <20180605175429.9072-8-enric.balletbo@collabora.com> <20180605181526.GA214655@decatoncale.mtv.corp.google.com>
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Tue, 5 Jun 2018 11:43:58 -0700
-Message-ID: <CAKdAkRT44w1-pEndznkJpvA5L4fweq1NSAeBrSu6LFLw6L3eHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] extcon: usbc-cros-ec: Switch to SPDX identifier.
-To: Benson Leung <bleung@google.com>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Brightmail-Tracker: H4sIAAAAAAAAA22SX0wTWRjFuZ1hOjSMGaZQPwroZtQXglgBQ6OiBh+2iVmzIdkH5WF3kIE2
+        0oIzBYH4UBXUKlkFV3e3IjYsRsWAQLZsARWpRsBE0aoJ4B+MKQYRjVDRmmBwxoLtw7593zn3
+        d0/uySUx5rRSS5osVl6wcEUsocJV61uSVmtHNbm6+f2r9O6nY5i++dMpTP+wu57QX2n8A9ff
+        dmr05593RW4hDA2OAdww7X2CDMe/6Az+jmU/4ztVG/P5IlMZL6zZ9JvKeNF2GCuZW1Hu7zyO
+        bOh+/FEURQKdAe+cfuIoUpEM/ZcCWvs7lcHlGoI/bzSh4NKJYKbOjmSEoJNhZMCNyXMs/Quc
+        GT+Ey4cw+hKC8Qt3FbKhprOh+u1lpTzj9Epo73qDyzNF/wiBBx0omL0MRu7ZsaAeA4N/+76d
+        wWiAvokJ7ASiHGGWI8xyIkUzihNNujJzmk6flirk8WKlbm3qrmJzBwo2p3Gjg335HkSTiI2m
+        pvo0uUwkVyZWmD1oHalg46iURklaklecX2HkROOvQmkRL7JaCkVERDDq77JYmmc2iaKp2OJB
+        QGJsLMV5JY7K5yoqeaE4iHlQAomzSynflvc7GbqQs/K7eb6EFxbdDSTJAmUYkcAYgS/kywtM
+        RdZFm00KZmrCnfBYBRnlQelktJQdNyxniyWcWTQVLuDxQZxZVEPoHZSpXUrhciwtu8ZSy/dU
+        bSJ1djA2l4kLM0LkJHqEpN7UlE8OjJY+ZSgPKLe6fgcTsyCGoDSnxNAzFNQ2sDA9lgHzPdvg
+        +qEd0HBAALevDkGDexZBbdVLDEYDVTgEbCdxaPU+w6G3/UCkpLVFgrfboYRjvTdJqOo/FwUD
+        df1RMGv7VwVT/xyh4IjHRUHN61YaAo+dMVBjr2ZgaHxGAx2nRuPhQ09zgnxLAvgnXEnQHrgl
+        fTD7i+Uw+2L2B6i52sZOSj0qpB5flavlHq2c9X96XFBDD9PaUJsx+3ST1VXvyPkJvUvkNw1Z
+        LVkBNzP8yjudwBrLss8cc+UWnphLyVs1tbl0697Mh53pQ3xsre3pNvdk2jCRcVb3JnX7vkll
+        FirI7G1x+auJmpxuIquF6NrDjc2vsC+ZG+Z1vZt9u5SfL7dfKUhKXJn8+/6UjZXrppYPpP8X
+        +MjiopFbm4wJIvcVIqrGvykEAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 11:15 AM, Benson Leung <bleung@google.com> wrote:
-> On Tue, Jun 05, 2018 at 07:54:28PM +0200, Enric Balletbo i Serra wrote:
->> Adopt the SPDX license identifier headers to ease license compliance
->> management.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->
-> Reviewed-by: Benson Leung <bleung@chromium.org>
+Upon request by Marc Kleine-Budde this patch series does not only
+contain our patch to enable enable multi-queue for SocketCAN devices
+but also a driver (Companion driver suite) which makes active use of
+this feature.
 
-It has wrong license tag, I think all ChromeOS drivers as GPL v2 only.
+The driver suite implements
+  - two CAN interfaces
+  - one generic command interfaces
+and offers a SocketCAN as well as a char device interface. The
+SocketCAN interface supports multi-queue.
 
->
->> ---
->>
->> Changes in v2:
->> - [8/9] Fixed wrong copyright year.
->>
->>  drivers/extcon/extcon-usbc-cros-ec.c | 20 +++++---------------
->>  1 file changed, 5 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
->> index 6721ab01fe7d..ef5a23e46e71 100644
->> --- a/drivers/extcon/extcon-usbc-cros-ec.c
->> +++ b/drivers/extcon/extcon-usbc-cros-ec.c
->> @@ -1,18 +1,8 @@
->> -/**
->> - * drivers/extcon/extcon-usbc-cros-ec - ChromeOS Embedded Controller extcon
->> - *
->> - * Copyright (C) 2017 Google, Inc
->> - * Author: Benson Leung <bleung@chromium.org>
->> - *
->> - * This software is licensed under the terms of the GNU General Public
->> - * License version 2, as published by the Free Software Foundation, and
->> - * may be copied, distributed, and modified under those terms.
->> - *
->> - * This program is distributed in the hope that it will be useful,
->> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> - * GNU General Public License for more details.
->> - */
->> +// SPDX-License-Identifier: GPL-2.0+
->> +// ChromeOS Embedded Controller extcon
->> +//
->> +// Copyright (C) 2017 Google, Inc.
->> +// Author: Benson Leung <bleung@chromium.org>
->>
->>  #include <linux/extcon-provider.h>
->>  #include <linux/kernel.h>
->> --
->> 2.17.1
->>
->
-> --
-> Benson Leung
-> Staff Software Engineer
-> Chrome OS Kernel
-> Google Inc.
-> bleung@google.com
-> Chromium OS Project
-> bleung@chromium.org
+The functionality bases on an external peripheral chip named Companion.
+It offers two CAN interfaces, each has 8 prioritized transmit FIFOs as
+well as one receive FIFO. Besides CAN, undisclosed additional functions
+can be accessed through the char device.
 
+A standard SPI interface with two additional lines for flow control is
+used. The Companion chip is the SPI slave.
 
+The driver suite consists of three separate drivers. The following
+diagram illustrates the dependencies in layers.
+
+           /dev/companion       SocketCAN                User Space
+-------------------------------------------------------------------
+         +----------------+ +---------------+
+         | companion-char | | companion-can |
+         +----------------+ +---------------+
+         +----------------------------------+
+         |          companion-spi           |
+         +----------------------------------+
+         +----------------------------------+
+         |     standard SPI subsystem       |
+         +----------------------------------+          Linux Kernel
+-------------------------------------------------------------------
+               | | | |      | |                            Hardware
+            CS-+ | | |      | +-BUSY
+            CLK--+ | |      +---REQUEST
+            MOSI---+ |
+            MISO-----+
+
+companion-spi
+   core.c: handles SPI, sysfs entry and interface to upper layer
+   protocol-manager.c: handles protocol with the SPI HW
+   queue-manager.c: handles buffering and packets scheduling
+
+companion-can
+   makes use of multi-queue support and allows to use tc to configure
+   the queuing discipline (e.g. mqprio). Together with the SO_PRIORITY
+   socket option this allows to specify the FIFO a CAN frame shall be
+   sent to.
+
+companion-char
+   handles messages to other undisclosed functionality beyond CAN.
+
+Zhu Yi (5):
+  can: enable multi-queue for SocketCAN devices
+  spi: implement companion-spi driver
+  char: implement companion-char driver
+  can: implement companion-can driver
+  spi,can,char: add companion DT binding documentation
+
+ .../devicetree/bindings/spi/bosch,companion.txt    |   82 ++
+ drivers/char/Kconfig                               |    7 +
+ drivers/char/Makefile                              |    2 +
+ drivers/char/companion-char.c                      |  367 ++++++
+ drivers/net/can/Kconfig                            |    8 +
+ drivers/net/can/Makefile                           |    1 +
+ drivers/net/can/companion-can.c                    |  694 ++++++++++++
+ drivers/net/can/dev.c                              |    8 +-
+ drivers/spi/Kconfig                                |    2 +
+ drivers/spi/Makefile                               |    2 +
+ drivers/spi/companion/Kconfig                      |    5 +
+ drivers/spi/companion/Makefile                     |    2 +
+ drivers/spi/companion/core.c                       | 1189 ++++++++++++++++++++
+ drivers/spi/companion/protocol-manager.c           | 1035 +++++++++++++++++
+ drivers/spi/companion/protocol-manager.h           |  348 ++++++
+ drivers/spi/companion/protocol.h                   |  273 +++++
+ drivers/spi/companion/queue-manager.c              |  146 +++
+ drivers/spi/companion/queue-manager.h              |  245 ++++
+ include/linux/can/dev.h                            |    7 +-
+ include/linux/companion.h                          |  258 +++++
+ 20 files changed, 4677 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/bosch,companion.txt
+ create mode 100644 drivers/char/companion-char.c
+ create mode 100644 drivers/net/can/companion-can.c
+ create mode 100644 drivers/spi/companion/Kconfig
+ create mode 100644 drivers/spi/companion/Makefile
+ create mode 100644 drivers/spi/companion/core.c
+ create mode 100644 drivers/spi/companion/protocol-manager.c
+ create mode 100644 drivers/spi/companion/protocol-manager.h
+ create mode 100644 drivers/spi/companion/protocol.h
+ create mode 100644 drivers/spi/companion/queue-manager.c
+ create mode 100644 drivers/spi/companion/queue-manager.h
+ create mode 100644 include/linux/companion.h
 
 -- 
-Dmitry
+2.7.4
