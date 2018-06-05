@@ -1,98 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeFELnp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:43:45 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8696 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751866AbeFELnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:43:10 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Xi Wang <wangxi11@huawei.com>
-Subject: [PATCH net-next 2/3] net: hns3: Fix for VF mailbox receiving unknown message
-Date: Tue, 5 Jun 2018 12:42:00 +0100
-Message-ID: <20180605114201.29900-3-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180605114201.29900-1-salil.mehta@huawei.com>
-References: <20180605114201.29900-1-salil.mehta@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+        id S1751900AbeFELoU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:44:20 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:50607 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751819AbeFELoT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:44:19 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ludovic Barre <ludovic.barre@st.com>,
+        Rob Herring <robh@kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] irqchip/stm32: fix non-SMP build warning
+Date: Tue,  5 Jun 2018 13:43:34 +0200
+Message-Id: <20180605114347.1347128-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:6KhzIBMf76MS69gmFQuvp4KMTEktmb+ApIpuBYw4tviDx0ahOme
+ vcb2BXFtT4pmNFiKdx90jvC0YcF2xKseqEjvcp2INK98lNR4mnxXgqd2e5744SgHP9EHzFe
+ gG/UNdHlcAF9FeVS5+HBTV+V+ZiM8IfCeC5CGLfQd37WohtpO3bxJH1AvU5YgOreV5lXsRl
+ 1uV8HLzq9mZ7scTf61azw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:QU+Pqz4ZbB8=:ltzrkOP3CEU+rTY3Fylymv
+ LHTr5y7Yjibv11H+S1QUAqdM2r3TbbR0VK8QHV3Y3aMC6dEZS6BHCZ2WL4muKBNxbyBxMbR3P
+ 9MvAPJsnxlfQYiyLxtRSlnl5nO12TWqXdMcwbeY/aqMQXulHqHUCUKdvBeE+3mTV0mtzPeWa7
+ 4KraApxodNRyAhfvBboYfGPZ6E9c4z4NQX9mq7n40cKQBaiqOhXly+W9/PuyQjYtUURjjvKAS
+ T3AAHS5gXriOXy++mIGm0YeldH8E6496vYHlNe7hPeYEK4UCPgtSmekdxt2hSJdXY/fDMTFiI
+ jGmwFIDMD+sKJ2h7jL6HlKX3OfFCycefSV7zuwzBOk35DI1tTXHNgcpg58SLMfoRqK4KKZoey
+ VPbo57n2IJ7+w+eq4q3/IQEW1ZGnSTqi04HzVceNSY7QWHZ8PUsJfUTwkXtl/18josa+WPP9i
+ 8m8pow5x7PMIxOjC6gf+fRDF2Vr3IkoiAPydcQUeWtTX0FX5c9pOTSjm3FIYLzm4jpRYDez80
+ wRkewUKFijpMKzItiJj4IUY42WTYk14da7USGN6Zz6sWazLrrN6y5jV4OKyXy7LWGAYfoDT0z
+ X9hhcv7xfUpUXbCq3AnrPGeVxHn2FXkh6i/rZkkbgd5D9IsNobe+jDfvU0s9tqHJdWRk/x4Kh
+ gPEgaqFJbFNgng6snXMoQfSACD/WEVggYnSNZGGAlagUbEk3Khr5uFdx2sbw+jrUSwwU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xi Wang <wangxi11@huawei.com>
+Without CONFIG_SMP, we get a harmless compile-time warning:
 
-Before the firmware updates the crq's tail pointer, if the VF driver
-reads the data in the crq, the data may be incomplete at this time,
-which will lead to the driver read an unknown message.
+drivers/irqchip/irq-stm32-exti.c:495:12: error: 'stm32_exti_h_set_affinity' defined but not used [-Werror=unused-function]
 
-This patch fixes it by checking if crq is empty before reading the
-message.
+The #ifdef is inconsistent here, and it's better to use an IS_ENABLED() check
+that lets the compiler silently drop that function.
 
-Fixes: b11a0bb231f3 ("net: hns3: Add mailbox support to VF driver")
-Signed-off-by: Xi Wang <wangxi11@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Fixes: 927abfc4461e ("irqchip/stm32: Add stm32mp1 support with hierarchy domain")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c   | 23 +++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-stm32-exti.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
-index a286184..173ca27 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
-@@ -126,6 +126,13 @@ int hclgevf_send_mbx_msg(struct hclgevf_dev *hdev, u16 code, u16 subcode,
- 	return status;
- }
+diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+index 5089c1e2838d..3a7e8905a97e 100644
+--- a/drivers/irqchip/irq-stm32-exti.c
++++ b/drivers/irqchip/irq-stm32-exti.c
+@@ -552,9 +552,7 @@ static struct irq_chip stm32_exti_h_chip = {
+ 	.irq_set_type		= stm32_exti_h_set_type,
+ 	.irq_set_wake		= stm32_exti_h_set_wake,
+ 	.flags			= IRQCHIP_MASK_ON_SUSPEND,
+-#ifdef CONFIG_SMP
+-	.irq_set_affinity	= stm32_exti_h_set_affinity,
+-#endif
++	.irq_set_affinity	= IS_ENABLED(CONFIG_SMP) ? stm32_exti_h_set_affinity : NULL,
+ };
  
-+static bool hclgevf_cmd_crq_empty(struct hclgevf_hw *hw)
-+{
-+	u32 tail = hclgevf_read_dev(hw, HCLGEVF_NIC_CRQ_TAIL_REG);
-+
-+	return tail == hw->cmq.crq.next_to_use;
-+}
-+
- void hclgevf_mbx_handler(struct hclgevf_dev *hdev)
- {
- 	struct hclgevf_mbx_resp_status *resp;
-@@ -140,11 +147,22 @@ void hclgevf_mbx_handler(struct hclgevf_dev *hdev)
- 	resp = &hdev->mbx_resp;
- 	crq = &hdev->hw.cmq.crq;
- 
--	flag = le16_to_cpu(crq->desc[crq->next_to_use].flag);
--	while (hnae_get_bit(flag, HCLGEVF_CMDQ_RX_OUTVLD_B)) {
-+	while (!hclgevf_cmd_crq_empty(&hdev->hw)) {
- 		desc = &crq->desc[crq->next_to_use];
- 		req = (struct hclge_mbx_pf_to_vf_cmd *)desc->data;
- 
-+		flag = le16_to_cpu(crq->desc[crq->next_to_use].flag);
-+		if (unlikely(!hnae3_get_bit(flag, HCLGEVF_CMDQ_RX_OUTVLD_B))) {
-+			dev_warn(&hdev->pdev->dev,
-+				 "dropped invalid mailbox message, code = %d\n",
-+				 req->msg[0]);
-+
-+			/* dropping/not processing this invalid message */
-+			crq->desc[crq->next_to_use].flag = 0;
-+			hclge_mbx_ring_ptr_move_crq(crq);
-+			continue;
-+		}
-+
- 		/* synchronous messages are time critical and need preferential
- 		 * treatment. Therefore, we need to acknowledge all the sync
- 		 * responses as quickly as possible so that waiting tasks do not
-@@ -205,7 +223,6 @@ void hclgevf_mbx_handler(struct hclgevf_dev *hdev)
- 		}
- 		crq->desc[crq->next_to_use].flag = 0;
- 		hclge_mbx_ring_ptr_move_crq(crq);
--		flag = le16_to_cpu(crq->desc[crq->next_to_use].flag);
- 	}
- 
- 	/* Write back CMDQ_RQ header pointer, M7 need this pointer */
+ static int stm32_exti_h_domain_alloc(struct irq_domain *dm,
 -- 
-2.7.4
+2.9.0
