@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752615AbeFERDf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:03:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60474 "EHLO mail.kernel.org"
+        id S1752662AbeFERDl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751805AbeFERDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:31 -0400
+        id S1752637AbeFERDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 4.4 22/37] i2c: rcar: check master irqs before slave irqs
-Date: Tue,  5 Jun 2018 19:01:27 +0200
-Message-Id: <20180605170110.185722636@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
+        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.4 25/37] iio:kfifo_buf: check for uint overflow
+Date: Tue,  5 Jun 2018 19:01:30 +0200
+Message-Id: <20180605170110.346933218@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -32,56 +29,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Martin Kelly <mkelly@xevo.com>
 
-commit c3be0af15959e11fa535d5332ab3d7cf34abd09b upstream.
+commit 3d13de4b027d5f6276c0f9d3a264f518747d83f2 upstream.
 
-Due to the HW design, master IRQs are timing critical, so give them
-precedence over slave IRQ.
+Currently, the following causes a kernel OOPS in memcpy:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+echo 1073741825 > buffer/length
+echo 1 > buffer/enable
+
+Note that using 1073741824 instead of 1073741825 causes "write error:
+Cannot allocate memory" but no OOPS.
+
+This is because 1073741824 == 2^30 and 1073741825 == 2^30+1. Since kfifo
+rounds up to the nearest power of 2, it will actually call kmalloc with
+roundup_pow_of_two(length) * bytes_per_datum.
+
+Using length == 1073741825 and bytes_per_datum == 2, we get:
+
+kmalloc(roundup_pow_of_two(1073741825) * 2
+or kmalloc(2147483648 * 2)
+or kmalloc(4294967296)
+or kmalloc(UINT_MAX + 1)
+
+so this overflows to 0, causing kmalloc to return ZERO_SIZE_PTR and
+subsequent memcpy to fail once the device is enabled.
+
+Fix this by checking for overflow prior to allocating a kfifo. With this
+check added, the above code returns -EINVAL when enabling the buffer,
+rather than causing an OOPS.
+
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-rcar.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/iio/buffer/kfifo_buf.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -432,19 +432,17 @@ static bool rcar_i2c_slave_irq(struct rc
- static irqreturn_t rcar_i2c_irq(int irq, void *ptr)
- {
- 	struct rcar_i2c_priv *priv = ptr;
--	irqreturn_t result = IRQ_HANDLED;
- 	u32 msr;
+--- a/drivers/iio/buffer/kfifo_buf.c
++++ b/drivers/iio/buffer/kfifo_buf.c
+@@ -24,6 +24,13 @@ static inline int __iio_allocate_kfifo(s
+ 	if ((length == 0) || (bytes_per_datum == 0))
+ 		return -EINVAL;
  
--	if (rcar_i2c_slave_irq(priv))
--		goto exit;
--
- 	msr = rcar_i2c_read(priv, ICMSR);
- 
- 	/* Only handle interrupts that are currently enabled */
- 	msr &= rcar_i2c_read(priv, ICMIER);
- 	if (!msr) {
--		result = IRQ_NONE;
--		goto exit;
-+		if (rcar_i2c_slave_irq(priv))
-+			return IRQ_HANDLED;
++	/*
++	 * Make sure we don't overflow an unsigned int after kfifo rounds up to
++	 * the next power of 2.
++	 */
++	if (roundup_pow_of_two(length) > UINT_MAX / bytes_per_datum)
++		return -EINVAL;
 +
-+		return IRQ_NONE;
- 	}
- 
- 	/* Arbitration lost */
-@@ -481,8 +479,7 @@ out:
- 		wake_up(&priv->wait);
- 	}
- 
--exit:
--	return result;
-+	return IRQ_HANDLED;
+ 	return __kfifo_alloc((struct __kfifo *)&buf->kf, length,
+ 			     bytes_per_datum, GFP_KERNEL);
  }
- 
- static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
