@@ -1,83 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeFEHFz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:05:55 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41273 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbeFEHFp (ORCPT
+        id S1751870AbeFEHG3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:06:29 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:35515 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751510AbeFEHG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:05:45 -0400
-X-Google-Smtp-Source: ADUXVKLBW9PXW9iH5s0O+TUetXMsjxJFsMhvWKjxemEl6i7ppi5AUhz4PtSK4vcsWe+thuK6bTLNAQ==
-Date: Tue, 5 Jun 2018 08:05:42 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to
- PMIC_CHIP_ID_DA9063
-Message-ID: <20180605070542.GG21163@dell>
-References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
- <20180604122658.GC21163@dell>
- <3853ee6e-86a7-793e-c633-fc9c2910976f@gmail.com>
+        Tue, 5 Jun 2018 03:06:26 -0400
+X-Google-Smtp-Source: ADUXVKJFkHGx+E60HcmsbnqlqdGfLMCWgfMFZNmBHJ3rDgkXVXPpCDLyUOfrJhnp7OseVsVdkmWap0ha9dk7i7O0RCU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3853ee6e-86a7-793e-c633-fc9c2910976f@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180604162224.303870257@linutronix.de>
+References: <20180604162224.303870257@linutronix.de>
+From: Song Liu <liu.song.a23@gmail.com>
+Date: Tue, 5 Jun 2018 00:06:25 -0700
+Message-ID: <CAPhsuW60JCLpVkkJdixd1M1MNGXMwng8YwLoAF6KP_Uo3POE6g@mail.gmail.com>
+Subject: Re: [patch 1/8] x86/apic/vector: Prevent hlist corruption and leaks
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>, Joerg Roedel <jroedel@suse.de>,
+        Mike Travis <mike.travis@hpe.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 04 Jun 2018, Marek Vasut wrote:
+On Mon, Jun 4, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> Several people observed the WARN_ON() in irq_matrix_free() which triggers
+> when the caller tries to free an vector which is not in the allocation
+> range. Song provided the trace information which allowed to decode the root
+> cause.
+>
+> The rework of the vector allocation mechanism failed to preserve a sanity
+> check, which prevents setting a new target vector/CPU when the previous
+> affinity change has not fully completed.
+>
+> As a result a half finished affinity change can be overwritten, which can
+> cause the leak of a irq descriptor pointer on the previous target CPU and
+> double enqueue of the hlist head into the cleanup lists of two or more
+> CPUs. After one CPU cleaned up its vector the next CPU will invoke the
+> cleanup handler with vector 0, which triggers the out of range warning in
+> the matrix allocator.
+>
+> Prevent this by checking the apic_data of the interrupt whether the
+> move_in_progress flag is false and the hlist node is not hashed. Return
+> -EBUSY if not.
+>
+> This prevents the damage and restores the behaviour before the vector
+> allocation rework, but due to other changes in that area it also widens the
+> chance that user space can observe -EBUSY. In theory this should be fine,
+> but actually not all user space tools handle -EBUSY correctly. Addressing
+> that is not part of this fix, but will be addressed in follow up patches.
+>
+> Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
+> Reported-by: Dmitry Safonov <0x7f454c46@gmail.com>
+> Reported-by: Tariq Toukan <tariqt@mellanox.com>
+> Reported-by: Song Liu <liu.song.a23@gmail.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: stable@vger.kernel.org
 
-> On 06/04/2018 02:26 PM, Lee Jones wrote:
-> > On Sat, 02 Jun 2018, Marek Vasut wrote:
-> > 
-> >> The PMIC_DA9063 is a complete misnomer, it denotes the value of the
-> >> DA9063 chip ID register, so rename it as such. It is also the value
-> >> of chip ID register of DA9063L though, so drop the enum as all the
-> >> DA9063 "models" share the same chip ID and thus the distinction will
-> >> have to be made using DT or otherwise.
-> >>
-> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> Cc: Lee Jones <lee.jones@linaro.org>
-> >> Cc: Mark Brown <broonie@kernel.org>
-> >> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> >> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> Cc: linux-renesas-soc@vger.kernel.org
-> >> Acked-by: Mark Brown <broonie@kernel.org>
-> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> ---
-> >> V2: No change
-> >> V3: No change
-> >> ---
-> >>  drivers/mfd/da9063-core.c            | 2 +-
-> >>  drivers/mfd/da9063-i2c.c             | 2 +-
-> >>  drivers/regulator/da9063-regulator.c | 2 +-
-> >>  include/linux/mfd/da9063/core.h      | 4 +---
-> >>  4 files changed, 4 insertions(+), 6 deletions(-)
-> > 
-> > For my own reference:
-> >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> 
-> Thanks.
-> 
-> Any other comments before I submit the next round in a few days?
+Thanks Thomas!
 
-Yes, please hold off until I can complete the set.
+This patch alone fixes my test: ethtool -L in a loop.
 
-Should be done by EOD today.
+I also run the same test for the full set, and it works well.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Tested-by: Song Liu <songliubraving@fb.com>
+
+
+> ---
+>  arch/x86/kernel/apic/vector.c |    9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> --- a/arch/x86/kernel/apic/vector.c
+> +++ b/arch/x86/kernel/apic/vector.c
+> @@ -235,6 +235,15 @@ static int allocate_vector(struct irq_da
+>         if (vector && cpu_online(cpu) && cpumask_test_cpu(cpu, dest))
+>                 return 0;
+>
+> +       /*
+> +        * Careful here. @apicd might either have move_in_progress set or
+> +        * be enqueued for cleanup. Assigning a new vector would either
+> +        * leave a stale vector on some CPU around or in case of a pending
+> +        * cleanup corrupt the hlist.
+> +        */
+> +       if (apicd->move_in_progress || !hlist_unhashed(&apicd->clist))
+> +               return -EBUSY;
+> +
+>         vector = irq_matrix_alloc(vector_matrix, dest, resvd, &cpu);
+>         if (vector > 0)
+>                 apic_update_vector(irqd, vector, cpu);
+>
+>
