@@ -1,154 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751509AbeFECR4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 22:17:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43646 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751223AbeFECRy (ORCPT
+        id S1751470AbeFECV3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 22:21:29 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:56887 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751194AbeFECV2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 22:17:54 -0400
-Date: Mon, 4 Jun 2018 19:17:51 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: Chris Chiu <chiu@endlessm.com>
-Cc: corentin.chary@gmail.com, andy.shevchenko@gmail.com,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, hdegoede@redhat.com,
-        linux@endlessm.com
-Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
- on kbd brightness change
-Message-ID: <20180605021751.GD47042@localhost.localdomain>
-References: <20180604123238.82200-1-chiu@endlessm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604123238.82200-1-chiu@endlessm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Mon, 4 Jun 2018 22:21:28 -0400
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+X-Original-SENDERIP: 10.177.226.38
+X-Original-MAILFROM: hoeun.ryu@lge.com.com
+From: Hoeun Ryu <hoeun.ryu@lge.com.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Andi Kleen <ak@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>, Hoeun Ryu <hoeun.ryu@lge.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] panic: move bust_spinlocks(0) after console_flush_on_panic() to avoid deadlocks
+Date: Tue,  5 Jun 2018 11:19:13 +0900
+Message-Id: <1528165248-17914-1-git-send-email-hoeun.ryu@lge.com.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 08:32:37PM +0800, Chris Chiu wrote:
-> Make asus-wmi notify on hotkey kbd brightness changes, listen for
-> brightness events and update the brightness directly in the driver.
-> For this purpose, bound check on brightness in kbd_led_set must be
-> based on the same data type to prevent illegal value been set.
-> 
-> Update the brightness by led_classdev_notify_brightness_hw_changed.
-> This will allow userspace to monitor (poll) for brightness changes
-> on the LED without reporting via input keymapping.
-> 
-> Signed-off-by: Chris Chiu <chiu@endlessm.com>
-> ---
->  drivers/platform/x86/asus-nb-wmi.c |  2 --
->  drivers/platform/x86/asus-wmi.c    | 21 +++++++++++++++++++--
->  2 files changed, 19 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-> index 136ff2b4cce5..7ce80e4bb5a3 100644
-> --- a/drivers/platform/x86/asus-nb-wmi.c
-> +++ b/drivers/platform/x86/asus-nb-wmi.c
-> @@ -493,8 +493,6 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
->  	{ KE_KEY, 0xA6, { KEY_SWITCHVIDEOMODE } }, /* SDSP CRT + TV + HDMI */
->  	{ KE_KEY, 0xA7, { KEY_SWITCHVIDEOMODE } }, /* SDSP LCD + CRT + TV + HDMI */
->  	{ KE_KEY, 0xB5, { KEY_CALC } },
-> -	{ KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
-> -	{ KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
->  	{ KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
->  	{ KE_END, 0},
->  };
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 1f6e68f0b646..b4915b7718c1 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -460,6 +460,7 @@ static void kbd_led_update(struct work_struct *work)
->  		ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
->  
->  	asus_wmi_set_devstate(ASUS_WMI_DEVID_KBD_BACKLIGHT, ctrl_param, NULL);
-> +	led_classdev_notify_brightness_hw_changed(&asus->kbd_led, asus->kbd_led_wk);
->  }
->  
->  static int kbd_led_read(struct asus_wmi *asus, int *level, int *env)
-> @@ -497,9 +498,9 @@ static void kbd_led_set(struct led_classdev *led_cdev,
->  
->  	asus = container_of(led_cdev, struct asus_wmi, kbd_led);
->  
-> -	if (value > asus->kbd_led.max_brightness)
-> +	if ((int)value > (int)asus->kbd_led.max_brightness)
->  		value = asus->kbd_led.max_brightness;
-> -	else if (value < 0)
-> +	else if ((int)value < 0)
->  		value = 0;
->  
->  	asus->kbd_led_wk = value;
-> @@ -656,6 +657,7 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
->  
->  		asus->kbd_led_wk = led_val;
->  		asus->kbd_led.name = "asus::kbd_backlight";
-> +		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
->  		asus->kbd_led.brightness_set = kbd_led_set;
->  		asus->kbd_led.brightness_get = kbd_led_get;
->  		asus->kbd_led.max_brightness = 3;
-> @@ -1700,6 +1702,13 @@ static int is_display_toggle(int code)
->  	return 0;
->  }
->  
-> +static int is_kbd_led_event(int code)
-> +{
-> +	if (code == NOTIFY_KBD_BRTUP || code == NOTIFY_KBD_BRTDWN)
-> +		return 1;
-> +	return 0;
+From: Hoeun Ryu <hoeun.ryu@lge.com>
 
-I don't think this is worth breaking out into a separate function. This
-isn't exactly a hot path, but I don't think this makes the code any more
-readable really. The is_display_toggle was comparing 8 values in a
-complex logic statement, so we don't need to follow that for something
-this simple.
+ Many console device drivers hold the uart_port->lock spinlock with irq disabled
+(using spin_lock_irqsave()) while the device drivers are writing characters to their
+devices, but the device drivers just try to hold the spin lock (using
+spin_trylock_irqsave()) instead if "oops_in_progress" is equal or greater than 1 to
+avoid deadlocks.
 
-> +}
-> +
->  static void asus_wmi_notify(u32 value, void *context)
->  {
->  	struct asus_wmi *asus = context;
-> @@ -1745,6 +1754,14 @@ static void asus_wmi_notify(u32 value, void *context)
->  		}
->  	}
->  
-> +	if (is_kbd_led_event(code)) {
-> +		if (code == NOTIFY_KBD_BRTDWN)
+ There is a case ocurring a deadlock related to the lock and oops_in_progress. If the
+kernel lockup detector calls panic() while the device driver is holding the lock,
+it can cause a deadlock because panic() eventually calls console_unlock() and tries
+to hold the lock. Here is an example.
 
-Seems like we could eliminate the extra function and eliminate a level
-of indentation by rewriting this as:
+ CPU0
 
-	if (code == NOTIFY_KBD_BRTDWN)
-		kbd_led_set(&asus->kbd_led, asus->kbd_led_wk - 1);
-	else if (code == NOTIFY_KBD_BRTUP)
-		kbd_led_set(&asus->kbd_led, asus->kbd_led_wk + 1);
-	if (code == NOTIFY_KBD_BRTDWN || NOTIFY_KBD_BRTUP)
-		goto exit;
+ local_irq_save()
+ .
+ foo()
+ bar()
+ .						// foo() + bar() takes long time
+ printk()
+   console_unlock()
+     call_console_drivers()			// close to watchdog threshold
+       some_slow_console_device_write()		// device driver code
+         spin_lock_irqsave(uart->lock)		// acquire uart spin lock
+           slow-write()
+             watchdog_overflow_callback()	// watchdog expired and call panic()
+               panic()
+                 bust_spinlocks(0)		// now, oops_in_progress = 0
+                   console_flush_on_panic()
+                     console_unlock()
+                       call_console_drivers()
+                         some_slow_console_device_write()
+                           spin_lock_irqsave(uart->lock)
+                           ^^^^ deadlock	// we can use spin_trylock_irqsave()
 
-Or, just treat them as separate events:
+ console_flush_on_panic() is called in panic() and it eventually holds the uart
+lock but the lock is held by the preempted CPU (the same CPU in NMI context) and it is
+a deadlock.
+ By moving bust_spinlocks(0) after console_flush_on_panic(), let the console device
+drivers think the Oops is still in progress to call spin_trylock_irqsave() instead of
+spin_lock_irqsave() to avoid the deadlock.
 
+ CPU0
 
-	if (code == NOTIFY_KBD_BRTDWN) {
-		kbd_led_set(&asus->kbd_led, asus->kbd_led_wk - 1);
-		goto exit;
-	}
+ watchdog_overflow_callback()			// watchdog expired and call panic()
+   panic()
+     console_flush_on_panic()
+       console_unlock()
+         call_console_drivers()
+           some_slow_console_device_write()
+             spin_trylock_irqsave(uart->lock)	// oops_in_progress = 1
+             ^^^^ use trylock, no deadlock
+     bust_spinlocks(0)				// now, oops_in_progress = 0
 
-	if (code == NOTIFY_KBD_BRTUP) {
-		kbd_led_set(&asus->kbd_led, asus->kbd_led_wk + 1);
-		goto exit;
-	}
+Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
+---
+ v2: fix commit message on the reason of a deadlock, no code change.
 
+ kernel/panic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
->  	if (is_display_toggle(code) &&
->  	    asus->driver->quirks->no_display_toggle)
->  		goto exit;
-> -- 
-> 2.11.0
-> 
-> 
-
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 42e4874..b4063b6 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -233,8 +233,6 @@ void panic(const char *fmt, ...)
+ 	if (_crash_kexec_post_notifiers)
+ 		__crash_kexec(NULL);
+ 
+-	bust_spinlocks(0);
+-
+ 	/*
+ 	 * We may have ended up stopping the CPU holding the lock (in
+ 	 * smp_send_stop()) while still having some valuable data in the console
+@@ -246,6 +244,8 @@ void panic(const char *fmt, ...)
+ 	debug_locks_off();
+ 	console_flush_on_panic();
+ 
++	bust_spinlocks(0);
++
+ 	if (!panic_blink)
+ 		panic_blink = no_blink;
+ 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.1.4
