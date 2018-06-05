@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753813AbeFERHH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:07:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36324 "EHLO mail.kernel.org"
+        id S1753739AbeFERGq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753801AbeFERHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:07:04 -0400
+        id S1753702AbeFERGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.9 49/61] MIPS: ptrace: Fix PTRACE_PEEKUSR requests for 64-bit FGRs
-Date: Tue,  5 Jun 2018 19:02:10 +0200
-Message-Id: <20180605170120.823768977@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "dwmw@amazon.co.uk, boris.ostrovsky@oracle.com, Juergen Gross"
+        <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH 4.9 16/61] xen: set cpu capabilities from xen_start_kernel()
+Date: Tue,  5 Jun 2018 19:01:37 +0200
+Message-Id: <20180605170118.637543435@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -30,51 +32,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit c7e814628df65f424fe197dde73bfc67e4a244d7 upstream.
+Upstream commit: 0808e80cb760de2733c0527d2090ed2205a1eef8 ("xen: set
+cpu capabilities from xen_start_kernel()")
 
-Use 64-bit accesses for 64-bit floating-point general registers with
-PTRACE_PEEKUSR, removing the truncation of their upper halves in the
-FR=1 mode, caused by commit bbd426f542cb ("MIPS: Simplify FP context
-access"), which inadvertently switched them to using 32-bit accesses.
+There is no need to set the same capabilities for each cpu
+individually. This can easily be done for all cpus when starting the
+kernel.
 
-The PTRACE_POKEUSR side is fine as it's never been broken and continues
-using 64-bit accesses.
-
-Fixes: bbd426f542cb ("MIPS: Simplify FP context access")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.15+
-Patchwork: https://patchwork.linux-mips.org/patch/19334/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/mips/kernel/ptrace.c   |    2 +-
- arch/mips/kernel/ptrace32.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/xen/enlighten.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -838,7 +838,7 @@ long arch_ptrace(struct task_struct *chi
- 				break;
- 			}
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -472,6 +472,14 @@ static void __init xen_init_cpuid_mask(v
+ 		cpuid_leaf1_ecx_set_mask = (1 << (X86_FEATURE_MWAIT % 32));
+ }
+ 
++static void __init xen_init_capabilities(void)
++{
++	if (xen_pv_domain()) {
++		setup_clear_cpu_cap(X86_BUG_SYSRET_SS_ATTRS);
++		setup_force_cpu_cap(X86_FEATURE_XENPV);
++	}
++}
++
+ static void xen_set_debugreg(int reg, unsigned long val)
+ {
+ 	HYPERVISOR_set_debugreg(reg, val);
+@@ -1634,6 +1642,7 @@ asmlinkage __visible void __init xen_sta
+ 
+ 	xen_init_irq_ops();
+ 	xen_init_cpuid_mask();
++	xen_init_capabilities();
+ 
+ #ifdef CONFIG_X86_LOCAL_APIC
+ 	/*
+@@ -1978,14 +1987,6 @@ bool xen_hvm_need_lapic(void)
+ }
+ EXPORT_SYMBOL_GPL(xen_hvm_need_lapic);
+ 
+-static void xen_set_cpu_features(struct cpuinfo_x86 *c)
+-{
+-	if (xen_pv_domain()) {
+-		clear_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
+-		set_cpu_cap(c, X86_FEATURE_XENPV);
+-	}
+-}
+-
+ static void xen_pin_vcpu(int cpu)
+ {
+ 	static bool disable_pinning;
+@@ -2032,7 +2033,6 @@ const struct hypervisor_x86 x86_hyper_xe
+ 	.init_platform		= xen_hvm_guest_init,
  #endif
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -107,7 +107,7 @@ long compat_arch_ptrace(struct task_stru
- 						addr & 1);
- 				break;
- 			}
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
+ 	.x2apic_available	= xen_x2apic_para_available,
+-	.set_cpu_features       = xen_set_cpu_features,
+ 	.pin_vcpu               = xen_pin_vcpu,
+ };
+ EXPORT_SYMBOL(x86_hyper_xen);
