@@ -1,65 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeFELi4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:38:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60012 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751596AbeFELiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:38:54 -0400
-Date: Tue, 5 Jun 2018 13:38:50 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v2 06/10] vfio: ccw: Make FSM functions atomic
-Message-ID: <20180605133850.3509a3d3.cohuck@redhat.com>
-In-Reply-To: <1527243678-3140-7-git-send-email-pmorel@linux.vnet.ibm.com>
-References: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1527243678-3140-7-git-send-email-pmorel@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751865AbeFELj3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:39:29 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:52863 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751644AbeFELj1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:39:27 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,
+        Peng Li <lipeng321@huawei.com>, Fuyun Liang <liangfuyun1@huawei.com>,
+        Yunsheng Lin <linyunsheng@huawei.com>,
+        Jian Shen <shenjian15@huawei.com>, Xi Wang <wangxi11@huawei.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: hns3: remove unused hclgevf_cfg_func_mta_filter
+Date: Tue,  5 Jun 2018 13:38:21 +0200
+Message-Id: <20180605113904.1193671-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:Iez9VtF5xpSUk0xVaNPN3uwcHsRcB+ASrfN5hZ9WSxgGw5Sg9nm
+ u7+ReGD43u72apA0yhua6H103J0L7Ig7TDyQI5PzjY9xg/PRNByAKJDz36d3TeRF/1fzDc5
+ mVsK936l/3TYs7vW3qYzJFHVaekiR0UhBFBQCQZl41Kwxg8LR4vmvbpQZ+aZG94TO7fr2/1
+ k01nIeqWdiMuKNsffTKyA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:d3XsoAC7Jw4=:JwCYlinR7duiEHy/lfhUvk
+ D7/3FQrg3YNX48JV8hOFV8nTtinHGEV9X6K4yQuA/k5LWwey2rfj7gSdhztSux514aOXpEuXB
+ 6xvZjzwadvEPPt/k8jLicQaOQFMgfWXGzRPIsV7Usdbh5TKa/T4VSX7p0qk1ej1gng2t/dRKc
+ YhTGOTHfruzVEIUaiy28mkty6DTIlWBFMlHzBx8op1Ua9jNttsUyHT4MFGYe3dHr8XaaIosXk
+ XLZA+FoH3vOeTt9ZJ+qOPhUxgaf1NXaMfRqspv08iVY9DKkNee1UCT+LWHXIjbtuX5TrVYlAj
+ vS8S0V68UNdXy3OKwkVBuy1DVVZhRGk4bN8snhRX+dyz5AHoWK22ZqkHupttX4tag33sWe0X9
+ 8ILmRNg5wY7EW564DhmrhQahPzkMopxf+EpVMsMx4QLaJywn1iQ/Wurrts3VzThdZlvpJ9kG3
+ KTuGzESArtDN5GASluvypgb8ZWyrIUetQ3lk/9MMlNAJlNADgUWWqqGX5SCVXHMd3RHMdXhf3
+ UaLhAHCOJaL5AAD+aaIidP9/uJpabkZhgs7je/FskGLt/SSYa2qMYQM4qrMhP0lgxZggV3n6V
+ R4vX8Wj9OB0lh0qEDHy4KVRxQHfwwXgv40Y0rEZmZSUin98RaQ5uPcQ1DvsSF/8gVJiQ+Zcd1
+ rJCKWv78NtPOAZcigfS3ySICu2sx1Ox62oCMIIJ80WwFTRSoXS2CXkFz/L5NrXMdN2oc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 May 2018 12:21:14 +0200
-Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+The last patch apparently added a complete replacement for this
+function, but left the old one in place, which now causes a
+harmless warning:
 
-> We use mutex around the FSM function call to make the FSM
-> event handling and state change atomic.
+drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c:731:12: 'hclgevf_cfg_func_mta_filter' defined but not used
 
-I'm still not really clear as to what this mutex is supposed to
-serialize:
+I assume it can be removed.
 
-- Modification of the state?
-- Any calls in the state machine?
-- A combination? (That would imply that we only deal with the state in
-  the state machine.)
+Fixes: 3a678b5806e6 ("net: hns3: Optimize the VF's process of updating multicast MAC")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-> 
-> Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
-> ---
->  drivers/s390/cio/vfio_ccw_drv.c     | 3 +--
->  drivers/s390/cio/vfio_ccw_private.h | 3 +++
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-> index 6b7112e..98951d5 100644
-> --- a/drivers/s390/cio/vfio_ccw_drv.c
-> +++ b/drivers/s390/cio/vfio_ccw_drv.c
-> @@ -73,8 +73,6 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
->  
->  	private = container_of(work, struct vfio_ccw_private, io_work);
->  	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
-> -	if (private->mdev)
-> -		private->state = VFIO_CCW_STATE_IDLE;
-
-Looks like an unrelated change? If you want to do all state changes
-under the mutex, that should rather be moved than deleted, shouldn't it?
-
->  }
->  
->  static void vfio_ccw_sch_event_todo(struct work_struct *work)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index dd8e8e6718dc..bc8a5760d959 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -728,17 +728,6 @@ static void hclgevf_reset_tqp_stats(struct hnae3_handle *handle)
+ 	}
+ }
+ 
+-static int hclgevf_cfg_func_mta_filter(struct hnae3_handle *handle, bool en)
+-{
+-	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
+-	u8 msg[2] = {0};
+-
+-	msg[0] = en;
+-	return hclgevf_send_mbx_msg(hdev, HCLGE_MBX_SET_MULTICAST,
+-				    HCLGE_MBX_MAC_VLAN_MC_FUNC_MTA_ENABLE,
+-				    msg, 1, false, NULL, 0);
+-}
+-
+ static int hclgevf_cfg_func_mta_type(struct hclgevf_dev *hdev)
+ {
+ 	u8 resp_msg = HCLGEVF_MTA_TYPE_SEL_MAX;
+-- 
+2.9.0
