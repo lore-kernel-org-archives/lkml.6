@@ -1,377 +1,253 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeFEVmw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:42:52 -0400
+        id S1752548AbeFEVmx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:42:53 -0400
 Received: from mga04.intel.com ([192.55.52.120]:37414 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751780AbeFEVmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:42:50 -0400
+        id S1752039AbeFEVmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:42:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="47023739"
+   d="scan'208";a="47023740"
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To: lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net
 Cc: peterz@infradead.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
         viresh.kumar@linaro.org, ggherdovich@suse.cz,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 0/4] Intel_pstate: HWP Dynamic performance boost
-Date: Tue,  5 Jun 2018 14:42:38 -0700
-Message-Id: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 1/4] cpufreq: intel_pstate: Add HWP boost utility and sched util hooks
+Date: Tue,  5 Jun 2018 14:42:39 -0700
+Message-Id: <20180605214242.62156-2-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v1 (Compared to RFC/RFT v3)
-- Minor suggestion for intel_pstate for coding
-- Add SKL desktop model used in some Xeons
+Added two utility functions to HWP boost up gradually and boost down to
+the default cached HWP request values.
 
+Boost up:
+Boost up updates HWP request minimum value in steps. This minimum value
+can reach upto at HWP request maximum values depends on how frequently,
+this boost up function is called. At max, boost up will take three steps
+to reach the maximum, depending on the current HWP request levels and HWP
+capabilities. For example, if the current settings are:
+If P0 (Turbo max) = P1 (Guaranteed max) = min
+        No boost at all.
+If P0 (Turbo max) > P1 (Guaranteed max) = min
+        Should result in one level boost only for P0.
+If P0 (Turbo max) = P1 (Guaranteed max) > min
+        Should result in two level boost:
+                (min + p1)/2 and P1.
+If P0 (Turbo max) > P1 (Guaranteed max) > min
+        Should result in three level boost:
+                (min + p1)/2, P1 and P0.
+We don't set any level between P0 and P1 as there is no guarantee that
+they will be honored.
+
+Boost down:
+After the system is idle for hold time of 3ms, the HWP request is reset
+to the default value from HWP init or user modified one via sysfs.
+
+Caching of HWP Request and Capabilities
+Store the HWP request value last set using MSR_HWP_REQUEST and read
+MSR_HWP_CAPABILITIES. This avoid reading of MSRs in the boost utility
+functions.
+
+These boost utility functions calculated limits are based on the latest
+HWP request value, which can be modified by setpolicy() callback. So if
+user space modifies the minimum perf value, that will be accounted for
+every time the boost up is called. There will be case when there can be
+contention with the user modified minimum perf, in that case user value
+will gain precedence. For example just before HWP_REQUEST MSR is updated
+from setpolicy() callback, the boost up function is called via scheduler
+tick callback. Here the cached MSR value is already the latest and limits
+are updated based on the latest user limits, but on return the MSR write
+callback called from setpolicy() callback will update the HWP_REQUEST
+value. This will be used till next time the boost up function is called.
+
+In addition add a variable to control HWP dynamic boosting. When HWP
+dynamic boost is active then set the HWP specific update util hook. The
+contents in the utility hooks will be filled in the subsequent patches.
+
+Reported-by: Mel Gorman <mgorman@techsingularity.net>
 Tested-by: Giovanni Gherdovich <ggherdovich@suse.cz>
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/cpufreq/intel_pstate.c | 100 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 97 insertions(+), 3 deletions(-)
 
-This series has an overall positive performance impact on IO both on xfs and
-ext4, and I'd be vary happy if it lands in v4.18. You dropped the migration
-optimization from v1 to v2 after the reviewers' suggestion; I'm looking
-forward to test that part too, so please add me to CC when you'll resend it.
-
-I've tested your series on a single socket Xeon E3-1240 v5 (Skylake, 4 cores /
-8 threads) with SSD storage. The platform is a Dell PowerEdge R230.
-
-The benchmarks used are a mix of I/O intensive workloads on ext4 and xfs
-(dbench4, sqlite, pgbench in read/write and read-only configuration, Flexible
-IO aka FIO, etc) and scheduler stressers just to check that everything is okay
-in that department too (hackbench, pipetest, schbench, sockperf on localhost
-both in "throughput" and "under-load" mode, netperf in localhost, etc). There
-is also some HPC with the NAS Parallel Benchmark, as when using openMPI as IPC
-mechanism it ends up being write-intensive and that could be a good
-experiment, even if the HPC people aren't exactly the target audience for a
-frequency governor.
-
-The large improvements are in areas you already highlighted in your cover
-letter (dbench4, sqlite, and pgbench read/write too, very impressive
-honestly). Minor wins are also observed in sockperf and running the git unit
-tests (gitsource below). The scheduler stressers ends up, as expected, in the
-"neutral" category where you'll also find FIO (which given other results I'd
-have expected to improve a little at least). Marked "neutral" are also those
-results where statistical significance wasn't reached (2 standard deviations,
-which is roughly like a 0.05 p-value) even if they showed some difference in a
-direction or the other. In the "small losses" section I found hackbench run
-with processes (not threads) and pipes (not sockets) which I report for due
-diligence but looking at the raw numbers it's more of a mixed bag than a real
-loss, and the NAS high-perf computing benchmark when it uses openMP (as
-opposed to openMPI) for IPC -- but again, we often find that supercomputers
-people run the machines at full speed all the time.
-
-At the bottom of this message you'll find some directions if you want to run
-some test yourself using the same framework I used, MMTests from
-https://github.com/gormanm/mmtests (we store a fair amount of benchmarks
-parametrization up there).
-
-Large wins:
-
-    - dbench4:              +20% on ext4,
-                            +14% on xfs (always asynch IO)
-    - sqlite (insert):       +9% on both ext4 and xfs
-    - pgbench (read/write):  +9% on ext4,
-                            +10% on xfs
-
-Moderate wins:
-
-    - sockperf (type: under-load, localhost):              +1% with TCP,
-                                                           +5% with UDP
-    - gisource (git unit tests, shell intensive):          +3% on ext4
-    - NAS Parallel Benchmark (HPC, using openMPI, on xfs): +1%
-    - tbench4 (network part of dbench4, localhost):        +1%
-
-Neutral:
-
-    - pgbench (read-only) on ext4 and xfs
-    - siege
-    - netperf (streaming and round-robin) with TCP and UDP
-    - hackbench (sockets/process, sockets/thread and pipes/thread)
-    - pipetest
-    - Linux kernel build
-    - schbench
-    - sockperf (type: throughput) with TCP and UDP
-    - git unit tests on xfs
-    - FIO (both random and seq. read, both random and seq. write)
-      on ext4 and xfs, async IO
-
-Moderate losses:
-
-    - hackbench (pipes/process):          -10%
-    - NAS Parallel Benchmark with openMP:  -1%
-
-
-Each benchmark is run with a variety of configuration parameters (eg: number
-of threads, number of clients, etc); to reach a final "score" the geometric
-mean is used (with a few exceptions depending on the type of benchmark).
-Detailed results follow. Amean, Hmean and Gmean are respectively arithmetic,
-harmonic and geometric means.
-
-For brevity I won't report all tables but only those for "large wins" and
-"moderate losses". Note that I'm not overly worried for the hackbench-pipes
-situation, as we've studied it in the past and determined that such
-configuration is particularly weak, time is mostly spent on contention and the
-scheduler code path isn't exercised. See the comment in the file
-configs/config-global-dhp__scheduler-unbound in MMTests for a brief
-description of the issue.
-
-DBENCH4
-=======
-
-NOTES: asyncronous IO; varies the number of clients up to NUMCPUS*8.
-MMTESTS CONFIG: global-dhp__io-dbench4-async-{ext4, xfs}
-MEASURES: latency (millisecs)
-LOWER is better
-
-EXT4
-                              4.16.0                 4.16.0
-                             vanilla              hwp-boost
-Amean      1        28.49 (   0.00%)       19.68 (  30.92%)
-Amean      2        26.70 (   0.00%)       25.59 (   4.14%)
-Amean      4        54.59 (   0.00%)       43.56 (  20.20%)
-Amean      8        91.19 (   0.00%)       77.56 (  14.96%)
-Amean      64      538.09 (   0.00%)      438.67 (  18.48%)
-Stddev     1         6.70 (   0.00%)        3.24 (  51.66%)
-Stddev     2         4.35 (   0.00%)        3.57 (  17.85%)
-Stddev     4         7.99 (   0.00%)        7.24 (   9.29%)
-Stddev     8        17.51 (   0.00%)       15.80 (   9.78%)
-Stddev     64       49.54 (   0.00%)       46.98 (   5.17%)
-
-XFS
-                              4.16.0                 4.16.0
-                             vanilla              hwp-boost
-Amean      1        21.88 (   0.00%)       16.03 (  26.75%)
-Amean      2        19.72 (   0.00%)       19.82 (  -0.50%)
-Amean      4        37.55 (   0.00%)       29.52 (  21.38%)
-Amean      8        56.73 (   0.00%)       51.83 (   8.63%)
-Amean      64      808.80 (   0.00%)      698.12 (  13.68%)
-Stddev     1         6.29 (   0.00%)        2.33 (  62.99%)
-Stddev     2         3.12 (   0.00%)        2.26 (  27.73%)
-Stddev     4         7.56 (   0.00%)        5.88 (  22.28%)
-Stddev     8        14.15 (   0.00%)       12.49 (  11.71%)
-Stddev     64      380.54 (   0.00%)      367.88 (   3.33%)
-
-SQLITE
-======
-
-NOTES: SQL insert test on a table that will be 2M in size.
-MMTESTS CONFIG: global-dhp__db-sqlite-insert-medium-{ext4, xfs}
-MEASURES: transactions per second
-HIGHER is better
-
-EXT4
-                                4.16.0                 4.16.0
-                               vanilla              hwp-boost
-Hmean     Trans     2098.79 (   0.00%)     2292.16 (   9.21%)
-Stddev    Trans       78.79 (   0.00%)       95.73 ( -21.50%)
-
-XFS
-                                4.16.0                 4.16.0
-                               vanilla              hwp-boost
-Hmean     Trans     1890.27 (   0.00%)     2058.62 (   8.91%)
-Stddev    Trans       52.54 (   0.00%)       29.56 (  43.73%)
-
-PGBENCH-RW
-==========
-
-NOTES: packaged with Postgres. Varies the number of thread up to NUMCPUS. The
-  workload is scaled so that the approximate size is 80% of of the database
-  shared buffer which itself is 20% of RAM. The page cache is not flushed
-  after the database is populated for the test and starts cache-hot.
-MMTESTS CONFIG: global-dhp__db-pgbench-timed-rw-small-{ext4, xfs}
-MEASURES: transactions per second
-HIGHER is better
-
-EXT4
-                            4.16.0                 4.16.0
-                           vanilla              hwp-boost
-Hmean     1     2692.19 (   0.00%)     2660.98 (  -1.16%)
-Hmean     4     5218.93 (   0.00%)     5610.10 (   7.50%)
-Hmean     7     7332.68 (   0.00%)     8378.24 (  14.26%)
-Hmean     8     7462.03 (   0.00%)     8713.36 (  16.77%)
-Stddev    1      231.85 (   0.00%)      257.49 ( -11.06%)
-Stddev    4      681.11 (   0.00%)      312.64 (  54.10%)
-Stddev    7     1072.07 (   0.00%)      730.29 (  31.88%)
-Stddev    8     1472.77 (   0.00%)     1057.34 (  28.21%)
-
-XFS
-                            4.16.0                 4.16.0
-                           vanilla              hwp-boost
-Hmean     1     2675.02 (   0.00%)     2661.69 (  -0.50%)
-Hmean     4     5049.45 (   0.00%)     5601.45 (  10.93%)
-Hmean     7     7302.18 (   0.00%)     8348.16 (  14.32%)
-Hmean     8     7596.83 (   0.00%)     8693.29 (  14.43%)
-Stddev    1      225.41 (   0.00%)      246.74 (  -9.46%)
-Stddev    4      761.33 (   0.00%)      334.77 (  56.03%)
-Stddev    7     1093.93 (   0.00%)      811.30 (  25.84%)
-Stddev    8     1465.06 (   0.00%)     1118.81 (  23.63%)
-
-HACKBENCH
-=========
-
-NOTES: Varies the number of groups between 1 and NUMCPUS*4
-MMTESTS CONFIG: global-dhp__scheduler-unbound
-MEASURES: time (seconds)
-LOWER is better
-
-                             4.16.0                 4.16.0
-                            vanilla              hwp-boost
-Amean     1       0.8350 (   0.00%)      1.1577 ( -38.64%)
-Amean     3       2.8367 (   0.00%)      3.7457 ( -32.04%)
-Amean     5       6.7503 (   0.00%)      5.7977 (  14.11%)
-Amean     7       7.8290 (   0.00%)      8.0343 (  -2.62%)
-Amean     12     11.0560 (   0.00%)     11.9673 (  -8.24%)
-Amean     18     15.2603 (   0.00%)     15.5247 (  -1.73%)
-Amean     24     17.0283 (   0.00%)     17.9047 (  -5.15%)
-Amean     30     19.9193 (   0.00%)     23.4670 ( -17.81%)
-Amean     32     21.4637 (   0.00%)     23.4097 (  -9.07%)
-Stddev    1       0.0636 (   0.00%)      0.0255 (  59.93%)
-Stddev    3       0.1188 (   0.00%)      0.0235 (  80.22%)
-Stddev    5       0.0755 (   0.00%)      0.1398 ( -85.13%)
-Stddev    7       0.2778 (   0.00%)      0.1634 (  41.17%)
-Stddev    12      0.5785 (   0.00%)      0.1030 (  82.19%)
-Stddev    18      1.2099 (   0.00%)      0.7986 (  33.99%)
-Stddev    24      0.2057 (   0.00%)      0.7030 (-241.72%)
-Stddev    30      1.1303 (   0.00%)      0.7654 (  32.28%)
-Stddev    32      0.2032 (   0.00%)      3.1626 (-1456.69%)
-
-NAS PARALLEL BENCHMARK, C-CLASS (w/ openMP)
-===========================================
-
-NOTES: The various computational kernels are run separately; see
-  https://www.nas.nasa.gov/publications/npb.html for the list of tasks (IS =
-  Integer Sort, EP = Embarrassingly Parallel, etc)
-MMTESTS CONFIG: global-dhp__nas-c-class-omp-full
-MEASURES: time (seconds)
-LOWER is better
-
-                               4.16.0                 4.16.0
-                              vanilla              hwp-boost
-Amean     bt.C      169.82 (   0.00%)      170.54 (  -0.42%)
-Stddev    bt.C        1.07 (   0.00%)        0.97 (   9.34%)
-Amean     cg.C       41.81 (   0.00%)       42.08 (  -0.65%)
-Stddev    cg.C        0.06 (   0.00%)        0.03 (  48.24%)
-Amean     ep.C       26.63 (   0.00%)       26.47 (   0.61%)
-Stddev    ep.C        0.37 (   0.00%)        0.24 (  35.35%)
-Amean     ft.C       38.17 (   0.00%)       38.41 (  -0.64%)
-Stddev    ft.C        0.33 (   0.00%)        0.32 (   3.78%)
-Amean     is.C        1.49 (   0.00%)        1.40 (   6.02%)
-Stddev    is.C        0.20 (   0.00%)        0.16 (  19.40%)
-Amean     lu.C      217.46 (   0.00%)      220.21 (  -1.26%)
-Stddev    lu.C        0.23 (   0.00%)        0.22 (   0.74%)
-Amean     mg.C       18.56 (   0.00%)       18.80 (  -1.31%)
-Stddev    mg.C        0.01 (   0.00%)        0.01 (  22.54%)
-Amean     sp.C      293.25 (   0.00%)      296.73 (  -1.19%)
-Stddev    sp.C        0.10 (   0.00%)        0.06 (  42.67%)
-Amean     ua.C      170.74 (   0.00%)      172.02 (  -0.75%)
-Stddev    ua.C        0.28 (   0.00%)        0.31 ( -12.89%)
-
-HOW TO REPRODUCE
-================
-
-To install MMTests, clone the git repo at
-https://github.com/gormanm/mmtests.git
-
-To run a config (ie a set of benchmarks, such as
-config-global-dhp__nas-c-class-omp-full), use the command
-./run-mmtests.sh --config configs/$CONFIG $MNEMONIC-NAME
-from the top-level directory; the benchmark source will be downloaded from its
-canonical internet location, compiled and run.
-
-To compare results from two runs, use
-./bin/compare-mmtests.pl --directory ./work/log \
-                         --benchmark $BENCHMARK-NAME \
-                         --names $MNEMONIC-NAME-1,$MNEMONIC-NAME-2
-from the top-level directory.
-
-==================
->From RFC Series:
-v3
-- Removed atomic bit operation as suggested.
-- Added description of contention with user space.
-- Removed hwp cache, boost utililty function patch and merged with util callback
-  patch. This way any value set is used somewhere.
-
-Waiting for test results from Mel Gorman, who is the original reporter.
-
-v2
-This is a much simpler version than the previous one and only consider IO
-boost, using the existing mechanism. There is no change in this series
-beyond intel_pstate driver.
-
-Once PeterZ finishes his work on frequency invariant, I will revisit
-thread migration optimization in HWP mode.
-
-Other changes:
-- Gradual boost instead of single step as suggested by PeterZ.
-- Cross CPU synchronization concerns identified by Rafael.
-- Split the patch for HWP MSR value caching as suggested by PeterZ.
-
-Not changed as suggested:
-There is no architecture way to identify platform with Per-core
-P-states, so still have to enable feature based on CPU model.
-
------------
-v1
-
-This series tries to address some concern in performance particularly with IO
-workloads (Reported by Mel Gorman), when HWP is using intel_pstate powersave
-policy.
-
-Background
-HWP performance can be controlled by user space using sysfs interface for
-max/min frequency limits and energy performance preference settings. Based on
-workload characteristics these can be adjusted from user space. These limits
-are not changed dynamically by kernel based on workload.
-
-By default HWP defaults to energy performance preference value of 0x80 on
-majority of platforms(Scale is 0-255, 0 is max performance and 255 is min).
-This value offers best performance/watt and for majority of server workloads
-performance doesn't suffer. Also users always have option to use performance
-policy of intel_pstate, to get best performance. But user tend to run with
-out of box configuration, which is powersave policy on most of the distros.
-
-In some case it is possible to dynamically adjust performance, for example,
-when a CPU is woken up due to IO completion or thread migrate to a new CPU. In
-this case HWP algorithm will take some time to build utilization and ramp up
-P-states. So this may results in lower performance for some IO workloads and
-workloads which tend to migrate. The idea of this patch series is to
-temporarily boost performance dynamically in these cases. This is only
-applicable only when user is using powersave policy, not in performance policy.
-
-Results on a Skylake server:
-
-Benchmark                       Improvement %
-----------------------------------------------------------------------
-dbench                          50.36
-thread IO bench (tiobench)      10.35
-File IO                         9.81
-sqlite                          15.76
-X264 -104 cores                 9.75
-
-Spec Power                      (Negligible impact 7382 Vs. 7378)
-Idle Power                      No change observed
------------------------------------------------------------------------
-
-HWP brings in best performace/watt at EPP=0x80. Since we are boosting
-EPP here to 0, the performance/watt drops upto 10%. So there is a power
-penalty of these changes.
-
-Also Mel Gorman provided test results on a prior patchset, which shows
-benifits of this series.
-
-Srinivas Pandruvada (4):
-  cpufreq: intel_pstate: Add HWP boost utility and sched util hooks
-  cpufreq: intel_pstate: HWP boost performance on IO wakeup
-  cpufreq: intel_pstate: New sysfs entry to control HWP boost
-  cpufreq: intel_pstate: enable boost for Skylake Xeon
-
- drivers/cpufreq/intel_pstate.c | 179 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 176 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 08960a55eb27..3949e3861f55 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -221,6 +221,9 @@ struct global_params {
+  *			preference/bias
+  * @epp_saved:		Saved EPP/EPB during system suspend or CPU offline
+  *			operation
++ * @hwp_req_cached:	Cached value of the last HWP Request MSR
++ * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
++ * @hwp_boost_min:	Last HWP boosted min performance
+  *
+  * This structure stores per CPU instance data for all CPUs.
+  */
+@@ -253,6 +256,9 @@ struct cpudata {
+ 	s16 epp_policy;
+ 	s16 epp_default;
+ 	s16 epp_saved;
++	u64 hwp_req_cached;
++	u64 hwp_cap_cached;
++	u32 hwp_boost_min;
+ };
+ 
+ static struct cpudata **all_cpu_data;
+@@ -285,6 +291,7 @@ static struct pstate_funcs pstate_funcs __read_mostly;
+ 
+ static int hwp_active __read_mostly;
+ static bool per_cpu_limits __read_mostly;
++static bool hwp_boost __read_mostly;
+ 
+ static struct cpufreq_driver *intel_pstate_driver __read_mostly;
+ 
+@@ -689,6 +696,7 @@ static void intel_pstate_get_hwp_max(unsigned int cpu, int *phy_max,
+ 	u64 cap;
+ 
+ 	rdmsrl_on_cpu(cpu, MSR_HWP_CAPABILITIES, &cap);
++	WRITE_ONCE(all_cpu_data[cpu]->hwp_cap_cached, cap);
+ 	if (global.no_turbo)
+ 		*current_max = HWP_GUARANTEED_PERF(cap);
+ 	else
+@@ -763,6 +771,7 @@ static void intel_pstate_hwp_set(unsigned int cpu)
+ 		intel_pstate_set_epb(cpu, epp);
+ 	}
+ skip_epp:
++	WRITE_ONCE(cpu_data->hwp_req_cached, value);
+ 	wrmsrl_on_cpu(cpu, MSR_HWP_REQUEST, value);
+ }
+ 
+@@ -1381,6 +1390,81 @@ static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
+ 	intel_pstate_set_min_pstate(cpu);
+ }
+ 
++/*
++ * Long hold time will keep high perf limits for long time,
++ * which negatively impacts perf/watt for some workloads,
++ * like specpower. 3ms is based on experiements on some
++ * workoads.
++ */
++static int hwp_boost_hold_time_ns = 3 * NSEC_PER_MSEC;
++
++static inline void intel_pstate_hwp_boost_up(struct cpudata *cpu)
++{
++	u64 hwp_req = READ_ONCE(cpu->hwp_req_cached);
++	u32 max_limit = (hwp_req & 0xff00) >> 8;
++	u32 min_limit = (hwp_req & 0xff);
++	u32 boost_level1;
++
++	/*
++	 * Cases to consider (User changes via sysfs or boot time):
++	 * If, P0 (Turbo max) = P1 (Guaranteed max) = min:
++	 *	No boost, return.
++	 * If, P0 (Turbo max) > P1 (Guaranteed max) = min:
++	 *     Should result in one level boost only for P0.
++	 * If, P0 (Turbo max) = P1 (Guaranteed max) > min:
++	 *     Should result in two level boost:
++	 *         (min + p1)/2 and P1.
++	 * If, P0 (Turbo max) > P1 (Guaranteed max) > min:
++	 *     Should result in three level boost:
++	 *        (min + p1)/2, P1 and P0.
++	 */
++
++	/* If max and min are equal or already at max, nothing to boost */
++	if (max_limit == min_limit || cpu->hwp_boost_min >= max_limit)
++		return;
++
++	if (!cpu->hwp_boost_min)
++		cpu->hwp_boost_min = min_limit;
++
++	/* level at half way mark between min and guranteed */
++	boost_level1 = (HWP_GUARANTEED_PERF(cpu->hwp_cap_cached) + min_limit) >> 1;
++
++	if (cpu->hwp_boost_min < boost_level1)
++		cpu->hwp_boost_min = boost_level1;
++	else if (cpu->hwp_boost_min < HWP_GUARANTEED_PERF(cpu->hwp_cap_cached))
++		cpu->hwp_boost_min = HWP_GUARANTEED_PERF(cpu->hwp_cap_cached);
++	else if (cpu->hwp_boost_min == HWP_GUARANTEED_PERF(cpu->hwp_cap_cached) &&
++		 max_limit != HWP_GUARANTEED_PERF(cpu->hwp_cap_cached))
++		cpu->hwp_boost_min = max_limit;
++	else
++		return;
++
++	hwp_req = (hwp_req & ~GENMASK_ULL(7, 0)) | cpu->hwp_boost_min;
++	wrmsrl(MSR_HWP_REQUEST, hwp_req);
++	cpu->last_update = cpu->sample.time;
++}
++
++static inline void intel_pstate_hwp_boost_down(struct cpudata *cpu)
++{
++	if (cpu->hwp_boost_min) {
++		bool expired;
++
++		/* Check if we are idle for hold time to boost down */
++		expired = time_after64(cpu->sample.time, cpu->last_update +
++				       hwp_boost_hold_time_ns);
++		if (expired) {
++			wrmsrl(MSR_HWP_REQUEST, cpu->hwp_req_cached);
++			cpu->hwp_boost_min = 0;
++		}
++	}
++	cpu->last_update = cpu->sample.time;
++}
++
++static inline void intel_pstate_update_util_hwp(struct update_util_data *data,
++						u64 time, unsigned int flags)
++{
++}
++
+ static inline void intel_pstate_calc_avg_perf(struct cpudata *cpu)
+ {
+ 	struct sample *sample = &cpu->sample;
+@@ -1684,7 +1768,7 @@ static void intel_pstate_set_update_util_hook(unsigned int cpu_num)
+ {
+ 	struct cpudata *cpu = all_cpu_data[cpu_num];
+ 
+-	if (hwp_active)
++	if (hwp_active && !hwp_boost)
+ 		return;
+ 
+ 	if (cpu->update_util_set)
+@@ -1693,7 +1777,9 @@ static void intel_pstate_set_update_util_hook(unsigned int cpu_num)
+ 	/* Prevent intel_pstate_update_util() from using stale data. */
+ 	cpu->sample.time = 0;
+ 	cpufreq_add_update_util_hook(cpu_num, &cpu->update_util,
+-				     intel_pstate_update_util);
++				     (hwp_active ?
++				      intel_pstate_update_util_hwp :
++				      intel_pstate_update_util));
+ 	cpu->update_util_set = true;
+ }
+ 
+@@ -1805,8 +1891,16 @@ static int intel_pstate_set_policy(struct cpufreq_policy *policy)
+ 		intel_pstate_set_update_util_hook(policy->cpu);
+ 	}
+ 
+-	if (hwp_active)
++	if (hwp_active) {
++		/*
++		 * When hwp_boost was active before and dynamically it
++		 * was turned off, in that case we need to clear the
++		 * update util hook.
++		 */
++		if (!hwp_boost)
++			intel_pstate_clear_update_util_hook(policy->cpu);
+ 		intel_pstate_hwp_set(policy->cpu);
++	}
+ 
+ 	mutex_unlock(&intel_pstate_limits_lock);
+ 
 -- 
 2.13.6
