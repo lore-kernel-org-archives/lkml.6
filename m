@@ -1,81 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeFERag (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:30:36 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40853 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751856AbeFERad (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:30:33 -0400
-X-Google-Smtp-Source: ADUXVKLqDkYlQU7eLc5BuNuXSXgtx8vt0U4xS6iOXkLyOTA8dISgMrzhLu6JqMbAzr6X4JCFU5KSe+2pKhKXd8iU0SI=
+        id S1752019AbeFERbG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:31:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35125 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751856AbeFERbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:31:04 -0400
+Subject: Re: [PATCH v2 2/2] x86: paravirt: make native_save_fl extern inline
+To: Nick Desaulniers <ndesaulniers@google.com>, akpm@linux-foundation.org,
+        ard.biesheuvel@linaro.org, aryabinin@virtuozzo.com,
+        akataria@vmware.com, boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
+        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
+        pombredanne@nexb.com, rostedt@goodmis.org, tglx@linutronix.de,
+        thomas.lendacky@amd.com, tweek@google.com
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com
+References: <20180605170532.170361-1-ndesaulniers@google.com>
+ <20180605170532.170361-3-ndesaulniers@google.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <26c7fd1c-ab40-368f-c2e3-43a6b45157fd@zytor.com>
+Date: Tue, 5 Jun 2018 10:28:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <CAJZ5v0jq45atkapwSjJ4DkHhB1bfOA-Sh1TiA3dPXwKyFTBheA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jq45atkapwSjJ4DkHhB1bfOA-Sh1TiA3dPXwKyFTBheA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 5 Jun 2018 10:30:21 -0700
-Message-ID: <CA+55aFyoxvrA-7X_8ZfQXd1=GfLT96ZaHAM+o5gKwOOfiy_HDA@mail.gmail.com>
-Subject: Re: [GIT PULL] Device properties framework update for v4.18-rc1
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180605170532.170361-3-ndesaulniers@google.com>
+Content-Type: multipart/mixed;
+ boundary="------------440690091998480EBFAA1FD9"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 4:31 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
->  device property: Get rid of union aliasing
+This is a multi-part message in MIME format.
+--------------440690091998480EBFAA1FD9
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Honestly, this looks questionable to me.
+On 06/05/18 10:05, Nick Desaulniers wrote:
+> +
+> +/*
+> + * void native_restore_fl(unsigned long flags)
+> + * %rdi: flags
+> + */
+> +ENTRY(native_restore_fl)
+> +	push %_ASM_DI
+> +	popf
+> +	ret
+> +ENDPROC(native_restore_fl)
+> +EXPORT_SYMBOL(native_restore_fl)
+> 
 
-I'm not talking about the changes themselves - I can live with them.
-But the _rationale_ is pure and utter garbage, and dangerously so.
+To work on i386, this would have to be %_ASM_AX in that case.
 
-The fact is, using a union to do type punning is the traditional AND
-STANDARD way to do type punning in gcc. In fact, it is the
-*documented* way to do it for gcc, when you are a f*cking moron and
-use "-fstrict-aliasing" and need to undo the braindamage that that
-piece of garbage C standard imposes.
+Something like this added to <asm/asm.h> might be useful; then you can
+simply:
 
-So the commit message that talks about how horrible union aliasing is
-is pushing a story that is simply wrong. Using the standard to push it
-- the same standard that came up with the completely mis-guided
-aliasing rules - is not a valid argument.
+	push %_ASM_ARG1
 
-Andy, what is the background for trying to push this idiocy? Don't
-tell me "the C standard is unclear". The C standard is _clearly_ bogus
-shit (see above on strict aliasing rules), and when it is bogus
-garbage, it needs to be explicitly ignored, and it needs per-compiler
-workarounds for braindamage. The exact same situation is true when
-there is some lack of clarity.
+--------------440690091998480EBFAA1FD9
+Content-Type: text/x-patch;
+ name="0001-x86-asm-add-_ASM_ARG-constants-for-argument-registes.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-x86-asm-add-_ASM_ARG-constants-for-argument-registes.pa";
+ filename*1="tch"
 
-This is why we use -fwrapv, -fno-strict-aliasing etc. The standard
-simply is not *important*, when it is in direct conflict with reality
-and reliable code generation.
+>From 83a7c1b7167dceee0eb731cf4ae3af7f9b2c05ea Mon Sep 17 00:00:00 2001
+From: "H. Peter Anvin" <hpa@linux.intel.com>
+Date: Tue, 5 Jun 2018 10:21:35 -0700
+Subject: [PATCH] x86/asm: add _ASM_ARG* constants for argument registes to
+ <asm/asm.h>
 
-The *fact* is that gcc documents type punning through unions as the
-"right way". You may disagree with that, but putting some theoretical
-standards language over the *explicit* and long-time documentation of
-the main compiler we use is pure and utter bullshit.
+i386 and x86-64 uses different registers for arguments; make them
+available so we don't have to #ifdef in the actual code.
 
-I've said this before, and I'll say it again: a standards paper is
-just so much toilet paper when it conflicts with reality. It has
-absolutely _zero_ relevance. In fact, I'll take real toilet paper over
-standards any day, because at least that way I won't have splinters
-and ink up my arse.
+Native size and specified size (q, l, w, b) versions are provided.
 
-So I want to see actual real arguments, not "the standard is unclear".
-When documented gcc behavior says one thing, and the standard might be
-unclear, we really don't care one whit about the lack of clarity in
-some standard.
+Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
+---
+ arch/x86/include/asm/asm.h | 59 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-So what's the _real_ reason for avoiding union aliasing?
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 219faaec51df..3cab54bce51d 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -46,6 +46,65 @@
+ #define _ASM_SI		__ASM_REG(si)
+ #define _ASM_DI		__ASM_REG(di)
+ 
++#ifndef __x86_64__
++/* 32 bit */
++
++#define _ASM_ARG1	_ASM_AX
++#define _ASM_ARG2	_ASM_DX
++#define _ASM_ARG3	_ASM_CX
++
++#define _ASM_ARG1L	eax
++#define _ASM_ARG2L	edx
++#define _ASM_ARG3L	ecx
++
++#define _ASM_ARG1W	ax
++#define _ASM_ARG2W	dx
++#define _ASM_ARG3W	cx
++
++#define _ASM_ARG1B	al
++#define _ASM_ARG2B	dl
++#define _ASM_ARG3B	cl
++
++#else
++/* 64 bit */
++
++#define _ASM_ARG1	_ASM_DI
++#define _ASM_ARG2	_ASM_SI
++#define _ASM_ARG3	_ASM_DX
++#define _ASM_ARG4	_ASM_CX
++#define _ASM_ARG5	r8
++#define _ASM_ARG6	r9
++
++#define _ASM_ARG1Q	rdi
++#define _ASM_ARG2Q	rsi
++#define _ASM_ARG3Q	rdx
++#define _ASM_ARG4Q	rcx
++#define _ASM_ARG5Q	r8
++#define _ASM_ARG6Q	r9
++
++#define _ASM_ARG1L	edi
++#define _ASM_ARG2L	esi
++#define _ASM_ARG3L	edx
++#define _ASM_ARG4L	ecx
++#define _ASM_ARG5L	r8d
++#define _ASM_ARG6L	r9d
++
++#define _ASM_ARG1W	di
++#define _ASM_ARG2W	di
++#define _ASM_ARG3W	dx
++#define _ASM_ARG4W	cx
++#define _ASM_ARG5W	r8w
++#define _ASM_ARG6W	r9w
++
++#define _ASM_ARG1B	dil
++#define _ASM_ARG2B	sil
++#define _ASM_ARG3B	dl
++#define _ASM_ARG4B	cl
++#define _ASM_ARG5B	r8b
++#define _ASM_ARG6B	r9b
++
++#endif
++
+ /*
+  * Macros to generate condition code outputs from inline assembly,
+  * The output operand must be type "bool".
+-- 
+2.14.4
 
-There are competent people on standards bodies. But they aren't
-_always_ competent, and the translation of intent to English isn't
-always perfect either. So standards are not some kind of holy book
-that has to be revered. Standards too need to be questioned.
 
-                 Linus
+--------------440690091998480EBFAA1FD9--
