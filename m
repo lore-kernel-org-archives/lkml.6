@@ -1,64 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752578AbeFEOmI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:42:08 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:44337 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752178AbeFEOmH (ORCPT
+        id S1752630AbeFEOm4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:42:56 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45663 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752178AbeFEOmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:42:07 -0400
-X-Google-Smtp-Source: ADUXVKKalP2I5osRhW0+O1XlEijL3Y5DfRYlleRSUFB1l3Z4woZeWI7sFRf/nfAT+sP32GLl2v1F0w==
-Subject: Re: [PATCH] dm: Use kzalloc for all structs with embedded
- biosets/mempools
-To: dsterba@suse.cz, Kent Overstreet <kent.overstreet@gmail.com>,
-        torvalds@linux-foundation.org, snitzer@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <20180605092633.29583-1-kent.overstreet@gmail.com>
- <e78b0f9f-d4f9-d865-0727-5e1ed074928d@kernel.dk>
- <20180605143507.2o3qm4r6euvyhe5g@twin.jikos.cz>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <8a4b20a3-899d-3317-407e-a6a2029d31b0@kernel.dk>
-Date: Tue, 5 Jun 2018 08:42:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 5 Jun 2018 10:42:55 -0400
+X-Google-Smtp-Source: ADUXVKKc5c05YWfN4c/Gc6yleMWeUrxYo8ixKqC/uilIWAfwyOl5F4RNLchcyYbrjOaIlE2XPP2DcevzXZOJfqj44Gw=
 MIME-Version: 1.0
-In-Reply-To: <20180605143507.2o3qm4r6euvyhe5g@twin.jikos.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180605114056.1239571-1-arnd@arndb.de>
+In-Reply-To: <20180605114056.1239571-1-arnd@arndb.de>
+From: =?UTF-8?B?RWNrbCwgTcOhdMOp?= <ecklm94@gmail.com>
+Date: Tue, 5 Jun 2018 16:42:27 +0200
+Message-ID: <CAPFYX+KmWcO390JP_UbkyuBZWvcxZ9ym=w=T=mA+anazGPOw-A@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: provide udp*_lib_lookup for nf_tproxy
+To: arnd@arndb.de
+Cc: pablo@netfilter.org, davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, pabeni@redhat.com, willemb@google.com,
+        edumazet@google.com, dsahern@gmail.com, kafai@fb.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55Eh1cw016745
 
-On 6/5/18 8:35 AM, David Sterba wrote:
-> On Tue, Jun 05, 2018 at 08:22:22AM -0600, Jens Axboe wrote:
->>> I fucked up majorly on the bioset/mempool conversion - I forgot to check that
->>> everything biosets/mempools were being embedded in was actually being zeroed on
->>> allocation. Device mapper currently explodes, you'll probably want to apply this
->>> patch post haste.
->>>
->>> I have now done that auditing, for every single conversion - this patch fixes
->>> everything I found. There do not seem to be any incorrect ones outside of device
->>> mapper...
->>>
->>> We'll probably want a second patch that either a) changes
->>> bioset_init()/mempool_init() to zero the passed in bioset/mempool first, or b)
->>> my preference, WARN() or BUG() if they're passed memory that isn't zeroed.
->>
->> Odd, haven't seen a crash, but probably requires kasan or poisoning to
->> trigger anything? Mike's tree also had the changes, since they were based
->> on the block tree.
-> 
-> eg. fstests/generic/081 crashes (trace below), no KASAN, PAGE_POISONING=y,
-> PAGE_POISONING_NO_SANITY=y.
-> 
->> I can queue this up and ship it later today. Mike, you want to review
->> this one?
-> 
-> Would be great to push that soon. The fstests build on several DM targets, the
-> crashes lead to many test failures. I'm going to test the kzalloc fix now.
-
-For sure, it should go asap.
-
--- 
-Jens Axboe
+Arnd Bergmann <arnd@arndb.de> ezt írta (időpont: 2018. jún. 5., K, 13:41):
+>
+> It is now possible to enable the libified nf_tproxy modules without
+> also enabling NETFILTER_XT_TARGET_TPROXY, which throws off the
+> ifdef logic in the udp core code:
+>
+> net/ipv6/netfilter/nf_tproxy_ipv6.o: In function `nf_tproxy_get_sock_v6':
+> nf_tproxy_ipv6.c:(.text+0x1a8): undefined reference to `udp6_lib_lookup'
+> net/ipv4/netfilter/nf_tproxy_ipv4.o: In function `nf_tproxy_get_sock_v4':
+> nf_tproxy_ipv4.c:(.text+0x3d0): undefined reference to `udp4_lib_lookup'
+>
+> We can actually simplify the conditions now to provide the two functions
+> exactly when they are needed.
+>
+> Fixes: 45ca4e0cf273 ("netfilter: Libify xt_TPROXY")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Máté Eckl <ecklm94@gmail.com>
