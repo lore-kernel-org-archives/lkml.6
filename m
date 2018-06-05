@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753688AbeFERKT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:10:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37320 "EHLO mail.kernel.org"
+        id S1753893AbeFERKz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:10:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753818AbeFERKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:10:10 -0400
+        id S1753706AbeFERGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 58/61] fix io_destroy()/aio_complete() race
-Date: Tue,  5 Jun 2018 19:02:19 +0200
-Message-Id: <20180605170121.338300439@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 25/61] powerpc/pseries: Support firmware disable of RFI flush
+Date: Tue,  5 Jun 2018 19:01:46 +0200
+Message-Id: <20180605170119.310579309@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -28,40 +28,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 4faa99965e027cc057c5145ce45fa772caa04e8d upstream.
+commit 582605a429e20ae68fd0b041b2e840af296edd08 upstream.
 
-If io_destroy() gets to cancelling everything that can be cancelled and
-gets to kiocb_cancel() calling the function driver has left in ->ki_cancel,
-it becomes vulnerable to a race with IO completion.  At that point req
-is already taken off the list and aio_complete() does *NOT* spin until
-we (in free_ioctx_users()) releases ->ctx_lock.  As the result, it proceeds
-to kiocb_free(), freing req just it gets passed to ->ki_cancel().
+Some versions of firmware will have a setting that can be configured
+to disable the RFI flush, add support for it.
 
-Fix is simple - remove from the list after the call of kiocb_cancel().  All
-instances of ->ki_cancel() already have to cope with the being called with
-iocb still on list - that's what happens in io_cancel(2).
-
-Cc: stable@kernel.org
-Fixes: 0460fef2a921 "aio: use cancellation list lazily"
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 8989d56878a7 ("powerpc/pseries: Query hypervisor for RFI flush settings")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/aio.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/setup.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -636,9 +636,8 @@ static void free_ioctx_users(struct perc
- 	while (!list_empty(&ctx->active_reqs)) {
- 		req = list_first_entry(&ctx->active_reqs,
- 				       struct aio_kiocb, ki_list);
--
--		list_del_init(&req->ki_list);
- 		kiocb_cancel(req);
-+		list_del_init(&req->ki_list);
- 	}
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -473,7 +473,8 @@ static void pseries_setup_rfi_flush(void
+ 		if (types == L1D_FLUSH_NONE)
+ 			types = L1D_FLUSH_FALLBACK;
  
- 	spin_unlock_irq(&ctx->ctx_lock);
+-		if (!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR))
++		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
++		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
+ 			enable = false;
+ 	} else {
+ 		/* Default to fallback if case hcall is not available */
