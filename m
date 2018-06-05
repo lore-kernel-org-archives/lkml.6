@@ -1,61 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752114AbeFEPfE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:35:04 -0400
-Received: from imap.thunk.org ([74.207.234.97]:37824 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751807AbeFEPfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:35:03 -0400
-Date: Tue, 5 Jun 2018 11:35:01 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
-Subject: Re: [GIT PULL] fscrypt updates for 4.18
-Message-ID: <20180605153501.GC7839@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
-References: <20180605150751.GA9436@thunk.org>
- <CAFLxGvysjYbCpkqbVqD8Q1v3isGnRrNo5KdUn7TgCVt9WxzE2g@mail.gmail.com>
+        id S1751892AbeFEPgN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:36:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39622 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751599AbeFEPgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:36:11 -0400
+Date: Tue, 5 Jun 2018 17:36:07 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-s390x@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
+Message-ID: <20180605173607.4074f54d.cohuck@redhat.com>
+In-Reply-To: <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
+References: <20180509154822.23510-1-cohuck@redhat.com>
+        <20180509154822.23510-3-cohuck@redhat.com>
+        <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
+        <20180515181006.0cb1dfc2.cohuck@redhat.com>
+        <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
+        <20180522145208.310143ea.cohuck@redhat.com>
+        <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
+        <20180605151449.22aafbfc.cohuck@redhat.com>
+        <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFLxGvysjYbCpkqbVqD8Q1v3isGnRrNo5KdUn7TgCVt9WxzE2g@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 05:13:35PM +0200, Richard Weinberger wrote:
-> > Add bunch of cleanups, and add support for the Speck128/256
-> > algorithms.  Yes, Speck is contrversial, but the intention is to use
-> > them only for the lowest end Android devices, where the alternative
-> > *really* is no encryption at all for data stored at rest.
-> 
-> Will Android tell me that Speck is being used?
+On Tue, 5 Jun 2018 17:23:02 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-Well, today Android doesn't tell you, "Your files aren't being
-encrypted" in some big dialog box.  :-)  
+<snip lots of comments - I still need to think about this>
 
-Whether a phone is using no encryption or not, and what encryption
-algorithm, is fundamentally a property of the phone.  It's used to
-encrypt data at rest on the phone, so this isn't a data interchange
-issue.  I'm sure there will be some way of finding out --- by looking
-at the source code for that phone, if nothing else.
+> May be I should try to integrate your patches so we have a better view.
 
-But I suspect that if you are buying a phone in a first world country,
-you're never going to see a phone with Speck on it --- unless you
-build your own AOSP build and deliberately enable it for yourself,
-anyway.  :-)
-
-This is really intended for "The Next Billion Users"; phones like
-Android Go that was disclosed at the 2017 Google I/O conference, where
-the unsubsidized price is well under $100 USD (so cheaper than the
-original OLPC target).
-
-						- Ted
+Not sure whether it is worth trying to do so in the current state.
+(Also, I really need to get the information into my personal cache
+again, before I write too many weird things.)
