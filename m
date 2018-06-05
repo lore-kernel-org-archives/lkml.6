@@ -1,159 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeFEReb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:34:31 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43515 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeFERe3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:34:29 -0400
-X-Google-Smtp-Source: ADUXVKKVJKdIDw87UyMao9HsAigx0SONYuZZdkH/Xvz3Xvywtnwm5zyIE1EFlJLi56hi9Xl0Mw+l5Q==
-Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-To: Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: Michel Pollet <buserror+upstream@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, phil.edworthy@renesas.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Douglas Anderson <dianders@chromium.org>, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, Carlo Caione <carlo@endlessm.com>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com>
-Date: Tue, 5 Jun 2018 10:34:26 -0700
+        id S1752087AbeFERfW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:35:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58637 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751788AbeFERfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:35:20 -0400
+Subject: Re: [PATCH v2 2/2] x86: paravirt: make native_save_fl extern inline
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Nick Desaulniers <ndesaulniers@google.com>, akpm@linux-foundation.org,
+        ard.biesheuvel@linaro.org, aryabinin@virtuozzo.com,
+        akataria@vmware.com, boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
+        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
+        pombredanne@nexb.com, rostedt@goodmis.org, tglx@linutronix.de,
+        thomas.lendacky@amd.com, tweek@google.com
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com
+References: <20180605170532.170361-1-ndesaulniers@google.com>
+ <20180605170532.170361-3-ndesaulniers@google.com>
+ <26c7fd1c-ab40-368f-c2e3-43a6b45157fd@zytor.com>
+Message-ID: <0dd024cd-e05a-0d67-c1bf-1a532714bb1a@zytor.com>
+Date: Tue, 5 Jun 2018 10:31:11 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <26c7fd1c-ab40-368f-c2e3-43a6b45157fd@zytor.com>
+Content-Type: multipart/mixed;
+ boundary="------------A996B762124FDC7635524F0D"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/18 04:28, Michel Pollet wrote:
-> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time, it
-> requires a special enable method to get it started.
+This is a multi-part message in MIME format.
+--------------A996B762124FDC7635524F0D
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+On 06/05/18 10:28, H. Peter Anvin wrote:
+> On 06/05/18 10:05, Nick Desaulniers wrote:
+>> +
+>> +/*
+>> + * void native_restore_fl(unsigned long flags)
+>> + * %rdi: flags
+>> + */
+>> +ENTRY(native_restore_fl)
+>> +	push %_ASM_DI
+>> +	popf
+>> +	ret
+>> +ENDPROC(native_restore_fl)
+>> +EXPORT_SYMBOL(native_restore_fl)
+>>
 > 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  arch/arm/mach-shmobile/Makefile        |  1 +
->  arch/arm/mach-shmobile/smp-r9a06g032.c | 79 ++++++++++++++++++++++++++++++++++
->  2 files changed, 80 insertions(+)
->  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+> To work on i386, this would have to be %_ASM_AX in that case.
 > 
-> diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-> index 1939f52..d7fc98f 100644
-> --- a/arch/arm/mach-shmobile/Makefile
-> +++ b/arch/arm/mach-shmobile/Makefile
-> @@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
->  smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
->  smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
->  smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-> +smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
->  smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
->  
->  # PM objects
-> diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
-> new file mode 100644
-> index 0000000..cd40e6e
-> --- /dev/null
-> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * R9A06G032 Second CA7 enabler.
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-> + * Derived from action,s500-smp
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/smp.h>
-> +
-> +/*
-> + * The second CPU is parked in ROM at boot time. It requires waking it after
-> + * writing an address into the BOOTADDR register of sysctrl.
-> + *
-> + * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-> + *
-> + * *However* the BOOTADDR register is not available when the kernel
-> + * starts in NONSEC mode.
-> + *
-> + * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-> + * which is not restricted.
-
-The binding document for cpu-release-addr does not have a definition for 32 bit
-arm.  The existing definition is only 64 bit arm.  Please add the definition
-for 32 bit arm to patch 1.
-
--Frank
-
-
-> + */
-> +
-> +static void __iomem *cpu_bootaddr;
-> +
-> +static DEFINE_SPINLOCK(cpu_lock);
-> +
-> +static int r9a06g032_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
-> +{
-> +	if (!cpu_bootaddr)
-> +		return -ENODEV;
-> +
-> +	spin_lock(&cpu_lock);
-> +
-> +	writel(__pa_symbol(secondary_startup), cpu_bootaddr);
-> +	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-> +
-> +	spin_unlock(&cpu_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static void __init r9a06g032_smp_prepare_cpus(unsigned int max_cpus)
-> +{
-> +	struct device_node *dn;
-> +	int ret;
-> +	u32 bootaddr;
-> +
-> +	dn = of_get_cpu_node(1, NULL);
-> +	if (!dn) {
-> +		pr_err("CPU#1: missing device tree node\n");
-> +		return;
-> +	}
-> +	/*
-> +	 * Determine the address from which the CPU is polling.
-> +	 * The bootloader *does* change this property
-> +	 */
-> +	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
-> +	of_node_put(dn);
-> +	if (ret) {
-> +		pr_err("CPU#1: invalid cpu-release-addr property\n");
-> +		return;
-> +	}
-> +	pr_info("CPU#1: cpu-release-addr %08x\n", bootaddr);
-> +
-> +	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-> +}
-> +
-> +static const struct smp_operations r9a06g032_smp_ops __initconst = {
-> +	.smp_prepare_cpus = r9a06g032_smp_prepare_cpus,
-> +	.smp_boot_secondary = r9a06g032_smp_boot_secondary,
-> +};
-> +CPU_METHOD_OF_DECLARE(r9a06g032_smp, "renesas,r9a06g032-smp", &r9a06g032_smp_ops);
+> Something like this added to <asm/asm.h> might be useful; then you can
+> simply:
 > 
+> 	push %_ASM_ARG1
+> 
+
+Version with fixed typo...
+
+	-hpa
+
+
+--------------A996B762124FDC7635524F0D
+Content-Type: text/x-patch;
+ name="0001-x86-asm-add-_ASM_ARG-constants-for-argument-registes.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-x86-asm-add-_ASM_ARG-constants-for-argument-registes.pa";
+ filename*1="tch"
+
+>From 9946c03bc6648ea65e6f8e2576c390dca9555288 Mon Sep 17 00:00:00 2001
+From: "H. Peter Anvin" <hpa@linux.intel.com>
+Date: Tue, 5 Jun 2018 10:21:35 -0700
+Subject: [PATCH] x86/asm: add _ASM_ARG* constants for argument registes to
+ <asm/asm.h>
+
+i386 and x86-64 uses different registers for arguments; make them
+available so we don't have to #ifdef in the actual code.
+
+Native size and specified size (q, l, w, b) versions are provided.
+
+Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
+---
+ arch/x86/include/asm/asm.h | 59 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 219faaec51df..990770f9e76b 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -46,6 +46,65 @@
+ #define _ASM_SI		__ASM_REG(si)
+ #define _ASM_DI		__ASM_REG(di)
+ 
++#ifndef __x86_64__
++/* 32 bit */
++
++#define _ASM_ARG1	_ASM_AX
++#define _ASM_ARG2	_ASM_DX
++#define _ASM_ARG3	_ASM_CX
++
++#define _ASM_ARG1L	eax
++#define _ASM_ARG2L	edx
++#define _ASM_ARG3L	ecx
++
++#define _ASM_ARG1W	ax
++#define _ASM_ARG2W	dx
++#define _ASM_ARG3W	cx
++
++#define _ASM_ARG1B	al
++#define _ASM_ARG2B	dl
++#define _ASM_ARG3B	cl
++
++#else
++/* 64 bit */
++
++#define _ASM_ARG1	_ASM_DI
++#define _ASM_ARG2	_ASM_SI
++#define _ASM_ARG3	_ASM_DX
++#define _ASM_ARG4	_ASM_CX
++#define _ASM_ARG5	r8
++#define _ASM_ARG6	r9
++
++#define _ASM_ARG1Q	rdi
++#define _ASM_ARG2Q	rsi
++#define _ASM_ARG3Q	rdx
++#define _ASM_ARG4Q	rcx
++#define _ASM_ARG5Q	r8
++#define _ASM_ARG6Q	r9
++
++#define _ASM_ARG1L	edi
++#define _ASM_ARG2L	esi
++#define _ASM_ARG3L	edx
++#define _ASM_ARG4L	ecx
++#define _ASM_ARG5L	r8d
++#define _ASM_ARG6L	r9d
++
++#define _ASM_ARG1W	di
++#define _ASM_ARG2W	si
++#define _ASM_ARG3W	dx
++#define _ASM_ARG4W	cx
++#define _ASM_ARG5W	r8w
++#define _ASM_ARG6W	r9w
++
++#define _ASM_ARG1B	dil
++#define _ASM_ARG2B	sil
++#define _ASM_ARG3B	dl
++#define _ASM_ARG4B	cl
++#define _ASM_ARG5B	r8b
++#define _ASM_ARG6B	r9b
++
++#endif
++
+ /*
+  * Macros to generate condition code outputs from inline assembly,
+  * The output operand must be type "bool".
+-- 
+2.14.4
+
+
+--------------A996B762124FDC7635524F0D--
