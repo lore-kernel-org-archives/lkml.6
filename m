@@ -1,102 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751441AbeFEBwq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 21:52:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:37907 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751242AbeFEBwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 21:52:45 -0400
-Date: Tue, 5 Jun 2018 11:52:36 +1000
-From: David Gibson <david@gibson.dropbear.id.au>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        aik@ozlabs.ru, robh@kernel.org, joe@perches.com,
-        elfring@users.sourceforge.net, jasowang@redhat.com, mpe@ellerman.id.au,
-        hch@infradead.org
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-Message-ID: <20180605015236.GJ5140@umbus.fritz.box>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
- <20180523213703-mutt-send-email-mst@kernel.org>
- <f77638ddef3af52dd71341083707c9e3745dd505.camel@kernel.crashing.org>
- <20180604085742.GQ4251@umbus>
- <d5df613d6347fe2f9bb6ea65bc6f6be05650ca6f.camel@kernel.crashing.org>
+        id S1751473AbeFEByu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 21:54:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36656 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751297AbeFEByt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 21:54:49 -0400
+Date: Mon, 4 Jun 2018 18:54:44 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Vadim Pasternak <vadimp@mellanox.com>
+Cc: andy.shevchenko@gmail.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com
+Subject: Re: [PATCH v4 8/8] Documentation/ABI: Add documentation mlxreg-io
+ sysfs interfaces
+Message-ID: <20180605015444.GB47042@localhost.localdomain>
+References: <1527584347-167548-1-git-send-email-vadimp@mellanox.com>
+ <1527584347-167548-3-git-send-email-vadimp@mellanox.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YZVh52eu0Ophig4D"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d5df613d6347fe2f9bb6ea65bc6f6be05650ca6f.camel@kernel.crashing.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1527584347-167548-3-git-send-email-vadimp@mellanox.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 29, 2018 at 08:59:07AM +0000, Vadim Pasternak wrote:
+> Add documentation for mlxreg-io driver sysfs interfaces for user space
+> access to system's power resets control, reset causes monitoring,
+> programmable devices version reading and devices selection control.
+> 
+> Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 
---YZVh52eu0Ophig4D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Vadim,
 
-On Mon, Jun 04, 2018 at 07:48:54PM +1000, Benjamin Herrenschmidt wrote:
-> On Mon, 2018-06-04 at 18:57 +1000, David Gibson wrote:
-> >=20
-> > > - First qemu doesn't know that the guest will switch to "secure mode"
-> > > in advance. There is no difference between a normal and a secure
-> > > partition until the partition does the magic UV call to "enter secure
-> > > mode" and qemu doesn't see any of it. So who can set the flag here ?
-> >=20
-> > This seems weird to me.  As a rule HV calls should go through qemu -
-> > or be allowed to go directly to KVM *by* qemu.
->=20
-> It's not an HV call, it's a UV call, qemu won't see it, qemu isn't
-> trusted. Now the UV *will* reflect that to the HV via some synthetized
-> HV calls, and we *could* have those do a pass by qemu, however, so far,
-> our entire design doesn't rely on *any* qemu knowledge whatsoever and
-> it would be sad to add it just for that purpose.
->=20
-> Additionally, this is rather orthogonal, see my other email, the
-> problem we are trying to solve is *not* a qemu problem and it doesn't
-> make sense to leak that into qemu.
->=20
-> >   We generally reserve
-> > the latter for hot path things.  Since this isn't a hot path, having
-> > the call handled directly by the kernel seems wrong.
-> >
-> > Unless a "UV call" is something different I don't know about.
->=20
-> Yes, a UV call goes to the Ultravisor, not the Hypervisor. The
-> Hypervisor isn't trusted.
+You mentioned that these can vary by platform, I presume that means that
+any given platform will present a subset of these attributes - but that
+all possible attributes are documented here. Is that correct?
 
-Ah, right.  Is that implemented in the host kernel, or in something
-further above?
+> ---
+> v4:
+>  Comments pointed out by Greg:
+>  Add Documentation/ABI/ entries for the new sysfs files.
+> ---
+>  Documentation/ABI/stable/sysfs-driver-mlxreg-io | 51 +++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> 
+> diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> new file mode 100644
+> index 0000000..fcd659e
+> --- /dev/null
+> +++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> @@ -0,0 +1,51 @@
+> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> +							cause_aux_pwr_or_ref
+> +							cause_asic_thermal
+> +							cause_hotswap_or_wd
+> +							cause_fw_reset
+> +							cause_long_pb
+> +							cause_main_pwr_fail
+> +							cause_short_pb
+> +							cause_sw_reset
 
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+These property names do not seem to follow any kind of logical pattern
+with respect to abbreviation. Starting with "cause_" made me think they
+were event generators at first... Of course, who wants to be able to
+generate an asic thermal shutdown from sysfs... ;-)
 
---YZVh52eu0Ophig4D
-Content-Type: application/pgp-signature; name="signature.asc"
+The only thing that might make more sense to *me* would be to replace
+"cause" with "reset". Not required. I'll leave it to you, you may have
+good reason for the names chosen.
 
------BEGIN PGP SIGNATURE-----
+> +Date:		May 2018
+> +KernelVersion:	4.18
+> +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> +Description:	These files show the system reset cause, as following: power
+> +		auxiliary outage or power refresh, ASIC thermal shutdown,
+> +		hotswap or watchdog, firmware reset, long press power button,
+> +		short press power button, software reset. Value 1 in file means
+> +		this is reset cause, 0 - otherwise. Only one of the above
+> +		causes could be 1 at the same time, representing only last
+> +		reset cause.
+> +
+> +		The files are read only.
+> +
+> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> +							cpld1_version
+> +							cpld2_version
+> +Date:		May 2018
+> +KernelVersion:	4.18
+> +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> +Description:	These files show with which CPLD versions have been burned
+> +		on carrier and switch boards.
+> +
+> +		The files are read only.
+> +
+> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/select_iio
+> +Date:		May 2018
+> +KernelVersion:	4.18
+> +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> +Description:	This file allows iio devices selection.
+> +
+> +		The file is read/write.
+> +
 
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlsV7OIACgkQbDjKyiDZ
-s5LDZw/+O2nYPWBGyN1jbpBcGO/3bosxPXKBX2ZQFxEyD9OqN+pUnaZf371hjSFR
-d1XLmUvoZOSp4ErGc+UtEk+OsynoYq7OL2y8q9bAf7ZUiyE7s6Qcnt77F9BASHLV
-HcYd55P9f9mJl5p8LTD3ZHOee+9aWfY0djF0FTtKgF2uSQsdRhMHF+9YVrh9hq0q
-b6nsuYEJ97y0/jOdcxRI0n1SPZPzJZHH9zGogRU14iS/D8m8qKRXeJCzHTlGHIuL
-KPlelYmqj7jc8O6xSkDLPv9p9HsKIxo8Ke2GwNNMuD+osBZb6lLO6fpi65PiL7k8
-LcEqe3LfC4gQZtkmWyi/9hfFh68flJbP95+TPlqLLNoN6xog8h6qv+zUotIGPNss
-5K9BHZiikGdnK7O5B2HB9aai0Tb6Zg3DkJyg81b8FKv5PmZvGRUyB3qRYEkZ4SxL
-qAhebhropdXVmx6VYWodQsXumJNgnh6oTlncrZw4bHLXHWUzfDOgLjrVSZbfukUX
-23Y+BDrkGFygDCeA+0PA/lYN4nm/LZtqWsqJvlVyiRMwCpmx+Hm/SqzNeXMjg1kB
-vwwXndA/FfWFMzm0w1+l8JcravBxIcx1iLmanMnEs3d/++hUhKMvnGR0E+35cAw8
-daSslcvU9Q45hN0M4tP3bZsYDHxo8bqMwouuFXO+jYrYsEhuF2o=
-=JaZJ
------END PGP SIGNATURE-----
+Some description is appropriate here for what values it accepts and how
+it is intended to be used.
 
---YZVh52eu0Ophig4D--
+> +What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu1_on
+> +		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu2_on
+> +		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/pwr_cycle
+> +Date:		May 2018
+> +KernelVersion:	4.18
+> +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> +Description:	These files allow assert system's power cycling and PS units
+> +		on/off switching.
+
+This Description is awkward. Consider:
+
+These files allow asserting system power cycling and switching power
+supply units on and off.
+
+> +		The files are write only.
+
+Please provide usage and resulting behavior.
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
