@@ -1,134 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753865AbeFERN1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:13:27 -0400
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:41881 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753762AbeFERNZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:13:25 -0400
-Date: Tue, 5 Jun 2018 18:13:19 +0100
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: mhocko@kernel.org, vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not in
- swap cache
-Message-ID: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
+        id S1753533AbeFERGE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753383AbeFERGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:01 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 39/61] powerpc/pseries: Use the security flags in pseries_setup_rfi_flush()
+Date: Tue,  5 Jun 2018 19:02:00 +0200
+Message-Id: <20180605170120.159520145@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+References: <20180605170117.643936916@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
-fixed races between mremap and other operations for both file-backed and
-anonymous mappings. The file-backed was the most critical as it allowed the
-possibility that data could be changed on a physical page after page_mkclean
-returned which could trigger data loss or data integrity issues. A customer
-reported that the cost of the TLBs for anonymous regressions was excessive
-and resulting in a 30-50% drop in performance overall since this commit
-on a microbenchmark. Unfortunately I neither have access to the test-case
-nor can I describe what it does other than saying that mremap operations
-dominate heavily.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-The anonymous page race fix is overkill for two reasons. Pages that are not
-in the swap cache are not going to be issued for IO and if a stale TLB entry
-is used, the write still occurs on the same physical page. Any race with
-mmap replacing the address space is handled by mmap_sem. As anonymous pages
-are often dirty, it can mean that mremap always has to flush even when it is
-not necessary.
+------------------
 
-This patch special cases anonymous pages to only flush if the page is in
-swap cache and can be potentially queued for IO. It uses the page lock to
-serialise against any potential reclaim. If the page is added to the swap
-cache on the reclaim side after the page lock is dropped on the mremap
-side then reclaim will call try_to_unmap_flush_dirty() before issuing
-any IO so there is no data integrity issue. This means that in the common
-case where a workload avoids swap entirely that mremap is a much cheaper
-operation due to the lack of TLB flushes.
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-Using another testcase that simply calls mremap heavily with varying number
-of threads, it was found that very broadly speaking that TLB shootdowns
-were reduced by 31% on average throughout the entire test case but your
-milage will vary.
+commit 2e4a16161fcd324b1f9bf6cb6856529f7eaf0689 upstream.
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Now that we have the security flags we can simplify the code in
+pseries_setup_rfi_flush() because the security flags have pessimistic
+defaults.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/mremap.c | 42 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 37 insertions(+), 5 deletions(-)
+ arch/powerpc/platforms/pseries/setup.c |   27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 049470aa1e3e..d26c5a00fd9d 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -24,6 +24,7 @@
- #include <linux/uaccess.h>
- #include <linux/mm-arch-hooks.h>
- #include <linux/userfaultfd_k.h>
-+#include <linux/mm_inline.h>
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -492,30 +492,27 @@ void pseries_setup_rfi_flush(void)
+ 	bool enable;
+ 	long rc;
  
- #include <asm/cacheflush.h>
- #include <asm/tlbflush.h>
-@@ -112,6 +113,41 @@ static pte_t move_soft_dirty_pte(pte_t pte)
- 	return pte;
+-	/* Enable by default */
+-	enable = true;
+-	types = L1D_FLUSH_FALLBACK;
+-
+ 	rc = plpar_get_cpu_characteristics(&result);
+-	if (rc == H_SUCCESS) {
++	if (rc == H_SUCCESS)
+ 		init_cpu_char_feature_flags(&result);
+ 
+-		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
+-			types |= L1D_FLUSH_MTTRIG;
+-		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
+-			types |= L1D_FLUSH_ORI;
+-
+-		if ((!(result.behaviour & H_CPU_BEHAV_L1D_FLUSH_PR)) ||
+-		    (!(result.behaviour & H_CPU_BEHAV_FAVOUR_SECURITY)))
+-			enable = false;
+-	}
+-
+ 	/*
+ 	 * We're the guest so this doesn't apply to us, clear it to simplify
+ 	 * handling of it elsewhere.
+ 	 */
+ 	security_ftr_clear(SEC_FTR_L1D_FLUSH_HV);
+ 
++	types = L1D_FLUSH_FALLBACK;
++
++	if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_TRIG2))
++		types |= L1D_FLUSH_MTTRIG;
++
++	if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_ORI30))
++		types |= L1D_FLUSH_ORI;
++
++	enable = security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) && \
++		 security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR);
++
+ 	setup_rfi_flush(types, enable);
  }
  
-+/* Returns true if a TLB must be flushed before PTL is dropped */
-+static bool should_force_flush(pte_t *pte)
-+{
-+	bool is_swapcache;
-+	struct page *page;
-+
-+	if (!pte_present(*pte) || !pte_dirty(*pte))
-+		return false;
-+
-+	/*
-+	 * If we are remapping a dirty file PTE, make sure to flush TLB
-+	 * before we drop the PTL for the old PTE or we may race with
-+	 * page_mkclean().
-+	 */
-+	page = pte_page(*pte);
-+	if (page_is_file_cache(page))
-+		return true;
-+
-+	/*
-+	 * For anonymous pages, only flush swap cache pages that could
-+	 * be unmapped and queued for swap since flush_tlb_batched_pending was
-+	 * last called. Reclaim itself takes care that the TLB is flushed
-+	 * before IO is queued. If a page is not in swap cache and a stale TLB
-+	 * is used before mremap is complete then the write hits the same
-+	 * physical page and there is no lost data loss. Check under the
-+	 * page lock to avoid any potential race with reclaim.
-+	 */
-+	if (!trylock_page(page))
-+		return true;
-+	is_swapcache = PageSwapCache(page);
-+	unlock_page(page);
-+
-+	return is_swapcache;
-+}
-+
- static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
- 		unsigned long old_addr, unsigned long old_end,
- 		struct vm_area_struct *new_vma, pmd_t *new_pmd,
-@@ -163,15 +199,11 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
- 
- 		pte = ptep_get_and_clear(mm, old_addr, old_pte);
- 		/*
--		 * If we are remapping a dirty PTE, make sure
--		 * to flush TLB before we drop the PTL for the
--		 * old PTE or we may race with page_mkclean().
--		 *
- 		 * This check has to be done after we removed the
- 		 * old PTE from page tables or another thread may
- 		 * dirty it after the check and before the removal.
- 		 */
--		if (pte_present(pte) && pte_dirty(pte))
-+		if (should_force_flush(&pte))
- 			force_flush = true;
- 		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
- 		pte = move_soft_dirty_pte(pte);
