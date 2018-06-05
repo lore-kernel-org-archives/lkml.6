@@ -1,227 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752559AbeFEV4v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:56:51 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:41924 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751270AbeFEV4t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:56:49 -0400
-X-Google-Smtp-Source: ADUXVKLdpZEpYOga/0AWPB/ZokZrnATqKrIM0ZlZjsGsrot0oWz7xGShRn5WIzE1ccKlze6r6lbR+g==
-Subject: Re: [PATCH v2 1/3] arm64/mm: pass swapper_pg_dir as an argument to
- __enable_mmu()
-To: Jun Yao <yaojun8558363@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-References: <20180605093350.24504-1-yaojun8558363@gmail.com>
- <20180605093350.24504-2-yaojun8558363@gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <7cc30f38-55e5-ff7e-03a4-5cae2fa69587@redhat.com>
-Date: Tue, 5 Jun 2018 14:56:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752275AbeFEV72 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:59:28 -0400
+Received: from mga17.intel.com ([192.55.52.151]:7359 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752025AbeFEV71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:59:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
+   d="scan'208";a="56821720"
+Date: Tue, 5 Jun 2018 15:59:26 -0600
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH 2/2] libnvdimm: don't flush power-fail protected CPU
+ caches
+Message-ID: <20180605215926.GA16066@linux.intel.com>
+References: <20180605205841.15878-1-ross.zwisler@linux.intel.com>
+ <20180605205841.15878-2-ross.zwisler@linux.intel.com>
+ <CAPcyv4ipWTDP0dNeyUd2vba1GcYb61BQ-w2yWms8o8SeMtBiRA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180605093350.24504-2-yaojun8558363@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4ipWTDP0dNeyUd2vba1GcYb61BQ-w2yWms8o8SeMtBiRA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 02:33 AM, Jun Yao wrote:
-> Introduce __pa_swapper_pg_dir to save physical address of
-> swapper_pg_dir. And pass it as an argument to __enable_mmu().
+On Tue, Jun 05, 2018 at 02:20:38PM -0700, Dan Williams wrote:
+> On Tue, Jun 5, 2018 at 1:58 PM, Ross Zwisler
+> <ross.zwisler@linux.intel.com> wrote:
+> > This commit:
+> >
+> > 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
+> >
+> > intended to make sure that deep flush was always available even on
+> > platforms which support a power-fail protected CPU cache.  An unintended
+> > side effect of this change was that we also lost the ability to skip
+> > flushing CPU caches on those power-fail protected CPU cache.
+> >
+> > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> > Fixes: 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
+> > ---
+> >  drivers/dax/super.c   | 20 +++++++++++++++++++-
+> >  drivers/nvdimm/pmem.c |  2 ++
+> >  include/linux/dax.h   |  9 +++++++++
+> >  3 files changed, 30 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> > index c2c46f96b18c..457e0bb6c936 100644
+> > --- a/drivers/dax/super.c
+> > +++ b/drivers/dax/super.c
+> > @@ -152,6 +152,8 @@ enum dax_device_flags {
+> >         DAXDEV_ALIVE,
+> >         /* gate whether dax_flush() calls the low level flush routine */
+> >         DAXDEV_WRITE_CACHE,
+> > +       /* only flush the CPU caches if they are not power fail protected */
+> > +       DAXDEV_FLUSH_ON_SYNC,
+> >  };
+> >
+> >  /**
+> > @@ -283,7 +285,8 @@ EXPORT_SYMBOL_GPL(dax_copy_from_iter);
+> >  void arch_wb_cache_pmem(void *addr, size_t size);
+> >  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
+> >  {
+> > -       if (unlikely(!dax_write_cache_enabled(dax_dev)))
+> > +       if (unlikely(!dax_write_cache_enabled(dax_dev)) ||
+> > +                       !dax_flush_on_sync_enabled(dax_dev))
 > 
-> Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
-> ---
->   arch/arm64/include/asm/mmu_context.h |  4 +---
->   arch/arm64/include/asm/pgtable.h     |  1 +
->   arch/arm64/kernel/cpufeature.c       |  2 +-
->   arch/arm64/kernel/head.S             |  6 ++++--
->   arch/arm64/kernel/hibernate.c        |  2 +-
->   arch/arm64/kernel/sleep.S            |  1 +
->   arch/arm64/mm/kasan_init.c           |  4 ++--
->   arch/arm64/mm/mmu.c                  | 11 +++++++++--
->   8 files changed, 20 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
-> index 39ec0b8a689e..3eddb871f251 100644
-> --- a/arch/arm64/include/asm/mmu_context.h
-> +++ b/arch/arm64/include/asm/mmu_context.h
-> @@ -141,14 +141,12 @@ static inline void cpu_install_idmap(void)
->    * Atomically replaces the active TTBR1_EL1 PGD with a new VA-compatible PGD,
->    * avoiding the possibility of conflicting TLB entries being allocated.
->    */
-> -static inline void cpu_replace_ttbr1(pgd_t *pgdp)
-> +static inline void cpu_replace_ttbr1(phys_addr_t pgd_phys)
->   {
->   	typedef void (ttbr_replace_func)(phys_addr_t);
->   	extern ttbr_replace_func idmap_cpu_replace_ttbr1;
->   	ttbr_replace_func *replace_phys;
->   
-> -	phys_addr_t pgd_phys = virt_to_phys(pgdp);
-> -
->   	replace_phys = (void *)__pa_symbol(idmap_cpu_replace_ttbr1);
->   
->   	cpu_install_idmap();
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 7c4c8f318ba9..519ab5581b08 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -722,6 +722,7 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
->   extern pgd_t swapper_pg_end[];
->   extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
->   extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
-> +extern volatile phys_addr_t __pa_swapper_pg_dir;
->   
->   /*
->    * Encode and decode a swap entry:
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index d2856b129097..e3d76a9dd67a 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -917,7 +917,7 @@ kpti_install_ng_mappings(const struct arm64_cpu_capabilities *__unused)
->   	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
->   
->   	cpu_install_idmap();
-> -	remap_fn(cpu, num_online_cpus(), __pa_symbol(swapper_pg_dir));
-> +	remap_fn(cpu, num_online_cpus(), __pa_swapper_pg_dir);
->   	cpu_uninstall_idmap();
->   
->   	if (!cpu)
-> diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-> index b0853069702f..2e871b1cb75f 100644
-> --- a/arch/arm64/kernel/head.S
-> +++ b/arch/arm64/kernel/head.S
-> @@ -706,6 +706,7 @@ secondary_startup:
->   	 * Common entry point for secondary CPUs.
->   	 */
->   	bl	__cpu_setup			// initialise processor
-> +	ldr_l   x26, __pa_swapper_pg_dir
->   	bl	__enable_mmu
->   	ldr	x8, =__secondary_switched
->   	br	x8
-> @@ -748,6 +749,7 @@ ENDPROC(__secondary_switched)
->    * Enable the MMU.
->    *
->    *  x0  = SCTLR_EL1 value for turning on the MMU.
-> + *  x26 = TTBR1 value for turning on the MMU.
->    *
->    * Returns to the caller via x30/lr. This requires the caller to be covered
->    * by the .idmap.text section.
-> @@ -762,9 +764,8 @@ ENTRY(__enable_mmu)
->   	b.ne	__no_granule_support
->   	update_early_cpu_boot_status 0, x1, x2
->   	adrp	x1, idmap_pg_dir
-> -	adrp	x2, swapper_pg_dir
->   	phys_to_ttbr x3, x1
-> -	phys_to_ttbr x4, x2
-> +	phys_to_ttbr x4, x26
->   	msr	ttbr0_el1, x3			// load TTBR0
->   	msr	ttbr1_el1, x4			// load TTBR1
->   	isb
-> @@ -823,6 +824,7 @@ __primary_switch:
->   	mrs	x20, sctlr_el1			// preserve old SCTLR_EL1 value
->   #endif
->   
-> +	adrp    x26, swapper_pg_dir
->   	bl	__enable_mmu
->   #ifdef CONFIG_RELOCATABLE
->   	bl	__relocate_kernel
-> diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
-> index 6b2686d54411..0a0a0ca19f9b 100644
-> --- a/arch/arm64/kernel/hibernate.c
-> +++ b/arch/arm64/kernel/hibernate.c
-> @@ -125,7 +125,7 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
->   		return -EOVERFLOW;
->   
->   	arch_hdr_invariants(&hdr->invariants);
-> -	hdr->ttbr1_el1		= __pa_symbol(swapper_pg_dir);
-> +	hdr->ttbr1_el1          = __pa_swapper_pg_dir;
->   	hdr->reenter_kernel	= _cpu_resume;
->   
->   	/* We can't use __hyp_get_vectors() because kvm may still be loaded */
-> diff --git a/arch/arm64/kernel/sleep.S b/arch/arm64/kernel/sleep.S
-> index bebec8ef9372..03854c329449 100644
-> --- a/arch/arm64/kernel/sleep.S
-> +++ b/arch/arm64/kernel/sleep.S
-> @@ -101,6 +101,7 @@ ENTRY(cpu_resume)
->   	bl	el2_setup		// if in EL2 drop to EL1 cleanly
->   	bl	__cpu_setup
->   	/* enable the MMU early - so we can access sleep_save_stash by va */
-> +	ldr_l   x26, __pa_swapper_pg_dir
->   	bl	__enable_mmu
->   	ldr	x8, =_cpu_resume
->   	br	x8
-> diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-> index 12145874c02b..dd4f28c19165 100644
-> --- a/arch/arm64/mm/kasan_init.c
-> +++ b/arch/arm64/mm/kasan_init.c
-> @@ -199,7 +199,7 @@ void __init kasan_init(void)
->   	 */
->   	memcpy(tmp_pg_dir, swapper_pg_dir, sizeof(tmp_pg_dir));
->   	dsb(ishst);
-> -	cpu_replace_ttbr1(lm_alias(tmp_pg_dir));
-> +	cpu_replace_ttbr1(__pa_symbol(tmp_pg_dir));
->   
->   	clear_pgds(KASAN_SHADOW_START, KASAN_SHADOW_END);
->   
-> @@ -236,7 +236,7 @@ void __init kasan_init(void)
->   			pfn_pte(sym_to_pfn(kasan_zero_page), PAGE_KERNEL_RO));
->   
->   	memset(kasan_zero_page, 0, PAGE_SIZE);
-> -	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
-> +	cpu_replace_ttbr1(__pa_swapper_pg_dir);
->   
->   	/* At this point kasan is fully initialized. Enable error messages */
->   	init_task.kasan_depth = 0;
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 2dbb2c9f1ec1..c7df2f0d2e85 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -55,6 +55,9 @@ u64 idmap_ptrs_per_pgd = PTRS_PER_PGD;
->   u64 kimage_voffset __ro_after_init;
->   EXPORT_SYMBOL(kimage_voffset);
->   
-> +volatile phys_addr_t __section(".mmuoff.data.read")
-> +__pa_swapper_pg_dir;
-> +
->   /*
->    * Empty_zero_page is a special page that is used for zero-initialized data
->    * and COW.
-> @@ -631,6 +634,10 @@ void __init paging_init(void)
->   	phys_addr_t pgd_phys = early_pgtable_alloc();
->   	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
->   
-> +	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
-> +	__flush_dcache_area((void *)&__pa_swapper_pg_dir,
-> +			    sizeof(__pa_swapper_pg_dir));
-> +
+> This seems backwards. I think we should teach the pmem driver to still
+> issue deep flush even when dax_write_cache_enabled() is false.
 
-Can you add a comment here explaining why the flush is needed and
-also why the variable gets placed in the particular section?
-A brief summary of https://www.spinics.net/lists/kernel/msg2819594.html
-would be fine.
+That does still happen.  Deep flush is essentially controlled by the 'wbc'
+variable in pmem_attach_disk(), which we use to set blk_queue_write_cache().
+My understanding is that this causes the block layer to send down
+REQ_FUA/REQ_PREFLUSH BIOs, and it's in response to these that we do a deep
+flush via nvdimm_flush().  Whether this happens is totally up to the device's
+write cache setting, and doesn't look at whether the platform has
+flush-on-fail CPU caches.
 
-Thanks,
-Laura
+This does bring up another wrinkle, though: we export a write_cache sysfs
+entry that you can use to change the write cache setting of a namespace:
 
->   	map_kernel(pgdp);
->   	map_mem(pgdp);
->   
-> @@ -642,9 +649,9 @@ void __init paging_init(void)
->   	 *
->   	 * To do this we need to go via a temporary pgd.
->   	 */
-> -	cpu_replace_ttbr1(__va(pgd_phys));
-> +	cpu_replace_ttbr1(pgd_phys);
->   	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
-> -	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
-> +	cpu_replace_ttbr1(__pa_swapper_pg_dir);
->   
->   	pgd_clear_fixmap();
->   	memblock_free(pgd_phys, PAGE_SIZE);
-> 
+i.e.:
+	/sys/bus/nd/devices/pfn0.1/block/pmem0/dax/write_cache
+
+This changes whether or not the DAXDEV_WRITE_CACHE flag is set, but does *not*
+change whether the block queue says it supports a write cache
+(blk_queue_write_cache()).  So, the sysfs entry ends up controlling whether or
+not we do CPU cache flushing via DAX, but does not do anything with the deep
+flush code.
+
+I'm guessing this should be fixed?  I'll go take a look...
