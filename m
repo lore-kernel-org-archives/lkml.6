@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751978AbeFEREz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33812 "EHLO mail.kernel.org"
+        id S1753075AbeFEREs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:04:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753093AbeFEREv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:51 -0400
+        id S1753027AbeFEREp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "dwmw@amazon.co.uk, boris.ostrovsky@oracle.com, Juergen Gross"
-        <jgross@suse.com>,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.9 15/61] x86/amd: revert commit 944e0fc51a89c9827b9
-Date: Tue,  5 Jun 2018 19:01:36 +0200
-Message-Id: <20180605170118.591023264@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 13/61] ASoC: Intel: sst: remove redundant variable dma_dev_name
+Date: Tue,  5 Jun 2018 19:01:34 +0200
+Message-Id: <20180605170118.443210637@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -31,44 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Revert commit 944e0fc51a89c9827b98813d65dc083274777c7f ("x86/amd: don't
-set X86_BUG_SYSRET_SS_ATTRS when running under Xen") as it is lacking
-a prerequisite patch and is making things worse.
+commit 271ef65b5882425d500e969e875c98e47a6b0c86 upstream.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
+The pointer dma_dev_name is assigned but never read, it is redundant
+and can therefore be removed.
+
+Cleans up clang warning:
+sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
+'dma_dev_name' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kernel/cpu/amd.c |    5 ++---
- arch/x86/xen/enlighten.c  |    4 +++-
- 2 files changed, 5 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -857,9 +857,8 @@ static void init_amd(struct cpuinfo_x86
- 		if (cpu_has(c, X86_FEATURE_3DNOW) || cpu_has(c, X86_FEATURE_LM))
- 			set_cpu_cap(c, X86_FEATURE_3DNOWPREFETCH);
+---
+ sound/soc/intel/common/sst-firmware.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/sound/soc/intel/common/sst-firmware.c
++++ b/sound/soc/intel/common/sst-firmware.c
+@@ -274,7 +274,6 @@ int sst_dma_new(struct sst_dsp *sst)
+ 	struct sst_pdata *sst_pdata = sst->pdata;
+ 	struct sst_dma *dma;
+ 	struct resource mem;
+-	const char *dma_dev_name;
+ 	int ret = 0;
  
--	/* AMD CPUs don't reset SS attributes on SYSRET, Xen does. */
--	if (!cpu_has(c, X86_FEATURE_XENPV))
--		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
-+	/* AMD CPUs don't reset SS attributes on SYSRET */
-+	set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
- }
- 
- #ifdef CONFIG_X86_32
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -1980,8 +1980,10 @@ EXPORT_SYMBOL_GPL(xen_hvm_need_lapic);
- 
- static void xen_set_cpu_features(struct cpuinfo_x86 *c)
- {
--	if (xen_pv_domain())
-+	if (xen_pv_domain()) {
-+		clear_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
- 		set_cpu_cap(c, X86_FEATURE_XENPV);
-+	}
- }
- 
- static void xen_pin_vcpu(int cpu)
+ 	if (sst->pdata->resindex_dma_base == -1)
+@@ -285,7 +284,6 @@ int sst_dma_new(struct sst_dsp *sst)
+ 	* is attached to the ADSP IP. */
+ 	switch (sst->pdata->dma_engine) {
+ 	case SST_DMA_TYPE_DW:
+-		dma_dev_name = "dw_dmac";
+ 		break;
+ 	default:
+ 		dev_err(sst->dev, "error: invalid DMA engine %d\n",
