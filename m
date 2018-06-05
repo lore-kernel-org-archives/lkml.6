@@ -1,76 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751895AbeFEIyw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:54:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33984 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751540AbeFEIyt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:54:49 -0400
-Subject: Re: [PATCH v2] cpuidle/powernv : Add Description for cpuidle state
-To: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: rjw@rjwysocki.net, daniel.lezcano@linaro.org, paulus@samba.org,
-        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        stewart@linux.vnet.ibm.com
-References: <20180604081758.104201-1-huntbag@linux.vnet.ibm.com>
- <0a28154deb468669a59c120a90d4aedc1e1e705b.camel@kernel.crashing.org>
- <20180604114500.3rlpuso5aftesnf5@aksadiga.ibm>
-From: Abhishek <huntbag@linux.vnet.ibm.com>
-Date: Tue, 5 Jun 2018 14:24:39 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751904AbeFEIzD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:55:03 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50748 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751728AbeFEIzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:55:01 -0400
+Date: Tue, 5 Jun 2018 10:54:53 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 5/8] x86/microcode/AMD: Check microcode container data
+ in the late loader
+Message-ID: <20180605085453.GA27701@nazgul.tnic>
+References: <cover.1526767245.git.mail@maciej.szmigiero.name>
+ <32c2d5a36010a7e9e538f081d4f3a8e8c94da890.1526767245.git.mail@maciej.szmigiero.name>
 MIME-Version: 1.0
-In-Reply-To: <20180604114500.3rlpuso5aftesnf5@aksadiga.ibm>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18060508-4275-0000-0000-0000028A478E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060508-4276-0000-0000-000037914A6F
-Message-Id: <17cd53ec-6bc1-5814-8824-3c6a4f0b90cd@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806050108
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <32c2d5a36010a7e9e538f081d4f3a8e8c94da890.1526767245.git.mail@maciej.szmigiero.name>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, May 20, 2018 at 12:07:19AM +0200, Maciej S. Szmigiero wrote:
+> Convert the late loader in the AMD microcode update driver to use newly
+> introduced microcode container data checking functions as it was previously
+> done for the early loader.
+> 
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> ---
+>  arch/x86/kernel/cpu/microcode/amd.c | 70 +++++++++++++----------------
+>  1 file changed, 32 insertions(+), 38 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+> index f8bd74341ed8..3e10a5920f58 100644
+> --- a/arch/x86/kernel/cpu/microcode/amd.c
+> +++ b/arch/x86/kernel/cpu/microcode/amd.c
+> @@ -693,28 +693,26 @@ static enum ucode_state apply_microcode_amd(int cpu)
+>  	return UCODE_UPDATED;
+>  }
+>  
+> -static int install_equiv_cpu_table(const u8 *buf)
+> +static unsigned int install_equiv_cpu_table(const u8 *buf, size_t buf_size)
+>  {
+> -	unsigned int *ibuf = (unsigned int *)buf;
+> -	unsigned int type = ibuf[1];
+> -	unsigned int size = ibuf[2];
+> +	const u32 *hdr;
+> +	u32 equiv_tbl_len;
+>  
+> -	if (type != UCODE_EQUIV_CPU_TABLE_TYPE || !size) {
+> -		pr_err("empty section/"
+> -		       "invalid type field in container file section header\n");
+> -		return -EINVAL;
+> -	}
+> +	if (!verify_equivalence_table(buf, buf_size, false))
+> +		return 0;
+> +
+> +	hdr = (const u32 *)buf;
+> +	equiv_tbl_len = hdr[2];
+>  
+> -	equiv_cpu_table = vmalloc(size);
+> +	equiv_cpu_table = vmalloc(equiv_tbl_len);
+>  	if (!equiv_cpu_table) {
+>  		pr_err("failed to allocate equivalent CPU table\n");
+> -		return -ENOMEM;
+> +		return 0;
+>  	}
+>  
+> -	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, size);
+> +	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, equiv_tbl_len);
+>  
+> -	/* add header length */
+> -	return size + CONTAINER_HDR_SZ;
+> +	return equiv_tbl_len;
+>  }
+>  
+>  static void free_equiv_cpu_table(void)
+> @@ -739,13 +737,19 @@ static void cleanup(void)
+>  static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover,
+>  				unsigned int *crnt_size)
+>  {
+> +	u32 *hdr = (u32 *)fw;
+>  	struct microcode_header_amd *mc_hdr;
+>  	struct ucode_patch *patch;
+> -	unsigned int patch_size, ret;
+> +	u32 patch_size;
+>  	u32 proc_fam;
+>  	u16 proc_id;
+>  
+> -	patch_size  = *(u32 *)(fw + 4);
+> +	if (!verify_patch_section(fw, leftover, false)) {
+> +		*crnt_size = leftover;
 
+I'm not sure about this: we verify the patch section and in the error
+case we skip over the whole leftover buffer?
 
-On 06/04/2018 05:15 PM, Akshay Adiga wrote:
-> On Mon, Jun 04, 2018 at 07:04:14PM +1000, Benjamin Herrenschmidt wrote:
->> Is this a new property ? I'm not fan of adding yet another of those
->> silly arrays.
->>
->> I would say this is the right time now to switch over to a node per
->> state instead, as we discussed with Vaidy.
+Maybe skipping over SECTION_HDR_SIZE or better yet skip 1 byte here
+too, like in parse_container() to give us the highest chance of finding
+something sensible later...
 
-It is not a new property. Name was being used for description as 
-description was not present in device tree. A skiboot patch adding 
-description to device tree have been posted. This patch reads those 
-description instead of copying name itself into description. And we fall 
-back to reading name into description to not break the comaptibility 
-with older firmware.
+> +		return 0;
+> +	}
+> +
+> +	patch_size  = hdr[1];
 
-Thanks
-Abhishek
+Same comment as before: verify_patch_size()
 
-> I posted  the node based device tree here :
-> skiboot patch :  https://patchwork.ozlabs.org/patch/923120/
-> kernel patch : https://lkml.org/lkml/2018/5/30/1146
->
-> Do you have any inputs for this design ?
->
->> Additionally, while doing that, we can provide the versioning mechanism
->> I proposed so we can deal with state specific issues and erratas.
->>
->> Cheers,
->> Ben.
->>
+But I think you can simply do verify_patch() at the beginning of the
+function and be done with the verification in that function.
+
+>  	*crnt_size  = patch_size + SECTION_HDR_SIZE;
+>  	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
+>  	proc_id	    = mc_hdr->processor_rev_id;
+> @@ -767,16 +771,8 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover,
+>  		return 0;
+>  	}
+>  
+> -	/*
+> -	 * The section header length is not included in this indicated size
+> -	 * but is present in the leftover file length so we need to subtract
+> -	 * it before passing this value to the function below.
+> -	 */
+> -	ret = verify_patch_size(family, patch_size, leftover - SECTION_HDR_SIZE);
+> -	if (!ret) {
+> -		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
+> +	if (!verify_patch(family, fw, leftover, false))
+>  		return 0;
+> -	}
+>  
+>  	patch = kzalloc(sizeof(*patch), GFP_KERNEL);
+>  	if (!patch) {
+> @@ -810,21 +806,21 @@ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
+>  	enum ucode_state ret = UCODE_ERROR;
+>  	unsigned int leftover;
+>  	u8 *fw = (u8 *)data;
+> -	int offset;
+> +	unsigned int offset;
+>  
+> -	offset = install_equiv_cpu_table(data);
+> -	if (offset < 0) {
+> +	offset = install_equiv_cpu_table(data, size);
+> +	if (!offset) {
+>  		pr_err("failed to create equivalent cpu table\n");
+
+No need for that error message anymore I guess -
+install_equiv_cpu_table() and verify_equivalence_table() are pretty
+vocal in the error case already.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
