@@ -1,49 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeFELlt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:41:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44805 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751838AbeFELlr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:41:47 -0400
-Date: Tue, 5 Jun 2018 13:41:18 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>
-cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>, Song Liu <liu.song.a23@gmail.com>,
-        Joerg Roedel <jroedel@suse.de>, Mike Travis <mike.travis@hpe.com>,
-        stable@vger.kernel.org
-Subject: Re: [patch 3/8] x86/apic: Provide apic_ack_irq()
-In-Reply-To: <94117bd8-352b-1077-e8ae-8722d7ec213f@cn.fujitsu.com>
-Message-ID: <alpine.DEB.2.21.1806051339020.1591@nanos.tec.linutronix.de>
-References: <20180604162224.471925894@linutronix.de> <94117bd8-352b-1077-e8ae-8722d7ec213f@cn.fujitsu.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1751854AbeFELnF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:43:05 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8694 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751599AbeFELnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:43:04 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 0/3] Bug fixes & optimization for HNS3 Driver
+Date: Tue, 5 Jun 2018 12:41:58 +0100
+Message-ID: <20180605114201.29900-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Jun 2018, Dou Liyang wrote:
-> > +{
-> > +	if (unlikely(irqd_is_setaffinity_pending(irqd)))
-> 
-> Affinity pending is also judged in
-> 
-> > +		irq_move_irq(irqd);
-> 
-> If we can remove the if(...) statement here
+This patch-set presents 2 priority bug fixes and an optimization for
+HNS3 driver.
 
-That requires to fix all call sites in ia64 and that's why I didn't.  But
-we can make irq_move_irq() an inline function and have the check in the
-inline.
+Xi Wang (3):
+  net: hns3: Fix for VF mailbox cannot receiving PF response
+  net: hns3: Fix for VF mailbox receiving unknown message
+  net: hns3: Optimize PF CMDQ interrupt switching process
 
-Thanks,
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 13 ++++++++++++
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  3 +++
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c   | 23 +++++++++++++++++++---
+ 3 files changed, 36 insertions(+), 3 deletions(-)
 
-	tglx
+-- 
+2.7.4
