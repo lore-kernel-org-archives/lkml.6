@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751804AbeFEGC3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:02:29 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:15465 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751729AbeFEGCZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751762AbeFEGCZ (ORCPT <rfc822;w@1wt.eu>);
         Tue, 5 Jun 2018 02:02:25 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:36561 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751601AbeFEGCX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 02:02:23 -0400
 From: Nishanth Menon <nm@ti.com>
 To: Santosh Shilimkar <ssantosh@kernel.org>,
         Will Deacon <will.deacon@arm.com>,
@@ -17,11 +17,10 @@ CC: <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
         Tero Kristo <t-kristo@ti.com>, Russell King <linux@armlinux.org.uk>,
-        Sudeep Holla <sudeep.holla@arm.com>, Nishanth Menon <nm@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>
-Subject: [RFC PATCH 3/6] serial: 8250_omap: Add support for AM654 UART controller
-Date: Tue, 5 Jun 2018 01:01:22 -0500
-Message-ID: <20180605060125.9518-4-nm@ti.com>
+        Sudeep Holla <sudeep.holla@arm.com>, Nishanth Menon <nm@ti.com>
+Subject: [RFC PATCH 2/6] arm64: Add support for TI's K3 Multicore SoC architecture
+Date: Tue, 5 Jun 2018 01:01:21 -0500
+Message-ID: <20180605060125.9518-3-nm@ti.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180605060125.9518-1-nm@ti.com>
 References: <20180605060125.9518-1-nm@ti.com>
@@ -32,42 +31,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AM654 uses a UART controller that is compatible (partially) with
-existing 8250 UART, however, has a few differences with respect to DMA
-support and control paths. Introduce a base definition that allows us
-to build up the differences in follow on patches.
+Add support for Texas Instrument's K3 Multicore SoC architecture
+processors.
 
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Vignesh R <vigneshr@ti.com>
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- Documentation/devicetree/bindings/serial/omap_serial.txt | 1 +
- drivers/tty/serial/8250/8250_omap.c                      | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm64/Kconfig.platforms | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/omap_serial.txt b/Documentation/devicetree/bindings/serial/omap_serial.txt
-index 4b0f05adb228..c35d5ece1156 100644
---- a/Documentation/devicetree/bindings/serial/omap_serial.txt
-+++ b/Documentation/devicetree/bindings/serial/omap_serial.txt
-@@ -1,6 +1,7 @@
- OMAP UART controller
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index d5aeac351fc3..52df25bf4f8c 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -71,6 +71,13 @@ config ARCH_EXYNOS
+ 	help
+ 	  This enables support for ARMv8 based Samsung Exynos SoC family.
  
- Required properties:
-+- compatible : should be "ti,am654-uart" for AM654 controllers
- - compatible : should be "ti,omap2-uart" for OMAP2 controllers
- - compatible : should be "ti,omap3-uart" for OMAP3 controllers
- - compatible : should be "ti,omap4-uart" for OMAP4 controllers
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index 1b337fee07ed..a019286f8bb6 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1115,6 +1115,7 @@ static const u8 am3352_habit = OMAP_DMA_TX_KICK | UART_ERRATA_CLOCK_DISABLE;
- static const u8 dra742_habit = UART_ERRATA_CLOCK_DISABLE;
- 
- static const struct of_device_id omap8250_dt_ids[] = {
-+	{ .compatible = "ti,am654-uart" },
- 	{ .compatible = "ti,omap2-uart" },
- 	{ .compatible = "ti,omap3-uart" },
- 	{ .compatible = "ti,omap4-uart", .data = &omap4_habit, },
++config ARCH_K3
++	bool "Texas Instruments Inc. K3 multicore SoC architecture"
++	select PM_GENERIC_DOMAINS if PM
++	help
++	  This enables support for Texas Instruments' K3 multicore SoC
++	  architecture.
++
+ config ARCH_LAYERSCAPE
+ 	bool "ARMv8 based Freescale Layerscape SoC family"
+ 	select EDAC_SUPPORT
 -- 
 2.15.1
