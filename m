@@ -1,54 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751709AbeFEIQA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:16:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751481AbeFEIP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:15:58 -0400
-Date: Tue, 5 Jun 2018 10:15:35 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.16 00/47] 4.16.14-stable review
-Message-ID: <20180605081535.GA9155@kroah.com>
-References: <20180604065549.468488465@linuxfoundation.org>
- <65ecf137-2772-dde0-ee7c-ae9e9269b512@kernel.org>
+        id S1751816AbeFEIQT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:16:19 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58218 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeFEIQR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:16:17 -0400
+Date: Tue, 5 Jun 2018 10:16:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 13/19] mm/migrate: Use xchg instead of spinlock
+Message-ID: <20180605081606.GE12217@hirez.programming.kicks-ass.net>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-14-git-send-email-srikar@linux.vnet.ibm.com>
+ <20180604192821.GB12217@hirez.programming.kicks-ass.net>
+ <20180605072439.GE30328@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <65ecf137-2772-dde0-ee7c-ae9e9269b512@kernel.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180605072439.GE30328@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 01:47:12PM -0600, Shuah Khan wrote:
-> On 06/04/2018 12:58 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.16.14 release.
-> > There are 47 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Jun  6 06:55:34 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.14-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
+On Tue, Jun 05, 2018 at 12:24:39AM -0700, Srikar Dronamraju wrote:
+> * Peter Zijlstra <peterz@infradead.org> [2018-06-04 21:28:21]:
 > 
-> Compiled and booted on my test system. No dmesg regressions.
+> > >  	if (time_after(jiffies, pgdat->numabalancing_migrate_next_window)) {
+> > > -		spin_lock(&pgdat->numabalancing_migrate_lock);
+> > > -		pgdat->numabalancing_migrate_nr_pages = 0;
+> > > -		pgdat->numabalancing_migrate_next_window = jiffies +
+> > > -			msecs_to_jiffies(migrate_interval_millisecs);
+> > > -		spin_unlock(&pgdat->numabalancing_migrate_lock);
+> > > +		if (xchg(&pgdat->numabalancing_migrate_nr_pages, 0))
+> > > +			pgdat->numabalancing_migrate_next_window = jiffies +
+> > > +				msecs_to_jiffies(migrate_interval_millisecs);
+> >
+> > Note that both are in fact wrong. That wants to be something like:
+> >
+> > 	pgdat->numabalancing_migrate_next_window += interval;
+> >
+> > Otherwise you stretch every interval by 'jiffies - numabalancing_migrate_next_window'.
+> 
+> Okay, I get your point.
 
-Thanks for testing all of these and letting me know.
+Note that in practise it probably doesn't matter, but it just upsets my
+OCD ;-)
 
-greg k-h
+> > Also, that all wants READ_ONCE/WRITE_ONCE, irrespective of the
+> > spinlock/xchg.
+
+> unsigned long interval = READ_ONCE(pgdat->numabalancing_migrate_next_window);
+> 
+> if (time_after(jiffies, interval)) {
+> 	interval += msecs_to_jiffies(migrate_interval_millisecs));
+> 	if (xchg(&pgdat->numabalancing_migrate_nr_pages, 0))
+> 		WRITE_ONCE(pgdat->numabalancing_migrate_next_window, interval);
+> }
+> 
+> Something like this?
+
+Almost, you forgot about the case where 'jiffies -
+numabalancing_migrate_next_window > interval'.
+
+That wants to be something like:
+
+  unsigned long timo = READ_ONCE(stupid_long_name);
+
+  if (time_after(jiffies, timo) && xchg(&other_long_name, 0)) {
+	  do {
+		  timo += msec_to_jiffies(..);
+	  } while (unlikely(time_after(jiffies, timo);
+
+	  WRITE_ONCE(stupid_long_name, timo);
+  }
