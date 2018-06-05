@@ -1,86 +1,292 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753174AbeFERxO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:53:14 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38515 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753120AbeFERwz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:52:55 -0400
-X-Google-Smtp-Source: ADUXVKLJx5iu+uE0lO8wS8Beia0gJ0bHXTSUr1XNyGYLTqgGuo3DOHPjzEIYdJVKapmyEPcqAMpw5drXRcJ4/fizOOU=
-MIME-Version: 1.0
-References: <20180605170532.170361-1-ndesaulniers@google.com>
- <20180605170532.170361-3-ndesaulniers@google.com> <26c7fd1c-ab40-368f-c2e3-43a6b45157fd@zytor.com>
- <0dd024cd-e05a-0d67-c1bf-1a532714bb1a@zytor.com>
-In-Reply-To: <0dd024cd-e05a-0d67-c1bf-1a532714bb1a@zytor.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Tue, 5 Jun 2018 10:52:42 -0700
-Message-ID: <CAKwvOdk0v4gY04_pbMeUT7Ly5oRHetKorQXnjp_UVBabK74Ekw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] x86: paravirt: make native_save_fl extern inline
-To: hpa@zytor.com
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "J. Kiszka" <jan.kiszka@siemens.com>, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, Josh Poimboeuf <jpoimboe@redhat.com>,
-        kirill.shutemov@linux.intel.com, mingo@redhat.com, mjg59@google.com,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, rostedt@goodmis.org,
-        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
-        Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
-        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
-        David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753094AbeFERwu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:52:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753043AbeFERwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:52:45 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 42/46] perf script powerpc: Python script for hypervisor call statistics
+Date: Tue,  5 Jun 2018 14:50:26 -0300
+Message-Id: <20180605175030.32549-43-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
+References: <20180605175030.32549-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/18 10:28, H. Peter Anvin wrote:
-> On 06/05/18 10:05, Nick Desaulniers wrote:
->> +
->> +/*
->> + * void native_restore_fl(unsigned long flags)
->> + * %rdi: flags
->> + */
->> +ENTRY(native_restore_fl)
->> +    push %_ASM_DI
->> +    popf
->> +    ret
->> +ENDPROC(native_restore_fl)
->> +EXPORT_SYMBOL(native_restore_fl)
->>
->
-> To work on i386, this would have to be %_ASM_AX in that case.
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-?
+Add python script to show hypervisor call statistics. Ex,
 
-Does the kernel have a different calling convention for 32b x86? How
-does that work? regparm=3? Does that need to be added to the
-declaration?
+  # perf record -a -e "{powerpc:hcall_entry,powerpc:hcall_exit}"
+  # perf script -s scripts/python/powerpc-hcalls.py
+    hcall                            count   min(ns)   max(ns)   avg(ns)
+    --------------------------------------------------------------------
+    H_RANDOM                            82       838      1164       904
+    H_PUT_TCE                           47      1078      5928      2003
+    H_EOI                              266      1336      3546      1654
+    H_ENTER                             28      1646      4038      1952
+    H_PUT_TCE_INDIRECT                 230      2166     18168      6109
+    H_IPI                              238      1072      3232      1688
+    H_SEND_LOGICAL_LAN                  42      5488     21366      7694
+    H_STUFF_TCE                        294       986      6210      3591
+    H_XIRR                             266      2286      6990      3783
+    H_PROTECT                           10      2196      3556      2555
+    H_VIO_SIGNAL                       294      1028      2784      1311
+    H_ADD_LOGICAL_LAN_BUFFER            53      1978      3450      2600
+    H_SEND_CRQ                          77      1762      7240      2447
 
-> Something like this added to <asm/asm.h> might be useful; then you can
-> simply:
->
->       push %_ASM_ARG1
->
-> Version with fixed typo...
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20180605124801.17210-1-ravi.bangoria@linux.ibm.com
+[ Fixup typo: table_loockup -> table_lookup ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ .../perf/scripts/python/bin/powerpc-hcalls-record  |   2 +
+ .../perf/scripts/python/bin/powerpc-hcalls-report  |   2 +
+ tools/perf/scripts/python/powerpc-hcalls.py        | 200 +++++++++++++++++++++
+ 3 files changed, 204 insertions(+)
+ create mode 100644 tools/perf/scripts/python/bin/powerpc-hcalls-record
+ create mode 100644 tools/perf/scripts/python/bin/powerpc-hcalls-report
+ create mode 100644 tools/perf/scripts/python/powerpc-hcalls.py
 
-Oh, nice, thanks! I'll pick this up and add it to my patch set for v3
-(or did you want me to review/sign-off now?) I can pick up Sedat's
-suggestion.
+diff --git a/tools/perf/scripts/python/bin/powerpc-hcalls-record b/tools/perf/scripts/python/bin/powerpc-hcalls-record
+new file mode 100644
+index 000000000000..b7402aa9147d
+--- /dev/null
++++ b/tools/perf/scripts/python/bin/powerpc-hcalls-record
+@@ -0,0 +1,2 @@
++#!/bin/bash
++perf record -e "{powerpc:hcall_entry,powerpc:hcall_exit}" $@
+diff --git a/tools/perf/scripts/python/bin/powerpc-hcalls-report b/tools/perf/scripts/python/bin/powerpc-hcalls-report
+new file mode 100644
+index 000000000000..dd32ad7465f6
+--- /dev/null
++++ b/tools/perf/scripts/python/bin/powerpc-hcalls-report
+@@ -0,0 +1,2 @@
++#!/bin/bash
++perf script $@ -s "$PERF_EXEC_PATH"/scripts/python/powerpc-hcalls.py
+diff --git a/tools/perf/scripts/python/powerpc-hcalls.py b/tools/perf/scripts/python/powerpc-hcalls.py
+new file mode 100644
+index 000000000000..00e0e7476e55
+--- /dev/null
++++ b/tools/perf/scripts/python/powerpc-hcalls.py
+@@ -0,0 +1,200 @@
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Copyright (C) 2018 Ravi Bangoria, IBM Corporation
++#
++# Hypervisor call statisics
++
++import os
++import sys
++
++sys.path.append(os.environ['PERF_EXEC_PATH'] + \
++	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
++
++from perf_trace_context import *
++from Core import *
++from Util import *
++
++# output: {
++#	opcode: {
++#		'min': minimum time nsec
++#		'max': maximum time nsec
++#		'time': average time nsec
++#		'cnt': counter
++#	} ...
++# }
++output = {}
++
++# d_enter: {
++#	cpu: {
++#		opcode: nsec
++#	} ...
++# }
++d_enter = {}
++
++hcall_table = {
++	4: 'H_REMOVE',
++	8: 'H_ENTER',
++	12: 'H_READ',
++	16: 'H_CLEAR_MOD',
++	20: 'H_CLEAR_REF',
++	24: 'H_PROTECT',
++	28: 'H_GET_TCE',
++	32: 'H_PUT_TCE',
++	36: 'H_SET_SPRG0',
++	40: 'H_SET_DABR',
++	44: 'H_PAGE_INIT',
++	48: 'H_SET_ASR',
++	52: 'H_ASR_ON',
++	56: 'H_ASR_OFF',
++	60: 'H_LOGICAL_CI_LOAD',
++	64: 'H_LOGICAL_CI_STORE',
++	68: 'H_LOGICAL_CACHE_LOAD',
++	72: 'H_LOGICAL_CACHE_STORE',
++	76: 'H_LOGICAL_ICBI',
++	80: 'H_LOGICAL_DCBF',
++	84: 'H_GET_TERM_CHAR',
++	88: 'H_PUT_TERM_CHAR',
++	92: 'H_REAL_TO_LOGICAL',
++	96: 'H_HYPERVISOR_DATA',
++	100: 'H_EOI',
++	104: 'H_CPPR',
++	108: 'H_IPI',
++	112: 'H_IPOLL',
++	116: 'H_XIRR',
++	120: 'H_MIGRATE_DMA',
++	124: 'H_PERFMON',
++	220: 'H_REGISTER_VPA',
++	224: 'H_CEDE',
++	228: 'H_CONFER',
++	232: 'H_PROD',
++	236: 'H_GET_PPP',
++	240: 'H_SET_PPP',
++	244: 'H_PURR',
++	248: 'H_PIC',
++	252: 'H_REG_CRQ',
++	256: 'H_FREE_CRQ',
++	260: 'H_VIO_SIGNAL',
++	264: 'H_SEND_CRQ',
++	272: 'H_COPY_RDMA',
++	276: 'H_REGISTER_LOGICAL_LAN',
++	280: 'H_FREE_LOGICAL_LAN',
++	284: 'H_ADD_LOGICAL_LAN_BUFFER',
++	288: 'H_SEND_LOGICAL_LAN',
++	292: 'H_BULK_REMOVE',
++	304: 'H_MULTICAST_CTRL',
++	308: 'H_SET_XDABR',
++	312: 'H_STUFF_TCE',
++	316: 'H_PUT_TCE_INDIRECT',
++	332: 'H_CHANGE_LOGICAL_LAN_MAC',
++	336: 'H_VTERM_PARTNER_INFO',
++	340: 'H_REGISTER_VTERM',
++	344: 'H_FREE_VTERM',
++	348: 'H_RESET_EVENTS',
++	352: 'H_ALLOC_RESOURCE',
++	356: 'H_FREE_RESOURCE',
++	360: 'H_MODIFY_QP',
++	364: 'H_QUERY_QP',
++	368: 'H_REREGISTER_PMR',
++	372: 'H_REGISTER_SMR',
++	376: 'H_QUERY_MR',
++	380: 'H_QUERY_MW',
++	384: 'H_QUERY_HCA',
++	388: 'H_QUERY_PORT',
++	392: 'H_MODIFY_PORT',
++	396: 'H_DEFINE_AQP1',
++	400: 'H_GET_TRACE_BUFFER',
++	404: 'H_DEFINE_AQP0',
++	408: 'H_RESIZE_MR',
++	412: 'H_ATTACH_MCQP',
++	416: 'H_DETACH_MCQP',
++	420: 'H_CREATE_RPT',
++	424: 'H_REMOVE_RPT',
++	428: 'H_REGISTER_RPAGES',
++	432: 'H_DISABLE_AND_GETC',
++	436: 'H_ERROR_DATA',
++	440: 'H_GET_HCA_INFO',
++	444: 'H_GET_PERF_COUNT',
++	448: 'H_MANAGE_TRACE',
++	468: 'H_FREE_LOGICAL_LAN_BUFFER',
++	472: 'H_POLL_PENDING',
++	484: 'H_QUERY_INT_STATE',
++	580: 'H_ILLAN_ATTRIBUTES',
++	592: 'H_MODIFY_HEA_QP',
++	596: 'H_QUERY_HEA_QP',
++	600: 'H_QUERY_HEA',
++	604: 'H_QUERY_HEA_PORT',
++	608: 'H_MODIFY_HEA_PORT',
++	612: 'H_REG_BCMC',
++	616: 'H_DEREG_BCMC',
++	620: 'H_REGISTER_HEA_RPAGES',
++	624: 'H_DISABLE_AND_GET_HEA',
++	628: 'H_GET_HEA_INFO',
++	632: 'H_ALLOC_HEA_RESOURCE',
++	644: 'H_ADD_CONN',
++	648: 'H_DEL_CONN',
++	664: 'H_JOIN',
++	676: 'H_VASI_STATE',
++	688: 'H_ENABLE_CRQ',
++	696: 'H_GET_EM_PARMS',
++	720: 'H_SET_MPP',
++	724: 'H_GET_MPP',
++	748: 'H_HOME_NODE_ASSOCIATIVITY',
++	756: 'H_BEST_ENERGY',
++	764: 'H_XIRR_X',
++	768: 'H_RANDOM',
++	772: 'H_COP',
++	788: 'H_GET_MPP_X',
++	796: 'H_SET_MODE',
++	61440: 'H_RTAS',
++}
++
++def hcall_table_lookup(opcode):
++	if (hcall_table.has_key(opcode)):
++		return hcall_table[opcode]
++	else:
++		return opcode
++
++print_ptrn = '%-28s%10s%10s%10s%10s'
++
++def trace_end():
++	print print_ptrn % ('hcall', 'count', 'min(ns)', 'max(ns)', 'avg(ns)')
++	print '-' * 68
++	for opcode in output:
++		h_name = hcall_table_lookup(opcode)
++		time = output[opcode]['time']
++		cnt = output[opcode]['cnt']
++		min_t = output[opcode]['min']
++		max_t = output[opcode]['max']
++
++		print print_ptrn % (h_name, cnt, min_t, max_t, time/cnt)
++
++def powerpc__hcall_exit(name, context, cpu, sec, nsec, pid, comm, callchain,
++			opcode, retval):
++	if (d_enter.has_key(cpu) and d_enter[cpu].has_key(opcode)):
++		diff = nsecs(sec, nsec) - d_enter[cpu][opcode]
++
++		if (output.has_key(opcode)):
++			output[opcode]['time'] += diff
++			output[opcode]['cnt'] += 1
++			if (output[opcode]['min'] > diff):
++				output[opcode]['min'] = diff
++			if (output[opcode]['max'] < diff):
++				output[opcode]['max'] = diff
++		else:
++			output[opcode] = {
++				'time': diff,
++				'cnt': 1,
++				'min': diff,
++				'max': diff,
++			}
++
++		del d_enter[cpu][opcode]
++#	else:
++#		print "Can't find matching hcall_enter event. Ignoring sample"
++
++def powerpc__hcall_entry(event_name, context, cpu, sec, nsec, pid, comm,
++			 callchain, opcode):
++		if (d_enter.has_key(cpu)):
++			d_enter[cpu][opcode] = nsecs(sec, nsec)
++		else:
++			d_enter[cpu] = {opcode: nsecs(sec, nsec)}
 -- 
-Thanks,
-~Nick Desaulniers
+2.14.3
