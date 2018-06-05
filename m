@@ -1,83 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751490AbeFEEoV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 00:44:21 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9360 "EHLO mga14.intel.com"
+        id S1751547AbeFEEp6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 00:45:58 -0400
+Received: from muru.com ([72.249.23.125]:46070 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750975AbeFEEoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 00:44:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,477,1520924400";
-   d="scan'208";a="60417433"
-From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To: =?utf-8?B?TWlrYSBQZW50dGlsw6Q=?= <mika.penttila@nextfour.com>,
-        "Andy Lutomirski" <luto@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-CC: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] x86/vdso: Move out the CPU number store
-Thread-Topic: [PATCH 6/6] x86/vdso: Move out the CPU number store
-Thread-Index: AQHT/Dm2Eo4HTQvBLkW4xvj9vMmKVqRRbtEA//+XrwA=
-Date: Tue, 5 Jun 2018 04:44:16 +0000
-Message-ID: <C62C3F95-0DD4-4B66-89A8-4FAB819C8A70@intel.com>
-References: <1528140269-26205-1-git-send-email-chang.seok.bae@intel.com>
- <1528140269-26205-7-git-send-email-chang.seok.bae@intel.com>
- <8a41304a-3517-003a-badf-1ba8f7ababe4@nextfour.com>
-In-Reply-To: <8a41304a-3517-003a-badf-1ba8f7ababe4@nextfour.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.d.1.180523
-x-originating-ip: [10.254.45.193]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D7F5E37D78472044A328F4BA71A2EA02@intel.com>
+        id S1751320AbeFEEp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 00:45:57 -0400
+Date: Mon, 4 Jun 2018 21:45:54 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Maciej Purski <m.purski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        Carlos Hernandez <ceh@ti.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: Regression in Linux next again
+Message-ID: <20180605044554.GC5738@atomide.com>
+References: <20180530144505.GB5705@atomide.com>
+ <CGME20180604135952eucas1p292f7bcec405e6a1a6261031df36cad32@eucas1p2.samsung.com>
+ <1528120764-14316-1-git-send-email-m.purski@samsung.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528120764-14316-1-git-send-email-m.purski@samsung.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w554iQom009506
 
->> diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
->> index ea554f8..e716e94 100644
->> --- a/arch/x86/kernel/setup_percpu.c
->> +++ b/arch/x86/kernel/setup_percpu.c
->> @@ -155,12 +155,21 @@ static void __init pcpup_populate_pte(unsigned long addr)
->>  
->>  static inline void setup_percpu_segment(int cpu)
->>  {
->> -#ifdef CONFIG_X86_32
->> -	struct desc_struct d = GDT_ENTRY_INIT(0x8092, per_cpu_offset(cpu),
->> -					      0xFFFFF);
->> +#ifdef CONFIG_NUMA
->> +	unsigned long node = early_cpu_to_node(cpu);
->> +#else
->> +	unsigned long node = 0;
->> +#endif
->> +	struct desc_struct d = GDT_ENTRY_INIT(0x0, per_cpu_offset(cpu),
->> +			   make_lsl_tscp(cpu, node));
->> +
->> +	d.type = 5;	/* R0 data, expand down, accessed */
->> +	d.dpl = 3;	/* Visible to user code */
->> +	d.s = 1;	/* Not a system segment */
->> +	d.p = 1;	/* Present */
->> +	d.d = 1;	/* 32-bit */
->>  
->>  	write_gdt_entry(get_cpu_gdt_rw(cpu), GDT_ENTRY_PERCPU, &d, DESCTYPE_S);
->> -#endif
->>  }
+Hi,
 
-> This won't work on X86-32 because it actually uses the segment limit with fs: access. So there 
-> is a reason why the lsl based method is X86-64 only.
+* Maciej Purski <m.purski@samsung.com> [180604 14:02]:
+> Tony, please apply this patchset and test it on your Beaglebone. It'd be
+> great if you could try to find out, which patch causes failure. They should
+> be appliable on the current next.
 
-The limit will be consumed in X86-64 only, while the unification with i386 was suggested for a
-different reason.
+It seems beagle-x15 boots for me except with the last patch in the
+series with compile issue fixed. With that applied after modules
+get loaded it just hangs with:
 
-Thanks,
-Chang
+[   25.925607] regulator_resolve_supply: 1608
+[   25.930620] regulator_resolve_supply: 1608
+[   26.098449] lib80211: common routines for IEEE802.11 drivers
+[   26.446713] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[   26.514834] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   26.525311] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[   26.534250] cfg80211: failed to load regulatory.db
+[   26.998736] regulator_set_voltage: 3381
+[   27.007662] _regulator_do_set_voltage: 2913
+[   27.012593] regulator_set_voltage: 3381
+[   27.016969] _regulator_do_set_voltage: 2913
+[   27.022847] regulator_set_voltage: 3381
+
+Not sure what module gets loaded at that point, I'll test again
+with initcall_debug once you post a compiling version of your last
+patch.
+
+Regards,
+
+Tony
