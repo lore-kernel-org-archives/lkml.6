@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752960AbeFERVl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:21:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
+        id S1753119AbeFERWQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:22:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753032AbeFEREn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:43 -0400
+        id S1752086AbeFEREe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Guenter Roeck <groeck@chromium.org>, Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 12/61] rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
-Date: Tue,  5 Jun 2018 19:01:33 +0200
-Message-Id: <20180605170118.273436790@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Martin <dave.martin@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, Mark Salter <msalter@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 01/61] arm64: lse: Add early clobbers to some input/output asm operands
+Date: Tue,  5 Jun 2018 19:01:22 +0200
+Message-Id: <20180605170117.727723707@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -30,42 +29,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Will Deacon <will.deacon@arm.com>
 
-commit fb239c1209bb0f0b4830cc72507cc2f2d63fadbd upstream.
+commit 32c3fa7cdf0c4a3eb8405fc3e13398de019e828b upstream.
 
-In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
-is assigned to itself in an if ... else statement, apparently only to
-document that the branch condition is handled and that a previously read
-value should be returned unmodified. The self-assignment causes clang to
-raise the following warning:
+For LSE atomics that read and write a register operand, we need to
+ensure that these operands are annotated as "early clobber" if the
+register is written before all of the input operands have been consumed.
+Failure to do so can result in the compiler allocating the same register
+to both operands, leading to splats such as:
 
-drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
-  error: explicitly assigning value of variable of type 'u32'
-    (aka 'unsigned int') to itself [-Werror,-Wself-assign]
-  writeVal = writeVal;
+ Unable to handle kernel paging request at virtual address 11111122222221
+ [...]
+ x1 : 1111111122222222 x0 : 1111111122222221
+ Process swapper/0 (pid: 1, stack limit = 0x000000008209f908)
+ Call trace:
+  test_atomic64+0x1360/0x155c
 
-Delete the branch with the self-assignment.
+where x0 has been allocated as both the value to be stored and also the
+atomic_t pointer.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This patch adds the missing clobbers.
+
+Cc: <stable@vger.kernel.org>
+Cc: Dave Martin <dave.martin@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Reported-by: Mark Salter <msalter@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c |    3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm64/include/asm/atomic_lse.h |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
-@@ -304,9 +304,6 @@ static void _rtl92c_get_txpower_writeval
- 			writeVal = 0x00000000;
- 		if (rtlpriv->dm.dynamic_txhighpower_lvl == TXHIGHPWRLEVEL_BT1)
- 			writeVal = writeVal - 0x06060606;
--		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
--			 TXHIGHPWRLEVEL_BT2)
--			writeVal = writeVal;
- 		*(p_outwriteval + rf) = writeVal;
- 	}
+--- a/arch/arm64/include/asm/atomic_lse.h
++++ b/arch/arm64/include/asm/atomic_lse.h
+@@ -117,7 +117,7 @@ static inline void atomic_and(int i, ato
+ 	/* LSE atomics */
+ 	"	mvn	%w[i], %w[i]\n"
+ 	"	stclr	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
  }
+@@ -135,7 +135,7 @@ static inline int atomic_fetch_and##name
+ 	/* LSE atomics */						\
+ 	"	mvn	%w[i], %w[i]\n"					\
+ 	"	ldclr" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -161,7 +161,7 @@ static inline void atomic_sub(int i, ato
+ 	/* LSE atomics */
+ 	"	neg	%w[i], %w[i]\n"
+ 	"	stadd	%w[i], %[v]")
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -180,7 +180,7 @@ static inline int atomic_sub_return##nam
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], w30, %[v]\n"			\
+ 	"	add	%w[i], %w[i], w30")				\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS , ##cl);					\
+ 									\
+@@ -207,7 +207,7 @@ static inline int atomic_fetch_sub##name
+ 	/* LSE atomics */						\
+ 	"	neg	%w[i], %w[i]\n"					\
+ 	"	ldadd" #mb "	%w[i], %w[i], %[v]")			\
+-	: [i] "+r" (w0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (w0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -314,7 +314,7 @@ static inline void atomic64_and(long i,
+ 	/* LSE atomics */
+ 	"	mvn	%[i], %[i]\n"
+ 	"	stclr	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -332,7 +332,7 @@ static inline long atomic64_fetch_and##n
+ 	/* LSE atomics */						\
+ 	"	mvn	%[i], %[i]\n"					\
+ 	"	ldclr" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -358,7 +358,7 @@ static inline void atomic64_sub(long i,
+ 	/* LSE atomics */
+ 	"	neg	%[i], %[i]\n"
+ 	"	stadd	%[i], %[v]")
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)
+ 	: "r" (x1)
+ 	: __LL_SC_CLOBBERS);
+ }
+@@ -377,7 +377,7 @@ static inline long atomic64_sub_return##
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], x30, %[v]\n"			\
+ 	"	add	%[i], %[i], x30")				\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -404,7 +404,7 @@ static inline long atomic64_fetch_sub##n
+ 	/* LSE atomics */						\
+ 	"	neg	%[i], %[i]\n"					\
+ 	"	ldadd" #mb "	%[i], %[i], %[v]")			\
+-	: [i] "+r" (x0), [v] "+Q" (v->counter)				\
++	: [i] "+&r" (x0), [v] "+Q" (v->counter)				\
+ 	: "r" (x1)							\
+ 	: __LL_SC_CLOBBERS, ##cl);					\
+ 									\
+@@ -516,7 +516,7 @@ static inline long __cmpxchg_double##nam
+ 	"	eor	%[old1], %[old1], %[oldval1]\n"			\
+ 	"	eor	%[old2], %[old2], %[oldval2]\n"			\
+ 	"	orr	%[old1], %[old1], %[old2]")			\
+-	: [old1] "+r" (x0), [old2] "+r" (x1),				\
++	: [old1] "+&r" (x0), [old2] "+&r" (x1),				\
+ 	  [v] "+Q" (*(unsigned long *)ptr)				\
+ 	: [new1] "r" (x2), [new2] "r" (x3), [ptr] "r" (x4),		\
+ 	  [oldval1] "r" (oldval1), [oldval2] "r" (oldval2)		\
