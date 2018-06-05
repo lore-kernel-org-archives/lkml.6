@@ -1,83 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751864AbeFEJeo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:34:44 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48056 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751834AbeFEJem (ORCPT
+        id S1751674AbeFEJgx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:36:53 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37942 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751495AbeFEJgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:34:42 -0400
-Subject: Re: [PATCH 8/9] extcon: usbc-cros-ec: Switch to SPDX identifier.
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-References: <20180605092209.22887-1-enric.balletbo@collabora.com>
- <CGME20180605092225epcas5p3fd3b4614d8715ad6b5862a6d73beec15@epcas5p3.samsung.com>
- <20180605092209.22887-9-enric.balletbo@collabora.com>
- <5B165834.7000705@samsung.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <69b78abb-a057-025a-46ec-6c73bac2faff@collabora.com>
-Date: Tue, 5 Jun 2018 11:34:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 5 Jun 2018 05:36:52 -0400
+X-Google-Smtp-Source: ADUXVKJjur4rmrphE5gDvKKwHhFGaMXRy8us+buWwmL/ZbfgS7XUE72lj6fIKgpjFVnmVolRNkTt4y8iX3cKqpNieg0=
 MIME-Version: 1.0
-In-Reply-To: <5B165834.7000705@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com>
+References: <0000000000006e4595056dd23c16@google.com> <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
+ <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 5 Jun 2018 11:36:30 +0200
+Message-ID: <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
+Subject: Re: INFO: task hung in ip6gre_exit_batch_net
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>,
+        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/06/18 11:30, Chanwoo Choi wrote:
-> On 2018년 06월 05일 18:22, Enric Balletbo i Serra wrote:
->> Adopt the SPDX license identifier headers to ease license compliance
->> management.
+On Tue, Jun 5, 2018 at 11:03 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> Hi, Dmirty!
+>
+> On 04.06.2018 18:22, Dmitry Vyukov wrote:
+>> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
+>> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
+>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>
+>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>
+>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
 >>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
+>> Another hang on rtnl lock:
 >>
->>  drivers/extcon/extcon-usbc-cros-ec.c | 20 +++++---------------
->>  1 file changed, 5 insertions(+), 15 deletions(-)
+>> #syz dup: INFO: task hung in netdev_run_todo
 >>
->> diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
->> index 6721ab01fe7d..1a4888f2fe40 100644
->> --- a/drivers/extcon/extcon-usbc-cros-ec.c
->> +++ b/drivers/extcon/extcon-usbc-cros-ec.c
->> @@ -1,18 +1,8 @@
->> -/**
->> - * drivers/extcon/extcon-usbc-cros-ec - ChromeOS Embedded Controller extcon> - *
->> - * Copyright (C) 2017 Google, Inc
->> - * Author: Benson Leung <bleung@chromium.org>
->> - *
->> - * This software is licensed under the terms of the GNU General Public
->> - * License version 2, as published by the Free Software Foundation, and
->> - * may be copied, distributed, and modified under those terms.
->> - *
->> - * This program is distributed in the hope that it will be useful,
->> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> - * GNU General Public License for more details.
->> - */
->> +// SPDX-License-Identifier: GPL-2.0+
->> +// ChromeOS Embedded Controller extcon
->> +//
->> +// Copyright (C) 2012 Google, Inc.
-> 
-> 2012 is right?
+>> May be related to "unregister_netdevice: waiting for DEV to become free":
+>> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
 
-No, sorry, copy paste error.
-> The original copyright has '2017' year information.
-> 
+netdev_wait_allrefs does not hold rtnl lock during waiting, so it must
+be something different.
 
-Should be 2017.
 
->> +// Author: Benson Leung <bleung@chromium.org>
->>  
->>  #include <linux/extcon-provider.h>
->>  #include <linux/kernel.h>
->>
-> 
-> 
+>> Any other explanations for massive hangs on rtnl lock for minutes?
+>
+> To exclude the situation, when a task exists with rtnl_mutex held:
+>
+> would the pr_warn() from print_held_locks_bug() be included in the console output
+> if they appear?
+
+Yes, everything containing "WARNING:" is detected as bug.
