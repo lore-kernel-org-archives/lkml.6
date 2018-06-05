@@ -1,162 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752421AbeFETKV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:10:21 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:46929 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752003AbeFETKS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:10:18 -0400
-X-Google-Smtp-Source: ADUXVKKxUnPNZR8rGhcCN8zZKQ993MbY24VVV0HkeiYelDYwCiptXcotSfGI/mulgEicaDzHdoDP8NOn3BgBixDQKH8=
-MIME-Version: 1.0
-In-Reply-To: <71c55f5c-deed-b307-9022-8a41dd898822@virtuozzo.com>
-References: <CAPcyv4hJOzRBR0hg=xBZkd_oLtQRZeTXShYChdu8VA+GgTqUvg@mail.gmail.com>
- <71c55f5c-deed-b307-9022-8a41dd898822@virtuozzo.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 5 Jun 2018 12:10:16 -0700
-Message-ID: <CAPcyv4gXBKU-gjsk1+veCRAVqaN-hdd3vfT+kiF=2HaoLLxDEA@mail.gmail.com>
-Subject: Re: KASAN vs ZONE_DEVICE (was: Re: [PATCH v2 2/7] dax: change bdev_dax_supported()...)
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        id S1752289AbeFETLr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:11:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752035AbeFETLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 15:11:45 -0400
+Date: Tue, 5 Jun 2018 14:11:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ryankao <ryankao@realtek.com>
+Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
+        "jrg.otte@gmail.com" <jrg.otte@gmail.com>,
+        David Miller <davem@davemloft.net>, Hayes Wang <hayeswang@realtek.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "romieu@fr.zoreil.com" <romieu@fr.zoreil.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Hau <hau@realtek.com>, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
+Message-ID: <20180605191142.GA214338@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180605045812.17977-1-kai.heng.feng@canonical.com>
+ <9D9E2AF1-CD59-425B-85E9-DB89D620CA67@canonical.com>
+ <B01FA80E1422A647BEB597328C544223D30B8F90@RTITMBSV05.realtek.com.tw>
+ <20180605172805.GD30381@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605172805.GD30381@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 7:01 AM, Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->
->
-> On 06/05/2018 07:22 AM, Dan Williams wrote:
->> On Mon, Jun 4, 2018 at 8:32 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->>> [ adding KASAN devs...]
->>>
->>> On Mon, Jun 4, 2018 at 4:40 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->>>> On Sun, Jun 3, 2018 at 6:48 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->>>>> On Sun, Jun 3, 2018 at 5:25 PM, Dave Chinner <david@fromorbit.com> wrote:
->>>>>> On Mon, Jun 04, 2018 at 08:20:38AM +1000, Dave Chinner wrote:
->>>>>>> On Thu, May 31, 2018 at 09:02:52PM -0700, Dan Williams wrote:
->>>>>>>> On Thu, May 31, 2018 at 7:24 PM, Dave Chinner <david@fromorbit.com> wrote:
->>>>>>>>> On Thu, May 31, 2018 at 06:57:33PM -0700, Dan Williams wrote:
->>>>>>>>>>> FWIW, XFS+DAX used to just work on this setup (I hadn't even
->>>>>>>>>>> installed ndctl until this morning!) but after changing the kernel
->>>>>>>>>>> it no longer works. That would make it a regression, yes?
->>>>>>>
->>>>>>> [....]
->>>>>>>
->>>>>>>>>> I suspect your kernel does not have CONFIG_ZONE_DEVICE enabled which
->>>>>>>>>> has the following dependencies:
->>>>>>>>>>
->>>>>>>>>>         depends on MEMORY_HOTPLUG
->>>>>>>>>>         depends on MEMORY_HOTREMOVE
->>>>>>>>>>         depends on SPARSEMEM_VMEMMAP
->>>>>>>>>
->>>>>>>>> Filesystem DAX now has a dependency on memory hotplug?
->>>>>>>
->>>>>>> [....]
->>>>>>>
->>>>>>>>> OK, works now I've found the magic config incantantions to turn
->>>>>>>>> everything I now need on.
->>>>>>>
->>>>>>> By enabling these options, my test VM now has a ~30s pause in the
->>>>>>> boot very soon after the nvdimm subsystem is initialised.
->>>>>>>
->>>>>>> [    1.523718] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
->>>>>>> [    1.550353] 00:05: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
->>>>>>> [    1.552175] Non-volatile memory driver v1.3
->>>>>>> [    2.332045] tsc: Refined TSC clocksource calibration: 2199.909 MHz
->>>>>>> [    2.333280] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1fb5dcd4620, max_idle_ns: 440795264143 ns
->>>>>>> [   37.217453] brd: module loaded
->>>>>>> [   37.225423] loop: module loaded
->>>>>>> [   37.228441] virtio_blk virtio2: [vda] 10485760 512-byte logical blocks (5.37 GB/5.00 GiB)
->>>>>>> [   37.245418] virtio_blk virtio3: [vdb] 146800640 512-byte logical blocks (75.2 GB/70.0 GiB)
->>>>>>> [   37.255794] virtio_blk virtio4: [vdc] 1073741824000 512-byte logical blocks (550 TB/500 TiB)
->>>>>>> [   37.265403] nd_pmem namespace1.0: unable to guarantee persistence of writes
->>>>>>> [   37.265618] nd_pmem namespace0.0: unable to guarantee persistence of writes
->>>>>>>
->>>>>>> The system does not appear to be consuming CPU, but it is blocking
->>>>>>> NMIs so I can't get a CPU trace. For a VM that I rely on booting in
->>>>>>> a few seconds because I reboot it tens of times a day, this is a
->>>>>>> problem....
->>>>>>
->>>>>> And when I turn on KASAN, the kernel fails to boot to a login prompt
->>>>>> because:
->>>>>
->>>>> What's your qemu and kernel command line? I'll take look at this first
->>>>> thing tomorrow.
->>>>
->>>> I was able to reproduce this crash by just turning on KASAN...
->>>> investigating. It would still help to have your config for our own
->>>> regression testing purposes it makes sense for us to prioritize
->>>> "Dave's test config", similar to the priority of not breaking Linus'
->>>> laptop.
->>>
->>> I believe this is a bug in KASAN, or a bug in devm_memremap_pages(),
->>> depends on your point of view. At the very least it is a mismatch of
->>> assumptions. KASAN learns of hot added memory via the memory hotplug
->>> notifier. However, the devm_memremap_pages() implementation is
->>> intentionally limited to the "first half" of the memory hotplug
->>> procedure. I.e. it does just enough to setup the linear map for
->>> pfn_to_page() and initialize the "struct page" memmap, but then stops
->>> short of onlining the pages. This is why we are getting a NULL ptr
->>> deref and not a KASAN report, because KASAN has no shadow area setup
->>> for the linearly mapped pmem range.
->>>
->>> In terms of solving it we could refactor kasan_mem_notifier() so that
->>> devm_memremap_pages() can call it outside of the notifier... I'll give
->>> this a shot.
->>
->> Well, the attached patch got me slightly further, but only slightly...
->>
->> [   14.998394] BUG: KASAN: unknown-crash in pmem_do_bvec+0x19e/0x790 [nd_pmem]
->> [   15.000006] Read of size 4096 at addr ffff880200000000 by task
->> systemd-udevd/915
->> [   15.001991]
->> [   15.002590] CPU: 15 PID: 915 Comm: systemd-udevd Tainted: G
->>   OE     4.17.0-rc5+ #1
->> 982
->> [   15.004783] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
->> BIOS rel-1.11.1-0-g0551a
->> 4be2c-prebuilt.qemu-project.org 04/01/2014
->> [   15.007652] Call Trace:
->> [   15.008339]  dump_stack+0x9a/0xeb
->> [   15.009344]  print_address_description+0x73/0x280
->> [   15.010524]  kasan_report+0x258/0x380
->> [   15.011528]  ? pmem_do_bvec+0x19e/0x790 [nd_pmem]
->> [   15.012747]  memcpy+0x1f/0x50
->> [   15.013659]  pmem_do_bvec+0x19e/0x790 [nd_pmem]
->>
->> ...I've exhausted my limited kasan internals knowledge, any ideas what
->> it's missing?
->>
->
-> Initialization is missing. kasan_mem_notifier() doesn't initialize shadow because
-> it expects kasan_free_pages()/kasan_alloc_pages() will do that when page allocated/freed.
->
-> So adding memset(shadow_start, 0, shadow_size); will make this work.
-> But we shouldn't use kasan_mem_notifier here, as that would mean wasting a lot of memory only
-> to store zeroes.
->
-> A better solution would be mapping kasan_zero_page in shadow.
-> The draft patch bellow demonstrates the idea (build tested only).
->
->
-> ---
->  include/linux/kasan.h | 14 ++++++++++++++
->  kernel/memremap.c     | 10 ++++++++++
->  mm/kasan/kasan_init.c | 46 ++++++++++++++++++++++++++++++++++++----------
->  3 files changed, 60 insertions(+), 10 deletions(-)
+[+cc linux-pci]
 
-
-Thank you! This RFC patch works for me. For now we don't necessarily
-need kasan_remove_zero_shadow(), but in the future we might
-dynamically switch the same physical address from being mapped by
-devm_memremap_page() and traditional memory hotplug.
+On Tue, Jun 05, 2018 at 12:28:05PM -0500, Bjorn Helgaas wrote:
+> On Tue, Jun 05, 2018 at 06:34:09AM +0000, Ryankao wrote:
+> > Add realtek folk Hau
+> > 
+> > -----Original Message-----
+> > From: Kai Heng Feng [mailto:kai.heng.feng@canonical.com] 
+> > Sent: Tuesday, June 05, 2018 1:02 PM
+> > To: jrg.otte@gmail.com
+> > Cc: David Miller <davem@davemloft.net>; Hayes Wang <hayeswang@realtek.com>; hkallweit1@gmail.com; romieu@fr.zoreil.com; Linux Netdev List <netdev@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Ryankao <ryankao@realtek.com>
+> > Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
+> > 
+> > Hi Jörg Otte,
+> > 
+> > Can you give this patch a try?
+> > 
+> > Since you are the only one that reported ALDPS/ASPM regression,
+> > 
+> > And I think this patch should solve the issue you had [1].
+> > 
+> > Hopefully we don't need to go down the rabbit hole of blacklist/whitelist...
+> > 
+> > Kai-Heng
+> > 
+> > [1] https://lkml.org/lkml/2013/1/5/36
+> 
+> I have no idea what ALDPS is.  It's not mentioned in the PCIe spec, so
+> presumably it's some Realtek-specific thing.  ASPM is a generic PCIe
+> thing.  Changes to these two things should be in separate patches so
+> they don't get tangled up.
+> 
+> > > On Jun 5, 2018, at 12:58 PM, Kai-Heng Feng 
+> > > <kai.heng.feng@canonical.com>
+> > > wrote:
+> > >
+> > > This patch reinstate ALDPS and ASPM support on r8169.
+> > >
+> > > On some Intel platforms, ASPM support on r8169 is the key factor to 
+> > > let Package C-State achieve PC8. Without ASPM support, the deepest 
+> > > Package C-State can hit is PC3. PC8 can save additional ~3W in 
+> > > comparison with PC3.
+> > >
+> > > This patch is from Realtek.
+> > >
+> > > Fixes: e0c075577965 ("r8169: enable ALDPS for power saving")
+> > > Fixes: d64ec841517a ("r8169: enable internal ASPM and clock request
+> > > settings")
+> 
+> > > +3507,15 @@ static void rtl8168e_1_hw_phy_config(struct 
+> > > rtl8169_private *tp)
+> > >  	rtl_writephy(tp, 0x0d, 0x4007);
+> > >  	rtl_writephy(tp, 0x0e, 0x0000);
+> > >  	rtl_writephy(tp, 0x0d, 0x0000);
+> > > +
+> > > +	/* Check ALDPS bit, disable it if enabled */
+> > > +	rtl_writephy(tp, 0x1f, 0x0000);
+> > > +	if (enable_aldps)
+> > > +		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
+> > > +	else if (rtl_readphy(tp, 0x15) & 0x1000)
+> > > +		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
+> 
+> There's a lot of repetition of this code with minor variations.  You
+> could probably factor it out and make it more concise and more
+> readable.
+> 
+> > > +static void rtl8169_check_link_status(struct net_device *dev,
+> > > +				      struct rtl8169_private *tp) {
+> > > +	struct device *d = tp_to_dev(tp);
+> > > +
+> > > +	if (tp->link_ok(tp)) {
+> > > +		rtl_link_chg_patch(tp);
+> > > +		/* This is to cancel a scheduled suspend if there's one. */
+> > > +		if (pm_request_resume(d))
+> > > +			_rtl_reset_work(tp);
+> > > +		netif_carrier_on(dev);
+> > > +		if (net_ratelimit())
+> > > +			netif_info(tp, ifup, dev, "link up\n");
+> > > +	} else {
+> > > +		netif_carrier_off(dev);
+> > > +		netif_info(tp, ifdown, dev, "link down\n");
+> > > +		pm_runtime_idle(d);
+> > > +	}
+> > > +}
+> 
+> This function apparently just got moved around without changing
+> anything.  That's fine, but the move should be in a separate patch to
+> make the real changes easier to review.
+> 
+> > > @@ -7649,8 +7757,12 @@ static int rtl_init_one(struct pci_dev *pdev, 
+> > > const struct pci_device_id *ent)
+> > >
+> > >  	/* disable ASPM completely as that cause random device stop working
+> > >  	 * problems as well as full system hangs for some PCIe devices users */
+> > > -	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+> > > -				     PCIE_LINK_STATE_CLKPM);
+> > > +	if (!enable_aspm) {
+> > > +		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
+> > > +					     PCIE_LINK_STATE_L1 |
+> > > +					     PCIE_LINK_STATE_CLKPM);
+> > > +		netif_info(tp, probe, dev, "ASPM disabled\n");
+> > > +	}
+> 
+> ASPM is a generic PCIe feature that should be configured by the PCI
+> core without any help from the device driver.
+> 
+> If code in the driver is needed, that means either the PCI core is
+> doing it wrong and we should fix it there, or the device is broken and
+> the driver is working around the erratum.
+> 
+> If this is an erratum, you should include details about exactly what's
+> broken and (ideally) a URL to the published erratum.  Otherwise this
+> is just unmaintainable black magic and likely to be broken by future
+> ASPM changes in the PCI core.
+> 
+> ASPM configuration is done by the PCI core before drivers are bound to
+> the device.  If you need device-specific workarounds, they should
+> probably be in quirks so they're done before the core does that ASPM
+> configuration.
+> 
+> > >  	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+> > >  	rc = pcim_enable_device(pdev);
+> > > --
+> > > 2.17.0
+> > 
+> > ------Please consider the environment before printing this e-mail.
