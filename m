@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752306AbeFETty convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:49:54 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.3]:3913 "EHLO
+        id S1752377AbeFETup convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:50:45 -0400
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.66]:23116 "EHLO
         mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751962AbeFETtx (ORCPT
+        by vger.kernel.org with ESMTP id S1751849AbeFETun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:49:53 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHKsWRWlGSWpSXmKPExsUSt3OpsW78S7F
-  og9sP5CymPnzCZjF39iRGi/tfjzJaXN41h81i68t3TBYPV85hsTi65x6zRd85dwcOj4lndT12
-  zrrL7rFpVSebx51re9g8ni1cz+LxeZNcAFsUa2ZeUn5FAmvG2yVnmAt2SFY0X3zA1sB4QrSLk
-  YtDSGApo8TOow2MXYycHGwChhLz3rwHs0UE0iXeXVjACFLELHCZSWLb5k5WkISwQKjExidr2S
-  GKwiTutN5jgrCNJB4vvgXWzCKgInFk1x8WEJtXIECiseUgmC0kUCUx9/YEsDmcAs4Sr9/sA6t
-  nFJCV+NK4mhnEZhYQl7j1ZD7YTAkBAYkle84zQ9iiEi8f/2OFsBUk9v1ayQZh20u8vveOBcLW
-  l3j0+BEjhG0osWraAai4ucTUnoeMEPN1JBbs/sQGYWtLLFv4mhniTkGJkzOfsExgFJ+F5IxZS
-  FpmIWmZhaRlASPLKkazpKLM9IyS3MTMHF1DAwNdQ0MjXUNLY10LvcQq3US91FLd8tTiEl1Dvc
-  TyYr3iytzknBS9vNSSTYzAeGcAgh2MOy8kH2KU5GBSEuXVWSQWLcSXlJ9SmZFYnBFfVJqTWny
-  IUYaDQ0mC98xzoJxgUWp6akVaZg4w8cCkJTh4lER4uV4ApXmLCxJzizPTIVKnGBWlxHlfg/QJ
-  gCQySvPg2mDJ7hKjrJQwLyPQIUI8BalFuZklqPKvGMU5GJWEeR+CTOHJzCuBm/4KaDET0OJnF
-  cIgi0sSEVJSDYwm/JfqW38aqumesPvXKKAV5ZnHubXRqPKZ/Ryx+OD+B91rM9Mts3uDeWQYHl
-  qFP+ttCHFn+uDmVrB+2kmlW+k7l1xcK8zbOi34aF9yU/1Dz8xEx7ktfI9Xbk64fvBN5etd6tG
-  B3c3/Reqn5Ly9ZhX8yrTH7XZNpdQqXvF9y2RzOd4VHc1LVmIpzkg01GIuKk4EAC9rnyhxAwAA
+        Tue, 5 Jun 2018 15:50:43 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRWlGSWpSXmKPExsUSt3Opse7El2L
+  RBk2/NCymPnzCZjF39iRGi/tfjzJaXN41h81i68t3TBYPV85hsTi65x6zRd85dwcOj4lndT12
+  zrrL7rFpVSebx51re9g8ni1cz+LxeZNcAFsUa2ZeUn5FAmvG4XML2QqaOCtO3HvE3sD4kL2Lk
+  YtDSGApo0RP40qmLkZODjYBQ4l5b94zgtgiAukS7y4sYAQpYha4zCSxbXMnK0hCWMBaom3Ben
+  aIIhuJ3xt2M0HYRhIzDxwBs1kEVCR2H+wCq+EVCJCY+msVG4gtJFAlMePNE7AaTgFniTn998F
+  mMgrISnxpXM0MYjMLiEvcejIfrEZCQEBiyZ7zzBC2qMTLx/9YIWwFiX2/VrJB2PYSr++9Y+li
+  5ACy9SX6GoshwoYSq6YdYIGwzSWm9jxkhBivI7Fg9yc2CFtbYtnC18wQZwpKnJz5hGUCo/gsJ
+  FfMQtIyC0nLLCQtCxhZVjFaJBVlpmeU5CZm5ugaGhjoGhoa6RpamusaWhjpJVbpJumlluqWpx
+  aX6BrqJZYX6xVX5ibnpOjlpZZsYgRGPAMQ7GBceiH5EKMkB5OSKK/OIrFoIb6k/JTKjMTijPi
+  i0pzU4kOMMhwcShK8fi+AcoJFqempFWmZOcDUA5OW4OBREuHdC5LmLS5IzC3OTIdInWJUlBLn
+  DQVJCIAkMkrz4Npg6e4So6yUMC8j0CFCPAWpRbmZJajyrxjFORiVhHllQabwZOaVwE1/BbSYC
+  WjxswphkMUliQgpqQbGLdWPGENq156PLXs0QaW5V/bKJU1ZxtTJ8zy2Nc70Kf1h97eh/Ptkq4
+  jT64Qniay/m6Vo6dSpfnHt5ismuxryIl9IfZrB0tZeGpu5Sbv4zqq7b/5McWs5ZHdG5L37kic
+  3haS+fHhjE5rDbrCv0qHbZ8Pvy9OlzsoJzz4is+Tsf/HvcQ9/nzz5SYmlOCPRUIu5qDgRAGZh
+  /rFyAwAA
 X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-23.tower-262.messagelabs.com!1528228191!1221468!1
+X-Msg-Ref: server-2.tower-288.messagelabs.com!1528228241!1694682!1
 X-Originating-IP: [94.185.165.51]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
@@ -38,23 +39,21 @@ CC: Marek Vasut <marek.vasut+renesas@gmail.com>,
         "linux-renesas-soc@vger.kernel.org"
         <linux-renesas-soc@vger.kernel.org>,
         Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to
- PMIC_CHIP_ID_DA9063
-Thread-Topic: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to
- PMIC_CHIP_ID_DA9063
-Thread-Index: AQHT+lowTneLOxdXIUmgCqzSDozouKRR7G5A
-Date: Tue, 5 Jun 2018 19:49:50 +0000
-Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AD6CE@SW-EX-MBX02.diasemi.com>
+Subject: RE: [PATCH v3 05/10] mfd: da9063: Add DA9063L type
+Thread-Topic: [PATCH v3 05/10] mfd: da9063: Add DA9063L type
+Thread-Index: AQHT+loymMnBuw7neUi5Vw/AJsI0QaRR9lNg
+Date: Tue, 5 Jun 2018 19:50:40 +0000
+Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AD6DD@SW-EX-MBX02.diasemi.com>
 References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
- <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20180602101155.26375-3-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-5-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20180602101155.26375-5-marek.vasut+renesas@gmail.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.20.27.121]
 x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
+x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
 x-kse-antivirus-interceptor-info: scan successful
 x-kse-antivirus-info: Clean, bases: 05/06/2018 15:14:00
 Content-Type: text/plain; charset="us-ascii"
@@ -66,14 +65,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 02 June 2018 11:12, Marek Vasut wrote,
 
-> Subject: [PATCH v3 03/10] mfd: da9063: Rename PMIC_DA9063 to
-> PMIC_CHIP_ID_DA9063
+> Subject: [PATCH v3 05/10] mfd: da9063: Add DA9063L type
 > 
-> The PMIC_DA9063 is a complete misnomer, it denotes the value of the
-> DA9063 chip ID register, so rename it as such. It is also the value
-> of chip ID register of DA9063L though, so drop the enum as all the
-> DA9063 "models" share the same chip ID and thus the distinction will
-> have to be made using DT or otherwise.
+> Add type for DA9063L, which is a reduced variant of the DA9063
+> without RTC block and with less regulators.
 > 
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -82,80 +77,27 @@ On 02 June 2018 11:12, Marek Vasut wrote,
 > Cc: Steve Twiss <stwiss.opensource@diasemi.com>
 > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Cc: linux-renesas-soc@vger.kernel.org
-> Acked-by: Mark Brown <broonie@kernel.org>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 > V2: No change
 > V3: No change
 > ---
->  drivers/mfd/da9063-core.c            | 2 +-
->  drivers/mfd/da9063-i2c.c             | 2 +-
->  drivers/regulator/da9063-regulator.c | 2 +-
->  include/linux/mfd/da9063/core.h      | 4 +---
->  4 files changed, 4 insertions(+), 6 deletions(-)
+>  include/linux/mfd/da9063/core.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-> index 8226ebd8b96d..fb122316c421 100644
-> --- a/drivers/mfd/da9063-core.c
-> +++ b/drivers/mfd/da9063-core.c
-> @@ -192,7 +192,7 @@ int da9063_device_init(struct da9063 *da9063, unsigned
-> int irq)
->  		dev_err(da9063->dev, "Cannot read chip model id.\n");
->  		return -EIO;
->  	}
-> -	if (model != PMIC_DA9063) {
-> +	if (model != PMIC_CHIP_ID_DA9063) {
->  		dev_err(da9063->dev, "Invalid chip model id: 0x%02x\n", model);
->  		return -ENODEV;
->  	}
-> diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-> index 981805a2c521..7f84030c8d53 100644
-> --- a/drivers/mfd/da9063-i2c.c
-> +++ b/drivers/mfd/da9063-i2c.c
-> @@ -280,7 +280,7 @@ static int da9063_i2c_remove(struct i2c_client *i2c)
->  }
-> 
->  static const struct i2c_device_id da9063_i2c_id[] = {
-> -	{"da9063", PMIC_DA9063},
-> +	{ "da9063", PMIC_CHIP_ID_DA9063 },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
-> diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-
-> regulator.c
-> index 6a8f9cd69f52..87c884ae0064 100644
-> --- a/drivers/regulator/da9063-regulator.c
-> +++ b/drivers/regulator/da9063-regulator.c
-> @@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
->  	{
->  		.regulator_info = da9063_regulator_info,
->  		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
-> -		.dev_model = PMIC_DA9063,
-> +		.dev_model = PMIC_CHIP_ID_DA9063,
->  	},
->  	{ }
->  };
 > diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-> index f3ae65db4c86..664f650d0086 100644
+> index eb234582dcb2..c3e917dd1860 100644
 > --- a/include/linux/mfd/da9063/core.h
 > +++ b/include/linux/mfd/da9063/core.h
-> @@ -29,9 +29,7 @@
->  #define DA9063_DRVNAME_RTC		"da9063-rtc"
->  #define DA9063_DRVNAME_VIBRATION	"da9063-vibration"
+> @@ -33,6 +33,7 @@
 > 
-> -enum da9063_models {
-> -	PMIC_DA9063 = 0x61,
-> -};
-> +#define PMIC_CHIP_ID_DA9063		0x61
+>  enum da9063_type {
+>  	PMIC_TYPE_DA9063 = 0,
+> +	PMIC_TYPE_DA9063L,
+>  };
 > 
 >  enum da9063_variant_codes {
->  	PMIC_DA9063_AD = 0x3,
 > --
 > 2.16.2
 
-Hi Marek,
-
 Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-
-Regards,
-Stephen
