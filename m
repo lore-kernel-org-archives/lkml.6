@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752164AbeFEQnu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:43:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46843 "EHLO mx2.suse.de"
+        id S1752180AbeFEQoD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:44:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46866 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751877AbeFEQnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:43:47 -0400
+        id S1751819AbeFEQnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:43:49 -0400
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Michal Suchanek <msuchanek@suse.de>
 To: Jonathan Corbet <corbet@lwn.net>, Michal Suchanek <msuchanek@suse.de>,
@@ -23,9 +23,9 @@ To: Jonathan Corbet <corbet@lwn.net>, Michal Suchanek <msuchanek@suse.de>,
         Jeffrey Hugo <jhugo@codeaurora.org>, Baoquan He <bhe@redhat.com>,
         Ilya Matveychikov <matvejchikov@gmail.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v10 2/5] Documentation/admin-guide: backslash support in kernel arguments.
-Date: Tue,  5 Jun 2018 18:43:09 +0200
-Message-Id: <8ea00d3036146fc52ef8c582f2f4d5d674712be5.1528215659.git.msuchanek@suse.de>
+Subject: [PATCH v10 5/5] Documentation/admin-guide: single quotes in kernel arguments.
+Date: Tue,  5 Jun 2018 18:43:12 +0200
+Message-Id: <c918b9d9901503148c74c31662999712c732dae2.1528215659.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1528215659.git.msuchanek@suse.de>
 References: <cover.1528215659.git.msuchanek@suse.de>
@@ -37,22 +37,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- Documentation/admin-guide/kernel-parameters.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+- fix typo
+---
+ Documentation/admin-guide/kernel-parameters.rst | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.rst b/Documentation/admin-guide/kernel-parameters.rst
-index b8d0bc07ed0a..327e76ebe37d 100644
+index 327e76ebe37d..cc81ad7cab0c 100644
 --- a/Documentation/admin-guide/kernel-parameters.rst
 +++ b/Documentation/admin-guide/kernel-parameters.rst
-@@ -35,9 +35,9 @@ can also be entered as::
+@@ -35,9 +35,10 @@ can also be entered as::
  
  	log-buf-len=1M print_fatal_signals=1
  
--Double-quotes can be used to protect spaces in values, e.g.::
-+Double-quotes and backslashes can be used to protect spaces in values, e.g.::
+-Double-quotes and backslashes can be used to protect spaces in values, e.g.::
++Double-quotes, single-quotes and backslashes can be used to protect spaces
++in values, e.g.::
  
--	param="spaces in here"
-+	param="spaces in here" param2=spaces\ in\ here
+-	param="spaces in here" param2=spaces\ in\ here
++	param="spaces in here" param2=spaces\ in\ here param3='@%# !\'
  
  cpu lists:
  ----------
