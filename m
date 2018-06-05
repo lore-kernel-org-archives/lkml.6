@@ -1,97 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751858AbeFEKy7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:54:59 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:5934 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751820AbeFEKyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:54:55 -0400
-From: Caizhiyong <caizhiyong@hisilicon.com>
-To: Wang YanQing <udknight@gmail.com>, "axboe@kernel.dk" <axboe@kernel.dk>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Jiangheng <jiangheng@hisilicon.com>
-Subject: RE: [PATCH v5] block: add verifier for cmdline partition
-Thread-Topic: [PATCH v5] block: add verifier for cmdline partition
-Thread-Index: AQHT6Av4OP23kM1HY0i+PmOza2mCRqRRC8QAgACahkA=
-Date: Tue, 5 Jun 2018 10:54:45 +0000
-Message-ID: <C3050A4DBA34F345975765E43127F10F8B794419@dggemm511-mbx.china.huawei.com>
-References: <20180510030637.GA25734@udknight>
- <20180605093840.GA9488@udknight>
-In-Reply-To: <20180605093840.GA9488@udknight>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.217.112]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1751610AbeFEK53 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 06:57:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751386AbeFEK51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 06:57:27 -0400
+Date: Tue, 5 Jun 2018 16:27:16 +0530
+From: Vinod <vkoul@kernel.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Vikash Garodia <vgarodia@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, acourbot@chromium.org
+Subject: Re: [PATCH v2 1/5] media: venus: add a routine to reset ARM9
+Message-ID: <20180605105716.GT16230@vkoul-mobl>
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-2-git-send-email-vgarodia@codeaurora.org>
+ <894ab678-bc1d-da04-b552-d53301bd3980@linaro.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <894ab678-bc1d-da04-b552-d53301bd3980@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACK.
+On 02-06-18, 01:15, Stanimir Varbanov wrote:
+> Hi Vikash,
+> 
+> On  1.06.2018 23:26, Vikash Garodia wrote:
+> > Add a new routine to reset the ARM9 and brings it
+> > out of reset. This is in preparation to add PIL
+> > functionality in venus driver.
+> 
+> please squash this patch with 4/5. I don't see a reason to add a function
+> which is not used. Shouldn't this produce gcc warnings?
 
-the patch is OK for me
+Yes this would but in a multi patch series that is okay as subsequent
+patches would use that and end result in no warning.
 
-> -----Original Message-----
-> From: Wang YanQing [mailto:udknight@gmail.com]
-> Sent: Tuesday, June 05, 2018 5:39 PM
-> To: axboe@kernel.dk; gregkh@linuxfoundation.org;
-> pombredanne@nexb.com; tglx@linutronix.de; Caizhiyong
-> <caizhiyong@hisilicon.com>; rdunlap@infradead.org; Jiangheng
-> <jiangheng@hisilicon.com>; linux-block@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH v5] block: add verifier for cmdline partition
-> 
-> On Thu, May 10, 2018 at 11:06:37AM +0800, Wang YanQing wrote:
-> > I meet strange filesystem corruption issue recently, the reason
-> > is there are overlaps partitions in cmdline partition argument.
-> >
-> > This patch add verifier for cmdline partition, then if there are
-> > overlaps partitions, cmdline_partition will log a warning. We don't
-> > treat overlaps partition as a error:
-> > "
-> > Caizhiyong <caizhiyong@hisilicon.com> said:
-> > Partition overlap was intentionally designed in this cmdline partition.
-> > reference http://lists.infradead.org/pipermail/linux-mtd/2013-
-> August/048092.html
-> > "
-> >
-> > Signed-off-by: Wang YanQing <udknight@gmail.com>
-> > ---
-> >  Changes
-> >  v4-v5:
-> >  1:Delete unnecessary blank line at begin and end of logs.
-> >  2:Delete newline character in log, pr_* will add newline
-> >    automatically.
-> >
-> >  v3-v4:
-> >  1:Fix grammar typo, reported by Randy Dunlap.
-> >  2:Delete unnecessary type casting, reported by Caizhiyong.
-> >  3:Record the reason why we can't treat overlapping partitions
-> >    as errors into changelog.
-> >
-> >  v2-v3:
-> >  1:Fix log one pair of overlaps partitions twice in cmdline_parts_verifier.
-> >  2:Fix out of bound access in cmdline_parts_verifier.
-> >
-> >  v1-v2:
-> >  1:Don't treat overlaps partition as a error, but log a warning.
-> >
-> >  Hi! Jens Axboe
-> >
-> >  What is your suggestion?
-> Hi! All
-> 
-> I just want to know what is the status about this patch?
-> 
-> ACK or NACK is welcome.
-> 
-> Thanks
+Splitting logically is good and typical practice in kernel to add the
+routine followed by usages..
+
+-- 
+~Vinod
