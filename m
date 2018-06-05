@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753191AbeFEROL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:14:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753477AbeFERF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753481AbeFERF6 (ORCPT <rfc822;w@1wt.eu>);
         Tue, 5 Jun 2018 13:05:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752976AbeFERFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 38/61] powerpc/powernv: Use the security flags in pnv_setup_rfi_flush()
-Date: Tue,  5 Jun 2018 19:01:59 +0200
-Message-Id: <20180605170120.104788088@linuxfoundation.org>
+Subject: [PATCH 4.9 37/61] powerpc/64s: Enhance the information in cpu_show_meltdown()
+Date: Tue,  5 Jun 2018 19:01:58 +0200
+Message-Id: <20180605170120.052252607@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -30,89 +30,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 37c0bdd00d3ae83369ab60a6712c28e11e6458d5 upstream.
+commit ff348355e9c72493947be337bb4fae4fc1a41eba upstream.
 
-Now that we have the security flags we can significantly simplify the
-code in pnv_setup_rfi_flush(), because we can use the flags instead of
-checking device tree properties and because the security flags have
-pessimistic defaults.
+Now that we have the security feature flags we can make the
+information displayed in the "meltdown" file more informative.
 
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/setup.c |   41 ++++++++-------------------------
- 1 file changed, 10 insertions(+), 31 deletions(-)
+ arch/powerpc/kernel/security.c |   30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/setup.c
-+++ b/arch/powerpc/platforms/powernv/setup.c
-@@ -65,7 +65,7 @@ static void init_fw_feat_flags(struct de
- 	if (fw_feature_is("enabled", "fw-bcctrl-serialized", np))
- 		security_ftr_set(SEC_FTR_BCCTRL_SERIALISED);
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -6,6 +6,7 @@
  
--	if (fw_feature_is("enabled", "inst-spec-barrier-ori31,31,0", np))
-+	if (fw_feature_is("enabled", "inst-l1d-flush-ori30,30,0", np))
- 		security_ftr_set(SEC_FTR_L1D_FLUSH_ORI30);
+ #include <linux/kernel.h>
+ #include <linux/device.h>
++#include <linux/seq_buf.h>
  
- 	if (fw_feature_is("enabled", "inst-l1d-flush-trig2", np))
-@@ -98,11 +98,10 @@ static void pnv_setup_rfi_flush(void)
+ #include <asm/security_features.h>
+ 
+@@ -19,8 +20,33 @@ unsigned long powerpc_security_features
+ 
+ ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
  {
- 	struct device_node *np, *fw_features;
- 	enum l1d_flush_type type;
--	int enable;
-+	bool enable;
- 
- 	/* Default to fallback in case fw-features are not available */
- 	type = L1D_FLUSH_FALLBACK;
--	enable = 1;
- 
- 	np = of_find_node_by_name(NULL, "ibm,opal");
- 	fw_features = of_get_child_by_name(np, "fw-features");
-@@ -110,40 +109,20 @@ static void pnv_setup_rfi_flush(void)
- 
- 	if (fw_features) {
- 		init_fw_feat_flags(fw_features);
-+		of_node_put(fw_features);
- 
--		np = of_get_child_by_name(fw_features, "inst-l1d-flush-trig2");
--		if (np && of_property_read_bool(np, "enabled"))
-+		if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_TRIG2))
- 			type = L1D_FLUSH_MTTRIG;
- 
--		of_node_put(np);
--
--		np = of_get_child_by_name(fw_features, "inst-l1d-flush-ori30,30,0");
--		if (np && of_property_read_bool(np, "enabled"))
-+		if (security_ftr_enabled(SEC_FTR_L1D_FLUSH_ORI30))
- 			type = L1D_FLUSH_ORI;
--
--		of_node_put(np);
--
--		/* Enable unless firmware says NOT to */
--		enable = 2;
--		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-hv-1-to-0");
--		if (np && of_property_read_bool(np, "disabled"))
--			enable--;
--
--		of_node_put(np);
--
--		np = of_get_child_by_name(fw_features, "needs-l1d-flush-msr-pr-0-to-1");
--		if (np && of_property_read_bool(np, "disabled"))
--			enable--;
--
--		np = of_get_child_by_name(fw_features, "speculation-policy-favor-security");
--		if (np && of_property_read_bool(np, "disabled"))
--			enable = 0;
--
--		of_node_put(np);
--		of_node_put(fw_features);
- 	}
- 
--	setup_rfi_flush(type, enable > 0);
-+	enable = security_ftr_enabled(SEC_FTR_FAVOUR_SECURITY) && \
-+		 (security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR)   || \
-+		  security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV));
+-	if (rfi_flush)
+-		return sprintf(buf, "Mitigation: RFI Flush\n");
++	bool thread_priv;
 +
-+	setup_rfi_flush(type, enable);
- }
++	thread_priv = security_ftr_enabled(SEC_FTR_L1D_THREAD_PRIV);
++
++	if (rfi_flush || thread_priv) {
++		struct seq_buf s;
++		seq_buf_init(&s, buf, PAGE_SIZE - 1);
++
++		seq_buf_printf(&s, "Mitigation: ");
++
++		if (rfi_flush)
++			seq_buf_printf(&s, "RFI Flush");
++
++		if (rfi_flush && thread_priv)
++			seq_buf_printf(&s, ", ");
++
++		if (thread_priv)
++			seq_buf_printf(&s, "L1D private per thread");
++
++		seq_buf_printf(&s, "\n");
++
++		return s.len;
++	}
++
++	if (!security_ftr_enabled(SEC_FTR_L1D_FLUSH_HV) &&
++	    !security_ftr_enabled(SEC_FTR_L1D_FLUSH_PR))
++		return sprintf(buf, "Not affected\n");
  
- static void __init pnv_setup_arch(void)
+ 	return sprintf(buf, "Vulnerable\n");
+ }
