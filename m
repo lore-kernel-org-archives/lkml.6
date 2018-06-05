@@ -1,96 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752678AbeFEVnl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:43:41 -0400
-Received: from mga04.intel.com ([192.55.52.120]:37414 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752358AbeFEVmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:42:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="47023742"
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net
-Cc: peterz@infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
-        viresh.kumar@linaro.org, ggherdovich@suse.cz,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 3/4] cpufreq: intel_pstate: New sysfs entry to control HWP boost
-Date: Tue,  5 Jun 2018 14:42:41 -0700
-Message-Id: <20180605214242.62156-4-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
-References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+        id S1752485AbeFEVoq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:44:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34394 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751780AbeFEVoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:44:44 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: mathieu.poirier@linaro.org, robh@kernel.org, frowand.list@gmail.com,
+        mark.rutland@arm.com, sudeep.holla@arm.com, arm@kernel.org,
+        linux-kernel@vger.kernel.org, matt.sealey@arm.com, john.horley@arm.com,
+        charles.garcia-tobin@arm.com, coresight@lists.linaro.org,
+        devicetree@vger.kernel.org, mike.leach@linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 00/20] coresight: Update device tree bindings
+Date: Tue,  5 Jun 2018 22:43:11 +0100
+Message-Id: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new attribute is added to intel_pstate sysfs to enable/disable
-HWP dynamic performance boost.
+Coresight uses DT graph bindings to describe the connections of the
+components. However we have some undocumented usage of the bindings
+to describe some of the properties of the connections.
 
-Reported-by: Mel Gorman <mgorman@techsingularity.net>
-Tested-by: Giovanni Gherdovich <ggherdovich@suse.cz>
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/cpufreq/intel_pstate.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+The coresight driver needs to know the hardware ports invovled
+in the connection and the direction of data flow to effectively
+manage the trace sessions. So far we have relied on the "port"
+address (as described by the generic graph bindings) to represent
+the hardware port of the component for a connection.
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 5b2b6b6d1ff4..70bf63bb4e0e 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1033,6 +1033,30 @@ static ssize_t store_min_perf_pct(struct kobject *a, struct attribute *b,
- 	return count;
- }
- 
-+static ssize_t show_hwp_dynamic_boost(struct kobject *kobj,
-+				struct attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "%u\n", hwp_boost);
-+}
-+
-+static ssize_t store_hwp_dynamic_boost(struct kobject *a, struct attribute *b,
-+				       const char *buf, size_t count)
-+{
-+	unsigned int input;
-+	int ret;
-+
-+	ret = kstrtouint(buf, 10, &input);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&intel_pstate_driver_lock);
-+	hwp_boost = !!input;
-+	intel_pstate_update_policies();
-+	mutex_unlock(&intel_pstate_driver_lock);
-+
-+	return count;
-+}
-+
- show_one(max_perf_pct, max_perf_pct);
- show_one(min_perf_pct, min_perf_pct);
- 
-@@ -1042,6 +1066,7 @@ define_one_global_rw(max_perf_pct);
- define_one_global_rw(min_perf_pct);
- define_one_global_ro(turbo_pct);
- define_one_global_ro(num_pstates);
-+define_one_global_rw(hwp_dynamic_boost);
- 
- static struct attribute *intel_pstate_attributes[] = {
- 	&status.attr,
-@@ -1082,6 +1107,11 @@ static void __init intel_pstate_sysfs_expose_params(void)
- 	rc = sysfs_create_file(intel_pstate_kobject, &min_perf_pct.attr);
- 	WARN_ON(rc);
- 
-+	if (hwp_active) {
-+		rc = sysfs_create_file(intel_pstate_kobject,
-+				       &hwp_dynamic_boost.attr);
-+		WARN_ON(rc);
-+	}
- }
- /************************** sysfs end ************************/
- 
+The hardware uses separate numbering scheme for input and output
+ports, which implies, we could have two different (input and output)
+ports with the same port number. This could create problems in the
+graph bindings where the label of the port wouldn't match the address.
+
+e.g, with the existing bindings we get :
+
+	port@0{				// Output port 0
+		reg = <0>;
+		...
+	};
+
+	port@1{
+		reg = <0>;		// Input port 0
+		endpoint {
+			slave-mode;
+			...
+		};
+	};
+
+With the new enforcement in the DT rules, mismatches in label and address
+are not allowed (as see in the case for port@1). So, we need a new mechanism
+to describe the hardware port number reliably.
+
+Also, we relied on an undocumented "slave-mode" property (see the above
+example) to indicate if the port is an input port. Let us formalise and
+switch to a new property to describe the direction of data flow.
+
+There were three options considered for the hardware port number scheme:
+
+ 1) Use natural ordering in the DT to infer the hardware port number.
+  i.e, Mandate that the all ports are listed in the DT and in the ascending
+  order for each class (input and output respectively).
+   Pros :
+      - We don't need new properties and if the existing DTS list them in
+        order (which most of them do), they work out of the box.
+   Cons :
+      - We must list all the ports even if the system cannot/shouldn't use
+        it.
+      - It is prone to human errors (if the order is not kept).
+
+ 2) Use an explicit property to list both the direction and the hw port
+    number and direction. Define "coresight,hwid" as 2 member array of u32,
+    where the members are port number and the direction respectively.
+	e.g
+
+	port@0{
+		reg = <0>;
+		endpoint {
+			coresight,hwid = <0 1>;	// Port # 0, Output
+		}
+	};
+
+	port@1{
+		reg = <1>;
+		endpoint {
+			coresight,hwid = <0 0>;	// Port # 0, Input
+		};
+	};
+
+	Pros:
+	  - The bindings are formal but not so reader friendly and could potentially
+	    lead to human errors.
+	Cons:
+	  - Backward compatiblity is lost.
+ 3) Use explicit properties (implemented in the series) for the hardware
+    port id and direction. We define a new property "coresight,hwid" for
+    each endpoint in coresight devices to specify the hardware port number
+    explicitly. Also use a separate property "direction" to specify the
+    direction of the data flow.
+
+	e.g,
+
+	port@0{
+		reg = <0>;
+		endpoint {
+			direction = <1>;	// Output
+			coresight,hwid = <0>;	// Port # 0
+		}
+	};
+
+	port@1{
+		reg = <1>;
+		endpoint {
+			direction = <0>;	// Input
+			coresight,hwid = <0>;	// Port # 0
+		};
+	};
+
+    Pros:
+       - The bindings are formal and reader friendly, and less prone to errors.
+    Cons:
+       - Backward compatibility is lost.
+
+
+This series implements Option (3) listed above and falls back to the old
+bindings if the new bindings are not available. This allows the systems
+with old bindings work with the new driver. The driver now issues a warning
+(once) when it encounters the old bindings.
+
+It also cleans up the platform parsing code to reduce the memory usage by
+reusing the platform description.
+
+I am not sure what is the best route to push these DTS changes. Thoughts ?
+
+Changes since RFC [0] :
+ - Fixed style issues
+ - Fix an existing memory leak coresight_register (Found in code update)
+ - Fix missing of_node_put() in the existing driver (Reported-by Mathieu)
+ - Update the existing dts in kernel tree.
+ - Rename new helper functions for consistency
+
+
+Suzuki K Poulose (20):
+  coresight: Fix memory leak in coresight_register
+  coresight: of: Fix refcounting for graph nodes
+  coresight: Fix remote endpoint parsing
+  coresight: Cleanup platform description data
+  coresight: platform: Cleanup coresight connection handling
+  coresight: Handle errors in finding input/output ports
+  coresight: dts: Document usage of graph bindings
+  coresight: dts: Cleanup device tree graph bindings
+  coresight: dts: Define new bindings for direction of data flow
+  dts: juno: Update coresight bindings for hw port
+  dts: hisilicon: Update coresight bindings for hw ports
+  dts: spreadtrum: Update coresight bindings for hw ports
+  dts: qcom: Update coresight bindings for hw ports
+  dts: arm: hisilicon: Update coresight bindings for hardware port
+  dts: arm: imx7{d,s}: Update coresight binding for hardware ports
+  dts: arm: omap: Update coresight bindings for hardware ports
+  dts: arm: qcom: Update coresight bindings for hardware ports
+  dts: sama5d2: Update coresight bindings for hardware ports
+  dts: ste-dbx5x0: Update coresight bindings for hardware port
+  dts: tc2: Update coresight bindings for hardware ports
+
+ .../devicetree/bindings/arm/coresight.txt          |  76 +++++--
+ arch/arm/boot/dts/hip04.dtsi                       | 195 +++++++++++++-----
+ arch/arm/boot/dts/imx7d.dtsi                       |   5 +-
+ arch/arm/boot/dts/imx7s.dtsi                       |  41 ++--
+ arch/arm/boot/dts/omap3-beagle-xm.dts              |   5 +-
+ arch/arm/boot/dts/omap3-beagle.dts                 |   5 +-
+ arch/arm/boot/dts/qcom-apq8064.dtsi                |  37 +++-
+ arch/arm/boot/dts/qcom-msm8974.dtsi                |  60 ++++--
+ arch/arm/boot/dts/sama5d2.dtsi                     |   5 +-
+ arch/arm/boot/dts/ste-dbx5x0.dtsi                  |  31 ++-
+ arch/arm/boot/dts/vexpress-v2p-ca15_a7.dts         |  48 +++--
+ arch/arm64/boot/dts/arm/juno-base.dtsi             |  82 +++++---
+ arch/arm64/boot/dts/arm/juno-cs-r1r2.dtsi          |  26 ++-
+ arch/arm64/boot/dts/arm/juno.dts                   |   5 +-
+ .../arm64/boot/dts/hisilicon/hi6220-coresight.dtsi |  89 ++++++---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |  55 ++++--
+ arch/arm64/boot/dts/sprd/sc9836.dtsi               |  40 ++--
+ arch/arm64/boot/dts/sprd/sc9860.dtsi               | 101 +++++++---
+ drivers/hwtracing/coresight/coresight.c            |  30 +--
+ drivers/hwtracing/coresight/of_coresight.c         | 219 +++++++++++++--------
+ include/linux/coresight.h                          |  11 +-
+ 21 files changed, 818 insertions(+), 348 deletions(-)
+
 -- 
-2.13.6
+2.7.4
