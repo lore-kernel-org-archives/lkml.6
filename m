@@ -1,197 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751625AbeFEKLM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:11:12 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:34220 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751494AbeFEKLK (ORCPT
+        id S1751801AbeFEKLd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 06:11:33 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35738 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751722AbeFEKLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:11:10 -0400
-Message-ID: <71df09bc89619aba975147e6b07920f1dfc2f46f.camel@hadess.net>
-Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
- on kbd brightness change
-From: Bastien Nocera <hadess@hadess.net>
-To: Hans de Goede <hdegoede@redhat.com>, Chris Chiu <chiu@endlessm.com>,
-        Darren Hart <dvhart@infradead.org>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Benjamin Berg <benjamin@sipsolutions.net>
-Date: Tue, 05 Jun 2018 11:58:17 +0200
-In-Reply-To: <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com>
-References: <20180604123238.82200-1-chiu@endlessm.com>
-         <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
-         <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
-         <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com>
-         <20180605023124.GE47042@localhost.localdomain>
-         <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
-         <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 5 Jun 2018 06:11:32 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>
+Subject: Re: [PATCH] drm/bridge: analogix-anx78xx: Switch to SPDX identifier.
+Date: Tue, 05 Jun 2018 13:11:43 +0300
+Message-ID: <1896069.8N7yzJMC7C@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180605100051.4023-1-enric.balletbo@collabora.com>
+References: <20180605100051.4023-1-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-05 at 09:37 +0200, Hans de Goede wrote:
-> Hi,
+Hi Enric,
+
+Thank you for the patch.
+
+On Tuesday, 5 June 2018 13:00:50 EEST Enric Balletbo i Serra wrote:
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
 > 
-> On 05-06-18 05:18, Chris Chiu wrote:
-> > On Tue, Jun 5, 2018 at 10:31 AM, Darren Hart <dvhart@infradead.org>
-> > wrote:
-> > > On Mon, Jun 04, 2018 at 04:23:04PM +0200, Hans de Goede wrote:
-> > > > Hi,
-> > > > 
-> > > > On 04-06-18 15:51, Daniel Drake wrote:
-> > > > > On Mon, Jun 4, 2018 at 7:22 AM, Hans de Goede <hdegoede@redha
-> > > > > t.com> wrote:
-> > > > > > Is this really a case of the hardware itself processing the
-> > > > > > keypress and then changing the brightness *itself* ?
-> > > > > > 
-> > > > > >   From the "[PATCH 2/2] platform/x86: asus-wmi: Add
-> > > > > > keyboard backlight
-> > > > > > toggle support" patch I get the impression that the driver
-> > > > > > is
-> > > > > > modifying the brightness from within the kernel rather then
-> > > > > > the
-> > > > > > keyboard controller are ACPI embeddec-controller doing it
-> > > > > > itself.
-> > > > > > 
-> > > > > > If that is the case then the right fix is for the driver to
-> > > > > > stop
-> > > > > > mucking with the brighness itself, it should simply report
-> > > > > > the
-> > > > > > right keyboard events and export a led interface and then
-> > > > > > userspace
-> > > > > > will do the right thing (and be able to offer flexible
-> > > > > > policies
-> > > > > > to the user).
-> > > > > 
-> > > > > Before this modification, the driver reports the brightness
-> > > > > keypresses
-> > > > > to userspace and then userspace can respond by changing the
-> > > > > brightness
-> > > > > level, as you describe.
-> > > > > 
-> > > > > You are right in that the hardware doesn't change the
-> > > > > brightness
-> > > > > directly itself, which is the normal usage of
-> > > > > LED_BRIGHT_HW_CHANGED.
-> > > > > 
-> > > > > However this approach was suggested by Benjamin Berg and
-> > > > > Bastien
-> > > > > Nocera in the thread: Re: [PATCH v2] platform/x86: asus-wmi:
-> > > > > Add
-> > > > > keyboard backlight toggle support
-> > > > > https://marc.info/?l=linux-kernel&m=152639169210655&w=2
-> > > > > 
-> > > > > The issue is that we need to support a new "keyboard
-> > > > > backlight
-> > > > > brightness cycle" key (in the patch that follows this one)
-> > > > > which
-> > > > > doesn't fit into any definitions of keys recognised by the
-> > > > > kernel and
-> > > > > likewise there's no userspace code to handle it.
-> > > > > 
-> > > > > If preferred we could leave the standard brightness keys
-> > > > > behaving as
-> > > > > they are (input events) and make the new special key type
-> > > > > directly
-> > > > > handled by the kernel?
-> > > > 
-> > > > I'm sorry that Benjamin and Bastien steered you in this
-> > > > direction,
-> > > > IMHO none of it should be handled in the kernel.
-> > > > 
-> > > > Anytime any sort of input is directly responded to by the
-> > > > kernel
-> > > > it is a huge PITA to deal with from userspace. The kernel will
-> > > > have
-> > > > a simplistic implementation which almost always is wrong.
-> > > > 
-> > > > Benjamin, remember the pain we went through with rfkill hotkey
-> > > > presses being handled in the kernel ?
-> > > > 
-> > > > And then there is the whole
-> > > > acpi_video.brightness_switch_enabled
-> > > > debacle, which is an option which defaults to true which causes
-> > > > the kernel to handle LCD brightness key presses, which all
-> > > > distros
-> > > > have been patching to default to off for ages.
-> > > > 
-> > > > To give a concrete example, we may want to implement software
-> > > > dimming / auto-off of the kbd backlight when the no keys are
-> > > > touched for x seconds. This would seriously get in the way of
-> > > > that.
-> > > > 
-> > > > So sorry, but NACK to this series.
-> > > 
-> > > So if instead of modifying the LED value, the kernel platform
-> > > drivers
-> > > converted the TOGGLE into a cycle even by converting to an UP
-> > > event
-> > > based on awareness of the plaform specific max value and the read
-> > > current value, leaving userspace to act on the TOGGLE/UP events -
-> > > would
-> > > that be preferable?
-> > > 
-> > > Something like:
-> > > 
-> > >          if (code == TOGGLE && ledval < ledmax)
-> > >                  code = UP;
-> > > 
-> > >          sparse_keymap_report_event(..., code, ...)
-> > > 
-> > > }
-> > > --
-> > > Darren Hart
-> > > VMware Open Source Technology Center
-> > 
-> > That's what I was trying to do in  [PATCH v2] platform/x86: asus-
-> > wmi: Add
-> > keyboard backlight toggle support. However, that brought another
-> > problem
-> > discussed in the thread.
-> > https://marc.info/?l=linux-kernel&m=152639169210655&w=2
-> > 
-> > So I moved the brightness change in the driver without passing to
-> > userspace.
-> > Per Hans, seems there're some other concerns and I also wonder if
-> > the
-> > TOGGLE event happens in ASUS HID (asus-hid.c) which also convert
-> > and
-> > pass the keycode to userspace but no TOGGLE key support yet What
-> > should
-> > we do then?
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
 > 
-> As I mentioned in my reply to Darren, there are 2 proper solutions to
-> this:
+>  drivers/gpu/drm/bridge/analogix-anx78xx.c | 24 ++++++++---------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
 > 
-> 1) Make userspace treat KEY_KBDILLUMTOGGLE as a cycle key, this is
-> what the kbd-backlight on most laptops with a single hotkey (*) does
-> in cases where this is handled in firmware, rather then left to the
-> OS. The handled in firmware is the case which I created the
-> led_classdev_notify_brightness_hw_changed() API for. This would be
-> my preferred solution and I believe that Benjamin is discussing this
-> with Bastien ATM.
+> diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> b/drivers/gpu/drm/bridge/analogix-anx78xx.c index
+> b49043866be6..54d7e7981bed 100644
+> --- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> +++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
+> @@ -1,19 +1,11 @@
+> -/*
+> - * Copyright(c) 2016, Analogix Semiconductor.
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 and
+> - * only version 2 as published by the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * Based on anx7808 driver obtained from chromeos with copyright:
+> - * Copyright(c) 2013, Google Inc.
+> - *
+> - */
+> +// SPDX-License-Identifier: GPL-2.0
 
-It isn't on Macs, at least. Toggle is a toggle, not a cycle key. It
-turns the keyboard backlight off and on, restoring the backlight level
-when turned back on.
+This looks good to m.
 
-> 2) Add a new KEY_KBDILLUMCYCLE event
+> +// Driver for ANX78xx SlimPort transmitter.
+> +//
+> +// Copyright (C) 2016 Analogix Semiconductor.
+> +// Copyright (C) 2016 Google, Inc.
 
-Which won't be accessible to Xorg.
+Should the last line be 2013, not 2016 ?
 
->  and send that for the TOGGLE code
-> on these laptops.
->
-> Yes both will take time to get into end-users hand, but so will a
-> kernel-only solution. In the mean time endless can always carry
-> downstream patches to make things work right now (while waiting for
-> the changes to trickle down from upstream).
+> +//
+> +// Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+I don't think there's a need to convert the whole comment block to C++-style.
+
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/interrupt.h>
+
+-- 
+Regards,
+
+Laurent Pinchart
