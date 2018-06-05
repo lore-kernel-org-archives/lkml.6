@@ -1,23 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753828AbeFERHM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:07:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36416 "EHLO mail.kernel.org"
+        id S1753843AbeFERHQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:07:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753409AbeFERHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:07:09 -0400
+        id S1753409AbeFERHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:07:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Jason Gunthorpe <jgg@mellanox.com>, Doug Ledford <dledford@redhat.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.9 51/61] scsi: scsi_transport_srp: Fix shost to rport translation
-Date: Tue,  5 Jun 2018 19:02:12 +0200
-Message-Id: <20180605170120.938871770@linuxfoundation.org>
+        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.9 52/61] stm class: Use vmalloc for the master map
+Date: Tue,  5 Jun 2018 19:02:13 +0200
+Message-Id: <20180605170121.004287720@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -33,95 +29,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit c9ddf73476ff4fffb7a87bd5107a0705bf2cf64b upstream.
+commit b5e2ced9bf81393034072dd4d372f6b430bc1f0a upstream.
 
-Since an SRP remote port is attached as a child to shost->shost_gendev
-and as the only child, the translation from the shost pointer into an
-rport pointer must happen by looking up the shost child that is an
-rport. This patch fixes the following KASAN complaint:
+Fengguang is running into a warning from the buddy allocator:
 
-BUG: KASAN: slab-out-of-bounds in srp_timed_out+0x57/0x110 [scsi_transport_srp]
-Read of size 4 at addr ffff880035d3fcc0 by task kworker/1:0H/19
+> swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
+> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #262
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> Call Trace:
+...
+>  __kmalloc+0x14b/0x180: ____cache_alloc at mm/slab.c:3127
+>  stm_register_device+0xf3/0x5c0: stm_register_device at drivers/hwtracing/stm/core.c:695
+...
 
-CPU: 1 PID: 19 Comm: kworker/1:0H Not tainted 4.16.0-rc3-dbg+ #1
-Workqueue: kblockd blk_mq_timeout_work
-Call Trace:
-dump_stack+0x85/0xc7
-print_address_description+0x65/0x270
-kasan_report+0x231/0x350
-srp_timed_out+0x57/0x110 [scsi_transport_srp]
-scsi_times_out+0xc7/0x3f0 [scsi_mod]
-blk_mq_terminate_expired+0xc2/0x140
-bt_iter+0xbc/0xd0
-blk_mq_queue_tag_busy_iter+0x1c7/0x350
-blk_mq_timeout_work+0x325/0x3f0
-process_one_work+0x441/0xa50
-worker_thread+0x76/0x6c0
-kthread+0x1b2/0x1d0
-ret_from_fork+0x24/0x30
+Which is basically a result of the stm class trying to allocate ~512kB
+for the dummy_stm with its default parameters. There's no reason, however,
+for it not to be vmalloc()ed instead, which is what this patch does.
 
-Fixes: e68ca75200fe ("scsi_transport_srp: Reduce failover time")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Laurence Oberman <loberman@redhat.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/scsi_transport_srp.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/hwtracing/stm/core.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/scsi_transport_srp.c
-+++ b/drivers/scsi/scsi_transport_srp.c
-@@ -52,6 +52,8 @@ struct srp_internal {
- 	struct transport_container rport_attr_cont;
- };
- 
-+static int scsi_is_srp_rport(const struct device *dev);
-+
- #define to_srp_internal(tmpl) container_of(tmpl, struct srp_internal, t)
- 
- #define	dev_to_rport(d)	container_of(d, struct srp_rport, dev)
-@@ -61,9 +63,24 @@ static inline struct Scsi_Host *rport_to
- 	return dev_to_shost(r->dev.parent);
- }
- 
-+static int find_child_rport(struct device *dev, void *data)
-+{
-+	struct device **child = data;
-+
-+	if (scsi_is_srp_rport(dev)) {
-+		WARN_ON_ONCE(*child);
-+		*child = dev;
-+	}
-+	return 0;
-+}
-+
- static inline struct srp_rport *shost_to_rport(struct Scsi_Host *shost)
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -682,7 +682,7 @@ static void stm_device_release(struct de
  {
--	return transport_class_to_srp_rport(&shost->shost_gendev);
-+	struct device *child = NULL;
-+
-+	WARN_ON_ONCE(device_for_each_child(&shost->shost_gendev, &child,
-+					   find_child_rport) < 0);
-+	return child ? dev_to_rport(child) : NULL;
+ 	struct stm_device *stm = to_stm_device(dev);
+ 
+-	kfree(stm);
++	vfree(stm);
  }
  
- /**
-@@ -637,7 +654,8 @@ static enum blk_eh_timer_return srp_time
- 	struct srp_rport *rport = shost_to_rport(shost);
+ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+@@ -699,7 +699,7 @@ int stm_register_device(struct device *p
+ 		return -EINVAL;
  
- 	pr_debug("timeout for sdev %s\n", dev_name(&sdev->sdev_gendev));
--	return rport->fast_io_fail_tmo < 0 && rport->dev_loss_tmo < 0 &&
-+	return rport && rport->fast_io_fail_tmo < 0 &&
-+		rport->dev_loss_tmo < 0 &&
- 		i->f->reset_timer_if_blocked && scsi_device_blocked(sdev) ?
- 		BLK_EH_RESET_TIMER : BLK_EH_NOT_HANDLED;
+ 	nmasters = stm_data->sw_end - stm_data->sw_start + 1;
+-	stm = kzalloc(sizeof(*stm) + nmasters * sizeof(void *), GFP_KERNEL);
++	stm = vzalloc(sizeof(*stm) + nmasters * sizeof(void *));
+ 	if (!stm)
+ 		return -ENOMEM;
+ 
+@@ -752,7 +752,7 @@ err_device:
+ 	/* matches device_initialize() above */
+ 	put_device(&stm->dev);
+ err_free:
+-	kfree(stm);
++	vfree(stm);
+ 
+ 	return err;
  }
