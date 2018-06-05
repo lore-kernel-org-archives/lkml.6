@@ -1,196 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751786AbeFEP1N convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:27:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39350 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751637AbeFEP1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:27:12 -0400
-Date: Tue, 5 Jun 2018 17:27:08 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
-        bjsdjshi@linux.vnet.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] vfio: ccw: Handling reset and shutdown with
- states
-Message-ID: <20180605172708.24bb7af2.cohuck@redhat.com>
-In-Reply-To: <ad0c095c-249c-dc74-17db-f52c1092537d@linux.ibm.com>
-References: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1527243678-3140-9-git-send-email-pmorel@linux.vnet.ibm.com>
-        <20180605141827.6911fc74.cohuck@redhat.com>
-        <ad0c095c-249c-dc74-17db-f52c1092537d@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1751902AbeFEP2B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:28:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57478 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751665AbeFEP17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:27:59 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2 3/3] arm64: disable ACPI PPTT support temporarily
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+References: <1528209304-3280-1-git-send-email-sudeep.holla@arm.com>
+ <1528209304-3280-3-git-send-email-sudeep.holla@arm.com>
+ <CAJZ5v0hn+sya29bZJzksDEDt2QPZDY36Hwn=ckw3ikTGp7T1Zw@mail.gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <a93212e3-7965-9ae2-34b0-407f04590567@arm.com>
+Date: Tue, 5 Jun 2018 16:27:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAJZ5v0hn+sya29bZJzksDEDt2QPZDY36Hwn=ckw3ikTGp7T1Zw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Jun 2018 16:10:52 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-> On 05/06/2018 14:18, Cornelia Huck wrote:
-> > On Fri, 25 May 2018 12:21:16 +0200
-> > Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 
-> >> +static int fsm_online(struct vfio_ccw_private *private)
-> >> +{
-> >> +	struct subchannel *sch = private->sch;
-> >> +	int ret = VFIO_CCW_STATE_IDLE;
-> >> +
-> >> +	spin_lock_irq(sch->lock);
-> >> +	if (cio_enable_subchannel(sch, (u32)(unsigned long)sch))
-> >> +		ret = VFIO_CCW_STATE_NOT_OPER;
-> >> +	spin_unlock_irq(sch->lock);
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +static int fsm_offline(struct vfio_ccw_private *private)
-> >> +{
-> >> +	struct subchannel *sch = private->sch;
-> >> +	int ret = VFIO_CCW_STATE_STANDBY;
-> >> +
-> >> +	spin_lock_irq(sch->lock);
-> >> +	if (cio_disable_subchannel(sch))
-> >> +		ret = VFIO_CCW_STATE_NOT_OPER;  
-> > So, what about a subchannel that is busy? Why should it go to the not
-> > oper state?  
+On 05/06/18 16:02, Rafael J. Wysocki wrote:
+> On Tue, Jun 5, 2018 at 4:35 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> Currently, ARM64 doesn't support updating the CPU topology masks on
+>> CPU hotplug operations. ACPI PPTT support rely on that missing feature
+>> which is technically not incorrect. Instead of reverting all the PPTT
+>> support, let's keep it simple and disable ACPI PPTT support on ARM64
+>> for time-being until the topology updates are added for CPU hotplug
+>> operations.
 > 
-> right, thanks.
+> When is that going to happen?
+> > Nobody else uses PPTT now.
 > 
-> >
-> > (And you should try to flush pending I/O and then try again in that
-> > case. Otherwise, you may have a still-enabled subchannel which may
-> > throw an interrupt.)  
-> 
-> What about letting the guest doing this.
-> After giving him the right information on what happened of course.
 
-Why should the guest know anything about this? Getting the device to a
-usable state respectively cleaning up is the responsibility of the host
-code. This processing will happen before the guest gets use of the
-device or after it has lost use of it already (or it is some internal
-handling like reset, which the guest should not be made aware of).
+No we need it on ARM64. I have even the fixes for the original issue
+but it's bit invasive and too late as we are already in the merge
+window. It needs to be tested on NUMA platforms, I have asked for that
+explicitly.
 
-> 
-> >  
-> >> +	spin_unlock_irq(sch->lock);
-> >> +	if (private->completion)
-> >> +		complete(private->completion);
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +static int fsm_quiescing(struct vfio_ccw_private *private)
-> >> +{
-> >> +	struct subchannel *sch = private->sch;
-> >> +	int ret = VFIO_CCW_STATE_STANDBY;
-> >> +	int iretry = 255;
-> >> +
-> >> +	spin_lock_irq(sch->lock);
-> >> +	ret = cio_cancel_halt_clear(sch, &iretry);
-> >> +	if (ret == -EBUSY)
-> >> +		ret = VFIO_CCW_STATE_QUIESCING;
-> >> +	else if (private->completion)
-> >> +		complete(private->completion);
-> >> +	spin_unlock_irq(sch->lock);
-> >> +	return ret;  
-> > If I read this correctly, you're calling cio_cancel_halt_clear() only
-> > once. What happened to the retry loop?  
-> 
-> Same as above, what about letting the guest doing this?
-
-See my reply above.
-
-> And there are already 255 retries as part of the interface to cio.
-
->From the kerneldoc comment for cio_cancel_halt_clear():
-
- * This should be called repeatedly since halt/clear are asynchronous           
- * operations. We do one try with cio_cancel, three tries with cio_halt,        
- * 255 tries with cio_clear. The caller should initialize @iretry with          
- * the value 255 for its first call to this, and keep using the same            
- * @iretry in the subsequent calls until it gets a non -EBUSY return. 
-
-> 
-> >  
-> >> +}
-> >> +static int fsm_quiescing_done(struct vfio_ccw_private *private)
-> >> +{
-> >> +	if (private->completion)
-> >> +		complete(private->completion);
-> >> +	return VFIO_CCW_STATE_STANDBY;
-> >> +}
-> >>   /*
-> >>    * No operation action.
-> >>    */
-> >> @@ -178,15 +225,10 @@ static int fsm_sch_event(struct vfio_ccw_private *private)
-> >>   static int fsm_init(struct vfio_ccw_private *private)
-> >>   {
-> >>   	struct subchannel *sch = private->sch;
-> >> -	int ret = VFIO_CCW_STATE_STANDBY;
-> >>   
-> >> -	spin_lock_irq(sch->lock);
-> >>   	sch->isc = VFIO_CCW_ISC;
-> >> -	if (cio_enable_subchannel(sch, (u32)(unsigned long)sch))
-> >> -		ret = VFIO_CCW_STATE_NOT_OPER;
-> >> -	spin_unlock_irq(sch->lock);
-> >>   
-> >> -	return ret;
-> >> +	return VFIO_CCW_STATE_STANDBY;  
-> > Doesn't that change the semantic of the standby state?  
-> 
-> It changes the FSM: NOT_OPER and STANDBY are clearly different.
-> Part of the initialization is now done in when putting the device online.
-
-Hm, I think the changes to the fsm semantics are a bit mixed up between
-patches. I'll wait for an outline of how this is supposed to look in
-the end before commenting further :)
-
-> > Your idea here seems to be to go to either disabling the subchannel
-> > directly or flushing out I/O first, depending on the state you're in.
-> > The problem is that you may need retries in any case (the subchannel
-> > may be status pending if it is enabled; not necessarily by any I/O that
-> > had been started, but also from an unsolicited notification.)  
-> 
-> I wanted to let the guest do the retries as he wants to.
-> Somehow we must give the right response back to the guest
-> and take care of the error number we give back.
-
-As described above, we need to be clear on what should be guest-visible
-and what is just internal handling e.g. during initialization/removal.
-
-> 
-> I will get a better look at this.
-> 
-> >  
-> >>   };
-> >> diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
-> >> index ea8fd64..b202e73 100644
-> >> --- a/drivers/s390/cio/vfio_ccw_ops.c
-> >> +++ b/drivers/s390/cio/vfio_ccw_ops.c
-> >> @@ -21,21 +21,14 @@ static int vfio_ccw_mdev_reset(struct mdev_device *mdev)
-> >>   
-> >>   	private = dev_get_drvdata(mdev_parent_dev(mdev));
-> >>   	sch = private->sch;
-> >> -	/*
-> >> -	 * TODO:
-> >> -	 * In the cureent stage, some things like "no I/O running" and "no
-> >> -	 * interrupt pending" are clear, but we are not sure what other state
-> >> -	 * we need to care about.
-> >> -	 * There are still a lot more instructions need to be handled. We
-> >> -	 * should come back here later.
-> >> -	 */  
-> > This is still true, no? I'm thinking about things like channel monitors
-> > and the like (even if we don't support them yet).  
-> 
-> I think that this is not the place to put this remark since here
-> we should send an event to the FSM, having new states
-> will be handled as FSM states.
-> I put it back, here or where I think it belong if I find another
-> place after resolving the RESET problem.
-
-The comment basically refers to "we aren't quite sure whether there is
-more stuff we need to reset", so I think this is indeed the correct
-place.
+-- 
+Regards,
+Sudeep
