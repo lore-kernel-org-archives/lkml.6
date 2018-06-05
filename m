@@ -1,79 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753394AbeFER4f (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:56:35 -0400
-Received: from mail.medvecky.net ([85.118.132.146]:46807 "EHLO
-        mail.medvecky.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753220AbeFER4c (ORCPT
+        id S1753188AbeFER4b (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:56:31 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50738 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753150AbeFERyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:56:32 -0400
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-Subject: Re: [PATCH 1/1] Update AMD cpu microcode for family 15h
-To: "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-        Ivan Ivanov <qmastery16@gmail.com>
-Cc: Josh Boyer <jwboyer@kernel.org>,
-        Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>
-References: <1527213479-121361-1-git-send-email-sherry.hurwitz@amd.com>
- <CA+5PVA7aPRHk=kfxsmPi-qStKEnK_HJ=rTjvtQGO1QbnLb9qBw@mail.gmail.com>
- <CAAaskFAGRUU3APZbsY2w9hW9jbBJfeMbHt8ttg7vXHidp025=g@mail.gmail.com>
- <20180531220503.2jqs3oiqsnw7ye2t@khazad-dum.debian.net>
- <6402a30f-04d3-59d9-92df-5a43e2060f5c@assembler.cz>
- <MWHPR1201MB2526CF0F174938EA64156AE98B660@MWHPR1201MB2526.namprd12.prod.outlook.com>
-From: Rudolf Marek <r.marek@assembler.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=r.marek@assembler.cz; prefer-encrypt=mutual; keydata=
- xsBNBFN2VH4BCADpv+3Tkikr+X489Xso9UC719YdxgGiy0xBjDiWC22wAd3tHy6G3nEhWfh4
- 1UNGcqscPAvJMn2GhgSJRfBzj0wALXLkoTYta78wEK+Ji+Gs7PX9VhqRKt9/OIn/2XJ1Yv9i
- e8uo9MFBGFCB5roz+Ws8rdXq0Quu7VZylzRv7qqhxMAk9RvXCT2tyt6XY16R7ZEL9wbSLRAl
- h8LRPMF0iiLH1YenfSCX2XkW7eA7CJSjh9pwIBFOF5cd5mcT69OPO+TuAbdvgCcZPEoQQBhk
- QmOr2PlUOl3CSgqtTxjAjAxXhPTU7Q3xxgB2Oa7xbt3Eic2Z4lltP/dowULZqXvsC5DxABEB
- AAHNI1J1ZG9sZiBNYXJlayA8ci5tYXJla0Bhc3NlbWJsZXIuY3o+wsB+BBMBAgAoBQJTdlR+
- AhsjBQkJZgGABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDAb22rZM9dcMf1B/97PHhB
- YaPoM4PHlk3o3HEs0ZxiJyVqDLpmM8kOh+Pcvb40KX0uebiODfeff+RYJWOff27la7AzqG20
- dEAi3hpHYVigZWf3BaLXwCbUKlyLLydks4qydfKBG62PnM74sW1M/sfFA/bdzC9tnjy4G9r9
- mXNBJBDHb4XuHeukqlrMLDDGW78wrfv4tjtW9Z3Aoroja9CnxREt6c3iHA50TX65BrthPxhF
- c+ES+4J/uuBe6pfq9PN8HZKBWgK+jhCoyCajck964ccVF1a2uTRhN39gXtA2YpKUqb+dcsp+
- 2NH2eBVYZYaPVJIoIWPxhriOHszs+NjOkk+jBw2gVLy4bmOlzsBNBFN2VH4BCADsg91uA/mm
- l6APO+aWyqkiPjENreT2DT2gmoaEkp07jZrzNcQrLyNhGhsH6+UtCJLV9YNHbfJb7wsfXmXh
- IRh+TQYLJlrU4tBqvVB0F24+MEAFdt/1/jAmaihRZWKdE/Ogtt0YV7BEKfJk2KZxrG4wLB4G
- g57kI+aVmoVRl7/WmM46JpOJhBqvI6/Pw/ZIDhJZfrOXCCWM3pYjx0ftkkULPl6E6dXv3V7N
- 9dMV4bqNj4PDfysptFoVo02AblHqMmmBQ2LcI+o5HNm2iPyTklKMmq8Z5kblXDR6GXe2rO5c
- 5j0vQ6q5uSyVa30JNJcfl2iUT2akFv7n+RRWhlyCItjpABEBAAHCwGUEGAECAA8FAlN2VH4C
- GwwFCQlmAYAACgkQwG9tq2TPXXAq4Af/UhDBiEaW/s1gDmtci6ZBTDetOdWGx69dzD2rIm1b
- OoQiO1EZ+WNFe0RFmMByfCsRVXP4iD/Ly1l0c6ZNvCBPR+ssXlnltE0Z1S43ZrR4gYjWw2GM
- y1EcSOLv6Yvt/+8IS6YANlzR6RRBs2pM1ndM2AhI43k2rpGFarNEX7z9QrdcoZ4rY94DUGwZ
- 0hlQ5VrGt/DAnMkJmOkr6Yriiybw8COnw4qigLfZH6b87vUqdBjRr3BR0iD3ahiXUY0bhlX2
- bQE1IdT8+enQsm4+ePcC8Oihl8Y9JI/cBCw3eEZOl2p1+8aRq7tGkLsilWXUCDJ2kCDQixCJ
- RoTzi/gSro2qhg==
-Message-ID: <9aa8d2aa-c58e-89fe-a2be-3b0de50fd554@assembler.cz>
-Date: Tue, 5 Jun 2018 19:55:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <MWHPR1201MB2526CF0F174938EA64156AE98B660@MWHPR1201MB2526.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=US-ASCII
-Content-Language: en-US
-Content-Transfer-Encoding: 7BIT
+        Tue, 5 Jun 2018 13:54:40 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Tony Luck <tony.luck@intel.com>,
+        Paolo Cretaro <paolocretaro@gmail.com>, linux-iio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>, linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-pwm@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Colin Cross <ccross@android.com>, Kees Cook <keescook@chromium.org>,
+        Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v2 0/8] cros_ec: Switch to SPDX identifier.
+Date: Tue,  5 Jun 2018 19:54:21 +0200
+Message-Id: <20180605175429.9072-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sherry,
+Dear all,
 
-Many thanks for your efforts. Are there any technical restriction(s) of why the OS bundled updates are not the latest available
-version? I think we can't count much on hardware vendors to release microcode updates in the BIOS in the timely manner. I also
-think especially for older families that BIOS updates won't be ever released. It is in the public interest 
-to always have latest update available - and it is also in line with AMD phrase "At AMD, security is a top priority".
+This patchset is just to adopt the SPDX license identifier for all
+ChromeOS Embedded Controller related drivers. The patches touches
+different subsystems but every patch can be picked from their respective
+maintainer independently.
 
-Please consider having the latest microcode version available for OS updates too.
+This second version fixes some copy paste errors in the copyright year
+and takes care to no remove the paragraphs that have nothing to do with
+license notice.
 
-I would also appreciate of having the latest microcode available for the coreboot.org project.
+Thanks,
+ Enric
 
-Many thanks
-Rudolf
+Changes in v2:
+- Removed '[PATCH 5/9] rtc: cros-ec: Switch to SPDX identifier' from
+  series as it was applied.
+- s/Chrome OS/ChromeOS/
+- [1/9] Fixed wrong copyright year.
+- [6/9] Do not remove last paragraph.
+- [8/9] Fixed wrong copyright year.
+
+Enric Balletbo i Serra (8):
+  platform/chrome: cros_ec: Switch to SPDX identifier.
+  platform/chrome: pstore: Switch to SPDX identifier.
+  mfd: cros_ec: Add or fix SPDX-License-Identifier in all files.
+  iio: cros_ec: Switch to SPDX identifier.
+  Input: cros_ec_keyb - Switch to SPDX identifier.
+  pwm: cros-ec: Switch to SPDX identifier.
+  extcon: usbc-cros-ec: Switch to SPDX identifier.
+  i2c: i2c-cros-ec-tunnel: Switch to SPDX identifier.
+
+ drivers/extcon/extcon-usbc-cros-ec.c          | 20 +++--------
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c       | 14 +++-----
+ drivers/iio/accel/cros_ec_accel_legacy.c      | 27 +++++----------
+ .../common/cros_ec_sensors/cros_ec_sensors.c  | 24 ++++---------
+ .../cros_ec_sensors/cros_ec_sensors_core.c    | 18 +++-------
+ .../cros_ec_sensors/cros_ec_sensors_core.h    | 12 ++-----
+ drivers/iio/light/cros_ec_light_prox.c        | 18 +++-------
+ drivers/iio/pressure/cros_ec_baro.c           | 18 +++-------
+ drivers/input/keyboard/cros_ec_keyb.c         | 34 +++++++------------
+ drivers/mfd/cros_ec.c                         | 26 +++++---------
+ drivers/mfd/cros_ec_dev.c                     | 23 +++----------
+ drivers/mfd/cros_ec_dev.h                     | 16 ++-------
+ drivers/mfd/cros_ec_i2c.c                     | 18 +++-------
+ drivers/mfd/cros_ec_spi.c                     | 20 +++--------
+ drivers/platform/chrome/chromeos_pstore.c     | 13 +++----
+ drivers/platform/chrome/cros_ec_debugfs.c     | 22 +++---------
+ drivers/platform/chrome/cros_ec_lightbar.c    | 22 +++---------
+ drivers/platform/chrome/cros_ec_lpc.c         | 34 +++++++------------
+ drivers/platform/chrome/cros_ec_lpc_mec.c     | 34 +++++++------------
+ drivers/platform/chrome/cros_ec_lpc_reg.c     | 34 +++++++------------
+ drivers/platform/chrome/cros_ec_proto.c       | 19 +++--------
+ drivers/platform/chrome/cros_ec_sysfs.c       | 22 +++---------
+ drivers/platform/chrome/cros_ec_vbc.c         | 24 +++----------
+ .../platform/chrome/cros_kbd_led_backlight.c  | 19 +++--------
+ drivers/pwm/pwm-cros-ec.c                     | 13 +++----
+ include/linux/mfd/cros_ec.h                   | 10 +-----
+ include/linux/mfd/cros_ec_commands.h          | 10 +-----
+ include/linux/mfd/cros_ec_lpc_mec.h           | 14 ++------
+ include/linux/mfd/cros_ec_lpc_reg.h           | 14 ++------
+ 29 files changed, 152 insertions(+), 440 deletions(-)
+
+-- 
+2.17.1
