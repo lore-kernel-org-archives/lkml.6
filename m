@@ -1,83 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeFELxy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:53:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:51955 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751812AbeFELxw (ORCPT
+        id S1751733AbeFEL5n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:57:43 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48988 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751502AbeFEL5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:53:52 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Russell King <linux@armlinux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+        Tue, 5 Jun 2018 07:57:42 -0400
+Subject: Re: [PATCH 1/9] platform/chrome: cros_ec: Switch to SPDX identifier.
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: rpc: use designated initializers in ecard_default_ops
-Date: Tue,  5 Jun 2018 13:53:19 +0200
-Message-Id: <20180605115330.1733640-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:LUjdmY3vEd2QMazkDsR1SB+EbIymrQ1Pvqv2V6QgDq9n5L/TLsz
- gYW9t6mszJ3U0T/cAI4msYEDm5svDnZbwrBFwYaw7SjDuf6pPWelBtyWs6ISFEN3oA9JmY8
- 7/FR2NM0NPwGwwICZJcBwYPkXMn/Y90/pnf6mt1kiGMTC+1lRkVliJKcbA01GgPJFPP35mo
- Qm9TTSM5OO71/5Y4klE8Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:CONq93MxcEI=:taQMPaTJb1S5ztfAdJ1FN/
- g/qRqjwZhOiDa848Ha6BoA/7Vi1/wdi14+qzbEyeXDFMwdvgawb+KVWy5hw80x8/AZ5Z30eVQ
- HTUDmHEVgn7beLPBEM9QwRsJtly9hha32Bbm3ObAFLkUW4WjKLCmqi9jaXklJD9OeBkaLiVHv
- wjaO0FGn44niRLOPPz4ZIbf6j1Gnh7jrZyIwpN/sjBcc+CIEY/CT0TWWyO3RMO11pDjPD1f/Z
- vtKprhZZTniiOJ8hNKOScutNC4aGgpiQa7I5YCWI2/VdTpuK4FtDpV6Ym3fpJX25ELsDEiKaj
- /WOZIcwsGJ2NsNxYSZ6ICoVMDkcqqO1t1ncMarrqFTMPVDbCSTtLLkB04ZiU0mjeLrF5gLtRs
- AspqRqSBti2UHaZsudYXR9JZyIE9YPhghWI75J2pBeN4CiEsXne9ZiLb/oIzem+f9qBsYe4RB
- 5pE3ey5tkZ/PIcBfm+ENqYzxtSA6c8fK672Wdm5joApDZbofA07D/WoUosTpMcC0V7vbhq+UF
- 4drbppOU8vmAN2RQiKUa5Db8QniF4qpMPsSyzUG9wBzqDZ22A5SRARSC3EOGWZ2JPciCAvJA1
- y08GOdq+0jj62crwYJJXb/hpH0UODK6ZNnvUIQqXb6/nbwM1w4mMXBJ0oshRxyS6HWRweNHyD
- y2qI9O3ympkJ5w5Xo7NM69m0JyATcJ7qCFMQixClNfdHMryW+/FkuMAk1Aosuy3m5lRc=
+Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Olof Johansson <olof@lixom.net>, Benson Leung <bleung@chromium.org>
+References: <20180605092209.22887-1-enric.balletbo@collabora.com>
+ <20180605092209.22887-2-enric.balletbo@collabora.com>
+From: Emilio Pozuelo Monfort <emilio.pozuelo@collabora.co.uk>
+Message-ID: <2c125b86-bd33-a9a1-d0f3-706043e685c5@collabora.co.uk>
+Date: Tue, 5 Jun 2018 13:57:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605092209.22887-2-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the randstruct plugin is enabled, we get a warning about the
-use of traditional struct initializers for this structure, which
-results in incorrect behavior:
+Hi Enric,
 
-arch/arm/mach-rpc/ecard.c:416:2: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
-  ecard_def_irq_enable,
-  ^~~~~~~~~~~~~~~~~~~~
-arch/arm/mach-rpc/ecard.c:416:2: note: (near initialization for 'ecard_default_ops')
-arch/arm/mach-rpc/ecard.c:416:2: error: invalid initializer
-arch/arm/mach-rpc/ecard.c:416:2: note: (near initialization for 'ecard_default_ops.<anonymous>')
-arch/arm/mach-rpc/ecard.c:417:2: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
-  ecard_def_irq_disable,
-  ^~~~~~~~~~~~~~~~~~~~~
+On 05/06/18 11:22, Enric Balletbo i Serra wrote:
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+>  drivers/platform/chrome/cros_ec_debugfs.c     | 22 +++-------------
+>  drivers/platform/chrome/cros_ec_lightbar.c    | 22 +++-------------
+>  drivers/platform/chrome/cros_ec_lpc.c         | 26 +++----------------
+>  drivers/platform/chrome/cros_ec_lpc_mec.c     | 26 +++----------------
+>  drivers/platform/chrome/cros_ec_lpc_reg.c     | 26 +++----------------
+>  drivers/platform/chrome/cros_ec_proto.c       | 19 +++-----------
+>  drivers/platform/chrome/cros_ec_sysfs.c       | 22 +++-------------
+>  drivers/platform/chrome/cros_ec_vbc.c         | 24 ++++-------------
+>  .../platform/chrome/cros_kbd_led_backlight.c  | 19 +++-----------
+>  9 files changed, 37 insertions(+), 169 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+> index c62ee8e610a0..67c62934368a 100644
+> --- a/drivers/platform/chrome/cros_ec_debugfs.c
+> +++ b/drivers/platform/chrome/cros_ec_debugfs.c
+> @@ -1,21 +1,7 @@
+> -/*
+> - * cros_ec_debugfs - debug logs for Chrome OS EC
+> - *
+> - * Copyright 2015 Google, Inc.
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> - */
+> +// SPDX-License-Identifier: GPL-2.0+
+> +// Debug logs for ChromeOS EC.
+> +//
+> +// Copyright (C) 2012 Google, Inc.
 
-This changes it to use designated initializers like we do for all
-other structures.
+Copy paste error, s/2012/2015/ ?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-rpc/ecard.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-rpc/ecard.c b/arch/arm/mach-rpc/ecard.c
-index 39aef4876ed4..d0c4e20de4f3 100644
---- a/arch/arm/mach-rpc/ecard.c
-+++ b/arch/arm/mach-rpc/ecard.c
-@@ -413,12 +413,12 @@ static int ecard_def_fiq_pending(ecard_t *ec)
- }
- 
- static expansioncard_ops_t ecard_default_ops = {
--	ecard_def_irq_enable,
--	ecard_def_irq_disable,
--	ecard_def_irq_pending,
--	ecard_def_fiq_enable,
--	ecard_def_fiq_disable,
--	ecard_def_fiq_pending
-+	.irqenable  = ecard_def_irq_enable,
-+	.irqdisable = ecard_def_irq_disable,
-+	.irqpending = ecard_def_irq_pending,
-+	.fiqenable  = ecard_def_fiq_enable,
-+	.fiqdisable = ecard_def_fiq_disable,
-+	.fiqpending = ecard_def_fiq_pending
- };
- 
- /*
--- 
-2.9.0
+Cheers,
+Emilio
