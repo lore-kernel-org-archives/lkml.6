@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeFERZM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:25:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60904 "EHLO mail.kernel.org"
+        id S1752779AbeFERZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:25:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752680AbeFERDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:50 -0400
+        id S1752665AbeFERDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.4 29/37] stm class: Use vmalloc for the master map
-Date: Tue,  5 Jun 2018 19:01:34 +0200
-Message-Id: <20180605170110.588135089@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.4 27/37] MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
+Date: Tue,  5 Jun 2018 19:01:32 +0200
+Message-Id: <20180605170110.460357621@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -29,60 +30,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Maciej W. Rozycki <macro@mips.com>
 
-commit b5e2ced9bf81393034072dd4d372f6b430bc1f0a upstream.
+commit 28e4213dd331e944e7fca1954a946829162ed9d4 upstream.
 
-Fengguang is running into a warning from the buddy allocator:
+Having PR_FP_MODE_FRE (i.e. Config5.FRE) set without PR_FP_MODE_FR (i.e.
+Status.FR) is not supported as the lone purpose of Config5.FRE is to
+emulate Status.FR=0 handling on FPU hardware that has Status.FR=1
+hardwired[1][2].  Also we do not handle this case elsewhere, and assume
+throughout our code that TIF_HYBRID_FPREGS and TIF_32BIT_FPREGS cannot
+be set both at once for a task, leading to inconsistent behaviour if
+this does happen.
 
-> swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
-> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #262
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> Call Trace:
-...
->  __kmalloc+0x14b/0x180: ____cache_alloc at mm/slab.c:3127
->  stm_register_device+0xf3/0x5c0: stm_register_device at drivers/hwtracing/stm/core.c:695
-...
+Return unsuccessfully then from prctl(2) PR_SET_FP_MODE calls requesting
+PR_FP_MODE_FRE to be set with PR_FP_MODE_FR clear.  This corresponds to
+modes allowed by `mips_set_personality_fp'.
 
-Which is basically a result of the stm class trying to allocate ~512kB
-for the dummy_stm with its default parameters. There's no reason, however,
-for it not to be vmalloc()ed instead, which is what this patch does.
+References:
 
-Reported-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: stable@vger.kernel.org # v4.4+
+[1] "MIPS Architecture For Programmers, Vol. III: MIPS32 / microMIPS32
+    Privileged Resource Architecture", Imagination Technologies,
+    Document Number: MD00090, Revision 6.02, July 10, 2015, Table 9.69
+    "Config5 Register Field Descriptions", p. 262
+
+[2] "MIPS Architecture For Programmers, Volume III: MIPS64 / microMIPS64
+    Privileged Resource Architecture", Imagination Technologies,
+    Document Number: MD00091, Revision 6.03, December 22, 2015, Table
+    9.72 "Config5 Register Field Descriptions", p. 288
+
+Fixes: 9791554b45a2 ("MIPS,prctl: add PR_[GS]ET_FP_MODE prctl options for MIPS")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 4.0+
+Patchwork: https://patchwork.linux-mips.org/patch/19327/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/stm/core.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/kernel/process.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -602,7 +602,7 @@ static void stm_device_release(struct de
- {
- 	struct stm_device *stm = to_stm_device(dev);
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -680,6 +680,10 @@ int mips_set_process_fp_mode(struct task
+ 	if (value & ~known_bits)
+ 		return -EOPNOTSUPP;
  
--	kfree(stm);
-+	vfree(stm);
- }
- 
- int stm_register_device(struct device *parent, struct stm_data *stm_data,
-@@ -619,7 +619,7 @@ int stm_register_device(struct device *p
- 		return -EINVAL;
- 
- 	nmasters = stm_data->sw_end - stm_data->sw_start;
--	stm = kzalloc(sizeof(*stm) + nmasters * sizeof(void *), GFP_KERNEL);
-+	stm = vzalloc(sizeof(*stm) + nmasters * sizeof(void *));
- 	if (!stm)
- 		return -ENOMEM;
- 
-@@ -656,7 +656,7 @@ int stm_register_device(struct device *p
- err_device:
- 	put_device(&stm->dev);
- err_free:
--	kfree(stm);
-+	vfree(stm);
- 
- 	return err;
- }
++	/* Setting FRE without FR is not supported.  */
++	if ((value & (PR_FP_MODE_FR | PR_FP_MODE_FRE)) == PR_FP_MODE_FRE)
++		return -EOPNOTSUPP;
++
+ 	/* Avoid inadvertently triggering emulation */
+ 	if ((value & PR_FP_MODE_FR) && raw_cpu_has_fpu &&
+ 	    !(raw_current_cpu_data.fpu_id & MIPS_FPIR_F64))
