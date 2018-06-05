@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753739AbeFERGq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:06:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35966 "EHLO mail.kernel.org"
+        id S1753828AbeFERHM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:07:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753702AbeFERGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:44 -0400
+        id S1753409AbeFERHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:07:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "dwmw@amazon.co.uk, boris.ostrovsky@oracle.com, Juergen Gross"
-        <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.9 16/61] xen: set cpu capabilities from xen_start_kernel()
-Date: Tue,  5 Jun 2018 19:01:37 +0200
-Message-Id: <20180605170118.637543435@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Jason Gunthorpe <jgg@mellanox.com>, Doug Ledford <dledford@redhat.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 51/61] scsi: scsi_transport_srp: Fix shost to rport translation
+Date: Tue,  5 Jun 2018 19:02:12 +0200
+Message-Id: <20180605170120.938871770@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -32,67 +33,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-Upstream commit: 0808e80cb760de2733c0527d2090ed2205a1eef8 ("xen: set
-cpu capabilities from xen_start_kernel()")
+commit c9ddf73476ff4fffb7a87bd5107a0705bf2cf64b upstream.
 
-There is no need to set the same capabilities for each cpu
-individually. This can easily be done for all cpus when starting the
-kernel.
+Since an SRP remote port is attached as a child to shost->shost_gendev
+and as the only child, the translation from the shost pointer into an
+rport pointer must happen by looking up the shost child that is an
+rport. This patch fixes the following KASAN complaint:
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+BUG: KASAN: slab-out-of-bounds in srp_timed_out+0x57/0x110 [scsi_transport_srp]
+Read of size 4 at addr ffff880035d3fcc0 by task kworker/1:0H/19
+
+CPU: 1 PID: 19 Comm: kworker/1:0H Not tainted 4.16.0-rc3-dbg+ #1
+Workqueue: kblockd blk_mq_timeout_work
+Call Trace:
+dump_stack+0x85/0xc7
+print_address_description+0x65/0x270
+kasan_report+0x231/0x350
+srp_timed_out+0x57/0x110 [scsi_transport_srp]
+scsi_times_out+0xc7/0x3f0 [scsi_mod]
+blk_mq_terminate_expired+0xc2/0x140
+bt_iter+0xbc/0xd0
+blk_mq_queue_tag_busy_iter+0x1c7/0x350
+blk_mq_timeout_work+0x325/0x3f0
+process_one_work+0x441/0xa50
+worker_thread+0x76/0x6c0
+kthread+0x1b2/0x1d0
+ret_from_fork+0x24/0x30
+
+Fixes: e68ca75200fe ("scsi_transport_srp: Reduce failover time")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Laurence Oberman <loberman@redhat.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/xen/enlighten.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -472,6 +472,14 @@ static void __init xen_init_cpuid_mask(v
- 		cpuid_leaf1_ecx_set_mask = (1 << (X86_FEATURE_MWAIT % 32));
+---
+ drivers/scsi/scsi_transport_srp.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+--- a/drivers/scsi/scsi_transport_srp.c
++++ b/drivers/scsi/scsi_transport_srp.c
+@@ -52,6 +52,8 @@ struct srp_internal {
+ 	struct transport_container rport_attr_cont;
+ };
+ 
++static int scsi_is_srp_rport(const struct device *dev);
++
+ #define to_srp_internal(tmpl) container_of(tmpl, struct srp_internal, t)
+ 
+ #define	dev_to_rport(d)	container_of(d, struct srp_rport, dev)
+@@ -61,9 +63,24 @@ static inline struct Scsi_Host *rport_to
+ 	return dev_to_shost(r->dev.parent);
  }
  
-+static void __init xen_init_capabilities(void)
++static int find_child_rport(struct device *dev, void *data)
 +{
-+	if (xen_pv_domain()) {
-+		setup_clear_cpu_cap(X86_BUG_SYSRET_SS_ATTRS);
-+		setup_force_cpu_cap(X86_FEATURE_XENPV);
++	struct device **child = data;
++
++	if (scsi_is_srp_rport(dev)) {
++		WARN_ON_ONCE(*child);
++		*child = dev;
 +	}
++	return 0;
 +}
 +
- static void xen_set_debugreg(int reg, unsigned long val)
+ static inline struct srp_rport *shost_to_rport(struct Scsi_Host *shost)
  {
- 	HYPERVISOR_set_debugreg(reg, val);
-@@ -1634,6 +1642,7 @@ asmlinkage __visible void __init xen_sta
- 
- 	xen_init_irq_ops();
- 	xen_init_cpuid_mask();
-+	xen_init_capabilities();
- 
- #ifdef CONFIG_X86_LOCAL_APIC
- 	/*
-@@ -1978,14 +1987,6 @@ bool xen_hvm_need_lapic(void)
+-	return transport_class_to_srp_rport(&shost->shost_gendev);
++	struct device *child = NULL;
++
++	WARN_ON_ONCE(device_for_each_child(&shost->shost_gendev, &child,
++					   find_child_rport) < 0);
++	return child ? dev_to_rport(child) : NULL;
  }
- EXPORT_SYMBOL_GPL(xen_hvm_need_lapic);
  
--static void xen_set_cpu_features(struct cpuinfo_x86 *c)
--{
--	if (xen_pv_domain()) {
--		clear_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
--		set_cpu_cap(c, X86_FEATURE_XENPV);
--	}
--}
--
- static void xen_pin_vcpu(int cpu)
- {
- 	static bool disable_pinning;
-@@ -2032,7 +2033,6 @@ const struct hypervisor_x86 x86_hyper_xe
- 	.init_platform		= xen_hvm_guest_init,
- #endif
- 	.x2apic_available	= xen_x2apic_para_available,
--	.set_cpu_features       = xen_set_cpu_features,
- 	.pin_vcpu               = xen_pin_vcpu,
- };
- EXPORT_SYMBOL(x86_hyper_xen);
+ /**
+@@ -637,7 +654,8 @@ static enum blk_eh_timer_return srp_time
+ 	struct srp_rport *rport = shost_to_rport(shost);
+ 
+ 	pr_debug("timeout for sdev %s\n", dev_name(&sdev->sdev_gendev));
+-	return rport->fast_io_fail_tmo < 0 && rport->dev_loss_tmo < 0 &&
++	return rport && rport->fast_io_fail_tmo < 0 &&
++		rport->dev_loss_tmo < 0 &&
+ 		i->f->reset_timer_if_blocked && scsi_device_blocked(sdev) ?
+ 		BLK_EH_RESET_TIMER : BLK_EH_NOT_HANDLED;
+ }
