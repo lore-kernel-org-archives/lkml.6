@@ -1,43 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752720AbeFEWA1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 18:00:27 -0400
-Received: from mail-it0-f54.google.com ([209.85.214.54]:37910 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeFEWAZ (ORCPT
+        id S1752579AbeFEWBX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 18:01:23 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:43075 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752044AbeFEWBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 18:00:25 -0400
-X-Google-Smtp-Source: ADUXVKKW/wutZJwvAF4ZOvGaSbMc+XpbhQKq8cEU0wz9PVMxB7vNpHU+g4CWTLb6k+TCR+v2z69kppY/bo5VR4exm0k=
+        Tue, 5 Jun 2018 18:01:22 -0400
+Subject: Re: [PATCH 4.9 00/61] 4.9.107-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180605170117.643936916@linuxfoundation.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <5b3b383d-ced2-a00c-3c8c-5b3f506cfe38@kernel.org>
+Date: Tue, 5 Jun 2018 16:01:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180606075535.09b41c23@canb.auug.org.au>
-References: <20180606075535.09b41c23@canb.auug.org.au>
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Date: Tue, 5 Jun 2018 15:00:24 -0700
-Message-ID: <CABeXuvqG_DQMOwa0vrmJB+kx7DPbuMo=s-aS-DK7LdBy_ZGtTw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the y2038 tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kees Cook <keescook@chromium.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-That patch belongs to Kees.
+On 06/05/2018 11:01 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.107 release.
+> There are 61 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Jun  7 17:00:59 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.107-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
--Deepa
+Compiled and booted on my test system. No dmesg regressions.
 
-On Tue, Jun 5, 2018 at 2:55 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Arnd,
->
-> Commit
->
->   0f0d83b99ef7 ("pstore: Convert internal records to timespec64")
->
-> is missing a Signed-off-by from its committer.
->
-> --
-> Cheers,
-> Stephen Rothwell
+thanks,
+-- Shuah
