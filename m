@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752163AbeFERY1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:24:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32880 "EHLO mail.kernel.org"
+        id S1752256AbeFERYs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:24:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751812AbeFEREB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:01 -0400
+        id S1751923AbeFERD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick Ohly <patrick.ohly@intel.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 4.4 06/37] Revert "ima: limit file hash setting by user to fix and log modes"
-Date: Tue,  5 Jun 2018 19:01:11 +0200
-Message-Id: <20180605170109.266140832@linuxfoundation.org>
+        stable@vger.kernel.org, Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.4 04/37] sh: New gcc support
+Date: Tue,  5 Jun 2018 19:01:09 +0200
+Message-Id: <20180605170109.155041777@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -31,50 +29,182 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+From: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-commit f5acb3dcba1ffb7f0b8cbb9dba61500eea5d610b upstream.
+commit 940d4113f3306e07a1f86541489b686d1a979d54 upstream.
 
-Userspace applications have been modified to write security xattrs,
-but they are not context aware.  In the case of security.ima, the
-security xattr can be either a file hash or a file signature.
-Permitting writing one, but not the other requires the application to
-be context aware.
+New gcc (4.8 or later) used new shift helper functions.
+So we need added new helper to private libgcc.
 
-In addition, userspace applications might write files to a staging
-area, which might not be in policy, and then change some file metadata
-(eg. owner) making it in policy.  As a result, these files are not
-labeled properly.
-
-This reverts commit c68ed80c97d9720f51ef31fe91560fdd1e121533, which
-prevents writing file hashes as security.ima xattrs.
-
-Requested-by: Patrick Ohly <patrick.ohly@intel.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+Signed-off-by: Rich Felker <dalias@libc.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/integrity/ima/ima_appraise.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ arch/sh/kernel/sh_ksyms_32.c |    3 +++
+ arch/sh/lib/ashlsi3.S        |   35 ++++++++++++++++++++++++++---------
+ arch/sh/lib/ashrsi3.S        |   33 ++++++++++++++++++++++++---------
+ arch/sh/lib/lshrsi3.S        |   34 +++++++++++++++++++++++++---------
+ 4 files changed, 78 insertions(+), 27 deletions(-)
 
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -383,14 +383,10 @@ int ima_inode_setxattr(struct dentry *de
- 	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
- 				   xattr_value_len);
- 	if (result == 1) {
--		bool digsig;
--
- 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
- 			return -EINVAL;
--		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
--		if (!digsig && (ima_appraise & IMA_APPRAISE_ENFORCE))
--			return -EPERM;
--		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
-+		ima_reset_appraise_flags(d_backing_inode(dentry),
-+			 (xvalue->type == EVM_IMA_XATTR_DIGSIG) ? 1 : 0);
- 		result = 0;
- 	}
- 	return result;
+--- a/arch/sh/kernel/sh_ksyms_32.c
++++ b/arch/sh/kernel/sh_ksyms_32.c
+@@ -34,6 +34,9 @@ DECLARE_EXPORT(__sdivsi3);
+ DECLARE_EXPORT(__lshrsi3);
+ DECLARE_EXPORT(__ashrsi3);
+ DECLARE_EXPORT(__ashlsi3);
++DECLARE_EXPORT(__lshrsi3_r0);
++DECLARE_EXPORT(__ashrsi3_r0);
++DECLARE_EXPORT(__ashlsi3_r0);
+ DECLARE_EXPORT(__ashiftrt_r4_6);
+ DECLARE_EXPORT(__ashiftrt_r4_7);
+ DECLARE_EXPORT(__ashiftrt_r4_8);
+--- a/arch/sh/lib/ashlsi3.S
++++ b/arch/sh/lib/ashlsi3.S
+@@ -54,21 +54,38 @@ Boston, MA 02110-1301, USA.  */
+ !
+ ! (none)
+ !
++! __ashlsi3_r0
++!
++! Entry:
++!
++! r4: Value to shift
++! r0: Shifts
++!
++! Exit:
++!
++! r0: Result
++!
++! Destroys:
++!
++! (none)
++
++
+ 	.global	__ashlsi3
++	.global	__ashlsi3_r0
+ 	
+ 	.align	2
+ __ashlsi3:
+-	mov	#31,r0
+-	and	r0,r5
++	mov	r5,r0
++	.align	2
++__ashlsi3_r0:
++	and	#31,r0
++	mov.l	r4,@-r15
++	mov	r0,r4
+ 	mova	ashlsi3_table,r0
+-	mov.b	@(r0,r5),r5
+-#ifdef __sh1__
+-	add	r5,r0
++	mov.b	@(r0,r4),r4
++	add	r4,r0
+ 	jmp	@r0
+-#else
+-	braf	r5
+-#endif
+-	mov	r4,r0
++	mov.l	@r15+,r0
+ 
+ 	.align	2
+ ashlsi3_table:
+--- a/arch/sh/lib/ashrsi3.S
++++ b/arch/sh/lib/ashrsi3.S
+@@ -54,22 +54,37 @@ Boston, MA 02110-1301, USA.  */
+ !
+ ! (none)
+ !
++! __ashrsi3_r0
++!
++! Entry:
++!
++! r4: Value to shift
++! r0: Shifts
++!
++! Exit:
++!
++! r0: Result
++!
++! Destroys:
++!
++! (none)
+ 
+ 	.global	__ashrsi3
++	.global	__ashrsi3_r0
+ 	
+ 	.align	2
+ __ashrsi3:
+-	mov	#31,r0
+-	and	r0,r5
++	mov	r5,r0
++	.align	2
++__ashrsi3_r0:
++	and	#31,r0
++	mov.l	r4,@-r15
++	mov	r0,r4
+ 	mova	ashrsi3_table,r0
+-	mov.b	@(r0,r5),r5
+-#ifdef __sh1__
+-	add	r5,r0
++	mov.b	@(r0,r4),r4
++	add	r4,r0
+ 	jmp	@r0
+-#else
+-	braf	r5
+-#endif
+-	mov	r4,r0
++	mov.l	@r15+,r0
+ 
+ 	.align	2
+ ashrsi3_table:
+--- a/arch/sh/lib/lshrsi3.S
++++ b/arch/sh/lib/lshrsi3.S
+@@ -54,21 +54,37 @@ Boston, MA 02110-1301, USA.  */
+ !
+ ! (none)
+ !
++! __lshrsi3_r0
++!
++! Entry:
++!
++! r0: Value to shift
++! r5: Shifts
++!
++! Exit:
++!
++! r0: Result
++!
++! Destroys:
++!
++! (none)
++!
+ 	.global	__lshrsi3
++	.global	__lshrsi3_r0
+ 	
+ 	.align	2
+ __lshrsi3:
+-	mov	#31,r0
+-	and	r0,r5
++	mov	r5,r0
++	.align	2
++__lshrsi3_r0:
++	and	#31,r0
++	mov.l	r4,@-r15
++	mov	r0,r4
+ 	mova	lshrsi3_table,r0
+-	mov.b	@(r0,r5),r5
+-#ifdef __sh1__
+-	add	r5,r0
++	mov.b	@(r0,r4),r4
++	add	r4,r0
+ 	jmp	@r0
+-#else
+-	braf	r5
+-#endif
+-	mov	r4,r0
++	mov.l	@r15+,r0
+ 
+ 	.align	2
+ lshrsi3_table:
