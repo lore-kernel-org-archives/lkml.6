@@ -1,49 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752229AbeFEPgi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:36:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:57634 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751637AbeFEPgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:36:36 -0400
-Date: Tue, 5 Jun 2018 16:37:07 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH -tip v5 17/27] arm64: kprobes: Don't call the
- ->break_handler() in arm kprobes code
-Message-ID: <20180605153706.GB26352@arm.com>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
- <152812780433.10068.4191004481518140821.stgit@devbox>
+        id S1752248AbeFEPhZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:37:25 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:38917 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751747AbeFEPhX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:37:23 -0400
+X-Google-Smtp-Source: ADUXVKL90S+UGXjp+1OY3NaovxFwYBtsSTK/8QAqmbhtslzVqsrbnnaBOeMLIuO3ugOmM0HWAq6NZqAZsmIz3FgabWE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152812780433.10068.4191004481518140821.stgit@devbox>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180523140635.GB27215@amd>
+References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
+ <20180523140635.GB27215@amd>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 5 Jun 2018 18:37:21 +0300
+Message-ID: <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com>
+Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 12:56:44AM +0900, Masami Hiramatsu wrote:
-> Don't call the ->break_handler() from the arm kprobes code,
-> because it was only used by jprobes which got removed.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> ---
->  arch/arm64/kernel/probes/kprobes.c |    8 --------
->  1 file changed, 8 deletions(-)
+On Wed, May 23, 2018 at 5:06 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
+>> The register constants are so far defined in a way that they fit
+>> for the pcal9555a when shifted by the number of banks, i.e. are
+>> multiplied by 2 in the accessor function.
+>>
+>> Now, the pcal6524 has 3 banks which means the relative offset
+>> is multiplied by 4 for the standard registers.
+>>
+>> Simply applying the bit shift to the extended registers gives
+>> a wrong result, since the base offset is already included in
+>> the offset.
+>>
+>> Therefore, we have to add code to the 24 bit accessor functions
+>> that adjusts the register number for these exended registers.
+>>
+>> The formula finally used was developed and proposed by
+>> Andy Shevchenko <andy.shevchenko@gmail.com>.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+>>       int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+>> +     int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+>> +     int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
 
-Will
+> Is this reasonable to do on each register access? Compiler will not be
+> able to optimize out fls and shifts, right?
+
+On modern CPUs fls() is one assembly command. OTOH, any proposal to do
+this better?
+
+What I can see is that bank_shift is invariant to the function, and
+maybe cached.
+
+-- 
+With Best Regards,
+Andy Shevchenko
