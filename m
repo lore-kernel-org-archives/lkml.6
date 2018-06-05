@@ -1,85 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752720AbeFERZx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:25:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54191 "EHLO mx2.suse.de"
+        id S1752641AbeFERDj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752028AbeFERZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:25:51 -0400
-Date: Tue, 5 Jun 2018 19:25:48 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Aaron Wu <Aaron.Wu@analog.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Steven Rostedt," <rostedt@goodmis.org>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>, Baoquan He <bhe@redhat.com>,
-        Ilya Matveychikov <matvejchikov@gmail.com>,
-        Linux Documentation List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 0/5] Kernel parameter parser cleanup/enhancement
-Message-ID: <20180605192548.4ff64b3e@kitsune.suse.cz>
-In-Reply-To: <CAHp75VdG4Vp2_6LMLv--kwiMkXO4mdc1DUgRQLBCtp2OoEmAZQ@mail.gmail.com>
-References: <cover.1528215659.git.msuchanek@suse.de>
-        <CAHp75VdG4Vp2_6LMLv--kwiMkXO4mdc1DUgRQLBCtp2OoEmAZQ@mail.gmail.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1751805AbeFERDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:36 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vinod Koul <vinod.koul@intel.com>, Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 4.4 24/37] dmaengine: usb-dmac: fix endless loop in usb_dmac_chan_terminate_all()
+Date: Tue,  5 Jun 2018 19:01:29 +0200
+Message-Id: <20180605170110.301507773@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+References: <20180605170108.884872354@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Jun 2018 20:05:50 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-> On Tue, Jun 5, 2018 at 7:43 PM, Michal Suchanek <msuchanek@suse.de>
-> wrote:
-> > Hello,
-> >
-> > due to work on the fadump_extra_args I looked at the kernel
-> > parameter parser and found its grammar rather curious.
-> >
-> > It supports double quotes but not any other quoting characters so
-> > double quotes cannot be quoted. What's more, the quotes can be
-> > anywhere in the parameter name or value and are interpteted but are
-> > removed only from start and end of the parameter value.
-> >
-> > These are the patches not specific to fadump which somewhat
-> > straighten the qouting grammar to make it on par with common shell
-> > interpreters.  
-> 
-> I didn't notice any use of string_unescape_*() functionality. So, your
-> patch is kinda very specific to some narrow subset of escaping and
-> unescaping stuff.
+------------------
 
-It does what it says. It cannot use string_unescape because it needs to
-determine the boundaries of quoted strings.
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-> Thus, it's still not on par with shell, right?
+commit d9f5efade2cfd729138a7cafb46d01044da40f5e upstream.
 
-It does not interpret special character sequences other than quoting.
+This patch fixes an issue that list_for_each_entry() in
+usb_dmac_chan_terminate_all() is possible to cause endless loop because
+this will move own desc to the desc_freed. So, this driver should use
+list_for_each_entry_safe() instead of list_for_each_entry().
 
-The feature would not be hard to add but I do not see the need.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Unfortunately, the existing string_unescape is totally not fitting to
-be integrated into the parser for the purpose.
+---
+ drivers/dma/sh/usb-dmac.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks
-
-Michal
-
-> 
-> >
-> > Specifically double and single quotes can be used for quoting as
-> > well as backslashes with the usual shell semantic. All quoting
-> > characters are removed while the parameters are parsed.
-> >
+--- a/drivers/dma/sh/usb-dmac.c
++++ b/drivers/dma/sh/usb-dmac.c
+@@ -448,7 +448,7 @@ usb_dmac_prep_slave_sg(struct dma_chan *
+ static int usb_dmac_chan_terminate_all(struct dma_chan *chan)
+ {
+ 	struct usb_dmac_chan *uchan = to_usb_dmac_chan(chan);
+-	struct usb_dmac_desc *desc;
++	struct usb_dmac_desc *desc, *_desc;
+ 	unsigned long flags;
+ 	LIST_HEAD(head);
+ 	LIST_HEAD(list);
+@@ -459,7 +459,7 @@ static int usb_dmac_chan_terminate_all(s
+ 	if (uchan->desc)
+ 		uchan->desc = NULL;
+ 	list_splice_init(&uchan->desc_got, &list);
+-	list_for_each_entry(desc, &list, node)
++	list_for_each_entry_safe(desc, _desc, &list, node)
+ 		list_move_tail(&desc->node, &uchan->desc_freed);
+ 	spin_unlock_irqrestore(&uchan->vc.lock, flags);
+ 	vchan_dma_desc_free_list(&uchan->vc, &head);
