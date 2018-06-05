@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753782AbeFERG6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:06:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36178 "EHLO mail.kernel.org"
+        id S1753798AbeFERHD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:07:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753762AbeFERGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:55 -0400
+        id S1753784AbeFERHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:07:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Ivan Kalvachev <ikalvachev@gmail.com>,
-        "Huang, Ying" <ying.huang@intel.com>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 59/61] mm: fix the NULL mapping case in __isolate_lru_page()
-Date: Tue,  5 Jun 2018 19:02:20 +0200
-Message-Id: <20180605170121.388634728@linuxfoundation.org>
+        stable@vger.kernel.org, Aleksey Makarov <aleksey.makarov@linaro.org>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Christopher Covington <cov@codeaurora.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.9 61/61] serial: pl011: add console matching function
+Date: Tue,  5 Jun 2018 19:02:22 +0200
+Message-Id: <20180605170121.492754231@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -34,45 +32,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hugh Dickins <hughd@google.com>
+From: Aleksey Makarov <aleksey.makarov@linaro.org>
 
-commit 145e1a71e090575c74969e3daa8136d1e5b99fc8 upstream.
+commit 10879ae5f12e9cab3c4e8e9504c1aaa8a033bde7 upstream.
 
-George Boole would have noticed a slight error in 4.16 commit
-69d763fc6d3a ("mm: pin address_space before dereferencing it while
-isolating an LRU page").  Fix it, to match both the comment above it,
-and the original behaviour.
+This patch adds function pl011_console_match() that implements
+method match of struct console.  It allows to match consoles against
+data specified in a string, for example taken from command line or
+compiled by ACPI SPCR table handler.
 
-Although anonymous pages are not marked PageDirty at first, we have an
-old habit of calling SetPageDirty when a page is removed from swap
-cache: so there's a category of ex-swap pages that are easily
-migratable, but were inadvertently excluded from compaction's async
-migration in 4.16.
+This patch was merged to tty-next but then reverted because of
+conflict with
 
-Link: http://lkml.kernel.org/r/alpine.LSU.2.11.1805302014001.12558@eggly.anvils
-Fixes: 69d763fc6d3a ("mm: pin address_space before dereferencing it while isolating an LRU page")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Minchan Kim <minchan@kernel.org>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Reported-by:  Ivan Kalvachev <ikalvachev@gmail.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+commit 46e36683f433 ("serial: earlycon: Extend earlycon command line option to support 64-bit addresses")
+
+Now it is fixed.
+
+Signed-off-by: Aleksey Makarov <aleksey.makarov@linaro.org>
+Reviewed-by: Peter Hurley <peter@hurleysoftware.com>
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+Tested-by: Christopher Covington <cov@codeaurora.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/amba-pl011.c |   55 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1393,7 +1393,7 @@ int __isolate_lru_page(struct page *page
- 				return ret;
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -2320,12 +2320,67 @@ static int __init pl011_console_setup(st
+ 	return uart_set_options(&uap->port, co, baud, parity, bits, flow);
+ }
  
- 			mapping = page_mapping(page);
--			migrate_dirty = mapping && mapping->a_ops->migratepage;
-+			migrate_dirty = !mapping || mapping->a_ops->migratepage;
- 			unlock_page(page);
- 			if (!migrate_dirty)
- 				return ret;
++/**
++ *	pl011_console_match - non-standard console matching
++ *	@co:	  registering console
++ *	@name:	  name from console command line
++ *	@idx:	  index from console command line
++ *	@options: ptr to option string from console command line
++ *
++ *	Only attempts to match console command lines of the form:
++ *	    console=pl011,mmio|mmio32,<addr>[,<options>]
++ *	    console=pl011,0x<addr>[,<options>]
++ *	This form is used to register an initial earlycon boot console and
++ *	replace it with the amba_console at pl011 driver init.
++ *
++ *	Performs console setup for a match (as required by interface)
++ *	If no <options> are specified, then assume the h/w is already setup.
++ *
++ *	Returns 0 if console matches; otherwise non-zero to use default matching
++ */
++static int __init pl011_console_match(struct console *co, char *name, int idx,
++				      char *options)
++{
++	unsigned char iotype;
++	resource_size_t addr;
++	int i;
++
++	if (strcmp(name, "pl011") != 0)
++		return -ENODEV;
++
++	if (uart_parse_earlycon(options, &iotype, &addr, &options))
++		return -ENODEV;
++
++	if (iotype != UPIO_MEM && iotype != UPIO_MEM32)
++		return -ENODEV;
++
++	/* try to match the port specified on the command line */
++	for (i = 0; i < ARRAY_SIZE(amba_ports); i++) {
++		struct uart_port *port;
++
++		if (!amba_ports[i])
++			continue;
++
++		port = &amba_ports[i]->port;
++
++		if (port->mapbase != addr)
++			continue;
++
++		co->index = i;
++		port->cons = co;
++		return pl011_console_setup(co, options);
++	}
++
++	return -ENODEV;
++}
++
+ static struct uart_driver amba_reg;
+ static struct console amba_console = {
+ 	.name		= "ttyAMA",
+ 	.write		= pl011_console_write,
+ 	.device		= uart_console_device,
+ 	.setup		= pl011_console_setup,
++	.match		= pl011_console_match,
+ 	.flags		= CON_PRINTBUFFER,
+ 	.index		= -1,
+ 	.data		= &amba_reg,
