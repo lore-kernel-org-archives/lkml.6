@@ -1,73 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751674AbeFEJgx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:36:53 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37942 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751495AbeFEJgw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:36:52 -0400
-X-Google-Smtp-Source: ADUXVKJjur4rmrphE5gDvKKwHhFGaMXRy8us+buWwmL/ZbfgS7XUE72lj6fIKgpjFVnmVolRNkTt4y8iX3cKqpNieg0=
+        id S1751786AbeFEJhH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:37:07 -0400
+Received: from mga05.intel.com ([192.55.52.43]:57779 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751502AbeFEJhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 05:37:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,478,1520924400";
+   d="scan'208";a="54857045"
+Subject: Re: [PATCH] mmc: tegra: Use sdhci_pltfm_clk_get_max_clock
+To: Aapo Vienamo <avienamo@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0c9cb398-07ac-360b-c661-31670f64fe06@intel.com>
+Date: Tue, 5 Jun 2018 12:35:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com>
-References: <0000000000006e4595056dd23c16@google.com> <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
- <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 5 Jun 2018 11:36:30 +0200
-Message-ID: <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
-Subject: Re: INFO: task hung in ip6gre_exit_batch_net
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>,
-        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 11:03 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> Hi, Dmirty!
->
-> On 04.06.2018 18:22, Dmitry Vyukov wrote:
->> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
->> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
->>> Hello,
->>>
->>> syzbot found the following crash on:
->>>
->>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
->>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>>
->>> Unfortunately, I don't have any reproducer for this crash yet.
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
->>
->> Another hang on rtnl lock:
->>
->> #syz dup: INFO: task hung in netdev_run_todo
->>
->> May be related to "unregister_netdevice: waiting for DEV to become free":
->> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
+On 04/06/18 18:35, Aapo Vienamo wrote:
+> The sdhci get_max_clock callback is set to sdhci_pltfm_clk_get_max_clock
+> and tegra_sdhci_get_max_clock is removed. It appears that the
+> shdci-tegra specific callback was originally introduced due to the
+> requirement that the host clock has to be twice the bus clock on DDR50
+> mode. As far as I can tell the only effect the removal has on DDR50 mode
+> is in cases where the parent clock is unable to supply the requested
+> clock rate, causing the DDR50 mode to run at a lower frequency.
+> Currently the DDR50 mode isn't enabled on any of the SoCs and would also
+> require configuring the SDHCI clock divider register to function
+> properly.
+> 
+> The problem with tegra_sdhci_get_max_clock is that it divides the clock
+> rate by two and thus artificially limits the maximum frequency of faster
+> signaling modes which don't have the host-bus frequency ratio requirement
+> of DDR50 such as SDR104 and HS200. Furthermore, the call to
+> clk_round_rate() may return an error which isn't handled by
+> tegra_sdhci_get_max_clock.
+> 
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 
-netdev_wait_allrefs does not hold rtnl lock during waiting, so it must
-be something different.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-
->> Any other explanations for massive hangs on rtnl lock for minutes?
->
-> To exclude the situation, when a task exists with rtnl_mutex held:
->
-> would the pr_warn() from print_held_locks_bug() be included in the console output
-> if they appear?
-
-Yes, everything containing "WARNING:" is detected as bug.
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 15 ++-------------
+>  1 file changed, 2 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 970d38f6..c8745b5 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -234,17 +234,6 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+>  	sdhci_set_uhs_signaling(host, timing);
+>  }
+>  
+> -static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
+> -{
+> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -
+> -	/*
+> -	 * DDR modes require the host to run at double the card frequency, so
+> -	 * the maximum rate we can support is half of the module input clock.
+> -	 */
+> -	return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
+> -}
+> -
+>  static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
+>  {
+>  	u32 reg;
+> @@ -309,7 +298,7 @@ static const struct sdhci_ops tegra_sdhci_ops = {
+>  	.platform_execute_tuning = tegra_sdhci_execute_tuning,
+>  	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>  	.voltage_switch = tegra_sdhci_voltage_switch,
+> -	.get_max_clock = tegra_sdhci_get_max_clock,
+> +	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>  };
+>  
+>  static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
+> @@ -357,7 +346,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
+>  	.platform_execute_tuning = tegra_sdhci_execute_tuning,
+>  	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>  	.voltage_switch = tegra_sdhci_voltage_switch,
+> -	.get_max_clock = tegra_sdhci_get_max_clock,
+> +	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
+>  };
+>  
+>  static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+> 
