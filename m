@@ -1,51 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeFEPNj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:13:39 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35852 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbeFEPNh (ORCPT
+        id S1751982AbeFEPO7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:14:59 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57172 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbeFEPO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:13:37 -0400
-X-Google-Smtp-Source: ADUXVKIfBZfy4o3EVvL/rGn0/9drIF7eI8gGyflkkiBDshV69UEUG4Osn7rJF/lCSqw6dBucORqOP06jtJc9yeLZw9g=
+        Tue, 5 Jun 2018 11:14:58 -0400
+From: Colin King <colin.king@canonical.com>
+To: Matias Bjorling <mb@lightnvm.io>, linux-block@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] lightnvm: pblk: fix resource leak of invalid_bitmap
+Date: Tue,  5 Jun 2018 16:14:56 +0100
+Message-Id: <20180605151456.20359-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <20180605150751.GA9436@thunk.org>
-References: <20180605150751.GA9436@thunk.org>
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Tue, 5 Jun 2018 17:13:35 +0200
-Message-ID: <CAFLxGvysjYbCpkqbVqD8Q1v3isGnRrNo5KdUn7TgCVt9WxzE2g@mail.gmail.com>
-Subject: Re: [GIT PULL] fscrypt updates for 4.18
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ted,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Tue, Jun 5, 2018 at 5:07 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
->
->   Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
->
-> for you to fetch changes up to 4f2f76f751433908364ccff82f437a57d0e6e9b7:
->
->   ext4: fix fencepost error in check for inode count overflow during resize (2018-05-25 12:51:25 -0400)
->
-> ----------------------------------------------------------------
-> Add bunch of cleanups, and add support for the Speck128/256
-> algorithms.  Yes, Speck is contrversial, but the intention is to use
-> them only for the lowest end Android devices, where the alternative
-> *really* is no encryption at all for data stored at rest.
+Currently the error exit path when the emeta could not be
+interpreted is via fail_free_ws and this fails to free
+invalid_bitmap.  Fix this by adding another exit label and
+exiting via this to kfree invalid_bitmap.
 
-Will Android tell me that Speck is being used?
+Detected by CoverityScan, CID#1469659 ("Resource leak")
 
+Fixes: 48b8d20895f8 ("lightnvm: pblk: garbage collect lines with failed writes")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/lightnvm/pblk-gc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+index df88f1bdd921..31a0a1b3868b 100644
+--- a/drivers/lightnvm/pblk-gc.c
++++ b/drivers/lightnvm/pblk-gc.c
+@@ -203,7 +203,7 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 		if (!lba_list) {
+ 			pr_err("pblk: could not interpret emeta (line %d)\n",
+ 					line->id);
+-			goto fail_free_ws;
++			goto fail_free_invalid_bitmap;
+ 		}
+ 	}
+ 
+@@ -280,6 +280,7 @@ static void pblk_gc_line_prepare_ws(struct work_struct *work)
+ 	kfree(gc_rq);
+ fail_free_lba_list:
+ 	pblk_mfree(lba_list, l_mg->emeta_alloc_type);
++fail_free_invalid_bitmap:
+ 	kfree(invalid_bitmap);
+ fail_free_ws:
+ 	kfree(line_ws);
 -- 
-Thanks,
-//richard
+2.17.0
