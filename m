@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeFER5r (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:57:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46558 "EHLO mail.kernel.org"
+        id S1752854AbeFERwX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:52:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752963AbeFERwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:52:30 -0400
+        id S1752816AbeFERwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:52:20 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 37/46] perf stat: Display user and system time
-Date: Tue,  5 Jun 2018 14:50:21 -0300
-Message-Id: <20180605175030.32549-38-acme@kernel.org>
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 33/46] perf hists: Check if a hist_entry has callchains before using them
+Date: Tue,  5 Jun 2018 14:50:17 -0300
+Message-Id: <20180605175030.32549-34-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
 References: <20180605175030.32549-1-acme@kernel.org>
@@ -24,209 +24,244 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Adding the support to read rusage data once the workload is finished and
-display the system/user time values:
+So far if we use 'perf record -g' this will make
+symbol_conf.use_callchain 'true' and logic will assume that all events
+have callchains enabled, but ever since we added the possibility of
+setting up callchains for some events (e.g.: -e
+cycles/call-graph=dwarf/) while not for others, we limit usage scenarios
+by looking at that symbol_conf.use_callchain global boolean, we better
+look at each event attributes.
 
-  $ perf stat --null perf bench sched pipe
-  ...
+On the road to that we need to look if a hist_entry has callchains, that
+is, to go from hist_entry->hists to the evsel that contains it, to then
+look at evsel->sample_type for PERF_SAMPLE_CALLCHAIN.
 
-   Performance counter stats for 'perf bench sched pipe':
+The next step is to add a symbol_conf.ignore_callchains global, to use
+in the places where what we really want to know is if callchains should
+be ignored, even if present.
 
-       5.342599256 seconds time elapsed
+Then -g will mean just to select a callchain mode to be applied to all
+events not explicitely setting some other callchain mode, i.e. a default
+callchain mode, and --no-call-graph will set
+symbol_conf.ignore_callchains with that clear intention.
 
-       2.544434000 seconds user
-       4.549691000 seconds sys
+That too will at some point become a per evsel thing, that tools can set
+for all or just a few of its evsels.
 
-It works only in non -r mode and only for workload target.
-
-So as of now, for workload targets, we display 3 types of timings. The
-time we meassure in perf stat from enable to disable+period:
-
-       5.342599256 seconds time elapsed
-
-The time spent in user and system lands, displayed only for workload
-session/target:
-
-       2.544434000 seconds user
-       4.549691000 seconds sys
-
-Those times are the very same displayed by 'time' tool.  They are
-returned by wait4 call via the getrusage struct interface.
-
-Committer notes:
-
-Had to rename some variables to avoid this on older systems such as
-centos:6:
-
-  builtin-stat.c: In function 'print_footer':
-  builtin-stat.c:1831: warning: declaration of 'stime' shadows a global declaration
-  /usr/include/time.h:297: warning: shadowed declaration is here
-
-Committer testing:
-
-  # perf stat --null time perf bench sched pipe
-  # Running 'sched/pipe' benchmark:
-  # Executed 1000000 pipe operations between two processes
-
-       Total time: 5.526 [sec]
-
-         5.526534 usecs/op
-           180945 ops/sec
-  1.00user 6.25system 0:05.52elapsed 131%CPU (0avgtext+0avgdata 8056maxresident)k
-  0inputs+0outputs (0major+606minor)pagefaults 0swaps
-
-   Performance counter stats for 'time perf bench sched pipe':
-
-         5.530978744 seconds time elapsed
-
-         1.004037000 seconds user
-         6.259937000 seconds sys
-
-  #
-
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180605121313.31337-1-jolsa@kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-0sas5cm4dsw2obn75g7ruz69@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-stat.txt | 40 ++++++++++++++++++++++++----------
- tools/perf/builtin-stat.c              | 28 +++++++++++++++++++++++-
- 2 files changed, 56 insertions(+), 12 deletions(-)
+ tools/perf/ui/browsers/hists.c | 11 ++++++-----
+ tools/perf/ui/gtk/hists.c      |  5 +++--
+ tools/perf/ui/hist.c           |  2 +-
+ tools/perf/ui/stdio/hist.c     |  4 ++--
+ tools/perf/util/hist.c         | 11 ++++++-----
+ tools/perf/util/hist.h         |  6 ++++++
+ tools/perf/util/sort.h         |  3 +--
+ 7 files changed, 25 insertions(+), 17 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-index 3a822f308e6d..5dfe102fb5b5 100644
---- a/tools/perf/Documentation/perf-stat.txt
-+++ b/tools/perf/Documentation/perf-stat.txt
-@@ -310,20 +310,38 @@ Users who wants to get the actual value can apply --no-metric-only.
- EXAMPLES
- --------
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index 22054107f1af..a96f62ca984a 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -1231,6 +1231,7 @@ static int hist_browser__show_entry(struct hist_browser *browser,
+ 	int width = browser->b.width;
+ 	char folded_sign = ' ';
+ 	bool current_entry = ui_browser__is_current_entry(&browser->b, row);
++	bool use_callchain = hist_entry__has_callchains(entry) && symbol_conf.use_callchain;
+ 	off_t row_offset = entry->row_offset;
+ 	bool first = true;
+ 	struct perf_hpp_fmt *fmt;
+@@ -1240,7 +1241,7 @@ static int hist_browser__show_entry(struct hist_browser *browser,
+ 		browser->selection = &entry->ms;
+ 	}
  
--$ perf stat -- make -j
-+$ perf stat -- make
+-	if (symbol_conf.use_callchain) {
++	if (use_callchain) {
+ 		hist_entry__init_have_children(entry);
+ 		folded_sign = hist_entry__folded(entry);
+ 	}
+@@ -1276,7 +1277,7 @@ static int hist_browser__show_entry(struct hist_browser *browser,
+ 			}
  
-- Performance counter stats for 'make -j':
-+   Performance counter stats for 'make':
+ 			if (first) {
+-				if (symbol_conf.use_callchain) {
++				if (use_callchain) {
+ 					ui_browser__printf(&browser->b, "%c ", folded_sign);
+ 					width -= 2;
+ 				}
+@@ -1583,7 +1584,7 @@ hists_browser__scnprintf_headers(struct hist_browser *browser, char *buf,
+ 	int column = 0;
+ 	int span = 0;
  
--    8117.370256  task clock ticks     #      11.281 CPU utilization factor
--            678  context switches     #       0.000 M/sec
--            133  CPU migrations       #       0.000 M/sec
--         235724  pagefaults           #       0.029 M/sec
--    24821162526  CPU cycles           #    3057.784 M/sec
--    18687303457  instructions         #    2302.138 M/sec
--      172158895  cache references     #      21.209 M/sec
--       27075259  cache misses         #       3.335 M/sec
-+        83723.452481      task-clock:u (msec)       #    1.004 CPUs utilized
-+                   0      context-switches:u        #    0.000 K/sec
-+                   0      cpu-migrations:u          #    0.000 K/sec
-+           3,228,188      page-faults:u             #    0.039 M/sec
-+     229,570,665,834      cycles:u                  #    2.742 GHz
-+     313,163,853,778      instructions:u            #    1.36  insn per cycle
-+      69,704,684,856      branches:u                #  832.559 M/sec
-+       2,078,861,393      branch-misses:u           #    2.98% of all branches
+-	if (symbol_conf.use_callchain) {
++	if (hists__has_callchains(hists) && symbol_conf.use_callchain) {
+ 		ret = scnprintf(buf, size, "  ");
+ 		if (advance_hpp_check(&dummy_hpp, ret))
+ 			return ret;
+@@ -1987,7 +1988,7 @@ static int hist_browser__fprintf_entry(struct hist_browser *browser,
+ 	bool first = true;
+ 	int ret;
  
-- Wall-clock time elapsed:   719.554352 msecs
-+        83.409183620 seconds time elapsed
-+
-+        74.684747000 seconds user
-+         8.739217000 seconds sys
-+
-+TIMINGS
-+-------
-+As displayed in the example above we can display 3 types of timings.
-+We always display the time the counters were enabled/alive:
-+
-+        83.409183620 seconds time elapsed
-+
-+For workload sessions we also display time the workloads spent in
-+user/system lands:
-+
-+        74.684747000 seconds user
-+         8.739217000 seconds sys
-+
-+Those times are the very same as displayed by the 'time' tool.
+-	if (symbol_conf.use_callchain) {
++	if (hist_entry__has_callchains(he) && symbol_conf.use_callchain) {
+ 		folded_sign = hist_entry__folded(he);
+ 		printed += fprintf(fp, "%c ", folded_sign);
+ 	}
+@@ -2671,7 +2672,7 @@ static void hist_browser__update_percent_limit(struct hist_browser *hb,
+ 			he->nr_rows = 0;
+ 		}
  
- CSV FORMAT
- ----------
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index a4f662a462c6..096ccb25c11f 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -80,6 +80,9 @@
- #include <sys/stat.h>
- #include <sys/wait.h>
- #include <unistd.h>
-+#include <sys/time.h>
-+#include <sys/resource.h>
-+#include <sys/wait.h>
+-		if (!he->leaf || !symbol_conf.use_callchain)
++		if (!he->leaf || !hist_entry__has_callchains(he) || !symbol_conf.use_callchain)
+ 			goto next;
  
- #include "sane_ctype.h"
+ 		if (callchain_param.mode == CHAIN_GRAPH_REL) {
+diff --git a/tools/perf/ui/gtk/hists.c b/tools/perf/ui/gtk/hists.c
+index 24e1ec201ffd..b085f1b3e34d 100644
+--- a/tools/perf/ui/gtk/hists.c
++++ b/tools/perf/ui/gtk/hists.c
+@@ -382,7 +382,8 @@ static void perf_gtk__show_hists(GtkWidget *window, struct hists *hists,
+ 			gtk_tree_store_set(store, &iter, col_idx++, s, -1);
+ 		}
  
-@@ -175,6 +178,8 @@ static int			output_fd;
- static int			print_free_counters_hint;
- static int			print_mixed_hw_group_error;
- static u64			*walltime_run;
-+static bool			ru_display			= false;
-+static struct rusage		ru_data;
- 
- struct perf_stat {
- 	bool			 record;
-@@ -726,7 +731,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 					break;
+-		if (symbol_conf.use_callchain && hists__has(hists, sym)) {
++		if (hists__has_callchains(hists) &&
++		    symbol_conf.use_callchain && hists__has(hists, sym)) {
+ 			if (callchain_param.mode == CHAIN_GRAPH_REL)
+ 				total = symbol_conf.cumulate_callchain ?
+ 					h->stat_acc->period : h->stat.period;
+@@ -479,7 +480,7 @@ static void perf_gtk__add_hierarchy_entries(struct hists *hists,
  			}
  		}
--		waitpid(child_pid, &status, 0);
-+		wait4(child_pid, &status, 0, &ru_data);
  
- 		if (workload_exec_errno) {
- 			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
-@@ -1804,6 +1809,11 @@ static void print_table(FILE *output, int precision, double avg)
- 	fprintf(output, "\n%*s# Final result:\n", indent, "");
+-		if (symbol_conf.use_callchain && he->leaf) {
++		if (he->leaf && hist_entry__has_callchains(he) && symbol_conf.use_callchain) {
+ 			if (callchain_param.mode == CHAIN_GRAPH_REL)
+ 				total = symbol_conf.cumulate_callchain ?
+ 					he->stat_acc->period : he->stat.period;
+diff --git a/tools/perf/ui/hist.c b/tools/perf/ui/hist.c
+index 706f6f1e9c7d..fe3dfaa64a91 100644
+--- a/tools/perf/ui/hist.c
++++ b/tools/perf/ui/hist.c
+@@ -207,7 +207,7 @@ static int __hpp__sort_acc(struct hist_entry *a, struct hist_entry *b,
+ 		if (ret)
+ 			return ret;
+ 
+-		if (a->thread != b->thread || !symbol_conf.use_callchain)
++		if (a->thread != b->thread || !hist_entry__has_callchains(a) || !symbol_conf.use_callchain)
+ 			return 0;
+ 
+ 		ret = b->callchain->max_depth - a->callchain->max_depth;
+diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
+index c1eb476da91b..69b7a28f7a1c 100644
+--- a/tools/perf/ui/stdio/hist.c
++++ b/tools/perf/ui/stdio/hist.c
+@@ -516,7 +516,7 @@ static int hist_entry__hierarchy_fprintf(struct hist_entry *he,
+ 	}
+ 	printed += putc('\n', fp);
+ 
+-	if (symbol_conf.use_callchain && he->leaf) {
++	if (he->leaf && hist_entry__has_callchains(he) && symbol_conf.use_callchain) {
+ 		u64 total = hists__total_period(hists);
+ 
+ 		printed += hist_entry_callchain__fprintf(he, total, 0, fp);
+@@ -550,7 +550,7 @@ static int hist_entry__fprintf(struct hist_entry *he, size_t size,
+ 
+ 	ret = fprintf(fp, "%s\n", bf);
+ 
+-	if (use_callchain)
++	if (hist_entry__has_callchains(he) && use_callchain)
+ 		callchain_ret = hist_entry_callchain__fprintf(he, total_period,
+ 							      0, fp);
+ 
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 6173dd489f39..b4c8e3a46370 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -410,7 +410,7 @@ static int hist_entry__init(struct hist_entry *he,
+ 		map__get(he->mem_info->daddr.map);
+ 	}
+ 
+-	if (symbol_conf.use_callchain)
++	if (hist_entry__has_callchains(he) && symbol_conf.use_callchain)
+ 		callchain_init(he->callchain);
+ 
+ 	if (he->raw_data) {
+@@ -496,7 +496,7 @@ static u8 symbol__parent_filter(const struct symbol *parent)
+ 
+ static void hist_entry__add_callchain_period(struct hist_entry *he, u64 period)
+ {
+-	if (!symbol_conf.use_callchain)
++	if (!hist_entry__has_callchains(he) || !symbol_conf.use_callchain)
+ 		return;
+ 
+ 	he->hists->callchain_period += period;
+@@ -990,7 +990,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
+ 	iter->he = he;
+ 	he_cache[iter->curr++] = he;
+ 
+-	if (symbol_conf.use_callchain)
++	if (hist_entry__has_callchains(he) && symbol_conf.use_callchain)
+ 		callchain_append(he->callchain, &cursor, sample->period);
+ 	return 0;
+ }
+@@ -1377,7 +1377,8 @@ static int hists__hierarchy_insert_entry(struct hists *hists,
+ 	if (new_he) {
+ 		new_he->leaf = true;
+ 
+-		if (symbol_conf.use_callchain) {
++		if (hist_entry__has_callchains(new_he) &&
++		    symbol_conf.use_callchain) {
+ 			callchain_cursor_reset(&callchain_cursor);
+ 			if (callchain_merge(&callchain_cursor,
+ 					    new_he->callchain,
+@@ -1418,7 +1419,7 @@ static int hists__collapse_insert_entry(struct hists *hists,
+ 			if (symbol_conf.cumulate_callchain)
+ 				he_stat__add_stat(iter->stat_acc, he->stat_acc);
+ 
+-			if (symbol_conf.use_callchain) {
++			if (hist_entry__has_callchains(he) && symbol_conf.use_callchain) {
+ 				callchain_cursor_reset(&callchain_cursor);
+ 				if (callchain_merge(&callchain_cursor,
+ 						    iter->callchain,
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index cafafbf2aa9f..06607c434949 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -220,6 +220,12 @@ static inline struct hists *evsel__hists(struct perf_evsel *evsel)
+ 	return &hevsel->hists;
  }
  
-+static double timeval2double(struct timeval *t)
++static __pure inline bool hists__has_callchains(struct hists *hists)
 +{
-+	return t->tv_sec + (double) t->tv_usec/USEC_PER_SEC;
++	const struct perf_evsel *evsel = hists_to_evsel(hists);
++	return evsel__has_callchain(evsel);
 +}
 +
- static void print_footer(void)
+ int hists__init(void);
+ int __hists__init(struct hists *hists, struct perf_hpp_list *hpp_list);
+ 
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index 1a046157bfef..7cf2d5cc038e 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -153,8 +153,7 @@ struct hist_entry {
+ 
+ static __pure inline bool hist_entry__has_callchains(struct hist_entry *he)
  {
- 	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
-@@ -1815,6 +1825,15 @@ static void print_footer(void)
+-	const struct perf_evsel *evsel = hists_to_evsel(he->hists);
+-	return evsel__has_callchain(evsel);
++	return hists__has_callchains(he->hists);
+ }
  
- 	if (run_count == 1) {
- 		fprintf(output, " %17.9f seconds time elapsed", avg);
-+
-+		if (ru_display) {
-+			double ru_utime = timeval2double(&ru_data.ru_utime);
-+			double ru_stime = timeval2double(&ru_data.ru_stime);
-+
-+			fprintf(output, "\n\n");
-+			fprintf(output, " %17.9f seconds user\n", ru_utime);
-+			fprintf(output, " %17.9f seconds sys\n", ru_stime);
-+		}
- 	} else {
- 		double sd = stddev_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
- 		/*
-@@ -2950,6 +2969,13 @@ int cmd_stat(int argc, const char **argv)
- 
- 	setup_system_wide(argc);
- 
-+	/*
-+	 * Display user/system times only for single
-+	 * run and when there's specified tracee.
-+	 */
-+	if ((run_count == 1) && target__none(&target))
-+		ru_display = true;
-+
- 	if (run_count < 0) {
- 		pr_err("Run count must be a positive number\n");
- 		parse_options_usage(stat_usage, stat_options, "r", 1);
+ static inline bool hist_entry__has_pairs(struct hist_entry *he)
 -- 
 2.14.3
