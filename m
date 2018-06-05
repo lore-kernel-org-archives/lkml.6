@@ -1,71 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeFEU7D (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:59:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:25418 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751894AbeFEU7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:59:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="234933759"
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org
-Subject: [PATCH 1/2] libnvdimm: use dax_write_cache* helpers
-Date: Tue,  5 Jun 2018 14:58:40 -0600
-Message-Id: <20180605205841.15878-1-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.4
+        id S1752545AbeFEVAj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:00:39 -0400
+Received: from mx1.yrkesakademin.fi ([85.134.45.194]:10728 "EHLO
+        mx1.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeFEVAi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:00:38 -0400
+Subject: Re: python errors in tools/testing/selftests/tc-testing - IGNORE
+From: Thomas Backlund <tmb@mageia.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, <bjb@mojatatu.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
+ <11f16994-d704-10e3-e4f7-a490b6ae1fad@mageia.org>
+Message-ID: <bcc1f7da-7500-fffb-7314-8bd747303caf@mageia.org>
+Date: Wed, 6 Jun 2018 00:00:49 +0259
+MIME-Version: 1.0
+In-Reply-To: <11f16994-d704-10e3-e4f7-a490b6ae1fad@mageia.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-WatchGuard-Spam-ID: str=0001.0A0C0206.5B16F9F6.000C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
+X-WatchGuard-Mail-Client-IP: 85.134.45.194
+X-WatchGuard-Mail-From: tmb@mageia.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dax_write_cache() and dax_write_cache_enabled() instead of open coding
-the bit operations.
+Den 2018-06-05 kl. 23:10, skrev Thomas Backlund:
+> Compiling 
+> /usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/plugin-lib/rootPlugin.py 
+> ...
+>    File 
+> "/usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/plugin-lib/rootPlugin.py", 
+> line 18
+>      print('This script must be run with root privileges', file=sys.stderr)
+>                                                                ^
+> SyntaxError: invalid syntax
+> 
+> 
+> Caused by:
+> 
+> commit f6926e85eee9be08d05170af3a2266b8d7f9cdef
+> Author: Brenda J. Butler <bjb@mojatatu.com>
+> Date:   Wed Feb 14 14:08:55 2018 -0500
+> 
+>      tools: tc-testing: rootPlugin
+> 
+>      Move the functionality that checks for root permissions into a plugin.
+> 
+> 
+> 
+> and:
+> 
+> Compiling 
+> /usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/tdc.py 
+> ...
+>    File 
+> "/usr/src/kernel-linus-4.17.0-1.mga7/tools/testing/selftests/tc-testing/tdc.py", 
+> line 167
+>      print('', file=sys.stderr)
+>                    ^
+> SyntaxError: invalid syntax
+> 
+> 
+> Caused by:
+> 
+> commit 93707cbabcc8baf2b2b5f4a99c1f08ee83eb7abd
+> Author: Brenda J. Butler <bjb@mojatatu.com>
+> Date:   Wed Feb 14 14:08:54 2018 -0500
+> 
+>      tools: tc-testing: Introduce plugin architecture
+> 
+> 
+> 
+> 
+> 
+> And this system has:
+> 
+> $ python3 -V
+> Python 3.5.3
+> 
+> $ python -V
+> Python 2.7.15
+> 
 
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
----
- drivers/dax/super.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 2b2332b605e4..c2c46f96b18c 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -182,8 +182,7 @@ static ssize_t write_cache_show(struct device *dev,
- 	if (!dax_dev)
- 		return -ENXIO;
- 
--	rc = sprintf(buf, "%d\n", !!test_bit(DAXDEV_WRITE_CACHE,
--				&dax_dev->flags));
-+	rc = sprintf(buf, "%d\n", !!dax_write_cache_enabled(dax_dev));
- 	put_dax(dax_dev);
- 	return rc;
- }
-@@ -201,10 +200,8 @@ static ssize_t write_cache_store(struct device *dev,
- 
- 	if (rc)
- 		len = rc;
--	else if (write_cache)
--		set_bit(DAXDEV_WRITE_CACHE, &dax_dev->flags);
- 	else
--		clear_bit(DAXDEV_WRITE_CACHE, &dax_dev->flags);
-+		dax_write_cache(dax_dev, write_cache);
- 
- 	put_dax(dax_dev);
- 	return len;
-@@ -286,7 +283,7 @@ EXPORT_SYMBOL_GPL(dax_copy_from_iter);
- void arch_wb_cache_pmem(void *addr, size_t size);
- void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
- {
--	if (unlikely(!test_bit(DAXDEV_WRITE_CACHE, &dax_dev->flags)))
-+	if (unlikely(!dax_write_cache_enabled(dax_dev)))
- 		return;
- 
- 	arch_wb_cache_pmem(addr, size);
--- 
-2.14.4
+This one on the other hand seems to be a toolchain issue...
+
+rpmbuild calls out to
+
+/usr/lib/rpm/brp-python-bytecompile /usr/bin/python
+
+which basically in this case seems to try to parse python3 code with 
+python2 and it falls over...
+
+So I've disabled bytecompiling on kernel builds until I can check the 
+toolchain behaviour...
+
+--
+Thomas
