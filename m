@@ -1,83 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751876AbeFEIyk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:54:40 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35851 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751617AbeFEIyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:54:38 -0400
-Subject: Re: [PATCH] usb: xhci: remove the code build warning
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <mathias.nyman@intel.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-usb@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1528216500-14172-1-git-send-email-gengdongjiu@huawei.com>
- <20180605084019.GA8665@kroah.com>
-From: gengdongjiu <gengdongjiu@huawei.com>
-Message-ID: <e2b3ea42-ab55-a1b5-567a-1a57a5f45b5c@huawei.com>
-Date: Tue, 5 Jun 2018 16:54:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751895AbeFEIyw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:54:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33984 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751540AbeFEIyt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:54:49 -0400
+Subject: Re: [PATCH v2] cpuidle/powernv : Add Description for cpuidle state
+To: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: rjw@rjwysocki.net, daniel.lezcano@linaro.org, paulus@samba.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        stewart@linux.vnet.ibm.com
+References: <20180604081758.104201-1-huntbag@linux.vnet.ibm.com>
+ <0a28154deb468669a59c120a90d4aedc1e1e705b.camel@kernel.crashing.org>
+ <20180604114500.3rlpuso5aftesnf5@aksadiga.ibm>
+From: Abhishek <huntbag@linux.vnet.ibm.com>
+Date: Tue, 5 Jun 2018 14:24:39 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180605084019.GA8665@kroah.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180604114500.3rlpuso5aftesnf5@aksadiga.ibm>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.142.68.147]
-X-CFilter-Loop: Reflected
+X-TM-AS-GCONF: 00
+x-cbid: 18060508-4275-0000-0000-0000028A478E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060508-4276-0000-0000-000037914A6F
+Message-Id: <17cd53ec-6bc1-5814-8824-3c6a4f0b90cd@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806050108
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018/6/5 16:40, Greg KH wrote:
-> On Wed, Jun 06, 2018 at 12:35:00AM +0800, Dongjiu Geng wrote:
->> Initialize the 'err' variate to remove the build warning,
->> the warning is shown as below:
+On 06/04/2018 05:15 PM, Akshay Adiga wrote:
+> On Mon, Jun 04, 2018 at 07:04:14PM +1000, Benjamin Herrenschmidt wrote:
+>> Is this a new property ? I'm not fan of adding yet another of those
+>> silly arrays.
 >>
->> drivers/usb/host/xhci-tegra.c: In function ‘tegra_xusb_mbox_thread’:
->> drivers/usb/host/xhci-tegra.c:552:6: warning: ‘err’ may be used uninitialized in this function [-Wuninitialized]
->> drivers/usb/host/xhci-tegra.c:482:6: note: ‘err’ was declared here
+>> I would say this is the right time now to switch over to a node per
+>> state instead, as we discussed with Vaidy.
+
+It is not a new property. Name was being used for description as 
+description was not present in device tree. A skiboot patch adding 
+description to device tree have been posted. This patch reads those 
+description instead of copying name itself into description. And we fall 
+back to reading name into description to not break the comaptibility 
+with older firmware.
+
+Thanks
+Abhishek
+
+> I posted  the node based device tree here :
+> skiboot patch :  https://patchwork.ozlabs.org/patch/923120/
+> kernel patch : https://lkml.org/lkml/2018/5/30/1146
+>
+> Do you have any inputs for this design ?
+>
+>> Additionally, while doing that, we can provide the versioning mechanism
+>> I proposed so we can deal with state specific issues and erratas.
 >>
->> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
->> ---
-> 
-> Any hint as to what commit caused this warning to show up?
-
-It seems below commit:
-
-commit e84fce0f8837496a48d11086829bdbe170358b7a
-Author: Thierry Reding <treding@nvidia.com>
-Date:   Thu Feb 11 18:10:48 2016 +0100
-
-    usb: xhci: Add NVIDIA Tegra XUSB controller driver
-
-    Add support for the on-chip XUSB controller present on Tegra SoCs. This
-    controller, when loaded with external firmware, exposes an interface
-    compliant with xHCI. This driver loads the firmware, starts the
-    controller, and is able to service host-specific messages sent by the
-    controller's firmware.
-
-    The controller also supports USB device mode as well as powergating
-    of the SuperSpeed and host-controller logic when not in use, but
-    support for these is not yet implemented.
-
-    Based on work by:
-      Ajay Gupta <ajayg@nvidia.com>
-      Bharath Yadav <byadav@nvidia.com>
-      Andrew Bresticker <abrestic@chromium.org>
-
-    Cc: Mathias Nyman <mathias.nyman@intel.com>
-    Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-    Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> .
-> 
+>> Cheers,
+>> Ben.
+>>
