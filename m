@@ -1,507 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeFENzf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:55:35 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51797 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751884AbeFENya (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:54:30 -0400
-X-Google-Smtp-Source: ADUXVKLtQ/c82TYkM7C0A3EoMmm5Dd3+/9GAaa1GdOUEXQcGyn9MzYm2a/ATfGPSUTAy3jWINEtawQ==
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-To: gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, airlied@linux.ie, vincent.abriou@st.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v1 4/7] drm: sti: make connectors use atomic_print_state instead of debugfs
-Date: Tue,  5 Jun 2018 15:54:04 +0200
-Message-Id: <20180605135407.20214-5-benjamin.gaignard@linaro.org>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20180605135407.20214-1-benjamin.gaignard@linaro.org>
-References: <20180605135407.20214-1-benjamin.gaignard@linaro.org>
+        id S1752226AbeFENzj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:55:39 -0400
+Received: from mail-eopbgr10118.outbound.protection.outlook.com ([40.107.1.118]:38995
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751282AbeFENze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 09:55:34 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Subject: Re: INFO: task hung in ip6gre_exit_batch_net
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>,
+        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+References: <0000000000006e4595056dd23c16@google.com>
+ <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
+ <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com>
+ <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <e71c0df1-d83c-030c-7c97-13a923aca1b3@virtuozzo.com>
+Date: Tue, 5 Jun 2018 16:55:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: HE1PR05CA0141.eurprd05.prod.outlook.com
+ (2603:10a6:7:28::28) To HE1PR0801MB1337.eurprd08.prod.outlook.com
+ (2603:10a6:3:39::27)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1337;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;3:fAKza+Q1hgYvHzrjITTig8yWkBCf7eAMMfv+1I0weh1NQHx1zkUuT7vSDzyDSxp4tgMdPFXuh4WByBNLDpxNlFSBZSw3mf8h/jOw++tLufCdeqsEY4M8Ge/oJ5A0tmJQwtfLo0gR4fXlgnU/+AjGJDdqASDTvyy2XpDEMtVSUH40qpyA0T+AUBMOm5DKHQbFXng+NrkOqDSWKNg/Lzi5XMhn/vlm1H2qWf++BTRZYwFp3vAZARHpOcXfm2VyP/io;25:Q7JKHCuUagvUZycUKc0hZJc036sgaifjFSCLWFXRiP0M5n7voRJfA4wKSaUGv0J7qOTWpYB5BVu5sojK6ZHOkeJ16iU7LRJlECyuc/16dSqgK0FECf+quNUvRX7hIfcCB56QxoDTIWb5NyngTVXPEk46M5CLYhDRjQp/Ay+2Rv5tOkr1G6kvmME4GLYBo8b5jmk6qNZRlQ0A+ToEETxlMQ2HwNwoT5oAcs+V//RMb8T9YYczdI/jyGHLaChJnHLOsLZlvk5nJacxCh8rvgVW5Yzj22HPJ8CDnLA5FDWQF70RHFfkPBKOp2aTVdDhpaEMh9/AatEwWf2BA9uoQFKnCQ==;31:SMlpiSvJdYxnSNt7wuOtQnzwXxaegtD/j9/rIDMn6Na+ygoY09iHGhua685OpAoA50CWhQ1maaQTa54PRNv8ISjyQq96qgEwfXbOTBBs3evgvND0K3lqoMpwLqLan7FOySaXMhulrSS9wLbynlwGW5BD8A78A4UBOOrkzNE7fY10fMKjlH84GtcF1k6bqNcOkHjefT0NIPgmwrFWxQUkc5ncgSfh3aEhE4fM2pC6msA=
+X-MS-TrafficTypeDiagnostic: HE1PR0801MB1337:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;20:AlRPOJgD07cc3D4wi2zbliDQPJN1XFcm1W74+T1ugVETc7OcN9o7PUbzJpQst5DwTC/O3pfI3Jpy5hgvuEs9sQbiTcMB+QU65pLGstwV9qycJxNRfZYmbjfCi7zAeNbcrL7BE6MCJjJxy013JbXmUZdB7QihYTelwOk5k9erAMPlY4loAcXAe7jWv9lNWYOCW3qeXCfWj0pHrrIy1SWsZp8M2t882ePqY5BYfpZg1NROdDEpQb1bmIuihbNddsV5yPWgUdVRticRWJrdNkM00zSTEUI2i1F9R7cWXSS/gG7ct/Q1rg23o7BtJW5ILtQ/OOO/6luJDyhCrOlgNyqxCa2TC8EK8KOqU++y0yDH3GHErjAVkB50JU5yR22a0pM6A47GHBQP+gY312UQDA9Q0jAw9TGU4y+TGLqXDjAi+WhuaQrbFKVPGrg4CrPRFSsE+ydumHOHkA8u2Yyt7DWHknTuR3zs+JMy+FFEeVQAjZYRkapVfbhLI61lDFmmYQd5;4:Ruwqp4t1e7e0wXMJwx70XtYmzjxUoAABObL891YXSxpUvZxUGad7B/3lW3Xv73Tk5RpSD6N83pE2zzea7Lsjb1qYMwc/nYfi7yiCBBwOpJpl9TSWtrpv23Zxkx6+ELCgZUT08DiuY2vTfBW6nu8WN48zgj84r0XzS+ua59iPfC/KLdLzG4gs2geo6MecF2cehb2T/VzCC/HslfHY4Ji+CQugqmaUAAmUkZny4lqYDuDKSoLm62gIrjCQDF8j1xubWJ3NZGXaz2adTJPI6qFz3g==
+X-Microsoft-Antispam-PRVS: <HE1PR0801MB1337864B9C3CDB8B176720BFCD660@HE1PR0801MB1337.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB1337;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1337;
+X-Forefront-PRVS: 0694C54398
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(366004)(346002)(39850400004)(39380400002)(396003)(376002)(189003)(199004)(31686004)(53936002)(966005)(478600001)(25786009)(39060400002)(6246003)(4326008)(105586002)(106356001)(7416002)(65826007)(230700001)(5660300001)(6666003)(6916009)(6116002)(3846002)(7736002)(305945005)(6486002)(229853002)(50466002)(64126003)(6306002)(81166006)(81156014)(8676002)(8936002)(76176011)(52116002)(59450400001)(2486003)(386003)(53546011)(23676004)(52146003)(486006)(55236004)(186003)(77096007)(956004)(97736004)(476003)(446003)(2616005)(11346002)(47776003)(36756003)(316002)(2906002)(16576012)(93886005)(86362001)(65806001)(58126008)(15760500003)(65956001)(66066001)(68736007)(54906003)(31696002)(16526019)(26005)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1337;H:[172.16.25.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:3;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjEzMzc7MjM6bmdobk5paHRUMUV0VlAvc0NxRENTWmlz?=
+ =?utf-8?B?Ujl0cnBkNkJlbDlRWklESDhJek45elVIQlI5WkJWUWFxR1ZjOHdROVdOUStu?=
+ =?utf-8?B?NlpaeWZvTGdwNTBFK3kra3BDVTU5TUE5cERtSGNWRDhxdUluYmtLMjVzamFO?=
+ =?utf-8?B?STV2MHRoOS9HTSt1ZkxXNzVIaStRL0JxUDdjL0s0OGdLMHhOdTNZaFF3dzQr?=
+ =?utf-8?B?M1pqUndLOXExalY3WU9CZG1HOVFFU2hKU0pWYXZQbGtnQXllSHNGbGtiVHFK?=
+ =?utf-8?B?MlUyaTZDcStMQy9uY0JmT1NMNkZxOXRTTlh6SzBIemJVSWNTalpNcXV6NEcw?=
+ =?utf-8?B?Q2NMTDVSWXF3MUltQTZwRWVzbDMwd2xpQ2J3b3BRRUpNbWJFVmVtNExJQjJX?=
+ =?utf-8?B?Vk1OcmlhZmhOOFRkSExtQ2dUeVJwclZMMjBmOVcxdUFaVU9UUkgyN3lleXJp?=
+ =?utf-8?B?azRWek91VkhmSEc1UTdyYVpnYVJoa0ZkVEJITndEZ0F4THlEM2xVZWl1SDU0?=
+ =?utf-8?B?dkZHN2hzcnZXU1J6OXNPYlVxcmYvUHZtemlVSTlMdjVRSmxUcXlnci8zRTYr?=
+ =?utf-8?B?VzR6MFNTN3JWWVFBbE9aTFF0a29HeHEzbGNtejN6WVRKWTUzanlaTXN1V0t4?=
+ =?utf-8?B?a3QvL0NvaEZvelJha3J1bXBJakVibUw1SUVmV3V0U1RLZXJsZy9uRDBWRFFN?=
+ =?utf-8?B?ME9CaUZ5RkhPdWhuQVQ0K3lNNWhtT1FFSHNvaWQyWi91TnhRNGxicUJQWnNU?=
+ =?utf-8?B?RWhHQjdBa0JoSW52WklxaDRLYjlOZElJZCtveHd6U2JCbEIxS3hhZG5PWUFy?=
+ =?utf-8?B?djl1QWs0VFVVWkdKdTcxSTMzL0dVMUZJNHlHU1liVWJpZXlsR3Q5SS9MaVJh?=
+ =?utf-8?B?VTVsdGpubWZNQ2UzaGJJSFdUTWw3R0JWeXo0aExIMXVRLzhhTmdwM0VGOThX?=
+ =?utf-8?B?blpybHYzUHFTcnhTUjlOZVAybjBWTlFIV2kxeVVzdmxLeXBROWRNb1ZvTnI2?=
+ =?utf-8?B?TXJZek5PSGNSdUw4L0NoOVh1ckVjVEkvMktYL3ZpblpJeEkveHhhK1VGcFpq?=
+ =?utf-8?B?NW5wTWZWaWF1OUZDTEYvK1M0c2JuWlQ5QlRveG1NT054QXV1SW9iTGt5LzZJ?=
+ =?utf-8?B?NFdkMHVlMTB1c3UxVmNQd042OVdmcnZuZkNnVGw5SUdsZnlCcWR6RnJCeDRt?=
+ =?utf-8?B?WEk0eHQ3SGpZQ2Qzd2pGU3F5S0xJTkVOQWg4WXlHUThQbHlqUDY4eHpGdmFw?=
+ =?utf-8?B?TTZuSUo1dEcwMVZXWWRLNTNvUEY4eWhZeWJUMHZoUnliRGNUam11SU1CbnI5?=
+ =?utf-8?B?VEZZZDJrdVF1dkZ3REFTaURLSUpTYmpZNEwyTmlQdVJqNXlFNWhOdDJkN3Jq?=
+ =?utf-8?B?OUtWc0NDU04xQ3pVTTdyR2lNUk9lM2J6RUorUGRPOGY3eTJHV2JlRmI3alFZ?=
+ =?utf-8?B?bkFFaEVqUVl3aW1IWG1Ydzlad3h3dzdXaXp0WGh5MEIraExKZ29YdytCUGp0?=
+ =?utf-8?B?TE4zUW9sekZKNm9GdzIrWTl2Q2VLMXBidmtud1B2WUZXL2VNbnErYTI4OVdq?=
+ =?utf-8?B?UnJIVzI2VFREaFhvOGpZOVNyRGZPSHBGR2hvWkZicGU3VWc5OCtkY0pIMzVK?=
+ =?utf-8?B?Yk5XWkpBUm8zbmtKMSs1Z0M0YkpjbjFvUSsyQThGZC81NnFFemZUZTFITjBX?=
+ =?utf-8?B?cllrWDdDV1ZyWUxEYndOeFVOdjQyaHorZTRPYjM4blRzVkZDRUZ0SWpFdnhK?=
+ =?utf-8?B?TXNwY21HRlYzN3BlTTJXU1RwUW9iOEUrampOVUxCbGFyaHcrdDRmS2xrYVkx?=
+ =?utf-8?B?Y25BdU1DMS96cTZBN2FBMUZrMEVickptN1VmeDc3NDYxZVZyYlNpNzVFK2FF?=
+ =?utf-8?B?STFMTy9oQXdKOHBQZ1NNN1A5cFUrQkF3bk1JQWY0aWVDeGJ6UStJY0l1OE5o?=
+ =?utf-8?B?UnIyc3BydlJpbDcxdzd1RWRmMVNXalhHVHMyTm5CRE9pSGZBekF1RnlGcDVJ?=
+ =?utf-8?B?NmVKRWRKY0dUcC96a0c3cUpkeFBDLytDRXFSaUlwSEpka2pXRGJUdjIxUitX?=
+ =?utf-8?B?cytDTXFaMWpBd0ZhS0VkTW1NSCs2aCtTOGVKM0tjc0gwQjdSTzRzUE9rRnBD?=
+ =?utf-8?B?TUJaSExLOFU4N3NKY09wbm5PcnZML3B6Mld5bHYxQ0hnSTNPUnNlczNMaGxx?=
+ =?utf-8?Q?jC7uDAFnY882z000NWesJXv+7dnW6534w11tdNryU6xA=3D?=
+X-Microsoft-Antispam-Message-Info: elCgn/HJEKM11v/e7cBcZ2dOdkJmM+vGOOi/OD/1hwxhSPpO6zfYAbnSo73KFs4gZlQrO+vN2ft8oLWN9lIiCjcnUT77BFU99X9Wk2ku1fyEJxawcgjjKWj3Z55pRrtBR9wp1iAeu3sX0g2h36Wnn6PX+YS1wvO8ZFOQ3c8OmK5XqqGy9UzPR+bBf/wqzawm
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;6:iBBCXRMZP4cHnYKVkmNiuDMZ92Qr5SEES1jvrchvLk0ZqO1MB9zmy7M8RX+aRRs1E4nVGXzFiqNPw8ppqC/zKfB5GrV9m/qW7r/xYqMVmwabk10RSQYEj/DqOhKprSLlFrqvITcaCtUAjmL8KWuzaMGnd3e3kFZDb7d/1rBdQWuTBdKH5IaiRUVrxjLuXCdvZNgM9BfiZ7waD47xDevzMqdoudHVtCrDJ5j8iJPAyrYKxdo1vS02R+4w1rdrG0r2YrVJ2fifg0dZ/jEM8Gwikeiuh3J4gM0cPZJR8OeRQKxMpj74TZmlZ8RpBrwGv43RuJssO2Hv6Mmw8FM+0TThQBPtOji3vw3wXJ2tFcbVReL88yt+CSjTJYcffBTN2OIlDBI/N+BgrMyFCiZdinvTcl1o6CrJI+3l11taZccDnWW8CsJVjDpQdVmw4/lnfLU60WJoEd+IoVU8okLHzPbvcQ==;5:/exiielUjKkSOM/TFbMVXj46ayGgzSi9047FJUGrNJSeCNtyWYYw8aWWnnZdhZaMQzjAlmlGgxI5ibZHnzwZfAkPBv2qqbcCZJED/vC5DacYprHqHoc3knOBfE6V3LEOgQQOlXapH3924Vuv+lJzuAlzVzvzp4ll7bPsRA10nsw=;24:GrAZJ5FuG8fcMflm2crIloiqgqF0BxHhS2sLxF3q44sT348uCLFXvkjzTdjx8v5n7Oqmm05AQfZDNN29WfBEoq4rH+V8nmjFH1TnyKtqptU=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1337;7:jrGm/85ggKRwGGw5M3buc9dIpLDKUqwDioDe8KCrlXxtS4m/TuSeY6RHQP33qdThbYy0QM+MNg3xv+lMgIgSDUvHbQNR3Kh9TuZTczJgY3ZpNDPD1HU8sjAnU+heSm3o4WE8eWfzBt+xIXj06M7nnWHsZJfcshw9USmpkHvKZq6nwIsd5wxCo1WF+GVn+Pqkienn6My/ecvzvVc5SMbXGAlalvFoH3DoTaxIn75ea45YZImHRA/UIwn6UjqbKPu+;20:ev3TktPzxIqTyzFBwA/IMxaP/mOcPTYZqft+amg7JKuawJEBaXAVMD0QxUSP4ZRs96dKE8G0arhqJBp3mlU3ukTPMdHZ8Aq40yWLXz0DBkIMxeF+udlU4rUCL0eAbT71i3Zby8Dns1Xx5/bVx7/EVVrZwaB9AB54k+qzF2+6ruM=
+X-MS-Office365-Filtering-Correlation-Id: c0c08d05-ead3-47a4-5764-08d5caebff07
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2018 13:55:28.3058 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0c08d05-ead3-47a4-5764-08d5caebff07
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1337
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert all sti connectors to atomic_print_state usage rather than
-use a debugfs entry.
+On 05.06.2018 12:36, Dmitry Vyukov wrote:
+> On Tue, Jun 5, 2018 at 11:03 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>> Hi, Dmirty!
+>>
+>> On 04.06.2018 18:22, Dmitry Vyukov wrote:
+>>> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
+>>> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
+>>>> Hello,
+>>>>
+>>>> syzbot found the following crash on:
+>>>>
+>>>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
+>>>> git tree:       upstream
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
+>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>>>
+>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>
+>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
+>>>
+>>> Another hang on rtnl lock:
+>>>
+>>> #syz dup: INFO: task hung in netdev_run_todo
+>>>
+>>> May be related to "unregister_netdevice: waiting for DEV to become free":
+>>> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
+> 
+> netdev_wait_allrefs does not hold rtnl lock during waiting, so it must
+> be something different.
+> 
+> 
+>>> Any other explanations for massive hangs on rtnl lock for minutes?
+>>
+>> To exclude the situation, when a task exists with rtnl_mutex held:
+>>
+>> would the pr_warn() from print_held_locks_bug() be included in the console output
+>> if they appear?
+> 
+> Yes, everything containing "WARNING:" is detected as bug.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
----
- drivers/gpu/drm/sti/sti_dvo.c  |  60 +++++--------------
- drivers/gpu/drm/sti/sti_hda.c  |  75 +++++++----------------
- drivers/gpu/drm/sti/sti_hdmi.c | 132 ++++++++++++++++-------------------------
- 3 files changed, 90 insertions(+), 177 deletions(-)
+OK, then dead task not releasing the lock is excluded.
 
-diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
-index a5979cd25cc7..5662613ae6e0 100644
---- a/drivers/gpu/drm/sti/sti_dvo.c
-+++ b/drivers/gpu/drm/sti/sti_dvo.c
-@@ -6,7 +6,6 @@
- 
- #include <linux/clk.h>
- #include <linux/component.h>
--#include <linux/debugfs.h>
- #include <linux/module.h>
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
-@@ -158,52 +157,37 @@ static void dvo_awg_configure(struct sti_dvo *dvo, u32 *awg_ram_code, int nb)
- 	writel(DVO_AWG_CTRL_EN, dvo->regs + DVO_AWG_DIGSYNC_CTRL);
- }
- 
--#define DBGFS_DUMP(reg) seq_printf(s, "\n  %-25s 0x%08X", #reg, \
-+#define DBGFS_DUMP(reg) drm_printf(p, "\n\t\t%-25s 0x%08X", #reg, \
- 				   readl(dvo->regs + reg))
- 
--static void dvo_dbg_awg_microcode(struct seq_file *s, void __iomem *reg)
-+static void dvo_dbg_awg_microcode(struct drm_printer *p, void __iomem *reg)
- {
- 	unsigned int i;
- 
--	seq_puts(s, "\n\n");
--	seq_puts(s, "  DVO AWG microcode:");
-+	drm_printf(p, "\n\n");
-+	drm_printf(p, "  DVO AWG microcode:");
- 	for (i = 0; i < AWG_MAX_INST; i++) {
- 		if (i % 8 == 0)
--			seq_printf(s, "\n  %04X:", i);
--		seq_printf(s, " %04X", readl(reg + i * 4));
-+			drm_printf(p, "\n  %04X:", i);
-+		drm_printf(p, " %04X", readl(reg + i * 4));
- 	}
- }
- 
--static int dvo_dbg_show(struct seq_file *s, void *data)
-+static void sti_dvo_print_state(struct drm_printer *p,
-+				const struct drm_connector_state *state)
- {
--	struct drm_info_node *node = s->private;
--	struct sti_dvo *dvo = (struct sti_dvo *)node->info_ent->data;
-+	struct sti_dvo_connector *dvo_connector
-+		= to_sti_dvo_connector(state->connector);
-+	struct sti_dvo *dvo = dvo_connector->dvo;
- 
--	seq_printf(s, "DVO: (vaddr = 0x%p)", dvo->regs);
-+	drm_printf(p, "DVO: (vaddr = 0x%p)", dvo->regs);
- 	DBGFS_DUMP(DVO_AWG_DIGSYNC_CTRL);
- 	DBGFS_DUMP(DVO_DOF_CFG);
- 	DBGFS_DUMP(DVO_LUT_PROG_LOW);
- 	DBGFS_DUMP(DVO_LUT_PROG_MID);
- 	DBGFS_DUMP(DVO_LUT_PROG_HIGH);
--	dvo_dbg_awg_microcode(s, dvo->regs + DVO_DIGSYNC_INSTR_I);
--	seq_putc(s, '\n');
--	return 0;
--}
--
--static struct drm_info_list dvo_debugfs_files[] = {
--	{ "dvo", dvo_dbg_show, 0, NULL },
--};
--
--static int dvo_debugfs_init(struct sti_dvo *dvo, struct drm_minor *minor)
--{
--	unsigned int i;
--
--	for (i = 0; i < ARRAY_SIZE(dvo_debugfs_files); i++)
--		dvo_debugfs_files[i].data = dvo;
--
--	return drm_debugfs_create_files(dvo_debugfs_files,
--					ARRAY_SIZE(dvo_debugfs_files),
--					minor->debugfs_root, minor);
-+	dvo_dbg_awg_microcode(p, dvo->regs + DVO_DIGSYNC_INSTR_I);
-+	drm_printf(p, "\n");
- }
- 
- static void sti_dvo_disable(struct drm_bridge *bridge)
-@@ -397,20 +381,6 @@ sti_dvo_connector_detect(struct drm_connector *connector, bool force)
- 	return connector_status_disconnected;
- }
- 
--static int sti_dvo_late_register(struct drm_connector *connector)
--{
--	struct sti_dvo_connector *dvo_connector
--		= to_sti_dvo_connector(connector);
--	struct sti_dvo *dvo = dvo_connector->dvo;
--
--	if (dvo_debugfs_init(dvo, dvo->drm_dev->primary)) {
--		DRM_ERROR("DVO debugfs setup failed\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- static const struct drm_connector_funcs sti_dvo_connector_funcs = {
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.detect = sti_dvo_connector_detect,
-@@ -418,7 +388,7 @@ static const struct drm_connector_funcs sti_dvo_connector_funcs = {
- 	.reset = drm_atomic_helper_connector_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
--	.late_register = sti_dvo_late_register,
-+	.atomic_print_state = sti_dvo_print_state,
- };
- 
- static struct drm_encoder *sti_dvo_find_encoder(struct drm_device *dev)
-diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-index 67bbdb49fffc..0734f2751505 100644
---- a/drivers/gpu/drm/sti/sti_hda.c
-+++ b/drivers/gpu/drm/sti/sti_hda.c
-@@ -307,71 +307,56 @@ static void hda_enable_hd_dacs(struct sti_hda *hda, bool enable)
- 	}
- }
- 
--#define DBGFS_DUMP(reg) seq_printf(s, "\n  %-25s 0x%08X", #reg, \
-+#define DBGFS_DUMP(reg) drm_printf(p, "\n\t\t%-25s 0x%08X", #reg, \
- 				   readl(hda->regs + reg))
- 
--static void hda_dbg_cfg(struct seq_file *s, int val)
-+static void hda_dbg_cfg(struct drm_printer *p, int val)
- {
--	seq_puts(s, "\tAWG ");
--	seq_puts(s, val & CFG_AWG_ASYNC_EN ? "enabled" : "disabled");
-+	drm_printf(p, "\tAWG ");
-+	drm_printf(p, val & CFG_AWG_ASYNC_EN ? "enabled" : "disabled");
- }
- 
--static void hda_dbg_awg_microcode(struct seq_file *s, void __iomem *reg)
-+static void hda_dbg_awg_microcode(struct drm_printer *p, void __iomem *reg)
- {
- 	unsigned int i;
- 
--	seq_puts(s, "\n\n  HDA AWG microcode:");
-+	drm_printf(p, "\n\n  HDA AWG microcode:");
- 	for (i = 0; i < AWG_MAX_INST; i++) {
- 		if (i % 8 == 0)
--			seq_printf(s, "\n  %04X:", i);
--		seq_printf(s, " %04X", readl(reg + i * 4));
-+			drm_printf(p, "\n  %04X:", i);
-+		drm_printf(p, " %04X", readl(reg + i * 4));
- 	}
- }
- 
--static void hda_dbg_video_dacs_ctrl(struct seq_file *s, void __iomem *reg)
-+static void hda_dbg_video_dacs_ctrl(struct drm_printer *p, void __iomem *reg)
- {
- 	u32 val = readl(reg);
- 
--	seq_printf(s, "\n\n  %-25s 0x%08X", "VIDEO_DACS_CONTROL", val);
--	seq_puts(s, "\tHD DACs ");
--	seq_puts(s, val & DAC_CFG_HD_HZUVW_OFF_MASK ? "disabled" : "enabled");
-+	drm_printf(p, "\n\n  %-25s 0x%08X", "VIDEO_DACS_CONTROL", val);
-+	drm_printf(p, "\tHD DACs ");
-+	drm_printf(p, val & DAC_CFG_HD_HZUVW_OFF_MASK ? "disabled" : "enabled");
- }
- 
--static int hda_dbg_show(struct seq_file *s, void *data)
-+static void sti_hda_print_state(struct drm_printer *p,
-+				const struct drm_connector_state *state)
- {
--	struct drm_info_node *node = s->private;
--	struct sti_hda *hda = (struct sti_hda *)node->info_ent->data;
-+	struct sti_hda_connector *hda_connector
-+		= to_sti_hda_connector(state->connector);
-+	struct sti_hda *hda = hda_connector->hda;
- 
--	seq_printf(s, "HD Analog: (vaddr = 0x%p)", hda->regs);
-+	drm_printf(p, "HD Analog: (vaddr = 0x%pK)", hda->regs);
- 	DBGFS_DUMP(HDA_ANA_CFG);
--	hda_dbg_cfg(s, readl(hda->regs + HDA_ANA_CFG));
-+	hda_dbg_cfg(p, readl(hda->regs + HDA_ANA_CFG));
- 	DBGFS_DUMP(HDA_ANA_SCALE_CTRL_Y);
- 	DBGFS_DUMP(HDA_ANA_SCALE_CTRL_CB);
- 	DBGFS_DUMP(HDA_ANA_SCALE_CTRL_CR);
- 	DBGFS_DUMP(HDA_ANA_ANC_CTRL);
- 	DBGFS_DUMP(HDA_ANA_SRC_Y_CFG);
- 	DBGFS_DUMP(HDA_ANA_SRC_C_CFG);
--	hda_dbg_awg_microcode(s, hda->regs + HDA_SYNC_AWGI);
-+	hda_dbg_awg_microcode(p, hda->regs + HDA_SYNC_AWGI);
- 	if (hda->video_dacs_ctrl)
--		hda_dbg_video_dacs_ctrl(s, hda->video_dacs_ctrl);
--	seq_putc(s, '\n');
--	return 0;
--}
--
--static struct drm_info_list hda_debugfs_files[] = {
--	{ "hda", hda_dbg_show, 0, NULL },
--};
--
--static int hda_debugfs_init(struct sti_hda *hda, struct drm_minor *minor)
--{
--	unsigned int i;
--
--	for (i = 0; i < ARRAY_SIZE(hda_debugfs_files); i++)
--		hda_debugfs_files[i].data = hda;
--
--	return drm_debugfs_create_files(hda_debugfs_files,
--					ARRAY_SIZE(hda_debugfs_files),
--					minor->debugfs_root, minor);
-+		hda_dbg_video_dacs_ctrl(p, hda->video_dacs_ctrl);
-+	drm_printf(p, "\n");
- }
- 
- /**
-@@ -632,27 +617,13 @@ struct drm_connector_helper_funcs sti_hda_connector_helper_funcs = {
- 	.mode_valid = sti_hda_connector_mode_valid,
- };
- 
--static int sti_hda_late_register(struct drm_connector *connector)
--{
--	struct sti_hda_connector *hda_connector
--		= to_sti_hda_connector(connector);
--	struct sti_hda *hda = hda_connector->hda;
--
--	if (hda_debugfs_init(hda, hda->drm_dev->primary)) {
--		DRM_ERROR("HDA debugfs setup failed\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- static const struct drm_connector_funcs sti_hda_connector_funcs = {
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.destroy = drm_connector_cleanup,
- 	.reset = drm_atomic_helper_connector_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
--	.late_register = sti_hda_late_register,
-+	.atomic_print_state = sti_hda_print_state,
- };
- 
- static struct drm_encoder *sti_hda_find_encoder(struct drm_device *dev)
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index 58f431102512..b1313b3321bf 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -584,49 +584,49 @@ static void hdmi_swreset(struct sti_hdmi *hdmi)
- 	clk_disable_unprepare(hdmi->clk_audio);
- }
- 
--#define DBGFS_PRINT_STR(str1, str2) seq_printf(s, "%-24s %s\n", str1, str2)
--#define DBGFS_PRINT_INT(str1, int2) seq_printf(s, "%-24s %d\n", str1, int2)
--#define DBGFS_DUMP(str, reg) seq_printf(s, "%s  %-25s 0x%08X", str, #reg, \
-+#define DBGFS_PRINT_STR(str1, str2) drm_printf(p, "%-24s %s\n", str1, str2)
-+#define DBGFS_PRINT_INT(str1, int2) drm_printf(p, "%-24s %d\n", str1, int2)
-+#define DBGFS_DUMP(str, reg) drm_printf(p, "%s\t%-25s 0x%08X", str, #reg, \
- 					hdmi_read(hdmi, reg))
--#define DBGFS_DUMP_DI(reg, slot) DBGFS_DUMP("\n", reg(slot))
-+#define DBGFS_DUMP_DI(reg, slot) DBGFS_DUMP("\n\t\t", reg(slot))
- 
--static void hdmi_dbg_cfg(struct seq_file *s, int val)
-+static void hdmi_dbg_cfg(struct drm_printer *p, int val)
- {
- 	int tmp;
- 
--	seq_putc(s, '\t');
-+	drm_printf(p, "\t");
- 	tmp = val & HDMI_CFG_HDMI_NOT_DVI;
- 	DBGFS_PRINT_STR("mode:", tmp ? "HDMI" : "DVI");
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = val & HDMI_CFG_HDCP_EN;
- 	DBGFS_PRINT_STR("HDCP:", tmp ? "enable" : "disable");
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = val & HDMI_CFG_ESS_NOT_OESS;
- 	DBGFS_PRINT_STR("HDCP mode:", tmp ? "ESS enable" : "OESS enable");
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = val & HDMI_CFG_H_SYNC_POL_NEG;
- 	DBGFS_PRINT_STR("Hsync polarity:", tmp ? "inverted" : "normal");
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = val & HDMI_CFG_V_SYNC_POL_NEG;
- 	DBGFS_PRINT_STR("Vsync polarity:", tmp ? "inverted" : "normal");
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = val & HDMI_CFG_422_EN;
- 	DBGFS_PRINT_STR("YUV422 format:", tmp ? "enable" : "disable");
- }
- 
--static void hdmi_dbg_sta(struct seq_file *s, int val)
-+static void hdmi_dbg_sta(struct drm_printer *p, int val)
- {
- 	int tmp;
- 
--	seq_putc(s, '\t');
-+	drm_printf(p, "\t");
- 	tmp = (val & HDMI_STA_DLL_LCK);
- 	DBGFS_PRINT_STR("pll:", tmp ? "locked" : "not locked");
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = (val & HDMI_STA_HOT_PLUG);
- 	DBGFS_PRINT_STR("hdmi cable:", tmp ? "connected" : "not connected");
- }
- 
--static void hdmi_dbg_sw_di_cfg(struct seq_file *s, int val)
-+static void hdmi_dbg_sw_di_cfg(struct drm_printer *p, int val)
- {
- 	int tmp;
- 	char *const en_di[] = {"no transmission",
-@@ -634,57 +634,59 @@ static void hdmi_dbg_sw_di_cfg(struct seq_file *s, int val)
- 			       "once every field",
- 			       "once every frame"};
- 
--	seq_putc(s, '\t');
-+	drm_printf(p, "\t");
- 	tmp = (val & HDMI_IFRAME_CFG_DI_N(HDMI_IFRAME_MASK, 1));
- 	DBGFS_PRINT_STR("Data island 1:", en_di[tmp]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = (val & HDMI_IFRAME_CFG_DI_N(HDMI_IFRAME_MASK, 2)) >> 4;
- 	DBGFS_PRINT_STR("Data island 2:", en_di[tmp]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = (val & HDMI_IFRAME_CFG_DI_N(HDMI_IFRAME_MASK, 3)) >> 8;
- 	DBGFS_PRINT_STR("Data island 3:", en_di[tmp]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = (val & HDMI_IFRAME_CFG_DI_N(HDMI_IFRAME_MASK, 4)) >> 12;
- 	DBGFS_PRINT_STR("Data island 4:", en_di[tmp]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = (val & HDMI_IFRAME_CFG_DI_N(HDMI_IFRAME_MASK, 5)) >> 16;
- 	DBGFS_PRINT_STR("Data island 5:", en_di[tmp]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\t\t\t\t\t");
- 	tmp = (val & HDMI_IFRAME_CFG_DI_N(HDMI_IFRAME_MASK, 6)) >> 20;
- 	DBGFS_PRINT_STR("Data island 6:", en_di[tmp]);
- }
- 
--static int hdmi_dbg_show(struct seq_file *s, void *data)
-+static void sti_hdmi_print_state(struct drm_printer *p,
-+				 const struct drm_connector_state *state)
- {
--	struct drm_info_node *node = s->private;
--	struct sti_hdmi *hdmi = (struct sti_hdmi *)node->info_ent->data;
--
--	seq_printf(s, "HDMI: (vaddr = 0x%p)", hdmi->regs);
--	DBGFS_DUMP("\n", HDMI_CFG);
--	hdmi_dbg_cfg(s, hdmi_read(hdmi, HDMI_CFG));
--	DBGFS_DUMP("", HDMI_INT_EN);
--	DBGFS_DUMP("\n", HDMI_STA);
--	hdmi_dbg_sta(s, hdmi_read(hdmi, HDMI_STA));
--	DBGFS_DUMP("", HDMI_ACTIVE_VID_XMIN);
--	seq_putc(s, '\t');
-+	struct sti_hdmi_connector *hdmi_connector
-+		= to_sti_hdmi_connector(state->connector);
-+	struct sti_hdmi *hdmi = hdmi_connector->hdmi;
-+
-+	drm_printf(p, "\tHDMI: (vaddr = 0x%pK)", hdmi->regs);
-+	DBGFS_DUMP("\n\t\t", HDMI_CFG);
-+	hdmi_dbg_cfg(p, hdmi_read(hdmi, HDMI_CFG));
-+	DBGFS_DUMP("\t\t", HDMI_INT_EN);
-+	DBGFS_DUMP("\n\t\t", HDMI_STA);
-+	hdmi_dbg_sta(p, hdmi_read(hdmi, HDMI_STA));
-+	DBGFS_DUMP("\t\t", HDMI_ACTIVE_VID_XMIN);
-+	drm_printf(p, "\t");
- 	DBGFS_PRINT_INT("Xmin:", hdmi_read(hdmi, HDMI_ACTIVE_VID_XMIN));
--	DBGFS_DUMP("", HDMI_ACTIVE_VID_XMAX);
--	seq_putc(s, '\t');
-+	DBGFS_DUMP("\t\t", HDMI_ACTIVE_VID_XMAX);
-+	drm_printf(p, "\t");
- 	DBGFS_PRINT_INT("Xmax:", hdmi_read(hdmi, HDMI_ACTIVE_VID_XMAX));
--	DBGFS_DUMP("", HDMI_ACTIVE_VID_YMIN);
--	seq_putc(s, '\t');
-+	DBGFS_DUMP("\t\t", HDMI_ACTIVE_VID_YMIN);
-+	drm_printf(p, "\t");
- 	DBGFS_PRINT_INT("Ymin:", hdmi_read(hdmi, HDMI_ACTIVE_VID_YMIN));
--	DBGFS_DUMP("", HDMI_ACTIVE_VID_YMAX);
--	seq_putc(s, '\t');
-+	DBGFS_DUMP("\t\t", HDMI_ACTIVE_VID_YMAX);
-+	drm_printf(p, "\t");
- 	DBGFS_PRINT_INT("Ymax:", hdmi_read(hdmi, HDMI_ACTIVE_VID_YMAX));
--	DBGFS_DUMP("", HDMI_SW_DI_CFG);
--	hdmi_dbg_sw_di_cfg(s, hdmi_read(hdmi, HDMI_SW_DI_CFG));
-+	DBGFS_DUMP("\t\t", HDMI_SW_DI_CFG);
-+	hdmi_dbg_sw_di_cfg(p, hdmi_read(hdmi, HDMI_SW_DI_CFG));
- 
--	DBGFS_DUMP("\n", HDMI_AUDIO_CFG);
--	DBGFS_DUMP("\n", HDMI_SPDIF_FIFO_STATUS);
--	DBGFS_DUMP("\n", HDMI_AUDN);
-+	DBGFS_DUMP("\n\t\t", HDMI_AUDIO_CFG);
-+	DBGFS_DUMP("\n\t\t", HDMI_SPDIF_FIFO_STATUS);
-+	DBGFS_DUMP("\n\t\t", HDMI_AUDN);
- 
--	seq_printf(s, "\n AVI Infoframe (Data Island slot N=%d):",
-+	drm_printf(p, "\n\t\tAVI Infoframe (Data Island slot N=%d):",
- 		   HDMI_IFRAME_SLOT_AVI);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_HEAD_WORD, HDMI_IFRAME_SLOT_AVI);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD0, HDMI_IFRAME_SLOT_AVI);
-@@ -694,7 +696,7 @@ static int hdmi_dbg_show(struct seq_file *s, void *data)
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD4, HDMI_IFRAME_SLOT_AVI);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD5, HDMI_IFRAME_SLOT_AVI);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD6, HDMI_IFRAME_SLOT_AVI);
--	seq_printf(s, "\n\n AUDIO Infoframe (Data Island slot N=%d):",
-+	drm_printf(p, "\n\t\tAUDIO Infoframe (Data Island slot N=%d):",
- 		   HDMI_IFRAME_SLOT_AUDIO);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_HEAD_WORD, HDMI_IFRAME_SLOT_AUDIO);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD0, HDMI_IFRAME_SLOT_AUDIO);
-@@ -704,7 +706,8 @@ static int hdmi_dbg_show(struct seq_file *s, void *data)
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD4, HDMI_IFRAME_SLOT_AUDIO);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD5, HDMI_IFRAME_SLOT_AUDIO);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD6, HDMI_IFRAME_SLOT_AUDIO);
--	seq_printf(s, "\n\n VENDOR SPECIFIC Infoframe (Data Island slot N=%d):",
-+	drm_printf(p,
-+		   "\n\t\tVENDOR SPECIFIC Infoframe (Data Island slot N=%d):",
- 		   HDMI_IFRAME_SLOT_VENDOR);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_HEAD_WORD, HDMI_IFRAME_SLOT_VENDOR);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD0, HDMI_IFRAME_SLOT_VENDOR);
-@@ -714,24 +717,7 @@ static int hdmi_dbg_show(struct seq_file *s, void *data)
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD4, HDMI_IFRAME_SLOT_VENDOR);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD5, HDMI_IFRAME_SLOT_VENDOR);
- 	DBGFS_DUMP_DI(HDMI_SW_DI_N_PKT_WORD6, HDMI_IFRAME_SLOT_VENDOR);
--	seq_putc(s, '\n');
--	return 0;
--}
--
--static struct drm_info_list hdmi_debugfs_files[] = {
--	{ "hdmi", hdmi_dbg_show, 0, NULL },
--};
--
--static int hdmi_debugfs_init(struct sti_hdmi *hdmi, struct drm_minor *minor)
--{
--	unsigned int i;
--
--	for (i = 0; i < ARRAY_SIZE(hdmi_debugfs_files); i++)
--		hdmi_debugfs_files[i].data = hdmi;
--
--	return drm_debugfs_create_files(hdmi_debugfs_files,
--					ARRAY_SIZE(hdmi_debugfs_files),
--					minor->debugfs_root, minor);
-+	drm_printf(p, "\n");
- }
- 
- static void sti_hdmi_disable(struct drm_bridge *bridge)
-@@ -1099,20 +1085,6 @@ sti_hdmi_connector_get_property(struct drm_connector *connector,
- 	return -EINVAL;
- }
- 
--static int sti_hdmi_late_register(struct drm_connector *connector)
--{
--	struct sti_hdmi_connector *hdmi_connector
--		= to_sti_hdmi_connector(connector);
--	struct sti_hdmi *hdmi = hdmi_connector->hdmi;
--
--	if (hdmi_debugfs_init(hdmi, hdmi->drm_dev->primary)) {
--		DRM_ERROR("HDMI debugfs setup failed\n");
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- static const struct drm_connector_funcs sti_hdmi_connector_funcs = {
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.detect = sti_hdmi_connector_detect,
-@@ -1122,7 +1094,7 @@ static const struct drm_connector_funcs sti_hdmi_connector_funcs = {
- 	.atomic_get_property = sti_hdmi_connector_get_property,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
--	.late_register = sti_hdmi_late_register,
-+	.atomic_print_state = sti_hdmi_print_state,
- };
- 
- static struct drm_encoder *sti_hdmi_find_encoder(struct drm_device *dev)
--- 
-2.15.0
+One more assumption: someone corrupted memory around rtnl_mutex and it looks like locked.
+(I track lockdep "(rtnl_mutex){+.+.}" prints in initial message as "nobody owns rtnl_mutex").
+There may help a crash dump of the VM.
+
+Also, there may be a locking code BUG, but this seems the least probable for me.
+
+Kirill
