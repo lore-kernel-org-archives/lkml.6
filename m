@@ -1,79 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752124AbeFEMdt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:33:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48364 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752022AbeFEMcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:32:24 -0400
-From: YueHaibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <jcliburn@gmail.com>, <chris.snook@gmail.com>, <benve@cisco.com>,
-        <jdmason@kudzu.us>, <chessman@tux.org>, <jes@trained-monkey.org>,
-        <rahul.verma@cavium.com>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next 3/6] net: neterion: use pci_zalloc_consistent
-Date: Tue, 5 Jun 2018 20:28:48 +0800
-Message-ID: <20180605122851.23912-4-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20180605122851.23912-1-yuehaibing@huawei.com>
-References: <20180605122851.23912-1-yuehaibing@huawei.com>
+        id S1752133AbeFEMeM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:34:12 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33758 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751718AbeFEMeK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:34:10 -0400
+Date: Tue, 5 Jun 2018 13:34:09 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Ilya Matveychikov <matvejchikov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ksys_mount: check for permissions before resource
+ allocation
+Message-ID: <20180605123409.GP30522@ZenIV.linux.org.uk>
+References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+ <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
+ <20180605112641.GN30522@ZenIV.linux.org.uk>
+ <1E519BA2-4198-4255-BAE4-3125C59741A3@gmail.com>
+ <20180605115340.GO30522@ZenIV.linux.org.uk>
+ <0F38EDA5-DEC3-48A1-9375-47949C26DAE8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0F38EDA5-DEC3-48A1-9375-47949C26DAE8@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use pci_zalloc_consistent to remove unnecessary memset.
+On Tue, Jun 05, 2018 at 04:07:15PM +0400, Ilya Matveychikov wrote:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/neterion/s2io.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> > If you depend upon preventing kmalloc'ed temporary allocations filled
+> > with user-supplied data, you are screwed, plain and simple.  It really can't
+> > be prevented, in a lot of ways that are much less exotic than mount(2).
+> > Most of syscall arguments are copied in, before we get any permission
+> > checks.  It does happen and it will happen - examining them while they are
+> > still in userland is a nightmare in a lot of respects, starting with
+> > security.
+> 
+> I agree that it’s impossible to completely avoid this kind of allocations
+> and examining data in user-land will be the bigger problem than copying
+> arguments to the kernel. But aside of that what’s wrong with the idea of
+> having the permission check before doing any kind of work?
 
-diff --git a/drivers/net/ethernet/neterion/s2io.c b/drivers/net/ethernet/neterion/s2io.c
-index b8983e7..4e8a2fd 100644
---- a/drivers/net/ethernet/neterion/s2io.c
-+++ b/drivers/net/ethernet/neterion/s2io.c
-@@ -733,8 +733,8 @@ static int init_shared_mem(struct s2io_nic *nic)
- 
- 			rx_blocks = &ring->rx_blocks[j];
- 			size = SIZE_OF_BLOCK;	/* size is always page size */
--			tmp_v_addr = pci_alloc_consistent(nic->pdev, size,
--							  &tmp_p_addr);
-+			tmp_v_addr = pci_zalloc_consistent(nic->pdev, size,
-+							   &tmp_p_addr);
- 			if (tmp_v_addr == NULL) {
- 				/*
- 				 * In case of failure, free_shared_mem()
-@@ -746,7 +746,6 @@ static int init_shared_mem(struct s2io_nic *nic)
- 				return -ENOMEM;
- 			}
- 			mem_allocated += size;
--			memset(tmp_v_addr, 0, size);
- 
- 			size = sizeof(struct rxd_info) *
- 				rxd_count[nic->rxd_mode];
-@@ -835,8 +834,8 @@ static int init_shared_mem(struct s2io_nic *nic)
- 	/* Allocation and initialization of Statistics block */
- 	size = sizeof(struct stat_block);
- 	mac_control->stats_mem =
--		pci_alloc_consistent(nic->pdev, size,
--				     &mac_control->stats_mem_phy);
-+		pci_zalloc_consistent(nic->pdev, size,
-+				      &mac_control->stats_mem_phy);
- 
- 	if (!mac_control->stats_mem) {
- 		/*
-@@ -851,7 +850,6 @@ static int init_shared_mem(struct s2io_nic *nic)
- 
- 	tmp_v_addr = mac_control->stats_mem;
- 	mac_control->stats_info = tmp_v_addr;
--	memset(tmp_v_addr, 0, size);
- 	DBG_PRINT(INIT_DBG, "%s: Ring Mem PHY: 0x%llx\n",
- 		dev_name(&nic->pdev->dev), (unsigned long long)tmp_p_addr);
- 	mac_control->stats_info->sw_stat.mem_allocated += mem_allocated;
--- 
-2.7.0
+Presenting that as mitigating a vulnerability.  It's neither better nor worse
+in that respect than the original.
