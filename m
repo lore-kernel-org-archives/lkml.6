@@ -1,95 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752437AbeFETMh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:12:37 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51234 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752075AbeFETMf (ORCPT
+        id S1752480AbeFETMt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:12:49 -0400
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:44487 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752449AbeFETMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:12:35 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com, Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH v6 2/2] drm/i915: remove intel_cursor_plane_funcs
-Date: Tue,  5 Jun 2018 21:12:26 +0200
-Message-Id: <20180605191226.32310-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605191226.32310-1-enric.balletbo@collabora.com>
-References: <20180605191226.32310-1-enric.balletbo@collabora.com>
+        Tue, 5 Jun 2018 15:12:48 -0400
+Date: Tue, 5 Jun 2018 20:12:46 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, mhocko@kernel.org,
+        vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
+ in swap cache
+Message-ID: <20180605191245.3owve7gfut22tyob@techsingularity.net>
+References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
+ <bfc2e579-915f-24db-0ff0-29bd9148b8c0@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <bfc2e579-915f-24db-0ff0-29bd9148b8c0@intel.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On Tue, Jun 05, 2018 at 11:18:18AM -0700, Dave Hansen wrote:
+> On 06/05/2018 10:13 AM, Mel Gorman wrote:
+> > The anonymous page race fix is overkill for two reasons. Pages that are not
+> > in the swap cache are not going to be issued for IO and if a stale TLB entry
+> > is used, the write still occurs on the same physical page. Any race with
+> > mmap replacing the address space is handled by mmap_sem. As anonymous pages
+> > are often dirty, it can mean that mremap always has to flush even when it is
+> > not necessary.
+> 
+> This looks fine to me.  One nit on the description: I found myself
+> wondering if we skip the flush under the ptl where the flush is
+> eventually done.  That code is a bit out of the context, so we don't see
+> it in the patch.
+> 
 
-After converting legacy cursor updates to atomic async commits
-intel_cursor_plane_funcs just duplicates intel_plane_funcs now.
+That's fair enough. I updated part of the changelog to read
 
-Cc: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+This patch special cases anonymous pages to only flush ranges under the
+page table lock if the page is in swap cache and can be potentially queued
+for IO. Note that the full flush of the range being mremapped is still
+flushed so TLB flushes are not eliminated entirely.
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
+Does that work for you?
 
- drivers/gpu/drm/i915/intel_display.c | 23 +----------------------
- 1 file changed, 1 insertion(+), 22 deletions(-)
+> We have two modes of flushing during move_ptes():
+> 1. The flush_tlb_range() while holding the ptl in move_ptes().
+> 2. A flush_tlb_range() at the end of move_table_tables(), driven by
+>   'need_flush' which will be set any time move_ptes() does *not* flush.
+> 
+> This patch broadens the scope where move_ptes() does not flush and
+> shifts the burden to the flush inside move_table_tables().
+> 
+> Right?
+> 
 
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index b14d39e2d1f0..762a84e401a3 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -13061,16 +13061,6 @@ static bool intel_primary_plane_format_mod_supported(struct drm_plane *plane,
- 		return i8xx_mod_supported(format, modifier);
- }
- 
--static bool intel_cursor_plane_format_mod_supported(struct drm_plane *plane,
--						    uint32_t format,
--						    uint64_t modifier)
--{
--	if (WARN_ON(modifier == DRM_FORMAT_MOD_INVALID))
--		return false;
--
--	return modifier == DRM_FORMAT_MOD_LINEAR && format == DRM_FORMAT_ARGB8888;
--}
--
- static struct drm_plane_funcs intel_plane_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
-@@ -13082,17 +13072,6 @@ static struct drm_plane_funcs intel_plane_funcs = {
- 	.format_mod_supported = intel_primary_plane_format_mod_supported,
- };
- 
--static const struct drm_plane_funcs intel_cursor_plane_funcs = {
--	.update_plane = drm_atomic_helper_update_plane,
--	.disable_plane = drm_atomic_helper_disable_plane,
--	.destroy = intel_plane_destroy,
--	.atomic_get_property = intel_plane_atomic_get_property,
--	.atomic_set_property = intel_plane_atomic_set_property,
--	.atomic_duplicate_state = intel_plane_duplicate_state,
--	.atomic_destroy_state = intel_plane_destroy_state,
--	.format_mod_supported = intel_cursor_plane_format_mod_supported,
--};
--
- static bool i9xx_plane_has_fbc(struct drm_i915_private *dev_priv,
- 			       enum i9xx_plane_id i9xx_plane)
- {
-@@ -13326,7 +13305,7 @@ intel_cursor_plane_create(struct drm_i915_private *dev_priv,
- 		cursor->cursor.size = ~0;
- 
- 	ret = drm_universal_plane_init(&dev_priv->drm, &cursor->base,
--				       0, &intel_cursor_plane_funcs,
-+				       0, &intel_plane_funcs,
- 				       intel_cursor_formats,
- 				       ARRAY_SIZE(intel_cursor_formats),
- 				       cursor_format_modifiers,
+Yes. While this does not eliminate TLB flushes, it reduces the number
+considerably as we potentially are replacing one-flush-per-LATENCY_LIMIT
+with one flush.
+
+> Other minor nits:
+> 
+> > +/* Returns true if a TLB must be flushed before PTL is dropped */
+> > +static bool should_force_flush(pte_t *pte)
+> > +{
+> 
+> I usually try to make the non-pte-modifying functions take a pte_t
+> instead of 'pte_t *' to make it obvious that there no modification going
+> on.  Any reason not to do that here?
+> 
+
+No, it was just a minor saving on stack usage.
+
+> > +	if (!trylock_page(page))
+> > +		return true;
+> > +	is_swapcache = PageSwapCache(page);
+> > +	unlock_page(page);
+> > +
+> > +	return is_swapcache;
+> > +}
+> 
+> I was hoping we didn't have to go as far as taking the page lock, but I
+> guess the proof is in the pudding that this tradeoff is worth it.
+> 
+
+In the interest of full disclosure, the feedback I have from the customer is
+based on a patch that modifies the LATENCY_LIMIT. This helped but did not
+eliminate the problem. This was potentially a better solution but I wanted
+review first. I'm waiting on confirmation this definitely behaves better.
+
+> BTW, do you want to add a tiny comment about why we do the
+> trylock_page()?  I assume it's because we don't want to wait on finding
+> an exact answer: we just assume it is in the swap cache if the page is
+> locked and flush regardless.
+
+It's really because calling lock_page while holding a spinlock is
+eventually going to ruin your day.
+
+Thanks.
+
 -- 
-2.17.1
+Mel Gorman
+SUSE Labs
