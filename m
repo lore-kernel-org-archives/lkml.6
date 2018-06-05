@@ -1,54 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752152AbeFETBa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:01:30 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:44333 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbeFETB3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:01:29 -0400
-X-Google-Smtp-Source: ADUXVKLbnm9NYaeZbOnCmvkwpKt6Eq+OombUbqn1W7uf40tQIqO+Ln6PwfbcBVehhQ4AgQkz4Ux3fQ==
-From: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-To: dmitry.torokhov@gmail.com, rafael@kernel.org, chenhong3@huawei.com,
-        ravisadineni@google.com
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        rajatja@google.com, bleung@google.com, furquan@chromium.org,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Subject: [PATCH V3] i8042: Increment wakeup_count for the respective port.
-Date: Tue,  5 Jun 2018 12:01:24 -0700
-Message-Id: <20180605190124.191827-1-ravisadineni@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
-In-Reply-To: <CAJZ5v0iu23LqdKUJA5OQGF3Yqq3=k+nfNUVn-LFpYgkDrgokCg@mail.gmail.com>
-References: <CAJZ5v0iu23LqdKUJA5OQGF3Yqq3=k+nfNUVn-LFpYgkDrgokCg@mail.gmail.com>
+        id S1752157AbeFETDH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:03:07 -0400
+Received: from anholt.net ([50.246.234.109]:40558 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751823AbeFETDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 15:03:06 -0400
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        amd-gfx@lists.freedesktop.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH 1/3] drm/v3d: Take a lock across GPU scheduler job creation and queuing.
+Date: Tue,  5 Jun 2018 12:03:00 -0700
+Message-Id: <20180605190302.18279-1-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call pm_wakeup_event on every irq. This should help us in identifying if
-keyboard was a potential wake reason for the last resume.
+Between creation and queueing of a job, you need to prevent any other
+job from being created and queued.  Otherwise the scheduler's fences
+may be signaled out of seqno order.
 
-Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
 ---
-V3: Remove the unnecessary device_may_wakeup check.
-V2: Increment the wakeup count only when there is a irq and not when the
-method is called internally.
 
- drivers/input/serio/i8042.c | 3 +++
- 1 file changed, 3 insertions(+)
+ccing amd-gfx due to interaction of this series with the scheduler.
 
-diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
-index 824f4c1c1f310..b8bc71569349d 100644
---- a/drivers/input/serio/i8042.c
-+++ b/drivers/input/serio/i8042.c
-@@ -573,6 +573,9 @@ static irqreturn_t i8042_interrupt(int irq, void *dev_id)
- 	port = &i8042_ports[port_no];
- 	serio = port->exists ? port->serio : NULL;
+ drivers/gpu/drm/v3d/v3d_drv.h |  5 +++++
+ drivers/gpu/drm/v3d/v3d_gem.c | 11 +++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+index a043ac3aae98..26005abd9c5d 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.h
++++ b/drivers/gpu/drm/v3d/v3d_drv.h
+@@ -85,6 +85,11 @@ struct v3d_dev {
+ 	 */
+ 	struct mutex reset_lock;
  
-+	if (irq && serio)
-+		pm_wakeup_event(&serio->dev, 0);
++	/* Lock taken when creating and pushing the GPU scheduler
++	 * jobs, to keep the sched-fence seqnos in order.
++	 */
++	struct mutex sched_lock;
 +
- 	filter_dbg(port->driver_bound, data, "<- i8042 (interrupt, %d, %d%s%s)\n",
- 		   port_no, irq,
- 		   dfl & SERIO_PARITY ? ", bad parity" : "",
+ 	struct {
+ 		u32 num_allocated;
+ 		u32 pages_allocated;
+diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+index b513f9189caf..9ea83bdb9a30 100644
+--- a/drivers/gpu/drm/v3d/v3d_gem.c
++++ b/drivers/gpu/drm/v3d/v3d_gem.c
+@@ -550,13 +550,16 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+ 	if (ret)
+ 		goto fail;
+ 
++	mutex_lock(&v3d->sched_lock);
+ 	if (exec->bin.start != exec->bin.end) {
+ 		ret = drm_sched_job_init(&exec->bin.base,
+ 					 &v3d->queue[V3D_BIN].sched,
+ 					 &v3d_priv->sched_entity[V3D_BIN],
+ 					 v3d_priv);
+-		if (ret)
++		if (ret) {
++			mutex_unlock(&v3d->sched_lock);
+ 			goto fail_unreserve;
++		}
+ 
+ 		exec->bin_done_fence =
+ 			dma_fence_get(&exec->bin.base.s_fence->finished);
+@@ -570,12 +573,15 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+ 				 &v3d->queue[V3D_RENDER].sched,
+ 				 &v3d_priv->sched_entity[V3D_RENDER],
+ 				 v3d_priv);
+-	if (ret)
++	if (ret) {
++		mutex_unlock(&v3d->sched_lock);
+ 		goto fail_unreserve;
++	}
+ 
+ 	kref_get(&exec->refcount); /* put by scheduler job completion */
+ 	drm_sched_entity_push_job(&exec->render.base,
+ 				  &v3d_priv->sched_entity[V3D_RENDER]);
++	mutex_unlock(&v3d->sched_lock);
+ 
+ 	v3d_attach_object_fences(exec);
+ 
+@@ -615,6 +621,7 @@ v3d_gem_init(struct drm_device *dev)
+ 	spin_lock_init(&v3d->job_lock);
+ 	mutex_init(&v3d->bo_lock);
+ 	mutex_init(&v3d->reset_lock);
++	mutex_init(&v3d->sched_lock);
+ 
+ 	/* Note: We don't allocate address 0.  Various bits of HW
+ 	 * treat 0 as special, such as the occlusion query counters
 -- 
-2.17.1.1185.g55be947832-goog
+2.17.0
