@@ -1,169 +1,437 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751588AbeFEE47 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 00:56:59 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33132 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751542AbeFEE44 (ORCPT
+        id S1751599AbeFEE60 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 00:58:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47111 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751467AbeFEE6Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 00:56:56 -0400
-X-Google-Smtp-Source: ADUXVKI4VJHEbJ2nHlYnZW1Qu5DN8wsxdq/F1SPpOja4y2/4U2s7teP+nzVUM12o5f0GNxH/wxyDow==
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>, ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>, chris.redpath@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/2] arm: dts: sunxi: Add missing cooling device properties for CPUs
-Date: Tue,  5 Jun 2018 10:17:49 +0530
-Message-Id: <a313ec0be4104494de319e8318e05614fb97b2fd.1528173943.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
-In-Reply-To: <d894f425b7c32bce4dc4a982db8f4dface2db31d.1528173943.git.viresh.kumar@linaro.org>
-References: <20180601151701.sshwfdbflic6mybv@flea>
- <d894f425b7c32bce4dc4a982db8f4dface2db31d.1528173943.git.viresh.kumar@linaro.org>
+        Tue, 5 Jun 2018 00:58:25 -0400
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: davem@davemloft.net
+Cc: hayeswang@realtek.com, hkallweit1@gmail.com, romieu@fr.zoreil.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Ryankao <ryankao@realtek.com>
+Subject: [PATCH] r8169: Reinstate ALDPS and ASPM support
+Date: Tue,  5 Jun 2018 12:58:12 +0800
+Message-Id: <20180605045812.17977-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cooling device properties, like "#cooling-cells" and
-"dynamic-power-coefficient", should either be present for all the CPUs
-of a cluster or none. If these are present only for a subset of CPUs of
-a cluster then things will start falling apart as soon as the CPUs are
-brought online in a different order. For example, this will happen
-because the operating system looks for such properties in the CPU node
-it is trying to bring up, so that it can register a cooling device.
+This patch reinstate ALDPS and ASPM support on r8169.
 
-Add such missing properties.
+On some Intel platforms, ASPM support on r8169 is the key factor to let
+Package C-State achieve PC8. Without ASPM support, the deepest Package
+C-State can hit is PC3. PC8 can save additional ~3W in comparison with
+PC3.
 
-Fix other missing properties (clocks, OPP, clock latency) as well to
-make it all work.
+This patch is from Realtek.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: e0c075577965 ("r8169: enable ALDPS for power saving")
+Fixes: d64ec841517a ("r8169: enable internal ASPM and clock request settings")
+
+Cc: Ryankao <ryankao@realtek.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
-V2:
-- Separated patch for h3
-- Fixed subject s/sun/sunxi/
+ drivers/net/ethernet/realtek/r8169.c | 190 +++++++++++++++++++++------
+ 1 file changed, 151 insertions(+), 39 deletions(-)
 
- arch/arm/boot/dts/sun6i-a31.dtsi | 30 ++++++++++++++++++++++++++++++
- arch/arm/boot/dts/sun7i-a20.dtsi | 13 +++++++++++++
- arch/arm/boot/dts/sun8i-a33.dtsi |  9 +++++++++
- 3 files changed, 52 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index c72992556a86..debc0bf22ea3 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -119,18 +119,48 @@
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <1>;
-+			clocks = <&ccu CLK_CPU>;
-+			clock-latency = <244144>; /* 8 32k periods */
-+			operating-points = <
-+				/* kHz	  uV */
-+				1008000	1200000
-+				864000	1200000
-+				720000	1100000
-+				480000	1000000
-+				>;
-+			#cooling-cells = <2>;
- 		};
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 75dfac0248f4..a28ef20be221 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -319,6 +319,8 @@ static const struct pci_device_id rtl8169_pci_tbl[] = {
  
- 		cpu@2 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <2>;
-+			clocks = <&ccu CLK_CPU>;
-+			clock-latency = <244144>; /* 8 32k periods */
-+			operating-points = <
-+				/* kHz	  uV */
-+				1008000	1200000
-+				864000	1200000
-+				720000	1100000
-+				480000	1000000
-+				>;
-+			#cooling-cells = <2>;
- 		};
+ MODULE_DEVICE_TABLE(pci, rtl8169_pci_tbl);
  
- 		cpu@3 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <3>;
-+			clocks = <&ccu CLK_CPU>;
-+			clock-latency = <244144>; /* 8 32k periods */
-+			operating-points = <
-+				/* kHz	  uV */
-+				1008000	1200000
-+				864000	1200000
-+				720000	1100000
-+				480000	1000000
-+				>;
-+			#cooling-cells = <2>;
- 		};
++static int enable_aspm = 1;
++static int enable_aldps = 1;
+ static int use_dac = -1;
+ static struct {
+ 	u32 msg_enable;
+@@ -817,6 +819,10 @@ struct rtl8169_private {
+ 
+ MODULE_AUTHOR("Realtek and the Linux r8169 crew <netdev@vger.kernel.org>");
+ MODULE_DESCRIPTION("RealTek RTL-8169 Gigabit Ethernet driver");
++module_param(enable_aspm, int, 0);
++MODULE_PARM_DESC(enable_aspm, "Enable ASPM");
++module_param(enable_aldps, int, 0);
++MODULE_PARM_DESC(enable_aldps, "Enable ALDPS");
+ module_param(use_dac, int, 0);
+ MODULE_PARM_DESC(use_dac, "Enable PCI DAC. Unsafe on 32 bit PCI slot.");
+ module_param_named(debug, debug.msg_enable, int, 0);
+@@ -1567,25 +1573,6 @@ static void rtl_link_chg_patch(struct rtl8169_private *tp)
+ 	}
+ }
+ 
+-static void rtl8169_check_link_status(struct net_device *dev,
+-				      struct rtl8169_private *tp)
+-{
+-	struct device *d = tp_to_dev(tp);
+-
+-	if (tp->link_ok(tp)) {
+-		rtl_link_chg_patch(tp);
+-		/* This is to cancel a scheduled suspend if there's one. */
+-		pm_request_resume(d);
+-		netif_carrier_on(dev);
+-		if (net_ratelimit())
+-			netif_info(tp, ifup, dev, "link up\n");
+-	} else {
+-		netif_carrier_off(dev);
+-		netif_info(tp, ifdown, dev, "link down\n");
+-		pm_runtime_idle(d);
+-	}
+-}
+-
+ #define WAKE_ANY (WAKE_PHY | WAKE_MAGIC | WAKE_UCAST | WAKE_BCAST | WAKE_MCAST)
+ 
+ static u32 __rtl8169_get_wol(struct rtl8169_private *tp)
+@@ -3520,6 +3507,15 @@ static void rtl8168e_1_hw_phy_config(struct rtl8169_private *tp)
+ 	rtl_writephy(tp, 0x0d, 0x4007);
+ 	rtl_writephy(tp, 0x0e, 0x0000);
+ 	rtl_writephy(tp, 0x0d, 0x0000);
++
++	/* Check ALDPS bit, disable it if enabled */
++	rtl_writephy(tp, 0x1f, 0x0000);
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
++	else if (rtl_readphy(tp, 0x15) & 0x1000)
++		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
++
++	rtl_writephy(tp, 0x1f, 0x0000);
+ }
+ 
+ static void rtl_rar_exgmac_set(struct rtl8169_private *tp, u8 *addr)
+@@ -3627,6 +3623,15 @@ static void rtl8168e_2_hw_phy_config(struct rtl8169_private *tp)
+ 
+ 	/* Broken BIOS workaround: feed GigaMAC registers with MAC address. */
+ 	rtl_rar_exgmac_set(tp, tp->dev->dev_addr);
++
++	/* Check ALDPS bit, disable it if enabled */
++	rtl_writephy(tp, 0x1f, 0x0000);
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
++	else if (rtl_readphy(tp, 0x15) & 0x1000)
++		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
++
++	rtl_writephy(tp, 0x1f, 0x0000);
+ }
+ 
+ static void rtl8168f_hw_phy_config(struct rtl8169_private *tp)
+@@ -3649,6 +3654,15 @@ static void rtl8168f_hw_phy_config(struct rtl8169_private *tp)
+ 	rtl_writephy(tp, 0x05, 0x8b86);
+ 	rtl_w0w1_phy(tp, 0x06, 0x0001, 0x0000);
+ 	rtl_writephy(tp, 0x1f, 0x0000);
++
++	/* Check ALDPS bit, disable it if enabled */
++	rtl_writephy(tp, 0x1f, 0x0000);
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
++	else if (rtl_readphy(tp, 0x15) & 0x1000)
++		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
++
++	rtl_writephy(tp, 0x1f, 0x0000);
+ }
+ 
+ static void rtl8168f_1_hw_phy_config(struct rtl8169_private *tp)
+@@ -3865,7 +3879,9 @@ static void rtl8168g_1_hw_phy_config(struct rtl8169_private *tp)
+ 
+ 	/* Check ALDPS bit, disable it if enabled */
+ 	rtl_writephy(tp, 0x1f, 0x0a43);
+-	if (rtl_readphy(tp, 0x10) & 0x0004)
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
++	else if (rtl_readphy(tp, 0x10) & 0x0004)
+ 		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+ 
+ 	rtl_writephy(tp, 0x1f, 0x0000);
+@@ -3874,6 +3890,14 @@ static void rtl8168g_1_hw_phy_config(struct rtl8169_private *tp)
+ static void rtl8168g_2_hw_phy_config(struct rtl8169_private *tp)
+ {
+ 	rtl_apply_firmware(tp);
++
++	rtl_writephy(tp, 0x1f, 0x0a43);
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
++	else if (rtl_readphy(tp, 0x10) & 0x0004)
++		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
++
++	rtl_writephy(tp, 0x1f, 0x0000);
+ }
+ 
+ static void rtl8168h_1_hw_phy_config(struct rtl8169_private *tp)
+@@ -3980,7 +4004,9 @@ static void rtl8168h_1_hw_phy_config(struct rtl8169_private *tp)
+ 
+ 	/* Check ALDPS bit, disable it if enabled */
+ 	rtl_writephy(tp, 0x1f, 0x0a43);
+-	if (rtl_readphy(tp, 0x10) & 0x0004)
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
++	else if (rtl_readphy(tp, 0x10) & 0x0004)
+ 		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+ 
+ 	rtl_writephy(tp, 0x1f, 0x0000);
+@@ -4053,7 +4079,9 @@ static void rtl8168h_2_hw_phy_config(struct rtl8169_private *tp)
+ 
+ 	/* Check ALDPS bit, disable it if enabled */
+ 	rtl_writephy(tp, 0x1f, 0x0a43);
+-	if (rtl_readphy(tp, 0x10) & 0x0004)
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
++	else if (rtl_readphy(tp, 0x10) & 0x0004)
+ 		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+ 
+ 	rtl_writephy(tp, 0x1f, 0x0000);
+@@ -4095,7 +4123,9 @@ static void rtl8168ep_1_hw_phy_config(struct rtl8169_private *tp)
+ 
+ 	/* Check ALDPS bit, disable it if enabled */
+ 	rtl_writephy(tp, 0x1f, 0x0a43);
+-	if (rtl_readphy(tp, 0x10) & 0x0004)
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
++	else if (rtl_readphy(tp, 0x10) & 0x0004)
+ 		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+ 
+ 	rtl_writephy(tp, 0x1f, 0x0000);
+@@ -4186,7 +4216,9 @@ static void rtl8168ep_2_hw_phy_config(struct rtl8169_private *tp)
+ 
+ 	/* Check ALDPS bit, disable it if enabled */
+ 	rtl_writephy(tp, 0x1f, 0x0a43);
+-	if (rtl_readphy(tp, 0x10) & 0x0004)
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
++	else if (rtl_readphy(tp, 0x10) & 0x0004)
+ 		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+ 
+ 	rtl_writephy(tp, 0x1f, 0x0000);
+@@ -4233,6 +4265,15 @@ static void rtl8105e_hw_phy_config(struct rtl8169_private *tp)
+ 	rtl_apply_firmware(tp);
+ 
+ 	rtl_writephy_batch(tp, phy_reg_init, ARRAY_SIZE(phy_reg_init));
++
++	/* Check ALDPS bit, disable it if enabled */
++	rtl_writephy(tp, 0x1f, 0x0000);
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x18, 0x1000, 0x0000);
++	else if (rtl_readphy(tp, 0x18) & 0x1000)
++		rtl_w0w1_phy(tp, 0x18, 0x0000, 0x1000);
++
++	rtl_writephy(tp, 0x1f, 0x0000);
+ }
+ 
+ static void rtl8402_hw_phy_config(struct rtl8169_private *tp)
+@@ -4250,6 +4291,15 @@ static void rtl8402_hw_phy_config(struct rtl8169_private *tp)
+ 	rtl_writephy(tp, 0x10, 0x401f);
+ 	rtl_writephy(tp, 0x19, 0x7030);
+ 	rtl_writephy(tp, 0x1f, 0x0000);
++
++	/* Check ALDPS bit, disable it if enabled */
++	rtl_writephy(tp, 0x1f, 0x0000);
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x18, 0x1000, 0x0000);
++	else if (rtl_readphy(tp, 0x18) & 0x1000)
++		rtl_w0w1_phy(tp, 0x18, 0x0000, 0x1000);
++
++	rtl_writephy(tp, 0x1f, 0x0000);
+ }
+ 
+ static void rtl8106e_hw_phy_config(struct rtl8169_private *tp)
+@@ -4272,6 +4322,15 @@ static void rtl8106e_hw_phy_config(struct rtl8169_private *tp)
+ 	rtl_writephy_batch(tp, phy_reg_init, ARRAY_SIZE(phy_reg_init));
+ 
+ 	rtl_eri_write(tp, 0x1d0, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
++
++	/* Check ALDPS bit, disable it if enabled */
++	rtl_writephy(tp, 0x1f, 0x0000);
++	if (enable_aldps)
++		rtl_w0w1_phy(tp, 0x18, 0x1000, 0x0000);
++	else if (rtl_readphy(tp, 0x18) & 0x1000)
++		rtl_w0w1_phy(tp, 0x18, 0x0000, 0x1000);
++
++	rtl_writephy(tp, 0x1f, 0x0000);
+ }
+ 
+ static void rtl_hw_phy_config(struct net_device *dev)
+@@ -5290,6 +5349,18 @@ static void rtl_pcie_state_l2l3_enable(struct rtl8169_private *tp, bool enable)
+ 	RTL_W8(tp, Config3, data);
+ }
+ 
++static void rtl_hw_internal_aspm_clkreq_enable(struct rtl8169_private *tp,
++					       bool enable)
++{
++	if (enable) {
++		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
++		RTL_W8(tp, Config5, RTL_R8(tp, Config5) | ASPM_en);
++	} else {
++		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
++		RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
++	}
++}
++
+ static void rtl_hw_start_8168bb(struct rtl8169_private *tp)
+ {
+ 	RTL_W8(tp, Config3, RTL_R8(tp, Config3) & ~Beacon_en);
+@@ -5646,9 +5717,10 @@ static void rtl_hw_start_8168g_1(struct rtl8169_private *tp)
+ 	rtl_hw_start_8168g(tp);
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+-	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168g_1, ARRAY_SIZE(e_info_8168g_1));
++	if (enable_aspm)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
+@@ -5681,9 +5753,10 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
+ 	rtl_hw_start_8168g(tp);
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+-	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
++	if (enable_aspm)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+@@ -5700,8 +5773,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
  	};
  
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index e529e4ff2174..35372a0cfc8d 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -122,6 +122,19 @@
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <1>;
-+			clocks = <&ccu CLK_CPU>;
-+			clock-latency = <244144>; /* 8 32k periods */
-+			operating-points = <
-+				/* kHz	  uV */
-+				960000	1400000
-+				912000	1400000
-+				864000	1300000
-+				720000	1200000
-+				528000	1100000
-+				312000	1000000
-+				144000	1000000
-+				>;
-+			#cooling-cells = <2>;
- 		};
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+-	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
+ 
+ 	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
+@@ -5780,6 +5852,9 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+ 	r8168_mac_ocp_write(tp, 0xe63e, 0x0000);
+ 	r8168_mac_ocp_write(tp, 0xc094, 0x0000);
+ 	r8168_mac_ocp_write(tp, 0xc09e, 0x0000);
++
++	if (enable_aspm)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
+@@ -5831,11 +5906,13 @@ static void rtl_hw_start_8168ep_1(struct rtl8169_private *tp)
  	};
  
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index 8d278ee001e9..4e92741b24a7 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -132,21 +132,30 @@
- 		};
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+-	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168ep_1, ARRAY_SIZE(e_info_8168ep_1));
  
- 		cpu@1 {
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
- 		};
+ 	rtl_hw_start_8168ep(tp);
++
++	if (enable_aspm)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
  
- 		cpu@2 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <2>;
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu@3 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <3>;
-+			clocks = <&ccu CLK_CPUX>;
-+			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
- 		};
+ static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
+@@ -5847,14 +5924,16 @@ static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
  	};
  
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+-	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168ep_2, ARRAY_SIZE(e_info_8168ep_2));
+ 
+ 	rtl_hw_start_8168ep(tp);
+ 
+ 	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) & ~PFM_EN);
+ 	RTL_W8(tp, MISC_1, RTL_R8(tp, MISC_1) & ~PFM_D3COLD_EN);
++
++	if (enable_aspm)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+@@ -5868,8 +5947,7 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+ 	};
+ 
+ 	/* disable aspm and clock request before access ephy */
+-	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+-	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
++	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+ 	rtl_ephy_init(tp, e_info_8168ep_3, ARRAY_SIZE(e_info_8168ep_3));
+ 
+ 	rtl_hw_start_8168ep(tp);
+@@ -5889,6 +5967,9 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+ 	data = r8168_mac_ocp_read(tp, 0xe860);
+ 	data |= 0x0080;
+ 	r8168_mac_ocp_write(tp, 0xe860, data);
++
++	if (enable_aspm)
++		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+ }
+ 
+ static void rtl_hw_start_8168(struct rtl8169_private *tp)
+@@ -6364,7 +6445,7 @@ static void rtl8169_tx_clear(struct rtl8169_private *tp)
+ 	tp->cur_tx = tp->dirty_tx = 0;
+ }
+ 
+-static void rtl_reset_work(struct rtl8169_private *tp)
++static void _rtl_reset_work(struct rtl8169_private *tp)
+ {
+ 	struct net_device *dev = tp->dev;
+ 	int i;
+@@ -6384,6 +6465,33 @@ static void rtl_reset_work(struct rtl8169_private *tp)
+ 	napi_enable(&tp->napi);
+ 	rtl_hw_start(tp);
+ 	netif_wake_queue(dev);
++}
++
++static void rtl8169_check_link_status(struct net_device *dev,
++				      struct rtl8169_private *tp)
++{
++	struct device *d = tp_to_dev(tp);
++
++	if (tp->link_ok(tp)) {
++		rtl_link_chg_patch(tp);
++		/* This is to cancel a scheduled suspend if there's one. */
++		if (pm_request_resume(d))
++			_rtl_reset_work(tp);
++		netif_carrier_on(dev);
++		if (net_ratelimit())
++			netif_info(tp, ifup, dev, "link up\n");
++	} else {
++		netif_carrier_off(dev);
++		netif_info(tp, ifdown, dev, "link down\n");
++		pm_runtime_idle(d);
++	}
++}
++
++static void rtl_reset_work(struct rtl8169_private *tp)
++{
++	struct net_device *dev = tp->dev;
++
++	_rtl_reset_work(tp);
+ 	rtl8169_check_link_status(dev, tp);
+ }
+ 
+@@ -7649,8 +7757,12 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	/* disable ASPM completely as that cause random device stop working
+ 	 * problems as well as full system hangs for some PCIe devices users */
+-	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+-				     PCIE_LINK_STATE_CLKPM);
++	if (!enable_aspm) {
++		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
++					     PCIE_LINK_STATE_L1 |
++					     PCIE_LINK_STATE_CLKPM);
++		netif_info(tp, probe, dev, "ASPM disabled\n");
++	}
+ 
+ 	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+ 	rc = pcim_enable_device(pdev);
 -- 
-2.15.0.194.g9af6a3dea062
+2.17.0
