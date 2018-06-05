@@ -1,46 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeFEPZs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:25:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751662AbeFEPZr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:25:47 -0400
-Date: Tue, 5 Jun 2018 17:25:24 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: host: xhci-plat: Iterate over parent nodes for
- finding quirks
-Message-ID: <20180605152524.GA23280@kroah.com>
-References: <1528212056-28390-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
+        id S1751786AbeFEP1N convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:27:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39350 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751637AbeFEP1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:27:12 -0400
+Date: Tue, 5 Jun 2018 17:27:08 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.ibm.com>
+Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
+        bjsdjshi@linux.vnet.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v2 08/10] vfio: ccw: Handling reset and shutdown with
+ states
+Message-ID: <20180605172708.24bb7af2.cohuck@redhat.com>
+In-Reply-To: <ad0c095c-249c-dc74-17db-f52c1092537d@linux.ibm.com>
+References: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
+        <1527243678-3140-9-git-send-email-pmorel@linux.vnet.ibm.com>
+        <20180605141827.6911fc74.cohuck@redhat.com>
+        <ad0c095c-249c-dc74-17db-f52c1092537d@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528212056-28390-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 08:50:56PM +0530, Anurag Kumar Vulisha wrote:
-> In xhci_plat_probe() both sysdev and pdev->dev are being used
-> for finding quirks. There are some drivers(like dwc3 host.c)
-> which adds quirks(like usb3-lpm-capable) into pdev and the logic
-> present in xhci_plat_probe() checks for quirks in either sysdev
-> or pdev for finding the quirks. Because of this logic, some of
-> the quirks are getting missed(usb3-lpm-capable quirk added by dwc3
-> host.c driver is getting missed).This patch fixes this by iterating
-> over all the available parents for finding the quirks. In this way
-> all the quirks which are present in child or parent are correctly
-> updated.
+On Tue, 5 Jun 2018 16:10:52 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
+
+> On 05/06/2018 14:18, Cornelia Huck wrote:
+> > On Fri, 25 May 2018 12:21:16 +0200
+> > Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+
+> >> +static int fsm_online(struct vfio_ccw_private *private)
+> >> +{
+> >> +	struct subchannel *sch = private->sch;
+> >> +	int ret = VFIO_CCW_STATE_IDLE;
+> >> +
+> >> +	spin_lock_irq(sch->lock);
+> >> +	if (cio_enable_subchannel(sch, (u32)(unsigned long)sch))
+> >> +		ret = VFIO_CCW_STATE_NOT_OPER;
+> >> +	spin_unlock_irq(sch->lock);
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +static int fsm_offline(struct vfio_ccw_private *private)
+> >> +{
+> >> +	struct subchannel *sch = private->sch;
+> >> +	int ret = VFIO_CCW_STATE_STANDBY;
+> >> +
+> >> +	spin_lock_irq(sch->lock);
+> >> +	if (cio_disable_subchannel(sch))
+> >> +		ret = VFIO_CCW_STATE_NOT_OPER;  
+> > So, what about a subchannel that is busy? Why should it go to the not
+> > oper state?  
 > 
-> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+> right, thanks.
+> 
+> >
+> > (And you should try to flush pending I/O and then try again in that
+> > case. Otherwise, you may have a still-enabled subchannel which may
+> > throw an interrupt.)  
+> 
+> What about letting the guest doing this.
+> After giving him the right information on what happened of course.
 
-So this is a bugfix?  If so, how far back in the kernel releases should
-it go to?
+Why should the guest know anything about this? Getting the device to a
+usable state respectively cleaning up is the responsibility of the host
+code. This processing will happen before the guest gets use of the
+device or after it has lost use of it already (or it is some internal
+handling like reset, which the guest should not be made aware of).
 
-thanks,
+> 
+> >  
+> >> +	spin_unlock_irq(sch->lock);
+> >> +	if (private->completion)
+> >> +		complete(private->completion);
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +static int fsm_quiescing(struct vfio_ccw_private *private)
+> >> +{
+> >> +	struct subchannel *sch = private->sch;
+> >> +	int ret = VFIO_CCW_STATE_STANDBY;
+> >> +	int iretry = 255;
+> >> +
+> >> +	spin_lock_irq(sch->lock);
+> >> +	ret = cio_cancel_halt_clear(sch, &iretry);
+> >> +	if (ret == -EBUSY)
+> >> +		ret = VFIO_CCW_STATE_QUIESCING;
+> >> +	else if (private->completion)
+> >> +		complete(private->completion);
+> >> +	spin_unlock_irq(sch->lock);
+> >> +	return ret;  
+> > If I read this correctly, you're calling cio_cancel_halt_clear() only
+> > once. What happened to the retry loop?  
+> 
+> Same as above, what about letting the guest doing this?
 
-greg k-h
+See my reply above.
+
+> And there are already 255 retries as part of the interface to cio.
+
+>From the kerneldoc comment for cio_cancel_halt_clear():
+
+ * This should be called repeatedly since halt/clear are asynchronous           
+ * operations. We do one try with cio_cancel, three tries with cio_halt,        
+ * 255 tries with cio_clear. The caller should initialize @iretry with          
+ * the value 255 for its first call to this, and keep using the same            
+ * @iretry in the subsequent calls until it gets a non -EBUSY return. 
+
+> 
+> >  
+> >> +}
+> >> +static int fsm_quiescing_done(struct vfio_ccw_private *private)
+> >> +{
+> >> +	if (private->completion)
+> >> +		complete(private->completion);
+> >> +	return VFIO_CCW_STATE_STANDBY;
+> >> +}
+> >>   /*
+> >>    * No operation action.
+> >>    */
+> >> @@ -178,15 +225,10 @@ static int fsm_sch_event(struct vfio_ccw_private *private)
+> >>   static int fsm_init(struct vfio_ccw_private *private)
+> >>   {
+> >>   	struct subchannel *sch = private->sch;
+> >> -	int ret = VFIO_CCW_STATE_STANDBY;
+> >>   
+> >> -	spin_lock_irq(sch->lock);
+> >>   	sch->isc = VFIO_CCW_ISC;
+> >> -	if (cio_enable_subchannel(sch, (u32)(unsigned long)sch))
+> >> -		ret = VFIO_CCW_STATE_NOT_OPER;
+> >> -	spin_unlock_irq(sch->lock);
+> >>   
+> >> -	return ret;
+> >> +	return VFIO_CCW_STATE_STANDBY;  
+> > Doesn't that change the semantic of the standby state?  
+> 
+> It changes the FSM: NOT_OPER and STANDBY are clearly different.
+> Part of the initialization is now done in when putting the device online.
+
+Hm, I think the changes to the fsm semantics are a bit mixed up between
+patches. I'll wait for an outline of how this is supposed to look in
+the end before commenting further :)
+
+> > Your idea here seems to be to go to either disabling the subchannel
+> > directly or flushing out I/O first, depending on the state you're in.
+> > The problem is that you may need retries in any case (the subchannel
+> > may be status pending if it is enabled; not necessarily by any I/O that
+> > had been started, but also from an unsolicited notification.)  
+> 
+> I wanted to let the guest do the retries as he wants to.
+> Somehow we must give the right response back to the guest
+> and take care of the error number we give back.
+
+As described above, we need to be clear on what should be guest-visible
+and what is just internal handling e.g. during initialization/removal.
+
+> 
+> I will get a better look at this.
+> 
+> >  
+> >>   };
+> >> diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
+> >> index ea8fd64..b202e73 100644
+> >> --- a/drivers/s390/cio/vfio_ccw_ops.c
+> >> +++ b/drivers/s390/cio/vfio_ccw_ops.c
+> >> @@ -21,21 +21,14 @@ static int vfio_ccw_mdev_reset(struct mdev_device *mdev)
+> >>   
+> >>   	private = dev_get_drvdata(mdev_parent_dev(mdev));
+> >>   	sch = private->sch;
+> >> -	/*
+> >> -	 * TODO:
+> >> -	 * In the cureent stage, some things like "no I/O running" and "no
+> >> -	 * interrupt pending" are clear, but we are not sure what other state
+> >> -	 * we need to care about.
+> >> -	 * There are still a lot more instructions need to be handled. We
+> >> -	 * should come back here later.
+> >> -	 */  
+> > This is still true, no? I'm thinking about things like channel monitors
+> > and the like (even if we don't support them yet).  
+> 
+> I think that this is not the place to put this remark since here
+> we should send an event to the FSM, having new states
+> will be handled as FSM states.
+> I put it back, here or where I think it belong if I find another
+> place after resolving the RESET problem.
+
+The comment basically refers to "we aren't quite sure whether there is
+more stuff we need to reset", so I think this is indeed the correct
+place.
