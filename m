@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeFENRH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:17:07 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:49419 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeFENRE (ORCPT
+        id S1751962AbeFENRG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:17:06 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:51822 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751840AbeFENRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 5 Jun 2018 09:17:04 -0400
-X-Google-Smtp-Source: ADUXVKIEfF98dvTPd7Gd2b0weM809tDRUPeUak810RYrkNxT/tVOCuZ56FUSWHdtzfebSQ4PBsaDpSIhm8vcpb7LnJwT8ZYbqhLC
+X-Google-Smtp-Source: ADUXVKKQMrk+k3Hr5b0hSJaG2caCI5Sg1NehaQQgOguuzFJ7YLDlKRCdAcBXXktXbUjaHEvfm4qKUseYIcGrEgB743eHgd6SxQ5Q
 MIME-Version: 1.0
 Date: Tue, 05 Jun 2018 06:17:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b6f0d9056de4dd54@google.com>
-Subject: BUG: unable to handle kernel paging request in dput
-From: syzbot <syzbot+4f39ae71208fef432d97@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <000000000000b9e25a056de4dd10@google.com>
+Subject: WARNING in close_fs_devices
+From: syzbot <syzbot+ceb2606025ec1cc3479c@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, jbacik@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -28,85 +29,76 @@ syzbot found the following crash on:
 
 HEAD commit:    716a685fdb89 Merge branch 'x86-hyperv-for-linus' of git://..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10224f2f800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15c5f46f800000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=4f65cd4286737868
-dashboard link: https://syzkaller.appspot.com/bug?extid=4f39ae71208fef432d97
+dashboard link: https://syzkaller.appspot.com/bug?extid=ceb2606025ec1cc3479c
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10626def800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151d6af7800000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1251799f800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177f3edf800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4f39ae71208fef432d97@syzkaller.appspotmail.com
+Reported-by: syzbot+ceb2606025ec1cc3479c@syzkaller.appspotmail.com
 
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440449
-RDX: 00000000000000a6 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000001 R09: 65732f636f720031
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-BUG: unable to handle kernel paging request at fffffffffffffff4
-PGD 8c6d067 P4D 8c6d067 PUD 8c6f067 PMD 0
-Oops: 0000 [#1] SMP KASAN
-CPU: 0 PID: 4491 Comm: syz-executor505 Not tainted 4.17.0+ #84
+WARNING: CPU: 1 PID: 4499 at fs/btrfs/volumes.c:1071  
+close_fs_devices+0xbc7/0xfa0 fs/btrfs/volumes.c:1071
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 4499 Comm: syz-executor921 Not tainted 4.17.0+ #84
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:fast_dput fs/dcache.c:716 [inline]
-RIP: 0010:dput.part.26+0x117/0x780 fs/dcache.c:835
-Code: ff 09 b3 ff 45 84 ff 0f 84 e2 03 00 00 e8 21 09 b3 ff 48 89 d8 48 c1  
-e8 03 42 0f b6 04 28 84 c0 74 08 3c 03 0f 8e 04 05 00 00 <44> 8b 3b 48 8d  
-83 80 00 00 00 31 ff 48 89 85 70 ff ff ff 41 83 e7
-RSP: 0018:ffff8801b6f979f8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: fffffffffffffff4 RCX: ffffffff81c64bd2
-RDX: 0000000000000000 RSI: ffffffff81c647df RDI: 0000000000000001
-RBP: ffff8801b6f97a90 R08: ffff8801b04205c0 R09: ffffed003b5c46d6
-R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: 1ffff10036df2f41
-R13: dffffc0000000000 R14: ffffed0036df2f45 R15: 0000000000000001
-FS:  0000000001150880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffffffffffff4 CR3: 00000001d06ad000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  dput+0x15/0x20 fs/dcache.c:830
-  proc_fill_cache+0x230/0x660 fs/proc/base.c:1910
-  proc_ns_dir_readdir+0x3f5/0x560 fs/proc/namespaces.c:126
-  iterate_dir+0x4b0/0x5d0 fs/readdir.c:51
-  ksys_getdents64+0x21c/0x430 fs/readdir.c:314
-  __do_sys_getdents64 fs/readdir.c:333 [inline]
-  __se_sys_getdents64 fs/readdir.c:330 [inline]
-  __x64_sys_getdents64+0x73/0xb0 fs/readdir.c:330
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:close_fs_devices+0xbc7/0xfa0 fs/btrfs/volumes.c:1071
+Code: a0 b4 fe 0f 0b e8 89 a0 b4 fe 0f 0b 48 89 f7 e8 8f 10 f1 fe e9 f6 f5  
+ff ff e8 75 a0 b4 fe 0f 0b e9 fd fd ff ff e8 69 a0 b4 fe <0f> 0b e9 a8 fd  
+ff ff 48 8b bd 58 fd ff ff e8 26 11 f1 fe e9 35 fd
+RSP: 0018:ffff8801ad45e530 EFLAGS: 00010293
+RAX: ffff8801adb96200 RBX: 0000000000000001 RCX: ffffffff82c4ae3d
+RDX: 0000000000000000 RSI: ffffffff82c4b097 RDI: 0000000000000007
+RBP: ffff8801ad45e830 R08: ffff8801adb96200 R09: 0000000000000006
+R10: ffff8801adb96200 R11: 0000000000000000 R12: ffffed0035a8bcc1
+R13: 1ffff10035a8bcf9 R14: ffff8801ad45e7c8 R15: ffff8801b4431688
+  btrfs_close_devices+0x29/0x150 fs/btrfs/volumes.c:1085
+  open_ctree+0x589/0x7898 fs/btrfs/disk-io.c:3358
+  btrfs_fill_super fs/btrfs/super.c:1202 [inline]
+  btrfs_mount_root+0x16df/0x1e70 fs/btrfs/super.c:1593
+  mount_fs+0xae/0x328 fs/super.c:1277
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount+0x40/0x60 fs/namespace.c:1027
+  btrfs_mount+0x4a1/0x213e fs/btrfs/super.c:1661
+  mount_fs+0xae/0x328 fs/super.c:1277
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x564/0x30b0 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440449
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff292cc9d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440449
-RDX: 00000000000000a6 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000001 R09: 65732f636f720031
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
+RIP: 0033:0x4431da
+Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 fd e5 fb ff c3 66 2e 0f  
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 da e5 fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007ffe426bfd28 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004431da
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffe426bfd40
+RBP: 0000000000000004 R08: 00000000200006c0 R09: 000000000000000a
+R10: 0000000000000001 R11: 0000000000000286 R12: 0000000000000010
+R13: 0000000008100000 R14: 0031656c69662f2e R15: fe03f80fe03f80ff
 Dumping ftrace buffer:
     (ftrace buffer empty)
-CR2: fffffffffffffff4
----[ end trace 81153e86b0cb1bde ]---
-RIP: 0010:fast_dput fs/dcache.c:716 [inline]
-RIP: 0010:dput.part.26+0x117/0x780 fs/dcache.c:835
-Code: ff 09 b3 ff 45 84 ff 0f 84 e2 03 00 00 e8 21 09 b3 ff 48 89 d8 48 c1  
-e8 03 42 0f b6 04 28 84 c0 74 08 3c 03 0f 8e 04 05 00 00 <44> 8b 3b 48 8d  
-83 80 00 00 00 31 ff 48 89 85 70 ff ff ff 41 83 e7
-RSP: 0018:ffff8801b6f979f8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: fffffffffffffff4 RCX: ffffffff81c64bd2
-RDX: 0000000000000000 RSI: ffffffff81c647df RDI: 0000000000000001
-RBP: ffff8801b6f97a90 R08: ffff8801b04205c0 R09: ffffed003b5c46d6
-R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: 1ffff10036df2f41
-R13: dffffc0000000000 R14: ffffed0036df2f45 R15: 0000000000000001
-FS:  0000000001150880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffffffffffff4 CR3: 00000001d06ad000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
