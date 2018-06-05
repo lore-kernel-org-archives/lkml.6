@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753634AbeFERG1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:06:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35542 "EHLO mail.kernel.org"
+        id S1753656AbeFERGc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752271AbeFERGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:22 -0400
+        id S1753600AbeFERG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
         Subhash Jadavani <subhashj@codeaurora.org>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Li Wei <liwei213@huawei.com>
-Subject: [PATCH 4.9 19/61] scsi: ufs: fix failure to read the string descriptor
-Date: Tue,  5 Jun 2018 19:01:40 +0200
-Message-Id: <20180605170118.888128989@linuxfoundation.org>
+Subject: [PATCH 4.9 20/61] scsi: ufs: refactor device descriptor reading
+Date: Tue,  5 Jun 2018 19:01:41 +0200
+Message-Id: <20180605170118.964067155@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -31,80 +31,199 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Subhash Jadavani <subhashj@codeaurora.org>
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-commit bde44bb665d049468b6a1a2fa7d666434de4f83f upstream.
+commit 93fdd5ac64bbe80dac6416f048405362d7ef0945 upstream.
 
-While reading variable size descriptors (like string descriptor), some UFS
-devices may report the "LENGTH" (field in "Transaction Specific fields" of
-Query Response UPIU) same as what was requested in Query Request UPIU
-instead of reporting the actual size of the variable size descriptor.
-Although it's safe to ignore the "LENGTH" field for variable size
-descriptors as we can always derive the length of the descriptor from
-the descriptor header fields. Hence this change impose the length match
-check only for fixed size descriptors (for which we always request the
-correct size as part of Query Request UPIU).
+Pull device descriptor reading out of ufs quirk so it can be used also
+for other purposes.
 
-Reviewed-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Revamp the fixup setup:
+
+1. Rename ufs_device_info to ufs_dev_desc as very similar name
+   ufs_dev_info is already in use.
+
+2. Make the handlers static as they are not used out of the ufshdc.c
+   file.
+
+[mkp: applied by hand]
+
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[Wei Li: Slight tweaks to get the cherry-pick to apply,resolved collisions.]
 Signed-off-by: Li Wei <liwei213@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ufs/ufshcd.c |   39 +++++++++++++++++++++++++++++++--------
- 1 file changed, 31 insertions(+), 8 deletions(-)
+ drivers/scsi/ufs/ufs.h        |   12 ++++++++++++
+ drivers/scsi/ufs/ufs_quirks.h |   28 ++++++----------------------
+ drivers/scsi/ufs/ufshcd.c     |   40 +++++++++++++++++++---------------------
+ 3 files changed, 37 insertions(+), 43 deletions(-)
 
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -522,4 +522,16 @@ struct ufs_dev_info {
+ 	bool is_lu_power_on_wp;
+ };
+ 
++#define MAX_MODEL_LEN 16
++/**
++ * ufs_dev_desc - ufs device details from the device descriptor
++ *
++ * @wmanufacturerid: card details
++ * @model: card model
++ */
++struct ufs_dev_desc {
++	u16 wmanufacturerid;
++	char model[MAX_MODEL_LEN + 1];
++};
++
+ #endif /* End of Header */
+--- a/drivers/scsi/ufs/ufs_quirks.h
++++ b/drivers/scsi/ufs/ufs_quirks.h
+@@ -21,41 +21,28 @@
+ #define UFS_ANY_VENDOR 0xFFFF
+ #define UFS_ANY_MODEL  "ANY_MODEL"
+ 
+-#define MAX_MODEL_LEN 16
+-
+ #define UFS_VENDOR_TOSHIBA     0x198
+ #define UFS_VENDOR_SAMSUNG     0x1CE
+ #define UFS_VENDOR_SKHYNIX     0x1AD
+ 
+ /**
+- * ufs_device_info - ufs device details
+- * @wmanufacturerid: card details
+- * @model: card model
+- */
+-struct ufs_device_info {
+-	u16 wmanufacturerid;
+-	char model[MAX_MODEL_LEN + 1];
+-};
+-
+-/**
+  * ufs_dev_fix - ufs device quirk info
+  * @card: ufs card details
+  * @quirk: device quirk
+  */
+ struct ufs_dev_fix {
+-	struct ufs_device_info card;
++	struct ufs_dev_desc card;
+ 	unsigned int quirk;
+ };
+ 
+ #define END_FIX { { 0 }, 0 }
+ 
+ /* add specific device quirk */
+-#define UFS_FIX(_vendor, _model, _quirk) \
+-		{					  \
+-			.card.wmanufacturerid = (_vendor),\
+-			.card.model = (_model),		  \
+-			.quirk = (_quirk),		  \
+-		}
++#define UFS_FIX(_vendor, _model, _quirk) { \
++	.card.wmanufacturerid = (_vendor),\
++	.card.model = (_model),		   \
++	.quirk = (_quirk),		   \
++}
+ 
+ /*
+  * If UFS device is having issue in processing LCC (Line Control
+@@ -144,7 +131,4 @@ struct ufs_dev_fix {
+  */
+ #define UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME	(1 << 8)
+ 
+-struct ufs_hba;
+-void ufs_advertise_fixup_device(struct ufs_hba *hba);
+-
+ #endif /* UFS_QUIRKS_H_ */
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
-@@ -2086,18 +2086,41 @@ static int ufshcd_read_desc_param(struct
- 					desc_id, desc_index, 0, desc_buf,
- 					&buff_len);
+@@ -4906,8 +4906,8 @@ out:
+ 	return ret;
+ }
  
--	if (ret || (buff_len < ufs_query_desc_max_size[desc_id]) ||
--	    (desc_buf[QUERY_DESC_LENGTH_OFFSET] !=
--	     ufs_query_desc_max_size[desc_id])
--	    || (desc_buf[QUERY_DESC_DESC_TYPE_OFFSET] != desc_id)) {
--		dev_err(hba->dev, "%s: Failed reading descriptor. desc_id %d param_offset %d buff_len %d ret %d",
--			__func__, desc_id, param_offset, buff_len, ret);
--		if (!ret)
--			ret = -EINVAL;
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed reading descriptor. desc_id %d, desc_index %d, param_offset %d, ret %d",
-+			__func__, desc_id, desc_index, param_offset, ret);
+-static int ufs_get_device_info(struct ufs_hba *hba,
+-				struct ufs_device_info *card_data)
++static int ufs_get_device_desc(struct ufs_hba *hba,
++			       struct ufs_dev_desc *dev_desc)
+ {
+ 	int err;
+ 	u8 model_index;
+@@ -4926,7 +4926,7 @@ static int ufs_get_device_info(struct uf
+ 	 * getting vendor (manufacturerID) and Bank Index in big endian
+ 	 * format
+ 	 */
+-	card_data->wmanufacturerid = desc_buf[DEVICE_DESC_PARAM_MANF_ID] << 8 |
++	dev_desc->wmanufacturerid = desc_buf[DEVICE_DESC_PARAM_MANF_ID] << 8 |
+ 				     desc_buf[DEVICE_DESC_PARAM_MANF_ID + 1];
  
- 		goto out;
+ 	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
+@@ -4940,36 +4940,26 @@ static int ufs_get_device_info(struct uf
  	}
  
-+	/* Sanity check */
-+	if (desc_buf[QUERY_DESC_DESC_TYPE_OFFSET] != desc_id) {
-+		dev_err(hba->dev, "%s: invalid desc_id %d in descriptor header",
-+			__func__, desc_buf[QUERY_DESC_DESC_TYPE_OFFSET]);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	/*
-+	 * While reading variable size descriptors (like string descriptor),
-+	 * some UFS devices may report the "LENGTH" (field in "Transaction
-+	 * Specific fields" of Query Response UPIU) same as what was requested
-+	 * in Query Request UPIU instead of reporting the actual size of the
-+	 * variable size descriptor.
-+	 * Although it's safe to ignore the "LENGTH" field for variable size
-+	 * descriptors as we can always derive the length of the descriptor from
-+	 * the descriptor header fields. Hence this change impose the length
-+	 * match check only for fixed size descriptors (for which we always
-+	 * request the correct size as part of Query Request UPIU).
-+	 */
-+	if ((desc_id != QUERY_DESC_IDN_STRING) &&
-+	    (buff_len != desc_buf[QUERY_DESC_LENGTH_OFFSET])) {
-+		dev_err(hba->dev, "%s: desc_buf length mismatch: buff_len %d, buff_len(desc_header) %d",
-+			__func__, buff_len, desc_buf[QUERY_DESC_LENGTH_OFFSET]);
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (is_kmalloc)
- 		memcpy(param_read_buf, &desc_buf[param_offset], param_size);
+ 	str_desc_buf[QUERY_DESC_STRING_MAX_SIZE] = '\0';
+-	strlcpy(card_data->model, (str_desc_buf + QUERY_DESC_HDR_SIZE),
++	strlcpy(dev_desc->model, (str_desc_buf + QUERY_DESC_HDR_SIZE),
+ 		min_t(u8, str_desc_buf[QUERY_DESC_LENGTH_OFFSET],
+ 		      MAX_MODEL_LEN));
+ 
+ 	/* Null terminate the model string */
+-	card_data->model[MAX_MODEL_LEN] = '\0';
++	dev_desc->model[MAX_MODEL_LEN] = '\0';
+ 
  out:
+ 	return err;
+ }
+ 
+-void ufs_advertise_fixup_device(struct ufs_hba *hba)
++static void ufs_fixup_device_setup(struct ufs_hba *hba,
++				   struct ufs_dev_desc *dev_desc)
+ {
+-	int err;
+ 	struct ufs_dev_fix *f;
+-	struct ufs_device_info card_data;
+-
+-	card_data.wmanufacturerid = 0;
+-
+-	err = ufs_get_device_info(hba, &card_data);
+-	if (err) {
+-		dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
+-			__func__, err);
+-		return;
+-	}
+ 
+ 	for (f = ufs_fixups; f->quirk; f++) {
+-		if (((f->card.wmanufacturerid == card_data.wmanufacturerid) ||
+-		    (f->card.wmanufacturerid == UFS_ANY_VENDOR)) &&
+-		    (STR_PRFX_EQUAL(f->card.model, card_data.model) ||
++		if ((f->card.wmanufacturerid == dev_desc->wmanufacturerid ||
++		     f->card.wmanufacturerid == UFS_ANY_VENDOR) &&
++		    (STR_PRFX_EQUAL(f->card.model, dev_desc->model) ||
+ 		     !strcmp(f->card.model, UFS_ANY_MODEL)))
+ 			hba->dev_quirks |= f->quirk;
+ 	}
+@@ -5147,6 +5137,7 @@ static void ufshcd_tune_unipro_params(st
+  */
+ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ {
++	struct ufs_dev_desc card = {0};
+ 	int ret;
+ 
+ 	ret = ufshcd_link_startup(hba);
+@@ -5170,7 +5161,14 @@ static int ufshcd_probe_hba(struct ufs_h
+ 	if (ret)
+ 		goto out;
+ 
+-	ufs_advertise_fixup_device(hba);
++	ret = ufs_get_device_desc(hba, &card);
++	if (ret) {
++		dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
++			__func__, ret);
++		goto out;
++	}
++
++	ufs_fixup_device_setup(hba, &card);
+ 	ufshcd_tune_unipro_params(hba);
+ 
+ 	ret = ufshcd_set_vccq_rail_unused(hba,
