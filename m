@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeFEHHK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:07:10 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38409 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751568AbeFEHHI (ORCPT
+        id S1751894AbeFEHHv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:07:51 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46029 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751497AbeFEHHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:07:08 -0400
-X-Google-Smtp-Source: ADUXVKLboUweTuYCoSR3pXzT+bOxkgJTLycUb7CdGa0hjwcSy72MW3YOzX8ku1XlSqbAeqNjwvF2wIV+n+yHgeGeeeY=
+        Tue, 5 Jun 2018 03:07:49 -0400
+X-Google-Smtp-Source: ADUXVKK/2gVfBym337yYSm6K+ysiCy5LKKNo1p7FMdoR50Ep2zxWQ3wt+56ROHXe31c1lgcn3ZmLE5JDfcAnKh0rt5A=
 MIME-Version: 1.0
-In-Reply-To: <20180604162224.386544292@linutronix.de>
-References: <20180604162224.386544292@linutronix.de>
+In-Reply-To: <20180604162224.471925894@linutronix.de>
+References: <20180604162224.471925894@linutronix.de>
 From: Song Liu <liu.song.a23@gmail.com>
-Date: Tue, 5 Jun 2018 00:07:08 -0700
-Message-ID: <CAPhsuW4M=i1bGTEeL=SvfPKPQxgv79NbQHSRWLerbFtCnOZ2FQ@mail.gmail.com>
-Subject: Re: [patch 2/8] genirq/generic_pending: Do not lose pending affinity update
+Date: Tue, 5 Jun 2018 00:07:48 -0700
+Message-ID: <CAPhsuW6BnCSLcSUnG75KkAJeYBaS4bTvyj-brk2OUUfOfQszcQ@mail.gmail.com>
+Subject: Re: [patch 3/8] x86/apic: Provide apic_ack_irq()
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
@@ -27,76 +27,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Jun 4, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> The generic pending interrupt mechanism moves interrupts from the interrupt
-> handler on the original target CPU to the new destination CPU. This is
-> required for x86 and ia64 due to the way the interrupt delivery and
-> acknowledge works if the interrupts are not remapped.
+> apic_ack_edge() is explicitely for handling interrupt affinity cleanup when
+> interrupt remapping is not available or disable.
 >
-> However that update can fail for various reasons. Some of them are valid
-> reasons to discard the pending update, but the case, when the previous move
-> has not been fully cleaned up is not a legit reason to fail.
+> Remapped interrupts and also some of the platform specific special
+> interrupts, e.g. UV, invoke ack_APIC_irq() directly.
 >
-> Check the return value of irq_do_set_affinity() for -EBUSY, which indicates
-> a pending cleanup, and rearm the pending move in the irq dexcriptor so it's
-> tried again when the next interrupt arrives.
+> To address the issue of failing an affinity update with -EBUSY the delayed
+> affinity mechanism can be reused, but ack_APIC_irq() does not handle
+> that. Adding this to ack_APIC_irq() is not possible, because that function
+> is also used for exceptions and directly handled interrupts like IPIs.
 >
-> Fixes: 996c591227d9 ("x86/irq: Plug vector cleanup race")
+> Create a new function, which just contains the conditional invocation of
+> irq_move_irq() and the final ack_APIC_irq(). Making the invocation of
+> irq_move_irq() conditional avoids the out of line call if the pending bit
+> is not set.
+>
+> Reuse the new function in apic_ack_edge().
+>
+> Preparatory change for the real fix
+>
+> Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 > Cc: stable@vger.kernel.org
 
 Tested-by: Song Liu <songliubraving@fb.com>
 
 > ---
->  kernel/irq/migration.c |   24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
+>  arch/x86/include/asm/apic.h   |    2 ++
+>  arch/x86/kernel/apic/vector.c |   10 ++++++++--
+>  2 files changed, 10 insertions(+), 2 deletions(-)
 >
-> --- a/kernel/irq/migration.c
-> +++ b/kernel/irq/migration.c
-> @@ -38,17 +38,18 @@ bool irq_fixup_move_pending(struct irq_d
->  void irq_move_masked_irq(struct irq_data *idata)
+> --- a/arch/x86/include/asm/apic.h
+> +++ b/arch/x86/include/asm/apic.h
+> @@ -436,6 +436,8 @@ static inline void apic_set_eoi_write(vo
+>
+>  #endif /* CONFIG_X86_LOCAL_APIC */
+>
+> +extern void apic_ack_irq(struct irq_data *data);
+> +
+>  static inline void ack_APIC_irq(void)
 >  {
->         struct irq_desc *desc = irq_data_to_desc(idata);
-> -       struct irq_chip *chip = desc->irq_data.chip;
-> +       struct irq_data *data = &desc->irq_data;
-> +       struct irq_chip *chip = data->chip;
->
-> -       if (likely(!irqd_is_setaffinity_pending(&desc->irq_data)))
-> +       if (likely(!irqd_is_setaffinity_pending(data)))
->                 return;
->
-> -       irqd_clr_move_pending(&desc->irq_data);
-> +       irqd_clr_move_pending(data);
->
 >         /*
->          * Paranoia: cpu-local interrupts shouldn't be calling in here anyway.
->          */
-> -       if (irqd_is_per_cpu(&desc->irq_data)) {
-> +       if (irqd_is_per_cpu(data)) {
->                 WARN_ON(1);
->                 return;
->         }
-> @@ -73,9 +74,20 @@ void irq_move_masked_irq(struct irq_data
->          * For correct operation this depends on the caller
->          * masking the irqs.
->          */
-> -       if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids)
-> -               irq_do_set_affinity(&desc->irq_data, desc->pending_mask, false);
-> +       if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids) {
-> +               int ret;
->
-> +               ret = irq_do_set_affinity(data, desc->pending_mask, false);
-> +               /*
-> +                * If the there is a cleanup pending in the underlying
-> +                * vector management, reschedule the move for the next
-> +                * interrupt. Leave desc->pending_mask intact.
-> +                */
-> +               if (ret == -EBUSY) {
-> +                       irqd_set_move_pending(data);
-> +                       return;
-> +               }
-> +       }
->         cpumask_clear(desc->pending_mask);
+> --- a/arch/x86/kernel/apic/vector.c
+> +++ b/arch/x86/kernel/apic/vector.c
+> @@ -809,11 +809,17 @@ static int apic_retrigger_irq(struct irq
+>         return 1;
 >  }
 >
+> +void apic_ack_irq(struct irq_data *irqd)
+> +{
+> +       if (unlikely(irqd_is_setaffinity_pending(irqd)))
+> +               irq_move_irq(irqd);
+> +       ack_APIC_irq();
+> +}
+> +
+>  void apic_ack_edge(struct irq_data *irqd)
+>  {
+>         irq_complete_move(irqd_cfg(irqd));
+> -       irq_move_irq(irqd);
+> -       ack_APIC_irq();
+> +       apic_ack_irq(irqd);
+>  }
+>
+>  static struct irq_chip lapic_controller = {
 >
 >
