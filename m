@@ -1,355 +1,466 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752382AbeFETMg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:12:36 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51222 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752025AbeFETMf (ORCPT
+        id S1752540AbeFETNZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:13:25 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39035 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752111AbeFETNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:12:35 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com, Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH v6 1/2] drm/i915: update cursors asynchronously through atomic
-Date: Tue,  5 Jun 2018 21:12:25 +0200
-Message-Id: <20180605191226.32310-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 5 Jun 2018 15:13:23 -0400
+X-Google-Smtp-Source: ADUXVKKDqUl+v2nGkdcM7c8ievb4gioy5I+k5UcifKF9IfxsPAE1Ki4WptE1b4moY/hxEbgvKnYUqQ==
+Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>, davem@davemloft.net
+Cc: hayeswang@realtek.com, romieu@fr.zoreil.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ryankao <ryankao@realtek.com>
+References: <20180605045812.17977-1-kai.heng.feng@canonical.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <dfd3a9b4-3f89-9849-8d71-6fc49374b1df@gmail.com>
+Date: Tue, 5 Jun 2018 21:13:08 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605045812.17977-1-kai.heng.feng@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On 05.06.2018 06:58, Kai-Heng Feng wrote:
+> This patch reinstate ALDPS and ASPM support on r8169.
+> 
+> On some Intel platforms, ASPM support on r8169 is the key factor to let
+> Package C-State achieve PC8. Without ASPM support, the deepest Package
+> C-State can hit is PC3. PC8 can save additional ~3W in comparison with
+> PC3.
+> 
+> This patch is from Realtek.
+> 
+> Fixes: e0c075577965 ("r8169: enable ALDPS for power saving")
+> Fixes: d64ec841517a ("r8169: enable internal ASPM and clock request settings")
+> 
+> Cc: Ryankao <ryankao@realtek.com>
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/net/ethernet/realtek/r8169.c | 190 +++++++++++++++++++++------
+>  1 file changed, 151 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+> index 75dfac0248f4..a28ef20be221 100644
+> --- a/drivers/net/ethernet/realtek/r8169.c
+> +++ b/drivers/net/ethernet/realtek/r8169.c
+> @@ -319,6 +319,8 @@ static const struct pci_device_id rtl8169_pci_tbl[] = {
+>  
+>  MODULE_DEVICE_TABLE(pci, rtl8169_pci_tbl);
+>  
+> +static int enable_aspm = 1;
+> +static int enable_aldps = 1;
+>  static int use_dac = -1;
+>  static struct {
+>  	u32 msg_enable;
+> @@ -817,6 +819,10 @@ struct rtl8169_private {
+>  
+>  MODULE_AUTHOR("Realtek and the Linux r8169 crew <netdev@vger.kernel.org>");
+>  MODULE_DESCRIPTION("RealTek RTL-8169 Gigabit Ethernet driver");
+> +module_param(enable_aspm, int, 0);
+> +MODULE_PARM_DESC(enable_aspm, "Enable ASPM");
+> +module_param(enable_aldps, int, 0);
+> +MODULE_PARM_DESC(enable_aldps, "Enable ALDPS");
+>  module_param(use_dac, int, 0);
+>  MODULE_PARM_DESC(use_dac, "Enable PCI DAC. Unsafe on 32 bit PCI slot.");
+>  module_param_named(debug, debug.msg_enable, int, 0);
+> @@ -1567,25 +1573,6 @@ static void rtl_link_chg_patch(struct rtl8169_private *tp)
+>  	}
+>  }
+>  
+> -static void rtl8169_check_link_status(struct net_device *dev,
+> -				      struct rtl8169_private *tp)
+> -{
+> -	struct device *d = tp_to_dev(tp);
+> -
+> -	if (tp->link_ok(tp)) {
+> -		rtl_link_chg_patch(tp);
+> -		/* This is to cancel a scheduled suspend if there's one. */
+> -		pm_request_resume(d);
+> -		netif_carrier_on(dev);
+> -		if (net_ratelimit())
+> -			netif_info(tp, ifup, dev, "link up\n");
+> -	} else {
+> -		netif_carrier_off(dev);
+> -		netif_info(tp, ifdown, dev, "link down\n");
+> -		pm_runtime_idle(d);
+> -	}
+> -}
+> -
+>  #define WAKE_ANY (WAKE_PHY | WAKE_MAGIC | WAKE_UCAST | WAKE_BCAST | WAKE_MCAST)
+>  
+>  static u32 __rtl8169_get_wol(struct rtl8169_private *tp)
+> @@ -3520,6 +3507,15 @@ static void rtl8168e_1_hw_phy_config(struct rtl8169_private *tp)
+>  	rtl_writephy(tp, 0x0d, 0x4007);
+>  	rtl_writephy(tp, 0x0e, 0x0000);
+>  	rtl_writephy(tp, 0x0d, 0x0000);
+> +
+> +	/* Check ALDPS bit, disable it if enabled */
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
+> +	else if (rtl_readphy(tp, 0x15) & 0x1000)
+> +		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0000);
 
-Add support to async updates of cursors by using the new atomic
-interface for that. Basically what this commit does is do what
-intel_legacy_cursor_update() did but through atomic.
+Few remarks:
+- The comment isn't applicable any longer.
+- The second rtl_writephy(tp, 0x1f, 0x0000) isn't needed because you don't
+  switch the page in between.
+- The code is a little hard to read, instead you could use the following
+  and create a helper, ideally with register and bit number as
+  parameters so that you can use it for all affected chip types.
 
-Cc: Daniel Vetter <daniel.vetter@intel.com>
-Cc: intel-gfx@lists.freedesktop.org
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-This is another attempt to land the patches to update cursors
-asynchronously through atomic for the i915 driver. Last version was sent
-some time ago [1], so these series are rebased on top of current mainline
-and also solves some issues found. The patches were tested by running the
-igt test and check there is no regressions (kms_cursor_legacy and
-kms_atomic plane_cursor_legacy)
+val = rtl_readphy(tp, 0x15);
+val &= ~BIT(12);
+if (enable_aldps)
+	val |= BIT(12);
+rtl_writephy(tp, 0x15, val);
 
-Waiting for your feedback,
- Enric
+>  }
+>  
+>  static void rtl_rar_exgmac_set(struct rtl8169_private *tp, u8 *addr)
+> @@ -3627,6 +3623,15 @@ static void rtl8168e_2_hw_phy_config(struct rtl8169_private *tp)
+>  
+>  	/* Broken BIOS workaround: feed GigaMAC registers with MAC address. */
+>  	rtl_rar_exgmac_set(tp, tp->dev->dev_addr);
+> +
+> +	/* Check ALDPS bit, disable it if enabled */
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
+> +	else if (rtl_readphy(tp, 0x15) & 0x1000)
+> +		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+>  }
+>  
+>  static void rtl8168f_hw_phy_config(struct rtl8169_private *tp)
+> @@ -3649,6 +3654,15 @@ static void rtl8168f_hw_phy_config(struct rtl8169_private *tp)
+>  	rtl_writephy(tp, 0x05, 0x8b86);
+>  	rtl_w0w1_phy(tp, 0x06, 0x0001, 0x0000);
+>  	rtl_writephy(tp, 0x1f, 0x0000);
+> +
+> +	/* Check ALDPS bit, disable it if enabled */
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
+> +	else if (rtl_readphy(tp, 0x15) & 0x1000)
+> +		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+>  }
+>  
+>  static void rtl8168f_1_hw_phy_config(struct rtl8169_private *tp)
+> @@ -3865,7 +3879,9 @@ static void rtl8168g_1_hw_phy_config(struct rtl8169_private *tp)
+>  
+>  	/* Check ALDPS bit, disable it if enabled */
+>  	rtl_writephy(tp, 0x1f, 0x0a43);
+> -	if (rtl_readphy(tp, 0x10) & 0x0004)
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
+> +	else if (rtl_readphy(tp, 0x10) & 0x0004)
+>  		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+>  
+>  	rtl_writephy(tp, 0x1f, 0x0000);
+> @@ -3874,6 +3890,14 @@ static void rtl8168g_1_hw_phy_config(struct rtl8169_private *tp)
+>  static void rtl8168g_2_hw_phy_config(struct rtl8169_private *tp)
+>  {
+>  	rtl_apply_firmware(tp);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0a43);
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
+> +	else if (rtl_readphy(tp, 0x10) & 0x0004)
+> +		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+>  }
+>  
+>  static void rtl8168h_1_hw_phy_config(struct rtl8169_private *tp)
+> @@ -3980,7 +4004,9 @@ static void rtl8168h_1_hw_phy_config(struct rtl8169_private *tp)
+>  
+>  	/* Check ALDPS bit, disable it if enabled */
+>  	rtl_writephy(tp, 0x1f, 0x0a43);
+> -	if (rtl_readphy(tp, 0x10) & 0x0004)
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
+> +	else if (rtl_readphy(tp, 0x10) & 0x0004)
+>  		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+>  
+>  	rtl_writephy(tp, 0x1f, 0x0000);
+> @@ -4053,7 +4079,9 @@ static void rtl8168h_2_hw_phy_config(struct rtl8169_private *tp)
+>  
+>  	/* Check ALDPS bit, disable it if enabled */
+>  	rtl_writephy(tp, 0x1f, 0x0a43);
+> -	if (rtl_readphy(tp, 0x10) & 0x0004)
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
+> +	else if (rtl_readphy(tp, 0x10) & 0x0004)
+>  		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+>  
+>  	rtl_writephy(tp, 0x1f, 0x0000);
+> @@ -4095,7 +4123,9 @@ static void rtl8168ep_1_hw_phy_config(struct rtl8169_private *tp)
+>  
+>  	/* Check ALDPS bit, disable it if enabled */
+>  	rtl_writephy(tp, 0x1f, 0x0a43);
+> -	if (rtl_readphy(tp, 0x10) & 0x0004)
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
+> +	else if (rtl_readphy(tp, 0x10) & 0x0004)
+>  		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+>  
+>  	rtl_writephy(tp, 0x1f, 0x0000);
+> @@ -4186,7 +4216,9 @@ static void rtl8168ep_2_hw_phy_config(struct rtl8169_private *tp)
+>  
+>  	/* Check ALDPS bit, disable it if enabled */
+>  	rtl_writephy(tp, 0x1f, 0x0a43);
+> -	if (rtl_readphy(tp, 0x10) & 0x0004)
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x10, 0x0004, 0x0000);
+> +	else if (rtl_readphy(tp, 0x10) & 0x0004)
+>  		rtl_w0w1_phy(tp, 0x10, 0x0000, 0x0004);
+>  
+>  	rtl_writephy(tp, 0x1f, 0x0000);
+> @@ -4233,6 +4265,15 @@ static void rtl8105e_hw_phy_config(struct rtl8169_private *tp)
+>  	rtl_apply_firmware(tp);
+>  
+>  	rtl_writephy_batch(tp, phy_reg_init, ARRAY_SIZE(phy_reg_init));
+> +
+> +	/* Check ALDPS bit, disable it if enabled */
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x18, 0x1000, 0x0000);
+> +	else if (rtl_readphy(tp, 0x18) & 0x1000)
+> +		rtl_w0w1_phy(tp, 0x18, 0x0000, 0x1000);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+>  }
+>  
+>  static void rtl8402_hw_phy_config(struct rtl8169_private *tp)
+> @@ -4250,6 +4291,15 @@ static void rtl8402_hw_phy_config(struct rtl8169_private *tp)
+>  	rtl_writephy(tp, 0x10, 0x401f);
+>  	rtl_writephy(tp, 0x19, 0x7030);
+>  	rtl_writephy(tp, 0x1f, 0x0000);
+> +
+> +	/* Check ALDPS bit, disable it if enabled */
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x18, 0x1000, 0x0000);
+> +	else if (rtl_readphy(tp, 0x18) & 0x1000)
+> +		rtl_w0w1_phy(tp, 0x18, 0x0000, 0x1000);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+>  }
+>  
+>  static void rtl8106e_hw_phy_config(struct rtl8169_private *tp)
+> @@ -4272,6 +4322,15 @@ static void rtl8106e_hw_phy_config(struct rtl8169_private *tp)
+>  	rtl_writephy_batch(tp, phy_reg_init, ARRAY_SIZE(phy_reg_init));
+>  
+>  	rtl_eri_write(tp, 0x1d0, ERIAR_MASK_0011, 0x0000, ERIAR_EXGMAC);
+> +
+> +	/* Check ALDPS bit, disable it if enabled */
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+> +	if (enable_aldps)
+> +		rtl_w0w1_phy(tp, 0x18, 0x1000, 0x0000);
+> +	else if (rtl_readphy(tp, 0x18) & 0x1000)
+> +		rtl_w0w1_phy(tp, 0x18, 0x0000, 0x1000);
+> +
+> +	rtl_writephy(tp, 0x1f, 0x0000);
+>  }
+>  
+>  static void rtl_hw_phy_config(struct net_device *dev)
+> @@ -5290,6 +5349,18 @@ static void rtl_pcie_state_l2l3_enable(struct rtl8169_private *tp, bool enable)
+>  	RTL_W8(tp, Config3, data);
+>  }
+>  
+> +static void rtl_hw_internal_aspm_clkreq_enable(struct rtl8169_private *tp,
+> +					       bool enable)
+> +{
+> +	if (enable) {
+> +		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
+> +		RTL_W8(tp, Config5, RTL_R8(tp, Config5) | ASPM_en);
+> +	} else {
+> +		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+> +		RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+> +	}
+> +}
+> +
+>  static void rtl_hw_start_8168bb(struct rtl8169_private *tp)
+>  {
+>  	RTL_W8(tp, Config3, RTL_R8(tp, Config3) & ~Beacon_en);
+> @@ -5646,9 +5717,10 @@ static void rtl_hw_start_8168g_1(struct rtl8169_private *tp)
+>  	rtl_hw_start_8168g(tp);
+>  
+>  	/* disable aspm and clock request before access ephy */
+> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>  	rtl_ephy_init(tp, e_info_8168g_1, ARRAY_SIZE(e_info_8168g_1));
+> +	if (enable_aspm)
+> +		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>  }
+>  
+>  static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
+> @@ -5681,9 +5753,10 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
+>  	rtl_hw_start_8168g(tp);
+>  
+>  	/* disable aspm and clock request before access ephy */
+> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>  	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
+> +	if (enable_aspm)
+> +		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>  }
+>  
+>  static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+> @@ -5700,8 +5773,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+>  	};
+>  
+>  	/* disable aspm and clock request before access ephy */
+> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>  	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
+>  
+>  	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
+> @@ -5780,6 +5852,9 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+>  	r8168_mac_ocp_write(tp, 0xe63e, 0x0000);
+>  	r8168_mac_ocp_write(tp, 0xc094, 0x0000);
+>  	r8168_mac_ocp_write(tp, 0xc09e, 0x0000);
+> +
+> +	if (enable_aspm)
+> +		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>  }
+>  
+>  static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
+> @@ -5831,11 +5906,13 @@ static void rtl_hw_start_8168ep_1(struct rtl8169_private *tp)
+>  	};
+>  
+>  	/* disable aspm and clock request before access ephy */
+> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>  	rtl_ephy_init(tp, e_info_8168ep_1, ARRAY_SIZE(e_info_8168ep_1));
+>  
+>  	rtl_hw_start_8168ep(tp);
+> +
+> +	if (enable_aspm)
+> +		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>  }
+>  
+>  static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
+> @@ -5847,14 +5924,16 @@ static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
+>  	};
+>  
+>  	/* disable aspm and clock request before access ephy */
+> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>  	rtl_ephy_init(tp, e_info_8168ep_2, ARRAY_SIZE(e_info_8168ep_2));
+>  
+>  	rtl_hw_start_8168ep(tp);
+>  
+>  	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) & ~PFM_EN);
+>  	RTL_W8(tp, MISC_1, RTL_R8(tp, MISC_1) & ~PFM_D3COLD_EN);
+> +
+> +	if (enable_aspm)
+> +		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>  }
+>  
+>  static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+> @@ -5868,8 +5947,7 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+>  	};
+>  
+>  	/* disable aspm and clock request before access ephy */
+> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>  	rtl_ephy_init(tp, e_info_8168ep_3, ARRAY_SIZE(e_info_8168ep_3));
+>  
+>  	rtl_hw_start_8168ep(tp);
+> @@ -5889,6 +5967,9 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+>  	data = r8168_mac_ocp_read(tp, 0xe860);
+>  	data |= 0x0080;
+>  	r8168_mac_ocp_write(tp, 0xe860, data);
+> +
+> +	if (enable_aspm)
+> +		rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>  }
+>  
+>  static void rtl_hw_start_8168(struct rtl8169_private *tp)
+> @@ -6364,7 +6445,7 @@ static void rtl8169_tx_clear(struct rtl8169_private *tp)
+>  	tp->cur_tx = tp->dirty_tx = 0;
+>  }
+>  
+> -static void rtl_reset_work(struct rtl8169_private *tp)
+> +static void _rtl_reset_work(struct rtl8169_private *tp)
+>  {
+>  	struct net_device *dev = tp->dev;
+>  	int i;
+> @@ -6384,6 +6465,33 @@ static void rtl_reset_work(struct rtl8169_private *tp)
+>  	napi_enable(&tp->napi);
+>  	rtl_hw_start(tp);
+>  	netif_wake_queue(dev);
+> +}
+> +
+> +static void rtl8169_check_link_status(struct net_device *dev,
+> +				      struct rtl8169_private *tp)
+> +{
+> +	struct device *d = tp_to_dev(tp);
+> +
+> +	if (tp->link_ok(tp)) {
+> +		rtl_link_chg_patch(tp);
+> +		/* This is to cancel a scheduled suspend if there's one. */
+> +		if (pm_request_resume(d))
+> +			_rtl_reset_work(tp);
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2017-September/152141.html
+This reset was added, what is it good for and how is it related to
+ASPM/ALDPS? It looks a little bogus, especially considering that
+pm_request_resume() can return also positive values.
 
-Changes in v6:
-- Rework the intel_plane_atomic_async_update due driver changed from
-  last time.
-- Removed the mutex_lock/unlock as causes a deadlock.
+> +		netif_carrier_on(dev);
+> +		if (net_ratelimit())
+> +			netif_info(tp, ifup, dev, "link up\n");
+> +	} else {
+> +		netif_carrier_off(dev);
+> +		netif_info(tp, ifdown, dev, "link down\n");
+> +		pm_runtime_idle(d);
+> +	}
+> +}
+> +
+> +static void rtl_reset_work(struct rtl8169_private *tp)
+> +{
+> +	struct net_device *dev = tp->dev;
+> +
+> +	_rtl_reset_work(tp);
+>  	rtl8169_check_link_status(dev, tp);
+>  }
+>  
+> @@ -7649,8 +7757,12 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  
+>  	/* disable ASPM completely as that cause random device stop working
+>  	 * problems as well as full system hangs for some PCIe devices users */
+> -	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+> -				     PCIE_LINK_STATE_CLKPM);
+> +	if (!enable_aspm) {
+> +		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
+> +					     PCIE_LINK_STATE_L1 |
+> +					     PCIE_LINK_STATE_CLKPM);
+> +		netif_info(tp, probe, dev, "ASPM disabled\n");
 
-Changes in v5:
-- Call drm_atomic_helper_async_check() from the check hook
+You should use dev_info() here because the net_device isn't registered yet.
 
-Changes in v4:
-- Set correct vma to new state for cleanup
-- Move size checks back to drivers (Ville Syrjälä)
-
-Changes in v3:
-- Move fb setting to core and use new state (Eric Anholt)
-
- drivers/gpu/drm/i915/intel_atomic_plane.c |  69 ++++++++++
- drivers/gpu/drm/i915/intel_display.c      | 154 +++-------------------
- 2 files changed, 87 insertions(+), 136 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/intel_atomic_plane.c b/drivers/gpu/drm/i915/intel_atomic_plane.c
-index 7481ce85746b..7a58909900ed 100644
---- a/drivers/gpu/drm/i915/intel_atomic_plane.c
-+++ b/drivers/gpu/drm/i915/intel_atomic_plane.c
-@@ -248,11 +248,80 @@ static void intel_plane_atomic_update(struct drm_plane *plane,
- 	}
- }
- 
-+static int intel_plane_atomic_async_check(struct drm_plane *plane,
-+					  struct drm_plane_state *state)
-+{
-+	struct drm_crtc_state *crtc_state;
-+
-+	if (plane->type != DRM_PLANE_TYPE_CURSOR)
-+		return -EINVAL;
-+
-+	crtc_state = drm_atomic_get_existing_crtc_state(state->state,
-+							state->crtc);
-+	if (WARN_ON(!crtc_state))
-+		return -EINVAL;
-+
-+	/*
-+	 * When crtc is inactive or there is a modeset pending,
-+	 * wait for it to complete in the slowpath
-+	 */
-+	if (!crtc_state->active || to_intel_crtc_state(crtc_state)->update_pipe)
-+		return -EINVAL;
-+
-+	/*
-+	 * If any parameters change that may affect watermarks,
-+	 * take the slowpath. Only changing fb or position should be
-+	 * in the fastpath.
-+	 */
-+	if (plane->state->crtc != state->crtc ||
-+	    plane->state->src_w != state->src_w ||
-+	    plane->state->src_h != state->src_h ||
-+	    plane->state->crtc_w != state->crtc_w ||
-+	    plane->state->crtc_h != state->crtc_h ||
-+	    !plane->state->fb != !state->fb)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static void intel_plane_atomic_async_update(struct drm_plane *plane,
-+					    struct drm_plane_state *new_state)
-+{
-+	struct intel_plane *intel_plane = to_intel_plane(plane);
-+	struct drm_crtc *crtc = plane->state->crtc;
-+	struct drm_framebuffer *old_fb;
-+
-+	old_fb = plane->state->fb;
-+
-+	i915_gem_track_fb(intel_fb_obj(old_fb), intel_fb_obj(new_state->fb),
-+			  intel_plane->frontbuffer_bit);
-+
-+	plane->state->src_x = new_state->src_x;
-+	plane->state->src_y = new_state->src_y;
-+	plane->state->crtc_x = new_state->crtc_x;
-+	plane->state->crtc_y = new_state->crtc_y;
-+	plane->state->fb = new_state->fb;
-+
-+	new_state->fb = old_fb;
-+
-+	if (plane->state->visible) {
-+		trace_intel_update_plane(plane, to_intel_crtc(crtc));
-+		intel_plane->update_plane(intel_plane,
-+					  to_intel_crtc_state(crtc->state),
-+					  to_intel_plane_state(plane->state));
-+	} else {
-+		trace_intel_disable_plane(plane, to_intel_crtc(crtc));
-+		intel_plane->disable_plane(intel_plane, to_intel_crtc(crtc));
-+	}
-+}
-+
- const struct drm_plane_helper_funcs intel_plane_helper_funcs = {
- 	.prepare_fb = intel_prepare_plane_fb,
- 	.cleanup_fb = intel_cleanup_plane_fb,
- 	.atomic_check = intel_plane_atomic_check,
- 	.atomic_update = intel_plane_atomic_update,
-+	.atomic_async_check = intel_plane_atomic_async_check,
-+	.atomic_async_update = intel_plane_atomic_async_update,
- };
- 
- /**
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 56004ffbd8bb..b14d39e2d1f0 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -12106,6 +12106,9 @@ static int intel_atomic_check(struct drm_device *dev,
- 	if (ret)
- 		return ret;
- 
-+	if (state->legacy_cursor_update)
-+		state->async_update = !drm_atomic_helper_async_check(dev,
-+								     state);
- 	intel_fbc_choose_crtc(dev_priv, intel_state);
- 	return calc_watermark_data(state);
- }
-@@ -12510,38 +12513,27 @@ static int intel_atomic_commit(struct drm_device *dev,
- 	struct drm_i915_private *dev_priv = to_i915(dev);
- 	int ret = 0;
- 
--	drm_atomic_state_get(state);
--	i915_sw_fence_init(&intel_state->commit_ready,
--			   intel_atomic_commit_ready);
--
- 	/*
--	 * The intel_legacy_cursor_update() fast path takes care
-+	 * The atomic async update fast path takes care
- 	 * of avoiding the vblank waits for simple cursor
- 	 * movement and flips. For cursor on/off and size changes,
- 	 * we want to perform the vblank waits so that watermark
- 	 * updates happen during the correct frames. Gen9+ have
- 	 * double buffered watermarks and so shouldn't need this.
--	 *
--	 * Unset state->legacy_cursor_update before the call to
--	 * drm_atomic_helper_setup_commit() because otherwise
--	 * drm_atomic_helper_wait_for_flip_done() is a noop and
--	 * we get FIFO underruns because we didn't wait
--	 * for vblank.
--	 *
--	 * FIXME doing watermarks and fb cleanup from a vblank worker
--	 * (assuming we had any) would solve these problems.
- 	 */
--	if (INTEL_GEN(dev_priv) < 9 && state->legacy_cursor_update) {
--		struct intel_crtc_state *new_crtc_state;
--		struct intel_crtc *crtc;
--		int i;
-+	if (state->async_update) {
-+		ret = drm_atomic_helper_prepare_planes(dev, state);
-+		if (ret)
-+			return ret;
- 
--		for_each_new_intel_crtc_in_state(intel_state, crtc, new_crtc_state, i)
--			if (new_crtc_state->wm.need_postvbl_update ||
--			    new_crtc_state->update_wm_post)
--				state->legacy_cursor_update = false;
-+		drm_atomic_helper_async_commit(dev, state);
-+		return 0;
- 	}
- 
-+	drm_atomic_state_get(state);
-+	i915_sw_fence_init(&intel_state->commit_ready,
-+			   intel_atomic_commit_ready);
-+
- 	ret = intel_atomic_prepare_commit(dev, state);
- 	if (ret) {
- 		DRM_DEBUG_ATOMIC("Preparing state failed with %i\n", ret);
-@@ -12721,6 +12713,9 @@ intel_prepare_plane_fb(struct drm_plane *plane,
- 	struct drm_i915_gem_object *old_obj = intel_fb_obj(plane->state->fb);
- 	int ret;
- 
-+	if (new_state->state->async_update)
-+		return 0;
-+
- 	if (old_obj) {
- 		struct drm_crtc_state *crtc_state =
- 			drm_atomic_get_existing_crtc_state(new_state->state,
-@@ -13087,121 +13082,8 @@ static struct drm_plane_funcs intel_plane_funcs = {
- 	.format_mod_supported = intel_primary_plane_format_mod_supported,
- };
- 
--static int
--intel_legacy_cursor_update(struct drm_plane *plane,
--			   struct drm_crtc *crtc,
--			   struct drm_framebuffer *fb,
--			   int crtc_x, int crtc_y,
--			   unsigned int crtc_w, unsigned int crtc_h,
--			   uint32_t src_x, uint32_t src_y,
--			   uint32_t src_w, uint32_t src_h,
--			   struct drm_modeset_acquire_ctx *ctx)
--{
--	struct drm_i915_private *dev_priv = to_i915(crtc->dev);
--	int ret;
--	struct drm_plane_state *old_plane_state, *new_plane_state;
--	struct intel_plane *intel_plane = to_intel_plane(plane);
--	struct drm_framebuffer *old_fb;
--	struct drm_crtc_state *crtc_state = crtc->state;
--
--	/*
--	 * When crtc is inactive or there is a modeset pending,
--	 * wait for it to complete in the slowpath
--	 */
--	if (!crtc_state->active || needs_modeset(crtc_state) ||
--	    to_intel_crtc_state(crtc_state)->update_pipe)
--		goto slow;
--
--	old_plane_state = plane->state;
--	/*
--	 * Don't do an async update if there is an outstanding commit modifying
--	 * the plane.  This prevents our async update's changes from getting
--	 * overridden by a previous synchronous update's state.
--	 */
--	if (old_plane_state->commit &&
--	    !try_wait_for_completion(&old_plane_state->commit->hw_done))
--		goto slow;
--
--	/*
--	 * If any parameters change that may affect watermarks,
--	 * take the slowpath. Only changing fb or position should be
--	 * in the fastpath.
--	 */
--	if (old_plane_state->crtc != crtc ||
--	    old_plane_state->src_w != src_w ||
--	    old_plane_state->src_h != src_h ||
--	    old_plane_state->crtc_w != crtc_w ||
--	    old_plane_state->crtc_h != crtc_h ||
--	    !old_plane_state->fb != !fb)
--		goto slow;
--
--	new_plane_state = intel_plane_duplicate_state(plane);
--	if (!new_plane_state)
--		return -ENOMEM;
--
--	drm_atomic_set_fb_for_plane(new_plane_state, fb);
--
--	new_plane_state->src_x = src_x;
--	new_plane_state->src_y = src_y;
--	new_plane_state->src_w = src_w;
--	new_plane_state->src_h = src_h;
--	new_plane_state->crtc_x = crtc_x;
--	new_plane_state->crtc_y = crtc_y;
--	new_plane_state->crtc_w = crtc_w;
--	new_plane_state->crtc_h = crtc_h;
--
--	ret = intel_plane_atomic_check_with_state(to_intel_crtc_state(crtc->state),
--						  to_intel_crtc_state(crtc->state), /* FIXME need a new crtc state? */
--						  to_intel_plane_state(plane->state),
--						  to_intel_plane_state(new_plane_state));
--	if (ret)
--		goto out_free;
--
--	ret = mutex_lock_interruptible(&dev_priv->drm.struct_mutex);
--	if (ret)
--		goto out_free;
--
--	ret = intel_plane_pin_fb(to_intel_plane_state(new_plane_state));
--	if (ret)
--		goto out_unlock;
--
--	old_fb = old_plane_state->fb;
--
--	i915_gem_track_fb(intel_fb_obj(old_fb), intel_fb_obj(fb),
--			  intel_plane->frontbuffer_bit);
--
--	/* Swap plane state */
--	plane->state = new_plane_state;
--
--	if (plane->state->visible) {
--		trace_intel_update_plane(plane, to_intel_crtc(crtc));
--		intel_plane->update_plane(intel_plane,
--					  to_intel_crtc_state(crtc->state),
--					  to_intel_plane_state(plane->state));
--	} else {
--		trace_intel_disable_plane(plane, to_intel_crtc(crtc));
--		intel_plane->disable_plane(intel_plane, to_intel_crtc(crtc));
--	}
--
--	intel_plane_unpin_fb(to_intel_plane_state(old_plane_state));
--
--out_unlock:
--	mutex_unlock(&dev_priv->drm.struct_mutex);
--out_free:
--	if (ret)
--		intel_plane_destroy_state(plane, new_plane_state);
--	else
--		intel_plane_destroy_state(plane, old_plane_state);
--	return ret;
--
--slow:
--	return drm_atomic_helper_update_plane(plane, crtc, fb,
--					      crtc_x, crtc_y, crtc_w, crtc_h,
--					      src_x, src_y, src_w, src_h, ctx);
--}
--
- static const struct drm_plane_funcs intel_cursor_plane_funcs = {
--	.update_plane = intel_legacy_cursor_update,
-+	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
- 	.destroy = intel_plane_destroy,
- 	.atomic_get_property = intel_plane_atomic_get_property,
--- 
-2.17.1
+> +	}
+>  
+>  	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+>  	rc = pcim_enable_device(pdev);
+> 
