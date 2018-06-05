@@ -1,157 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751819AbeFEHhh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:37:37 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51665 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751502AbeFEHhf (ORCPT
+        id S1751847AbeFEHiD convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:38:03 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:36968 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751619AbeFEHiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:37:35 -0400
-X-Google-Smtp-Source: ADUXVKKijGyHe7da9ypustH75F/XJuGSvSx5WL3ew6fm6443FoqkreWQNr5udz+NMnkKx1mRVI94AA==
-Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
- on kbd brightness change
-To: Chris Chiu <chiu@endlessm.com>, Darren Hart <dvhart@infradead.org>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Linux Upstreaming Team <linux@endlessm.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Benjamin Berg <benjamin@sipsolutions.net>
-References: <20180604123238.82200-1-chiu@endlessm.com>
- <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
- <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
- <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com>
- <20180605023124.GE47042@localhost.localdomain>
- <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com>
-Date: Tue, 5 Jun 2018 09:37:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 5 Jun 2018 03:38:02 -0400
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: Matthew Wilcox <willy@infradead.org>
+CC: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Huang Ying <ying.huang@intel.com>
+Subject: Re: kernel panic in reading /proc/kpageflags when enabling
+ RAM-simulated PMEM
+Thread-Topic: kernel panic in reading /proc/kpageflags when enabling
+ RAM-simulated PMEM
+Thread-Index: AQHT/GeymmpDVR1XWE69lshFJtmzcqRQRpEAgABpKgA=
+Date: Tue, 5 Jun 2018 07:35:01 +0000
+Message-ID: <20180605073500.GA23766@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180605005402.GA22975@hori1.linux.bs1.fc.nec.co.jp>
+ <20180605011836.GA32444@bombadil.infradead.org>
+In-Reply-To: <20180605011836.GA32444@bombadil.infradead.org>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <6DF55117BC2F334FAC63EA0F79B38338@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 05-06-18 05:18, Chris Chiu wrote:
-> On Tue, Jun 5, 2018 at 10:31 AM, Darren Hart <dvhart@infradead.org> wrote:
->> On Mon, Jun 04, 2018 at 04:23:04PM +0200, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 04-06-18 15:51, Daniel Drake wrote:
->>>> On Mon, Jun 4, 2018 at 7:22 AM, Hans de Goede <hdegoede@redhat.com> wrote:
->>>>> Is this really a case of the hardware itself processing the
->>>>> keypress and then changing the brightness *itself* ?
->>>>>
->>>>>   From the "[PATCH 2/2] platform/x86: asus-wmi: Add keyboard backlight
->>>>> toggle support" patch I get the impression that the driver is
->>>>> modifying the brightness from within the kernel rather then the
->>>>> keyboard controller are ACPI embeddec-controller doing it itself.
->>>>>
->>>>> If that is the case then the right fix is for the driver to stop
->>>>> mucking with the brighness itself, it should simply report the
->>>>> right keyboard events and export a led interface and then userspace
->>>>> will do the right thing (and be able to offer flexible policies
->>>>> to the user).
->>>>
->>>> Before this modification, the driver reports the brightness keypresses
->>>> to userspace and then userspace can respond by changing the brightness
->>>> level, as you describe.
->>>>
->>>> You are right in that the hardware doesn't change the brightness
->>>> directly itself, which is the normal usage of LED_BRIGHT_HW_CHANGED.
->>>>
->>>> However this approach was suggested by Benjamin Berg and Bastien
->>>> Nocera in the thread: Re: [PATCH v2] platform/x86: asus-wmi: Add
->>>> keyboard backlight toggle support
->>>> https://marc.info/?l=linux-kernel&m=152639169210655&w=2
->>>>
->>>> The issue is that we need to support a new "keyboard backlight
->>>> brightness cycle" key (in the patch that follows this one) which
->>>> doesn't fit into any definitions of keys recognised by the kernel and
->>>> likewise there's no userspace code to handle it.
->>>>
->>>> If preferred we could leave the standard brightness keys behaving as
->>>> they are (input events) and make the new special key type directly
->>>> handled by the kernel?
->>>
->>> I'm sorry that Benjamin and Bastien steered you in this direction,
->>> IMHO none of it should be handled in the kernel.
->>>
->>> Anytime any sort of input is directly responded to by the kernel
->>> it is a huge PITA to deal with from userspace. The kernel will have
->>> a simplistic implementation which almost always is wrong.
->>>
->>> Benjamin, remember the pain we went through with rfkill hotkey
->>> presses being handled in the kernel ?
->>>
->>> And then there is the whole acpi_video.brightness_switch_enabled
->>> debacle, which is an option which defaults to true which causes
->>> the kernel to handle LCD brightness key presses, which all distros
->>> have been patching to default to off for ages.
->>>
->>> To give a concrete example, we may want to implement software
->>> dimming / auto-off of the kbd backlight when the no keys are
->>> touched for x seconds. This would seriously get in the way of that.
->>>
->>> So sorry, but NACK to this series.
->>
->> So if instead of modifying the LED value, the kernel platform drivers
->> converted the TOGGLE into a cycle even by converting to an UP event
->> based on awareness of the plaform specific max value and the read
->> current value, leaving userspace to act on the TOGGLE/UP events - would
->> that be preferable?
->>
->> Something like:
->>
->>          if (code == TOGGLE && ledval < ledmax)
->>                  code = UP;
->>
->>          sparse_keymap_report_event(..., code, ...)
->>
->> }
->> --
->> Darren Hart
->> VMware Open Source Technology Center
+On Mon, Jun 04, 2018 at 06:18:36PM -0700, Matthew Wilcox wrote:
+> On Tue, Jun 05, 2018 at 12:54:03AM +0000, Naoya Horiguchi wrote:
+> > Reproduction precedure is like this:
+> >  - enable RAM based PMEM (with a kernel boot parameter like memmap=1G!4G)
+> >  - read /proc/kpageflags (or call tools/vm/page-types with no arguments)
+> >  (- my kernel config is attached)
+> > 
+> > I spent a few days on this, but didn't reach any solutions.
+> > So let me report this with some details below ...
+> > 
+> > In the critial page request, stable_page_flags() is called with an argument
+> > page whose ->compound_head was somehow filled with '0xffffffffffffffff'.
+> > And compound_head() returns (struct page *)(head - 1), which explains the
+> > address 0xfffffffffffffffe in the above message.
 > 
-> That's what I was trying to do in  [PATCH v2] platform/x86: asus-wmi: Add
-> keyboard backlight toggle support. However, that brought another problem
-> discussed in the thread.
-> https://marc.info/?l=linux-kernel&m=152639169210655&w=2
+> Hm.  compound_head shares with:
 > 
-> So I moved the brightness change in the driver without passing to userspace.
-> Per Hans, seems there're some other concerns and I also wonder if the
-> TOGGLE event happens in ASUS HID (asus-hid.c) which also convert and
-> pass the keycode to userspace but no TOGGLE key support yet What should
-> we do then?
+>                         struct list_head lru;
+>                                 struct list_head slab_list;     /* uses lru */
+>                                 struct {        /* Partial pages */
+>                                         struct page *next;
+>                         unsigned long _compound_pad_1;  /* compound_head */
+>                         unsigned long _pt_pad_1;        /* compound_head */
+>                         struct dev_pagemap *pgmap;
+>                 struct rcu_head rcu_head;
+> 
+> None of them should be -1.
+> 
+> > It seems that this kernel panic happens when reading kpageflags of pfn range
+> > [0xbffd7, 0xc0000), which coresponds to a 'reserved' range.
+> > 
+> > [    0.000000] user-defined physical RAM map:
+> > [    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
+> > [    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+> > [    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+> > [    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
+> > [    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved
+> > [    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+> > [    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+> > [    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12)
+> > 
+> > So I guess 'memmap=' parameter might badly affect the memory initialization process.
+> > 
+> > This problem doesn't reproduce on v4.17, so some pre-released patch introduces it.
+> > I hope this info helps you find the solution/workaround.
+> 
+> Can you try bisecting this?  It could be one of my patches to reorder struct
+> page, or it could be one of Pavel's deferred page initialisation patches.
+> Or something else ;-)
 
-As I mentioned in my reply to Darren, there are 2 proper solutions to this:
+Thank you for the comment. I'm trying bisecting now, let you know the result later.
 
-1) Make userspace treat KEY_KBDILLUMTOGGLE as a cycle key, this is
-what the kbd-backlight on most laptops with a single hotkey (*) does
-in cases where this is handled in firmware, rather then left to the
-OS. The handled in firmware is the case which I created the
-led_classdev_notify_brightness_hw_changed() API for. This would be
-my preferred solution and I believe that Benjamin is discussing this
-with Bastien ATM.
+And I found that my statement "not reproduce on v4.17" was wrong (I used
+different kvm guests, which made some different test condition and misguided me),
+this seems an older (at least < 4.15) bug.
 
-2) Add a new KEY_KBDILLUMCYCLE event and send that for the TOGGLE code
-on these laptops.
-
-Yes both will take time to get into end-users hand, but so will a
-kernel-only solution. In the mean time endless can always carry
-downstream patches to make things work right now (while waiting for
-the changes to trickle down from upstream).
-
-Regards,
-
-Hans
+Thanks,
+Naoya Horiguchi
