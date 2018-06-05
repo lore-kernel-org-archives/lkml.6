@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752672AbeFEVHt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:07:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:33548 "EHLO foss.arm.com"
+        id S1751770AbeFEVLA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:11:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:33672 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752600AbeFEVHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:07:44 -0400
+        id S1752658AbeFEVHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:07:48 -0400
 From: Kim Phillips <kim.phillips@arm.com>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>,
@@ -31,9 +31,9 @@ Cc: Leo Yan <leo.yan@linaro.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Kim Phillips <kim.phillips@arm.com>
-Subject: [PATCH v4 09/14] coresight: allow etm4x to be built as a module
-Date: Tue,  5 Jun 2018 16:07:05 -0500
-Message-Id: <20180605210710.22227-10-kim.phillips@arm.com>
+Subject: [PATCH v4 13/14] coresight: allow funnel and replicator drivers to be built as modules
+Date: Tue,  5 Jun 2018 16:07:09 -0500
+Message-Id: <20180605210710.22227-14-kim.phillips@arm.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180605210710.22227-1-kim.phillips@arm.com>
 References: <20180605210710.22227-1-kim.phillips@arm.com>
@@ -41,12 +41,12 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to build coresight-etm4x as a module, for ease of development.
+Allow to build coresight-funnel and coresight-replicator as modules,
+for ease of development.
 
 - Kconfig becomes a tristate, to allow =m
-- append -core to source file name to allow module to
-  be called coresight-etm4x by the Makefile
-- add an etm4_remove function, for module unload
+- add funnel_remove and replicator_remove functions,
+  for module unload
 - add a MODULE_DEVICE_TABLE for autoloading on boot
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -58,100 +58,120 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/hwtracing/coresight/Kconfig           |  5 +++-
- drivers/hwtracing/coresight/Makefile          |  4 +--
- ...resight-etm4x.c => coresight-etm4x-core.c} | 25 ++++++++++++++++++-
- 3 files changed, 30 insertions(+), 4 deletions(-)
- rename drivers/hwtracing/coresight/{coresight-etm4x.c => coresight-etm4x-core.c} (97%)
+ drivers/hwtracing/coresight/Kconfig           |  5 ++++-
+ .../hwtracing/coresight/coresight-funnel.c    | 18 ++++++++++++++-
+ .../coresight/coresight-replicator.c          | 22 ++++++++++++++++++-
+ 3 files changed, 42 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-index 56675e4f5a15..c32673f9177a 100644
+index ae05b4b89ff9..181a44ea2d61 100644
 --- a/drivers/hwtracing/coresight/Kconfig
 +++ b/drivers/hwtracing/coresight/Kconfig
-@@ -64,7 +64,7 @@ config CORESIGHT_SOURCE_ETM3X
- 	  module will be called coresight-etm3x.
+@@ -14,13 +14,16 @@ menuconfig CORESIGHT
  
- config CORESIGHT_SOURCE_ETM4X
--	bool "CoreSight Embedded Trace Macrocell 4.x driver"
-+	tristate "CoreSight Embedded Trace Macrocell 4.x driver"
- 	depends on ARM64
- 	select CORESIGHT_LINKS_AND_SINKS
+ if CORESIGHT
+ config CORESIGHT_LINKS_AND_SINKS
+-	bool "CoreSight Link and Sink drivers"
++	tristate "CoreSight Link and Sink drivers"
  	help
-@@ -73,6 +73,9 @@ config CORESIGHT_SOURCE_ETM4X
- 	  for instruction level tracing. Depending on the implemented version
- 	  data tracing may also be available.
+ 	  This enables support for CoreSight link and sink drivers that are
+ 	  responsible for transporting and collecting the trace data
+ 	  respectively.  Link and sinks are dynamically aggregated with a trace
+ 	  entity at run time to form a complete trace path.
  
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called coresight-etm4x.
++	  To compile these drivers as modules, choose M here: the
++	  modules will be called coresight-funnel and coresight-replicator.
 +
- config CORESIGHT_DYNAMIC_REPLICATOR
- 	tristate "CoreSight Programmable Replicator driver"
+ config CORESIGHT_LINK_AND_SINK_TMC
+ 	tristate "Coresight generic TMC driver"
  	depends on CORESIGHT_LINKS_AND_SINKS
-diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-index c3281e37e542..1623ed266b04 100644
---- a/drivers/hwtracing/coresight/Makefile
-+++ b/drivers/hwtracing/coresight/Makefile
-@@ -14,8 +14,8 @@ obj-$(CONFIG_CORESIGHT_LINKS_AND_SINKS) += coresight-funnel.o \
- obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x.o
- coresight-etm3x-objs := coresight-etm3x-core.o coresight-etm-cp14.o \
- 					coresight-etm3x-sysfs.o
--obj-$(CONFIG_CORESIGHT_SOURCE_ETM4X) += coresight-etm4x.o \
--					coresight-etm4x-sysfs.o
-+obj-$(CONFIG_CORESIGHT_SOURCE_ETM4X) += coresight-etm4x.o
-+coresight-etm4x-objs := coresight-etm4x-core.o coresight-etm4x-sysfs.o
- obj-$(CONFIG_CORESIGHT_DYNAMIC_REPLICATOR) += coresight-dynamic-replicator.o
- obj-$(CONFIG_CORESIGHT_STM) += coresight-stm.o
- obj-$(CONFIG_CORESIGHT_CPU_DEBUG) += coresight-cpu-debug.o
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-similarity index 97%
-rename from drivers/hwtracing/coresight/coresight-etm4x.c
-rename to drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 1d94ebec027b..0f4828c2268c 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -1046,6 +1046,20 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
- 	return ret;
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index 448145a36675..861ac641a716 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -211,6 +211,15 @@ static int funnel_probe(struct amba_device *adev, const struct amba_id *id)
+ 	return PTR_ERR_OR_ZERO(drvdata->csdev);
  }
  
-+static int __exit etm4_remove(struct amba_device *adev)
++static int __exit funnel_remove(struct amba_device *adev)
 +{
-+	struct etmv4_drvdata *drvdata = dev_get_drvdata(&adev->dev);
-+
-+	etm_perf_symlink(drvdata->csdev, false);
-+
-+	cpuhp_remove_state_nocalls(CPUHP_AP_ARM_CORESIGHT_STARTING);
-+	cpuhp_remove_state_nocalls(hp_online);
++	struct funnel_drvdata *drvdata = dev_get_drvdata(&adev->dev);
 +
 +	coresight_unregister(drvdata->csdev);
 +
 +	return 0;
 +}
 +
- #define ETM4x_AMBA_ID(pid)			\
- 	{					\
- 		.id	= pid,			\
-@@ -1061,12 +1075,21 @@ static const struct amba_id etm4_ids[] = {
- 	{},
+ #ifdef CONFIG_PM
+ static int funnel_runtime_suspend(struct device *dev)
+ {
+@@ -250,6 +259,8 @@ static const struct amba_id funnel_ids[] = {
+ 	{ 0, 0},
  };
  
-+MODULE_DEVICE_TABLE(amba, etm4_ids);
++MODULE_DEVICE_TABLE(amba, funnel_ids);
 +
- static struct amba_driver etm4x_driver = {
+ static struct amba_driver funnel_driver = {
  	.drv = {
- 		.name   = "coresight-etm4x",
-+		.owner  = THIS_MODULE,
+ 		.name	= "coresight-funnel",
+@@ -258,6 +269,11 @@ static struct amba_driver funnel_driver = {
  		.suppress_bind_attrs = true,
  	},
- 	.probe		= etm4_probe,
-+	.remove         = etm4_remove,
- 	.id_table	= etm4_ids,
+ 	.probe		= funnel_probe,
++	.remove		= funnel_remove,
+ 	.id_table	= funnel_ids,
  };
--builtin_amba_driver(etm4x_driver);
-+module_amba_driver(etm4x_driver);
+-builtin_amba_driver(funnel_driver);
++module_amba_driver(funnel_driver);
++
++MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
++MODULE_DESCRIPTION("Arm CoreSight Funnel Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index 8d2eaaab6c2f..1fb469d7cf50 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -112,6 +112,17 @@ static int replicator_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int __exit replicator_remove(struct platform_device *pdev)
++{
++	struct replicator_drvdata *drvdata = dev_get_drvdata(&pdev->dev);
++
++	coresight_unregister(drvdata->csdev);
++
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
+ #ifdef CONFIG_PM
+ static int replicator_runtime_suspend(struct device *dev)
+ {
+@@ -144,13 +155,22 @@ static const struct of_device_id replicator_match[] = {
+ 	{}
+ };
+ 
++MODULE_DEVICE_TABLE(of, replicator_match);
++
+ static struct platform_driver replicator_driver = {
+ 	.probe          = replicator_probe,
++	.remove         = replicator_remove,
+ 	.driver         = {
+ 		.name   = "coresight-replicator",
+ 		.of_match_table = replicator_match,
++		.owner	= THIS_MODULE,
+ 		.pm	= &replicator_dev_pm_ops,
+ 		.suppress_bind_attrs = true,
+ 	},
+ };
+-builtin_platform_driver(replicator_driver);
++module_platform_driver(replicator_driver);
 +
 +MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
 +MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
-+MODULE_DESCRIPTION("Arm CoreSight Program Flow Trace v4 driver");
++MODULE_DESCRIPTION("Arm CoreSight Replicator Driver");
 +MODULE_LICENSE("GPL v2");
 -- 
 2.17.0
