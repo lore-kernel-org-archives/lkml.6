@@ -1,45 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752075AbeFEPsD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:48:03 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41993 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751744AbeFEPsA (ORCPT
+        id S1751869AbeFEPtf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:49:35 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:52935 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeFEPtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:48:00 -0400
-X-Google-Smtp-Source: ADUXVKJ2v4pnDEVTlPB/lCD/Jcc/xzfIqj+THM2NDHjcbFKTY5lXbroGh/BUlLxWI0Ft8X4+VErgMQ==
-Date: Tue, 5 Jun 2018 09:47:57 -0600
-From: Rob Herring <robh@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 2/4] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180605154757.GA26812@rob-hp-laptop>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <6509bbe0238c20c16930c9f23d63656b1d5f4af2.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+        Tue, 5 Jun 2018 11:49:33 -0400
+Subject: Re: [PATCH v2 0/4] drm/tinydrm: new dirver for ILI9341 displays
+To: David Lechner <david@lechnology.com>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        limor@ladyada.net, Nitin Patil <nitin@mindsensors.com>,
+        linux-kernel@vger.kernel.org, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, Sean Paul <seanpaul@chromium.org>
+References: <20180525193623.15533-1-david@lechnology.com>
+ <8840212b-fd46-e700-58a1-cb1b882c5771@tronnes.org>
+ <d5297fc5-94f2-edcd-5a11-95d7a9dca78d@lechnology.com>
+From: =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <ecd75b89-14a6-12f7-0ec4-222b1f984e49@tronnes.org>
+Date: Tue, 5 Jun 2018 17:49:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6509bbe0238c20c16930c9f23d63656b1d5f4af2.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <d5297fc5-94f2-edcd-5a11-95d7a9dca78d@lechnology.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 04:18:30PM +0300, Matti Vaittinen wrote:
-> Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 76 ++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+(cc: drm-misc maintainers)
 
-I've replied on the prior version discussion. Please don't send new 
-versions if the last one is still under discussion.
 
-Rob
+Den 04.06.2018 03.21, skrev David Lechner:
+>
+>
+> On 6/3/18 5:00 PM, Noralf Trønnes wrote:
+>>
+>> Den 25.05.2018 21.36, skrev David Lechner:
+>>> This series adds a new tinydrm driver for the Ilitek ILI9341 
+>>> controller and
+>>> a 2.4" display panel that uses this controller.
+>>
+>> David, do you have commit rights now?
+>
+> No. Opened a bug a while back to request access, but I guess the
+> right person didn't see it.
+>
+> https://bugs.freedesktop.org/show_bug.cgi?id=105166
+>
+
+Could someone please look at this?
+
+Noralf.
+
+>>
+>> Noralf.
+>>
+>>> A few things to note here:
+>>> * The datasheet for this display[1] doesn't have a vendor mentioned 
+>>> on it
+>>>    anywhere, so I have used "adafruit" as the vendor prefix. If 
+>>> someone has a
+>>>    better suggestion, please speak up.
+>>> * The MAINTAINERS patch for ili9225 is included so we don't end up 
+>>> with a merge
+>>>    conflict later on.
+>>>
+>>> v2 changes:
+>>> * change vendor prefix from "noname" to "adafruit"
+>>> * new patch for "adafruit" vendor prefix
+>>> * minor style changes
+>>> * drop regulator from driver (instead of adding to DT bindings)
+>>>
+>>> [1]: 
+>>> https://cdn-learn.adafruit.com/assets/assets/000/046/879/original/SPEC-YX240QV29-T_Rev.A__1_.pdf 
+>>>
+>>>
+>>>
+>>> David Lechner (4):
+>>>    MAINTAINERS: fix path to ilitek,ili9225 device tree bindings
+>>>    dt-bindings: Add vendor prefix for Adafruit
+>>>    dt-bindings: new binding for Ilitek ILI9341 display panels
+>>>    drm/tinydrm: new driver for ILI9341 display panels
+>>>
+>>>   .../bindings/display/ilitek,ili9341.txt       |  27 ++
+>>>   .../devicetree/bindings/vendor-prefixes.txt   |   1 +
+>>>   MAINTAINERS                                   |   8 +-
+>>>   drivers/gpu/drm/tinydrm/Kconfig               |  10 +
+>>>   drivers/gpu/drm/tinydrm/Makefile              |   1 +
+>>>   drivers/gpu/drm/tinydrm/ili9341.c             | 233 
+>>> ++++++++++++++++++
+>>>   6 files changed, 279 insertions(+), 1 deletion(-)
+>>>   create mode 100644 
+>>> Documentation/devicetree/bindings/display/ilitek,ili9341.txt
+>>>   create mode 100644 drivers/gpu/drm/tinydrm/ili9341.c
+>>>
+>>
