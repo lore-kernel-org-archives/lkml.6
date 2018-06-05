@@ -1,26 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753698AbeFERGi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:06:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35802 "EHLO mail.kernel.org"
+        id S1753720AbeFERGn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753671AbeFERGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:36 -0400
+        id S1753702AbeFERGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyniger <marc.zyngier@arm.com>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Sewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.9 23/61] arm64/cpufeature: dont use mutex in bringup path
-Date: Tue,  5 Jun 2018 19:01:44 +0200
-Message-Id: <20180605170119.187902092@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 24/61] powerpc/rfi-flush: Move out of HARDLOCKUP_DETECTOR #ifdef
+Date: Tue,  5 Jun 2018 19:01:45 +0200
+Message-Id: <20180605170119.244280138@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -36,172 +28,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 63a1e1c95e60e798fa09ab3c536fb555aa5bbf2b upstream.
+The backport of the RFI flush support, done by me, has a minor bug in
+that the code is inside an #ifdef CONFIG_HARDLOCKUP_DETECTOR, which is
+incorrect.
 
-Currently, cpus_set_cap() calls static_branch_enable_cpuslocked(), which
-must take the jump_label mutex.
+This doesn't matter with common configs because we enable
+HARDLOCKUP_DETECTOR, but with future patches it will break the build.
+So fix it.
 
-We call cpus_set_cap() in the secondary bringup path, from the idle
-thread where interrupts are disabled. Taking a mutex in this path "is a
-NONO" regardless of whether it's contended, and something we must avoid.
-We didn't spot this until recently, as ___might_sleep() won't warn for
-this case until all CPUs have been brought up.
-
-This patch avoids taking the mutex in the secondary bringup path. The
-poking of static keys is deferred until enable_cpu_capabilities(), which
-runs in a suitable context on the boot CPU. To account for the static
-keys being set later, cpus_have_const_cap() is updated to use another
-static key to check whether the const cap keys have been initialised,
-falling back to the caps bitmap until this is the case.
-
-This means that users of cpus_have_const_cap() gain should only gain a
-single additional NOP in the fast path once the const caps are
-initialised, but should always see the current cap value.
-
-The hyp code should never dereference the caps array, since the caps are
-initialized before we run the module initcall to initialise hyp. A check
-is added to the hyp init code to document this requirement.
-
-This change will sidestep a number of issues when the upcoming hotplug
-locking rework is merged.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Marc Zyniger <marc.zyngier@arm.com>
-Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Christoffer Dall <christoffer.dall@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Sewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-[4.9: this avoids an IPI before GICv3 is up, preventing a boot time crash]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Fixes: c3b82ebee6e0 ("powerpc/64s: Add support for RFI flush of L1-D cache")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cpufeature.h |   12 ++++++++++--
- arch/arm64/include/asm/kvm_host.h   |    8 ++++++--
- arch/arm64/kernel/cpufeature.c      |   23 +++++++++++++++++++++--
- 3 files changed, 37 insertions(+), 6 deletions(-)
+ arch/powerpc/kernel/setup_64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -96,6 +96,7 @@ struct arm64_cpu_capabilities {
- 
- extern DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
- extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
-+extern struct static_key_false arm64_const_caps_ready;
- 
- bool this_cpu_has_cap(unsigned int cap);
- 
-@@ -105,7 +106,7 @@ static inline bool cpu_have_feature(unsi
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -679,6 +679,7 @@ static int __init disable_hardlockup_det
+ 	return 0;
  }
+ early_initcall(disable_hardlockup_detector);
++#endif /* CONFIG_HARDLOCKUP_DETECTOR */
  
- /* System capability check for constant caps */
--static inline bool cpus_have_const_cap(int num)
-+static inline bool __cpus_have_const_cap(int num)
- {
- 	if (num >= ARM64_NCAPS)
- 		return false;
-@@ -119,6 +120,14 @@ static inline bool cpus_have_cap(unsigne
- 	return test_bit(num, cpu_hwcaps);
+ #ifdef CONFIG_PPC_BOOK3S_64
+ static enum l1d_flush_type enabled_flush_types;
+@@ -806,4 +807,3 @@ ssize_t cpu_show_meltdown(struct device
+ 	return sprintf(buf, "Vulnerable\n");
  }
- 
-+static inline bool cpus_have_const_cap(int num)
-+{
-+	if (static_branch_likely(&arm64_const_caps_ready))
-+		return __cpus_have_const_cap(num);
-+	else
-+		return cpus_have_cap(num);
-+}
-+
- static inline void cpus_set_cap(unsigned int num)
- {
- 	if (num >= ARM64_NCAPS) {
-@@ -126,7 +135,6 @@ static inline void cpus_set_cap(unsigned
- 			num, ARM64_NCAPS);
- 	} else {
- 		__set_bit(num, cpu_hwcaps);
--		static_branch_enable(&cpu_hwcap_keys[num]);
- 	}
- }
- 
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -24,6 +24,7 @@
- 
- #include <linux/types.h>
- #include <linux/kvm_types.h>
-+#include <asm/cpufeature.h>
- #include <asm/kvm.h>
- #include <asm/kvm_asm.h>
- #include <asm/kvm_mmio.h>
-@@ -358,9 +359,12 @@ static inline void __cpu_init_hyp_mode(p
- 				       unsigned long vector_ptr)
- {
- 	/*
--	 * Call initialization code, and switch to the full blown
--	 * HYP code.
-+	 * Call initialization code, and switch to the full blown HYP code.
-+	 * If the cpucaps haven't been finalized yet, something has gone very
-+	 * wrong, and hyp will crash and burn when it uses any
-+	 * cpus_have_const_cap() wrapper.
- 	 */
-+	BUG_ON(!static_branch_likely(&arm64_const_caps_ready));
- 	__kvm_call_hyp((void *)pgd_ptr, hyp_stack_ptr, vector_ptr);
- }
- 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1052,8 +1052,16 @@ void update_cpu_capabilities(const struc
-  */
- void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
- {
--	for (; caps->matches; caps++)
--		if (caps->enable && cpus_have_cap(caps->capability))
-+	for (; caps->matches; caps++) {
-+		unsigned int num = caps->capability;
-+
-+		if (!cpus_have_cap(num))
-+			continue;
-+
-+		/* Ensure cpus_have_const_cap(num) works */
-+		static_branch_enable(&cpu_hwcap_keys[num]);
-+
-+		if (caps->enable) {
- 			/*
- 			 * Use stop_machine() as it schedules the work allowing
- 			 * us to modify PSTATE, instead of on_each_cpu() which
-@@ -1061,6 +1069,8 @@ void __init enable_cpu_capabilities(cons
- 			 * we return.
- 			 */
- 			stop_machine(caps->enable, (void *)caps, cpu_online_mask);
-+		}
-+	}
- }
- 
- /*
-@@ -1164,6 +1174,14 @@ static void __init setup_feature_capabil
- 	enable_cpu_capabilities(arm64_features);
- }
- 
-+DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
-+EXPORT_SYMBOL(arm64_const_caps_ready);
-+
-+static void __init mark_const_caps_ready(void)
-+{
-+	static_branch_enable(&arm64_const_caps_ready);
-+}
-+
- extern const struct arm64_cpu_capabilities arm64_errata[];
- 
- bool this_cpu_has_cap(unsigned int cap)
-@@ -1180,6 +1198,7 @@ void __init setup_cpu_features(void)
- 	/* Set the CPU feature capabilies */
- 	setup_feature_capabilities();
- 	enable_errata_workarounds();
-+	mark_const_caps_ready();
- 	setup_elf_hwcaps(arm64_elf_hwcaps);
- 
- 	if (system_supports_32bit_el0())
+ #endif /* CONFIG_PPC_BOOK3S_64 */
+-#endif
