@@ -1,11 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeFEQns (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:43:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46799 "EHLO mx2.suse.de"
+        id S1752424AbeFEQpE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:45:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46866 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751748AbeFEQnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:43:46 -0400
+        id S1751950AbeFEQns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:43:48 -0400
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Michal Suchanek <msuchanek@suse.de>
 To: Jonathan Corbet <corbet@lwn.net>, Michal Suchanek <msuchanek@suse.de>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -22,52 +23,49 @@ To: Jonathan Corbet <corbet@lwn.net>, Michal Suchanek <msuchanek@suse.de>,
         Jeffrey Hugo <jhugo@codeaurora.org>, Baoquan He <bhe@redhat.com>,
         Ilya Matveychikov <matvejchikov@gmail.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v10 0/5] Kernel parameter parser cleanup/enhancement
-Date: Tue,  5 Jun 2018 18:43:07 +0200
-Message-Id: <cover.1528215659.git.msuchanek@suse.de>
+Subject: [PATCH v10 3/5] init/main.c: simplify repair_env_string.
+Date: Tue,  5 Jun 2018 18:43:10 +0200
+Message-Id: <f0d9664cf6e10cd89c8fa551885b91a75619b267.1528215659.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1528215659.git.msuchanek@suse.de>
+References: <cover.1528215659.git.msuchanek@suse.de>
+In-Reply-To: <cover.1528215659.git.msuchanek@suse.de>
+References: <cover.1528215659.git.msuchanek@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Quoting characters are now removed from the parameter so value always
+follows directly after the NUL terminating parameter name.
 
-due to work on the fadump_extra_args I looked at the kernel parameter parser
-and found its grammar rather curious.
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ init/main.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-It supports double quotes but not any other quoting characters so double quotes
-cannot be quoted. What's more, the quotes can be anywhere in the parameter
-name or value and are interpteted but are removed only from start and end of
-the parameter value.
-
-These are the patches not specific to fadump which somewhat straighten the
-qouting grammar to make it on par with common shell interpreters.
-
-Specifically double and single quotes can be used for quoting as well as
-backslashes with the usual shell semantic. All quoting characters are removed
-while the parameters are parsed.
-
-Previous versions (including the fadump part) can be found here:
-
-https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg126148.html
-https://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg123639.html
-
-Thanks
-
-Michal
-
-Michal Suchanek (5):
-  lib/cmdline.c: Add backslash support to kernel commandline parsing.
-  Documentation/admin-guide: backslash support in kernel arguments.
-  init/main.c: simplify repair_env_string.
-  lib/cmdline.c: Implement single quotes in commandline argument
-    parsing.
-  Documentation/admin-guide: single quotes in kernel arguments.
-
- Documentation/admin-guide/kernel-parameters.rst |  5 +-
- init/main.c                                     | 13 ++---
- lib/cmdline.c                                   | 63 +++++++++++++++----------
- 3 files changed, 46 insertions(+), 35 deletions(-)
-
+diff --git a/init/main.c b/init/main.c
+index 4bc2819d97ad..d0f4a7a0f010 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -251,15 +251,10 @@ static int __init repair_env_string(char *param, char *val,
+ 				    const char *unused, void *arg)
+ {
+ 	if (val) {
+-		/* param=val or param="val"? */
+-		if (val == param+strlen(param)+1)
+-			val[-1] = '=';
+-		else if (val == param+strlen(param)+2) {
+-			val[-2] = '=';
+-			memmove(val-1, val, strlen(val)+1);
+-			val--;
+-		} else
+-			BUG();
++		int parm_len = strlen(param);
++
++		param[parm_len] = '=';
++		BUG_ON(val != param + parm_len + 1);
+ 	}
+ 	return 0;
+ }
 -- 
 2.13.6
