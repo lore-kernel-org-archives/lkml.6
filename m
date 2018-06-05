@@ -1,76 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeFEQvW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:51:22 -0400
-Received: from smtprelay0075.hostedemail.com ([216.40.44.75]:53279 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751805AbeFEQvV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:51:21 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2538:2559:2562:2828:3138:3139:3140:3141:3142:3352:3865:3866:3867:4250:4321:4605:5007:6117:6119:6690:7901:7903:10004:10400:10482:10848:11658:11914:12555:12679:12760:13069:13311:13357:13439:14181:14394:14659:14721:19901:19997:21080:21451:21627:30054:30062:30067,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: moon52_45da5a05eac56
-X-Filterd-Recvd-Size: 2168
-Message-ID: <d08e49e8f6562c58a63792aa64306d1851f81f4b.camel@perches.com>
-Subject: [PATCH] scripts: Use SPDX tag in get_maintainer and checkpatch
-From: Joe Perches <joe@perches.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Whitcroft <apw@shadowen.org>, LKML <linux-kernel@vger.kernel.org>
-Date: Tue, 05 Jun 2018 09:51:18 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751864AbeFEQyi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:54:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58584 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751688AbeFEQyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:54:36 -0400
+Date: Tue, 5 Jun 2018 17:54:31 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
+Message-ID: <20180605165431.GF32302@e110439-lin>
+References: <20180604160600.22052-1-patrick.bellasi@arm.com>
+ <20180604160600.22052-3-patrick.bellasi@arm.com>
+ <CAKfTPtD8RDxT=-oO2VYJRbtwoEyEKEAau-Ad-bAd8L2T2zKWEg@mail.gmail.com>
+ <20180605151129.GC32302@e110439-lin>
+ <20180605153105.GM16081@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605153105.GM16081@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the appropriate SPDX tag to these scripts.
+On 05-Jun 17:31, Juri Lelli wrote:
+> On 05/06/18 16:11, Patrick Bellasi wrote:
+> 
+> [...]
+> 
+> > If I run an experiment with your example above, while using the
+> > performance governor to rule out any possible scale invariance
+> > difference, here is what I measure:
+> > 
+> >    Task1 (40ms delayed by the following Task2):
+> >                                mean          std     max
+> >       running_avg        455.387449    22.940168   492.0
+> >       util_avg           433.233288    17.395477   458.0
+> > 
+> >    Task2 (waking up at same time of Task1 and running before):
+> >                                mean          std     max
+> >       running_avg        430.281834    22.405175   455.0
+> >       util_avg           421.745331    22.098873   456.0
+> > 
+> > and if I compare Task1 above with another experiment where Task1 is
+> > running alone:
+> > 
+> >    Task1 (running alone):
+> >                                mean          std     min
+> >       running_avg        460.257895    22.103704   460.0
+> >       util_avg           435.119737    17.647556   461.0
+> 
+> Wait, why again in this last case running_avg != util_avg? :)
 
-Miscellanea:
+I _think_ it's mostly due to the rouding errors we have because of the
+reasons I've explained in the reply to Joel:
 
-o Add my copyright to checkpatch
+   https://lkml.org/lkml/2018/6/5/559
+   20180605152156.GD32302@e110439-lin
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- scripts/checkpatch.pl     | 4 +++-
- scripts/get_maintainer.pl | 4 ++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+at the end, while commenting about the division overhead.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 2d42eb9cd1a5..7aadfded3fe0 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -1,9 +1,11 @@
- #!/usr/bin/env perl
-+# SPDX-License-Identifier: GPL-2.0
-+#
- # (c) 2001, Dave Jones. (the file handling bit)
- # (c) 2005, Joel Schopp <jschopp@austin.ibm.com> (the ugly bit)
- # (c) 2007,2008, Andy Whitcroft <apw@uk.ibm.com> (new conditions, test suite)
- # (c) 2008-2010 Andy Whitcroft <apw@canonical.com>
--# Licensed under the terms of the GNU GPL License version 2
-+# (c) 2010-2018 Joe Perches <joe@perches.com>
- 
- use strict;
- use warnings;
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index 99c96e86eccb..30eca36b4dad 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -1,4 +1,6 @@
- #!/usr/bin/env perl
-+# SPDX-License-Identifier: GPL-2.0
-+#
- # (c) 2007, Joe Perches <joe@perches.com>
- #           created from checkpatch.pl
- #
-@@ -7,8 +9,6 @@
- #
- # usage: perl scripts/get_maintainer.pl [OPTIONS] <patch>
- #        perl scripts/get_maintainer.pl [OPTIONS] -f <file>
--#
--# Licensed under the terms of the GNU GPL License version 2
- 
- use warnings;
- use strict;
+I should try the above examples while tracking the full signal at
+___update_load_avg() time.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
