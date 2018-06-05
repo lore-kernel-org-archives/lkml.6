@@ -1,89 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752328AbeFETHT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:07:19 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:46871 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751900AbeFETHR (ORCPT
+        id S1752363AbeFETIM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:08:12 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:38726 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751968AbeFETIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:07:17 -0400
-X-Google-Smtp-Source: ADUXVKK8Ab8hABsfXry0GTTYK71l8fr9WMSxPCpKSak/wfLNiAVyGhQJsZ3n7rabldKKrylWYxIw7vmkeuxdrWzL/lI=
+        Tue, 5 Jun 2018 15:08:11 -0400
+X-Google-Smtp-Source: ADUXVKLR+irgySyvG4afOyCFJaU5Ba7pCI8wYwRq3B2W+sEgOzMdZ0Stq0sWNnsvygQmvpqwByXBNw==
+Date: Tue, 5 Jun 2018 12:08:07 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org
+Subject: [GIT PULL 1/2] libata changes for v4.18-rc1
+Message-ID: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0iu23LqdKUJA5OQGF3Yqq3=k+nfNUVn-LFpYgkDrgokCg@mail.gmail.com>
-References: <20180601180053.120202-1-ravisadineni@chromium.org>
- <20180602010708.152025-1-ravisadineni@chromium.org> <20180604215339.GG164893@dtor-ws>
- <CAJZ5v0iu23LqdKUJA5OQGF3Yqq3=k+nfNUVn-LFpYgkDrgokCg@mail.gmail.com>
-From: Ravi Chandra Sadineni <ravisadineni@google.com>
-Date: Tue, 5 Jun 2018 12:06:53 -0700
-Message-ID: <CAOGSYL0JJOoCnE7bjXZ8XPRJWmSyQ5nMQDO_0L708=r9MNX5BQ@mail.gmail.com>
-Subject: Re: [PATCH V2] i8042: Increment wakeup_count for the respective port.
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        chenhong3@huawei.com, Dmitry Torokhov <dtor@google.com>,
-        Todd Broch <tbroch@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org, Rajat Jain <rajatja@google.com>,
-        Benson Leung <bleung@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 2:14 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Mon, Jun 4, 2018 at 11:53 PM, Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
->> On Fri, Jun 01, 2018 at 06:07:08PM -0700, Ravi Chandra Sadineni wrote:
->>> Call pm_wakeup_event on every irq. This should help us in identifying if
->>> keyboard was a potential wake reason for the last resume.
->>>
->>> Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
->>> ---
->>> V2: Increment the wakeup count only when there is a irq and not when the
->>> method is called internally.
->>>
->>> drivers/input/serio/i8042.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
->>> index 824f4c1c1f310..2bd6f2633e29a 100644
->>> --- a/drivers/input/serio/i8042.c
->>> +++ b/drivers/input/serio/i8042.c
->>> @@ -573,6 +573,9 @@ static irqreturn_t i8042_interrupt(int irq, void *dev_id)
->>>       port = &i8042_ports[port_no];
->>>       serio = port->exists ? port->serio : NULL;
->>>
->>> +     if (irq && serio && device_may_wakeup(&serio->dev))
->>> +             pm_wakeup_event(&serio->dev, 0);
->>
->> The constant checks for device_may_wakeup() before calling
->> pm_wakeup_event()needed to avoid warnings in wakeup_source_activate()
->> (?) are annoying.
->
-> I'm not following you here.
->
-> pm_wakeup_event() ->
->     pm_wakeup_dev_event() ->
->         pm_wakeup_ws_event(dev->power.wakeup, ...)
->             Checks if the first arg is NULL and returns quietly if so.
->
-> I don't see why you need the device_may_wakeup() check.
-Just realized that device_may_wakeup check is not needed. Removed the
-check in V3. Thanks.
->
->> Rafael, can we move the check into pm_wakeup_dev_event()?
->
-> That would be redundant, wouldn't it?
->
->> I am also confused when pm_wakeup_event() vs pm_wakeup_hard_event() vs
->> pm_wakeup_dev_event() should be used, if any. Is there any guidance?
->
-> First off, the "hard" variant is for when you want to abort suspends
-> in progress or wake up from suspend to idle regardless of whether or
-> not wakeup source tracking is enabled.
->
-> Second, use pm_wakeup_dev_event() if the decision on "hard" vs "soft"
-> needs to be made at run time.
->
-> Thanks,
-> Rafael
+Hello, Linus.
+
+These two are fixes which missed v4.17.  I tried to merge these into
+libata/for-4.18 but couldn't make "git request-pull" not generate huge
+spurious diffstat without merging v4.17 in the middle, so I'm sending
+them out as two spearate pull request.  Pulling into master should be
+clean for both.
+
+One is to remove an incorrect power management blacklist entry and the
+other to fix a cdb buffer overrun which has been there for a very long
+time.
+
+The following changes since commit 4544e403eb25552aed7f0ee181a7a506b8800403:
+
+  ahci: Add PCI ID for Cannon Lake PCH-LP AHCI (2018-05-24 07:03:32 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-4.17-fixes
+
+for you to fetch changes up to 2cfce3a86b64b53f0a70e92a6a659c720c319b45:
+
+  libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk (2018-05-31 08:45:37 -0700)
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      libata: zpodd: small read overflow in eject_tray()
+
+Hans de Goede (1):
+      libata: Drop SanDisk SD7UB3Q*G1001 NOLPM quirk
+
+ drivers/ata/libata-core.c  | 3 ---
+ drivers/ata/libata-zpodd.c | 2 +-
+ 2 files changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 346b163..9bfd2f7 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4557,9 +4557,6 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
+ 	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
+ 
+-	/* Sandisk devices which are known to not handle LPM well */
+-	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
+-
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+index de4ddd0..b3ed8f9 100644
+--- a/drivers/ata/libata-zpodd.c
++++ b/drivers/ata/libata-zpodd.c
+@@ -35,7 +35,7 @@ struct zpodd {
+ static int eject_tray(struct ata_device *dev)
+ {
+ 	struct ata_taskfile tf;
+-	static const char cdb[] = {  GPCMD_START_STOP_UNIT,
++	static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_START_STOP_UNIT,
+ 		0, 0, 0,
+ 		0x02,     /* LoEj */
+ 		0, 0, 0, 0, 0, 0, 0,
+-- 
+tejun
