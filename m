@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeFEQH3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:07:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55262 "EHLO mx1.redhat.com"
+        id S1752328AbeFEQHg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:07:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34818 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752198AbeFEQH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:07:26 -0400
+        id S1752275AbeFEQHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:07:32 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 4/5] afs: Display manually added cells in dynamic root mount
+Subject: [PATCH 5/5] afs: Optimise callback breaking by not repeating volume
+ lookup
 From: David Howells <dhowells@redhat.com>
 To: viro@ZenIV.linux.org.uk
 Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 05 Jun 2018 17:07:24 +0100
-Message-ID: <152821484419.16494.12571848033105958373.stgit@warthog.procyon.org.uk>
+Date: Tue, 05 Jun 2018 17:07:30 +0100
+Message-ID: <152821485065.16494.756490676047402859.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152821481874.16494.4047053234419671609.stgit@warthog.procyon.org.uk>
 References: <152821481874.16494.4047053234419671609.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -27,361 +28,261 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alter the dynroot mount so that cells created by manipulation of
-/proc/fs/afs/cells and /proc/fs/afs/rootcell and by specification of a root
-cell as a module parameter will cause directories for those cells to be
-created in the dynamic root superblock for the network namespace[*].
+At the moment, afs_break_callbacks calls afs_break_one_callback() for each
+separate FID it was given, and the latter looks up the volume individually
+for each one.
 
-To this end:
+However, this is inefficient if two or more FIDs have the same vid as we
+could reuse the volume.  This is complicated by cell aliasing whereby we
+may have multiple cells sharing a volume and can therefore have multiple
+callback interests for any particular volume ID.
 
- (1) Only one dynamic root superblock is now created per network namespace
-     and this is shared between all attempts to mount it.  This makes it
-     easier to find the superblock to modify.
+At the moment afs_break_one_callback() scans the entire list of volumes
+we're getting from a server and breaks the appropriate callback in every
+matching volume, regardless of cell.  This scan is done for every FID.
 
- (2) When a dynamic root superblock is created, the list of cells is walked
-     and directories created for each cell already defined.
+Optimise callback breaking by the following means:
 
- (3) When a new cell is added, if a dynamic root superblock exists, a
-     directory is created for it.
+ (1) Sort the FID list by vid so that all FIDs belonging to the same volume
+     are clumped together.
 
- (4) When a cell is destroyed, the directory is removed.
+     This is done through the use of an indirection table as we cannot do
+     an insertion sort on the afs_callback_break array as we decode FIDs
+     into it as we subsequently also have to decode callback info into it
+     that corresponds by array index only.
 
- (5) These directories are created by calling lookup_one_len() on the root
-     dir which automatically creates them if they don't exist.
+     We also don't really want to bubblesort afterwards if we can avoid it.
 
-[*] Inasmuch as network namespaces are currently supported here.
+ (2) Sort the server->cb_interests array by vid so that all the matching
+     volumes are grouped together.  This permits the scan to stop after
+     finding a record that has a higher vid.
+
+ (3) When breaking FIDs, we try to keep server->cb_break_lock as long as
+     possible, caching the start point in the array for that volume group
+     as long as possible.
+
+     It might make sense to add another layer in that list and have a
+     refcounted volume ID anchor that has the matching interests attached
+     to it rather than being in the list.  This would allow the lock to be
+     dropped without losing the cursor.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/afs/cell.c         |   12 +++--
- fs/afs/dynroot.c      |  124 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/afs/internal.h     |    7 ++-
- fs/afs/main.c         |    2 -
- fs/afs/super.c        |   19 ++++++--
- fs/namei.c            |   29 +++++++++++
- include/linux/namei.h |    1 
- 7 files changed, 183 insertions(+), 11 deletions(-)
+ fs/afs/callback.c |  110 +++++++++++++++++++++++++++++++++++++++++++++--------
+ fs/afs/internal.h |   15 ++++++-
+ fs/afs/server.c   |    2 -
+ 3 files changed, 107 insertions(+), 20 deletions(-)
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index bb92b54d2a4a..f3d0bef16d78 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -15,6 +15,7 @@
- #include <linux/dns_resolver.h>
+diff --git a/fs/afs/callback.c b/fs/afs/callback.c
+index 571437dcb252..5f261fbf2182 100644
+--- a/fs/afs/callback.c
++++ b/fs/afs/callback.c
+@@ -20,6 +20,66 @@
  #include <linux/sched.h>
- #include <linux/inet.h>
-+#include <linux/namei.h>
- #include <keys/rxrpc-type.h>
  #include "internal.h"
  
-@@ -531,9 +532,11 @@ static int afs_activate_cell(struct afs_net *net, struct afs_cell *cell)
- 	ret = afs_proc_cell_setup(cell);
- 	if (ret < 0)
- 		return ret;
--	spin_lock(&net->proc_cells_lock);
++/*
++ * Create volume and callback interests on a server.
++ */
++static struct afs_cb_interest *afs_create_interest(struct afs_server *server,
++						   struct afs_vnode *vnode)
++{
++	struct afs_vol_interest *new_vi, *vi;
++	struct afs_cb_interest *new;
++	struct hlist_node **pp;
 +
-+	mutex_lock(&net->proc_cells_lock);
- 	list_add_tail(&cell->proc_link, &net->proc_cells);
--	spin_unlock(&net->proc_cells_lock);
-+	afs_dynroot_mkdir(net, cell);
-+	mutex_unlock(&net->proc_cells_lock);
- 	return 0;
++	new_vi = kzalloc(sizeof(struct afs_vol_interest), GFP_KERNEL);
++	if (!new_vi)
++		return NULL;
++
++	new = kzalloc(sizeof(struct afs_cb_interest), GFP_KERNEL);
++	if (!new) {
++		kfree(new_vi);
++		return NULL;
++	}
++
++	new_vi->usage = 1;
++	new_vi->vid = vnode->volume->vid;
++	INIT_HLIST_NODE(&new_vi->srv_link);
++	INIT_HLIST_HEAD(&new_vi->cb_interests);
++
++	refcount_set(&new->usage, 1);
++	new->sb = vnode->vfs_inode.i_sb;
++	new->vid = vnode->volume->vid;
++	new->server = afs_get_server(server);
++	INIT_HLIST_NODE(&new->cb_vlink);
++
++	write_lock(&server->cb_break_lock);
++
++	for (pp = &server->cb_volumes.first; *pp; pp = &(*pp)->next) {
++		vi = hlist_entry(*pp, struct afs_vol_interest, srv_link);
++		if (vi->vid < new_vi->vid)
++			continue;
++		if (vi->vid > new_vi->vid)
++			break;
++		vi->usage++;
++		goto found_vi;
++	}
++
++	new_vi->srv_link.pprev = pp;
++	new_vi->srv_link.next = *pp;
++	if (*pp)
++		(*pp)->pprev = &new_vi->srv_link.next;
++	*pp = &new_vi->srv_link;
++	vi = new_vi;
++	new_vi = NULL;
++found_vi:
++
++	new->vol_interest = vi;
++	hlist_add_head(&new->cb_vlink, &vi->cb_interests);
++
++	write_unlock(&server->cb_break_lock);
++	kfree(new_vi);
++	return new;
++}
++
+ /*
+  * Set up an interest-in-callbacks record for a volume on a server and
+  * register it with the server.
+@@ -77,20 +137,10 @@ int afs_register_server_cb_interest(struct afs_vnode *vnode,
+ 	}
+ 
+ 	if (!cbi) {
+-		new = kzalloc(sizeof(struct afs_cb_interest), GFP_KERNEL);
++		new = afs_create_interest(server, vnode);
+ 		if (!new)
+ 			return -ENOMEM;
+ 
+-		refcount_set(&new->usage, 1);
+-		new->sb = vnode->vfs_inode.i_sb;
+-		new->vid = vnode->volume->vid;
+-		new->server = afs_get_server(server);
+-		INIT_LIST_HEAD(&new->cb_link);
+-
+-		write_lock(&server->cb_break_lock);
+-		list_add_tail(&new->cb_link, &server->cb_interests);
+-		write_unlock(&server->cb_break_lock);
+-
+ 		write_lock(&slist->lock);
+ 		if (!entry->cb_interest) {
+ 			entry->cb_interest = afs_get_cb_interest(new);
+@@ -126,11 +176,22 @@ int afs_register_server_cb_interest(struct afs_vnode *vnode,
+  */
+ void afs_put_cb_interest(struct afs_net *net, struct afs_cb_interest *cbi)
+ {
++	struct afs_vol_interest *vi;
++
+ 	if (cbi && refcount_dec_and_test(&cbi->usage)) {
+-		if (!list_empty(&cbi->cb_link)) {
++		if (!hlist_unhashed(&cbi->cb_vlink)) {
+ 			write_lock(&cbi->server->cb_break_lock);
+-			list_del_init(&cbi->cb_link);
++
++			hlist_del_init(&cbi->cb_vlink);
++			vi = cbi->vol_interest;
++			cbi->vol_interest = NULL;
++			if (--vi->usage == 0)
++				hlist_del(&vi->srv_link);
++			else
++				vi = NULL;
++
+ 			write_unlock(&cbi->server->cb_break_lock);
++			kfree(vi);
+ 			afs_put_server(net, cbi->server);
+ 		}
+ 		kfree(cbi);
+@@ -182,20 +243,34 @@ void afs_break_callback(struct afs_vnode *vnode)
+ static void afs_break_one_callback(struct afs_server *server,
+ 				   struct afs_fid *fid)
+ {
++	struct afs_vol_interest *vi;
+ 	struct afs_cb_interest *cbi;
+ 	struct afs_iget_data data;
+ 	struct afs_vnode *vnode;
+ 	struct inode *inode;
+ 
+ 	read_lock(&server->cb_break_lock);
++	hlist_for_each_entry(vi, &server->cb_volumes, srv_link) {
++		if (vi->vid < fid->vid)
++			continue;
++		if (vi->vid > fid->vid) {
++			vi = NULL;
++			break;
++		}
++		//atomic_inc(&vi->usage);
++		break;
++	}
++
++	/* TODO: Find all matching volumes if we couldn't match the server and
++	 * break them anyway.
++	 */
++	if (!vi)
++		goto out;
+ 
+ 	/* Step through all interested superblocks.  There may be more than one
+ 	 * because of cell aliasing.
+ 	 */
+-	list_for_each_entry(cbi, &server->cb_interests, cb_link) {
+-		if (cbi->vid != fid->vid)
+-			continue;
+-
++	hlist_for_each_entry(cbi, &vi->cb_interests, cb_vlink) {
+ 		if (fid->vnode == 0 && fid->unique == 0) {
+ 			/* The callback break applies to an entire volume. */
+ 			struct afs_super_info *as = AFS_FS_S(cbi->sb);
+@@ -217,6 +292,7 @@ static void afs_break_one_callback(struct afs_server *server,
+ 		}
+ 	}
+ 
++out:
+ 	read_unlock(&server->cb_break_lock);
  }
  
-@@ -546,9 +549,10 @@ static void afs_deactivate_cell(struct afs_net *net, struct afs_cell *cell)
- 
- 	afs_proc_cell_remove(cell);
- 
--	spin_lock(&net->proc_cells_lock);
-+	mutex_lock(&net->proc_cells_lock);
- 	list_del_init(&cell->proc_link);
--	spin_unlock(&net->proc_cells_lock);
-+	afs_dynroot_rmdir(net, cell);
-+	mutex_unlock(&net->proc_cells_lock);
- 
- #ifdef CONFIG_AFS_FSCACHE
- 	fscache_relinquish_cookie(cell->cache, NULL, false);
-diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-index 7425f416ed73..174e843f0633 100644
---- a/fs/afs/dynroot.c
-+++ b/fs/afs/dynroot.c
-@@ -1,4 +1,4 @@
--/* dir.c: AFS dynamic root handling
-+/* AFS dynamic root handling
-  *
-  * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
-  * Written by David Howells (dhowells@redhat.com)
-@@ -207,3 +207,125 @@ const struct dentry_operations afs_dynroot_dentry_operations = {
- 	.d_release	= afs_d_release,
- 	.d_automount	= afs_d_automount,
- };
-+
-+/*
-+ * Create a manually added cell mount directory.
-+ * - The caller must hold net->proc_cells_lock
-+ */
-+int afs_dynroot_mkdir(struct afs_net *net, struct afs_cell *cell)
-+{
-+	struct super_block *sb = net->dynroot_sb;
-+	struct dentry *root, *subdir;
-+	int ret;
-+
-+	if (!sb || atomic_read(&sb->s_active) == 0)
-+		return 0;
-+
-+	/* Let the ->lookup op do the creation */
-+	root = sb->s_root;
-+	inode_lock(root->d_inode);
-+	subdir = lookup_one_len(cell->name, root, cell->name_len);
-+	if (IS_ERR(subdir)) {
-+		ret = PTR_ERR(subdir);
-+		goto unlock;
-+	}
-+
-+	/* Note that we're retaining an extra ref on the dentry */
-+	subdir->d_fsdata = (void *)1UL;
-+	ret = 0;
-+unlock:
-+	inode_unlock(root->d_inode);
-+	return ret;
-+}
-+
-+/*
-+ * Remove a manually added cell mount directory.
-+ * - The caller must hold net->proc_cells_lock
-+ */
-+void afs_dynroot_rmdir(struct afs_net *net, struct afs_cell *cell)
-+{
-+	struct super_block *sb = net->dynroot_sb;
-+	struct dentry *root, *subdir;
-+
-+	if (!sb || atomic_read(&sb->s_active) == 0)
-+		return;
-+
-+	root = sb->s_root;
-+	inode_lock(root->d_inode);
-+
-+	/* Don't want to trigger a lookup call, which will re-add the cell */
-+	subdir = try_lookup_one_len(cell->name, root, cell->name_len);
-+	if (IS_ERR_OR_NULL(subdir)) {
-+		_debug("lookup %ld", PTR_ERR(subdir));
-+		goto no_dentry;
-+	}
-+
-+	_debug("rmdir %pd %u", subdir, d_count(subdir));
-+
-+	if (subdir->d_fsdata) {
-+		_debug("unpin %u", d_count(subdir));
-+		subdir->d_fsdata = NULL;
-+		dput(subdir);
-+	}
-+	dput(subdir);
-+no_dentry:
-+	inode_unlock(root->d_inode);
-+	_leave("");
-+}
-+
-+/*
-+ * Populate a newly created dynamic root with cell names.
-+ */
-+int afs_dynroot_populate(struct super_block *sb)
-+{
-+	struct afs_cell *cell;
-+	struct afs_net *net = afs_sb2net(sb);
-+	int ret;
-+
-+	if (mutex_lock_interruptible(&net->proc_cells_lock) < 0)
-+		return -ERESTARTSYS;
-+
-+	net->dynroot_sb = sb;
-+	list_for_each_entry(cell, &net->proc_cells, proc_link) {
-+		ret = afs_dynroot_mkdir(net, cell);
-+		if (ret < 0)
-+			goto error;
-+	}
-+
-+	ret = 0;
-+out:
-+	mutex_unlock(&net->proc_cells_lock);
-+	return ret;
-+
-+error:
-+	net->dynroot_sb = NULL;
-+	goto out;
-+}
-+
-+/*
-+ * When a dynamic root that's in the process of being destroyed, depopulate it
-+ * of pinned directories.
-+ */
-+void afs_dynroot_depopulate(struct super_block *sb)
-+{
-+	struct afs_net *net = afs_sb2net(sb);
-+	struct dentry *root = sb->s_root, *subdir, *tmp;
-+
-+	/* Prevent more subdirs from being created */
-+	mutex_lock(&net->proc_cells_lock);
-+	if (net->dynroot_sb == sb)
-+		net->dynroot_sb = NULL;
-+	mutex_unlock(&net->proc_cells_lock);
-+
-+	inode_lock(root->d_inode);
-+
-+	/* Remove all the pins for dirs created for manually added cells */
-+	list_for_each_entry_safe(subdir, tmp, &root->d_subdirs, d_child) {
-+		if (subdir->d_fsdata) {
-+			subdir->d_fsdata = NULL;
-+			dput(subdir);
-+		}
-+	}
-+
-+	inode_unlock(root->d_inode);
-+}
 diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index bc3d8c87a938..ab6bdf456f1a 100644
+index ab6bdf456f1a..e35d59761d47 100644
 --- a/fs/afs/internal.h
 +++ b/fs/afs/internal.h
-@@ -239,7 +239,7 @@ struct afs_net {
- 	atomic_t		cells_outstanding;
- 	seqlock_t		cells_lock;
+@@ -406,16 +406,27 @@ struct afs_server {
+ 	rwlock_t		fs_lock;	/* access lock */
  
--	spinlock_t		proc_cells_lock;
-+	struct mutex		proc_cells_lock;
- 	struct list_head	proc_cells;
+ 	/* callback promise management */
+-	struct list_head	cb_interests;	/* List of superblocks using this server */
++	struct hlist_head	cb_volumes;	/* List of volume interests on this server */
+ 	unsigned		cb_s_break;	/* Break-everything counter. */
+ 	rwlock_t		cb_break_lock;	/* Volume finding lock */
+ };
  
- 	/* Known servers.  Theoretically each fileserver can only be in one
-@@ -263,6 +263,7 @@ struct afs_net {
- 	struct mutex		lock_manager_mutex;
- 
- 	/* Misc */
-+	struct super_block	*dynroot_sb;	/* Dynamic root mount superblock */
- 	struct proc_dir_entry	*proc_afs;	/* /proc/net/afs directory */
- 	struct afs_sysnames	*sysnames;
- 	rwlock_t		sysnames_lock;
-@@ -721,6 +722,10 @@ extern const struct inode_operations afs_dynroot_inode_operations;
- extern const struct dentry_operations afs_dynroot_dentry_operations;
- 
- extern struct inode *afs_try_auto_mntpt(struct dentry *, struct inode *);
-+extern int afs_dynroot_mkdir(struct afs_net *, struct afs_cell *);
-+extern void afs_dynroot_rmdir(struct afs_net *, struct afs_cell *);
-+extern int afs_dynroot_populate(struct super_block *);
-+extern void afs_dynroot_depopulate(struct super_block *);
- 
- /*
-  * file.c
-diff --git a/fs/afs/main.c b/fs/afs/main.c
-index 7d2c1354e2ca..e84fe822a960 100644
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@ -86,7 +86,7 @@ static int __net_init afs_net_init(struct net *net_ns)
- 	INIT_WORK(&net->cells_manager, afs_manage_cells);
- 	timer_setup(&net->cells_timer, afs_cells_timer, 0);
- 
--	spin_lock_init(&net->proc_cells_lock);
-+	mutex_init(&net->proc_cells_lock);
- 	INIT_LIST_HEAD(&net->proc_cells);
- 
- 	seqlock_init(&net->fs_lock);
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index 67135c2c3c9a..d524e4e6f290 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -365,12 +365,16 @@ static int afs_test_super(struct super_block *sb, struct fs_context *fc)
- 
- 	return (as->net_ns == fc->net_ns &&
- 		as->volume &&
--		as->volume->vid == ctx->volume->vid);
-+		as->volume->vid == ctx->volume->vid &&
-+		!as->dyn_root);
- }
- 
- static int afs_dynroot_test_super(struct super_block *sb, struct fs_context *fc)
- {
--	return false;
-+	struct afs_super_info *as = AFS_FS_S(sb);
-+
-+	return (as->net_ns == fc->net_ns &&
-+		as->dyn_root);
- }
- 
- static int afs_set_super(struct super_block *sb, struct fs_context *fc)
-@@ -426,10 +430,14 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
- 	if (!sb->s_root)
- 		goto error;
- 
--	if (as->dyn_root)
-+	if (as->dyn_root) {
- 		sb->s_d_op = &afs_dynroot_dentry_operations;
--	else
-+		ret = afs_dynroot_populate(sb);
-+		if (ret < 0)
-+			goto error;
-+	} else {
- 		sb->s_d_op = &afs_fs_dentry_operations;
-+	}
- 
- 	_leave(" = 0");
- 	return 0;
-@@ -472,6 +480,9 @@ static void afs_kill_super(struct super_block *sb)
- 	struct afs_super_info *as = AFS_FS_S(sb);
- 	struct afs_net *net = afs_net(as->net_ns);
- 
-+	if (as->dyn_root)
-+		afs_dynroot_depopulate(sb);
-+	
- 	/* Clear the callback interests (which will do ilookup5) before
- 	 * deactivating the superblock.
- 	 */
-diff --git a/fs/namei.c b/fs/namei.c
-index a59968de1636..2794a3b265ee 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2461,6 +2461,35 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
- 	return inode_permission(base->d_inode, MAY_EXEC);
- }
- 
-+/**
-+ * try_lookup_one_len - filesystem helper to lookup single pathname component
-+ * @name:	pathname component to lookup
-+ * @base:	base directory to lookup from
-+ * @len:	maximum length @len should be interpreted to
-+ *
-+ * Look up a dentry by name in the dcache, returning NULL if it does not
-+ * currently exist.  The function does not try to create a dentry.
-+ *
-+ * Note that this routine is purely a helper for filesystem usage and should
-+ * not be called by generic code.
-+ *
-+ * The caller must hold base->i_mutex.
++/*
++ * Volume collation in the server's callback interest list.
 + */
-+struct dentry *try_lookup_one_len(const char *name, struct dentry *base, int len)
-+{
-+	struct qstr this;
-+	int err;
++struct afs_vol_interest {
++	struct hlist_node	srv_link;	/* Link in server->cb_volumes */
++	struct hlist_head	cb_interests;	/* List of callback interests on the server */
++	afs_volid_t		vid;		/* Volume ID to match */
++	unsigned int		usage;
++};
 +
-+	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-+
-+	err = lookup_one_len_common(name, base, len, &this);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	return lookup_dcache(&this, base, 0);
-+}
-+EXPORT_SYMBOL(try_lookup_one_len);
-+
- /**
-  * lookup_one_len - filesystem helper to lookup single pathname component
-  * @name:	pathname component to lookup
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index a982bb7cd480..a78606e8e3df 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -81,6 +81,7 @@ extern void done_path_create(struct path *, struct dentry *);
- extern struct dentry *kern_path_locked(const char *, struct path *);
- extern int kern_path_mountpoint(int, const char *, struct path *, unsigned int);
+ /*
+  * Interest by a superblock on a server.
+  */
+ struct afs_cb_interest {
+-	struct list_head	cb_link;	/* Link in server->cb_interests */
++	struct hlist_node	cb_vlink;	/* Link in vol_interest->cb_interests */
++	struct afs_vol_interest	*vol_interest;
+ 	struct afs_server	*server;	/* Server on which this interest resides */
+ 	struct super_block	*sb;		/* Superblock on which inodes reside */
+ 	afs_volid_t		vid;		/* Volume ID to match */
+diff --git a/fs/afs/server.c b/fs/afs/server.c
+index 3af4625e2f8c..1d329e6981d5 100644
+--- a/fs/afs/server.c
++++ b/fs/afs/server.c
+@@ -228,7 +228,7 @@ static struct afs_server *afs_alloc_server(struct afs_net *net,
+ 	server->flags = (1UL << AFS_SERVER_FL_NEW);
+ 	server->update_at = ktime_get_real_seconds() + afs_server_update_delay;
+ 	rwlock_init(&server->fs_lock);
+-	INIT_LIST_HEAD(&server->cb_interests);
++	INIT_HLIST_HEAD(&server->cb_volumes);
+ 	rwlock_init(&server->cb_break_lock);
  
-+extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
- extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
- extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int);
- 
+ 	afs_inc_servers_outstanding(net);
