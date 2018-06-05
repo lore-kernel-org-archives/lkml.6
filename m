@@ -1,22 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeFER3A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:29:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751902AbeFERDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752220AbeFERDF (ORCPT <rfc822;w@1wt.eu>);
         Tue, 5 Jun 2018 13:03:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751902AbeFERDC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Wei Wang <weiwan@google.com>, Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         "David S. Miller" <davem@davemloft.net>,
         Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 14/37] tcp: avoid integer overflows in tcp_rcv_space_adjust()
-Date: Tue,  5 Jun 2018 19:01:19 +0200
-Message-Id: <20180605170109.740656848@linuxfoundation.org>
+Subject: [PATCH 4.4 13/37] irda: fix overly long udelay()
+Date: Tue,  5 Jun 2018 19:01:18 +0200
+Message-Id: <20180605170109.686137201@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -32,75 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 607065bad9931e72207b0cac365d7d4abc06bd99 upstream.
+commit c9bd28233b6d0d82ac3ba0215723be0a8262c39c upstream.
 
-When using large tcp_rmem[2] values (I did tests with 500 MB),
-I noticed overflows while computing rcvwin.
+irda_get_mtt() returns a hardcoded '10000' in some cases,
+and with gcc-7, we get a build error because this triggers a
+compile-time check in udelay():
 
-Lets fix this before the following patch.
+drivers/net/irda/w83977af_ir.o: In function `w83977af_hard_xmit':
+w83977af_ir.c:(.text.w83977af_hard_xmit+0x14c): undefined reference to `__bad_udelay'
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Wei Wang <weiwan@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
+Older compilers did not run into this because they either did not
+completely inline the irda_get_mtt() or did not consider the
+10000 value a constant expression.
+
+The code has been wrong since the start of git history.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[Backport: sysctl_tcp_rmem is not Namespace-ify'd in older kernels]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/tcp.h  |    2 +-
- net/ipv4/tcp_input.c |   10 ++++++----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/irda/w83977af_ir.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -324,7 +324,7 @@ struct tcp_sock {
+--- a/drivers/net/irda/w83977af_ir.c
++++ b/drivers/net/irda/w83977af_ir.c
+@@ -518,7 +518,9 @@ static netdev_tx_t w83977af_hard_xmit(st
+ 		
+ 		mtt = irda_get_mtt(skb);
+ 		pr_debug("%s(%ld), mtt=%d\n", __func__ , jiffies, mtt);
+-			if (mtt)
++			if (mtt > 1000)
++				mdelay(mtt/1000);
++			else if (mtt)
+ 				udelay(mtt);
  
- /* Receiver queue space */
- 	struct {
--		int	space;
-+		u32	space;
- 		u32	seq;
- 		u32	time;
- 	} rcvq_space;
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -557,8 +557,8 @@ static inline void tcp_rcv_rtt_measure_t
- void tcp_rcv_space_adjust(struct sock *sk)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 copied;
- 	int time;
--	int copied;
- 
- 	time = tcp_time_stamp - tp->rcvq_space.time;
- 	if (time < (tp->rcv_rtt_est.rtt >> 3) || tp->rcv_rtt_est.rtt == 0)
-@@ -580,12 +580,13 @@ void tcp_rcv_space_adjust(struct sock *s
- 
- 	if (sysctl_tcp_moderate_rcvbuf &&
- 	    !(sk->sk_userlocks & SOCK_RCVBUF_LOCK)) {
--		int rcvwin, rcvmem, rcvbuf;
-+		int rcvmem, rcvbuf;
-+		u64 rcvwin;
- 
- 		/* minimal window to cope with packet losses, assuming
- 		 * steady state. Add some cushion because of small variations.
- 		 */
--		rcvwin = (copied << 1) + 16 * tp->advmss;
-+		rcvwin = ((u64)copied << 1) + 16 * tp->advmss;
- 
- 		/* If rate increased by 25%,
- 		 *	assume slow start, rcvwin = 3 * copied
-@@ -605,7 +606,8 @@ void tcp_rcv_space_adjust(struct sock *s
- 		while (tcp_win_from_space(rcvmem) < tp->advmss)
- 			rcvmem += 128;
- 
--		rcvbuf = min(rcvwin / tp->advmss * rcvmem, sysctl_tcp_rmem[2]);
-+		do_div(rcvwin, tp->advmss);
-+		rcvbuf = min_t(u64, rcvwin * rcvmem, sysctl_tcp_rmem[2]);
- 		if (rcvbuf > sk->sk_rcvbuf) {
- 			sk->sk_rcvbuf = rcvbuf;
- 
+ 			/* Enable DMA interrupt */
