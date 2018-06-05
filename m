@@ -1,92 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeFERDN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:03:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36616 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752271AbeFERDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:08 -0400
-Date: Tue, 5 Jun 2018 11:03:04 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Cc: "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Linuxarm <linuxarm@huawei.com>, "John Garry" <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
- management
-Message-ID: <20180605110304.33e14b0d@w520.home>
-In-Reply-To: <20180525145408.2938a9ec@w520.home>
-References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
-        <20180524122032.724676b9@w520.home>
-        <5FC3163CFD30C246ABAA99954A238FA8386EE591@FRAEML521-MBX.china.huawei.com>
-        <20180525145408.2938a9ec@w520.home>
+        id S1752537AbeFERD0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752481AbeFERDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:22 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.4 02/37] powerpc/64s: Clear PCR on boot
+Date: Tue,  5 Jun 2018 19:01:07 +0200
+Message-Id: <20180605170109.044539086@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+References: <20180605170108.884872354@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc +dwmw2]
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-On Fri, 25 May 2018 14:54:08 -0600
-Alex Williamson <alex.williamson@redhat.com> wrote:
+------------------
 
-> On Fri, 25 May 2018 08:45:36 +0000
-> Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com> wrote:
-> 
-> > Yes, the above changes related to list empty cases looks fine to me.   
-> 
-> Thanks Shameer, applied to my next branch with the discussed fixes for
-> v4.18 (modulo patch 4/7 which Joerg already pushed for v4.17).  Thanks,
+From: Michael Neuling <mikey@neuling.org>
 
-Hi Shameer,
+commit faf37c44a105f3608115785f17cbbf3500f8bc71 upstream.
 
-We're still hitting issues with this.  VT-d marks reserved regions for
-any RMRR ranges, which are IOVA ranges that the BIOS requests to be
-identity mapped for a device.  These are indicated by these sorts of
-log entries on boot:
+Clear the PCR (Processor Compatibility Register) on boot to ensure we
+are not running in a compatibility mode.
 
- DMAR: Setting RMRR:
- DMAR: Setting identity map for device 0000:00:02.0 [0xbf800000 - 0xcf9fffff]
- DMAR: Setting identity map for device 0000:00:1a.0 [0xbe8d1000 - 0xbe8dffff]
- DMAR: Setting identity map for device 0000:00:1d.0 [0xbe8d1000 - 0xbe8dffff]
+We've seen this cause problems when a crash (and kdump) occurs while
+running compat mode guests. The kdump kernel then runs with the PCR
+set and causes problems. The symptom in the kdump kernel (also seen in
+petitboot after fast-reboot) is early userspace programs taking
+sigills on newer instructions (seen in libc).
 
-So while for an unaffected device, I see very usable ranges for QEMU,
-such as:
+Signed-off-by: Michael Neuling <mikey@neuling.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-	00: 0000000000000000 - 00000000fedfffff
-	01: 00000000fef00000 - 01ffffffffffffff
+---
+ arch/powerpc/kernel/cpu_setup_power.S |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-If I try to assign the previously assignable 00:02.0 IGD graphics
-device, I get:
-
-	00: 0000000000000000 - 00000000bf7fffff
-	01: 00000000cfa00000 - 00000000fedfffff
-	02: 00000000fef00000 - 01ffffffffffffff
-
-And we get a fault when QEMU tries the following mapping:
-
-vfio_dma_map(0x55f790421a20, 0x100000, 0xbff00000, 0x7ff163f00000)
-
-bff00000 clearly extends into the gap starting at bf800000.  VT-d is
-rather split-brained about RMRRs, typically we'd exclude devices from
-assignment at all for relying on RMRRs and these reserved ranges
-would be a welcome mechanism to avoid conflicts with those ranges, but
-for RMRR ranges covering IGD and USB devices we've decided that we
-don't need to honor the RMRR (see device_is_rmrr_locked()), but it's
-still listed as a reserved range and bites us here.
-
-Unless we can get VT-d to exclude RMRRs from reserved regions where
-we've already seen fit to allow the devices to participate in the IOMMU
-API, this would introduce a functional regression for assignment of
-these devices.  David, should we skip GFX and USB devices with RMRRs in
-intel_iommu_get_resv_regions() just as we do in
-device_is_rmrr_locked()?  Thanks,
-
-Alex
+--- a/arch/powerpc/kernel/cpu_setup_power.S
++++ b/arch/powerpc/kernel/cpu_setup_power.S
+@@ -27,6 +27,7 @@ _GLOBAL(__setup_cpu_power7)
+ 	beqlr
+ 	li	r0,0
+ 	mtspr	SPRN_LPID,r0
++	mtspr	SPRN_PCR,r0
+ 	mfspr	r3,SPRN_LPCR
+ 	bl	__init_LPCR
+ 	bl	__init_tlb_power7
+@@ -40,6 +41,7 @@ _GLOBAL(__restore_cpu_power7)
+ 	beqlr
+ 	li	r0,0
+ 	mtspr	SPRN_LPID,r0
++	mtspr	SPRN_PCR,r0
+ 	mfspr	r3,SPRN_LPCR
+ 	bl	__init_LPCR
+ 	bl	__init_tlb_power7
+@@ -55,6 +57,7 @@ _GLOBAL(__setup_cpu_power8)
+ 	beqlr
+ 	li	r0,0
+ 	mtspr	SPRN_LPID,r0
++	mtspr	SPRN_PCR,r0
+ 	mfspr	r3,SPRN_LPCR
+ 	ori	r3, r3, LPCR_PECEDH
+ 	bl	__init_LPCR
+@@ -74,6 +77,7 @@ _GLOBAL(__restore_cpu_power8)
+ 	beqlr
+ 	li	r0,0
+ 	mtspr	SPRN_LPID,r0
++	mtspr	SPRN_PCR,r0
+ 	mfspr   r3,SPRN_LPCR
+ 	ori	r3, r3, LPCR_PECEDH
+ 	bl	__init_LPCR
