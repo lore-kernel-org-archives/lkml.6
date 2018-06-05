@@ -1,157 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752636AbeFER2S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:28:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41818 "EHLO mail.kernel.org"
+        id S1752643AbeFER3A (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:29:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751895AbeFER2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:28:15 -0400
-Date: Tue, 5 Jun 2018 12:28:05 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ryankao <ryankao@realtek.com>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
-        "jrg.otte@gmail.com" <jrg.otte@gmail.com>,
-        David Miller <davem@davemloft.net>, Hayes Wang <hayeswang@realtek.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "romieu@fr.zoreil.com" <romieu@fr.zoreil.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hau <hau@realtek.com>
-Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
-Message-ID: <20180605172805.GD30381@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180605045812.17977-1-kai.heng.feng@canonical.com>
- <9D9E2AF1-CD59-425B-85E9-DB89D620CA67@canonical.com>
- <B01FA80E1422A647BEB597328C544223D30B8F90@RTITMBSV05.realtek.com.tw>
+        id S1751902AbeFERDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:05 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Wei Wang <weiwan@google.com>, Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.4 14/37] tcp: avoid integer overflows in tcp_rcv_space_adjust()
+Date: Tue,  5 Jun 2018 19:01:19 +0200
+Message-Id: <20180605170109.740656848@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+References: <20180605170108.884872354@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <B01FA80E1422A647BEB597328C544223D30B8F90@RTITMBSV05.realtek.com.tw>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 06:34:09AM +0000, Ryankao wrote:
-> Add realtek folk Hau
-> 
-> -----Original Message-----
-> From: Kai Heng Feng [mailto:kai.heng.feng@canonical.com] 
-> Sent: Tuesday, June 05, 2018 1:02 PM
-> To: jrg.otte@gmail.com
-> Cc: David Miller <davem@davemloft.net>; Hayes Wang <hayeswang@realtek.com>; hkallweit1@gmail.com; romieu@fr.zoreil.com; Linux Netdev List <netdev@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Ryankao <ryankao@realtek.com>
-> Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
-> 
-> Hi Jörg Otte,
-> 
-> Can you give this patch a try?
-> 
-> Since you are the only one that reported ALDPS/ASPM regression,
-> 
-> And I think this patch should solve the issue you had [1].
-> 
-> Hopefully we don't need to go down the rabbit hole of blacklist/whitelist...
-> 
-> Kai-Heng
-> 
-> [1] https://lkml.org/lkml/2013/1/5/36
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-I have no idea what ALDPS is.  It's not mentioned in the PCIe spec, so
-presumably it's some Realtek-specific thing.  ASPM is a generic PCIe
-thing.  Changes to these two things should be in separate patches so
-they don't get tangled up.
+------------------
 
-> > On Jun 5, 2018, at 12:58 PM, Kai-Heng Feng 
-> > <kai.heng.feng@canonical.com>
-> > wrote:
-> >
-> > This patch reinstate ALDPS and ASPM support on r8169.
-> >
-> > On some Intel platforms, ASPM support on r8169 is the key factor to 
-> > let Package C-State achieve PC8. Without ASPM support, the deepest 
-> > Package C-State can hit is PC3. PC8 can save additional ~3W in 
-> > comparison with PC3.
-> >
-> > This patch is from Realtek.
-> >
-> > Fixes: e0c075577965 ("r8169: enable ALDPS for power saving")
-> > Fixes: d64ec841517a ("r8169: enable internal ASPM and clock request
-> > settings")
+From: Eric Dumazet <edumazet@google.com>
 
-> > +3507,15 @@ static void rtl8168e_1_hw_phy_config(struct 
-> > rtl8169_private *tp)
-> >  	rtl_writephy(tp, 0x0d, 0x4007);
-> >  	rtl_writephy(tp, 0x0e, 0x0000);
-> >  	rtl_writephy(tp, 0x0d, 0x0000);
-> > +
-> > +	/* Check ALDPS bit, disable it if enabled */
-> > +	rtl_writephy(tp, 0x1f, 0x0000);
-> > +	if (enable_aldps)
-> > +		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
-> > +	else if (rtl_readphy(tp, 0x15) & 0x1000)
-> > +		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
+commit 607065bad9931e72207b0cac365d7d4abc06bd99 upstream.
 
-There's a lot of repetition of this code with minor variations.  You
-could probably factor it out and make it more concise and more
-readable.
+When using large tcp_rmem[2] values (I did tests with 500 MB),
+I noticed overflows while computing rcvwin.
 
-> > +static void rtl8169_check_link_status(struct net_device *dev,
-> > +				      struct rtl8169_private *tp) {
-> > +	struct device *d = tp_to_dev(tp);
-> > +
-> > +	if (tp->link_ok(tp)) {
-> > +		rtl_link_chg_patch(tp);
-> > +		/* This is to cancel a scheduled suspend if there's one. */
-> > +		if (pm_request_resume(d))
-> > +			_rtl_reset_work(tp);
-> > +		netif_carrier_on(dev);
-> > +		if (net_ratelimit())
-> > +			netif_info(tp, ifup, dev, "link up\n");
-> > +	} else {
-> > +		netif_carrier_off(dev);
-> > +		netif_info(tp, ifdown, dev, "link down\n");
-> > +		pm_runtime_idle(d);
-> > +	}
-> > +}
+Lets fix this before the following patch.
 
-This function apparently just got moved around without changing
-anything.  That's fine, but the move should be in a separate patch to
-make the real changes easier to review.
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Wei Wang <weiwan@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[Backport: sysctl_tcp_rmem is not Namespace-ify'd in older kernels]
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> > @@ -7649,8 +7757,12 @@ static int rtl_init_one(struct pci_dev *pdev, 
-> > const struct pci_device_id *ent)
-> >
-> >  	/* disable ASPM completely as that cause random device stop working
-> >  	 * problems as well as full system hangs for some PCIe devices users */
-> > -	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
-> > -				     PCIE_LINK_STATE_CLKPM);
-> > +	if (!enable_aspm) {
-> > +		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
-> > +					     PCIE_LINK_STATE_L1 |
-> > +					     PCIE_LINK_STATE_CLKPM);
-> > +		netif_info(tp, probe, dev, "ASPM disabled\n");
-> > +	}
+---
+ include/linux/tcp.h  |    2 +-
+ net/ipv4/tcp_input.c |   10 ++++++----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-ASPM is a generic PCIe feature that should be configured by the PCI
-core without any help from the device driver.
-
-If code in the driver is needed, that means either the PCI core is
-doing it wrong and we should fix it there, or the device is broken and
-the driver is working around the erratum.
-
-If this is an erratum, you should include details about exactly what's
-broken and (ideally) a URL to the published erratum.  Otherwise this
-is just unmaintainable black magic and likely to be broken by future
-ASPM changes in the PCI core.
-
-ASPM configuration is done by the PCI core before drivers are bound to
-the device.  If you need device-specific workarounds, they should
-probably be in quirks so they're done before the core does that ASPM
-configuration.
-
-> >  	/* enable device (incl. PCI PM wakeup and hotplug setup) */
-> >  	rc = pcim_enable_device(pdev);
-> > --
-> > 2.17.0
-> 
-> ------Please consider the environment before printing this e-mail.
+--- a/include/linux/tcp.h
++++ b/include/linux/tcp.h
+@@ -324,7 +324,7 @@ struct tcp_sock {
+ 
+ /* Receiver queue space */
+ 	struct {
+-		int	space;
++		u32	space;
+ 		u32	seq;
+ 		u32	time;
+ 	} rcvq_space;
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -557,8 +557,8 @@ static inline void tcp_rcv_rtt_measure_t
+ void tcp_rcv_space_adjust(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
++	u32 copied;
+ 	int time;
+-	int copied;
+ 
+ 	time = tcp_time_stamp - tp->rcvq_space.time;
+ 	if (time < (tp->rcv_rtt_est.rtt >> 3) || tp->rcv_rtt_est.rtt == 0)
+@@ -580,12 +580,13 @@ void tcp_rcv_space_adjust(struct sock *s
+ 
+ 	if (sysctl_tcp_moderate_rcvbuf &&
+ 	    !(sk->sk_userlocks & SOCK_RCVBUF_LOCK)) {
+-		int rcvwin, rcvmem, rcvbuf;
++		int rcvmem, rcvbuf;
++		u64 rcvwin;
+ 
+ 		/* minimal window to cope with packet losses, assuming
+ 		 * steady state. Add some cushion because of small variations.
+ 		 */
+-		rcvwin = (copied << 1) + 16 * tp->advmss;
++		rcvwin = ((u64)copied << 1) + 16 * tp->advmss;
+ 
+ 		/* If rate increased by 25%,
+ 		 *	assume slow start, rcvwin = 3 * copied
+@@ -605,7 +606,8 @@ void tcp_rcv_space_adjust(struct sock *s
+ 		while (tcp_win_from_space(rcvmem) < tp->advmss)
+ 			rcvmem += 128;
+ 
+-		rcvbuf = min(rcvwin / tp->advmss * rcvmem, sysctl_tcp_rmem[2]);
++		do_div(rcvwin, tp->advmss);
++		rcvbuf = min_t(u64, rcvwin * rcvmem, sysctl_tcp_rmem[2]);
+ 		if (rcvbuf > sk->sk_rcvbuf) {
+ 			sk->sk_rcvbuf = rcvbuf;
+ 
