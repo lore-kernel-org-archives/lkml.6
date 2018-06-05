@@ -1,73 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeFEUgs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:36:48 -0400
-Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:35432
-        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751807AbeFEUgr (ORCPT
+        id S1752097AbeFEUh7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 16:37:59 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:36986 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751894AbeFEUh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:36:47 -0400
-x-originating-ip: 107.180.71.197
-From: kys@linuxonhyperv.com
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, sthemmin@microsoft.com,
-        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 0/8] Drivers: hv: Miscellaneous fixes/improvements 
-Date: Tue,  5 Jun 2018 13:35:36 -0700
-Message-Id: <20180605203536.29751-1-kys@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.1
-Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfFoSvIHJU3e+QySuHvM2Y3lATCGlJuIog+/PKVVlwrjn8DevfLqERzIbV/ssr58LPmVsm7g+Fhnesr9DEgNdwjak0AeuTbKpfTLTIT2dv+Qnx5Xho36s
- 8xKVadFB2lcTBQLXWiG5F6F50TJier41ZRwlgzbXgGCv9vddDw45sSRNRb57419t0CN+dzkDS/OzuGZL5Cr6tgGc2VChxHdhr4lAUWPJEdaxfwGsgLeoAqOl
- h5xD3cPS+NSBlk6i2xdO/CZ+Z6oAb+LYR2TtLgoyLV9Nq/v12m1EFLy32BZegHgWI4c/S0XKXVXJOhDstZuZsBAyjrYJd2S2k33NZjq41yjVYwWBSE3or0yg
- 9VSVWgU0KbvB1kLv5y3B3TJGIcLQyx26EHSrWmDCVzQQTThqHnCsy+EDI0eZw3kyVzMsxEX73ptYLZii+IXUbr/qSKPfY0YyNBF8ZYOTKht1ErsSBUQV9YFN
- 1XRcOvaAHl8v/BHOCofRB8R9KaNkxQCU6EB0lVkPihxlowBH3jkoPsue0OcToIwDQ8DK6KXbE1iWVY+U
+        Tue, 5 Jun 2018 16:37:57 -0400
+X-Google-Smtp-Source: ADUXVKLQ4dPBMs+9zW56Ll/MtFCwzAvi4CWfQo6kkaQkqqX3Gc+RBdgj5EtSu559c/o51THEdQU/0Q==
+From: Arun Parameswaran <arun.parameswaran@broadcom.com>
+To: Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Arun Parameswaran <arun.parameswaran@broadcom.com>
+Subject: [PATCH 1/1] net: dsa: b53: Fix for brcm tag issue in Cygnus SoC
+Date: Tue,  5 Jun 2018 13:38:12 -0700
+Message-Id: <1528231092-31472-1-git-send-email-arun.parameswaran@broadcom.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "K. Y. Srinivasan" <kys@microsoft.com>
+In the Broadcom Cygnus SoC, the brcm tag needs to be inserted
+in between the mac address and the ether type (should use
+'DSA_PROTO_TAG_BRCM') for the packets sent to the internal
+b53 switch.
 
-Some miscellaneous fixes/improvements. 
+Since the Cygnus was added with the BCM58XX device id and the
+BCM58XX uses 'DSA_PROTO_TAG_BRCM_PREPEND', the data path is
+broken, due to the incorrect brcm tag location.
 
-Arjan van de Ven (1):
-  use the new async probing feature for the hyperv drivers
+Add a new b53 device id (BCM583XX) for Cygnus family to fix the
+issue. Add the new device id to the BCM58XX family as Cygnus
+is similar to the BCM58XX in most other functionalities.
 
-Dexuan Cui (1):
-  Drivers: hv: vmbus: Fix the offer_in_progress in vmbus_process_offer()
+Fixes: 11606039604c ("net: dsa: b53: Support prepended Broadcom tags")
 
-Michael Kelley (4):
-  x86/hyperv: Add interrupt handler annotations
-  Drivers: hv: vmbus: Add comments on ring buffer signaling
-  Drivers: hv: vmbus: Remove x86 MSR refs in arch independent code
-  Drivers: hv: vmbus: Make TLFS #define names architecture neutral
+Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+---
+ drivers/net/dsa/b53/b53_common.c | 15 ++++++++++++++-
+ drivers/net/dsa/b53/b53_priv.h   |  2 ++
+ drivers/net/dsa/b53/b53_srab.c   |  4 ++--
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-Olaf Hering (1):
-  tools: hv: update lsvmbus to be compatible with python3
-
-Vitaly Kuznetsov (1):
-  Tools: hv: vss: fix loop device detection
-
- arch/x86/hyperv/hv_init.c             |  4 +-
- arch/x86/include/asm/hyperv-tlfs.h    | 12 ++---
- arch/x86/include/asm/mshyperv.h       | 12 +++--
- arch/x86/kernel/cpu/mshyperv.c        |  6 +--
- drivers/hid/hid-hyperv.c              |  3 ++
- drivers/hv/channel_mgmt.c             |  4 +-
- drivers/hv/hv.c                       | 30 ++++++-------
- drivers/hv/hv_balloon.c               |  3 ++
- drivers/hv/hv_util.c                  |  3 ++
- drivers/hv/ring_buffer.c              | 65 ++++++++++++++++++++++-----
- drivers/input/serio/hyperv-keyboard.c |  3 ++
- drivers/net/hyperv/netvsc_drv.c       |  3 ++
- drivers/scsi/storvsc_drv.c            |  3 ++
- drivers/video/fbdev/hyperv_fb.c       |  6 +++
- include/linux/hyperv.h                | 31 +++++++++----
- tools/hv/hv_vss_daemon.c              | 65 +++++++++++++++++++++++++--
- tools/hv/lsvmbus                      | 12 ++---
- 17 files changed, 201 insertions(+), 64 deletions(-)
-
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index 3da5fca..bbc6cc6 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -684,7 +684,8 @@ static int b53_switch_reset(struct b53_device *dev)
+ 	 * still use this driver as a library and need to perform the reset
+ 	 * earlier.
+ 	 */
+-	if (dev->chip_id == BCM58XX_DEVICE_ID) {
++	if (dev->chip_id == BCM58XX_DEVICE_ID ||
++	    dev->chip_id == BCM583XX_DEVICE_ID) {
+ 		b53_read8(dev, B53_CTRL_PAGE, B53_SOFTRESET, &reg);
+ 		reg |= SW_RST | EN_SW_RST | EN_CH_RST;
+ 		b53_write8(dev, B53_CTRL_PAGE, B53_SOFTRESET, reg);
+@@ -1880,6 +1881,18 @@ struct b53_chip_data {
+ 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
+ 	},
+ 	{
++		.chip_id = BCM583XX_DEVICE_ID,
++		.dev_name = "BCM583xx/11360",
++		.vlans = 4096,
++		.enabled_ports = 0x103,
++		.arl_entries = 4,
++		.cpu_port = B53_CPU_PORT,
++		.vta_regs = B53_VTA_REGS,
++		.duplex_reg = B53_DUPLEX_STAT_GE,
++		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
++		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
++	},
++	{
+ 		.chip_id = BCM7445_DEVICE_ID,
+ 		.dev_name = "BCM7445",
+ 		.vlans	= 4096,
+diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
+index 3b57f47..b232aaa 100644
+--- a/drivers/net/dsa/b53/b53_priv.h
++++ b/drivers/net/dsa/b53/b53_priv.h
+@@ -62,6 +62,7 @@ enum {
+ 	BCM53018_DEVICE_ID = 0x53018,
+ 	BCM53019_DEVICE_ID = 0x53019,
+ 	BCM58XX_DEVICE_ID = 0x5800,
++	BCM583XX_DEVICE_ID = 0x58300,
+ 	BCM7445_DEVICE_ID = 0x7445,
+ 	BCM7278_DEVICE_ID = 0x7278,
+ };
+@@ -181,6 +182,7 @@ static inline int is5301x(struct b53_device *dev)
+ static inline int is58xx(struct b53_device *dev)
+ {
+ 	return dev->chip_id == BCM58XX_DEVICE_ID ||
++		dev->chip_id == BCM583XX_DEVICE_ID ||
+ 		dev->chip_id == BCM7445_DEVICE_ID ||
+ 		dev->chip_id == BCM7278_DEVICE_ID;
+ }
+diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
+index c37ffd1..8247481 100644
+--- a/drivers/net/dsa/b53/b53_srab.c
++++ b/drivers/net/dsa/b53/b53_srab.c
+@@ -364,7 +364,7 @@ static int b53_srab_write64(struct b53_device *dev, u8 page, u8 reg,
+ 	{ .compatible = "brcm,bcm53018-srab" },
+ 	{ .compatible = "brcm,bcm53019-srab" },
+ 	{ .compatible = "brcm,bcm5301x-srab" },
+-	{ .compatible = "brcm,bcm11360-srab", .data = (void *)BCM58XX_DEVICE_ID },
++	{ .compatible = "brcm,bcm11360-srab", .data = (void *)BCM583XX_DEVICE_ID },
+ 	{ .compatible = "brcm,bcm58522-srab", .data = (void *)BCM58XX_DEVICE_ID },
+ 	{ .compatible = "brcm,bcm58525-srab", .data = (void *)BCM58XX_DEVICE_ID },
+ 	{ .compatible = "brcm,bcm58535-srab", .data = (void *)BCM58XX_DEVICE_ID },
+@@ -372,7 +372,7 @@ static int b53_srab_write64(struct b53_device *dev, u8 page, u8 reg,
+ 	{ .compatible = "brcm,bcm58623-srab", .data = (void *)BCM58XX_DEVICE_ID },
+ 	{ .compatible = "brcm,bcm58625-srab", .data = (void *)BCM58XX_DEVICE_ID },
+ 	{ .compatible = "brcm,bcm88312-srab", .data = (void *)BCM58XX_DEVICE_ID },
+-	{ .compatible = "brcm,cygnus-srab", .data = (void *)BCM58XX_DEVICE_ID },
++	{ .compatible = "brcm,cygnus-srab", .data = (void *)BCM583XX_DEVICE_ID },
+ 	{ .compatible = "brcm,nsp-srab", .data = (void *)BCM58XX_DEVICE_ID },
+ 	{ /* sentinel */ },
+ };
 -- 
-2.17.1
+1.9.1
