@@ -1,56 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeFEOWJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:22:09 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45352 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbeFEOWF (ORCPT
+        id S1752536AbeFEOW1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:22:27 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40167 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752486AbeFEOW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:22:05 -0400
-Date: Tue, 5 Jun 2018 16:21:54 +0200 (CEST)
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-cc: "Tobin C. Harding" <me@tobin.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>, "Theodore Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] enable early printing of hashed pointers
-In-Reply-To: <20180531145253.02daa5d4@vmware.local.home>
-Message-ID: <alpine.DEB.2.20.1806051621070.2789@hypnos.tec.linutronix.de>
-References: <1527472002-11571-1-git-send-email-me@tobin.cc> <20180531145253.02daa5d4@vmware.local.home>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 5 Jun 2018 10:22:26 -0400
+X-Google-Smtp-Source: ADUXVKLHFrKqqYDvahf9w8NCMFtFSmDedWMAZ9YnGGvCHmucsUfmLnnrU6JqZTnggQZQ6TtK+3kaoQ==
+Subject: Re: [PATCH] dm: Use kzalloc for all structs with embedded
+ biosets/mempools
+To: Kent Overstreet <kent.overstreet@gmail.com>,
+        torvalds@linux-foundation.org
+Cc: snitzer@redhat.com, linux-kernel@vger.kernel.org
+References: <20180605092633.29583-1-kent.overstreet@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <e78b0f9f-d4f9-d865-0727-5e1ed074928d@kernel.dk>
+Date: Tue, 5 Jun 2018 08:22:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180605092633.29583-1-kent.overstreet@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018, Steven Rostedt wrote:
+On 6/5/18 3:26 AM, Kent Overstreet wrote:
+> mempool_init()/bioset_init() require that the mempools/biosets be zeroed
+> first; they probably should not _require_ this, but not allocating those
+> structs with kzalloc is a fairly nonsensical thing to do (calling
+> mempool_exit()/bioset_exit() on an uninitialized mempool/bioset is legal
+> and safe, but only works if said memory was zeroed.)
+> 
+> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> ---
+> 
+> Linus,
+> 
+> I fucked up majorly on the bioset/mempool conversion - I forgot to check that
+> everything biosets/mempools were being embedded in was actually being zeroed on
+> allocation. Device mapper currently explodes, you'll probably want to apply this
+> patch post haste.
+> 
+> I have now done that auditing, for every single conversion - this patch fixes
+> everything I found. There do not seem to be any incorrect ones outside of device
+> mapper...
+> 
+> We'll probably want a second patch that either a) changes
+> bioset_init()/mempool_init() to zero the passed in bioset/mempool first, or b)
+> my preference, WARN() or BUG() if they're passed memory that isn't zeroed.
 
-> On Mon, 28 May 2018 11:46:38 +1000
-> "Tobin C. Harding" <me@tobin.cc> wrote:
-> 
-> > Steve,
-> 
-> Hi Tobin,
-> 
-> Sorry for the late reply, I'm currently at a conference and have had
-> little time to read email.
-> 
-> > 
-> > Could you please take a quick squiz at the final 2 patches if you get a
-> > chance.  I assumed we are in preemptible context during early_init based
-> > on your code (and code comment) and called static_branch_disable()
-> > directly if hw RNG returned keying material.  It's a pretty simple
-> > change but I'd love to get someone else to check I've not noob'ed it.
-> 
-> I can take a look, and perhaps do some tests. But it was Anna-Maria
-> that originally triggered the issue. She's on Cc, perhaps she can try
-> this and see if it works.
+Odd, haven't seen a crash, but probably requires kasan or poisoning to
+trigger anything? Mike's tree also had the changes, since they were based
+on the block tree.
 
-I'll test it today - sorry for the delay.
+I can queue this up and ship it later today. Mike, you want to review
+this one?
 
-Anna-Maria
+-- 
+Jens Axboe
