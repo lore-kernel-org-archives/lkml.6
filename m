@@ -1,93 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751764AbeFELiG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:38:06 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:41941 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751588AbeFELiF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:38:05 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86: mark native_set_p4d() as __always_inline
-Date: Tue,  5 Jun 2018 13:35:15 +0200
-Message-Id: <20180605113715.1133726-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:3jiT0AcdXGPwkDX3jDsLr/EUaq2di6XVid1sscnP79ubIgD1TEz
- hfShsJahlNLz9J5KXRedWG5xmyBo7qgtNAvWtVxqC7mOn15sdGwY7OILoHeUBjjMnIwE1V7
- bgKndQmJIzbMkX5V2wKhDIo7Wl8SfFVlzzAOwBmDBR4TW9MaTWvp5KwkfnsBUaCiGv0FPEi
- FoTWZ1yzZyj/HdK7llY/g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Lw3GqVoN2cE=:OjvoOqHmW0xtAO7w/xQMCj
- qQrkKpGLFPX3r9pOQ4zCw8FsjOb/DrbXrp7qix5qo7XD9hv7FO8wCAxdfZykUTq1gcUE0maEj
- mB1i87UvM/l5HpoWO9hukfSYECWl3/jcX2ltJ8YS/2qzCtL0GGXbIcoJCyl4GszokuFR/Zu6P
- o8d9BkP45UOlOc+jsPWlOzjLPechYK4eqJIkDtouDb3k0ZyFr2ksVdk64scj0E+RAfZ1lQx2d
- 15nI54qe73Iq4XeKH+w614oucWB9xLtIWErRi0jHIu+8Akufm1k62toR33n6kcCrqVY+ZQIt1
- E0vOPL7nDFO4Ytz6sAAVtFazN8XCcrGGxk0GwqsITWp6IcZXvqzny2X4Jmnj0oZ5NjKC8XWe8
- TJD/PKEQu7QfGIUoHmfTTbme9QJne0UF/6JlxWIBGPLqxvQABfscMDWcQUXUt1L+4rrTf6oYi
- pLsmWrlEqXE2rJtJR66LS0r3GsP7mleqZnXncRriKQ/LKJjJj49sHwEazUm73IkMnvu7xYH86
- VysoOYqiDPaFJB0oFnQgagkl0gk9inF9NdEJa4KTe0ej9XAdhWhsQVHRFW06xS1+hpBrhJNNR
- RMhs5k2ivfZrrw36d+PwJuKiKh7IOch6pzKX7QZqnLy2LIiKgEzU12oZzYGYGnVRAupvmEt+m
- XVP0K6dLJRt3QMOnfIvkGnhnXcP7tAIq9kf6LV32gKeLv1N/NirjALLHcLbA2BdxF7do=
+        id S1751835AbeFELi4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:38:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60012 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751596AbeFELiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:38:54 -0400
+Date: Tue, 5 Jun 2018 13:38:50 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Cc: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v2 06/10] vfio: ccw: Make FSM functions atomic
+Message-ID: <20180605133850.3509a3d3.cohuck@redhat.com>
+In-Reply-To: <1527243678-3140-7-git-send-email-pmorel@linux.vnet.ibm.com>
+References: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
+        <1527243678-3140-7-git-send-email-pmorel@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_OPTIMIZE_INLINING is enabled, the function native_set_p4d()
-may not be fully inlined into the caller, resulting in a false-positive
-warning about an access to the __pgtable_l5_enabled variable from a
-non-__init function, despite the original caller being an __init function:
+On Fri, 25 May 2018 12:21:14 +0200
+Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 
-WARNING: vmlinux.o(.text.unlikely+0x1429): Section mismatch in reference from the function native_set_p4d() to the variable .init.data:__pgtable_l5_enabled
-WARNING: vmlinux.o(.text.unlikely+0x1429): Section mismatch in reference from the function native_p4d_clear() to the variable .init.data:__pgtable_l5_enabled
-The function native_set_p4d() references
-the variable __initdata __pgtable_l5_enabled.
-This is often because native_set_p4d lacks a __initdata
-annotation or the annotation of __pgtable_l5_enabled is wrong.
+> We use mutex around the FSM function call to make the FSM
+> event handling and state change atomic.
 
-Marking the native_set_p4d function and its caller native_p4d_clear()
-avoids this problem.
+I'm still not really clear as to what this mutex is supposed to
+serialize:
 
-I did not bisect the original cause, but I assume this is related to
-the recent rework that turned pgtable_l5_enabled() into an inline
-function, which in turn caused the compiler to make different inlining
-decisions.
+- Modification of the state?
+- Any calls in the state machine?
+- A combination? (That would imply that we only deal with the state in
+  the state machine.)
 
-Fixes: ad3fe525b950 ("x86/mm: Unify pgtable_l5_enabled usage in early boot code")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/include/asm/pgtable_64.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+> ---
+>  drivers/s390/cio/vfio_ccw_drv.c     | 3 +--
+>  drivers/s390/cio/vfio_ccw_private.h | 3 +++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+> index 6b7112e..98951d5 100644
+> --- a/drivers/s390/cio/vfio_ccw_drv.c
+> +++ b/drivers/s390/cio/vfio_ccw_drv.c
+> @@ -73,8 +73,6 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
+>  
+>  	private = container_of(work, struct vfio_ccw_private, io_work);
+>  	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_INTERRUPT);
+> -	if (private->mdev)
+> -		private->state = VFIO_CCW_STATE_IDLE;
 
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 3c5385f9a88f..0fdcd21dadbd 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -216,7 +216,7 @@ static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
- }
- #endif
- 
--static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
-+static __always_inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- {
- 	pgd_t pgd;
- 
-@@ -230,7 +230,7 @@ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- 	*p4dp = native_make_p4d(native_pgd_val(pgd));
- }
- 
--static inline void native_p4d_clear(p4d_t *p4d)
-+static __always_inline void native_p4d_clear(p4d_t *p4d)
- {
- 	native_set_p4d(p4d, native_make_p4d(0));
- }
--- 
-2.9.0
+Looks like an unrelated change? If you want to do all state changes
+under the mutex, that should rather be moved than deleted, shouldn't it?
+
+>  }
+>  
+>  static void vfio_ccw_sch_event_todo(struct work_struct *work)
