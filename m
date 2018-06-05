@@ -1,121 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751915AbeFENPX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:15:23 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38381 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeFENPW (ORCPT
+        id S1751948AbeFENQz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:16:55 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:47446 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751764AbeFENQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:15:22 -0400
-X-Google-Smtp-Source: ADUXVKI8c20Axzy+zsrVt+Ytx3K8HD1dwUE1HTMeN32TmlBjAOH6OqRjSvX7j106PgJPNLKcgYJUYg==
-Date: Tue, 5 Jun 2018 15:15:18 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Quentin Perret <quentin.perret@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-Message-ID: <20180605131518.GG16081@localhost.localdomain>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
- <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
- <20180605121153.GD16081@localhost.localdomain>
- <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
+        Tue, 5 Jun 2018 09:16:54 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w55DGeLZ027314
+X-Nifty-SrcIP: [209.85.213.52]
+X-Google-Smtp-Source: ADUXVKIqgWSOpsTGG9+ZYvQR/FXgDfcOqZvs7XxH/o87eaYITxwsZiR0b+ZlufmsXveO23W+ldqXdtKzzbQIcIariJ0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180602160209.23605-1-natechancellor@gmail.com>
+References: <20180602160209.23605-1-natechancellor@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 5 Jun 2018 22:15:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATCTZTzcEpW8kBG8GktMeDZSuinAQX7_hnjysj0OaztcQ@mail.gmail.com>
+Message-ID: <CAK7LNATCTZTzcEpW8kBG8GktMeDZSuinAQX7_hnjysj0OaztcQ@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: Avoid format overflow warning from GCC 8.1
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55DH2eq012362
 
-On 05/06/18 14:05, Quentin Perret wrote:
-> On Tuesday 05 Jun 2018 at 14:11:53 (+0200), Juri Lelli wrote:
-> > Hi Quentin,
-> > 
-> > On 05/06/18 11:57, Quentin Perret wrote:
-> > 
-> > [...]
-> > 
-> > > What about the diff below (just a quick hack to show the idea) applied
-> > > on tip/sched/core ?
-> > > 
-> > > ---8<---
-> > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > > index a8ba6d1f262a..23a4fb1c2c25 100644
-> > > --- a/kernel/sched/cpufreq_schedutil.c
-> > > +++ b/kernel/sched/cpufreq_schedutil.c
-> > > @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
-> > >  	sg_cpu->util_dl  = cpu_util_dl(rq);
-> > >  }
-> > >  
-> > > +unsigned long scale_rt_capacity(int cpu);
-> > >  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> > >  {
-> > >  	struct rq *rq = cpu_rq(sg_cpu->cpu);
-> > > +	int cpu = sg_cpu->cpu;
-> > > +	unsigned long util, dl_bw;
-> > >  
-> > >  	if (rq->rt.rt_nr_running)
-> > >  		return sg_cpu->max;
-> > > @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> > >  	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
-> > >  	 * ready for such an interface. So, we only do the latter for now.
-> > >  	 */
-> > > -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
-> > > +	util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
-> > 
-> > Sorry to be pedantinc, but this (ATM) includes DL avg contribution, so,
-> > since we use max below, we will probably have the same problem that we
-> > discussed on Vincent's approach (overestimation of DL contribution while
-> > we could use running_bw).
-> 
-> Ah no, you're right, this isn't great for long running deadline tasks.
-> We should definitely account for the running_bw here, not the dl avg...
-> 
-> I was trying to address the issue of RT stealing time from CFS here, but
-> the DL integration isn't quite right which this patch as-is, I agree ...
-> 
-> > 
-> > > +	util >>= SCHED_CAPACITY_SHIFT;
-> > > +	util = arch_scale_cpu_capacity(NULL, cpu) - util;
-> > > +	util += sg_cpu->util_cfs;
-> > > +	dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
-> > 
-> > Why this_bw instead of running_bw?
-> 
-> So IIUC, this_bw should basically give you the absolute reservation (== the
-> sum of runtime/deadline ratios of all DL tasks on that rq).
+2018-06-03 1:02 GMT+09:00 Nathan Chancellor <natechancellor@gmail.com>:
+> In file included from scripts/kconfig/zconf.tab.c:2485:
+> scripts/kconfig/confdata.c: In function ‘conf_write’:
+> scripts/kconfig/confdata.c:773:22: warning: ‘%s’ directive writing likely 7 or more bytes into a region of size between 1 and 4097 [-Wformat-overflow=]
+>   sprintf(newname, "%s%s", dirname, basename);
+>                       ^~
+> scripts/kconfig/confdata.c:773:19: note: assuming directive output of 7 bytes
+>   sprintf(newname, "%s%s", dirname, basename);
+>                    ^~~~~~
+> scripts/kconfig/confdata.c:773:2: note: ‘sprintf’ output 1 or more bytes (assuming 4104) into a destination of size 4097
+>   sprintf(newname, "%s%s", dirname, basename);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> scripts/kconfig/confdata.c:776:23: warning: ‘.tmpconfig.’ directive writing 11 bytes into a region of size between 1 and 4097 [-Wformat-overflow=]
+>    sprintf(tmpname, "%s.tmpconfig.%d", dirname, (int)getpid());
+>                        ^~~~~~~~~~~
+> scripts/kconfig/confdata.c:776:3: note: ‘sprintf’ output between 13 and 4119 bytes into a destination of size 4097
+>    sprintf(tmpname, "%s.tmpconfig.%d", dirname, (int)getpid());
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Increase the size of tmpname and newname to make GCC happy.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
 
-Yep.
+Applied to linux-kbuild.  Thanks!
 
-> The reason I added this max is because I'm still not sure to understand
-> how we can safely drop the freq below that point ? If we don't guarantee
-> to always stay at least at the freq required by DL, aren't we risking to
-> start a deadline tasks stuck at a low freq because of rate limiting ? In
-> this case, if that tasks uses all of its runtime then you might start
-> missing deadlines ...
 
-We decided to avoid (software) rate limiting for DL with e97a90f7069b
-("sched/cpufreq: Rate limits for SCHED_DEADLINE").
+>  scripts/kconfig/confdata.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> index 5f87ad561b08..39e20974f4a3 100644
+> --- a/scripts/kconfig/confdata.c
+> +++ b/scripts/kconfig/confdata.c
+> @@ -720,7 +720,7 @@ int conf_write(const char *name)
+>         struct menu *menu;
+>         const char *basename;
+>         const char *str;
+> -       char dirname[PATH_MAX+1], tmpname[PATH_MAX+1], newname[PATH_MAX+1];
+> +       char dirname[PATH_MAX+1], tmpname[PATH_MAX+22], newname[PATH_MAX+8];
+>         char *env;
+>
+>         dirname[0] = 0;
+> --
+> 2.17.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-> My feeling is that the only safe thing to do is to guarantee to never go
-> below the freq required by DL, and to optimistically add CFS tasks
-> without raising the OPP if we have good reasons to think that DL is
-> using less than it required (which is what we should get by using
-> running_bw above I suppose). Does that make any sense ?
 
-Then we can't still avoid the hardware limits, so using running_bw is a
-trade off between safety (especially considering soft real-time
-scenarios) and energy consumption (which seems to be working in
-practice).
 
-Thanks,
-
-- Juri
+-- 
+Best Regards
+Masahiro Yamada
