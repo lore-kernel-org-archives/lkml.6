@@ -1,119 +1,139 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-next-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti33d1t02-2079613-1528157885-2-3572360270616278806
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-charsets: plain='US-ASCII'
+X-Resolved-to: linux@kroah.com
+X-Delivered-to: linux@kroah.com
+X-Mail-from: linux-next-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1528157885; b=AaXwU6KS1Alolbd6G8efUVzlAYw3e3hPTUhSa60IxaLBzTSUec
+    8OuDbpLFSlOL+kbcOPPTToCM2z0BkNVFeGKLG07l30dTeXaSu9DbCB32KeWCeEjc
+    YWqjKIABq4aK5kz/IVxr6hlQCf8oQwoV/tv9pvRIEVN7klqNU49S5pDpI1M4pgPa
+    Y0oruo5co1xqfRgPFCx9bRWbGsZX7yt3SSVpFL9E0A0AOj/tyw6EOWZ4L/K9puEY
+    4WvpjF8DMVsAtuFaVGCjjaybT+ZFkmaZrpmljsU/rx6kqPaiFMfb/3JQ65yzEQsZ
+    k9GM7o9/oQ57I0gbP3VDxS9fbQl9xuNmfdmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1528157885;
+    bh=waw47zheNwkoS7dx/sKJzu9W50MtR00lPfTV5BUnrk4=; b=cdq3A74molN+
+    Ea8AEifYFsT+C8DKUmZaQuv4iD0LnWYyVcabxofpnDhMSiDXVsMnkOH2ErHu3LcK
+    zXOvA8/LAHxB016NaSstNTv4YUf5zdqcDAkI0687o+9DYFnzBWCi9fkznUK0rQxs
+    i5azytpGY5tRiVawNLyX+KF18K7sUTDGz0RaSaE7Snb+pmQRAEivsPPbvl7C3SD4
+    sV6tHoQkK0544tOJ1qgBQ4EVSkioAICw/3Z6a0nViYLMrCrgMPB3iJwopdMyt6lq
+    O6SROXlsvD7utBDGVwNTRdNTGHLiPYL43MDlGRN9Tdvhe9sFaDqy2azhN5BcHGYr
+    EAdCpv2Whg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NFMGUCIv
+    header.a=rsa-sha256 header.s=201702 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=canb.auug.org.au header.result=pass
+    header_org.domain=auug.org.au header_org.result=pass
+    header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NFMGUCIv
+      header.a=rsa-sha256 header.s=201702 x-bits=2048;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=canb.auug.org.au;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-next-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=canb.auug.org.au header.result=pass
+      header_org.domain=auug.org.au header_org.result=pass
+      header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMSZC43rCrQb4RufWVRZ+SoJAm+bsjBPc68zJRCL2YH666w8S0gdKc1TQL8P+jDyM1gkck2933jo+VmFI56AdLT/7yJoY4AW0Wf4PWgohlGS3fAl9Kmv
+    5mE7Bym7KFrlAm/GUi5fM9dX5+Bhx/MOxE4bc8hwBpB5Wt9ZOOg1CAf5JJoklxMduSEnlwu3gZgZOnAllwBy8s/uzzWEs7C3Nlu4dofa9YGviyYb/y0fPXjS
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=7mUfYlMuFuIA:10 a=ZfKkRxCrd0Kd0y71gVoA:9
+    a=CjuIK1q_8ugA:10 a=AyGQUss9LGL0DZyyh3YA:9 a=VwQbUJbxAAAA:8
+    a=fT6DY2neKoG22zCxINUA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750919AbeFAD7v (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 31 May 2018 23:59:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:51477 "EHLO ozlabs.org"
+        id S1751170AbeFEASB (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 4 Jun 2018 20:18:01 -0400
+Received: from ozlabs.org ([203.11.71.1]:39467 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750728AbeFAD7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 May 2018 23:59:49 -0400
+        id S1751099AbeFEASA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Jun 2018 20:18:00 -0400
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 1 Jun 2018 13:59:43 +1000
+Date: Tue, 5 Jun 2018 10:17:41 +1000
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
+To: Trond Myklebust <trondmy@gmail.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20180601135943.66b90890@canb.auug.org.au>
-In-Reply-To: <20180531073855.29c23fce@canb.auug.org.au>
-References: <20180529132548.7f71c2ff@canb.auug.org.au>
-        <20180531073855.29c23fce@canb.auug.org.au>
+        Fred Isaman <fred.isaman@gmail.com>
+Subject: linux-next: build warning after merge of the nfs tree
+Message-ID: <20180605101741.658efe5f@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n.9LVszNWzS7qnUZXUD2hgH"; protocol="application/pgp-signature"
-Sender: linux-kernel-owner@vger.kernel.org
-List-ID: <linux-kernel.vger.kernel.org>
+ boundary="Sig_/dRvnpcJT_E3eB/vTtZiW6ih"; protocol="application/pgp-signature"
+Sender: linux-next-owner@vger.kernel.org
+X-Mailing-List: linux-next@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
+List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/n.9LVszNWzS7qnUZXUD2hgH
+--Sig_/dRvnpcJT_E3eB/vTtZiW6ih
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Trond,
 
-On Thu, 31 May 2018 07:38:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 29 May 2018 13:25:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the net-next tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfil=
-ter_umh.o' is incompatible with i386:x86-64 output
-> >=20
-> > Caused by commit
-> >=20
-> >   d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
-> >=20
-> > In my builds, the host is PowerPC 64 LE ...
-> >=20
-> > I have reverted that commit along with
-> >=20
-> >   61a552eb487f ("bpfilter: fix build dependency")
-> >   13405468f49d ("bpfilter: don't pass O_CREAT when opening console for =
-debug")
-> >=20
-> > for today. =20
->=20
-> I am still getting this failure (well, at least yesterday I did).
+After merging the nfs tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-Still happened today.  My guess is that bpfilter_umh needs to be built
-with the kernel compiler (not the host compiler - since ir is meant to
-run on the some machine as the kernel, right?) but will require the
-kernel architecture libc etc
+fs/nfs/nfs4proc.c:910:13: warning: 'nfs4_layoutget_release' defined but not=
+ used [-Wunused-function]
+ static void nfs4_layoutget_release(void *calldata)
+             ^~~~~~~~~~~~~~~~~~~~~~
 
+Introduced by commit
 
-I replaced the reverts above with the following:
+  30ae2412e90f ("pnfs: Fix manipulation of NFS_LAYOUT_FIRST_LAYOUTGET")
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 1 Jun 2018 13:33:28 +1000
-Subject: [PATCH] net: bpfilter: mark as BROKEN for now
+in combination with
 
-This does not build in a cross compile environment
+  2409a976a299 ("pnfs: Add LAYOUTGET to OPEN of a new file")
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/bpfilter/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
-index a948b072c28f..ea4be72fdf6e 100644
---- a/net/bpfilter/Kconfig
-+++ b/net/bpfilter/Kconfig
-@@ -2,6 +2,7 @@ menuconfig BPFILTER
- 	bool "BPF based packet filtering framework (BPFILTER)"
- 	default n
- 	depends on NET && BPF && INET
-+	depends on BROKEN
- 	help
- 	  This builds experimental bpfilter framework that is aiming to
- 	  provide netfilter compatible functionality via BPF
---=20
-2.17.0
+# CONFIG_NFS_V4_1 is not set
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/n.9LVszNWzS7qnUZXUD2hgH
+--Sig_/dRvnpcJT_E3eB/vTtZiW6ih
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQxK8ACgkQAVBC80lX
-0GwCHggAmx8CYmzcPprLmFQPnIWfgChZPxX3eYn/uNyzLGh37itxI78MsrzwIZ2x
-vV4/Y+pEYeQHy8TLComcACQnP8cvgA4stM4/uTk0fgKVp5CO/D/IHr+tdlkeju/J
-M6NQS7jpsCeXfCzZ131BN4+QTKM09NN5OfzmJxhNmW0upNr0Fm3ErxFv2ElgEY1b
-YJwNWcae9+2v0/5P3D4py7JiFgmx2th62DTLxBaOXxRDGARxCH5hE22Wy5LkrGtE
-RgJTcbV1csMinGj7quKxxqHcja04XVDzT1PPjpjd4zsmsCY1FdQP4P+R0pa2HLat
-QIdHpIbtpb7u41WFy9tHCB2JT6/e/w==
-=JYZW
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsV1qUACgkQAVBC80lX
+0Gym6wf/VCrXzrjESxb5fUTzfcbVAb/hFYug9kVBdzMhl2024Hl9DNemMDzkK/QD
+Fj/MvPzsU8+fHF66XpTSLfgL9ElT81q9mm2pbcQqnSJHoyVzO+yWfzJwTpCxCpog
+iNvinm+giTsdDkgoWA/pxR62HTF1nrz5QGtiKk9QFn2KOChAYFk7ke6gnOu5xL3i
+4w37NcIJveBMohoYedtlPL/ypVjDINWuOqyIDE1MrCnpOXqWpBy6crQP37gsh2LF
+rcMXMkBHWjHfieSPkkbH31UQnkwP94K1W1CkPoNMKNkTEEJVwnG1w4257C016sWE
+VQVs2+7MKGNG0B9nU5Mcf3QpSDI09g==
+=/wG2
 -----END PGP SIGNATURE-----
 
---Sig_/n.9LVszNWzS7qnUZXUD2hgH--
+--Sig_/dRvnpcJT_E3eB/vTtZiW6ih--
