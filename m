@@ -1,294 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeFEOxn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:53:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44338 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752300AbeFEOxm (ORCPT
+        id S1752645AbeFEOyT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:54:19 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:44374 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752137AbeFEOyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:53:42 -0400
-Date: Tue, 5 Jun 2018 16:53:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        Boqun Feng <boqun.feng@gmail.com>, Will Deacon <will.deacon@arm.com>,
-        Jiri Slaby <jslaby@suse.com>, Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH 1/7] atomics/tty: add missing atomic_long_t * cast
-Message-ID: <20180605145334.GA12235@hirez.programming.kicks-ass.net>
-References: <20180529180746.29684-1-mark.rutland@arm.com>
- <20180529180746.29684-2-mark.rutland@arm.com>
- <20180605120021.GH12258@hirez.programming.kicks-ass.net>
- <20180605142051.GB12925@kroah.com>
- <20180605144304.GW12180@hirez.programming.kicks-ass.net>
+        Tue, 5 Jun 2018 10:54:16 -0400
+X-Google-Smtp-Source: ADUXVKKkNOstIG5SeGstEG2Ok3ibBe2ll7VPSaaFcQGt/IGK88UOyLuu9RZtC5piBISw8MLwDchmAw==
+Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle injection
+ framework
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180605103917.pyhhcobdvaivqv6g@vireshk-i7>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <57d769f8-46ea-512e-8f89-a0439c9d053f@linaro.org>
+Date: Tue, 5 Jun 2018 16:54:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605144304.GW12180@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180605103917.pyhhcobdvaivqv6g@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 04:43:04PM +0200, Peter Zijlstra wrote:
+On 05/06/2018 12:39, Viresh Kumar wrote:
+> On 05-06-18, 11:16, Daniel Lezcano wrote:
+>> diff --git a/drivers/powercap/idle_injection.c b/drivers/powercap/idle_injection.c
+>> +/**
+>> + * idle_injection_wakeup - Wake up all idle injection threads
+>> + * @ii_dev: the idle injection device
+>> + *
+>> + * Every idle injection task belonging to the idle injection device
+>> + * and running on an online CPU will be wake up by this call.
+>> + */
+>> +static void idle_injection_wakeup(struct idle_injection_device *ii_dev)
+>> +{
+>> +	struct idle_injection_thread *iit;
+>> +	int cpu;
+>> +
+>> +	for_each_cpu_and(cpu, ii_dev->cpumask, cpu_online_mask) {
+>> +		atomic_inc(&ii_dev->count);
+> 
+> This may not be sufficient enough in some extremely corner cases, as it is
+> possible that the idle_injection_fn() starts running for the first cpu in the
+> cpumask right after first iteration of this loop completes. And so
+> atomic_dec_and_test() may return true there before idle_injection_fn() task gets
+> a chance to run on all cpus in the cpumask. Normally this wouldn't be a big
+> problem as the hrtimer can get reprogrammed in that case, but there is a case I
+> am worried about. More on this later..
+> 
+>> +		iit = per_cpu_ptr(&idle_injection_thread, cpu);
+>> +		iit->should_run = 1;
+>> +		wake_up_process(iit->tsk);
+>> +	}
+>> +}
+>> +
+>> +/**
+>> + * idle_injection_wakeup_fn - idle injection timer callback
+>> + * @timer: a hrtimer structure
+>> + *
+>> + * This function is called when the idle injection timer expires which
+>> + * will wake up the idle injection tasks and these ones, in turn, play
+>> + * idle a specified amount of time.
+>> + *
+>> + * Return: HRTIMER_NORESTART.
+>> + */
+>> +static enum hrtimer_restart idle_injection_wakeup_fn(struct hrtimer *timer)
+>> +{
+>> +	struct idle_injection_device *ii_dev =
+>> +		container_of(timer, struct idle_injection_device, timer);
+>> +
+>> +	idle_injection_wakeup(ii_dev);
+>> +
+>> +	return HRTIMER_NORESTART;
+>> +}
+>> +
+>> +/**
+>> + * idle_injection_fn - idle injection routine
+>> + * @cpu: the CPU number the tasks belongs to
+>> + *
+>> + * The idle injection routine will stay idle the specified amount of
+>> + * time
+>> + */
+>> +static void idle_injection_fn(unsigned int cpu)
+>> +{
+>> +	struct idle_injection_device *ii_dev;
+>> +	struct idle_injection_thread *iit;
+>> +	int run_duration_ms, idle_duration_ms;
+>> +
+>> +	ii_dev = per_cpu(idle_injection_device, cpu);
+>> +	iit = per_cpu_ptr(&idle_injection_thread, cpu);
+>> +
+>> +	/*
+>> +	 * Boolean used by the smpboot main loop and used as a
+>> +	 * flip-flop in this function
+>> +	 */
+>> +	iit->should_run = 0;
+>> +
+>> +	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+>> +	if (idle_duration_ms)
+>> +		play_idle(idle_duration_ms);
+>> +
+>> +	/*
+>> +	 * The last CPU waking up is in charge of setting the timer. If
+>> +	 * the CPU is hotplugged, the timer will move to another CPU
+>> +	 * (which may not belong to the same cluster) but that is not a
+>> +	 * problem as the timer will be set again by another CPU
+>> +	 * belonging to the cluster. This mechanism is self adaptive.
+>> +	 */
+>> +	if (!atomic_dec_and_test(&ii_dev->count))
+>> +		return;
+>> +
+>> +	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+>> +	if (run_duration_ms) {
+>> +		hrtimer_start(&ii_dev->timer, ms_to_ktime(run_duration_ms),
+>> +			      HRTIMER_MODE_REL_PINNED);
+>> +		return;
+>> +	}
+>> +
+>> +	complete(&ii_dev->stop_complete);
+>> +}
+> 
+> Here is the corner case I was talking about. Consider the cpumask contains
+> CPU0/1/2/3.
+> 
+> PATH A                                                  PATH B
+> 
+>                                                         unregister()
+>                                                           -> idle_injection_stop()
+> 
+> idle_injection_wakeup()
+>   -> Running loop for CPU0
+>   -> atomic inc (count == 1)
+>   -> wake_up_process(tsk)
+>   -> At this point the current task stops
+>   running and idle_injection_fn() starts running
+>   (maybe on a different CPU)
+> 
+>                                                         
+> 
+> 
+> idle_injection_fn()
+>   -> atomic_dec_and_test(), returns true
+>   as count == 0
+> 
+> 
+>                                                              -> set-duration to 0
+>                                                              -> wait for completion
+> 
+> 
+>   -> atomic_read(run_duration), returns 0
+>   -> complete()
+> 
+>                                                              -> kfree(ii_dev);   
+> 
+> 
+> But the initial loop idle_injection_wakeup() has only run for CPU0 until now and
+> will continue running for other CPUs and will crash as ii_dev is already freed.
+> 
+> Am I still making a mistake here ?
 
-> I can make a proper patch, hold on.
+I don't think you are doing a mistake. Even if this can happen
+theoretically, I don't think practically that is the case.
 
----
-Subject: atomic/tty: Fix up atomic abuse in ldsem
+The play_idle() has 1ms minimum sleep time.
 
-Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
-working after making the atomic_long interface type safe.
+The scenario you are describing means:
 
-Needing casts is bad form, which made me look at the code. There are no
-ld_semaphore::count users outside of these functions so there is no
-reason why it can not be an atomic_long_t in the first place, obviating
-the need for this cast.
+1. the loop in idle_injection_wakeup() takes more than 1ms to achieve
 
-That also ensures the loads use atomic_long_read(), which implies (at
-least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+2. at the same time, the user of the idle injection unregisters while
+the idle injection is acting precisely at CPU0 and exits before another
+task was wakeup by the loop in 1. more than 1ms after.
 
-When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
-very thin (the only difference is not changing *old on success, which
-most callers don't seem to care about).
+>From my POV, this scenario can't happen.
 
-So rework the whole thing to use atomic_long_t and its accessors
-directly.
+Anyway, we must write rock solid code so may be we can use a refcount to
+protect against that, so instead of freeing in unregister, we refput the
+ii_dev pointer.
 
-While there, fixup all the horrible comment styles.
 
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
- include/linux/tty_ldisc.h |  4 +--
- 2 files changed, 37 insertions(+), 49 deletions(-)
+>> +static struct idle_injection_device *ii_dev_alloc(void)
+>> +{
+>> +	struct idle_injection_device *ii_dev;
+>> +
+>> +	ii_dev = kzalloc(sizeof(*ii_dev), GFP_KERNEL);
+>> +	if (!ii_dev)
+>> +		return NULL;
+>> +
+>> +	if (!alloc_cpumask_var(&ii_dev->cpumask, GFP_KERNEL)) {
+>> +		kfree(ii_dev);
+>> +		return NULL;
+>> +	}
+>> +
+>> +	return ii_dev;
+>> +}
+>> +
+>> +static void ii_dev_free(struct idle_injection_device *ii_dev)
+>> +{
+>> +	free_cpumask_var(ii_dev->cpumask);
+>> +	kfree(ii_dev);
+>> +}
+>> +
+>> +/**
+>> + * idle_injection_register - idle injection init routine
+>> + * @cpumask: the list of CPUs managed by the idle injection device
+>> + *
+>> + * This is the initialization function in charge of creating the
+>> + * initializing of the timer and allocate the structures. It does not
+>> + * starts the idle injection cycles.
+>> + *
+>> + * Return: NULL if an allocation fails.
+>> + */
+>> +struct idle_injection_device *idle_injection_register(struct cpumask *cpumask)
+>> +{
+>> +	struct idle_injection_device *ii_dev;
+>> +	int cpu;
+>> +
+>> +	ii_dev = ii_dev_alloc();
+>> +	if (!ii_dev)
+>> +		return NULL;
+>> +
+>> +	cpumask_copy(ii_dev->cpumask, cpumask);
+>> +	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+>> +	ii_dev->timer.function = idle_injection_wakeup_fn;
+>> +	init_completion(&ii_dev->stop_complete);
+>> +
+>> +	for_each_cpu(cpu, ii_dev->cpumask) {
+>> +
+>> +		if (per_cpu(idle_injection_device, cpu)) {
+>> +			pr_err("cpu%d is already registered\n", cpu);
+>> +			goto out_rollback_per_cpu;
+>> +		}
+>> +
+>> +		per_cpu(idle_injection_device, cpu) = ii_dev;
+>> +	}
+>> +
+>> +	return ii_dev;
+>> +
+>> +out_rollback_per_cpu:
+>> +	for_each_cpu(cpu, ii_dev->cpumask)
+>> +		per_cpu(idle_injection_device, cpu) = NULL;
+> 
+> Maybe move above into ii_dev_free(), as I suggested earlier, as that will remove
+> same code from unregister routine as well.
 
-diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
-index 37a91b3df980..0c98d88f795a 100644
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -74,28 +74,6 @@ struct ldsem_waiter {
- 	struct task_struct *task;
- };
- 
--static inline long ldsem_atomic_update(long delta, struct ld_semaphore *sem)
--{
--	return atomic_long_add_return(delta, (atomic_long_t *)&sem->count);
--}
--
--/*
-- * ldsem_cmpxchg() updates @*old with the last-known sem->count value.
-- * Returns 1 if count was successfully changed; @*old will have @new value.
-- * Returns 0 if count was not changed; @*old will have most recent sem->count
-- */
--static inline int ldsem_cmpxchg(long *old, long new, struct ld_semaphore *sem)
--{
--	long tmp = atomic_long_cmpxchg(&sem->count, *old, new);
--	if (tmp == *old) {
--		*old = new;
--		return 1;
--	} else {
--		*old = tmp;
--		return 0;
--	}
--}
--
- /*
-  * Initialize an ldsem:
-  */
-@@ -109,7 +87,7 @@ void __init_ldsem(struct ld_semaphore *sem, const char *name,
- 	debug_check_no_locks_freed((void *)sem, sizeof(*sem));
- 	lockdep_init_map(&sem->dep_map, name, key, 0);
- #endif
--	sem->count = LDSEM_UNLOCKED;
-+	atomic_long_set(&sem->count, LDSEM_UNLOCKED);
- 	sem->wait_readers = 0;
- 	raw_spin_lock_init(&sem->wait_lock);
- 	INIT_LIST_HEAD(&sem->read_wait);
-@@ -122,16 +100,17 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
- 	struct task_struct *tsk;
- 	long adjust, count;
- 
--	/* Try to grant read locks to all readers on the read wait list.
-+	/*
-+	 * Try to grant read locks to all readers on the read wait list.
- 	 * Note the 'active part' of the count is incremented by
- 	 * the number of readers before waking any processes up.
- 	 */
- 	adjust = sem->wait_readers * (LDSEM_ACTIVE_BIAS - LDSEM_WAIT_BIAS);
--	count = ldsem_atomic_update(adjust, sem);
-+	count = atomic_long_add_return(adjust, &sem->count);
- 	do {
- 		if (count > 0)
- 			break;
--		if (ldsem_cmpxchg(&count, count - adjust, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count - adjust))
- 			return;
- 	} while (1);
- 
-@@ -148,14 +127,15 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
- 
- static inline int writer_trylock(struct ld_semaphore *sem)
- {
--	/* only wake this writer if the active part of the count can be
-+	/*
-+	 * Only wake this writer if the active part of the count can be
- 	 * transitioned from 0 -> 1
- 	 */
--	long count = ldsem_atomic_update(LDSEM_ACTIVE_BIAS, sem);
-+	long count = atomic_long_add_return(LDSEM_ACTIVE_BIAS, &sem->count);
- 	do {
- 		if ((count & LDSEM_ACTIVE_MASK) == LDSEM_ACTIVE_BIAS)
- 			return 1;
--		if (ldsem_cmpxchg(&count, count - LDSEM_ACTIVE_BIAS, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count - LDSEM_ACTIVE_BIAS))
- 			return 0;
- 	} while (1);
- }
-@@ -205,12 +185,16 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
- 	/* set up my own style of waitqueue */
- 	raw_spin_lock_irq(&sem->wait_lock);
- 
--	/* Try to reverse the lock attempt but if the count has changed
-+	/*
-+	 * Try to reverse the lock attempt but if the count has changed
- 	 * so that reversing fails, check if there are are no waiters,
--	 * and early-out if not */
-+	 * and early-out if not
-+	 */
- 	do {
--		if (ldsem_cmpxchg(&count, count + adjust, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + adjust)) {
-+			count += adjust;
- 			break;
-+		}
- 		if (count > 0) {
- 			raw_spin_unlock_irq(&sem->wait_lock);
- 			return sem;
-@@ -243,12 +227,14 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
- 	__set_current_state(TASK_RUNNING);
- 
- 	if (!timeout) {
--		/* lock timed out but check if this task was just
-+		/*
-+		 * Lock timed out but check if this task was just
- 		 * granted lock ownership - if so, pretend there
--		 * was no timeout; otherwise, cleanup lock wait */
-+		 * was no timeout; otherwise, cleanup lock wait.
-+		 */
- 		raw_spin_lock_irq(&sem->wait_lock);
- 		if (waiter.task) {
--			ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
-+			atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
- 			list_del(&waiter.list);
- 			raw_spin_unlock_irq(&sem->wait_lock);
- 			put_task_struct(waiter.task);
-@@ -273,11 +259,13 @@ down_write_failed(struct ld_semaphore *sem, long count, long timeout)
- 	/* set up my own style of waitqueue */
- 	raw_spin_lock_irq(&sem->wait_lock);
- 
--	/* Try to reverse the lock attempt but if the count has changed
-+	/*
-+	 * Try to reverse the lock attempt but if the count has changed
- 	 * so that reversing fails, check if the lock is now owned,
--	 * and early-out if so */
-+	 * and early-out if so.
-+	 */
- 	do {
--		if (ldsem_cmpxchg(&count, count + adjust, sem))
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + adjust))
- 			break;
- 		if ((count & LDSEM_ACTIVE_MASK) == LDSEM_ACTIVE_BIAS) {
- 			raw_spin_unlock_irq(&sem->wait_lock);
-@@ -303,7 +291,7 @@ down_write_failed(struct ld_semaphore *sem, long count, long timeout)
- 	}
- 
- 	if (!locked)
--		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
-+		atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
- 	list_del(&waiter.list);
- 	raw_spin_unlock_irq(&sem->wait_lock);
- 
-@@ -324,7 +312,7 @@ static int __ldsem_down_read_nested(struct ld_semaphore *sem,
- 
- 	lockdep_acquire_read(sem, subclass, 0, _RET_IP_);
- 
--	count = ldsem_atomic_update(LDSEM_READ_BIAS, sem);
-+	count = atomic_long_add_return(LDSEM_READ_BIAS, &sem->count);
- 	if (count <= 0) {
- 		lock_stat(sem, contended);
- 		if (!down_read_failed(sem, count, timeout)) {
-@@ -343,7 +331,7 @@ static int __ldsem_down_write_nested(struct ld_semaphore *sem,
- 
- 	lockdep_acquire(sem, subclass, 0, _RET_IP_);
- 
--	count = ldsem_atomic_update(LDSEM_WRITE_BIAS, sem);
-+	count = atomic_long_add_return(LDSEM_WRITE_BIAS, &sem->count);
- 	if ((count & LDSEM_ACTIVE_MASK) != LDSEM_ACTIVE_BIAS) {
- 		lock_stat(sem, contended);
- 		if (!down_write_failed(sem, count, timeout)) {
-@@ -370,10 +358,10 @@ int __sched ldsem_down_read(struct ld_semaphore *sem, long timeout)
-  */
- int ldsem_down_read_trylock(struct ld_semaphore *sem)
- {
--	long count = sem->count;
-+	long count = atomic_long_read(&sem->count);
- 
- 	while (count >= 0) {
--		if (ldsem_cmpxchg(&count, count + LDSEM_READ_BIAS, sem)) {
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_READ_BIAS)) {
- 			lockdep_acquire_read(sem, 0, 1, _RET_IP_);
- 			lock_stat(sem, acquired);
- 			return 1;
-@@ -396,10 +384,10 @@ int __sched ldsem_down_write(struct ld_semaphore *sem, long timeout)
-  */
- int ldsem_down_write_trylock(struct ld_semaphore *sem)
- {
--	long count = sem->count;
-+	long count = atomic_long_read(&sem->count);
- 
- 	while ((count & LDSEM_ACTIVE_MASK) == 0) {
--		if (ldsem_cmpxchg(&count, count + LDSEM_WRITE_BIAS, sem)) {
-+		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_WRITE_BIAS)) {
- 			lockdep_acquire(sem, 0, 1, _RET_IP_);
- 			lock_stat(sem, acquired);
- 			return 1;
-@@ -417,7 +405,7 @@ void ldsem_up_read(struct ld_semaphore *sem)
- 
- 	lockdep_release(sem, 1, _RET_IP_);
- 
--	count = ldsem_atomic_update(-LDSEM_READ_BIAS, sem);
-+	count = atomic_long_add_return(-LDSEM_READ_BIAS, &sem->count);
- 	if (count < 0 && (count & LDSEM_ACTIVE_MASK) == 0)
- 		ldsem_wake(sem);
- }
-@@ -431,7 +419,7 @@ void ldsem_up_write(struct ld_semaphore *sem)
- 
- 	lockdep_release(sem, 1, _RET_IP_);
- 
--	count = ldsem_atomic_update(-LDSEM_WRITE_BIAS, sem);
-+	count = atomic_long_add_return(-LDSEM_WRITE_BIAS, &sem->count);
- 	if (count < 0)
- 		ldsem_wake(sem);
- }
-diff --git a/include/linux/tty_ldisc.h b/include/linux/tty_ldisc.h
-index 1ef64d4ad887..840894ca3fc0 100644
---- a/include/linux/tty_ldisc.h
-+++ b/include/linux/tty_ldisc.h
-@@ -119,13 +119,13 @@
- 
- #include <linux/fs.h>
- #include <linux/wait.h>
--
-+#include <linux/atomic.h>
- 
- /*
-  * the semaphore definition
-  */
- struct ld_semaphore {
--	long			count;
-+	atomic_long_t		count;
- 	raw_spinlock_t		wait_lock;
- 	unsigned int		wait_readers;
- 	struct list_head	read_wait;
+I don't like to mix operations when the function name define clearly
+what is doing. The ii_dev_free() frees a structure,
+idle_injection_device refers to a global variable.
+
+Anyway if we are talking about using a refcount, we can add a release
+which frees the structure and sets the per cpu idle_injection_device
+global variable to NULL.
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
