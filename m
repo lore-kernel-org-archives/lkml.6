@@ -1,57 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeFEQEK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:04:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751748AbeFEQEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:04:08 -0400
-Date: Tue, 5 Jun 2018 13:04:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH V3 00/17] perf tools and x86 PTI entry trampolines
-Message-ID: <20180605160404.GL4899@kernel.org>
-References: <1526986485-6562-1-git-send-email-adrian.hunter@intel.com>
- <4017be61-554f-f356-b68d-64981261f8dd@intel.com>
- <20180605152943.GH4899@kernel.org>
- <20180605160046.GZ12180@hirez.programming.kicks-ass.net>
+        id S1752011AbeFEQER (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:04:17 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:37246 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751748AbeFEQEN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 12:04:13 -0400
+X-Google-Smtp-Source: ADUXVKKgP05PyF874DXsV3HCY0Trl9jIuGmEX9S9MXhaijK+eGTLCPw32ptBBapCk33ufHWcGALYjeOB708PtRQmN5k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605160046.GZ12180@hirez.programming.kicks-ass.net>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 5 Jun 2018 18:04:10 +0200
+X-Google-Sender-Auth: SFuStefRwrpWZC_LI--iR3yqcH0
+Message-ID: <CAK8P3a2M9RBKMXikFW2jZYwQnWXDjOJ6mzD6Jt85SVOnZkbXnQ@mail.gmail.com>
+Subject: vfs_timespec64 merge into v4.18?
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jun 05, 2018 at 06:00:46PM +0200, Peter Zijlstra escreveu:
-> On Tue, Jun 05, 2018 at 12:29:43PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > Arnaldo has queued the tools patches, but there are still 3 kernel patches:
-> > > 
-> > > 	kallsyms: Simplify update_iter_mod()
-> > > 	kallsyms, x86: Export addresses of syscall trampolines
-> 
-> That one needs a changelog.
-> 
-> > > 	x86: Add entry trampolines to kcore
-> > > 
-> > > Are there any further comments on these?  Can they be applied?
-> > 
-> > Would be interesting to have some acked-by from kernel folks :-\
-> 
-> Other than that, they look good I tihnk. The updatE_iter_mod thing took
-> me a few tries, so maybe something can be done to the changelog there
-> too, maybe explicitly mention the rule for the *mod_end things.
+Hi everyone,
 
-I was feeling daft, good to see you found that difficult to follow 8-)
+As I discussed with Thomas on IRC, I'd still like to try to get Deepa's series
+merged to have 64-bit inode timestamps in VFS, as a prerequisite to fixing
+the individual file systems for y2038 as the next step.
 
-- Arnaldo
+The orignal tree that I've been testing with is in
+https://github.com/deepa-hub/vfs vfs_timespec64 (see description at [1]
+Unfortunately this was never in linux-next so far, so it's definitely
+against our
+normal rules, and if there are any objections (or new issues getting found),
+then we should defer it another merge window.
+
+Until very recently, the branch worked fine with both linux-next and 4.17-rc,
+but with some last minute changes to the NFS and Overlayfs trees, it
+gained some nasty conflicts.
+
+I've merged Trond's NFS branch and Miklos' Overlayfs branches into
+it, fixed up those conflicts and now uploaded it to my tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git
+Obviously this will break if either of them rebases their trees once
+more, in which case I assume Stephen will drop my branch from
+linux-next.
+
+Once those two are merged into mainline and nothing unexpected
+has come up from linux-next testing, we could either send a pull request
+to Linus for the merged branch, or regenerate the flag-day patch in it
+using coccinelle, which should result in identical contents.
+
+        Arnd
+
+[1] https://lkml.org/lkml/2018/5/25/828
