@@ -1,144 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752229AbeFESqo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:46:44 -0400
-Received: from de-out1.bosch-org.com ([139.15.230.186]:53992 "EHLO
-        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751917AbeFESqj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:46:39 -0400
-X-AuditID: 0a3aad14-925ff70000003a2f-1e-5b16da99210d
-From: Mark Jonas <mark.jonas@de.bosch.com>
-To: Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-CC: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <hs@denx.de>, <yi.zhu5@cn.bosch.com>,
-        Mark Jonas <mark.jonas@de.bosch.com>
-Subject: [PATCH 5/5] spi,can,char: add companion DT binding documentation
-Date: Tue, 5 Jun 2018 20:44:00 +0200
-Message-ID: <1528224240-30786-6-git-send-email-mark.jonas@de.bosch.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
-References: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
+        id S1752019AbeFESsP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:48:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47750 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751816AbeFESsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 14:48:14 -0400
+Date: Tue, 5 Jun 2018 14:48:11 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Airlie <airlied@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>, Christoph Hellwig <hch@lst.de>,
+        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] mm: rework hmm to use devm_memremap_pages
+Message-ID: <20180605184811.GC4423@redhat.com>
+References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180524001026.GA3527@redhat.com>
+ <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com>
+ <CAPM=9tzMJq=KC+ijoj-JGmc1R3wbshdwtfR3Zpmyaw3jYJ9+gw@mail.gmail.com>
+ <CAPcyv4g2XQtuYGPu8HMbPj6wXqGwxiL5jDRznf5fmW4WgC2DTw@mail.gmail.com>
+ <CAPM=9twm=17t=2=M27ELB=vZWzpqM7GuwCUsC891jJ0t3JM4vg@mail.gmail.com>
+ <CAPcyv4jTty4k1xXCOWbeRjzv-KjxNH1L4oOkWW1EbJt66jF4_w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrILsWRmVeSWpSXmKPExsXCZbVWVnfmLbFog8m9VhY77txntlj1fSqz
-        xeVdc9gs1i+awmJxbIGYxdJ7O1kd2DzmzTrB4vHx0m1Gj/6/Bh6fN8kFsERx2aSk5mSWpRbp
-        2yVwZazZPJ+54JB0xZXWjewNjM9Euhg5OSQETCTOXnnL0sXIxSEkMINJYtnrR1DOfkaJptlv
-        2SCcbYwSp++eZgFpYRPQkrh5YgcziC0iECox+2kbWAezwEpGiafLzzJ1MXJwCAt4Sny8qAJS
-        wyKgIrH5zTmwXl4Bd4lnz64yQqyWk7h5rhNsDqeAh8Tv1nfsILYQUM25TTD1ghInZz4Bs5kF
-        JCQOvnjBPIGRfxaS1CwkqQWMTKsYRdNSDcpyDc1NDPSKklKLqwwM9ZLzczcxQgJUZAfjpIcp
-        hxgFOBiVeHj/HBSLFmJNLCuuzD3EaMrBpCTKq7MIKMSXlJ9SmZFYnBFfVJqTWqwkxcvIwMAg
-        JAwXLi5Nys0sLs7MzzvEKMHBrCTCm3gJqI83JbGyKrUoH6LtEKM0B4uSOG/HmpdRQgLpiSWp
-        2ampBalFMFlrDg4lCV6Pm0CNgkWp6akVaZk5JTBpJVmInWLIMsjWMnFwHmI05uAB2u0EMoK3
-        uCAxtzgzHapdEqJdCCaK0HqK0VxKnLcSpEcAJJtRmge3VUqGd+5JkWghUSQJhM5XjDcYgeEm
-        zDsTpJkHmFYR9knw7hCeEykkCBVEaDJaAtQjsJtbYl5TkcS8HV8ZJSa2PGKW2L+xiVXi1o8N
-        rBKHty1nk5i54AObRMvx+ZwSJyYd55R4s7iDV6Lj0FZeiZ6X6wQkflxdICjR09kqJHHp0x9h
-        iRmL90tI/FuyUUri84rHQGLhSyDxYqusxMYfR+Qk/k15KCfx5/gGeYn7zdMVJP43rVSU2PHk
-        kpLE559vlSQu/VqsLDHvxwNliQtNj5Ql1u//COQuOa/6ChiWTMCwfFYhDArLksQSLGEJFUV4
-        TqqBUd857677RYmJ1fmLViuWbj1qqbDDrL1rkytvefIs7RuGN3n+tx6+33ksZLGp6E3hfZGi
-        bp0xcqqLlKWVF5QpZdu9i+cpTf779t3a+oq6WbfmWDie2t1X5yTwc82/ez+7viqe4Vkjd/d4
-        zr8bN57ffM2eHyj/8PaHw5q7vye78kpmODI78DPnK7EUZyQaajEXFScCAA81uvlEBAAA
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4jTty4k1xXCOWbeRjzv-KjxNH1L4oOkWW1EbJt66jF4_w@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhu Yi <yi.zhu5@cn.bosch.com>
+On Tue, May 29, 2018 at 04:33:49PM -0700, Dan Williams wrote:
+> On Tue, May 29, 2018 at 4:00 PM, Dave Airlie <airlied@gmail.com> wrote:
+> > On 30 May 2018 at 08:31, Dan Williams <dan.j.williams@intel.com> wrote:
+> >> On Tue, May 29, 2018 at 3:22 PM, Dave Airlie <airlied@gmail.com> wrote:
+> >>>
+> >>> On 24 May 2018 at 13:18, Dan Williams <dan.j.williams@intel.com> wrote:
+> >>> > On Wed, May 23, 2018 at 5:10 PM, Jerome Glisse <jglisse@redhat.com> wrote:
+> >>> >> On Mon, May 21, 2018 at 03:35:14PM -0700, Dan Williams wrote:
+> >>> >>> Hi Andrew, please consider this series for 4.18.
+> >>> >>>
+> >>> >>> For maintainability, as ZONE_DEVICE continues to attract new users,
+> >>> >>> it is useful to keep all users consolidated on devm_memremap_pages() as
+> >>> >>> the interface for create "device pages".
+> >>> >>>
+> >>> >>> The devm_memremap_pages() implementation was recently reworked to make
+> >>> >>> it more generic for arbitrary users, like the proposed peer-to-peer
+> >>> >>> PCI-E enabling. HMM pre-dated this rework and opted to duplicate
+> >>> >>> devm_memremap_pages() as hmm_devmem_pages_create().
+> >>> >>>
+> >>> >>> Rework HMM to be a consumer of devm_memremap_pages() directly and fix up
+> >>> >>> the licensing on the exports given the deep dependencies on the mm.
+> >>> >>
+> >>> >> I am on PTO right now so i won't be able to quickly review it all
+> >>> >> but forcing GPL export is problematic for me now. I rather have
+> >>> >> device driver using "sane" common helpers than creating their own
+> >>> >> crazy thing.
+> >>> >
+> >>> > Sane drivers that need this level of deep integration with Linux
+> >>> > memory management need to be upstream. Otherwise, HMM is an
+> >>> > unprecedented departure from the norms of Linux kernel development.
+> >>>
+> >>> Isn't it the author of code choice what EXPORT_SYMBOL to use? and
+> >>> isn't the agreement that if something is EXPORT_SYMBOL now, changing
+> >>> underlying exports isn't considered a good idea. We've seen this before
+> >>> with the refcount fun,
+> >>>
+> >>> See d557d1b58b3546bab2c5bc2d624c5709840e6b10
+> >>>
+> >>> Not commenting on the legality or what derived works are considered,
+> >>> since really the markings are just an indication of the authors opinion,
+> >>> and at this stage I think are actually meaningless, since we've diverged
+> >>> considerably from the advice given to Linus back when this started.
+> >>
+> >> Yes, and in this case devm_memremap_pages() was originally written by
+> >> Christoph and I:
+> >>
+> >>     41e94a851304 add devm_memremap_pages
+> >
+> > So you wrote some code in 2015 (3 years ago) and you've now decided
+> > to change the EXPORT marker on it? what changed in 3 years, and why
+> > would changing that marker 3 years later have any effect on your original
+> > statement that it was an EXPORT_SYMBOL.
+> >
+> > Think what EXPORT_SYMBOL vs GPL means, it isn't a bit stick that magically
+> > makes things into derived works. If something wasn't a derived work for 3 years
+> > using that API, then it isn't a derived work now 3 years later because you
+> > changed the marker. Retrospectively changing the markers doesn't really
+> > make any sense legally or otherwise.
+> 
+> It honestly was an oversight, and as we've gone on to add deeper and
+> deeper ties into the mm and filesystems [1] I realized this symbol was
+> mis-labeled.  It would be one thing if this was just some random
+> kernel leaf / library function, but this capability when turned on
+> causes the entire kernel to be recompiled as things like the
+> definition of put_page() changes. It's deeply integrated with how
+> Linux manages memory.
 
-Signed-off-by: Zhu Yi <yi.zhu5@cn.bosch.com>
-Signed-off-by: Mark Jonas <mark.jonas@de.bosch.com>
----
- .../devicetree/bindings/spi/bosch,companion.txt    | 82 ++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/bosch,companion.txt
+I am personaly on the fence on deciding GPL versus non GPL export
+base on subjective view of what is deeply integrated and what is
+not. I think one can argue that every single linux kernel function
+is deeply integrated within the kernel, starting with all device
+drivers functions. One could similarly argue that nothing is ...
 
-diff --git a/Documentation/devicetree/bindings/spi/bosch,companion.txt b/Documentation/devicetree/bindings/spi/bosch,companion.txt
-new file mode 100644
-index 0000000..5ded325
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/bosch,companion.txt
-@@ -0,0 +1,82 @@
-+Bosch Companion SPI slave device
-+
-+The functionality bases on an external peripheral chip named Companion.
-+It offers two CAN interfaces, each has 8 prioritized transmit FIFOs as
-+well as one receive FIFO. Besides CAN, undisclosed additional functions
-+can be accessed through the char device.
-+
-+A standard SPI interface with two additional lines for flow control is
-+used. The Companion chip is the SPI slave.
-+
-+The driver suite consists of three separate drivers. The following
-+diagram illustrates the dependencies in layers.
-+
-+           /dev/companion       SocketCAN                User Space
-+-------------------------------------------------------------------
-+         +----------------+ +---------------+
-+         | companion-char | | companion-can |
-+         +----------------+ +---------------+
-+         +----------------------------------+
-+         |          companion-spi           |
-+         +----------------------------------+
-+         +----------------------------------+
-+         |     standard SPI subsystem       |
-+         +----------------------------------+          Linux Kernel
-+-------------------------------------------------------------------
-+               | | | |      | |                            Hardware
-+            CS-+ | | |      | +-BUSY
-+            CLK--+ | |      +---REQUEST
-+            MOSI---+ |
-+            MISO-----+
-+
-+Required properties:
-+
-+- compatible       : must be "bosch,companion-spi"
-+- interrupt-parent : the phandle of the GPIO controller
-+- interrupts       : (GPIO) interrupt to which 'request-gpios' is
-+                     connected to
-+- request-gpios    : GPIO pin to request SPI master to receive data
-+- busy-gpios       : GPIO pin to indicate SPI slave is busy
-+- cs-gpios         : GPIO pin to select SPI slave
-+
-+Optional properties:
-+
-+The controller supports at most 2 CAN and 1 char device subnodes. When
-+optionally specify the subnodes, the following properties are required:
-+
-+- CAN subnode
-+  - compatible     : must be "bosch,companion-can"
-+  - clock-frequency: CAN device clock in Hz
-+  - port           : must be 0 or 1
-+
-+- Char device subnode
-+  - compatible     : must be "bosch,companion-char"
-+
-+Example:
-+
-+&ecspi1 {
-+	companion-spi@0 {
-+		compatible = "bosch,companion-spi";
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
-+		request-gpios = <&gpio1 26 GPIO_ACTIVE_LOW>;
-+		busy-gpios = <&gpio1 27 GPIO_ACTIVE_LOW>;
-+		cs-gpios = <&gpio4 9 GPIO_ACTIVE_LOW>;
-+
-+		companion-can0 {
-+			compatible = "bosch,companion-can";
-+			clock-frequency = <28000000>;
-+			port = <0>;
-+		};
-+
-+		companion-can1 {
-+			compatible = "bosch,companion-can";
-+			clock-frequency = <28000000>;
-+			port = <1>;
-+		};
-+
-+		companion-char {
-+			compatible = "bosch,companion-char";
-+		};
-+	};
-+};
--- 
-2.7.4
+I see more value in consistency of symbol export over time. Once
+we pick one it should stay that way.
+
+
+> >> HMM started off by duplicating devm_memremap_pages() which is fixed up
+> >> by this series:
+> >
+> > Just looking in my current tree hmm_devmem_pages_create and
+> > devm_memremap_pages don't look like duplicates, they might have
+> > code but they definitely aren't one for one copies. I'm not sure you can
+> > just say Jerome copied that code in, you've now refactored the code
+> > so HMM can use it and are changing the symbol exports underneath it,
+> 
+> The initial patches for HMM used devm_memremap_pages() directly, and
+> during review I asked for the exact same arrangement as implemented
+> here, i.e. for the dev_pagemap structure to be a sub-structure of the
+> HMM data [2]. At some point along the way we lost that review
+> feedback. It was not until Christoph and Logan recently reworked
+> devm_memermap_pages() that I realized that HMM had unnecessarily
+> diverged.
+> 
+> > Again if Christoph believes all uses of this are a derived work he didn't
+> > indicate it 3 years ago, but neither does the mark make any legal difference
+> > in this case, since everything in the kernel is GPL, and if you
+> > consider something
+> > a derived work or not is well into legal land.
+> >
+> > I'd rather anyways the original author of HMM wishes were respected
+> > on his code, or at least you wait until he gets back from holidays before
+> > pushing to merge this.
+> 
+> To be clear this only affects the usage of the ZONE_DEVICE facility,
+> I'm not touching the other pieces of HMM that are original to HMM. I
+> didn't realize Jerome was on vacation when I sent the patches, and I
+> think it is otherwise healthy to have this discussion in the meantime.
+
+While HMM is a toolbox and i intend to use some part of HMM to replace
+some existing GUP user. Biggest user of HMM will use all the tools in
+the HMM box. Thus having a mix of GPL and non GPL defeat its usefulness
+for out of tree drivers.
+
+I still want to review this patchset, i am going through a backlog of
+urgent emails so i probably won't be able to review before a day or two.
+
+I am just strongly against changing to GPL only export.
+
+Cheers,
+Jérôme
