@@ -1,140 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751787AbeFEKq4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:46:56 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:45810 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751534AbeFEKqz (ORCPT
+        id S1751701AbeFEKs4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 06:48:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59402 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751498AbeFEKsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:46:55 -0400
-Message-ID: <cfb6ff791a9034f8ade738085475e946b3d7519b.camel@sipsolutions.net>
-Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
- on kbd brightness change
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: Hans de Goede <hdegoede@redhat.com>,
-        Bastien Nocera <hadess@hadess.net>, Chris Chiu <chiu@endlessm.com>,
-        Darren Hart <dvhart@infradead.org>
-Cc: Daniel Drake <drake@endlessm.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Date: Tue, 05 Jun 2018 12:46:46 +0200
-In-Reply-To: <0443419b-3147-163b-374d-bb8651b08837@redhat.com> (sfid-20180605_123103_271620_F1F8BDCF)
-References: <20180604123238.82200-1-chiu@endlessm.com>
-         <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
-         <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
-         <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com>
-         <20180605023124.GE47042@localhost.localdomain>
-         <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
-         <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com>
-         <71df09bc89619aba975147e6b07920f1dfc2f46f.camel@hadess.net>
-         <cd6a5d86-1fdb-2561-1e29-0553be53c41a@redhat.com>
-         <94789b55b88ae5a296e1fca3b0311318e7b507ee.camel@hadess.net>
-         <0443419b-3147-163b-374d-bb8651b08837@redhat.com>
-         (sfid-20180605_123103_271620_F1F8BDCF)
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-QtbsNiEpvSwUb0UXili9"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
+        Tue, 5 Jun 2018 06:48:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AC45601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From: "sayali" <sayalil@codeaurora.org>
+To: "'Kyuho Choi'" <chlrbgh0@gmail.com>
+Cc: <subhashj@codeaurora.org>, <cang@codeaurora.org>,
+        <vivek.gautam@codeaurora.org>, <rnayak@codeaurora.org>,
+        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <asutoshd@codeaurora.org>,
+        <evgreen@chromium.org>, <linux-scsi@vger.kernel.org>,
+        "'open list'" <linux-kernel@vger.kernel.org>
+References: <1527849774-7623-1-git-send-email-sayalil@codeaurora.org> <1527849774-7623-2-git-send-email-sayalil@codeaurora.org> <CAP2JTQJAyPAJ-uJM3REb02fBLUKkhf28OacEnzNHGidWfu3+YA@mail.gmail.com>
+In-Reply-To: <CAP2JTQJAyPAJ-uJM3REb02fBLUKkhf28OacEnzNHGidWfu3+YA@mail.gmail.com>
+Subject: RE: [PATCH V1 1/3] scsi: ufs: set the device reference clock setting
+Date: Tue, 5 Jun 2018 16:18:46 +0530
+Message-ID: <000801d3fcba$cafa3c30$60eeb490$@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKGja9h2+sAa9B7VDYjBpPLWNjYigKV7YTZAlkPtOiixOBpYA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55An10A004041
 
 
---=-QtbsNiEpvSwUb0UXili9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+-----Original Message-----
+From: Kyuho Choi [mailto:chlrbgh0@gmail.com] 
+Sent: Saturday, June 02, 2018 11:04 AM
+To: Sayali Lokhande <sayalil@codeaurora.org>
+Cc: subhashj@codeaurora.org; cang@codeaurora.org; vivek.gautam@codeaurora.org; rnayak@codeaurora.org; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; asutoshd@codeaurora.org; evgreen@chromium.org; linux-scsi@vger.kernel.org; open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V1 1/3] scsi: ufs: set the device reference clock setting
 
-Hey,
+Hi Sayali,
 
-On Tue, 2018-06-05 at 12:31 +0200, Hans de Goede wrote:
-> On 05-06-18 12:14, Bastien Nocera wrote:
-> > On Tue, 2018-06-05 at 12:05 +0200, Hans de Goede wrote:
-> > > On 05-06-18 11:58, Bastien Nocera wrote:
-> > > > [SNIP]
-> > >=20
-> > > Ok, so what are you suggestion, do you really want to hardcode
-> > > the cycle behavior in the kernel as these 2 patches are doing,
-> > > without any option to intervene from userspace?
-> > >=20
-> > > As mentioned before in the thread there are several example
-> > > of the kernel deciding to handle key-presses itself, putting
-> > > policy in the kernel and they have all ended poorly (think
-> > > e.g. rfkill, acpi-video dealing with LC brightnesskey presses
-> > > itself).
-> > >=20
-> > > I guess one thing we could do here is code out both solutions,
-> > > have a module option which controls if we:
-> > >=20
-> > > 1) Handle this in the kernel as these patches do
-> > > 2) Or send a new KEY_KBDILLUMCYCLE event
-> > >=20
-> > > Combined with a Kconfig option to select which is the default
-> > > behavior. Then Endless can select 1 for now and then in
-> > > Fedora (which defaults to Wayland now) we could default to
-> > > 2. once all the code for handling 2 is in place.
-> > >=20
-> > > This is ugly (on the kernel side) but it might be the best
-> > > compromise we can do.
-> >=20
-> > I don't really mind which option is used, I'm listing the problems with
-> > the different options. If you don't care about Xorg, then definitely go
-> > for adding a new key. Otherwise, processing it in the kernel is the
-> > least ugly, especially given that the key goes through the same driver
-> > that controls the brightness anyway. There's no crazy cross driver
-> > interaction as there was in the other cases you listed.
->=20
-> Unfortunately not caring about Xorg is not really an option.
->=20
-> Ok, new idea, how about we make g-s-d behavior upon detecting a
-> KEY_KBDILLUMTOGGLE event configurable, if we're on a Mac do a
-> toggle, otherwise do a cycle.
+On 6/1/18, Sayali Lokhande <sayalil@codeaurora.org> wrote:
+> From: Subhash Jadavani <subhashj@codeaurora.org>
 >
-> Or we could do this through hwdb, then we could add a hwdb entry
-> for this laptop setting the udev property to do a cycle instead of
-> a toggle on receiving the keypress.
+> UFS host supplies the reference clock to UFS device and UFS device 
+> specification allows host to provide one of the 4 frequencies (19.2 
+> MHz,
+> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the 
+> device reference clock frequency setting in the device based on what 
+> frequency it is supplying to UFS device.
+>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> [cang@codeaurora.org: Resolved trivial merge conflicts]
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  drivers/scsi/ufs/ufs.h    |  9 +++++++
+>  drivers/scsi/ufs/ufshcd.c | 62
+> +++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h |  1 +
+>  3 files changed, 72 insertions(+)
+>
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h index 
+> 14e5bf7..e15deb0 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -378,6 +378,15 @@ enum query_opcode {
+>  	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+>  };
+>
+> +/* bRefClkFreq attribute values */
+> +enum ref_clk_freq {
+> +	REF_CLK_FREQ_19_2_MHZ	= 0x0,
+> +	REF_CLK_FREQ_26_MHZ	= 0x1,
+> +	REF_CLK_FREQ_38_4_MHZ	= 0x2,
+> +	REF_CLK_FREQ_52_MHZ	= 0x3,
+> +	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
+> +};
+> +
+>  /* Query response result code */
+>  enum {
+>  	QUERY_RESULT_SUCCESS                    = 0x00,
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c 
+> index c5b1bf1..3669bc4 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -6297,6 +6297,63 @@ static void ufshcd_def_desc_sizes(struct 
+> ufs_hba
+> *hba)
+>  }
+>
+>  /**
+> + * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
+> + * @hba: per-adapter instance
+> + * @ref_clk_freq: refrerence clock frequency to be set
+> + *
+> + * Read the current value of the bRefClkFreq attribute from device 
+> + and
+> update it
+> + * if host is supplying different reference clock frequency than one
+> mentioned
+> + * in bRefClkFreq attribute.
+> + *
+> + * Returns zero on success, non-zero error value on failure.
+> + */
+> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba, u32 
+> +ref_clk_freq) {
+> +	int err = 0;
+> +	int ref_clk = -1;
+> +	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
+> +						     "38.4 MHz", "52 MHz"};
+> +
+> +	hba->dev_ref_clk_freq = ref_clk_freq;
+> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+> +
+> +	if (err) {
+> +		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+> +			 __func__, err);
+> +		goto out;
+> +	}
+> +
+> +	if ((ref_clk < 0) || (ref_clk > REF_CLK_FREQ_52_MHZ)) {
+> +		dev_err(hba->dev, "%s: invalid ref_clk setting = %d\n",
+> +			 __func__, ref_clk);
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (ref_clk == hba->dev_ref_clk_freq)
+> +		goto out; /* nothing to update */
+> +
+> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
+> +			&hba->dev_ref_clk_freq);
+> +
+> +	if (err)
+> +		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
+> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+> +	else
+> +		/*
+> +		 * It is good to print this out here to debug any later failures
+> +		 * related to gear switch.
+> +		 */
+> +		dev_info(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
+> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +/**
+>   * ufshcd_probe_hba - probe hba to detect device and initialize
+>   * @hba: per-adapter instance
+>   *
+> @@ -6361,6 +6418,11 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>  			"%s: Failed getting max supported power mode\n",
+>  			__func__);
+>  	} else {
+> +		/*
+> +		 * Set the right value to bRefClkFreq before attempting to
+> +		 * switch to HS gears.
+> +		 */
+> +		ufshcd_set_dev_ref_clk(hba, REF_CLK_FREQ_19_2_MHZ);
 
-If we are adding hwdb entries anyway to control the userspace
-interpretation of the TOGGLE key, then we could also add the new CYCLE
-key and explicitly re-map it to TOGGLE. That requires slightly more
-logic in hwdb, but it does mean that we could theoretically just drop
-the workaround if we ever stop caring about Xorg.
+How it works in 26MHz refclk support host like exynos series?. As I understood, there default refclk value are 26MHz for host and device.
+In that case, your code maybe set device's refclk to 19.2MHz. It would be need to set same refclk value both host and device for switch to HS.
+[Sayali] : As per HPG, we set ref_clk to 19.2 Mhz (for host and device). But as it can vary for others (like exynos as you pointed), I think its better to parse ref_clk frequency from device tree instead of passing hardcoded value. DT approach was present in my previous patchset, I will update/add it again in my next patch set.
 
-> I guess alternatively I could live with hardcoding this in the
-> kernel as these 2 patches do, but that solves it just for *this*
-> laptop, I've a feeling that if we do that we end up with similar
-> code in all laptop vendor drivers under drivers/platform/x86
-> soon.  Which really is the acpi_video.brightness_event thing
-> again, where the kernel would handle brightness key-presses
-> but only if the acpi_video backlight interface was in use
-> and not on models with a vendor specific or native-hardware
-> backlight driver.  Hmm, so writing this, I'm still quite sure
-> the kernel approach is actually a bad idea.
+>  		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+>  		if (ret) {
+>  			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n", 
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h 
+> index 8110dcd..b026ad8 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -548,6 +548,7 @@ struct ufs_hba {
+>  	void *priv;
+>  	unsigned int irq;
+>  	bool is_irq_enabled;
+> +	u32 dev_ref_clk_freq;
+>
+>  	/* Interrupt aggregation support is broken */
+>  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+> Forum, a Linux Foundation Collaborative Project
+>
+>
 
-Benjamin
---=-QtbsNiEpvSwUb0UXili9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEED2NO4vMS33W8E4AFq6ZWhpmFY3AFAlsWahYACgkQq6ZWhpmF
-Y3DsvQ//WIq+C0ldZo05gfwEdsv8hIO/Ih2QBO+tgEXO1QpZ1GIZ3ym+Q758FsxM
-PbtJduBRTyCo8oAKYHr/m3EsQbHrXJ3tS1DpGgUnMwy4zbGGBxHkohccSZYfdazx
-2aP5rpHt6/QWJC5EoJzUpii5/l4lhThXYG9F60Z6m5z6hZ5gPi9BjYyepqmAWKYr
-ZhoNtDbfOupmaCv6SEDomrIz3RpWO4zobUNveG4TAuxwQqhQ7zBqEI8Qdc/4PWqs
-6F/iVQ6VV4N1CkT9H3+6U2fwzVfiNBdIUTWLOi4HBQ6//ozjuIb3xJItEgshVK2B
-VU4GkRhkYj1x1Kg2SpS5tqtw2DaW/YVf8Y8HZMzAjERHP6uc0rSMT4O/LDj4VAKE
-ps6g2dMAr7eK/EpdlwRhH3dzHcuaV2PHlVi7hrnc1G8ckDnb25mSPMIfNCuJ4/6A
-hlpErQrtjzcPhK0o9bCCUjilDZE/2ApThWtBIjXs9XGGn98i2RW5iKhaUrgsgNEb
-zAEp1r/DElvEoF8/fwbZIIuIICtPxo7tEF3yeQVSdO1VfxqJt48wMUM1GFu7LASk
-7ImINXe+o1tRFxL8GhjVRWcn7Tq1yxk8AKXG1R7bk34jkzGEjYAbc3wS+42bcagn
-MUKx2zy7A1EE1d1A8xl7WJ//r+Af13zipCSdddELQImvagfmaCg=
-=KnOm
------END PGP SIGNATURE-----
-
---=-QtbsNiEpvSwUb0UXili9--
+BR,
+Kyuho Choi
