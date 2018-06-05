@@ -1,181 +1,377 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752262AbeFEVlr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:41:47 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:36874 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752025AbeFEVlp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:41:45 -0400
-X-Google-Smtp-Source: ADUXVKIh0QbC7FydS9UOeMqQOcXlCZPPloZDODxX555af56ErQVvghSlz+PQfz9hB27utJZiU0EhSw==
-Subject: Re: [PATCH 1/1] net: dsa: b53: Fix for brcm tag issue in Cygnus SoC
-To: Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-References: <1528231092-31472-1-git-send-email-arun.parameswaran@broadcom.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <c51cf072-beeb-6630-e260-24c585d29aae@gmail.com>
-Date: Tue, 5 Jun 2018 14:41:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1528231092-31472-1-git-send-email-arun.parameswaran@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752452AbeFEVmw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:42:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:37414 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751780AbeFEVmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:42:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
+   d="scan'208";a="47023739"
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net
+Cc: peterz@infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+        viresh.kumar@linaro.org, ggherdovich@suse.cz,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 0/4] Intel_pstate: HWP Dynamic performance boost
+Date: Tue,  5 Jun 2018 14:42:38 -0700
+Message-Id: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 01:38 PM, Arun Parameswaran wrote:
-> In the Broadcom Cygnus SoC, the brcm tag needs to be inserted
-> in between the mac address and the ether type (should use
-> 'DSA_PROTO_TAG_BRCM') for the packets sent to the internal
-> b53 switch.
-> 
-> Since the Cygnus was added with the BCM58XX device id and the
-> BCM58XX uses 'DSA_PROTO_TAG_BRCM_PREPEND', the data path is
-> broken, due to the incorrect brcm tag location.
-> 
-> Add a new b53 device id (BCM583XX) for Cygnus family to fix the
-> issue. Add the new device id to the BCM58XX family as Cygnus
-> is similar to the BCM58XX in most other functionalities.
-> 
-> Fixes: 11606039604c ("net: dsa: b53: Support prepended Broadcom tags")
-> 
-> Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+v1 (Compared to RFC/RFT v3)
+- Minor suggestion for intel_pstate for coding
+- Add SKL desktop model used in some Xeons
 
-Clement originally reported this to me/us:
+Tested-by: Giovanni Gherdovich <ggherdovich@suse.cz>
 
-Reported-by: Clément Péron <peron.clem@gmail.com>
+This series has an overall positive performance impact on IO both on xfs and
+ext4, and I'd be vary happy if it lands in v4.18. You dropped the migration
+optimization from v1 to v2 after the reviewers' suggestion; I'm looking
+forward to test that part too, so please add me to CC when you'll resend it.
 
-I completely overlooked that when adding support for prepended Broadcom
-tags, thanks for the fix Arun!
+I've tested your series on a single socket Xeon E3-1240 v5 (Skylake, 4 cores /
+8 threads) with SSD storage. The platform is a Dell PowerEdge R230.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+The benchmarks used are a mix of I/O intensive workloads on ext4 and xfs
+(dbench4, sqlite, pgbench in read/write and read-only configuration, Flexible
+IO aka FIO, etc) and scheduler stressers just to check that everything is okay
+in that department too (hackbench, pipetest, schbench, sockperf on localhost
+both in "throughput" and "under-load" mode, netperf in localhost, etc). There
+is also some HPC with the NAS Parallel Benchmark, as when using openMPI as IPC
+mechanism it ends up being write-intensive and that could be a good
+experiment, even if the HPC people aren't exactly the target audience for a
+frequency governor.
 
-David, can you also queue this up for -stable? Thank you
+The large improvements are in areas you already highlighted in your cover
+letter (dbench4, sqlite, and pgbench read/write too, very impressive
+honestly). Minor wins are also observed in sockperf and running the git unit
+tests (gitsource below). The scheduler stressers ends up, as expected, in the
+"neutral" category where you'll also find FIO (which given other results I'd
+have expected to improve a little at least). Marked "neutral" are also those
+results where statistical significance wasn't reached (2 standard deviations,
+which is roughly like a 0.05 p-value) even if they showed some difference in a
+direction or the other. In the "small losses" section I found hackbench run
+with processes (not threads) and pipes (not sockets) which I report for due
+diligence but looking at the raw numbers it's more of a mixed bag than a real
+loss, and the NAS high-perf computing benchmark when it uses openMP (as
+opposed to openMPI) for IPC -- but again, we often find that supercomputers
+people run the machines at full speed all the time.
 
-> ---
->  drivers/net/dsa/b53/b53_common.c | 15 ++++++++++++++-
->  drivers/net/dsa/b53/b53_priv.h   |  2 ++
->  drivers/net/dsa/b53/b53_srab.c   |  4 ++--
->  3 files changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-> index 3da5fca..bbc6cc6 100644
-> --- a/drivers/net/dsa/b53/b53_common.c
-> +++ b/drivers/net/dsa/b53/b53_common.c
-> @@ -684,7 +684,8 @@ static int b53_switch_reset(struct b53_device *dev)
->  	 * still use this driver as a library and need to perform the reset
->  	 * earlier.
->  	 */
-> -	if (dev->chip_id == BCM58XX_DEVICE_ID) {
-> +	if (dev->chip_id == BCM58XX_DEVICE_ID ||
-> +	    dev->chip_id == BCM583XX_DEVICE_ID) {
->  		b53_read8(dev, B53_CTRL_PAGE, B53_SOFTRESET, &reg);
->  		reg |= SW_RST | EN_SW_RST | EN_CH_RST;
->  		b53_write8(dev, B53_CTRL_PAGE, B53_SOFTRESET, reg);
-> @@ -1880,6 +1881,18 @@ struct b53_chip_data {
->  		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
->  	},
->  	{
-> +		.chip_id = BCM583XX_DEVICE_ID,
-> +		.dev_name = "BCM583xx/11360",
-> +		.vlans = 4096,
-> +		.enabled_ports = 0x103,
-> +		.arl_entries = 4,
-> +		.cpu_port = B53_CPU_PORT,
-> +		.vta_regs = B53_VTA_REGS,
-> +		.duplex_reg = B53_DUPLEX_STAT_GE,
-> +		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
-> +		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-> +	},
-> +	{
->  		.chip_id = BCM7445_DEVICE_ID,
->  		.dev_name = "BCM7445",
->  		.vlans	= 4096,
-> diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
-> index 3b57f47..b232aaa 100644
-> --- a/drivers/net/dsa/b53/b53_priv.h
-> +++ b/drivers/net/dsa/b53/b53_priv.h
-> @@ -62,6 +62,7 @@ enum {
->  	BCM53018_DEVICE_ID = 0x53018,
->  	BCM53019_DEVICE_ID = 0x53019,
->  	BCM58XX_DEVICE_ID = 0x5800,
-> +	BCM583XX_DEVICE_ID = 0x58300,
->  	BCM7445_DEVICE_ID = 0x7445,
->  	BCM7278_DEVICE_ID = 0x7278,
->  };
-> @@ -181,6 +182,7 @@ static inline int is5301x(struct b53_device *dev)
->  static inline int is58xx(struct b53_device *dev)
->  {
->  	return dev->chip_id == BCM58XX_DEVICE_ID ||
-> +		dev->chip_id == BCM583XX_DEVICE_ID ||
->  		dev->chip_id == BCM7445_DEVICE_ID ||
->  		dev->chip_id == BCM7278_DEVICE_ID;
->  }
-> diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
-> index c37ffd1..8247481 100644
-> --- a/drivers/net/dsa/b53/b53_srab.c
-> +++ b/drivers/net/dsa/b53/b53_srab.c
-> @@ -364,7 +364,7 @@ static int b53_srab_write64(struct b53_device *dev, u8 page, u8 reg,
->  	{ .compatible = "brcm,bcm53018-srab" },
->  	{ .compatible = "brcm,bcm53019-srab" },
->  	{ .compatible = "brcm,bcm5301x-srab" },
-> -	{ .compatible = "brcm,bcm11360-srab", .data = (void *)BCM58XX_DEVICE_ID },
-> +	{ .compatible = "brcm,bcm11360-srab", .data = (void *)BCM583XX_DEVICE_ID },
->  	{ .compatible = "brcm,bcm58522-srab", .data = (void *)BCM58XX_DEVICE_ID },
->  	{ .compatible = "brcm,bcm58525-srab", .data = (void *)BCM58XX_DEVICE_ID },
->  	{ .compatible = "brcm,bcm58535-srab", .data = (void *)BCM58XX_DEVICE_ID },
-> @@ -372,7 +372,7 @@ static int b53_srab_write64(struct b53_device *dev, u8 page, u8 reg,
->  	{ .compatible = "brcm,bcm58623-srab", .data = (void *)BCM58XX_DEVICE_ID },
->  	{ .compatible = "brcm,bcm58625-srab", .data = (void *)BCM58XX_DEVICE_ID },
->  	{ .compatible = "brcm,bcm88312-srab", .data = (void *)BCM58XX_DEVICE_ID },
-> -	{ .compatible = "brcm,cygnus-srab", .data = (void *)BCM58XX_DEVICE_ID },
-> +	{ .compatible = "brcm,cygnus-srab", .data = (void *)BCM583XX_DEVICE_ID },
->  	{ .compatible = "brcm,nsp-srab", .data = (void *)BCM58XX_DEVICE_ID },
->  	{ /* sentinel */ },
->  };
-> 
+At the bottom of this message you'll find some directions if you want to run
+some test yourself using the same framework I used, MMTests from
+https://github.com/gormanm/mmtests (we store a fair amount of benchmarks
+parametrization up there).
 
+Large wins:
+
+    - dbench4:              +20% on ext4,
+                            +14% on xfs (always asynch IO)
+    - sqlite (insert):       +9% on both ext4 and xfs
+    - pgbench (read/write):  +9% on ext4,
+                            +10% on xfs
+
+Moderate wins:
+
+    - sockperf (type: under-load, localhost):              +1% with TCP,
+                                                           +5% with UDP
+    - gisource (git unit tests, shell intensive):          +3% on ext4
+    - NAS Parallel Benchmark (HPC, using openMPI, on xfs): +1%
+    - tbench4 (network part of dbench4, localhost):        +1%
+
+Neutral:
+
+    - pgbench (read-only) on ext4 and xfs
+    - siege
+    - netperf (streaming and round-robin) with TCP and UDP
+    - hackbench (sockets/process, sockets/thread and pipes/thread)
+    - pipetest
+    - Linux kernel build
+    - schbench
+    - sockperf (type: throughput) with TCP and UDP
+    - git unit tests on xfs
+    - FIO (both random and seq. read, both random and seq. write)
+      on ext4 and xfs, async IO
+
+Moderate losses:
+
+    - hackbench (pipes/process):          -10%
+    - NAS Parallel Benchmark with openMP:  -1%
+
+
+Each benchmark is run with a variety of configuration parameters (eg: number
+of threads, number of clients, etc); to reach a final "score" the geometric
+mean is used (with a few exceptions depending on the type of benchmark).
+Detailed results follow. Amean, Hmean and Gmean are respectively arithmetic,
+harmonic and geometric means.
+
+For brevity I won't report all tables but only those for "large wins" and
+"moderate losses". Note that I'm not overly worried for the hackbench-pipes
+situation, as we've studied it in the past and determined that such
+configuration is particularly weak, time is mostly spent on contention and the
+scheduler code path isn't exercised. See the comment in the file
+configs/config-global-dhp__scheduler-unbound in MMTests for a brief
+description of the issue.
+
+DBENCH4
+=======
+
+NOTES: asyncronous IO; varies the number of clients up to NUMCPUS*8.
+MMTESTS CONFIG: global-dhp__io-dbench4-async-{ext4, xfs}
+MEASURES: latency (millisecs)
+LOWER is better
+
+EXT4
+                              4.16.0                 4.16.0
+                             vanilla              hwp-boost
+Amean      1        28.49 (   0.00%)       19.68 (  30.92%)
+Amean      2        26.70 (   0.00%)       25.59 (   4.14%)
+Amean      4        54.59 (   0.00%)       43.56 (  20.20%)
+Amean      8        91.19 (   0.00%)       77.56 (  14.96%)
+Amean      64      538.09 (   0.00%)      438.67 (  18.48%)
+Stddev     1         6.70 (   0.00%)        3.24 (  51.66%)
+Stddev     2         4.35 (   0.00%)        3.57 (  17.85%)
+Stddev     4         7.99 (   0.00%)        7.24 (   9.29%)
+Stddev     8        17.51 (   0.00%)       15.80 (   9.78%)
+Stddev     64       49.54 (   0.00%)       46.98 (   5.17%)
+
+XFS
+                              4.16.0                 4.16.0
+                             vanilla              hwp-boost
+Amean      1        21.88 (   0.00%)       16.03 (  26.75%)
+Amean      2        19.72 (   0.00%)       19.82 (  -0.50%)
+Amean      4        37.55 (   0.00%)       29.52 (  21.38%)
+Amean      8        56.73 (   0.00%)       51.83 (   8.63%)
+Amean      64      808.80 (   0.00%)      698.12 (  13.68%)
+Stddev     1         6.29 (   0.00%)        2.33 (  62.99%)
+Stddev     2         3.12 (   0.00%)        2.26 (  27.73%)
+Stddev     4         7.56 (   0.00%)        5.88 (  22.28%)
+Stddev     8        14.15 (   0.00%)       12.49 (  11.71%)
+Stddev     64      380.54 (   0.00%)      367.88 (   3.33%)
+
+SQLITE
+======
+
+NOTES: SQL insert test on a table that will be 2M in size.
+MMTESTS CONFIG: global-dhp__db-sqlite-insert-medium-{ext4, xfs}
+MEASURES: transactions per second
+HIGHER is better
+
+EXT4
+                                4.16.0                 4.16.0
+                               vanilla              hwp-boost
+Hmean     Trans     2098.79 (   0.00%)     2292.16 (   9.21%)
+Stddev    Trans       78.79 (   0.00%)       95.73 ( -21.50%)
+
+XFS
+                                4.16.0                 4.16.0
+                               vanilla              hwp-boost
+Hmean     Trans     1890.27 (   0.00%)     2058.62 (   8.91%)
+Stddev    Trans       52.54 (   0.00%)       29.56 (  43.73%)
+
+PGBENCH-RW
+==========
+
+NOTES: packaged with Postgres. Varies the number of thread up to NUMCPUS. The
+  workload is scaled so that the approximate size is 80% of of the database
+  shared buffer which itself is 20% of RAM. The page cache is not flushed
+  after the database is populated for the test and starts cache-hot.
+MMTESTS CONFIG: global-dhp__db-pgbench-timed-rw-small-{ext4, xfs}
+MEASURES: transactions per second
+HIGHER is better
+
+EXT4
+                            4.16.0                 4.16.0
+                           vanilla              hwp-boost
+Hmean     1     2692.19 (   0.00%)     2660.98 (  -1.16%)
+Hmean     4     5218.93 (   0.00%)     5610.10 (   7.50%)
+Hmean     7     7332.68 (   0.00%)     8378.24 (  14.26%)
+Hmean     8     7462.03 (   0.00%)     8713.36 (  16.77%)
+Stddev    1      231.85 (   0.00%)      257.49 ( -11.06%)
+Stddev    4      681.11 (   0.00%)      312.64 (  54.10%)
+Stddev    7     1072.07 (   0.00%)      730.29 (  31.88%)
+Stddev    8     1472.77 (   0.00%)     1057.34 (  28.21%)
+
+XFS
+                            4.16.0                 4.16.0
+                           vanilla              hwp-boost
+Hmean     1     2675.02 (   0.00%)     2661.69 (  -0.50%)
+Hmean     4     5049.45 (   0.00%)     5601.45 (  10.93%)
+Hmean     7     7302.18 (   0.00%)     8348.16 (  14.32%)
+Hmean     8     7596.83 (   0.00%)     8693.29 (  14.43%)
+Stddev    1      225.41 (   0.00%)      246.74 (  -9.46%)
+Stddev    4      761.33 (   0.00%)      334.77 (  56.03%)
+Stddev    7     1093.93 (   0.00%)      811.30 (  25.84%)
+Stddev    8     1465.06 (   0.00%)     1118.81 (  23.63%)
+
+HACKBENCH
+=========
+
+NOTES: Varies the number of groups between 1 and NUMCPUS*4
+MMTESTS CONFIG: global-dhp__scheduler-unbound
+MEASURES: time (seconds)
+LOWER is better
+
+                             4.16.0                 4.16.0
+                            vanilla              hwp-boost
+Amean     1       0.8350 (   0.00%)      1.1577 ( -38.64%)
+Amean     3       2.8367 (   0.00%)      3.7457 ( -32.04%)
+Amean     5       6.7503 (   0.00%)      5.7977 (  14.11%)
+Amean     7       7.8290 (   0.00%)      8.0343 (  -2.62%)
+Amean     12     11.0560 (   0.00%)     11.9673 (  -8.24%)
+Amean     18     15.2603 (   0.00%)     15.5247 (  -1.73%)
+Amean     24     17.0283 (   0.00%)     17.9047 (  -5.15%)
+Amean     30     19.9193 (   0.00%)     23.4670 ( -17.81%)
+Amean     32     21.4637 (   0.00%)     23.4097 (  -9.07%)
+Stddev    1       0.0636 (   0.00%)      0.0255 (  59.93%)
+Stddev    3       0.1188 (   0.00%)      0.0235 (  80.22%)
+Stddev    5       0.0755 (   0.00%)      0.1398 ( -85.13%)
+Stddev    7       0.2778 (   0.00%)      0.1634 (  41.17%)
+Stddev    12      0.5785 (   0.00%)      0.1030 (  82.19%)
+Stddev    18      1.2099 (   0.00%)      0.7986 (  33.99%)
+Stddev    24      0.2057 (   0.00%)      0.7030 (-241.72%)
+Stddev    30      1.1303 (   0.00%)      0.7654 (  32.28%)
+Stddev    32      0.2032 (   0.00%)      3.1626 (-1456.69%)
+
+NAS PARALLEL BENCHMARK, C-CLASS (w/ openMP)
+===========================================
+
+NOTES: The various computational kernels are run separately; see
+  https://www.nas.nasa.gov/publications/npb.html for the list of tasks (IS =
+  Integer Sort, EP = Embarrassingly Parallel, etc)
+MMTESTS CONFIG: global-dhp__nas-c-class-omp-full
+MEASURES: time (seconds)
+LOWER is better
+
+                               4.16.0                 4.16.0
+                              vanilla              hwp-boost
+Amean     bt.C      169.82 (   0.00%)      170.54 (  -0.42%)
+Stddev    bt.C        1.07 (   0.00%)        0.97 (   9.34%)
+Amean     cg.C       41.81 (   0.00%)       42.08 (  -0.65%)
+Stddev    cg.C        0.06 (   0.00%)        0.03 (  48.24%)
+Amean     ep.C       26.63 (   0.00%)       26.47 (   0.61%)
+Stddev    ep.C        0.37 (   0.00%)        0.24 (  35.35%)
+Amean     ft.C       38.17 (   0.00%)       38.41 (  -0.64%)
+Stddev    ft.C        0.33 (   0.00%)        0.32 (   3.78%)
+Amean     is.C        1.49 (   0.00%)        1.40 (   6.02%)
+Stddev    is.C        0.20 (   0.00%)        0.16 (  19.40%)
+Amean     lu.C      217.46 (   0.00%)      220.21 (  -1.26%)
+Stddev    lu.C        0.23 (   0.00%)        0.22 (   0.74%)
+Amean     mg.C       18.56 (   0.00%)       18.80 (  -1.31%)
+Stddev    mg.C        0.01 (   0.00%)        0.01 (  22.54%)
+Amean     sp.C      293.25 (   0.00%)      296.73 (  -1.19%)
+Stddev    sp.C        0.10 (   0.00%)        0.06 (  42.67%)
+Amean     ua.C      170.74 (   0.00%)      172.02 (  -0.75%)
+Stddev    ua.C        0.28 (   0.00%)        0.31 ( -12.89%)
+
+HOW TO REPRODUCE
+================
+
+To install MMTests, clone the git repo at
+https://github.com/gormanm/mmtests.git
+
+To run a config (ie a set of benchmarks, such as
+config-global-dhp__nas-c-class-omp-full), use the command
+./run-mmtests.sh --config configs/$CONFIG $MNEMONIC-NAME
+from the top-level directory; the benchmark source will be downloaded from its
+canonical internet location, compiled and run.
+
+To compare results from two runs, use
+./bin/compare-mmtests.pl --directory ./work/log \
+                         --benchmark $BENCHMARK-NAME \
+                         --names $MNEMONIC-NAME-1,$MNEMONIC-NAME-2
+from the top-level directory.
+
+==================
+>From RFC Series:
+v3
+- Removed atomic bit operation as suggested.
+- Added description of contention with user space.
+- Removed hwp cache, boost utililty function patch and merged with util callback
+  patch. This way any value set is used somewhere.
+
+Waiting for test results from Mel Gorman, who is the original reporter.
+
+v2
+This is a much simpler version than the previous one and only consider IO
+boost, using the existing mechanism. There is no change in this series
+beyond intel_pstate driver.
+
+Once PeterZ finishes his work on frequency invariant, I will revisit
+thread migration optimization in HWP mode.
+
+Other changes:
+- Gradual boost instead of single step as suggested by PeterZ.
+- Cross CPU synchronization concerns identified by Rafael.
+- Split the patch for HWP MSR value caching as suggested by PeterZ.
+
+Not changed as suggested:
+There is no architecture way to identify platform with Per-core
+P-states, so still have to enable feature based on CPU model.
+
+-----------
+v1
+
+This series tries to address some concern in performance particularly with IO
+workloads (Reported by Mel Gorman), when HWP is using intel_pstate powersave
+policy.
+
+Background
+HWP performance can be controlled by user space using sysfs interface for
+max/min frequency limits and energy performance preference settings. Based on
+workload characteristics these can be adjusted from user space. These limits
+are not changed dynamically by kernel based on workload.
+
+By default HWP defaults to energy performance preference value of 0x80 on
+majority of platforms(Scale is 0-255, 0 is max performance and 255 is min).
+This value offers best performance/watt and for majority of server workloads
+performance doesn't suffer. Also users always have option to use performance
+policy of intel_pstate, to get best performance. But user tend to run with
+out of box configuration, which is powersave policy on most of the distros.
+
+In some case it is possible to dynamically adjust performance, for example,
+when a CPU is woken up due to IO completion or thread migrate to a new CPU. In
+this case HWP algorithm will take some time to build utilization and ramp up
+P-states. So this may results in lower performance for some IO workloads and
+workloads which tend to migrate. The idea of this patch series is to
+temporarily boost performance dynamically in these cases. This is only
+applicable only when user is using powersave policy, not in performance policy.
+
+Results on a Skylake server:
+
+Benchmark                       Improvement %
+----------------------------------------------------------------------
+dbench                          50.36
+thread IO bench (tiobench)      10.35
+File IO                         9.81
+sqlite                          15.76
+X264 -104 cores                 9.75
+
+Spec Power                      (Negligible impact 7382 Vs. 7378)
+Idle Power                      No change observed
+-----------------------------------------------------------------------
+
+HWP brings in best performace/watt at EPP=0x80. Since we are boosting
+EPP here to 0, the performance/watt drops upto 10%. So there is a power
+penalty of these changes.
+
+Also Mel Gorman provided test results on a prior patchset, which shows
+benifits of this series.
+
+Srinivas Pandruvada (4):
+  cpufreq: intel_pstate: Add HWP boost utility and sched util hooks
+  cpufreq: intel_pstate: HWP boost performance on IO wakeup
+  cpufreq: intel_pstate: New sysfs entry to control HWP boost
+  cpufreq: intel_pstate: enable boost for Skylake Xeon
+
+ drivers/cpufreq/intel_pstate.c | 179 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 176 insertions(+), 3 deletions(-)
 
 -- 
-Florian
+2.13.6
