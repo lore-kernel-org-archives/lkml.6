@@ -1,49 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeFEXDM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 19:03:12 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:34806 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752365AbeFEXDL (ORCPT
+        id S1752662AbeFEXEu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 19:04:50 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:33201 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752063AbeFEXEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:03:11 -0400
-X-Google-Smtp-Source: ADUXVKIRjsivTGiFg/PYW/27WLKlgyPk1XDLw6PAZQxjcf2RFQ8yOCc37c1OV0km1ATfE0kH/qNMyUJ/Ss6mpPv1FE8=
+        Tue, 5 Jun 2018 19:04:49 -0400
+X-Google-Smtp-Source: ADUXVKLsQXUpTgk8NAr3ly0LFJH2LoGQcIGjjPwOUixoKFWg6FROq0tM85qx5xJgrtwA8vfNizFKYBvAiXsBSMOKglQ=
 MIME-Version: 1.0
-In-Reply-To: <CABeXuvqG_DQMOwa0vrmJB+kx7DPbuMo=s-aS-DK7LdBy_ZGtTw@mail.gmail.com>
-References: <20180606075535.09b41c23@canb.auug.org.au> <CABeXuvqG_DQMOwa0vrmJB+kx7DPbuMo=s-aS-DK7LdBy_ZGtTw@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 5 Jun 2018 16:03:09 -0700
-X-Google-Sender-Auth: pvRadwcD5l0BLqXRLQb0bOMVjjk
-Message-ID: <CAGXu5j+wz-CK60Y=1zRKsWPimBpwdoAa+uoEYzk1st9NP+u7iQ@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the y2038 tree
-To: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180604122132.GA3337@gmail.com> <CA+55aFx=zLkZx4h4rcWv79OKQSGJAwC3eS8=zSDgKjyrsbLrNA@mail.gmail.com>
+ <20180605150514.GA31065@gmail.com> <20180605172243.GA2059@avx2>
+ <CA+55aFxTve6FxLuvWyyD88ACOg+3eHKbpWUeuvNZMSB=AFfuqg@mail.gmail.com>
+ <20180605224150.GA2051@avx2> <CA+55aFwt0SOns=tfsD9GCfbc9-xY04O5AWfKiQTroeH=edO7wQ@mail.gmail.com>
+In-Reply-To: <CA+55aFwt0SOns=tfsD9GCfbc9-xY04O5AWfKiQTroeH=edO7wQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 5 Jun 2018 16:04:37 -0700
+Message-ID: <CA+55aFxz46_efiQw9Nk_pFbX3AYx+oehPQOk-BDd1Xpbr2Oa3w@mail.gmail.com>
+Subject: Re: x86/asm: __clear_user() micro-optimization (was: "Re: [GIT PULL]
+ x86/asm changes for v4.18")
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Peter Anvin <hpa@zytor.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 3:00 PM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> That patch belongs to Kees.
+On Tue, Jun 5, 2018 at 4:01 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> -Deepa
+> On Tue, Jun 5, 2018 at 3:41 PM Alexey Dobriyan <adobriyan@gmail.com> wrote:
+> >
+> > On my potato performance increase is 33%, sheesh.
+> > And CPU starts doing 3 instructions per cycle vs 2.
 >
-> On Tue, Jun 5, 2018 at 2:55 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi Arnd,
->>
->> Commit
->>
->>   0f0d83b99ef7 ("pstore: Convert internal records to timespec64")
->>
->> is missing a Signed-off-by from its committer.
+> Whee. That's a shockingly big difference. On my CPU (i7-6700K) it
+> makes absolutely no difference whether the values are integers or in
+> registers.
 
-Hm, Deepa, maybe it got lost somewhere? It has my S-o-b in my tree.
-Regardless, yes, please add it back. :)
+In fact, looking at Agner Fog's instruction lists, I don't see any CPU
+where it would make a difference, except for the P4 (where the
+immediate looks like it's a bad idea because it's an extra uop, but it
+might pack fine and not be noticeable).
 
--Kees
+But maybe I'm missing something subtle. What CPU, out of morbid interest?
 
--- 
-Kees Cook
-Pixel Security
+               Linus
