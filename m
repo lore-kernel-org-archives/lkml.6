@@ -1,101 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752309AbeFERXv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:23:51 -0400
-Received: from smtprelay0055.hostedemail.com ([216.40.44.55]:59289 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751786AbeFERXt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:23:49 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 
-X-HE-Tag: curve42_3d7667ba1630c
-X-Filterd-Recvd-Size: 4486
-Message-ID: <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
-Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline
- declarations
-From: Joe Perches <joe@perches.com>
-To: Nick Desaulniers <ndesaulniers@google.com>, akpm@linux-foundation.org,
-        ard.biesheuvel@linaro.org, aryabinin@virtuozzo.com,
-        akataria@vmware.com, boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org, hpa@zytor.com,
-        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
-        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
-        pombredanne@nexb.com, rostedt@goodmis.org, tglx@linutronix.de,
-        thomas.lendacky@amd.com, tweek@google.com
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com
-Date: Tue, 05 Jun 2018 10:23:40 -0700
-In-Reply-To: <20180605170532.170361-2-ndesaulniers@google.com>
-References: <20180605170532.170361-1-ndesaulniers@google.com>
-         <20180605170532.170361-2-ndesaulniers@google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752775AbeFEREH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:04:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32914 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751842AbeFEREE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:04 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        KT Liao <kt.liao@emc.com.tw>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.4 07/37] Input: elan_i2c_smbus - fix corrupted stack
+Date: Tue,  5 Jun 2018 19:01:12 +0200
+Message-Id: <20180605170109.327128892@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+References: <20180605170108.884872354@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-05 at 10:05 -0700, Nick Desaulniers wrote:
-> Functions marked extern inline do not emit an externally visible
-> function when the gnu89 C standard is used. Some KBUILD Makefiles
-> overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
-> an explicit C standard specified, the default is gnu11. Since c99, the
-> semantics of extern inline have changed such that an externally visible
-> function is always emitted. This can lead to multiple definition errors
-> of extern inline functions at link time of compilation units whose build
-> files have removed an explicit C standard compiler flag for users of GCC
-> 5.1+ or Clang.
-[]
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-[]
-> @@ -72,17 +72,24 @@
->   * -Wunused-function.  This turns out to avoid the need for complex #ifdef
->   * directives.  Suppress the warning in clang as well by using "unused"
->   * function attribute, which is redundant but not harmful for gcc.
-> + * Prefer gnu_inline, so that extern inline functions do not emit an
-> + * externally visible function. This makes extern inline behave as per gnu89
-> + * semantics rather than c99. This prevents multiple symbol definition errors
-> + * of extern inline functions at link time.
->   */
->  #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
->      !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
-> -#define inline inline		__attribute__((always_inline,unused)) notrace
-> -#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
-> -#define __inline __inline	__attribute__((always_inline,unused)) notrace
-> +#define inline \
-> +	inline __attribute__((always_inline, unused, gnu_inline)) notrace
-> +#define __inline__ \
-> +	__inline__ __attribute__((always_inline, unused, gnu_inline)) notrace
-> +#define __inline \
-> +	__inline __attribute__((always_inline, unused, gnu_inline)) notrace
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Perhaps these are simpler as
+------------------
 
-#define __inline__	inline
-#define __inline	inline
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
->  #else
->  /* A lot of inline functions can cause havoc with function tracing */
-> -#define inline inline		__attribute__((unused)) notrace
-> -#define __inline__ __inline__	__attribute__((unused)) notrace
-> -#define __inline __inline	__attribute__((unused)) notrace
-> +#define inline inline		__attribute__((unused, gnu_inline)) notrace
-> +#define __inline__ __inline__	__attribute__((unused, gnu_inline)) notrace
-> +#define __inline __inline	__attribute__((unused, gnu_inline)) notrace
->  #endif
+commit 40f7090bb1b4ec327ea1e1402ff5783af5b35195 upstream.
 
-And only set once along with:
+New ICs (like the one on the Lenovo T480s) answer to
+ETP_SMBUS_IAP_VERSION_CMD 4 bytes instead of 3. This corrupts the stack
+as i2c_smbus_read_block_data() uses the values returned by the i2c
+device to know how many data it need to return.
 
->  #define __always_inline	inline __attribute__((always_inline))
+i2c_smbus_read_block_data() can read up to 32 bytes (I2C_SMBUS_BLOCK_MAX)
+and there is no safeguard on how many bytes are provided in the return
+value. Ensure we always have enough space for any future firmware.
+Also 0-initialize the values to prevent any access to uninitialized memory.
 
-And perhaps this __always_inline should be updated
-with gnu_inline as well
+Cc: <stable@vger.kernel.org> # v4.4.x, v4.9.x, v4.14.x, v4.15.x, v4.16.x
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Acked-by: KT Liao <kt.liao@emc.com.tw>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/input/mouse/elan_i2c_smbus.c |   22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+--- a/drivers/input/mouse/elan_i2c_smbus.c
++++ b/drivers/input/mouse/elan_i2c_smbus.c
+@@ -130,7 +130,7 @@ static int elan_smbus_get_baseline_data(
+ 					bool max_baseline, u8 *value)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client,
+ 					  max_baseline ?
+@@ -149,7 +149,7 @@ static int elan_smbus_get_version(struct
+ 				  bool iap, u8 *version)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client,
+ 					  iap ? ETP_SMBUS_IAP_VERSION_CMD :
+@@ -169,7 +169,7 @@ static int elan_smbus_get_sm_version(str
+ 				     u8 *ic_type, u8 *version)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client,
+ 					  ETP_SMBUS_SM_VERSION_CMD, val);
+@@ -186,7 +186,7 @@ static int elan_smbus_get_sm_version(str
+ static int elan_smbus_get_product_id(struct i2c_client *client, u16 *id)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client,
+ 					  ETP_SMBUS_UNIQUEID_CMD, val);
+@@ -203,7 +203,7 @@ static int elan_smbus_get_checksum(struc
+ 				   bool iap, u16 *csum)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client,
+ 					  iap ? ETP_SMBUS_FW_CHECKSUM_CMD :
+@@ -223,7 +223,7 @@ static int elan_smbus_get_max(struct i2c
+ 			      unsigned int *max_x, unsigned int *max_y)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client, ETP_SMBUS_RANGE_CMD, val);
+ 	if (error) {
+@@ -241,7 +241,7 @@ static int elan_smbus_get_resolution(str
+ 				     u8 *hw_res_x, u8 *hw_res_y)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client,
+ 					  ETP_SMBUS_RESOLUTION_CMD, val);
+@@ -261,7 +261,7 @@ static int elan_smbus_get_num_traces(str
+ 				     unsigned int *y_traces)
+ {
+ 	int error;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client,
+ 					  ETP_SMBUS_XY_TRACENUM_CMD, val);
+@@ -288,7 +288,7 @@ static int elan_smbus_iap_get_mode(struc
+ {
+ 	int error;
+ 	u16 constant;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	error = i2c_smbus_read_block_data(client, ETP_SMBUS_IAP_CTRL_CMD, val);
+ 	if (error < 0) {
+@@ -339,7 +339,7 @@ static int elan_smbus_prepare_fw_update(
+ 	int len;
+ 	int error;
+ 	enum tp_mode mode;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 	u8 cmd[4] = {0x0F, 0x78, 0x00, 0x06};
+ 	u16 password;
+ 
+@@ -413,7 +413,7 @@ static int elan_smbus_write_fw_block(str
+ 	struct device *dev = &client->dev;
+ 	int error;
+ 	u16 result;
+-	u8 val[3];
++	u8 val[I2C_SMBUS_BLOCK_MAX] = {0};
+ 
+ 	/*
+ 	 * Due to the limitation of smbus protocol limiting
