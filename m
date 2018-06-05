@@ -1,103 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752952AbeFESEe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:04:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752244AbeFERvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:51:18 -0400
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 12/46] perf annotate: Introduce symbol__cycle_hists()
-Date: Tue,  5 Jun 2018 14:49:56 -0300
-Message-Id: <20180605175030.32549-13-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180605175030.32549-1-acme@kernel.org>
-References: <20180605175030.32549-1-acme@kernel.org>
+        id S1753029AbeFESEw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:04:52 -0400
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:37300 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752839AbeFESEu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 14:04:50 -0400
+X-Google-Smtp-Source: ADUXVKIOerJhETV0S8mMjkXVKzFjgmEdwPx8+3xD2wp+H8uEnFuSZX+k5Xb5+y889zujIJi5yI6LQi0lPgGfSlDTMzQ=
+MIME-Version: 1.0
+In-Reply-To: <20180605175429.9072-6-enric.balletbo@collabora.com>
+References: <20180605175429.9072-1-enric.balletbo@collabora.com> <20180605175429.9072-6-enric.balletbo@collabora.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 5 Jun 2018 15:04:49 -0300
+Message-ID: <CAOMZO5ByhMV9_gRHLmGiSNJtCvKEOk==ZMz2O2=tokZh2ps4xg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/8] Input: cros_ec_keyb - Switch to SPDX identifier.
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Hi Enric,
 
-In this case we're wanting just notes->src->cycles_hist, allocating it if needed.
+On Tue, Jun 5, 2018 at 2:54 PM, Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>
+> Changes in v2:
+> - [6/9] Do not remove last paragraph.
+>
+>  drivers/input/keyboard/cros_ec_keyb.c | 34 ++++++++++-----------------
+>  1 file changed, 12 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+> index 79eb29550c34..91b2839c12df 100644
+> --- a/drivers/input/keyboard/cros_ec_keyb.c
+> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+> @@ -1,25 +1,15 @@
+> -/*
+> - * ChromeOS EC keyboard driver
+> - *
+> - * Copyright (C) 2012 Google, Inc
+> - *
+> - * This software is licensed under the terms of the GNU General Public
+> - * License version 2, as published by the Free Software Foundation, and
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-pqj81aneunhftlntm66tmhz0@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/annotate.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+Original text says GPL-2.0...
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 467bae0279ce..f11199f0be27 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -848,19 +848,23 @@ static int __symbol__inc_addr_samples(struct symbol *sym, struct map *map,
- 	return 0;
- }
- 
--static struct annotation *symbol__get_annotation(struct symbol *sym, bool cycles)
-+static struct cyc_hist *symbol__cycles_hist(struct symbol *sym)
- {
- 	struct annotation *notes = symbol__annotation(sym);
- 
- 	if (notes->src == NULL) {
--		if (symbol__alloc_hist(sym) < 0)
-+		notes->src = annotated_source__new();
-+		if (notes->src == NULL)
- 			return NULL;
-+		goto alloc_cycles_hist;
- 	}
--	if (!notes->src->cycles_hist && cycles) {
--		if (symbol__alloc_hist_cycles(sym) < 0)
--			return NULL;
-+
-+	if (!notes->src->cycles_hist) {
-+alloc_cycles_hist:
-+		symbol__alloc_hist_cycles(sym);
- 	}
--	return notes;
-+
-+	return notes->src->cycles_hist;
- }
- 
- static struct annotated_source *symbol__hists(struct symbol *sym)
-@@ -900,13 +904,13 @@ static int symbol__inc_addr_samples(struct symbol *sym, struct map *map,
- static int symbol__account_cycles(u64 addr, u64 start,
- 				  struct symbol *sym, unsigned cycles)
- {
--	struct annotation *notes;
-+	struct cyc_hist *cycles_hist;
- 	unsigned offset;
- 
- 	if (sym == NULL)
- 		return 0;
--	notes = symbol__get_annotation(sym, true);
--	if (notes == NULL)
-+	cycles_hist = symbol__cycles_hist(sym);
-+	if (cycles_hist == NULL)
- 		return -ENOMEM;
- 	if (addr < sym->start || addr >= sym->end)
- 		return -ERANGE;
-@@ -918,7 +922,7 @@ static int symbol__account_cycles(u64 addr, u64 start,
- 			start = 0;
- 	}
- 	offset = addr - sym->start;
--	return __symbol__account_cycles(notes->src->cycles_hist,
-+	return __symbol__account_cycles(cycles_hist,
- 					start ? start - sym->start : 0,
- 					offset, cycles,
- 					!!start);
--- 
-2.14.3
+> - * may be copied, distributed, and modified under those terms.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * This driver uses the Chrome OS EC byte-level message-based protocol for
+> - * communicating the keyboard state (which keys are pressed) from a keyboard EC
+> - * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
+> - * but everything else (including deghosting) is done here.  The main
+> - * motivation for this is to keep the EC firmware as simple as possible, since
+> - * it cannot be easily upgraded and EC flash/IRAM space is relatively
+> - * expensive.
+> - */
+> +// SPDX-License-Identifier: GPL-2.0+
+
+but here you add a GPL-2.0+ type.
