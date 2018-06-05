@@ -1,52 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752411AbeFEUBV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:01:21 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:35563 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751959AbeFEUBT (ORCPT
+        id S1752302AbeFEUIE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 16:08:04 -0400
+Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:35781 "EHLO
+        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752050AbeFEUIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:01:19 -0400
-X-Google-Smtp-Source: ADUXVKIhV3GbfMK61lXvQwEmTDPmLWTuoHbz32OfaaZqEEy7dFDuIMywHBiBLOdjlY1RqTKkLYGY0w==
-Date: Tue, 5 Jun 2018 14:01:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: avifishman70@gmail.com
-Cc: gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
-        tmaimon77@gmail.com, venture@google.com, yuenn@google.com,
-        brendanhiggins@google.com, mathias.nyman@linux.intel.com,
-        bjorn.andersson@linaro.org, jhogan@kernel.org, albeu@free.fr,
-        chunfeng.yun@mediatek.com, tony@atomide.com, baolu.lu@linux.intel.com,
-        elder@linaro.org, digetx@gmail.com, kstewart@linuxfoundation.org,
-        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] USB: DT probing support to ehci-npcm7xx
-Message-ID: <20180605200115.GA20061@rob-hp-laptop>
-References: <1527788430-12494-1-git-send-email-avifishman70@gmail.com>
- <1527788430-12494-3-git-send-email-avifishman70@gmail.com>
+        Tue, 5 Jun 2018 16:08:02 -0400
+Date: Tue, 5 Jun 2018 21:08:00 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Aaron Lu <aaron.lu@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
+ in swap cache
+Message-ID: <20180605200800.emb3yfdtnpjgmxb7@techsingularity.net>
+References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
+ <EAD124C4-FFA4-4894-AE8B-33949CD6731B@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <1527788430-12494-3-git-send-email-avifishman70@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <EAD124C4-FFA4-4894-AE8B-33949CD6731B@gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 31, 2018 at 08:40:29PM +0300, avifishman70@gmail.com wrote:
-> From: Avi Fishman <AviFishman70@gmail.com>
-
-The subject sounds like a driver change, not a binding doc. To start 
-with, the subject prefix should be "dt-bindings: usb: ..."
-
-> Device Tree documentation for Nuvoton npcm7xx EHCI.
+On Tue, Jun 05, 2018 at 12:53:57PM -0700, Nadav Amit wrote:
+> While I do not have a specific reservation regarding the logic, I find the
+> current TLB invalidation scheme hard to follow and inconsistent. I guess
+> should_force_flush() can be extended and used more commonly to make things
+> clearer.
 > 
-> Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
-> ---
->  Documentation/devicetree/bindings/usb/npcm7xx-usb.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+> To be more specific and to give an example: Can should_force_flush() be used
+> in zap_pte_range() to set the force_flush instead of the current code?
+> 
+>   if (!PageAnon(page)) {
+> 	if (pte_dirty(ptent)) {
+> 		force_flush = 1;
+> 		...
+>   	}
+> 
 
-Otherwise,
+That check is against !PageAnon pages where it's potentially critical
+that the dirty PTE bit be propogated to the page. You could split the
+separate the TLB flush from the dirty page setting but it's not the same
+class of problem and without perf data, it's not clear it's worthwhile.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Note that I also didn't handle the huge page moving because it's already
+naturally batching a larger range with a lower potential factor of TLB
+flushing and has different potential race conditions.
+
+I agree that the TLB handling would benefit from being simplier but it's
+not a simple search/replace job to deal with the different cases that apply.
+
+-- 
+Mel Gorman
+SUSE Labs
