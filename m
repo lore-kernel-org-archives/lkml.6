@@ -1,88 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751948AbeFENQz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:16:55 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:47446 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeFENQy (ORCPT
+        id S1751980AbeFENRH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:17:07 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:49419 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751832AbeFENRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:16:54 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w55DGeLZ027314
-X-Nifty-SrcIP: [209.85.213.52]
-X-Google-Smtp-Source: ADUXVKIqgWSOpsTGG9+ZYvQR/FXgDfcOqZvs7XxH/o87eaYITxwsZiR0b+ZlufmsXveO23W+ldqXdtKzzbQIcIariJ0=
+        Tue, 5 Jun 2018 09:17:04 -0400
+X-Google-Smtp-Source: ADUXVKIEfF98dvTPd7Gd2b0weM809tDRUPeUak810RYrkNxT/tVOCuZ56FUSWHdtzfebSQ4PBsaDpSIhm8vcpb7LnJwT8ZYbqhLC
 MIME-Version: 1.0
-In-Reply-To: <20180602160209.23605-1-natechancellor@gmail.com>
-References: <20180602160209.23605-1-natechancellor@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 5 Jun 2018 22:15:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATCTZTzcEpW8kBG8GktMeDZSuinAQX7_hnjysj0OaztcQ@mail.gmail.com>
-Message-ID: <CAK7LNATCTZTzcEpW8kBG8GktMeDZSuinAQX7_hnjysj0OaztcQ@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: Avoid format overflow warning from GCC 8.1
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 05 Jun 2018 06:17:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b6f0d9056de4dd54@google.com>
+Subject: BUG: unable to handle kernel paging request in dput
+From: syzbot <syzbot+4f39ae71208fef432d97@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55DH2eq012362
 
-2018-06-03 1:02 GMT+09:00 Nathan Chancellor <natechancellor@gmail.com>:
-> In file included from scripts/kconfig/zconf.tab.c:2485:
-> scripts/kconfig/confdata.c: In function ‘conf_write’:
-> scripts/kconfig/confdata.c:773:22: warning: ‘%s’ directive writing likely 7 or more bytes into a region of size between 1 and 4097 [-Wformat-overflow=]
->   sprintf(newname, "%s%s", dirname, basename);
->                       ^~
-> scripts/kconfig/confdata.c:773:19: note: assuming directive output of 7 bytes
->   sprintf(newname, "%s%s", dirname, basename);
->                    ^~~~~~
-> scripts/kconfig/confdata.c:773:2: note: ‘sprintf’ output 1 or more bytes (assuming 4104) into a destination of size 4097
->   sprintf(newname, "%s%s", dirname, basename);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> scripts/kconfig/confdata.c:776:23: warning: ‘.tmpconfig.’ directive writing 11 bytes into a region of size between 1 and 4097 [-Wformat-overflow=]
->    sprintf(tmpname, "%s.tmpconfig.%d", dirname, (int)getpid());
->                        ^~~~~~~~~~~
-> scripts/kconfig/confdata.c:776:3: note: ‘sprintf’ output between 13 and 4119 bytes into a destination of size 4097
->    sprintf(tmpname, "%s.tmpconfig.%d", dirname, (int)getpid());
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Increase the size of tmpname and newname to make GCC happy.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
+Hello,
 
-Applied to linux-kbuild.  Thanks!
+syzbot found the following crash on:
+
+HEAD commit:    716a685fdb89 Merge branch 'x86-hyperv-for-linus' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10224f2f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4f65cd4286737868
+dashboard link: https://syzkaller.appspot.com/bug?extid=4f39ae71208fef432d97
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10626def800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151d6af7800000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4f39ae71208fef432d97@syzkaller.appspotmail.com
+
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440449
+RDX: 00000000000000a6 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 0000000000000001 R09: 65732f636f720031
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
+R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+BUG: unable to handle kernel paging request at fffffffffffffff4
+PGD 8c6d067 P4D 8c6d067 PUD 8c6f067 PMD 0
+Oops: 0000 [#1] SMP KASAN
+CPU: 0 PID: 4491 Comm: syz-executor505 Not tainted 4.17.0+ #84
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:fast_dput fs/dcache.c:716 [inline]
+RIP: 0010:dput.part.26+0x117/0x780 fs/dcache.c:835
+Code: ff 09 b3 ff 45 84 ff 0f 84 e2 03 00 00 e8 21 09 b3 ff 48 89 d8 48 c1  
+e8 03 42 0f b6 04 28 84 c0 74 08 3c 03 0f 8e 04 05 00 00 <44> 8b 3b 48 8d  
+83 80 00 00 00 31 ff 48 89 85 70 ff ff ff 41 83 e7
+RSP: 0018:ffff8801b6f979f8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: fffffffffffffff4 RCX: ffffffff81c64bd2
+RDX: 0000000000000000 RSI: ffffffff81c647df RDI: 0000000000000001
+RBP: ffff8801b6f97a90 R08: ffff8801b04205c0 R09: ffffed003b5c46d6
+R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: 1ffff10036df2f41
+R13: dffffc0000000000 R14: ffffed0036df2f45 R15: 0000000000000001
+FS:  0000000001150880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffffffffffff4 CR3: 00000001d06ad000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  dput+0x15/0x20 fs/dcache.c:830
+  proc_fill_cache+0x230/0x660 fs/proc/base.c:1910
+  proc_ns_dir_readdir+0x3f5/0x560 fs/proc/namespaces.c:126
+  iterate_dir+0x4b0/0x5d0 fs/readdir.c:51
+  ksys_getdents64+0x21c/0x430 fs/readdir.c:314
+  __do_sys_getdents64 fs/readdir.c:333 [inline]
+  __se_sys_getdents64 fs/readdir.c:330 [inline]
+  __x64_sys_getdents64+0x73/0xb0 fs/readdir.c:330
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440449
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 5b 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff292cc9d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d9
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440449
+RDX: 00000000000000a6 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 0000000000000001 R09: 65732f636f720031
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
+R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+CR2: fffffffffffffff4
+---[ end trace 81153e86b0cb1bde ]---
+RIP: 0010:fast_dput fs/dcache.c:716 [inline]
+RIP: 0010:dput.part.26+0x117/0x780 fs/dcache.c:835
+Code: ff 09 b3 ff 45 84 ff 0f 84 e2 03 00 00 e8 21 09 b3 ff 48 89 d8 48 c1  
+e8 03 42 0f b6 04 28 84 c0 74 08 3c 03 0f 8e 04 05 00 00 <44> 8b 3b 48 8d  
+83 80 00 00 00 31 ff 48 89 85 70 ff ff ff 41 83 e7
+RSP: 0018:ffff8801b6f979f8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: fffffffffffffff4 RCX: ffffffff81c64bd2
+RDX: 0000000000000000 RSI: ffffffff81c647df RDI: 0000000000000001
+RBP: ffff8801b6f97a90 R08: ffff8801b04205c0 R09: ffffed003b5c46d6
+R10: ffffed003b5c46d6 R11: ffff8801dae236b3 R12: 1ffff10036df2f41
+R13: dffffc0000000000 R14: ffffed0036df2f45 R15: 0000000000000001
+FS:  0000000001150880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffffffffffff4 CR3: 00000001d06ad000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
->  scripts/kconfig/confdata.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
-> index 5f87ad561b08..39e20974f4a3 100644
-> --- a/scripts/kconfig/confdata.c
-> +++ b/scripts/kconfig/confdata.c
-> @@ -720,7 +720,7 @@ int conf_write(const char *name)
->         struct menu *menu;
->         const char *basename;
->         const char *str;
-> -       char dirname[PATH_MAX+1], tmpname[PATH_MAX+1], newname[PATH_MAX+1];
-> +       char dirname[PATH_MAX+1], tmpname[PATH_MAX+22], newname[PATH_MAX+8];
->         char *env;
->
->         dirname[0] = 0;
-> --
-> 2.17.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-
-
--- 
-Best Regards
-Masahiro Yamada
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
