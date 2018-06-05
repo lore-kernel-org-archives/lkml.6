@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753903AbeFERIe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:08:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36388 "EHLO mail.kernel.org"
+        id S1753871AbeFERI6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:08:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752988AbeFERHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:07:06 -0400
+        id S1753773AbeFERG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.9 50/61] MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
-Date: Tue,  5 Jun 2018 19:02:11 +0200
-Message-Id: <20180605170120.873339046@linuxfoundation.org>
+        stable@vger.kernel.org, Anatoly Pugachev <matorola@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 60/61] sparc64: Dont clibber fixed registers in __multi4.
+Date: Tue,  5 Jun 2018 19:02:21 +0200
+Message-Id: <20180605170121.438897356@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -30,57 +30,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@mips.com>
+From: David S. Miller <davem@davemloft.net>
 
-commit 28e4213dd331e944e7fca1954a946829162ed9d4 upstream.
+commit 79db795833bf5c3e798bcd7a5aeeee3fb0505927 upstream.
 
-Having PR_FP_MODE_FRE (i.e. Config5.FRE) set without PR_FP_MODE_FR (i.e.
-Status.FR) is not supported as the lone purpose of Config5.FRE is to
-emulate Status.FR=0 handling on FPU hardware that has Status.FR=1
-hardwired[1][2].  Also we do not handle this case elsewhere, and assume
-throughout our code that TIF_HYBRID_FPREGS and TIF_32BIT_FPREGS cannot
-be set both at once for a task, leading to inconsistent behaviour if
-this does happen.
+%g4 and %g5 are fixed registers used by the kernel for the thread
+pointer and the per-cpu offset.  Use %o4 and %g7 instead.
 
-Return unsuccessfully then from prctl(2) PR_SET_FP_MODE calls requesting
-PR_FP_MODE_FRE to be set with PR_FP_MODE_FR clear.  This corresponds to
-modes allowed by `mips_set_personality_fp'.
+Diagnosis by Anthony Yznaga.
 
-References:
-
-[1] "MIPS Architecture For Programmers, Vol. III: MIPS32 / microMIPS32
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00090, Revision 6.02, July 10, 2015, Table 9.69
-    "Config5 Register Field Descriptions", p. 262
-
-[2] "MIPS Architecture For Programmers, Volume III: MIPS64 / microMIPS64
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00091, Revision 6.03, December 22, 2015, Table
-    9.72 "Config5 Register Field Descriptions", p. 288
-
-Fixes: 9791554b45a2 ("MIPS,prctl: add PR_[GS]ET_FP_MODE prctl options for MIPS")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.0+
-Patchwork: https://patchwork.linux-mips.org/patch/19327/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Fixes: 1b4af13ff2cc ("sparc64: Add __multi3 for gcc 7.x and later.")
+Reported-by: Anatoly Pugachev <matorola@gmail.com>
+Tested-by: Anatoly Pugachev <matorola@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/process.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/sparc/lib/multi3.S |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -699,6 +699,10 @@ int mips_set_process_fp_mode(struct task
- 	if (value & ~known_bits)
- 		return -EOPNOTSUPP;
- 
-+	/* Setting FRE without FR is not supported.  */
-+	if ((value & (PR_FP_MODE_FR | PR_FP_MODE_FRE)) == PR_FP_MODE_FRE)
-+		return -EOPNOTSUPP;
-+
- 	/* Avoid inadvertently triggering emulation */
- 	if ((value & PR_FP_MODE_FR) && raw_cpu_has_fpu &&
- 	    !(raw_current_cpu_data.fpu_id & MIPS_FPIR_F64))
+--- a/arch/sparc/lib/multi3.S
++++ b/arch/sparc/lib/multi3.S
+@@ -5,26 +5,26 @@
+ 	.align	4
+ ENTRY(__multi3) /* %o0 = u, %o1 = v */
+ 	mov	%o1, %g1
+-	srl	%o3, 0, %g4
+-	mulx	%g4, %g1, %o1
++	srl	%o3, 0, %o4
++	mulx	%o4, %g1, %o1
+ 	srlx	%g1, 0x20, %g3
+-	mulx	%g3, %g4, %g5
+-	sllx	%g5, 0x20, %o5
+-	srl	%g1, 0, %g4
++	mulx	%g3, %o4, %g7
++	sllx	%g7, 0x20, %o5
++	srl	%g1, 0, %o4
+ 	sub	%o1, %o5, %o5
+ 	srlx	%o5, 0x20, %o5
+-	addcc	%g5, %o5, %g5
++	addcc	%g7, %o5, %g7
+ 	srlx	%o3, 0x20, %o5
+-	mulx	%g4, %o5, %g4
++	mulx	%o4, %o5, %o4
+ 	mulx	%g3, %o5, %o5
+ 	sethi	%hi(0x80000000), %g3
+-	addcc	%g5, %g4, %g5
+-	srlx	%g5, 0x20, %g5
++	addcc	%g7, %o4, %g7
++	srlx	%g7, 0x20, %g7
+ 	add	%g3, %g3, %g3
+ 	movcc	%xcc, %g0, %g3
+-	addcc	%o5, %g5, %o5
+-	sllx	%g4, 0x20, %g4
+-	add	%o1, %g4, %o1
++	addcc	%o5, %g7, %o5
++	sllx	%o4, 0x20, %o4
++	add	%o1, %o4, %o1
+ 	add	%o5, %g3, %g2
+ 	mulx	%g1, %o2, %g1
+ 	add	%g1, %g2, %g1
