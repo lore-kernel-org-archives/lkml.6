@@ -1,157 +1,375 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751784AbeFEMrd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:47:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40542 "EHLO mx2.suse.de"
+        id S1751855AbeFEMsC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:48:02 -0400
+Received: from mail02.ausil.us ([74.119.218.151]:33096 "EHLO mail.ausil.us"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751598AbeFEMrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:47:32 -0400
-Date: Tue, 5 Jun 2018 14:47:29 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org, "4 . 13+" <stable@vger.kernel.org>
-Subject: Re: [PATCH] printk/nmi: Prevent deadlock when serializing NMI
- backtraces
-Message-ID: <20180605124729.3vix5nlkjpjzdljx@pathway.suse.cz>
-References: <20180517143903.19339-1-pmladek@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180517143903.19339-1-pmladek@suse.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1751667AbeFEMsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:48:00 -0400
+From: Dennis Gilmore <dennis@ausil.us>
+To: linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
+        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Dennis Gilmore <dennis@ausil.us>
+Subject: [PATCH V2] ARM: dts: armada388-helios4
+Date: Tue,  5 Jun 2018 07:47:38 -0500
+Message-Id: <20180605124738.24844-1-dennis@ausil.us>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-05-17 16:39:03, Petr Mladek wrote:
-> The commit 719f6a7040f1bdaf96fcc ("printk: Use the main logbuf in NMI when
-> logbuf_lock is available") tried to detect when logbuf_lock was taken
-> on another CPU. Then it looked safe to wait for the lock even in NMI.
-> 
-> It would be safe if other locks were not involved. Ironically the same
-> commit introduced an ABBA deadlock scenario. It added a spin lock into
-> nmi_cpu_backtrace() to serialize logs from different CPUs. The effect
-> is that also the NMI handlers are serialized. As a result, logbuf_lock
-> might be blocked by NMI on another CPU:
-> 
-> CPU0			CPU1			CPU2
-> 
-> printk()
->   vprintk_emit()
->     spin_lock(&logbuf_lock)
-> 
-> 						trigger_all_cpu_backtrace()
-> 						  raise()
-> 
-> 			nmi_enter()
-> 			  printk_nmi_enter()
-> 			    if (this_cpu_read(printk_context)
-> 			      & PRINTK_SAFE_CONTEXT_MASK)
-> 			      // false
-> 			    else
-> 			      // looks safe to use printk_deferred()
-> 			      this_cpu_or(printk_context,
-> 				PRINTK_NMI_DEFERRED_CONTEXT_MASK);
-> 
-> 			  nmi_cpu_backtrace()
-> 			    arch_spin_lock(&lock);
-> 			      show_regs()
-> 
-> nmi_enter()
->   nmi_cpu_backtrace()
->     arch_spin_lock(&lock);
-> 
-> 			      printk()
-> 				vprintk_func()
-> 				  vprintk_deferred()
-> 				    vprintk_emit()
-> 				      spin_lock(&logbuf_lock)
-> 
-> DEADLOCK: between &logbuf_lock from vprintk_emit() and
-> 		  &lock from nmi_cpu_backtrace().
-> 
-> CPU0			CPU1
-> lock(logbuf_lock)	lock(lock)
->   lock(lock)		  lock(logbuf_lock)
-> 
-> I have found this problem when stress testing trigger_all_cpu_backtrace()
-> and the system frozen.
-> 
-> Note that lockdep is not able to detect these dependencies because
-> there is no support for NMI context. Let's stay on the safe side
-> and always use printk_safe buffers when logbuf_lock is taken
-> when entering NMI.
-> 
-> Fixes: 719f6a7040f1bdaf96fcc ("printk: Use the main logbuf in NMI when logbuf_lock is available")
-> Cc: 4.13+ <stable@vger.kernel.org> # v4.13+
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  kernel/printk/printk_safe.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/printk/printk_safe.c b/kernel/printk/printk_safe.c
-> index 449d67edfa4b..a2ebd749c053 100644
-> --- a/kernel/printk/printk_safe.c
-> +++ b/kernel/printk/printk_safe.c
-> @@ -310,15 +310,12 @@ void printk_nmi_enter(void)
->  {
->  	/*
->  	 * The size of the extra per-CPU buffer is limited. Use it only when
-> -	 * the main one is locked. If this CPU is not in the safe context,
-> -	 * the lock must be taken on another CPU and we could wait for it.
-> +	 * the main one is locked.
->  	 */
-> -	if ((this_cpu_read(printk_context) & PRINTK_SAFE_CONTEXT_MASK) &&
-> -	    raw_spin_is_locked(&logbuf_lock)) {
-> +	if (raw_spin_is_locked(&logbuf_lock))
->  		this_cpu_or(printk_context, PRINTK_NMI_CONTEXT_MASK);
+The helios4 is a Armada388 based nas board designed by SolidRun and
+based on their SOM. It is sold by kobol.io the dts file came from
+https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
+I added a SPDX license line to match the clearfog it says it was based
+on and a compatible line for "kobol,helios4"
 
-Grr, the ABBA deadlock is still there. NMIs are not sent to the other
-CPUs atomically. Even if we detect that logbuf_lock is available
-in printk_nmi_enter() on some CPUs, it might still get locked on
-another CPU before the other CPU gets NMI.
+Signed-off-by: Dennis Gilmore <dennis@ausil.us>
 
-By other words, any check in printk_safe_enter() is racy and not
-sufficient
+---
 
-  => I suggest to revert the commit 719f6a7040f1bdaf96fcc70
-     "printk: Use the main logbuf in NMI when logbuf_lock is available"
-     for-4.18 and stable until we get a better solution.
+changes since first submission
+change solidrun to kobol in compatible line based on feedback
+---
+ arch/arm/boot/dts/Makefile               |   1 +
+ arch/arm/boot/dts/armada-388-helios4.dts | 315 +++++++++++++++++++++++
+ 2 files changed, 316 insertions(+)
+ create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
 
-The only safe solution seems to be a trylock() in NMI in
-vprintk_emit() and fallback to vprintk_safe() when the lock
-is not taken. I mean something like:
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 247808333ba4..4a5a0bf221b3 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1845,7 +1845,13 @@ asmlinkage int vprintk_emit(int facility, int level,
- 	printk_delay();
- 
- 	/* This stops the holder of console_sem just where we want him */
--	logbuf_lock_irqsave(flags);
-+	printk_safe_enter_irqsave(flags);
-+	if (in_nmi() && !raw_spin_trylock(&logbuf_lock)) {
-+		vprintk_nmi(fmt, args);
-+		printk_safe_exit_irqrestore(flags);
-+		return;
-+	} else
-+		raw_spin_lock(&logbuf_lock);
- 	/*
- 	 * The printf needs to come first; we need the syslog
- 	 * prefix which might be passed-in as a parameter.
-
-
-Sigh, this looks like a material for-4.19. We might need to
-revisit if printk_context still makes sense, ...
-
-Best Regards,
-Petr
-
-PS: I realized this when writing the pull request for-4.18.
-I removed this patch from the pull request.
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 7e2424957809..490bfd586198 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
+ 	armada-388-clearfog-pro.dtb \
+ 	armada-388-db.dtb \
+ 	armada-388-gp.dtb \
++	armada-388-helios4.dtb \
+ 	armada-388-rd.dtb
+ dtb-$(CONFIG_MACH_ARMADA_39X) += \
+ 	armada-398-db.dtb
+diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
+new file mode 100644
+index 000000000000..16026bedc380
+--- /dev/null
++++ b/arch/arm/boot/dts/armada-388-helios4.dts
+@@ -0,0 +1,315 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Device Tree file for Helios4
++ * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
++ *
++ *  Copyright (C) 2017
++ *
++ */
++
++/dts-v1/;
++#include "armada-388.dtsi"
++#include "armada-38x-solidrun-microsom.dtsi"
++
++/ {
++	model = "Helios4";
++	compatible = "kobol,helios4", "marvell,armada388",
++		"marvell,armada385", "marvell,armada380";
++
++	memory {
++		device_type = "memory";
++		reg = <0x00000000 0x80000000>; /* 2 GB */
++	};
++
++	aliases {
++		/* So that mvebu u-boot can update the MAC addresses */
++		ethernet1 = &eth0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	reg_12v: regulator-12v {
++		compatible = "regulator-fixed";
++		regulator-name = "power_brick_12V";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "3P3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		vin-supply = <&reg_12v>;
++	};
++
++	reg_5p0v_hdd: regulator-5v-hdd {
++		compatible = "regulator-fixed";
++		regulator-name = "5V_HDD";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		vin-supply = <&reg_12v>;
++	};
++
++	reg_5p0v_usb: regulator-5v-usb {
++		compatible = "regulator-fixed";
++		regulator-name = "USB-PWR";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-boot-on;
++		regulator-always-on;
++		enable-active-high;
++		gpio = <&expander0 6 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&reg_12v>;
++	};
++
++	system-leds {
++		compatible = "gpio-leds";
++		status-led {
++			label = "helios4:green:status";
++			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "heartbeat";
++			default-state = "on";
++		};
++
++		fault-led {
++			label = "helios4:red:fault";
++			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
++			default-state = "keep";
++		};
++	};
++
++	io-leds {
++		compatible = "gpio-leds";
++		sata1-led {
++			label = "helios4:green:ata1";
++			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata1";
++			default-state = "off";
++		};
++		sata2-led {
++			label = "helios4:green:ata2";
++			gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata2";
++			default-state = "off";
++		};
++		sata3-led {
++			label = "helios4:green:ata3";
++			gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata3";
++			default-state = "off";
++		};
++		sata4-led {
++			label = "helios4:green:ata4";
++			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata4";
++			default-state = "off";
++		};
++		usb-led {
++			label = "helios4:green:usb";
++			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "usb-host";
++			default-state = "off";
++		};
++	};
++
++	fan1: j10-pwm {
++		compatible = "pwm-fan";
++		pwms = <&gpio1 9 40000>;	/* Target freq:25 kHz */
++	};
++
++	fan2: j17-pwm {
++		compatible = "pwm-fan";
++		pwms = <&gpio1 23 40000>;	/* Target freq:25 kHz */
++	};
++
++	usb2_phy: usb2-phy {
++		compatible = "usb-nop-xceiv";
++		vbus-regulator = <&reg_5p0v_usb>;
++	};
++
++	usb3_phy: usb3-phy {
++		compatible = "usb-nop-xceiv";
++		//vbus-regulator = <&reg_5p0v_usb>;
++	};
++
++	soc {
++		internal-regs {
++			i2c@11000 {
++				clock-frequency = <400000>;
++				pinctrl-0 = <&i2c0_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++
++				/*
++				 * PCA9655 GPIO expander, up to 1MHz clock.
++				 *  0-Board Revision bit 0 #
++				 *  1-Board Revision bit 1 #
++				 *  5-USB3 overcurrent
++				 *  6-USB3 power
++				 */
++				expander0: gpio-expander@20 {
++					/*
++					 * This is how it should be:
++					 * compatible = "onnn,pca9655",
++					 *	 "nxp,pca9555";
++					 * but you can't do this because of
++					 * the way I2C works.
++					 */
++					compatible = "nxp,pca9555";
++					gpio-controller;
++					#gpio-cells = <2>;
++					reg = <0x20>;
++					pinctrl-names = "default";
++					pinctrl-0 = <&pca0_pins>;
++					interrupt-parent = <&gpio0>;
++					interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
++					interrupt-controller;
++					#interrupt-cells = <2>;
++
++					board_rev_bit_0 {
++						gpio-hog;
++						gpios = <0 GPIO_ACTIVE_LOW>;
++						input;
++						line-name = "board-rev-0";
++					};
++					board_rev_bit_1 {
++						gpio-hog;
++						gpios = <1 GPIO_ACTIVE_LOW>;
++						input;
++						line-name = "board-rev-1";
++					};
++					usb3_ilimit {
++						gpio-hog;
++						gpios = <5 GPIO_ACTIVE_HIGH>;
++						input;
++						line-name = "usb-overcurrent-status";
++					};
++				};
++
++				temp_sensor: temp@4c {
++					compatible = "ti,lm75";
++					reg = <0x4c>;
++					vcc-supply = <&reg_3p3v>;
++				};
++			};
++
++			i2c@11100 {
++				/*
++				 * External I2C Bus for user peripheral
++				 */
++				clock-frequency = <400000>;
++				pinctrl-0 = <&helios_i2c1_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++			};
++
++			sata@a8000 {
++				status = "okay";
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				sata0: sata-port@0 {
++					reg = <0>;
++				};
++
++				sata1: sata-port@1 {
++					reg = <1>;
++				};
++			};
++
++			sata@e0000 {
++				status = "okay";
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				sata2: sata-port@0 {
++					reg = <0>;
++				};
++
++				sata3: sata-port@1 {
++					reg = <1>;
++				};
++			};
++
++			spi@10680 {
++				pinctrl-0 = <&spi1_pins
++					     &microsom_spi1_cs_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++			};
++
++			sdhci@d8000 {
++				bus-width = <4>;
++				cd-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
++				no-1-8-v;
++				pinctrl-0 = <&helios_sdhci_pins
++					     &helios_sdhci_cd_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++				vmmc = <&reg_3p3v>;
++				wp-inverted;
++			};
++
++			usb@58000 {
++				//vcc-supply = <&reg_5p0v_usb>;
++				usb-phy = <&usb2_phy>;
++				status = "okay";
++			};
++
++			usb3@f0000 {
++				status = "okay";
++			};
++
++			usb3@f8000 {
++				status = "okay";
++			};
++
++			pinctrl@18000 {
++				pca0_pins: pca0-pins {
++					marvell,pins = "mpp23";
++					marvell,function = "gpio";
++				};
++				microsom_phy0_int_pins: microsom-phy0-int-pins {
++					marvell,pins = "mpp18";
++					marvell,function = "gpio";
++				};
++				helios_i2c1_pins: i2c1-pins {
++					marvell,pins = "mpp26", "mpp27";
++					marvell,function = "i2c1";
++				};
++				helios_sdhci_cd_pins: helios-sdhci-cd-pins {
++					marvell,pins = "mpp20";
++					marvell,function = "gpio";
++				};
++				helios_sdhci_pins: helios-sdhci-pins {
++					marvell,pins = "mpp21", "mpp28",
++						       "mpp37", "mpp38",
++						       "mpp39", "mpp40";
++					marvell,function = "sd0";
++				};
++				helios_led_pins: helios-led-pins {
++					marvell,pins = "mpp24", "mpp25",
++						       "mpp49", "mpp50",
++						       "mpp52", "mpp53",
++						       "mpp54";
++					marvell,function = "gpio";
++				};
++				helios_fan_pins: helios-fan-pins {
++					marvell,pins = "mpp41", "mpp43",
++						       "mpp48", "mpp55";
++					marvell,function = "gpio";
++				};
++				microsom_spi1_cs_pins: spi1-cs-pins {
++					marvell,pins = "mpp59";
++					marvell,function = "spi1";
++				};
++			};
++		};
++	};
++};
+-- 
+2.17.1
