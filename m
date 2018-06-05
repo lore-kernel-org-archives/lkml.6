@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752757AbeFERED (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
+        id S1752800AbeFEREJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:04:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751842AbeFERD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:59 -0400
+        id S1751858AbeFEREH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chiluk <chiluk+linuxxfs@indeed.com>
-Subject: [PATCH 4.4 05/37] xfs: detect agfl count corruption and reset agfl
-Date: Tue,  5 Jun 2018 19:01:10 +0200
-Message-Id: <20180605170109.209417858@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 08/37] tracing: Fix crash when freeing instances with event triggers
+Date: Tue,  5 Jun 2018 19:01:13 +0200
+Message-Id: <20180605170109.387156770@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -31,229 +29,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brian Foster <bfoster@redhat.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit a27ba2607e60312554cbcd43fc660b2c7f29dc9c upstream.
+commit 86b389ff22bd6ad8fd3cb98e41cd271886c6d023 upstream.
 
-The struct xfs_agfl v5 header was originally introduced with
-unexpected padding that caused the AGFL to operate with one less
-slot than intended. The header has since been packed, but the fix
-left an incompatibility for users who upgrade from an old kernel
-with the unpacked header to a newer kernel with the packed header
-while the AGFL happens to wrap around the end. The newer kernel
-recognizes one extra slot at the physical end of the AGFL that the
-previous kernel did not. The new kernel will eventually attempt to
-allocate a block from that slot, which contains invalid data, and
-cause a crash.
+If a instance has an event trigger enabled when it is freed, it could cause
+an access of free memory. Here's the case that crashes:
 
-This condition can be detected by comparing the active range of the
-AGFL to the count. While this detects a padding mismatch, it can
-also trigger false positives for unrelated flcount corruption. Since
-we cannot distinguish a size mismatch due to padding from unrelated
-corruption, we can't trust the AGFL enough to simply repopulate the
-empty slot.
+ # cd /sys/kernel/tracing
+ # mkdir instances/foo
+ # echo snapshot > instances/foo/events/initcall/initcall_start/trigger
+ # rmdir instances/foo
 
-Instead, avoid unnecessarily complex detection logic and and use a
-solution that can handle any form of flcount corruption that slips
-through read verifiers: distrust the entire AGFL and reset it to an
-empty state. Any valid blocks within the AGFL are intentionally
-leaked. This requires xfs_repair to rectify (which was already
-necessary based on the state the AGFL was found in). The reset
-mitigates the side effect of the padding mismatch problem from a
-filesystem crash to a free space accounting inconsistency. The
-generic approach also means that this patch can be safely backported
-to kernels with or without a packed struct xfs_agfl.
+Would produce:
 
-Check the AGF for an invalid freelist count on initial read from
-disk. If detected, set a flag on the xfs_perag to indicate that a
-reset is required before the AGFL can be used. In the first
-transaction that attempts to use a flagged AGFL, reset it to empty,
-warn the user about the inconsistency and allow the freelist fixup
-code to repopulate the AGFL with new blocks. The xfs_perag flag is
-cleared to eliminate the need for repeated checks on each block
-allocation operation.
+ general protection fault: 0000 [#1] PREEMPT SMP PTI
+ Modules linked in: tun bridge ...
+ CPU: 5 PID: 6203 Comm: rmdir Tainted: G        W         4.17.0-rc4-test+ #933
+ Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+ RIP: 0010:clear_event_triggers+0x3b/0x70
+ RSP: 0018:ffffc90003783de0 EFLAGS: 00010286
+ RAX: 0000000000000000 RBX: 6b6b6b6b6b6b6b2b RCX: 0000000000000000
+ RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8800c7130ba0
+ RBP: ffffc90003783e00 R08: ffff8801131993f8 R09: 0000000100230016
+ R10: ffffc90003783d80 R11: 0000000000000000 R12: ffff8800c7130ba0
+ R13: ffff8800c7130bd8 R14: ffff8800cc093768 R15: 00000000ffffff9c
+ FS:  00007f6f4aa86700(0000) GS:ffff88011eb40000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007f6f4a5aed60 CR3: 00000000cd552001 CR4: 00000000001606e0
+ Call Trace:
+  event_trace_del_tracer+0x2a/0xc5
+  instance_rmdir+0x15c/0x200
+  tracefs_syscall_rmdir+0x52/0x90
+  vfs_rmdir+0xdb/0x160
+  do_rmdir+0x16d/0x1c0
+  __x64_sys_rmdir+0x17/0x20
+  do_syscall_64+0x55/0x1a0
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-This allows kernels that include the packing fix commit 96f859d52bcb
-("libxfs: pack the agfl header structure so XFS_AGFL_SIZE is correct")
-to handle older unpacked AGFL formats without a filesystem crash.
+This was due to the call the clears out the triggers when an instance is
+being deleted not removing the trigger from the link list.
 
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by Dave Chiluk <chiluk+linuxxfs@indeed.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Dave Chiluk <chiluk+linuxxfs@indeed.com>
+Cc: stable@vger.kernel.org
+Fixes: 85f2b08268c01 ("tracing: Add basic event trigger framework")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xfs/libxfs/xfs_alloc.c |   94 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_mount.h        |    1 
- fs/xfs/xfs_trace.h        |    9 +++-
- 3 files changed, 103 insertions(+), 1 deletion(-)
+ kernel/trace/trace_events_trigger.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/xfs/libxfs/xfs_alloc.c
-+++ b/fs/xfs/libxfs/xfs_alloc.c
-@@ -1924,6 +1924,93 @@ xfs_alloc_space_available(
- }
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -469,9 +469,10 @@ clear_event_triggers(struct trace_array
+ 	struct trace_event_file *file;
  
- /*
-+ * Check the agfl fields of the agf for inconsistency or corruption. The purpose
-+ * is to detect an agfl header padding mismatch between current and early v5
-+ * kernels. This problem manifests as a 1-slot size difference between the
-+ * on-disk flcount and the active [first, last] range of a wrapped agfl. This
-+ * may also catch variants of agfl count corruption unrelated to padding. Either
-+ * way, we'll reset the agfl and warn the user.
-+ *
-+ * Return true if a reset is required before the agfl can be used, false
-+ * otherwise.
-+ */
-+static bool
-+xfs_agfl_needs_reset(
-+	struct xfs_mount	*mp,
-+	struct xfs_agf		*agf)
-+{
-+	uint32_t		f = be32_to_cpu(agf->agf_flfirst);
-+	uint32_t		l = be32_to_cpu(agf->agf_fllast);
-+	uint32_t		c = be32_to_cpu(agf->agf_flcount);
-+	int			agfl_size = XFS_AGFL_SIZE(mp);
-+	int			active;
-+
-+	/* no agfl header on v4 supers */
-+	if (!xfs_sb_version_hascrc(&mp->m_sb))
-+		return false;
-+
-+	/*
-+	 * The agf read verifier catches severe corruption of these fields.
-+	 * Repeat some sanity checks to cover a packed -> unpacked mismatch if
-+	 * the verifier allows it.
-+	 */
-+	if (f >= agfl_size || l >= agfl_size)
-+		return true;
-+	if (c > agfl_size)
-+		return true;
-+
-+	/*
-+	 * Check consistency between the on-disk count and the active range. An
-+	 * agfl padding mismatch manifests as an inconsistent flcount.
-+	 */
-+	if (c && l >= f)
-+		active = l - f + 1;
-+	else if (c)
-+		active = agfl_size - f + l + 1;
-+	else
-+		active = 0;
-+
-+	return active != c;
-+}
-+
-+/*
-+ * Reset the agfl to an empty state. Ignore/drop any existing blocks since the
-+ * agfl content cannot be trusted. Warn the user that a repair is required to
-+ * recover leaked blocks.
-+ *
-+ * The purpose of this mechanism is to handle filesystems affected by the agfl
-+ * header padding mismatch problem. A reset keeps the filesystem online with a
-+ * relatively minor free space accounting inconsistency rather than suffer the
-+ * inevitable crash from use of an invalid agfl block.
-+ */
-+static void
-+xfs_agfl_reset(
-+	struct xfs_trans	*tp,
-+	struct xfs_buf		*agbp,
-+	struct xfs_perag	*pag)
-+{
-+	struct xfs_mount	*mp = tp->t_mountp;
-+	struct xfs_agf		*agf = XFS_BUF_TO_AGF(agbp);
-+
-+	ASSERT(pag->pagf_agflreset);
-+	trace_xfs_agfl_reset(mp, agf, 0, _RET_IP_);
-+
-+	xfs_warn(mp,
-+	       "WARNING: Reset corrupted AGFL on AG %u. %d blocks leaked. "
-+	       "Please unmount and run xfs_repair.",
-+	         pag->pag_agno, pag->pagf_flcount);
-+
-+	agf->agf_flfirst = 0;
-+	agf->agf_fllast = cpu_to_be32(XFS_AGFL_SIZE(mp) - 1);
-+	agf->agf_flcount = 0;
-+	xfs_alloc_log_agf(tp, agbp, XFS_AGF_FLFIRST | XFS_AGF_FLLAST |
-+				    XFS_AGF_FLCOUNT);
-+
-+	pag->pagf_flcount = 0;
-+	pag->pagf_agflreset = false;
-+}
-+
-+/*
-  * Decide whether to use this allocation group for this allocation.
-  * If so, fix up the btree freelist's size.
-  */
-@@ -1983,6 +2070,10 @@ xfs_alloc_fix_freelist(
+ 	list_for_each_entry(file, &tr->events, list) {
+-		struct event_trigger_data *data;
+-		list_for_each_entry_rcu(data, &file->triggers, list) {
++		struct event_trigger_data *data, *n;
++		list_for_each_entry_safe(data, n, &file->triggers, list) {
+ 			trace_event_trigger_enable_disable(file, 0);
++			list_del_rcu(&data->list);
+ 			if (data->ops->free)
+ 				data->ops->free(data->ops, data);
  		}
- 	}
- 
-+	/* reset a padding mismatched agfl before final free space check */
-+	if (pag->pagf_agflreset)
-+		xfs_agfl_reset(tp, agbp, pag);
-+
- 	/* If there isn't enough total space or single-extent, reject it. */
- 	need = xfs_alloc_min_freelist(mp, pag);
- 	if (!xfs_alloc_space_available(args, need, flags))
-@@ -2121,6 +2212,7 @@ xfs_alloc_get_freelist(
- 		agf->agf_flfirst = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, -1);
- 	xfs_trans_agflist_delta(tp, -1);
- 	pag->pagf_flcount--;
-@@ -2226,6 +2318,7 @@ xfs_alloc_put_freelist(
- 		agf->agf_fllast = 0;
- 
- 	pag = xfs_perag_get(mp, be32_to_cpu(agf->agf_seqno));
-+	ASSERT(!pag->pagf_agflreset);
- 	be32_add_cpu(&agf->agf_flcount, 1);
- 	xfs_trans_agflist_delta(tp, 1);
- 	pag->pagf_flcount++;
-@@ -2417,6 +2510,7 @@ xfs_alloc_read_agf(
- 		pag->pagb_count = 0;
- 		pag->pagb_tree = RB_ROOT;
- 		pag->pagf_init = 1;
-+		pag->pagf_agflreset = xfs_agfl_needs_reset(mp, agf);
- 	}
- #ifdef DEBUG
- 	else if (!XFS_FORCED_SHUTDOWN(mp)) {
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -278,6 +278,7 @@ typedef struct xfs_perag {
- 	char		pagi_inodeok;	/* The agi is ok for inodes */
- 	__uint8_t	pagf_levels[XFS_BTNUM_AGF];
- 					/* # of levels in bno & cnt btree */
-+	bool		pagf_agflreset; /* agfl requires reset before use */
- 	__uint32_t	pagf_flcount;	/* count of blocks in freelist */
- 	xfs_extlen_t	pagf_freeblks;	/* total free blocks */
- 	xfs_extlen_t	pagf_longest;	/* longest free space */
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -1485,7 +1485,7 @@ TRACE_EVENT(xfs_trans_commit_lsn,
- 		  __entry->lsn)
- );
- 
--TRACE_EVENT(xfs_agf,
-+DECLARE_EVENT_CLASS(xfs_agf_class,
- 	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags,
- 		 unsigned long caller_ip),
- 	TP_ARGS(mp, agf, flags, caller_ip),
-@@ -1541,6 +1541,13 @@ TRACE_EVENT(xfs_agf,
- 		  __entry->longest,
- 		  (void *)__entry->caller_ip)
- );
-+#define DEFINE_AGF_EVENT(name) \
-+DEFINE_EVENT(xfs_agf_class, name, \
-+	TP_PROTO(struct xfs_mount *mp, struct xfs_agf *agf, int flags, \
-+		 unsigned long caller_ip), \
-+	TP_ARGS(mp, agf, flags, caller_ip))
-+DEFINE_AGF_EVENT(xfs_agf);
-+DEFINE_AGF_EVENT(xfs_agfl_reset);
- 
- TRACE_EVENT(xfs_free_extent,
- 	TP_PROTO(struct xfs_mount *mp, xfs_agnumber_t agno, xfs_agblock_t agbno,
