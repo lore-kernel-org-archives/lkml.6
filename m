@@ -1,51 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B2FAC606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2103A601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=nyt.cloud
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752207AbeFFMlF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:41:05 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:51126 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751714AbeFFMlE (ORCPT
+        id S1752496AbeFEU0U (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Tue, 5 Jun 2018 16:26:20 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:46349 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752358AbeFEU0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:41:04 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>
-Cc: devel@driverdev.osuosl.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] android: binder: Drop dependency on !M68K
-Date: Wed,  6 Jun 2018 14:40:56 +0200
-Message-Id: <1528288856-11841-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 5 Jun 2018 16:26:19 -0400
+To: misc@openbsd.org, LKML <linux-kernel@vger.kernel.org>
+From: =?UTF-8?Q?Ywe_C=c3=a6rlyn?= <ywe@nyt.cloud>
+Subject: A pedophilia cult?
+Message-ID: <b5958f6e-001c-22e9-50b2-a0df36676148@nyt.cloud>
+Date: Tue, 5 Jun 2018 22:26:07 +0200
+User-Agent: Mozilla/5.0 (Windows NT 5.1; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of commit 7124330dabe5b3cb ("m68k/uaccess: Revive 64-bit
-get_user()"), the 64-bit Android binder interface builds fine on m68k.
+So when things are discussed in a proper way, nobody says nothing.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- drivers/android/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I did this page: https://nyt.cloud/showthread.php?tid=2
 
-diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
-index ee4880bfdcdc98d2..432e9ad770703275 100644
---- a/drivers/android/Kconfig
-+++ b/drivers/android/Kconfig
-@@ -10,7 +10,7 @@ if ANDROID
- 
- config ANDROID_BINDER_IPC
- 	bool "Android Binder IPC Driver"
--	depends on MMU && !M68K
-+	depends on MMU
- 	default n
- 	---help---
- 	  Binder is used in Android for both communication between processes,
--- 
-2.7.4
+None of the usual vocal people have said anything.
+But act elsewhere as some kind of level is relevant.
+
+Everything should be covered here.
+
+What I am also noticing is that a lot of people online, are pedophile 
+abused.
+
+So is their discussion only for the abuse of their father?
+Because no serious reply has come..
+
+Consider that if you follow these "idols", who awaits you there.
+
+It ain´t paradise.
+
+Peace Go With Thou.
