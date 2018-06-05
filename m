@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeFEUja (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:39:30 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:59502
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751950AbeFEUjB (ORCPT
+        id S1752557AbeFEUj3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 16:39:29 -0400
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:49478
+        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752110AbeFEUjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 5 Jun 2018 16:39:01 -0400
 x-originating-ip: 107.180.71.197
@@ -13,65 +13,52 @@ To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
         jasowang@redhat.com, sthemmin@microsoft.com,
         Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 7/8] tools: hv: update lsvmbus to be compatible with python3
-Date: Tue,  5 Jun 2018 13:37:55 -0700
-Message-Id: <20180605203756.29809-7-kys@linuxonhyperv.com>
+Cc: Michael Kelley <mikelley@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 2/8] x86/hyperv: Add interrupt handler annotations
+Date: Tue,  5 Jun 2018 13:37:50 -0700
+Message-Id: <20180605203756.29809-2-kys@linuxonhyperv.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605203756.29809-1-kys@linuxonhyperv.com>
 References: <20180605203536.29751-1-kys@linuxonhyperv.com>
  <20180605203756.29809-1-kys@linuxonhyperv.com>
 Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfAorYw9lwdMbUVXOmopGsUwUamZra+Q4XhFqpP9g4t5ddAl/R+jK9CDPQXrqoL5es+SZs4RLxLp3Yv0v+R00LC5e5pL6FVDvfukvPH3MGYlaZv1yChEF
- QDQRTNX4vmg9hM78XbuGAdfiD7YVsX6sLn+YcKMVylUoSjukNnGbsp00/q6omoF7565hqFDAb+dJ12HDLc5iUPdZwPC09y+C7ufhK6qa+LLidBHFDyu4csGb
- ISGyGj/QLs/lGAMVO1XJ3NjZK9yfhG8r5+vaywOvBEKG2W93sk4lsc3CDKRGWYEmih3zVigqfKAeQebDHTJBfOXWVcNIbvlcyVs6x7xuEC8UHt46zQSSmgeT
- g4G8PF+yWeQyypRtZXkQsdVQbclLtg8gWZ/SkE19zowxvcaUEKoT5osaaeluT5PfCM4YCxCZVDlBjCwJ48DTjPvOhR0iMlsy6n11R05wArLC3hR0VnXdsHHO
- 6arD+E2w8wnulutckFu6WPPbgUViX3IbelJPhNRJkFyRRDTkqteGOVbpOB91k4BiSESHeJpUuDoijYZw
+X-CMAE-Envelope: MS4wfBmPPXvR3AC73sWWSmoXjypNo3+5mZlASFGBmTxJXdkYZ46NrqUmluAu0+sbeDEibEfhlF7ezv7JJVuWqRU5QMs1li0vZBLLo8Kj5YZljCjiUM1yiTi0
+ +Ldd/VwBSuEyx3T0Rf3eUubo6qvqZDUmmCB8IxMyy7JNpQW9LjpKE6S1gPtn6wX/gMrcrcqTziMlmeQsTuxSG5EpzvW07yUXxFIRjYwwz2ilVYAqJAnRnV2C
+ lv8oZTOEHARzjR6wQXirv1e1C9xU7LNdTUp5c1aUzZR9IH9gNP9wermhQZYjoQfJZfyp7g/V14hMar3VW9Zh6RzQ69Vu4mNQ78KlhU+zdFHLxbINNwUSInej
+ hD3HbW5xrbG/bxFak4EMkTTQ4MgQ0zQPFxElaRukzCp6qOujN6o9Kqa9EbaO43grgeqsVeJ1P2l+H9b9rI4tAYw80XeME1eo5AVj+nMxnNkGpbGvOIjt4vEd
+ v3fcSi+7cikrdpUdxhBMujQSSHmtu+jxiHUBh4tQO/RXxBS08Elh5ypxl0hWl0P4ILPZHmGZD1M3Dr8QyzxCtJYEUwnl6WpAyHszyg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olaf Hering <olaf@aepfle.de>
+From: Michael Kelley <mikelley@microsoft.com>
 
-Python3 changed the way how 'print' works.
-Adjust the code to a syntax that is understood by python2 and python3.
+Add standard interrupt handler annotations to
+hyperv_vector_handler(). This does not fix any observed
+bug, but avoids potential removal of the code by link
+time optimization and makes it consistent with
+hv_stimer0_vector_handler in the same source file.
 
-Signed-off-by: Olaf Hering <olaf@aepfle.de>
-Acked-by: Dexuan Cui <decui@microsoft.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
 Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 ---
- tools/hv/lsvmbus | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/mshyperv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/hv/lsvmbus b/tools/hv/lsvmbus
-index 353e56768df8..55e7374bade0 100644
---- a/tools/hv/lsvmbus
-+++ b/tools/hv/lsvmbus
-@@ -17,7 +17,7 @@ if options.verbose is not None:
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 031082c96db8..8a49b7ef7b76 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -41,7 +41,7 @@ static void (*hv_stimer0_handler)(void);
+ static void (*hv_kexec_handler)(void);
+ static void (*hv_crash_handler)(struct pt_regs *regs);
  
- vmbus_sys_path = '/sys/bus/vmbus/devices'
- if not os.path.isdir(vmbus_sys_path):
--	print "%s doesn't exist: exiting..." % vmbus_sys_path
-+	print("%s doesn't exist: exiting..." % vmbus_sys_path)
- 	exit(-1)
+-void hyperv_vector_handler(struct pt_regs *regs)
++__visible void __irq_entry hyperv_vector_handler(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
  
- vmbus_dev_dict = {
-@@ -93,11 +93,11 @@ format2 = '%2s: Class_ID = %s - %s\n\tDevice_ID = %s\n\tSysfs path: %s\n%s'
- 
- for d in vmbus_dev_list:
- 	if verbose == 0:
--		print ('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc)
-+		print(('VMBUS ID ' + format0) % (d.vmbus_id, d.dev_desc))
- 	elif verbose == 1:
--		print ('VMBUS ID ' + format1) %	\
--			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping)
-+		print (('VMBUS ID ' + format1) %	\
-+			(d.vmbus_id, d.class_id, d.dev_desc, d.chn_vp_mapping))
- 	else:
--		print ('VMBUS ID ' + format2) % \
-+		print (('VMBUS ID ' + format2) % \
- 			(d.vmbus_id, d.class_id, d.dev_desc, \
--			d.device_id, d.sysfs_path, d.chn_vp_mapping)
-+			d.device_id, d.sysfs_path, d.chn_vp_mapping))
 -- 
 2.17.1
