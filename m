@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752256AbeFERYs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:24:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32776 "EHLO mail.kernel.org"
+        id S1752486AbeFERZM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:25:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751923AbeFERD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:56 -0400
+        id S1752680AbeFERDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 04/37] sh: New gcc support
-Date: Tue,  5 Jun 2018 19:01:09 +0200
-Message-Id: <20180605170109.155041777@linuxfoundation.org>
+        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.4 29/37] stm class: Use vmalloc for the master map
+Date: Tue,  5 Jun 2018 19:01:34 +0200
+Message-Id: <20180605170110.588135089@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -29,182 +29,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yoshinori Sato <ysato@users.sourceforge.jp>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit 940d4113f3306e07a1f86541489b686d1a979d54 upstream.
+commit b5e2ced9bf81393034072dd4d372f6b430bc1f0a upstream.
 
-New gcc (4.8 or later) used new shift helper functions.
-So we need added new helper to private libgcc.
+Fengguang is running into a warning from the buddy allocator:
 
-Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-Signed-off-by: Rich Felker <dalias@libc.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
+> swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
+> CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #262
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> Call Trace:
+...
+>  __kmalloc+0x14b/0x180: ____cache_alloc at mm/slab.c:3127
+>  stm_register_device+0xf3/0x5c0: stm_register_device at drivers/hwtracing/stm/core.c:695
+...
+
+Which is basically a result of the stm class trying to allocate ~512kB
+for the dummy_stm with its default parameters. There's no reason, however,
+for it not to be vmalloc()ed instead, which is what this patch does.
+
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/sh/kernel/sh_ksyms_32.c |    3 +++
- arch/sh/lib/ashlsi3.S        |   35 ++++++++++++++++++++++++++---------
- arch/sh/lib/ashrsi3.S        |   33 ++++++++++++++++++++++++---------
- arch/sh/lib/lshrsi3.S        |   34 +++++++++++++++++++++++++---------
- 4 files changed, 78 insertions(+), 27 deletions(-)
+ drivers/hwtracing/stm/core.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/sh/kernel/sh_ksyms_32.c
-+++ b/arch/sh/kernel/sh_ksyms_32.c
-@@ -34,6 +34,9 @@ DECLARE_EXPORT(__sdivsi3);
- DECLARE_EXPORT(__lshrsi3);
- DECLARE_EXPORT(__ashrsi3);
- DECLARE_EXPORT(__ashlsi3);
-+DECLARE_EXPORT(__lshrsi3_r0);
-+DECLARE_EXPORT(__ashrsi3_r0);
-+DECLARE_EXPORT(__ashlsi3_r0);
- DECLARE_EXPORT(__ashiftrt_r4_6);
- DECLARE_EXPORT(__ashiftrt_r4_7);
- DECLARE_EXPORT(__ashiftrt_r4_8);
---- a/arch/sh/lib/ashlsi3.S
-+++ b/arch/sh/lib/ashlsi3.S
-@@ -54,21 +54,38 @@ Boston, MA 02110-1301, USA.  */
- !
- ! (none)
- !
-+! __ashlsi3_r0
-+!
-+! Entry:
-+!
-+! r4: Value to shift
-+! r0: Shifts
-+!
-+! Exit:
-+!
-+! r0: Result
-+!
-+! Destroys:
-+!
-+! (none)
-+
-+
- 	.global	__ashlsi3
-+	.global	__ashlsi3_r0
- 	
- 	.align	2
- __ashlsi3:
--	mov	#31,r0
--	and	r0,r5
-+	mov	r5,r0
-+	.align	2
-+__ashlsi3_r0:
-+	and	#31,r0
-+	mov.l	r4,@-r15
-+	mov	r0,r4
- 	mova	ashlsi3_table,r0
--	mov.b	@(r0,r5),r5
--#ifdef __sh1__
--	add	r5,r0
-+	mov.b	@(r0,r4),r4
-+	add	r4,r0
- 	jmp	@r0
--#else
--	braf	r5
--#endif
--	mov	r4,r0
-+	mov.l	@r15+,r0
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -602,7 +602,7 @@ static void stm_device_release(struct de
+ {
+ 	struct stm_device *stm = to_stm_device(dev);
  
- 	.align	2
- ashlsi3_table:
---- a/arch/sh/lib/ashrsi3.S
-+++ b/arch/sh/lib/ashrsi3.S
-@@ -54,22 +54,37 @@ Boston, MA 02110-1301, USA.  */
- !
- ! (none)
- !
-+! __ashrsi3_r0
-+!
-+! Entry:
-+!
-+! r4: Value to shift
-+! r0: Shifts
-+!
-+! Exit:
-+!
-+! r0: Result
-+!
-+! Destroys:
-+!
-+! (none)
+-	kfree(stm);
++	vfree(stm);
+ }
  
- 	.global	__ashrsi3
-+	.global	__ashrsi3_r0
- 	
- 	.align	2
- __ashrsi3:
--	mov	#31,r0
--	and	r0,r5
-+	mov	r5,r0
-+	.align	2
-+__ashrsi3_r0:
-+	and	#31,r0
-+	mov.l	r4,@-r15
-+	mov	r0,r4
- 	mova	ashrsi3_table,r0
--	mov.b	@(r0,r5),r5
--#ifdef __sh1__
--	add	r5,r0
-+	mov.b	@(r0,r4),r4
-+	add	r4,r0
- 	jmp	@r0
--#else
--	braf	r5
--#endif
--	mov	r4,r0
-+	mov.l	@r15+,r0
+ int stm_register_device(struct device *parent, struct stm_data *stm_data,
+@@ -619,7 +619,7 @@ int stm_register_device(struct device *p
+ 		return -EINVAL;
  
- 	.align	2
- ashrsi3_table:
---- a/arch/sh/lib/lshrsi3.S
-+++ b/arch/sh/lib/lshrsi3.S
-@@ -54,21 +54,37 @@ Boston, MA 02110-1301, USA.  */
- !
- ! (none)
- !
-+! __lshrsi3_r0
-+!
-+! Entry:
-+!
-+! r0: Value to shift
-+! r5: Shifts
-+!
-+! Exit:
-+!
-+! r0: Result
-+!
-+! Destroys:
-+!
-+! (none)
-+!
- 	.global	__lshrsi3
-+	.global	__lshrsi3_r0
- 	
- 	.align	2
- __lshrsi3:
--	mov	#31,r0
--	and	r0,r5
-+	mov	r5,r0
-+	.align	2
-+__lshrsi3_r0:
-+	and	#31,r0
-+	mov.l	r4,@-r15
-+	mov	r0,r4
- 	mova	lshrsi3_table,r0
--	mov.b	@(r0,r5),r5
--#ifdef __sh1__
--	add	r5,r0
-+	mov.b	@(r0,r4),r4
-+	add	r4,r0
- 	jmp	@r0
--#else
--	braf	r5
--#endif
--	mov	r4,r0
-+	mov.l	@r15+,r0
+ 	nmasters = stm_data->sw_end - stm_data->sw_start;
+-	stm = kzalloc(sizeof(*stm) + nmasters * sizeof(void *), GFP_KERNEL);
++	stm = vzalloc(sizeof(*stm) + nmasters * sizeof(void *));
+ 	if (!stm)
+ 		return -ENOMEM;
  
- 	.align	2
- lshrsi3_table:
+@@ -656,7 +656,7 @@ int stm_register_device(struct device *p
+ err_device:
+ 	put_device(&stm->dev);
+ err_free:
+-	kfree(stm);
++	vfree(stm);
+ 
+ 	return err;
+ }
