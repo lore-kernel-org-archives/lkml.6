@@ -1,65 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751638AbeFEG5p (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:57:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:60569 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751530AbeFEG5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 02:57:44 -0400
-Message-Id: <fa51770430e00ac2db1c621365473a0c893d105e.1528179842.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc: fix build failure by disabling attribute-alias
- warning in pci_32
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue,  5 Jun 2018 06:57:43 +0000 (UTC)
+        id S1751662AbeFEG7M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 02:59:12 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42344 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751368AbeFEG7L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 02:59:11 -0400
+X-Google-Smtp-Source: ADUXVKKapf/ctfpqA315ZiRbEwqxVJXiC0U+B1x72FovKUY2wlycP3iccBATurwFY+SgaW2qyROWVQ==
+Date: Tue, 5 Jun 2018 07:59:07 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Gwendal Grignou <gwendal@chromium.org>
+Cc: bleung@chromium.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] cros_ec: Use devm_kzalloc for private data
+Message-ID: <20180605065907.GE21163@dell>
+References: <CAFqH_50VYJC7aep6P+KtN4qmFeV66GEXvxmFy8KrNp1BRv33xg@mail.gmail.com>
+ <20180530165422.51178-1-gwendal@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180530165422.51178-1-gwendal@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 2479bfc9bc600 ("powerpc: Fix build by disabling attribute-alias
-warning for SYSCALL_DEFINEx") forgot arch/powerpc/kernel/pci_32.c
+On Wed, 30 May 2018, Gwendal Grignou wrote:
 
-Latest GCC version emit the following warnings
+> Use dev_kzmalloc, remove .release entry point.
+> 
+> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+> ---
+> Change sinc v1:
+> - Readd __remove to avoid a warning when loaded as a module.
+> 
+>  drivers/mfd/cros_ec_dev.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index 1d6dc5c7a19d..81466264f7fc 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -262,12 +262,7 @@ static const struct file_operations fops = {
+>  #endif
+>  };
+>  
+> -static void __remove(struct device *dev)
+> -{
+> -	struct cros_ec_dev *ec = container_of(dev, struct cros_ec_dev,
+> -					      class_dev);
+> -	kfree(ec);
+> -}
+> +static void __remove(struct device *dev) { }
 
-As arch/powerpc code is built with -Werror, this breaks build with
-GCC 8.1
+I missed this line when reviewing.
 
-This patch inhibits this warning
+Why are you keeping the function around?
 
-In file included from arch/powerpc/kernel/pci_32.c:14:
-./include/linux/syscalls.h:233:18: error: 'sys_pciconfig_iobase' alias between functions of incompatible types 'long int(long int,  long unsigned int,  long unsigned int)' and 'long int(long int,  long int,  long int)' [-Werror=attribute-alias]
-  asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__)) \
-                  ^~~
-./include/linux/syscalls.h:222:2: note: in expansion of macro '__SYSCALL_DEFINEx'
-  __SYSCALL_DEFINEx(x, sname, __VA_ARGS__)
-  ^~~~~~~~~~~~~~~~~
+As a result, we now suffer with a build warning:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/kernel/pci_32.c | 4 ++++
- 1 file changed, 4 insertions(+)
+  drivers/mfd/cros_ec_dev.c:265:13: warning: '__remove' defined but not used [-Wunused-function]
+   static void __remove(struct device *dev) { }
 
-diff --git a/arch/powerpc/kernel/pci_32.c b/arch/powerpc/kernel/pci_32.c
-index d63b488d34d7..4f861055a852 100644
---- a/arch/powerpc/kernel/pci_32.c
-+++ b/arch/powerpc/kernel/pci_32.c
-@@ -285,6 +285,9 @@ pci_bus_to_hose(int bus)
-  * Note that the returned IO or memory base is a physical address
-  */
- 
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wpragmas"
-+#pragma GCC diagnostic ignored "-Wattribute-alias"
- SYSCALL_DEFINE3(pciconfig_iobase, long, which,
- 		unsigned long, bus, unsigned long, devfn)
- {
-@@ -310,3 +313,4 @@ SYSCALL_DEFINE3(pciconfig_iobase, long, which,
- 
- 	return result;
- }
-+#pragma GCC diagnostic pop
+Can I just remove the line?  What are the ramifications of doing so?
+
+Please reply swiftly, so resolve this issue in good time.
+
 -- 
-2.13.3
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
