@@ -1,90 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752621AbeFEWpF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 18:45:05 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:44352 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbeFEWpD (ORCPT
+        id S932081AbeFEWru (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 18:47:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752318AbeFEWrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 18:45:03 -0400
-X-Google-Smtp-Source: ADUXVKLqrvUM35meuLzPGZGFwRG+khHwT69037xDCgWPWmZgmDjUka6HK02scgtkaENOVfh1P/9qvQ==
-From: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-To: ravisadineni@google.com, dmitry.torokhov@gmail.com, dtor@google.com
-Cc: tbroch@google.com, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Subject: [PATCH] Input: cros_ec_keyb: Remove check before calling pm_wakeup_event.
-Date: Tue,  5 Jun 2018 15:44:57 -0700
-Message-Id: <20180605224458.62692-1-ravisadineni@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+        Tue, 5 Jun 2018 18:47:48 -0400
+Subject: Re: [PATCH v4a 8/8] module: replace the existing LSM hook in
+ init_module
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>
+In-Reply-To: <CAGXu5j+9P9HLvwC4WfHoxXsz7vYA_raStVDPzA=tNR9f9vr9=Q@mail.gmail.com>
+References: <1527616920-5415-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1527616920-5415-9-git-send-email-zohar@linux.vnet.ibm.com>
+         <CAHC9VhQL+CsqKL83fSZhjEZVSjKKfmLULvehXZ8SZhtK5xzLMQ@mail.gmail.com>
+         <1527635645.3534.39.camel@linux.vnet.ibm.com>
+         <CAHC9VhQQX-JAnV-6jEOsug-6siyO9mrNa=rYK9Whg-MYcfHxgA@mail.gmail.com>
+         <1527780226.3427.20.camel@linux.vnet.ibm.com>
+         <CAGXu5jLXSEWHorm6=h9+1cP-y8ZX2_ALcra6g9x7Tm-O0kU3DQ@mail.gmail.com>
+         <1528234513.3557.16.camel@linux.vnet.ibm.com>
+         <CAGXu5j+9P9HLvwC4WfHoxXsz7vYA_raStVDPzA=tNR9f9vr9=Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 05 Jun 2018 18:40:11 -0400
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18060522-0028-0000-0000-000002CD8256
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060522-0029-0000-0000-000023848935
+Message-Id: <1528238411.3557.32.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=917 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806050255
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unnecessary check before calling pm_wakeup_event. If the
-device is not wake enabled, this call is no-op anyway.
+On Tue, 2018-06-05 at 15:26 -0700, Kees Cook wrote:
+> On Tue, Jun 5, 2018 at 2:35 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > On Tue, 2018-06-05 at 12:45 -0700, Kees Cook wrote:
+> >
+> >> And if you must have a separate enum, please change this to fail
+> >> closed instead of open (and mark the fall-through):
+> >>
+> >> int rc = -EPERM;
+> >>
+> >> switch (id) {
+> >> case LOADING_MODULE:
+> >>     rc = loadpin_read_file(NULL, READING_MODULE);
+> >>     /* Fall-through */
+> >> default:
+> >>     break;
+> >> }
+> >
+> > This will fail the sysfs firmware fallback loading and the kexec_load
+> > syscall without any message, as you have for init_module.  Is that
+> > what you want?
+> 
+> I'd prefer there be a full mapping of the enums so that everything
+> gets passed into loadpin_read_file() :)
+> 
+> Can the enum be shared or is that nonsensical?
 
-Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
----
- drivers/input/keyboard/cros_ec_keyb.c | 30 ++++++++++-----------------
- 1 file changed, 11 insertions(+), 19 deletions(-)
+Considering this is v4 of the patch set, it's pretty obvious I did
+everything possible not to define a new LSM hook.  Even if we can't
+re-use the existing enum, we could define the new enum in terms
+of __kernel_read_file_id.
 
-diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index 489ddd37bd4ee..c5e32544130dc 100644
---- a/drivers/input/keyboard/cros_ec_keyb.c
-+++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -242,19 +242,17 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
- 	u32 val;
- 	unsigned int ev_type;
- 
-+	/*
-+	 * If not wake enabled, discard key state changes during
-+	 * suspend. Switches will be re-checked in
-+	 * cros_ec_keyb_resume() to be sure nothing is lost.
-+	 */
-+	if (queued_during_suspend && !device_may_wakeup(ckdev->dev))
-+		return NOTIFY_OK;
-+
- 	switch (ckdev->ec->event_data.event_type) {
- 	case EC_MKBP_EVENT_KEY_MATRIX:
--		if (device_may_wakeup(ckdev->dev)) {
--			pm_wakeup_event(ckdev->dev, 0);
--		} else {
--			/*
--			 * If keyboard is not wake enabled, discard key state
--			 * changes during suspend. Switches will be re-checked
--			 * in cros_ec_keyb_resume() to be sure nothing is lost.
--			 */
--			if (queued_during_suspend)
--				return NOTIFY_OK;
--		}
-+		pm_wakeup_event(ckdev->dev, 0);
- 
- 		if (ckdev->ec->event_size != ckdev->cols) {
- 			dev_err(ckdev->dev,
-@@ -268,10 +266,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
- 		break;
- 
- 	case EC_MKBP_EVENT_SYSRQ:
--		if (device_may_wakeup(ckdev->dev))
--			pm_wakeup_event(ckdev->dev, 0);
--		else if (queued_during_suspend)
--			return NOTIFY_OK;
-+		pm_wakeup_event(ckdev->dev, 0);
- 
- 		val = get_unaligned_le32(&ckdev->ec->event_data.data.sysrq);
- 		dev_dbg(ckdev->dev, "sysrq code from EC: %#x\n", val);
-@@ -280,10 +275,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
- 
- 	case EC_MKBP_EVENT_BUTTON:
- 	case EC_MKBP_EVENT_SWITCH:
--		if (device_may_wakeup(ckdev->dev))
--			pm_wakeup_event(ckdev->dev, 0);
--		else if (queued_during_suspend)
--			return NOTIFY_OK;
-+		pm_wakeup_event(ckdev->dev, 0);
- 
- 		if (ckdev->ec->event_data.event_type == EC_MKBP_EVENT_BUTTON) {
- 			val = get_unaligned_le32(
--- 
-2.18.0.rc1.242.g61856ae69a-goog
+enum kernel_load_data_id {
+        __kernel_read_file_id(__data_id_enumify)
+};
+
+static const char * const kernel_load_data_str[] = {
+        __kernel_read_file_id(__data_id_stringify)
+};
+
+Eric, Serge, would using either the existing __kernel_read_file_id
+enum or the above definitions be acceptable?
+
+Mimi
