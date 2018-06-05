@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeFENYX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:24:23 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:39053 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeFENYV (ORCPT
+        id S1752044AbeFENY7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:24:59 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:46670 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751832AbeFENY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:24:21 -0400
-X-Google-Smtp-Source: ADUXVKJU03MCo9FzkTYWAQ6POFjefT+DgdLgLpshBpgQeKa0hMGXRkP92nFiXwdffngrXjhIznW+fIveh5u1q0VznRk=
+        Tue, 5 Jun 2018 09:24:56 -0400
+X-Google-Smtp-Source: ADUXVKLBaN3brrikIeoreUDqV2Ab7Km+REmNVwPa8v3qlHhS602r5cutt2Xe+q1FoBnl3otymvMOWEroBcpHuYofNFg=
 MIME-Version: 1.0
 In-Reply-To: <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
 References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com> <1528198148-23308-4-git-send-email-michel.pollet@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Jun 2018 15:24:20 +0200
-X-Google-Sender-Auth: ObtUcBj1i42Aa0yK1XASZLFvaHI
-Message-ID: <CAMuHMdVPfE=0EynQg1syOiPCMbvtK9ooWo+_hvtY=VEMKMPXHw@mail.gmail.com>
+Date: Tue, 5 Jun 2018 15:24:55 +0200
+X-Google-Sender-Auth: jaEf_APHwTzWM_I0Yo8Ow6V4ZnE
+Message-ID: <CAMuHMdU1n0tQgPaEXAn6W1aVCDBjk-h0Mz2kgh2vu4e9CEi0XQ@mail.gmail.com>
 Subject: Re: [PATCH v4 3/3] ARM: dts: Renesas R9A06G032 SMP enable method
 To: Michel Pollet <michel.pollet@bp.renesas.com>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -47,6 +47,17 @@ On Tue, Jun 5, 2018 at 1:28 PM, Michel Pollet
 > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -1,3 +1,4 @@
+> +
+
+Bogus change
+
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
 
 Gr{oetje,eeting}s,
 
