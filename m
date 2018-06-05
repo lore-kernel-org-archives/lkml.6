@@ -1,101 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeFEFvA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 01:51:00 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:55086 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751534AbeFEFu6 (ORCPT
+        id S1751723AbeFEFwP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 01:52:15 -0400
+Received: from mgwym04.jp.fujitsu.com ([211.128.242.43]:10430 "EHLO
+        mgwym04.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751567AbeFEFwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 01:50:58 -0400
+        Tue, 5 Jun 2018 01:52:14 -0400
+From: "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com>
+To: "'Eric W. Biederman'" <ebiederm@xmission.com>
+CC: "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
+        "'tj@kernel.org'" <tj@kernel.org>,
+        "Okajima, Toshiyuki" <toshi.okajima@jp.fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "'ebiederm@aristanetworks.com'" <ebiederm@aristanetworks.com>
+Subject: RE: [CFT][PATCH] kernfs: Correct kernfs directory seeks.
+Thread-Topic: [CFT][PATCH] kernfs: Correct kernfs directory seeks.
+Thread-Index: AQHT/HFLI3mQ17S8REWGMo+9PpY1yqRRKDIA
+Date: Tue, 5 Jun 2018 05:52:05 +0000
+Message-ID: <33710E6CAA200E4583255F4FB666C4E21B66BAFB@G01JPEXMBYT03>
+References: <33710E6CAA200E4583255F4FB666C4E21B63D491@G01JPEXMBYT03>
+        <87wovhqex2.fsf@xmission.com> <87po17r9ek.fsf_-_@xmission.com>
+        <33710E6CAA200E4583255F4FB666C4E21B65E04E@G01JPEXMBYT03>
+        <87sh62k3vk.fsf@xmission.com> <87h8mihtx5.fsf@xmission.com>
+In-Reply-To: <87h8mihtx5.fsf@xmission.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20170217-enc
+x-shieldmailcheckermailid: 164f185dab124feda3e3f0bace252a03
+x-originating-ip: [10.124.89.120]
+Content-Type: text/plain; charset="iso-2022-jp"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Tue, 05 Jun 2018 07:50:56 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Nicholas Piggin <npiggin@gmail.com>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kbuild-owner@vger.kernel.org
-Subject: Re: [PATCH v5 24/31] kconfig: add CC_IS_GCC and GCC_VERSION
-In-Reply-To: <CAK7LNAQ9t-eRRb_mYunEAocaYksOTr=4sw+pExhMd9AvMx+zOw@mail.gmail.com>
-References: <1527499328-13213-1-git-send-email-yamada.masahiro@socionext.com>
- <1527499328-13213-25-git-send-email-yamada.masahiro@socionext.com>
- <dbd4d0dc92ba45dcae81cbab8ab8ba29@agner.ch>
- <CAK7LNAQ9t-eRRb_mYunEAocaYksOTr=4sw+pExhMd9AvMx+zOw@mail.gmail.com>
-Message-ID: <9a58f4b4e488a3bfc41aba39bc73f8ff@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.05 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[11];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-2.95)[99.80%];
-         ARC_NA(0.00)[]
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.06.2018 02:07, Masahiro Yamada wrote:
-> Hi Stefan
-> 
-> 2018-06-05 6:49 GMT+09:00 Stefan Agner <stefan@agner.ch>:
->> Hi Masahiro,
->>
->> On 28.05.2018 11:22, Masahiro Yamada wrote:
->>> This will be useful to specify the required compiler version,
->>> like this:
->>>
->>> config FOO
->>>         bool "Use Foo"
->>>         depends on GCC_VERSION >= 40800
->>>         help
->>>           This feature requires GCC 4.8 or newer.
->>>
->>
->> I tried using CC_IS_GCC today while using clang. It seems that it is set
->> to y despite I am using CC=clang.
->>
->> .config looks like this after config:
->>
->> ...
->> CONFIG_CC_IS_GCC=y
->> CONFIG_GCC_VERSION=40201
->> CONFIG_CC_IS_CLANG=y
->> CONFIG_CLANG_VERSION=60000
->> ...
->>
->>
->> I am using clang 6.0.0 on Arch Linux, which seems to return a version
->> when using gcc-version.sh:
->> ./scripts/gcc-version.sh clang | sed 's/^0*//'
->> 402
->>
->> I guess that should not be the case?
->>
-> 
-> 
-> What will 'clang --version' print on your machine?
 
-$ clang --version
-clang version 6.0.0 (tags/RELEASE_600/final)
-Target: x86_64-pc-linux-gnu
-Thread model: posix
-InstalledDir:
-/home/ags/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf/bin
 
-I use a symlink to clang in my cross compiler toolchain, that is why
-InstalledDir points to a GCC toolchain.
+> -----Original Message-----
+> From: Eric W. Biederman [mailto:ebiederm@xmission.com]
+> Sent: Tuesday, June 5, 2018 11:03 AM
+> To: Hatayama, Daisuke <d.hatayama@jp.fujitsu.com>
+> Cc: 'gregkh@linuxfoundation.org' <gregkh@linuxfoundation.org>;
+> 'tj@kernel.org' <tj@kernel.org>; Okajima, Toshiyuki 
+> <toshi.okajima@jp.fujitsu.com>; linux-kernel@vger.kernel.org;
+> 'ebiederm@aristanetworks.com' <ebiederm@aristanetworks.com>
+> Subject: Re: [CFT][PATCH] kernfs: Correct kernfs directory seeks.
+> 
+> ebiederm@xmission.com (Eric W. Biederman) writes:
+> 
+> > "Hatayama, Daisuke" <d.hatayama@jp.fujitsu.com> writes:
+> >
+> >>> Can you test this and please verify it fixes your issue?
+> >>
+> >> I tried this patch on top of v4.17 but the system fails to boot
+> >> without detecting root disks by dracut like this:
+> [snip]
+> 
+> >> OTOH, there's no issue on the pure v4.17 kernel.
+> >>
+> >> As above, ls /sys/module looks apparently good. But I guess any part of
+> >> behavior of getdentries() on sysfs must have changed, affecting the disk
+> >> detection...
+> >
+> > I haven't been able to reproduce this yet.  My test system boots fine.
+> > Which fedora are you testing on?
+> 
+> I reproduced something similar and fedora 28.  So I think I have found
+> and fixed the issue.  I believe I simply reversed the test at the end of
+> kernfs_dir_pos. AKA "<" instead of ">".
 
---
-Stefan
+Though too late, I used fedora 28 and RHEL7.5.
+
+I applied this fix to your patch and the system boot was successfully done.
+
+I'll start testing your patch from now on.
+
+> 
+> I am going to see if I can test my changes more throughly on this side
+> and then repost.
+> 
+> 
+> 
+> >>>  fs/kernfs/dir.c | 109
+> >>> ++++++++++++++++++++++++++++++++++----------------------
+> >>>  1 file changed, 67 insertions(+), 42 deletions(-)
+> >>>
+> >>> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> >>> index 89d1dc19340b..8148b5fec48d 100644
+> >>> --- a/fs/kernfs/dir.c
+> >>> +++ b/fs/kernfs/dir.c
+> >>> @@ -1584,53 +1584,75 @@ static int kernfs_dir_fop_release(struct inode
+> *inode,
+> >>> struct file *filp)
+> >>>  	return 0;
+> >>>  }
+> >>>
+> >>> +static struct kernfs_node *kernfs_dir_next(struct kernfs_node *pos)
+> >>> +{
+> >>> +	struct rb_node *node = rb_next(&pos->rb);
+> >>> +	return node ? rb_to_kn(node) : NULL;
+> >>> +}
+> >>> +
+> >>>  static struct kernfs_node *kernfs_dir_pos(const void *ns,
+> >>> -	struct kernfs_node *parent, loff_t hash, struct kernfs_node *pos)
+> >>> +	struct kernfs_node *parent, loff_t off, struct kernfs_node *saved)
+> >>>  {
+> >>> -	if (pos) {
+> >>> -		int valid = kernfs_active(pos) &&
+> >>> -			pos->parent == parent && hash == pos->hash;
+> >>> -		kernfs_put(pos);
+> >>> -		if (!valid)
+> >>> -			pos = NULL;
+> >>> -	}
+> >>> -	if (!pos && (hash > 1) && (hash < INT_MAX)) {
+> >>> -		struct rb_node *node = parent->dir.children.rb_node;
+> >>> -		while (node) {
+> >>> -			pos = rb_to_kn(node);
+> >>> -
+> >>> -			if (hash < pos->hash)
+> >>> -				node = node->rb_left;
+> >>> -			else if (hash > pos->hash)
+> >>> -				node = node->rb_right;
+> >>> -			else
+> >>> -				break;
+> >>> +	struct kernfs_node *pos;
+> >>> +	struct rb_node *node;
+> >>> +	unsigned int hash;
+> >>> +	const char *name = "";
+> >>> +
+> >>> +	/* Is off a valid name hash? */
+> >>> +	if ((off < 2) || (off >= INT_MAX))
+> >>> +		return NULL;
+> >>> +	hash = off;
+> >>> +
+> >>> +	/* Is the saved position usable? */
+> >>> +	if (saved) {
+> >>> +		/* Proper parent and hash? */
+> >>> +		if ((parent != saved->parent) || (saved->hash != hash)) {
+> >>> +			saved = NULL;
+> >>
+> >> name is uninitialized in this path.
+> >
+> > It is.  name is initialized to "" see above.
+> >
+> >>> +		} else {
+> >>> +			if (kernfs_active(saved))
+> >>> +				return saved;
+> >>> +			name = saved->name;
+> >>>  		}
+> >>>  	}
+> >>> -	/* Skip over entries which are dying/dead or in the wrong namespace
+> >>> */
+> >>> -	while (pos && (!kernfs_active(pos) || pos->ns != ns)) {
+> >>> -		struct rb_node *node = rb_next(&pos->rb);
+> >>> -		if (!node)
+> >>> -			pos = NULL;
+> >>> +
+> >>> +	/* Find the closest pos to the hash we are looking for */
+> >>> +	pos = NULL;
+> >>> +	node = parent->dir.children.rb_node;
+> >>> +	while (node) {
+> >>> +		int result;
+> >>> +
+> >>> +		pos = rb_to_kn(node);
+> >>> +		result = kernfs_name_compare(hash, name, ns, pos);
+> >>> +		if (result < 0)
+> >>> +			node = node->rb_left;
+> >>> +		else if (result > 0)
+> >>> +			node = node->rb_right;
+> >>>  		else
+> >>> -			pos = rb_to_kn(node);
+> >>> +			break;
+> >>>  	}
+> >>> +
+> >>> +	/* Ensure pos is at or beyond the target position */
+> >>> +	if (pos && (kernfs_name_compare(hash, name, ns, pos) < 0))
+>                                                     ^^^^^^^^^^^^^^^^
+>                                           should be > 0
+> >>> +		pos = kernfs_dir_next(pos);
+> >>> +
+> 
+> Eric
+> 
