@@ -1,57 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752615AbeFEPA0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:00:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49226 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752057AbeFEPAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:00:25 -0400
-Date: Tue, 5 Jun 2018 17:00:23 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc: linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
-        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com, han.xu@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Message-ID: <20180605170023.24eeaaaa@bbrezillon>
-In-Reply-To: <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
-        <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752663AbeFEPAl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:00:41 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:35985 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752057AbeFEPAj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:00:39 -0400
+X-Google-Smtp-Source: ADUXVKJLho+BnlM41r3fsH95L5B1MgwkRaFOykDT3//17thw2w9NzSXtrv6whhsXno8oQPrnQSPEgHJcHR9JBItgCWU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1528209304-3280-2-git-send-email-sudeep.holla@arm.com>
+References: <1528209304-3280-1-git-send-email-sudeep.holla@arm.com> <1528209304-3280-2-git-send-email-sudeep.holla@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 5 Jun 2018 17:00:33 +0200
+X-Google-Sender-Auth: Fwm0p_OttUN0sZ2A6yXkacLA1-s
+Message-ID: <CAJZ5v0gqQNHCuaeduQ8oQtGNUQcZxK171nDfyMNi1VVfnVsMqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] ACPI / PPTT: fix build when CONFIG_ACPI_PPTT is
+ not enabled
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 May 2018 15:14:32 +0200
-Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
-
-> +
-> +static void fsl_qspi_read_ahb(struct fsl_qspi *q, const struct spi_mem_op *op)
+On Tue, Jun 5, 2018 at 4:35 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> Though CONFIG_ACPI_PPTT is selected by platforms and nor user visible,
+> it may be useful to support the build with CONFIG_ACPI_PPTT disabled.
+>
+> This patch adds the missing dummy/boiler plate implementation to fix
+> the build.
+>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  include/linux/acpi.h      | 15 +++++++++++++++
+>  include/linux/cacheinfo.h |  2 +-
+>  2 files changed, 16 insertions(+), 1 deletion(-)
+>
+> Hi Rafael,
+>
+> If you are fine with this, can you provide Ack, so that we route this
+> through ARM64 tree where most of the ACPI PPTT support is present.
+>
+> Regards,
+> Sudeep
+>
+> v1->v2:
+>         - removed duplicate definition for acpi_find_last_cache_level
+>
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 8f2cdb0eca71..4b35a66383f9 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1299,8 +1299,23 @@ static inline int lpit_read_residency_count_address(u64 *address)
+>  }
+>  #endif
+>
+> +#ifdef CONFIG_ACPI_PPTT
+>  int find_acpi_cpu_topology(unsigned int cpu, int level);
+>  int find_acpi_cpu_topology_package(unsigned int cpu);
+>  int find_acpi_cpu_cache_topology(unsigned int cpu, int level);
+> +#else
+> +static inline int find_acpi_cpu_topology(unsigned int cpu, int level)
 > +{
-> +	static int seq;
-> +
-> +	/*
-> +	 * We want to avoid needing to invalidate the cache by issueing
-> +	 * a reset to the AHB and Serial Flash domain, as this needs
-> +	 * time. So we change the address on each read to trigger an
-> +	 * actual read operation on the flash. The actual address for
-> +	 * the flash memory is set by programming the LUT.
-> +	 */
-> +	memcpy_fromio(op->data.buf.in,
-> +		      q->ahb_addr +
-> +		      (seq * q->devtype_data->ahb_buf_size),
-> +		      op->data.nbytes);
-> +
-> +	seq = seq ? 0 : 1;
+> +       return -EINVAL;
 
-We should get rid of this hack. Yogesh, Han, do you know if there's an
-easy way to invalidate the AHB buffer without resetting the IP?
+Why -EINVAL?
 
 > +}
+> +static inline int find_acpi_cpu_topology_package(unsigned int cpu)
+> +{
+> +       return -EINVAL;
+> +}
+> +static inline int find_acpi_cpu_cache_topology(unsigned int cpu, int level)
+> +{
+> +       return -EINVAL;
+> +}
+> +#endif
+>
+>  #endif /*_LINUX_ACPI_H*/
+> diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+> index 89397e30e269..70e19bc6cc9f 100644
+> --- a/include/linux/cacheinfo.h
+> +++ b/include/linux/cacheinfo.h
+> @@ -98,7 +98,7 @@ struct cpu_cacheinfo *get_cpu_cacheinfo(unsigned int cpu);
+>  int init_cache_level(unsigned int cpu);
+>  int populate_cache_leaves(unsigned int cpu);
+>  int cache_setup_acpi(unsigned int cpu);
+> -#ifndef CONFIG_ACPI
+> +#ifndef CONFIG_ACPI_PPTT
+>  /*
+>   * acpi_find_last_cache_level is only called on ACPI enabled
+>   * platforms using the PPTT for topology. This means that if
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
