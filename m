@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeFERyv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:54:51 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50798 "EHLO
+        id S1753369AbeFERyu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:54:50 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50806 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752989AbeFERyo (ORCPT
+        with ESMTP id S1753014AbeFERyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:54:44 -0400
+        Tue, 5 Jun 2018 13:54:45 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        linux-pwm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 6/8] pwm: cros-ec: Switch to SPDX identifier.
-Date: Tue,  5 Jun 2018 19:54:27 +0200
-Message-Id: <20180605175429.9072-7-enric.balletbo@collabora.com>
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH v2 7/8] extcon: usbc-cros-ec: Switch to SPDX identifier.
+Date: Tue,  5 Jun 2018 19:54:28 +0200
+Message-Id: <20180605175429.9072-8-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605175429.9072-1-enric.balletbo@collabora.com>
 References: <20180605175429.9072-1-enric.balletbo@collabora.com>
@@ -27,31 +28,39 @@ management.
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
-Changes in v2: None
+Changes in v2:
+- [8/9] Fixed wrong copyright year.
 
- drivers/pwm/pwm-cros-ec.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/extcon/extcon-usbc-cros-ec.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/pwm/pwm-cros-ec.c b/drivers/pwm/pwm-cros-ec.c
-index 9c13694eaa24..9bf4cde86765 100644
---- a/drivers/pwm/pwm-cros-ec.c
-+++ b/drivers/pwm/pwm-cros-ec.c
-@@ -1,12 +1,7 @@
--/*
-- * Copyright (C) 2016 Google, Inc
+diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
+index 6721ab01fe7d..ef5a23e46e71 100644
+--- a/drivers/extcon/extcon-usbc-cros-ec.c
++++ b/drivers/extcon/extcon-usbc-cros-ec.c
+@@ -1,18 +1,8 @@
+-/**
+- * drivers/extcon/extcon-usbc-cros-ec - ChromeOS Embedded Controller extcon
 - *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2, as published by
-- * the Free Software Foundation.
+- * Copyright (C) 2017 Google, Inc
+- * Author: Benson Leung <bleung@chromium.org>
 - *
-- * Expose a PWM controlled by the ChromeOS EC to the host processor.
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
 - */
-+// SPDX-License-Identifier: GPL-2.0
-+// Expose a PWM controlled by the ChromeOS EC to the host processor.
++// SPDX-License-Identifier: GPL-2.0+
++// ChromeOS Embedded Controller extcon
 +//
-+// Copyright (C) 2016 Google, Inc.
++// Copyright (C) 2017 Google, Inc.
++// Author: Benson Leung <bleung@chromium.org>
  
- #include <linux/module.h>
- #include <linux/mfd/cros_ec.h>
+ #include <linux/extcon-provider.h>
+ #include <linux/kernel.h>
 -- 
 2.17.1
