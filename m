@@ -1,61 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752169AbeFEOMH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:12:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:56550 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752021AbeFEOMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:12:05 -0400
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 1/3] Revert "arm64: topology: divorce MC scheduling domain
- from core_siblings"
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
- <1528206938-2702-1-git-send-email-sudeep.holla@arm.com>
- <CAMuHMdVPRLt34SUDsbbHvEG2OzvbJoT6id7Rb_2j32=zb1TuKg@mail.gmail.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <36920292-9a04-9fe6-8a85-cc50b484dce5@arm.com>
-Date: Tue, 5 Jun 2018 15:12:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752034AbeFEONX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:13:23 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38962 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbeFEONW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 10:13:22 -0400
+X-Google-Smtp-Source: ADUXVKKO7L0QYpOQCWikBmAR/lyz1Z7ypVvb4q4W+Kuu5P+b2ZwDEXzs35R14HvUU4naQgtyiPvpNw==
+Date: Tue, 5 Jun 2018 16:13:17 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>
+Subject: Re: [PATCH v5 00/10] track CPU utilization
+Message-ID: <20180605141317.GJ16081@localhost.localdomain>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
+ <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
+ <20180605121153.GD16081@localhost.localdomain>
+ <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
+ <20180605131518.GG16081@localhost.localdomain>
+ <20180605140101.GE12193@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVPRLt34SUDsbbHvEG2OzvbJoT6id7Rb_2j32=zb1TuKg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605140101.GE12193@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/06/18 15:01, Quentin Perret wrote:
+> On Tuesday 05 Jun 2018 at 15:15:18 (+0200), Juri Lelli wrote:
+> > On 05/06/18 14:05, Quentin Perret wrote:
+> > > On Tuesday 05 Jun 2018 at 14:11:53 (+0200), Juri Lelli wrote:
+> > > > Hi Quentin,
+> > > > 
+> > > > On 05/06/18 11:57, Quentin Perret wrote:
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > What about the diff below (just a quick hack to show the idea) applied
+> > > > > on tip/sched/core ?
+> > > > > 
+> > > > > ---8<---
+> > > > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > > > > index a8ba6d1f262a..23a4fb1c2c25 100644
+> > > > > --- a/kernel/sched/cpufreq_schedutil.c
+> > > > > +++ b/kernel/sched/cpufreq_schedutil.c
+> > > > > @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+> > > > >  	sg_cpu->util_dl  = cpu_util_dl(rq);
+> > > > >  }
+> > > > >  
+> > > > > +unsigned long scale_rt_capacity(int cpu);
+> > > > >  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> > > > >  {
+> > > > >  	struct rq *rq = cpu_rq(sg_cpu->cpu);
+> > > > > +	int cpu = sg_cpu->cpu;
+> > > > > +	unsigned long util, dl_bw;
+> > > > >  
+> > > > >  	if (rq->rt.rt_nr_running)
+> > > > >  		return sg_cpu->max;
+> > > > > @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+> > > > >  	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+> > > > >  	 * ready for such an interface. So, we only do the latter for now.
+> > > > >  	 */
+> > > > > -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+> > > > > +	util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
+> > > > 
+> > > > Sorry to be pedantinc, but this (ATM) includes DL avg contribution, so,
+> > > > since we use max below, we will probably have the same problem that we
+> > > > discussed on Vincent's approach (overestimation of DL contribution while
+> > > > we could use running_bw).
+> > > 
+> > > Ah no, you're right, this isn't great for long running deadline tasks.
+> > > We should definitely account for the running_bw here, not the dl avg...
+> > > 
+> > > I was trying to address the issue of RT stealing time from CFS here, but
+> > > the DL integration isn't quite right which this patch as-is, I agree ...
+> > > 
+> > > > 
+> > > > > +	util >>= SCHED_CAPACITY_SHIFT;
+> > > > > +	util = arch_scale_cpu_capacity(NULL, cpu) - util;
+> > > > > +	util += sg_cpu->util_cfs;
+> > > > > +	dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+> > > > 
+> > > > Why this_bw instead of running_bw?
+> > > 
+> > > So IIUC, this_bw should basically give you the absolute reservation (== the
+> > > sum of runtime/deadline ratios of all DL tasks on that rq).
+> > 
+> > Yep.
+> > 
+> > > The reason I added this max is because I'm still not sure to understand
+> > > how we can safely drop the freq below that point ? If we don't guarantee
+> > > to always stay at least at the freq required by DL, aren't we risking to
+> > > start a deadline tasks stuck at a low freq because of rate limiting ? In
+> > > this case, if that tasks uses all of its runtime then you might start
+> > > missing deadlines ...
+> > 
+> > We decided to avoid (software) rate limiting for DL with e97a90f7069b
+> > ("sched/cpufreq: Rate limits for SCHED_DEADLINE").
+> 
+> Right, I spotted that one, but yeah you could also be limited by HW ...
+> 
+> > 
+> > > My feeling is that the only safe thing to do is to guarantee to never go
+> > > below the freq required by DL, and to optimistically add CFS tasks
+> > > without raising the OPP if we have good reasons to think that DL is
+> > > using less than it required (which is what we should get by using
+> > > running_bw above I suppose). Does that make any sense ?
+> > 
+> > Then we can't still avoid the hardware limits, so using running_bw is a
+> > trade off between safety (especially considering soft real-time
+> > scenarios) and energy consumption (which seems to be working in
+> > practice).
+> 
+> Ok, I see ... Have you guys already tried something like my patch above
+> (keeping the freq >= this_bw) in real world use cases ? Is this costing
+> that much energy in practice ? If we fill the gaps left by DL (when it
 
+IIRC, Claudio (now Cc-ed) did experiment a bit with both approaches, so
+he might add some numbers to my words above. I didn't (yet). But, please
+consider that I might be reserving (for example) 50% of bandwidth for my
+heavy and time sensitive task and then have that task wake up only once
+in a while (but I'll be keeping clock speed up for the whole time). :/
 
-On 05/06/18 15:09, Geert Uytterhoeven wrote:
-> Hi Sudeep,
+> doesn't use all the runtime) with CFS tasks that might no be so bad ...
 > 
-> On Tue, Jun 5, 2018 at 3:55 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> This reverts commit 37c3ec2d810f87eac73822f76b30391a83bded19.
->>
->> Currently on ARM64 platforms, we don't update the CPU topology masks
->> on each hotplug operation. However, the updates to cpu_coregroup_mask
-> 
-> I would add
-> 
->     "leading to e.g. a system hang during system suspend."
-> 
-> to avoid people thinking this is purely a small bookkeeping issue without  any
-> percussions.
-> 
+> Thank you very much for taking the time to explain all this, I really
+> appreciate :-)
 
-Sure, thanks. Sorry for missing that.
+Sure. Thanks for participating to the discussion!
 
--- 
-Regards,
-Sudeep
+Best,
+
+- Juri
