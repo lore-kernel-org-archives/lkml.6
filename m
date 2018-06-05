@@ -1,19 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753156AbeFERE6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33928 "EHLO mail.kernel.org"
+        id S1753166AbeFERFB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753087AbeFERE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:56 -0400
+        id S1753087AbeFERE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:04:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Johan Hovold <johan@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 03/61] USB: serial: cp210x: use tcflag_t to fix incompatible pointer type
-Date: Tue,  5 Jun 2018 19:01:24 +0200
-Message-Id: <20180605170117.849278044@linuxfoundation.org>
+        stable@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 04/61] Revert "pinctrl: msm: Use dynamic GPIO numbering"
+Date: Tue,  5 Jun 2018 19:01:25 +0200
+Message-Id: <20180605170117.895562304@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -29,61 +32,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 009615ab7fd4e43b82a38e4e6adc5e23c1ee567f upstream.
+This reverts commit 0bd77073e693e8f93ff6ddba65a9f426153221cb which is
+commit a7aa75a2a7dba32594291a71c3704000a2fd7089 upstream.
 
-On sparc32, tcflag_t is unsigned long, unlike all other architectures:
+There's been too many complaints about this.  Personally I think it's
+going to blow up when people hit this in mainline, but hey, it's not my
+systems.  At least we don't have to backport the mess to the stable
+kernels to give them some more life to live unscathed :)
 
-    drivers/usb/serial/cp210x.c: In function 'cp210x_get_termios':
-    drivers/usb/serial/cp210x.c:717:3: warning: passing argument 2 of 'cp210x_get_termios_port' from incompatible pointer type
-       cp210x_get_termios_port(tty->driver_data,
-       ^
-    drivers/usb/serial/cp210x.c:35:13: note: expected 'unsigned int *' but argument is of type 'tcflag_t *'
-     static void cp210x_get_termios_port(struct usb_serial_port *port,
-		 ^
-
-Consistently use tcflag_t to fix this.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Reported-by: Timur Tabi <timur@codeaurora.org>
+Reported-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/cp210x.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -33,7 +33,7 @@ static int cp210x_open(struct tty_struct
- static void cp210x_close(struct usb_serial_port *);
- static void cp210x_get_termios(struct tty_struct *, struct usb_serial_port *);
- static void cp210x_get_termios_port(struct usb_serial_port *port,
--	unsigned int *cflagp, unsigned int *baudp);
-+	tcflag_t *cflagp, unsigned int *baudp);
- static void cp210x_change_speed(struct tty_struct *, struct usb_serial_port *,
- 							struct ktermios *);
- static void cp210x_set_termios(struct tty_struct *, struct usb_serial_port *,
-@@ -728,7 +728,7 @@ static void cp210x_get_termios(struct tt
- 			&tty->termios.c_cflag, &baud);
- 		tty_encode_baud_rate(tty, baud, baud);
- 	} else {
--		unsigned int cflag;
-+		tcflag_t cflag;
- 		cflag = 0;
- 		cp210x_get_termios_port(port, &cflag, &baud);
- 	}
-@@ -739,10 +739,10 @@ static void cp210x_get_termios(struct tt
-  * This is the heart of cp210x_get_termios which always uses a &usb_serial_port.
-  */
- static void cp210x_get_termios_port(struct usb_serial_port *port,
--	unsigned int *cflagp, unsigned int *baudp)
-+	tcflag_t *cflagp, unsigned int *baudp)
- {
- 	struct device *dev = &port->dev;
--	unsigned int cflag;
-+	tcflag_t cflag;
- 	struct cp210x_flow_ctl flow_ctl;
- 	u32 baud;
- 	u16 bits;
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -790,7 +790,7 @@ static int msm_gpio_init(struct msm_pinc
+ 		return -EINVAL;
+ 
+ 	chip = &pctrl->chip;
+-	chip->base = -1;
++	chip->base = 0;
+ 	chip->ngpio = ngpio;
+ 	chip->label = dev_name(pctrl->dev);
+ 	chip->parent = pctrl->dev;
