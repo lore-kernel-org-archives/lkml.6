@@ -1,80 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751769AbeFEIxZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:53:25 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58302 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751532AbeFEIxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:53:24 -0400
-Date: Tue, 5 Jun 2018 11:53:04 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Thibaut Robert <thibaut.robert@gmail.com>
-Cc: devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Aditya Shankar <aditya.shankar@microchip.com>
-Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
- warnings
-Message-ID: <20180605085304.jycb5l3gomwlujq5@mwanda>
-References: <20180529191143.13081-1-thibaut.robert@gmail.com>
- <20180530111725.gmigyddsp2i6mgzw@mwanda>
- <20180604193250.GB32753@L80496>
- <20180605073631.cvp2iuef4yb636jz@mwanda>
- <20180605083325.GA6965@L80496>
+        id S1751699AbeFEIyF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:54:05 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50656 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751354AbeFEIyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:54:03 -0400
+Date: Tue, 5 Jun 2018 10:54:04 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/8] x86/microcode/AMD: Add microcode container data
+ checking functions
+Message-ID: <20180605085403.GA1617@zn.tnic>
+References: <cover.1526767245.git.mail@maciej.szmigiero.name>
+ <28d0439f64e03e3c8192e1f5280f01a5729698fc.1526767245.git.mail@maciej.szmigiero.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180605083325.GA6965@L80496>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8914 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806050108
+In-Reply-To: <28d0439f64e03e3c8192e1f5280f01a5729698fc.1526767245.git.mail@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:33:25AM +0200, Thibaut Robert wrote:
-> Le mardi 05 juin 2018 à 10:36:31 (+0300), Dan Carpenter a écrit :
-> > On Mon, Jun 04, 2018 at 09:32:50PM +0200, Thibaut Robert wrote:
-> > > Le mercredi 30 mai 2018 à 14:17:25 (+0300), Dan Carpenter a écrit :
-> > > > On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert wrote:
-> > > > > diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > > > > index e248702ee519..745bf5ca2622 100644
-> > > > > --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > > > > +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> > > > > @@ -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device *dev, u8 *buff, u32 size)
-> > > > >  
-> > > > >  	freq = ieee80211_channel_to_frequency(curr_channel, NL80211_BAND_2GHZ);
-> > > > >  
-> > > > > -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
-> > > > > +	if (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {
-> > > > 
-> > > > "buff" comes from the network, it's going to be little endian, not cpu
-> > > > endian.  The rest of the function treats it as CPU endian but I'm pretty
-> > > > sure it's wrong...
-> > > buff comes from the network but we are looking at single byte here.
-> > > ieee80211_is_action expects an le16, so we I added this to extend an u8
-> > > to an le16. Is this incorrect ?
-> > > 
-> > > Or maybe we the buff has the second byte ? but that I can't tell. 
-> > 
-> > You raise a good point that I hadn't seen. The original code is clearly
-> > buggy.  But your fix isn't correct either...  The other thing to
-> > consider is that cpu_to_le16() is basically a cast to u16 on x86 so it's
-> > a no-op here.
-> The sparse warning is clearly spotting a real issue. I tried to at least
-> have big endian handle correctly the 0-255 case. I am willing to drop
-> the change (since I agree it's not very satisfying and will mask an issue), 
-> but may I ask you to explain how it is wrong ? How would you correctly expand 
-> an u8 to __le16 ? I think in big endian we need to swap the bytes.
+On Sun, May 20, 2018 at 12:07:16AM +0200, Maciej S. Szmigiero wrote:
+> Add verify_container(), verify_equivalence_table(), verify_patch_section()
+> and verify_patch() functions to the AMD microcode update driver.
+> 
+> These functions check whether a passed buffer contains the relevant
+> structure, whether it isn't truncated and (for actual microcode patches)
+> whether the size of a patch is not too large for a particular CPU family.
+> By adding these checks as separate functions the actual microcode loading
+> code won't get interspersed with a lot of checks and so will be more
+> readable.
+> 
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> ---
+>  arch/x86/kernel/cpu/microcode/amd.c | 148 +++++++++++++++++++++++++++-
+>  1 file changed, 145 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+> index dc8ea9a9d962..f9485ff7183c 100644
+> --- a/arch/x86/kernel/cpu/microcode/amd.c
+> +++ b/arch/x86/kernel/cpu/microcode/amd.c
+> @@ -73,6 +73,150 @@ static u16 find_equiv_id(struct equiv_cpu_entry *equiv_table, u32 sig)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Checks whether there is a valid microcode container file at the beginning
 
-You're right that on big endian we would need to swap the bytes and
-cpu_to_le16() does that.
+"Check whether... " imperative tone. Ditto for the rest.
 
-regards,
-dan carpenter
+> + * of a passed buffer @buf of size @size.
+
+@buf_size
+
+Also, fix the other comments too.
+
+> + * If @early is set this function does not print errors which makes it
+> + * usable by the early microcode loader.
+> + */
+> +static bool verify_container(const u8 *buf, size_t buf_size, bool early)
+
+...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
