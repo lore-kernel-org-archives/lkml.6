@@ -1,375 +1,288 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751855AbeFEMsC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:48:02 -0400
-Received: from mail02.ausil.us ([74.119.218.151]:33096 "EHLO mail.ausil.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751667AbeFEMsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:48:00 -0400
-From: Dennis Gilmore <dennis@ausil.us>
-To: linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
-        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Cc: Dennis Gilmore <dennis@ausil.us>
-Subject: [PATCH V2] ARM: dts: armada388-helios4
-Date: Tue,  5 Jun 2018 07:47:38 -0500
-Message-Id: <20180605124738.24844-1-dennis@ausil.us>
-X-Mailer: git-send-email 2.17.1
+        id S1751879AbeFEMsc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:48:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34752 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751667AbeFEMsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:48:31 -0400
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To: acme@kernel.org
+Cc: alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, mpe@ellerman.id.au,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH] perf script powerpc: Python script for hypervisor call statistics
+Date: Tue,  5 Jun 2018 18:18:01 +0530
+X-Mailer: git-send-email 2.14.4
+X-TM-AS-GCONF: 00
+x-cbid: 18060512-0012-0000-0000-0000027B5D34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060512-0013-0000-0000-000020AC6223
+Message-Id: <20180605124801.17210-1-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806050148
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helios4 is a Armada388 based nas board designed by SolidRun and
-based on their SOM. It is sold by kobol.io the dts file came from
-https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
-I added a SPDX license line to match the clearfog it says it was based
-on and a compatible line for "kobol,helios4"
+Add python script to show hypervisor call statistics. Ex,
 
-Signed-off-by: Dennis Gilmore <dennis@ausil.us>
+  # perf record -a -e "{powerpc:hcall_entry,powerpc:hcall_exit}"
+  # perf script -s scripts/python/powerpc-hcalls.py
+    hcall                            count   min(ns)   max(ns)   avg(ns)
+    --------------------------------------------------------------------
+    H_RANDOM                            82       838      1164       904
+    H_PUT_TCE                           47      1078      5928      2003
+    H_EOI                              266      1336      3546      1654
+    H_ENTER                             28      1646      4038      1952
+    H_PUT_TCE_INDIRECT                 230      2166     18168      6109
+    H_IPI                              238      1072      3232      1688
+    H_SEND_LOGICAL_LAN                  42      5488     21366      7694
+    H_STUFF_TCE                        294       986      6210      3591
+    H_XIRR                             266      2286      6990      3783
+    H_PROTECT                           10      2196      3556      2555
+    H_VIO_SIGNAL                       294      1028      2784      1311
+    H_ADD_LOGICAL_LAN_BUFFER            53      1978      3450      2600
+    H_SEND_CRQ                          77      1762      7240      2447
 
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 ---
+ .../perf/scripts/python/bin/powerpc-hcalls-record  |   2 +
+ .../perf/scripts/python/bin/powerpc-hcalls-report  |   2 +
+ tools/perf/scripts/python/powerpc-hcalls.py        | 200 +++++++++++++++++++++
+ 3 files changed, 204 insertions(+)
+ create mode 100644 tools/perf/scripts/python/bin/powerpc-hcalls-record
+ create mode 100644 tools/perf/scripts/python/bin/powerpc-hcalls-report
+ create mode 100644 tools/perf/scripts/python/powerpc-hcalls.py
 
-changes since first submission
-change solidrun to kobol in compatible line based on feedback
----
- arch/arm/boot/dts/Makefile               |   1 +
- arch/arm/boot/dts/armada-388-helios4.dts | 315 +++++++++++++++++++++++
- 2 files changed, 316 insertions(+)
- create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 7e2424957809..490bfd586198 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
- 	armada-388-clearfog-pro.dtb \
- 	armada-388-db.dtb \
- 	armada-388-gp.dtb \
-+	armada-388-helios4.dtb \
- 	armada-388-rd.dtb
- dtb-$(CONFIG_MACH_ARMADA_39X) += \
- 	armada-398-db.dtb
-diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
+diff --git a/tools/perf/scripts/python/bin/powerpc-hcalls-record b/tools/perf/scripts/python/bin/powerpc-hcalls-record
 new file mode 100644
-index 000000000000..16026bedc380
+index 000000000000..b7402aa9147d
 --- /dev/null
-+++ b/arch/arm/boot/dts/armada-388-helios4.dts
-@@ -0,0 +1,315 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Device Tree file for Helios4
-+ * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
-+ *
-+ *  Copyright (C) 2017
-+ *
-+ */
++++ b/tools/perf/scripts/python/bin/powerpc-hcalls-record
+@@ -0,0 +1,2 @@
++#!/bin/bash
++perf record -e "{powerpc:hcall_entry,powerpc:hcall_exit}" $@
+diff --git a/tools/perf/scripts/python/bin/powerpc-hcalls-report b/tools/perf/scripts/python/bin/powerpc-hcalls-report
+new file mode 100644
+index 000000000000..dd32ad7465f6
+--- /dev/null
++++ b/tools/perf/scripts/python/bin/powerpc-hcalls-report
+@@ -0,0 +1,2 @@
++#!/bin/bash
++perf script $@ -s "$PERF_EXEC_PATH"/scripts/python/powerpc-hcalls.py
+diff --git a/tools/perf/scripts/python/powerpc-hcalls.py b/tools/perf/scripts/python/powerpc-hcalls.py
+new file mode 100644
+index 000000000000..ff732118cae8
+--- /dev/null
++++ b/tools/perf/scripts/python/powerpc-hcalls.py
+@@ -0,0 +1,200 @@
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Copyright (C) 2018 Ravi Bangoria, IBM Corporation
++#
++# Hypervisor call statisics
 +
-+/dts-v1/;
-+#include "armada-388.dtsi"
-+#include "armada-38x-solidrun-microsom.dtsi"
++import os
++import sys
 +
-+/ {
-+	model = "Helios4";
-+	compatible = "kobol,helios4", "marvell,armada388",
-+		"marvell,armada385", "marvell,armada380";
++sys.path.append(os.environ['PERF_EXEC_PATH'] + \
++	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
 +
-+	memory {
-+		device_type = "memory";
-+		reg = <0x00000000 0x80000000>; /* 2 GB */
-+	};
++from perf_trace_context import *
++from Core import *
++from Util import *
 +
-+	aliases {
-+		/* So that mvebu u-boot can update the MAC addresses */
-+		ethernet1 = &eth0;
-+	};
++# output: {
++#	opcode: {
++#		'min': minimum time nsec
++#		'max': maximum time nsec
++#		'time': average time nsec
++#		'cnt': counter
++#	} ...
++# }
++output = {}
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
++# d_enter: {
++#	cpu: {
++#		opcode: nsec
++#	} ...
++# }
++d_enter = {}
 +
-+	reg_12v: regulator-12v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "power_brick_12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-always-on;
-+	};
++hcall_table = {
++	4: 'H_REMOVE',
++	8: 'H_ENTER',
++	12: 'H_READ',
++	16: 'H_CLEAR_MOD',
++	20: 'H_CLEAR_REF',
++	24: 'H_PROTECT',
++	28: 'H_GET_TCE',
++	32: 'H_PUT_TCE',
++	36: 'H_SET_SPRG0',
++	40: 'H_SET_DABR',
++	44: 'H_PAGE_INIT',
++	48: 'H_SET_ASR',
++	52: 'H_ASR_ON',
++	56: 'H_ASR_OFF',
++	60: 'H_LOGICAL_CI_LOAD',
++	64: 'H_LOGICAL_CI_STORE',
++	68: 'H_LOGICAL_CACHE_LOAD',
++	72: 'H_LOGICAL_CACHE_STORE',
++	76: 'H_LOGICAL_ICBI',
++	80: 'H_LOGICAL_DCBF',
++	84: 'H_GET_TERM_CHAR',
++	88: 'H_PUT_TERM_CHAR',
++	92: 'H_REAL_TO_LOGICAL',
++	96: 'H_HYPERVISOR_DATA',
++	100: 'H_EOI',
++	104: 'H_CPPR',
++	108: 'H_IPI',
++	112: 'H_IPOLL',
++	116: 'H_XIRR',
++	120: 'H_MIGRATE_DMA',
++	124: 'H_PERFMON',
++	220: 'H_REGISTER_VPA',
++	224: 'H_CEDE',
++	228: 'H_CONFER',
++	232: 'H_PROD',
++	236: 'H_GET_PPP',
++	240: 'H_SET_PPP',
++	244: 'H_PURR',
++	248: 'H_PIC',
++	252: 'H_REG_CRQ',
++	256: 'H_FREE_CRQ',
++	260: 'H_VIO_SIGNAL',
++	264: 'H_SEND_CRQ',
++	272: 'H_COPY_RDMA',
++	276: 'H_REGISTER_LOGICAL_LAN',
++	280: 'H_FREE_LOGICAL_LAN',
++	284: 'H_ADD_LOGICAL_LAN_BUFFER',
++	288: 'H_SEND_LOGICAL_LAN',
++	292: 'H_BULK_REMOVE',
++	304: 'H_MULTICAST_CTRL',
++	308: 'H_SET_XDABR',
++	312: 'H_STUFF_TCE',
++	316: 'H_PUT_TCE_INDIRECT',
++	332: 'H_CHANGE_LOGICAL_LAN_MAC',
++	336: 'H_VTERM_PARTNER_INFO',
++	340: 'H_REGISTER_VTERM',
++	344: 'H_FREE_VTERM',
++	348: 'H_RESET_EVENTS',
++	352: 'H_ALLOC_RESOURCE',
++	356: 'H_FREE_RESOURCE',
++	360: 'H_MODIFY_QP',
++	364: 'H_QUERY_QP',
++	368: 'H_REREGISTER_PMR',
++	372: 'H_REGISTER_SMR',
++	376: 'H_QUERY_MR',
++	380: 'H_QUERY_MW',
++	384: 'H_QUERY_HCA',
++	388: 'H_QUERY_PORT',
++	392: 'H_MODIFY_PORT',
++	396: 'H_DEFINE_AQP1',
++	400: 'H_GET_TRACE_BUFFER',
++	404: 'H_DEFINE_AQP0',
++	408: 'H_RESIZE_MR',
++	412: 'H_ATTACH_MCQP',
++	416: 'H_DETACH_MCQP',
++	420: 'H_CREATE_RPT',
++	424: 'H_REMOVE_RPT',
++	428: 'H_REGISTER_RPAGES',
++	432: 'H_DISABLE_AND_GETC',
++	436: 'H_ERROR_DATA',
++	440: 'H_GET_HCA_INFO',
++	444: 'H_GET_PERF_COUNT',
++	448: 'H_MANAGE_TRACE',
++	468: 'H_FREE_LOGICAL_LAN_BUFFER',
++	472: 'H_POLL_PENDING',
++	484: 'H_QUERY_INT_STATE',
++	580: 'H_ILLAN_ATTRIBUTES',
++	592: 'H_MODIFY_HEA_QP',
++	596: 'H_QUERY_HEA_QP',
++	600: 'H_QUERY_HEA',
++	604: 'H_QUERY_HEA_PORT',
++	608: 'H_MODIFY_HEA_PORT',
++	612: 'H_REG_BCMC',
++	616: 'H_DEREG_BCMC',
++	620: 'H_REGISTER_HEA_RPAGES',
++	624: 'H_DISABLE_AND_GET_HEA',
++	628: 'H_GET_HEA_INFO',
++	632: 'H_ALLOC_HEA_RESOURCE',
++	644: 'H_ADD_CONN',
++	648: 'H_DEL_CONN',
++	664: 'H_JOIN',
++	676: 'H_VASI_STATE',
++	688: 'H_ENABLE_CRQ',
++	696: 'H_GET_EM_PARMS',
++	720: 'H_SET_MPP',
++	724: 'H_GET_MPP',
++	748: 'H_HOME_NODE_ASSOCIATIVITY',
++	756: 'H_BEST_ENERGY',
++	764: 'H_XIRR_X',
++	768: 'H_RANDOM',
++	772: 'H_COP',
++	788: 'H_GET_MPP_X',
++	796: 'H_SET_MODE',
++	61440: 'H_RTAS',
++}
 +
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_12v>;
-+	};
++def hcall_table_loockup(opcode):
++	if (hcall_table.has_key(opcode)):
++		return hcall_table[opcode]
++	else:
++		return opcode
 +
-+	reg_5p0v_hdd: regulator-5v-hdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V_HDD";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_12v>;
-+	};
++print_ptrn = '%-28s%10s%10s%10s%10s'
 +
-+	reg_5p0v_usb: regulator-5v-usb {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB-PWR";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		enable-active-high;
-+		gpio = <&expander0 6 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&reg_12v>;
-+	};
++def trace_end():
++	print print_ptrn % ('hcall', 'count', 'min(ns)', 'max(ns)', 'avg(ns)')
++	print '-' * 68
++	for opcode in output:
++		h_name = hcall_table_loockup(opcode)
++		time = output[opcode]['time']
++		cnt = output[opcode]['cnt']
++		min_t = output[opcode]['min']
++		max_t = output[opcode]['max']
 +
-+	system-leds {
-+		compatible = "gpio-leds";
-+		status-led {
-+			label = "helios4:green:status";
-+			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "on";
-+		};
++		print print_ptrn % (h_name, cnt, min_t, max_t, time/cnt)
 +
-+		fault-led {
-+			label = "helios4:red:fault";
-+			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
-+			default-state = "keep";
-+		};
-+	};
++def powerpc__hcall_exit(name, context, cpu, sec, nsec, pid, comm, callchain,
++			opcode, retval):
++	if (d_enter.has_key(cpu) and d_enter[cpu].has_key(opcode)):
++		diff = nsecs(sec, nsec) - d_enter[cpu][opcode]
 +
-+	io-leds {
-+		compatible = "gpio-leds";
-+		sata1-led {
-+			label = "helios4:green:ata1";
-+			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata1";
-+			default-state = "off";
-+		};
-+		sata2-led {
-+			label = "helios4:green:ata2";
-+			gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata2";
-+			default-state = "off";
-+		};
-+		sata3-led {
-+			label = "helios4:green:ata3";
-+			gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata3";
-+			default-state = "off";
-+		};
-+		sata4-led {
-+			label = "helios4:green:ata4";
-+			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata4";
-+			default-state = "off";
-+		};
-+		usb-led {
-+			label = "helios4:green:usb";
-+			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "usb-host";
-+			default-state = "off";
-+		};
-+	};
++		if (output.has_key(opcode)):
++			output[opcode]['time'] += diff
++			output[opcode]['cnt'] += 1
++			if (output[opcode]['min'] > diff):
++				output[opcode]['min'] = diff
++			if (output[opcode]['max'] < diff):
++				output[opcode]['max'] = diff
++		else:
++			output[opcode] = {
++				'time': diff,
++				'cnt': 1,
++				'min': diff,
++				'max': diff,
++			}
 +
-+	fan1: j10-pwm {
-+		compatible = "pwm-fan";
-+		pwms = <&gpio1 9 40000>;	/* Target freq:25 kHz */
-+	};
++		del d_enter[cpu][opcode]
++#	else:
++#		print "Can't find matching hcall_enter event. Ignoring sample"
 +
-+	fan2: j17-pwm {
-+		compatible = "pwm-fan";
-+		pwms = <&gpio1 23 40000>;	/* Target freq:25 kHz */
-+	};
-+
-+	usb2_phy: usb2-phy {
-+		compatible = "usb-nop-xceiv";
-+		vbus-regulator = <&reg_5p0v_usb>;
-+	};
-+
-+	usb3_phy: usb3-phy {
-+		compatible = "usb-nop-xceiv";
-+		//vbus-regulator = <&reg_5p0v_usb>;
-+	};
-+
-+	soc {
-+		internal-regs {
-+			i2c@11000 {
-+				clock-frequency = <400000>;
-+				pinctrl-0 = <&i2c0_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+
-+				/*
-+				 * PCA9655 GPIO expander, up to 1MHz clock.
-+				 *  0-Board Revision bit 0 #
-+				 *  1-Board Revision bit 1 #
-+				 *  5-USB3 overcurrent
-+				 *  6-USB3 power
-+				 */
-+				expander0: gpio-expander@20 {
-+					/*
-+					 * This is how it should be:
-+					 * compatible = "onnn,pca9655",
-+					 *	 "nxp,pca9555";
-+					 * but you can't do this because of
-+					 * the way I2C works.
-+					 */
-+					compatible = "nxp,pca9555";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					reg = <0x20>;
-+					pinctrl-names = "default";
-+					pinctrl-0 = <&pca0_pins>;
-+					interrupt-parent = <&gpio0>;
-+					interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
-+					interrupt-controller;
-+					#interrupt-cells = <2>;
-+
-+					board_rev_bit_0 {
-+						gpio-hog;
-+						gpios = <0 GPIO_ACTIVE_LOW>;
-+						input;
-+						line-name = "board-rev-0";
-+					};
-+					board_rev_bit_1 {
-+						gpio-hog;
-+						gpios = <1 GPIO_ACTIVE_LOW>;
-+						input;
-+						line-name = "board-rev-1";
-+					};
-+					usb3_ilimit {
-+						gpio-hog;
-+						gpios = <5 GPIO_ACTIVE_HIGH>;
-+						input;
-+						line-name = "usb-overcurrent-status";
-+					};
-+				};
-+
-+				temp_sensor: temp@4c {
-+					compatible = "ti,lm75";
-+					reg = <0x4c>;
-+					vcc-supply = <&reg_3p3v>;
-+				};
-+			};
-+
-+			i2c@11100 {
-+				/*
-+				 * External I2C Bus for user peripheral
-+				 */
-+				clock-frequency = <400000>;
-+				pinctrl-0 = <&helios_i2c1_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+			};
-+
-+			sata@a8000 {
-+				status = "okay";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sata0: sata-port@0 {
-+					reg = <0>;
-+				};
-+
-+				sata1: sata-port@1 {
-+					reg = <1>;
-+				};
-+			};
-+
-+			sata@e0000 {
-+				status = "okay";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sata2: sata-port@0 {
-+					reg = <0>;
-+				};
-+
-+				sata3: sata-port@1 {
-+					reg = <1>;
-+				};
-+			};
-+
-+			spi@10680 {
-+				pinctrl-0 = <&spi1_pins
-+					     &microsom_spi1_cs_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+			};
-+
-+			sdhci@d8000 {
-+				bus-width = <4>;
-+				cd-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
-+				no-1-8-v;
-+				pinctrl-0 = <&helios_sdhci_pins
-+					     &helios_sdhci_cd_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+				vmmc = <&reg_3p3v>;
-+				wp-inverted;
-+			};
-+
-+			usb@58000 {
-+				//vcc-supply = <&reg_5p0v_usb>;
-+				usb-phy = <&usb2_phy>;
-+				status = "okay";
-+			};
-+
-+			usb3@f0000 {
-+				status = "okay";
-+			};
-+
-+			usb3@f8000 {
-+				status = "okay";
-+			};
-+
-+			pinctrl@18000 {
-+				pca0_pins: pca0-pins {
-+					marvell,pins = "mpp23";
-+					marvell,function = "gpio";
-+				};
-+				microsom_phy0_int_pins: microsom-phy0-int-pins {
-+					marvell,pins = "mpp18";
-+					marvell,function = "gpio";
-+				};
-+				helios_i2c1_pins: i2c1-pins {
-+					marvell,pins = "mpp26", "mpp27";
-+					marvell,function = "i2c1";
-+				};
-+				helios_sdhci_cd_pins: helios-sdhci-cd-pins {
-+					marvell,pins = "mpp20";
-+					marvell,function = "gpio";
-+				};
-+				helios_sdhci_pins: helios-sdhci-pins {
-+					marvell,pins = "mpp21", "mpp28",
-+						       "mpp37", "mpp38",
-+						       "mpp39", "mpp40";
-+					marvell,function = "sd0";
-+				};
-+				helios_led_pins: helios-led-pins {
-+					marvell,pins = "mpp24", "mpp25",
-+						       "mpp49", "mpp50",
-+						       "mpp52", "mpp53",
-+						       "mpp54";
-+					marvell,function = "gpio";
-+				};
-+				helios_fan_pins: helios-fan-pins {
-+					marvell,pins = "mpp41", "mpp43",
-+						       "mpp48", "mpp55";
-+					marvell,function = "gpio";
-+				};
-+				microsom_spi1_cs_pins: spi1-cs-pins {
-+					marvell,pins = "mpp59";
-+					marvell,function = "spi1";
-+				};
-+			};
-+		};
-+	};
-+};
++def powerpc__hcall_entry(event_name, context, cpu, sec, nsec, pid, comm,
++			 callchain, opcode):
++		if (d_enter.has_key(cpu)):
++			d_enter[cpu][opcode] = nsecs(sec, nsec)
++		else:
++			d_enter[cpu] = {opcode: nsecs(sec, nsec)}
 -- 
-2.17.1
+2.14.3
