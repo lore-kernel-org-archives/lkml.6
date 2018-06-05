@@ -1,153 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752875AbeFEXKr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 19:10:47 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35508 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752779AbeFEXKo (ORCPT
+        id S932118AbeFEXLH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 19:11:07 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36062 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932069AbeFEXKz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 19:10:44 -0400
-X-Google-Smtp-Source: ADUXVKJ2FNxAdmHYri/vQ2Mdc0vkHTTG4Pa0HtPnRjd7pW9Lb2dyStwhyEhY7mMCNXhB6xU92FYF/A==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Tue, 5 Jun 2018 19:10:55 -0400
+X-Google-Smtp-Source: ADUXVKKJW9EgJCcN7iqUI8vKY0ZbaMXH3+XpX01Jq4Ek+0nM9cFSu//1fVSgu6EuHftjt1JnpwpQcA==
+Subject: Re: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+To: Steve Twiss <stwiss.opensource@diasemi.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 09/12] mfd: da9063: Add custom IRQ map for DA9063L
-Date: Wed,  6 Jun 2018 01:10:10 +0200
-Message-Id: <20180605231013.1803-9-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
-References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Support Opensource <Support.Opensource@diasemi.com>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
+ <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
+ <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
+ <6ED8E3B22081A4459DAC7699F3695FB701941AD701@SW-EX-MBX02.diasemi.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <ab8fa587-a33a-5906-9403-ff5e23e09ff0@gmail.com>
+Date: Wed, 6 Jun 2018 01:02:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <6ED8E3B22081A4459DAC7699F3695FB701941AD701@SW-EX-MBX02.diasemi.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
-ignore the Alarm and Tick IRQs from the PMIC.
+On 06/05/2018 10:17 PM, Steve Twiss wrote:
+> Hi Marek and Geert,
+> 
+> On 04 June 2018 17:25 Marek Vasut wrote,
+> 
+>> Subject: Re: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+>>
+>> On 06/04/2018 09:39 AM, Geert Uytterhoeven wrote:
+>>> Hi Marek, Steve,
+>>>
+>>> On Sat, Jun 2, 2018 at 12:11 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>> While the datasheet for DA9063L (2v1, 23-Mar-2017) lists the RTC register
+>>>> block, the DA9063L does not have an RTC. Add custom regmap for DA9063L to
+>>>> prevent access into that register block.
+> 
+> Ok. I've said previously in [v3 07/10], but I'll copy again:
+> There is now an internal Dialog request to remove the RTC references from the DA9063L datasheet.
+> Adding that first part to the sentence in the commit log: "While the datasheet for DA9063L
+> (2v1, 23-Mar-2017) lists the RTC register block" -- it exists in error for the register map table
+> on page 91, but the datasheet also identifies those registers in Table 102 on page 126 as
+> "Reserved".
+> 
+> Pointing out the ambiguity in this version of the datasheet seems redundant in the commit log.
+> Also Dialog do not store a history of Datasheets on their website so once this is updated (although
+> this update is not in my hands) the datasheet will be replaced. So, it seems this comment could
+> make the commit message just as misleading as the current datasheet.
+> 
+> How about something simpler?
+> "The DA9063L does not have an RTC. Add custom regmap for DA9063L to prevent access
+> into that register block."
+> 
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>
+>>> Thanks for your patch!
+>>>
+>>>> --- a/drivers/mfd/da9063-i2c.c
+>>>> +++ b/drivers/mfd/da9063-i2c.c
+>>>> @@ -254,6 +341,10 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+>>>
+>>> Note that the line above doesn't check da9063->type, but da9063-
+>>> variant_code...
+>>>
+>>>>                 da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+>>>>                 da9063_regmap_config.wr_table = &da9063_ad_writeable_table;
+>>>>                 da9063_regmap_config.volatile_table = &da9063_ad_volatile_table;
+>>>> +       } else if (da9063->type == PMIC_TYPE_DA9063L) {
+>>>
+>>> ... so this may be slightly confusing.
+>>
+>> I know.
+>>
+>>>> +               da9063_regmap_config.rd_table = &da9063l_bb_readable_table;
+>>>> +               da9063_regmap_config.wr_table = &da9063l_bb_writeable_table;
+>>>> +               da9063_regmap_config.volatile_table = &da9063l_bb_volatile_table;
+>>>>         } else {
+>>>>                 da9063_regmap_config.rd_table = &da9063_bb_readable_table;
+>>>>                 da9063_regmap_config.wr_table = &da9063_bb_writeable_table;
+>>>
+>>> However, da9063->variant_code doesn't seem to have been filled in at this
+>>> point yet (the call to da9063_device_init() doing so is below, at the end
+>>> of the probe function!), so commit 9cb42e2a8ed06e91 ("mfd: da9063: Add
+>>> support for AD silicon variant") never actually handled the AD silicon variant
+>>> correctly? Or am I missing something?
+> 
+> Okay ... No. You're not missing anything. I had noticed that.
+> The AD chip model is not referenced and by default only the BB chip model is used.
+> 
+>> Ha, that is a good point.
+> 
+> Yeah, it's a good point, but it's not an amusing point.
+> The device tree only distinguishes a "dlg,da9063", there is no AD type in the DT schema.
+> There is no datasheet listing AD registers supported by Dialog, only BB.
+> 
+> But, AD registers were added back into the header file in commit 9cb42e2a8ed06e91
+> and the RTC driver was updated to distinguish between the AD and BB according to
+> the type of variant detected at run-time during the da9063_device_init() call.
+> 
+> The real problem is that this leads to two competing chip detection methods for the
+> DA9063. The function da9063_device_init() autodetects the chip variant, but
+> autodetection cannot define the chip model. It's circular: the chip model cannot be
+> autodetected because a chip model is needed to access the register used during
+> autodetection.
+> 
+> Which leads me back to what I said two paragraphs up:
+>> The device tree only distinguishes a "dlg,da9063", there is no AD type in the DT schema.
+>> There is no datasheet listing AD registers supported by Dialog, only BB.
+> 
+> This is not how it is done in the DA9062 and DA9061 driver: the variant code is only
+> used to print the information to the console during start-up and it is the DT that defines
+> the chip model based upon "dlg,da9062" or "dlg,da9061".
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V3: New patch
-V4: - Formatting fixes
-    - Drop extra newline in da9063l_irq_chip
-    - Drop mention of the buggy datasheet in commit message
----
- drivers/mfd/da9063-irq.c | 81 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 79 insertions(+), 2 deletions(-)
+So the AD was broken since forever and noone noticed ? :)
 
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 34ea8d0334d7..c1bc52428e8c 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -102,8 +102,81 @@ static const struct regmap_irq_chip da9063_irq_chip = {
- 	.init_ack_masked = true,
- };
- 
-+static const struct regmap_irq da9063l_irqs[] = {
-+	/* DA9063 event A register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
-+	/* DA9063 event B register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-+	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-+	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-+	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
-+	/* DA9063 event C register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
-+	/* DA9063 event D register */
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
-+};
-+
-+static const struct regmap_irq_chip da9063l_irq_chip = {
-+	.name = "da9063l-irq",
-+	.irqs = da9063l_irqs,
-+	.num_irqs = ARRAY_SIZE(da9063l_irqs),
-+	.num_regs = 4,
-+	.status_base = DA9063_REG_EVENT_A,
-+	.mask_base = DA9063_REG_IRQ_MASK_A,
-+	.ack_base = DA9063_REG_EVENT_A,
-+	.init_ack_masked = true,
-+};
-+
- int da9063_irq_init(struct da9063 *da9063)
- {
-+	const struct regmap_irq_chip *irq_chip;
- 	int ret;
- 
- 	if (!da9063->chip_irq) {
-@@ -111,10 +184,14 @@ int da9063_irq_init(struct da9063 *da9063)
- 		return -EINVAL;
- 	}
- 
-+	if (da9063->type == PMIC_TYPE_DA9063)
-+		irq_chip = &da9063_irq_chip;
-+	else
-+		irq_chip = &da9063l_irq_chip;
-+
- 	ret = regmap_add_irq_chip(da9063->regmap, da9063->chip_irq,
- 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
--			da9063->irq_base, &da9063_irq_chip,
--			&da9063->regmap_irq);
-+			da9063->irq_base, irq_chip, &da9063->regmap_irq);
- 	if (ret) {
- 		dev_err(da9063->dev, "Failed to reguest IRQ %d: %d\n",
- 				da9063->chip_irq, ret);
+Do you have an AD hardware and can you fix it ?
+
 -- 
-2.16.2
+Best regards,
+Marek Vasut
