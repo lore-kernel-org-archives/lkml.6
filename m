@@ -1,170 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751273AbeFEAC5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 20:02:57 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38263 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbeFEACz (ORCPT
+        id S1751290AbeFEAHE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 20:07:04 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:40294 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbeFEAHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 20:02:55 -0400
-X-Google-Smtp-Source: ADUXVKIjlQd3SQ9fU9ayTp5Hwnd2K4WieuFinmftngpCbCO7AYJFFjCDIAhO5cPXVi2zoBYHBbSrMw==
-From: Tycho Andersen <tycho@tycho.ws>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Serge E . Hallyn" <serge@hallyn.com>, Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH] uart: fix race between uart_put_char() and uart_shutdown()
-Date: Mon,  4 Jun 2018 18:01:27 -0600
-Message-Id: <20180605000127.5495-1-tycho@tycho.ws>
-X-Mailer: git-send-email 2.17.0
+        Mon, 4 Jun 2018 20:07:03 -0400
+X-Google-Smtp-Source: ADUXVKIkJujOCRTkvHHA+AdLaVd6dNrJ//J+Q9CgpabTzfpx0/yaPwlkE4r7rh9ntCnZL6332SybTvLATwPBJin4Ccc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20180604202235.73679-1-egranata@google.com>
+In-Reply-To: <20180604202235.73679-1-egranata@google.com>
+From: Gwendal Grignou <gwendal@chromium.org>
+Date: Mon, 4 Jun 2018 17:06:50 -0700
+Message-ID: <CAMHSBOUtysO1Mj6stn1_wQ95s7mH5LuKD_Yd-4YZr7m7rCDkSQ@mail.gmail.com>
+Subject: Re: [PATCH] Cleanup dependency chain for cros_ec modules
+To: Enrico Granata <egranata@google.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, egranata@chromium.org,
+        Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have reports of the following crash:
-
-    PID: 7 TASK: ffff88085c6d61c0 CPU: 1 COMMAND: "kworker/u25:0"
-    #0 [ffff88085c6db710] machine_kexec at ffffffff81046239
-    #1 [ffff88085c6db760] crash_kexec at ffffffff810fc248
-    #2 [ffff88085c6db830] oops_end at ffffffff81008ae7
-    #3 [ffff88085c6db860] no_context at ffffffff81050b8f
-    #4 [ffff88085c6db8b0] __bad_area_nosemaphore at ffffffff81050d75
-    #5 [ffff88085c6db900] bad_area_nosemaphore at ffffffff81050e83
-    #6 [ffff88085c6db910] __do_page_fault at ffffffff8105132e
-    #7 [ffff88085c6db9b0] do_page_fault at ffffffff8105152c
-    #8 [ffff88085c6db9c0] page_fault at ffffffff81a3f122
-    [exception RIP: uart_put_char+149]
-    RIP: ffffffff814b67b5 RSP: ffff88085c6dba78 RFLAGS: 00010006
-    RAX: 0000000000000292 RBX: ffffffff827c5120 RCX: 0000000000000081
-    RDX: 0000000000000000 RSI: 000000000000005f RDI: ffffffff827c5120
-    RBP: ffff88085c6dba98 R8: 000000000000012c R9: ffffffff822ea320
-    R10: ffff88085fe4db04 R11: 0000000000000001 R12: ffff881059f9c000
-    R13: 0000000000000001 R14: 000000000000005f R15: 0000000000000fba
-    ORIG_RAX: ffffffffffffffff CS: 0010 SS: 0018
-    #9 [ffff88085c6dbaa0] tty_put_char at ffffffff81497544
-    #10 [ffff88085c6dbac0] do_output_char at ffffffff8149c91c
-    #11 [ffff88085c6dbae0] __process_echoes at ffffffff8149cb8b
-    #12 [ffff88085c6dbb30] commit_echoes at ffffffff8149cdc2
-    #13 [ffff88085c6dbb60] n_tty_receive_buf_fast at ffffffff8149e49b
-    #14 [ffff88085c6dbbc0] __receive_buf at ffffffff8149ef5a
-    #15 [ffff88085c6dbc20] n_tty_receive_buf_common at ffffffff8149f016
-    #16 [ffff88085c6dbca0] n_tty_receive_buf2 at ffffffff8149f194
-    #17 [ffff88085c6dbcb0] flush_to_ldisc at ffffffff814a238a
-    #18 [ffff88085c6dbd50] process_one_work at ffffffff81090be2
-    #19 [ffff88085c6dbe20] worker_thread at ffffffff81091b4d
-    #20 [ffff88085c6dbeb0] kthread at ffffffff81096384
-    #21 [ffff88085c6dbf50] ret_from_fork at ffffffff81a3d69f​
-
-after slogging through some dissasembly:
-
-ffffffff814b6720 <uart_put_char>:
-ffffffff814b6720:	55                   	push   %rbp
-ffffffff814b6721:	48 89 e5             	mov    %rsp,%rbp
-ffffffff814b6724:	48 83 ec 20          	sub    $0x20,%rsp
-ffffffff814b6728:	48 89 1c 24          	mov    %rbx,(%rsp)
-ffffffff814b672c:	4c 89 64 24 08       	mov    %r12,0x8(%rsp)
-ffffffff814b6731:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
-ffffffff814b6736:	4c 89 74 24 18       	mov    %r14,0x18(%rsp)
-ffffffff814b673b:	e8 b0 8e 58 00       	callq  ffffffff81a3f5f0 <mcount>
-ffffffff814b6740:	4c 8b a7 88 02 00 00 	mov    0x288(%rdi),%r12
-ffffffff814b6747:	45 31 ed             	xor    %r13d,%r13d
-ffffffff814b674a:	41 89 f6             	mov    %esi,%r14d
-ffffffff814b674d:	49 83 bc 24 70 01 00 	cmpq   $0x0,0x170(%r12)
-ffffffff814b6754:	00 00
-ffffffff814b6756:	49 8b 9c 24 80 01 00 	mov    0x180(%r12),%rbx
-ffffffff814b675d:	00
-ffffffff814b675e:	74 2f                	je     ffffffff814b678f <uart_put_char+0x6f>
-ffffffff814b6760:	48 89 df             	mov    %rbx,%rdi
-ffffffff814b6763:	e8 a8 67 58 00       	callq  ffffffff81a3cf10 <_raw_spin_lock_irqsave>
-ffffffff814b6768:	41 8b 8c 24 78 01 00 	mov    0x178(%r12),%ecx
-ffffffff814b676f:	00
-ffffffff814b6770:	89 ca                	mov    %ecx,%edx
-ffffffff814b6772:	f7 d2                	not    %edx
-ffffffff814b6774:	41 03 94 24 7c 01 00 	add    0x17c(%r12),%edx
-ffffffff814b677b:	00
-ffffffff814b677c:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
-ffffffff814b6782:	75 23                	jne    ffffffff814b67a7 <uart_put_char+0x87>
-ffffffff814b6784:	48 89 c6             	mov    %rax,%rsi
-ffffffff814b6787:	48 89 df             	mov    %rbx,%rdi
-ffffffff814b678a:	e8 e1 64 58 00       	callq  ffffffff81a3cc70 <_raw_spin_unlock_irqrestore>
-ffffffff814b678f:	44 89 e8             	mov    %r13d,%eax
-ffffffff814b6792:	48 8b 1c 24          	mov    (%rsp),%rbx
-ffffffff814b6796:	4c 8b 64 24 08       	mov    0x8(%rsp),%r12
-ffffffff814b679b:	4c 8b 6c 24 10       	mov    0x10(%rsp),%r13
-ffffffff814b67a0:	4c 8b 74 24 18       	mov    0x18(%rsp),%r14
-ffffffff814b67a5:	c9                   	leaveq
-ffffffff814b67a6:	c3                   	retq
-ffffffff814b67a7:	49 8b 94 24 70 01 00 	mov    0x170(%r12),%rdx
-ffffffff814b67ae:	00
-ffffffff814b67af:	48 63 c9             	movslq %ecx,%rcx
-ffffffff814b67b2:	41 b5 01             	mov    $0x1,%r13b
-ffffffff814b67b5:	44 88 34 0a          	mov    %r14b,(%rdx,%rcx,1)
-ffffffff814b67b9:	41 8b 94 24 78 01 00 	mov    0x178(%r12),%edx
-ffffffff814b67c0:	00
-ffffffff814b67c1:	83 c2 01             	add    $0x1,%edx
-ffffffff814b67c4:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
-ffffffff814b67ca:	41 89 94 24 78 01 00 	mov    %edx,0x178(%r12)
-ffffffff814b67d1:	00
-ffffffff814b67d2:	eb b0                	jmp    ffffffff814b6784 <uart_put_char+0x64>
-ffffffff814b67d4:	66 66 66 2e 0f 1f 84 	data32 data32 nopw %cs:0x0(%rax,%rax,1)
-ffffffff814b67db:	00 00 00 00 00
-
-for our build, this is crashing at:
-
-    circ->buf[circ->head] = c;
-
-Looking in uart_port_startup(), it seems that circ->buf (state->xmit.buf)
-protected by the "per-port mutex", which based on uart_port_check() is
-state->port.mutex. Indeed, the lock acquired in uart_put_char() is
-uport->lock, i.e. not the same lock.
-
-Anyway, since the lock is not acquired, if uart_shutdown() is called, the
-last chunk of that function may release state->xmit.buf before its assigned
-to null, and cause the race above.
-
-To fix it, we simply also acquire state->port.mutex.
-
-Unfortunately, I don't have any insightful thoughts about how to test this.
-Ideas are appreciated :)
-
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
----
- drivers/tty/serial/serial_core.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 0466f9f08a91..883a8c15510c 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -532,9 +532,15 @@ static int uart_put_char(struct tty_struct *tty, unsigned char c)
- 	unsigned long flags;
- 	int ret = 0;
- 
-+	/*
-+	 * state->xmit.buf is protected by state->port.mutex, see the note in
-+	 * uart_port_startup()
-+	 */
-+	mutex_lock(&state->port.mutex);
-+
- 	circ = &state->xmit;
- 	if (!circ->buf)
--		return 0;
-+		goto out;
- 
- 	port = uart_port_lock(state, flags);
- 	if (port && uart_circ_chars_free(circ) != 0) {
-@@ -543,6 +549,9 @@ static int uart_put_char(struct tty_struct *tty, unsigned char c)
- 		ret = 1;
- 	}
- 	uart_port_unlock(port, flags);
-+
-+out:
-+	mutex_unlock(&state->port.mutex);
- 	return ret;
- }
- 
--- 
-2.17.0
+On Mon, Jun 4, 2018 at 1:22 PM Enrico Granata <egranata@google.com> wrote:
+>
+> From: Enrico Granata <egranata@chromium.org>
+>
+> If one builds the Chrome EC support as modules, there is no explicit
+> dependency chain amongst the several modules (LPC, CHARDEV, CORE, ...)
+>
+> This makes it possible - for instance - to rmmod cros_ec_core, even though
+> cros_ec_dev actively uses it for data transport to the EC chip.
+>
+> This commit makes two changes in an attempt to address this:
+> a) moves cros_ec_proto.c as part of the CORE module; this removes the
+>    possibility of unloading cros_ec_core while cros_ec_dev is using it;
+> b) enables cros_ec_core to explicitly register a runtime dependency on
+>    the kernel module that is using its cmd and pkt transfer functions
+>
+> Signed-off-by: Enrico Granata <egranata@chromium.org>
+> ---
+>
+>  drivers/mfd/Kconfig                             |  1 -
+>  drivers/mfd/Makefile                            |  2 +-
+>  drivers/mfd/cros_ec.c                           | 17 ++++++++++++++++-
+>  .../{platform/chrome => mfd}/cros_ec_proto.c    |  0
+>  drivers/platform/chrome/Kconfig                 |  5 -----
+>  drivers/platform/chrome/Makefile                |  1 -
+>  drivers/platform/chrome/cros_ec_lpc.c           |  1 +
+>  include/linux/mfd/cros_ec.h                     |  2 ++
+>  8 files changed, 20 insertions(+), 9 deletions(-)
+>  rename drivers/{platform/chrome => mfd}/cros_ec_proto.c (100%)
+>
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index b860eb5aa194..a8daa2072ae6 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -194,7 +194,6 @@ config MFD_CROS_EC
+>         tristate "ChromeOS Embedded Controller"
+>         select MFD_CORE
+>         select CHROME_PLATFORMS
+> -       select CROS_EC_PROTO
+>         depends on X86 || ARM || ARM64 || COMPILE_TEST
+>         help
+>           If you say Y here you get support for the ChromeOS Embedded
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index d9d2cf0d32ef..20537bd27695 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -12,7 +12,7 @@ obj-$(CONFIG_MFD_SM501)               += sm501.o
+>  obj-$(CONFIG_MFD_ASIC3)                += asic3.o tmio_core.o
+>  obj-$(CONFIG_MFD_BCM590XX)     += bcm590xx.o
+>  obj-$(CONFIG_MFD_BD9571MWV)    += bd9571mwv.o
+> -cros_ec_core-objs              := cros_ec.o
+> +cros_ec_core-objs              := cros_ec.o cros_ec_proto.o
+We try to get cros_ec_proto out of mfd directory, it is weird to
+compile something from drivers/platform/chrome/ in drivers/mfd.
+>  cros_ec_core-$(CONFIG_ACPI)    += cros_ec_acpi_gpe.o
+>  obj-$(CONFIG_MFD_CROS_EC)      += cros_ec_core.o
+>  obj-$(CONFIG_MFD_CROS_EC_I2C)  += cros_ec_i2c.o
+> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> index d61024141e2b..109e9cb1e289 100644
+> --- a/drivers/mfd/cros_ec.c
+> +++ b/drivers/mfd/cros_ec.c
+> @@ -168,9 +168,21 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>          */
+>         err = cros_ec_sleep_event(ec_dev, 0);
+>         if (err < 0)
+> -               dev_dbg(ec_dev->dev, "Error %d clearing sleep event to ec",
+> +               dev_dbg(dev, "Error %d clearing sleep event to ec",
+>                         err);
+Concatenate both line.
+>
+> +       if (ec_dev->xfer_fcn_owner != NULL) {
+> +               err = try_module_get(ec_dev->xfer_fcn_owner);
+> +               if (err < 0) {
+> +                       dev_err(dev, "Error %d acquiring transfer module", err);
+> +                       return err;
+> +               }
+> +               dev_info(dev, "Transfer module %p get successfully",
+> +                        ec_dev->xfer_fcn_owner);
+> +       } else {
+> +               dev_warn(dev, "No transfer module registered");
+> +       }
+> +
+>         dev_info(dev, "Chrome EC device registered\n");
+>
+>         cros_ec_acpi_install_gpe_handler(dev);
+> @@ -193,6 +205,9 @@ int cros_ec_remove(struct cros_ec_device *ec_dev)
+>         if (ec_dev->irq)
+>                 free_irq(ec_dev->irq, ec_dev);
+>
+> +       if (ec_dev->xfer_fcn_owner != NULL)
+> +               module_put(ec_dev->xfer_fcn_owner);
+> +
+>         return 0;
+>  }
+>  EXPORT_SYMBOL(cros_ec_remove);
+> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/mfd/cros_ec_proto.c
+> similarity index 100%
+> rename from drivers/platform/chrome/cros_ec_proto.c
+> rename to drivers/mfd/cros_ec_proto.c
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index e728a96cabfd..a050c9e8b506 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -65,11 +65,6 @@ config CROS_EC_LPC_MEC
+>           If you have a ChromeOS Embedded Controller Microchip EC variant
+>           choose Y here.
+>
+> -config CROS_EC_PROTO
+> -        bool
+> -        help
+> -          ChromeOS EC communication protocol helpers.
+> -
+>  config CROS_KBD_LED_BACKLIGHT
+>         tristate "Backlight LED support for Chrome OS keyboards"
+>         depends on LEDS_CLASS && ACPI
+> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> index ff3b369911f0..0b5e26ca9c96 100644
+> --- a/drivers/platform/chrome/Makefile
+> +++ b/drivers/platform/chrome/Makefile
+> @@ -8,5 +8,4 @@ obj-$(CONFIG_CROS_EC_CTL)               += cros_ec_ctl.o
+>  cros_ec_lpcs-objs                      := cros_ec_lpc.o cros_ec_lpc_reg.o
+>  cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC) += cros_ec_lpc_mec.o
+>  obj-$(CONFIG_CROS_EC_LPC)              += cros_ec_lpcs.o
+> -obj-$(CONFIG_CROS_EC_PROTO)            += cros_ec_proto.o
+>  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)   += cros_kbd_led_backlight.o
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+> index 3682e1539251..8f02b188bd3f 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -282,6 +282,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+>         ec_dev->phys_name = dev_name(dev);
+>         ec_dev->cmd_xfer = cros_ec_cmd_xfer_lpc;
+>         ec_dev->pkt_xfer = cros_ec_pkt_xfer_lpc;
+> +       ec_dev->xfer_fcn_owner = THIS_MODULE;
+You need to modify other transport modules as well:
+cros_ec_i2c.c, cros_ec_spi.c.
+>         ec_dev->cmd_readmem = cros_ec_lpc_readmem;
+>         ec_dev->din_size = sizeof(struct ec_host_response) +
+>                            sizeof(struct ec_response_get_protocol_info);
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index 2d4e23c9ea0a..5239107e5091 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -18,6 +18,7 @@
+>
+>  #include <linux/cdev.h>
+>  #include <linux/device.h>
+> +#include <linux/module.h>
+>  #include <linux/notifier.h>
+>  #include <linux/mfd/cros_ec_commands.h>
+>  #include <linux/mutex.h>
+> @@ -139,6 +140,7 @@ struct cros_ec_device {
+>         int dout_size;
+>         bool wake_enabled;
+>         bool suspended;
+> +       struct module *xfer_fcn_owner;
+Another solution would be to make cros_ec a real module. lpc depends
+on cros_ec_register, so lsmod will not unload cros_ec [core functions]
+if cros_ec_lpc is still loaded.
+>         int (*cmd_xfer)(struct cros_ec_device *ec,
+>                         struct cros_ec_command *msg);
+>         int (*pkt_xfer)(struct cros_ec_device *ec,
+> --
+> 2.17.1.1185.g55be947832-goog
+>
