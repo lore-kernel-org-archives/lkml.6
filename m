@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752104AbeFERCU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:02:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59334 "EHLO mail.kernel.org"
+        id S1752138AbeFERC1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:02:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752056AbeFERCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:02:17 -0400
+        id S1752071AbeFERCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:02:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 10/37] cfg80211: further limit wiphy names to 64 bytes
-Date: Tue,  5 Jun 2018 19:01:15 +0200
-Message-Id: <20180605170109.518600196@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Guenter Roeck <groeck@chromium.org>, Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 11/37] rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
+Date: Tue,  5 Jun 2018 19:01:16 +0200
+Message-Id: <20180605170109.570518089@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -31,39 +30,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 814596495dd2b9d4aab92d8f89cf19060d25d2ea upstream.
+commit fb239c1209bb0f0b4830cc72507cc2f2d63fadbd upstream.
 
-wiphy names were recently limited to 128 bytes by commit a7cfebcb7594
-("cfg80211: limit wiphy names to 128 bytes").  As it turns out though,
-this isn't sufficient because dev_vprintk_emit() needs the syslog header
-string "SUBSYSTEM=ieee80211\0DEVICE=+ieee80211:$devname" to fit into 128
-bytes.  This triggered the "device/subsystem name too long" WARN when
-the device name was >= 90 bytes.  As before, this was reproduced by
-syzbot by sending an HWSIM_CMD_NEW_RADIO command to the MAC80211_HWSIM
-generic netlink family.
+In _rtl92c_get_txpower_writeval_by_regulatory() the variable writeVal
+is assigned to itself in an if ... else statement, apparently only to
+document that the branch condition is handled and that a previously read
+value should be returned unmodified. The self-assignment causes clang to
+raise the following warning:
 
-Fix it by further limiting wiphy names to 64 bytes.
+drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c:304:13:
+  error: explicitly assigning value of variable of type 'u32'
+    (aka 'unsigned int') to itself [-Werror,-Wself-assign]
+  writeVal = writeVal;
 
-Reported-by: syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com
-Fixes: a7cfebcb7594 ("cfg80211: limit wiphy names to 128 bytes")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Delete the branch with the self-assignment.
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/nl80211.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/include/uapi/linux/nl80211.h
-+++ b/include/uapi/linux/nl80211.h
-@@ -2195,7 +2195,7 @@ enum nl80211_attrs {
- #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
- #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
- 
--#define NL80211_WIPHY_NAME_MAXLEN		128
-+#define NL80211_WIPHY_NAME_MAXLEN		64
- 
- #define NL80211_MAX_SUPP_RATES			32
- #define NL80211_MAX_SUPP_HT_RATES		77
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/rf.c
+@@ -304,9 +304,6 @@ static void _rtl92c_get_txpower_writeval
+ 			writeVal = 0x00000000;
+ 		if (rtlpriv->dm.dynamic_txhighpower_lvl == TXHIGHPWRLEVEL_BT1)
+ 			writeVal = writeVal - 0x06060606;
+-		else if (rtlpriv->dm.dynamic_txhighpower_lvl ==
+-			 TXHIGHPWRLEVEL_BT2)
+-			writeVal = writeVal;
+ 		*(p_outwriteval + rf) = writeVal;
+ 	}
+ }
