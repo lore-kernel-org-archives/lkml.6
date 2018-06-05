@@ -1,106 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753410AbeFERPw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:15:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753399AbeFERFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:50 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Wei Wang <weiwan@google.com>, Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 18/61] tcp: avoid integer overflows in tcp_rcv_space_adjust()
-Date: Tue,  5 Jun 2018 19:01:39 +0200
-Message-Id: <20180605170118.783762261@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
-References: <20180605170117.643936916@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753450AbeFERQK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:16:10 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44135 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752035AbeFERQI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:16:08 -0400
+X-Google-Smtp-Source: ADUXVKL/CWk4lJg+HgHQGhyobSArqRgVt6xQq2POFCcuqeAwmqmUGPs+wFW0dLzAV3nPhAHBgoebfQ==
+Date: Tue, 5 Jun 2018 10:16:04 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: Henrik Rydberg <rydberg@bitmath.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC/PATCH] Input: make input_report_slot_state() return boolean
+Message-ID: <20180605171604.GA221901@dtor-ws>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Let's make input_report_slot_state() return boolean representing whether
+the contact is active or not. This will allow writing code like:
 
-------------------
+	if (input_mt_report_slot_state(input, obj->mt_tool,
+					obj->type != RMI_2D_OBJECT_NONE) {
 
-From: Eric Dumazet <edumazet@google.com>
+		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
+		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
+		...
+	}
 
-commit 607065bad9931e72207b0cac365d7d4abc06bd99 upstream.
+instead of:
 
-When using large tcp_rmem[2] values (I did tests with 500 MB),
-I noticed overflows while computing rcvwin.
+	input_mt_report_slot_state(input, obj->mt_tool,
+				   obj->type != RMI_2D_OBJECT_NONE);
+	if (obj->type != RMI_2D_OBJECT_NONE) {
+		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
+		input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
+		...
+	}
 
-Lets fix this before the following patch.
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Wei Wang <weiwan@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[Backport: sysctl_tcp_rmem is not Namespace-ify'd in older kernels]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- include/linux/tcp.h  |    2 +-
- net/ipv4/tcp_input.c |   10 ++++++----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/input/input-mt.c | 10 +++++++---
+ include/linux/input/mt.h |  2 +-
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -337,7 +337,7 @@ struct tcp_sock {
- 
- /* Receiver queue space */
- 	struct {
--		int	space;
-+		u32	space;
- 		u32	seq;
- 		u32	time;
- 	} rcvq_space;
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -581,8 +581,8 @@ static inline void tcp_rcv_rtt_measure_t
- void tcp_rcv_space_adjust(struct sock *sk)
+diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
+index 7ca4b318ed419..4a69716e54614 100644
+--- a/drivers/input/input-mt.c
++++ b/drivers/input/input-mt.c
+@@ -131,8 +131,10 @@ EXPORT_SYMBOL(input_mt_destroy_slots);
+  * inactive, or if the tool type is changed, a new tracking id is
+  * assigned to the slot. The tool type is only reported if the
+  * corresponding absbit field is set.
++ *
++ * Returns true if contact is active.
+  */
+-void input_mt_report_slot_state(struct input_dev *dev,
++bool input_mt_report_slot_state(struct input_dev *dev,
+ 				unsigned int tool_type, bool active)
  {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 copied;
- 	int time;
--	int copied;
+ 	struct input_mt *mt = dev->mt;
+@@ -140,14 +142,14 @@ void input_mt_report_slot_state(struct input_dev *dev,
+ 	int id;
  
- 	time = tcp_time_stamp - tp->rcvq_space.time;
- 	if (time < (tp->rcv_rtt_est.rtt >> 3) || tp->rcv_rtt_est.rtt == 0)
-@@ -604,12 +604,13 @@ void tcp_rcv_space_adjust(struct sock *s
+ 	if (!mt)
+-		return;
++		return false;
  
- 	if (sysctl_tcp_moderate_rcvbuf &&
- 	    !(sk->sk_userlocks & SOCK_RCVBUF_LOCK)) {
--		int rcvwin, rcvmem, rcvbuf;
-+		int rcvmem, rcvbuf;
-+		u64 rcvwin;
+ 	slot = &mt->slots[mt->slot];
+ 	slot->frame = mt->frame;
  
- 		/* minimal window to cope with packet losses, assuming
- 		 * steady state. Add some cushion because of small variations.
- 		 */
--		rcvwin = (copied << 1) + 16 * tp->advmss;
-+		rcvwin = ((u64)copied << 1) + 16 * tp->advmss;
+ 	if (!active) {
+ 		input_event(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
+-		return;
++		return false;
+ 	}
  
- 		/* If rate increased by 25%,
- 		 *	assume slow start, rcvwin = 3 * copied
-@@ -629,7 +630,8 @@ void tcp_rcv_space_adjust(struct sock *s
- 		while (tcp_win_from_space(rcvmem) < tp->advmss)
- 			rcvmem += 128;
+ 	id = input_mt_get_value(slot, ABS_MT_TRACKING_ID);
+@@ -156,6 +158,8 @@ void input_mt_report_slot_state(struct input_dev *dev,
  
--		rcvbuf = min(rcvwin / tp->advmss * rcvmem, sysctl_tcp_rmem[2]);
-+		do_div(rcvwin, tp->advmss);
-+		rcvbuf = min_t(u64, rcvwin * rcvmem, sysctl_tcp_rmem[2]);
- 		if (rcvbuf > sk->sk_rcvbuf) {
- 			sk->sk_rcvbuf = rcvbuf;
+ 	input_event(dev, EV_ABS, ABS_MT_TRACKING_ID, id);
+ 	input_event(dev, EV_ABS, ABS_MT_TOOL_TYPE, tool_type);
++
++	return true;
+ }
+ EXPORT_SYMBOL(input_mt_report_slot_state);
  
+diff --git a/include/linux/input/mt.h b/include/linux/input/mt.h
+index d7188de4db968..3f4bf60b0bb55 100644
+--- a/include/linux/input/mt.h
++++ b/include/linux/input/mt.h
+@@ -100,7 +100,7 @@ static inline bool input_is_mt_axis(int axis)
+ 	return axis == ABS_MT_SLOT || input_is_mt_value(axis);
+ }
+ 
+-void input_mt_report_slot_state(struct input_dev *dev,
++bool input_mt_report_slot_state(struct input_dev *dev,
+ 				unsigned int tool_type, bool active);
+ 
+ void input_mt_report_finger_count(struct input_dev *dev, int count);
+-- 
+2.17.1.1185.g55be947832-goog
+
+
+-- 
+Dmitry
