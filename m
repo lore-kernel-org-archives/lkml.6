@@ -1,21 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753656AbeFERGc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:06:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35630 "EHLO mail.kernel.org"
+        id S1753698AbeFERGi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753600AbeFERG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:06:28 -0400
+        id S1753671AbeFERGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Li Wei <liwei213@huawei.com>
-Subject: [PATCH 4.9 20/61] scsi: ufs: refactor device descriptor reading
-Date: Tue,  5 Jun 2018 19:01:41 +0200
-Message-Id: <20180605170118.964067155@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyniger <marc.zyngier@arm.com>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Sewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.9 23/61] arm64/cpufeature: dont use mutex in bringup path
+Date: Tue,  5 Jun 2018 19:01:44 +0200
+Message-Id: <20180605170119.187902092@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -31,199 +36,172 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 93fdd5ac64bbe80dac6416f048405362d7ef0945 upstream.
+commit 63a1e1c95e60e798fa09ab3c536fb555aa5bbf2b upstream.
 
-Pull device descriptor reading out of ufs quirk so it can be used also
-for other purposes.
+Currently, cpus_set_cap() calls static_branch_enable_cpuslocked(), which
+must take the jump_label mutex.
 
-Revamp the fixup setup:
+We call cpus_set_cap() in the secondary bringup path, from the idle
+thread where interrupts are disabled. Taking a mutex in this path "is a
+NONO" regardless of whether it's contended, and something we must avoid.
+We didn't spot this until recently, as ___might_sleep() won't warn for
+this case until all CPUs have been brought up.
 
-1. Rename ufs_device_info to ufs_dev_desc as very similar name
-   ufs_dev_info is already in use.
+This patch avoids taking the mutex in the secondary bringup path. The
+poking of static keys is deferred until enable_cpu_capabilities(), which
+runs in a suitable context on the boot CPU. To account for the static
+keys being set later, cpus_have_const_cap() is updated to use another
+static key to check whether the const cap keys have been initialised,
+falling back to the caps bitmap until this is the case.
 
-2. Make the handlers static as they are not used out of the ufshdc.c
-   file.
+This means that users of cpus_have_const_cap() gain should only gain a
+single additional NOP in the fast path once the const caps are
+initialised, but should always see the current cap value.
 
-[mkp: applied by hand]
+The hyp code should never dereference the caps array, since the caps are
+initialized before we run the module initcall to initialise hyp. A check
+is added to the hyp init code to document this requirement.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Li Wei <liwei213@huawei.com>
+This change will sidestep a number of issues when the upcoming hotplug
+locking rework is merged.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Marc Zyniger <marc.zyngier@arm.com>
+Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Christoffer Dall <christoffer.dall@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Sewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+[4.9: this avoids an IPI before GICv3 is up, preventing a boot time crash]
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/ufs/ufs.h        |   12 ++++++++++++
- drivers/scsi/ufs/ufs_quirks.h |   28 ++++++----------------------
- drivers/scsi/ufs/ufshcd.c     |   40 +++++++++++++++++++---------------------
- 3 files changed, 37 insertions(+), 43 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |   12 ++++++++++--
+ arch/arm64/include/asm/kvm_host.h   |    8 ++++++--
+ arch/arm64/kernel/cpufeature.c      |   23 +++++++++++++++++++++--
+ 3 files changed, 37 insertions(+), 6 deletions(-)
 
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -522,4 +522,16 @@ struct ufs_dev_info {
- 	bool is_lu_power_on_wp;
- };
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -96,6 +96,7 @@ struct arm64_cpu_capabilities {
  
-+#define MAX_MODEL_LEN 16
-+/**
-+ * ufs_dev_desc - ufs device details from the device descriptor
-+ *
-+ * @wmanufacturerid: card details
-+ * @model: card model
-+ */
-+struct ufs_dev_desc {
-+	u16 wmanufacturerid;
-+	char model[MAX_MODEL_LEN + 1];
-+};
-+
- #endif /* End of Header */
---- a/drivers/scsi/ufs/ufs_quirks.h
-+++ b/drivers/scsi/ufs/ufs_quirks.h
-@@ -21,41 +21,28 @@
- #define UFS_ANY_VENDOR 0xFFFF
- #define UFS_ANY_MODEL  "ANY_MODEL"
+ extern DECLARE_BITMAP(cpu_hwcaps, ARM64_NCAPS);
+ extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
++extern struct static_key_false arm64_const_caps_ready;
  
--#define MAX_MODEL_LEN 16
--
- #define UFS_VENDOR_TOSHIBA     0x198
- #define UFS_VENDOR_SAMSUNG     0x1CE
- #define UFS_VENDOR_SKHYNIX     0x1AD
+ bool this_cpu_has_cap(unsigned int cap);
  
- /**
-- * ufs_device_info - ufs device details
-- * @wmanufacturerid: card details
-- * @model: card model
-- */
--struct ufs_device_info {
--	u16 wmanufacturerid;
--	char model[MAX_MODEL_LEN + 1];
--};
--
--/**
-  * ufs_dev_fix - ufs device quirk info
-  * @card: ufs card details
-  * @quirk: device quirk
-  */
- struct ufs_dev_fix {
--	struct ufs_device_info card;
-+	struct ufs_dev_desc card;
- 	unsigned int quirk;
- };
+@@ -105,7 +106,7 @@ static inline bool cpu_have_feature(unsi
+ }
  
- #define END_FIX { { 0 }, 0 }
+ /* System capability check for constant caps */
+-static inline bool cpus_have_const_cap(int num)
++static inline bool __cpus_have_const_cap(int num)
+ {
+ 	if (num >= ARM64_NCAPS)
+ 		return false;
+@@ -119,6 +120,14 @@ static inline bool cpus_have_cap(unsigne
+ 	return test_bit(num, cpu_hwcaps);
+ }
  
- /* add specific device quirk */
--#define UFS_FIX(_vendor, _model, _quirk) \
--		{					  \
--			.card.wmanufacturerid = (_vendor),\
--			.card.model = (_model),		  \
--			.quirk = (_quirk),		  \
--		}
-+#define UFS_FIX(_vendor, _model, _quirk) { \
-+	.card.wmanufacturerid = (_vendor),\
-+	.card.model = (_model),		   \
-+	.quirk = (_quirk),		   \
++static inline bool cpus_have_const_cap(int num)
++{
++	if (static_branch_likely(&arm64_const_caps_ready))
++		return __cpus_have_const_cap(num);
++	else
++		return cpus_have_cap(num);
 +}
++
+ static inline void cpus_set_cap(unsigned int num)
+ {
+ 	if (num >= ARM64_NCAPS) {
+@@ -126,7 +135,6 @@ static inline void cpus_set_cap(unsigned
+ 			num, ARM64_NCAPS);
+ 	} else {
+ 		__set_bit(num, cpu_hwcaps);
+-		static_branch_enable(&cpu_hwcap_keys[num]);
+ 	}
+ }
+ 
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -24,6 +24,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/kvm_types.h>
++#include <asm/cpufeature.h>
+ #include <asm/kvm.h>
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_mmio.h>
+@@ -358,9 +359,12 @@ static inline void __cpu_init_hyp_mode(p
+ 				       unsigned long vector_ptr)
+ {
+ 	/*
+-	 * Call initialization code, and switch to the full blown
+-	 * HYP code.
++	 * Call initialization code, and switch to the full blown HYP code.
++	 * If the cpucaps haven't been finalized yet, something has gone very
++	 * wrong, and hyp will crash and burn when it uses any
++	 * cpus_have_const_cap() wrapper.
+ 	 */
++	BUG_ON(!static_branch_likely(&arm64_const_caps_ready));
+ 	__kvm_call_hyp((void *)pgd_ptr, hyp_stack_ptr, vector_ptr);
+ }
+ 
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1052,8 +1052,16 @@ void update_cpu_capabilities(const struc
+  */
+ void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
+ {
+-	for (; caps->matches; caps++)
+-		if (caps->enable && cpus_have_cap(caps->capability))
++	for (; caps->matches; caps++) {
++		unsigned int num = caps->capability;
++
++		if (!cpus_have_cap(num))
++			continue;
++
++		/* Ensure cpus_have_const_cap(num) works */
++		static_branch_enable(&cpu_hwcap_keys[num]);
++
++		if (caps->enable) {
+ 			/*
+ 			 * Use stop_machine() as it schedules the work allowing
+ 			 * us to modify PSTATE, instead of on_each_cpu() which
+@@ -1061,6 +1069,8 @@ void __init enable_cpu_capabilities(cons
+ 			 * we return.
+ 			 */
+ 			stop_machine(caps->enable, (void *)caps, cpu_online_mask);
++		}
++	}
+ }
  
  /*
-  * If UFS device is having issue in processing LCC (Line Control
-@@ -144,7 +131,4 @@ struct ufs_dev_fix {
-  */
- #define UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME	(1 << 8)
- 
--struct ufs_hba;
--void ufs_advertise_fixup_device(struct ufs_hba *hba);
--
- #endif /* UFS_QUIRKS_H_ */
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -4906,8 +4906,8 @@ out:
- 	return ret;
+@@ -1164,6 +1174,14 @@ static void __init setup_feature_capabil
+ 	enable_cpu_capabilities(arm64_features);
  }
  
--static int ufs_get_device_info(struct ufs_hba *hba,
--				struct ufs_device_info *card_data)
-+static int ufs_get_device_desc(struct ufs_hba *hba,
-+			       struct ufs_dev_desc *dev_desc)
- {
- 	int err;
- 	u8 model_index;
-@@ -4926,7 +4926,7 @@ static int ufs_get_device_info(struct uf
- 	 * getting vendor (manufacturerID) and Bank Index in big endian
- 	 * format
- 	 */
--	card_data->wmanufacturerid = desc_buf[DEVICE_DESC_PARAM_MANF_ID] << 8 |
-+	dev_desc->wmanufacturerid = desc_buf[DEVICE_DESC_PARAM_MANF_ID] << 8 |
- 				     desc_buf[DEVICE_DESC_PARAM_MANF_ID + 1];
- 
- 	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
-@@ -4940,36 +4940,26 @@ static int ufs_get_device_info(struct uf
- 	}
- 
- 	str_desc_buf[QUERY_DESC_STRING_MAX_SIZE] = '\0';
--	strlcpy(card_data->model, (str_desc_buf + QUERY_DESC_HDR_SIZE),
-+	strlcpy(dev_desc->model, (str_desc_buf + QUERY_DESC_HDR_SIZE),
- 		min_t(u8, str_desc_buf[QUERY_DESC_LENGTH_OFFSET],
- 		      MAX_MODEL_LEN));
- 
- 	/* Null terminate the model string */
--	card_data->model[MAX_MODEL_LEN] = '\0';
-+	dev_desc->model[MAX_MODEL_LEN] = '\0';
- 
- out:
- 	return err;
- }
- 
--void ufs_advertise_fixup_device(struct ufs_hba *hba)
-+static void ufs_fixup_device_setup(struct ufs_hba *hba,
-+				   struct ufs_dev_desc *dev_desc)
- {
--	int err;
- 	struct ufs_dev_fix *f;
--	struct ufs_device_info card_data;
--
--	card_data.wmanufacturerid = 0;
--
--	err = ufs_get_device_info(hba, &card_data);
--	if (err) {
--		dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
--			__func__, err);
--		return;
--	}
- 
- 	for (f = ufs_fixups; f->quirk; f++) {
--		if (((f->card.wmanufacturerid == card_data.wmanufacturerid) ||
--		    (f->card.wmanufacturerid == UFS_ANY_VENDOR)) &&
--		    (STR_PRFX_EQUAL(f->card.model, card_data.model) ||
-+		if ((f->card.wmanufacturerid == dev_desc->wmanufacturerid ||
-+		     f->card.wmanufacturerid == UFS_ANY_VENDOR) &&
-+		    (STR_PRFX_EQUAL(f->card.model, dev_desc->model) ||
- 		     !strcmp(f->card.model, UFS_ANY_MODEL)))
- 			hba->dev_quirks |= f->quirk;
- 	}
-@@ -5147,6 +5137,7 @@ static void ufshcd_tune_unipro_params(st
-  */
- static int ufshcd_probe_hba(struct ufs_hba *hba)
- {
-+	struct ufs_dev_desc card = {0};
- 	int ret;
- 
- 	ret = ufshcd_link_startup(hba);
-@@ -5170,7 +5161,14 @@ static int ufshcd_probe_hba(struct ufs_h
- 	if (ret)
- 		goto out;
- 
--	ufs_advertise_fixup_device(hba);
-+	ret = ufs_get_device_desc(hba, &card);
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed getting device info. err = %d\n",
-+			__func__, ret);
-+		goto out;
-+	}
++DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
++EXPORT_SYMBOL(arm64_const_caps_ready);
 +
-+	ufs_fixup_device_setup(hba, &card);
- 	ufshcd_tune_unipro_params(hba);
++static void __init mark_const_caps_ready(void)
++{
++	static_branch_enable(&arm64_const_caps_ready);
++}
++
+ extern const struct arm64_cpu_capabilities arm64_errata[];
  
- 	ret = ufshcd_set_vccq_rail_unused(hba,
+ bool this_cpu_has_cap(unsigned int cap)
+@@ -1180,6 +1198,7 @@ void __init setup_cpu_features(void)
+ 	/* Set the CPU feature capabilies */
+ 	setup_feature_capabilities();
+ 	enable_errata_workarounds();
++	mark_const_caps_ready();
+ 	setup_elf_hwcaps(arm64_elf_hwcaps);
+ 
+ 	if (system_supports_32bit_el0())
