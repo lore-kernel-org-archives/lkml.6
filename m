@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751572AbeFEG1E (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:27:04 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:37769 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751509AbeFEG1A (ORCPT
+        id S1751481AbeFEG06 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 02:26:58 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:16491 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751049AbeFEG04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 02:27:00 -0400
+        Tue, 5 Jun 2018 02:26:56 -0400
 From: Nishanth Menon <nm@ti.com>
 To: Rob Herring <robh+dt@kernel.org>,
         Santosh Shilimkar <ssantosh@kernel.org>, Tero Kristo <t-kristo@ti.com>,
         Nishanth Menon <nm@ti.com>
 CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH 1/3] Documentation: dt: keystone: ti-sci: Add optional host-id parameter
-Date: Tue, 5 Jun 2018 01:26:38 -0500
-Message-ID: <20180605062640.3356-2-nm@ti.com>
+Subject: [RFC PATCH 3/3] arm64: dts: ti: k3-am6: Add Device Management Security Controller support
+Date: Tue, 5 Jun 2018 01:26:40 -0500
+Message-ID: <20180605062640.3356-4-nm@ti.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180605062640.3356-1-nm@ti.com>
 References: <20180605062640.3356-1-nm@ti.com>
@@ -26,45 +26,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Texas Instrument's System Control Interface (TISCI) permits the
-ability for Operating Systems to running in virtual machines to be
-able to independently communicate with the firmware without the need
-going through an hypervisor.
-
-The "host-id" in effect is the hardware representation of the
-host (example: VMs locked to a core) as identified to the System
-Controller.
-
-This is introduced as an optional parameter to maintain consistency
-with legacy device tree blobs.
-
-We call this with a vendor prefix to prevent any possible confusion
-with SCSI ID (m68k) kernel option.
+Add TISCI compatible System controller for AM6 SoCs.
 
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- Documentation/devicetree/bindings/arm/keystone/ti,sci.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am6.dtsi | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt b/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-index 31f5f9a104cc..b56a02c10ae6 100644
---- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-+++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-@@ -45,11 +45,15 @@ Optional Properties:
- 	debug_messages - Map the Debug message region
- - reg:  register space corresponding to the debug_messages
- - ti,system-reboot-controller: If system reboot can be triggered by SoC reboot
-+- ti,host-id: Integer value corresponding to the host ID assigned by Firmware
-+	for identification of host processing entities such as virtual
-+	machines
+diff --git a/arch/arm64/boot/dts/ti/k3-am6.dtsi b/arch/arm64/boot/dts/ti/k3-am6.dtsi
+index 07e9cc05519c..898422e24b27 100644
+--- a/arch/arm64/boot/dts/ti/k3-am6.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am6.dtsi
+@@ -97,6 +97,38 @@
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
- Example (K2G):
- -------------
- 	pmmc: pmmc {
- 		compatible = "ti,k2g-sci";
-+		ti,host-id = <2>;
- 		mbox-names = "rx", "tx";
- 		mboxes= <&msgmgr &msgmgr_proxy_pmmc_rx>,
- 			<&msgmgr &msgmgr_proxy_pmmc_tx>;
++		dmsc: dmsc {
++			compatible = "ti,k2g-sci";
++			ti,host-id = <12>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
++			/*
++			 * In case of rare platforms that does not use am6 as
++			 * system master, use /delete-property/
++			 */
++			ti,system-reboot-controller;
++			mbox-names = "rx", "tx";
++
++			mboxes= <&secure_proxy 11>,
++				<&secure_proxy 13>;
++
++			k3_pds: power-controller {
++				compatible = "ti,sci-pm-domain";
++				#power-domain-cells = <1>;
++			};
++
++			k3_clks: clocks {
++				compatible = "ti,k2g-sci-clk";
++				#clock-cells = <2>;
++			};
++
++			k3_reset: reset-controller {
++				compatible = "ti,sci-reset";
++				#reset-cells = <2>;
++			};
++		};
++
+ 		wkup_uart0: serial@42300000 {
+ 			compatible = "ti,am654-uart", "ti,omap4-uart", "ns16550a";
+ 			reg = <0x0 0x42300000 0x0 0x100>;
 -- 
 2.15.1
