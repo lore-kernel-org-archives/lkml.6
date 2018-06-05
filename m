@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeFERDl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:03:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60650 "EHLO mail.kernel.org"
+        id S1752685AbeFERDq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752637AbeFERDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:39 -0400
+        id S1752637AbeFERDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kelly <mkelly@xevo.com>,
-        Stable@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.4 25/37] iio:kfifo_buf: check for uint overflow
-Date: Tue,  5 Jun 2018 19:01:30 +0200
-Message-Id: <20180605170110.346933218@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.4 26/37] MIPS: ptrace: Fix PTRACE_PEEKUSR requests for 64-bit FGRs
+Date: Tue,  5 Jun 2018 19:01:31 +0200
+Message-Id: <20180605170110.400512984@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -29,58 +30,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kelly <mkelly@xevo.com>
+From: Maciej W. Rozycki <macro@mips.com>
 
-commit 3d13de4b027d5f6276c0f9d3a264f518747d83f2 upstream.
+commit c7e814628df65f424fe197dde73bfc67e4a244d7 upstream.
 
-Currently, the following causes a kernel OOPS in memcpy:
+Use 64-bit accesses for 64-bit floating-point general registers with
+PTRACE_PEEKUSR, removing the truncation of their upper halves in the
+FR=1 mode, caused by commit bbd426f542cb ("MIPS: Simplify FP context
+access"), which inadvertently switched them to using 32-bit accesses.
 
-echo 1073741825 > buffer/length
-echo 1 > buffer/enable
+The PTRACE_POKEUSR side is fine as it's never been broken and continues
+using 64-bit accesses.
 
-Note that using 1073741824 instead of 1073741825 causes "write error:
-Cannot allocate memory" but no OOPS.
-
-This is because 1073741824 == 2^30 and 1073741825 == 2^30+1. Since kfifo
-rounds up to the nearest power of 2, it will actually call kmalloc with
-roundup_pow_of_two(length) * bytes_per_datum.
-
-Using length == 1073741825 and bytes_per_datum == 2, we get:
-
-kmalloc(roundup_pow_of_two(1073741825) * 2
-or kmalloc(2147483648 * 2)
-or kmalloc(4294967296)
-or kmalloc(UINT_MAX + 1)
-
-so this overflows to 0, causing kmalloc to return ZERO_SIZE_PTR and
-subsequent memcpy to fail once the device is enabled.
-
-Fix this by checking for overflow prior to allocating a kfifo. With this
-check added, the above code returns -EINVAL when enabling the buffer,
-rather than causing an OOPS.
-
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
-cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: bbd426f542cb ("MIPS: Simplify FP context access")
+Signed-off-by: Maciej W. Rozycki <macro@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.15+
+Patchwork: https://patchwork.linux-mips.org/patch/19334/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/buffer/kfifo_buf.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/mips/kernel/ptrace.c   |    2 +-
+ arch/mips/kernel/ptrace32.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/buffer/kfifo_buf.c
-+++ b/drivers/iio/buffer/kfifo_buf.c
-@@ -24,6 +24,13 @@ static inline int __iio_allocate_kfifo(s
- 	if ((length == 0) || (bytes_per_datum == 0))
- 		return -EINVAL;
- 
-+	/*
-+	 * Make sure we don't overflow an unsigned int after kfifo rounds up to
-+	 * the next power of 2.
-+	 */
-+	if (roundup_pow_of_two(length) > UINT_MAX / bytes_per_datum)
-+		return -EINVAL;
-+
- 	return __kfifo_alloc((struct __kfifo *)&buf->kf, length,
- 			     bytes_per_datum, GFP_KERNEL);
- }
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -841,7 +841,7 @@ long arch_ptrace(struct task_struct *chi
+ 				break;
+ 			}
+ #endif
+-			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
++			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
+ 			break;
+ 		case PC:
+ 			tmp = regs->cp0_epc;
+--- a/arch/mips/kernel/ptrace32.c
++++ b/arch/mips/kernel/ptrace32.c
+@@ -107,7 +107,7 @@ long compat_arch_ptrace(struct task_stru
+ 						addr & 1);
+ 				break;
+ 			}
+-			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
++			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
+ 			break;
+ 		case PC:
+ 			tmp = regs->cp0_epc;
