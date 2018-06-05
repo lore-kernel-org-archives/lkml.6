@@ -1,111 +1,294 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752635AbeFEOul (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:50:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49022 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752445AbeFEOuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:50:40 -0400
-Date: Tue, 5 Jun 2018 16:50:38 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Bob Ham <rah@settrans.net>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm: sun4i: Add support for Pengpod 1000 tablet
-Message-ID: <20180605145038.qptdlcphdbnw6jyg@flea>
-References: <20180602160313.26763-1-rah@settrans.net>
- <20180604081302.hcn7j36gt6xeyquq@flea>
- <313a74ea-0be6-cff1-6b2f-06a4b0b7ba8d@settrans.net>
+        id S1752449AbeFEOxn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:53:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44338 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752300AbeFEOxm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 10:53:42 -0400
+Date: Tue, 5 Jun 2018 16:53:34 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+        Boqun Feng <boqun.feng@gmail.com>, Will Deacon <will.deacon@arm.com>,
+        Jiri Slaby <jslaby@suse.com>, Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: [PATCH 1/7] atomics/tty: add missing atomic_long_t * cast
+Message-ID: <20180605145334.GA12235@hirez.programming.kicks-ass.net>
+References: <20180529180746.29684-1-mark.rutland@arm.com>
+ <20180529180746.29684-2-mark.rutland@arm.com>
+ <20180605120021.GH12258@hirez.programming.kicks-ass.net>
+ <20180605142051.GB12925@kroah.com>
+ <20180605144304.GW12180@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zazi7f7zkd74w65t"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <313a74ea-0be6-cff1-6b2f-06a4b0b7ba8d@settrans.net>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180605144304.GW12180@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 05, 2018 at 04:43:04PM +0200, Peter Zijlstra wrote:
 
---zazi7f7zkd74w65t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I can make a proper patch, hold on.
 
-On Mon, Jun 04, 2018 at 06:33:02PM +0100, Bob Ham wrote:
-> On 04/06/18 09:13, Maxime Ripard wrote:
-> > On Sat, Jun 02, 2018 at 05:03:13PM +0100, Bob Ham wrote:
->=20
-> >> + * This file is dual-licensed: you can use it either under the terms
-> >> + * of the GPL or the X11 license, at your option. Note that this dual
-> >> + * licensing only applies to this file, and not this project as a
-> >> + * whole.
->=20
-> >> + *     The above copyright notice and this permission notice shall be
-> >> + *     included in all copies or substantial portions of the Software.
->=20
-> > And this is redundant with the SPDX header.
->=20
-> The X11 license notice states explicitly that the notice has to be
-> included in the file.  Wouldn't removing it be a violation of the license?
+---
+Subject: atomic/tty: Fix up atomic abuse in ldsem
 
-The SPDX header is explicitly here to remove the license text and
-create a tag that is in a indirect reference to the license text in
-LICENSES. It's not going away.
+Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+working after making the atomic_long interface type safe.
 
-> >> +		brightness-levels =3D <0 10 20 30 40 50 60 70 80 90 100>;
-> >=20
-> > Each step should increase the perceived brightness by roughly 1/Nth, N
-> > being the number of steps. Usually PWM backlights don't work like that.
->=20
-> FYI, this was copied from another .dts file.  All of the other
-> brightness-levels settings in sun{4,5,7}i .dts files follow similar
-> patterns:
->=20
-> sun4i-a10-dserve-dsrv9703c.dts:               brightness-levels =3D <0 10
-> 20 30 40 50 60 70 80 90 100>;
-> sun4i-a10-inet1.dts:          brightness-levels =3D <0 10 20 30 40 50 60
-> 70 80 90 100>;
-> sun4i-a10-pov-protab2-ips9.dts:               brightness-levels =3D <0 10
-> 20 30 40 50 60 70 80 90 100>;
-> sun5i-a13-empire-electronix-d709.dts:         brightness-levels =3D <0 10
-> 20 30 40 50 60 70 80 90 100>;
-> sun5i-a13-utoo-p66.dts:       brightness-levels =3D <0 30 40 50 60 70 80
-> 90 100>;
-> sun5i-gr8-evb.dts:            brightness-levels =3D <0 10 20 30 40 50 60
-> 70 80 90 100>;
-> sun7i-a20-wexler-tab7200.dts:         brightness-levels =3D <0 10 20 30 40
-> 50 60 70 80 90 100>;
+Needing casts is bad form, which made me look at the code. There are no
+ld_semaphore::count users outside of these functions so there is no
+reason why it can not be an atomic_long_t in the first place, obviating
+the need for this cast.
 
-I never said we were perfect reviewers. Feel free to help in the process.
+That also ensures the loads use atomic_long_read(), which implies (at
+least) READ_ONCE() in order to guarantee single-copy-atomic loads.
 
-Maxime
+When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+very thin (the only difference is not changing *old on success, which
+most callers don't seem to care about).
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+So rework the whole thing to use atomic_long_t and its accessors
+directly.
 
---zazi7f7zkd74w65t
-Content-Type: application/pgp-signature; name="signature.asc"
+While there, fixup all the horrible comment styles.
 
------BEGIN PGP SIGNATURE-----
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Reported-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ drivers/tty/tty_ldsem.c   | 82 ++++++++++++++++++++---------------------------
+ include/linux/tty_ldisc.h |  4 +--
+ 2 files changed, 37 insertions(+), 49 deletions(-)
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsWoz0ACgkQ0rTAlCFN
-r3SBxxAAk+5xBNAj0WH0RlFM8/lJC/r//zqIeqZcEgmMimHLbJ6Dvjo6kyGCuFov
-LBkTy+TAFSK2a8H6G2l1HddTAqGKo9wY3W+fmXxElZ/9sD7sZn6R3dmD1rVFJ2nR
-lLix71GEyQnLWy1Qp9kAR1j75A/yi7ubspNDiHVatXt+i4anLz0xHl6nywPFQH1Y
-HeX6jWd2l9k5Z+okYppgc92a1pmocCo+mhreR46RxRac7ZI2CrrV5bVwizV2w7jK
-M5ZLgVOLo0pEixzUylITPbWlC+H0vtzXZFDdA7ZRjEVVGS7WuUAtWUVM2ldK5x37
-3k2H5/rwQ6B20eTIpwzH9HbaqwK+WgkgEELvZFP+SEgWvs+i2IzUp6/QsxL+3bGC
-KanK8hHd7NQClP/PHWDx5jXwrXOxv6QyHfgt8hFDHKqLBc3isMIatltHa9/YoJdj
-resI7vs+OZsgfACDCvFzxR1aQl8AD/USaeqo3bMGojovASHDPQfmQmRo4yP+Xd2/
-jsiHpGVW1+/RnUfT0acKiykpx2u66vBTsPROrqOtvy0dNX6EDGblI2nU0F5m8ax4
-9GDUVtuvBFbIvbSe70lrPTL999qW/zrf1qkOh5yYXzMGq9tGBinlt7hZg6nIWNfT
-ejrvg14s7/LVVfQiBbUHysJ6DUawLoMqvy+GOijmhyij97X/3DE=
-=/Kki
------END PGP SIGNATURE-----
-
---zazi7f7zkd74w65t--
+diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
+index 37a91b3df980..0c98d88f795a 100644
+--- a/drivers/tty/tty_ldsem.c
++++ b/drivers/tty/tty_ldsem.c
+@@ -74,28 +74,6 @@ struct ldsem_waiter {
+ 	struct task_struct *task;
+ };
+ 
+-static inline long ldsem_atomic_update(long delta, struct ld_semaphore *sem)
+-{
+-	return atomic_long_add_return(delta, (atomic_long_t *)&sem->count);
+-}
+-
+-/*
+- * ldsem_cmpxchg() updates @*old with the last-known sem->count value.
+- * Returns 1 if count was successfully changed; @*old will have @new value.
+- * Returns 0 if count was not changed; @*old will have most recent sem->count
+- */
+-static inline int ldsem_cmpxchg(long *old, long new, struct ld_semaphore *sem)
+-{
+-	long tmp = atomic_long_cmpxchg(&sem->count, *old, new);
+-	if (tmp == *old) {
+-		*old = new;
+-		return 1;
+-	} else {
+-		*old = tmp;
+-		return 0;
+-	}
+-}
+-
+ /*
+  * Initialize an ldsem:
+  */
+@@ -109,7 +87,7 @@ void __init_ldsem(struct ld_semaphore *sem, const char *name,
+ 	debug_check_no_locks_freed((void *)sem, sizeof(*sem));
+ 	lockdep_init_map(&sem->dep_map, name, key, 0);
+ #endif
+-	sem->count = LDSEM_UNLOCKED;
++	atomic_long_set(&sem->count, LDSEM_UNLOCKED);
+ 	sem->wait_readers = 0;
+ 	raw_spin_lock_init(&sem->wait_lock);
+ 	INIT_LIST_HEAD(&sem->read_wait);
+@@ -122,16 +100,17 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
+ 	struct task_struct *tsk;
+ 	long adjust, count;
+ 
+-	/* Try to grant read locks to all readers on the read wait list.
++	/*
++	 * Try to grant read locks to all readers on the read wait list.
+ 	 * Note the 'active part' of the count is incremented by
+ 	 * the number of readers before waking any processes up.
+ 	 */
+ 	adjust = sem->wait_readers * (LDSEM_ACTIVE_BIAS - LDSEM_WAIT_BIAS);
+-	count = ldsem_atomic_update(adjust, sem);
++	count = atomic_long_add_return(adjust, &sem->count);
+ 	do {
+ 		if (count > 0)
+ 			break;
+-		if (ldsem_cmpxchg(&count, count - adjust, sem))
++		if (atomic_long_try_cmpxchg(&sem->count, &count, count - adjust))
+ 			return;
+ 	} while (1);
+ 
+@@ -148,14 +127,15 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
+ 
+ static inline int writer_trylock(struct ld_semaphore *sem)
+ {
+-	/* only wake this writer if the active part of the count can be
++	/*
++	 * Only wake this writer if the active part of the count can be
+ 	 * transitioned from 0 -> 1
+ 	 */
+-	long count = ldsem_atomic_update(LDSEM_ACTIVE_BIAS, sem);
++	long count = atomic_long_add_return(LDSEM_ACTIVE_BIAS, &sem->count);
+ 	do {
+ 		if ((count & LDSEM_ACTIVE_MASK) == LDSEM_ACTIVE_BIAS)
+ 			return 1;
+-		if (ldsem_cmpxchg(&count, count - LDSEM_ACTIVE_BIAS, sem))
++		if (atomic_long_try_cmpxchg(&sem->count, &count, count - LDSEM_ACTIVE_BIAS))
+ 			return 0;
+ 	} while (1);
+ }
+@@ -205,12 +185,16 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
+ 	/* set up my own style of waitqueue */
+ 	raw_spin_lock_irq(&sem->wait_lock);
+ 
+-	/* Try to reverse the lock attempt but if the count has changed
++	/*
++	 * Try to reverse the lock attempt but if the count has changed
+ 	 * so that reversing fails, check if there are are no waiters,
+-	 * and early-out if not */
++	 * and early-out if not
++	 */
+ 	do {
+-		if (ldsem_cmpxchg(&count, count + adjust, sem))
++		if (atomic_long_try_cmpxchg(&sem->count, &count, count + adjust)) {
++			count += adjust;
+ 			break;
++		}
+ 		if (count > 0) {
+ 			raw_spin_unlock_irq(&sem->wait_lock);
+ 			return sem;
+@@ -243,12 +227,14 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
+ 	__set_current_state(TASK_RUNNING);
+ 
+ 	if (!timeout) {
+-		/* lock timed out but check if this task was just
++		/*
++		 * Lock timed out but check if this task was just
+ 		 * granted lock ownership - if so, pretend there
+-		 * was no timeout; otherwise, cleanup lock wait */
++		 * was no timeout; otherwise, cleanup lock wait.
++		 */
+ 		raw_spin_lock_irq(&sem->wait_lock);
+ 		if (waiter.task) {
+-			ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
++			atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
+ 			list_del(&waiter.list);
+ 			raw_spin_unlock_irq(&sem->wait_lock);
+ 			put_task_struct(waiter.task);
+@@ -273,11 +259,13 @@ down_write_failed(struct ld_semaphore *sem, long count, long timeout)
+ 	/* set up my own style of waitqueue */
+ 	raw_spin_lock_irq(&sem->wait_lock);
+ 
+-	/* Try to reverse the lock attempt but if the count has changed
++	/*
++	 * Try to reverse the lock attempt but if the count has changed
+ 	 * so that reversing fails, check if the lock is now owned,
+-	 * and early-out if so */
++	 * and early-out if so.
++	 */
+ 	do {
+-		if (ldsem_cmpxchg(&count, count + adjust, sem))
++		if (atomic_long_try_cmpxchg(&sem->count, &count, count + adjust))
+ 			break;
+ 		if ((count & LDSEM_ACTIVE_MASK) == LDSEM_ACTIVE_BIAS) {
+ 			raw_spin_unlock_irq(&sem->wait_lock);
+@@ -303,7 +291,7 @@ down_write_failed(struct ld_semaphore *sem, long count, long timeout)
+ 	}
+ 
+ 	if (!locked)
+-		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
++		atomic_long_add_return(-LDSEM_WAIT_BIAS, &sem->count);
+ 	list_del(&waiter.list);
+ 	raw_spin_unlock_irq(&sem->wait_lock);
+ 
+@@ -324,7 +312,7 @@ static int __ldsem_down_read_nested(struct ld_semaphore *sem,
+ 
+ 	lockdep_acquire_read(sem, subclass, 0, _RET_IP_);
+ 
+-	count = ldsem_atomic_update(LDSEM_READ_BIAS, sem);
++	count = atomic_long_add_return(LDSEM_READ_BIAS, &sem->count);
+ 	if (count <= 0) {
+ 		lock_stat(sem, contended);
+ 		if (!down_read_failed(sem, count, timeout)) {
+@@ -343,7 +331,7 @@ static int __ldsem_down_write_nested(struct ld_semaphore *sem,
+ 
+ 	lockdep_acquire(sem, subclass, 0, _RET_IP_);
+ 
+-	count = ldsem_atomic_update(LDSEM_WRITE_BIAS, sem);
++	count = atomic_long_add_return(LDSEM_WRITE_BIAS, &sem->count);
+ 	if ((count & LDSEM_ACTIVE_MASK) != LDSEM_ACTIVE_BIAS) {
+ 		lock_stat(sem, contended);
+ 		if (!down_write_failed(sem, count, timeout)) {
+@@ -370,10 +358,10 @@ int __sched ldsem_down_read(struct ld_semaphore *sem, long timeout)
+  */
+ int ldsem_down_read_trylock(struct ld_semaphore *sem)
+ {
+-	long count = sem->count;
++	long count = atomic_long_read(&sem->count);
+ 
+ 	while (count >= 0) {
+-		if (ldsem_cmpxchg(&count, count + LDSEM_READ_BIAS, sem)) {
++		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_READ_BIAS)) {
+ 			lockdep_acquire_read(sem, 0, 1, _RET_IP_);
+ 			lock_stat(sem, acquired);
+ 			return 1;
+@@ -396,10 +384,10 @@ int __sched ldsem_down_write(struct ld_semaphore *sem, long timeout)
+  */
+ int ldsem_down_write_trylock(struct ld_semaphore *sem)
+ {
+-	long count = sem->count;
++	long count = atomic_long_read(&sem->count);
+ 
+ 	while ((count & LDSEM_ACTIVE_MASK) == 0) {
+-		if (ldsem_cmpxchg(&count, count + LDSEM_WRITE_BIAS, sem)) {
++		if (atomic_long_try_cmpxchg(&sem->count, &count, count + LDSEM_WRITE_BIAS)) {
+ 			lockdep_acquire(sem, 0, 1, _RET_IP_);
+ 			lock_stat(sem, acquired);
+ 			return 1;
+@@ -417,7 +405,7 @@ void ldsem_up_read(struct ld_semaphore *sem)
+ 
+ 	lockdep_release(sem, 1, _RET_IP_);
+ 
+-	count = ldsem_atomic_update(-LDSEM_READ_BIAS, sem);
++	count = atomic_long_add_return(-LDSEM_READ_BIAS, &sem->count);
+ 	if (count < 0 && (count & LDSEM_ACTIVE_MASK) == 0)
+ 		ldsem_wake(sem);
+ }
+@@ -431,7 +419,7 @@ void ldsem_up_write(struct ld_semaphore *sem)
+ 
+ 	lockdep_release(sem, 1, _RET_IP_);
+ 
+-	count = ldsem_atomic_update(-LDSEM_WRITE_BIAS, sem);
++	count = atomic_long_add_return(-LDSEM_WRITE_BIAS, &sem->count);
+ 	if (count < 0)
+ 		ldsem_wake(sem);
+ }
+diff --git a/include/linux/tty_ldisc.h b/include/linux/tty_ldisc.h
+index 1ef64d4ad887..840894ca3fc0 100644
+--- a/include/linux/tty_ldisc.h
++++ b/include/linux/tty_ldisc.h
+@@ -119,13 +119,13 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/wait.h>
+-
++#include <linux/atomic.h>
+ 
+ /*
+  * the semaphore definition
+  */
+ struct ld_semaphore {
+-	long			count;
++	atomic_long_t		count;
+ 	raw_spinlock_t		wait_lock;
+ 	unsigned int		wait_readers;
+ 	struct list_head	read_wait;
