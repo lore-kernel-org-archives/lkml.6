@@ -1,51 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751590AbeFEFck (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 01:32:40 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38644 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751497AbeFEFcj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 01:32:39 -0400
-X-Google-Smtp-Source: ADUXVKL4Ob0ub03C/a/ePm8bWUW4CBMu3HHd0dKLmJUC75uUoZfTOZFSGQswpF70+ED++wTUXwB5HQ==
-Date: Tue, 5 Jun 2018 11:02:36 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Janani Sankara Babu <jananis37@gmail.com>
-Cc: gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [greybus-dev] [PATCH] Staging:greybus Fix comparison to NULL
-Message-ID: <20180605053236.u57riboa47so66rr@vireshk-i7>
-References: <1528030371-3822-1-git-send-email-jananis37@gmail.com>
+        id S1751662AbeFEFeT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 01:34:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51642 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751572AbeFEFeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 01:34:18 -0400
+Date: Tue, 5 Jun 2018 06:34:10 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCHv2 03/16] atomics/treewide: make atomic64_inc_not_zero()
+ optional
+Message-ID: <20180605053409.bsxh5zgsidsbqtjm@salmiak>
+References: <20180529154346.3168-4-mark.rutland@arm.com>
+ <mhng-bc7520a5-9be6-4f9f-b3f1-3a44d7da233e@palmer-si-x1c4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528030371-3822-1-git-send-email-jananis37@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <mhng-bc7520a5-9be6-4f9f-b3f1-3a44d7da233e@palmer-si-x1c4>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03-06-18, 08:52, Janani Sankara Babu wrote:
-> This patch replaces comparison of var to NULL with !var
+On Mon, Jun 04, 2018 at 04:17:25PM -0700, Palmer Dabbelt wrote:
+> On Tue, 29 May 2018 08:43:33 PDT (-0700), mark.rutland@arm.com wrote:
+> > We define a trivial fallback for atomic_inc_not_zero(), but don't do
+> > the same for atmic64_inc_not_zero(), leading most architectures to
+> > define the same boilerplate.
 > 
-> Signed-off-by: Janani Sankara Babu <jananis37@gmail.com>
-> ---
->  drivers/staging/greybus/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/greybus/core.c b/drivers/staging/greybus/core.c
-> index dafa430..5d14a4e 100644
-> --- a/drivers/staging/greybus/core.c
-> +++ b/drivers/staging/greybus/core.c
-> @@ -48,7 +48,7 @@ static bool greybus_match_one_id(struct gb_bundle *bundle,
->  static const struct greybus_bundle_id *
->  greybus_match_id(struct gb_bundle *bundle, const struct greybus_bundle_id *id)
->  {
-> -	if (id == NULL)
-> +	if (!id)
+> atmic64
 
-It is pretty much personal preference and there is no good reason to accept this
-patch really.
+Cheers for the spot; fixed now!
 
--- 
-viresh
+Mark.
