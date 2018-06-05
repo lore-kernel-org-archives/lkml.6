@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752639AbeFEV3A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:29:00 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40054 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751819AbeFEV25 (ORCPT
+        id S1751965AbeFEVbj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:31:39 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:43630 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbeFEVbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:28:57 -0400
-X-Google-Smtp-Source: ADUXVKKrBpCX61JQTGM5J5SuPDMo7NSOfXSL0A4NoQV4qFwbuTjbP1eOKV0MMv+XD/QYVLemott3UFU3aPBK6a1dNxA=
+        Tue, 5 Jun 2018 17:31:36 -0400
+X-Google-Smtp-Source: ADUXVKI7NorkJSQ+St48Txtiw6Uskw8u3TrlfA8BDO91Li71U0xHHtw4ULHlEC84au7rwCRM1/JkOHHsKFj+byjjNmg=
 MIME-Version: 1.0
-In-Reply-To: <20180605170532.170361-3-ndesaulniers@google.com>
-References: <20180605170532.170361-1-ndesaulniers@google.com> <20180605170532.170361-3-ndesaulniers@google.com>
+In-Reply-To: <CAK8P3a0v6sr_oZmYTZV7E-uJ8JdG6D8JqUesHDPkPY2UrWKdvw@mail.gmail.com>
+References: <20180605170532.170361-1-ndesaulniers@google.com>
+ <20180605170532.170361-3-ndesaulniers@google.com> <CAK8P3a0v6sr_oZmYTZV7E-uJ8JdG6D8JqUesHDPkPY2UrWKdvw@mail.gmail.com>
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 5 Jun 2018 23:28:54 +0200
-X-Google-Sender-Auth: mL3x_csGcqYNBuk7-miSAUq_tQk
-Message-ID: <CAK8P3a0v6sr_oZmYTZV7E-uJ8JdG6D8JqUesHDPkPY2UrWKdvw@mail.gmail.com>
+Date: Tue, 5 Jun 2018 23:31:35 +0200
+X-Google-Sender-Auth: IUVe0cpAn_tLcUbnK-Vas7qebm4
+Message-ID: <CAK8P3a1MY1-ennr_g=viLSiKodO8uva_jvmtUUU283aXWDLnHw@mail.gmail.com>
 Subject: Re: [PATCH v2 2/2] x86: paravirt: make native_save_fl extern inline
 To: Nick Desaulniers <ndesaulniers@google.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -52,22 +53,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 7:05 PM, Nick Desaulniers
-<ndesaulniers@google.com> wrote:
+On Tue, Jun 5, 2018 at 11:28 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Jun 5, 2018 at 7:05 PM, Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+>>
+>> The semantics of extern inline has changed since gnu89. This means that
+>> folks using GCC versions >= 5.1 may see symbol redefinition errors at
+>> link time for subdirs that override KBUILD_CFLAGS (making the C standard
+>> used implicit) regardless of this patch. This has been cleaned up
+>> earlier in the patch set, but is left as a note in the commit message
+>> for future travelers.
 >
-> The semantics of extern inline has changed since gnu89. This means that
-> folks using GCC versions >= 5.1 may see symbol redefinition errors at
-> link time for subdirs that override KBUILD_CFLAGS (making the C standard
-> used implicit) regardless of this patch. This has been cleaned up
-> earlier in the patch set, but is left as a note in the commit message
-> for future travelers.
+> I think the keyword you are missing is
+>
+> __attribute__((gnu_inline))
+>
+> which forces the gnu89 behavior on all compiler versions. It's been supported
+> since gcc-4.2, so it should not cause problems on any compiler that is able
+> to build an x86 kernel.
 
-I think the keyword you are missing is
-
-__attribute__((gnu_inline))
-
-which forces the gnu89 behavior on all compiler versions. It's been supported
-since gcc-4.2, so it should not cause problems on any compiler that is able
-to build an x86 kernel.
+Nevermind, I just saw you already posted that.
 
        Arnd
