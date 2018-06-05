@@ -1,62 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751737AbeFEI3m (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:29:42 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54507 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751690AbeFEI3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:29:40 -0400
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] usb: xhci: remove the code build warning
-Date: Wed, 6 Jun 2018 00:35:00 +0800
-Message-ID: <1528216500-14172-1-git-send-email-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751511AbeFEIcr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:32:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47759 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751296AbeFEIcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:32:45 -0400
+Date: Tue, 5 Jun 2018 10:32:41 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>, qing.huang@oracle.com,
+        tariqt@mellanox.com, haakon.bugge@oracle.com, yanjun.zhu@oracle.com,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gi-oh.kim@profitbricks.com
+Subject: Re: [PATCH V4] mlx4_core: allocate ICM memory in page size chunks
+Message-ID: <20180605083241.GU19202@dhcp22.suse.cz>
+References: <20180525.102321.858995452200286788.davem@davemloft.net>
+ <7a353b65-6b7f-1aee-1c48-e83c8e02f693@gmail.com>
+ <0e11e0fc-6ccf-aa93-9c4f-b9eae1b90643@gmail.com>
+ <cdf0d1a9-378a-8b09-544e-a4918acb57fe@gmail.com>
+ <20180531065405.GH15278@dhcp22.suse.cz>
+ <ae114f01-4b09-bb1c-fb92-6152486a896f@gmail.com>
+ <20180531085532.GK15278@dhcp22.suse.cz>
+ <20180531091022.GL15278@dhcp22.suse.cz>
+ <20180604131104.GS19202@dhcp22.suse.cz>
+ <1908601f-2eda-d739-9c4d-430a002b1a05@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.143.28.90]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1908601f-2eda-d739-9c4d-430a002b1a05@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize the 'err' variate to remove the build warning,
-the warning is shown as below:
+On Mon 04-06-18 06:22:26, Eric Dumazet wrote:
+> 
+> 
+> On 06/04/2018 06:11 AM, Michal Hocko wrote:
+> > On Thu 31-05-18 11:10:22, Michal Hocko wrote:
+> 
+> > Just in case you are interested
+> > ---
+> > From 5010543ed6f73e4c00367801486dca8d5c63b2ce Mon Sep 17 00:00:00 2001
+> > From: Michal Hocko <mhocko@suse.com>
+> > Date: Mon, 4 Jun 2018 15:07:37 +0200
+> > Subject: [PATCH] net: cleanup gfp mask in alloc_skb_with_frags
+> > 
+> > alloc_skb_with_frags uses __GFP_NORETRY for non-sleeping allocations
+> > which is just a noop and a little bit confusing.
+> > 
+> > __GFP_NORETRY was added by ed98df3361f0 ("net: use __GFP_NORETRY for
+> > high order allocations") to prevent from the OOM killer. Yet this was
+> > not enough because fb05e7a89f50 ("net: don't wait for order-3 page
+> > allocation") didn't want an excessive reclaim for non-costly orders
+> > so it made it completely NOWAIT while it preserved __GFP_NORETRY in
+> > place which is now redundant.
+> > 
+> > Drop the pointless __GFP_NORETRY because this function is used as
+> > copy&paste source for other places.
+> > 
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> 
+> Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-drivers/usb/host/xhci-tegra.c: In function ‘tegra_xusb_mbox_thread’:
-drivers/usb/host/xhci-tegra.c:552:6: warning: ‘err’ may be used uninitialized in this function [-Wuninitialized]
-drivers/usb/host/xhci-tegra.c:482:6: note: ‘err’ was declared here
-
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
----
-How to reproduce:
-1. make defconfig ARCH=arm
-2. make -j100 CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
-
-Then you can see below warnings:
-drivers/usb/host/xhci-tegra.c: In function ‘tegra_xusb_mbox_thread’:
-drivers/usb/host/xhci-tegra.c:552:6: warning: ‘err’ may be used uninitialized in this function [-Wuninitialized]
-drivers/usb/host/xhci-tegra.c:482:6: note: ‘err’ was declared here
----
- drivers/usb/host/xhci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 2c076ea..1ed87ce 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -479,7 +479,7 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
- 	unsigned long mask;
- 	unsigned int port;
- 	bool idle, enable;
--	int err;
-+	int err = 0;
- 
- 	memset(&rsp, 0, sizeof(rsp));
- 
+Thanks! What is the proper process now? Should I resend or somebody can
+pick it up from this thread?
 -- 
-2.7.4
+Michal Hocko
+SUSE Labs
