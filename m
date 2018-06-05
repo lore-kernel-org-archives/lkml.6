@@ -1,297 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751855AbeFEGhH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 02:37:07 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8637 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751453AbeFEGfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 02:35:52 -0400
-From: Abbott Liu <liuwenliang@huawei.com>
-To: <aryabinin@virtuozzo.com>, <glider@google.com>, <dvyukov@google.com>,
-        <corbet@lwn.net>, <linux@armlinux.org.uk>, <christoffer.dall@arm.com>,
-        <marc.zyngier@arm.com>, <arnd@arndb.de>, <nicolas.pitre@linaro.org>,
-        <vladimir.murzin@arm.com>, <keescook@chromium.org>,
-        <jinb.park7@gmail.com>, <alexandre.belloni@bootlin.com>,
-        <ard.biesheuvel@linaro.org>, <daniel.lezcano@linaro.org>,
-        <pombredanne@nexb.com>, <kstewart@linuxfoundation.org>,
-        <liuwenliang@huawei.com>, <rob@landley.net>,
-        <gregkh@linuxfoundation.org>, <f.fainelli@gmail.com>,
-        <mawilcox@microsoft.com>, <akpm@linux-foundation.org>,
-        <mark.rutland@arm.com>, <catalin.marinas@arm.com>,
-        <yamada.masahiro@socionext.com>, <alexander.levin@verizon.com>,
-        <tglx@linutronix.de>, <thgarnie@google.com>, <dhowells@redhat.com>,
-        <geert@linux-m68k.org>, <andre.przywara@arm.com>,
-        <julien.thierry@arm.com>, <drjones@redhat.com>, <philip@cog.systems>,
-        <opendmb@gmail.com>, <mhocko@suse.com>,
-        <kirill.shutemov@linux.intel.com>, <kasan-dev@googlegroups.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.cs.columbia.edu>
-CC: <a.ryabinin@samsung.com>, <ryabinin.a.a@gmail.com>
-Subject: [PATCH v5 4/6] Define the virtual space of KASan's shadow region
-Date: Tue, 5 Jun 2018 14:14:14 +0800
-Message-ID: <20180605061416.18690-5-liuwenliang@huawei.com>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180605061416.18690-1-liuwenliang@huawei.com>
-References: <20180605061416.18690-1-liuwenliang@huawei.com>
+        id S1751461AbeFEGry (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 02:47:54 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44867 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751156AbeFEGrx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 02:47:53 -0400
+X-Google-Smtp-Source: ADUXVKI6fH3N8xTSN3AS+59ZOjGHYbHLQKFwLX+WKjpHlxlGsNSL5LoyIF+QC3bWXCSUXg9vuproJhELF2a1BuinVKQ=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.187.223]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180604065549.468488465@linuxfoundation.org>
+References: <20180604065549.468488465@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 5 Jun 2018 12:17:50 +0530
+Message-ID: <CA+G9fYtqeKHObf76DxmdwQdJ0gK97Jc7QuUKhxN8gDCB9gbJjA@mail.gmail.com>
+Subject: Re: [PATCH 4.16 00/47] 4.16.14-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, Shuah Khan <shuah@kernel.org>,
+        patches@kernelci.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org, linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w556m2dt020640
 
-Define KASAN_SHADOW_OFFSET,KASAN_SHADOW_START and KASAN_SHADOW_END for arm
-kernel address sanitizer.
+On 4 June 2018 at 12:28, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.16.14 release.
+> There are 47 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Jun  6 06:55:34 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.14-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-     +----+ 0xffffffff
-     |    |
-     |    |
-     |    |
-     +----+ CONFIG_PAGE_OFFSET
-     |    |     |    | |->  module virtual address space area.
-     |    |/
-     +----+ MODULE_VADDR = KASAN_SHADOW_END
-     |    |     |    | |-> the shadow area of kernel virtual address.
-     |    |/
-     +----+ TASK_SIZE(start of kernel space) = KASAN_SHADOW_START  the
-     |    |\  shadow address of MODULE_VADDR
-     |    | ---------------------+
-     |    |                      |
-     +    + KASAN_SHADOW_OFFSET  |-> the user space area. Kernel address
-     |    |                      |    sanitizer do not use this space.
-     |    | ---------------------+
-     |    |/
-     ------ 0
+Results from Linaro’s test farm.
+No regressions on arm64, arm and x86_64.
 
-1)KASAN_SHADOW_OFFSET:
-  This value is used to map an address to the corresponding shadow
-address by the following formula:
-shadow_addr = (address >> 3) + KASAN_SHADOW_OFFSET;
+NOTE:  The boot failures are due to infrastructure issues.
+Test failures are known issues and these will be added to skip list.
+1. kselftest: rtnetlink.sh
+2. ltp syscalls: cve-2017-5669
+3. ltp cve: cve-2017-5669
 
-2)KASAN_SHADOW_START
-  This value is the MODULE_VADDR's shadow address. It is the start
-of kernel virtual space.
+Summary
+------------------------------------------------------------------------
 
-3)KASAN_SHADOW_END
-  This value is the 0x100000000's shadow address. It is the end of
-kernel addresssanitizer's shadow area. It is also the start of the
-module area.
+kernel: 4.16.14-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.16.y
+git commit: 79de57953e95a587e1b673af554995d899bdd006
+git describe: v4.16.13-48-g79de57953e95
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/build/v4.16.13-48-g79de57953e95
 
-When enable kasan, the definition of TASK_SIZE is not an an 8-bit
-rotated constant, so we need to modify the TASK_SIZE access code
-in the *.s file.
 
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Joel Stanley <joel@jms.id.au>
-Tested-by: Florian Fainelli <f.fainelli@gmail.com>
-Tested-by: Abbott Liu <liuwenliang@huawei.com>
-Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
----
- arch/arm/include/asm/kasan_def.h | 64 ++++++++++++++++++++++++++++++++++++++++
- arch/arm/include/asm/memory.h    |  5 ++++
- arch/arm/kernel/entry-armv.S     |  5 ++--
- arch/arm/kernel/entry-common.S   |  9 ++++--
- arch/arm/mm/init.c               |  6 ++++
- arch/arm/mm/mmu.c                |  7 ++++-
- 6 files changed, 90 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm/include/asm/kasan_def.h
+No regressions (compared to build v4.16.13)
 
-diff --git a/arch/arm/include/asm/kasan_def.h b/arch/arm/include/asm/kasan_def.h
-new file mode 100644
-index 0000000..7b7f424
---- /dev/null
-+++ b/arch/arm/include/asm/kasan_def.h
-@@ -0,0 +1,64 @@
-+/*
-+ *  arch/arm/include/asm/kasan_def.h
-+ *
-+ *  Copyright (c) 2018 Huawei Technologies Co., Ltd.
-+ *
-+ *  Author: Abbott Liu <liuwenliang@huawei.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __ASM_KASAN_DEF_H
-+#define __ASM_KASAN_DEF_H
-+
-+#ifdef CONFIG_KASAN
-+
-+/*
-+ *    +----+ 0xffffffff
-+ *    |    |
-+ *    |    |
-+ *    |    |
-+ *    +----+ CONFIG_PAGE_OFFSET
-+ *    |    |\
-+ *    |    | |->  module virtual address space area.
-+ *    |    |/
-+ *    +----+ MODULE_VADDR = KASAN_SHADOW_END
-+ *    |    |\
-+ *    |    | |-> the shadow area of kernel virtual address.
-+ *    |    |/
-+ *    +----+ TASK_SIZE(start of kernel space) = KASAN_SHADOW_START  the
-+ *    |    |\  shadow address of MODULE_VADDR
-+ *    |    | ---------------------+
-+ *    |    |                      |
-+ *    +    + KASAN_SHADOW_OFFSET  |-> the user space area. Kernel address
-+ *    |    |                      |    sanitizer do not use this space.
-+ *    |    | ---------------------+
-+ *    |    |/
-+ *    ------ 0
-+ *
-+ *1)KASAN_SHADOW_OFFSET:
-+ *    This value is used to map an address to the corresponding shadow
-+ * address by the following formula:
-+ * shadow_addr = (address >> 3) + KASAN_SHADOW_OFFSET;
-+ *
-+ * 2)KASAN_SHADOW_START
-+ *     This value is the MODULE_VADDR's shadow address. It is the start
-+ * of kernel virtual space.
-+ *
-+ * 3) KASAN_SHADOW_END
-+ *   This value is the 0x100000000's shadow address. It is the end of
-+ * kernel addresssanitizer's shadow area. It is also the start of the
-+ * module area.
-+ *
-+ */
-+
-+#define KASAN_SHADOW_OFFSET     (KASAN_SHADOW_END - (1<<29))
-+
-+#define KASAN_SHADOW_START      ((KASAN_SHADOW_END >> 3) + KASAN_SHADOW_OFFSET)
-+
-+#define KASAN_SHADOW_END        (UL(CONFIG_PAGE_OFFSET) - UL(SZ_16M))
-+
-+#endif
-+#endif
-diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
-index ed8fd0d..6e099a5 100644
---- a/arch/arm/include/asm/memory.h
-+++ b/arch/arm/include/asm/memory.h
-@@ -21,6 +21,7 @@
- #ifdef CONFIG_NEED_MACH_MEMORY_H
- #include <mach/memory.h>
- #endif
-+#include <asm/kasan_def.h>
- 
- /* PAGE_OFFSET - the virtual address of the start of the kernel image */
- #define PAGE_OFFSET		UL(CONFIG_PAGE_OFFSET)
-@@ -31,7 +32,11 @@
-  * TASK_SIZE - the maximum size of a user space task.
-  * TASK_UNMAPPED_BASE - the lower boundary of the mmap VM area
-  */
-+#ifndef CONFIG_KASAN
- #define TASK_SIZE		(UL(CONFIG_PAGE_OFFSET) - UL(SZ_16M))
-+#else
-+#define TASK_SIZE		(KASAN_SHADOW_START)
-+#endif
- #define TASK_UNMAPPED_BASE	ALIGN(TASK_SIZE / 3, SZ_16M)
- 
- /*
-diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-index 1752033..b4de9e4 100644
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@ -183,7 +183,7 @@ ENDPROC(__und_invalid)
- 
- 	get_thread_info tsk
- 	ldr	r0, [tsk, #TI_ADDR_LIMIT]
--	mov	r1, #TASK_SIZE
-+	ldr	r1, =TASK_SIZE
- 	str	r1, [tsk, #TI_ADDR_LIMIT]
- 	str	r0, [sp, #SVC_ADDR_LIMIT]
- 
-@@ -437,7 +437,8 @@ ENDPROC(__fiq_abt)
- 	@ if it was interrupted in a critical region.  Here we
- 	@ perform a quick test inline since it should be false
- 	@ 99.9999% of the time.  The rest is done out of line.
--	cmp	r4, #TASK_SIZE
-+	ldr	r0, =TASK_SIZE
-+	cmp	r4, r0
- 	blhs	kuser_cmpxchg64_fixup
- #endif
- #endif
-diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 3c4f887..78046de 100644
---- a/arch/arm/kernel/entry-common.S
-+++ b/arch/arm/kernel/entry-common.S
-@@ -51,7 +51,8 @@ ret_fast_syscall:
-  UNWIND(.cantunwind	)
- 	disable_irq_notrace			@ disable interrupts
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
--	cmp	r2, #TASK_SIZE
-+	ldr	r1, =TASK_SIZE
-+	cmp	r2, r1
- 	blne	addr_limit_check_failed
- 	ldr	r1, [tsk, #TI_FLAGS]		@ re-check for syscall tracing
- 	tst	r1, #_TIF_SYSCALL_WORK | _TIF_WORK_MASK
-@@ -81,7 +82,8 @@ ret_fast_syscall:
- 	str	r0, [sp, #S_R0 + S_OFF]!	@ save returned r0
- 	disable_irq_notrace			@ disable interrupts
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
--	cmp	r2, #TASK_SIZE
-+	ldr     r1, =TASK_SIZE
-+	cmp     r2, r1
- 	blne	addr_limit_check_failed
- 	ldr	r1, [tsk, #TI_FLAGS]		@ re-check for syscall tracing
- 	tst	r1, #_TIF_SYSCALL_WORK | _TIF_WORK_MASK
-@@ -116,7 +118,8 @@ ret_slow_syscall:
- 	disable_irq_notrace			@ disable interrupts
- ENTRY(ret_to_user_from_irq)
- 	ldr	r2, [tsk, #TI_ADDR_LIMIT]
--	cmp	r2, #TASK_SIZE
-+	ldr     r1, =TASK_SIZE
-+	cmp	r2, r1
- 	blne	addr_limit_check_failed
- 	ldr	r1, [tsk, #TI_FLAGS]
- 	tst	r1, #_TIF_WORK_MASK
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index c186474..9320cf5 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -538,6 +538,9 @@ void __init mem_init(void)
- #ifdef CONFIG_MODULES
- 			"    modules : 0x%08lx - 0x%08lx   (%4ld MB)\n"
- #endif
-+#ifdef CONFIG_KASAN
-+			"    kasan   : 0x%08lx - 0x%08lx   (%4ld MB)\n"
-+#endif
- 			"      .text : 0x%p" " - 0x%p" "   (%4td kB)\n"
- 			"      .init : 0x%p" " - 0x%p" "   (%4td kB)\n"
- 			"      .data : 0x%p" " - 0x%p" "   (%4td kB)\n"
-@@ -558,6 +561,9 @@ void __init mem_init(void)
- #ifdef CONFIG_MODULES
- 			MLM(MODULES_VADDR, MODULES_END),
- #endif
-+#ifdef CONFIG_KASAN
-+			MLM(KASAN_SHADOW_START, KASAN_SHADOW_END),
-+#endif
- 
- 			MLK_ROUNDUP(_text, _etext),
- 			MLK_ROUNDUP(__init_begin, __init_end),
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index e46a6a4..f5aa1de 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -1251,9 +1251,14 @@ static inline void prepare_page_table(void)
- 	/*
- 	 * Clear out all the mappings below the kernel image.
- 	 */
--	for (addr = 0; addr < MODULES_VADDR; addr += PMD_SIZE)
-+	for (addr = 0; addr < TASK_SIZE; addr += PMD_SIZE)
- 		pmd_clear(pmd_off_k(addr));
- 
-+#ifdef CONFIG_KASAN
-+	/*TASK_SIZE ~ MODULES_VADDR is the KASAN's shadow area -- skip over it*/
-+	addr = MODULES_VADDR;
-+#endif
-+
- #ifdef CONFIG_XIP_KERNEL
- 	/* The XIP kernel is mapped in the module area -- skip over it */
- 	addr = ((unsigned long)_exiprom + PMD_SIZE - 1) & PMD_MASK;
+Boards, architectures and test suites:
+-------------------------------------
+
+dragonboard-410c - arm64
+* boot - pass: 10, fail: 2
+* kselftest - skip: 26, pass: 40, fail: 2
+* libhugetlbfs - skip: 1, pass: 89, fail: 1
+* ltp-containers-tests - skip: 17, pass: 64,
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - skip: 6, pass: 60,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - skip: 1, pass: 21,
+
+hi6220-hikey - arm64
+* boot - pass: 13,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - skip: 6, pass: 60,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - skip: 1, pass: 21,
+* ltp-io-tests - pass: 3,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - skip: 4, pass: 10,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - skip: 132, pass: 1015, fail: 2
+* ltp-timers-tests - pass: 13,
+
+juno-r2 - arm64
+* boot - pass: 21,
+* kselftest - skip: 24, pass: 43, fail: 1
+* libhugetlbfs - skip: 1, pass: 90,
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - skip: 17, pass: 64,
+* ltp-cve-tests - skip: 8, pass: 24, fail: 3
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - skip: 6, pass: 60,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - skip: 4, pass: 10,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - skip: 131, pass: 1016, fail: 2
+* ltp-timers-tests - pass: 13,
+
+qemu_arm
+* boot - pass: 21,
+* kselftest - skip: 31, pass: 36, fail: 1
+* libhugetlbfs - skip: 1, pass: 87,
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - skip: 18, pass: 63,
+* ltp-cve-tests - skip: 8, pass: 22, fail: 5
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - skip: 5, pass: 61,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - skip: 1, pass: 21,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - skip: 7, pass: 7,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - skip: 93, pass: 1053, fail: 3
+* ltp-timers-tests - pass: 13,
+
+qemu_arm64
+* boot - pass: 21,
+* kselftest - skip: 29, pass: 40, fail: 1
+* libhugetlbfs - skip: 1, pass: 90,
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - skip: 17, pass: 64,
+* ltp-cve-tests - skip: 8, pass: 23, fail: 4
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - skip: 6, pass: 60,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - skip: 6, pass: 8,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - skip: 153, pass: 993, fail: 3
+* ltp-timers-tests - pass: 13,
+
+qemu_x86_64
+* boot - pass: 21,
+* kselftest - skip: 29, pass: 52, fail: 1
+* libhugetlbfs - skip: 1, pass: 90,
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - skip: 17, pass: 64,
+* ltp-cve-tests - skip: 3, pass: 29, fail: 3
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - skip: 6, pass: 60,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - skip: 1, pass: 13,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - skip: 152, pass: 995, fail: 2
+* ltp-timers-tests - pass: 13,
+
+x15 - arm
+* boot - pass: 3,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - skip: 76, pass: 1073,
+* ltp-timers-tests - pass: 13,
+
+x86_64
+* boot - pass: 23,
+* kselftest - skip: 20, pass: 53, fail: 1
+* kselftest-vsyscall-mode-native - skip: 19, pass: 54, fail: 1
+* kselftest-vsyscall-mode-none - skip: 23, pass: 53, fail: 1
+* libhugetlbfs - skip: 1, pass: 90,
+* ltp-cap_bounds-tests - pass: 2,
+* ltp-containers-tests - skip: 17, pass: 64,
+* ltp-cve-tests - skip: 3, pass: 29, fail: 3
+* ltp-fcntl-locktests-tests - pass: 2,
+* ltp-filecaps-tests - pass: 2,
+* ltp-fs-tests - skip: 5, pass: 61,
+* ltp-fs_bind-tests - pass: 2,
+* ltp-fs_perms_simple-tests - pass: 19,
+* ltp-fsx-tests - pass: 2,
+* ltp-hugetlb-tests - pass: 22,
+* ltp-io-tests - pass: 3,
+* ltp-ipc-tests - pass: 9,
+* ltp-math-tests - pass: 11,
+* ltp-nptl-tests - pass: 2,
+* ltp-pty-tests - pass: 4,
+* ltp-sched-tests - skip: 5, pass: 9,
+* ltp-securebits-tests - pass: 4,
+* ltp-syscalls-tests - skip: 116, pass: 1031, fail: 2
+* ltp-timers-tests - pass: 13,
+
 -- 
-2.9.0
+Linaro QA (BETA)
+https://qa-reports.linaro.org
