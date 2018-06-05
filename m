@@ -1,126 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751804AbeFEJ2H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:28:07 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51079 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751509AbeFEJ2E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:28:04 -0400
-X-Google-Smtp-Source: ADUXVKIMwf70Fo8SbMGL176Q2KD2t9Ivt+XD8HGro5VmfrO2E7FozIK3QSz2uwMGpNKFFGGw36DrzA==
-Date: Tue, 5 Jun 2018 11:28:01 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Aapo Vienamo <avienamo@nvidia.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: tegra: Use sdhci_pltfm_clk_get_max_clock
-Message-ID: <20180605092801.GC20649@ulmo>
-References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
+        id S1751577AbeFEJ3c (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:29:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8643 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751437AbeFEJ3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 05:29:31 -0400
+Subject: Re: [PATCH v2 01/21] usb: phy: use match_string() helper
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-2-git-send-email-xieyisheng1@huawei.com>
+ <af7838f0-9cae-d526-b52f-15996cd8031c@cogentembedded.com>
+ <CAHp75VfAwj2P51ydOoe6aysB=Q9j8DaMNSbYaMqwbYHn7UFfdQ@mail.gmail.com>
+ <d06e5dd2-cee8-7648-c4e0-3f65977e0510@cogentembedded.com>
+ <CAHp75VfUvcCJEyisNG0cgiL8GCdNQvSaefJVW2yx7HWDHC45cw@mail.gmail.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <4ea021ae-1284-4519-e467-5c03bc62c98b@huawei.com>
+Date: Tue, 5 Jun 2018 17:28:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
-Content-Disposition: inline
-In-Reply-To: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAHp75VfUvcCJEyisNG0cgiL8GCdNQvSaefJVW2yx7HWDHC45cw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---4jXrM3lyYWu4nBt5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/6/1 2:59, Andy Shevchenko wrote:
+> On Thu, May 31, 2018 at 9:56 PM, Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+>> On 05/31/2018 09:47 PM, Andy Shevchenko wrote:
+> 
+>>>>> -     int err, i;
+> 
+>>>>> +     err = match_string(usbphy_modes, ARRAY_SIZE(usbphy_modes), phy_type);
+>>>>> +     if (err < 0)
+>>>>
+>>>>    This is one of the few cases when 'err' is not the best name for such a
+>>>> variable. I'd prefer to see something like 'match' or even 'rc' or 'ret'... :-)
+>>>
+>>> Then leaving i would make it?
+>>    Yes. :-)
+> 
+> So, I leave it to Greg to decide either it's okay in this version, or
+> needs update with i left untouched.
+Hi Greg,
 
-On Mon, Jun 04, 2018 at 06:35:40PM +0300, Aapo Vienamo wrote:
-> The sdhci get_max_clock callback is set to sdhci_pltfm_clk_get_max_clock
-> and tegra_sdhci_get_max_clock is removed. It appears that the
-> shdci-tegra specific callback was originally introduced due to the
-> requirement that the host clock has to be twice the bus clock on DDR50
-> mode. As far as I can tell the only effect the removal has on DDR50 mode
-> is in cases where the parent clock is unable to supply the requested
-> clock rate, causing the DDR50 mode to run at a lower frequency.
-> Currently the DDR50 mode isn't enabled on any of the SoCs and would also
-> require configuring the SDHCI clock divider register to function
-> properly.
->=20
-> The problem with tegra_sdhci_get_max_clock is that it divides the clock
-> rate by two and thus artificially limits the maximum frequency of faster
-> signaling modes which don't have the host-bus frequency ratio requirement
-> of DDR50 such as SDR104 and HS200. Furthermore, the call to
-> clk_round_rate() may return an error which isn't handled by
-> tegra_sdhci_get_max_clock.
->=20
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
-a.c
-> index 970d38f6..c8745b5 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -234,17 +234,6 @@ static void tegra_sdhci_set_uhs_signaling(struct sdh=
-ci_host *host,
->  	sdhci_set_uhs_signaling(host, timing);
->  }
-> =20
-> -static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
-> -{
-> -	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
-> -
-> -	/*
-> -	 * DDR modes require the host to run at double the card frequency, so
-> -	 * the maximum rate we can support is half of the module input clock.
-> -	 */
-> -	return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
-> -}
+IIRC, you seems want to keep the err unchanged, right?
 
-sdhci_pltfm_clk_get_max_clock() returns the current frequency of the
-clock, which may not be an accurate maximum.
+Please let me know if another version is need.
 
-Also, even if we don't support DDR modes now, we may want to enable them
-in the future, at which point we'll need to move to something similar to
-the above again, albeit maybe with some of the issues that you mentioned
-fixed.
+Thanks
+Yisheng
 
-I wonder if we have access to the target mode in this function, because
-it seems to me like we'd need to take that into account when determining
-the maximum clock rate. Or perhaps the double-rate aspect is already
-dealt with in other parts of the MMC subsystem, so the value we should
-return here may not even need to take the mode into account.
-
-All of the above said, it is true that we don't enable DDR modes as of
-now, and this patch seems like it shouldn't break anything either, so:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
-I also gave this a brief run on Jetson TK1 and things seem to work fine,
-so:
-
-Tested-by: Thierry Reding <treding@nvidia.com>
-
---4jXrM3lyYWu4nBt5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsWV54ACgkQ3SOs138+
-s6HoVBAAuvqCXzBhxeGOSFkxq1u7Ieicvxs2P3mW6fTgcVl9AeQU8lGxzG3OaF7r
-1dM/xq3lH7HvVWILUG2XIyH48Bvk9aFvVnIo1iZHkIsGdx5Nl4ecVhAeNapsWG3k
-7LpOoU/dQ9blcyTCUAWfTpJDaAojaVpQ+HGZ9ttALzC67aUjmDHE1fg4RZXZcmId
-/2R9TWa0EVrPNvgqjuSawgXkriLwz75oAHtpTch+1XnCBAEGkgcUNMTkQmXulpyG
-/FUm/WxChXColO0F7J3lBGTkpCYiddyQ4QMt7R6aX7CpPdhpBvy5UNl4HRwpjL85
-HTOhp1yC5x367h4ekVJtcspttRMJzZUbw86C7/pwa5m4Ok30Ga6zJegRodljnttT
-0u44+qL3q0CyPiQ+Hl9YDrDngrD4ZFjXQ9fEl9nkJMqn97WCN90PWlw1ueKGh1aL
-mois1ut6lz717zbCn6og8U9gHydcpkU45YM5Ug6hcurgc8EWMug25KKxq++AX7AI
-6OkTColPrLdTn1CjTJc85JLTvvRCWirtjS3nxqiezhSBr6HnNsDJ6o3bES3HcyB5
-i/Q6w8IpDJDEwt/qqy9jqCtmwJP00hZHypECO9SnS8UC0Vptvw3dSJu23cEnyLe7
-Cv+B3doRkF0DXMn7jSS+gJOidVO/hrRxuzWkKjkhFh+w1o5JV4I=
-=wHuu
------END PGP SIGNATURE-----
-
---4jXrM3lyYWu4nBt5--
+> 
+>>> I'm okay with either which just not renames err, b/c it's used with
+>>> something else in this function.
+>>
+>>    Looking at it again, 'err' seems equally bad for the result of
+>> of_property_read_string()... unless the check there is changed to just *if* (err) --
+>> this function never returns positive values, 0 means success, others mean error.
+> 
+> While you seems right, this is matter of another change which you are
+> welcome to propose.
+> 
