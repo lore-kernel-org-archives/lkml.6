@@ -1,161 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752289AbeFETLr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:11:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752035AbeFETLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:11:45 -0400
-Date: Tue, 5 Jun 2018 14:11:42 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ryankao <ryankao@realtek.com>
-Cc: Kai Heng Feng <kai.heng.feng@canonical.com>,
-        "jrg.otte@gmail.com" <jrg.otte@gmail.com>,
-        David Miller <davem@davemloft.net>, Hayes Wang <hayeswang@realtek.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "romieu@fr.zoreil.com" <romieu@fr.zoreil.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hau <hau@realtek.com>, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
-Message-ID: <20180605191142.GA214338@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180605045812.17977-1-kai.heng.feng@canonical.com>
- <9D9E2AF1-CD59-425B-85E9-DB89D620CA67@canonical.com>
- <B01FA80E1422A647BEB597328C544223D30B8F90@RTITMBSV05.realtek.com.tw>
- <20180605172805.GD30381@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180605172805.GD30381@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752437AbeFETMh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:12:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51234 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752075AbeFETMf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 15:12:35 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com, Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        intel-gfx@lists.freedesktop.org, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH v6 2/2] drm/i915: remove intel_cursor_plane_funcs
+Date: Tue,  5 Jun 2018 21:12:26 +0200
+Message-Id: <20180605191226.32310-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605191226.32310-1-enric.balletbo@collabora.com>
+References: <20180605191226.32310-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc linux-pci]
+From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-On Tue, Jun 05, 2018 at 12:28:05PM -0500, Bjorn Helgaas wrote:
-> On Tue, Jun 05, 2018 at 06:34:09AM +0000, Ryankao wrote:
-> > Add realtek folk Hau
-> > 
-> > -----Original Message-----
-> > From: Kai Heng Feng [mailto:kai.heng.feng@canonical.com] 
-> > Sent: Tuesday, June 05, 2018 1:02 PM
-> > To: jrg.otte@gmail.com
-> > Cc: David Miller <davem@davemloft.net>; Hayes Wang <hayeswang@realtek.com>; hkallweit1@gmail.com; romieu@fr.zoreil.com; Linux Netdev List <netdev@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Ryankao <ryankao@realtek.com>
-> > Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
-> > 
-> > Hi Jörg Otte,
-> > 
-> > Can you give this patch a try?
-> > 
-> > Since you are the only one that reported ALDPS/ASPM regression,
-> > 
-> > And I think this patch should solve the issue you had [1].
-> > 
-> > Hopefully we don't need to go down the rabbit hole of blacklist/whitelist...
-> > 
-> > Kai-Heng
-> > 
-> > [1] https://lkml.org/lkml/2013/1/5/36
-> 
-> I have no idea what ALDPS is.  It's not mentioned in the PCIe spec, so
-> presumably it's some Realtek-specific thing.  ASPM is a generic PCIe
-> thing.  Changes to these two things should be in separate patches so
-> they don't get tangled up.
-> 
-> > > On Jun 5, 2018, at 12:58 PM, Kai-Heng Feng 
-> > > <kai.heng.feng@canonical.com>
-> > > wrote:
-> > >
-> > > This patch reinstate ALDPS and ASPM support on r8169.
-> > >
-> > > On some Intel platforms, ASPM support on r8169 is the key factor to 
-> > > let Package C-State achieve PC8. Without ASPM support, the deepest 
-> > > Package C-State can hit is PC3. PC8 can save additional ~3W in 
-> > > comparison with PC3.
-> > >
-> > > This patch is from Realtek.
-> > >
-> > > Fixes: e0c075577965 ("r8169: enable ALDPS for power saving")
-> > > Fixes: d64ec841517a ("r8169: enable internal ASPM and clock request
-> > > settings")
-> 
-> > > +3507,15 @@ static void rtl8168e_1_hw_phy_config(struct 
-> > > rtl8169_private *tp)
-> > >  	rtl_writephy(tp, 0x0d, 0x4007);
-> > >  	rtl_writephy(tp, 0x0e, 0x0000);
-> > >  	rtl_writephy(tp, 0x0d, 0x0000);
-> > > +
-> > > +	/* Check ALDPS bit, disable it if enabled */
-> > > +	rtl_writephy(tp, 0x1f, 0x0000);
-> > > +	if (enable_aldps)
-> > > +		rtl_w0w1_phy(tp, 0x15, 0x1000, 0x0000);
-> > > +	else if (rtl_readphy(tp, 0x15) & 0x1000)
-> > > +		rtl_w0w1_phy(tp, 0x15, 0x0000, 0x1000);
-> 
-> There's a lot of repetition of this code with minor variations.  You
-> could probably factor it out and make it more concise and more
-> readable.
-> 
-> > > +static void rtl8169_check_link_status(struct net_device *dev,
-> > > +				      struct rtl8169_private *tp) {
-> > > +	struct device *d = tp_to_dev(tp);
-> > > +
-> > > +	if (tp->link_ok(tp)) {
-> > > +		rtl_link_chg_patch(tp);
-> > > +		/* This is to cancel a scheduled suspend if there's one. */
-> > > +		if (pm_request_resume(d))
-> > > +			_rtl_reset_work(tp);
-> > > +		netif_carrier_on(dev);
-> > > +		if (net_ratelimit())
-> > > +			netif_info(tp, ifup, dev, "link up\n");
-> > > +	} else {
-> > > +		netif_carrier_off(dev);
-> > > +		netif_info(tp, ifdown, dev, "link down\n");
-> > > +		pm_runtime_idle(d);
-> > > +	}
-> > > +}
-> 
-> This function apparently just got moved around without changing
-> anything.  That's fine, but the move should be in a separate patch to
-> make the real changes easier to review.
-> 
-> > > @@ -7649,8 +7757,12 @@ static int rtl_init_one(struct pci_dev *pdev, 
-> > > const struct pci_device_id *ent)
-> > >
-> > >  	/* disable ASPM completely as that cause random device stop working
-> > >  	 * problems as well as full system hangs for some PCIe devices users */
-> > > -	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
-> > > -				     PCIE_LINK_STATE_CLKPM);
-> > > +	if (!enable_aspm) {
-> > > +		pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S |
-> > > +					     PCIE_LINK_STATE_L1 |
-> > > +					     PCIE_LINK_STATE_CLKPM);
-> > > +		netif_info(tp, probe, dev, "ASPM disabled\n");
-> > > +	}
-> 
-> ASPM is a generic PCIe feature that should be configured by the PCI
-> core without any help from the device driver.
-> 
-> If code in the driver is needed, that means either the PCI core is
-> doing it wrong and we should fix it there, or the device is broken and
-> the driver is working around the erratum.
-> 
-> If this is an erratum, you should include details about exactly what's
-> broken and (ideally) a URL to the published erratum.  Otherwise this
-> is just unmaintainable black magic and likely to be broken by future
-> ASPM changes in the PCI core.
-> 
-> ASPM configuration is done by the PCI core before drivers are bound to
-> the device.  If you need device-specific workarounds, they should
-> probably be in quirks so they're done before the core does that ASPM
-> configuration.
-> 
-> > >  	/* enable device (incl. PCI PM wakeup and hotplug setup) */
-> > >  	rc = pcim_enable_device(pdev);
-> > > --
-> > > 2.17.0
-> > 
-> > ------Please consider the environment before printing this e-mail.
+After converting legacy cursor updates to atomic async commits
+intel_cursor_plane_funcs just duplicates intel_plane_funcs now.
+
+Cc: Daniel Vetter <daniel.vetter@intel.com>
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+
+ drivers/gpu/drm/i915/intel_display.c | 23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index b14d39e2d1f0..762a84e401a3 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -13061,16 +13061,6 @@ static bool intel_primary_plane_format_mod_supported(struct drm_plane *plane,
+ 		return i8xx_mod_supported(format, modifier);
+ }
+ 
+-static bool intel_cursor_plane_format_mod_supported(struct drm_plane *plane,
+-						    uint32_t format,
+-						    uint64_t modifier)
+-{
+-	if (WARN_ON(modifier == DRM_FORMAT_MOD_INVALID))
+-		return false;
+-
+-	return modifier == DRM_FORMAT_MOD_LINEAR && format == DRM_FORMAT_ARGB8888;
+-}
+-
+ static struct drm_plane_funcs intel_plane_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+@@ -13082,17 +13072,6 @@ static struct drm_plane_funcs intel_plane_funcs = {
+ 	.format_mod_supported = intel_primary_plane_format_mod_supported,
+ };
+ 
+-static const struct drm_plane_funcs intel_cursor_plane_funcs = {
+-	.update_plane = drm_atomic_helper_update_plane,
+-	.disable_plane = drm_atomic_helper_disable_plane,
+-	.destroy = intel_plane_destroy,
+-	.atomic_get_property = intel_plane_atomic_get_property,
+-	.atomic_set_property = intel_plane_atomic_set_property,
+-	.atomic_duplicate_state = intel_plane_duplicate_state,
+-	.atomic_destroy_state = intel_plane_destroy_state,
+-	.format_mod_supported = intel_cursor_plane_format_mod_supported,
+-};
+-
+ static bool i9xx_plane_has_fbc(struct drm_i915_private *dev_priv,
+ 			       enum i9xx_plane_id i9xx_plane)
+ {
+@@ -13326,7 +13305,7 @@ intel_cursor_plane_create(struct drm_i915_private *dev_priv,
+ 		cursor->cursor.size = ~0;
+ 
+ 	ret = drm_universal_plane_init(&dev_priv->drm, &cursor->base,
+-				       0, &intel_cursor_plane_funcs,
++				       0, &intel_plane_funcs,
+ 				       intel_cursor_formats,
+ 				       ARRAY_SIZE(intel_cursor_formats),
+ 				       cursor_format_modifiers,
+-- 
+2.17.1
