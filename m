@@ -1,115 +1,370 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeFEBSx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 4 Jun 2018 21:18:53 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:44933 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751578AbeFEBSv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Jun 2018 21:18:51 -0400
-X-Google-Smtp-Source: ADUXVKKqAXzOv3O/dp8xaWMZWuhY/ypzoPedAgCR4AvqDwwXhRF2L09sbnzI1l7a8bjpBwv+niNdvA==
-Date: Mon, 04 Jun 2018 18:18:50 -0700 (PDT)
-X-Google-Original-Date: Mon, 04 Jun 2018 18:17:03 PDT (-0700)
-Subject: Re: [PATCH] riscv: pass machine size to sparse
-In-Reply-To: <20180531153553.kex32gupopdq2nqh@ltop.local>
-CC: yamada.masahiro@socionext.com, Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        albert@sifive.com, michal.lkml@markovi.net
-From: Palmer Dabbelt <palmer@sifive.com>
-To: luc.vanoostenryck@gmail.com
-Message-ID: <mhng-fc62e953-d986-4975-9164-0eafc1ade1d3@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1751570AbeFEBUT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 4 Jun 2018 21:20:19 -0400
+Received: from mail02.ausil.us ([74.119.218.151]:40222 "EHLO mail.ausil.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751354AbeFEBUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Jun 2018 21:20:17 -0400
+From: Dennis Gilmore <dennis@ausil.us>
+To: linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
+        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Dennis Gilmore <dennis@ausil.us>
+Subject: [PATCH] ARM: dts: armada388-helios4
+Date: Mon,  4 Jun 2018 20:13:43 -0500
+Message-Id: <20180605011343.14999-1-dennis@ausil.us>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018 08:35:54 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
-> On Thu, May 31, 2018 at 05:09:21AM -0700, Palmer Dabbelt wrote:
->> On Mon, 28 May 2018 23:14:20 PDT (-0700), yamada.masahiro@socionext.com wrote:
->> > 2018-05-29 15:11 GMT+09:00 Christoph Hellwig <hch@infradead.org>:
->> > > On Mon, May 28, 2018 at 06:35:05PM +0200, Luc Van Oostenryck wrote:
->> > > > By default, sparse assumes a 64bit machine when compiled on x86-64
->> > > > and 32bit when compiled on anything else.
->> > > >
->> > > > This can of course create all sort of problems when this doesn't
->> > > > correspond to the target's machine size, like issuing false
->> > > > warnings like: 'shift too big (32) for type unsigned long' or
->> > > > is 64bit while sparse was compiled on a 32bit machine, or worse,
->> > > > to not emit legitimate warnings.
->> > > >
->> > > > Fix this by passing the appropriate -m32/-m64 flag to sparse.
->> > >
->> > > Can we please move this to the common Kbuild code using the
->> > > CONFIG_64BIT syombol?  This really should not need boiler plate in
->> > > every architecture.
->> >
->> >
->> > I agree.
->> >
->> > Luc did so for -mbig/little-endian:
->> > https://patchwork.kernel.org/patch/10433957/
->> >
->> > We should do likewise for -m32/64.
->>
->> Sorry for being a bit slow here, but I like the idea of making the
->> 32/64-bit issue generic as it seems like it'll be necessary for
->> every port.
->
-> Sure, Christophe asked it too.
-> I've sent a new version doing it once and for all for all archs
-> but I forgot to CC you:
-> 	https://lkml.org/lkml/2018/5/30/948
->
->> Looking through the patch for big/little-endian I did
->> notice:
->>
->> * RISC-V compilers set "__riscv_xlen" to the length of an X
->> (integer) register  in bits.
->> * RISC-V compilers define "__riscv", and it doesn't appear we inform
->> sparse  about that.
->>
->> These two might not be that interesting, but we do already have some
->> cases where we're checking for __riscv_xlen in Linux.  I've yet to
->> successfully use sparse, but adding at least
->>
->>    CHECKFLAGS += -D__riscv
->>
->> seems reasonable,
->
-> Sure (but I don't see a dependency in the kernel (yet)).
->
->> and possibly also some sort of
->>
->>    ifeq ($(CONFIG_ARCH_RV64I),y)
->>            CHECKFLAGS += -D__riscv_xlen=64
->>    else
->>            CHECKFLAGS += -D__riscv_xlen=32
->>    fi
->>
->> might be necessary.
->
-> Yes, this one is really needed.
-> I'll send a patch for this one and __riscv.
->
->> We strive to follow the generic rules for
->> ABI-related stuff like __LP64__ but I don't think there's any
->> generic mapping for XLEN.  Similarly there's "__riscv_flen" and
->> "__riscv_float_abi_*", but those are less likely to be used by the
->> kernel so they're probably not worth worrying about for now.
->
-> Yes, I agree.
-> Note that sparse will define __LP64__ (and _LP64) when in -m64 mode.
->
->> There's also a bunch of other RISC-V macros, the only one of which
->> we're currently using is "__riscv_muldiv" (and that's in a manner
->> that's unlikely to trigger any sort of static analysis).  Between a
->> lack of Kconfig options and a glibc port we're essentially mandating
->> IMA right now, so these probably don't matter.
->
-> Yes, I just saw. I think also it's better to leave it so for now.
-> And if it becomes more used, then better to infer it from the compiler
-> than harcoding it.
+The helios4 is a Armada388 based nas board designed by SolidRun and
+based on their SOM. It is sold by kobol.io the dts file came from
+https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
+I added a SPDX license line to match the clearfog it says it was based
+on and a compatible line for "solidrun,helios4"
 
-Makes sense.  Thanks for the work!
+Signed-off-by: Dennis Gilmore <dennis@ausil.us>
+---
+ arch/arm/boot/dts/Makefile               |   1 +
+ arch/arm/boot/dts/armada-388-helios4.dts | 315 +++++++++++++++++++++++
+ 2 files changed, 316 insertions(+)
+ create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 7e2424957809..490bfd586198 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
+ 	armada-388-clearfog-pro.dtb \
+ 	armada-388-db.dtb \
+ 	armada-388-gp.dtb \
++	armada-388-helios4.dtb \
+ 	armada-388-rd.dtb
+ dtb-$(CONFIG_MACH_ARMADA_39X) += \
+ 	armada-398-db.dtb
+diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
+new file mode 100644
+index 000000000000..a6d6996e1378
+--- /dev/null
++++ b/arch/arm/boot/dts/armada-388-helios4.dts
+@@ -0,0 +1,315 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Device Tree file for Helios4
++ * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
++ *
++ *  Copyright (C) 2017
++ *
++ */
++
++/dts-v1/;
++#include "armada-388.dtsi"
++#include "armada-38x-solidrun-microsom.dtsi"
++
++/ {
++	model = "Helios4";
++	compatible = "solidrun,helios4", "marvell,armada388",
++		"marvell,armada385", "marvell,armada380";
++
++	memory {
++		device_type = "memory";
++		reg = <0x00000000 0x80000000>; /* 2 GB */
++	};
++
++	aliases {
++		/* So that mvebu u-boot can update the MAC addresses */
++		ethernet1 = &eth0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	reg_12v: regulator-12v {
++		compatible = "regulator-fixed";
++		regulator-name = "power_brick_12V";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator-3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "3P3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		vin-supply = <&reg_12v>;
++	};
++
++	reg_5p0v_hdd: regulator-5v-hdd {
++		compatible = "regulator-fixed";
++		regulator-name = "5V_HDD";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		vin-supply = <&reg_12v>;
++	};
++
++	reg_5p0v_usb: regulator-5v-usb {
++		compatible = "regulator-fixed";
++		regulator-name = "USB-PWR";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-boot-on;
++		regulator-always-on;
++		enable-active-high;
++		gpio = <&expander0 6 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&reg_12v>;
++	};
++
++	system-leds {
++		compatible = "gpio-leds";
++		status-led {
++			label = "helios4:green:status";
++			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "heartbeat";
++			default-state = "on";
++		};
++
++		fault-led {
++			label = "helios4:red:fault";
++			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
++			default-state = "keep";
++		};
++	};
++
++	io-leds {
++		compatible = "gpio-leds";
++		sata1-led {
++			label = "helios4:green:ata1";
++			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata1";
++			default-state = "off";
++		};
++		sata2-led {
++			label = "helios4:green:ata2";
++			gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata2";
++			default-state = "off";
++		};
++		sata3-led {
++			label = "helios4:green:ata3";
++			gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata3";
++			default-state = "off";
++		};
++		sata4-led {
++			label = "helios4:green:ata4";
++			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "ata4";
++			default-state = "off";
++		};
++		usb-led {
++			label = "helios4:green:usb";
++			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "usb-host";
++			default-state = "off";
++		};
++	};
++
++	fan1: j10-pwm {
++		compatible = "pwm-fan";
++		pwms = <&gpio1 9 40000>;	/* Target freq:25 kHz */
++	};
++
++	fan2: j17-pwm {
++		compatible = "pwm-fan";
++		pwms = <&gpio1 23 40000>;	/* Target freq:25 kHz */
++	};
++
++	usb2_phy: usb2-phy {
++		compatible = "usb-nop-xceiv";
++		vbus-regulator = <&reg_5p0v_usb>;
++	};
++
++	usb3_phy: usb3-phy {
++		compatible = "usb-nop-xceiv";
++		//vbus-regulator = <&reg_5p0v_usb>;
++	};
++
++	soc {
++		internal-regs {
++			i2c@11000 {
++				clock-frequency = <400000>;
++				pinctrl-0 = <&i2c0_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++
++				/*
++				 * PCA9655 GPIO expander, up to 1MHz clock.
++				 *  0-Board Revision bit 0 #
++				 *  1-Board Revision bit 1 #
++				 *  5-USB3 overcurrent
++				 *  6-USB3 power
++				 */
++				expander0: gpio-expander@20 {
++					/*
++					 * This is how it should be:
++					 * compatible = "onnn,pca9655",
++					 *	 "nxp,pca9555";
++					 * but you can't do this because of
++					 * the way I2C works.
++					 */
++					compatible = "nxp,pca9555";
++					gpio-controller;
++					#gpio-cells = <2>;
++					reg = <0x20>;
++					pinctrl-names = "default";
++					pinctrl-0 = <&pca0_pins>;
++					interrupt-parent = <&gpio0>;
++					interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
++					interrupt-controller;
++					#interrupt-cells = <2>;
++
++					board_rev_bit_0 {
++						gpio-hog;
++						gpios = <0 GPIO_ACTIVE_LOW>;
++						input;
++						line-name = "board-rev-0";
++					};
++					board_rev_bit_1 {
++						gpio-hog;
++						gpios = <1 GPIO_ACTIVE_LOW>;
++						input;
++						line-name = "board-rev-1";
++					};
++					usb3_ilimit {
++						gpio-hog;
++						gpios = <5 GPIO_ACTIVE_HIGH>;
++						input;
++						line-name = "usb-overcurrent-status";
++					};
++				};
++
++				temp_sensor: temp@4c {
++					compatible = "ti,lm75";
++					reg = <0x4c>;
++					vcc-supply = <&reg_3p3v>;
++				};
++			};
++
++			i2c@11100 {
++				/*
++				 * External I2C Bus for user peripheral
++				 */
++				clock-frequency = <400000>;
++				pinctrl-0 = <&helios_i2c1_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++			};
++
++			sata@a8000 {
++				status = "okay";
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				sata0: sata-port@0 {
++					reg = <0>;
++				};
++
++				sata1: sata-port@1 {
++					reg = <1>;
++				};
++			};
++
++			sata@e0000 {
++				status = "okay";
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				sata2: sata-port@0 {
++					reg = <0>;
++				};
++
++				sata3: sata-port@1 {
++					reg = <1>;
++				};
++			};
++
++			spi@10680 {
++				pinctrl-0 = <&spi1_pins
++					     &microsom_spi1_cs_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++			};
++
++			sdhci@d8000 {
++				bus-width = <4>;
++				cd-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
++				no-1-8-v;
++				pinctrl-0 = <&helios_sdhci_pins
++					     &helios_sdhci_cd_pins>;
++				pinctrl-names = "default";
++				status = "okay";
++				vmmc = <&reg_3p3v>;
++				wp-inverted;
++			};
++
++			usb@58000 {
++				//vcc-supply = <&reg_5p0v_usb>;
++				usb-phy = <&usb2_phy>;
++				status = "okay";
++			};
++
++			usb3@f0000 {
++				status = "okay";
++			};
++
++			usb3@f8000 {
++				status = "okay";
++			};
++
++			pinctrl@18000 {
++				pca0_pins: pca0-pins {
++					marvell,pins = "mpp23";
++					marvell,function = "gpio";
++				};
++				microsom_phy0_int_pins: microsom-phy0-int-pins {
++					marvell,pins = "mpp18";
++					marvell,function = "gpio";
++				};
++				helios_i2c1_pins: i2c1-pins {
++					marvell,pins = "mpp26", "mpp27";
++					marvell,function = "i2c1";
++				};
++				helios_sdhci_cd_pins: helios-sdhci-cd-pins {
++					marvell,pins = "mpp20";
++					marvell,function = "gpio";
++				};
++				helios_sdhci_pins: helios-sdhci-pins {
++					marvell,pins = "mpp21", "mpp28",
++						       "mpp37", "mpp38",
++						       "mpp39", "mpp40";
++					marvell,function = "sd0";
++				};
++				helios_led_pins: helios-led-pins {
++					marvell,pins = "mpp24", "mpp25",
++						       "mpp49", "mpp50",
++						       "mpp52", "mpp53",
++						       "mpp54";
++					marvell,function = "gpio";
++				};
++				helios_fan_pins: helios-fan-pins {
++					marvell,pins = "mpp41", "mpp43",
++						       "mpp48", "mpp55";
++					marvell,function = "gpio";
++				};
++				microsom_spi1_cs_pins: spi1-cs-pins {
++					marvell,pins = "mpp59";
++					marvell,function = "spi1";
++				};
++			};
++		};
++	};
++};
+-- 
+2.17.1
