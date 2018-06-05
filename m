@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753363AbeFERFm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:05:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34734 "EHLO mail.kernel.org"
+        id S1753394AbeFERFr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752093AbeFERFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:38 -0400
+        id S1752093AbeFERFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 32/61] powerpc/pseries: Add new H_GET_CPU_CHARACTERISTICS flags
-Date: Tue,  5 Jun 2018 19:01:53 +0200
-Message-Id: <20180605170119.750989000@linuxfoundation.org>
+Subject: [PATCH 4.9 34/61] powerpc/pseries: Set or clear security feature flags
+Date: Tue,  5 Jun 2018 19:01:55 +0200
+Message-Id: <20180605170119.879523536@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -30,26 +30,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit c4bc36628d7f8b664657d8bd6ad1c44c177880b7 upstream.
+commit f636c14790ead6cc22cf62279b1f8d7e11a67116 upstream.
 
-Add some additional values which have been defined for the
-H_GET_CPU_CHARACTERISTICS hypercall.
+Now that we have feature flags for security related things, set or
+clear them based on what we receive from the hypercall.
 
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/include/asm/hvcall.h |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/platforms/pseries/setup.c |   43 +++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
---- a/arch/powerpc/include/asm/hvcall.h
-+++ b/arch/powerpc/include/asm/hvcall.h
-@@ -313,6 +313,9 @@
- #define H_CPU_CHAR_L1D_FLUSH_ORI30	(1ull << 61) // IBM bit 2
- #define H_CPU_CHAR_L1D_FLUSH_TRIG2	(1ull << 60) // IBM bit 3
- #define H_CPU_CHAR_L1D_THREAD_PRIV	(1ull << 59) // IBM bit 4
-+#define H_CPU_CHAR_BRANCH_HINTS_HONORED	(1ull << 58) // IBM bit 5
-+#define H_CPU_CHAR_THREAD_RECONFIG_CTRL	(1ull << 57) // IBM bit 6
-+#define H_CPU_CHAR_COUNT_CACHE_DISABLED	(1ull << 56) // IBM bit 7
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -66,6 +66,7 @@
+ #include <asm/reg.h>
+ #include <asm/plpar_wrappers.h>
+ #include <asm/kexec.h>
++#include <asm/security_features.h>
  
- #define H_CPU_BEHAV_FAVOUR_SECURITY	(1ull << 63) // IBM bit 0
- #define H_CPU_BEHAV_L1D_FLUSH_PR	(1ull << 62) // IBM bit 1
+ #include "pseries.h"
+ 
+@@ -450,6 +451,40 @@ static void __init find_and_init_phbs(vo
+ 	of_pci_check_probe_only();
+ }
+ 
++static void init_cpu_char_feature_flags(struct h_cpu_char_result *result)
++{
++	if (result->character & H_CPU_CHAR_SPEC_BAR_ORI31)
++		security_ftr_set(SEC_FTR_SPEC_BAR_ORI31);
++
++	if (result->character & H_CPU_CHAR_BCCTRL_SERIALISED)
++		security_ftr_set(SEC_FTR_BCCTRL_SERIALISED);
++
++	if (result->character & H_CPU_CHAR_L1D_FLUSH_ORI30)
++		security_ftr_set(SEC_FTR_L1D_FLUSH_ORI30);
++
++	if (result->character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
++		security_ftr_set(SEC_FTR_L1D_FLUSH_TRIG2);
++
++	if (result->character & H_CPU_CHAR_L1D_THREAD_PRIV)
++		security_ftr_set(SEC_FTR_L1D_THREAD_PRIV);
++
++	if (result->character & H_CPU_CHAR_COUNT_CACHE_DISABLED)
++		security_ftr_set(SEC_FTR_COUNT_CACHE_DISABLED);
++
++	/*
++	 * The features below are enabled by default, so we instead look to see
++	 * if firmware has *disabled* them, and clear them if so.
++	 */
++	if (!(result->character & H_CPU_BEHAV_FAVOUR_SECURITY))
++		security_ftr_clear(SEC_FTR_FAVOUR_SECURITY);
++
++	if (!(result->character & H_CPU_BEHAV_L1D_FLUSH_PR))
++		security_ftr_clear(SEC_FTR_L1D_FLUSH_PR);
++
++	if (!(result->character & H_CPU_BEHAV_BNDS_CHK_SPEC_BAR))
++		security_ftr_clear(SEC_FTR_BNDS_CHK_SPEC_BAR);
++}
++
+ void pseries_setup_rfi_flush(void)
+ {
+ 	struct h_cpu_char_result result;
+@@ -463,6 +498,8 @@ void pseries_setup_rfi_flush(void)
+ 
+ 	rc = plpar_get_cpu_characteristics(&result);
+ 	if (rc == H_SUCCESS) {
++		init_cpu_char_feature_flags(&result);
++
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_TRIG2)
+ 			types |= L1D_FLUSH_MTTRIG;
+ 		if (result.character & H_CPU_CHAR_L1D_FLUSH_ORI30)
+@@ -473,6 +510,12 @@ void pseries_setup_rfi_flush(void)
+ 			enable = false;
+ 	}
+ 
++	/*
++	 * We're the guest so this doesn't apply to us, clear it to simplify
++	 * handling of it elsewhere.
++	 */
++	security_ftr_clear(SEC_FTR_L1D_FLUSH_HV);
++
+ 	setup_rfi_flush(types, enable);
+ }
+ 
