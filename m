@@ -1,50 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751566AbeFEIPG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:15:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46501 "EHLO mx2.suse.de"
+        id S1751709AbeFEIQA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:16:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751495AbeFEIPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:15:04 -0400
-Date: Tue, 5 Jun 2018 10:15:01 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
-        riel@redhat.com, tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner()
- more scalable
-Message-ID: <20180605081501.GT19202@dhcp22.suse.cz>
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
- <20180426130700.GP17484@dhcp22.suse.cz>
- <877enj9uwf.fsf@xmission.com>
- <20180601135725.GE15278@dhcp22.suse.cz>
- <87a7sey3ud.fsf@xmission.com>
- <20180601150219.GG15278@dhcp22.suse.cz>
- <87y3fyv88o.fsf@xmission.com>
- <20180604065425.GF19202@dhcp22.suse.cz>
- <87r2lmlj1p.fsf@xmission.com>
+        id S1751481AbeFEIP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:15:58 -0400
+Date: Tue, 5 Jun 2018 10:15:35 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.16 00/47] 4.16.14-stable review
+Message-ID: <20180605081535.GA9155@kroah.com>
+References: <20180604065549.468488465@linuxfoundation.org>
+ <65ecf137-2772-dde0-ee7c-ae9e9269b512@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87r2lmlj1p.fsf@xmission.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <65ecf137-2772-dde0-ee7c-ae9e9269b512@kernel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 04-06-18 09:31:46, Eric W. Biederman wrote:
-[...]
-> My key point is that it is easy to trigger which makes the current
-> mm_update_next_owner a fundamentally flawed design, and something that
-> needs to be fixed.
+On Mon, Jun 04, 2018 at 01:47:12PM -0600, Shuah Khan wrote:
+> On 06/04/2018 12:58 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.16.14 release.
+> > There are 47 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Jun  6 06:55:34 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.14-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Compiled and booted on my test system. No dmesg regressions.
 
-Ohh, absolutely agreed! I was not trying to argue that part of course.
+Thanks for testing all of these and letting me know.
 
--- 
-Michal Hocko
-SUSE Labs
+greg k-h
