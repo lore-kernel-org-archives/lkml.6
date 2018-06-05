@@ -1,43 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751507AbeFEIko (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:40:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751296AbeFEIkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:40:42 -0400
-Date: Tue, 5 Jun 2018 10:40:19 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dongjiu Geng <gengdongjiu@huawei.com>
-Cc: mathias.nyman@intel.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, linux-usb@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: xhci: remove the code build warning
-Message-ID: <20180605084019.GA8665@kroah.com>
-References: <1528216500-14172-1-git-send-email-gengdongjiu@huawei.com>
+        id S1751723AbeFEIlv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:41:51 -0400
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:58669 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751685AbeFEIlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 04:41:49 -0400
+Date: Tue, 5 Jun 2018 09:41:47 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 01/19] sched/numa: Remove redundant field.
+Message-ID: <20180605084147.wqjdj7hvoudfzxjp@techsingularity.net>
+References: <1528106428-19992-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1528106428-19992-2-git-send-email-srikar@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528216500-14172-1-git-send-email-gengdongjiu@huawei.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1528106428-19992-2-git-send-email-srikar@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 12:35:00AM +0800, Dongjiu Geng wrote:
-> Initialize the 'err' variate to remove the build warning,
-> the warning is shown as below:
+On Mon, Jun 04, 2018 at 03:30:10PM +0530, Srikar Dronamraju wrote:
+> numa_entry is a list_head defined in task_struct, but never used.
 > 
-> drivers/usb/host/xhci-tegra.c: In function ‘tegra_xusb_mbox_thread’:
-> drivers/usb/host/xhci-tegra.c:552:6: warning: ‘err’ may be used uninitialized in this function [-Wuninitialized]
-> drivers/usb/host/xhci-tegra.c:482:6: note: ‘err’ was declared here
+> No functional change
 > 
-> Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-> ---
+> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
-Any hint as to what commit caused this warning to show up?
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
-thanks,
-
-greg k-h
+-- 
+Mel Gorman
+SUSE Labs
