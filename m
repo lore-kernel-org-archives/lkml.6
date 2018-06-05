@@ -1,108 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751937AbeFESt6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:49:58 -0400
-Received: from anholt.net ([50.246.234.109]:40434 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751816AbeFESt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:49:57 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: Kevin Quigley <kevin@kquigley.co.uk>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-kernel@vger.kernel.org,
-        James Hughes <james.hughes@raspberrypi.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH] drm/vc4: Enable the DSI module and link before other enables.
-In-Reply-To: <20180605082532eucas1p21328ec5bea7d588c81480829f862bdfd~1NhnMydDJ0562405624eucas1p2l@eucas1p2.samsung.com>
-References: <CGME20180604194448epcas1p29627759e2d8c0b1388c6700a7da77a45@epcas1p2.samsung.com> <20180604194437.13790-1-eric@anholt.net> <20180605082532eucas1p21328ec5bea7d588c81480829f862bdfd~1NhnMydDJ0562405624eucas1p2l@eucas1p2.samsung.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Tue, 05 Jun 2018 11:49:53 -0700
-Message-ID: <87lgbtt6em.fsf@anholt.net>
+        id S1752016AbeFESuq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:50:46 -0400
+Received: from mx1.yrkesakademin.fi ([85.134.45.194]:40109 "EHLO
+        mx1.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751812AbeFESup (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 14:50:45 -0400
+Subject: Re: building in 32bit chroot on x86_64 host broken
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
+ <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org>
+ <CA+55aFwJAbr8_Xs0ZX9K2iAr8bf=ZgNnKTLopQe6jPCgEBemrA@mail.gmail.com>
+ <7a5458da-4222-7480-00ed-a51bed2c1e39@mageia.org>
+ <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
+From: Thomas Backlund <tmb@mageia.org>
+Message-ID: <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org>
+Date: Tue, 5 Jun 2018 21:50:56 +0259
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-WatchGuard-Spam-ID: str=0001.0A0C0202.5B16DB85.0103,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
+X-WatchGuard-Mail-Client-IP: 85.134.45.194
+X-WatchGuard-Mail-From: tmb@mageia.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
 
-Andrzej Hajda <a.hajda@samsung.com> writes:
-
-> On 04.06.2018 21:44, Eric Anholt wrote:
->> We want the DSI PHY to be enabled and the DSI module clocked before a
->> panel or bridge's prepare() function, since most DSI panel drivers
->> with a prepare() hook are doing DCS transactions inside of them.
+Den 2018-06-05 kl. 21:38, skrev Linus Torvalds:
+> On Tue, Jun 5, 2018 at 11:23 AM Thomas Backlund <tmb@mageia.org> wrote:
+>>    #
+>> -# CONFIG_64BIT is not set
 >>
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->> Cc: Kevin Quigley <kevin@kquigley.co.uk>
->> Cc: James Hughes <james.hughes@raspberrypi.org>
->> Cc: Boris Brezillon <boris.brezillon@bootlin.com>
->> ---
->>
->> I'm not sure it makes sense to enable CRTCs before encoders on vc4 at
->> all.  Why start scanning pixels before the encoder is ready to hear
->> about VSTART?  However, this patch will hopefully unblock people
->> trying to attach other panels to rpi
+>> So something _does_ strip away the needed config bit
+> Why do you need it?
 >
-> But this patch is about enabling encoder before panel/bridge prepare. Or
-> am I missing something.
-> Anyway I would be more precise here, MIPI-DSI bus is used for two things:
-> - control bus - accessing DSI device (configuration/detection,...),
-> - video data bus - sending video stream.
+> I get
 >
-> I suspect in prepare/pre_enable phase of DSI panel/bridge only control
-> bus should be functional, video stream transfer does not make sense.
-> So the best solution (I guess) would be to split DSI-encoder enable
-> sequence into control bus enable and video transfer enable parts and
-> call the former before 1st transfer request from device and the latter
-> in encoder enable callback. Of course there will be a problem then with
-> disabling sequence, ie stopping video stream should be performed in
-> encoder's disable, but when we should disable control bus? If we do it
-> in encoder's disable callback we could not perform transfers in
-> post_disable cb of the bridge - in most cases (maybe all currently
-> present in kernel) it will work, but it does not look ideal.
-> All this recalls me discussion that hardwiring bridge callbacks into drm
-> core is problematic and maybe it would be better to call downstream
-> callbacks explicitly from upstream element - the callback order should
-> depend on the local bus protocol, and should not be fixed in drm core.
+>    CONFIG_X86_32=y
+>    CONFIG_X86=y
+>
+> and CONFIG_64BIT never gets set.
+>
+> It is true that I don't get the
+>
+>    # CONFIG_64BIT is not set
+>
+> line, but why do you care?
+>
+>              Linus
 
-It does seem like for DSI encoders they generally would need to be able
-to control when the call down to the bridge happens.  However, from my
-experience with panels, drivers are bad about calling both prepare and
-enable, if their particular panel only cares about one of them.  So, how
-about:
+Because without it running the build in the 32bit chroot will get the 
+initial reported issue:
 
-- encoders can call drm_bridge_disable_midlayer_calls() (any naming
-  suggestions?) to flag this bridge as not wanting the calls from the
-  atomic helpers.
 
-- atomic helpers WARN if bridge midlayer_calls flag was set and
-  drm_bridge_pre_enable/enable/disable/post_disable failed to be called
-  by the encoder
+$ uname -m
+i686
+$ make oldconfig
+scripts/kconfig/conf  --oldconfig Kconfig
+*
+* Restart config...
+*
+*
+* Linux/x86 4.17.0 Kernel Configuration
+*
+64-bit kernel (64BIT) [Y/n/?] (NEW)
 
-- drm_bridge_detach() clears disable_midlayer_calls flag for the next
-  encoder
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+which breaks our buildbots running in chroots...
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsW21EACgkQtdYpNtH8
-nugQUg//QG8RdjfWVnErEusS3Hgz6j3s13xE2CYARmN71xz8wIrezEjJCcS7BFnE
-6RIhGKBpityf29/bmEsIMGey+jkW0FgshAY3Z0v+q0dvj0hmge9qsMBSxRm4RCHL
-mIXPa8KLndCUpiFKNLrwG7yNAo6aR3fn5E2Pdt+9wh1Ry8Mod+uSJH3s0SxL4+/s
-66VmO2BlCnJKt1wWPNQ5qM+PqEapjpLmJvA3czN6NnvOlUasasr6eb8wIeTKHuTo
-rg3iT7DqLvITRXidRv4ZMLPRZLhqnpObp3ApyEElToMFaYDgvu5VkMLJbzqA4+U3
-cXGnjx9TV+D3iQG092GUV6GqFGI99OxGeGbx9A2NlUPuKlObo0HbFmX8qWWKBgCK
-QsM+AYanClEFrofAyhLWY9RyvsRGS407cVpoy/tmpaZrais9oS862p1r4Ga1L9oB
-8bHQPHazAOuRj9TkYr3yiIPTr4Kn/gKyZFymOo6pGgL6kezXcy8fLm/EW73bWJdB
-nYchbQd7ri/TPJWCcN8wBlxH7DSqECPeRyr9QSjfhO8yOWW1oiWi7bsuA6BdLVh3
-qmImGeM0PK6wNbIAWsrGIAoJyIhqVLgI0leOomKJ13KWQDZly4EO4mNpsx9C8g7U
-yPME2kVFijK0+Xda/OR8xwp9ULyzzShfuKYkxK5wdBBMqbj1pXE=
-=zJgH
------END PGP SIGNATURE-----
---=-=-=--
+Now I can work around it by adding the config bit myself, but I'd like 
+to understand what changed and why...
+
+--
+Thomas
