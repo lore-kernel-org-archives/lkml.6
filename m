@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753800AbeFERL1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:11:27 -0400
+        id S1753882AbeFERLl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:11:41 -0400
 Received: from mail-eopbgr50065.outbound.protection.outlook.com ([40.107.5.65]:19319
         "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753731AbeFERLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:11:22 -0400
+        id S1753742AbeFERLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:11:25 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=leonard.crestez@nxp.com;
 From: Leonard Crestez <leonard.crestez@nxp.com>
@@ -19,10 +19,12 @@ Cc: Robert Chiras <robert.chiras@nxp.com>, dri-devel@lists.freedesktop.org,
         Laurentiu Palcu <laurentiu.palcu@nxp.com>,
         Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
         kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] drm/mxsfb: Fix runtime PM for unpowering lcdif block
-Date: Tue,  5 Jun 2018 20:11:05 +0300
-Message-Id: <cd4ddc544a27915cab58a218223723eb18525c21.1528218001.git.leonard.crestez@nxp.com>
+Subject: [RFC 2/2] ARM: dts: imx6sl: Convert gpc to new bindings
+Date: Tue,  5 Jun 2018 20:11:06 +0300
+Message-Id: <b75a4dc8fa208ca9f9009fd0b0c9789a8b1f28c6.1528218001.git.leonard.crestez@nxp.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cd4ddc544a27915cab58a218223723eb18525c21.1528218001.git.leonard.crestez@nxp.com>
+References: <cd4ddc544a27915cab58a218223723eb18525c21.1528218001.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [95.76.156.53]
@@ -32,47 +34,48 @@ X-ClientProxiedBy: AM5PR06CA0023.eurprd06.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4301;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;3:O04jNuHummun+RpWmpzzabcgqvf/K6UnUWglkMRz6JTwr2UirvC7SQZgQTU483zIY3eKr+RqcN1HwK/nO8jKNq0q78DleZyVgZ177EU/qZTQfci5WSI1xlW+1Zqk+9tCwL3CCNoGh/AN8EzqWKE3W3L/YVrEKHDGnEhBaGEVEo45mQLkWsTWcLQRrdTQ8LWIzkXVDJ7Uou174Dhu73/ejtI0QOAukT6DIUQK8DkEzh1ODadeQgW6Gn8ByKIeq8jI;25:ivk4sXV2VNPeRIkU1rWJnWDl0s2mVi8CVt9o2HSb49t7rwx6ZVRTcQ4RfKIBmf/p1EA3tDlWL0SlOuFluw7tnPMrcMQWJ7f72aTsVRP3LvADUzBY/wpnguZfF6tGUsmVqwCtqd8/CBDKtTWL0sdBGH2OZlUuMdPD4/XsypFBj/l08wh9ktqN2881/Es60ZiOAnz8d7zbnqVfi6Oq2zWTDQybK/4iSxUBrvdOSDXCov1NfIJtAOKwiHPrRwE2h17sdREcmgnUqqFHeT2wWNt+MsxBuj5Q/zdaJtKay5sYjd0CD0Qw267/b7VOSAyJy4nbyxasjcoNbohxbjR+/i042w==;31:DZWrmGbSYuTqlXnSULefWnMNPOaaDeuMY/mwN/3LWWKwhhR23hbno/HJy1lAjqK4ucT5rSTDmvNhP1JepmhupJ9hnGam9Gg3sgZIYnnKsgWKTTfOs+GSDNwgTzWKmbx2MWu0y7QCSyuBA29QhmP6V+EER4akEd4ryp9VoxmM9SclERghir/V7UiRywsLpFERUIfr5lM2gGIfObxAd4WT8azSfWh48XilIUeZpSrqO58=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;3:mx4kCQ3O0XMptLBtkdyJkR+7d1i+Evm1p85Hiy0zfZwxRTmbDSTsl0NwOfqQYTcD7b3YSsNwFNfF19OUZhV7uB2tTK+jgvPi5lzZ8V9/KI3twJTlECDrONNFJlHSxCNCX7iso4TmZiKD3AbL32wpEdVLY3HEeecZfbRYYeROrnyL1+mJQJjkoxslnnML8lPwJt0aSrKL0Z1u415HhlsBNMvQ/b/zOhSV5o018tteSlVdXFHdug8IEfl46A/UGYVa;25:uHoeTqT25w+W++kvtP0L5DhhqeUCH0IqHVrZZ1tMoDyPYIBi4NNo7iwuA8NiyHna3rNTY+QAHZD6sBy7k/lFCCYAShmR916Xht1Q8nJdrMzgf9lBNCk5QvxwhmNAoaaxX9/m7iV5yk+FHTlciMjpATX0RMFdyxx/1VvAu/tMa0ZhkP9qRZ2gMW34uOfGNS1z7gA/awV5EO834TzmlWDiqI+n9HDeO+/I50TkyDgaoceIoVxmNGU06NAp7NGM1TIfeZHvjiUBicg8pkiutr+EjfnXxgN9TcJZw57Zu1n2fTslZDBWPaP3RWrY4kZ/xmUpWFzoAaj0qnmQczj4UVob/Q==;31:dSjTG6JXjDeHIehzpRJX066oylWh+i97hHrUvKyZcX7FLjElpGC9xsjcxGK7qLH/g7ELqrPTN0Mfb6zxV8/faAKsoMwAu2QRJdIrVa7IfWpHnCkrjoy40auRLhPoGmZHqCod5tgNSH+AIIxUL0AAn97aW94TWTr2lL8HqObFj+IhkVlEke+eKx88c2BkAhE+4KPhTQBUvCDPJZBSgnwwqGakdzA/1W69Sm451FCMWzA=
 X-MS-TrafficTypeDiagnostic: VI1PR04MB4301:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;20:tgV9rli+bvEvby0QQGW5P9VU6UA63tO2FfwPCyPMBJ93v3ACwOh1KEQSCILtxLEUyNgK1GQe6nCF970P+gad+UhzfHq/fte8eDk1bOdFeR+KEphFcOb0CLx2CJkRC9gnC7XACcGr9AW3Ss8CGKi+XQuVTgBS9xzwOlzQPZ3ts/gooWVcsGkUC3IPwM+/raEP9rFN5tp0ZGrCHkTOaVE5jgNU2uGtmJv4YfIHfhn0y3PP+HpDMXjZlVaUuGp+F2gRBx7u1hnbngQQ4rlBKjpPqYPPVb+NqvYr5OIUxF9M4mdt8mealL4Wbr9nSF1WUSCF+weiw0QbyjvpGhWoZJFmUPr2e7vmJr9Okjs/dEwxQ/708rjhymBpph5nwOznAEclK/fhfQjkDdUyI62uwZJk+zgkzgZ4g4FVZfhrXQn3Q7MZctRRZ5wg3E1YzecZDBRm0v6J5CwjZz2sbYoG96GOZdof5ap1ajB7OSEBe0p9P0Cj4PoJuOFU5eBHpVehdOmj;4:iYuYPEMlJEtF7jwbvSKHv7m2BQ031DVxpJ4nYbElz4hDrfMEvlnEMZkmhFxb/Dw/LbESX2cLBM/7d5RYGn4sx3Zp6PA6Aeik0+OGv6gmWTY+1CMoeZhx0Gf4hxqttgp3gjZwyehwnwcQAHDa6UwmilMblj8oWXsqGiW33l4P4XGvTwJlW00a9q5GBXlvr9b9mMDAbdtcENUNIIqK50LiG4LzEuZwsRQB5ChJBZT76PcT65cwBpcErg9lhRkVD6ZdtTfnbiy6QvapVKDsHxrQVwbXWPwiMSpYcjoDrdNMu0J+d50paDc71Gcz2wJqRVNc
-X-Microsoft-Antispam-PRVS: <VI1PR04MB4301EEB2BECC3D67C4DFAAE5EE660@VI1PR04MB4301.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;20:GlsO+LbSJluldjIuPOk8et0J/K3tx+fgMh1i2KaI1JXqeOhPslldUxxUKX7XE3uCWJEfjHcxKD7+F7N/2sAapov+KdquswRjxzf3WCRjBQo1qv6wZoXE75GjPbxyLbTH2zzHmluihvBWfbzDa69Atobd/KNHg85jq6EAJO8SFTDnu/4hkDGGSH/ekdEbXZObzGXHx3wLECEVRTW9HV1veTN/ez6lZvBo/RL2bgLUm0d8dCjJ/AA1IhmV9iJGK3uEoY2HUPzBqP6rsQP0SX95hf7AuoFm+PG3p12pTv8Y/yadTDLdMpZO4aw0ToSP156YErlvtwxGbj4L7NYZCkkWWDWevYKmJkxmgNIwCKGF+h0RyFbBqyQ0HHN0syYUC3zOS/gNa2tnY7FZUauZy7k1netGFyA61TZgmNS42v4uj8iYIoBMlfQCK17/yE3od5uS06B6LT4a6EEF2/XkAcx28gi0vnpvrgfbrd6OiOEjBXJPft1ls5I5FqwZP+HWp4Aj;4:385diFjRdJQ6h4Sw4ngwYNgbfCKRkusswe63BNd/YOZxwgQC9g9faC4FYMB5ttkgDjMjiEWDcugfF5Y299QqfZeQbZ8QIN74M7nH+7mNjhZaShxr1aai4qVqZKbsEIev9QYlt0wi9hgCA61mOkSJf296ToaGKo43AxW/Bmep4a3Sh3qN98MiaoNe+0/kj9fC6H2i1RXOT7v8ExcW3uGRQng/Lfjz5MyU1y2pYfEoyfAKVUskMeggQLsmrr46GOXW5Ls7dwQKophPwpfyAOFLctrm0HHPmYxCmPUoRMqTOqiHdk7d+zQLKRMlEAUeUlZ5
+X-Microsoft-Antispam-PRVS: <VI1PR04MB43012CDF1A779F617440E793EE660@VI1PR04MB4301.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:VI1PR04MB4301;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4301;
 X-Forefront-PRVS: 0694C54398
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(346002)(396003)(366004)(376002)(39380400002)(39860400002)(189003)(199004)(6486002)(106356001)(6116002)(5660300001)(26005)(25786009)(4326008)(3846002)(97736004)(7736002)(186003)(6512007)(110136005)(50226002)(54906003)(16586007)(86362001)(16526019)(68736007)(105586002)(956004)(2616005)(36756003)(81166006)(575784001)(59450400001)(386003)(6506007)(486006)(48376002)(118296001)(81156014)(478600001)(305945005)(6666003)(44832011)(52116002)(51416003)(50466002)(47776003)(476003)(8936002)(316002)(66066001)(8676002)(53936002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4301;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB4301;23:9YoL8xDzQtWaEao72WrMPCrjB8dZL4FLkcvmRdmp7?=
- =?us-ascii?Q?dsIH8K2dA64cuNXvl//cYjfqXcRRWP8HXZfs+aHNYr8LEzNA9wxDgtjx+yG8?=
- =?us-ascii?Q?NW2i+ZbqR+YftTUYculctirgfViFvzXpzhA3JMcqucrMMRV62DhYxAP/7pXj?=
- =?us-ascii?Q?pnWSabYkUS978tPxPnX1MpIgpEKLYdQdJzO0lfMksvmvWZQVWSXS6aF8sy9Z?=
- =?us-ascii?Q?hF6xXVk/DulSp70P79a9M9RqZUfkbOSS6XQX0lz1QyZ4TVGsNQ9oJYamTGGI?=
- =?us-ascii?Q?nFsNqKEaW+leGtY/qhBOeykYpJWGeBvu/Jt8B/c1SihUuIGMDtTkfUwCIWs3?=
- =?us-ascii?Q?FpmbSfxERLShBAagHngWl6gN/UV4yyChJNDexIocn4pPR6ByYk1idSh9bjYY?=
- =?us-ascii?Q?pt3ub13j0CzyyRrz4e6JZquIw1+vO4/6H0MQug6gnekcKnV9hCPpJZjca+Uh?=
- =?us-ascii?Q?fuZkfYqw4fdajjCyKwZ25kWJA6ErxXArQBjtLSpMWa1ISU0Tx1zd+Vo8rHvH?=
- =?us-ascii?Q?OH3LMiFl9ZrTnsoNYHSXXYLZ044b+kh5iRKHG4dp/yVDT4GOd5qeCt3NpPWg?=
- =?us-ascii?Q?5KT1HVvKRLC+3htIZFMpa8GL2EMg7hDXid6VI/hdon9xsN4YZDvcyMqZJrTx?=
- =?us-ascii?Q?KWnV/Ftsjb2AxPIhFCGpQLeqclmmJNafkz0pddEuK4X4rZkJDWEl71osjQDU?=
- =?us-ascii?Q?gfGPFoMkV5JQVvXOGiW+TLRCgsKBGpgaXU1PuHMXWK6XIx+sxvpYD8fsqzjE?=
- =?us-ascii?Q?+9SSvAOQ8vMNyFprGbwyCBdvMGjXMUOdOu58wLPQqImjCdGUF6bX4h+Oc2vx?=
- =?us-ascii?Q?p5yqXNcT9d/KHAhXVAR9AvWpSw9VuD7zrAHCeN0qUUoQW7gRL2edj7IoYBd5?=
- =?us-ascii?Q?sMUOXPgYRfvXAHiiFsFl08rLUcRZNyKZAV7fz9wpOCpBlHbFwqLuP3TjjFd1?=
- =?us-ascii?Q?s34YBNSTDzShn8ocvZ28C2oxnOps66UUv/ptyprzIjCKVTEdUnKsAwf3Ih0I?=
- =?us-ascii?Q?Y2LaaVxmGPBUE8IXIN1sf0fVIOIxvqMq7kgeYwY9qZRH5SlYJ3tg+mnkysAV?=
- =?us-ascii?Q?yITaclup2V+9mS2EFSk6fpM91quGT7LIyL+BZMcb6yql8SEv6/5IBBRavA5X?=
- =?us-ascii?Q?1GDpoljgNy5n2mBBvoDyl6LVYXl98AAKpNIclttv1vPviQfJQajDcnLBDKz0?=
- =?us-ascii?Q?Y5MW+teABT6l/hghD78Bb2fFC0Pc8koRDvWFFMuMT20G56t+nCarvCnqku6I?=
- =?us-ascii?Q?8gNLTkD7sOIbrzwZbU=3D?=
-X-Microsoft-Antispam-Message-Info: Y8bjmKMpOAimHXMkexIZPspGyMwKi/T0leMOPTL1s8eYudzhp9JDCADfEdJnzuqnTUB810oas4Zyz8inRp/X1+k5Ue5cW8X2cGXj7+YJXRgOXvbTxcVAOr/NH8lvOQkhZ8HoAwe3dzkmGU0Gm1+mJ3UG9im7gpz4aU7+SHM/3YJuB37US1xiAmrWUVPwnW9V
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;6:x1zUKanGyzVg3oDtH2gM57J/hsjwGDe35A6uVq4AM4FSdRdmI3RGquxpXO5H31k80hIA4hOqqALapJgPTJlnDsgUlmtopv4+x6ymaWHRg+LUUYVWC5TNUFuJ6RMix4If3Scnh8OrF+emniFNA+izkFDUNaQM0zoQOOXdpm+As2CDTHNWMw1Gzv1Lous6/x4imF5rnEj9VRwdzT885626Tp4edEzCfvmqfg538iAXF853IIkzrmp51hGzJ87oBfwVb/H0qzggQUqIYkdg4h1rHK6027FXzmL3sTGiWJ7fw4I7F+JQvv/ZWo1vS4UO2qJzW6chTtFdRMX762whsRqHvp4RVfrRCpTpkhxzl4VBDT6yPylCTP7846EDpn52MMOcHN9Peq21GRgs0/PcLi1XxI0XLaUAJ8V1Iji0TVs6lV5H9yUkJyF+i9DE7pqDVF3kAT+/R+qLX2h5yn7cGHVWMw==;5:cP7RDCtORZLwxlya+i5aqJL8wScdiez5ArLHJDDZHsHDjupdylS/5oLkzxcd12cl5CEylp2XGrFJuXkSAGKBWk5ymMAHVikZ700oLw405KnuA4aUrwwEF6+mYrvLVBhRb31/LGoNizZY95U7RFAykeyPeSC8nVH7b/iUfXZGtpA=;24:KogCFcM3yWlm0XYp0TJEQvg4c8MB3wJVlLjn+LjXtMlTe+CEOfPagSyW3KK46TH5TqXJE4SzLNewfVNvCislWo9woUSp9KgWiVrBJ6Mb7Vk=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(346002)(396003)(366004)(376002)(39380400002)(39860400002)(189003)(199004)(6486002)(106356001)(6116002)(5660300001)(26005)(25786009)(4326008)(3846002)(97736004)(7736002)(186003)(6512007)(110136005)(50226002)(54906003)(16586007)(86362001)(16526019)(68736007)(105586002)(956004)(446003)(11346002)(2616005)(36756003)(81166006)(59450400001)(386003)(6506007)(486006)(48376002)(118296001)(81156014)(478600001)(305945005)(6666003)(44832011)(52116002)(51416003)(50466002)(76176011)(47776003)(476003)(8936002)(316002)(66066001)(8676002)(53936002)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4301;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB4301;23:0yagAMBAZwZcAdEMUCOWRjEIXOhtmaS4Bh82W0W70?=
+ =?us-ascii?Q?6YRCWlwhjD1/cH6XP4W7NWkzvkx9l2Z0mEXdhzaouYEQ+Ljkn3CjUnMABSy+?=
+ =?us-ascii?Q?0Q6vYt61CKCSYQ8m8Td2RJBANiPoeux+rZ8l8Q+gy/VIkEU9m20kWoAysLG2?=
+ =?us-ascii?Q?AWQgK+sU9lP8TCw7r1Bq2cdNiAZCsXkHeGYS1UOlKyJEY2jC4PONT1Mq6N5Q?=
+ =?us-ascii?Q?67kMxdF0VB3l+kAl4Tiosr1oIdvdrCiMkHP7yfLlwOJuLfGXksLgktUK9pME?=
+ =?us-ascii?Q?hA14V7d1vQ0oxul1U/zhyuIGCFk2cFsy70ETpwZNG20+DUcgIfjuBpkHigPG?=
+ =?us-ascii?Q?mIa6wpeC52nvv/FWdBkUa8afZiO5qkLoSqLWeKBJzSCht7Qtvbd4Yjp6mw/r?=
+ =?us-ascii?Q?VA+BJc9BHjpXu8LRnUol/yqRSpYRue3wwRsKmAN97XYXt8wHJyl/E6nFJmO8?=
+ =?us-ascii?Q?xS+4dyXRNoePwbJQ1zumyAK/yTSqS67wwmh29xeVmQ+6xOQ7RWs6v7luecco?=
+ =?us-ascii?Q?samw3/vgPrNmuhPu4SISnyB9us/VvyuOyD8PD5oQcPjDemJeXi03E7Fz2jfn?=
+ =?us-ascii?Q?jYSHD6zBli76zAYHvLBcYU+oS7ThMT1u0qXchxs4DrQOHdgU8fTA2ZC/os2q?=
+ =?us-ascii?Q?+CfTsOsKZZG1JOfBejbEnOqf5oewaCDXGuAEFwA+FtVxJAL2eOm8mud3iwxC?=
+ =?us-ascii?Q?maAin8ghAyG0we58lFMWpt8yqOIxzuo+8Hj7itChKURprm+RnlFajKZCUycF?=
+ =?us-ascii?Q?6QM3sRPwvdf/DYJIrfneCMf0X+LO3kCyuVFAr3Tyut4C9pHd6tH83J3kWMX4?=
+ =?us-ascii?Q?drNbbR8O0qJMdr4w2kFdXdk9CWdaaP0H7WTQ7dPpBO1HazZnHNTK5hcKrXL1?=
+ =?us-ascii?Q?h637illJZQpxDbmz+KhDDOu1IyrtYIPDS2PqrFZHPfszXuo15ub/lrcrkWPQ?=
+ =?us-ascii?Q?wUsfGsSAp2U8rUru3EfvDxVBW7ykprijnvP3GaHkNA/6BCAxsv5af/mErk/g?=
+ =?us-ascii?Q?eNyx72Psk97irOVA71e6aRepA16y3VtCz4+o9tenq8kTT5NZw8nc8+OcugSF?=
+ =?us-ascii?Q?J7QvFe9r+MAcvQSHDXq+Bc4ZQMXKlahBebcL45A9yYTD5thjjki+ucDieEvO?=
+ =?us-ascii?Q?42jryD05zOLj6+Amm2Je8ESk3ntozYh3SzBhaC6/91QqSs77VxPak37K6EVa?=
+ =?us-ascii?Q?d8IPWTt3rDG2VfoTj0wE7sQNxjB+XjKDOU03ZsiPOIaur7QYYpJzApyHheKt?=
+ =?us-ascii?Q?dZuqOudIEPdzTVOtjxqVeOcQMI2jZpn2jFc25DCWtyq5QAKPaPmapZ8c7ATX?=
+ =?us-ascii?Q?/OqdkkoDG+6TBnfx/o9TkY=3D?=
+X-Microsoft-Antispam-Message-Info: a4HyrRx0n6zl9dltMgGQdTxpI7HU0aSnFTW50Fnp8wR5YDWMOfT2EqV7NKLX4m8W6RJrWC0OkXzk6GCSSBGWu27wW4Sl75OaeZWhhYFit88wh5LXqq5HOgntzqYnexZHRQ8ExX2gXhkmf079GDtiTKae2GfqmRi1M4uNvz24XcWzTO1S97ByuafIc2cVQNGa
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;6:x/FQi//xjHjQfdU3V4yAWcPZLpKj/bHqsidhWz8L+7X29sPfigk8ZR26Gmn8CCOK69LqSIi1LqGiDCvU195ohvJchKZ67OMz7RUpx7uYuIU23Vj2A0vn2Gq5elSOHkuYtOV0NbfR6RN659kDlOLSR7DdkeUNqcH8hemxfEEuCNT8IChyGyh018440mV1/itOdkmggdyeiGhx8/1iGfgSH1rMVH2/sNR9gFosdLtcSmNh/9sNT1AJRWla0QbK8M+ABEQZiK0mNOoZ6oCLf1pFlBPeOPiSdWFJBWe+ge31TYoseJiVDA/cSltjTZAUVdxm0IFOn9mhXrFRXhhMTnbYUqfr4DnGFUQ3jBJP1wRbv0c5/SX+TITUNt6Rc+og24bUBOo1x/1YnbWira3brWLQOm4lkiouVWn2talrDcjRegdaL/lk2a3aGvsX1/Ky/wjLqWplSEqyKcvRVh27ub5j8Q==;5:QmWVHmsogp4DSpxvDI5OCVvhUB+5xrftbghgZ6VLOmwUHoY+iG+G0RK+dwf29TJGlZcRcQcuDx1HkpMlLkkT3XQ+d8c9oJLHimn6AVZFicoW93CMM1wSgsn3G6/GEbTsXQQt6gJIHF903jABQ2lVsnE3PSjF3nD4nM4To+7KADw=;24:Amhom+TgJdOmKpb7GOwqq1wl5TuLkNSzHpLZcC+NCfM29cuTaWuq8IJi+KZugiLwYU6G8BB+rHFedaGeDxCryYLfYLBAbURUdmFlqeJ1n+g=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;7:Afqad3qpBTza2GdbOZ48pJ7uRrPPKqjXR4yL3YJBn8D7gmzfnKBteTAU4d5vuTYgRvsYhKr4OaoOOsA3ewn3IfbZ9KHXRvd2F7dIXoctAlC++/KO8ZIebDjhhf/ZvvctKPGNIwOYZUfF5hmRCVXzlxhvcey6TArfiCvfSd2lcVvDSlVhxyxrIRAeBqS5gNm+YOCGKqhD7HkAZTunvAi6sL7WzFopnBltxIlP7s5h+3X5BiUTPkae5ONk8dRHeUCU
-X-MS-Office365-Filtering-Correlation-Id: f2a54eaa-9f12-45e7-bbb7-08d5cb075a6c
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB4301;7:9vXg4ismvLP+x8b3IHO1F3BtWN5EIllX+yazOMPLfwu2vN/irIJdY8ny8sm3508pBFclTTtIedWyhqN3+2Yg3Z63XhdD4d6eRujHr20BksXhtHydrH6hEODqHhz1mQGm3Fmi539GQd9+On2K4aCr3ESoIuszs5OG5eyNaYX8q6XR5DuqXNCN9zxA1Z1f3htuOqT5QoDJUEI7Bflp12B3nMwBoFASLIQUT6E9Uv9Oo3iqov+j3cMJLoUdI5GMgdF+
+X-MS-Office365-Filtering-Correlation-Id: 21ae76f8-0357-4bf8-3bf6-08d5cb075b4f
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2018 17:11:17.3671
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2018 17:11:18.8515
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2a54eaa-9f12-45e7-bbb7-08d5cb075a6c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21ae76f8-0357-4bf8-3bf6-08d5cb075b4f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4301
@@ -80,301 +83,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding imx6sl/sx lcdif nodes in a power domain currently does work, it
-results in black/corrupted screens or hangs. While the driver does
-enable runtime pm it does not deal correctly with the block being
-unpowered.
+With old bindings imx_gpc_onecell_data always sets num_domains to 2 so
+the DISPMIX domain can't actually be referenced. The pd is still defined
+and pm core shuts it down as "unused" so display can't work.
 
-Fix by adding pm_runtime_get/put_sync to mxsfb_pipe_enable/disable.
+Converting to new gpc bindings by adding pgc nodes, also reference
+referencing the newly-defined &pu_disp domain from &lcdif.
 
-The mxsfb_plane_atomic_update function can get called before
-mxsfb_pipe_enable while the block is not powered. When this happens the
-write to LCDIF_NEXT_BUF is lost causing random corrupted pixels on
-unblank.
-
-Fix this by splitting the writing of gem->paddr to nextbuf into a
-mxsfb_update_hw_next_buf functiona and also calling it from
-mxsfb_crtc_mode_set_nofb.
-
-Also add fields to mxsfb_drv to keep track of enabled/suspended states.
-
-Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-
 ---
- drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 38 +++++++++++-----
- drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 72 +++++++++++++++++++++++++++++-
- drivers/gpu/drm/mxsfb/mxsfb_drv.h  |  3 ++
- 3 files changed, 100 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/imx6sl.dtsi | 35 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 32 insertions(+), 3 deletions(-)
 
-This was initially written by Robert for imx8m but I tested it also
-works on imx6sx/imx6sl to DISPMIX power domain.
+There are erratas regarding dispmix on 6sl so this might be wrong
 
-Tested on imx6sl-evk and imx6sx-sdb with SEIKO 43WVF1G panel by
-blanking and unblanking via sysfs and suspend/resume
-
-Testing requires a modified config (to enable MXFSB_DRM):
-CONFIG_DRM_MXSFB=y
-CONFIG_DRM_PANEL_SEIKO_43WVF1G=y
-CONFIG_FB_MXS=n
-
-It also requires dts changes to enable the DISPMIX power domain.  The
-dts changes might break drivers so this patch attempts to fix the lcdif
-driver first.
-
-Patch 2 is a RFC of imx6sl changes, imx6sx is a bit more complicated
-and it also interacts with PCI.
-
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-index 0abe77675b76..cce2ec1c80ae 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-@@ -194,10 +194,25 @@ static int mxsfb_reset_block(void __iomem *reset_addr)
- 		return ret;
- 
- 	return clear_poll_bit(reset_addr, MODULE_CLKGATE);
- }
- 
-+static void mxsfb_update_hw_next_buf(struct mxsfb_drm_private *mxsfb)
-+{
-+	struct drm_framebuffer *fb = mxsfb->pipe.plane.state->fb;
-+	struct drm_gem_cma_object *gem;
+diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
+index ab6a7e2e7e8f..9982874fa39e 100644
+--- a/arch/arm/boot/dts/imx6sl.dtsi
++++ b/arch/arm/boot/dts/imx6sl.dtsi
+@@ -694,14 +694,42 @@
+ 				reg = <0x020dc000 0x4000>;
+ 				interrupt-controller;
+ 				#interrupt-cells = <3>;
+ 				interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&intc>;
+-				pu-supply = <&reg_pu>;
+-				clocks = <&clks IMX6SL_CLK_GPU2D_OVG>,
+-					 <&clks IMX6SL_CLK_GPU2D_PODF>;
++				clocks = <&clks IMX6SL_CLK_IPG>;
++				clock-names = "ipg";
+ 				#power-domain-cells = <1>;
 +
-+	if (!fb)
-+		return;
++				pgc {
++					#address-cells = <1>;
++					#size-cells = <0>;
 +
-+	gem = drm_fb_cma_get_gem_obj(fb, 0);
-+	if (!gem)
-+		return;
++					power-domain@0 {
++						reg = <0>;
++						#power-domain-cells = <0>;
++					};
 +
-+	writel(gem->paddr, mxsfb->base + mxsfb->devdata->next_buf);
-+}
++					pd_pu: power-domain@1 {
++						reg = <1>;
++						#power-domain-cells = <0>;
++						power-supply = <&reg_pu>;
++						clocks = <&clks IMX6SL_CLK_GPU2D_OVG>,
++						         <&clks IMX6SL_CLK_GPU2D_PODF>;
++					};
 +
- static void mxsfb_crtc_mode_set_nofb(struct mxsfb_drm_private *mxsfb)
- {
- 	struct drm_display_mode *m = &mxsfb->pipe.crtc.state->adjusted_mode;
- 	const u32 bus_flags = mxsfb->connector.display_info.bus_flags;
- 	u32 vdctrl0, vsync_pulse_len, hsync_pulse_len;
-@@ -268,35 +283,41 @@ static void mxsfb_crtc_mode_set_nofb(struct mxsfb_drm_private *mxsfb)
- 	       mxsfb->base + LCDC_VDCTRL3);
++					pd_disp: power-domain@2 {
++						reg = <2>;
++						#power-domain-cells = <0>;
++						clocks = <&clks IMX6SL_CLK_IPG>,
++							 <&clks IMX6SL_CLK_LCDIF_AXI>,
++							 <&clks IMX6SL_CLK_LCDIF_PIX>,
++							 <&clks IMX6SL_CLK_EPDC_AXI>,
++							 <&clks IMX6SL_CLK_EPDC_PIX>,
++							 <&clks IMX6SL_CLK_PXP_AXI>;
++					};
++				};
+ 			};
  
- 	writel(SET_DOTCLK_H_VALID_DATA_CNT(m->hdisplay),
- 	       mxsfb->base + LCDC_VDCTRL4);
+ 			gpr: iomuxc-gpr@20e0000 {
+ 				compatible = "fsl,imx6sl-iomuxc-gpr",
+ 					     "fsl,imx6q-iomuxc-gpr", "syscon";
+@@ -752,10 +780,11 @@
+ 				clocks = <&clks IMX6SL_CLK_LCDIF_PIX>,
+ 					 <&clks IMX6SL_CLK_LCDIF_AXI>,
+ 					 <&clks IMX6SL_CLK_DUMMY>;
+ 				clock-names = "pix", "axi", "disp_axi";
+ 				status = "disabled";
++				power-domains = <&pd_disp>;
+ 			};
  
-+	mxsfb_update_hw_next_buf(mxsfb);
- 	mxsfb_disable_axi_clk(mxsfb);
- }
- 
- void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb)
- {
-+	if (mxsfb->enabled)
-+		return;
-+
- 	mxsfb_crtc_mode_set_nofb(mxsfb);
- 	mxsfb_enable_controller(mxsfb);
-+
-+	mxsfb->enabled = true;
- }
- 
- void mxsfb_crtc_disable(struct mxsfb_drm_private *mxsfb)
- {
-+	if (!mxsfb->enabled)
-+		return;
-+
- 	mxsfb_disable_controller(mxsfb);
-+
-+	mxsfb->enabled = false;
- }
- 
- void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
- 			       struct drm_plane_state *state)
- {
- 	struct drm_simple_display_pipe *pipe = &mxsfb->pipe;
- 	struct drm_crtc *crtc = &pipe->crtc;
--	struct drm_framebuffer *fb = pipe->plane.state->fb;
- 	struct drm_pending_vblank_event *event;
--	struct drm_gem_cma_object *gem;
--
--	if (!crtc)
--		return;
- 
- 	spin_lock_irq(&crtc->dev->event_lock);
- 	event = crtc->state->event;
- 	if (event) {
- 		crtc->state->event = NULL;
-@@ -307,14 +328,9 @@ void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
- 			drm_crtc_send_vblank_event(crtc, event);
- 		}
- 	}
- 	spin_unlock_irq(&crtc->dev->event_lock);
- 
--	if (!fb)
--		return;
--
--	gem = drm_fb_cma_get_gem_obj(fb, 0);
--
- 	mxsfb_enable_axi_clk(mxsfb);
--	writel(gem->paddr, mxsfb->base + mxsfb->devdata->next_buf);
-+	mxsfb_update_hw_next_buf(mxsfb);
- 	mxsfb_disable_axi_clk(mxsfb);
- }
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index 5cae8db9dcd4..c889cac2e275 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -100,23 +100,27 @@ static const struct drm_mode_config_funcs mxsfb_mode_config_funcs = {
- 
- static void mxsfb_pipe_enable(struct drm_simple_display_pipe *pipe,
- 			      struct drm_crtc_state *crtc_state)
- {
- 	struct mxsfb_drm_private *mxsfb = drm_pipe_to_mxsfb_drm_private(pipe);
-+	struct drm_device *drm = pipe->plane.dev;
- 
-+	pm_runtime_get_sync(drm->dev);
- 	drm_panel_prepare(mxsfb->panel);
- 	mxsfb_crtc_enable(mxsfb);
- 	drm_panel_enable(mxsfb->panel);
- }
- 
- static void mxsfb_pipe_disable(struct drm_simple_display_pipe *pipe)
- {
- 	struct mxsfb_drm_private *mxsfb = drm_pipe_to_mxsfb_drm_private(pipe);
-+	struct drm_device *drm = pipe->plane.dev;
- 
- 	drm_panel_disable(mxsfb->panel);
- 	mxsfb_crtc_disable(mxsfb);
- 	drm_panel_unprepare(mxsfb->panel);
-+	pm_runtime_put_sync(drm->dev);
- }
- 
- static void mxsfb_pipe_update(struct drm_simple_display_pipe *pipe,
- 			      struct drm_plane_state *plane_state)
- {
-@@ -175,10 +179,11 @@ static int mxsfb_load(struct drm_device *drm, unsigned long flags)
- 	if (!mxsfb)
- 		return -ENOMEM;
- 
- 	drm->dev_private = mxsfb;
- 	mxsfb->devdata = &mxsfb_devdata[pdev->id_entry->driver_data];
-+	platform_set_drvdata(pdev, drm);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mxsfb->base = devm_ioremap_resource(drm->dev, res);
- 	if (IS_ERR(mxsfb->base))
- 		return PTR_ERR(mxsfb->base);
-@@ -256,12 +261,10 @@ static int mxsfb_load(struct drm_device *drm, unsigned long flags)
- 		mxsfb->fbdev = NULL;
- 		dev_err(drm->dev, "Failed to init FB CMA area\n");
- 		goto err_cma;
- 	}
- 
--	platform_set_drvdata(pdev, drm);
--
- 	drm_helper_hpd_irq_event(drm);
- 
- 	return 0;
- 
- err_cma:
-@@ -417,17 +420,82 @@ static int mxsfb_remove(struct platform_device *pdev)
- 	drm_dev_unref(drm);
- 
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
-+static int mxsfb_runtime_suspend(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+	struct mxsfb_drm_private *mxsfb = drm->dev_private;
-+
-+	if (!drm->registered)
-+		return 0;
-+
-+	if (mxsfb->enabled) {
-+		mxsfb_crtc_disable(mxsfb);
-+		mxsfb->suspended = true;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mxsfb_runtime_resume(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+	struct mxsfb_drm_private *mxsfb = drm->dev_private;
-+
-+	if (!drm->registered || !mxsfb->suspended)
-+		return 0;
-+
-+	mxsfb_crtc_enable(mxsfb);
-+	mxsfb->suspended = false;
-+
-+	return 0;
-+}
-+
-+static int mxsfb_suspend(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+	struct mxsfb_drm_private *mxsfb = drm->dev_private;
-+
-+	if (mxsfb->enabled) {
-+		mxsfb_crtc_disable(mxsfb);
-+		mxsfb->suspended = true;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mxsfb_resume(struct device *dev)
-+{
-+	struct drm_device *drm = dev_get_drvdata(dev);
-+	struct mxsfb_drm_private *mxsfb = drm->dev_private;
-+
-+	if (!mxsfb->suspended)
-+		return 0;
-+
-+	mxsfb_crtc_enable(mxsfb);
-+	mxsfb->suspended = false;
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops mxsfb_pm_ops = {
-+	SET_RUNTIME_PM_OPS(mxsfb_runtime_suspend, mxsfb_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(mxsfb_suspend, mxsfb_resume)
-+};
-+
- static struct platform_driver mxsfb_platform_driver = {
- 	.probe		= mxsfb_probe,
- 	.remove		= mxsfb_remove,
- 	.id_table	= mxsfb_devtype,
- 	.driver	= {
- 		.name		= "mxsfb",
- 		.of_match_table	= mxsfb_dt_ids,
-+		.pm = &mxsfb_pm_ops,
- 	},
- };
- 
- module_platform_driver(mxsfb_platform_driver);
- 
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.h b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
-index 5d0883fc805b..d8ef4a053f0e 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.h
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
-@@ -36,10 +36,13 @@ struct mxsfb_drm_private {
- 
- 	struct drm_simple_display_pipe	pipe;
- 	struct drm_connector		connector;
- 	struct drm_panel		*panel;
- 	struct drm_fbdev_cma		*fbdev;
-+
-+	bool                            enabled;
-+	bool                            suspended;
- };
- 
- int mxsfb_setup_crtc(struct drm_device *dev);
- int mxsfb_create_output(struct drm_device *dev);
- 
+ 			dcp: dcp@20fc000 {
+ 				compatible = "fsl,imx6sl-dcp", "fsl,imx28-dcp";
+ 				reg = <0x020fc000 0x4000>;
 -- 
 2.17.0
