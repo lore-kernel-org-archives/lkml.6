@@ -1,103 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeFEWMX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 18:12:23 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39095 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751894AbeFEWMW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 18:12:22 -0400
-X-Google-Smtp-Source: ADUXVKIqDQ4IcgwP7GrPBeTLxG/MnDAHeuZlaIcCCezx7hZy+rrCiRaAwl4iZkjxAJnvD6iKKgZfWOu0vstyNcfWsc0=
-MIME-Version: 1.0
-In-Reply-To: <20180605215926.GA16066@linux.intel.com>
-References: <20180605205841.15878-1-ross.zwisler@linux.intel.com>
- <20180605205841.15878-2-ross.zwisler@linux.intel.com> <CAPcyv4ipWTDP0dNeyUd2vba1GcYb61BQ-w2yWms8o8SeMtBiRA@mail.gmail.com>
- <20180605215926.GA16066@linux.intel.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 5 Jun 2018 15:12:20 -0700
-Message-ID: <CAPcyv4h4U_nocetqT-ejjc5O7gzmAh6oShvb7CQ+3eVM1qw6tA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] libnvdimm: don't flush power-fail protected CPU caches
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
+        id S932086AbeFEWMx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 18:12:53 -0400
+Received: from imap.thunk.org ([74.207.234.97]:39548 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752166AbeFEWMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 18:12:51 -0400
+Date: Tue, 5 Jun 2018 18:12:49 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fscrypt@vger.kernel.org
+Subject: Re: [GIT PULL] fscrypt updates for 4.18
+Message-ID: <20180605221249.GA1368@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org
+References: <20180605150751.GA9436@thunk.org>
+ <CA+55aFxt4968GaU_q+e+D5KhGLGOjvHoZwRF0FKn_mHe4zx=Wg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFxt4968GaU_q+e+D5KhGLGOjvHoZwRF0FKn_mHe4zx=Wg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 2:59 PM, Ross Zwisler
-<ross.zwisler@linux.intel.com> wrote:
-> On Tue, Jun 05, 2018 at 02:20:38PM -0700, Dan Williams wrote:
->> On Tue, Jun 5, 2018 at 1:58 PM, Ross Zwisler
->> <ross.zwisler@linux.intel.com> wrote:
->> > This commit:
->> >
->> > 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
->> >
->> > intended to make sure that deep flush was always available even on
->> > platforms which support a power-fail protected CPU cache.  An unintended
->> > side effect of this change was that we also lost the ability to skip
->> > flushing CPU caches on those power-fail protected CPU cache.
->> >
->> > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
->> > Fixes: 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
->> > ---
->> >  drivers/dax/super.c   | 20 +++++++++++++++++++-
->> >  drivers/nvdimm/pmem.c |  2 ++
->> >  include/linux/dax.h   |  9 +++++++++
->> >  3 files changed, 30 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
->> > index c2c46f96b18c..457e0bb6c936 100644
->> > --- a/drivers/dax/super.c
->> > +++ b/drivers/dax/super.c
->> > @@ -152,6 +152,8 @@ enum dax_device_flags {
->> >         DAXDEV_ALIVE,
->> >         /* gate whether dax_flush() calls the low level flush routine */
->> >         DAXDEV_WRITE_CACHE,
->> > +       /* only flush the CPU caches if they are not power fail protected */
->> > +       DAXDEV_FLUSH_ON_SYNC,
->> >  };
->> >
->> >  /**
->> > @@ -283,7 +285,8 @@ EXPORT_SYMBOL_GPL(dax_copy_from_iter);
->> >  void arch_wb_cache_pmem(void *addr, size_t size);
->> >  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
->> >  {
->> > -       if (unlikely(!dax_write_cache_enabled(dax_dev)))
->> > +       if (unlikely(!dax_write_cache_enabled(dax_dev)) ||
->> > +                       !dax_flush_on_sync_enabled(dax_dev))
->>
->> This seems backwards. I think we should teach the pmem driver to still
->> issue deep flush even when dax_write_cache_enabled() is false.
->
-> That does still happen.  Deep flush is essentially controlled by the 'wbc'
-> variable in pmem_attach_disk(), which we use to set blk_queue_write_cache().
+On Tue, Jun 05, 2018 at 01:22:41PM -0700, Linus Torvalds wrote:
+> 
+> You have the tag *message* for fscrypt, but then the commit it points
+> to has nothing to do with fscrypt.
+> 
+> I think you tagged the wrong branch.
 
-Right, what I'm trying to kill is the need to add
-dax_flush_on_sync_enabled() I think we can handle this local to the
-pmem driver and not extend the 'dax' api.
+Yeah, sorry.  I used git shortlog when I was examining the branch to
+compose the tag message, and then I have a semi-automated script which
+generates the pull request.  And I failed to check the arguments to
+the script, as well as the output of the script.   :-(
 
-> My understanding is that this causes the block layer to send down
-> REQ_FUA/REQ_PREFLUSH BIOs, and it's in response to these that we do a deep
-> flush via nvdimm_flush().  Whether this happens is totally up to the device's
-> write cache setting, and doesn't look at whether the platform has
-> flush-on-fail CPU caches.
->
-> This does bring up another wrinkle, though: we export a write_cache sysfs
-> entry that you can use to change the write cache setting of a namespace:
->
-> i.e.:
->         /sys/bus/nd/devices/pfn0.1/block/pmem0/dax/write_cache
->
-> This changes whether or not the DAXDEV_WRITE_CACHE flag is set, but does *not*
-> change whether the block queue says it supports a write cache
-> (blk_queue_write_cache()).  So, the sysfs entry ends up controlling whether or
-> not we do CPU cache flushing via DAX, but does not do anything with the deep
-> flush code.
->
-> I'm guessing this should be fixed?  I'll go take a look...
+Trying again, here you go.....
 
-I think we need to disconnect DAXDEV_WRITE_CACHE from the indication
-of the filesystem triggerring nvdimm_flush() via REQ_{FUA,FLUSH}.
+The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
+
+  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git tags/fscrypt_for_linus
+
+for you to fetch changes up to e1cc40e5d42acb1d99652babb17e6a5ee4247409:
+
+  fscrypt: log the crypto algorithm implementations (2018-05-20 16:36:00 -0400)
+
+----------------------------------------------------------------
+Add bunch of cleanups, and add support for the Speck128/256
+algorithms.  Yes, Speck is contrversial, but the intention is to use
+them only for the lowest end Android devices, where the alternative
+*really* is no encryption at all for data stored at rest.
+
+----------------------------------------------------------------
+Eric Biggers (18):
+      fscrypt: use unbound workqueue for decryption
+      fs, fscrypt: only define ->s_cop when FS_ENCRYPTION is enabled
+      fscrypt: clean up after fscrypt_prepare_lookup() conversions
+      fscrypt: remove unnecessary NULL check when allocating skcipher
+      fscrypt: remove error messages for skcipher_request_alloc() failure
+      fscrypt: remove stale comment from fscrypt_d_revalidate()
+      fscrypt: don't clear flags on crypto transform
+      fscrypt: don't special-case EOPNOTSUPP from fscrypt_get_encryption_info()
+      fscrypt: drop max_namelen check from fname_decrypt()
+      fscrypt: drop empty name check from fname_decrypt()
+      fscrypt: make fscrypt_operations.max_namelen an integer
+      fscrypt: remove unnecessary check for non-logon key type
+      fscrypt: remove internal key size constants
+      fscrypt: use a common logging function
+      fscrypt: separate key lookup from key derivation
+      fscrypt: only derive the needed portion of the key
+      fscrypt: add Speck128/256 support
+      fscrypt: log the crypto algorithm implementations
+
+ Documentation/filesystems/fscrypt.rst |  10 ++
+ fs/crypto/crypto.c                    |  47 +++++--
+ fs/crypto/fname.c                     |  32 ++---
+ fs/crypto/fscrypt_private.h           |  23 ++--
+ fs/crypto/hooks.c                     |   5 +-
+ fs/crypto/keyinfo.c                   | 286 ++++++++++++++++++++++++-----------------
+ fs/ext4/super.c                       |   8 +-
+ fs/f2fs/super.c                       |   8 +-
+ fs/ubifs/crypto.c                     |  10 +-
+ include/linux/fs.h                    |   4 +-
+ include/linux/fscrypt_notsupp.h       |  10 --
+ include/linux/fscrypt_supp.h          |  16 +--
+ include/uapi/linux/fs.h               |   2 +
+ 13 files changed, 248 insertions(+), 213 deletions(-)
