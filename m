@@ -1,120 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeFER34 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:29:56 -0400
-Received: from mga05.intel.com ([192.55.52.43]:16179 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751764AbeFER3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:29:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="64534862"
-Date: Tue, 5 Jun 2018 10:32:53 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, "Raj, Ashok" <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, Yi L <yi.l.liu@linux.intel.com>,
-        Auger Eric <eric.auger@redhat.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 04/22] iommu/vt-d: add bind_pasid_table function
-Message-ID: <20180605103253.634ef8fd@jacob-builder>
-In-Reply-To: <1c1094e8-ecbb-7731-910c-59e4de1e5c70@arm.com>
-References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1523915351-54415-5-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20180417131047.0a9c310f@w520.home>
-        <AM4PR0802MB2369F739C91B630CA99B3D3BA3B40@AM4PR0802MB2369.eurprd08.prod.outlook.com>
-        <20180420164251.5245f822@jacob-builder>
-        <20180529140915.1f174689@w520.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1911E59C4@SHSMSX101.ccr.corp.intel.com>
-        <20180529211746.74f1dd23@w520.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1911E5F06@SHSMSX101.ccr.corp.intel.com>
-        <a07a0a0a-ebdd-c81a-7ed6-cff19e6078d7@arm.com>
-        <20180530125240.34e0e80c@jacob-builder>
-        <1c1094e8-ecbb-7731-910c-59e4de1e5c70@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1751894AbeFERag (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:30:36 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40853 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751856AbeFERad (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:30:33 -0400
+X-Google-Smtp-Source: ADUXVKLqDkYlQU7eLc5BuNuXSXgtx8vt0U4xS6iOXkLyOTA8dISgMrzhLu6JqMbAzr6X4JCFU5KSe+2pKhKXd8iU0SI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CAJZ5v0jq45atkapwSjJ4DkHhB1bfOA-Sh1TiA3dPXwKyFTBheA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jq45atkapwSjJ4DkHhB1bfOA-Sh1TiA3dPXwKyFTBheA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 5 Jun 2018 10:30:21 -0700
+Message-ID: <CA+55aFyoxvrA-7X_8ZfQXd1=GfLT96ZaHAM+o5gKwOOfiy_HDA@mail.gmail.com>
+Subject: Re: [GIT PULL] Device properties framework update for v4.18-rc1
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 May 2018 10:09:46 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+On Mon, Jun 4, 2018 at 4:31 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+>  device property: Get rid of union aliasing
 
-> On 30/05/18 20:52, Jacob Pan wrote:
-> >> However I think the model number should be added to
-> >> pasid_table_config. For one thing it gives us a simple
-> >> sanity-check, but it also tells which other fields are valid in
-> >> pasid_table_config. Arm-smmu-v3 needs at least two additional
-> >> 8-bit fields describing the PASID table format (number of levels
-> >> and PASID0 behaviour), which are written to device context tables
-> >> when installing the PASID table pointer.
-> >>  
-> > We had model number field in v2 of this patchset. My thought was
-> > that since the config info is meant to be generic, we shouldn't
-> > include model info. But I also think a simple sanity check can be
-> > useful, would that be sufficient to address Alex's concern? Of
-> > course we still need sysfs for more specific IOMMU features.
-> > 
-> > Would this work?
-> > enum pasid_table_model {
-> > 	PASID_TABLE_FORMAT_HOST,
-> > 	PASID_TABLE_FORMAT_ARM_1LVL,
-> > 	PASID_TABLE_FORMAT_ARM_2LVL,  
-> 
-> I'd rather use a single PASID_TABLE_FORMAT_ARM, because "2LVL" may be
-> further split into 2LVL_4k or 2LVL_64k leaf tables... I think it's
-> best if I add an arch-specific field in pasid_table_config for that,
-> and for the PASID0 configuration, when adding FORMAT_ARM in a future
-> patch
-> 
-sounds good. will only use PASID_TABLE_FORMAT_ARM.
-> > 	PASID_TABLE_FORMAT_AMD,
-> > 	PASID_TABLE_FORMAT_INTEL,
-> > };
-> > 
-> > /**
-> >  * PASID table data used to bind guest PASID table to the host
-> > IOMMU. This will
-> >  * enable guest managed first level page tables.
-> >  * @version: for future extensions and identification of the data
-> > format
-> >  * @bytes: size of this structure
-> >  * @model: PASID table format for different IOMMU models
-> >  * @base_ptr:	PASID table pointer
-> >  * @pasid_bits:	number of bits supported in the guest PASID
-> > table, must be less
-> >  *		or equal than the host supported PASID size.
-> >  */
-> > struct pasid_table_config {
-> > 	__u32 version;
-> > #define PASID_TABLE_CFG_VERSION_1 1
-> > 	__u32 bytes;  
-> 
-> "bytes" could be passed by VFIO as argument to bind_pasid_table, since
-> it can deduce it from argsz
-> 
-Are you suggesting we wrap this struct in a vfio struct with argsz? or
-we directly use this struct?
+Honestly, this looks questionable to me.
 
-I need to clarify how vfio will use this.
-- User program:
-struct pasid_table_config ptc = { .bytes = sizeof(ptc) };
-ptc.version = 1;
-ioctl(device, VFIO_DEVICE_BIND_PASID_TABLE, &ptc);
+I'm not talking about the changes themselves - I can live with them.
+But the _rationale_ is pure and utter garbage, and dangerously so.
 
-- Kernel:
-minsz = offsetofend(struct pasid_table_config, pasid_bits);
-if (ptc.bytes < minsz)
-	return -EINVAL;
+The fact is, using a union to do type punning is the traditional AND
+STANDARD way to do type punning in gcc. In fact, it is the
+*documented* way to do it for gcc, when you are a f*cking moron and
+use "-fstrict-aliasing" and need to undo the braindamage that that
+piece of garbage C standard imposes.
+
+So the commit message that talks about how horrible union aliasing is
+is pushing a story that is simply wrong. Using the standard to push it
+- the same standard that came up with the completely mis-guided
+aliasing rules - is not a valid argument.
+
+Andy, what is the background for trying to push this idiocy? Don't
+tell me "the C standard is unclear". The C standard is _clearly_ bogus
+shit (see above on strict aliasing rules), and when it is bogus
+garbage, it needs to be explicitly ignored, and it needs per-compiler
+workarounds for braindamage. The exact same situation is true when
+there is some lack of clarity.
+
+This is why we use -fwrapv, -fno-strict-aliasing etc. The standard
+simply is not *important*, when it is in direct conflict with reality
+and reliable code generation.
+
+The *fact* is that gcc documents type punning through unions as the
+"right way". You may disagree with that, but putting some theoretical
+standards language over the *explicit* and long-time documentation of
+the main compiler we use is pure and utter bullshit.
+
+I've said this before, and I'll say it again: a standards paper is
+just so much toilet paper when it conflicts with reality. It has
+absolutely _zero_ relevance. In fact, I'll take real toilet paper over
+standards any day, because at least that way I won't have splinters
+and ink up my arse.
+
+So I want to see actual real arguments, not "the standard is unclear".
+When documented gcc behavior says one thing, and the standard might be
+unclear, we really don't care one whit about the lack of clarity in
+some standard.
+
+So what's the _real_ reason for avoiding union aliasing?
+
+There are competent people on standards bodies. But they aren't
+_always_ competent, and the translation of intent to English isn't
+always perfect either. So standards are not some kind of holy book
+that has to be revered. Standards too need to be questioned.
+
+                 Linus
