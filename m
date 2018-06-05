@@ -1,79 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752011AbeFESIS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:08:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34047 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751832AbeFESIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:08:15 -0400
-Subject: Re: [PATCH v2 2/2] x86: paravirt: make native_save_fl extern inline
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "J. Kiszka" <jan.kiszka@siemens.com>, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, Josh Poimboeuf <jpoimboe@redhat.com>,
-        kirill.shutemov@linux.intel.com, mingo@redhat.com, mjg59@google.com,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, rostedt@goodmis.org,
-        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
-        Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
-        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
-        David Rientjes <rientjes@google.com>
-References: <20180605170532.170361-1-ndesaulniers@google.com>
- <20180605170532.170361-3-ndesaulniers@google.com>
- <26c7fd1c-ab40-368f-c2e3-43a6b45157fd@zytor.com>
- <0dd024cd-e05a-0d67-c1bf-1a532714bb1a@zytor.com>
- <CAKwvOdk0v4gY04_pbMeUT7Ly5oRHetKorQXnjp_UVBabK74Ekw@mail.gmail.com>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <a40b7e04-8d7c-b26f-4cb9-457bf0fd4a6a@zytor.com>
-Date: Tue, 5 Jun 2018 11:06:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751999AbeFESKv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:10:51 -0400
+Received: from mx2.yrkesakademin.fi ([85.134.45.195]:28641 "EHLO
+        mx2.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751830AbeFESKu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 14:10:50 -0400
+Subject: Re: building in 32bit chroot on x86_64 host broken - IGNORE
+From: Thomas Backlund <tmb@mageia.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
+ <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org>
+Message-ID: <48aa249f-22e8-924c-120c-8384eff9efb4@mageia.org>
+Date: Tue, 5 Jun 2018 21:11:01 +0259
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdk0v4gY04_pbMeUT7Ly5oRHetKorQXnjp_UVBabK74Ekw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-WatchGuard-Spam-ID: str=0001.0A0C0202.5B16D22A.0143,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
+X-WatchGuard-Mail-Client-IP: 85.134.45.195
+X-WatchGuard-Mail-From: tmb@mageia.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/18 10:52, Nick Desaulniers wrote:
+Den 2018-06-05 kl. 20:52, skrev Thomas Backlund:
 > 
-> Does the kernel have a different calling convention for 32b x86? How
-> does that work? regparm=3? Does that need to be added to the
-> declaration?
+> I have a 32bit x86 and a 64bit x86_64 install on the system.
+> 
+> With linux source up to 4.16.x I could do:
+> 
+> setarch i686 (or use command linux32)
+> chroot /path/to/32bit/
+> (/dev, /proc, /sys, /run is bind mounted in the chroot)
+> 
+> Then I could build a 32bit kernel in the chroot without booting the 
+> 32bit system...
+> 
+> (host is running a 4.14 longterm kernel)
+> 
+> but building from 4.17 source in the chroot I get:
+> 
+> 
+> $ uname -m
+> i686
+> $ make oldconfig
+> scripts/kconfig/conf  --oldconfig Kconfig
+> *
+> * Restart config...
+> *
+> *
+> * Linux/x86 4.17.0 Kernel Configuration
+> *
+> 64-bit kernel (64BIT) [Y/n/?] (NEW)
+> 
+> 
+> 
+> 
+> So it does not pick up 32bit anymore ...
+> 
+> Is this intentional ? If so, why ? If not, how can I fix it ?
 > 
 
-Yes, -mregparm=3.  No, doesn't need to be added to the declaration.
+
+Never mind...
+
+For some reason I seem to have lost this  in the .config update to 4.17:
+
+# CONFIG_64BIT is not set
 
 
->> Something like this added to <asm/asm.h> might be useful; then you can
->> simply:
->>
->>       push %_ASM_ARG1
->>
->> Version with fixed typo...
-> 
-> Oh, nice, thanks! I'll pick this up and add it to my patch set for v3
-> (or did you want me to review/sign-off now?) I can pick up Sedat's
-> suggestion.
-> 
+Re-adding it restores proper behaviour...
 
-Add it to your patchset and add your own signoff underneath mine.
+Sorry for the noise...
 
-	-hpa
+--
+Thomas
