@@ -1,432 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751727AbeFEJCu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 05:02:50 -0400
-Received: from pic75-3-78-194-244-226.fbxo.proxad.net ([78.194.244.226]:44460
-        "EHLO mail.corsac.net" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1751481AbeFEJCr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 05:02:47 -0400
-Date: Tue, 5 Jun 2018 10:54:51 +0200
-From: Yves-Alexis Perez <corsac@corsac.net>
-To: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Hans Liljestrand <ishkamiel@gmail.com>,
-        David Windsor <dwindsor@gmail.com>, Kees Cook <keescook@chromium.org>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Mateusz Jurczyk <mjurczyk@google.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        David Herrmann <dh.herrmann@gmail.com>, netdev@vger.kernel.org,
-        Alexander Kappner <agk@godking.net>,
-        Johannes Berg <johannes.berg@intel.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Freeze when using ipheth+IPsec+IPv6
-Message-ID: <20180605085450.GA3506@scapa.corsac.net>
+        id S1751870AbeFEJDf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 05:03:35 -0400
+Received: from mail-db5eur01on0134.outbound.protection.outlook.com ([104.47.2.134]:28864
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751442AbeFEJDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 05:03:32 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Subject: Re: INFO: task hung in ip6gre_exit_batch_net
+To: Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>,
+        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>,
+        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>
+References: <0000000000006e4595056dd23c16@google.com>
+ <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com>
+Date: Tue, 5 Jun 2018 12:03:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: HE1PR1001CA0010.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:3:f7::20) To AM5PR0801MB1329.eurprd08.prod.outlook.com
+ (2603:10a6:203:1f::7)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1329;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;3:d00V8Rlhoqmu3Bg3FZZn8H1VfoLnMqavgSRyrJYomGOVTpqS5LqtI5ArBGXAgpFBtVo574PqbtrN2l4Qv58O/bxXw2G7hBzJx0KNhX953Fd14a79IE4bPlLvkx4p1rlMJKq2JhuUA/JvvCP9VKPRSiSHrwqQ59wYVBCyE9WmmwuvZKKE1HtkrME8jN5uB+rRwGmSRwmyzikw7BKRo/rG+9RugLcVeRiRnGvDMzI6I5ki79zTJEuWf0d50lwMFhJ7;25:HYGZPxz3qUuQW6GdQgI8P89UgwbabKbbgTUmr9vLATnDOrUVhsAkma6j3dbseXFTff2YuAkmWK+MJEpQYcxlGczevN3/xSjL2kRlfwIEbsJyYT8VtWo6eJHmvAN0iveO7+dYZB317zv4AbAD+EYRA7KkLrtK1UoOWEHTxKXhitvF+2Ohie8fQKY4z4mDNahc/RVUxErgfywycyHm2CtW6ebIVpV7MiJNvScpsFb89Q9RJFJLhX0pxYoe0sDLBY+uReoUu09zsrAeadlESfsDcqmeVrRGTMeenyJogHoN68zFsUoDL65ZjkNRKx25qat/HMkZQfLLORS4pdx/nLq+2A==;31:LvM26rj8l4Z2Zs6PLlGgNrEWAF8+DLAM5jhoIglVnD64QCNHH3j2LKXlFBApXH90jNDmu/AM/L0nw8Deh8M59fHJd60Qe9LINx6BcAteQMthkWgYzv/HY8sqId5SjyPlxApdUm5y6HN8iVw9DgGRJ8Pt8NZThV1qxu/2AwKPXeljTqTrcjYJRcBwErKuKW6VwAmMpiRyFH5y9v6jYnUVSNgw0euQfNHBKwr4LkFYZMA=
+X-MS-TrafficTypeDiagnostic: AM5PR0801MB1329:
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;20:UqK2IJXGGcYpguWGTvgsV/yleVhwNUmvVp09SZOO7cjNZLP+setBS6c6FJle3NE4MdCTS/DxQIbCowtc/eIi9MKTKj5U4UAP6StxRL5Nv9ZZ//6fEfsF0nYxsGBiSM7/1eY/56rdqmTIT256PMwwlyYQeyiK6/n4+W3388oGK0Otj0xYrwExiGD02auY82aro1LM4p5a8ObJUo1GfWMnF1XfCNFgsYCpndiOy66SsogGluZRTFr1V7X1dXXniWJREGcIgTkmUwzb7EWVI4eS9klZC/0QcQjAMREK63VxufVttZ8fSR9PCgWMGlsTU2OmRvx3zpQXUP0JIGwgBbzhaYzyQpVIQNzkahaXQMJ2YMBlwdNuWpU5oV4uF/OOhfh2gLY3xQPHtZxXPdJZo3k/bQAZkUqWKhrs6/WO+Sm6QPNAqC+obbTB8YvaAMnICJQ+MuL6l7XFKJT3oRgbLmFqwXsnJwoIdYQwrO3rp1sRGEwgq2Qf9ySz8QxOcGIDm2dO;4:3Ltn4T46TPtUqPAa88aXE+UiE1Q/LAD+tr3dTWgQLqCPpJCLn72Ql91qYJlf2U1xAUIxA6f7ScUIY1uSD9T8MYcCB6B2KmCTGofwUdYP78dcL5PFcwREZth2Q4FO8HddiYW+bZbux1Kw0zRurFTvBK/5mHcTFCJ/1co8I00szXvabCMqFCDI0kUpRtw0myEh5Jj2UOPzXi2J0yIHKanxEE1VatXrgAp9naFUSWSZmkupchbiKrD8KpOn6NRtrDvn360HwW6D2OYPB0UGSyHZTA==
+X-Microsoft-Antispam-PRVS: <AM5PR0801MB1329D8D13AD2BFE00C532397CD660@AM5PR0801MB1329.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM5PR0801MB1329;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1329;
+X-Forefront-PRVS: 0694C54398
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(346002)(396003)(39840400004)(376002)(366004)(39380400002)(189003)(199004)(110136005)(39060400002)(8936002)(8676002)(54906003)(81166006)(65826007)(4326008)(5660300001)(316002)(15760500003)(81156014)(16576012)(58126008)(68736007)(966005)(106356001)(386003)(478600001)(7416002)(105586002)(97736004)(53546011)(31686004)(25786009)(55236004)(11346002)(59450400001)(446003)(486006)(65806001)(7736002)(65956001)(2906002)(305945005)(2616005)(956004)(476003)(16526019)(36756003)(64126003)(76176011)(52116002)(6116002)(6246003)(3846002)(66066001)(53936002)(52146003)(2486003)(23676004)(6306002)(6486002)(50466002)(86362001)(26005)(186003)(31696002)(77096007)(230700001)(47776003)(229853002)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB1329;H:[172.16.25.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjEzMjk7MjM6NkZZMVJHc2FsbmxXVTZuL1JNTWd4cGVm?=
+ =?utf-8?B?a2VjcHpJR1Vrei94Mnl2UEtlc3ZpNkdUTzFxZ2NFN2UrZ205cTNQMTQybVpK?=
+ =?utf-8?B?eVNPZFNtUEo4eldIWitURzdZUHRhSnFtU2duak4rVS9PTkFSblR1V0pjSnFE?=
+ =?utf-8?B?VFpKbEQ5cVhEckdSY0VMSkxyaVExMStoQU53OXZ3SVlZdjc3UWViQ2w2M0hT?=
+ =?utf-8?B?WlVEQUFSY05mZDB2eFdGL2cxaGR0eGNQNVZKdGVMNUM4VFRlUmsrU2ZyZ0V3?=
+ =?utf-8?B?T2Q1a1JQWHFXVUZnVGdlZTFVUUpmWTBHWlFOVTNzdWNza09veFpLUlhNTWc2?=
+ =?utf-8?B?WTcxcm9YVUU4cHlnMUJ6ZmowdzhvbjlOdHFYSGRHMTNoMDd5bWU0b2VPcjNE?=
+ =?utf-8?B?YmFRVit0bVBWS1Z2VkdVUmRJd0F1dXZ1dzNNcXdwN0VIS3JjK0VzK3E1ekJX?=
+ =?utf-8?B?ZWw5WEJsYmU3YmRoNnlFZnpaNEFETlBtUkUyVGJpSlJBVUlnZmMvSU9sMlRN?=
+ =?utf-8?B?YTEvY01PWGJ6dWt2aHpLWDRUOFI1NmF5ZkMwNlJYM2ZzeWhOd2lrNVhKRjd0?=
+ =?utf-8?B?QkNvd2FJcHc0NDRSVFRJN3Z1dWpUWHIxZzRyKzBaVlJ0cXFRc01UdnhPREdm?=
+ =?utf-8?B?Y2pFWXMzbWdxMHBFZXkrNzNoWitpVjBUaDJKZ3BsdkxYTXhhNEtJZW9ZcCsw?=
+ =?utf-8?B?MEQrenpqeHo2RGF4SkV0L2dqVUlnUnc1YnQ4WkJ3bUtmNUp0OVh0eVRNMzlE?=
+ =?utf-8?B?dkhnYjZNMmI4bFFCMlAzYWxacHNBaDlCanRXOStXc1Avd1RYZkVDYTFxWmt4?=
+ =?utf-8?B?OUY5ZGZhTGhTY1BaTGo3cnJUVE5KR1dxdGtkUk1meU1pQTgrV3F5TVp5RkQv?=
+ =?utf-8?B?SGhmdUFpN1RpMXdvQXNHakZ6OUFVcmRuTEZXWVFWdVdodmp4cGpDelVNMEo2?=
+ =?utf-8?B?a1UvUEc1V0tic3RQRm84Q2h3c1dIR2RWL3VyN1d5a2hkM0FEckYxYk1xbVdt?=
+ =?utf-8?B?R0R2eDJFR1I0bWR1d2ZadmI4RTJFMExOamZ4bjI2aU5lUDE3UEFyb3lkSlBL?=
+ =?utf-8?B?eVppVVVKL0M1WWYyK2pSZkpZTTZISmc3TTlmbmRWMTdXeUdCdkZDMThKVEN6?=
+ =?utf-8?B?WWwxRU9pc003M0MzbkxPOWwzMU1hVE5ZaThvWFpMVTlsZjZxYnpXVnlnV2RU?=
+ =?utf-8?B?UFFsczhwdWkxdk1MY2wzeEY0RXBPdGNncW5ZOUJCK2hRWnFUYkVEdmp4K1h2?=
+ =?utf-8?B?VDZSaGlya0E4T29oS2hXS0NHM2tJVDdQVDRqekh4czFwT0hqdWpJWERCNlpo?=
+ =?utf-8?B?d0krK2VwRC9Bc1NobWV0Skh2WnZ3TzVhK2ZLbzlRQ0lRcWJybGE3amIzNStH?=
+ =?utf-8?B?SW93Smd2cmlIeTlJZmJHdjZNSDNLUytPd2RDNXdSSldHK1l6bWU5WU1JV0E4?=
+ =?utf-8?B?OXBvWEJ1cjJaRERHQlp2M3V3MXpSeVVKT3BLUXkrQzJQcDFzQzNGSFBQdU8w?=
+ =?utf-8?B?T21YS1NSdkZJdjdzRTY0RmxQaTNhREZZZ05XSTUrWUFicnNyMjRBa3FDblV5?=
+ =?utf-8?B?RjFHMDV2TFlWazlpbnFRWjh2cUllMm5qWXNHaEhKbmdWKzg5NVdESXpYRkJ0?=
+ =?utf-8?B?TzFYUXF4dUk1ZmEvZHBnWnh0VDBSRUpuTHhaRVBmNnBydXl3MEVydGs1cXUz?=
+ =?utf-8?B?Tnhab2lNR2FmWGNXekZXOFFSUUZHOTJzSWl2eVluOU80bEJySGFRK0xHd0tl?=
+ =?utf-8?B?NFIyU1JrWUI1ZW5XZ081Q29wbnZFN1JGL0ZTblcwTFBIRVpkaitGeU5jYzV3?=
+ =?utf-8?B?aTJ6N0hHRlphSmhQMG5GTEViTDhZdDdSZDYwcHFVV2dWOTNmOVJETUpuS05z?=
+ =?utf-8?B?RG5lbzg5NDhxekNGMjZyblVlRWQvTURMK0Jsb1lmQkJuME5va2RDbkQxN2lG?=
+ =?utf-8?B?cnp6VWpmK21PU29VanBLWWdIY3Zhb1EzdjJrekZHK2JNRjBNMUh2dmQrOHZj?=
+ =?utf-8?B?SFRlRll4WUlSbEUwanBWTElHakZmcHlKNm1sN01Ba3prZmtmMWlYRDcxVlh4?=
+ =?utf-8?B?OUtTazlYeXZDZmFMSGkyYlZCTFBscTFGZjJiNDQ0OXZ4NHVMb3BwWmJnZ25r?=
+ =?utf-8?Q?hCxkH4Az2+cGrmsp+qSlHtIAkTad7yEoTEzhu8FEecAkox?=
+X-Microsoft-Antispam-Message-Info: l0j8XujcjHE2pCImHBJ89/g8zd6Nya+4apv1tHfqHLAfDqFod/rMyUnHzOV4upxSXCEX1+2pPt970AfIHUavJcA4INMwzA9P9A/j0d920ho54hELD7bvxf5YdX33s1JfQjR5roXbenwabSW7JoCXyG/hSaQdCb5l34VeoHHaekSIV5zKppYaFhdpIM2BjzCI
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;6:o3yDcfS6hte1G0O05VPJNWNm/a2IahDguVlpZI7Z/x9SoLgTpUEOd9yof9zwIxj+ziE1n0d0tbeD7LDYeDoy1d1rgDWn+uf68Fw5lamMmhhReeArOtpGEutOkpMxwX8Do0Bp1hbzo9aSUu3CVoHs3wFg+2kVJPUytBzhZSHfpV56Kf3f24Ml8XvZlLKoMEo5AEF+qw43O0ON8noFwoAQstXtqSsWb4eA5tL+UmKsCRtmhZroy3eIoz4PuS+q8VU7E6zK2iYpk2i5eMtELrRk4iLobfF539BM7FGAn5+qsMz0IeZixI+zac+ExlW5givIIlQ2ezQlIj56oSoiGoEFK30GY+aKjBz0OFX9+lFd6DR/7CE3H8OySBQwCXFLWbOVZSNIQ7ZeFBxjPtw1FeGOkJddlgv0L+isdWzProtMJWbQmb5Q4Q5fyJO3FietFzQQK3THlrXUJxfVFPWiD2Whiw==;5:+193+2PMUc9YEVgVxz0qjBnnDYp6kzg5bmg+2JbVaCfjpnm+TDSPd0hzFfraDSdKw5MJHOi0j+quX7lblYGPa6CjkAzLL3h5jvc2/qFMRXX9pELE3uMX0/osceaRPxQK6U3VSf/USoSwzLD/9YtrXE/xIOVet8B9sZsOVaUXm90=;24:D/99b0dt8tXfor20kOQavCXDRG9Ltxfyn+GfEhh5a7OfXFGZ10H1tOUeNjqu/6d7Xa6UBlp7SvVTlXMmQEFSGexN2FihUUC55FsJoWxZNkk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;7:5DgBy6ml/MjOoGPFy/iaTdQNuR7xfKum6khWQfnnyttBAXDtN2o3N8TyAC3/w2rEJTwB64z6KczZVRPMsm+62FeUjZlSRUrRvouooSv2x9ErIuiP4XBL8u21/tgj3ESwbCXjb+MW3DA/TjZY5mJ2gmqq2XWdqoHBXMpZBVj+po8RmBeiFuHCvkTSG2b2u/fD8mHI0op23kQeqrzI0Ipfua4CW7IWHbOw3v56RFFkH2StwkJisVY83dpa35ZtHRn1;20:sc/MkF5heML1tc92PQp45uFlkh0HA6waeM1igCtJCYuVN/sAv586D5itM9ZuiMkXEaOBPG2VJGAcDx7bCTFWYTDSy69REh/vRwD7LeBFWx0ZpBQjO2GfN4W0+J9XQPPF1tN5BlPQZiQl+1UFFzAR7zt8+XEYReP41Ev+RlBczc0=
+X-MS-Office365-Filtering-Correlation-Id: c207c6dd-d9cd-498f-2423-08d5cac3345b
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2018 09:03:27.9396 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c207c6dd-d9cd-498f-2423-08d5cac3345b
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1329
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Dmirty!
 
---PmA2V3Z32TCmWXqI
-Content-Type: multipart/mixed; boundary="ZGiS0Q5IWpPtfppv"
-Content-Disposition: inline
+On 04.06.2018 18:22, Dmitry Vyukov wrote:
+> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
+> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
+> 
+> Another hang on rtnl lock:
+> 
+> #syz dup: INFO: task hung in netdev_run_todo
+> 
+> May be related to "unregister_netdevice: waiting for DEV to become free":
+> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
+> 
+> Any other explanations for massive hangs on rtnl lock for minutes?
 
+To exclude the situation, when a task exists with rtnl_mutex held:
 
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+would the pr_warn() from print_held_locks_bug() be included in the console output
+if they appear?
 
-Hi,
-
-since some kernels releases (I didn't test thorougly but at least 4.16
-and 4.17) I have regular freezes in certain situations on my laptop.
-
-It seems to happen when I:
-
-- tether using my iPhone (involving ipheth)
-- mount an IPsec tunnel over IPv4
-- run evolution to fetch my mail (IMAP traffic over IPv6 inside the IPv4
-  IPsec tunnel)
-
-When I do that, the interface seems to freeze. Last time the mouse was
-still moving so the kernel didn't completely crash, but the UI was
-completely irresponsive. I managed to get the attached log from
-/sys/fs/pstore with refcount_t stuff pointing to an underflow.
-
-Since this doesn't happen if all three conditions aren't met, I've added
-a lot of people to the CC: list, sorry for the noise.
-
-I can try to add debugging here and there if needed, but any pointer to
-where would be helpful. I'm especially puzzled about the presence of
-net/unix/af_unix.c:491 unix_sock_destructor+0x97/0xc0 in the log.
-
-Regards,
---=20
-Yves-Alexis
-
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="dmesg-crash.txt"
-Content-Transfer-Encoding: quoted-printable
-
-Oops#1 Part8
-<4>[ 2189.388649] ------------[ cut here ]------------
-<4>[ 2189.388652] refcount_t: underflow; use-after-free.
-<4>[ 2189.388691] WARNING: CPU: 3 PID: 30 at /home/corsac/projets/linux/lin=
-ux/lib/refcount.c:187 refcount_sub_and_test+0x3e/0x50
-<4>[ 2189.388692] Modules linked in: esp4 xfrm6_mode_tunnel xfrm4_mode_tunn=
-el ipheth bnep rtsx_pci_sdmmc iwlmvm snd_hda_codec_realtek snd_hda_codec_ge=
-neric snd_hda_codec_hdmi iwlwifi snd_hda_intel rtsx_pci snd_hda_codec snd_h=
-wdep snd_hda_core snd_pcm thinkpad_acpi efivarfs input_leds
-<4>[ 2189.388713] CPU: 3 PID: 30 Comm: ksoftirqd/3 Tainted: G              =
-  T 4.17.0 #22
-<4>[ 2189.388714] Hardware name: LENOVO 20CMCTO1WW/20CMCTO1WW, BIOS N10ET48=
-W (1.27 ) 09/12/2017
-<4>[ 2189.388718] RIP: 0010:refcount_sub_and_test+0x3e/0x50
-<4>[ 2189.388720] RSP: 0000:ffff93e640dabdc0 EFLAGS: 00010282
-<4>[ 2189.388722] RAX: 0000000000000000 RBX: ffff8d00bac82000 RCX: 00000000=
-00000006
-<4>[ 2189.388723] RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff8d01=
-4dd95610
-<4>[ 2189.388724] RBP: ffff8d00bac82144 R08: 00000000000003b3 R09: 00000000=
-00000004
-<4>[ 2189.388725] R10: 0000000000000000 R11: 0000000000000001 R12: ffff8d01=
-4dda1100
-<4>[ 2189.388726] R13: 0000000000000000 R14: 909c6c76983bd4d2 R15: 13146644=
-b16dc153
-<4>[ 2189.388728] FS:  0000000000000000(0000) GS:ffff8d014dd80000(0000) knl=
-GS:0000000000000000
-<4>[ 2189.388729] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[ 2189.388731] CR2: 0000755942c8c000 CR3: 000000006620a004 CR4: 00000000=
-003606e0
-<4>[ 2189.388732] Call Trace:
-<4>[ 2189.388738]  sock_wfree+0x40/0x60
-<4>[ 2189.388743]  unix_destruct_scm+0x7b/0xa0
-<4>[ 2189.388747]  skb_release_head_state+0x59/0x90
-<4>[ 2189.388751]  skb_release_all+0x9/0x20
-<4>[ 2189.388753]  __kfree_skb_defer+0x19/0x50
-Oops#1 Part7
-<4>[ 2189.388757]  net_tx_action+0xf0/0x2d0
-<4>[ 2189.388760]  __do_softirq+0xdb/0x220
-<4>[ 2189.388766]  ? sort_range+0x20/0x20
-<4>[ 2189.388768]  run_ksoftirqd+0x1f/0x30
-<4>[ 2189.388771]  smpboot_thread_fn+0x11f/0x1e0
-<4>[ 2189.388775]  kthread+0x109/0x120
-<4>[ 2189.388779]  ? kthread_create_worker_on_cpu+0x70/0x70
-<4>[ 2189.388783]  ret_from_fork+0x35/0x40
-<4>[ 2189.388785] Code: c9 75 0c f0 0f b1 16 75 27 85 d2 0f 94 c0 c3 80 3d =
-ab 82 f4 00 00 75 15 48 c7 c7 b8 a5 fd bd c6 05 9b 82 f4 00 01 e8 22 13 d4 =
-ff <0f> 0b 31 c0 c3 83 f8 ff 75 bf eb f6 66 0f 1f 44 00 00 48 89 fe=20
-<4>[ 2189.388825] ---[ end trace b06d93f176d25117 ]---
-<4>[ 2189.388848] WARNING: CPU: 3 PID: 30 at /home/corsac/projets/linux/lin=
-ux/net/unix/af_unix.c:491 unix_sock_destructor+0x97/0xc0
-<4>[ 2189.388849] Modules linked in: esp4 xfrm6_mode_tunnel xfrm4_mode_tunn=
-el ipheth bnep rtsx_pci_sdmmc iwlmvm snd_hda_codec_realtek snd_hda_codec_ge=
-neric snd_hda_codec_hdmi iwlwifi snd_hda_intel rtsx_pci snd_hda_codec snd_h=
-wdep snd_hda_core snd_pcm thinkpad_acpi efivarfs input_leds
-<4>[ 2189.388866] CPU: 3 PID: 30 Comm: ksoftirqd/3 Tainted: G        W     =
-  T 4.17.0 #22
-<4>[ 2189.388867] Hardware name: LENOVO 20CMCTO1WW/20CMCTO1WW, BIOS N10ET48=
-W (1.27 ) 09/12/2017
-<4>[ 2189.388869] RIP: 0010:unix_sock_destructor+0x97/0xc0
-<4>[ 2189.388871] RSP: 0000:ffff93e640dabda8 EFLAGS: 00010286
-<4>[ 2189.388872] RAX: 0000000000000000 RBX: ffff8d00bac82000 RCX: 00000000=
-00000000
-<4>[ 2189.388873] RDX: 0000000000000001 RSI: 0000000000000282 RDI: 00000000=
-00000282
-<4>[ 2189.388875] RBP: ffff8d00bac82000 R08: ffff8d0084796430 R09: ffff93e6=
-40dabd50
-<4>[ 2189.388876] R10: 0000000000000000 R11: 0000000000000001 R12: ffff8d01=
-4dda1100
-<4>[ 2189.388877] R13: 0000000000000000 R14: 909c6c76983bd4d2 R15: 13146644=
-b16dc153
-Oops#1 Part6
-<4>[ 2189.388879] FS:  0000000000000000(0000) GS:ffff8d014dd80000(0000) knl=
-GS:0000000000000000
-<4>[ 2189.388880] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[ 2189.388881] CR2: 0000755942c8c000 CR3: 000000006620a004 CR4: 00000000=
-003606e0
-<4>[ 2189.388882] Call Trace:
-<4>[ 2189.388886]  __sk_destruct+0x1f/0x140
-<4>[ 2189.388888]  unix_destruct_scm+0x7b/0xa0
-<4>[ 2189.388891]  skb_release_head_state+0x59/0x90
-<4>[ 2189.388894]  skb_release_all+0x9/0x20
-<4>[ 2189.388894] ------------[ cut here ]------------
-<4>[ 2189.388896] refcount_t: addition on 0; use-after-free.
-<4>[ 2189.388898]  __kfree_skb_defer+0x19/0x50
-<4>[ 2189.388901]  net_tx_action+0xf0/0x2d0
-<4>[ 2189.388906] WARNING: CPU: 0 PID: 1094 at /home/corsac/projets/linux/l=
-inux/lib/refcount.c:102 refcount_add+0x26/0x30
-<4>[ 2189.388907] Modules linked in: esp4
-<4>[ 2189.388910]  __do_softirq+0xdb/0x220
-<4>[ 2189.388911]  xfrm6_mode_tunnel
-<4>[ 2189.388915]  ? sort_range+0x20/0x20
-<4>[ 2189.388915]  xfrm4_mode_tunnel ipheth
-<4>[ 2189.388918]  run_ksoftirqd+0x1f/0x30
-<4>[ 2189.388918]  bnep
-<4>[ 2189.388920]  smpboot_thread_fn+0x11f/0x1e0
-<4>[ 2189.388921]  rtsx_pci_sdmmc
-<4>[ 2189.388924]  kthread+0x109/0x120
-<4>[ 2189.388925]  iwlmvm
-<4>[ 2189.388927]  ? kthread_create_worker_on_cpu+0x70/0x70
-<4>[ 2189.388928]  snd_hda_codec_realtek
-<4>[ 2189.388932]  ret_from_fork+0x35/0x40
-<4>[ 2189.388932]  snd_hda_codec_generic snd_hda_codec_hdmi
-<4>[ 2189.388933] Code:=20
-<4>[ 2189.388935]  iwlwifi
-<4>[ 2189.388936] e8 ff=20
-<4>[ 2189.388937]  snd_hda_intel rtsx_pci
-<4>[ 2189.388938] f0 f2 ff 5b be=20
-<4>[ 2189.388941]  snd_hda_codec snd_hwdep
-<4>[ 2189.388942] 00 02=20
-<4>[ 2189.388944]  snd_hda_core
-<4>[ 2189.388944] 00 00=20
-<4>[ 2189.388945]  snd_pcm thinkpad_acpi
-Oops#1 Part5
-<4>[ 2189.388947] 48=20
-<4>[ 2189.388947]  efivarfs input_leds
-<4>[ 2189.388949] c7=20
-<4>[ 2189.388951] c7=20
-<4>[ 2189.388952] CPU: 0 PID: 1094 Comm: Xorg Tainted: G        W       T 4=
-=2E17.0 #22
-<4>[ 2189.388953] Hardware name: LENOVO 20CMCTO1WW/20CMCTO1WW, BIOS N10ET48=
-W (1.27 ) 09/12/2017
-<4>[ 2189.388954] 5c=20
-<4>[ 2189.388957] RIP: 0010:refcount_add+0x26/0x30
-<4>[ 2189.388958] c3=20
-<4>[ 2189.388959] RSP: 0018:ffff93e64167bbe0 EFLAGS: 00010286
-<4>[ 2189.388960] 7b=20
-<4>[ 2189.388961] RAX: 0000000000000000 RBX: ffff93e64167bc18 RCX: 00000000=
-00000000
-<4>[ 2189.388963] RDX: ffff8d014dc1c540 RSI: ffff8d014dc15618 RDI: ffff8d01=
-4dc15618
-<4>[ 2189.388963] bd=20
-<4>[ 2189.388965] RBP: ffffffffbd0d1570 R08: 00000000000003e6 R09: 00000000=
-00000004
-<4>[ 2189.388966] R10: ffff8d01449ee000 R11: 0000000000000001 R12: ffff93e6=
-4167bc94
-<4>[ 2189.388967] 5d e9=20
-<4>[ 2189.388969] R13: 0000000000000000 R14: 0000000000000000 R15: ffff8d00=
-bac82000
-<4>[ 2189.388970] FS:  00007559523e76c0(0000) GS:ffff8d014dc00000(0000) knl=
-GS:0000000000000000
-<4>[ 2189.388971] 2c 91=20
-<4>[ 2189.388973] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[ 2189.388975] CR2: 00007e917c21a000 CR3: 00000002431c8002 CR4: 00000000=
-003606f0
-<4>[ 2189.388976] 8d=20
-<4>[ 2189.388977] Call Trace:
-<4>[ 2189.388977] ff 48 89 ef=20
-<4>[ 2189.388983]  sock_alloc_send_pskb+0x20c/0x230
-<4>[ 2189.388984] e8 24 73=20
-<4>[ 2189.388987]  unix_stream_sendmsg+0x2bf/0x3d0
-<4>[ 2189.388988] 9f ff eb be=20
-<4>[ 2189.388993]  sock_sendmsg+0x31/0x40
-<4>[ 2189.388994] 0f=20
-<4>[ 2189.388996]  sock_write_iter+0x88/0xf0
-<4>[ 2189.388997] 0b 48 83=20
-<4>[ 2189.389002]  do_iter_readv_writev+0x147/0x1a0
-<4>[ 2189.389005] 7b=20
-<4>[ 2189.389007]  do_iter_write+0x81/0x1a0
-<4>[ 2189.389008] 70=20
-<4>[ 2189.389010]  vfs_writev+0xd1/0x160
-<4>[ 2189.389011] 00 74=20
-Oops#1 Part4
-<4>[ 2189.389013]  ? __sys_recvmsg+0x71/0xb0
-<4>[ 2189.389016]  ? __fget+0x6f/0xb0
-<4>[ 2189.389016] 8b <0f> 0b=20
-<4>[ 2189.389019]  ? do_writev+0x5c/0xf0
-<4>[ 2189.389021]  do_writev+0x5c/0xf0
-<4>[ 2189.389022] 48 83 bb=20
-<4>[ 2189.389025]  do_syscall_64+0x72/0x1c0
-<4>[ 2189.389026] 60=20
-<4>[ 2189.389029]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-<4>[ 2189.389029] 02 00=20
-<4>[ 2189.389031] RIP: 0033:0x75594f801017
-<4>[ 2189.389033] RSP: 002b:00007ffdf628f130 EFLAGS: 00000293
-<4>[ 2189.389033] 00=20
-<4>[ 2189.389034]  ORIG_RAX: 0000000000000014
-<4>[ 2189.389035] 00=20
-<4>[ 2189.389037] RAX: ffffffffffffffda RBX: 000000000000004b RCX: 00007559=
-4f801017
-<4>[ 2189.389037] 74=20
-<4>[ 2189.389039] RDX: 0000000000000001 RSI: 00007ffdf628f430 RDI: 00000000=
-0000004b
-<4>[ 2189.389039] 89=20
-<4>[ 2189.389041] RBP: 00007ffdf628f430 R08: 0000000000000000 R09: 0000616b=
-576c78e0
-<4>[ 2189.389041] 0f=20
-<4>[ 2189.389043] R10: 0000000000000001 R11: 0000000000000293 R12: 00000000=
-00000001
-<4>[ 2189.389043] 0b=20
-<4>[ 2189.389045] R13: 00007ffdf628f430 R14: 0000000000000020 R15: 0000616b=
-57691c80
-<4>[ 2189.389046] eb 85=20
-<4>[ 2189.389047] Code:=20
-<4>[ 2189.389048] 48=20
-<4>[ 2189.389049] 00 00=20
-<4>[ 2189.389050] 89=20
-<4>[ 2189.389051] 00=20
-<4>[ 2189.389052] de=20
-<4>[ 2189.389053] 00=20
-<4>[ 2189.389054] 5b=20
-<4>[ 2189.389055] 00=20
-<4>[ 2189.389055] 48=20
-<4>[ 2189.389057] e8 8b=20
-<4>[ 2189.389058] ---[ end trace b06d93f176d25118 ]---
-<4>[ 2189.389059] ff ff ff 84 c0 74 01 c3 80 3d 76 83 f4 00 00 75 f6 48 c7 =
-c7 58 a5 fd bd c6 05 66 83 f4 00 01 e8 ea 13 d4 ff <0f> 0b c3 0f 1f 80 00 0=
-0 00 00 8b=20
-<4>[ 2189.389090] WARNING: CPU: 3 PID: 30 at /home/corsac/projets/linux/lin=
-ux/net/unix/af_unix.c:492 unix_sock_destructor+0xa3/0xc0
-<4>[ 2189.389090] Modules linked in:
-<4>[ 2189.389091] 07=20
-<4>[ 2189.389092]  esp4
-<4>[ 2189.389093] 8d 50=20
-Oops#1 Part3
-<4>[ 2189.389094]  xfrm6_mode_tunnel
-<4>[ 2189.389095] 01 85=20
-<4>[ 2189.389097]  xfrm4_mode_tunnel
-<4>[ 2189.389097] c0 74=20
-<4>[ 2189.389099]  ipheth
-<4>[ 2189.389100] 35 85=20
-<4>[ 2189.389101]  bnep rtsx_pci_sdmmc
-<4>[ 2189.389103] d2=20
-<4>[ 2189.389104]  iwlmvm
-<4>[ 2189.389106] ---[ end trace b06d93f176d25119 ]---
-<4>[ 2189.389106]  snd_hda_codec_realtek snd_hda_codec_generic snd_hda_code=
-c_hdmi iwlwifi snd_hda_intel rtsx_pci snd_hda_codec snd_hwdep snd_hda_core =
-snd_pcm thinkpad_acpi efivarfs input_leds
-<4>[ 2189.389116] CPU: 3 PID: 30 Comm: ksoftirqd/3 Tainted: G        W     =
-  T 4.17.0 #22
-<4>[ 2189.389117] Hardware name: LENOVO 20CMCTO1WW/20CMCTO1WW, BIOS N10ET48=
-W (1.27 ) 09/12/2017
-<4>[ 2189.389119] RIP: 0010:unix_sock_destructor+0xa3/0xc0
-<4>[ 2189.389121] RSP: 0000:ffff93e640dabda8 EFLAGS: 00010286
-<4>[ 2189.389123] RAX: 0000000000000000 RBX: ffff8d00bac82000 RCX: 00000000=
-00000000
-<4>[ 2189.389124] RDX: 0000000000000001 RSI: 0000000000000282 RDI: 00000000=
-00000282
-<4>[ 2189.389126] RBP: ffff8d00bac82000 R08: ffff8d0084796430 R09: ffff93e6=
-40dabd50
-<4>[ 2189.389127] R10: 0000000000000000 R11: 0000000000000001 R12: ffff8d01=
-4dda1100
-<4>[ 2189.389128] R13: 0000000000000000 R14: 909c6c76983bd4d2 R15: 13146644=
-b16dc153
-<4>[ 2189.389130] FS:  0000000000000000(0000) GS:ffff8d014dd80000(0000) knl=
-GS:0000000000000000
-<4>[ 2189.389131] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[ 2189.389133] CR2: 0000755942c8c000 CR3: 000000006620a004 CR4: 00000000=
-003606e0
-<4>[ 2189.389134] Call Trace:
-<4>[ 2189.389138]  __sk_destruct+0x1f/0x140
-<4>[ 2189.389141]  unix_destruct_scm+0x7b/0xa0
-<4>[ 2189.389145]  skb_release_head_state+0x59/0x90
-<4>[ 2189.389148]  skb_release_all+0x9/0x20
-<4>[ 2189.389150]  __kfree_skb_defer+0x19/0x50
-<4>[ 2189.389153]  net_tx_action+0xf0/0x2d0
-Oops#1 Part2
-<4>[ 2189.389155]  __do_softirq+0xdb/0x220
-<4>[ 2189.389159]  ? sort_range+0x20/0x20
-<4>[ 2189.389163]  run_ksoftirqd+0x1f/0x30
-<4>[ 2189.389165]  smpboot_thread_fn+0x11f/0x1e0
-<4>[ 2189.389168]  kthread+0x109/0x120
-<4>[ 2189.389171]  ? kthread_create_worker_on_cpu+0x70/0x70
-<4>[ 2189.389174]  ret_from_fork+0x35/0x40
-<4>[ 2189.389176] Code: c7 c7 5c c3 7b bd 5d e9 2c 91 8d ff 48 89 ef e8 24 =
-73 9f ff eb be 0f 0b 48 83 7b 70 00 74 8b 0f 0b 48 83 bb 60 02 00 00 00 74 =
-89 <0f> 0b eb 85 48 89 de 5b 48 c7 c7 60 78 05 be 5d e9 31 74 92 ff=20
-<4>[ 2189.389222] ---[ end trace b06d93f176d2511a ]---
-<6>[ 2189.389224] unix: Attempt to release alive unix socket: 000000003dc67=
-149
-<1>[ 2190.401779] BUG: unable to handle kernel paging request at ffffffffbd=
-3e3680
-<6>[ 2190.401785] PGD 6620c067 P4D 6620c067 PUD 6620d063 PMD 652000e1=20
-<4>[ 2190.401790] Oops: 0003 [#1] PREEMPT SMP PTI
-<4>[ 2190.401792] Modules linked in: esp4 xfrm6_mode_tunnel xfrm4_mode_tunn=
-el ipheth bnep rtsx_pci_sdmmc iwlmvm snd_hda_codec_realtek snd_hda_codec_ge=
-neric snd_hda_codec_hdmi iwlwifi snd_hda_intel rtsx_pci snd_hda_codec snd_h=
-wdep snd_hda_core snd_pcm thinkpad_acpi efivarfs input_leds
-<4>[ 2190.401806] CPU: 2 PID: 4119 Comm: evolution Tainted: G        W     =
-  T 4.17.0 #22
-<4>[ 2190.401808] Hardware name: LENOVO 20CMCTO1WW/20CMCTO1WW, BIOS N10ET48=
-W (1.27 ) 09/12/2017
-<4>[ 2190.401813] RIP: 0010:queued_spin_lock_slowpath+0xe4/0x1a0
-<4>[ 2190.401815] RSP: 0018:ffff93e642373c60 EFLAGS: 00010282
-<4>[ 2190.401817] RAX: ffffffffbd3e3680 RBX: 0000000000000008 RCX: ffff8d01=
-4dd20880
-<4>[ 2190.401818] RDX: 0000000000001084 RSI: 0000000042161000 RDI: ffff8d00=
-bac82340
-<4>[ 2190.401820] RBP: ffff8d00bac82340 R08: 00000000000c0000 R09: ffff8d01=
-42385000
-<4>[ 2190.401821] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8d01=
-42385000
-Oops#1 Part1
-<4>[ 2190.401823] R13: 0000000000000000 R14: ffff8d00bac82000 R15: ffff8d01=
-44916800
-<4>[ 2190.401825] FS:  0000746978d9bf80(0000) GS:ffff8d014dd00000(0000) knl=
-GS:0000000000000000
-<4>[ 2190.401827] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[ 2190.401829] CR2: ffffffffbd3e3680 CR3: 00000001844d6005 CR4: 00000000=
-003606e0
-<4>[ 2190.401830] Call Trace:
-<4>[ 2190.401835]  unix_stream_sendmsg+0x1df/0x3d0
-<4>[ 2190.401839]  sock_sendmsg+0x31/0x40
-<4>[ 2190.401842]  sock_write_iter+0x88/0xf0
-<4>[ 2190.401846]  do_iter_readv_writev+0x147/0x1a0
-<4>[ 2190.401848]  do_iter_write+0x81/0x1a0
-<4>[ 2190.401851]  vfs_writev+0xd1/0x160
-<4>[ 2190.401854]  ? __fget+0x6f/0xb0
-<4>[ 2190.401857]  ? do_writev+0x5c/0xf0
-<4>[ 2190.401859]  do_writev+0x5c/0xf0
-<4>[ 2190.401863]  do_syscall_64+0x72/0x1c0
-<4>[ 2190.401866]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-<4>[ 2190.401868] RIP: 0033:0x746973a7c017
-<4>[ 2190.401870] RSP: 002b:00007ffd99341b60 EFLAGS: 00000293 ORIG_RAX: 000=
-0000000000014
-<4>[ 2190.401872] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007469=
-73a7c017
-<4>[ 2190.401873] RDX: 0000000000000003 RSI: 00007ffd99341d10 RDI: 00000000=
-00000004
-<4>[ 2190.401875] RBP: 00007ffd99341d10 R08: 0000000000000000 R09: 00000000=
-00000000
-<4>[ 2190.401876] R10: 00000000000000b0 R11: 0000000000000293 R12: 00000000=
-00000003
-<4>[ 2190.401878] R13: 00007ffd99341c94 R14: 000060ed17d42a98 R15: 00007ffd=
-99341c98
-<4>[ 2190.401880] Code: 89 c2 c1 e2 10 85 d2 0f 84 cc 00 00 00 c1 ea 12 83 =
-e0 03 83 ea 01 48 c1 e0 04 48 63 d2 48 05 80 08 02 00 48 03 04 d5 80 54 06 =
-be <48> 89 08 8b 41 08 85 c0 75 09 f3 90 8b 41 08 85 c0 74 f7 4c 8b=20
-<1>[ 2190.401909] RIP: queued_spin_lock_slowpath+0xe4/0x1a0 RSP: ffff93e642=
-373c60
-<4>[ 2190.401910] CR2: ffffffffbd3e3680
-<4>[ 2190.401912] ---[ end trace b06d93f176d2511b ]---
-
---ZGiS0Q5IWpPtfppv--
-
---PmA2V3Z32TCmWXqI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEE8vi34Qgfo83x35gF3rYcyPpXRFsFAlsWT9cACgkQ3rYcyPpX
-RFvDvwf/ZYLeHSNcsy3zbYv+eIOj7mnsjNqmooHpNqm/7qYZFWyhPE7ZZfV18ljW
-VybYVzvLQeF6H3ckQ5vgf1AjK9wj/AU+ljKEU+mNbBB2dcH1Y8fj3gNkru9ZSPE6
-zzB6X3CqPXLxgA+ceHwatgXbKDqByPsAGc4ArWPUKeCKSoG4zSLAWDyxaJfDVMHi
-Teb9uYg2DINRi9o+H8nj8pgA76c6KrRRvjFHqpHFN+PHv+eK5blOQFVGm6TWinNP
-LNbKF8fRLg+1nZmU43UFLTpDRxxku6oqfel7PXr/CiA5NNwtO2DW6LqzD7qP1aOj
-iLyk+5G5Dq5nE/w68Ae57yG0QU2oUw==
-=qeX1
------END PGP SIGNATURE-----
-
---PmA2V3Z32TCmWXqI--
+Kirill
