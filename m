@@ -1,95 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeFEHHv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 03:07:51 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:46029 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751497AbeFEHHt (ORCPT
+        id S1751772AbeFEHJS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 03:09:18 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41629 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751497AbeFEHJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 03:07:49 -0400
-X-Google-Smtp-Source: ADUXVKK/2gVfBym337yYSm6K+ysiCy5LKKNo1p7FMdoR50Ep2zxWQ3wt+56ROHXe31c1lgcn3ZmLE5JDfcAnKh0rt5A=
+        Tue, 5 Jun 2018 03:09:16 -0400
+X-Google-Smtp-Source: ADUXVKIEZWPzEkPPqaJRNjvFNP/aOifkF0Cq04zYkbxczmRKQHxygU/quXaVzf8fzEEXP0D6+51++A==
+Date: Tue, 5 Jun 2018 08:09:13 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/10] mfd: da9063: Use REGMAP_IRQ_REG
+Message-ID: <20180605070913.GH21163@dell>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-2-marek.vasut+renesas@gmail.com>
+ <20180604122624.GB21163@dell>
+ <b3c9a486-002e-a63b-7d2d-2b51ce55b08f@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180604162224.471925894@linutronix.de>
-References: <20180604162224.471925894@linutronix.de>
-From: Song Liu <liu.song.a23@gmail.com>
-Date: Tue, 5 Jun 2018 00:07:48 -0700
-Message-ID: <CAPhsuW6BnCSLcSUnG75KkAJeYBaS4bTvyj-brk2OUUfOfQszcQ@mail.gmail.com>
-Subject: Re: [patch 3/8] x86/apic: Provide apic_ack_irq()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>, Joerg Roedel <jroedel@suse.de>,
-        Mike Travis <mike.travis@hpe.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b3c9a486-002e-a63b-7d2d-2b51ce55b08f@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 8:33 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> apic_ack_edge() is explicitely for handling interrupt affinity cleanup when
-> interrupt remapping is not available or disable.
->
-> Remapped interrupts and also some of the platform specific special
-> interrupts, e.g. UV, invoke ack_APIC_irq() directly.
->
-> To address the issue of failing an affinity update with -EBUSY the delayed
-> affinity mechanism can be reused, but ack_APIC_irq() does not handle
-> that. Adding this to ack_APIC_irq() is not possible, because that function
-> is also used for exceptions and directly handled interrupts like IPIs.
->
-> Create a new function, which just contains the conditional invocation of
-> irq_move_irq() and the final ack_APIC_irq(). Making the invocation of
-> irq_move_irq() conditional avoids the out of line call if the pending bit
-> is not set.
->
-> Reuse the new function in apic_ack_edge().
->
-> Preparatory change for the real fix
->
-> Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
+On Mon, 04 Jun 2018, Marek Vasut wrote:
 
-Tested-by: Song Liu <songliubraving@fb.com>
+> On 06/04/2018 02:26 PM, Lee Jones wrote:
+> > On Sat, 02 Jun 2018, Marek Vasut wrote:
+> > 
+> >> Convert the regmap_irq table to use REGMAP_IRQ_REG().
+> >>
+> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Cc: Lee Jones <lee.jones@linaro.org>
+> >> Cc: Mark Brown <broonie@kernel.org>
+> >> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> >> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> Cc: linux-renesas-soc@vger.kernel.org
+> >> ---
+> >> V3: New patch
+> >> Note: A sed oneliner was used:
+> >>       sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
+> >> ---
+> >>  drivers/mfd/da9063-irq.c | 145 ++++++++++-------------------------------------
+> >>  1 file changed, 29 insertions(+), 116 deletions(-)
+> >>
+> >> diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+> >> index 207bbfe55449..5b406ecfc14a 100644
+> >> --- a/drivers/mfd/da9063-irq.c
+> >> +++ b/drivers/mfd/da9063-irq.c
+> >> @@ -28,125 +28,38 @@
+> >>  
+> >>  static const struct regmap_irq da9063_irqs[] = {
+> >>  	/* DA9063 event A register */
+> >> -	[DA9063_IRQ_ONKEY] = {
+> >> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> -		.mask = DA9063_M_ONKEY,
+> >> -	},
+> >> -	[DA9063_IRQ_ALARM] = {
+> >> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> -		.mask = DA9063_M_ALARM,
+> >> -	},
+> >> -	[DA9063_IRQ_TICK] = {
+> >> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> -		.mask = DA9063_M_TICK,
+> >> -	},
+> >> -	[DA9063_IRQ_ADC_RDY] = {
+> >> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> -		.mask = DA9063_M_ADC_RDY,
+> >> -	},
+> >> -	[DA9063_IRQ_SEQ_RDY] = {
+> >> -		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
+> >> -		.mask = DA9063_M_SEQ_RDY,
+> >> -	},
+> >> +	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
+> >> +	REGMAP_IRQ_REG(DA9063_IRQ_ALARM, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
+> >> +	REGMAP_IRQ_REG(DA9063_IRQ_TICK, DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
+> >> +	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
+> >> +	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY, DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
+> > 
+> > Nice, but I think checkpatch.pl would complain.
+> > 
+> > Better to break after the first argument I think.
+> 
+> Doesn't really help the readability, but done.
 
-> ---
->  arch/x86/include/asm/apic.h   |    2 ++
->  arch/x86/kernel/apic/vector.c |   10 ++++++++--
->  2 files changed, 10 insertions(+), 2 deletions(-)
->
-> --- a/arch/x86/include/asm/apic.h
-> +++ b/arch/x86/include/asm/apic.h
-> @@ -436,6 +436,8 @@ static inline void apic_set_eoi_write(vo
->
->  #endif /* CONFIG_X86_LOCAL_APIC */
->
-> +extern void apic_ack_irq(struct irq_data *data);
-> +
->  static inline void ack_APIC_irq(void)
->  {
->         /*
-> --- a/arch/x86/kernel/apic/vector.c
-> +++ b/arch/x86/kernel/apic/vector.c
-> @@ -809,11 +809,17 @@ static int apic_retrigger_irq(struct irq
->         return 1;
->  }
->
-> +void apic_ack_irq(struct irq_data *irqd)
-> +{
-> +       if (unlikely(irqd_is_setaffinity_pending(irqd)))
-> +               irq_move_irq(irqd);
-> +       ack_APIC_irq();
-> +}
-> +
->  void apic_ack_edge(struct irq_data *irqd)
->  {
->         irq_complete_move(irqd_cfg(irqd));
-> -       irq_move_irq(irqd);
-> -       ack_APIC_irq();
-> +       apic_ack_irq(irqd);
->  }
->
->  static struct irq_chip lapic_controller = {
->
->
+I don't make the rules. :)
+
+Personally /me is hoping that the 80 char limit is lifted to ~120 soon.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
