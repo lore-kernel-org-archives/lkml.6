@@ -1,158 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752138AbeFEPkJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:40:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:51542 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751890AbeFEPkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:40:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="205516815"
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org, tglx@linutronix.de, acme@kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 2/2] perf/x86/intel/lbr: Optimizing context switch for LBR call stack
-Date: Tue,  5 Jun 2018 08:38:46 -0700
-Message-Id: <1528213126-4312-2-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528213126-4312-1-git-send-email-kan.liang@linux.intel.com>
-References: <1528213126-4312-1-git-send-email-kan.liang@linux.intel.com>
+        id S1752166AbeFEPlF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:41:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38050 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751869AbeFEPlD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:41:03 -0400
+Date: Tue, 5 Jun 2018 17:40:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Kohli, Gaurav" <gkohli@codeaurora.org>, tglx@linutronix.de,
+        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
+ wakeup
+Message-ID: <20180605154053.GB12235@hirez.programming.kicks-ass.net>
+References: <745d762d-9ab3-0749-9b87-9bb03d913071@codeaurora.org>
+ <20180501131904.GG12217@hirez.programming.kicks-ass.net>
+ <9b289790-9b3a-73bd-7166-bf39f32cefd8@codeaurora.org>
+ <20180502082011.GB12180@hirez.programming.kicks-ass.net>
+ <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
+ <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
+ <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
+ <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
+ <20180605150841.GA24053@redhat.com>
+ <20180605152212.GY12180@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605152212.GY12180@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tue, Jun 05, 2018 at 05:22:12PM +0200, Peter Zijlstra wrote:
 
-Context switches with perf LBR call stack context are fairly expensive
-because they do a lot of MSR writes. Currently we unconditionally do the
-expensive operation when LBR call stack is enabled. It's not necessary
-for some common cases, e.g task -> other kernel thread -> same task.
-The LBR registers are not changed, hence they don't need to be
-rewritten/restored.
+> > OK, but __kthread_parkme() can be preempted before it calls schedule(), so the
+> > caller still can be migrated? Plus kthread_park_complete() can be called twice.
+> 
+> Argh... I forgot TASK_DEAD does the whole thing with preempt_disable().
+> Let me stare at that a bit.
 
-Introducing per-cpu variables to track the last LBR call stack context.
-If the same context is scheduled in, the rewrite/restore is not
-required, with the following two exceptions:
-- The LBR registers may be modified by a normal LBR event, i.e., adding
-  a new LBR event or scheduling an existing LBR event. In both cases,
-  the LBR registers are reset first. The last LBR call stack information
-  is cleared in intel_pmu_lbr_reset(). Restoring the LBR registers is
-  required.
-- The LBR registers are initialized to zero in C6.
-  If the LBR registers which TOS points is cleared, C6 must be entered
-  while swapped out. Restoring the LBR registers is required as well.
-These exceptions are not common.
+This should ensure we only ever complete when we read PARKED, right?
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/lbr.c  | 24 +++++++++++++++++++++++-
- arch/x86/events/perf_event.h |  4 ++++
- 2 files changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index a417004..f3e006b 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -216,6 +216,8 @@ static void intel_pmu_lbr_reset_64(void)
- 
- void intel_pmu_lbr_reset(void)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 8d59b259af4a..e513b4600796 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2641,7 +2641,7 @@ prepare_task_switch(struct rq *rq, struct task_struct *prev,
+  * past. prev == current is still correct but we need to recalculate this_rq
+  * because prev may have moved to another CPU.
+  */
+-static struct rq *finish_task_switch(struct task_struct *prev)
++static struct rq *finish_task_switch(struct task_struct *prev, bool preempt)
+ 	__releases(rq->lock)
  {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+
- 	if (!x86_pmu.lbr_nr)
- 		return;
+ 	struct rq *rq = this_rq();
+@@ -2674,7 +2674,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
+ 	 *
+ 	 * We must observe prev->state before clearing prev->on_cpu (in
+ 	 * finish_task), otherwise a concurrent wakeup can get prev
+-	 * running on another CPU and we could rave with its RUNNING -> DEAD
++	 * running on another CPU and we could race with its RUNNING -> DEAD
+ 	 * transition, resulting in a double drop.
+ 	 */
+ 	prev_state = prev->state;
+@@ -2720,7 +2720,8 @@ static struct rq *finish_task_switch(struct task_struct *prev)
+ 			break;
  
-@@ -223,6 +225,9 @@ void intel_pmu_lbr_reset(void)
- 		intel_pmu_lbr_reset_32();
- 	else
- 		intel_pmu_lbr_reset_64();
-+
-+	cpuc->last_task_ctx = NULL;
-+	cpuc->last_log_id = 0;
+ 		case TASK_PARKED:
+-			kthread_park_complete(prev);
++			if (!preempt)
++				kthread_park_complete(prev);
+ 			break;
+ 		}
+ 	}
+@@ -2784,7 +2785,7 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
+ 	 * PREEMPT_COUNT kernels).
+ 	 */
+ 
+-	rq = finish_task_switch(prev);
++	rq = finish_task_switch(prev, false);
+ 	balance_callback(rq);
+ 	preempt_enable();
+ 
+@@ -2797,7 +2798,7 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
+  */
+ static __always_inline struct rq *
+ context_switch(struct rq *rq, struct task_struct *prev,
+-	       struct task_struct *next, struct rq_flags *rf)
++	       struct task_struct *next, bool preempt, struct rq_flags *rf)
+ {
+ 	struct mm_struct *mm, *oldmm;
+ 
+@@ -2839,7 +2840,7 @@ context_switch(struct rq *rq, struct task_struct *prev,
+ 	switch_to(prev, next, prev);
+ 	barrier();
+ 
+-	return finish_task_switch(prev);
++	return finish_task_switch(prev, preempt);
  }
  
  /*
-@@ -334,6 +339,7 @@ static inline u64 rdlbr_to(unsigned int idx)
+@@ -3478,7 +3479,7 @@ static void __sched notrace __schedule(bool preempt)
+ 		trace_sched_switch(preempt, prev, next);
  
- static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	int i;
- 	unsigned lbr_idx, mask;
- 	u64 tos;
-@@ -344,8 +350,20 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
- 		return;
- 	}
- 
--	mask = x86_pmu.lbr_nr - 1;
- 	tos = task_ctx->tos;
-+	/*
-+	 * Does not restore the LBR registers, if
-+	 * - No one else touched them, and
-+	 * - Did not enter C6
-+	 */
-+	if ((task_ctx == cpuc->last_task_ctx) &&
-+	    (task_ctx->log_id == cpuc->last_log_id) &&
-+	    rdlbr_from(tos)) {
-+		task_ctx->lbr_stack_state = LBR_NONE;
-+		return;
-+	}
-+
-+	mask = x86_pmu.lbr_nr - 1;
- 	for (i = 0; i < task_ctx->valid_lbrs; i++) {
- 		lbr_idx = (tos - i) & mask;
- 		wrlbr_from(lbr_idx, task_ctx->lbr_from[i]);
-@@ -369,6 +387,7 @@ static void __intel_pmu_lbr_restore(struct x86_perf_task_context *task_ctx)
- 
- static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	unsigned lbr_idx, mask;
- 	u64 tos, from;
- 	int i;
-@@ -393,6 +412,9 @@ static void __intel_pmu_lbr_save(struct x86_perf_task_context *task_ctx)
- 	task_ctx->valid_lbrs = i;
- 	task_ctx->tos = tos;
- 	task_ctx->lbr_stack_state = LBR_VALID;
-+
-+	cpuc->last_task_ctx = task_ctx;
-+	cpuc->last_log_id = ++task_ctx->log_id;
+ 		/* Also unlocks the rq: */
+-		rq = context_switch(rq, prev, next, &rf);
++		rq = context_switch(rq, prev, next, preempt, &rf);
+ 	} else {
+ 		rq->clock_update_flags &= ~(RQCF_ACT_SKIP|RQCF_REQ_SKIP);
+ 		rq_unlock_irq(rq, &rf);
+@@ -3487,6 +3488,7 @@ static void __sched notrace __schedule(bool preempt)
+ 	balance_callback(rq);
  }
  
- void intel_pmu_lbr_sched_task(struct perf_event_context *ctx, bool sched_in)
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 6b72a92..2430398 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -163,6 +163,7 @@ struct intel_excl_cntrs {
- 	unsigned	core_id;	/* per-core: core id */
- };
- 
-+struct x86_perf_task_context;
- #define MAX_LBR_ENTRIES		32
- 
- enum {
-@@ -214,6 +215,8 @@ struct cpu_hw_events {
- 	struct perf_branch_entry	lbr_entries[MAX_LBR_ENTRIES];
- 	struct er_account		*lbr_sel;
- 	u64				br_sel;
-+	struct x86_perf_task_context	*last_task_ctx;
-+	int				last_log_id;
- 
- 	/*
- 	 * Intel host/guest exclude bits
-@@ -651,6 +654,7 @@ struct x86_perf_task_context {
- 	int valid_lbrs;
- 	int lbr_callstack_users;
- 	int lbr_stack_state;
-+	int log_id;
- };
- 
- #define x86_add_quirk(func_)						\
--- 
-2.7.4
++/* called with preemption disabled */
+ void __noreturn do_task_dead(void)
+ {
+ 	/* Causes final put_task_struct in finish_task_switch(): */
