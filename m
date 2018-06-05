@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeFEVLA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:11:00 -0400
-Received: from foss.arm.com ([217.140.101.70]:33672 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752658AbeFEVHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:07:48 -0400
+        id S1752481AbeFEVHk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:07:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33352 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751951AbeFEVHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:07:36 -0400
 From: Kim Phillips <kim.phillips@arm.com>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>,
@@ -31,9 +31,9 @@ Cc: Leo Yan <leo.yan@linaro.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Kim Phillips <kim.phillips@arm.com>
-Subject: [PATCH v4 13/14] coresight: allow funnel and replicator drivers to be built as modules
-Date: Tue,  5 Jun 2018 16:07:09 -0500
-Message-Id: <20180605210710.22227-14-kim.phillips@arm.com>
+Subject: [PATCH v4 02/14] coresight: use IS_ENABLED for CONFIGs that may be modules
+Date: Tue,  5 Jun 2018 16:06:58 -0500
+Message-Id: <20180605210710.22227-3-kim.phillips@arm.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180605210710.22227-1-kim.phillips@arm.com>
 References: <20180605210710.22227-1-kim.phillips@arm.com>
@@ -41,13 +41,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to build coresight-funnel and coresight-replicator as modules,
-for ease of development.
-
-- Kconfig becomes a tristate, to allow =m
-- add funnel_remove and replicator_remove functions,
-  for module unload
-- add a MODULE_DEVICE_TABLE for autoloading on boot
+Checking for ifdef CONFIG_x fails if CONFIG_x=m.  Use IS_ENABLED
+that is true for both built-ins and modules, instead.  Required
+when building coresight components as modules.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Leo Yan <leo.yan@linaro.org>
@@ -58,120 +54,49 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/hwtracing/coresight/Kconfig           |  5 ++++-
- .../hwtracing/coresight/coresight-funnel.c    | 18 ++++++++++++++-
- .../coresight/coresight-replicator.c          | 22 ++++++++++++++++++-
- 3 files changed, 42 insertions(+), 3 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm-perf.h | 2 +-
+ drivers/hwtracing/coresight/coresight-priv.h     | 2 +-
+ include/linux/coresight.h                        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-index ae05b4b89ff9..181a44ea2d61 100644
---- a/drivers/hwtracing/coresight/Kconfig
-+++ b/drivers/hwtracing/coresight/Kconfig
-@@ -14,13 +14,16 @@ menuconfig CORESIGHT
- 
- if CORESIGHT
- config CORESIGHT_LINKS_AND_SINKS
--	bool "CoreSight Link and Sink drivers"
-+	tristate "CoreSight Link and Sink drivers"
- 	help
- 	  This enables support for CoreSight link and sink drivers that are
- 	  responsible for transporting and collecting the trace data
- 	  respectively.  Link and sinks are dynamically aggregated with a trace
- 	  entity at run time to form a complete trace path.
- 
-+	  To compile these drivers as modules, choose M here: the
-+	  modules will be called coresight-funnel and coresight-replicator.
-+
- config CORESIGHT_LINK_AND_SINK_TMC
- 	tristate "Coresight generic TMC driver"
- 	depends on CORESIGHT_LINKS_AND_SINKS
-diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-index 448145a36675..861ac641a716 100644
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -211,6 +211,15 @@ static int funnel_probe(struct amba_device *adev, const struct amba_id *id)
- 	return PTR_ERR_OR_ZERO(drvdata->csdev);
- }
- 
-+static int __exit funnel_remove(struct amba_device *adev)
-+{
-+	struct funnel_drvdata *drvdata = dev_get_drvdata(&adev->dev);
-+
-+	coresight_unregister(drvdata->csdev);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM
- static int funnel_runtime_suspend(struct device *dev)
- {
-@@ -250,6 +259,8 @@ static const struct amba_id funnel_ids[] = {
- 	{ 0, 0},
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
+index 4197df4faf5e..539b250df455 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.h
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
+@@ -43,7 +43,7 @@ struct etm_filters {
  };
  
-+MODULE_DEVICE_TABLE(amba, funnel_ids);
-+
- static struct amba_driver funnel_driver = {
- 	.drv = {
- 		.name	= "coresight-funnel",
-@@ -258,6 +269,11 @@ static struct amba_driver funnel_driver = {
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe		= funnel_probe,
-+	.remove		= funnel_remove,
- 	.id_table	= funnel_ids,
- };
--builtin_amba_driver(funnel_driver);
-+module_amba_driver(funnel_driver);
-+
-+MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
-+MODULE_DESCRIPTION("Arm CoreSight Funnel Driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index 8d2eaaab6c2f..1fb469d7cf50 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -112,6 +112,17 @@ static int replicator_probe(struct platform_device *pdev)
- 	return ret;
- }
  
-+static int __exit replicator_remove(struct platform_device *pdev)
-+{
-+	struct replicator_drvdata *drvdata = dev_get_drvdata(&pdev->dev);
-+
-+	coresight_unregister(drvdata->csdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_PM
- static int replicator_runtime_suspend(struct device *dev)
- {
-@@ -144,13 +155,22 @@ static const struct of_device_id replicator_match[] = {
- 	{}
+-#ifdef CONFIG_CORESIGHT
++#if IS_ENABLED(CONFIG_CORESIGHT)
+ int etm_perf_symlink(struct coresight_device *csdev, bool link);
+ 
+ #else
+diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+index 1a6cf3589866..158c720119dd 100644
+--- a/drivers/hwtracing/coresight/coresight-priv.h
++++ b/drivers/hwtracing/coresight/coresight-priv.h
+@@ -144,7 +144,7 @@ struct list_head *coresight_build_path(struct coresight_device *csdev,
+ 				       struct coresight_device *sink);
+ void coresight_release_path(struct list_head *path);
+ 
+-#ifdef CONFIG_CORESIGHT_SOURCE_ETM3X
++#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
+ extern int etm_readl_cp14(u32 off, unsigned int *val);
+ extern int etm_writel_cp14(u32 off, u32 val);
+ #else
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index e5421b83e4e6..548fa56b29bd 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -236,7 +236,7 @@ struct coresight_ops {
+ 	const struct coresight_ops_source *source_ops;
  };
  
-+MODULE_DEVICE_TABLE(of, replicator_match);
-+
- static struct platform_driver replicator_driver = {
- 	.probe          = replicator_probe,
-+	.remove         = replicator_remove,
- 	.driver         = {
- 		.name   = "coresight-replicator",
- 		.of_match_table = replicator_match,
-+		.owner	= THIS_MODULE,
- 		.pm	= &replicator_dev_pm_ops,
- 		.suppress_bind_attrs = true,
- 	},
- };
--builtin_platform_driver(replicator_driver);
-+module_platform_driver(replicator_driver);
-+
-+MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
-+MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
-+MODULE_DESCRIPTION("Arm CoreSight Replicator Driver");
-+MODULE_LICENSE("GPL v2");
+-#ifdef CONFIG_CORESIGHT
++#if IS_ENABLED(CONFIG_CORESIGHT)
+ extern struct coresight_device *
+ coresight_register(struct coresight_desc *desc);
+ extern void coresight_unregister(struct coresight_device *csdev);
 -- 
 2.17.0
