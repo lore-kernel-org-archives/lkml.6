@@ -1,45 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753497AbeFERGA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:06:00 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:41238 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753383AbeFERFz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:55 -0400
-From: Richard Weinberger <richard@sigma-star.at>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Richard Weinberger <richard.weinberger@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
-Subject: Re: [GIT PULL] fscrypt updates for 4.18
-Date: Tue, 05 Jun 2018 19:05:52 +0200
-Message-ID: <5151941.CDXohbuWeC@blindfold>
-In-Reply-To: <20180605170208.GE7839@thunk.org>
-References: <20180605150751.GA9436@thunk.org> <30587992.7Od65ROsjm@blindfold> <20180605170208.GE7839@thunk.org>
+        id S1753553AbeFERGH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:06:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35220 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753531AbeFERGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:06:04 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 40/61] powerpc/64s: Wire up cpu_show_spectre_v1()
+Date: Tue,  5 Jun 2018 19:02:01 +0200
+Message-Id: <20180605170120.231358848@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+References: <20180605170117.643936916@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 5. Juni 2018, 19:02:08 CEST schrieb Theodore Y. Ts'o:
-> On Tue, Jun 05, 2018 at 06:10:24PM +0200, Richard Weinberger wrote:
-> > That's the question. I understand the use case, but I fear attack scenarios
-> > where someone manages to downgrade the crypto of my phone.
-> > This is why I was asking whether Android tells me whether Speck is used or not.
-> > "it does encryption" is clearly not enough.
-> 
-> An attack scenario where someone manages to downgrade the crypto of
-> your phone would require replacing your kernel and your /system
-> partition --- at which point, you've got other problems.  :-)
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-This means Speck is never enabled at kernel level on non-cheap phones?
+------------------
 
-Thanks,
-//richard
+From: Michael Ellerman <mpe@ellerman.id.au>
 
--- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+commit 56986016cb8cd9050e601831fe89f332b4e3c46e upstream.
+
+Add a definition for cpu_show_spectre_v1() to override the generic
+version. Currently this just prints "Not affected" or "Vulnerable"
+based on the firmware flag.
+
+Although the kernel does have array_index_nospec() in a few places, we
+haven't yet audited all the powerpc code to see where it's necessary,
+so for now we don't list that as a mitigation.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/powerpc/kernel/security.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -50,3 +50,11 @@ ssize_t cpu_show_meltdown(struct device
+ 
+ 	return sprintf(buf, "Vulnerable\n");
+ }
++
++ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	if (!security_ftr_enabled(SEC_FTR_BNDS_CHK_SPEC_BAR))
++		return sprintf(buf, "Not affected\n");
++
++	return sprintf(buf, "Vulnerable\n");
++}
