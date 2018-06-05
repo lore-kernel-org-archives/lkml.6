@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752166AbeFENyz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 09:54:55 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43557 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeFENyd (ORCPT
+        id S1752122AbeFENyc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 09:54:32 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40544 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751870AbeFENy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 09:54:33 -0400
-X-Google-Smtp-Source: ADUXVKLpc6lqJdUStd46szG+yzVG2/Vsvt/oEzyaCMJ8H56vKQyUhVEyiUqvVNE1I+HdIXhRl7AWaQ==
+        Tue, 5 Jun 2018 09:54:28 -0400
+X-Google-Smtp-Source: ADUXVKLZHifzJMtjYSBpT2zW8RVJrnmfCyk0V92Mujty8N+cynwyU/OXJnKBznSyXKMLASHZdhpFrg==
 From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 To: gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
         seanpaul@chromium.org, airlied@linux.ie, vincent.abriou@st.com
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v1 6/7] drm: sti: make encoders use atomic_print_state instead of debugfs
-Date: Tue,  5 Jun 2018 15:54:06 +0200
-Message-Id: <20180605135407.20214-7-benjamin.gaignard@linaro.org>
+Subject: [PATCH v1 3/7] drm: sti: make planes use atomic_print_state instead of debugfs
+Date: Tue,  5 Jun 2018 15:54:03 +0200
+Message-Id: <20180605135407.20214-4-benjamin.gaignard@linaro.org>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20180605135407.20214-1-benjamin.gaignard@linaro.org>
 References: <20180605135407.20214-1-benjamin.gaignard@linaro.org>
@@ -23,248 +23,705 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert all sti encoders to atomic_print usage rather than use a
-debugfs entry.
+Convert all sti planes to atomic_print_state usage rather than use a debugfs
+entry.
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 ---
- drivers/gpu/drm/sti/sti_tvout.c | 162 ++++++++++++++++------------------------
- 1 file changed, 63 insertions(+), 99 deletions(-)
+ drivers/gpu/drm/sti/sti_cursor.c |  65 +++++--------
+ drivers/gpu/drm/sti/sti_gdp.c    | 196 +++++++++++++--------------------------
+ drivers/gpu/drm/sti/sti_hqvdp.c  | 149 +++++++++++++----------------
+ 3 files changed, 146 insertions(+), 264 deletions(-)
 
-diff --git a/drivers/gpu/drm/sti/sti_tvout.c b/drivers/gpu/drm/sti/sti_tvout.c
-index ea4a3b87fa55..8aa23710b695 100644
---- a/drivers/gpu/drm/sti/sti_tvout.c
-+++ b/drivers/gpu/drm/sti/sti_tvout.c
-@@ -442,10 +442,10 @@ static void tvout_hda_start(struct sti_tvout *tvout, bool main_path)
- 	tvout_write(tvout, 0, TVO_HD_DAC_CFG_OFF);
- }
+diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/sti_cursor.c
+index df0a282b9615..69f6b1091422 100644
+--- a/drivers/gpu/drm/sti/sti_cursor.c
++++ b/drivers/gpu/drm/sti/sti_cursor.c
+@@ -74,72 +74,57 @@ static const uint32_t cursor_supported_formats[] = {
+ 
+ #define to_sti_cursor(x) container_of(x, struct sti_cursor, plane)
  
 -#define DBGFS_DUMP(reg) seq_printf(s, "\n  %-25s 0x%08X", #reg, \
 +#define DBGFS_DUMP(reg) drm_printf(p, "\n\t\t%-25s 0x%08X", #reg, \
- 				   readl(tvout->regs + reg))
+ 				   readl(cursor->regs + reg))
  
--static void tvout_dbg_vip(struct seq_file *s, int val)
-+static void tvout_dbg_vip(struct drm_printer *p, int val)
+-static void cursor_dbg_vpo(struct seq_file *s, u32 val)
++static void cursor_dbg_vpo(struct drm_printer *p, u32 val)
  {
- 	int r, g, b, tmp, mask;
- 	char *const reorder[] = {"Y_G", "Cb_B", "Cr_R"};
-@@ -459,86 +459,94 @@ static void tvout_dbg_vip(struct seq_file *s, int val)
- 				   "Aux (color matrix by-passed)",
- 				   "", "", "", "", "", "Force value"};
- 
--	seq_putc(s, '\t');
-+	drm_printf(p, "\n\t\t\t");
- 	mask = TVO_VIP_REORDER_MASK << TVO_VIP_REORDER_R_SHIFT;
- 	r = (val & mask) >> TVO_VIP_REORDER_R_SHIFT;
- 	mask = TVO_VIP_REORDER_MASK << TVO_VIP_REORDER_G_SHIFT;
- 	g = (val & mask) >> TVO_VIP_REORDER_G_SHIFT;
- 	mask = TVO_VIP_REORDER_MASK << TVO_VIP_REORDER_B_SHIFT;
- 	b = (val & mask) >> TVO_VIP_REORDER_B_SHIFT;
--	seq_printf(s, "%-24s %s->%s %s->%s %s->%s\n", "Reorder:",
-+	drm_printf(p, "%-24s %s->%s %s->%s %s->%s", "Reorder:",
- 		   reorder[r], reorder[TVO_VIP_REORDER_CR_R_SEL],
- 		   reorder[g], reorder[TVO_VIP_REORDER_Y_G_SEL],
- 		   reorder[b], reorder[TVO_VIP_REORDER_CB_B_SEL]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\n\t\t\t");
- 	mask = TVO_VIP_CLIP_MASK << TVO_VIP_CLIP_SHIFT;
- 	tmp = (val & mask) >> TVO_VIP_CLIP_SHIFT;
--	seq_printf(s, "%-24s %s\n", "Clipping:", clipping[tmp]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "%-24s %s", "Clipping:", clipping[tmp]);
-+	drm_printf(p, "\n\t\t\t");
- 	mask = TVO_VIP_RND_MASK << TVO_VIP_RND_SHIFT;
- 	tmp = (val & mask) >> TVO_VIP_RND_SHIFT;
--	seq_printf(s, "%-24s input data rounded to %s per component\n",
-+	drm_printf(p, "%-24s input data rounded to %s per component",
- 		   "Round:", round[tmp]);
--	seq_puts(s, "\t\t\t\t\t");
-+	drm_printf(p, "\n\t\t\t");
- 	tmp = (val & TVO_VIP_SEL_INPUT_MASK);
--	seq_printf(s, "%-24s %s", "Input selection:", input_sel[tmp]);
-+	drm_printf(p, "%-24s %s", "Input selection:", input_sel[tmp]);
+-	seq_printf(s, "\txdo:%4d\tydo:%4d", val & 0x0FFF, (val >> 16) & 0x0FFF);
++	drm_printf(p, "\txdo:%4d\tydo:%4d", val & 0x0FFF, (val >> 16) & 0x0FFF);
  }
  
--static void tvout_dbg_hd_dac_cfg(struct seq_file *s, int val)
-+static void tvout_dbg_hd_dac_cfg(struct drm_printer *p, int val)
+-static void cursor_dbg_size(struct seq_file *s, u32 val)
++static void cursor_dbg_size(struct drm_printer *p, u32 val)
  {
--	seq_printf(s, "\t%-24s %s", "HD DAC:",
-+	drm_printf(p, "\t%-24s %s", "HD DAC:",
- 		   val & 1 ? "disabled" : "enabled");
+-	seq_printf(s, "\t%d x %d", val & 0x07FF, (val >> 16) & 0x07FF);
++	drm_printf(p, "\t%d x %d", val & 0x07FF, (val >> 16) & 0x07FF);
  }
  
--static int tvout_dbg_show(struct seq_file *s, void *data)
-+static void sti_tvout_print(struct drm_printer *p, struct drm_encoder *encoder)
+-static void cursor_dbg_pml(struct seq_file *s,
++static void cursor_dbg_pml(struct drm_printer *p,
+ 			   struct sti_cursor *cursor, u32 val)
+ {
+ 	if (cursor->pixmap.paddr == val)
+-		seq_printf(s, "\tVirt @: %p", cursor->pixmap.base);
++		drm_printf(p, "\tVirt @: %pK", cursor->pixmap.base);
+ }
+ 
+-static void cursor_dbg_cml(struct seq_file *s,
++static void cursor_dbg_cml(struct drm_printer *p,
+ 			   struct sti_cursor *cursor, u32 val)
+ {
+ 	if (cursor->clut_paddr == val)
+-		seq_printf(s, "\tVirt @: %p", cursor->clut);
++		drm_printf(p, "\tVirt @: %pK", cursor->clut);
+ }
+ 
+-static int cursor_dbg_show(struct seq_file *s, void *data)
++static void sti_cursor_plane_print_state(struct drm_printer *p,
++					 const struct drm_plane_state *state)
  {
 -	struct drm_info_node *node = s->private;
--	struct sti_tvout *tvout = (struct sti_tvout *)node->info_ent->data;
-+	struct sti_tvout *tvout = to_sti_tvout(encoder);
- 	struct drm_crtc *crtc;
+-	struct sti_cursor *cursor = (struct sti_cursor *)node->info_ent->data;
++	struct sti_plane *plane = to_sti_plane(state->plane);
++	struct sti_cursor *cursor = to_sti_cursor(plane);
  
--	seq_printf(s, "TVOUT: (vaddr = 0x%p)", tvout->regs);
--
--	seq_puts(s, "\n\n  HDMI encoder: ");
--	crtc = tvout->hdmi->crtc;
--	if (crtc) {
--		seq_printf(s, "connected to %s path",
--			   sti_crtc_is_main(crtc) ? "main" : "aux");
--		DBGFS_DUMP(TVO_HDMI_SYNC_SEL);
--		DBGFS_DUMP(TVO_VIP_HDMI);
--		tvout_dbg_vip(s, readl(tvout->regs + TVO_VIP_HDMI));
--	} else {
--		seq_puts(s, "disabled");
-+	drm_printf(p, "\tTVOUT: (vaddr = 0x%pK)\n", tvout->regs);
-+
-+	if (encoder->encoder_type == DRM_MODE_ENCODER_TMDS) {
-+		drm_printf(p, "\tHDMI encoder: ");
-+		crtc = tvout->hdmi->crtc;
-+		if (crtc) {
-+			drm_printf(p, "connected to %s path",
-+				   sti_crtc_is_main(crtc) ? "main" : "aux");
-+			DBGFS_DUMP(TVO_HDMI_SYNC_SEL);
-+			DBGFS_DUMP(TVO_VIP_HDMI);
-+			tvout_dbg_vip(p, readl(tvout->regs + TVO_VIP_HDMI));
-+		} else {
-+			drm_printf(p, "disabled\n");
-+			return;
-+		}
- 	}
+-	seq_printf(s, "%s: (vaddr = 0x%p)",
++	drm_printf(p, "\t%s: (vaddr = 0x%pK)",
+ 		   sti_plane_to_str(&cursor->plane), cursor->regs);
  
--	seq_puts(s, "\n\n  DVO encoder: ");
--	crtc = tvout->dvo->crtc;
--	if (crtc) {
--		seq_printf(s, "connected to %s path",
--			   sti_crtc_is_main(crtc) ? "main" : "aux");
--		DBGFS_DUMP(TVO_DVO_SYNC_SEL);
--		DBGFS_DUMP(TVO_DVO_CONFIG);
--		DBGFS_DUMP(TVO_VIP_DVO);
--		tvout_dbg_vip(s, readl(tvout->regs + TVO_VIP_DVO));
--	} else {
--		seq_puts(s, "disabled");
-+	if (encoder->encoder_type == DRM_MODE_ENCODER_LVDS) {
-+		drm_printf(p, "\tDVO encoder: ");
-+		crtc = tvout->dvo->crtc;
-+		if (crtc) {
-+			drm_printf(p, "connected to %s path",
-+				   sti_crtc_is_main(crtc) ? "main" : "aux");
-+			DBGFS_DUMP(TVO_DVO_SYNC_SEL);
-+			DBGFS_DUMP(TVO_DVO_CONFIG);
-+			DBGFS_DUMP(TVO_VIP_DVO);
-+			tvout_dbg_vip(p, readl(tvout->regs + TVO_VIP_DVO));
-+		} else {
-+			drm_printf(p, "disabled\n");
-+			return;
-+		}
- 	}
- 
--	seq_puts(s, "\n\n  HDA encoder: ");
--	crtc = tvout->hda->crtc;
--	if (crtc) {
--		seq_printf(s, "connected to %s path",
--			   sti_crtc_is_main(crtc) ? "main" : "aux");
--		DBGFS_DUMP(TVO_HD_SYNC_SEL);
--		DBGFS_DUMP(TVO_HD_DAC_CFG_OFF);
--		tvout_dbg_hd_dac_cfg(s,
--				     readl(tvout->regs + TVO_HD_DAC_CFG_OFF));
--		DBGFS_DUMP(TVO_VIP_HDF);
--		tvout_dbg_vip(s, readl(tvout->regs + TVO_VIP_HDF));
--	} else {
--		seq_puts(s, "disabled");
-+	if (encoder->encoder_type == DRM_MODE_ENCODER_DAC) {
-+		drm_printf(p, "\tHDA encoder: ");
-+		crtc = tvout->hda->crtc;
-+		if (crtc) {
-+			drm_printf(p, "connected to %s path",
-+				   sti_crtc_is_main(crtc) ? "main" : "aux");
-+			DBGFS_DUMP(TVO_HD_SYNC_SEL);
-+			DBGFS_DUMP(TVO_HD_DAC_CFG_OFF);
-+			tvout_dbg_hd_dac_cfg(p,
-+				readl(tvout->regs + TVO_HD_DAC_CFG_OFF));
-+			DBGFS_DUMP(TVO_VIP_HDF);
-+			tvout_dbg_vip(p, readl(tvout->regs + TVO_VIP_HDF));
-+		} else {
-+			drm_printf(p, "disabled\n");
-+			return;
-+		}
- 	}
- 
--	seq_puts(s, "\n\n  main path configuration");
-+	drm_printf(p, "\n\t\tmain path configuration");
- 	DBGFS_DUMP(TVO_CSC_MAIN_M0);
- 	DBGFS_DUMP(TVO_CSC_MAIN_M1);
- 	DBGFS_DUMP(TVO_CSC_MAIN_M2);
-@@ -549,7 +557,7 @@ static int tvout_dbg_show(struct seq_file *s, void *data)
- 	DBGFS_DUMP(TVO_CSC_MAIN_M7);
- 	DBGFS_DUMP(TVO_MAIN_IN_VID_FORMAT);
- 
--	seq_puts(s, "\n\n  auxiliary path configuration");
-+	drm_printf(p, "\n\t\tauxiliary path configuration");
- 	DBGFS_DUMP(TVO_CSC_AUX_M0);
- 	DBGFS_DUMP(TVO_CSC_AUX_M2);
- 	DBGFS_DUMP(TVO_CSC_AUX_M3);
-@@ -558,24 +566,7 @@ static int tvout_dbg_show(struct seq_file *s, void *data)
- 	DBGFS_DUMP(TVO_CSC_AUX_M6);
- 	DBGFS_DUMP(TVO_CSC_AUX_M7);
- 	DBGFS_DUMP(TVO_AUX_IN_VID_FORMAT);
+ 	DBGFS_DUMP(CUR_CTL);
+ 	DBGFS_DUMP(CUR_VPO);
+-	cursor_dbg_vpo(s, readl(cursor->regs + CUR_VPO));
++	cursor_dbg_vpo(p, readl(cursor->regs + CUR_VPO));
+ 	DBGFS_DUMP(CUR_PML);
+-	cursor_dbg_pml(s, cursor, readl(cursor->regs + CUR_PML));
++	cursor_dbg_pml(p, cursor, readl(cursor->regs + CUR_PML));
+ 	DBGFS_DUMP(CUR_PMP);
+ 	DBGFS_DUMP(CUR_SIZE);
+-	cursor_dbg_size(s, readl(cursor->regs + CUR_SIZE));
++	cursor_dbg_size(p, readl(cursor->regs + CUR_SIZE));
+ 	DBGFS_DUMP(CUR_CML);
+-	cursor_dbg_cml(s, cursor, readl(cursor->regs + CUR_CML));
++	cursor_dbg_cml(p, cursor, readl(cursor->regs + CUR_CML));
+ 	DBGFS_DUMP(CUR_AWS);
+ 	DBGFS_DUMP(CUR_AWE);
 -	seq_putc(s, '\n');
 -	return 0;
 -}
 -
--static struct drm_info_list tvout_debugfs_files[] = {
--	{ "tvout", tvout_dbg_show, 0, NULL },
+-static struct drm_info_list cursor_debugfs_files[] = {
+-	{ "cursor", cursor_dbg_show, 0, NULL },
 -};
 -
--static int tvout_debugfs_init(struct sti_tvout *tvout, struct drm_minor *minor)
+-static int cursor_debugfs_init(struct sti_cursor *cursor,
+-			       struct drm_minor *minor)
 -{
 -	unsigned int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(cursor_debugfs_files); i++)
+-		cursor_debugfs_files[i].data = cursor;
 -
--	for (i = 0; i < ARRAY_SIZE(tvout_debugfs_files); i++)
--		tvout_debugfs_files[i].data = tvout;
--
--	return drm_debugfs_create_files(tvout_debugfs_files,
--					ARRAY_SIZE(tvout_debugfs_files),
+-	return drm_debugfs_create_files(cursor_debugfs_files,
+-					ARRAY_SIZE(cursor_debugfs_files),
 -					minor->debugfs_root, minor);
-+	drm_printf(p, "\n");
++	drm_printf(p, "\t%s%s\n",
++		   plane->fps_info.fps_str, plane->fps_info.fips_str);
  }
  
- static void sti_tvout_encoder_dpms(struct drm_encoder *encoder, int mode)
-@@ -596,36 +587,9 @@ static void sti_tvout_encoder_destroy(struct drm_encoder *encoder)
- 	kfree(sti_encoder);
+ static void sti_cursor_argb8888_to_clut8(struct sti_cursor *cursor, u32 *src)
+@@ -336,14 +321,6 @@ static void sti_cursor_destroy(struct drm_plane *drm_plane)
+ 	drm_plane_cleanup(drm_plane);
  }
  
--static int sti_tvout_late_register(struct drm_encoder *encoder)
+-static int sti_cursor_late_register(struct drm_plane *drm_plane)
 -{
--	struct sti_tvout *tvout = to_sti_tvout(encoder);
--	int ret;
+-	struct sti_plane *plane = to_sti_plane(drm_plane);
+-	struct sti_cursor *cursor = to_sti_cursor(plane);
 -
--	if (tvout->debugfs_registered)
--		return 0;
+-	return cursor_debugfs_init(cursor, drm_plane->dev->primary);
+-}
 -
--	ret = tvout_debugfs_init(tvout, encoder->dev->primary);
--	if (ret)
--		return ret;
+ static const struct drm_plane_funcs sti_cursor_plane_helpers_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+@@ -351,7 +328,7 @@ static const struct drm_plane_funcs sti_cursor_plane_helpers_funcs = {
+ 	.reset = sti_plane_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+-	.late_register = sti_cursor_late_register,
++	.atomic_print_state = sti_cursor_plane_print_state,
+ };
+ 
+ struct drm_plane *sti_cursor_create(struct drm_device *drm_dev,
+diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
+index 49813d34bdf0..55789bae72c1 100644
+--- a/drivers/gpu/drm/sti/sti_gdp.c
++++ b/drivers/gpu/drm/sti/sti_gdp.c
+@@ -139,42 +139,42 @@ static const uint32_t gdp_supported_formats[] = {
+ 	DRM_FORMAT_RGB888,
+ };
+ 
+-#define DBGFS_DUMP(reg) seq_printf(s, "\n  %-25s 0x%08X", #reg, \
++#define DBGFS_DUMP(reg) drm_printf(p, "\n\t\t%-25s 0x%08X", #reg, \
+ 				   readl(gdp->regs + reg ## _OFFSET))
+ 
+-static void gdp_dbg_ctl(struct seq_file *s, int val)
++static void gdp_dbg_ctl(struct drm_printer *p, int val)
+ {
+ 	int i;
+ 
+-	seq_puts(s, "\tColor:");
++	drm_printf(p, "\tColor:");
+ 	for (i = 0; i < ARRAY_SIZE(gdp_format_to_str); i++) {
+ 		if (gdp_format_to_str[i].format == (val & 0x1F)) {
+-			seq_puts(s, gdp_format_to_str[i].name);
++			drm_printf(p, gdp_format_to_str[i].name);
+ 			break;
+ 		}
+ 	}
+ 	if (i == ARRAY_SIZE(gdp_format_to_str))
+-		seq_puts(s, "<UNKNOWN>");
++		drm_printf(p, "<UNKNOWN>");
+ 
+-	seq_printf(s, "\tWaitNextVsync:%d", val & WAIT_NEXT_VSYNC ? 1 : 0);
++	drm_printf(p, "\tWaitNextVsync:%d", val & WAIT_NEXT_VSYNC ? 1 : 0);
+ }
+ 
+-static void gdp_dbg_vpo(struct seq_file *s, int val)
++static void gdp_dbg_vpo(struct drm_printer *p, int val)
+ {
+-	seq_printf(s, "\txdo:%4d\tydo:%4d", val & 0xFFFF, (val >> 16) & 0xFFFF);
++	drm_printf(p, "\txdo:%4d\tydo:%4d", val & 0xFFFF, (val >> 16) & 0xFFFF);
+ }
+ 
+-static void gdp_dbg_vps(struct seq_file *s, int val)
++static void gdp_dbg_vps(struct drm_printer *p, int val)
+ {
+-	seq_printf(s, "\txds:%4d\tyds:%4d", val & 0xFFFF, (val >> 16) & 0xFFFF);
++	drm_printf(p, "\txds:%4d\tyds:%4d", val & 0xFFFF, (val >> 16) & 0xFFFF);
+ }
+ 
+-static void gdp_dbg_size(struct seq_file *s, int val)
++static void gdp_dbg_size(struct drm_printer *p, int val)
+ {
+-	seq_printf(s, "\t%d x %d", val & 0xFFFF, (val >> 16) & 0xFFFF);
++	drm_printf(p, "\t%d x %d", val & 0xFFFF, (val >> 16) & 0xFFFF);
+ }
+ 
+-static void gdp_dbg_nvn(struct seq_file *s, struct sti_gdp *gdp, int val)
++static void gdp_dbg_nvn(struct drm_printer *p, struct sti_gdp *gdp, int val)
+ {
+ 	void *base = NULL;
+ 	unsigned int i;
+@@ -191,157 +191,93 @@ static void gdp_dbg_nvn(struct seq_file *s, struct sti_gdp *gdp, int val)
+ 	}
+ 
+ 	if (base)
+-		seq_printf(s, "\tVirt @: %p", base);
++		drm_printf(p, "\tVirt @: %pK", base);
+ }
+ 
+-static void gdp_dbg_ppt(struct seq_file *s, int val)
++static void gdp_dbg_ppt(struct drm_printer *p, int val)
+ {
+ 	if (val & GAM_GDP_PPT_IGNORE)
+-		seq_puts(s, "\tNot displayed on mixer!");
++		drm_printf(p, "\tNot displayed on mixer!");
+ }
+ 
+-static void gdp_dbg_mst(struct seq_file *s, int val)
++static void gdp_dbg_mst(struct drm_printer *p, int val)
+ {
+ 	if (val & 1)
+-		seq_puts(s, "\tBUFFER UNDERFLOW!");
++		drm_printf(p, "\tBUFFER UNDERFLOW!");
+ }
+ 
+-static int gdp_dbg_show(struct seq_file *s, void *data)
++static int gdp_dbg_show(struct drm_printer *p, struct sti_gdp *gdp)
+ {
+-	struct drm_info_node *node = s->private;
+-	struct sti_gdp *gdp = (struct sti_gdp *)node->info_ent->data;
+-	struct drm_plane *drm_plane = &gdp->plane.drm_plane;
+-	struct drm_crtc *crtc;
 -
--	tvout->debugfs_registered = true;
+-	drm_modeset_lock(&drm_plane->mutex, NULL);
+-	crtc = drm_plane->state->crtc;
+-	drm_modeset_unlock(&drm_plane->mutex);
+-
+-	seq_printf(s, "%s: (vaddr = 0x%p)",
++	drm_printf(p, "\t%s: (vaddr = 0x%pK)",
+ 		   sti_plane_to_str(&gdp->plane), gdp->regs);
+ 
+ 	DBGFS_DUMP(GAM_GDP_CTL);
+-	gdp_dbg_ctl(s, readl(gdp->regs + GAM_GDP_CTL_OFFSET));
++	gdp_dbg_ctl(p, readl(gdp->regs + GAM_GDP_CTL_OFFSET));
+ 	DBGFS_DUMP(GAM_GDP_AGC);
+ 	DBGFS_DUMP(GAM_GDP_VPO);
+-	gdp_dbg_vpo(s, readl(gdp->regs + GAM_GDP_VPO_OFFSET));
++	gdp_dbg_vpo(p, readl(gdp->regs + GAM_GDP_VPO_OFFSET));
+ 	DBGFS_DUMP(GAM_GDP_VPS);
+-	gdp_dbg_vps(s, readl(gdp->regs + GAM_GDP_VPS_OFFSET));
++	gdp_dbg_vps(p, readl(gdp->regs + GAM_GDP_VPS_OFFSET));
+ 	DBGFS_DUMP(GAM_GDP_PML);
+ 	DBGFS_DUMP(GAM_GDP_PMP);
+ 	DBGFS_DUMP(GAM_GDP_SIZE);
+-	gdp_dbg_size(s, readl(gdp->regs + GAM_GDP_SIZE_OFFSET));
++	gdp_dbg_size(p, readl(gdp->regs + GAM_GDP_SIZE_OFFSET));
+ 	DBGFS_DUMP(GAM_GDP_NVN);
+-	gdp_dbg_nvn(s, gdp, readl(gdp->regs + GAM_GDP_NVN_OFFSET));
++	gdp_dbg_nvn(p, gdp, readl(gdp->regs + GAM_GDP_NVN_OFFSET));
+ 	DBGFS_DUMP(GAM_GDP_KEY1);
+ 	DBGFS_DUMP(GAM_GDP_KEY2);
+ 	DBGFS_DUMP(GAM_GDP_PPT);
+-	gdp_dbg_ppt(s, readl(gdp->regs + GAM_GDP_PPT_OFFSET));
++	gdp_dbg_ppt(p, readl(gdp->regs + GAM_GDP_PPT_OFFSET));
+ 	DBGFS_DUMP(GAM_GDP_CML);
+ 	DBGFS_DUMP(GAM_GDP_MST);
+-	gdp_dbg_mst(s, readl(gdp->regs + GAM_GDP_MST_OFFSET));
+-
+-	seq_puts(s, "\n\n");
+-	if (!crtc)
+-		seq_puts(s, "  Not connected to any DRM CRTC\n");
+-	else
+-		seq_printf(s, "  Connected to DRM CRTC #%d (%s)\n",
+-			   crtc->base.id, sti_mixer_to_str(to_sti_mixer(crtc)));
++	gdp_dbg_mst(p, readl(gdp->regs + GAM_GDP_MST_OFFSET));
+ 
++	drm_printf(p, "\n");
+ 	return 0;
+ }
+ 
+-static void gdp_node_dump_node(struct seq_file *s, struct sti_gdp_node *node)
++static void gdp_node_dump_node(struct drm_printer *p, struct sti_gdp_node *node)
+ {
+-	seq_printf(s, "\t@:0x%p", node);
+-	seq_printf(s, "\n\tCTL  0x%08X", node->gam_gdp_ctl);
+-	gdp_dbg_ctl(s, node->gam_gdp_ctl);
+-	seq_printf(s, "\n\tAGC  0x%08X", node->gam_gdp_agc);
+-	seq_printf(s, "\n\tVPO  0x%08X", node->gam_gdp_vpo);
+-	gdp_dbg_vpo(s, node->gam_gdp_vpo);
+-	seq_printf(s, "\n\tVPS  0x%08X", node->gam_gdp_vps);
+-	gdp_dbg_vps(s, node->gam_gdp_vps);
+-	seq_printf(s, "\n\tPML  0x%08X", node->gam_gdp_pml);
+-	seq_printf(s, "\n\tPMP  0x%08X", node->gam_gdp_pmp);
+-	seq_printf(s, "\n\tSIZE 0x%08X", node->gam_gdp_size);
+-	gdp_dbg_size(s, node->gam_gdp_size);
+-	seq_printf(s, "\n\tNVN  0x%08X", node->gam_gdp_nvn);
+-	seq_printf(s, "\n\tKEY1 0x%08X", node->gam_gdp_key1);
+-	seq_printf(s, "\n\tKEY2 0x%08X", node->gam_gdp_key2);
+-	seq_printf(s, "\n\tPPT  0x%08X", node->gam_gdp_ppt);
+-	gdp_dbg_ppt(s, node->gam_gdp_ppt);
+-	seq_printf(s, "\n\tCML  0x%08X\n", node->gam_gdp_cml);
++	drm_printf(p, "\t@:0x%pK", node);
++	drm_printf(p, "\n\t\tCTL  0x%08X", node->gam_gdp_ctl);
++	gdp_dbg_ctl(p, node->gam_gdp_ctl);
++	drm_printf(p, "\n\t\tAGC  0x%08X", node->gam_gdp_agc);
++	drm_printf(p, "\n\t\tVPO  0x%08X", node->gam_gdp_vpo);
++	gdp_dbg_vpo(p, node->gam_gdp_vpo);
++	drm_printf(p, "\n\t\tVPS  0x%08X", node->gam_gdp_vps);
++	gdp_dbg_vps(p, node->gam_gdp_vps);
++	drm_printf(p, "\n\t\tPML  0x%08X", node->gam_gdp_pml);
++	drm_printf(p, "\n\t\tPMP  0x%08X", node->gam_gdp_pmp);
++	drm_printf(p, "\n\t\tSIZE 0x%08X", node->gam_gdp_size);
++	gdp_dbg_size(p, node->gam_gdp_size);
++	drm_printf(p, "\n\t\tNVN  0x%08X", node->gam_gdp_nvn);
++	drm_printf(p, "\n\t\tKEY1 0x%08X", node->gam_gdp_key1);
++	drm_printf(p, "\n\t\tKEY2 0x%08X", node->gam_gdp_key2);
++	drm_printf(p, "\n\t\tPPT  0x%08X", node->gam_gdp_ppt);
++	gdp_dbg_ppt(p, node->gam_gdp_ppt);
++	drm_printf(p, "\n\t\tCML  0x%08X\n", node->gam_gdp_cml);
+ }
+ 
+-static int gdp_node_dbg_show(struct seq_file *s, void *arg)
++static void sti_gdp_plane_print_state(struct drm_printer *p,
++				      const struct drm_plane_state *state)
+ {
+-	struct drm_info_node *node = s->private;
+-	struct sti_gdp *gdp = (struct sti_gdp *)node->info_ent->data;
++	struct sti_plane *plane = to_sti_plane(state->plane);
++	struct sti_gdp *gdp = to_sti_gdp(plane);
+ 	unsigned int b;
+ 
+-	for (b = 0; b < GDP_NODE_NB_BANK; b++) {
+-		seq_printf(s, "\n%s[%d].top", sti_plane_to_str(&gdp->plane), b);
+-		gdp_node_dump_node(s, gdp->node_list[b].top_field);
+-		seq_printf(s, "\n%s[%d].btm", sti_plane_to_str(&gdp->plane), b);
+-		gdp_node_dump_node(s, gdp->node_list[b].btm_field);
+-	}
+-
 -	return 0;
 -}
 -
--static void sti_tvout_early_unregister(struct drm_encoder *encoder)
+-static struct drm_info_list gdp0_debugfs_files[] = {
+-	{ "gdp0", gdp_dbg_show, 0, NULL },
+-	{ "gdp0_node", gdp_node_dbg_show, 0, NULL },
+-};
+-
+-static struct drm_info_list gdp1_debugfs_files[] = {
+-	{ "gdp1", gdp_dbg_show, 0, NULL },
+-	{ "gdp1_node", gdp_node_dbg_show, 0, NULL },
+-};
+-
+-static struct drm_info_list gdp2_debugfs_files[] = {
+-	{ "gdp2", gdp_dbg_show, 0, NULL },
+-	{ "gdp2_node", gdp_node_dbg_show, 0, NULL },
+-};
+-
+-static struct drm_info_list gdp3_debugfs_files[] = {
+-	{ "gdp3", gdp_dbg_show, 0, NULL },
+-	{ "gdp3_node", gdp_node_dbg_show, 0, NULL },
+-};
+-
+-static int gdp_debugfs_init(struct sti_gdp *gdp, struct drm_minor *minor)
 -{
--	struct sti_tvout *tvout = to_sti_tvout(encoder);
+-	unsigned int i;
+-	struct drm_info_list *gdp_debugfs_files;
+-	int nb_files;
++	gdp_dbg_show(p, gdp);
+ 
+-	switch (gdp->plane.desc) {
+-	case STI_GDP_0:
+-		gdp_debugfs_files = gdp0_debugfs_files;
+-		nb_files = ARRAY_SIZE(gdp0_debugfs_files);
+-		break;
+-	case STI_GDP_1:
+-		gdp_debugfs_files = gdp1_debugfs_files;
+-		nb_files = ARRAY_SIZE(gdp1_debugfs_files);
+-		break;
+-	case STI_GDP_2:
+-		gdp_debugfs_files = gdp2_debugfs_files;
+-		nb_files = ARRAY_SIZE(gdp2_debugfs_files);
+-		break;
+-	case STI_GDP_3:
+-		gdp_debugfs_files = gdp3_debugfs_files;
+-		nb_files = ARRAY_SIZE(gdp3_debugfs_files);
+-		break;
+-	default:
+-		return -EINVAL;
++	for (b = 0; b < GDP_NODE_NB_BANK; b++) {
++		drm_printf(p, "\t%s[%d].top\n",
++			   sti_plane_to_str(&gdp->plane), b);
++		gdp_node_dump_node(p, gdp->node_list[b].top_field);
++		drm_printf(p, "\t%s[%d].btm\n",
++			   sti_plane_to_str(&gdp->plane), b);
++		gdp_node_dump_node(p, gdp->node_list[b].btm_field);
+ 	}
+ 
+-	for (i = 0; i < nb_files; i++)
+-		gdp_debugfs_files[i].data = gdp;
 -
--	if (!tvout->debugfs_registered)
--		return;
+-	return drm_debugfs_create_files(gdp_debugfs_files,
+-					nb_files,
+-					minor->debugfs_root, minor);
++	drm_printf(p, "\t%s%s\n",
++		   plane->fps_info.fps_str, plane->fps_info.fips_str);
+ }
+ 
+ static int sti_gdp_fourcc2format(int fourcc)
+@@ -887,14 +823,6 @@ static void sti_gdp_destroy(struct drm_plane *drm_plane)
+ 	drm_plane_cleanup(drm_plane);
+ }
+ 
+-static int sti_gdp_late_register(struct drm_plane *drm_plane)
+-{
+-	struct sti_plane *plane = to_sti_plane(drm_plane);
+-	struct sti_gdp *gdp = to_sti_gdp(plane);
 -
--	tvout->debugfs_registered = false;
+-	return gdp_debugfs_init(gdp, drm_plane->dev->primary);
 -}
 -
- static const struct drm_encoder_funcs sti_tvout_encoder_funcs = {
- 	.destroy = sti_tvout_encoder_destroy,
--	.late_register = sti_tvout_late_register,
--	.early_unregister = sti_tvout_early_unregister,
-+	.atomic_print = sti_tvout_print
+ static const struct drm_plane_funcs sti_gdp_plane_helpers_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+@@ -902,7 +830,7 @@ static const struct drm_plane_funcs sti_gdp_plane_helpers_funcs = {
+ 	.reset = sti_plane_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+-	.late_register = sti_gdp_late_register,
++	.atomic_print_state = sti_gdp_plane_print_state,
  };
  
- static void sti_dvo_encoder_enable(struct drm_encoder *encoder)
+ struct drm_plane *sti_gdp_create(struct drm_device *drm_dev,
+diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+index 106be8c4e58b..f218f636966c 100644
+--- a/drivers/gpu/drm/sti/sti_hqvdp.c
++++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+@@ -441,7 +441,7 @@ static int sti_hqvdp_get_next_cmd(struct sti_hqvdp *hqvdp)
+ 	return -1;
+ }
+ 
+-#define DBGFS_DUMP(reg) seq_printf(s, "\n  %-25s 0x%08X", #reg, \
++#define DBGFS_DUMP(reg) drm_printf(p, "\n\t\t%-25s 0x%08X", #reg, \
+ 				   readl(hqvdp->regs + reg))
+ 
+ static const char *hqvdp_dbg_get_lut(u32 *coef)
+@@ -469,99 +469,100 @@ static const char *hqvdp_dbg_get_lut(u32 *coef)
+ 	return "<UNKNOWN>";
+ }
+ 
+-static void hqvdp_dbg_dump_cmd(struct seq_file *s, struct sti_hqvdp_cmd *c)
++static void hqvdp_dbg_dump_cmd(struct drm_printer *p, struct sti_hqvdp_cmd *c)
+ {
+ 	int src_w, src_h, dst_w, dst_h;
+ 
+-	seq_puts(s, "\n\tTOP:");
+-	seq_printf(s, "\n\t %-20s 0x%08X", "Config", c->top.config);
++	drm_printf(p, "\n\tTOP:");
++	drm_printf(p, "\n\t %-20s 0x%08X", "Config", c->top.config);
+ 	switch (c->top.config) {
+ 	case TOP_CONFIG_PROGRESSIVE:
+-		seq_puts(s, "\tProgressive");
++		drm_printf(p, "\tProgressive");
+ 		break;
+ 	case TOP_CONFIG_INTER_TOP:
+-		seq_puts(s, "\tInterlaced, top field");
++		drm_printf(p, "\tInterlaced, top field");
+ 		break;
+ 	case TOP_CONFIG_INTER_BTM:
+-		seq_puts(s, "\tInterlaced, bottom field");
++		drm_printf(p, "\tInterlaced, bottom field");
+ 		break;
+ 	default:
+-		seq_puts(s, "\t<UNKNOWN>");
++		drm_printf(p, "\t<UNKNOWN>");
+ 		break;
+ 	}
+ 
+-	seq_printf(s, "\n\t %-20s 0x%08X", "MemFormat", c->top.mem_format);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "CurrentY", c->top.current_luma);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "CurrentC", c->top.current_chroma);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "YSrcPitch", c->top.luma_src_pitch);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "CSrcPitch",
++	drm_printf(p, "\n\t %-20s 0x%08X", "MemFormat", c->top.mem_format);
++	drm_printf(p, "\n\t %-20s 0x%08X", "CurrentY", c->top.current_luma);
++	drm_printf(p, "\n\t %-20s 0x%08X", "CurrentC", c->top.current_chroma);
++	drm_printf(p, "\n\t %-20s 0x%08X", "YSrcPitch", c->top.luma_src_pitch);
++	drm_printf(p, "\n\t %-20s 0x%08X", "CSrcPitch",
+ 		   c->top.chroma_src_pitch);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "InputFrameSize",
++	drm_printf(p, "\n\t %-20s 0x%08X", "InputFrameSize",
+ 		   c->top.input_frame_size);
+-	seq_printf(s, "\t%dx%d",
++	drm_printf(p, "\t%dx%d",
+ 		   c->top.input_frame_size & 0x0000FFFF,
+ 		   c->top.input_frame_size >> 16);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "InputViewportSize",
++	drm_printf(p, "\n\t %-20s 0x%08X", "InputViewportSize",
+ 		   c->top.input_viewport_size);
+ 	src_w = c->top.input_viewport_size & 0x0000FFFF;
+ 	src_h = c->top.input_viewport_size >> 16;
+-	seq_printf(s, "\t%dx%d", src_w, src_h);
++	drm_printf(p, "\t%dx%d", src_w, src_h);
+ 
+-	seq_puts(s, "\n\tHVSRC:");
+-	seq_printf(s, "\n\t %-20s 0x%08X", "OutputPictureSize",
++	drm_printf(p, "\n\tHVSRC:");
++	drm_printf(p, "\n\t %-20s 0x%08X", "OutputPictureSize",
+ 		   c->hvsrc.output_picture_size);
+ 	dst_w = c->hvsrc.output_picture_size & 0x0000FFFF;
+ 	dst_h = c->hvsrc.output_picture_size >> 16;
+-	seq_printf(s, "\t%dx%d", dst_w, dst_h);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "ParamCtrl", c->hvsrc.param_ctrl);
++	drm_printf(p, "\t%dx%d", dst_w, dst_h);
++	drm_printf(p, "\n\t %-20s 0x%08X", "ParamCtrl", c->hvsrc.param_ctrl);
+ 
+-	seq_printf(s, "\n\t %-20s %s", "yh_coef",
++	drm_printf(p, "\n\t %-20s %s", "yh_coef",
+ 		   hqvdp_dbg_get_lut(c->hvsrc.yh_coef));
+-	seq_printf(s, "\n\t %-20s %s", "ch_coef",
++	drm_printf(p, "\n\t %-20s %s", "ch_coef",
+ 		   hqvdp_dbg_get_lut(c->hvsrc.ch_coef));
+-	seq_printf(s, "\n\t %-20s %s", "yv_coef",
++	drm_printf(p, "\n\t %-20s %s", "yv_coef",
+ 		   hqvdp_dbg_get_lut(c->hvsrc.yv_coef));
+-	seq_printf(s, "\n\t %-20s %s", "cv_coef",
++	drm_printf(p, "\n\t %-20s %s", "cv_coef",
+ 		   hqvdp_dbg_get_lut(c->hvsrc.cv_coef));
+ 
+-	seq_printf(s, "\n\t %-20s", "ScaleH");
++	drm_printf(p, "\n\t %-20s", "ScaleH");
+ 	if (dst_w > src_w)
+-		seq_printf(s, " %d/1", dst_w / src_w);
++		drm_printf(p, " %d/1", dst_w / src_w);
+ 	else
+-		seq_printf(s, " 1/%d", src_w / dst_w);
++		drm_printf(p, " 1/%d", src_w / dst_w);
+ 
+-	seq_printf(s, "\n\t %-20s", "tScaleV");
++	drm_printf(p, "\n\t %-20s", "tScaleV");
+ 	if (dst_h > src_h)
+-		seq_printf(s, " %d/1", dst_h / src_h);
++		drm_printf(p, " %d/1", dst_h / src_h);
+ 	else
+-		seq_printf(s, " 1/%d", src_h / dst_h);
++		drm_printf(p, " 1/%d", src_h / dst_h);
+ 
+-	seq_puts(s, "\n\tCSDI:");
+-	seq_printf(s, "\n\t %-20s 0x%08X\t", "Config", c->csdi.config);
++	drm_printf(p, "\n\tCSDI:");
++	drm_printf(p, "\n\t %-20s 0x%08X\t", "Config", c->csdi.config);
+ 	switch (c->csdi.config) {
+ 	case CSDI_CONFIG_PROG:
+-		seq_puts(s, "Bypass");
++		drm_printf(p, "Bypass");
+ 		break;
+ 	case CSDI_CONFIG_INTER_DIR:
+-		seq_puts(s, "Deinterlace, directional");
++		drm_printf(p, "Deinterlace, directional");
+ 		break;
+ 	default:
+-		seq_puts(s, "<UNKNOWN>");
++		drm_printf(p, "<UNKNOWN>");
+ 		break;
+ 	}
+ 
+-	seq_printf(s, "\n\t %-20s 0x%08X", "Config2", c->csdi.config2);
+-	seq_printf(s, "\n\t %-20s 0x%08X", "DcdiConfig", c->csdi.dcdi_config);
++	drm_printf(p, "\n\t %-20s 0x%08X", "Config2", c->csdi.config2);
++	drm_printf(p, "\n\t %-20s 0x%08X", "DcdiConfig", c->csdi.dcdi_config);
+ }
+ 
+-static int hqvdp_dbg_show(struct seq_file *s, void *data)
++static void sti_hqvdp_plane_print_state(struct drm_printer *p,
++					const struct drm_plane_state *state)
+ {
+-	struct drm_info_node *node = s->private;
+-	struct sti_hqvdp *hqvdp = (struct sti_hqvdp *)node->info_ent->data;
++	struct sti_plane *plane = to_sti_plane(state->plane);
++	struct sti_hqvdp *hqvdp = to_sti_hqvdp(plane);
+ 	int cmd, cmd_offset, infoxp70;
+ 	void *virt;
+ 
+-	seq_printf(s, "%s: (vaddr = 0x%p)",
++	drm_printf(p, "\t%s: (vaddr = 0x%pK)",
+ 		   sti_plane_to_str(&hqvdp->plane), hqvdp->regs);
+ 
+ 	DBGFS_DUMP(HQVDP_MBX_IRQ_TO_XP70);
+@@ -569,80 +570,64 @@ static int hqvdp_dbg_show(struct seq_file *s, void *data)
+ 	DBGFS_DUMP(HQVDP_MBX_IRQ_TO_HOST);
+ 	DBGFS_DUMP(HQVDP_MBX_INFO_XP70);
+ 	infoxp70 = readl(hqvdp->regs + HQVDP_MBX_INFO_XP70);
+-	seq_puts(s, "\tFirmware state: ");
++	drm_printf(p, "\tFirmware state: ");
+ 	if (infoxp70 & INFO_XP70_FW_READY)
+-		seq_puts(s, "idle and ready");
++		drm_printf(p, "idle and ready");
+ 	else if (infoxp70 & INFO_XP70_FW_PROCESSING)
+-		seq_puts(s, "processing a picture");
++		drm_printf(p, "processing a picture");
+ 	else if (infoxp70 & INFO_XP70_FW_INITQUEUES)
+-		seq_puts(s, "programming queues");
++		drm_printf(p, "programming queues");
+ 	else
+-		seq_puts(s, "NOT READY");
++		drm_printf(p, "NOT READY");
+ 
+ 	DBGFS_DUMP(HQVDP_MBX_SW_RESET_CTRL);
+ 	DBGFS_DUMP(HQVDP_MBX_STARTUP_CTRL1);
+ 	if (readl(hqvdp->regs + HQVDP_MBX_STARTUP_CTRL1)
+ 					& STARTUP_CTRL1_RST_DONE)
+-		seq_puts(s, "\tReset is done");
++		drm_printf(p, "\tReset is done");
+ 	else
+-		seq_puts(s, "\tReset is NOT done");
++		drm_printf(p, "\tReset is NOT done");
+ 	DBGFS_DUMP(HQVDP_MBX_STARTUP_CTRL2);
+ 	if (readl(hqvdp->regs + HQVDP_MBX_STARTUP_CTRL2)
+ 					& STARTUP_CTRL2_FETCH_EN)
+-		seq_puts(s, "\tFetch is enabled");
++		drm_printf(p, "\tFetch is enabled");
+ 	else
+-		seq_puts(s, "\tFetch is NOT enabled");
++		drm_printf(p, "\tFetch is NOT enabled");
+ 	DBGFS_DUMP(HQVDP_MBX_GP_STATUS);
+ 	DBGFS_DUMP(HQVDP_MBX_NEXT_CMD);
+ 	DBGFS_DUMP(HQVDP_MBX_CURRENT_CMD);
+ 	DBGFS_DUMP(HQVDP_MBX_SOFT_VSYNC);
+ 	if (!(readl(hqvdp->regs + HQVDP_MBX_SOFT_VSYNC) & 3))
+-		seq_puts(s, "\tHW Vsync");
++		drm_printf(p, "\tHW Vsync");
+ 	else
+-		seq_puts(s, "\tSW Vsync ?!?!");
++		drm_printf(p, "\tSW Vsync ?!?!");
+ 
+ 	/* Last command */
+ 	cmd = readl(hqvdp->regs + HQVDP_MBX_CURRENT_CMD);
+ 	cmd_offset = sti_hqvdp_get_curr_cmd(hqvdp);
+ 	if (cmd_offset == -1) {
+-		seq_puts(s, "\n\n  Last command: unknown");
++		drm_printf(p, "\n\n\t\tLast command: unknown");
+ 	} else {
+ 		virt = hqvdp->hqvdp_cmd + cmd_offset;
+-		seq_printf(s, "\n\n  Last command: address @ 0x%x (0x%p)",
++		drm_printf(p, "\n\n\t\tLast command: address @ 0x%x (0x%p)",
+ 			   cmd, virt);
+-		hqvdp_dbg_dump_cmd(s, (struct sti_hqvdp_cmd *)virt);
++		hqvdp_dbg_dump_cmd(p, (struct sti_hqvdp_cmd *)virt);
+ 	}
+ 
+ 	/* Next command */
+ 	cmd = readl(hqvdp->regs + HQVDP_MBX_NEXT_CMD);
+ 	cmd_offset = sti_hqvdp_get_next_cmd(hqvdp);
+ 	if (cmd_offset == -1) {
+-		seq_puts(s, "\n\n  Next command: unknown");
++		drm_printf(p, "\n\n\t\tNext command: unknown");
+ 	} else {
+ 		virt = hqvdp->hqvdp_cmd + cmd_offset;
+-		seq_printf(s, "\n\n  Next command address: @ 0x%x (0x%p)",
++		drm_printf(p, "\n\n\t\tNext command address: @ 0x%x (0x%p)",
+ 			   cmd, virt);
+-		hqvdp_dbg_dump_cmd(s, (struct sti_hqvdp_cmd *)virt);
++		hqvdp_dbg_dump_cmd(p, (struct sti_hqvdp_cmd *)virt);
+ 	}
+ 
+-	seq_putc(s, '\n');
+-	return 0;
+-}
+-
+-static struct drm_info_list hqvdp_debugfs_files[] = {
+-	{ "hqvdp", hqvdp_dbg_show, 0, NULL },
+-};
+-
+-static int hqvdp_debugfs_init(struct sti_hqvdp *hqvdp, struct drm_minor *minor)
+-{
+-	unsigned int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(hqvdp_debugfs_files); i++)
+-		hqvdp_debugfs_files[i].data = hqvdp;
+-
+-	return drm_debugfs_create_files(hqvdp_debugfs_files,
+-					ARRAY_SIZE(hqvdp_debugfs_files),
+-					minor->debugfs_root, minor);
++	drm_printf(p, "\t%s%s\n",
++		   plane->fps_info.fps_str, plane->fps_info.fips_str);
+ }
+ 
+ /**
+@@ -1264,14 +1249,6 @@ static void sti_hqvdp_destroy(struct drm_plane *drm_plane)
+ 	drm_plane_cleanup(drm_plane);
+ }
+ 
+-static int sti_hqvdp_late_register(struct drm_plane *drm_plane)
+-{
+-	struct sti_plane *plane = to_sti_plane(drm_plane);
+-	struct sti_hqvdp *hqvdp = to_sti_hqvdp(plane);
+-
+-	return hqvdp_debugfs_init(hqvdp, drm_plane->dev->primary);
+-}
+-
+ static const struct drm_plane_funcs sti_hqvdp_plane_helpers_funcs = {
+ 	.update_plane = drm_atomic_helper_update_plane,
+ 	.disable_plane = drm_atomic_helper_disable_plane,
+@@ -1279,7 +1256,7 @@ static const struct drm_plane_funcs sti_hqvdp_plane_helpers_funcs = {
+ 	.reset = sti_plane_reset,
+ 	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+-	.late_register = sti_hqvdp_late_register,
++	.atomic_print_state = sti_hqvdp_plane_print_state,
+ };
+ 
+ static struct drm_plane *sti_hqvdp_create(struct drm_device *drm_dev,
 -- 
 2.15.0
