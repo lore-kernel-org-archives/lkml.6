@@ -1,96 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeFEQMe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:12:34 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:37921 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751727AbeFEQMc (ORCPT
+        id S1752036AbeFEQMl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:12:41 -0400
+Received: from smtprelay0170.hostedemail.com ([216.40.44.170]:46334 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751727AbeFEQMk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:12:32 -0400
-X-Google-Smtp-Source: ADUXVKJJCv2isaYxAdktQDdWBhxJJ07xeerATNmw1e1Jy49hGtzZVp0BP76J+Cz3qBjyOkd0aQ2UeUFjp0uf2EVLu1o=
-MIME-Version: 1.0
-In-Reply-To: <83b1b038-c4c1-0199-2cb0-fb5343f0e3f5@arm.com>
-References: <1528209304-3280-1-git-send-email-sudeep.holla@arm.com>
- <1528209304-3280-2-git-send-email-sudeep.holla@arm.com> <CAJZ5v0gqQNHCuaeduQ8oQtGNUQcZxK171nDfyMNi1VVfnVsMqQ@mail.gmail.com>
- <83b1b038-c4c1-0199-2cb0-fb5343f0e3f5@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 5 Jun 2018 18:12:30 +0200
-X-Google-Sender-Auth: TO0OWuR_6tbjmT8CHfH0k8En2d0
-Message-ID: <CAJZ5v0hrJs1Oo-uA560qisZ4no4mbgbH+2fza+5B0ErGGYPTHw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] ACPI / PPTT: fix build when CONFIG_ACPI_PPTT is
- not enabled
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 5 Jun 2018 12:12:40 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:541:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:2829:2898:3138:3139:3140:3141:3142:3352:3740:3865:3866:3867:3868:3870:3871:3872:3874:4250:4605:5007:6117:7903:9121:9707:10004:10400:10848:11026:11658:11914:12043:12555:12679:12760:13069:13311:13357:13439:14181:14394:14659:14721:21080:21324:21627:30054:30070:30090,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:33,LUA_SUMMARY:none
+X-HE-Tag: anger40_16f6186749844
+X-Filterd-Recvd-Size: 1871
+Message-ID: <7eeefc862194930c773e662cb2152e178441d3b8.camel@perches.com>
+Subject: [PATCH] spdxcheck: Work with current HEAD LICENSES/ directory
+From: Joe Perches <joe@perches.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Date: Tue, 05 Jun 2018 09:12:35 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 5:33 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->
->
-> On 05/06/18 16:00, Rafael J. Wysocki wrote:
->> On Tue, Jun 5, 2018 at 4:35 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>> Though CONFIG_ACPI_PPTT is selected by platforms and nor user visible,
->>> it may be useful to support the build with CONFIG_ACPI_PPTT disabled.
->>>
->>> This patch adds the missing dummy/boiler plate implementation to fix
->>> the build.
->>>
->>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>> ---
->>>  include/linux/acpi.h      | 15 +++++++++++++++
->>>  include/linux/cacheinfo.h |  2 +-
->>>  2 files changed, 16 insertions(+), 1 deletion(-)
->>>
->>> Hi Rafael,
->>>
->>> If you are fine with this, can you provide Ack, so that we route this
->>> through ARM64 tree where most of the ACPI PPTT support is present.
->>>
->>> Regards,
->>> Sudeep
->>>
->>> v1->v2:
->>>         - removed duplicate definition for acpi_find_last_cache_level
->>>
->>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
->>> index 8f2cdb0eca71..4b35a66383f9 100644
->>> --- a/include/linux/acpi.h
->>> +++ b/include/linux/acpi.h
->>> @@ -1299,8 +1299,23 @@ static inline int lpit_read_residency_count_address(u64 *address)
->>>  }
->>>  #endif
->>>
->>> +#ifdef CONFIG_ACPI_PPTT
->>>  int find_acpi_cpu_topology(unsigned int cpu, int level);
->>>  int find_acpi_cpu_topology_package(unsigned int cpu);
->>>  int find_acpi_cpu_cache_topology(unsigned int cpu, int level);
->>> +#else
->>> +static inline int find_acpi_cpu_topology(unsigned int cpu, int level)
->>> +{
->>> +       return -EINVAL;
->>
->> Why -EINVAL?
->>
->
-> I am not sure either. I used to return -ENOTSUPP, but IIRC someone
-> suggested to use it only for syscalls. Also I just based it on other
-> existing functions in acpi.h
->
-> I am open for any alternatives if you think that is better here.
+Depending on how old your -next tree is, it may
+not have a master that has the LICENSES directory.
 
-It would be good to make it consistent with the error codes returned
-by the functions when they are present.
+Change the lookup to HEAD and find whatever
+LICENSE directory files are used in that branch.
 
-Anyway, it's fine by me if that's consistent with the other acpi.h stubs.
+Miscellanea:
+
+o Remove the checkpatch test as it will have its own
+  SPDX license identifier.
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ scripts/spdxcheck.py | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
+index 7deaef297f52..a6041f29b18e 100755
+--- a/scripts/spdxcheck.py
++++ b/scripts/spdxcheck.py
+@@ -32,7 +32,7 @@ def read_spdxdata(repo):
+ 
+     # The subdirectories of LICENSES in the kernel source
+     license_dirs = [ "preferred", "other", "exceptions" ]
+-    lictree = repo.heads.master.commit.tree['LICENSES']
++    lictree = repo.head.commit.tree['LICENSES']
+ 
+     spdx = SPDXdata()
+ 
+@@ -199,8 +199,6 @@ def scan_git_tree(tree):
+             continue
+         if el.path.find("license-rules.rst") >= 0:
+             continue
+-        if el.path == 'scripts/checkpatch.pl':
+-            continue
+         if not os.path.isfile(el.path):
+             continue
+         parser.parse_lines(open(el.path), args.maxlines, el.path)
