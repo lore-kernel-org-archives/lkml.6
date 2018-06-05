@@ -1,138 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752455AbeFERDT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:03:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752271AbeFERDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:17 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH 4.4 18/37] i2c: rcar: remove spinlock
-Date: Tue,  5 Jun 2018 19:01:23 +0200
-Message-Id: <20180605170109.978602376@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
-References: <20180605170108.884872354@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1752374AbeFERDN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36616 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752271AbeFERDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:08 -0400
+Date: Tue, 5 Jun 2018 11:03:04 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Linuxarm <linuxarm@huawei.com>, "John Garry" <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v6 0/7] vfio/type1: Add support for valid iova list
+ management
+Message-ID: <20180605110304.33e14b0d@w520.home>
+In-Reply-To: <20180525145408.2938a9ec@w520.home>
+References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
+        <20180524122032.724676b9@w520.home>
+        <5FC3163CFD30C246ABAA99954A238FA8386EE591@FRAEML521-MBX.china.huawei.com>
+        <20180525145408.2938a9ec@w520.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+[Cc +dwmw2]
 
-------------------
+On Fri, 25 May 2018 14:54:08 -0600
+Alex Williamson <alex.williamson@redhat.com> wrote:
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> On Fri, 25 May 2018 08:45:36 +0000
+> Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com> wrote:
+> 
+> > Yes, the above changes related to list empty cases looks fine to me.   
+> 
+> Thanks Shameer, applied to my next branch with the discussed fixes for
+> v4.18 (modulo patch 4/7 which Joerg already pushed for v4.17).  Thanks,
 
-commit ff2316b87a336bff940939cd9fc56287ed48e578 upstream.
+Hi Shameer,
 
-After making sure to reinit the HW and clear interrupts in the timeout
-case, we know that interrupts are always disabled in the sections
-protected by the spinlock. Thus, we can simply remove it which is a
-preparation for further refactoring. While here, rename the timeout
-variable to time_left which is way more readable.
+We're still hitting issues with this.  VT-d marks reserved regions for
+any RMRR ranges, which are IOVA ranges that the BIOS requests to be
+identity mapped for a device.  These are indicated by these sorts of
+log entries on boot:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ DMAR: Setting RMRR:
+ DMAR: Setting identity map for device 0000:00:02.0 [0xbf800000 - 0xcf9fffff]
+ DMAR: Setting identity map for device 0000:00:1a.0 [0xbe8d1000 - 0xbe8dffff]
+ DMAR: Setting identity map for device 0000:00:1d.0 [0xbe8d1000 - 0xbe8dffff]
 
----
- drivers/i2c/busses/i2c-rcar.c |   23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+So while for an unaffected device, I see very usable ranges for QEMU,
+such as:
 
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -33,7 +33,6 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
--#include <linux/spinlock.h>
- 
- /* register offsets */
- #define ICSCR	0x00	/* slave ctrl */
-@@ -110,7 +109,6 @@ struct rcar_i2c_priv {
- 	struct i2c_msg	*msg;
- 	struct clk *clk;
- 
--	spinlock_t lock;
- 	wait_queue_head_t wait;
- 
- 	int pos;
-@@ -429,9 +427,6 @@ static irqreturn_t rcar_i2c_irq(int irq,
- 	irqreturn_t result = IRQ_HANDLED;
- 	u32 msr;
- 
--	/*-------------- spin lock -----------------*/
--	spin_lock(&priv->lock);
--
- 	if (rcar_i2c_slave_irq(priv))
- 		goto exit;
- 
-@@ -478,9 +473,6 @@ out:
- 	}
- 
- exit:
--	spin_unlock(&priv->lock);
--	/*-------------- spin unlock -----------------*/
--
- 	return result;
- }
- 
-@@ -490,9 +482,8 @@ static int rcar_i2c_master_xfer(struct i
- {
- 	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
- 	struct device *dev = rcar_i2c_priv_to_dev(priv);
--	unsigned long flags;
- 	int i, ret;
--	long timeout;
-+	long time_left;
- 
- 	pm_runtime_get_sync(dev);
- 
-@@ -507,9 +498,6 @@ static int rcar_i2c_master_xfer(struct i
- 			break;
- 		}
- 
--		/*-------------- spin lock -----------------*/
--		spin_lock_irqsave(&priv->lock, flags);
--
- 		/* init each data */
- 		priv->msg	= &msgs[i];
- 		priv->pos	= 0;
-@@ -519,13 +507,11 @@ static int rcar_i2c_master_xfer(struct i
- 
- 		rcar_i2c_prepare_msg(priv);
- 
--		spin_unlock_irqrestore(&priv->lock, flags);
--		/*-------------- spin unlock -----------------*/
--
--		timeout = wait_event_timeout(priv->wait,
-+		time_left = wait_event_timeout(priv->wait,
- 					     rcar_i2c_flags_has(priv, ID_DONE),
- 					     adap->timeout);
--		if (!timeout) {
-+		if (!time_left) {
-+			rcar_i2c_init(priv);
- 			ret = -ETIMEDOUT;
- 			break;
- 		}
-@@ -656,7 +642,6 @@ static int rcar_i2c_probe(struct platfor
- 
- 	irq = platform_get_irq(pdev, 0);
- 	init_waitqueue_head(&priv->wait);
--	spin_lock_init(&priv->lock);
- 
- 	adap = &priv->adap;
- 	adap->nr = pdev->id;
+	00: 0000000000000000 - 00000000fedfffff
+	01: 00000000fef00000 - 01ffffffffffffff
+
+If I try to assign the previously assignable 00:02.0 IGD graphics
+device, I get:
+
+	00: 0000000000000000 - 00000000bf7fffff
+	01: 00000000cfa00000 - 00000000fedfffff
+	02: 00000000fef00000 - 01ffffffffffffff
+
+And we get a fault when QEMU tries the following mapping:
+
+vfio_dma_map(0x55f790421a20, 0x100000, 0xbff00000, 0x7ff163f00000)
+
+bff00000 clearly extends into the gap starting at bf800000.  VT-d is
+rather split-brained about RMRRs, typically we'd exclude devices from
+assignment at all for relying on RMRRs and these reserved ranges
+would be a welcome mechanism to avoid conflicts with those ranges, but
+for RMRR ranges covering IGD and USB devices we've decided that we
+don't need to honor the RMRR (see device_is_rmrr_locked()), but it's
+still listed as a reserved range and bites us here.
+
+Unless we can get VT-d to exclude RMRRs from reserved regions where
+we've already seen fit to allow the devices to participate in the IOMMU
+API, this would introduce a functional regression for assignment of
+these devices.  David, should we skip GFX and USB devices with RMRRs in
+intel_iommu_get_resv_regions() just as we do in
+device_is_rmrr_locked()?  Thanks,
+
+Alex
