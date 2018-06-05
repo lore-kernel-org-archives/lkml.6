@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753044AbeFESBt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 14:01:49 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:46483 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752969AbeFESBl (ORCPT
+        id S1752976AbeFESCL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 14:02:11 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:39534 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752880AbeFESBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 14:01:41 -0400
-X-Google-Smtp-Source: ADUXVKKdqvVekonHLzIlcwvMK8SkE3xNuL6KHcBwJ5zGvCjPiCDB+H7v1rQAHvCLR0J+CFj4xNtwfw==
+        Tue, 5 Jun 2018 14:01:38 -0400
+X-Google-Smtp-Source: ADUXVKKL1KSGwnPgz+4FjOu0m4+803h+d/LAVG6dv5p8/MMVlAPNaIQ/9CO7SPr7FouTriQsoqsdeg==
 From: Tejun Heo <tj@kernel.org>
 To: axboe@kernel.dk
 Cc: michaelcallahan@fb.com, newella@fb.com, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel-team@fb.com,
         Tejun Heo <tj@kernel.org>
-Subject: [PATCH 6/6] blkcg: Track DISCARD statistics and output them in cgroup io.stat
-Date: Tue,  5 Jun 2018 11:01:20 -0700
-Message-Id: <20180605180120.2726113-7-tj@kernel.org>
+Subject: [PATCH 5/6] block: Track DISCARD statistics and output them in stat and diskstat
+Date: Tue,  5 Jun 2018 11:01:19 -0700
+Message-Id: <20180605180120.2726113-6-tj@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180605180120.2726113-1-tj@kernel.org>
 References: <20180605180120.2726113-1-tj@kernel.org>
@@ -23,124 +23,243 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add tracking of REQ_OP_DISCARD ios to the per-cgroup io.stat.  Two
-fields, dbytes and dios, to respectively count the total bytes and
-number of discards are added.
+From: Michael Callahan <michaelcallahan@fb.com>
 
+Add tracking of REQ_OP_DISCARD ios to the partition statistics and
+append them to the various stat files in /sys as well as
+/proc/diskstats.  These are tracked with the same four stats as reads
+and writes:
+
+Number of discard ios completed.
+Number of discard ios merged
+Number of discard sectors completed
+Milliseconds spent on discard requests
+
+This is done via adding a new STAT_DISCARD define to genhd.h and then
+using it to index that stat field for discard requests.
+
+tj: Refreshed on top of v4.17 and other previous updates.
+
+Signed-off-by: Michael Callahan <michaelcallahan@fb.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Cc: Andy Newell <newella@fb.com>
-Cc: Michael Callahan <michaelcallahan@fb.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 10 ++++++----
- block/blk-cgroup.c                      | 14 ++++++++++----
- include/linux/blk-cgroup.h              |  5 ++++-
- 3 files changed, 20 insertions(+), 9 deletions(-)
+ Documentation/ABI/testing/procfs-diskstats | 10 ++++++++++
+ Documentation/block/stat.txt               | 28 ++++++++++++++++------------
+ Documentation/iostats.txt                  | 15 +++++++++++++++
+ block/genhd.c                              | 13 ++++++++++---
+ block/partition-generic.c                  |  9 +++++++--
+ include/linux/blk_types.h                  |  8 ++++++++
+ include/linux/genhd.h                      |  3 ++-
+ 7 files changed, 68 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 74cdeae..7f7a161 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1263,17 +1263,19 @@ IO Interface Files
- 	Lines are keyed by $MAJ:$MIN device numbers and not ordered.
- 	The following nested keys are defined.
+diff --git a/Documentation/ABI/testing/procfs-diskstats b/Documentation/ABI/testing/procfs-diskstats
+index f91a973..abac31d 100644
+--- a/Documentation/ABI/testing/procfs-diskstats
++++ b/Documentation/ABI/testing/procfs-diskstats
+@@ -5,6 +5,7 @@ Contact:	Jerome Marchand <jmarchan@redhat.com>
+ 		The /proc/diskstats file displays the I/O statistics
+ 		of block devices. Each line contains the following 14
+ 		fields:
++
+ 		 1 - major number
+ 		 2 - minor mumber
+ 		 3 - device name
+@@ -19,4 +20,13 @@ Contact:	Jerome Marchand <jmarchan@redhat.com>
+ 		12 - I/Os currently in progress
+ 		13 - time spent doing I/Os (ms)
+ 		14 - weighted time spent doing I/Os (ms)
++
++		Kernel 4.18+ appends four more fields for discard
++		tracking putting the total at 18:
++
++		15 - discards completed successfully
++		16 - discards merged
++		17 - sectors discarded
++		18 - time spent discarding
++
+ 		For more details refer to Documentation/iostats.txt
+diff --git a/Documentation/block/stat.txt b/Documentation/block/stat.txt
+index 0dbc946..0aace9c 100644
+--- a/Documentation/block/stat.txt
++++ b/Documentation/block/stat.txt
+@@ -31,28 +31,32 @@ write ticks     milliseconds  total wait time for write requests
+ in_flight       requests      number of I/Os currently in flight
+ io_ticks        milliseconds  total time this block device has been active
+ time_in_queue   milliseconds  total wait time for all requests
++discard I/Os    requests      number of discard I/Os processed
++discard merges  requests      number of discard I/Os merged with in-queue I/O
++discard sectors sectors       number of sectors discarded
++discard ticks   milliseconds  total wait time for discard requests
  
--	  ======	===================
-+	  ======	=====================
- 	  rbytes	Bytes read
- 	  wbytes	Bytes written
- 	  rios		Number of read IOs
- 	  wios		Number of write IOs
--	  ======	===================
-+	  dbytes	Bytes discarded
-+	  dios		Number of discard IOs
-+	  ======	=====================
+-read I/Os, write I/Os
+-=====================
++read I/Os, write I/Os, discard I/0s
++===================================
  
- 	An example read output follows:
+ These values increment when an I/O request completes.
  
--	  8:16 rbytes=1459200 wbytes=314773504 rios=192 wios=353
--	  8:0 rbytes=90430464 wbytes=299008000 rios=8950 wios=1252
-+	  8:16 rbytes=1459200 wbytes=314773504 rios=192 wios=353 dbytes=0 dios=0
-+	  8:0 rbytes=90430464 wbytes=299008000 rios=8950 wios=1252 dbytes=50331648 dios=3021
+-read merges, write merges
+-=========================
++read merges, write merges, discard merges
++=========================================
  
-   io.weight
- 	A read-write flat-keyed file which exists on non-root cgroups.
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index eb85cb8..513d1ea 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -564,6 +564,7 @@ u64 __blkg_prfill_rwstat(struct seq_file *sf, struct blkg_policy_data *pd,
- 		[BLKG_RWSTAT_WRITE]	= "Write",
- 		[BLKG_RWSTAT_SYNC]	= "Sync",
- 		[BLKG_RWSTAT_ASYNC]	= "Async",
-+		[BLKG_RWSTAT_DISCARD]	= "Discard",
- 	};
- 	const char *dname = blkg_dev_name(pd->blkg);
- 	u64 v;
-@@ -577,7 +578,8 @@ u64 __blkg_prfill_rwstat(struct seq_file *sf, struct blkg_policy_data *pd,
- 			   (unsigned long long)atomic64_read(&rwstat->aux_cnt[i]));
+ These values increment when an I/O request is merged with an
+ already-queued I/O request.
  
- 	v = atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_READ]) +
--		atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_WRITE]);
-+		atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_WRITE]) +
-+		atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_DISCARD]);
- 	seq_printf(sf, "%s Total %llu\n", dname, (unsigned long long)v);
- 	return v;
- }
-@@ -955,7 +957,7 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
- 	hlist_for_each_entry_rcu(blkg, &blkcg->blkg_list, blkcg_node) {
- 		const char *dname;
- 		struct blkg_rwstat rwstat;
--		u64 rbytes, wbytes, rios, wios;
-+		u64 rbytes, wbytes, rios, wios, dbytes, dios;
+-read sectors, write sectors
+-===========================
++read sectors, write sectors, discard_sectors
++============================================
  
- 		dname = blkg_dev_name(blkg);
- 		if (!dname)
-@@ -967,17 +969,21 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
- 					offsetof(struct blkcg_gq, stat_bytes));
- 		rbytes = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_READ]);
- 		wbytes = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_WRITE]);
-+		dbytes = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_DISCARD]);
+-These values count the number of sectors read from or written to this
+-block device.  The "sectors" in question are the standard UNIX 512-byte
+-sectors, not any device- or filesystem-specific block size.  The
+-counters are incremented when the I/O completes.
++These values count the number of sectors read from, written to, or
++discarded from this block device.  The "sectors" in question are the
++standard UNIX 512-byte sectors, not any device- or filesystem-specific
++block size.  The counters are incremented when the I/O completes.
  
- 		rwstat = blkg_rwstat_recursive_sum(blkg, NULL,
- 					offsetof(struct blkcg_gq, stat_ios));
- 		rios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_READ]);
- 		wios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_WRITE]);
-+		dios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_DISCARD]);
+-read ticks, write ticks
+-=======================
++read ticks, write ticks, discard ticks
++======================================
  
- 		spin_unlock_irq(blkg->q->queue_lock);
+ These values count the number of milliseconds that I/O requests have
+ waited on this block device.  If there are multiple I/O requests waiting,
+diff --git a/Documentation/iostats.txt b/Documentation/iostats.txt
+index 04d394a..49df45f 100644
+--- a/Documentation/iostats.txt
++++ b/Documentation/iostats.txt
+@@ -31,6 +31,9 @@ and so should not differ.
+       3    0   hda 446216 784926 9550688 4382310 424847 312726 5922052 19310380 0 3376340 23705160
+       3    1   hda1 35486 38030 38030 38030
  
- 		if (rbytes || wbytes || rios || wios)
--			seq_printf(sf, "%s rbytes=%llu wbytes=%llu rios=%llu wios=%llu\n",
--				   dname, rbytes, wbytes, rios, wios);
-+			seq_printf(sf, "%s rbytes=%llu wbytes=%llu "
-+				   "rios=%llu wios=%llu dbytes=%llu dios=%llu\n",
-+				   dname, rbytes, wbytes, rios, wios,
-+				   dbytes, dios);
++   4.18+ diskstats:
++      3    0   hda 446216 784926 9550688 4382310 424847 312726 5922052 19310380 0 3376340 23705160 0 0 0 0
++
+ On 2.4 you might execute ``grep 'hda ' /proc/partitions``. On 2.6+, you have
+ a choice of ``cat /sys/block/hda/stat`` or ``grep 'hda ' /proc/diskstats``.
+ 
+@@ -101,6 +104,18 @@ Field 11 -- weighted # of milliseconds spent doing I/Os
+     last update of this field.  This can provide an easy measure of both
+     I/O completion time and the backlog that may be accumulating.
+ 
++Field 12 -- # of discards completed
++    This is the total number of discards completed successfully.
++
++Field 13 -- # of discards merged
++    See the description of field 2
++
++Field 14 -- # of sectors discarded
++    This is the total number of sectors discarded successfully.
++
++Field 15 -- # of milliseconds spent discarding
++    This is the total number of milliseconds spent by all discards (as
++    measured from __make_request() to end_that_request_last()).
+ 
+ To avoid introducing performance bottlenecks, no locks are held while
+ modifying these counters.  This implies that minor inaccuracies may be
+diff --git a/block/genhd.c b/block/genhd.c
+index 0711a80..8cc719a3 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -1333,8 +1333,11 @@ static int diskstats_show(struct seq_file *seqf, void *v)
+ 		part_round_stats(gp->queue, cpu, hd);
+ 		part_stat_unlock();
+ 		part_in_flight(gp->queue, hd, inflight);
+-		seq_printf(seqf, "%4d %7d %s %lu %lu %lu "
+-			   "%u %lu %lu %lu %u %u %u %u\n",
++		seq_printf(seqf, "%4d %7d %s "
++			   "%lu %lu %lu %u "
++			   "%lu %lu %lu %u "
++			   "%u %u %u "
++			   "%lu %lu %lu %u\n",
+ 			   MAJOR(part_devt(hd)), MINOR(part_devt(hd)),
+ 			   disk_name(gp, hd->partno, buf),
+ 			   part_stat_read(hd, ios[STAT_READ]),
+@@ -1347,7 +1350,11 @@ static int diskstats_show(struct seq_file *seqf, void *v)
+ 			   jiffies_to_msecs(part_stat_read(hd, ticks[STAT_WRITE])),
+ 			   inflight[0],
+ 			   jiffies_to_msecs(part_stat_read(hd, io_ticks)),
+-			   jiffies_to_msecs(part_stat_read(hd, time_in_queue))
++			   jiffies_to_msecs(part_stat_read(hd, time_in_queue)),
++			   part_stat_read(hd, ios[STAT_DISCARD]),
++			   part_stat_read(hd, merges[STAT_DISCARD]),
++			   part_stat_read(hd, sectors[STAT_DISCARD]),
++			   jiffies_to_msecs(part_stat_read(hd, ticks[STAT_DISCARD]))
+ 			);
  	}
+ 	disk_part_iter_exit(&piter);
+diff --git a/block/partition-generic.c b/block/partition-generic.c
+index 0ddb067..5a8975a 100644
+--- a/block/partition-generic.c
++++ b/block/partition-generic.c
+@@ -130,7 +130,8 @@ ssize_t part_stat_show(struct device *dev,
+ 	return sprintf(buf,
+ 		"%8lu %8lu %8llu %8u "
+ 		"%8lu %8lu %8llu %8u "
+-		"%8u %8u %8u"
++		"%8u %8u %8u "
++		"%8lu %8lu %8llu %8u"
+ 		"\n",
+ 		part_stat_read(p, ios[STAT_READ]),
+ 		part_stat_read(p, merges[STAT_READ]),
+@@ -142,7 +143,11 @@ ssize_t part_stat_show(struct device *dev,
+ 		jiffies_to_msecs(part_stat_read(p, ticks[STAT_WRITE])),
+ 		inflight[0],
+ 		jiffies_to_msecs(part_stat_read(p, io_ticks)),
+-		jiffies_to_msecs(part_stat_read(p, time_in_queue)));
++		jiffies_to_msecs(part_stat_read(p, time_in_queue)),
++		part_stat_read(p, ios[STAT_DISCARD]),
++		part_stat_read(p, merges[STAT_DISCARD]),
++		(unsigned long long)part_stat_read(p, sectors[STAT_DISCARD]),
++		jiffies_to_msecs(part_stat_read(p, ticks[STAT_DISCARD])));
+ }
  
- 	rcu_read_unlock();
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 6c666fd..bdb5c58d 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -35,6 +35,7 @@ enum blkg_rwstat_type {
- 	BLKG_RWSTAT_WRITE,
- 	BLKG_RWSTAT_SYNC,
- 	BLKG_RWSTAT_ASYNC,
-+	BLKG_RWSTAT_DISCARD,
+ ssize_t part_inflight_show(struct device *dev, struct device_attribute *attr,
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 698890a..6d72eb2 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -361,6 +361,7 @@ enum req_flag_bits {
+ enum stat_group {
+ 	STAT_READ,
+ 	STAT_WRITE,
++	STAT_DISCARD,
  
- 	BLKG_RWSTAT_NR,
- 	BLKG_RWSTAT_TOTAL = BLKG_RWSTAT_NR,
-@@ -589,7 +590,9 @@ static inline void blkg_rwstat_add(struct blkg_rwstat *rwstat,
+ 	NR_STAT_GROUPS
+ };
+@@ -402,8 +403,15 @@ static inline bool op_is_sync(unsigned int op)
+ 		(op & (REQ_SYNC | REQ_FUA | REQ_PREFLUSH));
+ }
+ 
++static inline bool op_is_discard(unsigned int op)
++{
++	return (op & REQ_OP_MASK) == REQ_OP_DISCARD;
++}
++
+ static inline int op_stat_group(unsigned int op)
  {
- 	struct percpu_counter *cnt;
- 
--	if (op_is_write(op))
 +	if (op_is_discard(op))
-+		cnt = &rwstat->cpu_cnt[BLKG_RWSTAT_DISCARD];
-+	else if (op_is_write(op))
- 		cnt = &rwstat->cpu_cnt[BLKG_RWSTAT_WRITE];
- 	else
- 		cnt = &rwstat->cpu_cnt[BLKG_RWSTAT_READ];
++		return STAT_DISCARD;
+ 	return op_is_write(op);
+ }
+ 
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index a754454..5786442 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -356,7 +356,8 @@ static inline void free_part_stats(struct hd_struct *part)
+ 
+ #define part_stat_read_accum(part, field)				\
+ 	(part_stat_read(part, field[STAT_READ]) +			\
+-	 part_stat_read(part, field[STAT_WRITE]))
++	 part_stat_read(part, field[STAT_WRITE]) +			\
++	 part_stat_read(part, field[STAT_DISCARD]))
+ 
+ #define part_stat_add(cpu, part, field, addnd)	do {			\
+ 	__part_stat_add((cpu), (part), field, addnd);			\
 -- 
 2.9.5
