@@ -1,73 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeFEOLX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 10:11:23 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:55067 "EHLO vps0.lunn.ch"
+        id S1752169AbeFEOMH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 10:12:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:56550 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752380AbeFEOLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 10:11:21 -0400
-Date: Tue, 5 Jun 2018 16:11:14 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: davem@davemloft.net, hayeswang@realtek.com, hkallweit1@gmail.com,
-        romieu@fr.zoreil.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ryankao <ryankao@realtek.com>
-Subject: Re: [PATCH] r8169: Reinstate ALDPS and ASPM support
-Message-ID: <20180605141114.GC14873@lunn.ch>
-References: <20180605045812.17977-1-kai.heng.feng@canonical.com>
+        id S1752021AbeFEOMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 10:12:05 -0400
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>, Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 1/3] Revert "arm64: topology: divorce MC scheduling domain
+ from core_siblings"
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <CAMuHMdWJWj3a0MZgEi7VJTUJRNoeR+X3eoN8A-sW6fwimEr6Fg@mail.gmail.com>
+ <1528206938-2702-1-git-send-email-sudeep.holla@arm.com>
+ <CAMuHMdVPRLt34SUDsbbHvEG2OzvbJoT6id7Rb_2j32=zb1TuKg@mail.gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <36920292-9a04-9fe6-8a85-cc50b484dce5@arm.com>
+Date: Tue, 5 Jun 2018 15:12:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605045812.17977-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAMuHMdVPRLt34SUDsbbHvEG2OzvbJoT6id7Rb_2j32=zb1TuKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 12:58:12PM +0800, Kai-Heng Feng wrote:
-> This patch reinstate ALDPS and ASPM support on r8169.
-> 
-> On some Intel platforms, ASPM support on r8169 is the key factor to let
-> Package C-State achieve PC8. Without ASPM support, the deepest Package
-> C-State can hit is PC3. PC8 can save additional ~3W in comparison with
-> PC3.
-> 
-> This patch is from Realtek.
-> 
-> Fixes: e0c075577965 ("r8169: enable ALDPS for power saving")
-> Fixes: d64ec841517a ("r8169: enable internal ASPM and clock request settings")
-> 
-> Cc: Ryankao <ryankao@realtek.com>
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/net/ethernet/realtek/r8169.c | 190 +++++++++++++++++++++------
->  1 file changed, 151 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-> index 75dfac0248f4..a28ef20be221 100644
-> --- a/drivers/net/ethernet/realtek/r8169.c
-> +++ b/drivers/net/ethernet/realtek/r8169.c
-> @@ -319,6 +319,8 @@ static const struct pci_device_id rtl8169_pci_tbl[] = {
->  
->  MODULE_DEVICE_TABLE(pci, rtl8169_pci_tbl);
->  
-> +static int enable_aspm = 1;
-> +static int enable_aldps = 1;
->  static int use_dac = -1;
->  static struct {
->  	u32 msg_enable;
-> @@ -817,6 +819,10 @@ struct rtl8169_private {
->  
->  MODULE_AUTHOR("Realtek and the Linux r8169 crew <netdev@vger.kernel.org>");
->  MODULE_DESCRIPTION("RealTek RTL-8169 Gigabit Ethernet driver");
-> +module_param(enable_aspm, int, 0);
-> +MODULE_PARM_DESC(enable_aspm, "Enable ASPM");
-> +module_param(enable_aldps, int, 0);
-> +MODULE_PARM_DESC(enable_aldps, "Enable ALDPS");
 
-Hi Kai
 
-No module parameter please. Just turn it on by default. Assuming
-testing shows works.
+On 05/06/18 15:09, Geert Uytterhoeven wrote:
+> Hi Sudeep,
+> 
+> On Tue, Jun 5, 2018 at 3:55 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> This reverts commit 37c3ec2d810f87eac73822f76b30391a83bded19.
+>>
+>> Currently on ARM64 platforms, we don't update the CPU topology masks
+>> on each hotplug operation. However, the updates to cpu_coregroup_mask
+> 
+> I would add
+> 
+>     "leading to e.g. a system hang during system suspend."
+> 
+> to avoid people thinking this is purely a small bookkeeping issue without  any
+> percussions.
+> 
 
-	Andrew
+Sure, thanks. Sorry for missing that.
+
+-- 
+Regards,
+Sudeep
