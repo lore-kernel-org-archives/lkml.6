@@ -1,68 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeFEVUk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:20:40 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:39974 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbeFEVUj (ORCPT
+        id S1752246AbeFEVTy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:19:54 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:35063 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751635AbeFEVTx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:20:39 -0400
-X-Google-Smtp-Source: ADUXVKJZgB1S7loJ23Ar8V0+9NTgL1FHOw3ocB2Jbvw6q+TQEmmWTkGypESUVoLpLRHf4vzU3Om8ZBbZGVaXBftoWTQ=
+        Tue, 5 Jun 2018 17:19:53 -0400
+X-Google-Smtp-Source: ADUXVKI3s1/biCQidUZsGZ0AsDUNjC3IimMsk1RBIAzySBRnaVB0Ag/MgXNDYWt2+jOVERBH3QuA+dvMTg78QfdCf/c=
 MIME-Version: 1.0
-In-Reply-To: <20180605205841.15878-2-ross.zwisler@linux.intel.com>
-References: <20180605205841.15878-1-ross.zwisler@linux.intel.com> <20180605205841.15878-2-ross.zwisler@linux.intel.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 5 Jun 2018 14:20:38 -0700
-Message-ID: <CAPcyv4ipWTDP0dNeyUd2vba1GcYb61BQ-w2yWms8o8SeMtBiRA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] libnvdimm: don't flush power-fail protected CPU caches
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
+References: <20180529221625.33541-1-thgarnie@google.com> <20180529221625.33541-22-thgarnie@google.com>
+ <20180604161612.6d48d8d2@gandalf.local.home> <CAJcbSZG1dVBVeOjEDeTm4mwXS60wMi-5ej_FB+YyS7iwXoebOQ@mail.gmail.com>
+ <20180604174431.4aabfbf1@gandalf.local.home> <CAJcbSZGc7PjLTaoosZFPHpzfDGteE0fWrYS9g_GMBxMAegjfwQ@mail.gmail.com>
+In-Reply-To: <CAJcbSZGc7PjLTaoosZFPHpzfDGteE0fWrYS9g_GMBxMAegjfwQ@mail.gmail.com>
+From: Thomas Garnier <thgarnie@google.com>
+Date: Tue, 5 Jun 2018 14:19:40 -0700
+Message-ID: <CAJcbSZGDuJWuKKHkSi9N9iG12gzBQXawHtmmA4CtHPiP_uPRMA@mail.gmail.com>
+Subject: Re: [PATCH v4 21/27] x86/ftrace: Adapt function tracing for PIE support
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Guenter Roeck <linux@roeck-us.net>, nixiaoming <nixiaoming@huawei.com>,
+        James Hogan <jhogan@kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 1:58 PM, Ross Zwisler
-<ross.zwisler@linux.intel.com> wrote:
-> This commit:
+On Tue, Jun 5, 2018 at 9:56 AM Thomas Garnier <thgarnie@google.com> wrote:
 >
-> 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
+> On Mon, Jun 4, 2018 at 2:44 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Mon, 4 Jun 2018 14:06:03 -0700
+> > Thomas Garnier <thgarnie@google.com> wrote:
+> >
+> > > On Mon, Jun 4, 2018 at 1:16 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > >
+> > > > On Tue, 29 May 2018 15:15:22 -0700
+> > > > Thomas Garnier <thgarnie@google.com> wrote:
+> > > >
+> > > > > When using -fPIE/PIC with function tracing, the compiler generates a
+> > > > > call through the GOT (call *__fentry__@GOTPCREL). This instruction
+> > > > > takes 6 bytes instead of 5 on the usual relative call.
+> > > > >
+> > > > > If PIE is enabled, replace the 6th byte of the GOT call by a 1-byte nop
+> > > > > so ftrace can handle the previous 5-bytes as before.
+> > > > >
+> > > > > Position Independent Executable (PIE) support will allow to extend the
+> > > > > KASLR randomization range 0xffffffff80000000.
+> > > >
+> > > > I thought you were going to write a update to recordmcount.c to handle
+> > > > this at compile time?
+> > >
+> > > I can correctly calculate the start of the call instruction with
+> > > recordmcount (no need for addr-1) but I still need to handle the
+> > > different size of the instructions. I don't think I can completely
+> > > replace the GOT call with a relative call. Maybe I am missing
+> > > something on the way recordmcount is used? Should it replace all
+> > > mcount locations with a nop slide? Why is it done at runtime too then?
+> >
+> > Because we need to figure out the "ideal nop" thus we need to change it
+> > regardless.
 >
-> intended to make sure that deep flush was always available even on
-> platforms which support a power-fail protected CPU cache.  An unintended
-> side effect of this change was that we also lost the ability to skip
-> flushing CPU caches on those power-fail protected CPU cache.
+> I see what you mean looking at the different ideal_nops based on configurations.
 >
-> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Fixes: 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
-> ---
->  drivers/dax/super.c   | 20 +++++++++++++++++++-
->  drivers/nvdimm/pmem.c |  2 ++
->  include/linux/dax.h   |  9 +++++++++
->  3 files changed, 30 insertions(+), 1 deletion(-)
+> >
+> > We could have recordmcount.c replace everything with the default nop
+> > (I've thought of that before), and then we could update with the ideal
+> > nop at run time, if that helps with this.
 >
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index c2c46f96b18c..457e0bb6c936 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -152,6 +152,8 @@ enum dax_device_flags {
->         DAXDEV_ALIVE,
->         /* gate whether dax_flush() calls the low level flush routine */
->         DAXDEV_WRITE_CACHE,
-> +       /* only flush the CPU caches if they are not power fail protected */
-> +       DAXDEV_FLUSH_ON_SYNC,
->  };
->
->  /**
-> @@ -283,7 +285,8 @@ EXPORT_SYMBOL_GPL(dax_copy_from_iter);
->  void arch_wb_cache_pmem(void *addr, size_t size);
->  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
->  {
-> -       if (unlikely(!dax_write_cache_enabled(dax_dev)))
-> +       if (unlikely(!dax_write_cache_enabled(dax_dev)) ||
-> +                       !dax_flush_on_sync_enabled(dax_dev))
+> I don't think that's necessary. In proposed implementation of PIE,
+> kernel modules would not use a GOT call. In the current implementation
+> the __fentry__ call is always GOT based (6-bytes). I will simplify the
+> runtime implementation in the next patch set to just swap the expected
+> size and ideal_nop when PIE is enabled.
 
-This seems backwards. I think we should teach the pmem driver to still
-issue deep flush even when dax_write_cache_enabled() is false.
+Actually moving the logic from 5-bytes to 6-bytes is much more
+complicated, that's why I went with this approach before. I don't
+think it can be improved much more beyond creating a nop slide in
+mrecordcount but that's a different approach. I will clean-up the code
+a bit for the next iteration but that's about it. Let me know what you
+think.
+
+>
+> >
+> > -- Steve
+>
+>
+>
+> --
+> Thomas
+
+
+
+-- 
+Thomas
