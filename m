@@ -1,48 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751951AbeFEM3s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:29:48 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35109 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751685AbeFEM3r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:29:47 -0400
-X-Google-Smtp-Source: ADUXVKKPIwWc812VoIMXGynY3LBiTIx5/TIABFa8uT0Nhb9IGBvzLCSBUz6VP22KEF9LUqL26ppUvqCbXRUahM7J8ZE=
+        id S1751928AbeFEMbR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:31:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39182 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751642AbeFEMbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:31:16 -0400
+Date: Tue, 5 Jun 2018 14:28:29 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Ilya Matveychikov <matvejchikov@gmail.com>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ksys_mount: check for permissions before resource
+ allocation
+Message-ID: <20180605122829.y4vicefcfvzpqraw@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Ilya Matveychikov <matvejchikov@gmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+ <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
+ <20180605112641.GN30522@ZenIV.linux.org.uk>
+ <1E519BA2-4198-4255-BAE4-3125C59741A3@gmail.com>
+ <20180605115340.GO30522@ZenIV.linux.org.uk>
+ <0F38EDA5-DEC3-48A1-9375-47949C26DAE8@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <9ce783dc628699f02c45650c942f6735e93a18c4.camel@redhat.com>
-References: <1528200262-11834-1-git-send-email-laoar.shao@gmail.com> <9ce783dc628699f02c45650c942f6735e93a18c4.camel@redhat.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Tue, 5 Jun 2018 20:29:05 +0800
-Message-ID: <CALOAHbDLJjy-1s7Tyzwuc4WDz5qtqmoZRcKptj-7efo1E-22Vg@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/2] ipv4: replace ip_hdr() with skb->data for optimization
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>, David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0F38EDA5-DEC3-48A1-9375-47949C26DAE8@gmail.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 8:20 PM, Paolo Abeni <pabeni@redhat.com> wrote:
-> On Tue, 2018-06-05 at 08:04 -0400, Yafang Shao wrote:
->> In ip receive path, when ip header hasn't been pulled yet, ip_hdr() and
->> skb->data are pointing to the same byte.
->>
->> In ip output path, when ip header is just pushed, ip_hdr() and skb->data
->> are pointing to the same byte.
->>
->> As ip_hdr() is more expensive than using skb->data, so replace ip_hdr()
->> with skb->data in these situations for optimization.
->
-> IMHO this makes the code less readable and more error prone. Which kind
-> of performance improvement do you measure here?
->
+On Tue, Jun 05, 2018 at 04:07:15PM +0400, Ilya Matveychikov wrote:
+> > On Jun 5, 2018, at 3:53 PM, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> > On Tue, Jun 05, 2018 at 03:35:55PM +0400, Ilya Matveychikov wrote:
+> >>> On Jun 5, 2018, at 3:26 PM, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+> >>>>> On Jun 5, 2018, at 6:00 AM, Ilya Matveychikov <matvejchikov@gmail.com> wrote:
+> >>>>> Early check for mount permissions prevents possible allocation of 3
+> >>>>> pages from kmalloc() pool by unpriveledged user which can be used for
+> >>>>> spraying the kernel heap.
+> >>> 
+> >>> I'm sorry, but there are arseloads of unpriveleged syscalls that do the same,
+> >>> starting with read() from procfs files.  So what the hell does it buy?
+> >> 
+> >> Means that if all do the same shit no reason to fix it? Sounds weird...
+> > 
+> > Fix *what*?  You do realize that there's no permission checks to stop e.g.
+> > stat(2) from copying the pathname in, right?  With user-supplied contents,
+> > even...
+> > 
+> > If you depend upon preventing kmalloc'ed temporary allocations filled
+> > with user-supplied data, you are screwed, plain and simple.  It really can't
+> > be prevented, in a lot of ways that are much less exotic than mount(2).
+> > Most of syscall arguments are copied in, before we get any permission
+> > checks.  It does happen and it will happen - examining them while they are
+> > still in userland is a nightmare in a lot of respects, starting with
+> > security.
+> 
+> I agree that it’s impossible to completely avoid this kind of allocations
+> and examining data in user-land will be the bigger problem than copying
+> arguments to the kernel. But aside of that what’s wrong with the idea of
+> having the permission check before doing any kind of work?
 
-Correct the cc list.
+Isn't there some sysctl knob or config option to sanitize freed memory?
+I doubt that using kzfree everywhere unconditionally would be welcome,
+also would not scale as there are too many of them. This IMHO leaves
+only the build-time option for those willing to pay the performance hit.
 
-Hi Paolo,
+> BTW, sys_umount() has this check in the right place - before doing anything.
+> So, why not to have the same logic for mount/umount?
 
-There's a "+" opertaion in ip_hdr(),  using skb->data and avoid this operation.
-
-Thanks
-Yafang
+What if the check is not equivalent to the one done later? may_mount
+needs namespace, it will be available at umount time but not necessarily
+during mount due to the security hooks.
