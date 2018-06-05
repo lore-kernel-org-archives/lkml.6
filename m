@@ -1,78 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751729AbeFEIwK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:52:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34406 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751488AbeFEIwJ (ORCPT
+        id S1751824AbeFEIw3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:52:29 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55319 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751661AbeFEIw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:52:09 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] uvcvideo: Also validate buffers in BULK mode
-Date: Tue, 05 Jun 2018 11:52:19 +0300
-Message-ID: <2206409.jVpTcjFX6j@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180605002415.11421-1-nicolas.dufresne@collabora.com>
-References: <20180605002415.11421-1-nicolas.dufresne@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 5 Jun 2018 04:52:27 -0400
+X-Google-Smtp-Source: ADUXVKK7NLkEceoyt0CG4NLimeFA6NdpeCyLf2xK7PpfZt0zfzBSIZM27DcmKEUSuWAjXtawXDrSXg==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: khilman@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM64: dts: meson-gxl-s905x-p212: Add phy-supply for usb0
+Date: Tue,  5 Jun 2018 10:52:23 +0200
+Message-Id: <1528188743-12798-1-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+Like LibreTech-CC, the USB0 needs the 5V regulator to be enabled to power the
+devices on the P212 Reference Design based boards.
 
-Thank you for the patch.
+Fixes: b9f07cb4f41f ("ARM64: dts: meson-gxl-s905x-p212: enable the USB controller")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On Tuesday, 5 June 2018 03:24:15 EEST Nicolas Dufresne wrote:
-> Just like for ISOC, validate the decoded BULK buffer size when possible.
-> This avoids sending corrupted or partial buffers to userspace, which may
-> lead to application crash or run-time failure.
-> 
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> ---
->  drivers/media/usb/uvc/uvc_video.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c
-> b/drivers/media/usb/uvc/uvc_video.c index aa0082fe5833..46df4d01e31b 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -1307,8 +1307,10 @@ static void uvc_video_decode_bulk(struct urb *urb,
-> struct uvc_streaming *stream, if (stream->bulk.header_size == 0 &&
-> !stream->bulk.skip_payload) { do {
->  			ret = uvc_video_decode_start(stream, buf, mem, len);
-> -			if (ret == -EAGAIN)
-> +			if (ret == -EAGAIN) {
-> +				uvc_video_validate_buffer(stream, buf);
->  				uvc_video_next_buffers(stream, &buf, &meta_buf);
-
-Wouldn't it be simpler to move the uvc_video_validate_buffer() call to 
-uvc_video_next_buffers() ?
-
-> +			}
->  		} while (ret == -EAGAIN);
-> 
->  		/* If an error occurred skip the rest of the payload. */
-> @@ -1342,8 +1344,10 @@ static void uvc_video_decode_bulk(struct urb *urb,
-> struct uvc_streaming *stream, if (!stream->bulk.skip_payload && buf !=
-> NULL) {
->  			uvc_video_decode_end(stream, buf, stream->bulk.header,
->  				stream->bulk.payload_size);
-> -			if (buf->state == UVC_BUF_STATE_READY)
-> +			if (buf->state == UVC_BUF_STATE_READY) {
-> +				uvc_video_validate_buffer(stream, buf);
->  				uvc_video_next_buffers(stream, &buf, &meta_buf);
-> +			}
->  		}
-> 
->  		stream->bulk.header_size = 0;
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+index 0cfd701..a1b3101 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
+@@ -189,3 +189,10 @@
+ &usb0 {
+ 	status = "okay";
+ };
++
++&usb2_phy0 {
++	/*
++	 * HDMI_5V is also used as supply for the USB VBUS.
++	 */
++	phy-supply = <&hdmi_5v>;
++};
 -- 
-Regards,
-
-Laurent Pinchart
+2.7.4
