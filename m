@@ -1,98 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751625AbeFEIpQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:45:16 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36567 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751506AbeFEIpM (ORCPT
+        id S1751716AbeFEIpk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:45:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36672 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751495AbeFEIpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:45:12 -0400
-X-Google-Smtp-Source: ADUXVKL6JfewyLvE/dXrld+8UKfsEDPvjQGdenJs9Cxc6/et5upYOT+LANp1ZjcoEpN7unUIHYavzA==
-Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware
- device
-To: Tomasz Figa <tfiga@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        andy.gross@linaro.org, bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
- <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
- <CAAFQd5D39CkA=GucUs7YOHwsdj0gbk55BiY_gSvArY_RH4uDkg@mail.gmail.com>
- <2cf4f7e8-f9e6-d62b-45a8-2c348af4aafe@linaro.org>
- <CAAFQd5BFq+pdEpBmpw5QsO+m+fsAhexhqA_uJg1G39Mpv5E3HQ@mail.gmail.com>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <fd74c277-e8d3-a026-fbd2-914a029e8efe@linaro.org>
-Date: Tue, 5 Jun 2018 11:45:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 5 Jun 2018 04:45:38 -0400
+Date: Tue, 5 Jun 2018 14:15:30 +0530
+From: Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Stewart Smith <stewart@linux.vnet.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] cpuidle:powernv: Make the snooze timeout dynamic.
+Reply-To: ego@linux.vnet.ibm.com
+References: <1527768909-32637-1-git-send-email-ego@linux.vnet.ibm.com>
+ <87fu22bxlf.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BFq+pdEpBmpw5QsO+m+fsAhexhqA_uJg1G39Mpv5E3HQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87fu22bxlf.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18060508-0020-0000-0000-00000E198E2C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009133; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01042577; UDB=6.00533873; IPR=6.00821707;
+ MB=3.00021472; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-05 08:45:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060508-0021-0000-0000-000061C3491D
+Message-Id: <20180605084529.GA5656@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-05_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=970 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806050106
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc: Arnd
+Hello Michael,
 
-On 06/05/2018 07:08 AM, Tomasz Figa wrote:
-> On Mon, Jun 4, 2018 at 10:56 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> Hi Tomasz,
->>
->> On 06/04/2018 04:18 PM, Tomasz Figa wrote:
->>> Hi Vikash,
->>>
->>> On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
->>>> +static int __init venus_init(void)
->>>> +{
->>>> +       int ret;
->>>> +
->>>> +       ret = platform_driver_register(&qcom_video_firmware_driver);
->>>> +       if (ret)
->>>> +               return ret;
->>>
->>> Do we really need this firmware driver? As far as I can see, the
->>> approach used here should work even without any driver bound to the
->>> firmware device.
->>
->> We need device/driver bind because we need to call dma_configure() which
->> internally doing iommus sID parsing.
+On Mon, Jun 04, 2018 at 09:27:40PM +1000, Michael Ellerman wrote:
+> "Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
 > 
-> I can see some drivers calling of_dma_configure() directly:
-> https://elixir.bootlin.com/linux/latest/ident/of_dma_configure
+> > From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+> >
+> > The commit 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of
+> > snooze to deeper idle state") introduced a timeout for the snooze idle
+> > state so that it could be eventually be promoted to a deeper idle
+> > state. The snooze timeout value is static and set to the target
+> > residency of the next idle state, which would train the cpuidle
+> > governor to pick the next idle state eventually.
+> >
+> > The unfortunate side-effect of this is that if the next idle state(s)
+> > is disabled, the CPU will forever remain in snooze, despite the fact
+> > that the system is completely idle, and other deeper idle states are
+> > available.
 > 
-> I'm not sure if it's more elegant, but should at least require less code.
+> That sounds like a bug, I'll add?
+>
 
-I think that in this case of non-TZ where we do iommu mapping by hand we
-can use shared-dma-pool reserved memory see how venus_boot has been
-implemented in the beginning [1].
+Yes, this is a bug-fix for a customer scenario which we encountered
+recently.
 
-Arnd what do you think?
+> Fixes: 78eaa10f027c ("cpuidle: powernv/pseries: Auto-promotion of snooze to deeper idle state")
+> Cc: stable@vger.kernel.org # v4.2+
 
-Some background, we have a use-case where the memory for firmware needs
-to be mapped by the venus driver by hand instead of TZ firmware calls.
-I.e. we want to support both, iommu mapping from the driver and mapping
-done by TZ firmware. How we will differentiate what mapping (TZ or
-non-TZ) will be used is a separate issue.
+This patch applies cleanly from v4.13 onwards. Prior to that there are
+some (minor) conflicts.
+
+Should I spin a version separately for the prior stable versions ?
 
 > 
-> By the way, can we really assume that probe of firmware platform
-> device really completes before we call venus_boot()?
-
-I'd say we cannot.
-
--- 
-regards,
-Stan
-
-[1] https://lkml.org/lkml/2017/4/28/214
+> cheers
+> 
