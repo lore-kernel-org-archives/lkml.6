@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeFEQfp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 12:35:45 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37712 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751791AbeFEQfm (ORCPT
+        id S1752139AbeFEQfw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 12:35:52 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:43953 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751791AbeFEQfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 12:35:42 -0400
-X-Google-Smtp-Source: ADUXVKJVNQFURnivj3hruBgMDFvmEuT2ul4BIZluxG1+SwpJx7WwrAXpDMfBX1FwWeamqTUaPBiaoQ==
+        Tue, 5 Jun 2018 12:35:48 -0400
+X-Google-Smtp-Source: ADUXVKKNH6+WV8RoaMl3hODMpZrkfc6nAFUGn89XtmiHp8pDi3Qeg0d2ebSnym+1itNL2JIyweL/8g==
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: matthias.bgg@gmail.com, robh+dt@kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
@@ -16,9 +16,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
         daniel.thompson@linaro.org, amit.kucheria@linaro.org,
         manivannanece23@gmail.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 1/2] dt-bindings: arm: mediatek: Document Mediatek X20 Development Board
-Date: Tue,  5 Jun 2018 22:04:41 +0530
-Message-Id: <20180605163442.4812-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 2/2] arm64: dts: Add Mediatek X20 Development Board support
+Date: Tue,  5 Jun 2018 22:04:42 +0530
+Message-Id: <20180605163442.4812-3-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180605163442.4812-1-manivannan.sadhasivam@linaro.org>
 References: <20180605163442.4812-1-manivannan.sadhasivam@linaro.org>
@@ -26,27 +26,66 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document Mediatek X20 Development Board which is a 96Boards Consumer
-Edition platform based on MT6797 SoC.
+Add initial device tree support for Mediatek X20 Development Board
+based on MT6797 Deca core SoC. This board is one of the 96Boards
+Consumer Edition platform.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/mediatek.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/mediatek/Makefile         |  1 +
+ .../boot/dts/mediatek/mt6797-x20-dev.dts      | 33 +++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
-index 7d21ab37c19c..356df1ee11b9 100644
---- a/Documentation/devicetree/bindings/arm/mediatek.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek.txt
-@@ -47,6 +47,9 @@ Supported boards:
- - Evaluation board for MT6797(Helio X20):
-     Required root node properties:
-       - compatible = "mediatek,mt6797-evb", "mediatek,mt6797";
-+- Mediatek X20 Development Board:
-+    Required root node properties:
-+      - compatible = "archermind,mt6797-x20-dev", "mediatek,mt6797";
- - Reference board variant 1 for MT7622:
-     Required root node properties:
-       - compatible = "mediatek,mt7622-rfb1", "mediatek,mt7622";
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index ac17f60f998c..5b7fd6ad96e4 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -3,5 +3,6 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+new file mode 100644
+index 000000000000..2c09ca95d9e2
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for MediaTek X20 Development Board
++ *
++ * Copyright (C) 2018, Linaro Ltd.
++ *
++ */
++
++/dts-v1/;
++
++#include "mt6797.dtsi"
++
++/ {
++	model = "Mediatek X20 Development Board";
++	compatible = "archermind,mt6797-x20-dev", "mediatek,mt6797";
++
++	aliases {
++		serial0 = &uart1;
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x1e605000>;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart1 {
++	status = "okay";
++};
 -- 
 2.17.0
