@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752418AbeFERDQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:03:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60100 "EHLO mail.kernel.org"
+        id S1752455AbeFERDT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752271AbeFERDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:14 -0400
+        id S1752271AbeFERDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -14,9 +14,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Wolfram Sang <wsa@the-dreams.de>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH 4.4 17/37] i2c: rcar: remove unused IOERROR state
-Date: Tue,  5 Jun 2018 19:01:22 +0200
-Message-Id: <20180605170109.915139152@linuxfoundation.org>
+Subject: [PATCH 4.4 18/37] i2c: rcar: remove spinlock
+Date: Tue,  5 Jun 2018 19:01:23 +0200
+Message-Id: <20180605170109.978602376@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -34,7 +34,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 90f779e565bdc18dd4f79d81cf11f43a7266010b upstream.
+commit ff2316b87a336bff940939cd9fc56287ed48e578 upstream.
+
+After making sure to reinit the HW and clear interrupts in the timeout
+case, we know that interrupts are always disabled in the sections
+protected by the spinlock. Thus, we can simply remove it which is a
+preparation for further refactoring. While here, rename the timeout
+variable to time_left which is way more readable.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
@@ -43,28 +49,90 @@ Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-rcar.c |    6 ------
- 1 file changed, 6 deletions(-)
+ drivers/i2c/busses/i2c-rcar.c |   23 ++++-------------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
 --- a/drivers/i2c/busses/i2c-rcar.c
 +++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -94,7 +94,6 @@
- #define RCAR_IRQ_ACK_RECV	(~(MAT | MDR) & 0xFF)
+@@ -33,7 +33,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+-#include <linux/spinlock.h>
  
- #define ID_LAST_MSG	(1 << 0)
--#define ID_IOERROR	(1 << 1)
- #define ID_DONE		(1 << 2)
- #define ID_ARBLOST	(1 << 3)
- #define ID_NACK		(1 << 4)
-@@ -541,11 +540,6 @@ static int rcar_i2c_master_xfer(struct i
+ /* register offsets */
+ #define ICSCR	0x00	/* slave ctrl */
+@@ -110,7 +109,6 @@ struct rcar_i2c_priv {
+ 	struct i2c_msg	*msg;
+ 	struct clk *clk;
+ 
+-	spinlock_t lock;
+ 	wait_queue_head_t wait;
+ 
+ 	int pos;
+@@ -429,9 +427,6 @@ static irqreturn_t rcar_i2c_irq(int irq,
+ 	irqreturn_t result = IRQ_HANDLED;
+ 	u32 msr;
+ 
+-	/*-------------- spin lock -----------------*/
+-	spin_lock(&priv->lock);
+-
+ 	if (rcar_i2c_slave_irq(priv))
+ 		goto exit;
+ 
+@@ -478,9 +473,6 @@ out:
+ 	}
+ 
+ exit:
+-	spin_unlock(&priv->lock);
+-	/*-------------- spin unlock -----------------*/
+-
+ 	return result;
+ }
+ 
+@@ -490,9 +482,8 @@ static int rcar_i2c_master_xfer(struct i
+ {
+ 	struct rcar_i2c_priv *priv = i2c_get_adapdata(adap);
+ 	struct device *dev = rcar_i2c_priv_to_dev(priv);
+-	unsigned long flags;
+ 	int i, ret;
+-	long timeout;
++	long time_left;
+ 
+ 	pm_runtime_get_sync(dev);
+ 
+@@ -507,9 +498,6 @@ static int rcar_i2c_master_xfer(struct i
  			break;
  		}
  
--		if (rcar_i2c_flags_has(priv, ID_IOERROR)) {
--			ret = -EIO;
--			break;
--		}
+-		/*-------------- spin lock -----------------*/
+-		spin_lock_irqsave(&priv->lock, flags);
 -
- 		ret = i + 1; /* The number of transfer */
- 	}
- out:
+ 		/* init each data */
+ 		priv->msg	= &msgs[i];
+ 		priv->pos	= 0;
+@@ -519,13 +507,11 @@ static int rcar_i2c_master_xfer(struct i
+ 
+ 		rcar_i2c_prepare_msg(priv);
+ 
+-		spin_unlock_irqrestore(&priv->lock, flags);
+-		/*-------------- spin unlock -----------------*/
+-
+-		timeout = wait_event_timeout(priv->wait,
++		time_left = wait_event_timeout(priv->wait,
+ 					     rcar_i2c_flags_has(priv, ID_DONE),
+ 					     adap->timeout);
+-		if (!timeout) {
++		if (!time_left) {
++			rcar_i2c_init(priv);
+ 			ret = -ETIMEDOUT;
+ 			break;
+ 		}
+@@ -656,7 +642,6 @@ static int rcar_i2c_probe(struct platfor
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	init_waitqueue_head(&priv->wait);
+-	spin_lock_init(&priv->lock);
+ 
+ 	adap = &priv->adap;
+ 	adap->nr = pdev->id;
