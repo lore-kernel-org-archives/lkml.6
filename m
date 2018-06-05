@@ -1,103 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752643AbeFEUjr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 16:39:47 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50091 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751950AbeFEUjo (ORCPT
+        id S1752496AbeFEUj2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 16:39:28 -0400
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:49480
+        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751999AbeFEUjB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:39:44 -0400
-Date: Tue, 5 Jun 2018 22:39:41 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for
- pcal6524
-Message-ID: <20180605203941.GA28143@amd>
-References: <cover.1526533188.git.hns@goldelico.com>
- <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com>
- <20180523140635.GB27215@amd>
- <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 5 Jun 2018 16:39:01 -0400
+x-originating-ip: 107.180.71.197
+From: kys@linuxonhyperv.com
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, sthemmin@microsoft.com,
+        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 8/8] Tools: hv: vss: fix loop device detection
+Date: Tue,  5 Jun 2018 13:37:56 -0700
+Message-Id: <20180605203756.29809-8-kys@linuxonhyperv.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605203756.29809-1-kys@linuxonhyperv.com>
+References: <20180605203536.29751-1-kys@linuxonhyperv.com>
+ <20180605203756.29809-1-kys@linuxonhyperv.com>
+Reply-To: kys@microsoft.com
+X-CMAE-Envelope: MS4wfBmPPXvR3AC73sWWSmoXjypNo3+5mZlASFGBmTxJXdkYZ46NrqUmluAu0+sbeDEibEfhlF7ezv7JJVuWqRU5QMs1li0vZBLLo8Kj5YZljCjiUM1yiTi0
+ +Ldd/VwBSuEyx3T0Rf3eUubo6qvqZDUmmCB8IxMyy7JNpQW9LjpKE6S1UWDVIvAIhR96+waG8cGTdEH1rAX3xl3Bz+BrbVR0blVX4cPpB55BBwYWrlXqd2FO
+ OzXs+RdXGLdOOPNGu4k9YR2rVhSv5Q7i0d43qOEYhtluGVkvRPs4/T3p6cf7EalL8ytQQFbRQhZe1M7aNFZrpll3iw90UmcqkKK7La/4Mkpsbovlj9kS/5VN
+ 43VKfb03UJeZRq7rK6jsJDxPsrWNFamSF9MX1YXATZgM7Ad7QgVfiFrD8Z2FZeOHsD7zeiwVZo93JTM3OYRhosoaAUL9VrlznYafLuL9yTtfP4RkB9NBIQql
+ sXc3/6WeSv0iAalfupgDJWzxbEbWljQIqWpSy/ie1UNcReirnjaUPsciMteQCol7dPxjB/M0STOWmJy9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit ea81fdf0981d ("Tools: hv: vss: Skip freezing filesystems backed by
+loop") added skip for filesystems backed by loop device. However, it seems
+the detection of such cases is incomplete.
 
-On Tue 2018-06-05 18:37:21, Andy Shevchenko wrote:
-> On Wed, May 23, 2018 at 5:06 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> > On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
-> >> The register constants are so far defined in a way that they fit
-> >> for the pcal9555a when shifted by the number of banks, i.e. are
-> >> multiplied by 2 in the accessor function.
-> >>
-> >> Now, the pcal6524 has 3 banks which means the relative offset
-> >> is multiplied by 4 for the standard registers.
-> >>
-> >> Simply applying the bit shift to the extended registers gives
-> >> a wrong result, since the base offset is already included in
-> >> the offset.
-> >>
-> >> Therefore, we have to add code to the 24 bit accessor functions
-> >> that adjusts the register number for these exended registers.
-> >>
-> >> The formula finally used was developed and proposed by
-> >> Andy Shevchenko <andy.shevchenko@gmail.com>.
->=20
-> >>       int bank_shift =3D fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-> >> +     int addr =3D (reg & PCAL_GPIO_MASK) << bank_shift;
-> >> +     int pinctrl =3D (reg & PCAL_PINCTRL_MASK) << 1;
->=20
-> > Is this reasonable to do on each register access? Compiler will not be
-> > able to optimize out fls and shifts, right?
->=20
-> On modern CPUs fls() is one assembly command. OTOH, any proposal to do
-> this better?
->=20
-> What I can see is that bank_shift is invariant to the function, and
-> maybe cached.
+It was found that with 'devicemapper' storage driver docker creates the
+following chain:
 
-Yes, I thought that caching bank_shift might be good idea. I thought
-it was constant for given chip...
+NAME					MAJ:MIN
+loop0					7:0
+..docker-8:4-8473394-pool		253:0
+  ..docker-8:4-8473394-eac...		253:1
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+so when we're looking at the mounted device we see major '253' and not '7'.
 
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Solve the issue by walking /sys/dev/block/*/slaves chain and checking if
+there's a loop device somewhere.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Other than that, don't skip mountpoints silently when stat() fails. In case
+e.g. SELinux is failing stat we don't want to skip freezing everything
+without letting user know about the failure.
 
-iEYEARECAAYFAlsW9Q0ACgkQMOfwapXb+vLnsACfXGg75eku2hgA21L/7YAzxPdY
-nVUAnjrmbHRLIqtsz2vg2HQKeWmv0oei
-=E2tb
------END PGP SIGNATURE-----
+Fixes: ea81fdf0981d ("Tools: hv: vss: Skip freezing filesystems backed by loop")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+---
+ tools/hv/hv_vss_daemon.c | 65 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 61 insertions(+), 4 deletions(-)
 
---d6Gm4EdcadzBjdND--
+diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
+index 34031a297f02..b13300172762 100644
+--- a/tools/hv/hv_vss_daemon.c
++++ b/tools/hv/hv_vss_daemon.c
+@@ -36,6 +36,8 @@
+ #include <linux/hyperv.h>
+ #include <syslog.h>
+ #include <getopt.h>
++#include <stdbool.h>
++#include <dirent.h>
+ 
+ /* Don't use syslog() in the function since that can cause write to disk */
+ static int vss_do_freeze(char *dir, unsigned int cmd)
+@@ -68,6 +70,55 @@ static int vss_do_freeze(char *dir, unsigned int cmd)
+ 	return !!ret;
+ }
+ 
++static bool is_dev_loop(const char *blkname)
++{
++	char *buffer;
++	DIR *dir;
++	struct dirent *entry;
++	bool ret = false;
++
++	buffer = malloc(PATH_MAX);
++	if (!buffer) {
++		syslog(LOG_ERR, "Can't allocate memory!");
++		exit(1);
++	}
++
++	snprintf(buffer, PATH_MAX, "%s/loop", blkname);
++	if (!access(buffer, R_OK | X_OK)) {
++		ret = true;
++		goto free_buffer;
++	} else if (errno != ENOENT) {
++		syslog(LOG_ERR, "Can't access: %s; error:%d %s!",
++		       buffer, errno, strerror(errno));
++	}
++
++	snprintf(buffer, PATH_MAX, "%s/slaves", blkname);
++	dir = opendir(buffer);
++	if (!dir) {
++		if (errno != ENOENT)
++			syslog(LOG_ERR, "Can't opendir: %s; error:%d %s!",
++			       buffer, errno, strerror(errno));
++		goto free_buffer;
++	}
++
++	while ((entry = readdir(dir)) != NULL) {
++		if (strcmp(entry->d_name, ".") == 0 ||
++		    strcmp(entry->d_name, "..") == 0)
++			continue;
++
++		snprintf(buffer, PATH_MAX, "%s/slaves/%s", blkname,
++			 entry->d_name);
++		if (is_dev_loop(buffer)) {
++			ret = true;
++			break;
++		}
++	}
++	closedir(dir);
++free_buffer:
++	free(buffer);
++	return ret;
++}
++
+ static int vss_operate(int operation)
+ {
+ 	char match[] = "/dev/";
+@@ -75,6 +126,7 @@ static int vss_operate(int operation)
+ 	struct mntent *ent;
+ 	struct stat sb;
+ 	char errdir[1024] = {0};
++	char blkdir[23]; /* /sys/dev/block/XXX:XXX */
+ 	unsigned int cmd;
+ 	int error = 0, root_seen = 0, save_errno = 0;
+ 
+@@ -96,10 +148,15 @@ static int vss_operate(int operation)
+ 	while ((ent = getmntent(mounts))) {
+ 		if (strncmp(ent->mnt_fsname, match, strlen(match)))
+ 			continue;
+-		if (stat(ent->mnt_fsname, &sb) == -1)
+-			continue;
+-		if (S_ISBLK(sb.st_mode) && major(sb.st_rdev) == LOOP_MAJOR)
+-			continue;
++		if (stat(ent->mnt_fsname, &sb)) {
++			syslog(LOG_ERR, "Can't stat: %s; error:%d %s!",
++			       ent->mnt_fsname, errno, strerror(errno));
++		} else {
++			sprintf(blkdir, "/sys/dev/block/%d:%d",
++				major(sb.st_rdev), minor(sb.st_rdev));
++			if (is_dev_loop(blkdir))
++				continue;
++		}
+ 		if (hasmntopt(ent, MNTOPT_RO) != NULL)
+ 			continue;
+ 		if (strcmp(ent->mnt_type, "vfat") == 0)
+-- 
+2.17.1
