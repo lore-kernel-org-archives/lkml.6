@@ -1,382 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932098AbeFEWQJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 18:16:09 -0400
-Received: from mail02.ausil.us ([74.119.218.151]:34074 "EHLO mail.ausil.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932068AbeFEWQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 18:16:06 -0400
-From: Dennis Gilmore <dennis@ausil.us>
-To: linux-kernel@vger.kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
-        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        aditya@kobol.io, gauthier@kobol.io
-Cc: Dennis Gilmore <dennis@ausil.us>
-Subject: [PATCH V4] ARM: dts: armada388-helios4
-Date: Tue,  5 Jun 2018 17:15:45 -0500
-Message-Id: <20180605221545.32257-1-dennis@ausil.us>
-X-Mailer: git-send-email 2.17.1
+        id S1752635AbeFEWSk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 18:18:40 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41597 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752396AbeFEWSh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 18:18:37 -0400
+X-Google-Smtp-Source: ADUXVKKqloP2YJhNZZNJNuOKaqpbQbuK4QN6KDWYx5Ld4SccYKAAhNZzgy6xRRnWFWRvQFGuncy4Uwl3iupcIfdpXow=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <1528208105.3237.155.camel@linux.vnet.ibm.com>
+References: <20180604205455.2325754-1-stefanb@linux.vnet.ibm.com>
+ <20180604205455.2325754-5-stefanb@linux.vnet.ibm.com> <CAHC9VhRkkQ74tvqGrSuNX2RdeHz5N7eU03-yHmVsZg47TxFD0g@mail.gmail.com>
+ <1528208105.3237.155.camel@linux.vnet.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 5 Jun 2018 18:18:34 -0400
+Message-ID: <CAHC9VhSbdYOkcszy+emgPNWWtUc0LoWy8pPvov+qjubV7b_EjQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] ima: Differentiate auditing policy rules from
+ "audit" actions
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        sgrubb@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helios4 is a Armada388 based nas board designed by SolidRun and
-based on their SOM. It is sold by kobol.io the dts file came from
-https://raw.githubusercontent.com/armbian/build/master/patch/kernel/mvebu-default/95-helios4-device-tree.patch
-I added a SPDX license line to match the clearfog it says it was based
-on and a compatible line for "kobol,helios4"
+On Tue, Jun 5, 2018 at 10:15 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> Hi Paul,
+>
+> On Mon, 2018-06-04 at 20:21 -0400, Paul Moore wrote:
+>> On Mon, Jun 4, 2018 at 4:54 PM, Stefan Berger
+>> <stefanb@linux.vnet.ibm.com> wrote:
+>> > The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+>> > the IMA "audit" policy action.  This patch defines
+>> > AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+>> >
+>> > Since we defined a new message type we can now also pass the
+>> > audit_context and get an associated SYSCALL record. This now produces
+>> > the following records when parsing IMA policy's rules:
+>>
+>> Aaand now I see you included the current->audit_context pointer I
+>> mentioned in my comments for 3/4 ;)
+>>
+>> So basically this should be fine, although I should point out that you
+>> do not need to define a new message type to associate records
+>> together.  The fact that we don't associate all connected records is
+>> basically a bug.
+>>
+>> Anyway, patches 3/4 and 4/4 look good to me.  Considering this is
+>> likely going in during the *next* merge window, I would ask that you
+>> convert from "current->audit_context" to "audit_context()" as soon as
+>> this merge window closes.
+>>
+>> Thanks!
+>
+> Thanks, Paul.  I'd like to start queueing patches for the next open
+> window now, instead of scrambling later.  Can I add your Ack now, and
+> remember to make this change when rebasing?
 
-Signed-off-by: Dennis Gilmore <dennis@ausil.us>
+Sure, go ahead and add my ACK to both 3/4 and 4/4 as long as you
+double pinky swear you'll do the audit_context() fix-up during the
+merge :)
 
----
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-changes since first submission
-change solidrun to kobol in compatible line based on feedback
-
-changes since v2
-
-remove commented out nodes based on feedback
-
-changes since v3
-
-update copyright info for the dts based on a request from kobol
----
- arch/arm/boot/dts/Makefile               |   1 +
- arch/arm/boot/dts/armada-388-helios4.dts | 313 +++++++++++++++++++++++
- 2 files changed, 314 insertions(+)
- create mode 100644 arch/arm/boot/dts/armada-388-helios4.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 7e2424957809..490bfd586198 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1123,6 +1123,7 @@ dtb-$(CONFIG_MACH_ARMADA_38X) += \
- 	armada-388-clearfog-pro.dtb \
- 	armada-388-db.dtb \
- 	armada-388-gp.dtb \
-+	armada-388-helios4.dtb \
- 	armada-388-rd.dtb
- dtb-$(CONFIG_MACH_ARMADA_39X) += \
- 	armada-398-db.dtb
-diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
-new file mode 100644
-index 000000000000..705adfa8c680
---- /dev/null
-+++ b/arch/arm/boot/dts/armada-388-helios4.dts
-@@ -0,0 +1,313 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Device Tree file for Helios4
-+ * based on SolidRun Clearfog revision A1 rev 2.0 (88F6828)
-+ *
-+ *  Copyright (C) 2017 Aditya Prayoga <aditya@kobol.io>
-+ *
-+ */
-+
-+/dts-v1/;
-+#include "armada-388.dtsi"
-+#include "armada-38x-solidrun-microsom.dtsi"
-+
-+/ {
-+	model = "Helios4";
-+	compatible = "kobol,helios4", "marvell,armada388",
-+		"marvell,armada385", "marvell,armada380";
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x00000000 0x80000000>; /* 2 GB */
-+	};
-+
-+	aliases {
-+		/* So that mvebu u-boot can update the MAC addresses */
-+		ethernet1 = &eth0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	reg_12v: regulator-12v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "power_brick_12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_12v>;
-+	};
-+
-+	reg_5p0v_hdd: regulator-5v-hdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V_HDD";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		vin-supply = <&reg_12v>;
-+	};
-+
-+	reg_5p0v_usb: regulator-5v-usb {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB-PWR";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		enable-active-high;
-+		gpio = <&expander0 6 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&reg_12v>;
-+	};
-+
-+	system-leds {
-+		compatible = "gpio-leds";
-+		status-led {
-+			label = "helios4:green:status";
-+			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "on";
-+		};
-+
-+		fault-led {
-+			label = "helios4:red:fault";
-+			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
-+			default-state = "keep";
-+		};
-+	};
-+
-+	io-leds {
-+		compatible = "gpio-leds";
-+		sata1-led {
-+			label = "helios4:green:ata1";
-+			gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata1";
-+			default-state = "off";
-+		};
-+		sata2-led {
-+			label = "helios4:green:ata2";
-+			gpios = <&gpio1 18 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata2";
-+			default-state = "off";
-+		};
-+		sata3-led {
-+			label = "helios4:green:ata3";
-+			gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata3";
-+			default-state = "off";
-+		};
-+		sata4-led {
-+			label = "helios4:green:ata4";
-+			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "ata4";
-+			default-state = "off";
-+		};
-+		usb-led {
-+			label = "helios4:green:usb";
-+			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "usb-host";
-+			default-state = "off";
-+		};
-+	};
-+
-+	fan1: j10-pwm {
-+		compatible = "pwm-fan";
-+		pwms = <&gpio1 9 40000>;	/* Target freq:25 kHz */
-+	};
-+
-+	fan2: j17-pwm {
-+		compatible = "pwm-fan";
-+		pwms = <&gpio1 23 40000>;	/* Target freq:25 kHz */
-+	};
-+
-+	usb2_phy: usb2-phy {
-+		compatible = "usb-nop-xceiv";
-+		vbus-regulator = <&reg_5p0v_usb>;
-+	};
-+
-+	usb3_phy: usb3-phy {
-+		compatible = "usb-nop-xceiv";
-+	};
-+
-+	soc {
-+		internal-regs {
-+			i2c@11000 {
-+				clock-frequency = <400000>;
-+				pinctrl-0 = <&i2c0_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+
-+				/*
-+				 * PCA9655 GPIO expander, up to 1MHz clock.
-+				 *  0-Board Revision bit 0 #
-+				 *  1-Board Revision bit 1 #
-+				 *  5-USB3 overcurrent
-+				 *  6-USB3 power
-+				 */
-+				expander0: gpio-expander@20 {
-+					/*
-+					 * This is how it should be:
-+					 * compatible = "onnn,pca9655",
-+					 *	 "nxp,pca9555";
-+					 * but you can't do this because of
-+					 * the way I2C works.
-+					 */
-+					compatible = "nxp,pca9555";
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					reg = <0x20>;
-+					pinctrl-names = "default";
-+					pinctrl-0 = <&pca0_pins>;
-+					interrupt-parent = <&gpio0>;
-+					interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
-+					interrupt-controller;
-+					#interrupt-cells = <2>;
-+
-+					board_rev_bit_0 {
-+						gpio-hog;
-+						gpios = <0 GPIO_ACTIVE_LOW>;
-+						input;
-+						line-name = "board-rev-0";
-+					};
-+					board_rev_bit_1 {
-+						gpio-hog;
-+						gpios = <1 GPIO_ACTIVE_LOW>;
-+						input;
-+						line-name = "board-rev-1";
-+					};
-+					usb3_ilimit {
-+						gpio-hog;
-+						gpios = <5 GPIO_ACTIVE_HIGH>;
-+						input;
-+						line-name = "usb-overcurrent-status";
-+					};
-+				};
-+
-+				temp_sensor: temp@4c {
-+					compatible = "ti,lm75";
-+					reg = <0x4c>;
-+					vcc-supply = <&reg_3p3v>;
-+				};
-+			};
-+
-+			i2c@11100 {
-+				/*
-+				 * External I2C Bus for user peripheral
-+				 */
-+				clock-frequency = <400000>;
-+				pinctrl-0 = <&helios_i2c1_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+			};
-+
-+			sata@a8000 {
-+				status = "okay";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sata0: sata-port@0 {
-+					reg = <0>;
-+				};
-+
-+				sata1: sata-port@1 {
-+					reg = <1>;
-+				};
-+			};
-+
-+			sata@e0000 {
-+				status = "okay";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sata2: sata-port@0 {
-+					reg = <0>;
-+				};
-+
-+				sata3: sata-port@1 {
-+					reg = <1>;
-+				};
-+			};
-+
-+			spi@10680 {
-+				pinctrl-0 = <&spi1_pins
-+					     &microsom_spi1_cs_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+			};
-+
-+			sdhci@d8000 {
-+				bus-width = <4>;
-+				cd-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
-+				no-1-8-v;
-+				pinctrl-0 = <&helios_sdhci_pins
-+					     &helios_sdhci_cd_pins>;
-+				pinctrl-names = "default";
-+				status = "okay";
-+				vmmc = <&reg_3p3v>;
-+				wp-inverted;
-+			};
-+
-+			usb@58000 {
-+				usb-phy = <&usb2_phy>;
-+				status = "okay";
-+			};
-+
-+			usb3@f0000 {
-+				status = "okay";
-+			};
-+
-+			usb3@f8000 {
-+				status = "okay";
-+			};
-+
-+			pinctrl@18000 {
-+				pca0_pins: pca0-pins {
-+					marvell,pins = "mpp23";
-+					marvell,function = "gpio";
-+				};
-+				microsom_phy0_int_pins: microsom-phy0-int-pins {
-+					marvell,pins = "mpp18";
-+					marvell,function = "gpio";
-+				};
-+				helios_i2c1_pins: i2c1-pins {
-+					marvell,pins = "mpp26", "mpp27";
-+					marvell,function = "i2c1";
-+				};
-+				helios_sdhci_cd_pins: helios-sdhci-cd-pins {
-+					marvell,pins = "mpp20";
-+					marvell,function = "gpio";
-+				};
-+				helios_sdhci_pins: helios-sdhci-pins {
-+					marvell,pins = "mpp21", "mpp28",
-+						       "mpp37", "mpp38",
-+						       "mpp39", "mpp40";
-+					marvell,function = "sd0";
-+				};
-+				helios_led_pins: helios-led-pins {
-+					marvell,pins = "mpp24", "mpp25",
-+						       "mpp49", "mpp50",
-+						       "mpp52", "mpp53",
-+						       "mpp54";
-+					marvell,function = "gpio";
-+				};
-+				helios_fan_pins: helios-fan-pins {
-+					marvell,pins = "mpp41", "mpp43",
-+						       "mpp48", "mpp55";
-+					marvell,function = "gpio";
-+				};
-+				microsom_spi1_cs_pins: spi1-cs-pins {
-+					marvell,pins = "mpp59";
-+					marvell,function = "spi1";
-+				};
-+			};
-+		};
-+	};
-+};
 -- 
-2.17.1
+paul moore
+www.paul-moore.com
