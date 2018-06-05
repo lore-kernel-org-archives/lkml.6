@@ -1,208 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeFERCK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:02:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59146 "EHLO mail.kernel.org"
+        id S1752166AbeFER34 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:29:56 -0400
+Received: from mga05.intel.com ([192.55.52.43]:16179 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751819AbeFERCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:02:06 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/37] 4.4.136-stable review
-Date: Tue,  5 Jun 2018 19:01:05 +0200
-Message-Id: <20180605170108.884872354@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.136-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.136-rc1
-X-KernelTest-Deadline: 2018-06-07T17:01+00:00
+        id S1751764AbeFER3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:29:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
+   d="scan'208";a="64534862"
+Date: Tue, 5 Jun 2018 10:32:53 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, Yi L <yi.l.liu@linux.intel.com>,
+        Auger Eric <eric.auger@redhat.com>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v4 04/22] iommu/vt-d: add bind_pasid_table function
+Message-ID: <20180605103253.634ef8fd@jacob-builder>
+In-Reply-To: <1c1094e8-ecbb-7731-910c-59e4de1e5c70@arm.com>
+References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1523915351-54415-5-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20180417131047.0a9c310f@w520.home>
+        <AM4PR0802MB2369F739C91B630CA99B3D3BA3B40@AM4PR0802MB2369.eurprd08.prod.outlook.com>
+        <20180420164251.5245f822@jacob-builder>
+        <20180529140915.1f174689@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1911E59C4@SHSMSX101.ccr.corp.intel.com>
+        <20180529211746.74f1dd23@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1911E5F06@SHSMSX101.ccr.corp.intel.com>
+        <a07a0a0a-ebdd-c81a-7ed6-cff19e6078d7@arm.com>
+        <20180530125240.34e0e80c@jacob-builder>
+        <1c1094e8-ecbb-7731-910c-59e4de1e5c70@arm.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.136 release.
-There are 37 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Thu, 31 May 2018 10:09:46 +0100
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
 
-Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
-Anything received after that time might be too late.
+> On 30/05/18 20:52, Jacob Pan wrote:
+> >> However I think the model number should be added to
+> >> pasid_table_config. For one thing it gives us a simple
+> >> sanity-check, but it also tells which other fields are valid in
+> >> pasid_table_config. Arm-smmu-v3 needs at least two additional
+> >> 8-bit fields describing the PASID table format (number of levels
+> >> and PASID0 behaviour), which are written to device context tables
+> >> when installing the PASID table pointer.
+> >>  
+> > We had model number field in v2 of this patchset. My thought was
+> > that since the config info is meant to be generic, we shouldn't
+> > include model info. But I also think a simple sanity check can be
+> > useful, would that be sufficient to address Alex's concern? Of
+> > course we still need sysfs for more specific IOMMU features.
+> > 
+> > Would this work?
+> > enum pasid_table_model {
+> > 	PASID_TABLE_FORMAT_HOST,
+> > 	PASID_TABLE_FORMAT_ARM_1LVL,
+> > 	PASID_TABLE_FORMAT_ARM_2LVL,  
+> 
+> I'd rather use a single PASID_TABLE_FORMAT_ARM, because "2LVL" may be
+> further split into 2LVL_4k or 2LVL_64k leaf tables... I think it's
+> best if I add an arch-specific field in pasid_table_config for that,
+> and for the PASID0 configuration, when adding FORMAT_ARM in a future
+> patch
+> 
+sounds good. will only use PASID_TABLE_FORMAT_ARM.
+> > 	PASID_TABLE_FORMAT_AMD,
+> > 	PASID_TABLE_FORMAT_INTEL,
+> > };
+> > 
+> > /**
+> >  * PASID table data used to bind guest PASID table to the host
+> > IOMMU. This will
+> >  * enable guest managed first level page tables.
+> >  * @version: for future extensions and identification of the data
+> > format
+> >  * @bytes: size of this structure
+> >  * @model: PASID table format for different IOMMU models
+> >  * @base_ptr:	PASID table pointer
+> >  * @pasid_bits:	number of bits supported in the guest PASID
+> > table, must be less
+> >  *		or equal than the host supported PASID size.
+> >  */
+> > struct pasid_table_config {
+> > 	__u32 version;
+> > #define PASID_TABLE_CFG_VERSION_1 1
+> > 	__u32 bytes;  
+> 
+> "bytes" could be passed by VFIO as argument to bind_pasid_table, since
+> it can deduce it from argsz
+> 
+Are you suggesting we wrap this struct in a vfio struct with argsz? or
+we directly use this struct?
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.136-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
+I need to clarify how vfio will use this.
+- User program:
+struct pasid_table_config ptc = { .bytes = sizeof(ptc) };
+ptc.version = 1;
+ioctl(device, VFIO_DEVICE_BIND_PASID_TABLE, &ptc);
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.136-rc1
-
-David S. Miller <davem@davemloft.net>
-    sparc64: Fix build warnings with gcc 7.
-
-David S. Miller <davem@davemloft.net>
-    sparc64: Don't clibber fixed registers in __multi4.
-
-David S. Miller <davem@davemloft.net>
-    sparc64: Add __multi3 for gcc 7.x and later.
-
-Hugh Dickins <hughd@google.com>
-    mm: fix the NULL mapping case in __isolate_lru_page()
-
-Al Viro <viro@zeniv.linux.org.uk>
-    fix io_destroy()/aio_complete() race
-
-Arnd Bergmann <arnd@arndb.de>
-    Kbuild: change CC_OPTIMIZE_FOR_SIZE definition
-
-Ondrej Zary <linux@rainbow-software.org>
-    drm/i915: Disable LVDS on Radiant P845
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    hwtracing: stm: fix build error on some arches
-
-Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    stm class: Use vmalloc for the master map
-
-Bart Van Assche <bart.vanassche@wdc.com>
-    scsi: scsi_transport_srp: Fix shost to rport translation
-
-Maciej W. Rozycki <macro@mips.com>
-    MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
-
-Maciej W. Rozycki <macro@mips.com>
-    MIPS: ptrace: Fix PTRACE_PEEKUSR requests for 64-bit FGRs
-
-Martin Kelly <mkelly@xevo.com>
-    iio:kfifo_buf: check for uint overflow
-
-Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-    dmaengine: usb-dmac: fix endless loop in usb_dmac_chan_terminate_all()
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: revoke START request early
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: check master irqs before slave irqs
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: don't issue stop when HW does it automatically
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: init new messages in irq
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: refactor setup of a msg
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: remove spinlock
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: remove unused IOERROR state
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: rework hw init
-
-Wolfram Sang <wsa+renesas@sang-engineering.com>
-    i2c: rcar: make sure clocks are on when doing clock calculation
-
-Eric Dumazet <edumazet@google.com>
-    tcp: avoid integer overflows in tcp_rcv_space_adjust()
-
-Arnd Bergmann <arnd@arndb.de>
-    irda: fix overly long udelay()
-
-Colin Ian King <colin.king@canonical.com>
-    ASoC: Intel: sst: remove redundant variable dma_dev_name
-
-Matthias Kaehlcke <mka@chromium.org>
-    rtlwifi: rtl8192cu: Remove variable self-assignment in rf.c
-
-Eric Biggers <ebiggers@google.com>
-    cfg80211: further limit wiphy names to 64 bytes
-
-Sachin Grover <sgrover@codeaurora.org>
-    selinux: KASAN: slab-out-of-bounds in xattr_getsecurity
-
-Steven Rostedt (VMware) <rostedt@goodmis.org>
-    tracing: Fix crash when freeing instances with event triggers
-
-Benjamin Tissoires <benjamin.tissoires@redhat.com>
-    Input: elan_i2c_smbus - fix corrupted stack
-
-Mimi Zohar <zohar@linux.vnet.ibm.com>
-    Revert "ima: limit file hash setting by user to fix and log modes"
-
-Brian Foster <bfoster@redhat.com>
-    xfs: detect agfl count corruption and reset agfl
-
-Yoshinori Sato <ysato@users.sourceforge.jp>
-    sh: New gcc support
-
-Geert Uytterhoeven <geert@linux-m68k.org>
-    USB: serial: cp210x: use tcflag_t to fix incompatible pointer type
-
-Michael Neuling <mikey@neuling.org>
-    powerpc/64s: Clear PCR on boot
-
-Will Deacon <will.deacon@arm.com>
-    arm64: lse: Add early clobbers to some input/output asm operands
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/arm64/include/asm/atomic_lse.h                |  14 +-
- arch/mips/kernel/process.c                         |   4 +
- arch/mips/kernel/ptrace.c                          |   2 +-
- arch/mips/kernel/ptrace32.c                        |   2 +-
- arch/powerpc/kernel/cpu_setup_power.S              |   4 +
- arch/sh/kernel/sh_ksyms_32.c                       |   3 +
- arch/sh/lib/ashlsi3.S                              |  35 +++-
- arch/sh/lib/ashrsi3.S                              |  33 +++-
- arch/sh/lib/lshrsi3.S                              |  34 +++-
- arch/sparc/kernel/ds.c                             |   2 +-
- arch/sparc/lib/Makefile                            |   1 +
- arch/sparc/lib/multi3.S                            |  35 ++++
- drivers/dma/sh/usb-dmac.c                          |   4 +-
- drivers/gpu/drm/i915/intel_lvds.c                  |   8 +
- drivers/hwtracing/stm/core.c                       |   7 +-
- drivers/i2c/busses/i2c-rcar.c                      | 202 +++++++++------------
- drivers/iio/buffer/kfifo_buf.c                     |   7 +
- drivers/input/mouse/elan_i2c_smbus.c               |  22 +--
- drivers/net/irda/w83977af_ir.c                     |   4 +-
- .../net/wireless/realtek/rtlwifi/rtl8192cu/rf.c    |   3 -
- drivers/scsi/scsi_transport_srp.c                  |  22 ++-
- drivers/usb/serial/cp210x.c                        |   9 +-
- fs/aio.c                                           |   3 +-
- fs/xfs/libxfs/xfs_alloc.c                          |  94 ++++++++++
- fs/xfs/xfs_mount.h                                 |   1 +
- fs/xfs/xfs_trace.h                                 |   9 +-
- include/linux/tcp.h                                |   2 +-
- include/uapi/linux/nl80211.h                       |   2 +-
- init/Kconfig                                       |  13 ++
- kernel/trace/trace_events_trigger.c                |   5 +-
- mm/vmscan.c                                        |   2 +-
- net/ipv4/tcp_input.c                               |  10 +-
- security/integrity/ima/ima_appraise.c              |   8 +-
- security/selinux/ss/services.c                     |   2 +-
- sound/soc/intel/common/sst-firmware.c              |   2 -
- 36 files changed, 410 insertions(+), 204 deletions(-)
+- Kernel:
+minsz = offsetofend(struct pasid_table_config, pasid_bits);
+if (ptc.bytes < minsz)
+	return -EINVAL;
