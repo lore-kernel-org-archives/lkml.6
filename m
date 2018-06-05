@@ -1,56 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752937AbeFEREX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:04:23 -0400
-Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:59586 "EHLO
-        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752880AbeFEREU (ORCPT
+        id S1752309AbeFERXv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:23:51 -0400
+Received: from smtprelay0055.hostedemail.com ([216.40.44.55]:59289 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751786AbeFERXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:04:20 -0400
-Date: Tue, 5 Jun 2018 17:04:17 +0000
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Baoquan He <bhe@redhat.com>
-cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com, akpm@linux-foundation.org
-Subject: Re: [PATCH] slab: Clean up the code comment in slab kmem_cache
- struct
-In-Reply-To: <20180603032402.27526-1-bhe@redhat.com>
-Message-ID: <01000163d0e8083c-096b06d6-7202-4ce2-b41c-0f33784afcda-000000@email.amazonses.com>
-References: <20180603032402.27526-1-bhe@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.06.05-54.240.9.114
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+        Tue, 5 Jun 2018 13:23:49 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 
+X-HE-Tag: curve42_3d7667ba1630c
+X-Filterd-Recvd-Size: 4486
+Message-ID: <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
+Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline
+ declarations
+From: Joe Perches <joe@perches.com>
+To: Nick Desaulniers <ndesaulniers@google.com>, akpm@linux-foundation.org,
+        ard.biesheuvel@linaro.org, aryabinin@virtuozzo.com,
+        akataria@vmware.com, boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org, hpa@zytor.com,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
+        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
+        pombredanne@nexb.com, rostedt@goodmis.org, tglx@linutronix.de,
+        thomas.lendacky@amd.com, tweek@google.com
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com
+Date: Tue, 05 Jun 2018 10:23:40 -0700
+In-Reply-To: <20180605170532.170361-2-ndesaulniers@google.com>
+References: <20180605170532.170361-1-ndesaulniers@google.com>
+         <20180605170532.170361-2-ndesaulniers@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 3 Jun 2018, Baoquan He wrote:
+On Tue, 2018-06-05 at 10:05 -0700, Nick Desaulniers wrote:
+> Functions marked extern inline do not emit an externally visible
+> function when the gnu89 C standard is used. Some KBUILD Makefiles
+> overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
+> an explicit C standard specified, the default is gnu11. Since c99, the
+> semantics of extern inline have changed such that an externally visible
+> function is always emitted. This can lead to multiple definition errors
+> of extern inline functions at link time of compilation units whose build
+> files have removed an explicit C standard compiler flag for users of GCC
+> 5.1+ or Clang.
+[]
+> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+[]
+> @@ -72,17 +72,24 @@
+>   * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+>   * directives.  Suppress the warning in clang as well by using "unused"
+>   * function attribute, which is redundant but not harmful for gcc.
+> + * Prefer gnu_inline, so that extern inline functions do not emit an
+> + * externally visible function. This makes extern inline behave as per gnu89
+> + * semantics rather than c99. This prevents multiple symbol definition errors
+> + * of extern inline functions at link time.
+>   */
+>  #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
+>      !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+> -#define inline inline		__attribute__((always_inline,unused)) notrace
+> -#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
+> -#define __inline __inline	__attribute__((always_inline,unused)) notrace
+> +#define inline \
+> +	inline __attribute__((always_inline, unused, gnu_inline)) notrace
+> +#define __inline__ \
+> +	__inline__ __attribute__((always_inline, unused, gnu_inline)) notrace
+> +#define __inline \
+> +	__inline __attribute__((always_inline, unused, gnu_inline)) notrace
 
-> diff --git a/include/linux/slab_def.h b/include/linux/slab_def.h
-> index d9228e4d0320..3485c58cfd1c 100644
-> --- a/include/linux/slab_def.h
-> +++ b/include/linux/slab_def.h
-> @@ -67,9 +67,10 @@ struct kmem_cache {
->
->  	/*
->  	 * If debugging is enabled, then the allocator can add additional
-> -	 * fields and/or padding to every object. size contains the total
-> -	 * object size including these internal fields, the following two
-> -	 * variables contain the offset to the user object and its size.
-> +	 * fields and/or padding to every object. 'size' contains the total
-> +	 * object size including these internal fields, while 'obj_offset'
-> +	 * and 'object_size' contain the offset to the user object and its
-> +	 * size.
->  	 */
->  	int obj_offset;
->  #endif /* CONFIG_DEBUG_SLAB */
->
+Perhaps these are simpler as
 
-Wish we had some more consistent naming. object_size and obj_offset??? And
-the fields better be as close together as possible.
+#define __inline__	inline
+#define __inline	inline
 
+>  #else
+>  /* A lot of inline functions can cause havoc with function tracing */
+> -#define inline inline		__attribute__((unused)) notrace
+> -#define __inline__ __inline__	__attribute__((unused)) notrace
+> -#define __inline __inline	__attribute__((unused)) notrace
+> +#define inline inline		__attribute__((unused, gnu_inline)) notrace
+> +#define __inline__ __inline__	__attribute__((unused, gnu_inline)) notrace
+> +#define __inline __inline	__attribute__((unused, gnu_inline)) notrace
+>  #endif
 
-Acked-by: Christoph Lameter <cl@linux.com>
+And only set once along with:
+
+>  #define __always_inline	inline __attribute__((always_inline))
+
+And perhaps this __always_inline should be updated
+with gnu_inline as well
