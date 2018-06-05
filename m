@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752485AbeFERDW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:03:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60228 "EHLO mail.kernel.org"
+        id S1752339AbeFERDM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752454AbeFERDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:20 -0400
+        id S1752275AbeFERDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH 4.4 19/37] i2c: rcar: refactor setup of a msg
-Date: Tue,  5 Jun 2018 19:01:24 +0200
-Message-Id: <20180605170110.034307909@linuxfoundation.org>
+Subject: [PATCH 4.4 15/37] i2c: rcar: make sure clocks are on when doing clock calculation
+Date: Tue,  5 Jun 2018 19:01:20 +0200
+Message-Id: <20180605170109.802214595@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
 References: <20180605170108.884872354@linuxfoundation.org>
@@ -34,10 +35,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit b9d0684c79c4b9d30ce0d47d3270493dd0e76e59 upstream.
+commit e43e0df13f8528ca55ed79f469c4b2af897fa796 upstream.
 
-We want to reuse this function later.
+When calculating the bus speed, the clock should be on, of course. Most
+bootloaders left them on, so this went unnoticed so far.
 
+Move the ioremapping out of this clock-enabled-block and prepare for
+adding hw initialization there, too.
+
+Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
@@ -45,44 +51,68 @@ Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-rcar.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-rcar.c |   26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
 --- a/drivers/i2c/busses/i2c-rcar.c
 +++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -106,7 +106,8 @@ enum rcar_i2c_type {
- struct rcar_i2c_priv {
- 	void __iomem *io;
- 	struct i2c_adapter adap;
--	struct i2c_msg	*msg;
-+	struct i2c_msg *msg;
-+	int msgs_left;
- 	struct clk *clk;
+@@ -650,19 +650,23 @@ static int rcar_i2c_probe(struct platfor
+ 		return PTR_ERR(priv->clk);
+ 	}
  
- 	wait_queue_head_t wait;
-@@ -255,6 +256,11 @@ static void rcar_i2c_prepare_msg(struct
- {
- 	int read = !!rcar_i2c_is_recv(priv);
- 
-+	priv->pos = 0;
-+	priv->flags = 0;
-+	if (priv->msgs_left == 1)
-+		rcar_i2c_flags_set(priv, ID_LAST_MSG);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->io = devm_ioremap_resource(dev, res);
++	if (IS_ERR(priv->io))
++		return PTR_ERR(priv->io);
 +
- 	rcar_i2c_write(priv, ICMAR, (priv->msg->addr << 1) | read);
- 	rcar_i2c_write(priv, ICMSR, 0);
- 	rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_START);
-@@ -499,11 +505,8 @@ static int rcar_i2c_master_xfer(struct i
- 		}
+ 	bus_speed = 100000; /* default 100 kHz */
+ 	of_property_read_u32(dev->of_node, "clock-frequency", &bus_speed);
  
- 		/* init each data */
--		priv->msg	= &msgs[i];
--		priv->pos	= 0;
--		priv->flags	= 0;
--		if (i == num - 1)
--			rcar_i2c_flags_set(priv, ID_LAST_MSG);
-+		priv->msg = &msgs[i];
-+		priv->msgs_left = num - i;
+ 	priv->devtype = (enum rcar_i2c_type)of_match_device(rcar_i2c_dt_ids, dev)->data;
  
- 		rcar_i2c_prepare_msg(priv);
++	pm_runtime_enable(dev);
++	pm_runtime_get_sync(dev);
+ 	ret = rcar_i2c_clock_calculate(priv, bus_speed, dev);
+ 	if (ret < 0)
+-		return ret;
++		goto out_pm_put;
  
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->io = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(priv->io))
+-		return PTR_ERR(priv->io);
++	pm_runtime_put(dev);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	init_waitqueue_head(&priv->wait);
+@@ -682,22 +686,26 @@ static int rcar_i2c_probe(struct platfor
+ 			       dev_name(dev), priv);
+ 	if (ret < 0) {
+ 		dev_err(dev, "cannot get irq %d\n", irq);
+-		return ret;
++		goto out_pm_disable;
+ 	}
+ 
+-	pm_runtime_enable(dev);
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	ret = i2c_add_numbered_adapter(adap);
+ 	if (ret < 0) {
+ 		dev_err(dev, "reg adap failed: %d\n", ret);
+-		pm_runtime_disable(dev);
+-		return ret;
++		goto out_pm_disable;
+ 	}
+ 
+ 	dev_info(dev, "probed\n");
+ 
+ 	return 0;
++
++ out_pm_put:
++	pm_runtime_put(dev);
++ out_pm_disable:
++	pm_runtime_disable(dev);
++	return ret;
+ }
+ 
+ static int rcar_i2c_remove(struct platform_device *pdev)
