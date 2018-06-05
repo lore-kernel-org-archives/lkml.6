@@ -1,55 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeFEMVb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:21:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:34683 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751722AbeFEMV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:21:29 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe LEROY <christophe.leroy@c-s.fr>,
-        Michael Ellerman <patch-notifications@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, segher@kernel.crashing.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3] powerpc: fix build failure by disabling attribute-alias warning
-In-Reply-To: <0332913c-04c0-362f-313f-8d42099f168d@c-s.fr>
-References: <40zxgb4SmTz9s7c@ozlabs.org> <0332913c-04c0-362f-313f-8d42099f168d@c-s.fr>
-Date: Tue, 05 Jun 2018 22:21:27 +1000
-Message-ID: <87wovdmnjs.fsf@concordia.ellerman.id.au>
+        id S1751852AbeFEMZo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:25:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34102 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751696AbeFEMZn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 08:25:43 -0400
+Date: Tue, 5 Jun 2018 14:25:37 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 4/7] atomics: add common header generation files
+Message-ID: <20180605122537.GJ12258@hirez.programming.kicks-ass.net>
+References: <20180529180746.29684-1-mark.rutland@arm.com>
+ <20180529180746.29684-5-mark.rutland@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180529180746.29684-5-mark.rutland@arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> Le 04/06/2018 à 16:11, Michael Ellerman a écrit :
->> On Tue, 2018-05-29 at 16:06:41 UTC, Christophe Leroy wrote:
->>> Latest GCC version emit the following warnings
->>>
->>> As arch/powerpc code is built with -Werror, this breaks build with
->>> GCC 8.1
->>>
-....
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> 
->> Applied to powerpc next, thanks.
->> 
->> https://git.kernel.org/powerpc/c/2479bfc9bc600dcce7f932d52dcfa8
->
-> Oops, you didn't take v4 but v3 which was missing the fix into pci_32.c
+On Tue, May 29, 2018 at 07:07:43PM +0100, Mark Rutland wrote:
+> +++ b/scripts/atomic/atomics.tbl
+> @@ -0,0 +1,41 @@
+> +# name	meta	args...
+> +#
+> +# Where meta contains a string of variants to generate.
+> +# Upper-case implies _{acquire,release,relaxed} variants.
+> +# Valid meta values are:
+> +# * B/b	- bool: returns bool
+> +# * v	- void: returns void
+> +# * I/i	- int: returns base type
+> +# * R	- return: returns base type (has _return variants)
+> +# * F/f	- fetch: returns base type (has fetch_ variants)
+> +# * l	- load: returns base type (has _acquire order variant)
+> +# * s	- store: returns void (has _release order variant)
+> +#
+> +# Where args contains list of type[:name], where type is:
+> +# * cv	- const pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
+> +# * v	- pointer to atomic base type (atomic_t/atomic64_t/atomic_long_t)
+> +# * i	- base type (int/s64/long)
+> +# * I	- pointer to base type (int/s64/long)
 
-Yep sorry. I had v3 in my tree since a few days.
+I thought we agreed to make that 'p' instead of 'I'.
 
-If the patch is "Under Review" in patchwork that usually means I have it
-applied and am testing it. Although sometimes I forget :)
-
-> I'll send you a patch to add the fix in pci_32.c
-
-Thanks, applied.
-
-cheers
+> +#
+> +read			l	cv
+> +set			s	v	i
+> +add			vRF	i	v
+> +sub			vRF	i	v
+> +inc			vRF	v
+> +dec			vRF	v
+> +and			vF	i	v
+> +andnot			vF	i	v
+> +or			vF	i	v
+> +xor			vF	i	v
+> +xchg			I	v	i
+> +cmpxchg			I	v	i:old	i:new
+> +try_cmpxchg		B	v	I:old	i:new
+> +sub_and_test		b	i	v
+> +dec_and_test		b	v
+> +inc_and_test		b	v
+> +add_negative		b	i	v
+> +add_unless		fb	v	i:a	i:u
+> +inc_not_zero		b	v
+> +inc_unless_negative	b	v
+> +dec_unless_positive	b	v
+> +dec_if_positive		i	v
