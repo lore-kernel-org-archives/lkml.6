@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752625AbeFEVmy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:42:54 -0400
+        id S1752645AbeFEVn1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:43:27 -0400
 Received: from mga04.intel.com ([192.55.52.120]:37416 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752063AbeFEVmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752365AbeFEVmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 5 Jun 2018 17:42:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,479,1520924400";
-   d="scan'208";a="47023741"
+   d="scan'208";a="47023743"
 From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 To: lenb@kernel.org, rjw@rjwysocki.net, mgorman@techsingularity.net
 Cc: peterz@infradead.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
         viresh.kumar@linaro.org, ggherdovich@suse.cz,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 2/4] cpufreq: intel_pstate: HWP boost performance on IO wakeup
-Date: Tue,  5 Jun 2018 14:42:40 -0700
-Message-Id: <20180605214242.62156-3-srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH 4/4] cpufreq: intel_pstate: enable boost for Skylake Xeon
+Date: Tue,  5 Jun 2018 14:42:42 -0700
+Message-Id: <20180605214242.62156-5-srinivas.pandruvada@linux.intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
 References: <20180605214242.62156-1-srinivas.pandruvada@linux.intel.com>
@@ -27,87 +27,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change uses SCHED_CPUFREQ_IOWAIT flag to boost HWP performance.
-Since SCHED_CPUFREQ_IOWAIT flag is set frequently, we don't start
-boosting steps unless we see two consecutive flags in two ticks. This
-avoids boosting due to IO because of regular system activities.
-
-To avoid synchronization issues, the actual processing of the flag is
-done on the local CPU callback.
+Enable HWP boost on Skylake server and workstations.
 
 Reported-by: Mel Gorman <mgorman@techsingularity.net>
 Tested-by: Giovanni Gherdovich <ggherdovich@suse.cz>
 Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- drivers/cpufreq/intel_pstate.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/cpufreq/intel_pstate.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 3949e3861f55..5b2b6b6d1ff4 100644
+index 70bf63bb4e0e..01c8da1f99db 100644
 --- a/drivers/cpufreq/intel_pstate.c
 +++ b/drivers/cpufreq/intel_pstate.c
-@@ -223,6 +223,8 @@ struct global_params {
-  *			operation
-  * @hwp_req_cached:	Cached value of the last HWP Request MSR
-  * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
-+ * @last_io_update:	Last time when IO wake flag was set
-+ * @sched_flags:	Store scheduler flags for possible cross CPU update
-  * @hwp_boost_min:	Last HWP boosted min performance
-  *
-  * This structure stores per CPU instance data for all CPUs.
-@@ -258,6 +260,8 @@ struct cpudata {
- 	s16 epp_saved;
- 	u64 hwp_req_cached;
- 	u64 hwp_cap_cached;
-+	u64 last_io_update;
-+	unsigned int sched_flags;
- 	u32 hwp_boost_min;
+@@ -1794,6 +1794,12 @@ static const struct x86_cpu_id intel_pstate_cpu_ee_disable_ids[] = {
+ 	{}
  };
  
-@@ -1460,9 +1464,44 @@ static inline void intel_pstate_hwp_boost_down(struct cpudata *cpu)
- 	cpu->last_update = cpu->sample.time;
- }
- 
-+static inline void intel_pstate_update_util_hwp_local(struct cpudata *cpu,
-+						      u64 time)
-+{
-+	cpu->sample.time = time;
++static const struct x86_cpu_id intel_pstate_hwp_boost_ids[] __initconst = {
++	ICPU(INTEL_FAM6_SKYLAKE_X, core_funcs),
++	ICPU(INTEL_FAM6_SKYLAKE_DESKTOP, core_funcs),
++	{}
++};
 +
-+	if (cpu->sched_flags & SCHED_CPUFREQ_IOWAIT) {
-+		bool do_io = false;
-+
-+		cpu->sched_flags = 0;
-+		/*
-+		 * Set iowait_boost flag and update time. Since IO WAIT flag
-+		 * is set all the time, we can't just conclude that there is
-+		 * some IO bound activity is scheduled on this CPU with just
-+		 * one occurrence. If we receive at least two in two
-+		 * consecutive ticks, then we treat as boost candidate.
-+		 */
-+		if (time_before64(time, cpu->last_io_update + 2 * TICK_NSEC))
-+			do_io = true;
-+
-+		cpu->last_io_update = time;
-+
-+		if (do_io)
-+			intel_pstate_hwp_boost_up(cpu);
-+
-+	} else {
-+		intel_pstate_hwp_boost_down(cpu);
-+	}
-+}
-+
- static inline void intel_pstate_update_util_hwp(struct update_util_data *data,
- 						u64 time, unsigned int flags)
+ static int intel_pstate_init_cpu(unsigned int cpunum)
  {
-+	struct cpudata *cpu = container_of(data, struct cpudata, update_util);
-+
-+	cpu->sched_flags |= flags;
-+
-+	if (smp_processor_id() == cpu->cpu)
-+		intel_pstate_update_util_hwp_local(cpu, time);
- }
+ 	struct cpudata *cpu;
+@@ -1824,6 +1830,10 @@ static int intel_pstate_init_cpu(unsigned int cpunum)
+ 			intel_pstate_disable_ee(cpunum);
  
- static inline void intel_pstate_calc_avg_perf(struct cpudata *cpu)
+ 		intel_pstate_hwp_enable(cpu);
++
++		id = x86_match_cpu(intel_pstate_hwp_boost_ids);
++		if (id)
++			hwp_boost = true;
+ 	}
+ 
+ 	intel_pstate_get_cpu_pstates(cpu);
 -- 
 2.13.6
