@@ -1,99 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeFETPg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 15:15:36 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:33303 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752682AbeFETP2 (ORCPT
+        id S1752270AbeFETSf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 15:18:35 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38807 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751805AbeFETSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 15:15:28 -0400
-X-Google-Smtp-Source: ADUXVKLY4NNjeAIfyNh/HY6iWGz9PxUfW7+6mQe8njh42DoAXM1sdC4Xb6YlP4u9aOtNBpK2w8t0RQ==
-Date: Tue, 5 Jun 2018 12:15:25 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org
-Subject: [GIT PULL 2/2] libata changes for v4.18-rc1
-Message-ID: <20180605191525.GF1351649@devbig577.frc2.facebook.com>
-References: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
+        Tue, 5 Jun 2018 15:18:33 -0400
+X-Google-Smtp-Source: ADUXVKI752pYLSlcT2/wylNOfxjhemGRSB5T1VuJD0sky7Zb/p5hJZObeIHscMwOrge4EcWgGrAMow==
+From: =?UTF-8?q?Attila=20T=C5=91k=C3=A9s?= <attitokes@gmail.com>
+Cc: =?UTF-8?q?Attila=20T=C5=91k=C3=A9s?= <attitokes@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: hci_bcm: Configure SCO routing automatically
+Date: Tue,  5 Jun 2018 22:17:43 +0300
+Message-Id: <20180605191743.27748-1-attitokes@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+Signed-off-by: Attila Tőkés <attitokes@gmail.com>
+---
+ drivers/bluetooth/hci_bcm.c | 61 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-This is the second part of libata pull request.
-
-* libata has always been limiting the maximum queue depth to 31, 1 set
-  aside mostly for historical reasons.  This didn't use to make much
-  difference but Jens found out that modern hard drives can actually
-  perform measurably better with the extra one queue depth.  Jens
-  updated libata core so that it can make use of full 32 queue depth.
-
-* Damien updated command retry logic in error handling so that it
-  doesn't unnecessarily retry when upper layer (SCSI) is gonna handle
-  them.
-
-* A couple misc changes.
-
-Thanks.
-
-The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
-
-  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-4.18
-
-for you to fetch changes up to 88e10092f6a623b88808f782b6637162b5b658fb:
-
-  sata_fsl: use the right type for tag bitshift (2018-05-14 08:14:21 -0700)
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      ata: hpt37x: Convert to use match_string() helper
-
-Christoph Hellwig (1):
-      sata_nv: don't use block layer bounce buffer
-
-Damien Le Moal (5):
-      libata: Fix comment typo in ata_eh_analyze_tf()
-      libata: Fix ata_err_string()
-      libata: Make ata_dev_set_mode() less verbose
-      libata: Honor RQF_QUIET flag
-      libata: Fix command retry decision
-
-Jens Axboe (10):
-      libata: introduce notion of separate hardware tags
-      libata: convert core and drivers to ->hw_tag usage
-      libata: bump ->qc_active to a 64-bit type
-      libata: use ata_tag_internal() consistently
-      libata: remove assumption that ATA_MAX_QUEUE - 1 is the max
-      sata_nv: set host can_queue count appropriately
-      libata: add extra internal command
-      libata: don't clamp queue depth to ATA_MAX_QUEUE - 1
-      ahci: enable full queue depth of 32
-      sata_fsl: use the right type for tag bitshift
-
- drivers/ata/acard-ahci.c     |  4 +-
- drivers/ata/ahci.h           |  2 +-
- drivers/ata/libahci.c        |  8 ++--
- drivers/ata/libata-core.c    | 61 ++++++++++++---------------
- drivers/ata/libata-eh.c      | 56 ++++++++++++++++++++-----
- drivers/ata/libata-scsi.c    | 19 +++++----
- drivers/ata/pata_hpt37x.c    | 13 +++---
- drivers/ata/sata_dwc_460ex.c | 14 +++----
- drivers/ata/sata_fsl.c       | 10 ++---
- drivers/ata/sata_mv.c        | 26 ++++++------
- drivers/ata/sata_nv.c        | 98 +++++++++++++++++++-------------------------
- drivers/ata/sata_sil24.c     |  6 +--
- include/linux/libata.h       | 22 +++++-----
- 13 files changed, 177 insertions(+), 162 deletions(-)
-
---
-tejun
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index ddbd8c6a..50c73eef 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -83,6 +83,16 @@
+  * @hu: pointer to HCI UART controller struct,
+  *	used to disable flow control during runtime suspend and system sleep
+  * @is_suspended: whether flow control is currently disabled
++ *
++ *  SCO routing parameters:
++ *   used as the parameters for the bcm_set_pcm_int_params command
++ *	@sco_routing:
++ *	 >= 255 (skip SCO routing configuration)
++ *	 0-3 (PCM, Transport, Codec, I2S)
++ *	@pcm_interface_rate: 0-4 (128 Kbps - 2048 Kbps)
++ *	@pcm_frame_type: 0 (short), 1 (long)
++ *	@pcm_sync_mode: 0 (slave), 1 (master)
++ *	@pcm_clock_mode: 0 (slave), 1 (master)
+  */
+ struct bcm_device {
+ 	/* Must be the first member, hci_serdev.c expects this. */
+@@ -114,6 +124,13 @@ struct bcm_device {
+ 	struct hci_uart		*hu;
+ 	bool			is_suspended;
+ #endif
++
++	/* SCO routing parameters */
++	u32			sco_routing;
++	u32			pcm_interface_rate;
++	u32			pcm_frame_type;
++	u32			pcm_sync_mode;
++	u32			pcm_clock_mode;
+ };
+ 
+ /* generic bcm uart resources */
+@@ -189,6 +206,35 @@ static int bcm_set_baudrate(struct hci_uart *hu, unsigned int speed)
+ 	return 0;
+ }
+ 
++static int bcm_configure_sco_routing(struct hci_uart *hu, struct bcm_device *bcm_dev)
++{
++	struct hci_dev *hdev = hu->hdev;
++	struct sk_buff *skb;
++	struct bcm_set_pcm_int_params params;
++
++	bt_dev_dbg(hdev, "BCM: Configuring SCO routing (%d %d %d %d %d)",
++			bcm_dev->sco_routing, bcm_dev->pcm_interface_rate, bcm_dev->pcm_frame_type,
++			bcm_dev->pcm_sync_mode,	bcm_dev->pcm_clock_mode);
++
++	params.routing = bcm_dev->sco_routing;
++	params.rate = bcm_dev->pcm_interface_rate;
++	params.frame_sync = bcm_dev->pcm_frame_type;
++	params.sync_mode = bcm_dev->pcm_sync_mode;
++	params.clock_mode = bcm_dev->pcm_clock_mode;
++
++	// send the SCO routing configuration command
++	skb = __hci_cmd_sync(hdev, 0xfc1c, sizeof(params), &params, HCI_CMD_TIMEOUT);
++	if (IS_ERR(skb)) {
++		int err = PTR_ERR(skb);
++		bt_dev_err(hdev, "BCM: failed to configure SCO routing (%d)", err);
++		return err;
++	}
++
++	kfree_skb(skb);
++
++	return 0;
++}
++
+ /* bcm_device_exists should be protected by bcm_device_lock */
+ static bool bcm_device_exists(struct bcm_device *device)
+ {
+@@ -534,6 +580,10 @@ static int bcm_setup(struct hci_uart *hu)
+ 			host_set_baudrate(hu, speed);
+ 	}
+ 
++	if (bcm->dev->sco_routing < 0xff) {
++		bcm_configure_sco_routing(hu, bcm->dev);
++	}
++
+ finalize:
+ 	release_firmware(fw);
+ 
+@@ -1007,6 +1057,11 @@ static int bcm_acpi_probe(struct bcm_device *dev)
+ static int bcm_of_probe(struct bcm_device *bdev)
+ {
+ 	device_property_read_u32(bdev->dev, "max-speed", &bdev->oper_speed);
++	device_property_read_u32(bdev->dev, "sco-routing", &bdev->sco_routing);
++	device_property_read_u32(bdev->dev, "pcm-interface-rate", &bdev->pcm_interface_rate);
++	device_property_read_u32(bdev->dev, "pcm-frame-type", &bdev->pcm_frame_type);
++	device_property_read_u32(bdev->dev, "pcm-sync-mode", &bdev->pcm_sync_mode);
++	device_property_read_u32(bdev->dev, "pcm-clock-mode", &bdev->pcm_clock_mode);
+ 	return 0;
+ }
+ 
+@@ -1022,6 +1077,9 @@ static int bcm_probe(struct platform_device *pdev)
+ 	dev->dev = &pdev->dev;
+ 	dev->irq = platform_get_irq(pdev, 0);
+ 
++	/* SCO routing configuration is disabled by default */
++	dev->sco_routing = 0xff;
++
+ 	if (has_acpi_companion(&pdev->dev)) {
+ 		ret = bcm_acpi_probe(dev);
+ 		if (ret)
+@@ -1281,6 +1339,9 @@ static int bcm_serdev_probe(struct serdev_device *serdev)
+ 	bcmdev->serdev_hu.serdev = serdev;
+ 	serdev_device_set_drvdata(serdev, bcmdev);
+ 
++	/* SCO routing configuration is disabled by default */
++	bcmdev->sco_routing = 0xff;
++
+ 	if (has_acpi_companion(&serdev->dev))
+ 		err = bcm_acpi_probe(bcmdev);
+ 	else
+-- 
+2.17.0
