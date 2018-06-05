@@ -1,48 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752010AbeFERCN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:02:13 -0400
-Received: from imap.thunk.org ([74.207.234.97]:38228 "EHLO imap.thunk.org"
+        id S1752268AbeFERDG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:03:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751819AbeFERCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:02:11 -0400
-Date: Tue, 5 Jun 2018 13:02:08 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Richard Weinberger <richard@sigma-star.at>
-Cc: Richard Weinberger <richard.weinberger@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
-Subject: Re: [GIT PULL] fscrypt updates for 4.18
-Message-ID: <20180605170208.GE7839@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard@sigma-star.at>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-fscrypt@vger.kernel.org
-References: <20180605150751.GA9436@thunk.org>
- <CAFLxGvysjYbCpkqbVqD8Q1v3isGnRrNo5KdUn7TgCVt9WxzE2g@mail.gmail.com>
- <20180605153501.GC7839@thunk.org>
- <30587992.7Od65ROsjm@blindfold>
+        id S1752152AbeFERDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:03:00 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.4 12/37] ASoC: Intel: sst: remove redundant variable dma_dev_name
+Date: Tue,  5 Jun 2018 19:01:17 +0200
+Message-Id: <20180605170109.621810630@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+References: <20180605170108.884872354@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30587992.7Od65ROsjm@blindfold>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 06:10:24PM +0200, Richard Weinberger wrote:
-> That's the question. I understand the use case, but I fear attack scenarios
-> where someone manages to downgrade the crypto of my phone.
-> This is why I was asking whether Android tells me whether Speck is used or not.
-> "it does encryption" is clearly not enough.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-An attack scenario where someone manages to downgrade the crypto of
-your phone would require replacing your kernel and your /system
-partition --- at which point, you've got other problems.  :-)
+------------------
 
-	      	       	      	     	 - Ted
+From: Colin Ian King <colin.king@canonical.com>
+
+commit 271ef65b5882425d500e969e875c98e47a6b0c86 upstream.
+
+The pointer dma_dev_name is assigned but never read, it is redundant
+and can therefore be removed.
+
+Cleans up clang warning:
+sound/soc/intel/common/sst-firmware.c:288:3: warning: Value stored to
+'dma_dev_name' is never read
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ sound/soc/intel/common/sst-firmware.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/sound/soc/intel/common/sst-firmware.c
++++ b/sound/soc/intel/common/sst-firmware.c
+@@ -260,7 +260,6 @@ int sst_dma_new(struct sst_dsp *sst)
+ 	struct sst_pdata *sst_pdata = sst->pdata;
+ 	struct sst_dma *dma;
+ 	struct resource mem;
+-	const char *dma_dev_name;
+ 	int ret = 0;
+ 
+ 	if (sst->pdata->resindex_dma_base == -1)
+@@ -271,7 +270,6 @@ int sst_dma_new(struct sst_dsp *sst)
+ 	* is attached to the ADSP IP. */
+ 	switch (sst->pdata->dma_engine) {
+ 	case SST_DMA_TYPE_DW:
+-		dma_dev_name = "dw_dmac";
+ 		break;
+ 	default:
+ 		dev_err(sst->dev, "error: invalid DMA engine %d\n",
