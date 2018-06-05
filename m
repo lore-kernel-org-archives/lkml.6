@@ -1,73 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751730AbeFEIgM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 04:36:12 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:35796 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751554AbeFEIgJ (ORCPT
+        id S1751774AbeFEIgO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 04:36:14 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:43289 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751662AbeFEIgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 04:36:09 -0400
-Date: Tue, 5 Jun 2018 11:35:51 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Thibaut Robert <thibaut.robert@gmail.com>
-Cc: Ajay Singh <ajay.kathat@microchip.com>, devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ganesh Krishna <ganesh.krishna@microchip.com>,
-        Aditya Shankar <aditya.shankar@microchip.com>
-Subject: Re: [PATCH 1/1] staging: wilc1000: Use common structs to parse ip
- packets
-Message-ID: <20180605083551.n6kmljbfxfc7vv2c@mwanda>
-References: <20180529190839.12818-1-thibaut.robert@gmail.com>
- <20180530112904.x4vcpkdmqhpc7xll@mwanda>
- <20180604105549.04031722@ajaysk-VirtualBox>
- <20180604192702.GA32753@L80496>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180604192702.GA32753@L80496>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8914 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=737
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806050103
+        Tue, 5 Jun 2018 04:36:12 -0400
+X-IronPort-AV: E=Sophos;i="5.49,478,1520866800";
+   d="scan'208";a="283073147"
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+Date: Tue,  5 Jun 2018 09:29:58 +0100
+Message-Id: <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 09:27:02PM +0200, Thibaut Robert wrote:
-> Le lundi 04 juin 2018 à 10:55:49 (+0530), Ajay Singh a écrit :
-> > 
-> > Thank you for submitting the patches.
-> > 
-> > The modification in this patch looks okay to me.
-> > Please resend this by including changes as suggested by Dan.
-> > I can do the modification and resubmit this patch by including review
-> > comments, if its okay with you.
-> > 
-> Sorry, I would like to address the comments, but still had no time to do it correctly. I
-> am doing this as a hobby and am still learning so forgive me for the delay. 
-> If you can wait a little bit more, I'll resend an updated version.
-> 
-> Thanks for your time !
+The Renesas R9A06G032 SYSCTRL node description.
 
-When you're a kernel dev, you sometimes do get the feeling that everyone
-is waiting for you.  We're not.  There is no rush.  We read through your
-email and reply and then it's gone from our mind like dust in the wind.
-There is never a rush and you will never run out of more work to do.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 32 ++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
 
-Plus the merge window is open so Greg won't even look at it for the next
-several weeks.
-
-Take all the time you need.
-
-I normally write a patch, then wait until morning so I can review it
-with fresh eyes before sending it.  If I wait longer than a day, though,
-I forget what the issue is and I have to retest it from scratch.  After
-one day in my outbox a patch gets old and boring so those are low
-quality.  If it's a cleanup patch, I'll probably just delete it instead.
-
-regards,
-dan carpenter
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+new file mode 100644
+index 0000000..6aee360
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+@@ -0,0 +1,32 @@
++* Renesas R9A06G032 SYSCTRL
++
++Required Properties:
++
++  - compatible: Must be:
++    - "renesas,r9a06g032-sysctrl"
++  - reg: Base address and length of the SYSCTRL IO block.
++  - #clock-cells: Must be 1
++
++Examples
++--------
++
++  - SYSCTRL node:
++
++	sysctrl: system-controller@4000c000 {
++		compatible = "renesas,r9a06g032-sysctrl";
++		reg = <0x4000c000 0x1000>;
++		#clock-cells = <1>;
++	};
++
++  - Other nodes can use the clocks provided by SYSCTRL as in:
++
++	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
++	uart0: serial@40060000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x40060000 0x400>;
++		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&sysctrl R9A06G032_CLK_UART0>;
++		clock-names = "baudclk";
++	};
+-- 
+2.7.4
