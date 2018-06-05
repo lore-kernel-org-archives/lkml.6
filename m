@@ -1,147 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753422AbeFERFx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:05:53 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33116 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751819AbeFERFs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:48 -0400
-X-Google-Smtp-Source: ADUXVKJxnSSTUPTiadiile5wgZeOh/BrjUAks4VS2Jlc51HzVhseutqkdGQuYB8YBioSi3pwLeY6XA==
-From: Nick Desaulniers <ndesaulniers@google.com>
-To: akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        aryabinin@virtuozzo.com, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org, hpa@zytor.com,
-        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, kirill.shutemov@linux.intel.com,
-        mingo@redhat.com, mjg59@google.com, mka@chromium.org,
-        ndesaulniers@google.com, pombredanne@nexb.com, rostedt@goodmis.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, tweek@google.com
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com
-Subject: [PATCH v2 2/2] x86: paravirt: make native_save_fl extern inline
-Date: Tue,  5 Jun 2018 10:05:32 -0700
-Message-Id: <20180605170532.170361-3-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
-In-Reply-To: <20180605170532.170361-1-ndesaulniers@google.com>
-References: <20180605170532.170361-1-ndesaulniers@google.com>
+        id S1752939AbeFEROz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:14:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753410AbeFERFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:52 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 36/61] powerpc/64s: Move cpu_show_meltdown()
+Date: Tue,  5 Jun 2018 19:01:57 +0200
+Message-Id: <20180605170119.995860046@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+References: <20180605170117.643936916@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-native_save_fl() is marked static inline, but by using it as
-a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-paravirt's use of native_save_fl() also requires that no GPRs other than
-%rax are clobbered.
+------------------
 
-Compilers have different heuristics which they use to emit stack guard
-code, the emittance of which can break paravirt's callee saved assumption
-by clobbering %rcx.
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-Marking a function definition extern inline means that if this version
-cannot be inlined, then the out-of-line version will be preferred. By
-having the out-of-line version be implemented in assembly, it cannot be
-instrumented with a stack protector, which might violate custom calling
-conventions that code like paravirt rely on.
+commit 8ad33041563a10b34988800c682ada14b2612533 upstream.
 
-The semantics of extern inline has changed since gnu89. This means that
-folks using GCC versions >= 5.1 may see symbol redefinition errors at
-link time for subdirs that override KBUILD_CFLAGS (making the C standard
-used implicit) regardless of this patch. This has been cleaned up
-earlier in the patch set, but is left as a note in the commit message
-for future travelers.
+This landed in setup_64.c for no good reason other than we had nowhere
+else to put it. Now that we have a security-related file, that is a
+better place for it so move it.
 
-Reports:
-https://lkml.org/lkml/2018/5/7/534
-https://github.com/ClangBuiltLinux/linux/issues/16
-
-Discussion:
-https://bugs.llvm.org/show_bug.cgi?id=37512
-https://lkml.org/lkml/2018/5/24/1371
-
-Thanks to the many folks that participated in the discussion.
-
-Debugged-by: Alistair Strachan <astrachan@google.com>
-Debugged-by: Matthias Kaehlcke <mka@chromium.org>
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Tom Stellar <tstellar@redhat.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+[mpe: Add extern for rfi_flush to fix bisection break]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-No changes in v2, but here's the discussion of v1:
-https://patchwork.kernel.org/patch/10444075/
+ arch/powerpc/include/asm/security_features.h |    1 +
+ arch/powerpc/kernel/security.c               |   11 +++++++++++
+ arch/powerpc/kernel/setup_64.c               |    8 --------
+ 3 files changed, 12 insertions(+), 8 deletions(-)
 
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
- 3 files changed, 28 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/kernel/irqflags.S
-
-diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-index 89f08955fff7..c4fc17220df9 100644
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -13,7 +13,7 @@
-  * Interrupt control:
-  */
+--- a/arch/powerpc/include/asm/security_features.h
++++ b/arch/powerpc/include/asm/security_features.h
+@@ -10,6 +10,7 @@
  
--static inline unsigned long native_save_fl(void)
-+extern inline unsigned long native_save_fl(void)
+ 
+ extern unsigned long powerpc_security_features;
++extern bool rfi_flush;
+ 
+ static inline void security_ftr_set(unsigned long feature)
  {
- 	unsigned long flags;
+--- a/arch/powerpc/kernel/security.c
++++ b/arch/powerpc/kernel/security.c
+@@ -5,6 +5,8 @@
+ // Copyright 2018, Michael Ellerman, IBM Corporation.
  
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..8824d01c0c35 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -61,6 +61,7 @@ obj-y			+= alternative.o i8253.o hw_breakpoint.o
- obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
- obj-y			+= pci-iommu_table.o
- obj-y			+= resource.o
-+obj-y			+= irqflags.o
+ #include <linux/kernel.h>
++#include <linux/device.h>
++
+ #include <asm/security_features.h>
  
- obj-y				+= process.o
- obj-y				+= fpu/
-diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
-new file mode 100644
-index 000000000000..937bd08c3f79
---- /dev/null
-+++ b/arch/x86/kernel/irqflags.S
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+ 
+@@ -13,3 +15,12 @@ unsigned long powerpc_security_features
+ 	SEC_FTR_L1D_FLUSH_PR | \
+ 	SEC_FTR_BNDS_CHK_SPEC_BAR | \
+ 	SEC_FTR_FAVOUR_SECURITY;
 +
-+#include <asm/asm.h>
-+#include <asm/export.h>
-+#include <linux/linkage.h>
 +
-+/*
-+ * unsigned long native_save_fl(void)
-+ */
-+ENTRY(native_save_fl)
-+	pushf
-+	pop %_ASM_AX
-+	ret
-+ENDPROC(native_save_fl)
-+EXPORT_SYMBOL(native_save_fl)
++ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	if (rfi_flush)
++		return sprintf(buf, "Mitigation: RFI Flush\n");
 +
-+/*
-+ * void native_restore_fl(unsigned long flags)
-+ * %rdi: flags
-+ */
-+ENTRY(native_restore_fl)
-+	push %_ASM_DI
-+	popf
-+	ret
-+ENDPROC(native_restore_fl)
-+EXPORT_SYMBOL(native_restore_fl)
--- 
-2.17.1.1185.g55be947832-goog
++	return sprintf(buf, "Vulnerable\n");
++}
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -805,12 +805,4 @@ static __init int rfi_flush_debugfs_init
+ }
+ device_initcall(rfi_flush_debugfs_init);
+ #endif
+-
+-ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr, char *buf)
+-{
+-	if (rfi_flush)
+-		return sprintf(buf, "Mitigation: RFI Flush\n");
+-
+-	return sprintf(buf, "Vulnerable\n");
+-}
+ #endif /* CONFIG_PPC_BOOK3S_64 */
