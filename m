@@ -1,54 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751818AbeFELrk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:47:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56040 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751572AbeFELrf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:47:35 -0400
-Date: Tue, 5 Jun 2018 04:47:34 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: John Johansen <john.johansen@canonical.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Use an IDR to allocate apparmor secids
-Message-ID: <20180605114734.GA20472@bombadil.infradead.org>
-References: <20180522093259.GA30182@bombadil.infradead.org>
- <20180528170108.GA5448@bombadil.infradead.org>
- <862d03b6-ba2f-3ec0-d45e-d8fcf16f9edf@canonical.com>
- <20180605022712.GB32444@bombadil.infradead.org>
- <4e075d0a-2e4d-f298-070c-836324864b97@canonical.com>
+        id S1751779AbeFELrj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:47:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35917 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751625AbeFELrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:47:33 -0400
+Date: Tue, 5 Jun 2018 13:47:29 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@vger.kernel.org, Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+        kernel-team@fb.com, cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v13 0/7] cgroup-aware OOM killer
+Message-ID: <20180605114729.GB19202@dhcp22.suse.cz>
+References: <20171130152824.1591-1-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4e075d0a-2e4d-f298-070c-836324864b97@canonical.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20171130152824.1591-1-guro@fb.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04, 2018 at 07:35:24PM -0700, John Johansen wrote:
-> On 06/04/2018 07:27 PM, Matthew Wilcox wrote:
-> > On Mon, Jun 04, 2018 at 06:27:09PM -0700, John Johansen wrote:
-> >> hey Mathew,
-> >>
-> >> I've pulled this into apparmor-next and done the retuning of
-> >> AA_SECID_INVALID a follow on patch. The reworking of the api to
-> >> return the specific error type can wait for another cycle.
-> > 
-> > Oh ... here's what I currently have.  I decided that AA_SECID_INVALID
-> > wasn't needed.
-> > 
-> well not needed in the allocation path, but definitely needed and it
-> needs to be 0.
-> 
-> This is for catching some uninitialized or freed and zeroed values.
-> The debug checks aren't in the current version, as they were
-> residing in another debug patch, but I will pull them out into their
-> own patch.
+It seems that this is still in limbo mostly because of David's concerns.
+So let me reiterate them and provide my POV once more (and the last
+time) just to help Andrew make a decision:
 
-With the IDR, I don't know if you need it for debug.
+1) comparision root with tail memcgs during the OOM killer is not fair
+because we are comparing tasks with memcgs.
 
-	BUG_ON(label != idr_find(&aa_secids, label->secid))
+This is true, but I do not think this matters much for workloads which
+are going to use the feature. Why? Because the main consumers of the new
+feature seem to be containers which really need some fairness when
+comparing _workloads_ rather than processes. Those are unlikely to
+contain any significant memory consumers in the root memcg. That would
+be mostly common infrastructure.
 
-should do the trick.
+Is this is fixable? Yes, we would need to account in the root memcgs.
+Why are we not doing that now? Because it has some negligible
+performance overhead. Are there other ways? Yes we can approximate root
+memcg memory consumption but I would rather wait for somebody seeing
+that as a real problem rather than add hacks now without a strong
+reason.
+
+
+2) Evading the oom killer by attaching processes to child cgroups which
+basically means that a task can split up the workload into smaller
+memcgs to hide their real memory consumption.
+
+Again true but not really anything new. Processes can already fork and
+split up the memory consumption. Moreover it doesn't even require any
+special privileges to do so unlike creating a sub memcg. Is this
+fixable? Yes, untrusted workloads can setup group oom evaluation at the
+delegation layer so all subgroups would be considered together.
+
+3) Userspace has zero control over oom kill selection in leaf mem
+cgroups.
+
+Again true but this is something that needs a good evaluation to not end
+up in the fiasko we have seen with oom_score*. Current users demanding
+this feature can live without any prioritization so blocking the whole
+feature seems unreasonable.
+
+4) Future extensibility to be backward compatible.
+
+David is wrong here IMHO. Any prioritization or oom selection policy
+controls added in future are orthogonal to the oom_group concept added
+by this patchset. Allowing memcg to be an oom entity is something that
+we really want longterm. Global CGRP_GROUP_OOM is the most restrictive
+semantic and softening it will be possible by a adding a new knob to
+tell whether a memcg/hierarchy is a workload or a set of tasks.
+-- 
+Michal Hocko
+SUSE Labs
