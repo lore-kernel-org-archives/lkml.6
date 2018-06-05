@@ -1,86 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeFERZ3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:25:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60756 "EHLO mail.kernel.org"
+        id S1752720AbeFERZx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:25:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54191 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752665AbeFERDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:03:45 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.4 27/37] MIPS: prctl: Disallow FRE without FR with PR_SET_FP_MODE requests
-Date: Tue,  5 Jun 2018 19:01:32 +0200
-Message-Id: <20180605170110.460357621@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
-References: <20180605170108.884872354@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1752028AbeFERZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:25:51 -0400
+Date: Tue, 5 Jun 2018 19:25:48 +0200
+From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Aaron Wu <Aaron.Wu@analog.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Steven Rostedt," <rostedt@goodmis.org>,
+        Laura Abbott <lauraa@codeaurora.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Jeffrey Hugo <jhugo@codeaurora.org>, Baoquan He <bhe@redhat.com>,
+        Ilya Matveychikov <matvejchikov@gmail.com>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 0/5] Kernel parameter parser cleanup/enhancement
+Message-ID: <20180605192548.4ff64b3e@kitsune.suse.cz>
+In-Reply-To: <CAHp75VdG4Vp2_6LMLv--kwiMkXO4mdc1DUgRQLBCtp2OoEmAZQ@mail.gmail.com>
+References: <cover.1528215659.git.msuchanek@suse.de>
+        <CAHp75VdG4Vp2_6LMLv--kwiMkXO4mdc1DUgRQLBCtp2OoEmAZQ@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Tue, 5 Jun 2018 20:05:50 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-------------------
+> On Tue, Jun 5, 2018 at 7:43 PM, Michal Suchanek <msuchanek@suse.de>
+> wrote:
+> > Hello,
+> >
+> > due to work on the fadump_extra_args I looked at the kernel
+> > parameter parser and found its grammar rather curious.
+> >
+> > It supports double quotes but not any other quoting characters so
+> > double quotes cannot be quoted. What's more, the quotes can be
+> > anywhere in the parameter name or value and are interpteted but are
+> > removed only from start and end of the parameter value.
+> >
+> > These are the patches not specific to fadump which somewhat
+> > straighten the qouting grammar to make it on par with common shell
+> > interpreters.  
+> 
+> I didn't notice any use of string_unescape_*() functionality. So, your
+> patch is kinda very specific to some narrow subset of escaping and
+> unescaping stuff.
 
-From: Maciej W. Rozycki <macro@mips.com>
+It does what it says. It cannot use string_unescape because it needs to
+determine the boundaries of quoted strings.
 
-commit 28e4213dd331e944e7fca1954a946829162ed9d4 upstream.
+> Thus, it's still not on par with shell, right?
 
-Having PR_FP_MODE_FRE (i.e. Config5.FRE) set without PR_FP_MODE_FR (i.e.
-Status.FR) is not supported as the lone purpose of Config5.FRE is to
-emulate Status.FR=0 handling on FPU hardware that has Status.FR=1
-hardwired[1][2].  Also we do not handle this case elsewhere, and assume
-throughout our code that TIF_HYBRID_FPREGS and TIF_32BIT_FPREGS cannot
-be set both at once for a task, leading to inconsistent behaviour if
-this does happen.
+It does not interpret special character sequences other than quoting.
 
-Return unsuccessfully then from prctl(2) PR_SET_FP_MODE calls requesting
-PR_FP_MODE_FRE to be set with PR_FP_MODE_FR clear.  This corresponds to
-modes allowed by `mips_set_personality_fp'.
+The feature would not be hard to add but I do not see the need.
 
-References:
+Unfortunately, the existing string_unescape is totally not fitting to
+be integrated into the parser for the purpose.
 
-[1] "MIPS Architecture For Programmers, Vol. III: MIPS32 / microMIPS32
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00090, Revision 6.02, July 10, 2015, Table 9.69
-    "Config5 Register Field Descriptions", p. 262
+Thanks
 
-[2] "MIPS Architecture For Programmers, Volume III: MIPS64 / microMIPS64
-    Privileged Resource Architecture", Imagination Technologies,
-    Document Number: MD00091, Revision 6.03, December 22, 2015, Table
-    9.72 "Config5 Register Field Descriptions", p. 288
+Michal
 
-Fixes: 9791554b45a2 ("MIPS,prctl: add PR_[GS]ET_FP_MODE prctl options for MIPS")
-Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.0+
-Patchwork: https://patchwork.linux-mips.org/patch/19327/
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/mips/kernel/process.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -680,6 +680,10 @@ int mips_set_process_fp_mode(struct task
- 	if (value & ~known_bits)
- 		return -EOPNOTSUPP;
- 
-+	/* Setting FRE without FR is not supported.  */
-+	if ((value & (PR_FP_MODE_FR | PR_FP_MODE_FRE)) == PR_FP_MODE_FRE)
-+		return -EOPNOTSUPP;
-+
- 	/* Avoid inadvertently triggering emulation */
- 	if ((value & PR_FP_MODE_FR) && raw_cpu_has_fpu &&
- 	    !(raw_current_cpu_data.fpu_id & MIPS_FPIR_F64))
+> 
+> >
+> > Specifically double and single quotes can be used for quoting as
+> > well as backslashes with the usual shell semantic. All quoting
+> > characters are removed while the parameters are parsed.
+> >
