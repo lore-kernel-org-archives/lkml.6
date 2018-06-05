@@ -1,54 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeFEVSW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:18:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58382 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752580AbeFEVRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:17:54 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 3/3] rtc: ensure rtc_set_alarm fails when alarms are not supported
-Date: Tue,  5 Jun 2018 23:09:14 +0200
-Message-Id: <20180605210914.8054-3-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605210914.8054-1-alexandre.belloni@bootlin.com>
-References: <20180605210914.8054-1-alexandre.belloni@bootlin.com>
+        id S1752478AbeFEVUk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:20:40 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:39974 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751730AbeFEVUj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:20:39 -0400
+X-Google-Smtp-Source: ADUXVKJZgB1S7loJ23Ar8V0+9NTgL1FHOw3ocB2Jbvw6q+TQEmmWTkGypESUVoLpLRHf4vzU3Om8ZBbZGVaXBftoWTQ=
+MIME-Version: 1.0
+In-Reply-To: <20180605205841.15878-2-ross.zwisler@linux.intel.com>
+References: <20180605205841.15878-1-ross.zwisler@linux.intel.com> <20180605205841.15878-2-ross.zwisler@linux.intel.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 5 Jun 2018 14:20:38 -0700
+Message-ID: <CAPcyv4ipWTDP0dNeyUd2vba1GcYb61BQ-w2yWms8o8SeMtBiRA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] libnvdimm: don't flush power-fail protected CPU caches
+To: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using RTC_ALM_SET or RTC_WKALM_SET with rtc_wkalrm.enabled not set,
-rtc_timer_enqueue() is not called and rtc_set_alarm() may succeed but the
-subsequent RTC_AIE_ON ioctl will fail. RTC_ALM_READ would also fail in that
-case.
+On Tue, Jun 5, 2018 at 1:58 PM, Ross Zwisler
+<ross.zwisler@linux.intel.com> wrote:
+> This commit:
+>
+> 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
+>
+> intended to make sure that deep flush was always available even on
+> platforms which support a power-fail protected CPU cache.  An unintended
+> side effect of this change was that we also lost the ability to skip
+> flushing CPU caches on those power-fail protected CPU cache.
+>
+> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Fixes: 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices via fsync()")
+> ---
+>  drivers/dax/super.c   | 20 +++++++++++++++++++-
+>  drivers/nvdimm/pmem.c |  2 ++
+>  include/linux/dax.h   |  9 +++++++++
+>  3 files changed, 30 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index c2c46f96b18c..457e0bb6c936 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -152,6 +152,8 @@ enum dax_device_flags {
+>         DAXDEV_ALIVE,
+>         /* gate whether dax_flush() calls the low level flush routine */
+>         DAXDEV_WRITE_CACHE,
+> +       /* only flush the CPU caches if they are not power fail protected */
+> +       DAXDEV_FLUSH_ON_SYNC,
+>  };
+>
+>  /**
+> @@ -283,7 +285,8 @@ EXPORT_SYMBOL_GPL(dax_copy_from_iter);
+>  void arch_wb_cache_pmem(void *addr, size_t size);
+>  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
+>  {
+> -       if (unlikely(!dax_write_cache_enabled(dax_dev)))
+> +       if (unlikely(!dax_write_cache_enabled(dax_dev)) ||
+> +                       !dax_flush_on_sync_enabled(dax_dev))
 
-Ensure rtc_set_alarm() fails when alarms are not supported to avoid letting
-programs think the alarms are working for a particular RTC when they are
-not.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/interface.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index ffcfe6319466..7cae46c6b9bf 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -442,6 +442,11 @@ int rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- {
- 	int err;
- 
-+	if (!rtc->ops)
-+		return -ENODEV;
-+	else if (!rtc->ops->set_alarm)
-+		return -EINVAL;
-+
- 	err = rtc_valid_tm(&alarm->time);
- 	if (err != 0)
- 		return err;
--- 
-2.17.1
+This seems backwards. I think we should teach the pmem driver to still
+issue deep flush even when dax_write_cache_enabled() is false.
