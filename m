@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753962AbeFERKL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:10:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37304 "EHLO mail.kernel.org"
+        id S1753688AbeFERKT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:10:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753806AbeFERKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:10:08 -0400
+        id S1753818AbeFERKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:10:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.4 33/37] fix io_destroy()/aio_complete() race
-Date: Tue,  5 Jun 2018 19:01:38 +0200
-Message-Id: <20180605170110.835706577@linuxfoundation.org>
+Subject: [PATCH 4.9 58/61] fix io_destroy()/aio_complete() race
+Date: Tue,  5 Jun 2018 19:02:19 +0200
+Message-Id: <20180605170121.338300439@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
-References: <20180605170108.884872354@linuxfoundation.org>
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+References: <20180605170117.643936916@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -24,7 +24,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -54,7 +54,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/aio.c
 +++ b/fs/aio.c
-@@ -628,9 +628,8 @@ static void free_ioctx_users(struct perc
+@@ -636,9 +636,8 @@ static void free_ioctx_users(struct perc
  	while (!list_empty(&ctx->active_reqs)) {
  		req = list_first_entry(&ctx->active_reqs,
  				       struct aio_kiocb, ki_list);
