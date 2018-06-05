@@ -1,148 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeFEL1L (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:27:11 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57484 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751748AbeFEL1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:27:10 -0400
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86l <x86@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-CC: <yaomin2@huawei.com>
-Subject: [Question] Can we use SIGRTMIN when vdso disabled on X86?
-Message-ID: <5B1672FE.4050705@huawei.com>
-Date: Tue, 5 Jun 2018 19:24:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1751823AbeFEL2E convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:28:04 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:3865 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751653AbeFEL2C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:28:02 -0400
+X-IronPort-AV: E=Sophos;i="5.49,478,1520924400";
+   d="scan'208";a="14642179"
+Date: Tue, 5 Jun 2018 11:42:20 +0530
+From: Ajay Singh <ajay.kathat@microchip.com>
+To: Thibaut Robert <thibaut.robert@gmail.com>
+CC: Dan Carpenter <dan.carpenter@oracle.com>, <devel@driverdev.osuosl.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Ganesh Krishna" <ganesh.krishna@microchip.com>,
+        Aditya Shankar <aditya.shankar@microchip.com>
+Subject: Re: [PATCH 1/2] staging: wilc1000: fix some endianness sparse
+ warnings
+Message-ID: <20180605114220.5a893f01@ajaysk-VirtualBox>
+In-Reply-To: <20180605083325.GA6965@L80496>
+References: <20180529191143.13081-1-thibaut.robert@gmail.com>
+        <20180530111725.gmigyddsp2i6mgzw@mwanda>
+        <20180604193250.GB32753@L80496>
+        <20180605073631.cvp2iuef4yb636jz@mwanda>
+        <20180605083325.GA6965@L80496>
+Organization: Microchip Technology
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
-        boundary="------------060806090701040900040200"
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---------------060806090701040900040200
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+On Tue, 5 Jun 2018 10:33:25 +0200
+Thibaut Robert <thibaut.robert@gmail.com> wrote:
 
-After I executed "echo 0 > /proc/sys/abi/vsyscall32" to disable vdso, the rt_sigaction01 test case from ltp_2015 failed.
-The test case source code please refer to the attachment, and the output as blow:
+> Le mardi 05 juin 2018 à 10:36:31 (+0300), Dan Carpenter a écrit :
+> > On Mon, Jun 04, 2018 at 09:32:50PM +0200, Thibaut Robert wrote:  
+> > > Le mercredi 30 mai 2018 à 14:17:25 (+0300), Dan Carpenter a
+> > > écrit :  
+> > > > On Tue, May 29, 2018 at 09:11:43PM +0200, Thibaut Robert
+> > > > wrote:  
+> > > > > diff --git
+> > > > > a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+> > > > > b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c index
+> > > > > e248702ee519..745bf5ca2622 100644 ---
+> > > > > a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c +++
+> > > > > b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c @@
+> > > > > -1431,7 +1431,7 @@ void wilc_wfi_p2p_rx(struct net_device
+> > > > > *dev, u8 *buff, u32 size) freq =
+> > > > > ieee80211_channel_to_frequency(curr_channel,
+> > > > > NL80211_BAND_2GHZ); 
+> > > > > -	if (!ieee80211_is_action(buff[FRAME_TYPE_ID])) {
+> > > > > +	if
+> > > > > (!ieee80211_is_action(cpu_to_le16(buff[FRAME_TYPE_ID]))) {  
+> > > > 
+> > > > "buff" comes from the network, it's going to be little endian,
+> > > > not cpu endian.  The rest of the function treats it as CPU
+> > > > endian but I'm pretty sure it's wrong...  
+> > > buff comes from the network but we are looking at single byte
+> > > here. ieee80211_is_action expects an le16, so we I added this to
+> > > extend an u8 to an le16. Is this incorrect ?
+> > > 
+> > > Or maybe we the buff has the second byte ? but that I can't
+> > > tell.   
+> > 
+> > You raise a good point that I hadn't seen. The original code is
+> > clearly buggy.  But your fix isn't correct either...  The other
+> > thing to consider is that cpu_to_le16() is basically a cast to u16
+> > on x86 so it's a no-op here.  
+> The sparse warning is clearly spotting a real issue. I tried to at
+> least have big endian handle correctly the 0-255 case. I am willing
+> to drop the change (since I agree it's not very satisfying and will
+> mask an issue), but may I ask you to explain how it is wrong ? How
+> would you correctly expand an u8 to __le16 ? I think in big endian we
+> need to swap the bytes.
+> 
 
------------------
-./rt_sigaction01
-rt_sigaction01    0  TINFO  :  signal: 34
-rt_sigaction01    1  TPASS  :  rt_sigaction call succeeded: result = 0
-rt_sigaction01    0  TINFO  :  sa.sa_flags = SA_RESETHAND|SA_SIGINFO
-rt_sigaction01    0  TINFO  :  Signal Handler Called with signal number 34
+Yes, when sending the data to ieee80211_is_action() it should pass
+16bit value instead of 8bit value. It should be corrected.
 
-Segmentation fault
-------------------
+But the buff received from the wifi module is already in little endian
+format. As the data is already in LE endian format so in my opinion
+the conversion is not required while calling ieee80211_is_action().
+  
+> > 
+> > Really the right thing is to not treat buff as an array of u8 but a
+> > struct.  The code assumes that frame_type is 0-255 but probably it's
+> > supposed to go up to U16_MAX.
+> > 
+> > struct whatever {
+> > 	__le16 frame_type;
+> > 	...
+> > 
+> > There probably is already a struct like that, but I don't know what
+> > it is.  I don't know this code at all, I'm just guessing.
+> >   
+> I was thinking the same. I don't know whether this buf contains a
+> standard struct or something hw-specific. I'll try to dig further and
+> submit a separate patch if I can. Maybe Aditya can give more
+> information ?
+> 
+
+The buffer structure contains both some custom information along
+with standard info. As the frame_control is the first 2 byte in the in
+buff so casting it can also help to extract frame_control.
+
+Please refer the code in mgmt_tx() which use like below
+
+const struct ieee80211_mgmt *mgmt;
+....
+mgmt = (const struct ieee80211_mgmt *)buf;
+
+ieee80211_is_action(mgmt->frame_control)
 
 
-Is this the desired result? In function ia32_setup_rt_frame, I found below code:
+I think another approach can be by using proper type cast with first 2
+bytes of buffer(to extract 16bit value) and pass it to
+ieee80211_is_action().
 
-	if (ksig->ka.sa.sa_flags & SA_RESTORER)
-		restorer = ksig->ka.sa.sa_restorer;
-	else
-		restorer = current->mm->context.vdso +
-			vdso_image_32.sym___kernel_rt_sigreturn;
-	put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
 
-Because the vdso is disabled, so current->mm->context.vdso is NULL, which cause the result of frame->pretcode invalid.
-
-I'm not sure whether this is a kernel bug or just an error of test case itself. Can anyone help me?
-
--- 
-Thanks!
-BestRegards
-
---------------060806090701040900040200
-Content-Type: text/plain; charset="UTF-8"; name="rt_sigaction01.c"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="rt_sigaction01.c"
-
-LyoqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKi8KLyogQ29weXJpZ2h0IChjKSBDcmFja2VyamFj
-ayBQcm9qZWN0LiwgMjAwNyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKi8K
-LyogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgKi8KLyogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29m
-dHdhcmU7ICB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3IgbW9kaWZ5ICAgICAgKi8K
-LyogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5z
-ZSBhcyBwdWJsaXNoZWQgYnkgICAgICAgKi8KLyogdGhlIEZyZWUgU29mdHdhcmUgRm91bmRh
-dGlvbjsgZWl0aGVyIHZlcnNpb24gMiBvZiB0aGUgTGljZW5zZSwgb3IgICAgICAgICAgKi8K
-LyogKGF0IHlvdXIgb3B0aW9uKSBhbnkgbGF0ZXIgdmVyc2lvbi4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgKi8KLyogICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKi8K
-LyogVGhpcyBwcm9ncmFtIGlzIGRpc3RyaWJ1dGVkIGluIHRoZSBob3BlIHRoYXQgaXQgd2ls
-bCBiZSB1c2VmdWwsICAgICAgICAgICAgKi8KLyogYnV0IFdJVEhPVVQgQU5ZIFdBUlJBTlRZ
-OyAgd2l0aG91dCBldmVuIHRoZSBpbXBsaWVkIHdhcnJhbnR5IG9mICAgICAgICAgICAgKi8K
-LyogTUVSQ0hBTlRBQklMSVRZIG9yIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQT1NF
-LiAgU2VlICAgICAgICAgICAgICAgICAgKi8KLyogdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
-aWNlbnNlIGZvciBtb3JlIGRldGFpbHMuICAgICAgICAgICAgICAgICAgICAgICAgICAgKi8K
-LyogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgKi8KLyogWW91IHNob3VsZCBoYXZlIHJlY2VpdmVk
-IGEgY29weSBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgICAgICAgICAgKi8K
-LyogYWxvbmcgd2l0aCB0aGlzIHByb2dyYW07ICBpZiBub3QsIHdyaXRlIHRvIHRoZSBGcmVl
-IFNvZnR3YXJlIEZvdW5kYXRpb24sICAgKi8KLyogSW5jLiwgNTEgRnJhbmtsaW4gU3RyZWV0
-LCBGaWZ0aCBGbG9vciwgQm9zdG9uLCBNQSAwMjExMC0xMzAxIFVTQSAgICAgICAgICAgKi8K
-LyogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgKi8KLyogSGlzdG9yeTogICAgIFBvcnRpbmcgZnJv
-bSBDcmFja2VyamFjayB0byBMVFAgaXMgZG9uZSBieSAgICAgICAgICAgICAgICAgICAgKi8K
-LyogICAgICAgICAgICAgIE1hbmFzIEt1bWFyIE5heWFrIG1ha25heWFrQGluLmlibS5jb20+
-ICAgICAgICAgICAgICAgICAgICAgICAgKi8KLyoqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKi8K
-Ci8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKiovCi8qIERlc2NyaXB0aW9uOiBUaGlzIHRlc3Rz
-IHRoZSBydF9zaWdhY3Rpb24oKSBzeXNjYWxsICAgICAgICAgICAgICAgICAgICAgICAgICov
-Ci8qCQlydF9zaWdhY3Rpb24gYWx0ZXJzIGFuIGFjdGlvbiB0YWtlbiBieSBhIHByb2Nlc3Mg
-b24gcmVjZWlwdCAgICovCi8qIAkJb2YgYSBwYXJ0aWN1bGFyIHNpZ25hbC4gVGhlIGFjdGlv
-biBpcyBzcGVjaWZpZWQgYnkgdGhlICAgICAgICAqLwovKgkJc2lnYWN0aW9uIHN0cnVjdHVy
-ZS4gVGhlIHByZXZpb3VzIGFjdGlvbiBvbiB0aGUgc2lnbmFsIGlzICAgICAqLwovKgkJc2F2
-ZWQgaW4gb2FjdC5zaWdzZXRzaXplIHNob3VsZCBpbmRpY2F0ZSB0aGUgc2l6ZSBvZiBhICAg
-ICAgICAqLwovKgkJc2lnc2V0X3QgdHlwZS4gICAgICAgICAgICAgICAgICAgICAgIAkJCSAg
-ICAgICovCi8qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKiovCgojaW5jbHVkZSA8c3RkaW8uaD4K
-I2luY2x1ZGUgPHN0ZGxpYi5oPgojaW5jbHVkZSA8dW5pc3RkLmg+CiNpbmNsdWRlIDxzaWdu
-YWwuaD4KI2luY2x1ZGUgPGVycm5vLmg+CiNpbmNsdWRlIDxzeXMvc3lzY2FsbC5oPgojaW5j
-bHVkZSA8c3RyaW5nLmg+CgojaW5jbHVkZSAidGVzdC5oIgojaW5jbHVkZSAibGludXhfc3lz
-Y2FsbF9udW1iZXJzLmgiCiNpbmNsdWRlICJsYXBpL3J0X3NpZ2FjdGlvbi5oIgoKY2hhciAq
-VENJRCA9ICJydF9zaWdhY3Rpb24wMSI7CnN0YXRpYyBpbnQgdGVzdG5vOwppbnQgVFNUX1RP
-VEFMID0gMTsKCnN0YXRpYyB2b2lkIGNsZWFudXAodm9pZCkKewoJdHN0X3JtZGlyKCk7Cn0K
-CnN0YXRpYyB2b2lkIHNldHVwKHZvaWQpCnsKCVRFU1RfUEFVU0U7Cgl0c3RfdG1wZGlyKCk7
-Cn0KCnN0YXRpYyBpbnQgdGVzdF9mbGFnc1tdID0KICAgIHsgU0FfUkVTRVRIQU5EIHwgU0Ff
-U0lHSU5GTywgU0FfUkVTRVRIQU5ELCBTQV9SRVNFVEhBTkQgfCBTQV9TSUdJTkZPLApTQV9S
-RVNFVEhBTkQgfCBTQV9TSUdJTkZPLCBTQV9OT01BU0sgfTsKY2hhciAqdGVzdF9mbGFnc19s
-aXN0W10gPQogICAgeyAiU0FfUkVTRVRIQU5EfFNBX1NJR0lORk8iLCAiU0FfUkVTRVRIQU5E
-IiwgIlNBX1JFU0VUSEFORHxTQV9TSUdJTkZPIiwKIlNBX1JFU0VUSEFORHxTQV9TSUdJTkZP
-IiwgIlNBX05PTUFTSyIgfTsKCnN0YXRpYyB2b2lkIGhhbmRsZXIoaW50IHNpZykKewoJdHN0
-X3Jlc20oVElORk8sICJTaWduYWwgSGFuZGxlciBDYWxsZWQgd2l0aCBzaWduYWwgbnVtYmVy
-ICVkXG4iLCBzaWcpOwoJcmV0dXJuOwp9CgpzdGF0aWMgaW50IHNldF9oYW5kbGVyKGludCBz
-aWcsIGludCBzaWdfdG9fbWFzaywgaW50IG1hc2tfZmxhZ3MpCnsKCXN0cnVjdCBzaWdhY3Rp
-b24gc2EsIG9sZGFjdGlvbjsKCglzYS5zYV9oYW5kbGVyID0gKHZvaWQgKiloYW5kbGVyOwoJ
-c2Euc2FfZmxhZ3MgPSBtYXNrX2ZsYWdzOwoJc2lnZW1wdHlzZXQoJnNhLnNhX21hc2spOwoJ
-c2lnYWRkc2V0KCZzYS5zYV9tYXNrLCBzaWcpOwoKCXJldHVybiBsdHBfcnRfc2lnYWN0aW9u
-KHNpZywgJnNhLCAmb2xkYWN0aW9uLCBTSUdTRVRTSVpFKTsKfQoKaW50IG1haW4oaW50IGFj
-LCBjaGFyICoqYXYpCnsKCXVuc2lnbmVkIGludCBmbGFnOwoJaW50IHNpZ25hbDsKCWludCBs
-YzsKCgl0c3RfcGFyc2Vfb3B0cyhhYywgYXYsIE5VTEwsIE5VTEwpOwoKCXNldHVwKCk7CgoJ
-Zm9yIChsYyA9IDA7IFRFU1RfTE9PUElORyhsYyk7ICsrbGMpIHsKCgkJdHN0X2NvdW50ID0g
-MDsKCgkJZm9yICh0ZXN0bm8gPSAwOyB0ZXN0bm8gPCBUU1RfVE9UQUw7ICsrdGVzdG5vKSB7
-CgoJCQlmb3IgKHNpZ25hbCA9IFNJR1JUTUlOOyBzaWduYWwgPD0gU0lHUlRNQVg7IHNpZ25h
-bCsrKSB7CgkJCQlmb3IgKGZsYWcgPSAwOwoJCQkJICAgICBmbGFnIDwKCQkJCSAgICAgKHNp
-emVvZih0ZXN0X2ZsYWdzKSAvCgkJCQkgICAgICBzaXplb2YodGVzdF9mbGFnc1swXSkpOyBm
-bGFnKyspIHsKCgkJCQkJVEVTVChzZXRfaGFuZGxlcgoJCQkJCSAgICAgKHNpZ25hbCwgMCwg
-dGVzdF9mbGFnc1tmbGFnXSkpOwoKCQkJCQlpZiAoVEVTVF9SRVRVUk4gPT0gMCkgewoJCQkJ
-CQl0c3RfcmVzbShUSU5GTywgInNpZ25hbDogJWQgIiwKCQkJCQkJCSBzaWduYWwpOwoJCQkJ
-CQl0c3RfcmVzbShUUEFTUywKCQkJCQkJCSAicnRfc2lnYWN0aW9uIGNhbGwgc3VjY2VlZGVk
-OiByZXN1bHQgPSAlbGQgIiwKCQkJCQkJCSBURVNUX1JFVFVSTik7CgkJCQkJCXRzdF9yZXNt
-KFRJTkZPLAoJCQkJCQkJICJzYS5zYV9mbGFncyA9ICVzICIsCgkJCQkJCQkgdGVzdF9mbGFn
-c19saXN0W2ZsYWddKTsKCQkJCQkJa2lsbChnZXRwaWQoKSwgc2lnbmFsKTsKCQkJCQl9IGVs
-c2UgewoJCQkJCQl0c3RfcmVzbShURkFJTCB8IFRURVJSTk8sCgkJCQkJCQkgInJ0X3NpZ2Fj
-dGlvbiBjYWxsICIKCQkJCQkJCSAiZmFpbGVkIik7CgkJCQkJfQoKCQkJCX0KCgkJCX0KCgkJ
-fQoKCX0KCWNsZWFudXAoKTsKCXRzdF9leGl0KCk7Cn0K
---------------060806090701040900040200--
+Regards,
+Ajay
