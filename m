@@ -1,71 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeFEMHV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 08:07:21 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37113 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751598AbeFEMHT (ORCPT
+        id S1751828AbeFEMMA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 08:12:00 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36110 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751644AbeFEML6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 08:07:19 -0400
-X-Google-Smtp-Source: ADUXVKJOglazixY/Jkhkl+FecjqcWqR2/aHT8yXjKSSm9iK0pFkuuQfKer+iJ9jBqBQqL0WTp+cCAg==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] ksys_mount: check for permissions before resource
- allocation
-From: Ilya Matveychikov <matvejchikov@gmail.com>
-In-Reply-To: <20180605115340.GO30522@ZenIV.linux.org.uk>
-Date: Tue, 5 Jun 2018 16:07:15 +0400
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-Id: <0F38EDA5-DEC3-48A1-9375-47949C26DAE8@gmail.com>
-References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
- <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
- <20180605112641.GN30522@ZenIV.linux.org.uk>
- <1E519BA2-4198-4255-BAE4-3125C59741A3@gmail.com>
- <20180605115340.GO30522@ZenIV.linux.org.uk>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Tue, 5 Jun 2018 08:11:58 -0400
+X-Google-Smtp-Source: ADUXVKLlZcTYZ/YcKMraUPF67C1Xa+WqtXYw28x5j7MTGSiTlFZPBwQVDMcXS/1GzW1EhDDAeWeNEw==
+Date: Tue, 5 Jun 2018 14:11:53 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: Re: [PATCH v5 00/10] track CPU utilization
+Message-ID: <20180605121153.GD16081@localhost.localdomain>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
+ <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55C7QYk008148
 
+Hi Quentin,
 
+On 05/06/18 11:57, Quentin Perret wrote:
 
-> On Jun 5, 2018, at 3:53 PM, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+[...]
+
+> What about the diff below (just a quick hack to show the idea) applied
+> on tip/sched/core ?
 > 
-> On Tue, Jun 05, 2018 at 03:35:55PM +0400, Ilya Matveychikov wrote:
->> 
->>> On Jun 5, 2018, at 3:26 PM, Al Viro <viro@ZenIV.linux.org.uk> wrote:
->>>> 
->>>>> On Jun 5, 2018, at 6:00 AM, Ilya Matveychikov <matvejchikov@gmail.com> wrote:
->>>>> 
->>>>> Early check for mount permissions prevents possible allocation of 3
->>>>> pages from kmalloc() pool by unpriveledged user which can be used for
->>>>> spraying the kernel heap.
->>> 
->>> I'm sorry, but there are arseloads of unpriveleged syscalls that do the same,
->>> starting with read() from procfs files.  So what the hell does it buy?
->> 
->> Means that if all do the same shit no reason to fix it? Sounds weird...
-> 
-> Fix *what*?  You do realize that there's no permission checks to stop e.g.
-> stat(2) from copying the pathname in, right?  With user-supplied contents,
-> even...
-> 
-> If you depend upon preventing kmalloc'ed temporary allocations filled
-> with user-supplied data, you are screwed, plain and simple.  It really can't
-> be prevented, in a lot of ways that are much less exotic than mount(2).
-> Most of syscall arguments are copied in, before we get any permission
-> checks.  It does happen and it will happen - examining them while they are
-> still in userland is a nightmare in a lot of respects, starting with
-> security.
+> ---8<---
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index a8ba6d1f262a..23a4fb1c2c25 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+>  	sg_cpu->util_dl  = cpu_util_dl(rq);
+>  }
+>  
+> +unsigned long scale_rt_capacity(int cpu);
+>  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  {
+>  	struct rq *rq = cpu_rq(sg_cpu->cpu);
+> +	int cpu = sg_cpu->cpu;
+> +	unsigned long util, dl_bw;
+>  
+>  	if (rq->rt.rt_nr_running)
+>  		return sg_cpu->max;
+> @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+>  	 * ready for such an interface. So, we only do the latter for now.
+>  	 */
+> -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+> +	util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
 
-I agree that it’s impossible to completely avoid this kind of allocations
-and examining data in user-land will be the bigger problem than copying
-arguments to the kernel. But aside of that what’s wrong with the idea of
-having the permission check before doing any kind of work?
+Sorry to be pedantinc, but this (ATM) includes DL avg contribution, so,
+since we use max below, we will probably have the same problem that we
+discussed on Vincent's approach (overestimation of DL contribution while
+we could use running_bw).
 
-BTW, sys_umount() has this check in the right place - before doing anything.
-So, why not to have the same logic for mount/umount?
+> +	util >>= SCHED_CAPACITY_SHIFT;
+> +	util = arch_scale_cpu_capacity(NULL, cpu) - util;
+> +	util += sg_cpu->util_cfs;
+> +	dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+
+Why this_bw instead of running_bw?
+
+Thanks,
+
+- Juri
