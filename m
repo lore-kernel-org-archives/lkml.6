@@ -1,64 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752580AbeFEVXi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 17:23:38 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43197 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbeFEVXg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 17:23:36 -0400
-X-Google-Smtp-Source: ADUXVKI6j5hPZUJ0JWm2lr5SmH1l/EuW7AMSc+5gGWHysqbCIB+FnRjxehFugIpIX4xURQ8k4nkPloo+8MRSsoTbXq8=
+        id S1752486AbeFEVZJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 17:25:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751619AbeFEVZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 17:25:08 -0400
+X-Google-Smtp-Source: ADUXVKLSOJAEahUiMhp7w2r/o/siGwFuHNh/G4kbj4uTL4obtMXIMHsqAe0XqWEIRl+ycQxeJVWTonV1EmLRL5zQR7I=
 MIME-Version: 1.0
-In-Reply-To: <ea7ec2ef-f30f-c4dc-c1d3-c0a2a4810fd5@sandeen.net>
-References: <20180525151421.2317292-1-arnd@arndb.de> <ea7ec2ef-f30f-c4dc-c1d3-c0a2a4810fd5@sandeen.net>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 5 Jun 2018 23:23:34 +0200
-X-Google-Sender-Auth: 3oy363DO9g8Hwmj7s19uzvz7g4g
-Message-ID: <CAK8P3a1qnvUVN0jF3BYgtyCSNL6gZm8Lc3pg8kVfga5TVN2vTg@mail.gmail.com>
-Subject: Re: [PATCH] xfs: mark sb_fname as nonstring
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@redhat.com>, Martin Sebor <msebor@gmail.com>,
-        Brian Foster <bfoster@redhat.com>, Dave Chinner <dchinner@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <1525229431-3087-11-git-send-email-hao.wu@intel.com>
+References: <1525229431-3087-1-git-send-email-hao.wu@intel.com> <1525229431-3087-11-git-send-email-hao.wu@intel.com>
+From: Alan Tull <atull@kernel.org>
+Date: Tue, 5 Jun 2018 16:24:26 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTezwLOZOy3E=herSatYRm9mATdqO8WFcbEbRGpfK5mRQ@mail.gmail.com>
+Message-ID: <CANk1AXTezwLOZOy3E=herSatYRm9mATdqO8WFcbEbRGpfK5mRQ@mail.gmail.com>
+Subject: Re: [PATCH v5 10/28] fpga: dfl: add dfl_fpga_port_ops support.
+To: Wu Hao <hao.wu@intel.com>
+Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 8:44 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
-> On 5/25/18 10:14 AM, Arnd Bergmann wrote:
+On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
 
->> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
->> index 84fbf164cbc3..eb79f2bc4dcc 100644
->> --- a/fs/xfs/xfs_ioctl.c
->> +++ b/fs/xfs/xfs_ioctl.c
->> @@ -1819,12 +1819,12 @@ xfs_ioc_getlabel(
->>       BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
->>
->>       spin_lock(&mp->m_sb_lock);
->> -     strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
->> +     strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
->>       spin_unlock(&mp->m_sb_lock);
->>
->>       /* xfs on-disk label is 12 chars, be sure we send a null to user */
->>       label[XFSLABEL_MAX] = '\0';
->> -     if (copy_to_user(user_label, label, sizeof(sbp->sb_fname)))
->> +     if (copy_to_user(user_label, label, sizeof(label)))
+Hi Hao,
+
+> In some cases, other DFL driver modules may need to access some port
+> operations, e.g disable / enable port for partial reconfiguration in
+> FME module. In order to avoid dependency between port and FME modules,
+> this patch introduces the dfl_fpga_port_ops support in DFL framework.
+> A global dfl_fpga_port_ops list is added in the DFL framework, and
+> it allows other DFL modules to use these port operations registered
+> to this list, even in virtualization case, the port platform device
+> is turned into VF / guest VM and hidden in host, the registered
+> port_ops is still usable. It resolves the dependency issues between
+> modules, but once get port ops API returns a valid port ops, that
+> means related port driver module has been module_get to prevent from
+> unexpected unload, and put port ops API must be invoked after use.
 >
-> I /think/ this also runs the risk of copying out stack memory.
+> These APIs introduced by this patch is listed below:
+>  * dfl_fpga_add_port_ops
+>    add one port ops to the global list.
 >
-> I'll send another proposal based on this with slight modifications.
-
-I assumed it's safe since the earlier strncpy() pads the local 'label'
-with zero bytes up the XFSLABEL_MAX, and the last byte
-is explicitly set to guarantee zero padding.
-
-Using strlcpy() or strscpy() would guarantee a zero-terminated
-string without the explicit ='\0' assignment but would risk
-the data leak you were probably thinking of.
-
-       Arnd
+>  * dfl_fpga_del_port_ops
+>    del one port ops from the global list.
+>
+>  * dfl_fpga_get_port_ops / dfl_fpga_put_port_ops
+>    get/put the port ops before/after use.
+>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
+> ---
+>  drivers/fpga/dfl.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/fpga/dfl.h | 21 +++++++++++++++++
+>  2 files changed, 88 insertions(+)
+>
