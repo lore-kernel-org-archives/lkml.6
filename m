@@ -1,19 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeFERFi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:05:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34664 "EHLO mail.kernel.org"
+        id S1753363AbeFERFm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:05:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751879AbeFERFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:05:35 -0400
+        id S1752093AbeFERFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 13:05:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Subject: [PATCH 4.9 31/61] powerpc/rfi-flush: Call setup_rfi_flush() after LPM migration
-Date: Tue,  5 Jun 2018 19:01:52 +0200
-Message-Id: <20180605170119.701287189@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 32/61] powerpc/pseries: Add new H_GET_CPU_CHARACTERISTICS flags
+Date: Tue,  5 Jun 2018 19:01:53 +0200
+Message-Id: <20180605170119.750989000@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
 References: <20180605170117.643936916@linuxfoundation.org>
@@ -31,50 +30,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 921bc6cf807ceb2ab8005319cf39f33494d6b100 upstream.
+commit c4bc36628d7f8b664657d8bd6ad1c44c177880b7 upstream.
 
-We might have migrated to a machine that uses a different flush type,
-or doesn't need flushing at all.
+Add some additional values which have been defined for the
+H_GET_CPU_CHARACTERISTICS hypercall.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/pseries/mobility.c |    3 +++
- arch/powerpc/platforms/pseries/pseries.h  |    2 ++
- arch/powerpc/platforms/pseries/setup.c    |    2 +-
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/hvcall.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/platforms/pseries/mobility.c
-+++ b/arch/powerpc/platforms/pseries/mobility.c
-@@ -314,6 +314,9 @@ void post_mobility_fixup(void)
- 		printk(KERN_ERR "Post-mobility device tree update "
- 			"failed: %d\n", rc);
+--- a/arch/powerpc/include/asm/hvcall.h
++++ b/arch/powerpc/include/asm/hvcall.h
+@@ -313,6 +313,9 @@
+ #define H_CPU_CHAR_L1D_FLUSH_ORI30	(1ull << 61) // IBM bit 2
+ #define H_CPU_CHAR_L1D_FLUSH_TRIG2	(1ull << 60) // IBM bit 3
+ #define H_CPU_CHAR_L1D_THREAD_PRIV	(1ull << 59) // IBM bit 4
++#define H_CPU_CHAR_BRANCH_HINTS_HONORED	(1ull << 58) // IBM bit 5
++#define H_CPU_CHAR_THREAD_RECONFIG_CTRL	(1ull << 57) // IBM bit 6
++#define H_CPU_CHAR_COUNT_CACHE_DISABLED	(1ull << 56) // IBM bit 7
  
-+	/* Possibly switch to a new RFI flush type */
-+	pseries_setup_rfi_flush();
-+
- 	return;
- }
- 
---- a/arch/powerpc/platforms/pseries/pseries.h
-+++ b/arch/powerpc/platforms/pseries/pseries.h
-@@ -79,4 +79,6 @@ extern struct pci_controller_ops pseries
- 
- unsigned long pseries_memory_block_size(void);
- 
-+void pseries_setup_rfi_flush(void);
-+
- #endif /* _PSERIES_PSERIES_H */
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -450,7 +450,7 @@ static void __init find_and_init_phbs(vo
- 	of_pci_check_probe_only();
- }
- 
--static void pseries_setup_rfi_flush(void)
-+void pseries_setup_rfi_flush(void)
- {
- 	struct h_cpu_char_result result;
- 	enum l1d_flush_type types;
+ #define H_CPU_BEHAV_FAVOUR_SECURITY	(1ull << 63) // IBM bit 0
+ #define H_CPU_BEHAV_L1D_FLUSH_PR	(1ull << 62) // IBM bit 1
