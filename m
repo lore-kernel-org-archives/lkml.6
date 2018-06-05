@@ -1,212 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752005AbeFERzk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 13:55:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50786 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753194AbeFERyn (ORCPT
+        id S1753125AbeFERzx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 13:55:53 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44677 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753044AbeFERzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 13:54:43 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Paolo Cretaro <paolocretaro@gmail.com>, linux-iio@vger.kernel.org,
-        Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Subject: [PATCH v2 4/8] iio: cros_ec: Switch to SPDX identifier.
-Date: Tue,  5 Jun 2018 19:54:25 +0200
-Message-Id: <20180605175429.9072-5-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180605175429.9072-1-enric.balletbo@collabora.com>
-References: <20180605175429.9072-1-enric.balletbo@collabora.com>
+        Tue, 5 Jun 2018 13:55:50 -0400
+X-Google-Smtp-Source: ADUXVKKdKdv81X3vDpuQX4leq2iO+0GLLhMVG32L3RgD+j2aJUdyd/Du10sG0TbMSBK9/WcNGKuVkvINPMcOOOKIZZs=
+MIME-Version: 1.0
+References: <20180605170532.170361-1-ndesaulniers@google.com>
+ <20180605170532.170361-2-ndesaulniers@google.com> <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
+In-Reply-To: <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Tue, 5 Jun 2018 10:55:38 -0700
+Message-ID: <CAKwvOdkkCxNHJKBVPJfixn1gO4PjT9VAynXX0m4KBD+YfLUo5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline declarations
+To: joe@perches.com
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>, akataria@vmware.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Greg KH <gregkh@linuxfoundation.org>, hpa@zytor.com,
+        "J. Kiszka" <jan.kiszka@siemens.com>, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, Josh Poimboeuf <jpoimboe@redhat.com>,
+        kirill.shutemov@linux.intel.com, mingo@redhat.com, mjg59@google.com,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>, rostedt@goodmis.org,
+        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
+        Thiebaud Weksteen <tweek@google.com>, linux-efi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, Kees Cook <keescook@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
+        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adopt the SPDX license identifier headers to ease license compliance
-management.
+On Tue, Jun 5, 2018 at 10:23 AM Joe Perches <joe@perches.com> wrote:
+> On Tue, 2018-06-05 at 10:05 -0700, Nick Desaulniers wrote:
+> >  #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||             \
+> >      !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+> > -#define inline inline                __attribute__((always_inline,unused)) notrace
+> > -#define __inline__ __inline__        __attribute__((always_inline,unused)) notrace
+> > -#define __inline __inline    __attribute__((always_inline,unused)) notrace
+> > +#define inline \
+> > +     inline __attribute__((always_inline, unused, gnu_inline)) notrace
+> > +#define __inline__ \
+> > +     __inline__ __attribute__((always_inline, unused, gnu_inline)) notrace
+> > +#define __inline \
+> > +     __inline __attribute__((always_inline, unused, gnu_inline)) notrace
+>
+> Perhaps these are simpler as
+>
+> #define __inline__      inline
+> #define __inline        inline
+>
+> >  #else
+> >  /* A lot of inline functions can cause havoc with function tracing */
+> > -#define inline inline                __attribute__((unused)) notrace
+> > -#define __inline__ __inline__        __attribute__((unused)) notrace
+> > -#define __inline __inline    __attribute__((unused)) notrace
+> > +#define inline inline                __attribute__((unused, gnu_inline)) notrace
+> > +#define __inline__ __inline__        __attribute__((unused, gnu_inline)) notrace
+> > +#define __inline __inline    __attribute__((unused, gnu_inline)) notrace
+> >  #endif
+>
+> And only set once along with:
+>
+> >  #define __always_inline      inline __attribute__((always_inline))
+>
+> And perhaps this __always_inline should be updated
+> with gnu_inline as well
+>
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-
-Changes in v2: None
-
- drivers/iio/accel/cros_ec_accel_legacy.c      | 27 +++++++------------
- .../common/cros_ec_sensors/cros_ec_sensors.c  | 24 +++++------------
- .../cros_ec_sensors/cros_ec_sensors_core.c    | 18 +++----------
- .../cros_ec_sensors/cros_ec_sensors_core.h    | 12 ++-------
- drivers/iio/light/cros_ec_light_prox.c        | 18 +++----------
- drivers/iio/pressure/cros_ec_baro.c           | 18 +++----------
- 6 files changed, 30 insertions(+), 87 deletions(-)
-
-diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-index 063e89eff791..525f7eb37e91 100644
---- a/drivers/iio/accel/cros_ec_accel_legacy.c
-+++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-@@ -1,21 +1,12 @@
--/*
-- * Driver for older Chrome OS EC accelerometer
-- *
-- * Copyright 2017 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * This driver uses the memory mapper cros-ec interface to communicate
-- * with the Chrome OS EC about accelerometer data.
-- * Accelerometer access is presented through iio sysfs.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Driver for older ChromeOS EC accelerometer
-+//
-+// Copyright (C) 2017 Google, Inc.
-+// Author: Gwendal Grignou <gwendal@chromium.org>
-+//
-+// This driver uses the memory mapper cros-ec interface to communicate
-+// with the ChromeOS EC about accelerometer data.
-+// Accelerometer access is presented through iio sysfs.
- 
- #include <linux/delay.h>
- #include <linux/device.h>
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-index 705cb3e72663..39d4eecc97ea 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-@@ -1,20 +1,10 @@
--/*
-- * cros_ec_sensors - Driver for Chrome OS Embedded Controller sensors.
-- *
-- * Copyright (C) 2016 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * This driver uses the cros-ec interface to communicate with the Chrome OS
-- * EC about sensors data. Data access is presented through iio sysfs.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// Driver for ChromeOS Embedded Controller sensors.
-+//
-+// Copyright (C) 2016 Google, Inc.
-+//
-+// This driver uses the cros-ec interface to communicate with the ChromeOS
-+// EC about sensors data. Data access is presented through iio sysfs.
- 
- #include <linux/delay.h>
- #include <linux/device.h>
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-index a620eb5ce202..05221994197c 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-@@ -1,17 +1,7 @@
--/*
-- * cros_ec_sensors_core - Common function for Chrome OS EC sensor driver.
-- *
-- * Copyright (C) 2016 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// Common functions for ChromeOS EC sensor driver.
-+//
-+// Copyright (C) 2016 Google, Inc.
- 
- #include <linux/delay.h>
- #include <linux/device.h>
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.h b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.h
-index 2edf68dc7336..a9935489030e 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.h
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.h
-@@ -1,16 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * ChromeOS EC sensor hub
-  *
-- * Copyright (C) 2016 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-+ * Copyright (C) 2016 Google, Inc.
-  */
- 
- #ifndef __CROS_EC_SENSORS_CORE_H
-diff --git a/drivers/iio/light/cros_ec_light_prox.c b/drivers/iio/light/cros_ec_light_prox.c
-index 8e8a0e7f78d1..8635e1c18cd5 100644
---- a/drivers/iio/light/cros_ec_light_prox.c
-+++ b/drivers/iio/light/cros_ec_light_prox.c
-@@ -1,17 +1,7 @@
--/*
-- * cros_ec_light_prox - Driver for light and prox sensors behing CrosEC.
-- *
-- * Copyright (C) 2017 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// Driver for light and prox sensors behind ChromeOS EC.
-+//
-+// Copyright (C) 2017 Google, Inc.
- 
- #include <linux/delay.h>
- #include <linux/device.h>
-diff --git a/drivers/iio/pressure/cros_ec_baro.c b/drivers/iio/pressure/cros_ec_baro.c
-index 4599fde4dd25..8e134d65d18d 100644
---- a/drivers/iio/pressure/cros_ec_baro.c
-+++ b/drivers/iio/pressure/cros_ec_baro.c
-@@ -1,17 +1,7 @@
--/*
-- * cros_ec_baro - Driver for barometer sensor behind CrosEC.
-- *
-- * Copyright (C) 2017 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// Driver for barometer sensor behind ChromeOS EC.
-+//
-+// Copyright (C) 2017 Google, Inc.
- 
- #include <linux/delay.h>
- #include <linux/device.h>
+Great idea, I'll pick this up and add you to the Suggested-by: tag in
+v3. Thanks Joe!
 -- 
-2.17.1
+Thanks,
+~Nick Desaulniers
