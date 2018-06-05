@@ -1,81 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751622AbeFEFgp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 01:36:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54435 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751501AbeFEFgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 01:36:44 -0400
-Subject: Re: [PATCH 6/6] x86/vdso: Move out the CPU number store
-To: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
-        "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1528140269-26205-1-git-send-email-chang.seok.bae@intel.com>
- <1528140269-26205-7-git-send-email-chang.seok.bae@intel.com>
- <8a41304a-3517-003a-badf-1ba8f7ababe4@nextfour.com>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <51587908-9652-6a8e-0e01-f387e3ae5852@zytor.com>
-Date: Mon, 4 Jun 2018 22:36:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751603AbeFEFll (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 01:41:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:29749 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751497AbeFEFlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 01:41:40 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,477,1520924400";
+   d="gz'50?scan'50,208,50";a="61328559"
+Date: Tue, 5 Jun 2018 13:41:03 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Nadav Amit <namit@vmware.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        Nadav Amit <namit@vmware.com>, Christopher Li <sparse@chrisli.org>,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] x86: objtool: use asm macro for better compiler
+ decisions
+Message-ID: <201806051343.jOeEcDni%fengguang.wu@intel.com>
+References: <20180604112131.59100-3-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <8a41304a-3517-003a-badf-1ba8f7ababe4@nextfour.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="ZPt4rx8FFjLCG7dd"
+Content-Disposition: inline
+In-Reply-To: <20180604112131.59100-3-namit@vmware.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/18 20:57, Mika Penttilä wrote:
-> 
-> This won't work on X86-32 because it actually uses the segment limit with fs: access. So there 
-> is a reason why the lsl based method is X86-64 only.
-> 
 
-<thinks out loud>
+--ZPt4rx8FFjLCG7dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Why does that matter in any shape, way, or form?  The LSL instruction
-doesn't touch any of the segment registers, it just uses a segment
-selector number.
+Hi Nadav,
 
-<looks at code>
+Thank you for the patch! Yet something to improve:
 
-I see... we have a VERY unfortunate name collision: the x86-64
-GDT_ENTRY_PERC_PU and the i386 GDT_ENTRY_PERCPU are in fact two
-completely different things, with the latter being the actual percpu
-offset used by the kernel.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.17 next-20180604]
+[cannot apply to tip/x86/core]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-So yes, this patch is wrong, because the naming of the x86-64 segment is
-insane especially in the proximity of the  -- it should be something
-like GDT_ENTRY_CPU_NUMBER.
+url:    https://github.com/0day-ci/linux/commits/Nadav-Amit/x86-macrofying-inline-asm-for-better-compilation/20180605-124313
+config: c6x-evmc6678_defconfig (attached as .config)
+compiler: c6x-elf-gcc (GCC) 8.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        make.cross ARCH=c6x 
 
-Unfortunately we probably can't use the same GDT entry on x86-32 and
-x86-64, because entry 15 (selector 0x7b) is USER_DS, which is something
-we really don't want to screw with.  This means i386 programs that
-execute LSL directly for whatever reason will have to understand the
-difference, but most of the other segment numbers differ as well,
-including user space %cs (USER_CS/USER32_CS) and %ds/%es/%ss (USER_DS).
-Perhaps we could bump down segments 23-28 by one and put it as 23, that
-way the CPU_NUMBER segment would always be at %ss+80 for the default
-(flat, initial) user space %ss.  (We want to specify using %ss rather
-than %ds, because it is less likely to be changed and because 64 bits,
-too, have %ss defined, but not %ds.)
+All errors (new ones prefixed by >>):
 
-<action item>
+   include/linux/compiler.h: Assembler messages:
+>> include/linux/compiler.h:308: Error: Macro `annotate_unreachable' was already defined
 
-Rename the x86-64 segment to CPU_NUMBER, fixing the naming conflict.
-Add 1 to GDT entry numbers 23-28 for i386 (all of these are
-kernel-internal segments and so have no impact on user space).
-Add i386 CPU_NUMBER equivalent to x86-64 at GDT entry 23.
-Document the above relationship between segments.
+vim +308 include/linux/compiler.h
 
-OK, everyone?
+   307	
+ > 308	.macro ANNOTATE_UNREACHABLE counter:req
+   309	.endm
+   310	
 
-	-hpa
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--ZPt4rx8FFjLCG7dd
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--ZPt4rx8FFjLCG7dd--
