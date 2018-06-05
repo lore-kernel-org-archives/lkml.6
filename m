@@ -1,65 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752010AbeFEPPq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 11:15:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751599AbeFEPPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 11:15:44 -0400
-Date: Tue, 5 Jun 2018 17:15:40 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
-        bjsdjshi@linux.vnet.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v2 06/10] vfio: ccw: Make FSM functions atomic
-Message-ID: <20180605171540.229f69a9.cohuck@redhat.com>
-In-Reply-To: <6c39016f-8125-c5cc-3b9b-0bc517e5f642@linux.ibm.com>
-References: <1527243678-3140-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1527243678-3140-7-git-send-email-pmorel@linux.vnet.ibm.com>
-        <20180605133850.3509a3d3.cohuck@redhat.com>
-        <46613ac7-3156-7a78-7d49-acbc3f615b76@linux.ibm.com>
-        <20180605153539.1eee99f9.cohuck@redhat.com>
-        <6c39016f-8125-c5cc-3b9b-0bc517e5f642@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1751734AbeFEPTJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 11:19:09 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39187 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeFEPTI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 11:19:08 -0400
+X-Google-Smtp-Source: ADUXVKLRbOA9ph1yg0kOdWkY0qWOIHf+vs9GRh4j+DPzqo9LOdC1vErb+7LDQydjxJyax6yMDZS/NMO56XBqJzPlVqA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <201805290939.AjijeyJf%fengguang.wu@intel.com>
+References: <201805290939.AjijeyJf%fengguang.wu@intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 5 Jun 2018 18:19:07 +0300
+Message-ID: <CAHp75Ve-OjbeVjWUGkXbyh-PXn8L12Sb56EBq-n5z5sicUh7Sg@mail.gmail.com>
+Subject: Re: include/linux/string.h:246:9: warning: '__builtin_strncpy' output
+ truncated before terminating nul copying 4 bytes from a string of the same length
+To: kbuild test robot <lkp@intel.com>,
+        Michal Januszewski <spock@gentoo.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, kbuild-all@01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Jun 2018 16:21:03 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+On Tue, May 29, 2018 at 4:35 AM, kbuild test robot <lkp@intel.com> wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   786b71f5b754273ccef6d9462e52062b3e1f9877
+> commit: 854e55ad289ef8888e7991f0ada85d5846f5afb9 objtool, perf: Fix GCC 8 -Wrestrict error
+> date:   2 months ago
+> config: x86_64-randconfig-s4-05290856 (attached as .config)
+> compiler: gcc-8 (Debian 8.1.0-3) 8.1.0
+> reproduce:
+>         git checkout 854e55ad289ef8888e7991f0ada85d5846f5afb9
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64
+>
 
-> On 05/06/2018 15:35, Cornelia Huck wrote:
-> > On Tue, 5 Jun 2018 15:10:11 +0200
-> > Pierre Morel <pmorel@linux.ibm.com> wrote:
-> >  
-> >> On 05/06/2018 13:38, Cornelia Huck wrote:  
-> >>> On Fri, 25 May 2018 12:21:14 +0200
-> >>> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
-> >>>     
-> >>>> We use mutex around the FSM function call to make the FSM
-> >>>> event handling and state change atomic.  
-> >>> I'm still not really clear as to what this mutex is supposed to
-> >>> serialize:
-> >>>
-> >>> - Modification of the state?
-> >>> - Any calls in the state machine?
-> >>> - A combination? (That would imply that we only deal with the state in
-> >>>     the state machine.)  
-> >> yes to all  
-> > But wouldn't that imply that you need to either take the mutex if you
-> > do something dependent on the state, or fire an event in that case?  
-> 
-> Yes, if it is not I forgot something important (like I did in patch 10)
-> vfio_ccw_fsm_event(private, event) takes the mutex on firering an event.
-> 
-> I have some cases where I do not respect this.
-> This is false and I must handle this with a new private variable,
-> this is where I test the state after having fired an event.
-> I will need to change this, in quiesce, reset, probe and open (others?).
+I guess it's easy to fix by
 
-But isn't that inherently racy? Even if you check the return code from
-the state machine change, it might have changed in the meantime again.
+--- a/drivers/video/fbdev/uvesafb.c
++++ b/drivers/video/fbdev/uvesafb.c
+@@ -422,7 +422,7 @@ static int uvesafb_vbe_getinfo(struct uvesafb_ktask *task,
+       task->t.flags = TF_VBEIB;
+       task->t.buf_len = sizeof(struct vbe_ib);
+       task->buf = &par->vbe_ib;
+-       strncpy(par->vbe_ib.vbe_signature, "VBE2", 4);
++       snprintf(par->vbe_ib.vbe_signature,
+sizeof(par->vbe_ib.vbe_signature), "VBE2");
+
+The question is do we want this to just shut up a compiler? It's
+obviously false positive.
+
+> All warnings (new ones prefixed by >>):
+>
+>    In file included from include/linux/bitmap.h:9,
+>                     from include/linux/cpumask.h:12,
+>                     from arch/x86/include/asm/cpumask.h:5,
+>                     from arch/x86/include/asm/msr.h:11,
+>                     from arch/x86/include/asm/processor.h:21,
+>                     from arch/x86/include/asm/cpufeature.h:5,
+>                     from arch/x86/include/asm/thread_info.h:53,
+>                     from include/linux/thread_info.h:38,
+>                     from arch/x86/include/asm/preempt.h:7,
+>                     from include/linux/preempt.h:81,
+>                     from include/linux/spinlock.h:51,
+>                     from include/linux/seqlock.h:36,
+>                     from include/linux/time.h:6,
+>                     from include/linux/stat.h:19,
+>                     from include/linux/module.h:10,
+>                     from drivers/video/fbdev/uvesafb.c:12:
+>    In function 'strncpy',
+>        inlined from 'uvesafb_vbe_getinfo' at drivers/video/fbdev/uvesafb.c:425:2:
+>>> include/linux/string.h:246:9: warning: '__builtin_strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]
+>      return __builtin_strncpy(p, q, size);
+>             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> vim +/__builtin_strncpy +246 include/linux/string.h
+>
+> 6974f0c4 Daniel Micay 2017-07-12  237
+> 6974f0c4 Daniel Micay 2017-07-12  238  #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
+> 6974f0c4 Daniel Micay 2017-07-12  239  __FORTIFY_INLINE char *strncpy(char *p, const char *q, __kernel_size_t size)
+> 6974f0c4 Daniel Micay 2017-07-12  240  {
+> 6974f0c4 Daniel Micay 2017-07-12  241   size_t p_size = __builtin_object_size(p, 0);
+> 6974f0c4 Daniel Micay 2017-07-12  242   if (__builtin_constant_p(size) && p_size < size)
+> 6974f0c4 Daniel Micay 2017-07-12  243           __write_overflow();
+> 6974f0c4 Daniel Micay 2017-07-12  244   if (p_size < size)
+> 6974f0c4 Daniel Micay 2017-07-12  245           fortify_panic(__func__);
+> 6974f0c4 Daniel Micay 2017-07-12 @246   return __builtin_strncpy(p, q, size);
+> 6974f0c4 Daniel Micay 2017-07-12  247  }
+> 6974f0c4 Daniel Micay 2017-07-12  248
+>
+> :::::: The code at line 246 was first introduced by commit
+> :::::: 6974f0c4555e285ab217cee58b6e874f776ff409 include/linux/string.h: add the option of fortified string.h functions
+>
+> :::::: TO: Daniel Micay <danielmicay@gmail.com>
+> :::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
