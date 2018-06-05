@@ -1,81 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751779AbeFELrj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 07:47:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35917 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751625AbeFELrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 07:47:33 -0400
-Date: Tue, 5 Jun 2018 13:47:29 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@vger.kernel.org, Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
-        kernel-team@fb.com, cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v13 0/7] cgroup-aware OOM killer
-Message-ID: <20180605114729.GB19202@dhcp22.suse.cz>
-References: <20171130152824.1591-1-guro@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171130152824.1591-1-guro@fb.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751871AbeFELsg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:48:36 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:41369 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbeFELsf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:48:35 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jeff Moyer <jmoyer@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Adam Manzanares <adam.manzanares@wdc.com>,
+        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: stub out ioprio_check_cap for !CONFIG_BLOCK
+Date: Tue,  5 Jun 2018 13:47:41 +0200
+Message-Id: <20180605114756.1517549-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:Y6L/cJLYaX+ZjLDaxOizSH3E7uGVjAFTZ2UlDqkmZauEtPBmZig
+ 5ILglaIbLc65UDbAyFRETp00uxbh2CWQBsvCyAq4xFHRAJeqHPZ0ul0yDz8p2kf96pKEK0H
+ NxEp+yLJAzRzxLVPhPAG9y/KxKEe5ayN586NzjYJctJz/0KgwieuNNf/9H1lQG5qqDMDjZc
+ alc/lLG4lvnvMgX6KtHjw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3YqM4I1y2Gw=:j5ajDEHEGqnkwxdVflfqcl
+ qKHBxfBR+B//rWlCldTk7SubcDC5bzAhhqdqEld53bqFaiM1F3CWQECNZjxhX5FLFcw7fDJms
+ FmuzDv9ObFCishWCjumbr909C8CAzVCvPcU9XM8BP7VnyL/zACD0a4t68nvioSl3Kjma0rT4b
+ ok9CoaTNL4c73GcwCw+csg1faCA9nqnJzpSnotOTmu69+QcQIDC8WKf4ALG6SVsDscErFuvWC
+ dmkoq9wi0oZDdipR/uKGhsVp/WlL+fOsRAUjVuu78x8vJh9K3Gphb3uMya24nPs/g37HS3nW1
+ PYULwQyA+JNrJ+byy/Svhm3cyddWYn/PGQZzpSMLB1dfLPAKmqWl3OgoGsZPDDRdqG63/UMuJ
+ jVMpGaq5fDi4Kj/WlPN8K1a1rqzJKMiqI7lDe43scLxV/vYEqVoKTwSmZLFXYhokqVflkFV3n
+ +FC3juBOTMQGGGR4SSads7nG8OzMNzWbUNXyHolsoKnH6nOdDE3ohm+hXBpqxjTi922fsjgam
+ cCVZmmw59dbIVBkSSamJduNHsIpf1wNNZqmiDyLOpN7sxHSiw6yZyRIIUs0yM0F9/f6U1jtwN
+ 4ebSnkhChA96Fk1qiQWqT/fGTNeJX4IsLsqOTuWzt1jk9f4cFMazY4wglzpIaBwrt3wcBXpP2
+ v+M+GzjMeTt3J4gkkppBm9X66mcBuSsM/L4e7J3sr2fK7rEqxGppjbfU/8ArqjeEC3pw=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems that this is still in limbo mostly because of David's concerns.
-So let me reiterate them and provide my POV once more (and the last
-time) just to help Andrew make a decision:
+When CONFIG_BLOCK is disabled, we now run into a link error:
 
-1) comparision root with tail memcgs during the OOM killer is not fair
-because we are comparing tasks with memcgs.
+fs/aio.o: In function `aio_prep_rw':
+aio.c:(.text+0xf68): undefined reference to `ioprio_check_cap'
 
-This is true, but I do not think this matters much for workloads which
-are going to use the feature. Why? Because the main consumers of the new
-feature seem to be containers which really need some fairness when
-comparing _workloads_ rather than processes. Those are unlikely to
-contain any significant memory consumers in the root memcg. That would
-be mostly common infrastructure.
+Since the priorities are unused without block devices, this adds a stub
+that always returns success.
 
-Is this is fixable? Yes, we would need to account in the root memcgs.
-Why are we not doing that now? Because it has some negligible
-performance overhead. Are there other ways? Yes we can approximate root
-memcg memory consumption but I would rather wait for somebody seeing
-that as a real problem rather than add hacks now without a strong
-reason.
+Fixes: d9a08a9e616b ("fs: Add aio iopriority support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Not sure if my assertion is correct, please check that returning zero
+actually makes sense here.
+---
+ include/linux/ioprio.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-
-2) Evading the oom killer by attaching processes to child cgroups which
-basically means that a task can split up the workload into smaller
-memcgs to hide their real memory consumption.
-
-Again true but not really anything new. Processes can already fork and
-split up the memory consumption. Moreover it doesn't even require any
-special privileges to do so unlike creating a sub memcg. Is this
-fixable? Yes, untrusted workloads can setup group oom evaluation at the
-delegation layer so all subgroups would be considered together.
-
-3) Userspace has zero control over oom kill selection in leaf mem
-cgroups.
-
-Again true but this is something that needs a good evaluation to not end
-up in the fiasko we have seen with oom_score*. Current users demanding
-this feature can live without any prioritization so blocking the whole
-feature seems unreasonable.
-
-4) Future extensibility to be backward compatible.
-
-David is wrong here IMHO. Any prioritization or oom selection policy
-controls added in future are orthogonal to the oom_group concept added
-by this patchset. Allowing memcg to be an oom entity is something that
-we really want longterm. Global CGRP_GROUP_OOM is the most restrictive
-semantic and softening it will be possible by a adding a new knob to
-tell whether a memcg/hierarchy is a workload or a set of tasks.
+diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
+index 4a28cec49ec3..ccc2a44483b6 100644
+--- a/include/linux/ioprio.h
++++ b/include/linux/ioprio.h
+@@ -77,6 +77,13 @@ extern int ioprio_best(unsigned short aprio, unsigned short bprio);
+ 
+ extern int set_task_ioprio(struct task_struct *task, int ioprio);
+ 
++#ifdef CONFIG_BLOCK
+ extern int ioprio_check_cap(int ioprio);
++#else
++static inline int ioprio_check_cap(int ioprio)
++{
++	return 0;
++}
++#endif
+ 
+ #endif
 -- 
-Michal Hocko
-SUSE Labs
+2.9.0
