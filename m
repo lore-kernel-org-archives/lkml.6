@@ -1,237 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeFEK54 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 06:57:56 -0400
-Received: from foss.arm.com ([217.140.101.70]:54506 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751707AbeFEK5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 06:57:54 -0400
-Date: Tue, 5 Jun 2018 11:57:36 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-Message-ID: <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
+        id S1751598AbeFELAo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 07:00:44 -0400
+Received: from mail-eopbgr40067.outbound.protection.outlook.com ([40.107.4.67]:22121
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751386AbeFELAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 07:00:42 -0400
+From: Vadim Pasternak <vadimp@mellanox.com>
+To: Darren Hart <dvhart@infradead.org>
+CC: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "platform-driver-x86@vger.kernel.org"
+        <platform-driver-x86@vger.kernel.org>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        Michael Shych <michaelsh@mellanox.com>,
+        "ivecera@redhat.com" <ivecera@redhat.com>
+Subject: RE: [PATCH v4 8/8] Documentation/ABI: Add documentation mlxreg-io
+ sysfs interfaces
+Thread-Topic: [PATCH v4 8/8] Documentation/ABI: Add documentation mlxreg-io
+ sysfs interfaces
+Thread-Index: AQHT9xsmezeSaJ2pOUmbBzal9TgKEKRQ8iMAgACXbNA=
+Date: Tue, 5 Jun 2018 11:00:38 +0000
+Message-ID: <HE1PR0502MB3753C857729A06149F5EE35BA2660@HE1PR0502MB3753.eurprd05.prod.outlook.com>
+References: <1527584347-167548-1-git-send-email-vadimp@mellanox.com>
+ <1527584347-167548-3-git-send-email-vadimp@mellanox.com>
+ <20180605015444.GB47042@localhost.localdomain>
+In-Reply-To: <20180605015444.GB47042@localhost.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR0502MB3707;7:Kb7c7N9XgQShF4Te8SHruvgiY3pn6JfU6jxVIoZgFF23J3/YCApTeAuHTHBynSTyDTLX/0WyjSHGBC8KqMHXlAFoaY+vBucCG/RDNN0UezATfyGNWQnwQVuFhzHP0grWSVnzPb3V/rbB2pV7Pz7a+5JvKlpLXVCXG0I/x/8dgv0FIZDy3ygqW8dXmbz15UkANPal/+MNzpIEV9Vn/RAkJtj/M8bvya+D7FYJSbZTBf0TJ9gQrfAglMMpAIJqSgTg
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0502MB3707;
+x-ms-traffictypediagnostic: HE1PR0502MB3707:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vadimp@mellanox.com;
+x-microsoft-antispam-prvs: <HE1PR0502MB3707E561261600B06043CE00A2660@HE1PR0502MB3707.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72170088055959)(9452136761055)(85827821059158)(788757137089);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:HE1PR0502MB3707;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0502MB3707;
+x-forefront-prvs: 0694C54398
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(366004)(39860400002)(346002)(376002)(13464003)(50944005)(199004)(189003)(81166006)(81156014)(476003)(4326008)(97736004)(66066001)(8676002)(54906003)(76176011)(7696005)(6506007)(6436002)(7736002)(53546011)(305945005)(316002)(59450400001)(86362001)(2906002)(106356001)(74316002)(102836004)(229853002)(486006)(99286004)(5250100002)(8936002)(3280700002)(3660700001)(5660300001)(3846002)(68736007)(6916009)(6116002)(55016002)(446003)(33656002)(186003)(11346002)(105586002)(26005)(9686003)(25786009)(39060400002)(478600001)(2900100001)(6246003)(345774005)(53936002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0502MB3707;H:HE1PR0502MB3753.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: ZGkgRAuEXadMoCYBqOXtrY+Mweijfji/rBC8maqPUUtLaWpjIjEePhR8ahz169qpxuQSuy/S6pygMtTIBoGVqH4P5tydNImGFw95pPs1e8HolN41tog7cfaTLGb9xcXyz35Lk9Rdq8gnYjJ7ImBCmh8eY52MBUducv8CbJdGiYGSwZ62l4hG1hVJaXr158vR
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+X-MS-Office365-Filtering-Correlation-Id: 9d45cdb2-c692-4198-1756-08d5cad39230
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d45cdb2-c692-4198-1756-08d5cad39230
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jun 2018 11:00:38.1703
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0502MB3707
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w55B0noe004143
 
-Hi Vincent,
 
-On Tuesday 05 Jun 2018 at 10:36:26 (+0200), Vincent Guittot wrote:
-> Hi Quentin,
+
+> -----Original Message-----
+> From: Darren Hart [mailto:dvhart@infradead.org]
+> Sent: Tuesday, June 05, 2018 4:55 AM
+> To: Vadim Pasternak <vadimp@mellanox.com>
+> Cc: andy.shevchenko@gmail.com; gregkh@linuxfoundation.org; linux-
+> kernel@vger.kernel.org; platform-driver-x86@vger.kernel.org; jiri@resnulli.us;
+> Michael Shych <michaelsh@mellanox.com>; ivecera@redhat.com
+> Subject: Re: [PATCH v4 8/8] Documentation/ABI: Add documentation mlxreg-io
+> sysfs interfaces
 > 
-> On 25 May 2018 at 15:12, Vincent Guittot <vincent.guittot@linaro.org> wrote:
-> > This patchset initially tracked only the utilization of RT rq. During
-> > OSPM summit, it has been discussed the opportunity to extend it in order
-> > to get an estimate of the utilization of the CPU.
+> On Tue, May 29, 2018 at 08:59:07AM +0000, Vadim Pasternak wrote:
+> > Add documentation for mlxreg-io driver sysfs interfaces for user space
+> > access to system's power resets control, reset causes monitoring,
+> > programmable devices version reading and devices selection control.
 > >
-> > - Patches 1-3 correspond to the content of patchset v4 and add utilization
-> >   tracking for rt_rq.
-> >
-> > When both cfs and rt tasks compete to run on a CPU, we can see some frequency
-> > drops with schedutil governor. In such case, the cfs_rq's utilization doesn't
-> > reflect anymore the utilization of cfs tasks but only the remaining part that
-> > is not used by rt tasks. We should monitor the stolen utilization and take
-> > it into account when selecting OPP. This patchset doesn't change the OPP
-> > selection policy for RT tasks but only for CFS tasks
-> >
-> > A rt-app use case which creates an always running cfs thread and a rt threads
-> > that wakes up periodically with both threads pinned on same CPU, show lot of
-> > frequency switches of the CPU whereas the CPU never goes idles during the
-> > test. I can share the json file that I used for the test if someone is
-> > interested in.
-> >
-> > For a 15 seconds long test on a hikey 6220 (octo core cortex A53 platfrom),
-> > the cpufreq statistics outputs (stats are reset just before the test) :
-> > $ cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
-> > without patchset : 1230
-> > with patchset : 14
+> > Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 > 
-> I have attached the rt-app json file that I use for this test
+> Hi Vadim,
+> 
+> You mentioned that these can vary by platform, I presume that means that any
+> given platform will present a subset of these attributes - but that all possible
+> attributes are documented here. Is that correct?
 
-Thank you very much ! I did a quick test with a much simpler fix to this
-RT-steals-time-from-CFS issue using just the existing scale_rt_capacity().
-I get the following results on Hikey960:
+Hi Darren,
 
-Without patch:
-   cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
-   12
-   cat /sys/devices/system/cpu/cpufreq/policy4/stats/total_trans
-   640
-With patch
-   cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
-   8
-   cat /sys/devices/system/cpu/cpufreq/policy4/stats/total_trans
-   12
+Thank you for review.
+These are mostly all attributes, that should be exposed.
+I add two extra for the coming version.
 
-Yes the rt_avg stuff is out of sync with the PELT signal, but do you think
-this is an actual issue for realistic use-cases ?
+Maybe for the future system it could be slightly extended.
 
-What about the diff below (just a quick hack to show the idea) applied
-on tip/sched/core ?
+Also we have writable attribute for BIOS flash boot selection, which
+I am still not sure we want expose.
 
----8<---
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index a8ba6d1f262a..23a4fb1c2c25 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
- 	sg_cpu->util_dl  = cpu_util_dl(rq);
- }
- 
-+unsigned long scale_rt_capacity(int cpu);
- static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
-+	int cpu = sg_cpu->cpu;
-+	unsigned long util, dl_bw;
- 
- 	if (rq->rt.rt_nr_running)
- 		return sg_cpu->max;
-@@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
- 	 * ready for such an interface. So, we only do the latter for now.
- 	 */
--	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
-+	util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
-+	util >>= SCHED_CAPACITY_SHIFT;
-+	util = arch_scale_cpu_capacity(NULL, cpu) - util;
-+	util += sg_cpu->util_cfs;
-+	dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
-+
-+	/* Make sure to always provide the reserved freq to DL. */
-+	return max(util, dl_bw);
- }
- 
- static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f01f0f395f9a..0e87cbe47c8b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7868,7 +7868,7 @@ static inline int get_sd_load_idx(struct sched_domain *sd,
- 	return load_idx;
- }
- 
--static unsigned long scale_rt_capacity(int cpu)
-+unsigned long scale_rt_capacity(int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
- 	u64 total, used, age_stamp, avg;
---->8---
-
-
+Thanks,
+Vadim.
 
 > 
+> > ---
+> > v4:
+> >  Comments pointed out by Greg:
+> >  Add Documentation/ABI/ entries for the new sysfs files.
+> > ---
+> >  Documentation/ABI/stable/sysfs-driver-mlxreg-io | 51
+> > +++++++++++++++++++++++++
+> >  1 file changed, 51 insertions(+)
+> >  create mode 100644 Documentation/ABI/stable/sysfs-driver-mlxreg-io
 > >
-> > If we replace the cfs thread of rt-app by a sysbench cpu test, we can see
-> > performance improvements:
-> >
-> > - Without patchset :
-> > Test execution summary:
-> >     total time:                          15.0009s
-> >     total number of events:              4903
-> >     total time taken by event execution: 14.9972
-> >     per-request statistics:
-> >          min:                                  1.23ms
-> >          avg:                                  3.06ms
-> >          max:                                 13.16ms
-> >          approx.  95 percentile:              12.73ms
-> >
-> > Threads fairness:
-> >     events (avg/stddev):           4903.0000/0.00
-> >     execution time (avg/stddev):   14.9972/0.00
-> >
-> > - With patchset:
-> > Test execution summary:
-> >     total time:                          15.0014s
-> >     total number of events:              7694
-> >     total time taken by event execution: 14.9979
-> >     per-request statistics:
-> >          min:                                  1.23ms
-> >          avg:                                  1.95ms
-> >          max:                                 10.49ms
-> >          approx.  95 percentile:              10.39ms
-> >
-> > Threads fairness:
-> >     events (avg/stddev):           7694.0000/0.00
-> >     execution time (avg/stddev):   14.9979/0.00
-> >
-> > The performance improvement is 56% for this use case.
-> >
-> > - Patches 4-5 add utilization tracking for dl_rq in order to solve similar
-> >   problem as with rt_rq
-> >
-> > - Patches 6 uses dl and rt utilization in the scale_rt_capacity() and remove
-> >   dl and rt from sched_rt_avg_update
-> >
-> > - Patches 7-8 add utilization tracking for interrupt and use it select OPP
-> >   A test with iperf on hikey 6220 gives:
-> >     w/o patchset            w/ patchset
-> >     Tx 276 Mbits/sec        304 Mbits/sec +10%
-> >     Rx 299 Mbits/sec        328 Mbits/sec +09%
-> >
-> >     8 iterations of iperf -c server_address -r -t 5
-> >     stdev is lower than 1%
-> >     Only WFI idle state is enable (shallowest arm idle state)
-> >
-> > - Patches 9 removes the unused sched_avg_update code
-> >
-> > - Patch 10 removes the unused sched_time_avg_ms
-> >
-> > Change since v3:
-> > - add support of periodic update of blocked utilization
-> > - rebase on lastest tip/sched/core
-> >
-> > Change since v2:
-> > - move pelt code into a dedicated pelt.c file
-> > - rebase on load tracking changes
-> >
-> > Change since v1:
-> > - Only a rebase. I have addressed the comments on previous version in
-> >   patch 1/2
-> >
-> > Vincent Guittot (10):
-> >   sched/pelt: Move pelt related code in a dedicated file
-> >   sched/rt: add rt_rq utilization tracking
-> >   cpufreq/schedutil: add rt utilization tracking
-> >   sched/dl: add dl_rq utilization tracking
-> >   cpufreq/schedutil: get max utilization
-> >   sched: remove rt and dl from sched_avg
-> >   sched/irq: add irq utilization tracking
-> >   cpufreq/schedutil: take into account interrupt
-> >   sched: remove rt_avg code
-> >   proc/sched: remove unused sched_time_avg_ms
-> >
-> >  include/linux/sched/sysctl.h     |   1 -
-> >  kernel/sched/Makefile            |   2 +-
-> >  kernel/sched/core.c              |  38 +---
-> >  kernel/sched/cpufreq_schedutil.c |  24 ++-
-> >  kernel/sched/deadline.c          |   7 +-
-> >  kernel/sched/fair.c              | 381 +++----------------------------------
-> >  kernel/sched/pelt.c              | 395 +++++++++++++++++++++++++++++++++++++++
-> >  kernel/sched/pelt.h              |  63 +++++++
-> >  kernel/sched/rt.c                |  10 +-
-> >  kernel/sched/sched.h             |  57 ++++--
-> >  kernel/sysctl.c                  |   8 -
-> >  11 files changed, 563 insertions(+), 423 deletions(-)
-> >  create mode 100644 kernel/sched/pelt.c
-> >  create mode 100644 kernel/sched/pelt.h
-> >
-> > --
-> > 2.7.4
-> >
+> > diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> > b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> > new file mode 100644
+> > index 0000000..fcd659e
+> > --- /dev/null
+> > +++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> > @@ -0,0 +1,51 @@
+> > +What:		/sys/devices/platform/mlxplat/mlxreg-
+> io/hwmon/hwmon*/
+> > +
+> 	cause_aux_pwr_or_ref
+> > +							cause_asic_thermal
+> > +
+> 	cause_hotswap_or_wd
+> > +							cause_fw_reset
+> > +							cause_long_pb
+> > +							cause_main_pwr_fail
+> > +							cause_short_pb
+> > +							cause_sw_reset
+> 
+> These property names do not seem to follow any kind of logical pattern with
+> respect to abbreviation. Starting with "cause_" made me think they were event
+> generators at first... Of course, who wants to be able to generate an asic
+> thermal shutdown from sysfs... ;-)
+> 
+> The only thing that might make more sense to *me* would be to replace
+> "cause" with "reset". Not required. I'll leave it to you, you may have good
+> reason for the names chosen.
+> 
+> > +Date:		May 2018
+> > +KernelVersion:	4.18
+> > +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> > +Description:	These files show the system reset cause, as following: power
+> > +		auxiliary outage or power refresh, ASIC thermal shutdown,
+> > +		hotswap or watchdog, firmware reset, long press power
+> button,
+> > +		short press power button, software reset. Value 1 in file means
+> > +		this is reset cause, 0 - otherwise. Only one of the above
+> > +		causes could be 1 at the same time, representing only last
+> > +		reset cause.
+> > +
+> > +		The files are read only.
+> > +
+> > +What:		/sys/devices/platform/mlxplat/mlxreg-
+> io/hwmon/hwmon*/
+> > +							cpld1_version
+> > +							cpld2_version
+> > +Date:		May 2018
+> > +KernelVersion:	4.18
+> > +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> > +Description:	These files show with which CPLD versions have been burned
+> > +		on carrier and switch boards.
+> > +
+> > +		The files are read only.
+> > +
+> > +What:		/sys/devices/platform/mlxplat/mlxreg-
+> io/hwmon/hwmon*/select_iio
+> > +Date:		May 2018
+> > +KernelVersion:	4.18
+> > +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> > +Description:	This file allows iio devices selection.
+> > +
+> > +		The file is read/write.
+> > +
+> 
+> Some description is appropriate here for what values it accepts and how it is
+> intended to be used.
+> 
+> > +What:		/sys/devices/platform/mlxplat/mlxreg-
+> io/hwmon/hwmon*/psu1_on
+> > +		/sys/devices/platform/mlxplat/mlxreg-
+> io/hwmon/hwmon*/psu2_on
+> > +		/sys/devices/platform/mlxplat/mlxreg-
+> io/hwmon/hwmon*/pwr_cycle
+> > +Date:		May 2018
+> > +KernelVersion:	4.18
+> > +Contact:	Vadim Pasternak <vadimpmellanox.com>
+> > +Description:	These files allow assert system's power cycling and PS units
+> > +		on/off switching.
+> 
+> This Description is awkward. Consider:
+> 
+> These files allow asserting system power cycling and switching power supply
+> units on and off.
+> 
+> > +		The files are write only.
+> 
+> Please provide usage and resulting behavior.
+> 
+> --
+> Darren Hart
+> VMware Open Source Technology Center
