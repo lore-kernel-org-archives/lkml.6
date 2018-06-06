@@ -1,100 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B7C9601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfElH0S+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 31C48605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933750AbeFFRBz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:01:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33310 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933712AbeFFRBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:01:49 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak90 (was ghak32) V3 09/10] debug audit: read container ID of a process
-Date: Wed,  6 Jun 2018 12:58:36 -0400
-Message-Id: <b1eff0b849cc472f10dee8bd4f2eeb3567f0a459.1528304204.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
+        id S933640AbeFFRmX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:42:23 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:44932 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752026AbeFFRmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:42:21 -0400
+X-Google-Smtp-Source: ADUXVKLRsUhz/dO6c+/2RMCROlXJEKCRwD/QATzjJEkSDSla4Pbmie+ud0W625GBw8mj/KAXQ5nFiQ==
+From: Thomas Hebb <tommyhebb@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Antoine Tenart <antoine.tenart@free-electrons.com>,
+        sebastian.hesselbarth@gmail.com, Jisheng.Zhang@synaptics.com,
+        Thomas Hebb <tommyhebb@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org (open list:PWM SUBSYSTEM)
+Subject: [PATCH v2] pwm: berlin: Don't use broken prescaler values
+Date: Wed,  6 Jun 2018 13:42:10 -0400
+Message-Id: <a4e1449967f3dbc95770b9ac2bbc1fd116e3cac7.1528306926.git.tommyhebb@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for reading the audit container identifier from the proc
-filesystem.
+The Berlin PWM driver is currently broken on at least BG2CD. The
+symptoms manifest as a very non-linear and erratic mapping from the duty
+cycle configured in software to the duty cycle produced by hardware.
 
-This is a read from the proc entry of the form
-/proc/PID/audit_containerid where PID is the process ID of the task
-whose audit container identifier is sought.
+The cause of the bug is software's configuration of the prescaler, and
+in particular its usage of the six prescaler values between the minimum
+value of 1 and the maximum value of 4096. As it turns out, these six
+values do not actually slow down the PWM clock; rather, they emulate
+slowing down the clock by internally multiplying the value of TCNT.
 
-The read expects up to a u64 value (unset: 18446744073709551615).
+This would be a fine trick, if not for the fact that the internal,
+scaled TCNT value has no extra bits beyond the 16 already exposed to
+software in the register. What this means is that, for a prescaler of 4,
+the software must ensure that the top two bits of TCNT are not set,
+because hardware will chop them off; for a prescaler of 8, the top three
+bits must not be set, and so forth. Software does not currently ensure
+this, resulting in a TCNT several orders of magnitude lower than
+intended any time one of those six prescalers are selected.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Because hardware chops off the high bits in its internal shift, the
+middle six prescalers don't actually allow *anything* that the first
+doesn't. In fact, they are strictly worse than the first, since the
+internal shift of TCNT prevents software from setting the low bits,
+decreasing the resolution, without providing any extra high bits.
+
+By skipping the useless prescalers entirely, this patch both fixes the
+driver's behavior and increases its performance (since, when the 4096
+prescaler is selected, it now does only a single shift rather than the
+seven successive divisions it did before).
+
+Tested on BG2CD.
+
+Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
 ---
- fs/proc/base.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ drivers/pwm/pwm-berlin.c | 45 ++++++++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 318dff4..ca8bfe2 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1303,6 +1303,21 @@ static ssize_t proc_sessionid_read(struct file * file, char __user * buf,
- 	.llseek		= generic_file_llseek,
- };
- 
-+static ssize_t proc_contid_read(struct file *file, char __user *buf,
-+				  size_t count, loff_t *ppos)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct task_struct *task = get_proc_task(inode);
-+	ssize_t length;
-+	char tmpbuf[TMPBUFLEN*2];
-+
-+	if (!task)
-+		return -ESRCH;
-+	length = scnprintf(tmpbuf, TMPBUFLEN*2, "%llu", audit_get_contid(task));
-+	put_task_struct(task);
-+	return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
-+}
-+
- static ssize_t proc_contid_write(struct file *file, const char __user *buf,
- 				   size_t count, loff_t *ppos)
- {
-@@ -1333,6 +1348,7 @@ static ssize_t proc_contid_write(struct file *file, const char __user *buf,
+diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
+index 771859aca4be..7c8d6a168ceb 100644
+--- a/drivers/pwm/pwm-berlin.c
++++ b/drivers/pwm/pwm-berlin.c
+@@ -21,8 +21,18 @@
+ #define BERLIN_PWM_EN			0x0
+ #define  BERLIN_PWM_ENABLE		BIT(0)
+ #define BERLIN_PWM_CONTROL		0x4
+-#define  BERLIN_PWM_PRESCALE_MASK	0x7
+-#define  BERLIN_PWM_PRESCALE_MAX	4096
++/*
++ * The prescaler claims to support 8 different moduli, configured using the
++ * low three bits of PWM_CONTROL. (Sequentially, they are 1, 4, 8, 16, 64,
++ * 256, 1024, and 4096.)  However, the moduli from 4 to 1024 appear to be
++ * implemented by internally shifting TCNT left without adding additional
++ * bits. So, the max TCNT that actually works for a modulus of 4 is 0x3fff;
++ * for 8, 0x1fff; and so on. This means that those moduli are entirely
++ * useless, as we could just do the shift ourselves. The 4096 modulus is
++ * implemented with a real prescaler, so we do use that, but we treat it
++ * as a flag instead of pretending the modulus is actually configurable.
++ */
++#define  BERLIN_PWM_PRESCALE_4096	0x7
+ #define  BERLIN_PWM_INVERT_POLARITY	BIT(3)
+ #define BERLIN_PWM_DUTY			0x8
+ #define BERLIN_PWM_TCNT			0xc
+@@ -46,10 +56,6 @@ static inline struct berlin_pwm_chip *to_berlin_pwm_chip(struct pwm_chip *chip)
+ 	return container_of(chip, struct berlin_pwm_chip, chip);
  }
  
- static const struct file_operations proc_contid_operations = {
-+	.read		= proc_contid_read,
- 	.write		= proc_contid_write,
- 	.llseek		= generic_file_llseek,
- };
-@@ -3030,7 +3046,7 @@ static int proc_pid_patch_state(struct seq_file *m, struct pid_namespace *ns,
- #ifdef CONFIG_AUDITSYSCALL
- 	REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
--	REG("audit_containerid", S_IWUSR, proc_contid_operations),
-+	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-@@ -3422,7 +3438,7 @@ static int proc_tid_comm_permission(struct inode *inode, int mask)
- #ifdef CONFIG_AUDITSYSCALL
- 	REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
--	REG("audit_containerid", S_IWUSR, proc_contid_operations),
-+	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
+-static const u32 prescaler_table[] = {
+-	1, 4, 8, 16, 64, 256, 1024, 4096
+-};
+-
+ static inline u32 berlin_pwm_readl(struct berlin_pwm_chip *chip,
+ 				   unsigned int channel, unsigned long offset)
+ {
+@@ -86,33 +92,32 @@ static int berlin_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm_dev,
+ 			     int duty_ns, int period_ns)
+ {
+ 	struct berlin_pwm_chip *pwm = to_berlin_pwm_chip(chip);
+-	unsigned int prescale;
++	bool prescale_4096 = false;
+ 	u32 value, duty, period;
+-	u64 cycles, tmp;
++	u64 cycles;
+ 
+ 	cycles = clk_get_rate(pwm->clk);
+ 	cycles *= period_ns;
+ 	do_div(cycles, NSEC_PER_SEC);
+ 
+-	for (prescale = 0; prescale < ARRAY_SIZE(prescaler_table); prescale++) {
+-		tmp = cycles;
+-		do_div(tmp, prescaler_table[prescale]);
++	if (cycles > BERLIN_PWM_MAX_TCNT) {
++		prescale_4096 = true;
++		cycles >>= 12; // Prescaled by 4096
+ 
+-		if (tmp <= BERLIN_PWM_MAX_TCNT)
+-			break;
++		if (cycles > BERLIN_PWM_MAX_TCNT)
++			return -ERANGE;
+ 	}
+ 
+-	if (tmp > BERLIN_PWM_MAX_TCNT)
+-		return -ERANGE;
+-
+-	period = tmp;
+-	cycles = tmp * duty_ns;
++	period = cycles;
++	cycles *= duty_ns;
+ 	do_div(cycles, period_ns);
+ 	duty = cycles;
+ 
+ 	value = berlin_pwm_readl(pwm, pwm_dev->hwpwm, BERLIN_PWM_CONTROL);
+-	value &= ~BERLIN_PWM_PRESCALE_MASK;
+-	value |= prescale;
++	if (prescale_4096)
++		value |= BERLIN_PWM_PRESCALE_4096;
++	else
++		value &= ~BERLIN_PWM_PRESCALE_4096;
+ 	berlin_pwm_writel(pwm, pwm_dev->hwpwm, value, BERLIN_PWM_CONTROL);
+ 
+ 	berlin_pwm_writel(pwm, pwm_dev->hwpwm, duty, BERLIN_PWM_DUTY);
 -- 
-1.8.3.1
+2.17.1
