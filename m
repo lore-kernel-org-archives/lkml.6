@@ -1,154 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="PCiEYVRN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C98660555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3SaTulC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2C855606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753757AbeFFRHl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:07:41 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:47365 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932202AbeFFRHj (ORCPT
+        id S1752132AbeFFMJC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:09:02 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39736 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751673AbeFFMJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:07:39 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w56H7X9q023909
-X-Nifty-SrcIP: [209.85.213.43]
-X-Google-Smtp-Source: ADUXVKIEzxHsIKj1XMlxr11qHijRAbFBs6fDvxt/IBGDzw8isowY6fT3RaHAmWkFyaIRRImKHNTo1ErNdgU79IgImJ0=
+        Wed, 6 Jun 2018 08:09:00 -0400
+X-Google-Smtp-Source: ADUXVKI60JuKC/gyJVLgrHI9OUYgwXu/hoNEBToRFJNRPlFimEOPamXLdq7SmPY4xMmX97hBREVRvlV+ZlJ4s5BZDfY=
 MIME-Version: 1.0
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 7 Jun 2018 02:06:51 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQhF_A1CE28_4qe0DWS4pDeR1xw399NATm7X2UUKLe7=w@mail.gmail.com>
-Message-ID: <CAK7LNAQhF_A1CE28_4qe0DWS4pDeR1xw399NATm7X2UUKLe7=w@mail.gmail.com>
-Subject: [GIT PULL 1/2] Kbuild updates for v4.18
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
+In-Reply-To: <52eceaff-987d-4c1d-a2cb-73b28e48c01c@amd.com>
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com> <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com> <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com> <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+ <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com> <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
+ <CAEJqkgjfhmjwYo74xivsfgvoPQUFh2dFeXFwtEKoN+DXG1riMg@mail.gmail.com>
+ <CAEJqkgiVdeBf9konX4OJi59dYp4y_b+J02ns=yf-D6tjtZ7P1g@mail.gmail.com> <52eceaff-987d-4c1d-a2cb-73b28e48c01c@amd.com>
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Wed, 6 Jun 2018 14:08:28 +0200
+Message-ID: <CAEJqkgiBZ6G+tXWULYoGKqq3BsgvH7TrqkFbhtRL4JnGM+dLuA@mail.gmail.com>
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Jean-Marc Valin <jmvalin@mozilla.com>,
+        Dave Airlie <airlied@linux.ie>, alexander.deucher@amd.com,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        michel.daenzer@amd.com, dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+2018-06-06 13:33 GMT+02:00 Christian K=C3=B6nig <christian.koenig@amd.com>:
+> Am 06.06.2018 um 13:28 schrieb Gabriel C:
+>>
+>> 2018-04-11 7:02 GMT+02:00 Gabriel C <nix.or.die@gmail.com>:
+>>>>
+>>>> 2018-04-11 6:00 GMT+02:00 Gabriel C <nix.or.die@gmail.com>:
+>>>> 2018-04-09 11:42 GMT+02:00 Christian K=C3=B6nig
+>>>> <ckoenig.leichtzumerken@gmail.com>:
+>>>>>
+>>>>> Am 07.04.2018 um 00:00 schrieb Jean-Marc Valin:
+>>>
+>>> ...
+>>>>
+>>>> I can help testing code for 4.17/++ if you wish but that is *different=
+*
+>>>> storry.
+>>>>
+>>> Quick tested an 4.16.0-11490-gb284d4d5a678 , amdgpu and radeon driver
+>>> are broken now in this one.
+>>>
+>>> radeon tells:
+>>>
+>>> ...
+>>>
+>>> [    6.337838] [drm] PCIE GART of 2048M enabled (table at
+>>> 0x00000000001D6000).
+>>> [    6.338210] radeon 0000:21:00.0: (-12) create WB bo failed
+>>> [    6.338214] radeon 0000:21:00.0: disabling GPU acceleration
+>>>
+>>> ...
+>>>
+>> I have the same Issue now on final 4.17.
+>
+>
+> Actually Michel came up with a fix for the performance regression which i=
+s
+> now backported to older kernels as well.
+>
+> So the original issue of this mail thread should be fixed by now.
 
-Please pull Kbuild updates for v4.18
+Ok , will test as soon I get the GPU to work :))
 
+>
+>> Also I played with BIOS options also which does not fix anything but
+>> changes the error message.
+>>
+>> IOMMU && SR-IOV disabled the error changes to this :
+>>
+>> [    7.092044] [drm:r600_ring_test [radeon]] *ERROR* radeon: ring 0
+>> test failed (scratch(0x850C)=3D0xCAFEDEAD)
+>> [    7.092059] radeon 0000:21:00.0: disabling GPU acceleration
+>>
+>>
+>> While I could workaround SWIOTLB bugs in 4.15 and 4.16 , 4.17 seems to
+>> kill the GPU with no way
+>> for me to make it work ( at least I could not find any workaround by now=
+ )
+>
+>
+> That actually sounds like something completely different. Can you provide=
+ a
+> full dmesg of radeon and/or amdgpu?
 
+Sure here from boot with IOMMU/SR-IOV ON/OFF in BIOS :
 
-The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
+http://ftp.frugalware.org/pub/other/people/crazy/radeon/dmesg-iommu-sr-iov-=
+off.txt
+http://ftp.frugalware.org/pub/other/people/crazy/radeon/dmesg-iommu-sr-iov-=
+on.txt
 
-  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
+Also nothing else changed in that setup just testing kernel 4.17.
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
-tags/kbuild-v4.18
-
-for you to fetch changes up to 1f2f01b122d7c78a9e842a126ef168afb279552b:
-
-  kbuild: add machine size to CHECKFLAGS (2018-06-01 11:36:58 +0900)
-
-----------------------------------------------------------------
-Kbuild updates for v4.18
-
-- improve fixdep to coalesce consecutive slashes in dep-files
-
-- fix some issues of the maintainer string generation in deb-pkg script
-
-- remove unused CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX and clean-up
-  several tools and linker scripts
-
-- clean-up modpost
-
-- allow to enable the dead code/data elimination for PowerPC in EXPERT mode
-
-- improve two coccinelle scripts for better performance
-
-- pass endianness and machine size flags to sparse for all architecture
-
-- misc fixes
-
-----------------------------------------------------------------
-Joey Pabalinas (1):
-      scripts/tags.sh: use `find` for $ALLSOURCE_ARCHS generation
-
-Julia Lawall (2):
-      coccinelle: mini_lock: improve performance
-      coccinelle: deref_null: improve performance
-
-Luc Van Oostenryck (3):
-      kbuild: $(CHECK) doesnt need NOSTDINC_FLAGS twice
-      kbuild: add endianness flag to CHEKCFLAGS
-      kbuild: add machine size to CHECKFLAGS
-
-Masahiro Yamada (12):
-      modpost: remove symbol prefix support
-      genksyms: remove symbol prefix support
-      kallsyms: remove symbol prefix support
-      depmod.sh: remove symbol prefix support
-      export.h: remove code for prefixing symbols with underscore
-      kbuild: remove CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX
-      vmlinux.lds.h: remove no-op macro VMLINUX_SYMBOL()
-      checkpatch: remove VMLINUX_SYMBOL() check
-      modpost: pass struct elf_info pointer to get_modinfo()
-      modpost: use strstarts() helper more widely
-      modpost: remove redundant is_vmlinux() test
-      modpost: constify *modname function argument where possible
-
-Nicholas Piggin (4):
-      kbuild: Fix asm-generic/vmlinux.lds.h for LD_DEAD_CODE_DATA_ELIMINATION
-      kbuild: LD_DEAD_CODE_DATA_ELIMINATION no
--ffunction-sections/-fdata-sections for module build
-      kbuild: Allow LD_DEAD_CODE_DATA_ELIMINATION to be selectable if enabled
-      powerpc: Allow LD_DEAD_CODE_DATA_ELIMINATION to be selected
-
-Nicolas Pitre (1):
-      fixdep: suppress consecutive / from file paths in dependency list files
-
-Riku Voipio (1):
-      kbuild: deb-pkg improve maintainer address generation
-
-nixiaoming (1):
-      scripts: Fixed printf format mismatch
-
- Makefile                                 |  13 +-
- arch/Kconfig                             |  21 ---
- arch/alpha/Makefile                      |   2 +-
- arch/arm/Makefile                        |   2 +-
- arch/arm64/Makefile                      |   2 +-
- arch/ia64/Makefile                       |   2 +-
- arch/mips/Makefile                       |   3 -
- arch/openrisc/Makefile                   |   1 -
- arch/parisc/Makefile                     |   4 +-
- arch/powerpc/Kconfig                     |   1 +
- arch/powerpc/kernel/vmlinux.lds.S        |  22 +--
- arch/s390/Makefile                       |   2 +-
- arch/sparc/Makefile                      |   2 +-
- arch/x86/Makefile                        |   2 +-
- include/asm-generic/export.h             |  34 ++--
- include/asm-generic/vmlinux.lds.h        | 334
-++++++++++++++++++-----------------
- include/linux/export.h                   |  16 +-
- init/Kconfig                             |  27 +++
- scripts/Makefile.build                   |   9 +-
- scripts/adjust_autoksyms.sh              |   3 -
- scripts/basic/fixdep.c                   |   6 +-
- scripts/checkpatch.pl                    |  10 --
- scripts/coccinelle/locks/mini_lock.cocci |   6 +-
- scripts/coccinelle/null/deref_null.cocci |  40 ++---
- scripts/depmod.sh                        |  25 +--
- scripts/genksyms/genksyms.c              |  11 +-
- scripts/kallsyms.c                       |  49 ++---
- scripts/link-vmlinux.sh                  |   4 -
- scripts/mod/modpost.c                    |  97 +++++-----
- scripts/package/mkdebian                 |  27 ++-
- scripts/recordmcount.c                   |   2 +-
- scripts/recordmcount.h                   |   2 +-
- scripts/tags.sh                          |  11 +-
- 33 files changed, 349 insertions(+), 443 deletions(-)
-
-
--- 
-Best Regards
-Masahiro Yamada
+I can force the GPU to use amdgpu if you wish and post dmesg's too.
+Just let me know
