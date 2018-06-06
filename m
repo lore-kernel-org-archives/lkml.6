@@ -1,182 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8ED7860263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EilrHVYy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BCC4606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751987AbeFFNUw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:20:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:40444 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751714AbeFFNUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:20:50 -0400
-Date: Wed, 6 Jun 2018 14:20:46 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Claudio Scordino <claudio@evidence.eu.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-Message-ID: <20180606132046.GC10870@e108498-lin.cambridge.arm.com>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
- <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
- <20180605121153.GD16081@localhost.localdomain>
- <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
- <20180605131518.GG16081@localhost.localdomain>
- <20180605140101.GE12193@e108498-lin.cambridge.arm.com>
- <20180605141317.GJ16081@localhost.localdomain>
- <6c2dc1aa-3e19-be14-0ed8-b29003c72e61@evidence.eu.com>
+        id S932525AbeFFJTK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:19:10 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:21719 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932352AbeFFJTI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:19:08 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <linus.walleij@linaro.org>
+CC: <j-keerthy@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <t-kristo@ti.com>
+Subject: [PATCH 1/2] gpio: davinci: Move fetching IRQ to beginning of probe
+Date: Wed, 6 Jun 2018 14:48:53 +0530
+Message-ID: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c2dc1aa-3e19-be14-0ed8-b29003c72e61@evidence.eu.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Claudio,
+Currently IRQ resource fetching is done at the very end of probe.
+In case the of IRQ resource not being ready, we defer probe
+and need to revert prior changes. Hence move it to the beginning of
+the probe so as to avoid reverting.
 
-On Wednesday 06 Jun 2018 at 15:05:58 (+0200), Claudio Scordino wrote:
-> Hi Quentin,
-> 
-> Il 05/06/2018 16:13, Juri Lelli ha scritto:
-> > On 05/06/18 15:01, Quentin Perret wrote:
-> > > On Tuesday 05 Jun 2018 at 15:15:18 (+0200), Juri Lelli wrote:
-> > > > On 05/06/18 14:05, Quentin Perret wrote:
-> > > > > On Tuesday 05 Jun 2018 at 14:11:53 (+0200), Juri Lelli wrote:
-> > > > > > Hi Quentin,
-> > > > > > 
-> > > > > > On 05/06/18 11:57, Quentin Perret wrote:
-> > > > > > 
-> > > > > > [...]
-> > > > > > 
-> > > > > > > What about the diff below (just a quick hack to show the idea) applied
-> > > > > > > on tip/sched/core ?
-> > > > > > > 
-> > > > > > > ---8<---
-> > > > > > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > > > > > > index a8ba6d1f262a..23a4fb1c2c25 100644
-> > > > > > > --- a/kernel/sched/cpufreq_schedutil.c
-> > > > > > > +++ b/kernel/sched/cpufreq_schedutil.c
-> > > > > > > @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
-> > > > > > >   	sg_cpu->util_dl  = cpu_util_dl(rq);
-> > > > > > >   }
-> > > > > > > +unsigned long scale_rt_capacity(int cpu);
-> > > > > > >   static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> > > > > > >   {
-> > > > > > >   	struct rq *rq = cpu_rq(sg_cpu->cpu);
-> > > > > > > +	int cpu = sg_cpu->cpu;
-> > > > > > > +	unsigned long util, dl_bw;
-> > > > > > >   	if (rq->rt.rt_nr_running)
-> > > > > > >   		return sg_cpu->max;
-> > > > > > > @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> > > > > > >   	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
-> > > > > > >   	 * ready for such an interface. So, we only do the latter for now.
-> > > > > > >   	 */
-> > > > > > > -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
-> > > > > > > +	util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
-> > > > > > 
-> > > > > > Sorry to be pedantinc, but this (ATM) includes DL avg contribution, so,
-> > > > > > since we use max below, we will probably have the same problem that we
-> > > > > > discussed on Vincent's approach (overestimation of DL contribution while
-> > > > > > we could use running_bw).
-> > > > > 
-> > > > > Ah no, you're right, this isn't great for long running deadline tasks.
-> > > > > We should definitely account for the running_bw here, not the dl avg...
-> > > > > 
-> > > > > I was trying to address the issue of RT stealing time from CFS here, but
-> > > > > the DL integration isn't quite right which this patch as-is, I agree ...
-> > > > > 
-> > > > > > 
-> > > > > > > +	util >>= SCHED_CAPACITY_SHIFT;
-> > > > > > > +	util = arch_scale_cpu_capacity(NULL, cpu) - util;
-> > > > > > > +	util += sg_cpu->util_cfs;
-> > > > > > > +	dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
-> > > > > > 
-> > > > > > Why this_bw instead of running_bw?
-> > > > > 
-> > > > > So IIUC, this_bw should basically give you the absolute reservation (== the
-> > > > > sum of runtime/deadline ratios of all DL tasks on that rq).
-> > > > 
-> > > > Yep.
-> > > > 
-> > > > > The reason I added this max is because I'm still not sure to understand
-> > > > > how we can safely drop the freq below that point ? If we don't guarantee
-> > > > > to always stay at least at the freq required by DL, aren't we risking to
-> > > > > start a deadline tasks stuck at a low freq because of rate limiting ? In
-> > > > > this case, if that tasks uses all of its runtime then you might start
-> > > > > missing deadlines ...
-> > > > 
-> > > > We decided to avoid (software) rate limiting for DL with e97a90f7069b
-> > > > ("sched/cpufreq: Rate limits for SCHED_DEADLINE").
-> > > 
-> > > Right, I spotted that one, but yeah you could also be limited by HW ...
-> > > 
-> > > > 
-> > > > > My feeling is that the only safe thing to do is to guarantee to never go
-> > > > > below the freq required by DL, and to optimistically add CFS tasks
-> > > > > without raising the OPP if we have good reasons to think that DL is
-> > > > > using less than it required (which is what we should get by using
-> > > > > running_bw above I suppose). Does that make any sense ?
-> > > > 
-> > > > Then we can't still avoid the hardware limits, so using running_bw is a
-> > > > trade off between safety (especially considering soft real-time
-> > > > scenarios) and energy consumption (which seems to be working in
-> > > > practice).
-> > > 
-> > > Ok, I see ... Have you guys already tried something like my patch above
-> > > (keeping the freq >= this_bw) in real world use cases ? Is this costing
-> > > that much energy in practice ? If we fill the gaps left by DL (when it
-> > 
-> > IIRC, Claudio (now Cc-ed) did experiment a bit with both approaches, so
-> > he might add some numbers to my words above. I didn't (yet). But, please
-> > consider that I might be reserving (for example) 50% of bandwidth for my
-> > heavy and time sensitive task and then have that task wake up only once
-> > in a while (but I'll be keeping clock speed up for the whole time). :/
-> 
-> As far as I can remember, we never tested energy consumption of running_bw
-> vs this_bw, as at OSPM'17 we had already decided to use running_bw
-> implementing GRUB-PA.
-> The rationale is that, as Juri pointed out, the amount of spare (i.e.
-> reclaimable) bandwidth in this_bw is very user-dependent. For example,
-> the user can let this_bw be much higher than the measured bandwidth, just
-> to be sure that the deadlines are met even in corner cases.
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
 
-Ok I see the issue. Trusting userspace isn't necessarily the right thing
-to do, I totally agree with that.
+Tested for GPIO Interrupts on da850-lcdk and keystone-k2g-evm boards.
 
-> In practice, this means that the task executes for quite a short time and
-> then blocks (with its bandwidth reclaimed, hence the CPU frequency reduced,
-> at the 0lag time).
-> Using this_bw rather than running_bw, the CPU frequency would remain at
-> the same fixed value even when the task is blocked.
-> I understand that on some cases it could even be better (i.e. no waste
-> of energy in frequency switch).
+ drivers/gpio/gpio-davinci.c | 29 +++++++++++------------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
 
-+1, I'm pretty sure using this_bw is pretty much always worst than
-using running_bw from an energy standpoint,. The waste of energy in
-frequency changes should be less than the energy wasted by staying at a
-too high frequency for a long time, otherwise DVFS isn't a good idea to
-begin with :-)
-
-> However, IMHO, these are corner cases and in the average case it is better
-> to rely on running_bw and reduce the CPU frequency accordingly.
-
-My point was that accepting to go at a lower frequency than required by
-this_bw is fundamentally unsafe. If you're at a low frequency when a DL
-task starts, there are real situations where you won't be able to
-increase the frequency immediately, which can eventually lead to missing
-deadlines. Now, if this risk is known, has been discussed, and is
-accepted, that's fair enough. I'm just too late for the discussion :-)
-
-Thank you for your time !
-Quentin
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 987126c..861f35b 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -55,7 +55,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
+ 	return g;
+ }
+ 
+-static int davinci_gpio_irq_setup(struct platform_device *pdev);
++static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
+ 
+ /*--------------------------------------------------------------------------*/
+ 
+@@ -168,7 +168,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ {
+ 	static int ctrl_num, bank_base;
+ 	int gpio, bank, ret = 0;
+-	unsigned ngpio, nbank;
++	unsigned int ngpio, nbank, bank_irq;
+ 	struct davinci_gpio_controller *chips;
+ 	struct davinci_gpio_platform_data *pdata;
+ 	struct device *dev = &pdev->dev;
+@@ -209,6 +209,12 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(gpio_base))
+ 		return PTR_ERR(gpio_base);
+ 
++	bank_irq = platform_get_irq(pdev, 0);
++	if (bank_irq < 0) {
++		dev_dbg(dev, "IRQ not populated\n");
++		return bank_irq;
++	}
++
+ 	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
+ 	chips->chip.label = devm_kstrdup(dev, label, GFP_KERNEL);
+ 		if (!chips->chip.label)
+@@ -243,7 +249,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 		goto err;
+ 
+ 	platform_set_drvdata(pdev, chips);
+-	ret = davinci_gpio_irq_setup(pdev);
++	ret = davinci_gpio_irq_setup(pdev, bank_irq);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -452,16 +458,15 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+  * (dm6446) can be set appropriately for GPIOV33 pins.
+  */
+ 
+-static int davinci_gpio_irq_setup(struct platform_device *pdev)
++static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+ {
+ 	unsigned	gpio, bank;
+ 	int		irq;
+ 	int		ret;
+ 	struct clk	*clk;
+ 	u32		binten = 0;
+-	unsigned	ngpio, bank_irq;
++	unsigned int	ngpio;
+ 	struct device *dev = &pdev->dev;
+-	struct resource	*res;
+ 	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
+ 	struct davinci_gpio_platform_data *pdata = dev->platform_data;
+ 	struct davinci_gpio_regs __iomem *g;
+@@ -481,18 +486,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
+ 		gpio_get_irq_chip = (gpio_get_irq_chip_cb_t)match->data;
+ 
+ 	ngpio = pdata->ngpio;
+-	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!res) {
+-		dev_err(dev, "Invalid IRQ resource\n");
+-		return -EBUSY;
+-	}
+-
+-	bank_irq = res->start;
+-
+-	if (!bank_irq) {
+-		dev_err(dev, "Invalid IRQ resource\n");
+-		return -ENODEV;
+-	}
+ 
+ 	clk = devm_clk_get(dev, "gpio");
+ 	if (IS_ERR(clk)) {
+-- 
+1.9.1
