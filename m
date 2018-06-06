@@ -1,82 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0AD9660555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=theobroma-systems.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bk3vrBiY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B45260767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752659AbeFFPb4 convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Wed, 6 Jun 2018 11:31:56 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:44646 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751914AbeFFPby (ORCPT
+        id S932262AbeFFHYM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:24:12 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38863 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932205AbeFFHYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:31:54 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] arm64: dts: rockchip: Switch to SPDX identifier.
-From: klaus.goger@theobroma-systems.com
-In-Reply-To: <20180606152109.12359-1-enric.balletbo@collabora.com>
-Date: Wed, 6 Jun 2018 17:31:34 +0200
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com,
-        Simon Xue <xxm@rock-chips.com>,
-        Yakir Yang <kuankuan.y@gmail.com>,
-        Liang Chen <cl@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        William Wu <william.wu@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-rockchip@lists.infradead.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        =?utf-8?Q?Kamil_Trzci=C5=84ski?= <ayufan@ayufan.eu>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        devicetree@vger.kernel.org, Pierre-Hugues Husson <phh@phh.me>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-arm-kernel@lists.infradead.org,
-        Jianqun Xu <jay.xu@rock-chips.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Yao <markyao0591@gmail.com>,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Joseph Chen <chenjh@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <DCD2814D-35CD-4856-9479-3A09922586DD@theobroma-systems.com>
-References: <20180606152109.12359-1-enric.balletbo@collabora.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Wed, 6 Jun 2018 03:24:10 -0400
+X-Google-Smtp-Source: ADUXVKIt48z/jxCq8lZWraJVMYjBvKFVBQyfHPGAIPFYkCvvkAh+p5qcKMO/LHW206zmKi4i4brmyQ==
+Subject: Re: [PATCH v2 3/9] xen/balloon: Share common memory reservation
+ routines
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-4-andr2000@gmail.com>
+ <4fd46fd8-f936-1514-06e4-34c5d3ed8960@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <05e361c2-c7f3-2f57-908c-e2c9b98b18e7@gmail.com>
+Date: Wed, 6 Jun 2018 10:24:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <4fd46fd8-f936-1514-06e4-34c5d3ed8960@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
-
-> On 06.06.2018, at 17:21, Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
-> 
-> Adopt the SPDX license identifier headers to ease license compliance
-> management.
-
-[snip]
-
-Heiko merged a similar patch 2 days ago
-http://lists.infradead.org/pipermail/linux-rockchip/2018-June/020939.html
-
-Cheers,
-Klaus
+On 06/04/2018 07:37 PM, Boris Ostrovsky wrote:
+> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>> diff --git a/include/xen/mem-reservation.h b/include/xen/mem-reservation.h
+>> new file mode 100644
+>> index 000000000000..a727d65a1e61
+>> --- /dev/null
+>> +++ b/include/xen/mem-reservation.h
+>> @@ -0,0 +1,65 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +/*
+>> + * Xen memory reservation utilities.
+>> + *
+>> + * Copyright (c) 2003, B Dragovic
+>> + * Copyright (c) 2003-2004, M Williamson, K Fraser
+>> + * Copyright (c) 2005 Dan M. Smith, IBM Corporation
+>> + * Copyright (c) 2010 Daniel Kiper
+>> + * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+>> + */
+>> +
+>> +#ifndef _XENMEM_RESERVATION_H
+>> +#define _XENMEM_RESERVATION_H
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include <asm/xen/hypercall.h>
+>> +#include <asm/tlb.h>
+>> +
+>> +#include <xen/interface/memory.h>
+>> +#include <xen/page.h>
+>> +
+>> +#ifdef CONFIG_XEN_SCRUB_PAGES
+>> +void xenmem_reservation_scrub_page(struct page *page);
+>> +#else
+>> +static inline void xenmem_reservation_scrub_page(struct page *page)
+>> +{
+>> +}
+>> +#endif
+>
+> Given that this is a wrapper around a single call I'd prefer
+>
+> inline void xenmem_reservation_scrub_page(struct page *page)
+> {
+> #ifdef CONFIG_XEN_SCRUB_PAGES
+>      clear_highpage(page);
+> #endif
+> }
+Unfortunately this can't be done because of
+EXPORT_SYMBOL_GPL(xenmem_reservation_scrub_page);
+which is obviously cannot be used for static inline functions.
+So, I'll keep it as is.
+>
+>
+> -boris
+>
+>
+Thank you,
+Oleksandr
