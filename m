@@ -1,65 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mn9EwnLc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CE96D60263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtIrf89w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E4E360263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751999AbeFFN2o (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:28:44 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40500 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751350AbeFFN2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:28:42 -0400
-X-Google-Smtp-Source: ADUXVKJX2hY3HFxucNqSwaBJA3aHGzji23lV+HPo0BENsQWBc7r88MWtq9MlZu3khrGnedweSvQGBQ==
-Subject: Re: [PATCH 4.4 00/37] 4.4.136-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180605170108.884872354@linuxfoundation.org>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <965820e9-cf8a-a1f0-e23d-0b2ba910d613@roeck-us.net>
-Date: Wed, 6 Jun 2018 06:28:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1751965AbeFFNTu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:19:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751714AbeFFNTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:19:49 -0400
+Date: Wed, 6 Jun 2018 10:19:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH V4 3/3] x86: Add entry trampolines to kcore
+Message-ID: <20180606131946.GF24381@kernel.org>
+References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
+ <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
+ <20180606131631.GD12180@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606131631.GD12180@hirez.programming.kicks-ass.net>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 10:01 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.136 release.
-> There are 37 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Em Wed, Jun 06, 2018 at 03:16:31PM +0200, Peter Zijlstra escreveu:
+> On Wed, Jun 06, 2018 at 03:54:11PM +0300, Adrian Hunter wrote:
+> > Without program headers for PTI entry trampoline pages, the trampoline
+> > virtual addresses do not map to anything.
+> > 
 > 
-> Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
-> Anything received after that time might be too late.
+> > 
+> > In addition, entry trampolines all map to the same page.  Represent that by
+> > giving the corresponding program headers in kcore the same offset.
+> > 
+> > This has the benefit that, when perf tools uses /proc/kcore as a source for
+> > kernel object code, samples from different CPU trampolines are aggregated
+> > together.  Note, such aggregation is normal for profiling i.e. people want
+> > to profile the object code, not every different virtual address the object
+> > code might be mapped to (across different processes for example).
+> > 
+> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> > Acked-by: Andi Kleen <ak@linux.intel.com>
+> > ---
+> >  arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
+> >  fs/proc/kcore.c              |  7 +++++--
+> >  include/linux/kcore.h        | 13 +++++++++++++
+> >  3 files changed, 28 insertions(+), 2 deletions(-)
 > 
+> This also adds the KCORE_REMAP functionality, but isn't mentioned at all
+> in the Changelog.
+> 
+> Still, looks OK I suppose,
 
-Build results:
-	total: 148 pass: 146 fail: 2
-Failed builds:
-	sparc64:allmodconfig
-	sparc64:allnoconfig
-Qemu test results:
-	total: 128 pass: 124 fail: 4
-Failed tests:
-	sparc64:sun4u:smp:sparc64_defconfig
-	sparc64:sun4v:smp:sparc64_defconfig
-	sparc64:sun4u:nosmp:sparc64_defconfig
-	sparc64:sun4v:nosmp:sparc64_defconfig
+I can add a note about that,
+ 
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Failure caused by 'sparc64: Add __multi3 for gcc 7.x and later'. Please drop it
-as well as 'sparc64: Don't clibber fixed registers in __multi4.'. gcc 7/8 support
-for sparc in v4.4 will need more work. Sorry for the mess-up.
+Thanks, giving it some more hours and will apply and try to test it.
 
-Guenter
+- Arnaldo
