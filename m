@@ -1,78 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18C4C60764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiQ7lPjo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8C3360555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeFFOsX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:48:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60986 "EHLO mx2.suse.de"
+        id S1753017AbeFFP5G (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:57:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752047AbeFFOsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:48:22 -0400
-Date: Wed, 6 Jun 2018 16:45:35 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        Chris Mason <clm@fb.com>, jbacik@fb.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: btrfs: Change return type to vm_fault_t
-Message-ID: <20180606144535.GH3539@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        jbacik@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180605154635.GA27201@jordon-HP-15-Notebook-PC>
- <20180606132228.GF3539@twin.jikos.cz>
- <CAFqt6zY-q4xV+PAFKXfa+NjNYyiBy4K5VSykKqbeN0XGpCTudw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zY-q4xV+PAFKXfa+NjNYyiBy4K5VSykKqbeN0XGpCTudw@mail.gmail.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+        id S1752880AbeFFPzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:55:37 -0400
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: don't acquire orphan ino during recovery
+Date: Wed,  6 Jun 2018 23:55:01 +0800
+Message-Id: <20180606155502.11619-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 07:39:53PM +0530, Souptick Joarder wrote:
-> >> @@ -8885,8 +8885,9 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
-> >>       char *kaddr;
-> >>       unsigned long zero_start;
-> >>       loff_t size;
-> >> -     int ret;
-> >> +     int err;
-> >
-> > Please use ret2 for the variable name. We're leaving the err/ret naming
-> > pattern and use 'ret' to match the function return value and ret2, ret3
-> > for the temporary return values.
-> 
-> Is this new pattern specific to fs/btrfs file system ?
+From: Chao Yu <yuchao0@huawei.com>
 
-Yes it is, you're not expected to know it in advance but as this was not
-the only thing to update in the patch I did not fix it myself.
+During orphan inode recovery, checkpoint should never succeed due to
+SBI_POR_DOING flag, so we don't need acquire orphan ino which only be
+used by checkpoint.
 
-> >> -     ret = 0;
-> >> +     err = 0;
-> >>
-> >>       /* page is wholly or partially inside EOF */
-> >>       if (page_start + PAGE_SIZE > size)
-> >> @@ -9009,11 +9007,11 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
-> >>       unlock_extent_cached(io_tree, page_start, page_end, &cached_state);
-> >>
-> >>  out_unlock:
-> >> -     if (!ret) {
-> >> +     if (!err) {
-> >>               btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
-> >>               sb_end_pagefault(inode->i_sb);
-> >>               extent_changeset_free(data_reserved);
-> >> -             return VM_FAULT_LOCKED;
-> >> +             ret = VM_FAULT_LOCKED;
-> >
-> > That's not a direct change as it changes the code flow and lets the
-> > branch continue. As the error handling and cleanup code is partially
-> > done in this branch continuing wrong AFAICS.
-> 
-> Sorry about it, I will correct and send v2.
-> Is it possible to get it merge in 4.18 / 4.18-rc-X ?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Ok.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 9f825a5a5c9f..ae0a06a8dec1 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -578,12 +578,7 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ {
+ 	struct inode *inode;
+ 	struct node_info ni;
+-	int err = f2fs_acquire_orphan_inode(sbi);
+-
+-	if (err)
+-		goto err_out;
+-
+-	__add_ino_entry(sbi, ino, 0, ORPHAN_INO);
++	int err;
+ 
+ 	inode = f2fs_iget_retry(sbi->sb, ino);
+ 	if (IS_ERR(inode)) {
+@@ -613,7 +608,6 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
+ 		err = -EIO;
+ 		goto err_out;
+ 	}
+-	__remove_ino_entry(sbi, ino, ORPHAN_INO);
+ 	return 0;
+ 
+ err_out:
+-- 
+2.16.2.17.g38e79b1fd
