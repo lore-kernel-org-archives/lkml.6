@@ -1,53 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 291066070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsgVEkzw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B61A6037B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932585AbeFFJnP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:43:15 -0400
-Received: from verein.lst.de ([213.95.11.211]:36718 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932415AbeFFJnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:43:14 -0400
-Date: Wed, 6 Jun 2018 11:50:29 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Roland Dreier <roland@purestorage.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Laurence Oberman <loberman@redhat.com>,
-        Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-Message-ID: <20180606095029.GA10439@lst.de>
-References: <20180525125322.15398-1-jthumshirn@suse.de> <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com> <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me> <CAL1RGDV0eT4juuMwHWkjqc2oTsk-CHRJ0A90veXxLsVZYa5esQ@mail.gmail.com> <20180605044222.GA29384@lst.de> <4203e888-df87-efd6-f61a-24b43fb710e2@grimberg.me>
+        id S932167AbeFFG2f (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:28:35 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:39328 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932097AbeFFG2d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 02:28:33 -0400
+X-Google-Smtp-Source: ADUXVKIT+fECegZOosT4RnG2ucwoVIvZmyitFQMFBA1bEFgEVNyML+joc8U3IEMxHZzHkWV6pGL62GuK2WuAWcSGf1k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4203e888-df87-efd6-f61a-24b43fb710e2@grimberg.me>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com> <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Jun 2018 08:28:32 +0200
+X-Google-Sender-Auth: tc94Vrmp48Hz-0hdKZv9sp5CwCs
+Message-ID: <CAMuHMdVTNv8WufhX4E-aae2G5EOMhQcCjtzsQB+c-c8-MQ8dNQ@mail.gmail.com>
+Subject: Re: [PATCH v4 04/12] mfd: da9063: Replace DA9063_NUM_IRQ with ARRAY_SIZE
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 12:32:21PM +0300, Sagi Grimberg wrote:
-> Huh? different paths == different controllers so this sentence can't
-> be right... you mean that a path selector will select a controller
-> based on the home node of the local rdma device connecting to it and
-> the running cpu right?
+Hi Marek,
 
-Think of a system with say 8 cpu cores.  Say we have two optimized
-paths.
+On Wed, Jun 6, 2018 at 1:10 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> Replace DA9063_NUM_IRQ macro which is not used anywhere with
+> plain ARRAY_SIZE().
 
-There is no point in going round robin or service time over the
-two paths for each logic pre-cpu queue.  Instead we should always
-got to path A for a given cpu queue or path B to reduce selection
-overhead and cache footprint.
+Thanks for your patch!
+
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+
+With the issue below fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/include/linux/mfd/da9063/core.h
+> +++ b/include/linux/mfd/da9063/core.h
+> @@ -73,7 +73,6 @@ enum da9063_irqs {
+>  };
+>
+>  #define DA9063_IRQ_BASE_OFFSET 0
+
+DA9063_IRQ_BASE_OFFSET is now unused, so please remove it
+(before someone starts using it, and makes it non-zero ;-)
+
+> -#define DA9063_NUM_IRQ         (DA9063_IRQ_GPI15 + 1 - DA9063_IRQ_BASE_OFFSET)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
