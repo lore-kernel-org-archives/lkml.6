@@ -1,180 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eHtKqsce"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13373601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D5F28601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932547AbeFFJTO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:19:14 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:43185 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932499AbeFFJTK (ORCPT
+        id S932669AbeFFIew (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:34:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58114 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932628AbeFFIea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:19:10 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <linus.walleij@linaro.org>
-CC: <j-keerthy@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <t-kristo@ti.com>
-Subject: [PATCH 2/2] gpio: davinci: Do not assume continuous IRQ numbering
-Date: Wed, 6 Jun 2018 14:48:54 +0530
-Message-ID: <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
-References: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 6 Jun 2018 04:34:30 -0400
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH 6/7] Uprobes/sdt: Document about reference counter
+Date: Wed,  6 Jun 2018 14:03:43 +0530
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18060608-0008-0000-0000-00000244A8B3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060608-0009-0000-0000-000021AAB211
+Message-Id: <20180606083344.31320-7-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806060099
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the driver assumes that the interrupts are continuous
-and does platform_get_irq only once and assumes the rest are continuous,
-instead call platform_get_irq for all the interrupts and store them
-in an array for later use.
+Reference counter gate the invocation of probe. If present,
+by default reference count is 0. Kernel needs to increment
+it before tracing the probe and decrement it when done. This
+is identical to semaphore in Userspace Statically Defined
+Tracepoints (USDT).
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Document usage of reference counter.
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
+ Documentation/trace/uprobetracer.rst | 16 +++++++++++++---
+ kernel/trace/trace.c                 |  2 +-
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
-Tested for GPIO Interrupts on da850-lcdk and keystone-k2g-evm boards.
-
- drivers/gpio/gpio-davinci.c | 49 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 861f35b..375578c 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -42,6 +42,7 @@ struct davinci_gpio_regs {
+diff --git a/Documentation/trace/uprobetracer.rst b/Documentation/trace/uprobetracer.rst
+index 98d3f69..0c27c65 100644
+--- a/Documentation/trace/uprobetracer.rst
++++ b/Documentation/trace/uprobetracer.rst
+@@ -22,15 +22,25 @@ Synopsis of uprobe_tracer
+ -------------------------
+ ::
  
- #define BINTEN	0x8 /* GPIO Interrupt Per-Bank Enable Register */
- #define MAX_LABEL_SIZE 20
-+#define MAX_INT_PER_BANK 32
- 
- static void __iomem *gpio_base;
- static unsigned int offset_array[5] = {0x10, 0x38, 0x60, 0x88, 0xb0};
-@@ -55,7 +56,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
- 	return g;
- }
- 
--static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
-+static int davinci_gpio_irq_setup(struct platform_device *pdev, int *bank_irq);
- 
- /*--------------------------------------------------------------------------*/
- 
-@@ -168,7 +169,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- {
- 	static int ctrl_num, bank_base;
- 	int gpio, bank, ret = 0;
--	unsigned ngpio, nbank, bank_irq;
-+	unsigned int ngpio, nbank, nirq;
-+	int bank_irq[MAX_INT_PER_BANK], i;
- 	struct davinci_gpio_controller *chips;
- 	struct davinci_gpio_platform_data *pdata;
- 	struct device *dev = &pdev->dev;
-@@ -197,6 +199,16 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	if (WARN_ON(ARCH_NR_GPIOS < ngpio))
- 		ngpio = ARCH_NR_GPIOS;
- 
-+	/*
-+	 * If there are unbanked interrupts then the number of
-+	 * interrupts is equal to number of gpios else all are banked so
-+	 * number of interrupts is equal to number of banks(each with 16 gpios)
-+	 */
-+	if (pdata->gpio_unbanked)
-+		nirq = pdata->gpio_unbanked;
-+	else
-+		nirq = DIV_ROUND_UP(ngpio, 16);
+-  p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe
+-  r[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a return uprobe (uretprobe)
+-  -:[GRP/]EVENT                           : Clear uprobe or uretprobe event
++  p[:[GRP/]EVENT] PATH:OFFSET[(REF_CTR_OFFSET)] [FETCHARGS]
++  r[:[GRP/]EVENT] PATH:OFFSET[(REF_CTR_OFFSET)] [FETCHARGS]
++  -:[GRP/]EVENT
 +
- 	nbank = DIV_ROUND_UP(ngpio, 32);
- 	chips = devm_kzalloc(dev,
- 			     nbank * sizeof(struct davinci_gpio_controller),
-@@ -209,10 +221,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpio_base))
- 		return PTR_ERR(gpio_base);
++  p : Set a uprobe
++  r : Set a return uprobe (uretprobe)
++  - : Clear uprobe or uretprobe event
  
--	bank_irq = platform_get_irq(pdev, 0);
--	if (bank_irq < 0) {
--		dev_dbg(dev, "IRQ not populated\n");
--		return bank_irq;
-+	for (i = 0; i < nirq; i++) {
-+		bank_irq[i] = platform_get_irq(pdev, i);
-+		if (bank_irq[i] < 0) {
-+			dev_info(dev, "IRQ not populated, err = %d\n",
-+				 bank_irq[i]);
-+			return bank_irq[i];
-+		}
- 	}
+   GRP           : Group name. If omitted, "uprobes" is the default value.
+   EVENT         : Event name. If omitted, the event name is generated based
+                   on PATH+OFFSET.
+   PATH          : Path to an executable or a library.
+   OFFSET        : Offset where the probe is inserted.
++  REF_CTR_OFFSET: Reference counter offset. Optional field. Reference count
++                 gate the invocation of probe. If present, by default
++                 reference count is 0. Kernel needs to increment it before
++                 tracing the probe and decrement it when done. This is
++                 identical to semaphore in Userspace Statically Defined
++                 Tracepoints (USDT).
  
- 	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
-@@ -458,7 +473,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
-  * (dm6446) can be set appropriately for GPIOV33 pins.
-  */
- 
--static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
-+static int davinci_gpio_irq_setup(struct platform_device *pdev, int *bank_irq)
- {
- 	unsigned	gpio, bank;
- 	int		irq;
-@@ -492,6 +507,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 		dev_err(dev, "Error %ld getting gpio clock\n", PTR_ERR(clk));
- 		return PTR_ERR(clk);
- 	}
-+
- 	ret = clk_prepare_enable(clk);
- 	if (ret)
- 		return ret;
-@@ -531,12 +547,12 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 	if (pdata->gpio_unbanked) {
- 		/* pass "bank 0" GPIO IRQs to AINTC */
- 		chips->chip.to_irq = gpio_to_irq_unbanked;
--		chips->base_irq = bank_irq;
-+		chips->base_irq = bank_irq[0];
- 		chips->gpio_unbanked = pdata->gpio_unbanked;
- 		binten = GENMASK(pdata->gpio_unbanked / 16, 0);
- 
- 		/* AINTC handles mask/unmask; GPIO handles triggering */
--		irq = bank_irq;
-+		irq = bank_irq[0];
- 		irq_chip = gpio_get_irq_chip(irq);
- 		irq_chip->name = "GPIO-AINTC";
- 		irq_chip->irq_set_type = gpio_irq_type_unbanked;
-@@ -547,10 +563,11 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 		writel_relaxed(~0, &g->set_rising);
- 
- 		/* set the direct IRQs up to use that irqchip */
--		for (gpio = 0; gpio < pdata->gpio_unbanked; gpio++, irq++) {
--			irq_set_chip(irq, irq_chip);
--			irq_set_handler_data(irq, chips);
--			irq_set_status_flags(irq, IRQ_TYPE_EDGE_BOTH);
-+		for (gpio = 0; gpio < pdata->gpio_unbanked; gpio++) {
-+			irq_set_chip(bank_irq[gpio], irq_chip);
-+			irq_set_handler_data(bank_irq[gpio], chips);
-+			irq_set_status_flags(bank_irq[gpio],
-+					     IRQ_TYPE_EDGE_BOTH);
- 		}
- 
- 		goto done;
-@@ -560,7 +577,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 	 * Or, AINTC can handle IRQs for banks of 16 GPIO IRQs, which we
- 	 * then chain through our own handler.
- 	 */
--	for (gpio = 0, bank = 0; gpio < ngpio; bank++, bank_irq++, gpio += 16) {
-+	for (gpio = 0, bank = 0; gpio < ngpio; bank++, gpio += 16) {
- 		/* disabled by default, enabled only as needed
- 		 * There are register sets for 32 GPIOs. 2 banks of 16
- 		 * GPIOs are covered by each set of registers hence divide by 2
-@@ -587,8 +604,8 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- 		irqdata->bank_num = bank;
- 		irqdata->chip = chips;
- 
--		irq_set_chained_handler_and_data(bank_irq, gpio_irq_handler,
--						 irqdata);
-+		irq_set_chained_handler_and_data(bank_irq[bank],
-+						 gpio_irq_handler, irqdata);
- 
- 		binten |= BIT(bank);
- 	}
+   FETCHARGS     : Arguments. Each probe can have up to 128 args.
+    %REG         : Fetch register REG
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index bcd9303..f85639b 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4616,7 +4616,7 @@ static int tracing_trace_options_open(struct inode *inode, struct file *file)
+   "place (kretprobe): [<module>:]<symbol>[+<offset>]|<memaddr>\n"
+ #endif
+ #ifdef CONFIG_UPROBE_EVENTS
+-	"\t    place: <path>:<offset>\n"
++  "   place (uprobe): <path>:<offset>[(ref_ctr_offset)]\n"
+ #endif
+ 	"\t     args: <name>=fetcharg[:type]\n"
+ 	"\t fetcharg: %<register>, @<address>, @<symbol>[+|-<offset>],\n"
 -- 
-1.9.1
+1.8.3.1
