@@ -1,65 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A4085606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCcLjMfJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32B4460263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeFFOh5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:37:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54635 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752322AbeFFOhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:37:55 -0400
-From: Dongjiu Geng <gengdongjiu@huawei.com>
-To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <gengdongjiu@huawei.com>
-Subject: [PATCH v2] usb: xhci: remove the code build warning
-Date: Wed, 6 Jun 2018 22:36:59 +0800
-Message-ID: <20180606143659.1476-1-gengdongjiu@huawei.com>
-X-Mailer: git-send-email 2.11.0.windows.1
+        id S1752676AbeFFTYv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 15:24:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752228AbeFFTYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 15:24:50 -0400
+X-Google-Smtp-Source: ADUXVKLleDgLdficpydS/1YjZwo+dXUI/VF1SNHARW5ZZVPEaD5bo6jFYJmsnvf9VZwhYSsCZo/29WBx3jfRJThuApk=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.45.62.20]
-X-CFilter-Loop: Reflected
+References: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com>
+ <1528302199-29619-8-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrWsWbyyFC9p5POY8-Xbu8Tw-OhhD_m-5P8b4oYseQfYGQ@mail.gmail.com> <CAMzpN2iE1zba6g6Jh5LzzuX1AM+SskiwVtVi8WtcB+4dD2mJGQ@mail.gmail.com>
+In-Reply-To: <CAMzpN2iE1zba6g6Jh5LzzuX1AM+SskiwVtVi8WtcB+4dD2mJGQ@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 6 Jun 2018 12:24:36 -0700
+X-Gmail-Original-Message-ID: <CALCETrWdYwCAnnoT+f+8WiwzErKzJuTUrJiu-7+1fwoaxOPJjg@mail.gmail.com>
+Message-ID: <CALCETrWdYwCAnnoT+f+8WiwzErKzJuTUrJiu-7+1fwoaxOPJjg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] x86/segments/32: Introduce CPU_NUMBER segment
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initialize the 'err' variate to remove the build warning,
-the warning is shown as below:
+On Wed, Jun 6, 2018 at 12:07 PM Brian Gerst <brgerst@gmail.com> wrote:
+>
+> On Wed, Jun 6, 2018 at 1:16 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> > On Wed, Jun 6, 2018 at 9:23 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+> >>
+> >> The new entry will be equivalent to that of x86-64 which
+> >> stores CPU number. The entry is placed in segment 23 in GDT
+> >> by bumping down 23-28 by one, which are all kernel-internal
+> >> segments and so have no impact on user space.
+> >>
+> >> CPU_NUMBER segment will always be at '%ss (USER_DS) + 80'
+> >> for the default (flat, initial) user space %ss.
+> >
+> > No, it won't :(  This is because, on Xen PV, user code very frequently
+> > sees a different, Xen-supplied "flat" SS value.  This is definitely
+> > true right now on 64-bit, and I'm reasonably confident it's also the
+> > case on 32-bit.
+> >
+> > As it stands, as far as I can tell, we don't have a "cpu number"
+> > segment on 32-bit kernels.  I see no compelling reason to add one, and
+> > we should definitely not add one as part of the FSGSBASE series.  I
+> > think the right solution is to rename the 64-bit segment to
+> > "CPU_NUMBER" and then have the rearrangement of the initialization
+> > code as a followup patch.  The goal is to make the patches
+> > individually reviewable.  As it stands, this patch adds some #defines
+> > without making them work, which is extra confusing.
+> >
+> > Given how many times we screwed it up, I really want the patch that
+> > moves the initialization of the 64-bit CPU number to be obviously
+> > correct and to avoid changing the sematics of anything except the
+> > actual CPU number fields during boot.
+> >
+> > So NAK to this patch, at least as part of the FSGSBASE series.
+> >
+> > (My apologies -- a bunch of this is because I along with everyone else
+> > misunderstood the existing code.)
+>
+> The sole purpose of this segment is for the getcpu() function in the
+> VDSO.  No other userspace code can rely on its presence or location.
+>
 
-drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
-drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
-drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
-
-Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
-How to reproduce:
-1. make defconfig ARCH=arm
-2. make -j100 CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
-
-Then you can see below warnings:
-drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
-drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
-drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
----
- drivers/usb/host/xhci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index a8c1d07..d50549f 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -481,7 +481,7 @@ static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
- 	unsigned long mask;
- 	unsigned int port;
- 	bool idle, enable;
--	int err;
-+	int err = 0;
- 
- 	memset(&rsp, 0, sizeof(rsp));
- 
--- 
-1.9.1
+Agreed.  But this means that no code whatsoever should use it on a
+32-bit kernel, so let's not add support.\
