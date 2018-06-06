@@ -1,126 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EilrHVYy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BCC4606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GvDvKQy+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 34FF460290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932525AbeFFJTK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:19:10 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:21719 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932352AbeFFJTI (ORCPT
+        id S1752198AbeFFPBF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:01:05 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34670 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752141AbeFFPBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:19:08 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <linus.walleij@linaro.org>
-CC: <j-keerthy@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <t-kristo@ti.com>
-Subject: [PATCH 1/2] gpio: davinci: Move fetching IRQ to beginning of probe
-Date: Wed, 6 Jun 2018 14:48:53 +0530
-Message-ID: <1528276734-1483-1-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 6 Jun 2018 11:01:02 -0400
+X-Google-Smtp-Source: ADUXVKKjFzf2f7bOZ07nK5FkAi/lqpP92Wqjra6sHYgCBRze0PaV8yqzT/7/dr5Wull/H3QroJR7dg==
+From: Georgi Djakov <georgi.djakov@linaro.org>
+Subject: [PATCH v4 4/7] interconnect: qcom: Add RPM communication
+To: Evan Green <evgreen@chromium.org>
+Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, vincent.guittot@linaro.org,
+        skannan@codeaurora.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        davidai@quicinc.com, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20180309210958.16672-1-georgi.djakov@linaro.org>
+ <20180309210958.16672-5-georgi.djakov@linaro.org>
+ <CAE=gft6HTU76M8AqzvN-VeDWE6c8Bgk+TimHHLMfLztWYhCSYQ@mail.gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <43302039-a056-b73d-50a9-d54f7dc90219@linaro.org>
+Date: Wed, 6 Jun 2018 18:00:58 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAE=gft6HTU76M8AqzvN-VeDWE6c8Bgk+TimHHLMfLztWYhCSYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently IRQ resource fetching is done at the very end of probe.
-In case the of IRQ resource not being ready, we defer probe
-and need to revert prior changes. Hence move it to the beginning of
-the probe so as to avoid reverting.
+Hi Evan,
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+On 12.05.18 г. 0:30, Evan Green wrote:
+> On Fri, Mar 9, 2018 at 1:11 PM Georgi Djakov <georgi.djakov@linaro.org>
+> wrote:
+> 
+>> On some Qualcomm SoCs, there is a remote processor, which controls some of
+>> the Network-On-Chip interconnect resources. Other CPUs express their needs
+>> by communicating with this processor. Add a driver to handle comminication
+>> with this remote processor.
+> 
+>> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+>> ---
+>>   .../devicetree/bindings/interconnect/qcom-smd.txt  | 31 ++++++++
+>>   drivers/interconnect/qcom/Makefile                 |  1 +
+>>   drivers/interconnect/qcom/smd-rpm.c                | 90
+> ++++++++++++++++++++++
+>>   drivers/interconnect/qcom/smd-rpm.h                | 15 ++++
+>>   4 files changed, 137 insertions(+)
+>>   create mode 100644
+> Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+>>   create mode 100644 drivers/interconnect/qcom/Makefile
+>>   create mode 100644 drivers/interconnect/qcom/smd-rpm.c
+>>   create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+> 
+>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+> b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+>> new file mode 100644
+>> index 000000000000..14e83ed7019b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
+>> @@ -0,0 +1,31 @@
+>> +Qualcomm SMD-RPM interconnect driver binding
+>> +------------------------------------------------
+>> +The RPM is a dedicated hardware engine for managing the shared
+>> +SoC resources in order to keep the lowest power profile. It
+>> +communicates with other hardware subsystems via shared memory
+>> +and accepts requests for various resources.
+> 
+> You never say what RPM or SMD stands for. RPM is Resource Power Manager,
+> right? But I'm not in the know about SMD. Can you define these somewhere?
+> 
 
-Tested for GPIO Interrupts on da850-lcdk and keystone-k2g-evm boards.
+Sure, it's the Shared Memory Driver back-end used for communicating with
+RPM. Now added this explanation into the docs.
 
- drivers/gpio/gpio-davinci.c | 29 +++++++++++------------------
- 1 file changed, 11 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 987126c..861f35b 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -55,7 +55,7 @@ static inline struct davinci_gpio_regs __iomem *irq2regs(struct irq_data *d)
- 	return g;
- }
- 
--static int davinci_gpio_irq_setup(struct platform_device *pdev);
-+static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq);
- 
- /*--------------------------------------------------------------------------*/
- 
-@@ -168,7 +168,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- {
- 	static int ctrl_num, bank_base;
- 	int gpio, bank, ret = 0;
--	unsigned ngpio, nbank;
-+	unsigned int ngpio, nbank, bank_irq;
- 	struct davinci_gpio_controller *chips;
- 	struct davinci_gpio_platform_data *pdata;
- 	struct device *dev = &pdev->dev;
-@@ -209,6 +209,12 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpio_base))
- 		return PTR_ERR(gpio_base);
- 
-+	bank_irq = platform_get_irq(pdev, 0);
-+	if (bank_irq < 0) {
-+		dev_dbg(dev, "IRQ not populated\n");
-+		return bank_irq;
-+	}
-+
- 	snprintf(label, MAX_LABEL_SIZE, "davinci_gpio.%d", ctrl_num++);
- 	chips->chip.label = devm_kstrdup(dev, label, GFP_KERNEL);
- 		if (!chips->chip.label)
-@@ -243,7 +249,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
- 		goto err;
- 
- 	platform_set_drvdata(pdev, chips);
--	ret = davinci_gpio_irq_setup(pdev);
-+	ret = davinci_gpio_irq_setup(pdev, bank_irq);
- 	if (ret)
- 		goto err;
- 
-@@ -452,16 +458,15 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
-  * (dm6446) can be set appropriately for GPIOV33 pins.
-  */
- 
--static int davinci_gpio_irq_setup(struct platform_device *pdev)
-+static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
- {
- 	unsigned	gpio, bank;
- 	int		irq;
- 	int		ret;
- 	struct clk	*clk;
- 	u32		binten = 0;
--	unsigned	ngpio, bank_irq;
-+	unsigned int	ngpio;
- 	struct device *dev = &pdev->dev;
--	struct resource	*res;
- 	struct davinci_gpio_controller *chips = platform_get_drvdata(pdev);
- 	struct davinci_gpio_platform_data *pdata = dev->platform_data;
- 	struct davinci_gpio_regs __iomem *g;
-@@ -481,18 +486,6 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
- 		gpio_get_irq_chip = (gpio_get_irq_chip_cb_t)match->data;
- 
- 	ngpio = pdata->ngpio;
--	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!res) {
--		dev_err(dev, "Invalid IRQ resource\n");
--		return -EBUSY;
--	}
--
--	bank_irq = res->start;
--
--	if (!bank_irq) {
--		dev_err(dev, "Invalid IRQ resource\n");
--		return -ENODEV;
--	}
- 
- 	clk = devm_clk_get(dev, "gpio");
- 	if (IS_ERR(clk)) {
--- 
-1.9.1
+Thanks,
+Georgi
