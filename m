@@ -1,279 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pY7vHHtIGVttSAAAmS7hNA
-	; Thu, 07 Jun 2018 15:02:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lrJwI/ZSGFtoZgAAmS7hNA
+	; Wed, 06 Jun 2018 21:32:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0929E608C1; Thu,  7 Jun 2018 15:02:54 +0000 (UTC)
+	id 7F217608BA; Wed,  6 Jun 2018 21:32:38 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 01FED601C3;
-	Thu,  7 Jun 2018 15:02:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01FED601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 009B1607F7;
+	Wed,  6 Jun 2018 21:32:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 009B1607F7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964951AbeFGPCn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:02:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41452 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935115AbeFGPCj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:02:39 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbx-0005Zj-2f; Thu, 07 Jun 2018 15:09:57 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvaz-0002k7-19; Thu, 07 Jun 2018 15:08:57 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, arjan.van.de.ven@intel.com,
-        dave.hansen@intel.com, rkrcmar@redhat.com, karahmed@amazon.de,
-        kvm@vger.kernel.org, "Thomas Gleixner" <tglx@linutronix.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        pbonzini@redhat.com, "Ingo Molnar" <mingo@kernel.org>,
-        "David Woodhouse" <dwmw@amazon.co.uk>, bp@alien8.de,
-        "Peter Zijlstra" <peterz@infradead.org>, jmattson@google.com
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.211979700@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 050/410] x86/speculation: Use IBRS if available
- before calling into firmware
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1752676AbeFFVcg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:32:36 -0400
+Received: from mga17.intel.com ([192.55.52.151]:11662 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752042AbeFFVce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:32:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 14:32:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,484,1520924400";
+   d="scan'208";a="47331294"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.43])
+  by orsmga008.jf.intel.com with ESMTP; 06 Jun 2018 14:32:33 -0700
+From: Tomas Winkler <tomas.winkler@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc 1/2] mei: remove unused MEI_IAMTHIF_STALL_TIMER define
+Date: Thu,  7 Jun 2018 00:31:47 +0300
+Message-Id: <20180606213148.9469-2-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180606213148.9469-1-tomas.winkler@intel.com>
+References: <20180606213148.9469-1-tomas.winkler@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-------------------
+MEI_IAMTHIF_STALL_TIMER is unused now and can be safely removed.
 
-From: David Woodhouse <dwmw@amazon.co.uk>
-
-commit dd84441a797150dcc49298ec95c459a8891d8bb1 upstream.
-
-Retpoline means the kernel is safe because it has no indirect branches.
-But firmware isn't, so use IBRS for firmware calls if it's available.
-
-Block preemption while IBRS is set, although in practice the call sites
-already had to be doing that.
-
-Ignore hpwdt.c for now. It's taking spinlocks and calling into firmware
-code, from an NMI handler. I don't want to touch that with a bargepole.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: arjan.van.de.ven@intel.com
-Cc: bp@alien8.de
-Cc: dave.hansen@intel.com
-Cc: jmattson@google.com
-Cc: karahmed@amazon.de
-Cc: kvm@vger.kernel.org
-Cc: pbonzini@redhat.com
-Cc: rkrcmar@redhat.com
-Link: http://lkml.kernel.org/r/1519037457-7643-2-git-send-email-dwmw@amazon.co.uk
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16:
- - x86 defines {,__}efi_call_virt() itself; update those definitions
- - Renumber the feature bit
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- arch/x86/include/asm/apm.h           |  6 +++++
- arch/x86/include/asm/cpufeature.h    |  1 +
- arch/x86/include/asm/efi.h           |  8 ++++++
- arch/x86/include/asm/nospec-branch.h | 39 +++++++++++++++++++++-------
- arch/x86/kernel/cpu/bugs.c           | 12 ++++++++-
- 5 files changed, 56 insertions(+), 10 deletions(-)
+ drivers/misc/mei/hw.h | 2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/x86/include/asm/apm.h
-+++ b/arch/x86/include/asm/apm.h
-@@ -6,6 +6,8 @@
- #ifndef _ASM_X86_MACH_DEFAULT_APM_H
- #define _ASM_X86_MACH_DEFAULT_APM_H
+diff --git a/drivers/misc/mei/hw.h b/drivers/misc/mei/hw.h
+index 5c8286b40b62..3b325d955fbe 100644
+--- a/drivers/misc/mei/hw.h
++++ b/drivers/misc/mei/hw.h
+@@ -28,8 +28,6 @@
+ #define MEI_CL_CONNECT_TIMEOUT     15  /* HPS: Client Connect Timeout */
+ #define MEI_CLIENTS_INIT_TIMEOUT   15  /* HPS: Clients Enumeration Timeout */
  
-+#include <asm/nospec-branch.h>
-+
- #ifdef APM_ZERO_SEGS
- #	define APM_DO_ZERO_SEGS \
- 		"pushl %%ds\n\t" \
-@@ -31,6 +33,7 @@ static inline void apm_bios_call_asm(u32
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -43,6 +46,7 @@ static inline void apm_bios_call_asm(u32
- 		  "=S" (*esi)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- }
- 
- static inline u8 apm_bios_call_simple_asm(u32 func, u32 ebx_in,
-@@ -55,6 +59,7 @@ static inline u8 apm_bios_call_simple_as
- 	 * N.B. We do NOT need a cld after the BIOS call
- 	 * because we always save and restore the flags.
- 	 */
-+	firmware_restrict_branch_speculation_start();
- 	__asm__ __volatile__(APM_DO_ZERO_SEGS
- 		"pushl %%edi\n\t"
- 		"pushl %%ebp\n\t"
-@@ -67,6 +72,7 @@ static inline u8 apm_bios_call_simple_as
- 		  "=S" (si)
- 		: "a" (func), "b" (ebx_in), "c" (ecx_in)
- 		: "memory", "cc");
-+	firmware_restrict_branch_speculation_end();
- 	return error;
- }
- 
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -190,6 +190,7 @@
- #define X86_FEATURE_RSB_CTXSW	(7*32+11) /* "" Fill RSB on context switches */
- 
- #define X86_FEATURE_USE_IBPB	(7*32+12) /* "" Indirect Branch Prediction Barrier enabled */
-+#define X86_FEATURE_USE_IBRS_FW (7*32+13) /* "" Use IBRS during runtime firmware calls */
- 
- #define X86_FEATURE_RETPOLINE	(7*32+29) /* "" Generic Retpoline mitigation for Spectre variant 2 */
- #define X86_FEATURE_RETPOLINE_AMD (7*32+30) /* "" AMD Retpoline mitigation for Spectre variant 2 */
---- a/arch/x86/include/asm/efi.h
-+++ b/arch/x86/include/asm/efi.h
-@@ -2,6 +2,8 @@
- #define _ASM_X86_EFI_H
- 
- #include <asm/i387.h>
-+#include <asm/nospec-branch.h>
-+
- /*
-  * We map the EFI regions needed for runtime services non-contiguously,
-  * with preserved alignment on virtual addresses starting from -4G down
-@@ -37,8 +39,10 @@ extern unsigned long asmlinkage efi_call
- ({									\
- 	efi_status_t __s;						\
- 	kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
- 	__s = ((efi_##f##_t __attribute__((regparm(0)))*)		\
- 		efi.systab->runtime->f)(args);				\
-+	firmware_restrict_branch_speculation_end();			\
- 	kernel_fpu_end();						\
- 	__s;								\
- })
-@@ -47,8 +51,10 @@ extern unsigned long asmlinkage efi_call
- #define __efi_call_virt(f, args...) \
- ({									\
- 	kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
- 	((efi_##f##_t __attribute__((regparm(0)))*)			\
- 		efi.systab->runtime->f)(args);				\
-+	firmware_restrict_branch_speculation_end();			\
- 	kernel_fpu_end();						\
- })
- 
-@@ -69,7 +75,9 @@ extern u64 asmlinkage efi_call(void *fp,
- 	efi_sync_low_kernel_mappings();					\
- 	preempt_disable();						\
- 	__kernel_fpu_begin();						\
-+	firmware_restrict_branch_speculation_start();			\
- 	__s = efi_call((void *)efi.systab->runtime->f, __VA_ARGS__);	\
-+	firmware_restrict_branch_speculation_end();			\
- 	__kernel_fpu_end();						\
- 	preempt_enable();						\
- 	__s;								\
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -194,17 +194,38 @@ static inline void vmexit_fill_RSB(void)
- #endif
- }
- 
-+#define alternative_msr_write(_msr, _val, _feature)		\
-+	asm volatile(ALTERNATIVE("",				\
-+				 "movl %[msr], %%ecx\n\t"	\
-+				 "movl %[val], %%eax\n\t"	\
-+				 "movl $0, %%edx\n\t"		\
-+				 "wrmsr",			\
-+				 _feature)			\
-+		     : : [msr] "i" (_msr), [val] "i" (_val)	\
-+		     : "eax", "ecx", "edx", "memory")
-+
- static inline void indirect_branch_prediction_barrier(void)
- {
--	asm volatile(ALTERNATIVE("",
--				 "movl %[msr], %%ecx\n\t"
--				 "movl %[val], %%eax\n\t"
--				 "movl $0, %%edx\n\t"
--				 "wrmsr",
--				 X86_FEATURE_USE_IBPB)
--		     : : [msr] "i" (MSR_IA32_PRED_CMD),
--			 [val] "i" (PRED_CMD_IBPB)
--		     : "eax", "ecx", "edx", "memory");
-+	alternative_msr_write(MSR_IA32_PRED_CMD, PRED_CMD_IBPB,
-+			      X86_FEATURE_USE_IBPB);
-+}
-+
-+/*
-+ * With retpoline, we must use IBRS to restrict branch prediction
-+ * before calling into firmware.
-+ */
-+static inline void firmware_restrict_branch_speculation_start(void)
-+{
-+	preempt_disable();
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
-+			      X86_FEATURE_USE_IBRS_FW);
-+}
-+
-+static inline void firmware_restrict_branch_speculation_end(void)
-+{
-+	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
-+			      X86_FEATURE_USE_IBRS_FW);
-+	preempt_enable();
- }
- 
- #endif /* __ASSEMBLY__ */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -364,6 +364,15 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
- 		pr_info("Enabling Indirect Branch Prediction Barrier\n");
- 	}
-+
-+	/*
-+	 * Retpoline means the kernel is safe because it has no indirect
-+	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 */
-+	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
-+		pr_info("Enabling Restricted Speculation for firmware calls\n");
-+	}
- }
- 
- #undef pr_fmt
-@@ -393,8 +402,9 @@ ssize_t cpu_show_spectre_v2(struct devic
- 	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
- 		return sprintf(buf, "Not affected\n");
- 
--	return sprintf(buf, "%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+	return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 		       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+		       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 		       spectre_v2_module_string());
- }
- #endif
+-#define MEI_IAMTHIF_STALL_TIMER    12  /* HPS */
+-
+ #define MEI_PGI_TIMEOUT             1  /* PG Isolation time response 1 sec */
+ #define MEI_D0I3_TIMEOUT            5  /* D0i3 set/unset max response time */
+ #define MEI_HBM_TIMEOUT             1  /* 1 second */
+-- 
+2.14.4
