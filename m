@@ -1,107 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxjetDxF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A0D8C60764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36210606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932368AbeFFHrt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 03:47:49 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36762 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932275AbeFFHrp (ORCPT
+        id S1752480AbeFFOpq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:45:46 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:37733 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752152AbeFFOpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:47:45 -0400
-X-Google-Smtp-Source: ADUXVKJ/YBXLSkY+tm6ozdzK0fEsSiLO2sPxglgTCVDjmFP8uh1zmA63u+7ruVXc0npju47LdfgBCx+mjzK4coQHuDs=
+        Wed, 6 Jun 2018 10:45:45 -0400
+X-Google-Smtp-Source: ADUXVKKiGC4s13aDjl+c9onK+fVGQJH3q4dymdtBDcPHCvN71ARg/nZNNeqKBQI8zBTg5P6bTWrGpigmTU3Wx0RlSjs=
 MIME-Version: 1.0
-References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
- <20180529131014.18641-19-ricardo.ribalda@gmail.com> <CAHp75VfFTtysSBvYfmCMoKZz8BpHb73qh=Zy-gpn6RKO2DE-5Q@mail.gmail.com>
- <CAPybu_0zByhDeVf6_Tv_PwU0WL_y6bkVPn0ha+VBvPcxWV4rLA@mail.gmail.com>
-In-Reply-To: <CAPybu_0zByhDeVf6_Tv_PwU0WL_y6bkVPn0ha+VBvPcxWV4rLA@mail.gmail.com>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Wed, 6 Jun 2018 09:47:27 +0200
-Message-ID: <CAPybu_2dqG1HX39e+oG8rYvzMG_vGDBQjiLewNjwUvkh+AiF=w@mail.gmail.com>
-Subject: Re: [PATCH 18/19] serdev: ttydev: Serdev driver that creates an
- standard TTY port
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
+In-Reply-To: <20180605171604.GA221901@dtor-ws>
+References: <20180605171604.GA221901@dtor-ws>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Wed, 6 Jun 2018 16:45:43 +0200
+Message-ID: <CAO-hwJ++CB6xy9jwRmBz1Gj0LjF368D8w5nYiqkObo5Xy3g84g@mail.gmail.com>
+Subject: Re: [RFC/PATCH] Input: make input_report_slot_state() return boolean
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
-On Wed, Jun 6, 2018 at 8:58 AM Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
+On Tue, Jun 5, 2018 at 7:16 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> Let's make input_report_slot_state() return boolean representing whether
+> the contact is active or not. This will allow writing code like:
 >
-> Hi Andy
-> On Tue, Jun 5, 2018 at 3:42 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> > On Tue, May 29, 2018 at 4:10 PM, Ricardo Ribalda Delgado
-> > <ricardo.ribalda@gmail.com> wrote:
-> > > Standard TTY port that can be loaded/unloaded via serdev sysfs. This
-> > > serdev driver can only be used by serdev controllers that are compatible
-> > > with ttyport.
-> >
-> > > +config SERIAL_DEV_CTRL_TTYDEV
-> > > +       tristate "TTY port dynamically loaded by the Serial Device Bus"
-> > > +       help
-> > > +         Say Y here if you want to create a bridge driver between the Serial
-> > > +         device bus and the TTY chardevice. This driver can be dynamically
-> > > +         loaded/unloaded by the Serial Device Bus.
-> > > +
-> > > +         If unsure, say Y.
-> > > +       depends on SERIAL_DEV_CTRL_TTYPORT
-> >
-> > > +       default m
-> >
-> > Hmm... Can't we survive w/o this by default?
+>         if (input_mt_report_slot_state(input, obj->mt_tool,
+>                                         obj->type != RMI_2D_OBJECT_NONE) {
 >
-> If this module is not available and serdev is enabled the user would
-> miss his /dev/ttyS* nodes, so I rather leave this on.
-
-Sorry, brain fart. This is exactly what #if
-IS_ENABLED(CONFIG_SERIAL_DEV_CTRL_TTYDEV) prevents.
-
-I have defaulted the module to n as you suggested. You can take a look
-to the patches that I plan to submit tomorrow at:
-
-https://github.com/ribalda/linux/tree/serdev2
-
+>                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
+>                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
+>                 ...
+>         }
 >
-> >
-> > > +static int __init ttydev_serdev_init(void)
-> > > +{
-> > > +       return serdev_device_driver_register(&ttydev_serdev_driver);
-> > > +}
-> > > +module_init(ttydev_serdev_init);
-> > > +
-> > > +static void __exit ttydev_serdev_exit(void)
-> > > +{
-> > > +       return serdev_device_driver_unregister(&ttydev_serdev_driver);
-> > > +}
-> > > +module_exit(ttydev_serdev_exit);
-> >
-> > Isn't above is just a macro in serdev.h?
-> > I.e. module_serdev_device_driver().
+> instead of:
 >
-> ACK, thanks!
-> >
-> > --
-> > With Best Regards,
-> > Andy Shevchenko
+>         input_mt_report_slot_state(input, obj->mt_tool,
+>                                    obj->type != RMI_2D_OBJECT_NONE);
+>         if (obj->type != RMI_2D_OBJECT_NONE) {
+>                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
+>                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
+>                 ...
+>         }
 >
-> Best regards
->
-> --
-> Ricardo Ribalda
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
 
+Looks good to me as well.
 
+In case you still need it:
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redaht.com>
 
--- 
-Ricardo Ribalda
+Cheers,
+Benjamin
