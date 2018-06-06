@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="v++G3kR0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6894160555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A550160767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux.ee
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeFFMtw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:49:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52295 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751900AbeFFMtu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:49:50 -0400
-X-Google-Smtp-Source: ADUXVKIu1/BU3LiocpvQTC++4jUVBUUgVIevQQVmKZeA8KtEi0Nr5ZtgXwyeNFGcc9XZtyGrkM4x9w==
-From: Michal Simek <monstr@monstr.eu>
-To: devicetree@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        linux-kernel@vger.kernel.org, David Lechner <david@lechnology.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>, SZ Lin <sz.lin@moxa.com>
-Subject: [PATCH] dt-bindings: Add bitmain vendor prefix
-Date: Wed,  6 Jun 2018 14:49:48 +0200
-Message-Id: <20173c07cc538544c9e6780a8ef558b97a3fe2cb.1528289384.git.monstr@monstr.eu>
-X-Mailer: git-send-email 1.9.1
+        id S1752086AbeFFNLd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:11:33 -0400
+Received: from smtp2.it.da.ut.ee ([193.40.5.67]:46951 "EHLO smtp2.it.da.ut.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751851AbeFFNLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:11:32 -0400
+Date: Wed, 6 Jun 2018 16:11:26 +0300 (EEST)
+From: Meelis Roos <mroos@linux.ee>
+To: openipmi-developer@lists.sourceforge.net
+cc: Linux Kernel list <linux-kernel@vger.kernel.org>
+Subject: [PATCH] fix NULL device in ipmi_si error message
+Message-ID: <alpine.LRH.2.21.1806061604580.20960@math.ut.ee>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bitmain (https://www.bitmain.com) is a vendor of cryptocurrency
-hardware.
+I noticed that 4.17.0 logs the follwing during ipmi_si setup:
 
-Signed-off-by: Michal Simek <monstr@monstr.eu>
----
+ ipmi_si 0000:01:04.6: probing via PCI
+ (NULL device *): Could not setup I/O space
+ ipmi_si 0000:01:04.6: [mem 0xf5ef0000-0xf5ef00ff] regsize 1 spacing 1 irq 21
 
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+Fix the "NULL device *) by moving io.dev assignment before its potential 
+use by ipmi_pci_probe_regspacing().
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 36003832c2a8..ddb52511a583 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -51,6 +51,7 @@ axentia	Axentia Technologies AB
- axis	Axis Communications AB
- bananapi BIPAI KEJI LIMITED
- bhf	Beckhoff Automation GmbH & Co. KG
-+bitmain	Bitmain Technologies
- boe	BOE Technology Group Co., Ltd.
- bosch	Bosch Sensortec GmbH
- boundary	Boundary Devices Inc.
+Result:
+ ipmi_si 0000:01:04.6: probing via PCI
+ ipmi_si 0000:01:04.6: Could not setup I/O space
+ ipmi_si 0000:01:04.6: [mem 0xf5ef0000-0xf5ef00ff] regsize 1 spacing 1 irq 21
+
+Signed-off-by: Meelis Roos <mroos@linux.ee>
+
+diff --git a/drivers/char/ipmi/ipmi_si_pci.c b/drivers/char/ipmi/ipmi_si_pci.c
+index f54ca6869ed2..022e03634ce2 100644
+--- a/drivers/char/ipmi/ipmi_si_pci.c
++++ b/drivers/char/ipmi/ipmi_si_pci.c
+@@ -120,6 +120,8 @@ static int ipmi_pci_probe(struct pci_dev *pdev,
+ 	}
+ 	io.addr_data = pci_resource_start(pdev, 0);
+ 
++	io.dev = &pdev->dev;
++
+ 	io.regspacing = ipmi_pci_probe_regspacing(&io);
+ 	io.regsize = DEFAULT_REGSIZE;
+ 	io.regshift = 0;
+@@ -128,8 +130,6 @@ static int ipmi_pci_probe(struct pci_dev *pdev,
+ 	if (io.irq)
+ 		io.irq_setup = ipmi_std_irq_setup;
+ 
+-	io.dev = &pdev->dev;
+-
+ 	dev_info(&pdev->dev, "%pR regsize %d spacing %d irq %d\n",
+ 		&pdev->resource[0], io.regsize, io.regspacing, io.irq);
+ 
+
 -- 
-1.9.1
+Meelis Roos (mroos@linux.ee)
