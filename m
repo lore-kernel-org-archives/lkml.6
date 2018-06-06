@@ -1,81 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KGk/SF7y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 40DA2607CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9w22jNi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1604C60767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932252AbeFFGJD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:09:03 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:35811 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbeFFGHa (ORCPT
+        id S1751968AbeFFLYz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 07:24:55 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39557 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751700AbeFFLYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:07:30 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 0/6] Add MCAN Support for dra76x
-Date: Wed, 6 Jun 2018 11:38:20 +0530
-Message-ID: <20180606060826.14671-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 6 Jun 2018 07:24:53 -0400
+X-Google-Smtp-Source: ADUXVKJAoPVa+IW3CRcspk13lYraZ83Q3okJ3TCCfICCHa6dvFh2aKVkjV+xUa8fn+ZoxpdbUPv7eKDfjP+Hz0khy1s=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
+References: <20180605170117.643936916@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 6 Jun 2018 16:54:51 +0530
+Message-ID: <CA+G9fYu4MPfE10F_fR_FxmqL-YbgDmiGVKKMCjWZeoG4YKGMJQ@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/61] 4.9.107-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following patches add dts and sysconfig support
-for MCAN on TI's dra76 SOCs
+On 5 June 2018 at 22:31, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
+ote:
+> This is the start of the stable review cycle for the 4.9.107 release.
+> There are 61 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu Jun  7 17:00:59 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.107-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-The patches depend on the following series:
-https://patchwork.kernel.org/patch/10221105/
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-Changes in v3:
- 1. Added reset functionality to the ti-sysc
-    driver. This enables me to drop the hwmod
-    data patch as everything is being done in dt.
+Summary
+------------------------------------------------------------------------
 
- 2. Dropped ti,hwmods from the dts nodes
+kernel: 4.9.107-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 0a593cdaaec3e50857380c79ccf9eaebcde7f862
+git describe: v4.9.106-62-g0a593cdaaec3
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.106-62-g0a593cdaaec3
 
- 3. Fixed the unit address of target-module
-    and mcan
 
- 4. Removed the status="disabled" in dtsi
-    followed by status="okay" in dts.
+No regressions (compared to build v4.9.106-60-gc9f5af2d0154)
 
-Changes in v2:
- 1. Added Support for mcan in the ti-sysc driver
-    Also added the target-module node for the same
 
- 2. Added clkctrl data for mcan clocks
+Ran 9882 total tests in the following environments and test suites.
 
-Faiz Abbas (4):
-  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
-  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-  bus: ti-sysc: Add support for software reset
-  ARM: dts: Add generic interconnect target module node for MCAN
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15
+- x86_64
 
-Franklin S Cooper Jr (1):
-  ARM: dts: dra76x: Add MCAN node
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
 
-Lokesh Vutla (1):
-  ARM: dts: dra762: Add MCAN clock support
-
- .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
- arch/arm/boot/dts/dra76-evm.dts               |  6 ++
- arch/arm/boot/dts/dra76x.dtsi                 | 65 +++++++++++++++++++
- drivers/bus/ti-sysc.c                         | 58 +++++++++++++++++
- drivers/clk/ti/clk-7xx.c                      |  1 +
- include/dt-bindings/bus/ti-sysc.h             |  2 +
- include/dt-bindings/clock/dra7.h              |  1 +
- include/linux/platform_data/ti-sysc.h         |  1 +
- 8 files changed, 135 insertions(+)
-
--- 
-2.17.0
+--=20
+Linaro LKFT
+https://lkft.linaro.org
