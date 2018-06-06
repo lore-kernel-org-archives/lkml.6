@@ -1,68 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="dLTPKiqS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC71460555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHTxOjEg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74A5D60764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932640AbeFFJwI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:52:08 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:55944 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932265AbeFFJwD (ORCPT
+        id S1752161AbeFFMef (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:34:35 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:42615 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751851AbeFFMed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:52:03 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: matwey.kornilov@gmail.com,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Ed Blake <ed.blake@sondrel.com>,
-        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/4] serial: 8250_dw: allow enable rs485 at boot time
-Date: Wed,  6 Jun 2018 11:51:51 +0200
-Message-Id: <20180606095156.72628-1-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
-To: unlisted-recipients:; (no To-header on input)
+        Wed, 6 Jun 2018 08:34:33 -0400
+X-Google-Smtp-Source: ADUXVKLiSMd1fWuRQ5qswBkC/CtMY9xCkE8uL2DRfdJV+gIpna/9gRwmVrkSgDfIJxK4CIh2x28uwE8AwuHLoSuOMPo=
+MIME-Version: 1.0
+In-Reply-To: <20180606122731.GB27707@jra-laptop.brq.redhat.com>
+References: <20180606122731.GB27707@jra-laptop.brq.redhat.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 6 Jun 2018 14:34:32 +0200
+X-Google-Sender-Auth: ZGw8BI50ICCMsBJIG1UbU5b8m2M
+Message-ID: <CAJZ5v0hTTe9zYwYKtoQKjJJbazFeaGVO2SdbaODyvTFiNpGTdw@mail.gmail.com>
+Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
+ Stream, Linpack and NAS parallel benchmarks
+To: Jakub Racek <jracek@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If "linux,rs485-enabled-at-boot-time" is specified need to setup 485
-in probe function.
+On Wed, Jun 6, 2018 at 2:27 PM, Jakub Racek <jracek@redhat.com> wrote:
+> Hi,
+>
+> There is a huge performance regression on the 2 and 4 NUMA node systems on
+> stream benchmark with 4.17 kernel compared to 4.16 kernel. Stream, Linpack
+> and NAS parallel benchmarks show upto 50% performance drop.
+>
+> When running for example 20 stream processes in parallel, we see the
+> following behavior:
+>
+> * all processes are started at NODE #1
+> * memory is also allocated on NODE #1
+> * roughly half of the processes are moved to the NODE #0 very quickly. *
+> however, memory is not moved to NODE #0 and stays allocated on NODE #1
+>
+> As the result, half of the processes are running on NODE#0 with memory being
+> still allocated on NODE#1. This leads to non-local memory accesses
+> on the high Remote-To-Local Memory Access Ratio on the numatop charts.
+> So it seems that 4.17 is not doing a good job to move the memory to the
+> right NUMA
+> node after the process has been moved.
+>
+> ----8<----
+>
+> The above is an excerpt from performance testing on 4.16 and 4.17 kernels.
+>
+> For now I'm merely making sure the problem is reported.
 
-Call uart_get_rs485_mode() to get rs485 configuration, then call
-rs485_config() callback directly to setup port as rs485.
+OK, and why do you think that it is related to ACPI?
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- drivers/tty/serial/8250/8250_dw.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 45366e6e5411..0f8b4da03d4e 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -582,8 +582,11 @@ static int dw8250_probe(struct platform_device *pdev)
- 	if (data->uart_16550_compatible)
- 		p->handle_irq = NULL;
- 
--	if (!data->skip_autocfg)
-+	if (!data->skip_autocfg) {
- 		dw8250_setup_port(p);
-+		uart_get_rs485_mode(dev, &p->rs485);
-+		dw8250_rs485_config(p, &p->rs485);
-+	}
- 
- 	/* If we have a valid fifosize, try hooking up DMA */
- 	if (p->fifosize) {
--- 
-2.17.1
+Thanks,
+Rafael
