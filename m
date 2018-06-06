@@ -1,28 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 244716070B
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A7416070B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932367AbeFFKKt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:10:49 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54413 "EHLO
+        id S1752157AbeFFLoi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 07:44:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48697 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932265AbeFFKKr (ORCPT
+        with ESMTP id S1751729AbeFFLog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:10:47 -0400
-Date: Wed, 6 Jun 2018 03:10:37 -0700
-From: tip-bot for Laurentiu Tudor <tipbot@zytor.com>
-Message-ID: <tip-0cdd431c337e99177e68597f3de34bedd3a20a74@git.kernel.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        hpa@zytor.com, laurentiu.tudor@nxp.com
-Reply-To: mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com,
-          laurentiu.tudor@nxp.com
-In-Reply-To: <20180605122727.12831-1-laurentiu.tudor@nxp.com>
-References: <20180605122727.12831-1-laurentiu.tudor@nxp.com>
+        Wed, 6 Jun 2018 07:44:36 -0400
+Date: Wed, 6 Jun 2018 04:44:30 -0700
+From: tip-bot for Dou Liyang <tipbot@zytor.com>
+Message-ID: <tip-838d76d63ec4eaeaa12bedfa50f261480f615200@git.kernel.org>
+Cc: hpa@zytor.com, douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, douly.fnst@cn.fujitsu.com
+In-Reply-To: <20180601065031.21872-1-douly.fnst@cn.fujitsu.com>
+References: <20180601065031.21872-1-douly.fnst@cn.fujitsu.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/urgent] irqchip/ls-scfg-msi: Map MSIs in the iommu
-Git-Commit-ID: 0cdd431c337e99177e68597f3de34bedd3a20a74
+Subject: [tip:x86/urgent] x86/vector: Fix the args of vector_alloc
+ tracepoint
+Git-Commit-ID: 838d76d63ec4eaeaa12bedfa50f261480f615200
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,48 +35,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0cdd431c337e99177e68597f3de34bedd3a20a74
-Gitweb:     https://git.kernel.org/tip/0cdd431c337e99177e68597f3de34bedd3a20a74
-Author:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
-AuthorDate: Tue, 5 Jun 2018 15:27:27 +0300
+Commit-ID:  838d76d63ec4eaeaa12bedfa50f261480f615200
+Gitweb:     https://git.kernel.org/tip/838d76d63ec4eaeaa12bedfa50f261480f615200
+Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
+AuthorDate: Fri, 1 Jun 2018 14:50:31 +0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 12:05:19 +0200
+CommitDate: Wed, 6 Jun 2018 13:38:02 +0200
 
-irqchip/ls-scfg-msi: Map MSIs in the iommu
+x86/vector: Fix the args of vector_alloc tracepoint
 
-Add the required iommu_dma_map_msi_msg() when composing the MSI message,
-otherwise the interrupts will not work.
+The vector_alloc tracepont reversed the reserved and ret aggs, that made
+the trace print wrong. Exchange them.
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Fixes: 8d1e3dca7de6 ("x86/vector: Add tracepoints for vector management")
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: jason@lakedaemon.net
-Cc: marc.zyngier@arm.com
-Cc: zhiqiang.hou@nxp.com
-Cc: minghuan.lian@nxp.com
-Link: https://lkml.kernel.org/r/20180605122727.12831-1-laurentiu.tudor@nxp.com
+Cc: hpa@zytor.com
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180601065031.21872-1-douly.fnst@cn.fujitsu.com
 
 ---
- drivers/irqchip/irq-ls-scfg-msi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/trace/irq_vectors.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
-index 57e3d900f19e..1ec3bfe56693 100644
---- a/drivers/irqchip/irq-ls-scfg-msi.c
-+++ b/drivers/irqchip/irq-ls-scfg-msi.c
-@@ -21,6 +21,7 @@
- #include <linux/of_pci.h>
- #include <linux/of_platform.h>
- #include <linux/spinlock.h>
-+#include <linux/dma-iommu.h>
+diff --git a/arch/x86/include/asm/trace/irq_vectors.h b/arch/x86/include/asm/trace/irq_vectors.h
+index 22647a642e98..0af81b590a0c 100644
+--- a/arch/x86/include/asm/trace/irq_vectors.h
++++ b/arch/x86/include/asm/trace/irq_vectors.h
+@@ -236,7 +236,7 @@ TRACE_EVENT(vector_alloc,
+ 	TP_PROTO(unsigned int irq, unsigned int vector, bool reserved,
+ 		 int ret),
  
- #define MSI_IRQS_PER_MSIR	32
- #define MSI_MSIR_OFFSET		4
-@@ -94,6 +95,8 @@ static void ls_scfg_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
+-	TP_ARGS(irq, vector, ret, reserved),
++	TP_ARGS(irq, vector, reserved, ret),
  
- 	if (msi_affinity_flag)
- 		msg->data |= cpumask_first(data->common->affinity);
-+
-+	iommu_dma_map_msi_msg(data->irq, msg);
- }
- 
- static int ls_scfg_msi_set_affinity(struct irq_data *irq_data,
+ 	TP_STRUCT__entry(
+ 		__field(	unsigned int,	irq		)
