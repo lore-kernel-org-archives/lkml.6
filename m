@@ -1,122 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LOUeuWzI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m75zf81c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CFC560764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="Uy8JLtT+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 602A8607B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752175AbeFFNEA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:04:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33432 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751864AbeFFND6 (ORCPT
+        id S932256AbeFFPZd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:25:33 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53396 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932195AbeFFPZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:03:58 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 06 Jun 2018 18:33:56 +0530
-From: Vikash Garodia <vgarodia@codeaurora.org>
-To: Tomasz Figa <tfiga@google.com>
-Cc: Rob Herring <robh@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>, bjorn.andersson@linaro.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>,
-        linux-media-owner@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware
- device
-In-Reply-To: <CAAFQd5DGKnU15pjF2+eyMUaSuE0FCr2FMF90WrJb+kXt80xBCw@mail.gmail.com>
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
- <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
- <20180605210758.GA19888@rob-hp-laptop>
- <CAAFQd5DGKnU15pjF2+eyMUaSuE0FCr2FMF90WrJb+kXt80xBCw@mail.gmail.com>
-Message-ID: <f220c6aef40ea3fbcc3b6adcec234527@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 6 Jun 2018 11:25:29 -0400
+X-Google-Smtp-Source: ADUXVKJzMQQdFm9RKAa/efVp9ZD+TkRv5D3FFwi6EgC4AoKjWvmgoBjnWO5p7ld103yzlLH1R15bMA==
+From: Roman Pen <roman.penyaev@profitbricks.com>
+To: linux-block@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Danil Kipnis <danil.kipnis@profitbricks.com>,
+        Jack Wang <jinpu.wang@profitbricks.com>,
+        Roman Pen <roman.penyaev@profitbricks.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 01/25] sysfs: export sysfs_remove_file_self()
+Date: Wed,  6 Jun 2018 17:24:51 +0200
+Message-Id: <20180606152515.25807-2-roman.penyaev@profitbricks.com>
+X-Mailer: git-send-email 2.13.1
+In-Reply-To: <20180606152515.25807-1-roman.penyaev@profitbricks.com>
+References: <20180606152515.25807-1-roman.penyaev@profitbricks.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-06 10:16, Tomasz Figa wrote:
-> Hi Rob,
-> 
-> On Wed, Jun 6, 2018 at 6:08 AM Rob Herring <robh@kernel.org> wrote:
->> 
->> On Sat, Jun 02, 2018 at 01:56:08AM +0530, Vikash Garodia wrote:
->> > A separate child device is added for video firmware.
->> > This is needed to
->> > [1] configure the firmware context bank with the desired SID.
->> > [2] ensure that the iova for firmware region is from 0x0.
->> >
->> > Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
->> > ---
->> >  .../devicetree/bindings/media/qcom,venus.txt       |  8 +++-
->> >  drivers/media/platform/qcom/venus/core.c           | 48 +++++++++++++++++++---
->> >  drivers/media/platform/qcom/venus/firmware.c       | 20 ++++++++-
->> >  drivers/media/platform/qcom/venus/firmware.h       |  2 +
->> >  4 files changed, 71 insertions(+), 7 deletions(-)
->> >
->> > diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
->> > index 00d0d1b..701cbe8 100644
->> > --- a/Documentation/devicetree/bindings/media/qcom,venus.txt
->> > +++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
->> > @@ -53,7 +53,7 @@
->> >
->> >  * Subnodes
->> >  The Venus video-codec node must contain two subnodes representing
->> > -video-decoder and video-encoder.
->> > +video-decoder and video-encoder, one optional firmware subnode.
->> >
->> >  Every of video-encoder or video-decoder subnode should have:
->> >
->> > @@ -79,6 +79,8 @@ Every of video-encoder or video-decoder subnode should have:
->> >                   power domain which is responsible for collapsing
->> >                   and restoring power to the subcore.
->> >
->> > +The firmware sub node must contain the iommus specifiers for ARM9.
->> > +
->> >  * An Example
->> >       video-codec@1d00000 {
->> >               compatible = "qcom,msm8916-venus";
->> > @@ -105,4 +107,8 @@ Every of video-encoder or video-decoder subnode should have:
->> >                       clock-names = "core";
->> >                       power-domains = <&mmcc VENUS_CORE1_GDSC>;
->> >               };
->> > +             venus-firmware {
->> > +                     compatible = "qcom,venus-firmware-no-tz";
->> > +                     iommus = <&apps_smmu 0x10b2 0x0>;
->> 
->> This mostly looks like you are adding a node in order to create a
->> platform device. DT is not the only way to create platform devices and
->> shouldn't be used when the device is not really a separate h/w device.
->> Plus it seems like it is debatable that you even need a driver.
->> 
->> For iommus, just move it up to the parent (or add to existing prop).
-> 
-> As far as I understood the issue from reading this series and also
-> talking a bit with Stanimir, there are multiple (physical?) ports from
-> the Venus hardware block and that includes one dedicated for firmware
-> loading, which has IOVA range restrictions up to 6 MiBs or something
-> like that.
-> 
-> If we add the firmware port to the iommus property of the main node,
-> we would bind it to the same IOVA address space as the other ports and
-> so it would be part of the main full 32-bit IOMMU domain.
+Function is going to be used in transport over RDMA module
+in subsequent patches.
 
-Not really port-wise, but the restriction part is right. Once the 
-firmware
-is loaded, the ARM9 can only execute those firmware instructions if it 
-is
-present in iova address 0x0.
-Merging it to parent device cannot guarantee that the firmware memory is
-mapped from 0x0.
+Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+---
+ fs/sysfs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Best regards,
-> Tomasz
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index 5c13f29bfcdb..ff7443ac2aa7 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -444,6 +444,7 @@ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr)
+ 	kernfs_put(kn);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(sysfs_remove_file_self);
+ 
+ void sysfs_remove_files(struct kobject *kobj, const struct attribute **ptr)
+ {
+-- 
+2.13.1
