@@ -1,120 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SShTEU+O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 27A0A605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLiWoNgu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 605AB60263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932399AbeFFP5T (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:57:19 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:34872 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932163AbeFFP5Q (ORCPT
+        id S932367AbeFFJzq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:55:46 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:38907 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752074AbeFFJzo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:57:16 -0400
-To: himanshu.madhani@cavium.com
-Cc: quinn.tran@cavium.com, martin.petersen@oracle.com,
-        William.Kuzeja@stratus.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-scsi@vger.kernel.org, Li Wang <liwang@redhat.com>
-Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
-Date: Wed, 06 Jun 2018 11:56:55 -0400
-In-Reply-To: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
-        (Li Wang's message of "Fri, 1 Jun 2018 11:33:37 +0800")
-Message-ID: <yq1a7s7ewmw.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Wed, 6 Jun 2018 05:55:44 -0400
+X-Google-Smtp-Source: ADUXVKJklC6wNIBl0j+A4Z2D5jiyPXK+T52S7CzU5t4dJIFncgREKC0gUXDoC8/t4SaAlqTWC4nxIRVwNKIAbP/Y01A=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=933
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806060181
+In-Reply-To: <CAPybu_2dqG1HX39e+oG8rYvzMG_vGDBQjiLewNjwUvkh+AiF=w@mail.gmail.com>
+References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
+ <20180529131014.18641-19-ricardo.ribalda@gmail.com> <CAHp75VfFTtysSBvYfmCMoKZz8BpHb73qh=Zy-gpn6RKO2DE-5Q@mail.gmail.com>
+ <CAPybu_0zByhDeVf6_Tv_PwU0WL_y6bkVPn0ha+VBvPcxWV4rLA@mail.gmail.com> <CAPybu_2dqG1HX39e+oG8rYvzMG_vGDBQjiLewNjwUvkh+AiF=w@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 6 Jun 2018 12:55:42 +0300
+Message-ID: <CAHp75VfZBKTu5XHt5_0eQp6m0Tdyi0H3vNz00c3ok+jgx2By7A@mail.gmail.com>
+Subject: Re: [PATCH 18/19] serdev: ttydev: Serdev driver that creates an
+ standard TTY port
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 6, 2018 at 10:47 AM, Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+> Hi Andy,
+> On Wed, Jun 6, 2018 at 8:58 AM Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
 
-Himanshu,
+> I have defaulted the module to n as you suggested. You can take a look
+> to the patches that I plan to submit tomorrow at:
+>
+> https://github.com/ribalda/linux/tree/serdev2
 
-Ping?
-
-> Hi scsi experts,
->
-> Not sure who is the right person to ask, I just hit this bug on my HP
-> DL385 platform, can any one of you take a look?
->
-> system config:
-> -----------------
-> HP ProLiant DL385 G7
-> AMD Opteron(TM) Processor 6234
-> 16384 MB memory, 369 GB disk space
->
->
-> [   24.539274] qla2xxx [0000:0c:00.7]-500a:5: LOOP UP detected (10 Gbps).
-> [   24.577259] BUG: unable to handle kernel NULL pointer dereference
-> at 0000000000000102
-> [   24.623133] PGD 0 P4D 0
-> [   24.636760] Oops: 0000 [#1] SMP NOPTI
-> [   24.656942] Modules linked in: i2c_algo_bit drm_kms_helper
-> sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom fb_sys_fops
-> ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+) qla2xxx(+)
-> libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+)
-> nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel libata
-> nvme_core i2c_core scsi_transport_iscsi tg3 scsi_transport_fc bnx2
-> iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash dm_log dm_mod
-> [   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not tainted 4.17.0-rc6 #1
-> [   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS A18 08/15/2012
-> [   24.962106] Workqueue: events work_for_cpu_fn
-> [   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
-> [   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
-> [   25.042116] RAX: 0000000000000082 RBX: 0000000000000082 RCX:
-> 0000000000000000
-> [   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000 RDI:
-> 0000000000002000
-> [   25.123094] RBP: 0000000000000000 R08: 0000000000025a40 R09:
-> ffff8cf9aade2880
-> [   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0 R12:
-> ffff8cf9abc6d7d0
-> [   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8 R15:
-> 0000000000002000
-> [   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000)
-> knlGS:0000000000000000
-> [   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   26.010457] CR2: 0000000000000102 CR3: 000000030760a000 CR4:
-> 00000000000406f0
-> [   26.051048] Call Trace:
-> [   26.063572]  ? __switch_to_asm+0x34/0x70
-> [   26.086079]  queue_work_on+0x24/0x40
-> [   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
-> [   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
-> [   26.164075]  ? lock_timer_base+0x67/0x80
-> [   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
-> [   26.212284]  ? del_timer_sync+0x35/0x40
-> [   26.234080]  ? schedule_timeout+0x165/0x2f0
-> [   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
-> [   26.285740]  qla2x00_mailbox_command+0x74b/0xf50 [qla2xxx]
-> [   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0 [qla2xxx]
-> [   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
-> [   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0 [qla2xxx]
-> [   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
-> [   26.442055]  local_pci_probe+0x3f/0xa0
-> [   26.463108]  work_for_cpu_fn+0x10/0x20
-> [   26.483295]  process_one_work+0x152/0x350
-> [   26.505730]  worker_thread+0x1cf/0x3e0
-> [   26.527090]  kthread+0xf5/0x130
-> [   26.545085]  ? max_active_store+0x80/0x80
-> [   26.568085]  ? kthread_bind+0x10/0x10
-> [   26.589533]  ret_from_fork+0x22/0x40
-> [   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
-> 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48 89 f5 53
-> 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0 ec 01 00 41
-> [   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP: ffff992642ceba10
-> [   27.341591] CR2: 0000000000000102
-> [   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
+n _is_ default. So, just remove a line.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+With Best Regards,
+Andy Shevchenko
