@@ -1,243 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FFF4606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB97160290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752011AbeFFMLo (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:11:44 -0400
-Received: from mga17.intel.com ([192.55.52.151]:49043 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751856AbeFFMLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:11:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="61742478"
-Date: Wed, 6 Jun 2018 20:11:54 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: bhelgaas@google.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org, dan.daly@intel.com,
-        mark.d.rustad@intel.com, alexander.h.duyck@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: Re: [virtio-dev] Re: [PATCH v3] virtio_pci: support enabling VFs
-Message-ID: <20180606121154.GA9599@debian>
-References: <20180601040239.1151-1-tiwei.bie@intel.com>
- <20180604192222-mutt-send-email-mst@kernel.org>
- <20180605013653.GA1045@debian>
- <20180605152151-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180605152151-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1754005AbeFFQOw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:14:52 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:33091 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752861AbeFFQOs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:14:48 -0400
+X-Google-Smtp-Source: ADUXVKJPpcGYsl0XxJGpu8xOsAkPUSTVqDEGojUyZewYDrQJqUy/t9wGjJoyenpICoAcqVD04M06Tw==
+Message-ID: <1528301685.17774.1.camel@redhat.com>
+Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
+From: Laurence Oberman <loberman@redhat.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        himanshu.madhani@cavium.com
+Cc: quinn.tran@cavium.com, William.Kuzeja@stratus.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, Li Wang <liwang@redhat.com>
+Date: Wed, 06 Jun 2018 12:14:45 -0400
+In-Reply-To: <yq1a7s7ewmw.fsf@oracle.com>
+References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
+         <yq1a7s7ewmw.fsf@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 03:23:11PM +0300, Michael S. Tsirkin wrote:
-> On Tue, Jun 05, 2018 at 09:36:53AM +0800, Tiwei Bie wrote:
-> > On Mon, Jun 04, 2018 at 07:32:25PM +0300, Michael S. Tsirkin wrote:
-> > > On Fri, Jun 01, 2018 at 12:02:39PM +0800, Tiwei Bie wrote:
-> > > > There is a new feature bit allocated in virtio spec to
-> > > > support SR-IOV (Single Root I/O Virtualization):
-> > > > 
-> > > > https://github.com/oasis-tcs/virtio-spec/issues/11
-> > > > 
-> > > > This patch enables the support for this feature bit in
-> > > > virtio driver.
-> > > > 
-> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > ---
-> > > 
-> > > OK but what about freeze/restore functions?
+On Wed, 2018-06-06 at 11:56 -0400, Martin K. Petersen wrote:
+> Himanshu,
 > 
-> So for restore, don't you need to restore the
-> sriov capability?
-
-Currently I'm not familiar with the PM part.
-But I still think the sriov capability should
-be handled by PCI core. I'm trying to understand
-all the relevant code..
-
-For your question, based on what I found from
-the code currently, I guess the sriov capability
-will be restored by pci_restore_state() which
-will be called by the ops in pci_dev_pm_ops.
-The sriov_restore_state() will be called
-eventually.
-
-Best regards,
-Tiwei Bie
-
-
+> Ping?
+> 
+> > Hi scsi experts,
+> > 
+> > Not sure who is the right person to ask, I just hit this bug on my
+> > HP
+> > DL385 platform, can any one of you take a look?
+> > 
+> > system config:
+> > -----------------
+> > HP ProLiant DL385 G7
+> > AMD Opteron(TM) Processor 6234
+> > 16384 MB memory, 369 GB disk space
+> > 
+> > 
+> > [   24.539274] qla2xxx [0000:0c:00.7]-500a:5: LOOP UP detected (10
+> > Gbps).
+> > [   24.577259] BUG: unable to handle kernel NULL pointer
+> > dereference
+> > at 0000000000000102
+> > [   24.623133] PGD 0 P4D 0
+> > [   24.636760] Oops: 0000 [#1] SMP NOPTI
+> > [   24.656942] Modules linked in: i2c_algo_bit drm_kms_helper
+> > sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom fb_sys_fops
+> > ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+) qla2xxx(+)
+> > libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+)
+> > nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel libata
+> > nvme_core i2c_core scsi_transport_iscsi tg3 scsi_transport_fc bnx2
+> > iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash dm_log
+> > dm_mod
+> > [   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not tainted
+> > 4.17.0-rc6 #1
+> > [   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS A18
+> > 08/15/2012
+> > [   24.962106] Workqueue: events work_for_cpu_fn
+> > [   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
+> > [   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
+> > [   25.042116] RAX: 0000000000000082 RBX: 0000000000000082 RCX:
+> > 0000000000000000
+> > [   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000 RDI:
+> > 0000000000002000
+> > [   25.123094] RBP: 0000000000000000 R08: 0000000000025a40 R09:
+> > ffff8cf9aade2880
+> > [   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0 R12:
+> > ffff8cf9abc6d7d0
+> > [   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8 R15:
+> > 0000000000002000
+> > [   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000)
+> > knlGS:0000000000000000
+> > [   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   26.010457] CR2: 0000000000000102 CR3: 000000030760a000 CR4:
+> > 00000000000406f0
+> > [   26.051048] Call Trace:
+> > [   26.063572]  ? __switch_to_asm+0x34/0x70
+> > [   26.086079]  queue_work_on+0x24/0x40
+> > [   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
+> > [   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
+> > [   26.164075]  ? lock_timer_base+0x67/0x80
+> > [   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
+> > [   26.212284]  ? del_timer_sync+0x35/0x40
+> > [   26.234080]  ? schedule_timeout+0x165/0x2f0
+> > [   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
+> > [   26.285740]  qla2x00_mailbox_command+0x74b/0xf50 [qla2xxx]
+> > [   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0 [qla2xxx]
+> > [   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
+> > [   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0 [qla2xxx]
+> > [   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
+> > [   26.442055]  local_pci_probe+0x3f/0xa0
+> > [   26.463108]  work_for_cpu_fn+0x10/0x20
+> > [   26.483295]  process_one_work+0x152/0x350
+> > [   26.505730]  worker_thread+0x1cf/0x3e0
+> > [   26.527090]  kthread+0xf5/0x130
+> > [   26.545085]  ? max_active_store+0x80/0x80
+> > [   26.568085]  ? kthread_bind+0x10/0x10
+> > [   26.589533]  ret_from_fork+0x22/0x40
+> > [   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44
+> > 00
+> > 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48 89 f5
+> > 53
+> > 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0 ec 01 00
+> > 41
+> > [   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP: ffff992642ceba10
+> > [   27.341591] CR2: 0000000000000102
+> > [   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
 > 
 > 
-> > > I also wonder about kexec - virtio.c currently does:
-> > > 
-> > >         /* We always start by resetting the device, in case a previous
-> > >          * driver messed it up.  This also tests that code path a little. */
-> > >         dev->config->reset(dev);
-> > > 
-> > > Do we need to do something like this for sriov?
-> > 
-> > I think VFs are managed by PCI core. Once they are
-> > allocated, virtio driver doesn't have to care too
-> > much about how to manage them. The proposal for the
-> > spec is just to provide a feature bit based virtio
-> > way for virtio drivers to know whether a virtio
-> > device is SR-IOV capable (and virtio drivers can
-> > support configuring SR-IOV based on the feature
-> > bit negotiation result).
-> > 
-> > > 
-> > > I also wonder whether PCI core should disable sriov for us.
-> > > 
-> > > 
-> > > I wish there was a patch emulating this without vDPA for QEMU,
-> > > would make it easy to test your patches. Do you happen
-> > > to have something like this?
-> > 
-> > Sorry, currently I don't have anything like this..
-> > 
-> > Best regards,
-> > Tiwei Bie
-> > 
-> > > 
-> > > Thanks,
-> > > 
-> > > 
-> > > > v3:
-> > > > - Drop the acks;
-> > > > 
-> > > > v2:
-> > > > - Disable VFs when unbinding the driver (Alex, MST);
-> > > > - Don't use pci_sriov_configure_simple (Alex);
-> > > > 
-> > > >  drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
-> > > >  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
-> > > >  include/uapi/linux/virtio_config.h |  7 ++++++-
-> > > >  3 files changed, 50 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> > > > index 48d4d1cf1cb6..1d4467b2dc31 100644
-> > > > --- a/drivers/virtio/virtio_pci_common.c
-> > > > +++ b/drivers/virtio/virtio_pci_common.c
-> > > > @@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> > > >  	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> > > >  	struct device *dev = get_device(&vp_dev->vdev.dev);
-> > > >  
-> > > > +	pci_disable_sriov(pci_dev);
-> > > > +
-> > > >  	unregister_virtio_device(&vp_dev->vdev);
-> > > >  
-> > > >  	if (vp_dev->ioaddr)
-> > > > @@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> > > >  	put_device(dev);
-> > > >  }
-> > > >  
-> > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-> > > > +{
-> > > > +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> > > > +	struct virtio_device *vdev = &vp_dev->vdev;
-> > > > +	int ret;
-> > > > +
-> > > > +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> > > > +		return -EBUSY;
-> > > > +
-> > > > +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	if (pci_vfs_assigned(pci_dev))
-> > > > +		return -EPERM;
-> > > > +
-> > > > +	if (num_vfs == 0) {
-> > > > +		pci_disable_sriov(pci_dev);
-> > > > +		return 0;
-> > > > +	}
-> > > > +
-> > > > +	ret = pci_enable_sriov(pci_dev, num_vfs);
-> > > > +	if (ret < 0)
-> > > > +		return ret;
-> > > > +
-> > > > +	return num_vfs;
-> > > > +}
-> > > > +
-> > > >  static struct pci_driver virtio_pci_driver = {
-> > > >  	.name		= "virtio-pci",
-> > > >  	.id_table	= virtio_pci_id_table,
-> > > > @@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
-> > > >  #ifdef CONFIG_PM_SLEEP
-> > > >  	.driver.pm	= &virtio_pci_pm_ops,
-> > > >  #endif
-> > > > +	.sriov_configure = virtio_pci_sriov_configure,
-> > > >  };
-> > > >  
-> > > >  module_pci_driver(virtio_pci_driver);
-> > > > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> > > > index 2555d80f6eec..07571daccfec 100644
-> > > > --- a/drivers/virtio/virtio_pci_modern.c
-> > > > +++ b/drivers/virtio/virtio_pci_modern.c
-> > > > @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
-> > > >  	return features;
-> > > >  }
-> > > >  
-> > > > +static void vp_transport_features(struct virtio_device *vdev, u64 features)
-> > > > +{
-> > > > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > > > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> > > > +
-> > > > +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-> > > > +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-> > > > +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-> > > > +}
-> > > > +
-> > > >  /* virtio config->finalize_features() implementation */
-> > > >  static int vp_finalize_features(struct virtio_device *vdev)
-> > > >  {
-> > > >  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > > > +	u64 features = vdev->features;
-> > > >  
-> > > >  	/* Give virtio_ring a chance to accept features. */
-> > > >  	vring_transport_features(vdev);
-> > > >  
-> > > > +	/* Give virtio_pci a chance to accept features. */
-> > > > +	vp_transport_features(vdev, features);
-> > > > +
-> > > >  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
-> > > >  		dev_err(&vdev->dev, "virtio: device uses modern interface "
-> > > >  			"but does not have VIRTIO_F_VERSION_1\n");
-> > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > > > index 308e2096291f..b7c1f4e7d59e 100644
-> > > > --- a/include/uapi/linux/virtio_config.h
-> > > > +++ b/include/uapi/linux/virtio_config.h
-> > > > @@ -49,7 +49,7 @@
-> > > >   * transport being used (eg. virtio_ring), the rest are per-device feature
-> > > >   * bits. */
-> > > >  #define VIRTIO_TRANSPORT_F_START	28
-> > > > -#define VIRTIO_TRANSPORT_F_END		34
-> > > > +#define VIRTIO_TRANSPORT_F_END		38
-> > > >  
-> > > >  #ifndef VIRTIO_CONFIG_NO_LEGACY
-> > > >  /* Do we get callbacks when the ring is completely used, even if we've
-> > > > @@ -71,4 +71,9 @@
-> > > >   * this is for compatibility with legacy systems.
-> > > >   */
-> > > >  #define VIRTIO_F_IOMMU_PLATFORM		33
-> > > > +
-> > > > +/*
-> > > > + * Does the device support Single Root I/O Virtualization?
-> > > > + */
-> > > > +#define VIRTIO_F_SR_IOV			37
-> > > >  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> > > > -- 
-> > > > 2.17.0
-> > > 
-> > > ---------------------------------------------------------------------
-> > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
-> > > 
+
+This happened during probe and setup, stange where it faulted though
+It was in the context switch
+I have seen this before, trying to track it down
+Himanshu will probably get there before me
+
+Back when I have something
