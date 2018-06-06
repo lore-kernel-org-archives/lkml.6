@@ -1,54 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PY4i56As"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D8DA60764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C053B6070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeFFNwZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:52:25 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:48681 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751912AbeFFNwX (ORCPT
+        id S1752262AbeFFLoj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 07:44:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35735 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751730AbeFFLog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:52:23 -0400
-X-IronPort-AV: E=Sophos;i="5.49,483,1520899200";
-   d="scan'208";a="735681358"
-From: Norbert Manthey <nmanthey@amazon.de>
-To: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <x86@kernel.org>
-Subject: Make CONFIG_NET and CONFIG_SECCOMP_FILTER independent of CONFIG_NET
-Date: Wed, 6 Jun 2018 15:52:00 +0200
-Message-ID: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
-X-Mailer: git-send-email 2.7.4
+        Wed, 6 Jun 2018 07:44:36 -0400
+Date: Wed, 6 Jun 2018 04:43:58 -0700
+From: tip-bot for Dou Liyang <tipbot@zytor.com>
+Message-ID: <tip-336628128826a9acb045571a960e32e4414ccb61@git.kernel.org>
+Cc: douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org
+Reply-To: mingo@kernel.org, douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
+          hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180523023555.2933-1-douly.fnst@cn.fujitsu.com>
+References: <20180523023555.2933-1-douly.fnst@cn.fujitsu.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/idt: Simplify the
+ idt_setup_apic_and_irq_gates()
+Git-Commit-ID: 336628128826a9acb045571a960e32e4414ccb61
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear all,
+Commit-ID:  336628128826a9acb045571a960e32e4414ccb61
+Gitweb:     https://git.kernel.org/tip/336628128826a9acb045571a960e32e4414ccb61
+Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
+AuthorDate: Wed, 23 May 2018 10:35:55 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 6 Jun 2018 13:38:01 +0200
 
-currently, KVM and SECCOMP rely on functionality of CONFIG_NET, and hence the
-latter has to be enabled when building the kernel for the first two
-configurations. However, there exists scenarios where the system does not need
-networking, but KVM and SECCOMP filters. To reduce the kernel image size for
-these scenarios, and to be able to drop active code, this commit series allows
-to enable CONFIG_KVM and CONFIG_SECCOMP_FILTER without using CONFIG_NET.
+x86/idt: Simplify the idt_setup_apic_and_irq_gates()
 
-The functionality that is required for seccomp filters is kept in the same
-files and - after reordering the source code - is guarded with a single ifdef
-per file.
+The idt_setup_apic_and_irq_gates() sets the gates from
+FIRST_EXTERNAL_VECTOR up to FIRST_SYSTEM_VECTOR first. then secondly, from
+FIRST_SYSTEM_VECTOR to NR_VECTORS, it takes both APIC=y and APIC=n into
+account.
 
-I hope these changes are useful for other scenarios than the one I currently
-face.
+But for APIC=n, the FIRST_SYSTEM_VECTOR is equal to NR_VECTORS, all
+vectors has been set at the first step.
 
-Best,
-Norbert
+Simplify the second step, make it just work for APIC=y.
 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20180523023555.2933-1-douly.fnst@cn.fujitsu.com
+
+---
+ arch/x86/kernel/idt.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
+index 2c3a1b4294eb..74383a3780dc 100644
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -317,15 +317,12 @@ void __init idt_setup_apic_and_irq_gates(void)
+ 		set_intr_gate(i, entry);
+ 	}
+ 
+-	for_each_clear_bit_from(i, system_vectors, NR_VECTORS) {
+ #ifdef CONFIG_X86_LOCAL_APIC
++	for_each_clear_bit_from(i, system_vectors, NR_VECTORS) {
+ 		set_bit(i, system_vectors);
+ 		set_intr_gate(i, spurious_interrupt);
+-#else
+-		entry = irq_entries_start + 8 * (i - FIRST_EXTERNAL_VECTOR);
+-		set_intr_gate(i, entry);
+-#endif
+ 	}
++#endif
+ }
+ 
+ /**
