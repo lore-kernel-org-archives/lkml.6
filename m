@@ -1,141 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 07867601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="zHj/8C0s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3F85601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932110AbeFFPyY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:54:24 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57256 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752074AbeFFPyV (ORCPT
+        id S1752187AbeFFOln (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:41:43 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:35415 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751994AbeFFOll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:54:21 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org
-Subject: [PATCH 1/8] ARM: dts: am335x-sl50: update backlight nodes
-Date: Wed,  6 Jun 2018 17:54:06 +0200
-Message-Id: <20180606155413.23542-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 6 Jun 2018 10:41:41 -0400
+X-Google-Smtp-Source: ADUXVKKYDfMoiaZHf7skTPWO3BiqWqvwMeR723I9ZinB1Ij/jF2jOtTYJAic5wuLHv/Od0h74iJs+IsDGyFrT1LnJJs=
+MIME-Version: 1.0
+In-Reply-To: <Pine.LNX.4.44L0.1806060950050.1359-100000@iolanthe.rowland.org>
+References: <CAJrWOzBMB-6e1pKms4L216k=TN_Lr52_gWxj-ny8yitgf+K5gg@mail.gmail.com>
+ <Pine.LNX.4.44L0.1806060950050.1359-100000@iolanthe.rowland.org>
+From: Roman Penyaev <roman.penyaev@profitbricks.com>
+Date: Wed, 6 Jun 2018 16:41:20 +0200
+Message-ID: <CAJrWOzB8hz2qzNJAWfNdW_U_ArHmvCpzZVJBebsfQ3=eEiSh7w@mail.gmail.com>
+Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates the backlight nodes to improve the support and describe
-better how hardware is done. The changes done were:
+On Wed, Jun 6, 2018 at 3:54 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Wed, 6 Jun 2018, Roman Penyaev wrote:
+>
+>> > Preserving the order of volatile accesses isn't sufficient.  The
+>> > compiler is still allowed to translate
+>> >
+>> >         r1 = READ_ONCE(x);
+>> >         if (r1) {
+>> >                 ...
+>> >         }
+>> >         WRITE_ONCE(y, r2);
+>> >
+>> > into something resembling
+>> >
+>> >         r1 = READ_ONCE(x);
+>> >         WRITE_ONCE(y, r2);
+>> >         if (r1) {
+>> >                 ...
+>> >         }
+>>
+>> Hi Alan,
+>>
+>> According to the standard C99 Annex C "the controlling expression of
+>> a selection statement (if or switch)" are the sequence points, just
+>> like a volatile access (READ_ONCE or WRITE_ONCE).
+>>
+>> "5.1.2.3 Program execution" states:
+>> "At certain specified points in the execution sequence called sequence
+>> points, all side effects of previous evaluations shall be complete
+>> and no side effects of subsequent evaluations shall have taken place."
+>>
+>> So in the example we have 3 sequence points: "READ_ONCE", "if" and
+>> "WRITE_ONCE", which it seems can't be reordered.  Am I mistaken
+>> interpreting standard?  Could you please clarify.
+>
+> Well, for one thing, we're talking about C11, not C99.
 
- * Use PWM_POLARITY_INVERTED instead of the hardcoded number.
- * Add pinctrl configuration.
- * Add the enable gpio definition.
- * Add the power supply definition.
- * Add more brightness levels.
+C11 is a n1570, ISO/IEC 9899:2011 ? (according to wiki).  Found pdf on
+the web contains similar lines, so should not be any differences for
+that particular case.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+> For another, as far as I understand it, the standard means the program
+> should behave _as if_ the side effects are completed in the order
+> stated.  It doesn't mean that the generated code has to behave that way
+> literally.
 
- arch/arm/boot/dts/am335x-sl50.dts | 61 ++++++++++++++++++++++++++++---
- 1 file changed, 55 insertions(+), 6 deletions(-)
+Then I do not understand what are the differences between "side effects
+are completed" and "code generated".  Abstract machine state should
+provide some guarantees between sequence points, e.g.:
 
-diff --git a/arch/arm/boot/dts/am335x-sl50.dts b/arch/arm/boot/dts/am335x-sl50.dts
-index ddfa7192afd5..6d78bf828bbf 100644
---- a/arch/arm/boot/dts/am335x-sl50.dts
-+++ b/arch/arm/boot/dts/am335x-sl50.dts
-@@ -5,6 +5,7 @@
- /dts-v1/;
- 
- #include "am33xx.dtsi"
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "Toby Churchill SL50 Series";
-@@ -57,16 +58,44 @@
- 
- 	backlight0: disp0 {
- 		compatible = "pwm-backlight";
--		pwms = <&ehrpwm1 0 500000 0>;
--		brightness-levels = <0 10 20 30 40 50 60 70 80 90 99>;
--		default-brightness-level = <6>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&backlight0_pins>;
-+		pwms = <&ehrpwm1 0 500000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = < 0  1  2  3  4  5  6  7  8  9
-+				     10 11 12 13 14 15 16 17 18 19
-+				     20 21 22 23 24 25 26 27 28 29
-+				     30 31 32 33 34 35 36 37 38 39
-+				     40 41 42 43 44 45 46 47 48 49
-+				     50 51 52 53 54 55 56 57 58 59
-+				     60 61 62 63 64 65 66 67 68 69
-+				     70 71 72 73 74 75 76 77 78 79
-+				     80 81 82 83 84 85 86 87 88 89
-+				     90 91 92 93 94 95 96 97 98 99
-+				    100>;
-+		default-brightness-level = <50>;
-+		enable-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
-+		power-supply = <&vdd_sys_reg>;
- 	};
- 
- 	backlight1: disp1 {
- 		compatible = "pwm-backlight";
--		pwms = <&ehrpwm1 1 500000 0>;
--		brightness-levels = <0 10 20 30 40 50 60 70 80 90 99>;
--		default-brightness-level = <6>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&backlight1_pins>;
-+		pwms = <&ehrpwm1 1 500000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = < 0  1  2  3  4  5  6  7  8  9
-+				     10 11 12 13 14 15 16 17 18 19
-+				     20 21 22 23 24 25 26 27 28 29
-+				     30 31 32 33 34 35 36 37 38 39
-+				     40 41 42 43 44 45 46 47 48 49
-+				     50 51 52 53 54 55 56 57 58 59
-+				     60 61 62 63 64 65 66 67 68 69
-+				     70 71 72 73 74 75 76 77 78 79
-+				     80 81 82 83 84 85 86 87 88 89
-+				     90 91 92 93 94 95 96 97 98 99
-+				    100>;
-+		default-brightness-level = <50>;
-+		enable-gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
-+		power-supply = <&vdd_sys_reg>;
- 	};
- 
- 	clocks {
-@@ -105,6 +134,14 @@
- 		reset-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
- 	};
- 
-+	vdd_sys_reg: regulator@0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_sys_reg";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
- 	vmmcsd_fixed: fixedregulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vmmcsd_fixed";
-@@ -117,6 +154,18 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&lwb_pins>;
- 
-+	backlight0_pins: pinmux_backlight0_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x898, PIN_OUTPUT | MUX_MODE7)	/* gpmc_wen.gpio2_4 */
-+		>;
-+	};
-+
-+	backlight1_pins: pinmux_backlight1_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x828, PIN_OUTPUT | MUX_MODE7)     /* gpmc_ad10.gpio0_26 */
-+		>;
-+	};
-+
- 	led_pins: pinmux_led_pins {
- 		pinctrl-single,pins = <
- 			AM33XX_IOPAD(0x854, PIN_OUTPUT | MUX_MODE7)	/* gpmc_a5.gpio1_21 */
--- 
-2.17.1
+    foo();    /* function call */
+    ------------|
+    *a = 1;     |
+    *b = 12;    | Compiler in his right to reorder.
+    *c = 123;   |
+    ------------|
+    boo();    /* function call */
+
+compiler in his right to reorder memory accesses between foo() and
+boo() calls (foo and boo are sequence points, but memory accesses
+are not), but:
+
+   foo();    /* function call */
+   *(volatile int *)a = 1;
+   *(volatile int *)b = 12;
+   *(volatile int *)c = 123;
+   boo();    /* function call */
+
+are all sequence points, so compiler can't reorder them.
+
+Where am I mistaken?
+
+> And in particular, the standard is referring to the
+> behavior of a single thread, not the interaction between multiple
+> concurrent threads.
+
+Yes, that is clear: we are talking about code reordering in one
+particular function in a single threaded environment.
+
+--
+Roman
