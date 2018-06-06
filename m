@@ -1,61 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752729AbeFFBfB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 21:35:01 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51717 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbeFFBe7 (ORCPT
+        id S1752714AbeFFBiu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 21:38:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59708 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751977AbeFFBis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 21:34:59 -0400
-X-Google-Smtp-Source: ADUXVKLRVtz8HySzT72neNY/AZziKZKX1sn3ShAPM6Ip4X2OdIkBk+KKjvry4LDD9DyG/EjOSXEbzA==
+        Tue, 5 Jun 2018 21:38:48 -0400
+To: Colin King <colin.king@canonical.com>
+Cc: Hannes Reinecke <hare@suse.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: aic7xxx: aic79xx: fix potential null pointer dereference on ahd
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180531123117.32118-1-colin.king@canonical.com>
+Date: Tue, 05 Jun 2018 21:38:37 -0400
+In-Reply-To: <20180531123117.32118-1-colin.king@canonical.com> (Colin King's
+        message of "Thu, 31 May 2018 13:31:17 +0100")
+Message-ID: <yq1vaawelsy.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
- <1527884768-22392-2-git-send-email-vgarodia@codeaurora.org>
- <894ab678-bc1d-da04-b552-d53301bd3980@linaro.org> <20180605105716.GT16230@vkoul-mobl>
-In-Reply-To: <20180605105716.GT16230@vkoul-mobl>
-From: Alexandre Courbot <acourbot@chromium.org>
-Date: Wed, 6 Jun 2018 10:34:45 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MWSOFQT0ZuV_MJhjPzTYUhoPgRXUhT_dawTqDCtVXEmBA@mail.gmail.com>
-Message-ID: <CAPBb6MWSOFQT0ZuV_MJhjPzTYUhoPgRXUhT_dawTqDCtVXEmBA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] media: venus: add a routine to reset ARM9
-To: vkoul@kernel.org
-Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8915 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=566
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806060015
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 7:57 PM Vinod <vkoul@kernel.org> wrote:
->
-> On 02-06-18, 01:15, Stanimir Varbanov wrote:
-> > Hi Vikash,
-> >
-> > On  1.06.2018 23:26, Vikash Garodia wrote:
-> > > Add a new routine to reset the ARM9 and brings it
-> > > out of reset. This is in preparation to add PIL
-> > > functionality in venus driver.
-> >
-> > please squash this patch with 4/5. I don't see a reason to add a function
-> > which is not used. Shouldn't this produce gcc warnings?
->
-> Yes this would but in a multi patch series that is okay as subsequent
-> patches would use that and end result in no warning.
 
-Except during bisect.
+Colin,
 
->
-> Splitting logically is good and typical practice in kernel to add the
-> routine followed by usages..
+> If AHD_DEBUG is enabled and ahd_platform_alloc fails then ahd is set
+> to null and the debug printk dereferences ahd when passing it to
+> ahd_name.  Fix this by moving the debug printk to before the call to
+> ahd_platform_alloc where ahd is not null at that point.
 
-Is it in this case though? If this code was shared across multiple
-users I could understand but this function is only used locally (and
-only in one place IIUC). Also the patch is not so big that the code
-would become confusing if this was squashed into 4/5. I don't see any
-reason to keep this separate.
+Applied to 4.18/scsi-fixes. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
