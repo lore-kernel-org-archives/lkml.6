@@ -1,169 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F07D606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bfs.de
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xx2HtpcF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9247560763
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932441AbeFFJKF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:10:05 -0400
-Received: from mx01-sz.bfs.de ([194.94.69.67]:28319 "EHLO mx01-sz.bfs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932260AbeFFJKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:10:01 -0400
-Date: Wed, 6 Jun 2018 11:01:44 +0200 (CEST)
-From: Walter Harms <wharms@bfs.de>
-To: linux-ppp@vger.kernel.org, Eric Biggers <ebiggers3@gmail.com>,
-        Paul Mackerras <paulus@samba.org>
-Cc: syzkaller-bugs@googlegroups.com,
-        Guillaume Nault <g.nault@alphalink.fr>,
-        Eric Biggers <ebiggers@google.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Message-ID: <909200487.17769.1528275705881@ox-groupware.bfs.de>
-In-Reply-To: <20180523213738.146911-1-ebiggers3@gmail.com>
-References: <20180523035952.25768-1-ebiggers3@gmail.com>
- <20180523213738.146911-1-ebiggers3@gmail.com>
-Subject: Re: [PATCH v2] ppp: remove the PPPIOCDETACH ioctl
+        id S1754072AbeFFR5w (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:57:52 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:35750 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752489AbeFFR5v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:57:51 -0400
+X-Google-Smtp-Source: ADUXVKJIIZJAhpFc0R3qFdU/6kmtyzq0KCvLG8OOU1NZkfsmMNLz0sZbyVaNie+HPYQG0M0k6Ne7e4n995v/FjeZbmQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev31
-X-Originating-Client: com.openexchange.ox.gui.dhtml
+In-Reply-To: <20180526193523.3896-1-mattst88@gmail.com>
+References: <20180526193523.3896-1-mattst88@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 6 Jun 2018 20:57:49 +0300
+Message-ID: <CAHp75VcKD=NoAPU99ZoGeTL9m8y58kU-ev-UmzVcd85QVhhB8A@mail.gmail.com>
+Subject: Re: [PATCH] parport: Add support for the WCH384 4S multi-IO card
+To: Matt Turner <mattst88@gmail.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sergej Pupykin <ml@sergej.pp.ru>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, May 26, 2018 at 10:35 PM, Matt Turner <mattst88@gmail.com> wrote:
 
+> It looks like CH355_4S is similarly missing, but I don't have hardware
+> to test.
+>
+> This commit makes me wonder if I'm missing something -- how could
+> anything have worked after commit 72a3c0e4e662 without support in
+> parport_serial?
 
-> Eric Biggers <ebiggers3@gmail.com> hat am 23. Mai 2018 um 23:37 geschrieben:
-> 
-> 
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> The PPPIOCDETACH ioctl effectively tries to "close" the given ppp file
-> before f_count has reached 0, which is fundamentally a bad idea.  It
-> does check 'f_count < 2', which excludes concurrent operations on the
-> file since they would only be possible with a shared fd table, in which
-> case each fdget() would take a file reference.  However, it fails to
-> account for the fact that even with 'f_count == 1' the file can still be
-> linked into epoll instances.  As reported by syzbot, this can trivially
-> be used to cause a use-after-free.
-> 
-> Yet, the only known user of PPPIOCDETACH is pppd versions older than
-> ppp-2.4.2, which was released almost 15 years ago (November 2003).
-> Also, PPPIOCDETACH apparently stopped working reliably at around the
-> same time, when the f_count check was added to the kernel, e.g. see
-> https://lkml.org/lkml/2002/12/31/83.  Also, the current 'f_count < 2'
-> check makes PPPIOCDETACH only work in single-threaded applications; it
-> always fails if called from a multithreaded application.
-> 
-> All pppd versions released in the last 15 years just close() the file
-> descriptor instead.
-> 
-> Therefore, instead of hacking around this bug by exporting epoll
-> internals to modules, and probably missing other related bugs, just
-> remove the PPPIOCDETACH ioctl and see if anyone actually notices.  Leave
-> a stub in place that prints a one-time warning and returns EINVAL.
-> 
-> Reported-by: syzbot+16363c99d4134717c05b@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
-> 
-> v2: leave a stub in place, rather than removing the ioctl completely.
-> 
->  Documentation/networking/ppp_generic.txt |  6 ------
->  drivers/net/ppp/ppp_generic.c            | 27 +++++-------------------
->  include/uapi/linux/ppp-ioctl.h           |  2 +-
->  3 files changed, 6 insertions(+), 29 deletions(-)
-> 
-> diff --git a/Documentation/networking/ppp_generic.txt
-> b/Documentation/networking/ppp_generic.txt
-> index 091d20273dcb..61daf4b39600 100644
-> --- a/Documentation/networking/ppp_generic.txt
-> +++ b/Documentation/networking/ppp_generic.txt
-> @@ -300,12 +300,6 @@ unattached instance are:
->  The ioctl calls available on an instance of /dev/ppp attached to a
->  channel are:
->  
-> -* PPPIOCDETACH detaches the instance from the channel.  This ioctl is
-> -  deprecated since the same effect can be achieved by closing the
-> -  instance.  In order to prevent possible races this ioctl will fail
-> -  with an EINVAL error if more than one file descriptor refers to this
-> -  instance (i.e. as a result of dup(), dup2() or fork()).
-> -
->  * PPPIOCCONNECT connects this channel to a PPP interface.  The
->    argument should point to an int containing the interface unit
->    number.  It will return an EINVAL error if the channel is already
-> diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-> index dc7c7ec43202..02ad03a2fab7 100644
-> --- a/drivers/net/ppp/ppp_generic.c
-> +++ b/drivers/net/ppp/ppp_generic.c
-> @@ -605,30 +605,13 @@ static long ppp_ioctl(struct file *file, unsigned int
-> cmd, unsigned long arg)
->  
->  	if (cmd == PPPIOCDETACH) {
->  		/*
-> -		 * We have to be careful here... if the file descriptor
-> -		 * has been dup'd, we could have another process in the
-> -		 * middle of a poll using the same file *, so we had
-> -		 * better not free the interface data structures -
-> -		 * instead we fail the ioctl.  Even in this case, we
-> -		 * shut down the interface if we are the owner of it.
-> -		 * Actually, we should get rid of PPPIOCDETACH, userland
-> -		 * (i.e. pppd) could achieve the same effect by closing
-> -		 * this fd and reopening /dev/ppp.
-> +		 * PPPIOCDETACH is no longer supported as it was heavily broken,
-> +		 * and is only known to have been used by pppd older than
-> +		 * ppp-2.4.2 (released November 2003).
->  		 */
-> +		pr_warn_once("%s (%d) used obsolete PPPIOCDETACH ioctl\n",
-> +			     current->comm, current->pid);
->  		err = -EINVAL;
-> -		if (pf->kind == INTERFACE) {
-> -			ppp = PF_TO_PPP(pf);
-> -			rtnl_lock();
-> -			if (file == ppp->owner)
-> -				unregister_netdevice(ppp->dev);
-> -			rtnl_unlock();
-> -		}
-> -		if (atomic_long_read(&file->f_count) < 2) {
-> -			ppp_release(NULL, file);
-> -			err = 0;
-> -		} else
-> -			pr_warn("PPPIOCDETACH file->f_count=%ld\n",
-> -				atomic_long_read(&file->f_count));
->  		goto out;
->  	}
->  
-> diff --git a/include/uapi/linux/ppp-ioctl.h b/include/uapi/linux/ppp-ioctl.h
-> index b19a9c249b15..784c2e3e572e 100644
-> --- a/include/uapi/linux/ppp-ioctl.h
-> +++ b/include/uapi/linux/ppp-ioctl.h
-> @@ -106,7 +106,7 @@ struct pppol2tp_ioc_stats {
->  #define PPPIOCGIDLE	_IOR('t', 63, struct ppp_idle) /* get idle time */
->  #define PPPIOCNEWUNIT	_IOWR('t', 62, int)	/* create new ppp unit */
->  #define PPPIOCATTACH	_IOW('t', 61, int)	/* attach to ppp unit */
-> -#define PPPIOCDETACH	_IOW('t', 60, int)	/* detach from ppp unit/chan */
-> +#define PPPIOCDETACH	_IOW('t', 60, int)	/* obsolete, do not use */
+I guess that commit actually worked and the culprit would be the
+following one which changes logic of black list application.
 
-It's a bit late but ...
-i would suggest a stronger wording here. like /* removed 2003 */ 
-for me "obsolete" sounds like "maybe it will be removed in a distant future"
+7d8905d06405 serial: 8250_pci: Enable device after we check black list
 
-just my 2 cents,
+I will send a patch to remove stalled entries from blacklist.
 
-re,
- wh
-
->  #define PPPIOCSMRRU	_IOW('t', 59, int)	/* set multilink MRU */
->  #define PPPIOCCONNECT	_IOW('t', 58, int)	/* connect channel to unit */
->  #define PPPIOCDISCONN	_IO('t', 57)		/* disconnect channel */
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-> 
+>
+>  drivers/parport/parport_serial.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
+> index e15b4845f7c6..2c166d5a0d91 100644
+> --- a/drivers/parport/parport_serial.c
+> +++ b/drivers/parport/parport_serial.c
+> @@ -65,6 +65,7 @@ enum parport_pc_pci_cards {
+>         wch_ch353_1s1p,
+>         wch_ch353_2s1p,
+>         wch_ch382_2s1p,
+> +       wch_ch384_4,
+>         sunix_2s1p,
+>  };
+>
+> @@ -153,6 +154,7 @@ static struct parport_pc_pci cards[] = {
+>         /* wch_ch353_1s1p*/             { 1, { { 1, -1}, } },
+>         /* wch_ch353_2s1p*/             { 1, { { 2, -1}, } },
+>         /* wch_ch382_2s1p*/             { 1, { { 2, -1}, } },
+> +       /* wch_ch384_4 */               { 1, { { 4, -1}, } },
+>         /* sunix_2s1p */                { 1, { { 3, -1 }, } },
+>  };
+>
+> @@ -260,6 +262,7 @@ static struct pci_device_id parport_serial_pci_tbl[] = {
+>         { 0x4348, 0x5053, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p},
+>         { 0x4348, 0x7053, 0x4348, 0x3253, 0, 0, wch_ch353_2s1p},
+>         { 0x1c00, 0x3250, 0x1c00, 0x3250, 0, 0, wch_ch382_2s1p},
+> +       { 0x1c00, 0x3470, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch384_4},
+>
+>         /*
+>          * More SUNIX variations. At least one of these has part number
+> @@ -504,6 +507,13 @@ static struct pciserial_board pci_parport_serial_boards[] = {
+>                 .uart_offset    = 8,
+>                 .first_offset   = 0xC0,
+>         },
+> +       [wch_ch384_4] = {
+> +               .flags          = FL_BASE0,
+> +               .num_ports      = 4,
+> +               .base_baud      = 115200,
+> +               .uart_offset    = 8,
+> +               .first_offset   = 0xC0,
+> +       },
+>         [sunix_2s1p] = {
+>                 .flags          = FL_BASE0|FL_BASE_BARS,
+>                 .num_ports      = 2,
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-ppp" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 2.16.1
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
