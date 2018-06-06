@@ -1,52 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6c3o1gO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56D95601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfpMDkYP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13DE1601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932848AbeFFQQs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:16:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33584 "EHLO mail.kernel.org"
+        id S932611AbeFFKtx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:49:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753480AbeFFQQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:16:45 -0400
-X-Google-Smtp-Source: ADUXVKI/8NazthO4qNOPH0zPD1tHselQZj+hoQ62SEmibDtksYLnJYlPgg5Wb/Sbga7G9TqINBcRleszyOZ9DDTDn6k=
+        id S932428AbeFFKtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:49:52 -0400
+Date: Wed, 6 Jun 2018 12:49:28 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: John Whitmore <arigead@gmail.com>
+Cc: kstewart@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        John Whitmore <johnfwhitmore@gmail.com>, pombredanne@nexb.com,
+        colin.king@canonical.com
+Subject: Re: [PATCH v5 8/8] staging: rtl8192e: remove unnecessary parentheses
+ - Coding Style
+Message-ID: <20180606104928.GA4992@kroah.com>
+References: <20180603120413.13042-1-johnfwhitmore@gmail.com>
+ <20180603120413.13042-9-johnfwhitmore@gmail.com>
+ <20180603122835.GB18700@kroah.com>
+ <20180606102512.lvepwliyqd6pkbgj@xux707>
 MIME-Version: 1.0
-In-Reply-To: <1525229431-3087-2-git-send-email-hao.wu@intel.com>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com> <1525229431-3087-2-git-send-email-hao.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Wed, 6 Jun 2018 11:16:03 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRAsSE2oMrAiTsmScPUk1vD9L_Yfjy8p4jivSm0VYrbxw@mail.gmail.com>
-Message-ID: <CANk1AXRAsSE2oMrAiTsmScPUk1vD9L_Yfjy8p4jivSm0VYrbxw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/28] docs: fpga: add a document for FPGA Device
- Feature List (DFL) Framework Overview
-To: Wu Hao <hao.wu@intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606102512.lvepwliyqd6pkbgj@xux707>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+On Wed, Jun 06, 2018 at 11:25:14AM +0100, John Whitmore wrote:
+> On Sun, Jun 03, 2018 at 02:28:35PM +0200, Greg KH wrote:
+> > On Sun, Jun 03, 2018 at 01:04:13PM +0100, John Whitmore wrote:
+> > > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> > > ---
+> > >  drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 12 ++++++------
+> > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > 
+> > I can not take patches without any changelog text at all :(
+> 
+> Sorry I created a one line commit message, which became the subject of the
+> patch email. I couldn't think of anything more to add for a second line. My
+> mistake. I did an ammend of that, as it was the last commit, to add a second
+> line.
+> 
+> Now I'm probably going to get this next bit wrong. Can I simply bump the
+> version of patch 8/8 to v6 and resend that single patch file, or bump all 8
+> patches to v6 and resend all of them? I'll bump the last patch file and attach
+> it to this email, hope for the best.
 
-Hi Hao,
+I can't take attachments, sorry.
 
-I've acked the remaining patches with some changes requested.  In your
-v6, please add a patch to add yourself to the MAINTAINERS file or
-whoever is planning on maintaining fpga/drivers/*dfl*
+Try resending the whole series, as a new version (v6), and all should be
+fine.
 
-> Add a document for FPGA Device Feature List (DFL) Framework Overview.
->
-> Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-> Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
+Note that I can't do anything with patches until the merge window
+closes, in 2 weeks, so don't expect a response until then.
 
-Thanks,
-Alan
+thanks,
+
+greg k-h
