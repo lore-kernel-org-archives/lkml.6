@@ -1,111 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Fo0AFuKAG1tCNgAAmS7hNA
-	; Sat, 09 Jun 2018 07:25:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7AT+JzVVGFszcwAAmS7hNA
+	; Wed, 06 Jun 2018 21:42:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 31D94607E7; Sat,  9 Jun 2018 07:25:22 +0000 (UTC)
+	id 44EA5607F7; Wed,  6 Jun 2018 21:42:17 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEhW9p3/"
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="LAl54Jcd"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A9F18606FA;
-	Sat,  9 Jun 2018 07:25:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9F18606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9880A601C3;
+	Wed,  6 Jun 2018 21:42:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9880A601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753212AbeFIHZT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 03:25:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752858AbeFIHZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 03:25:18 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F204920874;
-        Sat,  9 Jun 2018 07:25:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528529117;
-        bh=RM2GeqTmwB0WxH+d4JM/Ta868YyVueCAL/9fmKplqwI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bEhW9p3/OFjeBrF1xwN2PRzmprMYaWfUsOdpuyPv7Le+2yIK2YG2uHsMK3LMd5ioS
-         jPp7rOyp2k+GDBuhfAnseyUi0Eb75S2pCf7z3oX60wxzcVOG4OWoQZIjiFAcyTt1vz
-         SMpNPivASkQcY4ZVw/RbG0WLjZRYesvV6hFbj4ZQ=
-Date: Sat, 9 Jun 2018 09:24:54 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sayali Lokhande <sayalil@codeaurora.org>
-Cc: subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, linux-scsi@vger.kernel.org,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 3/3] scsi: ufs: Add sysfs support for ufs provision
-Message-ID: <20180609072454.GH24148@kroah.com>
-References: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org>
- <1528455990-24572-4-git-send-email-sayalil@codeaurora.org>
+        id S1752362AbeFFVmN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:42:13 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35409 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752093AbeFFVmJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:42:09 -0400
+Received: by mail-pf0-f196.google.com with SMTP id c22-v6so3361135pfi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 14:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VJ8qk5s+xYKiHwGZWZI+ZIC9IXGEnt0+TzQXBlrrZ/s=;
+        b=LAl54JcdFOjO/D1mRSPxEJpDzhAD9uECkT7NgIE+1Vua4tH+ePaj0aQ8mio+mV0RP8
+         EMhsjWOStmhJewnCz1kHksHkpKNjh6LF3kYsBQra3c5HDJ0IdW0RT9SaU/p+Bp6LuxRu
+         gh9i7KlyKTJE6L80bV/kaU3kXKLQqJpMY7jK53NUNd+nnPmHygmN8hFZyS3RZkKp5xvr
+         VgWDdOP6qqrwAOBWse1WLdKgsm1kNHiLMhyy7+fdoZaX2wHYY0fvu0I3rV2gbQse0Pdi
+         7OmR2MKM7A3hR/uyTF6RIX/hRuOFeykRd+G5iKjwRaXzJ/5YTRpG7Mb7m1cCH8PaiEPN
+         y/tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VJ8qk5s+xYKiHwGZWZI+ZIC9IXGEnt0+TzQXBlrrZ/s=;
+        b=j8DMC+2dnvwVpgWg9P7a9VRW4bNpJH3GsPm7MNMTkgTdEuUWMhwp/Qi7btyqa/Ax6L
+         ZMX6YrZWyBAqbxn5rzfnqbZ8fnOU3pD9rEH9YDXOMAerlPPAebP9R3m4LNP8EUHPwNk8
+         q+0Dlu9RVrk0tYboqY7KBhDu6lopFti/zvlKOXAbXdIq4fWNoUsN8z40NLjs53spkThm
+         4m3nFKpS+yXylAK89EVdDdm3ttt2SElCgqeBI6lXn0DofxrsuutG9bZv6bR/OF7T4mVR
+         35lekVE8iRv9hGkS5GtQ3hGj2PYJ6VbEce0pjYjxpAcVf4rtrsNTrRI8IDGfIUuXFPOA
+         +lNw==
+X-Gm-Message-State: APt69E30VJDKb0CVgh6HC5yUyYzymsoZX4JU1xnChFoPiLCSOqMu2ixZ
+        0HU6T5fuEA4fBCbE1nC2BBkqTlK3
+X-Google-Smtp-Source: ADUXVKKvoj9EdlIbK3eAIOqOr5P0MAxx/BzvkkYvM/XzDyeayWTLOA2snlvRvNy2VcTekhVj9kGghw==
+X-Received: by 2002:a63:78c6:: with SMTP id t189-v6mr3908826pgc.239.1528321329076;
+        Wed, 06 Jun 2018 14:42:09 -0700 (PDT)
+Received: from cisco ([128.107.241.182])
+        by smtp.gmail.com with ESMTPSA id y2-v6sm1505367pfk.82.2018.06.06.14.42.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Jun 2018 14:42:07 -0700 (PDT)
+Date: Wed, 6 Jun 2018 15:42:07 -0600
+From: Tycho Andersen <tycho@tycho.ws>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] uart: fix race between uart_put_char() and
+ uart_shutdown()
+Message-ID: <20180606214207.GB9999@cisco>
+References: <20180605000127.5495-1-tycho@tycho.ws>
+ <20180605035936.GA19642@mail.hallyn.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528455990-24572-4-git-send-email-sayalil@codeaurora.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180605035936.GA19642@mail.hallyn.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 04:36:30PM +0530, Sayali Lokhande wrote:
-> Add sysfs support to trigger ufs provisioning at runtime.
-> Usage : echo <desc_buf> > /sys/bus/platform/drivers/*/
-> 	config_descriptor/ufs_provision
-> To check provisioning status:
-> cat /sys/bus/platform/drivers/*/config_descriptor/ufs_provision
-> 1- > Success (Reboot device to check updated provisioning)
+On Mon, Jun 04, 2018 at 10:59:36PM -0500, Serge E. Hallyn wrote:
+> Quoting Tycho Andersen (tycho@tycho.ws):
+> > Unfortunately, I don't have any insightful thoughts about how to test this.
+> > Ideas are appreciated :)
 > 
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  Documentation/ABI/testing/sysfs-driver-ufs |  16 ++++
->  drivers/scsi/ufs/ufs-sysfs.c               |  25 ++++++
->  drivers/scsi/ufs/ufs.h                     |   2 +
->  drivers/scsi/ufs/ufshcd.c                  | 128 +++++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h                  |   5 ++
->  5 files changed, 176 insertions(+)
+> I wonder whether there is something we can do with qemu -serial pipe: ?
+
+Good idea. I couldn't get tty_put_char() to trigger nicely, but I just
+hard coded one to occur, so at least now I know that this doesn't
+deadlock when called normally.
+
+Another suggestion Serge gave off list was to write a kernel module
+that implemented a driver. I'll see about doing that to see if I can
+force the original crash.
+
+> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-> index 016724e..43419b5 100644
-> --- a/Documentation/ABI/testing/sysfs-driver-ufs
-> +++ b/Documentation/ABI/testing/sysfs-driver-ufs
-> @@ -883,3 +883,19 @@ Contact:	Subhash Jadavani <subhashj@codeaurora.org>
->  Description:	This entry shows the target state of an UFS UIC link
->  		for the chosen system power management level.
->  		The file is read only.
-> +
-> +What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/ufs_provision
-> +Date:		February 2018
-> +Contact:	Sayali Lokhande <sayalil@codeaurora.org>
-> +Description:	This file shows the status of runtime ufs provisioning.
-> +		This can be used to provision ufs device if bConfigDescrLock is 0.
-> +		Configuration buffer needs to be written in space separated format
-> +		specificied as:
-> +		echo <bNumberLU> <bBootEnable> <bDescrAccessEn> <bInitPowerMode>
-> +		<bHighPriorityLUN> <bSecureRemovalType> <bInitActiveICCLevel>
-> +		<wPeriodicRTCUpdate> <bConfigDescrLock> <LUNum> <bLUEnable>
-> +		<bBootLunID> <size_in_kb> <bDataReliability> <bLUWriteProtect>
-> +		<bMemoryType> <bLogicalBlockSize> <bProvisioningType>
-> +		<wContextCapabilities> > ufs_provision
+> Acked-by: Serge Hallyn <serge@hallyn.com>
 
-That's crazy big, please use configfs for this if you really want to
-"provision" hardware with a new api.  That is what configfs was created
-for, do not abuse sysfs like this, it is not a "single" value.
+Thanks!
 
-thanks,
-
-greg k-h
+Tycho
