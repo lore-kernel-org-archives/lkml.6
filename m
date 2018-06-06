@@ -1,79 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C88CE601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2isFgtB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A93260290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752442AbeFFPJL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:09:11 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56802 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752177AbeFFPJK (ORCPT
+        id S1752172AbeFFPVk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:21:40 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39381 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932068AbeFFPVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:09:10 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Olof Johansson <olof@lixom.net>,
-        Benson Leung <bleung@chromium.org>
-Subject: [PATCH v3 01/12] platform/chrome: Make license text and module license match.
-Date: Wed,  6 Jun 2018 17:08:49 +0200
-Message-Id: <20180606150900.8342-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180606150900.8342-1-enric.balletbo@collabora.com>
-References: <20180606150900.8342-1-enric.balletbo@collabora.com>
+        Wed, 6 Jun 2018 11:21:37 -0400
+X-Google-Smtp-Source: ADUXVKJxgxHWs9B+MxiAZNfK0YwTtyJl0szkULm7YKvcX+6Fic2JV5IKrLnNWsC4P0AnqLnMO9dUKQ==
+Date: Wed, 6 Jun 2018 17:21:34 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Helge Eichelberg <kernelorg@elchenberg.name>
+Cc: Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (dell-smm) Disable fan support for Dell XPS13 9333
+Message-ID: <20180606152134.sw77aborznfy6mrj@pali>
+References: <20180605173833.27003-1-kernelorg@elchenberg.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="7xpsbcfufzx2oz5z"
+Content-Disposition: inline
+In-Reply-To: <20180605173833.27003-1-kernelorg@elchenberg.name>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The license text is specifying "GPLv2" but the MODULE_LICENSE is set to
-GPL which means GNU Public License v2 or later. When MODULE_LICENSE and
-boiler plate does not match, go for boiler plate license.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+--7xpsbcfufzx2oz5z
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v3:
-- Add new patches to match license text with MODULE_LICENSE (Dmitry)
-- If there is a conflict between the license notice and MODULE_LICENSE
-  go by license notice not MODULE_LICENSE. (Dmitry)
-- Reintroduced again the patch for the rtc-cros-ec driver as license
-  should be GPL v2-only.
-- Removed '[PATCH 7/9] pwm: cros-ec: Switch to SPDX identifier.' as
-  maintainer told me that I don't need to resend.
+On Tuesday 05 June 2018 19:38:32 Helge Eichelberg wrote:
+> Calling fan related SMM functions implemented by Dell BIOS firmware on De=
+ll
+> XPS13 9333 freeze kernel for about 500ms. Until Dell fixes it we need to
+> disable fan support for Dell XPS13 9333.
 
-Changes in v2:
-- Removed '[PATCH 5/9] rtc: cros-ec: Switch to SPDX identifier' from
-  series as it was applied.
-- s/Chrome OS/ChromeOS/
-- [1/9] Fixed wrong copyright year.
-- [6/9] Do not remove last paragraph.
-- [8/9] Fixed wrong copyright year.
+Hi! Have you reported this firmware bug to Dell?
 
- drivers/platform/chrome/chromeos_pstore.c | 2 +-
- drivers/platform/chrome/cros_ec_lpc.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Also we should probably match also BIOS version and do not apply this
+blacklist quirk for BIOS versions in which Dell fixed it.
 
-diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
-index b0693fdec8c6..57138ced4ca7 100644
---- a/drivers/platform/chrome/chromeos_pstore.c
-+++ b/drivers/platform/chrome/chromeos_pstore.c
-@@ -139,4 +139,4 @@ module_init(chromeos_pstore_init);
- module_exit(chromeos_pstore_exit);
- 
- MODULE_DESCRIPTION("Chrome OS pstore module");
--MODULE_LICENSE("GPL");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 3682e1539251..26f4fe6e9b04 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -479,5 +479,5 @@ static void __exit cros_ec_lpc_exit(void)
- module_init(cros_ec_lpc_init);
- module_exit(cros_ec_lpc_exit);
- 
--MODULE_LICENSE("GPL");
-+MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("ChromeOS EC LPC driver");
--- 
-2.17.1
+> Via "force" module param fan support can be enabled.
+>=20
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D195751
+> Signed-off-by: Helge Eichelberg <kernelorg@elchenberg.name>
+> ---
+>  drivers/hwmon/dell-smm-hwmon.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmo=
+n.c
+> index bf3bb7e1adab..9d3ef879dc51 100644
+> --- a/drivers/hwmon/dell-smm-hwmon.c
+> +++ b/drivers/hwmon/dell-smm-hwmon.c
+> @@ -1074,6 +1074,13 @@ static struct dmi_system_id i8k_blacklist_fan_supp=
+ort_dmi_table[] __initdata =3D {
+>  			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Vostro 3360"),
+>  		},
+>  	},
+> +	{
+> +		.ident =3D "Dell XPS13 9333",
+> +		.matches =3D {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS13 9333"),
+> +		},
+> +	},
+>  	{ }
+>  };
+> =20
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--7xpsbcfufzx2oz5z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWxf7+wAKCRCL8Mk9A+RD
+UrpHAKC5z51uDFci3hpJ1e0ZKW3U5hgnJwCfcYZuBb+bhE8fXAk/fUIn3xzIzgI=
+=Y8iZ
+-----END PGP SIGNATURE-----
+
+--7xpsbcfufzx2oz5z--
