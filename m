@@ -1,129 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 507E26070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B476360555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752129AbeFFNMZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:12:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40346 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751851AbeFFNMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:12:23 -0400
-Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
- framework
-To: Quentin Perret <quentin.perret@arm.com>, peterz@infradead.org,
-        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: mingo@redhat.com, morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-4-quentin.perret@arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
-Date: Wed, 6 Jun 2018 15:12:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180521142505.6522-4-quentin.perret@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S933678AbeFFRBa (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:01:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53238 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933654AbeFFRB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:01:27 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
+        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
+        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [RFC PATCH ghak90 (was ghak32) V3 06/10] audit: add containerid filtering
+Date: Wed,  6 Jun 2018 12:58:33 -0400
+Message-Id: <cc924bc23937ea3d65b4b2b625796ee61a5fb4da.1528304204.git.rgb@redhat.com>
+In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
+References: <cover.1528304203.git.rgb@redhat.com>
+In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
+References: <cover.1528304203.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 04:24 PM, Quentin Perret wrote:
-> Several subsystems in the kernel (scheduler and/or thermal at the time
-> of writing) can benefit from knowing about the energy consumed by CPUs.
-> Yet, this information can come from different sources (DT or firmware for
-> example), in different formats, hence making it hard to exploit without
-> a standard API.
-> 
-> This patch attempts to solve this issue by introducing a centralized
-> Energy Model (EM) framework which can be used to interface the data
-> providers with the client subsystems. This framework standardizes the
-> API to expose power costs, and to access them from multiple locations.
-> 
-> The current design assumes that all CPUs in a frequency domain share the
-> same micro-architecture. As such, the EM data is structured in a
-> per-frequency-domain fashion. Drivers aware of frequency domains
-> (typically, but not limited to, CPUFreq drivers) are expected to register
-> data in the EM framework using the em_register_freq_domain() API. To do
-> so, the drivers must provide a callback function that will be called by
-> the EM framework to populate the tables. As of today, only the active
-> power of the CPUs is considered. For each frequency domain, the EM
-> includes a list of <frequency, power, capacity> tuples for the capacity
-> states of the domain alongside a cpumask covering the involved CPUs.
-> 
-> The EM framework also provides an API to re-scale the capacity values
-> of the model asynchronously, after it has been created. This is required
-> for architectures where the capacity scale factor of CPUs can change at
-> run-time. This is the case for Arm/Arm64 for example where the
-> arch_topology driver recomputes the capacity scale factors of the CPUs
-> after the maximum frequency of all CPUs has been discovered. Although
-> complex, the process of creating and re-scaling the EM has to be kept in
-> two separate steps to fulfill the needs of the different users. The thermal
-> subsystem doesn't use the capacity values and shouldn't have dependencies
-> on subsystems providing them. On the other hand, the task scheduler needs
-> the capacity values, and it will benefit from seeing them up-to-date when
-> applicable.
-> 
-> Because of this need for asynchronous update, the capacity state table
-> of each frequency domain is protected by RCU, hence guaranteeing a safe
-> modification of the table and a fast access to readers in latency-sensitive
-> code paths.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Implement audit container identifier filtering using the AUDIT_CONTID
+field name to send an 8-character string representing a u64 since the
+value field is only u32.
 
-[...]
+Sending it as two u32 was considered, but gathering and comparing two
+fields was more complex.
 
-> +static void fd_update_cs_table(struct em_cs_table *cs_table, int cpu)
-> +{
-> +	unsigned long cmax = arch_scale_cpu_capacity(NULL, cpu);
-> +	int max_cap_state = cs_table->nr_cap_states - 1;
-> +	unsigned long fmax = cs_table->state[max_cap_state].frequency;
-> +	int i;
-> +
-> +	for (i = 0; i < cs_table->nr_cap_states; i++)
-> +		cs_table->state[i].capacity = cmax *
-> +					cs_table->state[i].frequency / fmax;
-> +}
+The feature indicator is AUDIT_FEATURE_BITMAP_CONTAINERID_FILTER.
 
-This has issues on a 32bit system. cs_table->state[i].capacity (unsigned
-long) overflows with the frequency values stored in Hz.
+See: https://github.com/linux-audit/audit-kernel/issues/91
+See: https://github.com/linux-audit/audit-userspace/issues/40
+See: https://github.com/linux-audit/audit-testsuite/issues/64
+See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ include/linux/audit.h      |  1 +
+ include/uapi/linux/audit.h |  5 ++++-
+ kernel/audit.h             |  1 +
+ kernel/auditfilter.c       | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/auditsc.c           |  3 +++
+ 5 files changed, 56 insertions(+), 1 deletion(-)
 
-Maybe something like this to cure it:
-
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index 6ad53f1cf7e6..c13b3eb8bf35 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -144,9 +144,11 @@ static void fd_update_cs_table(struct em_cs_table *cs_table, int cpu)
- 	unsigned long fmax = cs_table->state[max_cap_state].frequency;
- 	int i;
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index f549121..1e37abf 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -76,6 +76,7 @@ struct audit_field {
+ 	u32				type;
+ 	union {
+ 		u32			val;
++		u64			val64;
+ 		kuid_t			uid;
+ 		kgid_t			gid;
+ 		struct {
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 469ab25..b440558 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -262,6 +262,7 @@
+ #define AUDIT_LOGINUID_SET	24
+ #define AUDIT_SESSIONID	25	/* Session ID */
+ #define AUDIT_FSTYPE	26	/* FileSystem Type */
++#define AUDIT_CONTID	27	/* Container ID */
  
--	for (i = 0; i < cs_table->nr_cap_states; i++)
--		cs_table->state[i].capacity = cmax *
--					cs_table->state[i].frequency / fmax;
-+	for (i = 0; i < cs_table->nr_cap_states; i++) {
-+		u64 val = (u64)cmax * cs_table->state[i].frequency;
-+		do_div(val, fmax);
-+		cs_table->state[i].capacity = (unsigned long)val;
-+	}
+ 				/* These are ONLY useful when checking
+ 				 * at syscall exit time (AUDIT_AT_EXIT). */
+@@ -342,6 +343,7 @@ enum {
+ #define AUDIT_FEATURE_BITMAP_SESSIONID_FILTER	0x00000010
+ #define AUDIT_FEATURE_BITMAP_LOST_RESET		0x00000020
+ #define AUDIT_FEATURE_BITMAP_FILTER_FS		0x00000040
++#define AUDIT_FEATURE_BITMAP_CONTAINERID_FILTER	0x00000080
+ 
+ #define AUDIT_FEATURE_BITMAP_ALL (AUDIT_FEATURE_BITMAP_BACKLOG_LIMIT | \
+ 				  AUDIT_FEATURE_BITMAP_BACKLOG_WAIT_TIME | \
+@@ -349,7 +351,8 @@ enum {
+ 				  AUDIT_FEATURE_BITMAP_EXCLUDE_EXTEND | \
+ 				  AUDIT_FEATURE_BITMAP_SESSIONID_FILTER | \
+ 				  AUDIT_FEATURE_BITMAP_LOST_RESET | \
+-				  AUDIT_FEATURE_BITMAP_FILTER_FS)
++				  AUDIT_FEATURE_BITMAP_FILTER_FS | \
++				  AUDIT_FEATURE_BITMAP_CONTAINERID_FILTER)
+ 
+ /* deprecated: AUDIT_VERSION_* */
+ #define AUDIT_VERSION_LATEST 		AUDIT_FEATURE_BITMAP_ALL
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 1cf1c35..743d445 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -235,6 +235,7 @@ static inline int audit_hash_ino(u32 ino)
+ 
+ extern int audit_match_class(int class, unsigned syscall);
+ extern int audit_comparator(const u32 left, const u32 op, const u32 right);
++extern int audit_comparator64(const u64 left, const u32 op, const u64 right);
+ extern int audit_uid_comparator(kuid_t left, u32 op, kuid_t right);
+ extern int audit_gid_comparator(kgid_t left, u32 op, kgid_t right);
+ extern int parent_len(const char *path);
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index eaa3201..a5f60ce 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -410,6 +410,7 @@ static int audit_field_valid(struct audit_entry *entry, struct audit_field *f)
+ 	/* FALL THROUGH */
+ 	case AUDIT_ARCH:
+ 	case AUDIT_FSTYPE:
++	case AUDIT_CONTID:
+ 		if (f->op != Audit_not_equal && f->op != Audit_equal)
+ 			return -EINVAL;
+ 		break;
+@@ -584,6 +585,14 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
+ 			}
+ 			entry->rule.exe = audit_mark;
+ 			break;
++		case AUDIT_CONTID:
++			if (f->val != sizeof(u64))
++				goto exit_free;
++			str = audit_unpack_string(&bufp, &remain, f->val);
++			if (IS_ERR(str))
++				goto exit_free;
++			f->val64 = ((u64 *)str)[0];
++			break;
+ 		}
+ 	}
+ 
+@@ -666,6 +675,11 @@ static struct audit_rule_data *audit_krule_to_data(struct audit_krule *krule)
+ 			data->buflen += data->values[i] =
+ 				audit_pack_string(&bufp, audit_mark_path(krule->exe));
+ 			break;
++		case AUDIT_CONTID:
++			data->buflen += data->values[i] = sizeof(u64);
++			for (i = 0; i < sizeof(u64); i++)
++				((char *)bufp)[i] = ((char *)&f->val64)[i];
++			break;
+ 		case AUDIT_LOGINUID_SET:
+ 			if (krule->pflags & AUDIT_LOGINUID_LEGACY && !f->val) {
+ 				data->fields[i] = AUDIT_LOGINUID;
+@@ -752,6 +766,10 @@ static int audit_compare_rule(struct audit_krule *a, struct audit_krule *b)
+ 			if (!gid_eq(a->fields[i].gid, b->fields[i].gid))
+ 				return 1;
+ 			break;
++		case AUDIT_CONTID:
++			if (a->fields[i].val64 != b->fields[i].val64)
++				return 1;
++			break;
+ 		default:
+ 			if (a->fields[i].val != b->fields[i].val)
+ 				return 1;
+@@ -1208,6 +1226,31 @@ int audit_comparator(u32 left, u32 op, u32 right)
+ 	}
  }
-
-This brings me to another question. Let's say there are multiple users of
-the Energy Model in the system. Shouldn't the units of frequency and power
-not standardized, maybe Mhz and mW?
-The task scheduler doesn't care since it is only interested in power diffs
-but other user might do.
-
-[...]
+ 
++int audit_comparator64(u64 left, u32 op, u64 right)
++{
++	switch (op) {
++	case Audit_equal:
++		return (left == right);
++	case Audit_not_equal:
++		return (left != right);
++	case Audit_lt:
++		return (left < right);
++	case Audit_le:
++		return (left <= right);
++	case Audit_gt:
++		return (left > right);
++	case Audit_ge:
++		return (left >= right);
++	case Audit_bitmask:
++		return (left & right);
++	case Audit_bittest:
++		return ((left & right) == right);
++	default:
++		BUG();
++		return 0;
++	}
++}
++
+ int audit_uid_comparator(kuid_t left, u32 op, kuid_t right)
+ {
+ 	switch (op) {
+@@ -1346,6 +1389,10 @@ int audit_filter(int msgtype, unsigned int listtype)
+ 				result = audit_comparator(audit_loginuid_set(current),
+ 							  f->op, f->val);
+ 				break;
++			case AUDIT_CONTID:
++				result = audit_comparator64(audit_get_contid(current),
++							      f->op, f->val64);
++				break;
+ 			case AUDIT_MSGTYPE:
+ 				result = audit_comparator(msgtype, f->op, f->val);
+ 				break;
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 81c9765..ea1ee35 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -622,6 +622,9 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 		case AUDIT_LOGINUID_SET:
+ 			result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
+ 			break;
++		case AUDIT_CONTID:
++			result = audit_comparator64(audit_get_contid(tsk), f->op, f->val64);
++			break;
+ 		case AUDIT_SUBJ_USER:
+ 		case AUDIT_SUBJ_ROLE:
+ 		case AUDIT_SUBJ_TYPE:
+-- 
+1.8.3.1
