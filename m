@@ -1,378 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 741EC60767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPpBhinz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43A8E601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752606AbeFFPL7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:11:59 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56810 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752178AbeFFPJL (ORCPT
+        id S932443AbeFFIca (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:32:30 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:43079 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932364AbeFFIc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:09:11 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Kees Cook <keescook@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH v3 02/12] platform/chrome: Switch to SPDX identifier.
-Date: Wed,  6 Jun 2018 17:08:50 +0200
-Message-Id: <20180606150900.8342-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180606150900.8342-1-enric.balletbo@collabora.com>
-References: <20180606150900.8342-1-enric.balletbo@collabora.com>
+        Wed, 6 Jun 2018 04:32:29 -0400
+X-Google-Smtp-Source: ADUXVKIAN8n84kgr/aPEtt+QjRrvfVC6IiyrHfBj7Js/5QYQtGsOH2vYehtYTeHo6uzQM/NuVx4lAIiup2EOJQzdRzI=
+MIME-Version: 1.0
+References: <1528231092-31472-1-git-send-email-arun.parameswaran@broadcom.com> <8bb9ab39-a38b-9492-975e-d76c864ff8ff@broadcom.com>
+In-Reply-To: <8bb9ab39-a38b-9492-975e-d76c864ff8ff@broadcom.com>
+From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date: Wed, 6 Jun 2018 10:32:16 +0200
+Message-ID: <CAJiuCccVEMAzAsv61P60pEC6tvNGBpjgOPgbGE8En+CBDyx7wQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] net: dsa: b53: Fix for brcm tag issue in Cygnus SoC
+To: scott.branden@broadcom.com
+Cc: arun.parameswaran@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adopt the SPDX license identifier headers to ease license compliance
-management.
+Hi Scott,
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+On Tue, 5 Jun 2018 at 22:55, Scott Branden <scott.branden@broadcom.com> wro=
+te:
+>
+> Clement,
+>
+> Please test this works for your issue.
 
-Changes in v3: None
-Changes in v2: None
+Tested on top of 4.17.0 with a BCM58305
 
- drivers/platform/chrome/chromeos_pstore.c     | 13 +++----
- drivers/platform/chrome/cros_ec_debugfs.c     | 22 +++---------
- drivers/platform/chrome/cros_ec_lightbar.c    | 22 +++---------
- drivers/platform/chrome/cros_ec_lpc.c         | 34 +++++++------------
- drivers/platform/chrome/cros_ec_lpc_mec.c     | 34 +++++++------------
- drivers/platform/chrome/cros_ec_lpc_reg.c     | 34 +++++++------------
- drivers/platform/chrome/cros_ec_proto.c       | 19 +++--------
- drivers/platform/chrome/cros_ec_sysfs.c       | 22 +++---------
- drivers/platform/chrome/cros_ec_vbc.c         | 24 +++----------
- .../platform/chrome/cros_kbd_led_backlight.c  | 19 +++--------
- 10 files changed, 65 insertions(+), 178 deletions(-)
+Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
 
-diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
-index 57138ced4ca7..721400fcf14a 100644
---- a/drivers/platform/chrome/chromeos_pstore.c
-+++ b/drivers/platform/chrome/chromeos_pstore.c
-@@ -1,12 +1,7 @@
--/*
-- *  chromeos_pstore.c - Driver to instantiate Chromebook ramoops device
-- *
-- *  Copyright (C) 2013 Google, Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License as published by
-- *  the Free Software Foundation, version 2 of the License.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// Driver to instantiate Chromebook ramoops device.
-+//
-+// Copyright (C) 2013 Google, Inc.
- 
- #include <linux/acpi.h>
- #include <linux/dmi.h>
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index c62ee8e610a0..450dac3996ff 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -1,21 +1,7 @@
--/*
-- * cros_ec_debugfs - debug logs for Chrome OS EC
-- *
-- * Copyright 2015 Google, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Debug logs for ChromeOS EC.
-+//
-+// Copyright (C) 2015 Google, Inc.
- 
- #include <linux/circ_buf.h>
- #include <linux/debugfs.h>
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 68193bb53383..c5a6dd4ffa01 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -1,21 +1,7 @@
--/*
-- * cros_ec_lightbar - expose the Chromebook Pixel lightbar to userspace
-- *
-- * Copyright (C) 2014 Google, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Expose the Chromebook Pixel lightbar to userspace.
-+//
-+// Copyright (C) 2014 Google, Inc.
- 
- #define pr_fmt(fmt) "cros_ec_lightbar: " fmt
- 
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 26f4fe6e9b04..19c7deab1e3b 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -1,25 +1,15 @@
--/*
-- * cros_ec_lpc - LPC access to the Chrome OS Embedded Controller
-- *
-- * Copyright (C) 2012-2015 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * This driver uses the Chrome OS EC byte-level message-based protocol for
-- * communicating the keyboard state (which keys are pressed) from a keyboard EC
-- * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-- * but everything else (including deghosting) is done here.  The main
-- * motivation for this is to keep the EC firmware as simple as possible, since
-- * it cannot be easily upgraded and EC flash/IRAM space is relatively
-- * expensive.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// LPC access to the ChromeOS Embedded Controller.
-+//
-+// Copyright (C) 2012-2015 Google, Inc.
-+//
-+// This driver uses the ChromeOS EC byte-level message-based protocol for
-+// communicating the keyboard state (which keys are pressed) from a keyboard EC
-+// to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-+// but everything else (including deghosting) is done here.  The main
-+// motivation for this is to keep the EC firmware as simple as possible, since
-+// it cannot be easily upgraded and EC flash/IRAM space is relatively
-+// expensive.
- 
- #include <linux/acpi.h>
- #include <linux/dmi.h>
-diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.c b/drivers/platform/chrome/cros_ec_lpc_mec.c
-index 2eda2c2fc210..b37ac077cd3b 100644
---- a/drivers/platform/chrome/cros_ec_lpc_mec.c
-+++ b/drivers/platform/chrome/cros_ec_lpc_mec.c
-@@ -1,25 +1,15 @@
--/*
-- * cros_ec_lpc_mec - LPC variant I/O for Microchip EC
-- *
-- * Copyright (C) 2016 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * This driver uses the Chrome OS EC byte-level message-based protocol for
-- * communicating the keyboard state (which keys are pressed) from a keyboard EC
-- * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-- * but everything else (including deghosting) is done here.  The main
-- * motivation for this is to keep the EC firmware as simple as possible, since
-- * it cannot be easily upgraded and EC flash/IRAM space is relatively
-- * expensive.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// LPC variant I/O for Microchip EC.
-+//
-+// Copyright (C) 2016 Google, Inc.
-+//
-+// This driver uses the ChromeOS EC byte-level message-based protocol for
-+// communicating the keyboard state (which keys are pressed) from a keyboard EC
-+// to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-+// but everything else (including deghosting) is done here.  The main
-+// motivation for this is to keep the EC firmware as simple as possible, since
-+// it cannot be easily upgraded and EC flash/IRAM space is relatively
-+// expensive
- 
- #include <linux/delay.h>
- #include <linux/io.h>
-diff --git a/drivers/platform/chrome/cros_ec_lpc_reg.c b/drivers/platform/chrome/cros_ec_lpc_reg.c
-index dcc7a3e30604..69d622e51da9 100644
---- a/drivers/platform/chrome/cros_ec_lpc_reg.c
-+++ b/drivers/platform/chrome/cros_ec_lpc_reg.c
-@@ -1,25 +1,15 @@
--/*
-- * cros_ec_lpc_reg - LPC access to the Chrome OS Embedded Controller
-- *
-- * Copyright (C) 2016 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * This driver uses the Chrome OS EC byte-level message-based protocol for
-- * communicating the keyboard state (which keys are pressed) from a keyboard EC
-- * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-- * but everything else (including deghosting) is done here.  The main
-- * motivation for this is to keep the EC firmware as simple as possible, since
-- * it cannot be easily upgraded and EC flash/IRAM space is relatively
-- * expensive.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// LPC access to the ChromeOS Embedded Controller.
-+//
-+// Copyright (C) 2016 Google, Inc.
-+//
-+// This driver uses the ChromeOS EC byte-level message-based protocol for
-+// communicating the keyboard state (which keys are pressed) from a keyboard EC
-+// to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
-+// but everything else (including deghosting) is done here.  The main
-+// motivation for this is to keep the EC firmware as simple as possible, since
-+// it cannot be easily upgraded and EC flash/IRAM space is relatively
-+// expensive.
- 
- #include <linux/io.h>
- #include <linux/mfd/cros_ec.h>
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index 8350ca2311c7..6ec006d6ff58 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -1,18 +1,7 @@
--/*
-- * ChromeOS EC communication protocol helper functions
-- *
-- * Copyright (C) 2015 Google, Inc
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// ChromeOS EC communication protocol helper functions.
-+//
-+// Copyright (C) 2015 Google, Inc.
- 
- #include <linux/mfd/cros_ec.h>
- #include <linux/delay.h>
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index f34a50121064..68979cebb2c8 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -1,21 +1,7 @@
--/*
-- * cros_ec_sysfs - expose the Chrome OS EC through sysfs
-- *
-- * Copyright (C) 2014 Google, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Expose the ChromeOS EC through sysfs.
-+//
-+// Copyright (C) 2014 Google, Inc.
- 
- #define pr_fmt(fmt) "cros_ec_sysfs: " fmt
- 
-diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-index 5356f26bc022..a4934f41f462 100644
---- a/drivers/platform/chrome/cros_ec_vbc.c
-+++ b/drivers/platform/chrome/cros_ec_vbc.c
-@@ -1,22 +1,8 @@
--/*
-- * cros_ec_vbc - Expose the vboot context nvram to userspace
-- *
-- * Copyright (C) 2015 Collabora Ltd.
-- *
-- * based on vendor driver,
-- *
-- * Copyright (C) 2012 The Chromium OS Authors
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Expose the vboot context nvram to userspace.
-+//
-+// Copyright (C) 2012 Google, Inc.
-+// Copyright (C) 2015 Collabora Ltd.
- 
- #include <linux/of.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/platform/chrome/cros_kbd_led_backlight.c b/drivers/platform/chrome/cros_kbd_led_backlight.c
-index ca3e4da852b4..bd4aa9331806 100644
---- a/drivers/platform/chrome/cros_kbd_led_backlight.c
-+++ b/drivers/platform/chrome/cros_kbd_led_backlight.c
-@@ -1,18 +1,7 @@
--/*
-- *  Keyboard backlight LED driver for Chrome OS.
-- *
-- *  Copyright (C) 2012 Google, Inc.
-- *
-- *  This program is free software; you can redistribute it and/or modify
-- *  it under the terms of the GNU General Public License as published by
-- *  the Free Software Foundation; either version 2 of the License, or
-- *  (at your option) any later version.
-- *
-- *  This program is distributed in the hope that it will be useful,
-- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- *  GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Keyboard backlight LED driver for ChromeOS.
-+//
-+// Copyright (C) 2012 Google, Inc.
- 
- #include <linux/acpi.h>
- #include <linux/leds.h>
--- 
-2.17.1
+>
+>
+> On 18-06-05 01:38 PM, Arun Parameswaran wrote:
+> > In the Broadcom Cygnus SoC, the brcm tag needs to be inserted
+> > in between the mac address and the ether type (should use
+> > 'DSA_PROTO_TAG_BRCM') for the packets sent to the internal
+> > b53 switch.
+> >
+> > Since the Cygnus was added with the BCM58XX device id and the
+> > BCM58XX uses 'DSA_PROTO_TAG_BRCM_PREPEND', the data path is
+> > broken, due to the incorrect brcm tag location.
+> >
+> > Add a new b53 device id (BCM583XX) for Cygnus family to fix the
+> > issue. Add the new device id to the BCM58XX family as Cygnus
+> > is similar to the BCM58XX in most other functionalities.
+> >
+> > Fixes: 11606039604c ("net: dsa: b53: Support prepended Broadcom tags")
+> >
+> > Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
+> Acked-by: Scott Branden <scott.branden@broadcom.com>
+> > ---
+> >   drivers/net/dsa/b53/b53_common.c | 15 ++++++++++++++-
+> >   drivers/net/dsa/b53/b53_priv.h   |  2 ++
+> >   drivers/net/dsa/b53/b53_srab.c   |  4 ++--
+> >   3 files changed, 18 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53=
+_common.c
+> > index 3da5fca..bbc6cc6 100644
+> > --- a/drivers/net/dsa/b53/b53_common.c
+> > +++ b/drivers/net/dsa/b53/b53_common.c
+> > @@ -684,7 +684,8 @@ static int b53_switch_reset(struct b53_device *dev)
+> >        * still use this driver as a library and need to perform the res=
+et
+> >        * earlier.
+> >        */
+> > -     if (dev->chip_id =3D=3D BCM58XX_DEVICE_ID) {
+> > +     if (dev->chip_id =3D=3D BCM58XX_DEVICE_ID ||
+> > +         dev->chip_id =3D=3D BCM583XX_DEVICE_ID) {
+> >               b53_read8(dev, B53_CTRL_PAGE, B53_SOFTRESET, &reg);
+> >               reg |=3D SW_RST | EN_SW_RST | EN_CH_RST;
+> >               b53_write8(dev, B53_CTRL_PAGE, B53_SOFTRESET, reg);
+> > @@ -1880,6 +1881,18 @@ struct b53_chip_data {
+> >               .jumbo_size_reg =3D B53_JUMBO_MAX_SIZE,
+> >       },
+> >       {
+> > +             .chip_id =3D BCM583XX_DEVICE_ID,
+> > +             .dev_name =3D "BCM583xx/11360",
+> > +             .vlans =3D 4096,
+> > +             .enabled_ports =3D 0x103,
+> > +             .arl_entries =3D 4,
+> > +             .cpu_port =3D B53_CPU_PORT,
+> > +             .vta_regs =3D B53_VTA_REGS,
+> > +             .duplex_reg =3D B53_DUPLEX_STAT_GE,
+> > +             .jumbo_pm_reg =3D B53_JUMBO_PORT_MASK,
+> > +             .jumbo_size_reg =3D B53_JUMBO_MAX_SIZE,
+> > +     },
+> > +     {
+> >               .chip_id =3D BCM7445_DEVICE_ID,
+> >               .dev_name =3D "BCM7445",
+> >               .vlans  =3D 4096,
+> > diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_p=
+riv.h
+> > index 3b57f47..b232aaa 100644
+> > --- a/drivers/net/dsa/b53/b53_priv.h
+> > +++ b/drivers/net/dsa/b53/b53_priv.h
+> > @@ -62,6 +62,7 @@ enum {
+> >       BCM53018_DEVICE_ID =3D 0x53018,
+> >       BCM53019_DEVICE_ID =3D 0x53019,
+> >       BCM58XX_DEVICE_ID =3D 0x5800,
+> > +     BCM583XX_DEVICE_ID =3D 0x58300,
+> >       BCM7445_DEVICE_ID =3D 0x7445,
+> >       BCM7278_DEVICE_ID =3D 0x7278,
+> >   };
+> > @@ -181,6 +182,7 @@ static inline int is5301x(struct b53_device *dev)
+> >   static inline int is58xx(struct b53_device *dev)
+> >   {
+> >       return dev->chip_id =3D=3D BCM58XX_DEVICE_ID ||
+> > +             dev->chip_id =3D=3D BCM583XX_DEVICE_ID ||
+> >               dev->chip_id =3D=3D BCM7445_DEVICE_ID ||
+> >               dev->chip_id =3D=3D BCM7278_DEVICE_ID;
+> >   }
+> > diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_s=
+rab.c
+> > index c37ffd1..8247481 100644
+> > --- a/drivers/net/dsa/b53/b53_srab.c
+> > +++ b/drivers/net/dsa/b53/b53_srab.c
+> > @@ -364,7 +364,7 @@ static int b53_srab_write64(struct b53_device *dev,=
+ u8 page, u8 reg,
+> >       { .compatible =3D "brcm,bcm53018-srab" },
+> >       { .compatible =3D "brcm,bcm53019-srab" },
+> >       { .compatible =3D "brcm,bcm5301x-srab" },
+> > -     { .compatible =3D "brcm,bcm11360-srab", .data =3D (void *)BCM58XX=
+_DEVICE_ID },
+> > +     { .compatible =3D "brcm,bcm11360-srab", .data =3D (void *)BCM583X=
+X_DEVICE_ID },
+> >       { .compatible =3D "brcm,bcm58522-srab", .data =3D (void *)BCM58XX=
+_DEVICE_ID },
+> >       { .compatible =3D "brcm,bcm58525-srab", .data =3D (void *)BCM58XX=
+_DEVICE_ID },
+> >       { .compatible =3D "brcm,bcm58535-srab", .data =3D (void *)BCM58XX=
+_DEVICE_ID },
+> > @@ -372,7 +372,7 @@ static int b53_srab_write64(struct b53_device *dev,=
+ u8 page, u8 reg,
+> >       { .compatible =3D "brcm,bcm58623-srab", .data =3D (void *)BCM58XX=
+_DEVICE_ID },
+> >       { .compatible =3D "brcm,bcm58625-srab", .data =3D (void *)BCM58XX=
+_DEVICE_ID },
+> >       { .compatible =3D "brcm,bcm88312-srab", .data =3D (void *)BCM58XX=
+_DEVICE_ID },
+> > -     { .compatible =3D "brcm,cygnus-srab", .data =3D (void *)BCM58XX_D=
+EVICE_ID },
+> > +     { .compatible =3D "brcm,cygnus-srab", .data =3D (void *)BCM583XX_=
+DEVICE_ID },
+> >       { .compatible =3D "brcm,nsp-srab", .data =3D (void *)BCM58XX_DEVI=
+CE_ID },
+> >       { /* sentinel */ },
+> >   };
+>
