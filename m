@@ -1,198 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B05560879
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ryuJRDEY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 981F7601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932143AbeFFPZL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:25:11 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57006 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752401AbeFFPZJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:25:09 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Enric Balletbo i Serra <eballetbo@gmail.com>
-Subject: [PATCH 1/2] ARM: dts: igep: Relicense the IGEP boards under GPLv2/X11
-Date: Wed,  6 Jun 2018 17:24:59 +0200
-Message-Id: <20180606152500.14034-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
+        id S932380AbeFFP4P (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:56:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752677AbeFFP4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:56:10 -0400
+Message-ID: <81a365a631279f8b0ad0ed71b222c19817045704.camel@kernel.org>
+Subject: Re: [PATCH 2/5] buffer: record blockdev write errors in super_block
+ that backs them
+From: Jeff Layton <jlayton@kernel.org>
+To: viro@ZenIV.linux.org.uk, dhowells@redhat.com,
+        Jens Axboe <axboe@fb.com>
+Cc: willy@infradead.org, andres@anarazel.de, cmaiolino@redhat.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Date: Wed, 06 Jun 2018 11:56:06 -0400
+In-Reply-To: <20180604180304.9662-3-jlayton@kernel.org>
+References: <20180604180304.9662-1-jlayton@kernel.org>
+         <20180604180304.9662-3-jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current GPLv2 only licensing on IGEP boards makes it very impractical
-for other software components licensed under another license.
+On Mon, 2018-06-04 at 14:03 -0400, Jeff Layton wrote:
+> From: Jeff Layton <jlayton@redhat.com>
+> 
+> When syncing out a block device (a'la __sync_blockdev), any error
+> encountered will only be recorded in the bd_inode's mapping. When the
+> blockdev contains a filesystem however, we'd like to also record the
+> error in the super_block that's stored there.
+> 
+> Make mark_buffer_write_io_error also record the error in the
+> corresponding super_block when a writeback error occurs and the block
+> device contains a mounted superblock.
+> 
+> Signed-off-by: Jeff Layton <jlayton@redhat.com>
+> ---
+>  fs/buffer.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 249b83fafe48..dae2a857d5bc 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1117,6 +1117,8 @@ void mark_buffer_write_io_error(struct buffer_head *bh)
+>  		mapping_set_error(bh->b_page->mapping, -EIO);
+>  	if (bh->b_assoc_map)
+>  		mapping_set_error(bh->b_assoc_map, -EIO);
+> +	if (bh->b_bdev->bd_super)
+> +		errseq_set(&bh->b_bdev->bd_super->s_wb_err, -EIO);
+>  }
+>  EXPORT_SYMBOL(mark_buffer_write_io_error);
+>  
 
-In order to make it easier for them to reuse our device trees, relicense
-all boards under a GPLv2/X11 dual-license. Also switch to use the SPDX
-identifiers and remove the boiler plate license text.
+(cc'ing linux-block and Jens)
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+I'm wondering whether this patch might turn out to be racy. For
+instance, could a call to __sync_blockdev race with an unmount in such
+a way that bd_super goes NULL after we check it but before errseq_set
+is called?
 
- arch/arm/boot/dts/am335x-igep0033.dtsi       | 7 ++-----
- arch/arm/boot/dts/omap3-igep.dtsi            | 6 ++----
- arch/arm/boot/dts/omap3-igep0020-common.dtsi | 5 +----
- arch/arm/boot/dts/omap3-igep0020-rev-f.dts   | 5 +----
- arch/arm/boot/dts/omap3-igep0020.dts         | 5 +----
- arch/arm/boot/dts/omap3-igep0030-common.dtsi | 5 +----
- arch/arm/boot/dts/omap3-igep0030-rev-g.dts   | 5 +----
- arch/arm/boot/dts/omap3-igep0030.dts         | 5 +----
- 8 files changed, 10 insertions(+), 33 deletions(-)
+If so, what can we do to ensure that that doesn't happen? Any insight
+here would be appreciated.
 
-diff --git a/arch/arm/boot/dts/am335x-igep0033.dtsi b/arch/arm/boot/dts/am335x-igep0033.dtsi
-index a5769a8f5fc8..c79066df4e0c 100644
---- a/arch/arm/boot/dts/am335x-igep0033.dtsi
-+++ b/arch/arm/boot/dts/am335x-igep0033.dtsi
-@@ -1,11 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-- * am335x-igep0033.dtsi - Device Tree file for IGEP COM AQUILA AM335x
-+ * Device Tree file for IGEP COM AQUILA AM335x
-  *
-  * Copyright (C) 2013 ISEE 2007 SL - http://www.isee.biz
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- /dts-v1/;
-diff --git a/arch/arm/boot/dts/omap3-igep.dtsi b/arch/arm/boot/dts/omap3-igep.dtsi
-index f33cc80c9dbc..9c02942a58a7 100644
---- a/arch/arm/boot/dts/omap3-igep.dtsi
-+++ b/arch/arm/boot/dts/omap3-igep.dtsi
-@@ -1,13 +1,11 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Common device tree for IGEP boards based on AM/DM37x
-  *
-  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
-  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
-+
- /dts-v1/;
- 
- #include "omap36xx.dtsi"
-diff --git a/arch/arm/boot/dts/omap3-igep0020-common.dtsi b/arch/arm/boot/dts/omap3-igep0020-common.dtsi
-index ecbec23af49f..9675ce2cf069 100644
---- a/arch/arm/boot/dts/omap3-igep0020-common.dtsi
-+++ b/arch/arm/boot/dts/omap3-igep0020-common.dtsi
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Common Device Tree Source for IGEPv2
-  *
-  * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
-  * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include "omap3-igep.dtsi"
-diff --git a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
-index 321c2b7a4e9f..8b8959930d19 100644
---- a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
-+++ b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Source for IGEPv2 Rev. F (TI OMAP AM/DM37x)
-  *
-  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
-  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include "omap3-igep0020-common.dtsi"
-diff --git a/arch/arm/boot/dts/omap3-igep0020.dts b/arch/arm/boot/dts/omap3-igep0020.dts
-index 33d6b4ead092..770b69f13c9e 100644
---- a/arch/arm/boot/dts/omap3-igep0020.dts
-+++ b/arch/arm/boot/dts/omap3-igep0020.dts
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Source for IGEPv2 Rev. C (TI OMAP AM/DM37x)
-  *
-  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
-  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include "omap3-igep0020-common.dtsi"
-diff --git a/arch/arm/boot/dts/omap3-igep0030-common.dtsi b/arch/arm/boot/dts/omap3-igep0030-common.dtsi
-index 443f71707437..9cd3e427ae22 100644
---- a/arch/arm/boot/dts/omap3-igep0030-common.dtsi
-+++ b/arch/arm/boot/dts/omap3-igep0030-common.dtsi
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Common Device Tree Source for IGEP COM MODULE
-  *
-  * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
-  * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include "omap3-igep.dtsi"
-diff --git a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
-index 76dc08868bfb..8b2d01e7996b 100644
---- a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
-+++ b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Source for IGEP COM MODULE Rev. G (TI OMAP AM/DM37x)
-  *
-  * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
-  * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include "omap3-igep0030-common.dtsi"
-diff --git a/arch/arm/boot/dts/omap3-igep0030.dts b/arch/arm/boot/dts/omap3-igep0030.dts
-index 55b0cc4f5ee5..22329ae502c5 100644
---- a/arch/arm/boot/dts/omap3-igep0030.dts
-+++ b/arch/arm/boot/dts/omap3-igep0030.dts
-@@ -1,12 +1,9 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Device Tree Source for IGEP COM MODULE Rev. E (TI OMAP AM/DM37x)
-  *
-  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
-  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #include "omap3-igep0030-common.dtsi"
+Thanks,
 -- 
-2.17.1
+Jeff Layton <jlayton@kernel.org>
