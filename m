@@ -1,83 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93B8F601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0F9W9Vu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6B6460555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932489AbeFFJcI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:32:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50052 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932395AbeFFJcH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:32:07 -0400
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH] selftests/ftrace: Add ppc support for kprobe args tests
-Date: Wed,  6 Jun 2018 15:01:54 +0530
-X-Mailer: git-send-email 2.17.0
-X-TM-AS-GCONF: 00
-x-cbid: 18060609-0016-0000-0000-000001D8AB73
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060609-0017-0000-0000-0000322BB6F9
-Message-Id: <20180606093154.10408-1-naveen.n.rao@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806060109
+        id S1752990AbeFFP4J (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:56:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932351AbeFFPzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:55:39 -0400
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 2/2] f2fs: move s_res{u,g}id initialization to default_options()
+Date: Wed,  6 Jun 2018 23:55:02 +0800
+Message-Id: <20180606155502.11619-2-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
+In-Reply-To: <20180606155502.11619-1-chao@kernel.org>
+References: <20180606155502.11619-1-chao@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add powerpc support for the recently added kprobe args tests.
+From: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Let default_options() initialize s_res{u,g}id with default value like
+other options.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- .../selftests/ftrace/test.d/kprobe/kprobe_args_string.tc  | 8 ++++++++
- .../selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc  | 7 +++++++
- 2 files changed, 15 insertions(+)
+ fs/f2fs/super.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-index 5ba73035e1d9..a0002563e9ee 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -24,6 +24,14 @@ arm*)
-   ARG2=%r1
-   OFFS=4
- ;;
-+ppc64*)
-+  ARG2=%r4
-+  OFFS=8
-+;;
-+ppc*)
-+  ARG2=%r4
-+  OFFS=4
-+;;
- *)
-   echo "Please implement other architecture here"
-   exit_untested
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-index 231bcd2c4eb5..d026ff4e562f 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -34,6 +34,13 @@ arm*)
-   GOODREG=%r0
-   BADREG=%ax
- ;;
-+ppc*)
-+  GOODREG=%r3
-+  BADREG=%msr
-+;;
-+*)
-+  echo "Please implement other architecture here"
-+  exit_untested
- esac
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 73d7d7e51a61..56f3af86f62c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1355,6 +1355,8 @@ static void default_options(struct f2fs_sb_info *sbi)
+ 	F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
+ 	F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
+ 	F2FS_OPTION(sbi).test_dummy_encryption = false;
++	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
++	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
+ 	sbi->readdir_ra = 1;
  
- test_goodarg() # Good-args
+ 	set_opt(sbi, BG_GC);
+@@ -2702,9 +2704,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_fs_info = sbi;
+ 	sbi->raw_super = raw_super;
+ 
+-	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
+-	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
+-
+ 	/* precompute checksum seed for metadata */
+ 	if (f2fs_sb_has_inode_chksum(sb))
+ 		sbi->s_chksum_seed = f2fs_chksum(sbi, ~0, raw_super->uuid,
 -- 
-2.17.0
+2.16.2.17.g38e79b1fd
