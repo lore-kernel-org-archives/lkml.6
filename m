@@ -1,109 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D57C4605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jxJTJZx3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 66AB76037B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932300AbeFFG5Q (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:57:16 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:43886 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932239AbeFFG5O (ORCPT
+        id S1752309AbeFFQGh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:06:37 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35692 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751812AbeFFQGg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:57:14 -0400
-Date: Wed, 6 Jun 2018 16:57:31 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/11] macintosh/via-pmu: Replace via-pmu68k driver with
- via-pmu driver
-In-Reply-To: <CAMuHMdVheowFa8bx0fg-_Dvx+TMZhPbvouTs82Y3tq1gtSpRMQ@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1806061619240.8@nippy.intranet>
-References: <cover.1527909627.git.fthain@telegraphics.com.au> <f32f4e3a0fd736152f768b7a00bfc731daba1629.1527909627.git.fthain@telegraphics.com.au> <7ce9a8c3996506ae6f9ab16b3cf73c287e205a89.1527909627.git.fthain@telegraphics.com.au>
- <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au> <878b389293851359e53de186bf302ce52d95ad95.1527909627.git.fthain@telegraphics.com.au> <adba0545c06cd6c67e26c433990d036b0d7e968c.1527909627.git.fthain@telegraphics.com.au>
- <166b4c3a7347fe27f12bda86d50533cd01ee11b9.1527909627.git.fthain@telegraphics.com.au> <73507a3e9444da17c222cf74df41842ce30d15ee.1527909627.git.fthain@telegraphics.com.au> <de8edb03dbd2fd25b53d0bdf9c6d65adf9aa0aa3.1527909627.git.fthain@telegraphics.com.au>
- <CAMuHMdVheowFa8bx0fg-_Dvx+TMZhPbvouTs82Y3tq1gtSpRMQ@mail.gmail.com>
+        Wed, 6 Jun 2018 12:06:36 -0400
+X-Google-Smtp-Source: ADUXVKJ9OJxfB5rM2+CIZVifz6o/YliGYW5YCqX9ZERhmtnGvatI3t+vSVDKti1SuDybjwInO3uD33/UHwkYRehA/K8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <fba5a810-3c3b-dc8b-15fb-8078a591ec2b@arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-8-git-send-email-vincent.guittot@linaro.org>
+ <72473e6f-8ade-8e26-3282-276fcae4c4c7@arm.com> <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
+ <fba5a810-3c3b-dc8b-15fb-8078a591ec2b@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 6 Jun 2018 18:06:14 +0200
+Message-ID: <CAKfTPtAMf1FUyY-HtziVzZ8JecnKTrQ1LaF60hg6bd=Nv9pCQQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/10] sched/irq: add irq utilization tracking
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Jun 2018, Geert Uytterhoeven wrote:
+Hi Dietmar,
 
-> 
-> > Don't call pmu_shutdown() or pmu_restart() on early PowerBooks: the 
-> > PMU device found in these PowerBooks isn't supported.
-> 
-> Shouldn't that be a separate patch?
-> 
-> > --- a/arch/m68k/mac/misc.c
-> > +++ b/arch/m68k/mac/misc.c
-> 
-> > @@ -477,9 +445,8 @@ void mac_poweroff(void)
-> >                    macintosh_config->adb_type == MAC_ADB_CUDA) {
-> >                 cuda_shutdown();
-> >  #endif
-> > -#ifdef CONFIG_ADB_PMU68K
-> > -       } else if (macintosh_config->adb_type == MAC_ADB_PB1
-> > -               || macintosh_config->adb_type == MAC_ADB_PB2) {
-> > +#ifdef CONFIG_ADB_PMU
-> > +       } else if (macintosh_config->adb_type == MAC_ADB_PB2) {
-> >                 pmu_shutdown();
-> >  #endif
-> >         }
-> > @@ -519,9 +486,8 @@ void mac_reset(void)
-> >                    macintosh_config->adb_type == MAC_ADB_CUDA) {
-> >                 cuda_restart();
-> >  #endif
-> > -#ifdef CONFIG_ADB_PMU68K
-> > -       } else if (macintosh_config->adb_type == MAC_ADB_PB1
-> > -               || macintosh_config->adb_type == MAC_ADB_PB2) {
-> > +#ifdef CONFIG_ADB_PMU
-> > +       } else if (macintosh_config->adb_type == MAC_ADB_PB2) {
-> >                 pmu_restart();
-> >  #endif
-> >         } else if (CPU_IS_030) {
-> 
+Sorry for the late answer
 
-The stability problem here is bigger than just pmu_restart() and 
-pmu_shutdown(), so those hunks are insufficient. You need to prevent the 
-via-pmu68k driver from loading in the first place and to drop all the 
-PMU_68K_V1 cases.
+On 31 May 2018 at 18:54, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> On 05/30/2018 08:45 PM, Vincent Guittot wrote:
+>> Hi Dietmar,
+>>
+>> On 30 May 2018 at 17:55, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>> On 05/25/2018 03:12 PM, Vincent Guittot wrote:
+>
+> [...]
+>
+>>>> +        */
+>>>> +       ret = ___update_load_sum(rq->clock - running, rq->cpu,
+>>>> &rq->avg_irq,
+>>>> +                               0,
+>>>> +                               0,
+>>>> +                               0);
+>>>> +       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
+>>>> +                               1,
+>>>> +                               1,
+>>>> +                               1);
+>
+> Can you not change the function parameter list to the usual
+> (u64 now, struct rq *rq, int running)?
+>
+> Something like this (only compile and boot tested):
 
-But splitting this patch in that way creates potential merge conflicts, 
-which is a hassle. E.g. this hunk:
+To be honest, I prefer to keep the specific sequence above in a
+dedicated function instead of adding it in core code.
+Furthermore,  we end up calling call twice ___update_load_avg instead
+of only once. This will set an intermediate and incorrect value in
+util_avg and this value can be read in the meantime
 
--       ....
--       switch (macintosh_config->adb_type) {
--       case MAC_ADB_PB1:
--               pmu_kind = PMU_68K_V1;
--               break;
--       case MAC_ADB_PB2:
--               pmu_kind = PMU_68K_V2;
--               break;
--       default:
--               pmu_kind = PMU_UNKNOWN;
--               return -ENODEV;
--       }
--       ...
+Vincent
 
-would get split over two patches.
-
-The way I see it, having no PMU driver for PMU_68K_V1 machines is a bug. 
-And loading any of the existing PMU drivers on that hardware is also a 
-bug. These bugs are equivalent in that either one means you can't use the 
-keyboard, trackpad etc. So there's no value in cherry-picking the other 
-bug.
-
-If you are using v4.17 on a PMU_68K_V1 machine, you probably already have 
-CONFIG_ADB_PMU68K=n. With that config, here's nothing to be gained from 
-bisecting these changes.
-
-Does that make sense? Did I overlook other possible reason(s) to split up 
-this patch?
-
--- 
+>
+> -- >8 --
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 9894bc7af37e..26ffd585cab8 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -177,8 +177,22 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+>         rq->clock_task += delta;
+>
+>  #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
+> -       if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
+> -               update_irq_load_avg(rq, irq_delta + steal);
+> +       if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY)) {
+> +               /*
+> +                * We know the time that has been used by interrupt since last
+> +                * update but we don't when. Let be pessimistic and assume that
+> +                * interrupt has happened just before the update. This is not
+> +                * so far from reality because interrupt will most probably
+> +                * wake up task and trig an update of rq clock during which the
+> +                * metric si updated.
+> +                * We start to decay with normal context time and then we add
+> +                * the interrupt context time.
+> +                * We can safely remove running from rq->clock because
+> +                * rq->clock += delta with delta >= running
+> +                */
+> +               update_irq_load_avg(rq_clock(rq) - (irq_delta + steal), rq, 0);
+> +               update_irq_load_avg(rq_clock(rq), rq, 1);
+> +       }
+>  #endif
+>  }
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1bb3379c4b71..a245f853c271 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7363,7 +7363,7 @@ static void update_blocked_averages(int cpu)
+>         }
+>         update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+>         update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
+> -       update_irq_load_avg(rq, 0);
+> +       update_irq_load_avg(rq_clock(rq), rq, 0);
+>         /* Don't need periodic decay once load/util_avg are null */
+>         if (others_rqs_have_blocked(rq))
+>                 done = false;
+> @@ -7434,7 +7434,7 @@ static inline void update_blocked_averages(int cpu)
+>         update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
+>         update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
+>         update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
+> -       update_irq_load_avg(rq, 0);
+> +       update_irq_load_avg(rq_clock(rq), rq, 0);
+>  #ifdef CONFIG_NO_HZ_COMMON
+>         rq->last_blocked_load_update_tick = jiffies;
+>         if (!cfs_rq_has_blocked(cfs_rq) && !others_rqs_have_blocked(rq))
+> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> index d2e4f2186b13..ae01bb18e28c 100644
+> --- a/kernel/sched/pelt.c
+> +++ b/kernel/sched/pelt.c
+> @@ -365,31 +365,15 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+>   *
+>   */
+>
+> -int update_irq_load_avg(struct rq *rq, u64 running)
+> +int update_irq_load_avg(u64 now, struct rq *rq, int running)
+>  {
+> -       int ret = 0;
+> -       /*
+> -        * We know the time that has been used by interrupt since last update
+> -        * but we don't when. Let be pessimistic and assume that interrupt has
+> -        * happened just before the update. This is not so far from reality
+> -        * because interrupt will most probably wake up task and trig an update
+> -        * of rq clock during which the metric si updated.
+> -        * We start to decay with normal context time and then we add the
+> -        * interrupt context time.
+> -        * We can safely remove running from rq->clock because
+> -        * rq->clock += delta with delta >= running
+> -        */
+> -       ret = ___update_load_sum(rq->clock - running, rq->cpu, &rq->avg_irq,
+> -                               0,
+> -                               0,
+> -                               0);
+> -       ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
+> -                               1,
+> -                               1,
+> -                               1);
+> -
+> -       if (ret)
+> +       if (___update_load_sum(now, rq->cpu, &rq->avg_irq,
+> +                               running,
+> +                               running,
+> +                               running)) {
+>                 ___update_load_avg(&rq->avg_irq, 1, 1);
+> +               return 1;
+> +       }
+>
+> -       return ret;
+> +       return 0;
+>  }
+> diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+> index 0ce9a5a5877a..ebc57301a9a8 100644
+> --- a/kernel/sched/pelt.h
+> +++ b/kernel/sched/pelt.h
+> @@ -5,7 +5,7 @@ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_e
+>  int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
+>  int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+>  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
+> -int update_irq_load_avg(struct rq *rq, u64 running);
+> +int update_irq_load_avg(u64 now, struct rq *rq, int running);
+>
+>  /*
+>   * When a task is dequeued, its estimated utilization should not be update if
+>
+>
