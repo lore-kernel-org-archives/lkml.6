@@ -1,675 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uDdCBpou"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86A50607CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 767CC601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752137AbeFFMKT (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:10:19 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33779 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750864AbeFFMKR (ORCPT
+        id S1753520AbeFFQR5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:17:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753397AbeFFQIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:10:17 -0400
-X-Google-Smtp-Source: ADUXVKINm+DXv3gBZabgFUf9lMgMD1jgscRK/QAnC5Q5gyeDYlBx0VWpxeVlYFFKW89HHn1jA/GTLw==
-Subject: Re: [PATCH v2 7/9] xen/gntdev: Implement dma-buf export functionality
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-8-andr2000@gmail.com>
- <96dd30f5-6ac6-498f-06e7-352e46994576@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <117e05b3-69f6-b879-50d9-0cddd8e4c313@gmail.com>
-Date: Wed, 6 Jun 2018 15:10:13 +0300
+        Wed, 6 Jun 2018 12:08:47 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
+ callback
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
+ <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
+ <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
+ <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
+ <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
+ <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Wed, 6 Jun 2018 18:08:38 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <96dd30f5-6ac6-498f-06e7-352e46994576@oracle.com>
+In-Reply-To: <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18060616-4275-0000-0000-0000028AD2E1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060616-4276-0000-0000-00003791DDEB
+Message-Id: <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806060182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 01:07 AM, Boris Ostrovsky wrote:
-> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+On 06/06/2018 16:28, Tony Krowiak wrote:
+> On 06/05/2018 08:19 AM, Pierre Morel wrote:
+>> On 30/05/2018 16:33, Tony Krowiak wrote:
+>>> On 05/24/2018 05:08 AM, Pierre Morel wrote:
+>>>> On 23/05/2018 16:45, Tony Krowiak wrote:
+>>>>> On 05/16/2018 04:03 AM, Pierre Morel wrote:
+>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>>>>> Implements the open callback on the mediated matrix device.
+>>>>>>> The function registers a group notifier to receive notification
+>>>>>>> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
+>>>>>>> the vfio_ap device driver will get access to the guest's
+>>>>>>> kvm structure. With access to this structure the driver will:
+>>>>>>>
+>>>>>>> 1. Ensure that only one mediated device is opened for the guest
+>>>>
+>>>> You should explain why.
+>>>>
+>>>>>>>
+>>>>>>> 2. Configure access to the AP devices for the guest.
+>>>>>>>
+>>>> ...snip...
+>>>>>>> +void kvm_ap_refcount_inc(struct kvm *kvm)
+>>>>>>> +{
+>>>>>>> +    atomic_inc(&kvm->arch.crypto.aprefs);
+>>>>>>> +}
+>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_inc);
+>>>>>>> +
+>>>>>>> +void kvm_ap_refcount_dec(struct kvm *kvm)
+>>>>>>> +{
+>>>>>>> +    atomic_dec(&kvm->arch.crypto.aprefs);
+>>>>>>> +}
+>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_dec);
+>>>>>>
+>>>>>> Why are these functions inside kvm-ap ?
+>>>>>> Will anyone use this outer of vfio-ap ?
+>>>>>
+>>>>> As I've stated before, I made the choice to contain all interfaces 
+>>>>> that
+>>>>> access KVM in kvm-ap because I don't think it is appropriate for 
+>>>>> the device
+>>>>> driver to have to have "knowledge" of the inner workings of KVM. 
+>>>>> Why does
+>>>>> it matter whether any entity outside of the vfio_ap device driver 
+>>>>> calls
+>>>>> these functions? I could ask a similar question if the interfaces 
+>>>>> were
+>>>>> contained in vfio-ap; what if another device driver needs access 
+>>>>> to these
+>>>>> interfaces?
+>>>>
+>>>> This is very driver specific and only used during initialization.
+>>>> It is not a common property of the cryptographic interface.
+>>>>
+>>>> I really think you should handle this inside the driver.
+>>>
+>>> We are going to have to agree to disagree on this one. Is it not 
+>>> possible
+>>> that future drivers - e.g., when full virtualization is implemented 
+>>> - will
+>>> require access to KVM?
 >>
->> 1. Create a dma-buf from grant references provided by the foreign
->>     domain. By default dma-buf is backed by system memory pages, but
->>     by providing GNTDEV_DMA_FLAG_XXX flags it can also be created
->>     as a DMA write-combine/coherent buffer, e.g. allocated with
->>     corresponding dma_alloc_xxx API.
->>     Export the resulting buffer as a new dma-buf.
->>
->> 2. Implement waiting for the dma-buf to be released: block until the
->>     dma-buf with the file descriptor provided is released.
->>     If within the time-out provided the buffer is not released then
->>     -ETIMEDOUT error is returned. If the buffer with the file descriptor
->>     does not exist or has already been released, then -ENOENT is
->>     returned. For valid file descriptors this must not be treated as
->>     error.
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> ---
->>   drivers/xen/gntdev-dmabuf.c | 393 +++++++++++++++++++++++++++++++++++-
->>   drivers/xen/gntdev-dmabuf.h |   9 +-
->>   drivers/xen/gntdev.c        |  90 ++++++++-
->>   3 files changed, 486 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/xen/gntdev-dmabuf.c b/drivers/xen/gntdev-dmabuf.c
->> index 6bedd1387bd9..f612468879b4 100644
->> --- a/drivers/xen/gntdev-dmabuf.c
->> +++ b/drivers/xen/gntdev-dmabuf.c
->> @@ -3,15 +3,58 @@
->>   /*
->>    * Xen dma-buf functionality for gntdev.
->>    *
->> + * DMA buffer implementation is based on drivers/gpu/drm/drm_prime.c.
->> + *
->>    * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
->>    */
->>   
->> +#include <linux/dma-buf.h>
->>   #include <linux/slab.h>
->>   
->>   #include "gntdev-dmabuf.h"
->>   
->> +struct gntdev_dmabuf {
->> +	struct gntdev_dmabuf_priv *priv;
->> +	struct dma_buf *dmabuf;
->> +	struct list_head next;
->> +	int fd;
->> +
->> +	union {
->> +		struct {
->> +			/* Exported buffers are reference counted. */
->> +			struct kref refcount;
->> +
->> +			struct gntdev_priv *priv;
->> +			struct grant_map *map;
->> +			void (*release)(struct gntdev_priv *priv,
->> +					struct grant_map *map);
->> +		} exp;
->> +	} u;
->> +
->> +	/* Number of pages this buffer has. */
->> +	int nr_pages;
->> +	/* Pages of this buffer. */
->> +	struct page **pages;
->> +};
->> +
->> +struct gntdev_dmabuf_wait_obj {
->> +	struct list_head next;
->> +	struct gntdev_dmabuf *gntdev_dmabuf;
->> +	struct completion completion;
->> +};
->> +
->> +struct gntdev_dmabuf_attachment {
->> +	struct sg_table *sgt;
->> +	enum dma_data_direction dir;
->> +};
->> +
->>   struct gntdev_dmabuf_priv {
->> -	int dummy;
->> +	/* List of exported DMA buffers. */
->> +	struct list_head exp_list;
->> +	/* List of wait objects. */
->> +	struct list_head exp_wait_list;
->> +	/* This is the lock which protects dma_buf_xxx lists. */
->> +	struct mutex lock;
->>   };
->>   
->>   /* ------------------------------------------------------------------ */
->> @@ -22,19 +65,359 @@ struct gntdev_dmabuf_priv {
->>   /* Implementation of wait for exported DMA buffer to be released.     */
->>   /* ------------------------------------------------------------------ */
->>   
->> +static void dmabuf_exp_release(struct kref *kref);
->> +
->> +static struct gntdev_dmabuf_wait_obj *
->> +dmabuf_exp_wait_obj_new(struct gntdev_dmabuf_priv *priv,
->> +			struct gntdev_dmabuf *gntdev_dmabuf)
->> +{
->> +	struct gntdev_dmabuf_wait_obj *obj;
->> +
->> +	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
->> +	if (!obj)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	init_completion(&obj->completion);
->> +	obj->gntdev_dmabuf = gntdev_dmabuf;
->> +
->> +	mutex_lock(&priv->lock);
->> +	list_add(&obj->next, &priv->exp_wait_list);
->> +	/* Put our reference and wait for gntdev_dmabuf's release to fire. */
->> +	kref_put(&gntdev_dmabuf->u.exp.refcount, dmabuf_exp_release);
->> +	mutex_unlock(&priv->lock);
->> +	return obj;
->> +}
->> +
->> +static void dmabuf_exp_wait_obj_free(struct gntdev_dmabuf_priv *priv,
->> +				     struct gntdev_dmabuf_wait_obj *obj)
->> +{
->> +	struct gntdev_dmabuf_wait_obj *cur_obj, *q;
->> +
->> +	mutex_lock(&priv->lock);
->> +	list_for_each_entry_safe(cur_obj, q, &priv->exp_wait_list, next)
->> +		if (cur_obj == obj) {
->> +			list_del(&obj->next);
->> +			kfree(obj);
->> +			break;
->> +		}
->> +	mutex_unlock(&priv->lock);
->> +}
->> +
->> +static int dmabuf_exp_wait_obj_wait(struct gntdev_dmabuf_wait_obj *obj,
->> +				    u32 wait_to_ms)
->> +{
->> +	if (wait_for_completion_timeout(&obj->completion,
->> +			msecs_to_jiffies(wait_to_ms)) <= 0)
->> +		return -ETIMEDOUT;
->> +
->> +	return 0;
->> +}
->> +
->> +static void dmabuf_exp_wait_obj_signal(struct gntdev_dmabuf_priv *priv,
->> +				       struct gntdev_dmabuf *gntdev_dmabuf)
->> +{
->> +	struct gntdev_dmabuf_wait_obj *obj, *q;
->> +
->> +	list_for_each_entry_safe(obj, q, &priv->exp_wait_list, next)
->> +		if (obj->gntdev_dmabuf == gntdev_dmabuf) {
->> +			pr_debug("Found gntdev_dmabuf in the wait list, wake\n");
->> +			complete_all(&obj->completion);
-> break ?
-sure, thank you
->> +		}
->> +}
->> +
->> +static struct gntdev_dmabuf *
->> +dmabuf_exp_wait_obj_get_by_fd(struct gntdev_dmabuf_priv *priv, int fd)
->> +{
->> +	struct gntdev_dmabuf *q, *gntdev_dmabuf, *ret = ERR_PTR(-ENOENT);
->> +
->> +	mutex_lock(&priv->lock);
->> +	list_for_each_entry_safe(gntdev_dmabuf, q, &priv->exp_list, next)
->> +		if (gntdev_dmabuf->fd == fd) {
->> +			pr_debug("Found gntdev_dmabuf in the wait list\n");
->> +			kref_get(&gntdev_dmabuf->u.exp.refcount);
->> +			ret = gntdev_dmabuf;
->> +			break;
->> +		}
->> +	mutex_unlock(&priv->lock);
->> +	return ret;
->> +}
->> +
->>   int gntdev_dmabuf_exp_wait_released(struct gntdev_dmabuf_priv *priv, int fd,
->>   				    int wait_to_ms)
->>   {
->> -	return -EINVAL;
->> +	struct gntdev_dmabuf *gntdev_dmabuf;
->> +	struct gntdev_dmabuf_wait_obj *obj;
->> +	int ret;
->> +
->> +	pr_debug("Will wait for dma-buf with fd %d\n", fd);
->> +	/*
->> +	 * Try to find the DMA buffer: if not found means that
->> +	 * either the buffer has already been released or file descriptor
->> +	 * provided is wrong.
->> +	 */
->> +	gntdev_dmabuf = dmabuf_exp_wait_obj_get_by_fd(priv, fd);
->> +	if (IS_ERR(gntdev_dmabuf))
->> +		return PTR_ERR(gntdev_dmabuf);
->> +
->> +	/*
->> +	 * gntdev_dmabuf still exists and is reference count locked by us now,
->> +	 * so prepare to wait: allocate wait object and add it to the wait list,
->> +	 * so we can find it on release.
->> +	 */
->> +	obj = dmabuf_exp_wait_obj_new(priv, gntdev_dmabuf);
->> +	if (IS_ERR(obj)) {
->> +		pr_err("Failed to setup wait object, ret %ld\n", PTR_ERR(obj));
+>> I do not think that an access to KVM is required for full 
+>> virtualization.
 >
-> No need for pr_err. We are out of memory.
-Will remove
->
->> +		return PTR_ERR(obj);
->> +}
->> +
->> +	ret = dmabuf_exp_wait_obj_wait(obj, wait_to_ms);
->> +	dmabuf_exp_wait_obj_free(priv, obj);
->> +	return ret;
->>   }
->>   
->>   /* ------------------------------------------------------------------ */
->>   /* DMA buffer export support.                                         */
->>   /* ------------------------------------------------------------------ */
->>   
->> +static struct sg_table *
->> +dmabuf_pages_to_sgt(struct page **pages, unsigned int nr_pages)
->> +{
->> +	struct sg_table *sgt;
->> +	int ret;
->> +
->> +	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
->> +	if (!sgt) {
->> +		ret = -ENOMEM;
->> +		goto out;
->> +	}
->> +
->> +	ret = sg_alloc_table_from_pages(sgt, pages, nr_pages, 0,
->> +					nr_pages << PAGE_SHIFT,
->> +					GFP_KERNEL);
->> +	if (ret)
->> +		goto out;
->> +
->> +	return sgt;
->> +
->> +out:
->> +	kfree(sgt);
->> +	return ERR_PTR(ret);
->> +}
->> +
->> +static int dmabuf_exp_ops_attach(struct dma_buf *dma_buf,
->> +				 struct device *target_dev,
->> +				 struct dma_buf_attachment *attach)
->> +{
->> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach;
->> +
->> +	gntdev_dmabuf_attach = kzalloc(sizeof(*gntdev_dmabuf_attach),
->> +				       GFP_KERNEL);
->> +	if (!gntdev_dmabuf_attach)
->> +		return -ENOMEM;
->> +
->> +	gntdev_dmabuf_attach->dir = DMA_NONE;
->> +	attach->priv = gntdev_dmabuf_attach;
->> +	/* Might need to pin the pages of the buffer now. */
->
-> Who is supposed to pin the pages? The caller?
-Ok, as we do not implement .mmap for Xen dma-buf and there is
-no plan to mmap kernel memory (either ballooned or dma_alloc'ed),
-then we can remove this comment as there is no need to pin/unpin
-pages.
->
->> +	return 0;
->> +}
->> +
->> +static void dmabuf_exp_ops_detach(struct dma_buf *dma_buf,
->> +				  struct dma_buf_attachment *attach)
->> +{
->> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach = attach->priv;
->> +
->> +	if (gntdev_dmabuf_attach) {
->> +		struct sg_table *sgt = gntdev_dmabuf_attach->sgt;
->> +
->> +		if (sgt) {
->> +			if (gntdev_dmabuf_attach->dir != DMA_NONE)
->> +				dma_unmap_sg_attrs(attach->dev, sgt->sgl,
->> +						   sgt->nents,
->> +						   gntdev_dmabuf_attach->dir,
->> +						   DMA_ATTR_SKIP_CPU_SYNC);
->> +			sg_free_table(sgt);
->> +		}
->> +
->> +		kfree(sgt);
->> +		kfree(gntdev_dmabuf_attach);
->> +		attach->priv = NULL;
->> +	}
->> +	/* Might need to unpin the pages of the buffer now. */
-> Same question.
-Please see above
->> +}
->> +
->> +static struct sg_table *
->> +dmabuf_exp_ops_map_dma_buf(struct dma_buf_attachment *attach,
->> +			   enum dma_data_direction dir)
->> +{
->> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach = attach->priv;
->> +	struct gntdev_dmabuf *gntdev_dmabuf = attach->dmabuf->priv;
->> +	struct sg_table *sgt;
->> +
->> +	pr_debug("Mapping %d pages for dev %p\n", gntdev_dmabuf->nr_pages,
->> +		 attach->dev);
->> +
->> +	if (WARN_ON(dir == DMA_NONE || !gntdev_dmabuf_attach))
->
-> WARN_ON_ONCE. Here and elsewhere.
-Why? The UAPI may be used by different applications, thus we might
-lose warnings for some of them. Having WARN_ON will show problems
-for multiple users, not for the first one.
-Does this make sense to still use WARN_ON?
->
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	/* Return the cached mapping when possible. */
->> +	if (gntdev_dmabuf_attach->dir == dir)
->> +		return gntdev_dmabuf_attach->sgt;
->> +
->> +	/*
->> +	 * Two mappings with different directions for the same attachment are
->> +	 * not allowed.
->> +	 */
->> +	if (WARN_ON(gntdev_dmabuf_attach->dir != DMA_NONE))
->> +		return ERR_PTR(-EBUSY);
->> +
->> +	sgt = dmabuf_pages_to_sgt(gntdev_dmabuf->pages,
->> +				  gntdev_dmabuf->nr_pages);
->> +	if (!IS_ERR(sgt)) {
->> +		if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
->> +				      DMA_ATTR_SKIP_CPU_SYNC)) {
->> +			sg_free_table(sgt);
->> +			kfree(sgt);
->> +			sgt = ERR_PTR(-ENOMEM);
->> +		} else {
->> +			gntdev_dmabuf_attach->sgt = sgt;
->> +			gntdev_dmabuf_attach->dir = dir;
->> +		}
->> +	}
->> +	if (IS_ERR(sgt))
->> +		pr_err("Failed to map sg table for dev %p\n", attach->dev);
->> +	return sgt;
->> +}
->> +
->> +static void dmabuf_exp_ops_unmap_dma_buf(struct dma_buf_attachment *attach,
->> +					 struct sg_table *sgt,
->> +					 enum dma_data_direction dir)
->> +{
->> +	/* Not implemented. The unmap is done at dmabuf_exp_ops_detach(). */
->> +}
->> +
->> +static void dmabuf_exp_release(struct kref *kref)
->> +{
->> +	struct gntdev_dmabuf *gntdev_dmabuf =
->> +		container_of(kref, struct gntdev_dmabuf, u.exp.refcount);
->> +
->> +	dmabuf_exp_wait_obj_signal(gntdev_dmabuf->priv, gntdev_dmabuf);
->> +	list_del(&gntdev_dmabuf->next);
->> +	kfree(gntdev_dmabuf);
->> +}
->> +
->> +static void dmabuf_exp_ops_release(struct dma_buf *dma_buf)
->> +{
->> +	struct gntdev_dmabuf *gntdev_dmabuf = dma_buf->priv;
->> +	struct gntdev_dmabuf_priv *priv = gntdev_dmabuf->priv;
->> +
->> +	gntdev_dmabuf->u.exp.release(gntdev_dmabuf->u.exp.priv,
->> +				     gntdev_dmabuf->u.exp.map);
->> +	mutex_lock(&priv->lock);
->> +	kref_put(&gntdev_dmabuf->u.exp.refcount, dmabuf_exp_release);
->> +	mutex_unlock(&priv->lock);
->> +}
->> +
->> +static void *dmabuf_exp_ops_kmap_atomic(struct dma_buf *dma_buf,
->> +					unsigned long page_num)
->> +{
->> +	/* Not implemented. */
->> +	return NULL;
->> +}
->> +
->> +static void dmabuf_exp_ops_kunmap_atomic(struct dma_buf *dma_buf,
->> +					 unsigned long page_num, void *addr)
->> +{
->> +	/* Not implemented. */
->> +}
->> +
->> +static void *dmabuf_exp_ops_kmap(struct dma_buf *dma_buf,
->> +				 unsigned long page_num)
->> +{
->> +	/* Not implemented. */
->> +	return NULL;
->> +}
->> +
->> +static void dmabuf_exp_ops_kunmap(struct dma_buf *dma_buf,
->> +				  unsigned long page_num, void *addr)
->> +{
->> +	/* Not implemented. */
->> +}
->> +
->> +static int dmabuf_exp_ops_mmap(struct dma_buf *dma_buf,
->> +			       struct vm_area_struct *vma)
->> +{
->> +	/* Not implemented. */
->> +	return 0;
->> +}
->> +
->> +static const struct dma_buf_ops dmabuf_exp_ops =  {
->> +	.attach = dmabuf_exp_ops_attach,
->> +	.detach = dmabuf_exp_ops_detach,
->> +	.map_dma_buf = dmabuf_exp_ops_map_dma_buf,
->> +	.unmap_dma_buf = dmabuf_exp_ops_unmap_dma_buf,
->> +	.release = dmabuf_exp_ops_release,
->> +	.map = dmabuf_exp_ops_kmap,
->> +	.map_atomic = dmabuf_exp_ops_kmap_atomic,
->> +	.unmap = dmabuf_exp_ops_kunmap,
->> +	.unmap_atomic = dmabuf_exp_ops_kunmap_atomic,
->> +	.mmap = dmabuf_exp_ops_mmap,
->> +};
->> +
->>   int gntdev_dmabuf_exp_from_pages(struct gntdev_dmabuf_export_args *args)
->>   {
->> -	return -EINVAL;
->> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
->> +	struct gntdev_dmabuf *gntdev_dmabuf;
->> +	int ret = 0;
->> +
->> +	gntdev_dmabuf = kzalloc(sizeof(*gntdev_dmabuf), GFP_KERNEL);
->> +	if (!gntdev_dmabuf)
->> +		return -ENOMEM;
->> +
->> +	kref_init(&gntdev_dmabuf->u.exp.refcount);
->> +
->> +	gntdev_dmabuf->priv = args->dmabuf_priv;
->> +	gntdev_dmabuf->nr_pages = args->count;
->> +	gntdev_dmabuf->pages = args->pages;
->> +	gntdev_dmabuf->u.exp.priv = args->priv;
->> +	gntdev_dmabuf->u.exp.map = args->map;
->> +	gntdev_dmabuf->u.exp.release = args->release;
->> +
->> +	exp_info.exp_name = KBUILD_MODNAME;
->> +	if (args->dev->driver && args->dev->driver->owner)
->> +		exp_info.owner = args->dev->driver->owner;
->> +	else
->> +		exp_info.owner = THIS_MODULE;
->> +	exp_info.ops = &dmabuf_exp_ops;
->> +	exp_info.size = args->count << PAGE_SHIFT;
->> +	exp_info.flags = O_RDWR;
->> +	exp_info.priv = gntdev_dmabuf;
->> +
->> +	gntdev_dmabuf->dmabuf = dma_buf_export(&exp_info);
->> +	if (IS_ERR(gntdev_dmabuf->dmabuf)) {
->> +		ret = PTR_ERR(gntdev_dmabuf->dmabuf);
->> +		gntdev_dmabuf->dmabuf = NULL;
->> +		goto fail;
->> +	}
->> +
->> +	ret = dma_buf_fd(gntdev_dmabuf->dmabuf, O_CLOEXEC);
->> +	if (ret < 0)
->> +		goto fail;
->> +
->> +	gntdev_dmabuf->fd = ret;
->> +	args->fd = ret;
->> +
->> +	pr_debug("Exporting DMA buffer with fd %d\n", ret);
->> +
->> +	mutex_lock(&args->dmabuf_priv->lock);
->> +	list_add(&gntdev_dmabuf->next, &args->dmabuf_priv->exp_list);
->> +	mutex_unlock(&args->dmabuf_priv->lock);
->> +	return 0;
->> +
->> +fail:
->> +	if (gntdev_dmabuf->dmabuf)
->> +		dma_buf_put(gntdev_dmabuf->dmabuf);
->> +	kfree(gntdev_dmabuf);
->> +	return ret;
->>   }
->>   
->>   /* ------------------------------------------------------------------ */
->> @@ -66,6 +449,10 @@ struct gntdev_dmabuf_priv *gntdev_dmabuf_init(void)
->>   	if (!priv)
->>   		return ERR_PTR(-ENOMEM);
->>   
->> +	mutex_init(&priv->lock);
->> +	INIT_LIST_HEAD(&priv->exp_list);
->> +	INIT_LIST_HEAD(&priv->exp_wait_list);
->> +
->>   	return priv;
->>   }
->>   
->> diff --git a/drivers/xen/gntdev-dmabuf.h b/drivers/xen/gntdev-dmabuf.h
->> index 040b2de904ac..95c23a24f640 100644
->> --- a/drivers/xen/gntdev-dmabuf.h
->> +++ b/drivers/xen/gntdev-dmabuf.h
->> @@ -18,7 +18,14 @@ struct gntdev_dmabuf;
->>   struct device;
->>   
->>   struct gntdev_dmabuf_export_args {
->> -	int dummy;
->> +	struct gntdev_priv *priv;
->> +	struct grant_map *map;
->> +	void (*release)(struct gntdev_priv *priv, struct grant_map *map);
->> +	struct gntdev_dmabuf_priv *dmabuf_priv;
->> +	struct device *dev;
->> +	int count;
->> +	struct page **pages;
->> +	u32 fd;
->>   };
->>   
->>   struct gntdev_dmabuf_priv *gntdev_dmabuf_init(void);
->> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
->> index 7d58dfb3e5e8..cf255d45f20f 100644
->> --- a/drivers/xen/gntdev.c
->> +++ b/drivers/xen/gntdev.c
->> @@ -319,6 +319,16 @@ static void gntdev_put_map(struct gntdev_priv *priv, struct grant_map *map)
->>   	gntdev_free_map(map);
->>   }
->>   
->> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
->> +static void gntdev_remove_map(struct gntdev_priv *priv, struct grant_map *map)
->> +{
->> +	mutex_lock(&priv->lock);
->> +	list_del(&map->next);
->> +	gntdev_put_map(NULL /* already removed */, map);
->> +	mutex_unlock(&priv->lock);
->> +}
->> +#endif
->> +
->>   /* ------------------------------------------------------------------ */
->>   
->>   static int find_grant_ptes(pte_t *pte, pgtable_t token,
->> @@ -1063,12 +1073,88 @@ static long gntdev_ioctl_grant_copy(struct gntdev_priv *priv, void __user *u)
->>   /* DMA buffer export support.                                         */
->>   /* ------------------------------------------------------------------ */
->>   
->> +static struct grant_map *
->> +dmabuf_exp_alloc_backing_storage(struct gntdev_priv *priv, int dmabuf_flags,
->> +				 int count)
->> +{
->> +	struct grant_map *map;
->> +
->> +	if (unlikely(count <= 0))
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	if ((dmabuf_flags & GNTDEV_DMA_FLAG_WC) &&
->> +	    (dmabuf_flags & GNTDEV_DMA_FLAG_COHERENT)) {
->> +		pr_err("Wrong dma-buf flags: either WC or coherent, not both\n");
->> +		return ERR_PTR(-EINVAL);
->> +	}
->> +
->> +	map = gntdev_alloc_map(priv, count, dmabuf_flags);
->> +	if (!map)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	if (unlikely(atomic_add_return(count, &pages_mapped) > limit)) {
->> +		pr_err("can't map: over limit\n");
->> +		gntdev_put_map(NULL, map);
->> +		return ERR_PTR(-ENOMEM);
->> +	}
->> +	return map;
->> +}
->> +
->>   int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
->>   				int count, u32 domid, u32 *refs, u32 *fd)
->>   {
->> -	/* XXX: this will need to work with gntdev's map, so leave it here. */
->> +	struct grant_map *map;
->> +	struct gntdev_dmabuf_export_args args;
->> +	int i, ret;
->> +
->>   	*fd = -1;
->> -	return -EINVAL;
->> +
->> +	if (use_ptemod) {
->> +		pr_err("Cannot provide dma-buf: use_ptemode %d\n",
->> +		       use_ptemod);
-> No pr_err here please. This can potentially become a DoS vector as it
-> comes directly from ioctl.
->
-> I would, in fact, revisit other uses of pr_err in this file.
-Sure, all of pr_err can actually be pr_debug...
->> +		return -EINVAL;
->> +	}
->> +
->> +	map = dmabuf_exp_alloc_backing_storage(priv, flags, count);
->
-> @count comes from userspace. dmabuf_exp_alloc_backing_storage only
-> checks for it to be >0. Should it be checked for some sane max value?
-This is not easy as it is hard to tell what could be that
-max value. For DMA buffers if count is too big then allocation
-will fail, so need to check for max here  (dma_alloc_{xxx} will
-filter out too big allocations).
-For Xen balloon allocations I cannot tell what could be that
-max value neither. Tough question how to limit.
->
-> -boris
-Thank you,
-Oleksandr
->> +	if (IS_ERR(map))
->> +		return PTR_ERR(map);
->> +
->> +	for (i = 0; i < count; i++) {
->> +		map->grants[i].domid = domid;
->> +		map->grants[i].ref = refs[i];
->> +	}
->> +
->> +	mutex_lock(&priv->lock);
->> +	gntdev_add_map(priv, map);
->> +	mutex_unlock(&priv->lock);
->> +
->> +	map->flags |= GNTMAP_host_map;
->> +#if defined(CONFIG_X86)
->> +	map->flags |= GNTMAP_device_map;
->> +#endif
->> +
->> +	ret = map_grant_pages(map);
->> +	if (ret < 0)
->> +		goto out;
->> +
->> +	args.priv = priv;
->> +	args.map = map;
->> +	args.release = gntdev_remove_map;
->> +	args.dev = priv->dma_dev;
->> +	args.dmabuf_priv = priv->dmabuf_priv;
->> +	args.count = map->count;
->> +	args.pages = map->pages;
->> +
->> +	ret = gntdev_dmabuf_exp_from_pages(&args);
->> +	if (ret < 0)
->> +		goto out;
->> +
->> +	*fd = args.fd;
->> +	return 0;
->> +
->> +out:
->> +	gntdev_remove_map(priv, map);
->> +	return ret;
->>   }
->>   
->>   /* ------------------------------------------------------------------ */
+> You may be right, but at this point, there is no guarantee. I stand by my
+> design on this one.
+
+I really regret that we abandoned the initial design with the matrix bus 
+and one
+single parent matrix device per guest.
+We would not have the problem of these KVM dependencies.
+
+It had the advantage of taking care of having only one device per guest
+(available_instance = 1), could take care of provisioning as you have
+sysfs entries available for a matrix without having a guest and a mediated
+device.
+
+it also had advantage for virtualization to keep host side and guest 
+side matrix
+separate inside parent (host side) and mediated device (guest side).
+
+Shouldn't we treat this problem with a design using standard interfaces
+Instead of adding new dedicated interfaces?
+
+Regards,
+
+Pierre
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
