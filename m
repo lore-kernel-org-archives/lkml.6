@@ -1,81 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="lS8sIbFu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39BF760555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B600460764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752346AbeFFJuc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:50:32 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:55658 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbeFFJuK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:50:10 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: matwey.kornilov@gmail.com,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Kees Cook <keescook@chromium.org>, Sean Young <sean@mess.org>,
-        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/4] serial: core: Mask mctrl with TIOCM_RTS too if rs485 on and RTS_AFTER_SEND set.
-Date: Wed,  6 Jun 2018 11:49:39 +0200
-Message-Id: <20180606094942.71190-3-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
- <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
-To: unlisted-recipients:; (no To-header on input)
+        id S1752303AbeFFN5U (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:57:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751567AbeFFN5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:57:18 -0400
+Date: Wed, 6 Jun 2018 09:57:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: changbin.du@intel.com, kbuild-all@01.org, mingo@redhat.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, rdunlap@infradead.org,
+        x86@kernel.org, linux@armlinux.org.uk, lgirdwood@gmail.com,
+        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sparse@vger.kernel.org,
+        changbin.du@gmail.com
+Subject: Re: [PATCH v5 2/4] kernel hacking: new config NO_AUTO_INLINE to
+ disable compiler auto-inline optimizations
+Message-ID: <20180606095714.1d3c2def@vmware.local.home>
+In-Reply-To: <201806060501.btF3aJMZ%fengguang.wu@intel.com>
+References: <1528186420-6615-3-git-send-email-changbin.du@intel.com>
+        <201806060501.btF3aJMZ%fengguang.wu@intel.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If rs485 is enabled and RTS_AFTER_SEND is set on startup need to keep
-TIOCM_RTS asserted to keep rs485 transceiver in RX when idle.
+On Wed, 6 Jun 2018 05:21:55 +0800
+kbuild test robot <lkp@intel.com> wrote:
 
-Check if rs485 is on and RTS_AFTER_SEND is set and mask port->mctrl with
-TIOCM_RTS too and not only TIOCM_DTR.
+> Hi Changbin,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v4.17 next-20180605]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/changbin-du-intel-com/kernel-hacking-GCC-optimization-for-better-debug-experience-Og/20180606-001415
+> config: ia64-allmodconfig (attached as .config)
+> compiler: ia64-linux-gcc (GCC) 8.1.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=ia64 
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    drivers//staging/greybus/fw-management.c: In function 'fw_mgmt_load_and_validate_operation':
+> >> drivers//staging/greybus/fw-management.c:153:2: warning: 'strncpy' specified bound 10 equals destination size [-Wstringop-truncation]  
+>      strncpy(request.firmware_tag, tag, GB_FIRMWARE_TAG_MAX_SIZE);
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers//staging/greybus/fw-management.c: In function 'fw_mgmt_backend_fw_update_operation':
+>    drivers//staging/greybus/fw-management.c:304:2: warning: 'strncpy' specified bound 10 equals destination size [-Wstringop-truncation]
+>      strncpy(request.firmware_tag, tag, GB_FIRMWARE_TAG_MAX_SIZE);
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> --
+>    drivers/auxdisplay/panel.c: In function 'panel_bind_key':
+> >> drivers/auxdisplay/panel.c:1509:2: warning: 'strncpy' specified bound 12 equals destination size [-Wstringop-truncation]  
+>      strncpy(key->u.kbd.press_str, press, sizeof(key->u.kbd.press_str));
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/auxdisplay/panel.c:1510:2: warning: 'strncpy' specified bound 12 equals destination size [-Wstringop-truncation]
+>      strncpy(key->u.kbd.repeat_str, repeat, sizeof(key->u.kbd.repeat_str));
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- drivers/tty/serial/serial_core.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Nice! This patch actually caused bugs in other areas of the code to be
+caught by the build system.
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 0466f9f08a91..06d9441f6d20 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -2288,6 +2288,16 @@ uart_configure_port(struct uart_driver *drv, struct uart_state *state,
- 
- 	if (port->type != PORT_UNKNOWN) {
- 		unsigned long flags;
-+		int rs485_on = port->rs485_config &&
-+			(port->rs485.flags & SER_RS485_ENABLED);
-+		int RTS_after_send = !!(port->rs485.flags &
-+				SER_RS485_RTS_AFTER_SEND);
-+		int mctrl;
-+
-+		if (rs485_on && RTS_after_send)
-+			mctrl = port->mctrl & (TIOCM_DTR | TIOCM_RTS);
-+		else
-+			mctrl = port->mctrl & TIOCM_DTR;
- 
- 		uart_report_port(drv, port);
- 
-@@ -2300,7 +2310,7 @@ uart_configure_port(struct uart_driver *drv, struct uart_state *state,
- 		 * We probably don't need a spinlock around this, but
- 		 */
- 		spin_lock_irqsave(&port->lock, flags);
--		port->ops->set_mctrl(port, port->mctrl & TIOCM_DTR);
-+		port->ops->set_mctrl(port, mctrl);
- 		spin_unlock_irqrestore(&port->lock, flags);
- 
- 		/*
--- 
-2.17.1
+The patch is not wrong. The code that has these warnings are.
+
+-- Steve
+
+> 
+> vim +/strncpy +153 drivers//staging/greybus/fw-management.c
+> 
+> 013e6653 Viresh Kumar 2016-05-14  138  
+> 013e6653 Viresh Kumar 2016-05-14  139  static int fw_mgmt_load_and_validate_operation(struct fw_mgmt *fw_mgmt,
+> 013e6653 Viresh Kumar 2016-05-14  140  					       u8 load_method, const char *tag)
+> 013e6653 Viresh Kumar 2016-05-14  141  {
+> 013e6653 Viresh Kumar 2016-05-14  142  	struct gb_fw_mgmt_load_and_validate_fw_request request;
+> 013e6653 Viresh Kumar 2016-05-14  143  	int ret;
+> 013e6653 Viresh Kumar 2016-05-14  144  
+> 013e6653 Viresh Kumar 2016-05-14  145  	if (load_method != GB_FW_LOAD_METHOD_UNIPRO &&
+> 013e6653 Viresh Kumar 2016-05-14  146  	    load_method != GB_FW_LOAD_METHOD_INTERNAL) {
+> 013e6653 Viresh Kumar 2016-05-14  147  		dev_err(fw_mgmt->parent,
+> 013e6653 Viresh Kumar 2016-05-14  148  			"invalid load-method (%d)\n", load_method);
+> 013e6653 Viresh Kumar 2016-05-14  149  		return -EINVAL;
+> 013e6653 Viresh Kumar 2016-05-14  150  	}
+> 013e6653 Viresh Kumar 2016-05-14  151  
+> 013e6653 Viresh Kumar 2016-05-14  152  	request.load_method = load_method;
+> b2abeaa1 Viresh Kumar 2016-08-11 @153  	strncpy(request.firmware_tag, tag, GB_FIRMWARE_TAG_MAX_SIZE);
+> 013e6653 Viresh Kumar 2016-05-14  154  
+> 013e6653 Viresh Kumar 2016-05-14  155  	/*
+> 013e6653 Viresh Kumar 2016-05-14  156  	 * The firmware-tag should be NULL terminated, otherwise throw error and
+> 013e6653 Viresh Kumar 2016-05-14  157  	 * fail.
+> 013e6653 Viresh Kumar 2016-05-14  158  	 */
+> b2abeaa1 Viresh Kumar 2016-08-11  159  	if (request.firmware_tag[GB_FIRMWARE_TAG_MAX_SIZE - 1] != '\0') {
+> 013e6653 Viresh Kumar 2016-05-14  160  		dev_err(fw_mgmt->parent, "load-and-validate: firmware-tag is not NULL terminated\n");
+> 013e6653 Viresh Kumar 2016-05-14  161  		return -EINVAL;
+> 013e6653 Viresh Kumar 2016-05-14  162  	}
+> 013e6653 Viresh Kumar 2016-05-14  163  
+> 013e6653 Viresh Kumar 2016-05-14  164  	/* Allocate ids from 1 to 255 (u8-max), 0 is an invalid id */
+> 013e6653 Viresh Kumar 2016-05-14  165  	ret = ida_simple_get(&fw_mgmt->id_map, 1, 256, GFP_KERNEL);
+> 013e6653 Viresh Kumar 2016-05-14  166  	if (ret < 0) {
+> 013e6653 Viresh Kumar 2016-05-14  167  		dev_err(fw_mgmt->parent, "failed to allocate request id (%d)\n",
+> 013e6653 Viresh Kumar 2016-05-14  168  			ret);
+> 013e6653 Viresh Kumar 2016-05-14  169  		return ret;
+> 013e6653 Viresh Kumar 2016-05-14  170  	}
+> 013e6653 Viresh Kumar 2016-05-14  171  
+> 013e6653 Viresh Kumar 2016-05-14  172  	fw_mgmt->intf_fw_request_id = ret;
+> 04f0e6eb Viresh Kumar 2016-05-14  173  	fw_mgmt->intf_fw_loaded = false;
+> 013e6653 Viresh Kumar 2016-05-14  174  	request.request_id = ret;
+> 013e6653 Viresh Kumar 2016-05-14  175  
+> 013e6653 Viresh Kumar 2016-05-14  176  	ret = gb_operation_sync(fw_mgmt->connection,
+> 013e6653 Viresh Kumar 2016-05-14  177  				GB_FW_MGMT_TYPE_LOAD_AND_VALIDATE_FW, &request,
+> 013e6653 Viresh Kumar 2016-05-14  178  				sizeof(request), NULL, 0);
+> 013e6653 Viresh Kumar 2016-05-14  179  	if (ret) {
+> 013e6653 Viresh Kumar 2016-05-14  180  		ida_simple_remove(&fw_mgmt->id_map,
+> 013e6653 Viresh Kumar 2016-05-14  181  				  fw_mgmt->intf_fw_request_id);
+> 013e6653 Viresh Kumar 2016-05-14  182  		fw_mgmt->intf_fw_request_id = 0;
+> 013e6653 Viresh Kumar 2016-05-14  183  		dev_err(fw_mgmt->parent,
+> 013e6653 Viresh Kumar 2016-05-14  184  			"load and validate firmware request failed (%d)\n",
+> 013e6653 Viresh Kumar 2016-05-14  185  			ret);
+> 013e6653 Viresh Kumar 2016-05-14  186  		return ret;
+> 013e6653 Viresh Kumar 2016-05-14  187  	}
+> 013e6653 Viresh Kumar 2016-05-14  188  
+> 013e6653 Viresh Kumar 2016-05-14  189  	return 0;
+> 013e6653 Viresh Kumar 2016-05-14  190  }
+> 013e6653 Viresh Kumar 2016-05-14  191  
+> 
+> :::::: The code at line 153 was first introduced by commit
+> :::::: b2abeaa10d5711e7730bb07120dd60ae27d7b930 greybus: firmware: s/_LEN/_SIZE
+> 
+> :::::: TO: Viresh Kumar <viresh.kumar@linaro.org>
+> :::::: CC: Greg Kroah-Hartman <gregkh@google.com>
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
