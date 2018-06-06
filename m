@@ -1,129 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB97160290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5peXlm0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DE7760290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754005AbeFFQOw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:14:52 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:33091 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752861AbeFFQOs (ORCPT
+        id S932498AbeFFSzp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:55:45 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:46705 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932473AbeFFSzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:14:48 -0400
-X-Google-Smtp-Source: ADUXVKJPpcGYsl0XxJGpu8xOsAkPUSTVqDEGojUyZewYDrQJqUy/t9wGjJoyenpICoAcqVD04M06Tw==
-Message-ID: <1528301685.17774.1.camel@redhat.com>
-Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
-From: Laurence Oberman <loberman@redhat.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        himanshu.madhani@cavium.com
-Cc: quinn.tran@cavium.com, William.Kuzeja@stratus.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-scsi@vger.kernel.org, Li Wang <liwang@redhat.com>
-Date: Wed, 06 Jun 2018 12:14:45 -0400
-In-Reply-To: <yq1a7s7ewmw.fsf@oracle.com>
-References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
-         <yq1a7s7ewmw.fsf@oracle.com>
+        Wed, 6 Jun 2018 14:55:43 -0400
+X-Google-Smtp-Source: ADUXVKJmUSVv3Rq8mN4HoKC3DL1lCIrJQZXgUPiEWLyhcsVg5XDioY83yoBmhJVeG0dl7snc8zzWEAFeYDI8Po+NoL0=
+MIME-Version: 1.0
+In-Reply-To: <2abe2137e699e5ae3100b97316da469f6d1c9bb9.camel@linux.intel.com>
+References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
+ <20180606094942.71190-1-giulio.benetti@micronovasrl.com> <20180606094942.71190-4-giulio.benetti@micronovasrl.com>
+ <069f5cd3309e83d13c74929f240720b232ea7251.camel@linux.intel.com>
+ <0bc400b1-6178-2021-c9a3-3190d1a1de32@micronovasrl.com> <2abe2137e699e5ae3100b97316da469f6d1c9bb9.camel@linux.intel.com>
+From: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
+Date: Wed, 6 Jun 2018 21:55:22 +0300
+Message-ID: <CAJs94EZx2ZdEL14SCEBomEfXLRPN4FfOp4yE44kfpnE+5+Ze-g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] serial: 8250: Copy em485 from port to real port.
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-06 at 11:56 -0400, Martin K. Petersen wrote:
-> Himanshu,
-> 
-> Ping?
-> 
-> > Hi scsi experts,
-> > 
-> > Not sure who is the right person to ask, I just hit this bug on my
-> > HP
-> > DL385 platform, can any one of you take a look?
-> > 
-> > system config:
-> > -----------------
-> > HP ProLiant DL385 G7
-> > AMD Opteron(TM) Processor 6234
-> > 16384 MB memory, 369 GB disk space
-> > 
-> > 
-> > [   24.539274] qla2xxx [0000:0c:00.7]-500a:5: LOOP UP detected (10
-> > Gbps).
-> > [   24.577259] BUG: unable to handle kernel NULL pointer
-> > dereference
-> > at 0000000000000102
-> > [   24.623133] PGD 0 P4D 0
-> > [   24.636760] Oops: 0000 [#1] SMP NOPTI
-> > [   24.656942] Modules linked in: i2c_algo_bit drm_kms_helper
-> > sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom fb_sys_fops
-> > ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+) qla2xxx(+)
-> > libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+)
-> > nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel libata
-> > nvme_core i2c_core scsi_transport_iscsi tg3 scsi_transport_fc bnx2
-> > iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash dm_log
-> > dm_mod
-> > [   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not tainted
-> > 4.17.0-rc6 #1
-> > [   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS A18
-> > 08/15/2012
-> > [   24.962106] Workqueue: events work_for_cpu_fn
-> > [   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
-> > [   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
-> > [   25.042116] RAX: 0000000000000082 RBX: 0000000000000082 RCX:
-> > 0000000000000000
-> > [   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000 RDI:
-> > 0000000000002000
-> > [   25.123094] RBP: 0000000000000000 R08: 0000000000025a40 R09:
-> > ffff8cf9aade2880
-> > [   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0 R12:
-> > ffff8cf9abc6d7d0
-> > [   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8 R15:
-> > 0000000000002000
-> > [   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000)
-> > knlGS:0000000000000000
-> > [   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   26.010457] CR2: 0000000000000102 CR3: 000000030760a000 CR4:
-> > 00000000000406f0
-> > [   26.051048] Call Trace:
-> > [   26.063572]  ? __switch_to_asm+0x34/0x70
-> > [   26.086079]  queue_work_on+0x24/0x40
-> > [   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
-> > [   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
-> > [   26.164075]  ? lock_timer_base+0x67/0x80
-> > [   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
-> > [   26.212284]  ? del_timer_sync+0x35/0x40
-> > [   26.234080]  ? schedule_timeout+0x165/0x2f0
-> > [   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
-> > [   26.285740]  qla2x00_mailbox_command+0x74b/0xf50 [qla2xxx]
-> > [   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0 [qla2xxx]
-> > [   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
-> > [   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0 [qla2xxx]
-> > [   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
-> > [   26.442055]  local_pci_probe+0x3f/0xa0
-> > [   26.463108]  work_for_cpu_fn+0x10/0x20
-> > [   26.483295]  process_one_work+0x152/0x350
-> > [   26.505730]  worker_thread+0x1cf/0x3e0
-> > [   26.527090]  kthread+0xf5/0x130
-> > [   26.545085]  ? max_active_store+0x80/0x80
-> > [   26.568085]  ? kthread_bind+0x10/0x10
-> > [   26.589533]  ret_from_fork+0x22/0x40
-> > [   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44
-> > 00
-> > 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48 89 f5
-> > 53
-> > 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0 ec 01 00
-> > 41
-> > [   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP: ffff992642ceba10
-> > [   27.341591] CR2: 0000000000000102
-> > [   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
-> 
-> 
+2018-06-06 16:11 GMT+03:00 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
+> On Wed, 2018-06-06 at 14:15 +0200, Giulio Benetti wrote:
+>> Il 06/06/2018 13:56, Andy Shevchenko ha scritto:
+>> > On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
+>> > > em485 gets lost during
+>> > >
+>> > > Copy em485 to final uart port.
+>> > >
+>> >
+>> > Is it needed at all?
+>> >
+>> > The individual driver decides either to use software emulation (and
+>> > calls explicitly serial8250_em485_init() for that) or do HW assisted
+>> > stuff.
+>>
+>> In 8250_dw.c, during probe(), I need to call dw8250_rs485_config()
+>> against local struct uart_8250_port uart = {};
+>> Inside serial8250_register_8250_port() not all uart fields are
+>> copied(em485 too).
+>> So after probe, em485 is NULL.
+>>
+>> Another way could be to call dw8250_rs485_config() against real uart
+>> port, after calling serial8250_register_8250_port(),
+>> would it make sense?
+>
+> Look at OMAP case closely. They have a callback to configure RS485 which
+> is called in uart_set_rs485_config()  which is called whenever user
+> space does TIOCGRS485 IOCTL.
+>
+> So, it's completely driven by user space which makes sense by my
+> opinion.
 
-This happened during probe and setup, stange where it faulted though
-It was in the context switch
-I have seen this before, trying to track it down
-Himanshu will probably get there before me
+AFAIU, Giulio wants to add support for rs485-enabled-at-boot-time
+device tree option (see bindings/serial/rs485.txt for reference).
+I suppose it is only important for use-case when rs485 used as slave
+(peripheral role).
 
-Back when I have something
+>
+> --
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Intel Finland Oy
+
+
+
+-- 
+With best regards,
+Matwey V. Kornilov
