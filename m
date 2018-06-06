@@ -1,256 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sPHy4DgP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7729601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C5E4601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932567AbeFFKA1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:00:27 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34032 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbeFFKAY (ORCPT
+        id S1752273AbeFFOWq convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Wed, 6 Jun 2018 10:22:46 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:36836 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752136AbeFFOWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:24 -0400
-X-Google-Smtp-Source: ADUXVKI2KDTdqFN07dBlgNpzNRJxQ9+xaEiw9yEhtmok4gIfnfem4+skN79XAy05O+E/cxsjIW0EoA==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 03/14] mfd: da9063: Use regmap_reg_range
-Date: Wed,  6 Jun 2018 11:59:52 +0200
-Message-Id: <20180606100003.17067-3-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+        Wed, 6 Jun 2018 10:22:44 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Ilya Matveychikov <matvejchikov@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+References: <D2317950-0DB0-4311-ADB1-FF677B676E04@gmail.com>
+        <BD48252B-65D7-4238-BDA2-71BAC1CEA855@gmail.com>
+        <87o9gpatxs.fsf@xmission.com>
+        <64021AF2-81EE-439C-91D4-9A33AB0D08F7@gmail.com>
+Date: Wed, 06 Jun 2018 09:22:32 -0500
+In-Reply-To: <64021AF2-81EE-439C-91D4-9A33AB0D08F7@gmail.com> (Ilya
+        Matveychikov's message of "Wed, 6 Jun 2018 13:32:12 +0400")
+Message-ID: <87muw8805z.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1fQZKj-0000Ff-Hq;;;mid=<87muw8805z.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19DJFTbzHmDjkwT3ggQOr8YHd60cDyP+Qs=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] ksys_mount: check for permissions before resource allocation
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the regmap_range tables to use regmap_reg_range() macro.
+Ilya Matveychikov <matvejchikov@gmail.com> writes:
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V5: New patch
----
- drivers/mfd/da9063-i2c.c | 174 ++++++++++++-----------------------------------
- 1 file changed, 42 insertions(+), 132 deletions(-)
+>> On Jun 5, 2018, at 11:56 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> 
+>> Ilya Matveychikov <matvejchikov@gmail.com> writes:
+>> 
+>>> Just CC’ed to some of maintainers.
+>>> 
+>>> $ perl scripts/get_maintainer.pl fs/0001-ksys_mount-check-for-permissions-before-resource-all.patch
+>>> Alexander Viro <viro@zeniv.linux.org.uk> (maintainer:FILESYSTEMS (VFS and infrastructure))
+>>> linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure))
+>>> linux-kernel@vger.kernel.org (open list)
+>>> 
+>>>> On Jun 5, 2018, at 6:00 AM, Ilya Matveychikov <matvejchikov@gmail.com> wrote:
+>>>> 
+>>>> Early check for mount permissions prevents possible allocation of 3
+>>>> pages from kmalloc() pool by unpriveledged user which can be used for
+>>>> spraying the kernel heap.
+>> 
+>> *Snort*
+>> 
+>> You clearly have not read may_mount.  Your modified code still
+>> let's unprivileged users in.  So even if all of Al's good objections
+>> were not applicable this change would still be buggy and wrong.
+>> 
+>> Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>
+>
+> Don’t get me wrong but may_mount() is:
+>
+> static inline bool may_mount(void)
+> {
+>         return ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN);
+> }
+>
+> What do you mean by "You clearly have not read may_mount”? The only thing that
+> can affect may_mount result (as mentioned earlier) is that task’s NS capability
+> might be changed by security_sb_mount() hook.
+>
+> So, do you think that is’s possible to NOT have CAP_SYS_ADMIN while entering to
+> ksys_mount() but getting it with the security_sb_mount() hook?
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index 29456e807ed4..e9797153bc19 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -29,78 +29,33 @@
- #include <linux/regulator/of_regulator.h>
- 
- static const struct regmap_range da9063_ad_readable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_AD_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_T_OFFSET,
--		.range_max = DA9063_AD_REG_GP_ID_19,
--	}, {
--		.range_min = DA9063_REG_CHIP_ID,
--		.range_max = DA9063_REG_CHIP_VARIANT,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_AD_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_AD_REG_GP_ID_19),
-+	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
- };
- 
- static const struct regmap_range da9063_ad_writeable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_PAGE_CON,
--	}, {
--		.range_min = DA9063_REG_FAULT_LOG,
--		.range_max = DA9063_REG_VSYS_MON,
--	}, {
--		.range_min = DA9063_REG_COUNT_S,
--		.range_max = DA9063_AD_REG_ALARM_Y,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_CONFIG_I,
--		.range_max = DA9063_AD_REG_MON_REG_4,
--	}, {
--		.range_min = DA9063_AD_REG_GP_ID_0,
--		.range_max = DA9063_AD_REG_GP_ID_19,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
-+	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
-+	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_AD_REG_ALARM_Y),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_AD_REG_MON_REG_4),
-+	regmap_reg_range(DA9063_AD_REG_GP_ID_0, DA9063_AD_REG_GP_ID_19),
- };
- 
- static const struct regmap_range da9063_ad_volatile_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_EVENT_D,
--	}, {
--		.range_min = DA9063_REG_CONTROL_A,
--		.range_max = DA9063_REG_CONTROL_B,
--	}, {
--		.range_min = DA9063_REG_CONTROL_E,
--		.range_max = DA9063_REG_CONTROL_F,
--	}, {
--		.range_min = DA9063_REG_BCORE2_CONT,
--		.range_max = DA9063_REG_LDO11_CONT,
--	}, {
--		.range_min = DA9063_REG_DVC_1,
--		.range_max = DA9063_REG_ADC_MAN,
--	}, {
--		.range_min = DA9063_REG_ADC_RES_L,
--		.range_max = DA9063_AD_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_SEQ,
--	}, {
--		.range_min = DA9063_REG_EN_32K,
--		.range_max = DA9063_REG_EN_32K,
--	}, {
--		.range_min = DA9063_AD_REG_MON_REG_5,
--		.range_max = DA9063_AD_REG_MON_REG_6,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
-+	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
-+	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
-+	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
-+	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
-+	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_AD_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
-+	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
-+	regmap_reg_range(DA9063_AD_REG_MON_REG_5, DA9063_AD_REG_MON_REG_6),
- };
- 
- static const struct regmap_access_table da9063_ad_readable_table = {
-@@ -119,78 +74,33 @@ static const struct regmap_access_table da9063_ad_volatile_table = {
- };
- 
- static const struct regmap_range da9063_bb_readable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_BB_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_T_OFFSET,
--		.range_max = DA9063_BB_REG_GP_ID_19,
--	}, {
--		.range_min = DA9063_REG_CHIP_ID,
--		.range_max = DA9063_REG_CHIP_VARIANT,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_BB_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_T_OFFSET, DA9063_BB_REG_GP_ID_19),
-+	regmap_reg_range(DA9063_REG_CHIP_ID, DA9063_REG_CHIP_VARIANT),
- };
- 
- static const struct regmap_range da9063_bb_writeable_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_PAGE_CON,
--	}, {
--		.range_min = DA9063_REG_FAULT_LOG,
--		.range_max = DA9063_REG_VSYS_MON,
--	}, {
--		.range_min = DA9063_REG_COUNT_S,
--		.range_max = DA9063_BB_REG_ALARM_Y,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_ID_32_31,
--	}, {
--		.range_min = DA9063_REG_SEQ_A,
--		.range_max = DA9063_REG_AUTO3_LOW,
--	}, {
--		.range_min = DA9063_REG_CONFIG_I,
--		.range_max = DA9063_BB_REG_MON_REG_4,
--	}, {
--		.range_min = DA9063_BB_REG_GP_ID_0,
--		.range_max = DA9063_BB_REG_GP_ID_19,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_PAGE_CON),
-+	regmap_reg_range(DA9063_REG_FAULT_LOG, DA9063_REG_VSYS_MON),
-+	regmap_reg_range(DA9063_REG_COUNT_S, DA9063_BB_REG_ALARM_Y),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_ID_32_31),
-+	regmap_reg_range(DA9063_REG_SEQ_A, DA9063_REG_AUTO3_LOW),
-+	regmap_reg_range(DA9063_REG_CONFIG_I, DA9063_BB_REG_MON_REG_4),
-+	regmap_reg_range(DA9063_BB_REG_GP_ID_0, DA9063_BB_REG_GP_ID_19),
- };
- 
- static const struct regmap_range da9063_bb_volatile_ranges[] = {
--	{
--		.range_min = DA9063_REG_PAGE_CON,
--		.range_max = DA9063_REG_EVENT_D,
--	}, {
--		.range_min = DA9063_REG_CONTROL_A,
--		.range_max = DA9063_REG_CONTROL_B,
--	}, {
--		.range_min = DA9063_REG_CONTROL_E,
--		.range_max = DA9063_REG_CONTROL_F,
--	}, {
--		.range_min = DA9063_REG_BCORE2_CONT,
--		.range_max = DA9063_REG_LDO11_CONT,
--	}, {
--		.range_min = DA9063_REG_DVC_1,
--		.range_max = DA9063_REG_ADC_MAN,
--	}, {
--		.range_min = DA9063_REG_ADC_RES_L,
--		.range_max = DA9063_BB_REG_SECOND_D,
--	}, {
--		.range_min = DA9063_REG_SEQ,
--		.range_max = DA9063_REG_SEQ,
--	}, {
--		.range_min = DA9063_REG_EN_32K,
--		.range_max = DA9063_REG_EN_32K,
--	}, {
--		.range_min = DA9063_BB_REG_MON_REG_5,
--		.range_max = DA9063_BB_REG_MON_REG_6,
--	},
-+	regmap_reg_range(DA9063_REG_PAGE_CON, DA9063_REG_EVENT_D),
-+	regmap_reg_range(DA9063_REG_CONTROL_A, DA9063_REG_CONTROL_B),
-+	regmap_reg_range(DA9063_REG_CONTROL_E, DA9063_REG_CONTROL_F),
-+	regmap_reg_range(DA9063_REG_BCORE2_CONT, DA9063_REG_LDO11_CONT),
-+	regmap_reg_range(DA9063_REG_DVC_1, DA9063_REG_ADC_MAN),
-+	regmap_reg_range(DA9063_REG_ADC_RES_L, DA9063_BB_REG_SECOND_D),
-+	regmap_reg_range(DA9063_REG_SEQ, DA9063_REG_SEQ),
-+	regmap_reg_range(DA9063_REG_EN_32K, DA9063_REG_EN_32K),
-+	regmap_reg_range(DA9063_BB_REG_MON_REG_5, DA9063_BB_REG_MON_REG_6),
- };
- 
- static const struct regmap_access_table da9063_bb_readable_table = {
--- 
-2.16.2
+I mean it works for unprivileged users.
+
+You can try "unshare -Urm" on a reasonably recent kernel and it will
+work and you can then mount and unmount things.
+
+Strictly speaking it only works if you have the appropriate set of
+capabilities in your user namespace.  But that does not imply you are a
+privileged user in the broader sense.
+
+Any user can create a user namespace, and become the root user
+in a user namespace.  The root user in a user namespace can create
+a mount namespace.  The root user in a user namespace can mount
+and unmount filesystems in their namespace.
+
+Or in net anyone can call mount and get past the may_mount test.
+
+Without reducing who can cause the kernel allocation moving the test is
+pointless.
+
+Eric
