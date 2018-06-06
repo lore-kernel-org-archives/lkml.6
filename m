@@ -1,127 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="qJ2BIImR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E489601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B5A08606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752873AbeFFCuJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Tue, 5 Jun 2018 22:50:09 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54386 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752768AbeFFCuH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 22:50:07 -0400
-X-Google-Smtp-Source: ADUXVKLkkX+BwFPXMWA1J+tFq/HJZ5uXckpADkrHIlgUDK36fWYO8CbblWquOfSLArs3Zw1Mk7aP3dPH2dfYykfWSbc=
-MIME-Version: 1.0
-In-Reply-To: <362131bf-3b6b-58aa-bda6-003f5ffb5e8e@redhat.com>
-References: <20180604123238.82200-1-chiu@endlessm.com> <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
- <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
- <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com> <20180605023124.GE47042@localhost.localdomain>
- <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
- <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com> <71df09bc89619aba975147e6b07920f1dfc2f46f.camel@hadess.net>
- <cd6a5d86-1fdb-2561-1e29-0553be53c41a@redhat.com> <94789b55b88ae5a296e1fca3b0311318e7b507ee.camel@hadess.net>
- <0443419b-3147-163b-374d-bb8651b08837@redhat.com> <cfb6ff791a9034f8ade738085475e946b3d7519b.camel@sipsolutions.net>
- <362131bf-3b6b-58aa-bda6-003f5ffb5e8e@redhat.com>
-From: Chris Chiu <chiu@endlessm.com>
-Date: Wed, 6 Jun 2018 10:50:05 +0800
-Message-ID: <CAB4CAwfZtA8mf4MwJq1AA1wqwJB-HLXuiMmkzkow3NykRsHkSw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
- on kbd brightness change
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Benjamin Berg <benjamin@sipsolutions.net>,
-        Bastien Nocera <hadess@hadess.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Daniel Drake <drake@endlessm.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752339AbeFFM4T (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:56:19 -0400
+Received: from mga09.intel.com ([134.134.136.24]:9650 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752051AbeFFMzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:55:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
+   d="scan'208";a="55204295"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [PATCH V4 2/3] kallsyms, x86: Export addresses of PTI entry trampolines
+Date: Wed,  6 Jun 2018 15:54:10 +0300
+Message-Id: <1528289651-4113-3-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
+References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 7:06 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> Hi,
->
->
-> On 05-06-18 12:46, Benjamin Berg wrote:
->>
->> Hey,
->>
->> On Tue, 2018-06-05 at 12:31 +0200, Hans de Goede wrote:
->>>
->>> On 05-06-18 12:14, Bastien Nocera wrote:
->>>>
->>>> On Tue, 2018-06-05 at 12:05 +0200, Hans de Goede wrote:
->>>>>
->>>>> On 05-06-18 11:58, Bastien Nocera wrote:
->>>>>>
->>>>>> [SNIP]
->>>>>
->>>>>
->>>>> Ok, so what are you suggestion, do you really want to hardcode
->>>>> the cycle behavior in the kernel as these 2 patches are doing,
->>>>> without any option to intervene from userspace?
->>>>>
->>>>> As mentioned before in the thread there are several example
->>>>> of the kernel deciding to handle key-presses itself, putting
->>>>> policy in the kernel and they have all ended poorly (think
->>>>> e.g. rfkill, acpi-video dealing with LC brightnesskey presses
->>>>> itself).
->>>>>
->>>>> I guess one thing we could do here is code out both solutions,
->>>>> have a module option which controls if we:
->>>>>
->>>>> 1) Handle this in the kernel as these patches do
->>>>> 2) Or send a new KEY_KBDILLUMCYCLE event
->>>>>
->>>>> Combined with a Kconfig option to select which is the default
->>>>> behavior. Then Endless can select 1 for now and then in
->>>>> Fedora (which defaults to Wayland now) we could default to
->>>>> 2. once all the code for handling 2 is in place.
->>>>>
->>>>> This is ugly (on the kernel side) but it might be the best
->>>>> compromise we can do.
->>>>
->>>>
->>>> I don't really mind which option is used, I'm listing the problems with
->>>> the different options. If you don't care about Xorg, then definitely go
->>>> for adding a new key. Otherwise, processing it in the kernel is the
->>>> least ugly, especially given that the key goes through the same driver
->>>> that controls the brightness anyway. There's no crazy cross driver
->>>> interaction as there was in the other cases you listed.
->>>
->>>
->>> Unfortunately not caring about Xorg is not really an option.
->>>
->>> Ok, new idea, how about we make g-s-d behavior upon detecting a
->>> KEY_KBDILLUMTOGGLE event configurable, if we're on a Mac do a
->>> toggle, otherwise do a cycle.
->>>
->>> Or we could do this through hwdb, then we could add a hwdb entry
->>> for this laptop setting the udev property to do a cycle instead of
->>> a toggle on receiving the keypress.
->>
->>
->> If we are adding hwdb entries anyway to control the userspace
->> interpretation of the TOGGLE key, then we could also add the new CYCLE
->> key and explicitly re-map it to TOGGLE. That requires slightly more
->> logic in hwdb, but it does mean that we could theoretically just drop
->> the workaround if we ever stop caring about Xorg.
->
->
-> Hmm, interesting proposal, I say go for it :)
->
-> Regards,
->
-> Hans
->
->
->
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-So maybe the next stop is that I can follow Darren's suggestion to eliminate
-the is_kbd_led_event() and send a v2 for review?
+Currently, the addresses of PTI entry trampolines are not exported to user
+space. Kernel profiling tools need these addresses to identify the kernel
+code, so add a symbol and address for each CPU's PTI entry trampoline.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Acked-by: Andi Kleen <ak@linux.intel.com>
+---
+ arch/x86/mm/cpu_entry_area.c | 23 +++++++++++++++++++++++
+ kernel/kallsyms.c            | 28 +++++++++++++++++++++++++++-
+ 2 files changed, 50 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+index b45f5aaefd74..fab49fd5190f 100644
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -2,6 +2,7 @@
+ 
+ #include <linux/spinlock.h>
+ #include <linux/percpu.h>
++#include <linux/kallsyms.h>
+ 
+ #include <asm/cpu_entry_area.h>
+ #include <asm/pgtable.h>
+@@ -150,6 +151,28 @@ static void __init setup_cpu_entry_area(int cpu)
+ 	percpu_setup_debug_store(cpu);
+ }
+ 
++#ifdef CONFIG_X86_64
++int arch_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
++		     char *name)
++{
++	unsigned int cpu, ncpu = 0;
++
++	if (symnum >= num_possible_cpus())
++		return -EINVAL;
++
++	for_each_possible_cpu(cpu) {
++		if (ncpu++ >= symnum)
++			break;
++	}
++
++	*value = (unsigned long)&get_cpu_entry_area(cpu)->entry_trampoline;
++	*type = 't';
++	strlcpy(name, "__entry_SYSCALL_64_trampoline", KSYM_NAME_LEN);
++
++	return 0;
++}
++#endif
++
+ static __init void setup_cpu_entry_area_ptes(void)
+ {
+ #ifdef CONFIG_X86_32
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index aa31aa07f2ef..02a0b01380d8 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -432,6 +432,7 @@ int sprint_backtrace(char *buffer, unsigned long address)
+ /* To avoid using get_symbol_offset for every symbol, we carry prefix along. */
+ struct kallsym_iter {
+ 	loff_t pos;
++	loff_t pos_arch_end;
+ 	loff_t pos_mod_end;
+ 	loff_t pos_ftrace_mod_end;
+ 	unsigned long value;
+@@ -443,9 +444,29 @@ struct kallsym_iter {
+ 	int show_value;
+ };
+ 
++int __weak arch_get_kallsym(unsigned int symnum, unsigned long *value,
++			    char *type, char *name)
++{
++	return -EINVAL;
++}
++
++static int get_ksymbol_arch(struct kallsym_iter *iter)
++{
++	int ret = arch_get_kallsym(iter->pos - kallsyms_num_syms,
++				   &iter->value, &iter->type,
++				   iter->name);
++
++	if (ret < 0) {
++		iter->pos_arch_end = iter->pos;
++		return 0;
++	}
++
++	return 1;
++}
++
+ static int get_ksymbol_mod(struct kallsym_iter *iter)
+ {
+-	int ret = module_get_kallsym(iter->pos - kallsyms_num_syms,
++	int ret = module_get_kallsym(iter->pos - iter->pos_arch_end,
+ 				     &iter->value, &iter->type,
+ 				     iter->name, iter->module_name,
+ 				     &iter->exported);
+@@ -501,6 +522,7 @@ static void reset_iter(struct kallsym_iter *iter, loff_t new_pos)
+ 	iter->nameoff = get_symbol_offset(new_pos);
+ 	iter->pos = new_pos;
+ 	if (new_pos == 0) {
++		iter->pos_arch_end = 0;
+ 		iter->pos_mod_end = 0;
+ 		iter->pos_ftrace_mod_end = 0;
+ 	}
+@@ -515,6 +537,10 @@ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
+ {
+ 	iter->pos = pos;
+ 
++	if ((!iter->pos_arch_end || iter->pos_arch_end > pos) &&
++	    get_ksymbol_arch(iter))
++		return 1;
++
+ 	if ((!iter->pos_mod_end || iter->pos_mod_end > pos) &&
+ 	    get_ksymbol_mod(iter))
+ 		return 1;
+-- 
+1.9.1
