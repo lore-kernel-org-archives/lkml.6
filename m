@@ -1,70 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9cXuj1+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C9B560555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC549601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeFFQE6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:04:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751891AbeFFQE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:04:56 -0400
-X-Google-Smtp-Source: ADUXVKKvy1mm946lnWAo2W1SO5u+D3Qu1gtvxJCtSSc9OmwdOPHC78W7RsDj2TyCs6cc630AlxGuNmiQ69EzCdHyTmk=
-MIME-Version: 1.0
-In-Reply-To: <1525229431-3087-28-git-send-email-hao.wu@intel.com>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com> <1525229431-3087-28-git-send-email-hao.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Wed, 6 Jun 2018 11:04:15 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRVdZp7zCfY+YCBVubQa1iWYNq00xv=aQ=G3nwR-_vePg@mail.gmail.com>
-Message-ID: <CANk1AXRVdZp7zCfY+YCBVubQa1iWYNq00xv=aQ=G3nwR-_vePg@mail.gmail.com>
-Subject: Re: [PATCH v5 27/28] fpga: dfl: afu: add afu sub feature support
-To: Wu Hao <hao.wu@intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752512AbeFFNfe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:35:34 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:48812 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752400AbeFFNfc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:35:32 -0400
+X-IronPort-AV: E=Sophos;i="5.49,483,1520895600";
+   d="scan'208";a="330618737"
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+To: Ariel Elior <ariel.elior@cavium.com>
+Cc: kernel-janitors@vger.kernel.org, everest-linux-l2@cavium.com,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] bnx2x: use the right constant
+Date: Wed,  6 Jun 2018 15:03:22 +0200
+Message-Id: <1528290202-32454-1-git-send-email-Julia.Lawall@lip6.fr>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+Nearby code that also tests port suggests that the P0 constant should be
+used when port is zero.
 
-Hi Hao,
+The semantic match that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-> From: Xiao Guangrong <guangrong.xiao@linux.intel.com>
->
-> User Accelerated Function Unit sub feature exposes the MMIO region of
-> the AFU. After valid PR bitstream is programmed and the port is enabled,
-> then this MMIO region could be accessed.
->
-> This patch adds support to enumerate the AFU MMIO region and expose it
-> to userspace via mmap file operation. Below interfaces are exposed to user:
->
-> Sysfs interface:
-> * /sys/class/fpga_region/<regionX>/<dfl-port.x>/afu_id
->   Read-only. Indicate which PR bitstream is programmed to this AFU.
->
-> Ioctl interfaces:
-> * DFL_FPGA_PORT_GET_INFO
->   Provide info to userspace on the number of supported region.
->   Only UAFU region is supported now.
->
-> * DFL_FPGA_PORT_GET_REGION_INFO
->   Provide region information, including access permission, region size,
->   offset from the start of device fd.
->
-> Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-> Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-> Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-> Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-> Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
+// <smpl>
+@@
+expression e,e1;
+@@
+
+* e ? e1 : e1
+// </smpl>
+
+
+Fixes: 6c3218c6f7e5 ("bnx2x: Adjust ETS to 578xx")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+index 7dd83d0..22243c4 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
+@@ -588,7 +588,7 @@ static void bnx2x_ets_e3b0_nig_disabled(const struct link_params *params,
+ 	 * slots for the highest priority.
+ 	 */
+ 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
+-		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
++		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
+ 	/* Mapping between the CREDIT_WEIGHT registers and actual client
+ 	 * numbers
+ 	 */
