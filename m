@@ -1,274 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05A6060764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E19F601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752157AbeFFMgD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:36:03 -0400
-Received: from mga17.intel.com ([192.55.52.151]:49918 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750795AbeFFMgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:36:01 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="46867298"
-Date: Wed, 6 Jun 2018 20:24:57 +0800
-From: Wu Hao <hao.wu@intel.com>
-To: Alan Tull <atull@kernel.org>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: Re: [PATCH v5 07/28] fpga: dfl: add chardev support for feature
- devices
-Message-ID: <20180606122457.GB7681@hao-dev>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
- <1525229431-3087-8-git-send-email-hao.wu@intel.com>
- <CANk1AXRQx=QtwmSKuWiGprMcfjNnUWcBHNy-hTfP+JaQZsJLLA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANk1AXRQx=QtwmSKuWiGprMcfjNnUWcBHNy-hTfP+JaQZsJLLA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1752035AbeFFOwn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:52:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34246 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751957AbeFFOwl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 10:52:41 -0400
+Subject: Re: [PATCH v3 4/4] ima: Differentiate auditing policy rules from
+ "audit" actions
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-audit@redhat.com,
+        sgrubb@redhat.com, linux-kernel@vger.kernel.org
+Date: Wed, 06 Jun 2018 10:52:23 -0400
+In-Reply-To: <CAHC9VhSbdYOkcszy+emgPNWWtUc0LoWy8pPvov+qjubV7b_EjQ@mail.gmail.com>
+References: <20180604205455.2325754-1-stefanb@linux.vnet.ibm.com>
+         <20180604205455.2325754-5-stefanb@linux.vnet.ibm.com>
+         <CAHC9VhRkkQ74tvqGrSuNX2RdeHz5N7eU03-yHmVsZg47TxFD0g@mail.gmail.com>
+         <1528208105.3237.155.camel@linux.vnet.ibm.com>
+         <CAHC9VhSbdYOkcszy+emgPNWWtUc0LoWy8pPvov+qjubV7b_EjQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18060614-0020-0000-0000-00000297CA60
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060614-0021-0000-0000-000020E3DA3F
+Message-Id: <1528296743.3255.29.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806060170
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 03:21:48PM -0500, Alan Tull wrote:
-> On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+On Tue, 2018-06-05 at 18:18 -0400, Paul Moore wrote:
+> On Tue, Jun 5, 2018 at 10:15 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> > Hi Paul,
+> >
+> > On Mon, 2018-06-04 at 20:21 -0400, Paul Moore wrote:
+> >> On Mon, Jun 4, 2018 at 4:54 PM, Stefan Berger
+> >> <stefanb@linux.vnet.ibm.com> wrote:
+> >> > The AUDIT_INTEGRITY_RULE is used for auditing IMA policy rules and
+> >> > the IMA "audit" policy action.  This patch defines
+> >> > AUDIT_INTEGRITY_POLICY_RULE to reflect the IMA policy rules.
+> >> >
+> >> > Since we defined a new message type we can now also pass the
+> >> > audit_context and get an associated SYSCALL record. This now produces
+> >> > the following records when parsing IMA policy's rules:
+> >>
+> >> Aaand now I see you included the current->audit_context pointer I
+> >> mentioned in my comments for 3/4 ;)
+> >>
+> >> So basically this should be fine, although I should point out that you
+> >> do not need to define a new message type to associate records
+> >> together.  The fact that we don't associate all connected records is
+> >> basically a bug.
+> >>
+> >> Anyway, patches 3/4 and 4/4 look good to me.  Considering this is
+> >> likely going in during the *next* merge window, I would ask that you
+> >> convert from "current->audit_context" to "audit_context()" as soon as
+> >> this merge window closes.
+> >>
+> >> Thanks!
+> >
+> > Thanks, Paul.  I'd like to start queueing patches for the next open
+> > window now, instead of scrambling later.  Can I add your Ack now, and
+> > remember to make this change when rebasing?
 > 
-> Hi Hao,
+> Sure, go ahead and add my ACK to both 3/4 and 4/4 as long as you
+> double pinky swear you'll do the audit_context() fix-up during the
+> merge :)
 > 
-> > For feature devices drivers, both the FPGA Management Engine (FME) and
-> > Accelerated Function Unit (AFU) driver need to expose user interfaces via
-> > the device file, for example, mmap and ioctls.
-> >
-> > This patch adds chardev support in the dfl driver for feature devices,
-> > FME and AFU. It reserves the chardev regions for FME and AFU, and provide
-> > interfaces for FME and AFU driver to register their device file operations.
-> >
-> > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-> > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-> > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-> > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-> > Signed-off-by: Zhang Yi <yi.z.zhang@intel.com>
-> > Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> > ---
-> > v2: rebased
-> > v3: move chardev support to fpga-dfl framework
-> > v4: rebase, and add more comments in code.
-> > v5: rebase, and add dfl_ prefix to APIs and data structures.
-> > ---
-> >  drivers/fpga/dfl.c | 104 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> >  drivers/fpga/dfl.h |  14 ++++++++
-> >  2 files changed, 117 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> > index c1462e9..18aba02 100644
-> > --- a/drivers/fpga/dfl.c
-> > +++ b/drivers/fpga/dfl.c
-> > @@ -74,6 +74,96 @@ static enum dfl_id_type feature_dev_id_type(struct platform_device *pdev)
-> >         return DFL_ID_MAX;
-> >  }
-> >
-> > +struct dfl_chardev_info {
-> > +       const char *name;
-> > +       dev_t devt;
-> > +};
-> > +
-> > +/* indexed by enum dfl_fpga_devt_type */
-> > +struct dfl_chardev_info dfl_chrdevs[] = {
-> > +       {.name = DFL_FPGA_FEATURE_DEV_FME},     /* DFL_FPGA_DEVT_FME */
-> > +       {.name = DFL_FPGA_FEATURE_DEV_PORT},    /* DFL_FPGA_DEVT_AFU */
-> > +};
-> 
-> If this were added in the initial dfl.c patch, it could be used by
-> build_info_create_dev to get the name.
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
-Sure, will fix this.
+Sure, it will be really hard to miss.  The next-integrity-queued
+branch has:
 
-> 
-> > +
-> > +static void dfl_chardev_uinit(void)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = 0; i < DFL_FPGA_DEVT_MAX; i++)
-> > +               if (MAJOR(dfl_chrdevs[i].devt)) {
-> > +                       unregister_chrdev_region(dfl_chrdevs[i].devt,
-> > +                                                MINORMASK);
-> > +                       dfl_chrdevs[i].devt = MKDEV(0, 0);
-> > +               }
-> > +}
-> > +
-> > +static int dfl_chardev_init(void)
-> > +{
-> > +       int i, ret;
-> > +
-> > +       for (i = 0; i < DFL_FPGA_DEVT_MAX; i++) {
-> > +               ret = alloc_chrdev_region(&dfl_chrdevs[i].devt, 0, MINORMASK,
-> > +                                         dfl_chrdevs[i].name);
-> > +               if (ret)
-> > +                       goto exit;
-> > +       }
-> > +
-> > +       return 0;
-> > +
-> > +exit:
-> > +       dfl_chardev_uinit();
-> > +       return ret;
-> > +}
-> > +
-> > +static dev_t dfl_get_devt(enum dfl_fpga_devt_type type, int id)
-> > +{
-> > +       WARN_ON(type >= DFL_FPGA_DEVT_MAX);
-> > +
-> > +       return MKDEV(MAJOR(dfl_chrdevs[type].devt), id);
-> > +}
-> > +
-> > +/**
-> > + * dfl_fpga_register_dev_ops - register cdev ops for feature dev
-> > + *
-> > + * @pdev: feature dev.
-> > + * @fops: file operations for feature dev's cdev.
-> > + * @owner: owning module/driver.
-> > + *
-> > + * Return: 0 on success, negative error code otherwise.
-> > + */
-> > +int dfl_fpga_register_dev_ops(struct platform_device *pdev,
-> > +                             const struct file_operations *fops,
-> > +                             struct module *owner)
-> > +{
-> > +       struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> > +
-> > +       cdev_init(&pdata->cdev, fops);
-> > +       pdata->cdev.owner = owner;
-> > +
-> > +       /*
-> > +        * set parent to the feature device so that its refcount is
-> > +        * decreased after the last refcount of cdev is gone, that
-> > +        * makes sure the feature device is valid during device
-> > +        * file's life-cycle.
-> > +        */
-> > +       pdata->cdev.kobj.parent = &pdev->dev.kobj;
-> > +
-> > +       return cdev_add(&pdata->cdev, pdev->dev.devt, 1);
-> > +}
-> > +EXPORT_SYMBOL_GPL(dfl_fpga_register_dev_ops);
-> > +
-> > +/**
-> > + * dfl_fpga_unregister_dev_ops - unregister cdev ops for feature dev
-> > + * @pdev: feature dev.
-> > + */
-> > +void dfl_fpga_unregister_dev_ops(struct platform_device *pdev)
-> > +{
-> > +       struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> > +
-> > +       cdev_del(&pdata->cdev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(dfl_fpga_unregister_dev_ops);
-> > +
-> >  /**
-> >   * struct build_feature_devs_info - info collected during feature dev build.
-> >   *
-> > @@ -208,9 +298,13 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
-> >                       enum dfl_id_type type, const char *name,
-> >                       void __iomem *ioaddr)
-> >  {
-> > +       enum dfl_fpga_devt_type devt_type = DFL_FPGA_DEVT_FME;
-> >         struct platform_device *fdev;
-> >         int ret;
-> >
-> > +       if (type == PORT_ID)
-> > +               devt_type = DFL_FPGA_DEVT_PORT;
-> > +
-> >         /* we will create a new device, commit current device first */
-> >         ret = build_info_commit_dev(binfo);
-> >         if (ret)
-> > @@ -234,6 +328,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
-> >                 return fdev->id;
-> >
-> >         fdev->dev.parent = &binfo->cdev->region->dev;
-> > +       fdev->dev.devt = dfl_get_devt(devt_type, fdev->id);
-> >
-> >         return 0;
-> >  }
-> > @@ -702,13 +797,20 @@ void dfl_fpga_remove_feature_devs(struct dfl_fpga_cdev *cdev)
-> >
-> >  static int __init dfl_fpga_init(void)
-> >  {
-> > +       int ret;
-> > +
-> >         dfl_ids_init();
-> >
-> > -       return 0;
-> > +       ret = dfl_chardev_init();
-> > +       if (ret)
-> > +               dfl_ids_destroy();
-> > +
-> > +       return ret;
-> >  }
-> >
-> >  static void __exit dfl_fpga_exit(void)
-> >  {
-> > +       dfl_chardev_uinit();
-> >         dfl_ids_destroy();
-> >  }
-> >
-> > diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-> > index 2ede915..5fcb1a1 100644
-> > --- a/drivers/fpga/dfl.h
-> > +++ b/drivers/fpga/dfl.h
-> > @@ -15,6 +15,7 @@
-> >  #define __FPGA_DFL_H
-> >
-> >  #include <linux/bitfield.h>
-> > +#include <linux/cdev.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/fs.h>
-> >  #include <linux/iopoll.h>
-> > @@ -150,6 +151,7 @@ struct dfl_feature {
-> >   *
-> >   * @node: node to link feature devs to container device's port_dev_list.
-> >   * @lock: mutex to protect platform data.
-> > + * @cdev: cdev of feature dev.
-> >   * @dev: ptr to platform device linked with this platform data.
-> >   * @dfl_cdev: ptr to container device.
-> >   * @disable_count: count for port disable.
-> > @@ -159,6 +161,7 @@ struct dfl_feature {
-> >  struct dfl_feature_platform_data {
-> >         struct list_head node;
-> >         struct mutex lock;
-> > +       struct cdev cdev;
-> >         struct platform_device *dev;
-> >         struct dfl_fpga_cdev *dfl_cdev;
-> >         unsigned int disable_count;
-> > @@ -176,6 +179,17 @@ static inline int dfl_feature_platform_data_size(const int num)
-> >                 num * sizeof(struct dfl_feature);
-> >  }
-> >
-> > +enum dfl_fpga_devt_type {
-> > +       DFL_FPGA_DEVT_FME,
-> > +       DFL_FPGA_DEVT_PORT,
-> > +       DFL_FPGA_DEVT_MAX,
-> > +};
-> 
-> Could you move this enum to be close to other similar enums (like
-> dfl_id_type)?  The dfl code has a few enums that are similar, and may
-> need updating (or not) as feature are added.  Putting them close
-> together with appropriate comments would be helpful to keep them all
-> straight.
+Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 
-Agree, I will fix this in v6.
-Thanks for the review.
-
-Hao
+*** Remember replace current->audit_context with call to audit_context() ***
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
