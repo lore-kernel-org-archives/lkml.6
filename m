@@ -1,76 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvcdUUvo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 873D66070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E92ED60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeFFFKY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 01:10:24 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:45495 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeFFFKW (ORCPT
+        id S1752976AbeFFPzl (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:55:41 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57278 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbeFFPyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 01:10:22 -0400
-X-Google-Smtp-Source: ADUXVKJSUSvelqejpInXaxKjzRVAfExOUuXqO1hCaa+ZkoNkAxhsHaem11UTgzySoVNd3GlJi8aU5g==
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
-Date: Wed, 6 Jun 2018 08:10:17 +0300
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 3/4] clk: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180606051017.GB20078@localhost.localdomain>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <da121dede6d79460c5653a5bc360d413cb988c74.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <20180605154932.GA20204@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605154932.GA20204@rob-hp-laptop>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 6 Jun 2018 11:54:23 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org
+Subject: [PATCH 3/8] ARM: dts: am335x-sl50: add a node for the LCD controller
+Date: Wed,  6 Jun 2018 17:54:08 +0200
+Message-Id: <20180606155413.23542-3-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180606155413.23542-1-enric.balletbo@collabora.com>
+References: <20180606155413.23542-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 09:49:32AM -0600, Rob Herring wrote:
-> On Mon, Jun 04, 2018 at 04:18:53PM +0300, Matti Vaittinen wrote:
-> > Document devicetree bindings for ROHM BD71837 PMIC clock output.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  .../bindings/clock/rohm,bd71837-clock.txt          | 38 ++++++++++++++++++++++
-> >  1 file changed, 38 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-> > new file mode 100644
-> > index 000000000000..771acfe34114
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-> > @@ -0,0 +1,38 @@
-> > +ROHM BD71837 Power Management Integrated Circuit clock bindings
-> 
-> This needs to be added to the MFD doc. One node should be covered by at 
-> most 1 document.
+Add the pins used by the LCD controller, the panel-info and display-timings
+information for the MIDAS displays connected to the board. There are
+two displays in the board, and these, are connected to the LCD controller
+through a FPGA, so the timings and the resolution is what expects the FPGA,
+not the MIDAS displays.
 
-I was thinking of that too. But then I asked why? I also thought that if
-one knows there is clock block in the chip - where does he look for
-binding document? From clock folder. Then I saw how bindings for
-MAX77686 chip were written and thought that this is beneficial for all.
-MFD document directs to clock and regulator docs and on othe other hand,
-clock document clearly states that properties it describes must be
-present "in main device node of the MFD chip".
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Don't you think on searching for clock bindings should find something
-from clock folder? I can follow your instruction here but I think
-the user might be happy if he found something under bindings/clock for
-clock related properties.
+ arch/arm/boot/dts/am335x-sl50.dts | 69 ++++++++++++++++++++++++++++++-
+ 1 file changed, 68 insertions(+), 1 deletion(-)
 
-Br,
-	Matti Vaittinen
+diff --git a/arch/arm/boot/dts/am335x-sl50.dts b/arch/arm/boot/dts/am335x-sl50.dts
+index 58fe84f2ec8b..ea047b85b726 100644
+--- a/arch/arm/boot/dts/am335x-sl50.dts
++++ b/arch/arm/boot/dts/am335x-sl50.dts
+@@ -111,6 +111,45 @@
+ 		};
+ 	};
+ 
++	panel: lcd_panel {
++		compatible = "ti,tilcdc,panel";
++		pinctrl-names = "default";
++		pinctrl-0 = <&lcd_pins>;
++
++		panel-info {
++			ac-bias = <255>;
++			ac-bias-intrpt = <0>;
++			dma-burst-sz = <16>;
++			bpp = <16>;
++			fdd = <0x80>;
++			tft-alt-mode = <0>;
++			mono-8bit-mode = <0>;
++			sync-edge = <0>;
++			sync-ctrl = <1>;
++			raster-order = <0>;
++			fifo-th = <0>;
++		};
++
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: 960x128 {
++				clock-frequency = <18000000>;
++				hactive = <960>;
++				vactive = <272>;
++
++				hback-porch = <40>;
++				hfront-porch = <16>;
++				hsync-len = <24>;
++				hsync-active = <0>;
++
++				vback-porch = <3>;
++				vfront-porch = <8>;
++				vsync-len = <4>;
++				vsync-active = <0>;
++			};
++		};
++	};
++
+ 	sound {
+ 		compatible = "ti,da830-evm-audio";
+ 		ti,model = "AM335x-SL50";
+@@ -166,6 +205,31 @@
+ 		>;
+ 	};
+ 
++	lcd_pins: pinmux_lcd_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x8a0, PIN_OUTPUT | MUX_MODE0)	/* lcd_data0.lcd_data0 */
++			AM33XX_IOPAD(0x8a4, PIN_OUTPUT | MUX_MODE0)	/* lcd_data1.lcd_data1 */
++			AM33XX_IOPAD(0x8a8, PIN_OUTPUT | MUX_MODE0)	/* lcd_data2.lcd_data2 */
++			AM33XX_IOPAD(0x8ac, PIN_OUTPUT | MUX_MODE0)	/* lcd_data3.lcd_data3 */
++			AM33XX_IOPAD(0x8b0, PIN_OUTPUT | MUX_MODE0)	/* lcd_data4.lcd_data4 */
++			AM33XX_IOPAD(0x8b4, PIN_OUTPUT | MUX_MODE0)	/* lcd_data5.lcd_data5 */
++			AM33XX_IOPAD(0x8b8, PIN_OUTPUT | MUX_MODE0)	/* lcd_data6.lcd_data6 */
++			AM33XX_IOPAD(0x8bc, PIN_OUTPUT | MUX_MODE0)	/* lcd_data7.lcd_data7 */
++			AM33XX_IOPAD(0x8c0, PIN_OUTPUT | MUX_MODE0)	/* lcd_data8.lcd_data8 */
++			AM33XX_IOPAD(0x8c4, PIN_OUTPUT | MUX_MODE0)	/* lcd_data9.lcd_data9 */
++			AM33XX_IOPAD(0x8c8, PIN_OUTPUT | MUX_MODE0)	/* lcd_data10.lcd_data10 */
++			AM33XX_IOPAD(0x8cc, PIN_OUTPUT | MUX_MODE0)	/* lcd_data11.lcd_data11 */
++			AM33XX_IOPAD(0x8d0, PIN_OUTPUT | MUX_MODE0)	/* lcd_data12.lcd_data12 */
++			AM33XX_IOPAD(0x8d4, PIN_OUTPUT | MUX_MODE0)	/* lcd_data13.lcd_data13 */
++			AM33XX_IOPAD(0x8d8, PIN_OUTPUT | MUX_MODE0)	/* lcd_data14.lcd_data14 */
++			AM33XX_IOPAD(0x8dc, PIN_OUTPUT | MUX_MODE0)	/* lcd_data15.lcd_data15 */
++			AM33XX_IOPAD(0x8e0, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* lcd_vsync.lcd_vsync */
++			AM33XX_IOPAD(0x8e4, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* lcd_hsync.lcd_hsync */
++			AM33XX_IOPAD(0x8e8, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* lcd_pclk.lcd_pclk */
++			AM33XX_IOPAD(0x8ec, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* lcd_ac_bias_en.lcd_ac_bias_en */
++		>;
++	};
++
+ 	led_pins: pinmux_led_pins {
+ 		pinctrl-single,pins = <
+ 			AM33XX_IOPAD(0x854, PIN_OUTPUT | MUX_MODE7)	/* gpmc_a5.gpio1_21 */
+@@ -323,7 +387,6 @@
+ 	lwb_pins: pinmux_lwb_pins {
+ 		pinctrl-single,pins = <
+ 			AM33XX_IOPAD(0x9a4, PIN_OUTPUT | MUX_MODE7)	/* SoundPA_en - mcasp0_fsr.gpio3_19 */
+-			AM33XX_IOPAD(0x828, PIN_OUTPUT | MUX_MODE7)	/* nKbdOnC - gpmc_ad10.gpio0_26 */
+ 			AM33XX_IOPAD(0x830, PIN_INPUT_PULLUP | MUX_MODE7)	/* nKbdInt - gpmc_ad12.gpio1_12 */
+ 			AM33XX_IOPAD(0x834, PIN_INPUT_PULLUP | MUX_MODE7)	/* nKbdReset - gpmc_ad13.gpio1_13 */
+ 			AM33XX_IOPAD(0x844, PIN_INPUT_PULLUP | MUX_MODE7)	/* USB1_enPower - gpmc_a1.gpio1_17 */
+@@ -595,3 +658,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ehrpwm1_pins>;
+ };
++
++&lcdc {
++	status = "okay";
++};
+-- 
+2.17.1
