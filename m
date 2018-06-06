@@ -1,89 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8FEBE60767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biiFLhuK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5DA97601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752228AbeFFNIy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:08:54 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58573 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752046AbeFFNIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:08:51 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Xi Wang <wangxi11@huawei.com>
-Subject: [PATCH V2 net-next 3/3] net: hns3: Optimize PF CMDQ interrupt switching process
-Date: Wed, 6 Jun 2018 14:07:53 +0100
-Message-ID: <20180606130753.54428-4-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180606130753.54428-1-salil.mehta@huawei.com>
-References: <20180606130753.54428-1-salil.mehta@huawei.com>
+        id S933796AbeFFREg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:04:36 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46339 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933567AbeFFREf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:04:35 -0400
+X-Google-Smtp-Source: ADUXVKKesF6/VtAj+5uK10tsluRK0c1vqK792Bsp/wbBC6iD4XkMSVa4axoLHgx+eO4nERr5aA34gQZv55iaPnakZQQ=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.227.234]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAEdQ38GR7XzjfjARuYxnr0dYGnCr_Sxn9bwwZJGZu7CJf6syvw@mail.gmail.com>
+References: <20180526193523.3896-1-mattst88@gmail.com> <CAEdQ38GR7XzjfjARuYxnr0dYGnCr_Sxn9bwwZJGZu7CJf6syvw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 6 Jun 2018 20:04:33 +0300
+Message-ID: <CAHp75VepGkCyQ6gM7s2-EO3=6quiCNVGDSZooRr1uoUVeE7hmQ@mail.gmail.com>
+Subject: Re: [PATCH] parport: Add support for the WCH384 4S multi-IO card
+To: Matt Turner <mattst88@gmail.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergej Pupykin <ml@sergej.pp.ru>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xi Wang <wangxi11@huawei.com>
+On Wed, Jun 6, 2018 at 9:07 AM, Matt Turner <mattst88@gmail.com> wrote:
+> On Sat, May 26, 2018 at 12:35 PM, Matt Turner <mattst88@gmail.com> wrote:
+>> This Multi-IO card has one serial 16550-like serial connectors. Here's
+>> the lspci output, after this commit is applied:
+>>
+>> 01:00.0 Serial controller [0700]: Device [1c00:3470] (rev 10) (prog-if 05 [16850])
+>>         Subsystem: Device [1c00:3470]
+>>         Flags: fast devsel, IRQ 16
+>>         I/O ports at e000 [size=256]
+>>         Memory at f0100000 (32-bit, prefetchable) [size=32K]
+>>         I/O ports at e100 [size=4]
+>>         Expansion ROM at f7d00000 [disabled] [size=32K]
+>>         Capabilities: [60] Power Management version 3
+>>         Capabilities: [68] MSI: Enable- Count=1/32 Maskable+ 64bit+
+>>         Capabilities: [80] Express Legacy Endpoint, MSI 00
+>>         Capabilities: [100] Advanced Error Reporting
+>>         Kernel driver in use: parport_serial
+>>
+>> This card was already added to the blacklist of 8250_pci.c in commit
+>> 72a3c0e4e662 ("tty: Add support for the WCH384 4S multi-IO card").
 
-When the PF frequently switches the CMDQ interrupt, if the CMDQ_SRC is
-not cleared before the hardware interrupt is generated, the new interrupt
-will not be reported.
+First of all, this patch is in conflict with tty-next AFAICS.
 
-This patch optimizes this problem by clearing CMDQ_SRC and RESET_STS
-before enabling interrupt and syncing pending IRQ handlers after disabling
-interrupt.
+Second, what card w/o parport should do in parport_serial?
 
-Fixes: 466b0c00391b ("net: hns3: Add support for misc interrupt")
-Signed-off-by: Xi Wang <wangxi11@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Third, this patch brings more mess: either you should remove the code
+from 8250_pci, or do not add it here. See below.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 2a80134..d318d35 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2557,6 +2557,15 @@ static void hclge_clear_event_cause(struct hclge_dev *hdev, u32 event_type,
- 	}
- }
- 
-+static void hclge_clear_all_event_cause(struct hclge_dev *hdev)
-+{
-+	hclge_clear_event_cause(hdev, HCLGE_VECTOR0_EVENT_RST,
-+				BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B) |
-+				BIT(HCLGE_VECTOR0_CORERESET_INT_B) |
-+				BIT(HCLGE_VECTOR0_IMPRESET_INT_B));
-+	hclge_clear_event_cause(hdev, HCLGE_VECTOR0_EVENT_MBX, 0);
-+}
-+
- static void hclge_enable_vector(struct hclge_misc_vector *vector, bool enable)
- {
- 	writel(enable ? 1 : 0, vector->addr);
-@@ -5688,6 +5697,8 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
- 	INIT_WORK(&hdev->rst_service_task, hclge_reset_service_task);
- 	INIT_WORK(&hdev->mbx_service_task, hclge_mailbox_service_task);
- 
-+	hclge_clear_all_event_cause(hdev);
-+
- 	/* Enable MISC vector(vector0) */
- 	hclge_enable_vector(&hdev->misc_vector, true);
- 
-@@ -5817,6 +5828,8 @@ static void hclge_uninit_ae_dev(struct hnae3_ae_dev *ae_dev)
- 
- 	/* Disable MISC vector(vector0) */
- 	hclge_enable_vector(&hdev->misc_vector, false);
-+	synchronize_irq(hdev->misc_vector.vector_irq);
-+
- 	hclge_destroy_cmd_queue(&hdev->hw);
- 	hclge_misc_irq_uninit(hdev);
- 	hclge_pci_uninit(hdev);
+it looks like the mentioned patch mistakenly added it to blacklist by
+unknown reason.
+
+Feels to me like NAK to this one.
+
+And btw, you missed s letter in the model name across the code and I
+don't see any of cards there listed with numports == 0.
+
+>>
+>> Cc: Sergej Pupykin <ml@sergej.pp.ru>
+>> Signed-off-by: Matt Turner <mattst88@gmail.com>
+>> ---
+>
+> Hi,
+>
+> Can I expect this to be picked up for the 4.18 merge window?
+>
+> Matt
+
+
+
 -- 
-2.7.4
+With Best Regards,
+Andy Shevchenko
