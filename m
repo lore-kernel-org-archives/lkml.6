@@ -1,63 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADV0BQpk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D5BB60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8386860555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753877AbeFFRob (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:44:31 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44777 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752393AbeFFRo3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:44:29 -0400
-X-Google-Smtp-Source: ADUXVKIxQi7Slbz/4uZxEColbO22KHfygo3U2F/3F9eOwBpWMWNaTmThOG+QTN4DMAKYNOywyuQA0Q==
-From: Rafael David Tinoco <rafael.tinoco@linaro.org>
-To: bamv2005@gmail.com
-Cc: brgl@bgdev.pl, shuah@kernel.org, linux-gpio@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rafael.tinoco@linaro.org
-Subject: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT fix
-Date: Wed,  6 Jun 2018 14:44:24 -0300
-Message-Id: <20180606174424.9630-1-rafael.tinoco@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        id S1753854AbeFFRJK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:09:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33514 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752257AbeFFRJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:09:08 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: containers@lists.linux-foundation.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: eparis@parisplace.org, Steve Grubb <sgrubb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghau51/ghau40 v3 1/6] AUDIT_CONTAINER_ID message type basic support
+Date: Wed,  6 Jun 2018 13:07:24 -0400
+Message-Id: <1528304849-31826-2-git-send-email-rgb@redhat.com>
+In-Reply-To: <1528304849-31826-1-git-send-email-rgb@redhat.com>
+References: <1528304849-31826-1-git-send-email-rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
-should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
-the following error occurs:
+This defines the message number for the audit container identifier
+registration record should the kernel headers not be up to date, gives
+the record number a name for printing and allows the record to be
+interpreted since it is in the 1000 range like AUDIT_LOGIN.
 
-gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
-such file or directory
-
-despite the real result of gpio_pin_test(), gpio_debugfs_get() and
-gpiotools_request_linehandle() functions.
-
-Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+See: https://github.com/linux-audit/audit-userspace/issues/51
+See: https://github.com/linux-audit/audit-kernel/issues/90
+See: https://github.com/linux-audit/audit-testsuite/issues/64
+See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- tools/testing/selftests/gpio/gpio-mockup-chardev.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ lib/libaudit.h    | 4 ++++
+ lib/msg_typetab.h | 1 +
+ lib/netlink.c     | 1 +
+ 3 files changed, 6 insertions(+)
 
-diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-index 667e916fa7cc..f8d468f54e98 100644
---- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-+++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
-@@ -225,10 +225,10 @@ int gpio_pin_test(struct gpiochip_info *cinfo, int line, int flag, int value)
- 		if (flag & GPIOHANDLE_REQUEST_ACTIVE_LOW)
- 			debugfs_value = !debugfs_value;
+diff --git a/lib/libaudit.h b/lib/libaudit.h
+index b681e8d..6cdd269 100644
+--- a/lib/libaudit.h
++++ b/lib/libaudit.h
+@@ -242,6 +242,10 @@ extern "C" {
+ #define AUDIT_GET_FEATURE       1019    /* Get which features are enabled */
+ #endif
  
--		if (!(debugfs_dir == OUT && value == debugfs_value))
-+		if (!(debugfs_dir == OUT && value == debugfs_value)) {
- 			errno = -EINVAL;
--		ret = -errno;
--
-+			ret = -errno;
-+		}
- 	}
- 	gpiotools_release_linehandle(fd);
- 
++#ifndef AUDIT_CONTAINER_ID
++#define AUDIT_CONTAINER_ID	1020    /* Container creation notice */
++#endif
++
+ #ifndef AUDIT_MMAP
+ #define AUDIT_MMAP		1323 /* Descriptor and flags in mmap */
+ #endif
+diff --git a/lib/msg_typetab.h b/lib/msg_typetab.h
+index 966865f..e94bfb2 100644
+--- a/lib/msg_typetab.h
++++ b/lib/msg_typetab.h
+@@ -44,6 +44,7 @@ _S(AUDIT_LOGIN,                      "LOGIN"                         )
+ //_S(AUDIT_TTY_SET,                    "TTY_SET"                       )
+ //_S(AUDIT_SET_FEATURE,                "SET_FEATURE"                   )
+ //_S(AUDIT_GET_FEATURE,                "GET_FEATURE"                   )
++_S(AUDIT_CONTAINER_ID,               "CONTAINER_ID"                  )
+ _S(AUDIT_USER_AUTH,                  "USER_AUTH"                     )
+ _S(AUDIT_USER_ACCT,                  "USER_ACCT"                     )
+ _S(AUDIT_USER_MGMT,                  "USER_MGMT"                     )
+diff --git a/lib/netlink.c b/lib/netlink.c
+index 5b2028f..ef35bdd 100644
+--- a/lib/netlink.c
++++ b/lib/netlink.c
+@@ -184,6 +184,7 @@ static int adjust_reply(struct audit_reply *rep, int len)
+ 			break;
+ 		case AUDIT_USER:
+ 		case AUDIT_LOGIN:
++		case AUDIT_CONTAINER_ID:
+ 		case AUDIT_KERNEL:
+ 		case AUDIT_FIRST_USER_MSG...AUDIT_LAST_USER_MSG:
+ 		case AUDIT_FIRST_USER_MSG2...AUDIT_LAST_USER_MSG2:
 -- 
-2.17.1
+1.8.3.1
