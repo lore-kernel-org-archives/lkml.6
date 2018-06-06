@@ -1,111 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0A0D360555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sandeen.net
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=evidence-eu-com.20150623.gappssmtp.com header.i=@evidence-eu-com.20150623.gappssmtp.com header.b="WYlagfUv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F0376070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=evidence.eu.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753899AbeFFRph (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:45:37 -0400
-Received: from sandeen.net ([63.231.237.45]:56996 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752213AbeFFRpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:45:35 -0400
-Subject: Re: [PATCH V2] xfs: fix string handling in get/set functions
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
-        Martin Sebor <msebor@gmail.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20180525151421.2317292-1-arnd@arndb.de>
- <7aad9fc3-ed65-a016-d477-5d830e31cb43@sandeen.net>
- <20180606105817.GA6575@infradead.org>
-From: Eric Sandeen <sandeen@sandeen.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <75d75204-60e7-e5fd-febb-b82c70e26378@sandeen.net>
-Date: Wed, 6 Jun 2018 12:45:33 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S1752078AbeFFNGD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:06:03 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:44561 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751864AbeFFNGB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:06:01 -0400
+X-Google-Smtp-Source: ADUXVKKxh1/fbn4/9+/Y5WfkUvh9tZ9arDyoaUVlhrrcHUnid3VY2K9SzH09TsNaabPY1Seaz5QWIw==
+Subject: Re: [PATCH v5 00/10] track CPU utilization
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
+ <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
+ <20180605121153.GD16081@localhost.localdomain>
+ <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
+ <20180605131518.GG16081@localhost.localdomain>
+ <20180605140101.GE12193@e108498-lin.cambridge.arm.com>
+ <20180605141317.GJ16081@localhost.localdomain>
+From: Claudio Scordino <claudio@evidence.eu.com>
+Message-ID: <6c2dc1aa-3e19-be14-0ed8-b29003c72e61@evidence.eu.com>
+Date: Wed, 6 Jun 2018 15:05:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180606105817.GA6575@infradead.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180605141317.GJ16081@localhost.localdomain>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Quentin,
 
-
-On 6/6/18 5:58 AM, Christoph Hellwig wrote:
->> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
->> index 82f7c83c1dad..596e176c19a6 100644
->> --- a/fs/xfs/xfs_ioctl.c
->> +++ b/fs/xfs/xfs_ioctl.c
->> @@ -1828,13 +1828,13 @@ xfs_ioc_getlabel(
->>  	/* Paranoia */
->>  	BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
->>  
->> +	/* 1 larger than sb_fname, so this ensures a trailing NUL char */
->> +	memset(label, 0, sizeof(label));
+Il 05/06/2018 16:13, Juri Lelli ha scritto:
+> On 05/06/18 15:01, Quentin Perret wrote:
+>> On Tuesday 05 Jun 2018 at 15:15:18 (+0200), Juri Lelli wrote:
+>>> On 05/06/18 14:05, Quentin Perret wrote:
+>>>> On Tuesday 05 Jun 2018 at 14:11:53 (+0200), Juri Lelli wrote:
+>>>>> Hi Quentin,
+>>>>>
+>>>>> On 05/06/18 11:57, Quentin Perret wrote:
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>> What about the diff below (just a quick hack to show the idea) applied
+>>>>>> on tip/sched/core ?
+>>>>>>
+>>>>>> ---8<---
+>>>>>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+>>>>>> index a8ba6d1f262a..23a4fb1c2c25 100644
+>>>>>> --- a/kernel/sched/cpufreq_schedutil.c
+>>>>>> +++ b/kernel/sched/cpufreq_schedutil.c
+>>>>>> @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+>>>>>>   	sg_cpu->util_dl  = cpu_util_dl(rq);
+>>>>>>   }
+>>>>>>   
+>>>>>> +unsigned long scale_rt_capacity(int cpu);
+>>>>>>   static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>>>>>>   {
+>>>>>>   	struct rq *rq = cpu_rq(sg_cpu->cpu);
+>>>>>> +	int cpu = sg_cpu->cpu;
+>>>>>> +	unsigned long util, dl_bw;
+>>>>>>   
+>>>>>>   	if (rq->rt.rt_nr_running)
+>>>>>>   		return sg_cpu->max;
+>>>>>> @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>>>>>>   	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+>>>>>>   	 * ready for such an interface. So, we only do the latter for now.
+>>>>>>   	 */
+>>>>>> -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+>>>>>> +	util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
+>>>>>
+>>>>> Sorry to be pedantinc, but this (ATM) includes DL avg contribution, so,
+>>>>> since we use max below, we will probably have the same problem that we
+>>>>> discussed on Vincent's approach (overestimation of DL contribution while
+>>>>> we could use running_bw).
+>>>>
+>>>> Ah no, you're right, this isn't great for long running deadline tasks.
+>>>> We should definitely account for the running_bw here, not the dl avg...
+>>>>
+>>>> I was trying to address the issue of RT stealing time from CFS here, but
+>>>> the DL integration isn't quite right which this patch as-is, I agree ...
+>>>>
+>>>>>
+>>>>>> +	util >>= SCHED_CAPACITY_SHIFT;
+>>>>>> +	util = arch_scale_cpu_capacity(NULL, cpu) - util;
+>>>>>> +	util += sg_cpu->util_cfs;
+>>>>>> +	dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
+>>>>>
+>>>>> Why this_bw instead of running_bw?
+>>>>
+>>>> So IIUC, this_bw should basically give you the absolute reservation (== the
+>>>> sum of runtime/deadline ratios of all DL tasks on that rq).
+>>>
+>>> Yep.
+>>>
+>>>> The reason I added this max is because I'm still not sure to understand
+>>>> how we can safely drop the freq below that point ? If we don't guarantee
+>>>> to always stay at least at the freq required by DL, aren't we risking to
+>>>> start a deadline tasks stuck at a low freq because of rate limiting ? In
+>>>> this case, if that tasks uses all of its runtime then you might start
+>>>> missing deadlines ...
+>>>
+>>> We decided to avoid (software) rate limiting for DL with e97a90f7069b
+>>> ("sched/cpufreq: Rate limits for SCHED_DEADLINE").
+>>
+>> Right, I spotted that one, but yeah you could also be limited by HW ...
+>>
+>>>
+>>>> My feeling is that the only safe thing to do is to guarantee to never go
+>>>> below the freq required by DL, and to optimistically add CFS tasks
+>>>> without raising the OPP if we have good reasons to think that DL is
+>>>> using less than it required (which is what we should get by using
+>>>> running_bw above I suppose). Does that make any sense ?
+>>>
+>>> Then we can't still avoid the hardware limits, so using running_bw is a
+>>> trade off between safety (especially considering soft real-time
+>>> scenarios) and energy consumption (which seems to be working in
+>>> practice).
+>>
+>> Ok, I see ... Have you guys already tried something like my patch above
+>> (keeping the freq >= this_bw) in real world use cases ? Is this costing
+>> that much energy in practice ? If we fill the gaps left by DL (when it
 > 
-> I don't get the comment.  In fact I don't even get why we need any
-> comment here.  This is a structure that gets copied to userspace,
-> and we zero the whole structure, as we should do by default for
-> anything that goes to userspace.
+> IIRC, Claudio (now Cc-ed) did experiment a bit with both approaches, so
+> he might add some numbers to my words above. I didn't (yet). But, please
+> consider that I might be reserving (for example) 50% of bandwidth for my
+> heavy and time sensitive task and then have that task wake up only once
+> in a while (but I'll be keeping clock speed up for the whole time). :/
 
-Sure, I guess we didn't really need the comment, my main point was that
-we were guaranteed to have a \0 remaining at the end because we'd never copy
-over it due to sb_fname's smaller size.
+As far as I can remember, we never tested energy consumption of running_bw vs this_bw, as at OSPM'17 we had already decided to use running_bw implementing GRUB-PA.
+The rationale is that, as Juri pointed out, the amount of spare (i.e. reclaimable) bandwidth in this_bw is very user-dependent.
+For example, the user can let this_bw be much higher than the measured bandwidth, just to be sure that the deadlines are met even in corner cases.
+In practice, this means that the task executes for quite a short time and then blocks (with its bandwidth reclaimed, hence the CPU frequency reduced, at the 0lag time).
+Using this_bw rather than running_bw, the CPU frequency would remain at the same fixed value even when the task is blocked.
+I understand that on some cases it could even be better (i.e. no waste of energy in frequency switch).
+However, IMHO, these are corner cases and in the average case it is better to rely on running_bw and reduce the CPU frequency accordingly.
 
-> Otherwise this looks fine to me.
+Best regards,
 
-Thanks.  In retrospect we could have gone back to Arnd's original patch
-but I guess the explicit memset is ... well, nice and explicit.
-
--Eric
+              Claudio
