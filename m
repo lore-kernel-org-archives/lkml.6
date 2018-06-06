@@ -1,96 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94D69601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2775E60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752037AbeFFMDq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:03:46 -0400
-Received: from mga07.intel.com ([134.134.136.100]:25923 "EHLO mga07.intel.com"
+        id S932627AbeFFJoQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:44:16 -0400
+Received: from verein.lst.de ([213.95.11.211]:36730 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750864AbeFFMDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:03:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="234863348"
-Message-ID: <a156ce90ab7e45ecf6936c29cc5d976c56f49a51.camel@linux.intel.com>
-Subject: Re: [PATCH 4/4] serial: core: Mask mctrl with TIOCM_RTS too if
- rs485 on and RTS_AFTER_SEND set.
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: matwey.kornilov@gmail.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Kees Cook <keescook@chromium.org>, Sean Young <sean@mess.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date: Wed, 06 Jun 2018 15:03:40 +0300
-In-Reply-To: <20180606094942.71190-3-giulio.benetti@micronovasrl.com>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
-         <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
-         <20180606094942.71190-3-giulio.benetti@micronovasrl.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S932415AbeFFJoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:44:15 -0400
+Date: Wed, 6 Jun 2018 11:51:30 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Roland Dreier <roland@purestorage.com>
+Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Laurence Oberman <loberman@redhat.com>,
+        Ewan Milne <emilne@redhat.com>,
+        James Smart <james.smart@broadcom.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Martin George <marting@netapp.com>,
+        John Meneghini <John.Meneghini@netapp.com>
+Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
+Message-ID: <20180606095130.GA10485@lst.de>
+References: <20180525125322.15398-1-jthumshirn@suse.de> <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com> <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me> <CAL1RGDV0eT4juuMwHWkjqc2oTsk-CHRJ0A90veXxLsVZYa5esQ@mail.gmail.com> <20180605044222.GA29384@lst.de> <CAL1RGDWvxcz7zAoEa-Ukhmsn=Vuj6O07X666BK+vJOdkA7qwNQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL1RGDWvxcz7zAoEa-Ukhmsn=Vuj6O07X666BK+vJOdkA7qwNQ@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
-> If rs485 is enabled and RTS_AFTER_SEND is set on startup need to keep
-> TIOCM_RTS asserted to keep rs485 transceiver in RX when idle.
+On Tue, Jun 05, 2018 at 03:57:05PM -0700, Roland Dreier wrote:
+> That makes sense but I'm not sure it covers everything.  Probably the
+> most common way to do NVMe/RDMA will be with a single HCA that has
+> multiple ports, so there's no sensible CPU locality.  On the other
+> hand we want to keep both ports to the fabric busy.  Setting different
+> paths for different queues makes sense, but there may be
+> single-threaded applications that want a  different policy.
 > 
-> Check if rs485 is on and RTS_AFTER_SEND is set and mask port->mctrl
-> with
-> TIOCM_RTS too and not only TIOCM_DTR.
-> 
+> I'm not saying anything very profound, but we have to find the right
+> balance between too many and too few knobs.
 
-This one feels wrong to be in serial_core.c. Perhaps in 8250/8250*.c.
-
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> ---
->  drivers/tty/serial/serial_core.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/serial_core.c
-> b/drivers/tty/serial/serial_core.c
-> index 0466f9f08a91..06d9441f6d20 100644
-> --- a/drivers/tty/serial/serial_core.c
-> +++ b/drivers/tty/serial/serial_core.c
-> @@ -2288,6 +2288,16 @@ uart_configure_port(struct uart_driver *drv,
-> struct uart_state *state,
->  
->  	if (port->type != PORT_UNKNOWN) {
->  		unsigned long flags;
-> +		int rs485_on = port->rs485_config &&
-> +			(port->rs485.flags & SER_RS485_ENABLED);
-> +		int RTS_after_send = !!(port->rs485.flags &
-> +				SER_RS485_RTS_AFTER_SEND);
-> +		int mctrl;
-> +
-> +		if (rs485_on && RTS_after_send)
-> +			mctrl = port->mctrl & (TIOCM_DTR |
-> TIOCM_RTS);
-> +		else
-> +			mctrl = port->mctrl & TIOCM_DTR;
->  
->  		uart_report_port(drv, port);
->  
-> @@ -2300,7 +2310,7 @@ uart_configure_port(struct uart_driver *drv,
-> struct uart_state *state,
->  		 * We probably don't need a spinlock around this, but
->  		 */
->  		spin_lock_irqsave(&port->lock, flags);
-> -		port->ops->set_mctrl(port, port->mctrl & TIOCM_DTR);
-> +		port->ops->set_mctrl(port, mctrl);
->  		spin_unlock_irqrestore(&port->lock, flags);
->  
->  		/*
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Agreed.  And the philosophy here is to start with a as few knobs
+as possible and work from there based on actual use cases.
+Single threaded applications will run into issues with general
+blk-mq philosophy, so to work around that we'll need to dig deeper
+and allow borrowing of other cpu queues if we want to cater for that.
