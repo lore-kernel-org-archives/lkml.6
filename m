@@ -1,83 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43E0F60764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KgF8IzYv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BAA160555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeFFNyI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:54:08 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:35352 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1752213AbeFFNyG (ORCPT
+        id S932355AbeFFSmC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:42:02 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:32942 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932269AbeFFSmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:54:06 -0400
-Date: Wed, 6 Jun 2018 09:54:05 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Roman Penyaev <roman.penyaev@profitbricks.com>
-cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-In-Reply-To: <CAJrWOzBMB-6e1pKms4L216k=TN_Lr52_gWxj-ny8yitgf+K5gg@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1806060950050.1359-100000@iolanthe.rowland.org>
+        Wed, 6 Jun 2018 14:42:01 -0400
+X-Google-Smtp-Source: ADUXVKKns4ThkZlsUm6UVR9RUzTbuOgxSLWnU2edfE+E/tbCSyaZDWjq6Ltv9nrDVH3mBHKbaFWk1auwP21uRM0wf4Q=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <CAK7LNASMpvFgue9gZ=6Epq_Skt2pvTVOoT9w=SzA_uGR87KP-w@mail.gmail.com>
+In-Reply-To: <CAK7LNASMpvFgue9gZ=6Epq_Skt2pvTVOoT9w=SzA_uGR87KP-w@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 6 Jun 2018 11:41:49 -0700
+Message-ID: <CA+55aFyWNq8Hcg0DWB+7H2+JD-q5ZhdANJgYP0gAiW-+mnkjwQ@mail.gmail.com>
+Subject: Re: [GIT PULL 2/2] Kconfig updates for v4.18
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Jun 2018, Roman Penyaev wrote:
+On Wed, Jun 6, 2018 at 10:19 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Please pull Kconfig updates for v4.18
 
-> > Preserving the order of volatile accesses isn't sufficient.  The
-> > compiler is still allowed to translate
-> >
-> >         r1 = READ_ONCE(x);
-> >         if (r1) {
-> >                 ...
-> >         }
-> >         WRITE_ONCE(y, r2);
-> >
-> > into something resembling
-> >
-> >         r1 = READ_ONCE(x);
-> >         WRITE_ONCE(y, r2);
-> >         if (r1) {
-> >                 ...
-> >         }
-> 
-> Hi Alan,
-> 
-> According to the standard C99 Annex C "the controlling expression of
-> a selection statement (if or switch)" are the sequence points, just
-> like a volatile access (READ_ONCE or WRITE_ONCE).
-> 
-> "5.1.2.3 Program execution" states:
-> "At certain specified points in the execution sequence called sequence
-> points, all side effects of previous evaluations shall be complete
-> and no side effects of subsequent evaluations shall have taken place."
-> 
-> So in the example we have 3 sequence points: "READ_ONCE", "if" and
-> "WRITE_ONCE", which it seems can't be reordered.  Am I mistaken
-> interpreting standard?  Could you please clarify.
+Thanks, pulled, going through my build testing now.
 
-Well, for one thing, we're talking about C11, not C99.
+I just wanted to say how much I like the new Kconfig syntax
+extensions, even if this tree didn't contain the nice cleanups to
+actually use the new syntax.
 
-For another, as far as I understand it, the standard means the program
-should behave _as if_ the side effects are completed in the order
-stated.  It doesn't mean that the generated code has to behave that way
-literally.  And in particular, the standard is referring to the
-behavior of a single thread, not the interaction between multiple
-concurrent threads.
+Of course, maybe it causes unforseen problems and I'll grow to hate it
+over time, but at least for now this really looks *so* nice to have
+the ability move nasty things from Makefiles to the Kconfig phase.
 
-Alan
+Thanks,
+
+          Linus
