@@ -1,160 +1,287 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=evidence-eu-com.20150623.gappssmtp.com header.i=@evidence-eu-com.20150623.gappssmtp.com header.b="WYlagfUv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F0376070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=evidence.eu.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8645160764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeFFNGD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:06:03 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44561 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751864AbeFFNGB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:06:01 -0400
-X-Google-Smtp-Source: ADUXVKKxh1/fbn4/9+/Y5WfkUvh9tZ9arDyoaUVlhrrcHUnid3VY2K9SzH09TsNaabPY1Seaz5QWIw==
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-To: Quentin Perret <quentin.perret@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>
-References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
- <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
- <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
- <20180605121153.GD16081@localhost.localdomain>
- <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
- <20180605131518.GG16081@localhost.localdomain>
- <20180605140101.GE12193@e108498-lin.cambridge.arm.com>
- <20180605141317.GJ16081@localhost.localdomain>
-From: Claudio Scordino <claudio@evidence.eu.com>
-Message-ID: <6c2dc1aa-3e19-be14-0ed8-b29003c72e61@evidence.eu.com>
-Date: Wed, 6 Jun 2018 15:05:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752276AbeFFPH5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:07:57 -0400
+Received: from mga01.intel.com ([192.55.52.88]:2620 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752110AbeFFPHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:07:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
+   d="scan'208";a="55234497"
+Date: Wed, 6 Jun 2018 23:08:02 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: bhelgaas@google.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        linux-pci@vger.kernel.org, dan.daly@intel.com,
+        mark.d.rustad@intel.com, alexander.h.duyck@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com
+Subject: Re: [virtio-dev] Re: [PATCH v3] virtio_pci: support enabling VFs
+Message-ID: <20180606150802.GA14901@debian>
+References: <20180601040239.1151-1-tiwei.bie@intel.com>
+ <20180604192222-mutt-send-email-mst@kernel.org>
+ <20180605013653.GA1045@debian>
+ <20180605152151-mutt-send-email-mst@kernel.org>
+ <20180606121154.GA9599@debian>
+ <20180606153236-mutt-send-email-mst@kernel.org>
+ <20180606141943.GA13904@debian>
+ <20180606172139-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180605141317.GJ16081@localhost.localdomain>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180606172139-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Quentin,
-
-Il 05/06/2018 16:13, Juri Lelli ha scritto:
-> On 05/06/18 15:01, Quentin Perret wrote:
->> On Tuesday 05 Jun 2018 at 15:15:18 (+0200), Juri Lelli wrote:
->>> On 05/06/18 14:05, Quentin Perret wrote:
->>>> On Tuesday 05 Jun 2018 at 14:11:53 (+0200), Juri Lelli wrote:
->>>>> Hi Quentin,
->>>>>
->>>>> On 05/06/18 11:57, Quentin Perret wrote:
->>>>>
->>>>> [...]
->>>>>
->>>>>> What about the diff below (just a quick hack to show the idea) applied
->>>>>> on tip/sched/core ?
->>>>>>
->>>>>> ---8<---
->>>>>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
->>>>>> index a8ba6d1f262a..23a4fb1c2c25 100644
->>>>>> --- a/kernel/sched/cpufreq_schedutil.c
->>>>>> +++ b/kernel/sched/cpufreq_schedutil.c
->>>>>> @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
->>>>>>   	sg_cpu->util_dl  = cpu_util_dl(rq);
->>>>>>   }
->>>>>>   
->>>>>> +unsigned long scale_rt_capacity(int cpu);
->>>>>>   static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->>>>>>   {
->>>>>>   	struct rq *rq = cpu_rq(sg_cpu->cpu);
->>>>>> +	int cpu = sg_cpu->cpu;
->>>>>> +	unsigned long util, dl_bw;
->>>>>>   
->>>>>>   	if (rq->rt.rt_nr_running)
->>>>>>   		return sg_cpu->max;
->>>>>> @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->>>>>>   	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
->>>>>>   	 * ready for such an interface. So, we only do the latter for now.
->>>>>>   	 */
->>>>>> -	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
->>>>>> +	util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
->>>>>
->>>>> Sorry to be pedantinc, but this (ATM) includes DL avg contribution, so,
->>>>> since we use max below, we will probably have the same problem that we
->>>>> discussed on Vincent's approach (overestimation of DL contribution while
->>>>> we could use running_bw).
->>>>
->>>> Ah no, you're right, this isn't great for long running deadline tasks.
->>>> We should definitely account for the running_bw here, not the dl avg...
->>>>
->>>> I was trying to address the issue of RT stealing time from CFS here, but
->>>> the DL integration isn't quite right which this patch as-is, I agree ...
->>>>
->>>>>
->>>>>> +	util >>= SCHED_CAPACITY_SHIFT;
->>>>>> +	util = arch_scale_cpu_capacity(NULL, cpu) - util;
->>>>>> +	util += sg_cpu->util_cfs;
->>>>>> +	dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
->>>>>
->>>>> Why this_bw instead of running_bw?
->>>>
->>>> So IIUC, this_bw should basically give you the absolute reservation (== the
->>>> sum of runtime/deadline ratios of all DL tasks on that rq).
->>>
->>> Yep.
->>>
->>>> The reason I added this max is because I'm still not sure to understand
->>>> how we can safely drop the freq below that point ? If we don't guarantee
->>>> to always stay at least at the freq required by DL, aren't we risking to
->>>> start a deadline tasks stuck at a low freq because of rate limiting ? In
->>>> this case, if that tasks uses all of its runtime then you might start
->>>> missing deadlines ...
->>>
->>> We decided to avoid (software) rate limiting for DL with e97a90f7069b
->>> ("sched/cpufreq: Rate limits for SCHED_DEADLINE").
->>
->> Right, I spotted that one, but yeah you could also be limited by HW ...
->>
->>>
->>>> My feeling is that the only safe thing to do is to guarantee to never go
->>>> below the freq required by DL, and to optimistically add CFS tasks
->>>> without raising the OPP if we have good reasons to think that DL is
->>>> using less than it required (which is what we should get by using
->>>> running_bw above I suppose). Does that make any sense ?
->>>
->>> Then we can't still avoid the hardware limits, so using running_bw is a
->>> trade off between safety (especially considering soft real-time
->>> scenarios) and energy consumption (which seems to be working in
->>> practice).
->>
->> Ok, I see ... Have you guys already tried something like my patch above
->> (keeping the freq >= this_bw) in real world use cases ? Is this costing
->> that much energy in practice ? If we fill the gaps left by DL (when it
+On Wed, Jun 06, 2018 at 05:27:07PM +0300, Michael S. Tsirkin wrote:
+> On Wed, Jun 06, 2018 at 10:19:43PM +0800, Tiwei Bie wrote:
+> > On Wed, Jun 06, 2018 at 03:44:11PM +0300, Michael S. Tsirkin wrote:
+> > > On Wed, Jun 06, 2018 at 08:11:54PM +0800, Tiwei Bie wrote:
+> > > > On Tue, Jun 05, 2018 at 03:23:11PM +0300, Michael S. Tsirkin wrote:
+> > > > > On Tue, Jun 05, 2018 at 09:36:53AM +0800, Tiwei Bie wrote:
+> > > > > > On Mon, Jun 04, 2018 at 07:32:25PM +0300, Michael S. Tsirkin wrote:
+> > > > > > > On Fri, Jun 01, 2018 at 12:02:39PM +0800, Tiwei Bie wrote:
+> > > > > > > > There is a new feature bit allocated in virtio spec to
+> > > > > > > > support SR-IOV (Single Root I/O Virtualization):
+> > > > > > > > 
+> > > > > > > > https://github.com/oasis-tcs/virtio-spec/issues/11
+> > > > > > > > 
+> > > > > > > > This patch enables the support for this feature bit in
+> > > > > > > > virtio driver.
+> > > > > > > > 
+> > > > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > > > > > > ---
+> > > > > > > 
+> > > > > > > OK but what about freeze/restore functions?
+> > > > > 
+> > > > > So for restore, don't you need to restore the
+> > > > > sriov capability?
+> > > > 
+> > > > Currently I'm not familiar with the PM part.
+> > > > But I still think the sriov capability should
+> > > > be handled by PCI core.
+> > > 
+> > > OK but the point is restore looks just like power up for device.
+> > > 
+> > > > I'm trying to understand
+> > > > all the relevant code..
+> > > > For your question, based on what I found from
+> > > > the code currently, I guess the sriov capability
+> > > > will be restored by pci_restore_state() which
+> > > > will be called by the ops in pci_dev_pm_ops.
+> > > > The sriov_restore_state() will be called
+> > > > eventually.
+> > > > 
+> > > > Best regards,
+> > > > Tiwei Bie
+> > > 
+> > > Right but my point is during resume SRIOV gets enabled first before
+> > > driver ok.
+> > > 
+> > > Maybe we should relax the requirements in the spec:
+> > > - only require FEATURES_OK from device, not DRIVER_OK from driver
+> > > - explain that it only has to happen once, not on each reset,
+> > >   and driver can remember the result
+> > 
+> > I got your point now! I'd like to relax the
+> > requirements in the spec.
+> > 
+> > Best regards,
+> > Tiwei Bie
 > 
-> IIRC, Claudio (now Cc-ed) did experiment a bit with both approaches, so
-> he might add some numbers to my words above. I didn't (yet). But, please
-> consider that I might be reserving (for example) 50% of bandwidth for my
-> heavy and time sensitive task and then have that task wake up only once
-> in a while (but I'll be keeping clock speed up for the whole time). :/
+> Well the ballot approving your change closed.  I think we should apply
+> the first chunks reserving the feature bit then, and defer the rest, and
+> you can work on new wording documenting the actual behaviour with a new
+> github issue to track that - does this make sense?
+> Let's do it quickly though - I don't want to bother the
+> TC with re-voting the deferral, then the new patch.
 
-As far as I can remember, we never tested energy consumption of running_bw vs this_bw, as at OSPM'17 we had already decided to use running_bw implementing GRUB-PA.
-The rationale is that, as Juri pointed out, the amount of spare (i.e. reclaimable) bandwidth in this_bw is very user-dependent.
-For example, the user can let this_bw be much higher than the measured bandwidth, just to be sure that the deadlines are met even in corner cases.
-In practice, this means that the task executes for quite a short time and then blocks (with its bandwidth reclaimed, hence the CPU frequency reduced, at the 0lag time).
-Using this_bw rather than running_bw, the CPU frequency would remain at the same fixed value even when the task is blocked.
-I understand that on some cases it could even be better (i.e. no waste of energy in frequency switch).
-However, IMHO, these are corner cases and in the average case it is better to rely on running_bw and reduce the CPU frequency accordingly.
+Yeah. It makes sense! I think it's a good idea
+to reserve the feature bit first and defer the
+rest. I'll work on the new wording documenting
+the actual behavior with a new github issue to
+track it. Thanks a lot!
 
 Best regards,
+Tiwei Bie
 
-              Claudio
+> 
+> > > 
+> > > 
+> > > > 
+> > > > > 
+> > > > > 
+> > > > > > > I also wonder about kexec - virtio.c currently does:
+> > > > > > > 
+> > > > > > >         /* We always start by resetting the device, in case a previous
+> > > > > > >          * driver messed it up.  This also tests that code path a little. */
+> > > > > > >         dev->config->reset(dev);
+> > > > > > > 
+> > > > > > > Do we need to do something like this for sriov?
+> > > > > > 
+> > > > > > I think VFs are managed by PCI core. Once they are
+> > > > > > allocated, virtio driver doesn't have to care too
+> > > > > > much about how to manage them. The proposal for the
+> > > > > > spec is just to provide a feature bit based virtio
+> > > > > > way for virtio drivers to know whether a virtio
+> > > > > > device is SR-IOV capable (and virtio drivers can
+> > > > > > support configuring SR-IOV based on the feature
+> > > > > > bit negotiation result).
+> > > > > > 
+> > > > > > > 
+> > > > > > > I also wonder whether PCI core should disable sriov for us.
+> > > > > > > 
+> > > > > > > 
+> > > > > > > I wish there was a patch emulating this without vDPA for QEMU,
+> > > > > > > would make it easy to test your patches. Do you happen
+> > > > > > > to have something like this?
+> > > > > > 
+> > > > > > Sorry, currently I don't have anything like this..
+> > > > > > 
+> > > > > > Best regards,
+> > > > > > Tiwei Bie
+> > > > > > 
+> > > > > > > 
+> > > > > > > Thanks,
+> > > > > > > 
+> > > > > > > 
+> > > > > > > > v3:
+> > > > > > > > - Drop the acks;
+> > > > > > > > 
+> > > > > > > > v2:
+> > > > > > > > - Disable VFs when unbinding the driver (Alex, MST);
+> > > > > > > > - Don't use pci_sriov_configure_simple (Alex);
+> > > > > > > > 
+> > > > > > > >  drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
+> > > > > > > >  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
+> > > > > > > >  include/uapi/linux/virtio_config.h |  7 ++++++-
+> > > > > > > >  3 files changed, 50 insertions(+), 1 deletion(-)
+> > > > > > > > 
+> > > > > > > > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> > > > > > > > index 48d4d1cf1cb6..1d4467b2dc31 100644
+> > > > > > > > --- a/drivers/virtio/virtio_pci_common.c
+> > > > > > > > +++ b/drivers/virtio/virtio_pci_common.c
+> > > > > > > > @@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+> > > > > > > >  	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+> > > > > > > >  	struct device *dev = get_device(&vp_dev->vdev.dev);
+> > > > > > > >  
+> > > > > > > > +	pci_disable_sriov(pci_dev);
+> > > > > > > > +
+> > > > > > > >  	unregister_virtio_device(&vp_dev->vdev);
+> > > > > > > >  
+> > > > > > > >  	if (vp_dev->ioaddr)
+> > > > > > > > @@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
+> > > > > > > >  	put_device(dev);
+> > > > > > > >  }
+> > > > > > > >  
+> > > > > > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
+> > > > > > > > +{
+> > > > > > > > +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
+> > > > > > > > +	struct virtio_device *vdev = &vp_dev->vdev;
+> > > > > > > > +	int ret;
+> > > > > > > > +
+> > > > > > > > +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
+> > > > > > > > +		return -EBUSY;
+> > > > > > > > +
+> > > > > > > > +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
+> > > > > > > > +		return -EINVAL;
+> > > > > > > > +
+> > > > > > > > +	if (pci_vfs_assigned(pci_dev))
+> > > > > > > > +		return -EPERM;
+> > > > > > > > +
+> > > > > > > > +	if (num_vfs == 0) {
+> > > > > > > > +		pci_disable_sriov(pci_dev);
+> > > > > > > > +		return 0;
+> > > > > > > > +	}
+> > > > > > > > +
+> > > > > > > > +	ret = pci_enable_sriov(pci_dev, num_vfs);
+> > > > > > > > +	if (ret < 0)
+> > > > > > > > +		return ret;
+> > > > > > > > +
+> > > > > > > > +	return num_vfs;
+> > > > > > > > +}
+> > > > > > > > +
+> > > > > > > >  static struct pci_driver virtio_pci_driver = {
+> > > > > > > >  	.name		= "virtio-pci",
+> > > > > > > >  	.id_table	= virtio_pci_id_table,
+> > > > > > > > @@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
+> > > > > > > >  #ifdef CONFIG_PM_SLEEP
+> > > > > > > >  	.driver.pm	= &virtio_pci_pm_ops,
+> > > > > > > >  #endif
+> > > > > > > > +	.sriov_configure = virtio_pci_sriov_configure,
+> > > > > > > >  };
+> > > > > > > >  
+> > > > > > > >  module_pci_driver(virtio_pci_driver);
+> > > > > > > > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> > > > > > > > index 2555d80f6eec..07571daccfec 100644
+> > > > > > > > --- a/drivers/virtio/virtio_pci_modern.c
+> > > > > > > > +++ b/drivers/virtio/virtio_pci_modern.c
+> > > > > > > > @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
+> > > > > > > >  	return features;
+> > > > > > > >  }
+> > > > > > > >  
+> > > > > > > > +static void vp_transport_features(struct virtio_device *vdev, u64 features)
+> > > > > > > > +{
+> > > > > > > > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> > > > > > > > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
+> > > > > > > > +
+> > > > > > > > +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
+> > > > > > > > +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
+> > > > > > > > +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
+> > > > > > > > +}
+> > > > > > > > +
+> > > > > > > >  /* virtio config->finalize_features() implementation */
+> > > > > > > >  static int vp_finalize_features(struct virtio_device *vdev)
+> > > > > > > >  {
+> > > > > > > >  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> > > > > > > > +	u64 features = vdev->features;
+> > > > > > > >  
+> > > > > > > >  	/* Give virtio_ring a chance to accept features. */
+> > > > > > > >  	vring_transport_features(vdev);
+> > > > > > > >  
+> > > > > > > > +	/* Give virtio_pci a chance to accept features. */
+> > > > > > > > +	vp_transport_features(vdev, features);
+> > > > > > > > +
+> > > > > > > >  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
+> > > > > > > >  		dev_err(&vdev->dev, "virtio: device uses modern interface "
+> > > > > > > >  			"but does not have VIRTIO_F_VERSION_1\n");
+> > > > > > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> > > > > > > > index 308e2096291f..b7c1f4e7d59e 100644
+> > > > > > > > --- a/include/uapi/linux/virtio_config.h
+> > > > > > > > +++ b/include/uapi/linux/virtio_config.h
+> > > > > > > > @@ -49,7 +49,7 @@
+> > > > > > > >   * transport being used (eg. virtio_ring), the rest are per-device feature
+> > > > > > > >   * bits. */
+> > > > > > > >  #define VIRTIO_TRANSPORT_F_START	28
+> > > > > > > > -#define VIRTIO_TRANSPORT_F_END		34
+> > > > > > > > +#define VIRTIO_TRANSPORT_F_END		38
+> > > > > > > >  
+> > > > > > > >  #ifndef VIRTIO_CONFIG_NO_LEGACY
+> > > > > > > >  /* Do we get callbacks when the ring is completely used, even if we've
+> > > > > > > > @@ -71,4 +71,9 @@
+> > > > > > > >   * this is for compatibility with legacy systems.
+> > > > > > > >   */
+> > > > > > > >  #define VIRTIO_F_IOMMU_PLATFORM		33
+> > > > > > > > +
+> > > > > > > > +/*
+> > > > > > > > + * Does the device support Single Root I/O Virtualization?
+> > > > > > > > + */
+> > > > > > > > +#define VIRTIO_F_SR_IOV			37
+> > > > > > > >  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+> > > > > > > > -- 
+> > > > > > > > 2.17.0
+> > > > > > > 
+> > > > > > > ---------------------------------------------------------------------
+> > > > > > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
+> > > > > > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
+> > > > > > > 
