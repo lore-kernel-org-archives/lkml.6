@@ -1,60 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyxa0lEX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A43C7606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVcRllsG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AED2760555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeFFMrE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:47:04 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44785 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeFFMrC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:47:02 -0400
-X-Google-Smtp-Source: ADUXVKJe7CMoMbKboRpCtrabl/rlbqwUBkBIPUMxE5I4vbk0wflosb248hpx4oytsRNRbWF5OHG+SA==
-Subject: Re: [PATCH v2 9/9] xen/gntdev: Expose gntdev's dma-buf API for
- in-kernel use
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        dongwon.kim@intel.com, matthew.d.roper@intel.com
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com, daniel.vetter@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-10-andr2000@gmail.com>
- <86f5b340-856c-204f-4ba7-dd51f1e92639@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <984bcf75-9bea-aceb-3d3a-62e3c65709c7@gmail.com>
-Date: Wed, 6 Jun 2018 15:46:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1752492AbeFFPfo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:35:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751546AbeFFPfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:35:43 -0400
+Date: Wed, 6 Jun 2018 17:35:18 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/37] 4.4.136-stable review
+Message-ID: <20180606153518.GA16951@kroah.com>
+References: <20180605170108.884872354@linuxfoundation.org>
+ <965820e9-cf8a-a1f0-e23d-0b2ba910d613@roeck-us.net>
+ <20180606133155.GA27333@kroah.com>
+ <75154021-a5de-e8bc-e135-f3c44e6fbf3b@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <86f5b340-856c-204f-4ba7-dd51f1e92639@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75154021-a5de-e8bc-e135-f3c44e6fbf3b@roeck-us.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 01:36 AM, Boris Ostrovsky wrote:
-> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Allow creating grant device context for use by kernel modules which
->> require functionality, provided by gntdev. Export symbols for dma-buf
->> API provided by the module.
-> Can you give an example of who'd be using these interfaces?
-There is no use-case at the moment I can think of, but hyper dma-buf 
-[1], [2]
-I let Intel folks (CCed) to defend this patch as it was done primarily 
-for them
-and I don't use it in any of my use-cases. So, from this POV it can be 
-dropped,
-at least from this series.
->
-> -boris
->
-[1] https://patchwork.freedesktop.org/series/38207/
-[2] https://patchwork.freedesktop.org/patch/204447/
+On Wed, Jun 06, 2018 at 08:01:03AM -0700, Guenter Roeck wrote:
+> On 06/06/2018 06:31 AM, Greg Kroah-Hartman wrote:
+> > On Wed, Jun 06, 2018 at 06:28:39AM -0700, Guenter Roeck wrote:
+> > > On 06/05/2018 10:01 AM, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.4.136 release.
+> > > > There are 37 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > 
+> > > Build results:
+> > > 	total: 148 pass: 146 fail: 2
+> > > Failed builds:
+> > > 	sparc64:allmodconfig
+> > > 	sparc64:allnoconfig
+> > > Qemu test results:
+> > > 	total: 128 pass: 124 fail: 4
+> > > Failed tests:
+> > > 	sparc64:sun4u:smp:sparc64_defconfig
+> > > 	sparc64:sun4v:smp:sparc64_defconfig
+> > > 	sparc64:sun4u:nosmp:sparc64_defconfig
+> > > 	sparc64:sun4v:nosmp:sparc64_defconfig
+> > > 
+> > > Failure caused by 'sparc64: Add __multi3 for gcc 7.x and later'. Please drop it
+> > > as well as 'sparc64: Don't clibber fixed registers in __multi4.'. gcc 7/8 support
+> > > for sparc in v4.4 will need more work. Sorry for the mess-up.
+> > 
+> > Not a problem, I've pushed out a -rc2 with those two patches now
+> > dropped.
+> > 
+> 
+> Yes, that does the trick. For v4.4.135-36-ge757a1c (with gcc 5.5.0 for sparc/sparc64):
+> 
+> Build results:
+> 	total: 148 pass: 148 fail: 0
+> Qemu test results:
+> 	total: 128 pass: 128 fail: 0
+
+Wonderful, thanks for testing and letting me know.
+
+greg k-h
