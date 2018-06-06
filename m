@@ -1,73 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932083AbeFFBnq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 21:43:46 -0400
-Received: from mga02.intel.com ([134.134.136.20]:43491 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752520AbeFFBno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 21:43:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,481,1520924400";
-   d="scan'208";a="56867206"
-Date: Wed, 6 Jun 2018 09:40:28 +0800
-From: Ye Xiaolong <xiaolong.ye@intel.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Dave Chinner <dchinner@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cmaiolino@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        lkp@01.org
-Subject: Re: [lkp-robot] [xfs]  b027d4c97b:  fio.latency_2ms% +7.1% regression
-Message-ID: <20180606014028.GQ16472@yexl-desktop>
-References: <20180605071657.GP16472@yexl-desktop>
- <20180605223813.GI10363@dastard>
+        id S1752708AbeFFByo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 21:54:44 -0400
+Received: from mail-io0-f179.google.com ([209.85.223.179]:41175 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750751AbeFFByn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 21:54:43 -0400
+X-Google-Smtp-Source: ADUXVKLomKxGeDDL72d+FPhLnoOI05h6Oyvm8GNZoZB8SBwxQvYj9dLcKZATIJtWbnUFsO2FbECbljLwwS+ojgTFXTk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180605223813.GI10363@dastard>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
+ <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org> <CA+55aFwJAbr8_Xs0ZX9K2iAr8bf=ZgNnKTLopQe6jPCgEBemrA@mail.gmail.com>
+ <7a5458da-4222-7480-00ed-a51bed2c1e39@mageia.org> <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
+ <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org> <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
+ <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
+In-Reply-To: <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 5 Jun 2018 18:54:31 -0700
+Message-ID: <CA+55aFzNCQZHEz9P2a4ZSyWB0RxZcTkh5TVfwTmup-Y-6b8qjw@mail.gmail.com>
+Subject: Re: building in 32bit chroot on x86_64 host broken
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: tmb@mageia.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06, Dave Chinner wrote:
->On Tue, Jun 05, 2018 at 03:16:57PM +0800, kernel test robot wrote:
->> 
->> Greeting,
->> 
->> FYI, we noticed a +7.1%% regression of fio.latency_2ms% due to commit:
->> 
->> 
->> commit: b027d4c97b9675c2ad75dec94be4e46dceb3ec74 ("xfs: don't retry xfs_buf_find on XBF_TRYLOCK failure")
->> https://git.kernel.org/cgit/fs/xfs/xfs-linux.git xfs-4.18-merge
->....
->> 8925a3dc4771004b b027d4c97b9675c2ad75dec94b 
->> ---------------- -------------------------- 
->>          %stddev     %change         %stddev
->>              \          |                \  
->>      46.56 ±  3%      +7.1       53.61        fio.latency_2ms%
->>       8.19            +0.2        8.40        fio.latency_100ms%
->>       0.74 ±  3%      -0.1        0.68 ±  6%  fio.latency_250ms%
->>      25.20 ±  6%      -7.3       17.86 ±  6%  fio.latency_4ms%
->>       0.46 ±  9%      +0.2        0.69 ± 13%  fio.latency_750us%
+On Tue, Jun 5, 2018 at 6:38 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
->This is not a regression. The number of IOs in the 4ms IO latency
->bin has reduced by 7%, and inumber in the 2ms IO latency bin has
->increased by 7%. IOWs, there's a measurable improvement in IO
->latency as a result of those patches, not a regression.
+> Was the v4.16 behavior intentional,
+> or just something people found to work?
 
-Thanks for clarification.
+I don't think all the _details_ may be intentional, but the fact that
 
-Thanks,
-Xiaolong
+   make oldconfig
 
+"just works" is definitely a good thing.
+
+> "make ARCH=i386 allnoconfig" hides the prompt
+> of 64BIT.
 >
->Cheers,
->
->Dave.
->-- 
->Dave Chinner
->david@fromorbit.com
+> Then, "make oldconfig" makes the prompt newly visible,
+> so it is asking for user input.
+
+The "hides the prompt for 64BIT" is just a technical detail.
+
+It could equally well be a pre-determined Kconfig fragment that is
+used to generate a particular Kconfig.
+
+But once you *have* that particular Kconfig, I do think that "make
+oldconfig" should just work. And it apparently used to.
+
+So I think this is a behavioral regression.
+
+           Linus
