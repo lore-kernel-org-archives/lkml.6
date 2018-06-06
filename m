@@ -1,94 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC6AB606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnqGs8/D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 70797605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeFFMRF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:17:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33113 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751849AbeFFMRD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:17:03 -0400
-Date: Wed, 6 Jun 2018 05:16:53 -0700
-From: tip-bot for Konrad Rzeszutek Wilk <tipbot@zytor.com>
-Message-ID: <tip-108fab4b5c8f12064ef86e02cb0459992affb30f@git.kernel.org>
-Cc: konrad.wilk@oracle.com, dwmw@amazon.co.uk, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, bp@suse.de,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        karahmed@amazon.de
-Reply-To: hpa@zytor.com, dwmw@amazon.co.uk, tglx@linutronix.de,
-          mingo@kernel.org, konrad.wilk@oracle.com, karahmed@amazon.de,
-          linux-kernel@vger.kernel.org, keescook@chromium.org, bp@suse.de
-In-Reply-To: <20180601145921.9500-4-konrad.wilk@oracle.com>
-References: <20180601145921.9500-4-konrad.wilk@oracle.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/bugs: Switch the selection of mitigation from CPU
- vendor to CPU features
-Git-Commit-ID: 108fab4b5c8f12064ef86e02cb0459992affb30f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752991AbeFFS7S (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:59:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752330AbeFFS7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 14:59:17 -0400
+Date: Wed, 6 Jun 2018 15:59:14 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, daniel@iogearbox.net
+Subject: Re: [PATCH V4 1/3] kallsyms: Simplify update_iter_mod()
+Message-ID: <20180606185914.GJ24381@kernel.org>
+References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
+ <1528289651-4113-2-git-send-email-adrian.hunter@intel.com>
+ <20180606131302.GB12180@hirez.programming.kicks-ass.net>
+ <20180606143727.03da2e26@vmware.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180606143727.03da2e26@vmware.local.home>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  108fab4b5c8f12064ef86e02cb0459992affb30f
-Gitweb:     https://git.kernel.org/tip/108fab4b5c8f12064ef86e02cb0459992affb30f
-Author:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-AuthorDate: Fri, 1 Jun 2018 10:59:21 -0400
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 14:13:17 +0200
+Em Wed, Jun 06, 2018 at 02:37:27PM -0400, Steven Rostedt escreveu:
+> On Wed, 6 Jun 2018 15:13:02 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Wed, Jun 06, 2018 at 03:54:09PM +0300, Adrian Hunter wrote:
+> > > The logic in update_iter_mod() is overcomplicated and gets worse every time
+> > > another get_ksymbol_* function is added.
+> > > 
+> > > In preparation for adding another get_ksymbol_* function, simplify logic in
+> > > update_iter_mod().
+> > > 
+> > > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> > > Acked-by: Andi Kleen <ak@linux.intel.com>  
+> > 
+> > Both Daniel and Steven touched this function last year, let's also Cc
+> > them.
+> 
+> Thanks for Ccing me. I tested the patch to make sure my changes still
+> work and they do:
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-x86/bugs: Switch the selection of mitigation from CPU vendor to CPU features
+Since you said you tested the patch, may I replace the Acked-by with the
+stronger Tested-by?
 
-Both AMD and Intel can have SPEC_CTRL_MSR for SSBD.
+Thanks,
 
-However AMD also has two more other ways of doing it - which
-are !SPEC_CTRL MSR ways.
-
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kvm@vger.kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Cc: andrew.cooper3@citrix.com
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Link: https://lkml.kernel.org/r/20180601145921.9500-4-konrad.wilk@oracle.com
-
----
- arch/x86/kernel/cpu/bugs.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 6bea81855cdd..cd0fda1fff6d 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -532,17 +532,12 @@ static enum ssb_mitigation __init __ssb_select_mitigation(void)
- 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD may
- 		 * use a completely different MSR and bit dependent on family.
- 		 */
--		switch (boot_cpu_data.x86_vendor) {
--		case X86_VENDOR_INTEL:
--		case X86_VENDOR_AMD:
--			if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL)) {
--				x86_amd_ssb_disable();
--				break;
--			}
-+		if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
-+			x86_amd_ssb_disable();
-+		else {
- 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
- 			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
--			break;
- 		}
- 	}
- 
+- Arnaldo
