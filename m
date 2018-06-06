@@ -1,115 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtRHchKf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 08427606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3339E60764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeFFMyL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:54:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751914AbeFFMyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:54:07 -0400
-X-Google-Smtp-Source: ADUXVKKScQWn+6eJNU/B1zOH2LNsrfYc01BsW1sPijMnrPU2S+CCVA7ZCvuydfZdrpawQnGEOXZr99xjqrFtFC0yvEA=
+        id S932516AbeFFHxV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:53:21 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40771 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932243AbeFFHxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 03:53:19 -0400
+Subject: Is this a kernel BUG? ///Re: [Question] Can we use SIGRTMIN when vdso
+ disabled on X86?
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86l <x86@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <5B1672FE.4050705@huawei.com>
+CC: <yaomin2@huawei.com>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B1792C9.8010203@huawei.com>
+Date: Wed, 6 Jun 2018 15:52:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5DGKnU15pjF2+eyMUaSuE0FCr2FMF90WrJb+kXt80xBCw@mail.gmail.com>
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
- <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
- <20180605210758.GA19888@rob-hp-laptop> <CAAFQd5DGKnU15pjF2+eyMUaSuE0FCr2FMF90WrJb+kXt80xBCw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 6 Jun 2018 07:53:45 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+c1EbDGKhKov8cgB5r7SAeXZkXzJ96za2e3ukc8yOyZA@mail.gmail.com>
-Message-ID: <CAL_Jsq+c1EbDGKhKov8cgB5r7SAeXZkXzJ96za2e3ukc8yOyZA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware device
-To: Tomasz Figa <tfiga@google.com>
-Cc: Vikash Garodia <vgarodia@codeaurora.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5B1672FE.4050705@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 11:46 PM, Tomasz Figa <tfiga@google.com> wrote:
-> Hi Rob,
->
-> On Wed, Jun 6, 2018 at 6:08 AM Rob Herring <robh@kernel.org> wrote:
->>
->> On Sat, Jun 02, 2018 at 01:56:08AM +0530, Vikash Garodia wrote:
->> > A separate child device is added for video firmware.
->> > This is needed to
->> > [1] configure the firmware context bank with the desired SID.
->> > [2] ensure that the iova for firmware region is from 0x0.
->> >
->> > Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
->> > ---
->> >  .../devicetree/bindings/media/qcom,venus.txt       |  8 +++-
->> >  drivers/media/platform/qcom/venus/core.c           | 48 +++++++++++++++++++---
->> >  drivers/media/platform/qcom/venus/firmware.c       | 20 ++++++++-
->> >  drivers/media/platform/qcom/venus/firmware.h       |  2 +
->> >  4 files changed, 71 insertions(+), 7 deletions(-)
->> >
->> > diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
->> > index 00d0d1b..701cbe8 100644
->> > --- a/Documentation/devicetree/bindings/media/qcom,venus.txt
->> > +++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
->> > @@ -53,7 +53,7 @@
->> >
->> >  * Subnodes
->> >  The Venus video-codec node must contain two subnodes representing
->> > -video-decoder and video-encoder.
->> > +video-decoder and video-encoder, one optional firmware subnode.
->> >
->> >  Every of video-encoder or video-decoder subnode should have:
->> >
->> > @@ -79,6 +79,8 @@ Every of video-encoder or video-decoder subnode should have:
->> >                   power domain which is responsible for collapsing
->> >                   and restoring power to the subcore.
->> >
->> > +The firmware sub node must contain the iommus specifiers for ARM9.
->> > +
->> >  * An Example
->> >       video-codec@1d00000 {
->> >               compatible = "qcom,msm8916-venus";
->> > @@ -105,4 +107,8 @@ Every of video-encoder or video-decoder subnode should have:
->> >                       clock-names = "core";
->> >                       power-domains = <&mmcc VENUS_CORE1_GDSC>;
->> >               };
->> > +             venus-firmware {
->> > +                     compatible = "qcom,venus-firmware-no-tz";
->> > +                     iommus = <&apps_smmu 0x10b2 0x0>;
->>
->> This mostly looks like you are adding a node in order to create a
->> platform device. DT is not the only way to create platform devices and
->> shouldn't be used when the device is not really a separate h/w device.
->> Plus it seems like it is debatable that you even need a driver.
->>
->> For iommus, just move it up to the parent (or add to existing prop).
->
-> As far as I understood the issue from reading this series and also
-> talking a bit with Stanimir, there are multiple (physical?) ports from
-> the Venus hardware block and that includes one dedicated for firmware
-> loading, which has IOVA range restrictions up to 6 MiBs or something
-> like that.
->
-> If we add the firmware port to the iommus property of the main node,
-> we would bind it to the same IOVA address space as the other ports and
-> so it would be part of the main full 32-bit IOMMU domain.
 
-Sounds like an OS limitation, not a DT problem.
 
-That being said, I suppose we can live with having this sub-node if we
-can't fix or work-around this limitation.
+On 2018/6/5 19:24, Leizhen (ThunderTown) wrote:
+> After I executed "echo 0 > /proc/sys/abi/vsyscall32" to disable vdso, the rt_sigaction01 test case from ltp_2015 failed.
+> The test case source code please refer to the attachment, and the output as blow:
+> 
+> -----------------
+> ./rt_sigaction01
+> rt_sigaction01    0  TINFO  :  signal: 34
+> rt_sigaction01    1  TPASS  :  rt_sigaction call succeeded: result = 0
+> rt_sigaction01    0  TINFO  :  sa.sa_flags = SA_RESETHAND|SA_SIGINFO
+> rt_sigaction01    0  TINFO  :  Signal Handler Called with signal number 34
+> 
+> Segmentation fault
+> ------------------
+> 
+> 
+> Is this the desired result? In function ia32_setup_rt_frame, I found below code:
+> 
+> 	if (ksig->ka.sa.sa_flags & SA_RESTORER)
+> 		restorer = ksig->ka.sa.sa_restorer;
+> 	else
+> 		restorer = current->mm->context.vdso +
+> 			vdso_image_32.sym___kernel_rt_sigreturn;
+> 	put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
+> 
+> Because the vdso is disabled, so current->mm->context.vdso is NULL, which cause the result of frame->pretcode invalid.
+> 
+> I'm not sure whether this is a kernel bug or just an error of test case itself. Can anyone help me?
+> 
 
-Rob
+-- 
+Thanks!
+BestRegards
