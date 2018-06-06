@@ -1,111 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gVU5VjED";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gVU5VjED"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49D5A6070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1XlI2rs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22C6060555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932638AbeFFJv1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:51:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49058 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752074AbeFFJvY (ORCPT
+        id S932357AbeFFJtw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:49:52 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:46963 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750955AbeFFJtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:51:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFF1C6070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH] remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
-To: Vinod <vkoul@kernel.org>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        sibis@codeaurora.org
-References: <1528177361-8883-1-git-send-email-sricharan@codeaurora.org>
- <20180605061919.GQ16230@vkoul-mobl>
- <3a4c102b-7228-153a-c588-b1bf00291fa8@codeaurora.org>
- <20180605164031.GZ16230@vkoul-mobl>
- <1b376fc2-6a1b-1457-ffff-332954d1bef8@codeaurora.org>
- <20180606064909.GC16230@vkoul-mobl>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <dbcbdb1c-7721-62ea-8f97-f0952a490052@codeaurora.org>
-Date: Wed, 6 Jun 2018 15:21:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 6 Jun 2018 05:49:50 -0400
+X-Google-Smtp-Source: ADUXVKI9sVeToxktoQ35sGb+z+8hVlYHW3jpJihlxySpBuZFMaFrOZcFiNp0UGeBQQOfjRLpwDfXedxnZCOFgF9g1lE=
 MIME-Version: 1.0
-In-Reply-To: <20180606064909.GC16230@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
+References: <20180508180436.716-1-mfasheh@suse.de> <20180508233840.GM10363@dastard>
+ <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com> <20180509064103.GP10363@dastard>
+ <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 6 Jun 2018 12:49:48 +0300
+Message-ID: <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
+Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than one root
+To: Jeff Mahoney <jeffm@suse.com>
+Cc: Dave Chinner <david@fromorbit.com>, Mark Fasheh <mfasheh@suse.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
-
-On 6/6/2018 12:19 PM, Vinod wrote:
-> Hi Sricharan,
-> 
-> On 06-06-18, 12:09, Sricharan R wrote:
-> 
->>>>>> +config QCOM_Q6V5_WCSS
->>>>>> +	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
->>>>>> +	depends on OF && ARCH_QCOM
->>>>>> +	depends on QCOM_SMEM
->>>>>> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
->>>>>> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+On Tue, Jun 5, 2018 at 11:17 PM, Jeff Mahoney <jeffm@suse.com> wrote:
+> Sorry, just getting back to this.
+>
+> On 5/9/18 2:41 AM, Dave Chinner wrote:
+>> On Tue, May 08, 2018 at 10:06:44PM -0400, Jeff Mahoney wrote:
+>>> On 5/8/18 7:38 PM, Dave Chinner wrote:
+>>>> On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
+>>>>> Hi,
 >>>>>
->>>>> Is there a reason why it depends on RPMSG_QCOM_GLINK_SMEM=n? What would
->>>>> happen if distro wants both this and RPMSG_QCOM_GLINK_SMEM
+>>>>> The VFS's super_block covers a variety of filesystem functionality. In
+>>>>> particular we have a single structure representing both I/O and
+>>>>> namespace domains.
 >>>>>
->>>>   RPMSG_QCOM_GLINK_SMEM=n should be for the COMPILE_TEST. Probably that
->>>
->>> why would that be a limitation? I am more worried about
->>> RPMSG_QCOM_GLINK_SMEM=n being the condition here. In new drivers we
->>> should not typically have dependency on some symbol being not there
+>>>>> There are requirements to de-couple this functionality. For example,
+>>>>> filesystems with more than one root (such as btrfs subvolumes) can
+>>>>> have multiple inode namespaces. This starts to confuse userspace when
+>>>>> it notices multiple inodes with the same inode/device tuple on a
+>>>>> filesystem.
+>>>>
+
+Speaking as someone who joined this discussion late, maybe years after
+it started, it would help to get an overview of existing problems and how
+fs_view aims to solve them.
+
+I do believe that both Overlayfs and Btrfs can benefit from a layer of
+abstraction
+in the VFS, but I think it is best if we start with laying all the
+common problems
+and then see how a solution would look like.
+
+Even the name of the abstraction (fs_view) doesn't make it clear to me what
+it is we are abstracting (security context? st_dev? what else?). probably best
+to try to describe the abstraction from user POV rather then give sporadic
+examples of what MAY go into fs_view.
+
+While at it, need to see if this discussion has any intersections with David
+Howell's fs_context work, because if we consider adding sub volume support
+to VFS, we may want to leave some reserved bits in the API for it.
+
+[...]
+
+> One thing is clear: If we want to solve the btrfs and overlayfs problems
+> in the same way, the view approach with a simple static mapping doesn't
+> work.  Sticking something between the inode and superblock doesn't get
+> the job done when the belongs to a different file system.  Overlayfs
+> needs a per-object remapper, which means a callback that takes a path.
+> Suddenly the way we do things in the SUSE kernel doesn't seem so hacky
+> anymore.
+>
+
+And what is the SUSE way?
+
+> I'm not sure we need the same solution for btrfs and overlayfs.  It's
+> not the same problem.  Every object in overlayfs as a unique mapping
+> already.  If we report s_dev and i_ino from the inode, it still maps to
+> a unique user-visible object.  It may not map back to the overlayfs
+> name, but that's a separate issue that's more difficult to solve.  The
+> btrfs issue isn't one of presenting an alternative namespace to the
+> user.  Btrfs has multiple internal namespaces and no way to publish them
+> to the rest of the kernel.
+>
+
+FYI, the Overlayfs file/inode mapping is about to change with many
+VFS hacks queued for removal, so stay tuned.
+
+[...]
+
+>> My point is that if we are talking about infrastructure to remap
+>> what userspace sees from different mountpoint views into a
+>> filesystem, then it should be done above the filesystem layers in
+>> the VFS so all filesystems behave the same way. And in this case,
+>> the vfsmount maps exactly to the "fs_view" that Mark has proposed we
+>> add to the superblock.....
+>
+> It's proposed to be above the superblock with a default view in the
+> superblock.  It would sit between the inode and the superblock so we
+> have access to it anywhere we already have an inode.  That's the main
+> difference.  We already have the inode everywhere it's needed.  Plumbing
+> a vfsmount everywhere needed means changing code that only requires an
+> inode and doesn't need a vfsmount.
+>
+> The two biggest problem areas:
+> - Writeback tracepoints print a dev/inode pair.  Do we want to plumb a
+> vfsmount into __mark_inode_dirty, super_operations->write_inode,
+> __writeback_single_inode, writeback_sb_inodes, etc?
+> - Audit.  As it happens, most of audit has a path or file that can be
+> used.  We do run into problems with fsnotify.  fsnotify_move is called
+> from vfs_rename which turns into a can of worms pretty quickly.
+>
+
+Can you please elaborate on that problem.
+Do you mean when watching a directory for changes, you need to
+be able to tell in which fs_view the directory inode that is being watched?
+
+>>> It makes sense for that to be above the
+>>> superblock because the file system doesn't care about them.  We're
+>>> interested in the inode namespace, which for every other file system can
+>>> be described using an inode and a superblock pair, but btrfs has another
+>>> layer in the middle: inode -> btrfs_root -> superblock.
 >>
->> Without that, if RPMSG_QCOM_GLINK_SMEM=m is compiled as a module, then
->> it would break the build.
-> 
-> Okay I do not know the details, but that doesn't sound correct to me.
-> Breaking build sounds a bit extreme to me. Can you give details on this
-> part..
-> 
+>> Which seems to me to be irrelevant if there's a vfsmount per
+>> subvolume that can hold per-subvolume information.
+>
+> I disagree.  There are a ton of places where we only have access to an
+> inode and only need access to an inode.  It also doesn't solve the
+> overlayfs issue.
+>
 
- Having, just, depends on RPMSG_QCOM_GLINK_SMEM || COMPILE_TEST,
- is going to break when RPMSG_QCOM_GLINK_SMEM=m and COMPILE_TEST=y.
- Hence the COMPILE_TEST && RPMSG_QCOM_GLINK_SMEM=n.
+I have an interest of solving another problem.
+In VFS operations where only inode is available, I would like to be able to
+report fsnotify events (e.g. fsnotify_move()) only in directories under a
+certain subtree root. That could be achieved either by bind mount the subtree
+root and passing vfsmount into vfs_rename() or by defining an fs_view on the
+subtree and mounting that fs_view.
 
- Having said that, COMPILE_TEST is getting tested for RPMSG_QCOM_SMD=n in
- the previous line. So that's the reason for not having it in below line for
- RPMSG_QCOM_GLINK_SMEM.
-
->>>>   means that it should be corrected here and for ADSP, Q6V5_PIL as well.
->>>>   Bjorn, is that correct ?, should it be, below ?
->>>>  
->>>>   depends on (RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)) || (RPMSG_QCOM_GLINK_SMEM || (COMPILE_TEST && RPMSG_QCOM_GLINK_SMEM=n))
->>>
->>> that doesnt really sound good :(
->>
->>  Hmm, but i was thinking it should functionally depend on either SMD or GLINK and not both.
-> 
-> If you are depedent upon a symbol provided by a module you should say
-> depends on. If a machine is not supposed to have both SMD or GLINK then
-> the driver will not get probed.
-> 
-
-This is where, i was thinking, it should be functional if either of SMD or GLINK
-is there, but should not require both.
-
-Regards,
- Sricharan
-
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+Thanks,
+Amir.
