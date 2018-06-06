@@ -1,153 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1XlI2rs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22C6060555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0CC26605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932357AbeFFJtw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:49:52 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:46963 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbeFFJtu (ORCPT
+        id S932271AbeFFPy2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:54:28 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57286 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932102AbeFFPyZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:49:50 -0400
-X-Google-Smtp-Source: ADUXVKI9sVeToxktoQ35sGb+z+8hVlYHW3jpJihlxySpBuZFMaFrOZcFiNp0UGeBQQOfjRLpwDfXedxnZCOFgF9g1lE=
-MIME-Version: 1.0
-In-Reply-To: <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
-References: <20180508180436.716-1-mfasheh@suse.de> <20180508233840.GM10363@dastard>
- <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com> <20180509064103.GP10363@dastard>
- <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 6 Jun 2018 12:49:48 +0300
-Message-ID: <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than one root
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Dave Chinner <david@fromorbit.com>, Mark Fasheh <mfasheh@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Btrfs <linux-btrfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Jun 2018 11:54:25 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org
+Subject: [PATCH 6/8] ARM: dts: am335x-sl50: use audio-graph-card for sound.
+Date: Wed,  6 Jun 2018 17:54:11 +0200
+Message-Id: <20180606155413.23542-6-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180606155413.23542-1-enric.balletbo@collabora.com>
+References: <20180606155413.23542-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 11:17 PM, Jeff Mahoney <jeffm@suse.com> wrote:
-> Sorry, just getting back to this.
->
-> On 5/9/18 2:41 AM, Dave Chinner wrote:
->> On Tue, May 08, 2018 at 10:06:44PM -0400, Jeff Mahoney wrote:
->>> On 5/8/18 7:38 PM, Dave Chinner wrote:
->>>> On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
->>>>> Hi,
->>>>>
->>>>> The VFS's super_block covers a variety of filesystem functionality. In
->>>>> particular we have a single structure representing both I/O and
->>>>> namespace domains.
->>>>>
->>>>> There are requirements to de-couple this functionality. For example,
->>>>> filesystems with more than one root (such as btrfs subvolumes) can
->>>>> have multiple inode namespaces. This starts to confuse userspace when
->>>>> it notices multiple inodes with the same inode/device tuple on a
->>>>> filesystem.
->>>>
+audio-graph-card is recommended for audio bindings. Let's change to it and
+improve the support by adding the Amplifier configuration and the clock
+enable control.
 
-Speaking as someone who joined this discussion late, maybe years after
-it started, it would help to get an overview of existing problems and how
-fs_view aims to solve them.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-I do believe that both Overlayfs and Btrfs can benefit from a layer of
-abstraction
-in the VFS, but I think it is best if we start with laying all the
-common problems
-and then see how a solution would look like.
+ arch/arm/boot/dts/am335x-sl50.dts | 111 +++++++++++++++++++++---------
+ 1 file changed, 80 insertions(+), 31 deletions(-)
 
-Even the name of the abstraction (fs_view) doesn't make it clear to me what
-it is we are abstracting (security context? st_dev? what else?). probably best
-to try to describe the abstraction from user POV rather then give sporadic
-examples of what MAY go into fs_view.
-
-While at it, need to see if this discussion has any intersections with David
-Howell's fs_context work, because if we consider adding sub volume support
-to VFS, we may want to leave some reserved bits in the API for it.
-
-[...]
-
-> One thing is clear: If we want to solve the btrfs and overlayfs problems
-> in the same way, the view approach with a simple static mapping doesn't
-> work.  Sticking something between the inode and superblock doesn't get
-> the job done when the belongs to a different file system.  Overlayfs
-> needs a per-object remapper, which means a callback that takes a path.
-> Suddenly the way we do things in the SUSE kernel doesn't seem so hacky
-> anymore.
->
-
-And what is the SUSE way?
-
-> I'm not sure we need the same solution for btrfs and overlayfs.  It's
-> not the same problem.  Every object in overlayfs as a unique mapping
-> already.  If we report s_dev and i_ino from the inode, it still maps to
-> a unique user-visible object.  It may not map back to the overlayfs
-> name, but that's a separate issue that's more difficult to solve.  The
-> btrfs issue isn't one of presenting an alternative namespace to the
-> user.  Btrfs has multiple internal namespaces and no way to publish them
-> to the rest of the kernel.
->
-
-FYI, the Overlayfs file/inode mapping is about to change with many
-VFS hacks queued for removal, so stay tuned.
-
-[...]
-
->> My point is that if we are talking about infrastructure to remap
->> what userspace sees from different mountpoint views into a
->> filesystem, then it should be done above the filesystem layers in
->> the VFS so all filesystems behave the same way. And in this case,
->> the vfsmount maps exactly to the "fs_view" that Mark has proposed we
->> add to the superblock.....
->
-> It's proposed to be above the superblock with a default view in the
-> superblock.  It would sit between the inode and the superblock so we
-> have access to it anywhere we already have an inode.  That's the main
-> difference.  We already have the inode everywhere it's needed.  Plumbing
-> a vfsmount everywhere needed means changing code that only requires an
-> inode and doesn't need a vfsmount.
->
-> The two biggest problem areas:
-> - Writeback tracepoints print a dev/inode pair.  Do we want to plumb a
-> vfsmount into __mark_inode_dirty, super_operations->write_inode,
-> __writeback_single_inode, writeback_sb_inodes, etc?
-> - Audit.  As it happens, most of audit has a path or file that can be
-> used.  We do run into problems with fsnotify.  fsnotify_move is called
-> from vfs_rename which turns into a can of worms pretty quickly.
->
-
-Can you please elaborate on that problem.
-Do you mean when watching a directory for changes, you need to
-be able to tell in which fs_view the directory inode that is being watched?
-
->>> It makes sense for that to be above the
->>> superblock because the file system doesn't care about them.  We're
->>> interested in the inode namespace, which for every other file system can
->>> be described using an inode and a superblock pair, but btrfs has another
->>> layer in the middle: inode -> btrfs_root -> superblock.
->>
->> Which seems to me to be irrelevant if there's a vfsmount per
->> subvolume that can hold per-subvolume information.
->
-> I disagree.  There are a ton of places where we only have access to an
-> inode and only need access to an inode.  It also doesn't solve the
-> overlayfs issue.
->
-
-I have an interest of solving another problem.
-In VFS operations where only inode is available, I would like to be able to
-report fsnotify events (e.g. fsnotify_move()) only in directories under a
-certain subtree root. That could be achieved either by bind mount the subtree
-root and passing vfsmount into vfs_rename() or by defining an fs_view on the
-subtree and mounting that fs_view.
-
-Thanks,
-Amir.
+diff --git a/arch/arm/boot/dts/am335x-sl50.dts b/arch/arm/boot/dts/am335x-sl50.dts
+index b15690155159..495a4a0be25c 100644
+--- a/arch/arm/boot/dts/am335x-sl50.dts
++++ b/arch/arm/boot/dts/am335x-sl50.dts
+@@ -105,11 +105,20 @@
+ 		#size-cells = <0>;
+ 
+ 		/* audio external oscillator */
+-		tlv320aic3x_mclk: oscillator@0 {
++		audio_mclk_fixed: oscillator@0 {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency  = <24576000>;	/* 24.576MHz */
+ 		};
++
++		audio_mclk: audio_mclk_gate@0 {
++			compatible = "gpio-gate-clock";
++			#clock-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&audio_mclk_pins>;
++			clocks = <&audio_mclk_fixed>;
++			enable-gpios = <&gpio1 27 0>;
++		};
+ 	};
+ 
+ 	panel: lcd_panel {
+@@ -152,19 +161,29 @@
+ 	};
+ 
+ 	sound {
+-		compatible = "ti,da830-evm-audio";
+-		ti,model = "AM335x-SL50";
+-		ti,audio-codec = <&audio_codec>;
+-		ti,mcasp-controller = <&mcasp0>;
++		compatible = "audio-graph-card";
++		label = "sound-card";
++		pinctrl-names = "default";
++		pinctrl-0 = <&audio_pa_pins>;
++
++		widgets = "Headphone", "Headphone Jack",
++			  "Speaker", "Speaker External",
++			  "Line", "Line In",
++			  "Microphone", "Microphone Jack";
+ 
+-		clocks = <&tlv320aic3x_mclk>;
+-		clock-names = "mclk";
++		routing = "Headphone Jack",	"HPLOUT",
++			  "Headphone Jack",	"HPROUT",
++			  "Amplifier",		"MONO_LOUT",
++			  "Speaker External",	"Amplifier",
++			  "LINE1R",		"Line In",
++			  "LINE1L",		"Line In",
++			  "MIC3L",		"Microphone Jack",
++			  "MIC3R",		"Microphone Jack",
++			  "Microphone Jack",	"Mic Bias";
+ 
+-		ti,audio-routing =
+-			"Headphone Jack",	"HPLOUT",
+-			"Headphone Jack",	"HPROUT",
+-			"LINE1R",               "Line In",
+-			"LINE1L",		"Line In";
++		dais = <&cpu_port>;
++
++		pa-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+ 	emmc_pwrseq: pwrseq@0 {
+@@ -194,6 +213,28 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&lwb_pins>;
+ 
++	audio_pins: pinmux_audio_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x9ac, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_ahcklx.mcasp0_ahclkx */
++			AM33XX_IOPAD(0x994, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_fsx.mcasp0_fsx */
++			AM33XX_IOPAD(0x990, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_aclkx.mcasp0_aclkx */
++			AM33XX_IOPAD(0x998, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr0.mcasp0_axr0 */
++			AM33XX_IOPAD(0x99c, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mcasp0_ahclkr.mcasp0_axr2 */
++		>;
++	};
++
++	audio_pa_pins: pinmux_audio_pa_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x9a0, PIN_INPUT_PULLDOWN | MUX_MODE7)	/* SoundPA_en - mcasp0_aclkr.gpio3_18 */
++		>;
++	};
++
++	audio_mclk_pins: pinmux_audio_mclk_pins {
++		pinctrl-single,pins = <
++			AM33XX_IOPAD(0x86c, PIN_INPUT_PULLDOWN | MUX_MODE7)	/* gpmc_a11.gpio1_27 */
++		>;
++	};
++
+ 	backlight0_pins: pinmux_backlight0_pins {
+ 		pinctrl-single,pins = <
+ 			AM33XX_IOPAD(0x898, PIN_OUTPUT | MUX_MODE7)	/* gpmc_wen.gpio2_4 */
+@@ -358,16 +399,6 @@
+ 		>;
+ 	};
+ 
+-	audio_pins: pinmux_audio_pins {
+-		pinctrl-single,pins = <
+-			AM33XX_IOPAD(0x9ac, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_ahcklx.mcasp0_ahclkx */
+-			AM33XX_IOPAD(0x994, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_fsx.mcasp0_fsx */
+-			AM33XX_IOPAD(0x990, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_aclkx.mcasp0_aclkx */
+-			AM33XX_IOPAD(0x998, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr0.mcasp0_axr0 */
+-			AM33XX_IOPAD(0x99c, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mcasp0_ahclkr.mcasp0_axr2 */
+-		>;
+-	};
+-
+ 	ehrpwm1_pins: pinmux_ehrpwm1a_pins {
+ 		pinctrl-single,pins = <
+ 			AM33XX_IOPAD(0x848, PIN_OUTPUT | MUX_MODE6)	/* gpmc_a2.ehrpwm1a */
+@@ -393,7 +424,6 @@
+ 
+ 	lwb_pins: pinmux_lwb_pins {
+ 		pinctrl-single,pins = <
+-			AM33XX_IOPAD(0x9a4, PIN_OUTPUT | MUX_MODE7)	/* SoundPA_en - mcasp0_fsr.gpio3_19 */
+ 			AM33XX_IOPAD(0x830, PIN_INPUT_PULLUP | MUX_MODE7)	/* nKbdInt - gpmc_ad12.gpio1_12 */
+ 			AM33XX_IOPAD(0x834, PIN_INPUT_PULLUP | MUX_MODE7)	/* nKbdReset - gpmc_ad13.gpio1_13 */
+ 			AM33XX_IOPAD(0x844, PIN_INPUT_PULLUP | MUX_MODE7)	/* USB1_enPower - gpmc_a1.gpio1_17 */
+@@ -448,12 +478,21 @@
+ 	audio_codec: tlv320aic3106@1b {
+ 		status = "okay";
+ 		compatible = "ti,tlv320aic3106";
++		#sound-dai-cells = <0>;
+ 		reg = <0x1b>;
++		ai3x-micbias-vg = <2>;  /* 2.5V */
+ 
+ 		AVDD-supply = <&ldo4_reg>;
+ 		IOVDD-supply = <&ldo4_reg>;
+ 		DRVDD-supply = <&ldo4_reg>;
+ 		DVDD-supply = <&ldo3_reg>;
++
++		codec_port: port {
++			codec_endpoint: endpoint {
++				remote-endpoint = <&cpu_endpoint>;
++				clocks = <&audio_mclk>;
++			};
++		};
+ 	};
+ 
+ 	/* Ambient Light Sensor */
+@@ -519,17 +558,27 @@
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&audio_pins>;
+-
++	#sound-dai-cells = <0>;
+ 	op-mode = <0>;  /* MCASP_ISS_MODE */
+ 	tdm-slots = <2>;
+-	serial-dir = <
+-		2 0 1 0
+-		0 0 0 0
+-		0 0 0 0
+-		0 0 0 0
++	/* 4 serializers */
++	serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
++		0 0 1 2
+ 	>;
+-	tx-num-evt = <1>;
+-	rx-num-evt = <1>;
++	tx-num-evt = <32>;
++	rx-num-evt = <32>;
++
++	cpu_port: port {
++		cpu_endpoint: endpoint {
++			remote-endpoint = <&codec_endpoint>;
++
++			dai-format = "dsp_b";
++			bitclock-master = <&codec_port>;
++			frame-master = <&codec_port>;
++			bitclock-inversion;
++			clocks = <&audio_mclk>;
++		};
++	};
+ };
+ 
+ &uart0 {
+-- 
+2.17.1
