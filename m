@@ -1,126 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ktkhJ11ZGlsNXAAAmS7hNA
-	; Fri, 08 Jun 2018 10:24:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D4LmOhddGFsRJQAAmS7hNA
+	; Wed, 06 Jun 2018 22:17:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2577B606FA; Fri,  8 Jun 2018 10:24:56 +0000 (UTC)
+	id 674D360861; Wed,  6 Jun 2018 22:17:14 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BA33260590;
-	Fri,  8 Jun 2018 10:24:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA33260590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DCE74607E4;
+	Wed,  6 Jun 2018 22:17:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCE74607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeFHKYw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:24:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53918 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751056AbeFHKYv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:24:51 -0400
-Received: by mail-wm0-f67.google.com with SMTP id x6-v6so2419180wmc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 03:24:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XEpANGmuzWbehI5ia5/9Fl7yF+AKc3lPpM4oM3T5B1A=;
-        b=kedBVNJDlEVZTOC3g+bR8Dxg55jGWulDA1wc2bjD9VnNWGsofvTI24SUjmxq/Shh/b
-         lZuYq7gJ1y/1yJLRxDnCtGpA6llc0fMQfL51e23MTXk562aHXRiAh6Nq8Q5IT0DSy772
-         pRxqF5bd+VApOHdsLZYkU5JcFVP1ru8DO9v5G9itodaJhqb7BuH0Hph2TUY8NcEreQqH
-         /WJ3upwmiIjk5Xb+6NF4x94gT95S6YteLIPjxA5DaGWQEpVNhSeMq+u3m2LHDcRs6EeV
-         SmJl2JIpAZcWch/Iz5WRR5khEwFwOIN2sRVvvClwf0NUbFV28VpELq1IFxjm0OPrMNag
-         Vq9A==
-X-Gm-Message-State: APt69E2MWw5zSithLEW2WZunYZRDUtnZ17eHiPrLPcOyyu8UqyoOfwD0
-        q/q6T9pd53IpwOxZKcyTdgVB4w==
-X-Google-Smtp-Source: ADUXVKKV7EmmJdF3UGQtTWCesz4TihBKTlF83D/Ze6yrahG3vPTOYlxWymaI6Pc8N70fMGJbOtBWhw==
-X-Received: by 2002:a1c:b2d0:: with SMTP id b199-v6mr1095591wmf.108.1528453489940;
-        Fri, 08 Jun 2018 03:24:49 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id v25-v6sm859839wmh.43.2018.06.08.03.24.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 03:24:48 -0700 (PDT)
-Date: Fri, 8 Jun 2018 12:24:46 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Quentin Perret <quentin.perret@arm.com>
-Cc: peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joelaf@google.com, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 09/10] sched/fair: Select an energy-efficient CPU
- on task wake-up
-Message-ID: <20180608102446.GE658@localhost.localdomain>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-10-quentin.perret@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521142505.6522-10-quentin.perret@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753013AbeFFWRM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 18:17:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752404AbeFFWP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 18:15:28 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCE8D8A3CE;
+        Wed,  6 Jun 2018 22:15:27 +0000 (UTC)
+Received: from krava.redhat.com (ovpn-204-89.brq.redhat.com [10.40.204.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 723172026DEF;
+        Wed,  6 Jun 2018 22:15:25 +0000 (UTC)
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH 03/10] perf stat: Add --interval-clear option
+Date: Thu,  7 Jun 2018 00:15:06 +0200
+Message-Id: <20180606221513.11302-4-jolsa@kernel.org>
+In-Reply-To: <20180606221513.11302-1-jolsa@kernel.org>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 06 Jun 2018 22:15:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 06 Jun 2018 22:15:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Adding --interval-clear option to clear the screen
+before next interval.
 
-On 21/05/18 15:25, Quentin Perret wrote:
+Link: http://lkml.kernel.org/n/tip-8zobiwghr6t9f9a4o886cmau@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/Documentation/perf-stat.txt |  3 +++
+ tools/perf/builtin-stat.c              | 11 +++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-[...]
-
-> +static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
-> +{
-> +	unsigned long cur_energy, prev_energy, best_energy, cpu_cap, task_util;
-> +	int cpu, best_energy_cpu = prev_cpu;
-> +	struct sched_energy_fd *sfd;
-> +	struct sched_domain *sd;
-> +
-> +	sync_entity_load_avg(&p->se);
-> +
-> +	task_util = task_util_est(p);
-> +	if (!task_util)
-> +		return prev_cpu;
-> +
-> +	/*
-> +	 * Energy-aware wake-up happens on the lowest sched_domain starting
-> +	 * from sd_ea spanning over this_cpu and prev_cpu.
-> +	 */
-> +	sd = rcu_dereference(*this_cpu_ptr(&sd_ea));
-> +	while (sd && !cpumask_test_cpu(prev_cpu, sched_domain_span(sd)))
-> +		sd = sd->parent;
-> +	if (!sd)
-> +		return -1;
-
-Shouldn't this be return prev_cpu?
-
-> +
-> +	if (cpumask_test_cpu(prev_cpu, &p->cpus_allowed))
-> +		prev_energy = best_energy = compute_energy(p, prev_cpu);
-> +	else
-> +		prev_energy = best_energy = ULONG_MAX;
-> +
-> +	for_each_freq_domain(sfd) {
-> +		unsigned long spare_cap, max_spare_cap = 0;
-> +		int max_spare_cap_cpu = -1;
-> +		unsigned long util;
-> +
-> +		/* Find the CPU with the max spare cap in the freq. dom. */
-
-I undestand this being a heuristic to cut some overhead, but shouldn't
-the model tell between packing vs. spreading?
-
-Thanks,
-
- -Juri
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index 5dfe102fb5b5..b10a90b6a718 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -178,6 +178,9 @@ Print count deltas for fixed number of times.
+ This option should be used together with "-I" option.
+ 	example: 'perf stat -I 1000 --interval-count 2 -e cycles -a'
+ 
++--interval-clear::
++Clear the screen before next interval.
++
+ --timeout msecs::
+ Stop the 'perf stat' session and print count deltas after N milliseconds (minimum: 10 ms).
+ This option is not supported with the "-I" option.
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index fce46252f89c..067d8b5b2c83 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -65,6 +65,7 @@
+ #include "util/tool.h"
+ #include "util/string2.h"
+ #include "util/metricgroup.h"
++#include "util/top.h"
+ #include "asm/bug.h"
+ 
+ #include <linux/time64.h>
+@@ -173,6 +174,7 @@ static struct cpu_map		*aggr_map;
+ static aggr_get_id_t		aggr_get_id;
+ static bool			append_file;
+ static bool			interval_count;
++static bool			interval_clear;
+ static const char		*output_name;
+ static int			output_fd;
+ static int			print_free_counters_hint;
+@@ -1713,9 +1715,12 @@ static void print_interval(char *prefix, struct timespec *ts)
+ 	FILE *output = stat_config.output;
+ 	static int num_print_interval;
+ 
++	if (interval_clear)
++		puts(CONSOLE_CLEAR);
++
+ 	sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
+ 
+-	if (num_print_interval == 0 && !csv_output) {
++	if ((num_print_interval == 0 && !csv_output) || interval_clear) {
+ 		switch (stat_config.aggr_mode) {
+ 		case AGGR_SOCKET:
+ 			fprintf(output, "#           time socket cpus");
+@@ -1747,7 +1752,7 @@ static void print_interval(char *prefix, struct timespec *ts)
+ 		}
+ 	}
+ 
+-	if (num_print_interval == 0 && metric_only)
++	if ((num_print_interval == 0 && metric_only) || interval_clear)
+ 		print_metric_headers(" ", true);
+ 	if (++num_print_interval == 25)
+ 		num_print_interval = 0;
+@@ -2066,6 +2071,8 @@ static const struct option stat_options[] = {
+ 		    "(overhead is possible for values <= 100ms)"),
+ 	OPT_INTEGER(0, "interval-count", &stat_config.times,
+ 		    "print counts for fixed number of times"),
++	OPT_BOOLEAN(0, "interval-clear", &interval_clear,
++		    "clear screen in between new interval"),
+ 	OPT_UINTEGER(0, "timeout", &stat_config.timeout,
+ 		    "stop workload and print counts after a timeout period in ms (>= 10ms)"),
+ 	OPT_SET_UINT(0, "per-socket", &stat_config.aggr_mode,
+-- 
+2.13.6
