@@ -1,287 +1,262 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8645160764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89E06607B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752276AbeFFPH5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:07:57 -0400
-Received: from mga01.intel.com ([192.55.52.88]:2620 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752110AbeFFPHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:07:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="55234497"
-Date: Wed, 6 Jun 2018 23:08:02 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: bhelgaas@google.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org, dan.daly@intel.com,
-        mark.d.rustad@intel.com, alexander.h.duyck@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: Re: [virtio-dev] Re: [PATCH v3] virtio_pci: support enabling VFs
-Message-ID: <20180606150802.GA14901@debian>
-References: <20180601040239.1151-1-tiwei.bie@intel.com>
- <20180604192222-mutt-send-email-mst@kernel.org>
- <20180605013653.GA1045@debian>
- <20180605152151-mutt-send-email-mst@kernel.org>
- <20180606121154.GA9599@debian>
- <20180606153236-mutt-send-email-mst@kernel.org>
- <20180606141943.GA13904@debian>
- <20180606172139-mutt-send-email-mst@kernel.org>
+        id S1752154AbeFFNRU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:17:20 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:52496 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751946AbeFFNRD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:17:03 -0400
+X-Google-Smtp-Source: ADUXVKKpocg5oD+uwRYqauMUrzcrpyCTSre4E6ExqD8QYA8RLPa4cUDuWE7sHb+gHExceUiiKYhijlCW1B6+nb5pWvNkwKcc+lnF
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180606172139-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Date: Wed, 06 Jun 2018 06:17:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000087008b056df8fbb3@google.com>
+Subject: possible deadlock in console_unlock
+From: syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pmladek@suse.com,
+        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 05:27:07PM +0300, Michael S. Tsirkin wrote:
-> On Wed, Jun 06, 2018 at 10:19:43PM +0800, Tiwei Bie wrote:
-> > On Wed, Jun 06, 2018 at 03:44:11PM +0300, Michael S. Tsirkin wrote:
-> > > On Wed, Jun 06, 2018 at 08:11:54PM +0800, Tiwei Bie wrote:
-> > > > On Tue, Jun 05, 2018 at 03:23:11PM +0300, Michael S. Tsirkin wrote:
-> > > > > On Tue, Jun 05, 2018 at 09:36:53AM +0800, Tiwei Bie wrote:
-> > > > > > On Mon, Jun 04, 2018 at 07:32:25PM +0300, Michael S. Tsirkin wrote:
-> > > > > > > On Fri, Jun 01, 2018 at 12:02:39PM +0800, Tiwei Bie wrote:
-> > > > > > > > There is a new feature bit allocated in virtio spec to
-> > > > > > > > support SR-IOV (Single Root I/O Virtualization):
-> > > > > > > > 
-> > > > > > > > https://github.com/oasis-tcs/virtio-spec/issues/11
-> > > > > > > > 
-> > > > > > > > This patch enables the support for this feature bit in
-> > > > > > > > virtio driver.
-> > > > > > > > 
-> > > > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > > > > ---
-> > > > > > > 
-> > > > > > > OK but what about freeze/restore functions?
-> > > > > 
-> > > > > So for restore, don't you need to restore the
-> > > > > sriov capability?
-> > > > 
-> > > > Currently I'm not familiar with the PM part.
-> > > > But I still think the sriov capability should
-> > > > be handled by PCI core.
-> > > 
-> > > OK but the point is restore looks just like power up for device.
-> > > 
-> > > > I'm trying to understand
-> > > > all the relevant code..
-> > > > For your question, based on what I found from
-> > > > the code currently, I guess the sriov capability
-> > > > will be restored by pci_restore_state() which
-> > > > will be called by the ops in pci_dev_pm_ops.
-> > > > The sriov_restore_state() will be called
-> > > > eventually.
-> > > > 
-> > > > Best regards,
-> > > > Tiwei Bie
-> > > 
-> > > Right but my point is during resume SRIOV gets enabled first before
-> > > driver ok.
-> > > 
-> > > Maybe we should relax the requirements in the spec:
-> > > - only require FEATURES_OK from device, not DRIVER_OK from driver
-> > > - explain that it only has to happen once, not on each reset,
-> > >   and driver can remember the result
-> > 
-> > I got your point now! I'd like to relax the
-> > requirements in the spec.
-> > 
-> > Best regards,
-> > Tiwei Bie
-> 
-> Well the ballot approving your change closed.  I think we should apply
-> the first chunks reserving the feature bit then, and defer the rest, and
-> you can work on new wording documenting the actual behaviour with a new
-> github issue to track that - does this make sense?
-> Let's do it quickly though - I don't want to bother the
-> TC with re-voting the deferral, then the new patch.
+Hello,
 
-Yeah. It makes sense! I think it's a good idea
-to reserve the feature bit first and defer the
-rest. I'll work on the new wording documenting
-the actual behavior with a new github issue to
-track it. Thanks a lot!
+syzbot found the following crash on:
 
-Best regards,
-Tiwei Bie
+HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173d93ef800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
+dashboard link: https://syzkaller.appspot.com/bug?extid=43e93968b964e369db0b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16e00bb7800000
 
-> 
-> > > 
-> > > 
-> > > > 
-> > > > > 
-> > > > > 
-> > > > > > > I also wonder about kexec - virtio.c currently does:
-> > > > > > > 
-> > > > > > >         /* We always start by resetting the device, in case a previous
-> > > > > > >          * driver messed it up.  This also tests that code path a little. */
-> > > > > > >         dev->config->reset(dev);
-> > > > > > > 
-> > > > > > > Do we need to do something like this for sriov?
-> > > > > > 
-> > > > > > I think VFs are managed by PCI core. Once they are
-> > > > > > allocated, virtio driver doesn't have to care too
-> > > > > > much about how to manage them. The proposal for the
-> > > > > > spec is just to provide a feature bit based virtio
-> > > > > > way for virtio drivers to know whether a virtio
-> > > > > > device is SR-IOV capable (and virtio drivers can
-> > > > > > support configuring SR-IOV based on the feature
-> > > > > > bit negotiation result).
-> > > > > > 
-> > > > > > > 
-> > > > > > > I also wonder whether PCI core should disable sriov for us.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > I wish there was a patch emulating this without vDPA for QEMU,
-> > > > > > > would make it easy to test your patches. Do you happen
-> > > > > > > to have something like this?
-> > > > > > 
-> > > > > > Sorry, currently I don't have anything like this..
-> > > > > > 
-> > > > > > Best regards,
-> > > > > > Tiwei Bie
-> > > > > > 
-> > > > > > > 
-> > > > > > > Thanks,
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > v3:
-> > > > > > > > - Drop the acks;
-> > > > > > > > 
-> > > > > > > > v2:
-> > > > > > > > - Disable VFs when unbinding the driver (Alex, MST);
-> > > > > > > > - Don't use pci_sriov_configure_simple (Alex);
-> > > > > > > > 
-> > > > > > > >  drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
-> > > > > > > >  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
-> > > > > > > >  include/uapi/linux/virtio_config.h |  7 ++++++-
-> > > > > > > >  3 files changed, 50 insertions(+), 1 deletion(-)
-> > > > > > > > 
-> > > > > > > > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> > > > > > > > index 48d4d1cf1cb6..1d4467b2dc31 100644
-> > > > > > > > --- a/drivers/virtio/virtio_pci_common.c
-> > > > > > > > +++ b/drivers/virtio/virtio_pci_common.c
-> > > > > > > > @@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> > > > > > > >  	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> > > > > > > >  	struct device *dev = get_device(&vp_dev->vdev.dev);
-> > > > > > > >  
-> > > > > > > > +	pci_disable_sriov(pci_dev);
-> > > > > > > > +
-> > > > > > > >  	unregister_virtio_device(&vp_dev->vdev);
-> > > > > > > >  
-> > > > > > > >  	if (vp_dev->ioaddr)
-> > > > > > > > @@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> > > > > > > >  	put_device(dev);
-> > > > > > > >  }
-> > > > > > > >  
-> > > > > > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-> > > > > > > > +{
-> > > > > > > > +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> > > > > > > > +	struct virtio_device *vdev = &vp_dev->vdev;
-> > > > > > > > +	int ret;
-> > > > > > > > +
-> > > > > > > > +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> > > > > > > > +		return -EBUSY;
-> > > > > > > > +
-> > > > > > > > +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-> > > > > > > > +		return -EINVAL;
-> > > > > > > > +
-> > > > > > > > +	if (pci_vfs_assigned(pci_dev))
-> > > > > > > > +		return -EPERM;
-> > > > > > > > +
-> > > > > > > > +	if (num_vfs == 0) {
-> > > > > > > > +		pci_disable_sriov(pci_dev);
-> > > > > > > > +		return 0;
-> > > > > > > > +	}
-> > > > > > > > +
-> > > > > > > > +	ret = pci_enable_sriov(pci_dev, num_vfs);
-> > > > > > > > +	if (ret < 0)
-> > > > > > > > +		return ret;
-> > > > > > > > +
-> > > > > > > > +	return num_vfs;
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > >  static struct pci_driver virtio_pci_driver = {
-> > > > > > > >  	.name		= "virtio-pci",
-> > > > > > > >  	.id_table	= virtio_pci_id_table,
-> > > > > > > > @@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
-> > > > > > > >  #ifdef CONFIG_PM_SLEEP
-> > > > > > > >  	.driver.pm	= &virtio_pci_pm_ops,
-> > > > > > > >  #endif
-> > > > > > > > +	.sriov_configure = virtio_pci_sriov_configure,
-> > > > > > > >  };
-> > > > > > > >  
-> > > > > > > >  module_pci_driver(virtio_pci_driver);
-> > > > > > > > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> > > > > > > > index 2555d80f6eec..07571daccfec 100644
-> > > > > > > > --- a/drivers/virtio/virtio_pci_modern.c
-> > > > > > > > +++ b/drivers/virtio/virtio_pci_modern.c
-> > > > > > > > @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
-> > > > > > > >  	return features;
-> > > > > > > >  }
-> > > > > > > >  
-> > > > > > > > +static void vp_transport_features(struct virtio_device *vdev, u64 features)
-> > > > > > > > +{
-> > > > > > > > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > > > > > > > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> > > > > > > > +
-> > > > > > > > +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-> > > > > > > > +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-> > > > > > > > +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-> > > > > > > > +}
-> > > > > > > > +
-> > > > > > > >  /* virtio config->finalize_features() implementation */
-> > > > > > > >  static int vp_finalize_features(struct virtio_device *vdev)
-> > > > > > > >  {
-> > > > > > > >  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > > > > > > > +	u64 features = vdev->features;
-> > > > > > > >  
-> > > > > > > >  	/* Give virtio_ring a chance to accept features. */
-> > > > > > > >  	vring_transport_features(vdev);
-> > > > > > > >  
-> > > > > > > > +	/* Give virtio_pci a chance to accept features. */
-> > > > > > > > +	vp_transport_features(vdev, features);
-> > > > > > > > +
-> > > > > > > >  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
-> > > > > > > >  		dev_err(&vdev->dev, "virtio: device uses modern interface "
-> > > > > > > >  			"but does not have VIRTIO_F_VERSION_1\n");
-> > > > > > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > > > > > > > index 308e2096291f..b7c1f4e7d59e 100644
-> > > > > > > > --- a/include/uapi/linux/virtio_config.h
-> > > > > > > > +++ b/include/uapi/linux/virtio_config.h
-> > > > > > > > @@ -49,7 +49,7 @@
-> > > > > > > >   * transport being used (eg. virtio_ring), the rest are per-device feature
-> > > > > > > >   * bits. */
-> > > > > > > >  #define VIRTIO_TRANSPORT_F_START	28
-> > > > > > > > -#define VIRTIO_TRANSPORT_F_END		34
-> > > > > > > > +#define VIRTIO_TRANSPORT_F_END		38
-> > > > > > > >  
-> > > > > > > >  #ifndef VIRTIO_CONFIG_NO_LEGACY
-> > > > > > > >  /* Do we get callbacks when the ring is completely used, even if we've
-> > > > > > > > @@ -71,4 +71,9 @@
-> > > > > > > >   * this is for compatibility with legacy systems.
-> > > > > > > >   */
-> > > > > > > >  #define VIRTIO_F_IOMMU_PLATFORM		33
-> > > > > > > > +
-> > > > > > > > +/*
-> > > > > > > > + * Does the device support Single Root I/O Virtualization?
-> > > > > > > > + */
-> > > > > > > > +#define VIRTIO_F_SR_IOV			37
-> > > > > > > >  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> > > > > > > > -- 
-> > > > > > > > 2.17.0
-> > > > > > > 
-> > > > > > > ---------------------------------------------------------------------
-> > > > > > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> > > > > > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
-> > > > > > > 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com
+
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.17.0+ #111 Not tainted
+------------------------------------------------------
+syz-executor0/4774 is trying to acquire lock:
+         (ptrval) (console_owner){-...}, at: log_next  
+kernel/printk/printk.c:496 [inline]
+         (ptrval) (console_owner){-...}, at: console_unlock+0x583/0x1100  
+kernel/printk/printk.c:2382
+
+but task is already holding lock:
+         (ptrval) (&(&port->lock)->rlock){-.-.}, at: pty_write+0xf9/0x1f0  
+drivers/tty/pty.c:119
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&(&port->lock)->rlock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        tty_port_tty_get+0x20/0x80 drivers/tty/tty_port.c:288
+        tty_port_default_wakeup+0x15/0x40 drivers/tty/tty_port.c:47
+        tty_port_tty_wakeup+0x5d/0x70 drivers/tty/tty_port.c:390
+        uart_write_wakeup+0x44/0x60 drivers/tty/serial/serial_core.c:103
+        serial8250_tx_chars+0x4be/0xb60  
+drivers/tty/serial/8250/8250_port.c:1808
+        serial8250_handle_irq.part.25+0x1ee/0x280  
+drivers/tty/serial/8250/8250_port.c:1881
+        serial8250_handle_irq drivers/tty/serial/8250/8250_port.c:1867  
+[inline]
+        serial8250_default_handle_irq+0xc8/0x150  
+drivers/tty/serial/8250/8250_port.c:1897
+        serial8250_interrupt+0xfa/0x1d0  
+drivers/tty/serial/8250/8250_core.c:125
+        __handle_irq_event_percpu+0x1c0/0xad0 kernel/irq/handle.c:149
+        handle_irq_event_percpu+0x98/0x1c0 kernel/irq/handle.c:189
+        handle_irq_event+0xa7/0x135 kernel/irq/handle.c:206
+        handle_edge_irq+0x20f/0x870 kernel/irq/chip.c:791
+        generic_handle_irq_desc include/linux/irqdesc.h:159 [inline]
+        handle_irq+0x18c/0x2e7 arch/x86/kernel/irq_64.c:77
+        do_IRQ+0x78/0x190 arch/x86/kernel/irq.c:245
+        ret_from_intr+0x0/0x1e
+        native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
+        arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
+        default_idle+0xc2/0x440 arch/x86/kernel/process.c:500
+        arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:491
+        default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+        cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+        do_idle+0x395/0x560 kernel/sched/idle.c:262
+        cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
+        start_secondary+0x42b/0x5c0 arch/x86/kernel/smpboot.c:265
+        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+
+-> #1 (&port_lock_key){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        serial8250_console_write+0x8d5/0xb00  
+drivers/tty/serial/8250/8250_port.c:3230
+        univ8250_console_write+0x5f/0x70  
+drivers/tty/serial/8250/8250_core.c:590
+        call_console_drivers kernel/printk/printk.c:1718 [inline]
+        console_unlock+0xac2/0x1100 kernel/printk/printk.c:2395
+        vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
+        printk+0x9e/0xba kernel/printk/printk.c:1980
+        register_console+0x7e7/0xc00 kernel/printk/printk.c:2714
+        univ8250_console_init+0x3f/0x4b  
+drivers/tty/serial/8250/8250_core.c:685
+        console_init+0x6d9/0xa38 kernel/printk/printk.c:2798
+        start_kernel+0x608/0x92d init/main.c:661
+        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+
+-> #0 (console_owner){-...}:
+        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3924
+        console_lock_spinning_enable kernel/printk/printk.c:1581 [inline]
+        console_unlock+0x5ef/0x1100 kernel/printk/printk.c:2392
+        vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
+        printk+0x9e/0xba kernel/printk/printk.c:1980
+        fail_dump lib/fault-inject.c:44 [inline]
+        should_fail+0x97a/0xbcd lib/fault-inject.c:149
+        __should_failslab+0x124/0x180 mm/failslab.c:32
+        should_failslab+0x9/0x14 mm/slab_common.c:1522
+        slab_pre_alloc_hook mm/slab.h:423 [inline]
+        slab_alloc mm/slab.c:3378 [inline]
+        __do_kmalloc mm/slab.c:3716 [inline]
+        __kmalloc+0x63/0x760 mm/slab.c:3727
+        kmalloc include/linux/slab.h:517 [inline]
+        tty_buffer_alloc drivers/tty/tty_buffer.c:170 [inline]
+        __tty_buffer_request_room+0x2d2/0x7f0 drivers/tty/tty_buffer.c:268
+        tty_insert_flip_string_fixed_flag+0x8d/0x1f0  
+drivers/tty/tty_buffer.c:313
+        tty_insert_flip_string include/linux/tty_flip.h:37 [inline]
+        pty_write+0x12c/0x1f0 drivers/tty/pty.c:121
+        tty_put_char+0x129/0x150 drivers/tty/tty_io.c:2865
+        __process_echoes+0x4d9/0x8d0 drivers/tty/n_tty.c:703
+        process_echoes+0xfc/0x170 drivers/tty/n_tty.c:781
+        n_tty_set_termios+0xb56/0xe80 drivers/tty/n_tty.c:1837
+        tty_set_termios+0x7a0/0xac0 drivers/tty/tty_ioctl.c:341
+        set_termios+0x41e/0x7d0 drivers/tty/tty_ioctl.c:414
+        tty_mode_ioctl+0x871/0xb50 drivers/tty/tty_ioctl.c:781
+        n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
+        n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
+        tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
+        vfs_ioctl fs/ioctl.c:46 [inline]
+        file_ioctl fs/ioctl.c:500 [inline]
+        do_vfs_ioctl+0x1cf/0x16f0 fs/ioctl.c:684
+        __do_compat_sys_ioctl fs/compat_ioctl.c:1483 [inline]
+        __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
+        __ia32_compat_sys_ioctl+0x43e/0x640 fs/compat_ioctl.c:1407
+        do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+        do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+        entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+other info that might help us debug this:
+
+Chain exists of:
+   console_owner --> &port_lock_key --> &(&port->lock)->rlock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&(&port->lock)->rlock);
+                                lock(&port_lock_key);
+                                lock(&(&port->lock)->rlock);
+   lock(console_owner);
+
+  *** DEADLOCK ***
+
+6 locks held by syz-executor0/4774:
+  #0:         (ptrval) (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:         (ptrval) (&o_tty->termios_rwsem/1){++++}, at:  
+tty_set_termios+0xfd/0xac0 drivers/tty/tty_ioctl.c:328
+  #2:         (ptrval) (&tty->ldisc_sem){++++}, at: tty_ldisc_ref+0x22/0x90  
+drivers/tty/tty_ldisc.c:284
+  #3:         (ptrval) (&ldata->output_lock){+.+.}, at:  
+process_echoes+0xb6/0x170 drivers/tty/n_tty.c:779
+  #4:         (ptrval) (&(&port->lock)->rlock){-.-.}, at:  
+pty_write+0xf9/0x1f0 drivers/tty/pty.c:119
+  #5:         (ptrval) (console_lock){+.+.}, at: console_trylock_spinning  
+kernel/printk/printk.c:1643 [inline]
+  #5:         (ptrval) (console_lock){+.+.}, at: vprintk_emit+0x694/0xdd0  
+kernel/printk/printk.c:1906
+
+stack backtrace:
+CPU: 1 PID: 4774 Comm: syz-executor0 Not tainted 4.17.0+ #111
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_circular_bug.isra.36.cold.56+0x1bd/0x27d  
+kernel/locking/lockdep.c:1227
+  check_prev_add kernel/locking/lockdep.c:1867 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1980 [inline]
+  validate_chain kernel/locking/lockdep.c:2421 [inline]
+  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3435
+  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3924
+  console_lock_spinning_enable kernel/printk/printk.c:1581 [inline]
+  console_unlock+0x5ef/0x1100 kernel/printk/printk.c:2392
+  vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+  vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
+  printk+0x9e/0xba kernel/printk/printk.c:1980
+  fail_dump lib/fault-inject.c:44 [inline]
+  should_fail+0x97a/0xbcd lib/fault-inject.c:149
+  __should_failslab+0x124/0x180 mm/failslab.c:32
+  should_failslab+0x9/0x14 mm/slab_common.c:1522
+  slab_pre_alloc_hook mm/slab.h:423 [inline]
+  slab_alloc mm/slab.c:3378 [inline]
+  __do_kmalloc mm/slab.c:3716 [inline]
+  __kmalloc+0x63/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:517 [inline]
+  tty_buffer_alloc drivers/tty/tty_buffer.c:170 [inline]
+  __tty_buffer_request_room+0x2d2/0x7f0 drivers/tty/tty_buffer.c:268
+  tty_insert_flip_string_fixed_flag+0x8d/0x1f0 drivers/tty/tty_buffer.c:313
+  tty_insert_flip_string include/linux/tty_flip.h:37 [inline]
+  pty_write+0x12c/0x1f0 drivers/tty/pty.c:121
+  tty_put_char+0x129/0x150 drivers/tty/tty_io.c:2865
+  __process_echoes+0x4d9/0x8d0 drivers/tty/n_tty.c:703
+  process_echoes+0xfc/0x170 drivers/tty/n_tty.c:781
+  n_tty_set_termios+0xb56/0xe80 drivers/tty/n_tty.c:1837
+  tty_set_termios+0x7a0/0xac0 drivers/tty/tty_ioctl.c:341
+  set_termios+0x41e/0x7d0 drivers/tty/tty_ioctl.c:414
+  tty_mode_ioctl+0x871/0xb50 drivers/tty/tty_ioctl.c:781
+  n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
+  n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
+  tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16f0 fs/ioctl.c:684
+  __do_compat_sys_ioctl fs/compat_ioctl.c:1483 [inline]
+  __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
+  __ia32_compat_sys_ioctl+0x43e/0x640 fs/compat_ioctl.c:1407
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
