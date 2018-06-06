@@ -1,327 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="csT9D1eV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9C46B60860
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="kZ+DMPNq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B1769605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932585AbeFFI0q (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:26:46 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37340 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932392AbeFFI0o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:26:44 -0400
-X-Google-Smtp-Source: ADUXVKKeppVOkG0n8Me0cDLopo1hoiXmuk5y9la92lHzysJyRBhoQ3VcYqWU0C9dSe4F4/KLbt86iA==
-Date: Wed, 6 Jun 2018 10:26:40 +0200
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH 2/2] sched/fair: util_est: add running_sum tracking
-Message-ID: <20180606082640.GA14694@linaro.org>
-References: <20180604160600.22052-1-patrick.bellasi@arm.com>
- <20180604160600.22052-3-patrick.bellasi@arm.com>
- <CAKfTPtD8RDxT=-oO2VYJRbtwoEyEKEAau-Ad-bAd8L2T2zKWEg@mail.gmail.com>
- <20180605151129.GC32302@e110439-lin>
+        id S932400AbeFFHv0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:51:26 -0400
+Received: from mail-sn1nam01on0070.outbound.protection.outlook.com ([104.47.32.70]:27094
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932320AbeFFHvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 03:51:20 -0400
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+From: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+To: <boris.brezillon@bootlin.com>, <richard@nod.at>,
+        <wmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <f.fainelli@gmail.com>,
+        <mmayer@broadcom.com>, <rogerq@ti.com>, <ladis@linux-mips.org>,
+        <ada@thorsis.com>, <honghui.zhang@mediatek.com>,
+        <miquel.raynal@bootlin.com>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <nagasureshkumarrelli@gmail.com>,
+        Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Subject: [LINUX PATCH v9 0/4] Add arm pl353 smc memory and nand driver for xilinx zynq soc
+Date: Wed, 6 Jun 2018 13:19:38 +0530
+Message-ID: <1528271382-21690-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39860400002)(39380400002)(2980300002)(438002)(199004)(189003)(6306002)(16586007)(110136005)(9786002)(36756003)(486006)(476003)(2616005)(126002)(50226002)(81156014)(8676002)(81166006)(2201001)(305945005)(426003)(54906003)(356003)(336012)(36386004)(77096007)(8936002)(316002)(7696005)(51416003)(26005)(106002)(2906002)(186003)(50466002)(48376002)(478600001)(966005)(106466001)(5660300001)(7416002)(63266004)(4326008)(47776003)(6666003)(39060400002)(107886003)(921003)(107986001)(5001870100001)(1121003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR0201MB1494;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT034;1:T1iVcdug5vmRooNpUjKzAAPRlZEhnQTf+V8J1mfuW1gf2uzPUb9pedimKwD5q5R/zByrXKlZoRXwvCX8+hiE2Z3BcVSUfVKhiX92DawOudkgAq53XPuMwvhNSo510iUa
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180605151129.GC32302@e110439-lin>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY2PR0201MB1494;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0201MB1494;3:BicQUpjF4hmtHElOrMy4is8GgrK5/S3vcsg2zbTWy27fdByOl0EQ1yfSxPZRNeyL5Br/9LZ0znaHSt+R0XW7lLUuYeDZ6RH10TcVrkYi0Mfpjzl8W94Pj6JiWhENnxr4H7VG4+fC08rj8/EVfQFkNOWNBNIXsRYPWdXhU2XkUu3nKIX221SQlpwbNu1fUnA8GhwnAm7PRbE0J0TDAEGNPGnX6QVPR6YdQPx9AclxxXHu14hygpwupvV5ZBVIM2CwZKO1TK2JDz8JneH3TzD6dqjcxMqpNg5kZqrhfNmpL+9fMVrGHO+OyS5+1p6p6YTBnCme26YWsM8LVNZr8HuLSNlJiz9Jw1Z+o8Bq5QaUoDA=;25:ubb9WHWb8aP7rjuAmwlwOe/sbe6dgPAu/LSSdJhy5FpBTiL40HsNOxQs3L2H+2mWPLwHsr/uh0tc6+T5evGx4eXL+jrxXYfXgYsnXzW4A/0pF8efYEJRoYzR4+CKO5CmcnYa/XD6iRkD87jI3Mu/RFZtD8QswSNd6Tt+BdrkqYa3J4cWyy6vM/wkWS7rYRYcaF3G2O3Crj+SPndJFvhy9HrS5wV5iYzUhswYWH4e/7SBegYd1OFtzhPTk2i4YFcZV0+ZmV51c5xceUxnB1+uChimTfCSRvyR0KHFzoC4epjKq+AIhptHxVRyC12AkTbhYH1IthwSJ47w9Cmw8m0Fug==
+X-MS-TrafficTypeDiagnostic: BY2PR0201MB1494:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0201MB1494;31:Ff1rs3ZFp8g7lbkZrc7Mpw94Dd3or6u3kb+D1MZDga+QhH4NtsEKzfvzIPaRFstUBhPwf38YVgNenlg8DIqVcqRoomm+zmiNkw2NR9H+KgmGIeP4ggllWnpPwAAtsvR03uyeH7gPOnln3iaA9bUG8ZeMuIThpigl6a77AbFtvJ1TRu8kufYzq3USHWO7dQzmN/+PynWmGp+ms/4bKU+Cn7ey21w+aBfbb7PacwX0Zoc=;20:HqKpRoN+zZoyXNcvIymJ2BUpnAEYhh2KSpX8EU4mEF37gomLIfH30JjzdyA3Ej+WmKWzPH7pCigiTnAtiU8SEFst81Z0rfOi7R490MSbtkZaDV6siHGwX0aCVpaPrU9v9YvPDfwXJGZmoKMbROqRYenPzPiQZTbmJcZ8gOq2DOzBemoUJ1pn7GJk3AD7MXqk9VopLvzKVomgVJvaK11Z5hhTWAg6aY9AYqYxK95uCFTcJT3JPn+6uRTxf8Y0StgTNpW4ymDJnIvElw2c8rpWT83ZI/Ctm98uXB4UUNScC98ZP6m2xrZG4+tdTRJIKdOAw3++AsPo/kIdj9i8lCt7bR6OeiT2OOhxg5mur8JIw+6rE8lU1m2lRXARs/mIxOvgSaqxtKRM+rE6UjAm4bisrxT8e2H0HnARDOTc2sqpkLn48Nr4+LK54FQGqXmVfyGeACZ9Vwm6DsOR+5XBpqJEWUwxtd4BO9i5YCAiio15puEmZr6lQXZuokeUzYTnTAd/
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BY2PR0201MB149456E00F103CD3D7EFEF0BAF650@BY2PR0201MB1494.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(192813158149592)(189271028609987);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231254)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BY2PR0201MB1494;BCL:0;PCL:0;RULEID:;SRVR:BY2PR0201MB1494;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0201MB1494;4:wINzSG/O5IDjZjx/SCH9WSfDf1gwyxTNc3P+6C3UFRXvCIgvNzMzjUpttu1O+CxRFU9dVtNePhCGLU4dtiwmjj3Yw8J+LU8VHFy6Idzk8mWipBZlnkI9MRpb0XwBc9n4uXM4LitZ8pPayg8cQpuR7k8jUpPHZPOOa3yW2L2YINSX+Asosz/G649VCC+/0R6vjpIJ3G75aT9RHXwIRdR7XPnMZJjrwT7w6ddLlq8MiStQebURvqQ9KXItPUGWRBXrlifPepWceER+wQnfR5JXAfgqjgy2qqoZtap0jvmMG+4NFOfeHv9WiVonS9UdjVXYOq+D94VJ1zKzTr+fZtCdu71LmS+gQnyNIsibTbpfpORtW9NB7gfIGFrHr3ZhBmCO
+X-Forefront-PRVS: 06952FC175
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR0201MB1494;23:c9lMH4OazE9MjtEvSYeVNlTL4ap+FGZDfVsKDS1?=
+ =?us-ascii?Q?dIEXWKzhFrqO5BWhrpD1ouxqNiLNRL7Y3e9uzP+d+U2ymuLeKKqQH2lzYPdH?=
+ =?us-ascii?Q?Rk76C++srt1ab8eNnELmYzkY3/5/oLykI0Ur/bjXYc3L2EevYvcdKZPq8sDe?=
+ =?us-ascii?Q?Xpb7lhEs+hdF5CazhSZkJmevm9QRqth9Cdas2OjRjzT+JUxFh0Js9wrWfzSb?=
+ =?us-ascii?Q?UfHQbzZyuRCGEbgOIU8piFM6hWBOT4jsPsyNSxAkMHHewWX5/m4opvhs59s8?=
+ =?us-ascii?Q?ZNMCh3GVTfcweNAH0jgoKuxdNclnH6BUv7R9aLxkJz/i56w3iSsmB/GN8EwU?=
+ =?us-ascii?Q?HcsWnybOHo6l7IbRwZtXxmbE7x6A2keu6AU9xafQ5pflO/oMzv+Vqc/UAl/P?=
+ =?us-ascii?Q?YasYSsIq0VKC09aFjvnkdDDRBmm8L90ubLodolDnX48H9oK+g1tnC+7HBX0y?=
+ =?us-ascii?Q?39G16oHBuwswTOv4wIGf5kJrPT7ylQkC/Yb5hxAcCn7mxlGAHrBWnY2taw44?=
+ =?us-ascii?Q?FPf/Z00HMuA3nIx8XaV1Xhuv0Y/jW5IKGsvxcUolLu63osd6mpoEEmWcEtKl?=
+ =?us-ascii?Q?d8u/+1a+3NcMRCbcwf7fNxeRD5dC8540tU0b88gEdkYSPce4x93qV4Jx7JNt?=
+ =?us-ascii?Q?8oFtNtgKEH29yF9aGGsUE/JOyw2rXwMbhruCzIuLEq6G8DtjypciYEhJv++y?=
+ =?us-ascii?Q?kfuQoRa9CE+IBdm95WJtWmKfLJmNYBSGobIuvT3KHOh5yUvlfrGo8MQvptr3?=
+ =?us-ascii?Q?tJXDEvUhXis3D4X/3qTvaKp3zkHKsLoMnJArqqdoOs61+6FqgOQcBxDcsSoA?=
+ =?us-ascii?Q?VPqIoO6tICypT2uaKtH3EIQULd+b4qs6RuQ7Pl2xxq3/j8JAp+sBmuYdpaIe?=
+ =?us-ascii?Q?38RVAECUyZRD4Wuqvs82egeeLmZtd2XzybjGT9ESP/plXJpl72YjyqNXIq2S?=
+ =?us-ascii?Q?ytageffqnEnUhVZGtQ0rCkHyaFCW+gdLEaZriwzBoGxnrlBLMlSKhVdXyEwK?=
+ =?us-ascii?Q?KE6meJmeg0BKGuuiylncz5eUj1M37Gj1JuHoqg1c4Lyf9T3ERcUAULEaiRdO?=
+ =?us-ascii?Q?M0Dj/DTkFLF+TpCS1tt5qztfWMnhhL+fPDVmM1Co7KDyg2fVoHs24xj8BdPg?=
+ =?us-ascii?Q?sinjms0djsyTS3Bx7p6D+rbe7vnTJYstukq3Fjs5C7swNKr4NOOjid+Qm1XS?=
+ =?us-ascii?Q?iN8vzEoNfWnvI8pSqJSYBY/ow7+3+IYc1eUs22LWDfiEx4RklWfcZWjQre1A?=
+ =?us-ascii?Q?O05K6+GxZtAH3vQejUp8=3D?=
+X-Microsoft-Antispam-Message-Info: rp7xVHA34KYutBtUjd4PRw9+E8AKMxY6NQKgHUjyZ907mFs4/o6TGFfpkCx1JpVSUCUygHeIgiRg4e0RkCOxSTnePz06SY3QK5Dp1Tu6sDT9xbg4AxSbT2Exso87rlP8UaAugXh5fKb5/PchoXKxnHoM62osKLD+3Q0Gr4+BtMqP17PA0bUrGuoxuz5uOCbR
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0201MB1494;6:SfV2OCwkvoHkl9HTIJivwx4osENM5YJTIX/wP6eX+T4DlIww3ncnSOXLeg8GKsxhR8gIYAGDbaqtjTtOebUV6Y0Te2JCQO75tTVsaGKn9r69ok0Mi8QkGsCfzo/x4pgt9UD/b6zsEetwNy3hjk7l4ZsthNCAtZ9iNxwz3a4CI0eXWc2z7IJFi2SSqKDB+UW5DBC/6b9aVj8abNceusm/Spm87wcBIoN/VInvp+9cQnJjSg4fprTn/3Wztl/yAMBuowJNYGNfu+mRqiI+DMxkEpaxvC2KRcRnZbNvfPps3JgxsMYib90SowpEkf2HtmiPsep8fKBs08IRMVSPG9TGXxQJDzlKmPgy6Da824/HQ11gfihgQYletl8cY2L86GNZfWoD4vDpOhBuIZsDJjEIPFBlkCqGXlehPYwvMSHiHIBJZJXUxN1Yvpim6FP9UfDIcuYAxry1QTwEiFODKPvw2Q==;5:JBlaTXXp7TP9InLDOr3X7uQ+J2BKtOst2mTO+42QTv7/S6LMHmJzmGZCpgNoPNjwGJGWlXbDwAim3XUlxdd7M5XGfel4cAVFbBtI8mEDoRbE9gYDxoLLJ1Daz+bS1KrUbB5P6RRWiIyx6komYKKwA8s4LNIwN+laItBgyWoD/1o=;24:XFFs9D8yjBCazDOIpTUwDMVCSCXTudM/J6jNCTFW1pdq+2A2xwPa+i7QbU76RrqNssbTgEm+jS19vVrF2fEN+EYR4HOn7UUsBmpgrQj8H5M=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0201MB1494;7:eARQZqNWdapJ68/2fE/tDihQ7U5FxXy1lnxCgX9zNmJIKNX4UAmdtmY94r6JisuPNpEWqi9gD/JE6FXEv9sh7JOgvwlCbzZ/QVI6E4UJHM4rMdyfkDLcLgBIdOrFUNERJpadHXngISnq9B5ayFxHgWiqNFQG+XekT2bQEuaUBVCVwNnTYtCeWWL6H5OdBS4OM6TJQbsmpQXkvstweDoL8MYUF00qh2qi7Uw9rRIte4DYHrTUUvchpzKSix0/Xg0L
+X-MS-Office365-Filtering-Correlation-Id: dadce305-6924-4f99-20b5-08d5cb82482c
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2018 07:51:15.0144
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dadce305-6924-4f99-20b5-08d5cb82482c
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR0201MB1494
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le Tuesday 05 Jun 2018 à 16:11:29 (+0100), Patrick Bellasi a écrit :
-> Hi Vincent,
-> 
-> On 05-Jun 08:57, Vincent Guittot wrote:
-> > On 4 June 2018 at 18:06, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
-> 
-> [...]
-> 
-> > > Let's improve the estimated utilization by adding a new "sort-of" PELT
-> > > signal, explicitly only for SE which has the following behavior:
-> > >  a) at each enqueue time of a task, its value is the (already decayed)
-> > >     util_avg of the task being enqueued
-> > >  b) it's updated at each update_load_avg
-> > >  c) it can just increase, whenever the task is actually RUNNING on a
-> > >     CPU, while it's kept stable while the task is RUNNANBLE but not
-> > >     actively consuming CPU bandwidth
-> > >
-> > > Such a defined signal is exactly equivalent to the util_avg for a task
-> > > running alone on a CPU while, in case the task is preempted, it allows
-> > > to know at dequeue time how much would have been the task utilization if
-> > > it was running alone on that CPU.
-> > 
-> > I don't agree with this statement above
-> > Let say that you have 2 periodic tasks which wants to run 4ms in every
-> > period of 10ms and wakes up at the same time.
-> > One task will execute 1st and the other will wait but at the end they
-> > have the same period and running time and as a result the same
-> > util_avg which is exactly what they need.
-> 
-> In your example above you say that both tasks will end up with a 40%
-> util_avg, and that's exactly also the value reported by the new
-> "running_avg" metric.
+The following patches add arm pl353 static memory controller driver and nand driver
+for xilinx zynq soc. The arm pl353 smc supports two interfaces i.e nand and nor/sram
+memory interfaces. The current implementation supports only a single SMC
+instance and nand specific configuration.
 
-It's not really possible because the util_avg of the 2 tasks already give the exact same
-right value. So running_avg, which removes some decay for the 2nd task, can't
-give same results.
+xilinx zynq TRM link:
+http://www.xilinx.com/support/documentation/user_guides/ug585-Zynq-7000-TRM.pdf
 
-I add more details below
+ARM pl353 smc TRM link:
+http://infocenter.arm.com/help/topic/com.arm.doc.ddi0380g/DDI0380G_smc_pl350_series_r2p1_trm.pdf
 
->
-> 
-> Both tasks, if they where running alone, they would have generated a
-> 40% utilization, and above I'm saying:
-> 
->         it allows to know at dequeue time
->    how much would have been the task utilization
->       if it it was running alone on that CPU
-> 
-> Don't see where is not correct, maybe I should explain it better?
-> 
-> > > This new signal is named "running_avg", since it tracks the actual
-> > > RUNNING time of a task by ignoring any form of preemption.
-> > 
-> > In fact, you still take into account this preemption as you remove
-> > some time whereas it's only a shift of the excution
-> 
-> When the task is enqueued we cache the (already decayed) util_avg, and
-> from this time on the running_avg can only increase. It increases only
-> for the portion of CPU time the task is running and it's never decayed
-> while the task is preempted.
-> 
-> In your example above, if we look at the second task running, the one
-> "delayed", you will have:
-> 
->  @t1 wakeup time:    running_avg@t1 = util_avg@t1
->                         since we initialize it with the
->                         "sleep decayed" util_avg
-> 
->   NOTE: this initialization is the important part, more on that on your
->   next comment below related to the period being changed.
-> 
->  @t2 switch_in time: running_avg@t2 = running_avg@t1
->                         since it's not decayed while RUNNUBLE but !RUNNING
-> 
->                      while, meanwhile:
-> 
->                      util_avg@t2 < util_avg@t1
->                         since it's decayed while RUNNABLE but !RUNNING
-> 
->  @t3 dequeue time:   running_avg@t3 > running_avg@t2
-> 
-> 
-> When you say "it's only a shift of the execution" I agree, and indeed
-> the running_avg is not affected at all.
-> 
-> So, we can say that I'm "accounting for preemption time" but really,
-> the way I do it, is just by _not decaying_ PELT when the task is:
-> 
->                  RUNNABLE but !RUNNING
-> 
-> and that's why I say that running_avg gives you the same behavior of
-> util_avg _if_ the task was running alone, because in that case you never
-> have the condition above, and thus util_avg is never decayed.
->
+Tested Micron MT29F2G08ABAEAWP (On-die capable) and AMD/Spansion S34ML01G1.
+This latest series make use of ->exec_op() . Referenced the marvel driver
+as pointed by Miquel.
 
-For the above 2 tasks of the example example we have the pattern
+Naga Sureshkumar Relli (4):
+  Devicetree: Add pl353 smc controller devicetree binding information
+  memory: pl353: Add driver for arm pl353 static memory controller
+  Documentation: nand: pl353: Add documentation for controller and
+    driver
+  mtd: rawnand: pl353: Add basic driver for arm pl353 smc nand interface
 
-Task 1
-state       RRRRSSSSSSERRRRSSSSSSERRRRSSSSSS
-util_avg    AAAADDDDDD AAAADDDDDD AAAADDDDDD
+ .../bindings/memory-controllers/pl353-smc.txt      |   53 +
+ Documentation/mtd/nand/pl353-nand.txt              |   99 ++
+ drivers/memory/Kconfig                             |    8 +
+ drivers/memory/Makefile                            |    1 +
+ drivers/memory/pl353-smc.c                         |  523 +++++++++
+ drivers/mtd/nand/raw/Kconfig                       |    7 +
+ drivers/mtd/nand/raw/Makefile                      |    3 +
+ drivers/mtd/nand/raw/pl353_nand.c                  | 1236 ++++++++++++++++++++
+ include/linux/platform_data/pl353-smc.h            |   29 +
+ 9 files changed, 1959 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+ create mode 100644 Documentation/mtd/nand/pl353-nand.txt
+ create mode 100644 drivers/memory/pl353-smc.c
+ create mode 100644 drivers/mtd/nand/raw/pl353_nand.c
+ create mode 100644 include/linux/platform_data/pl353-smc.h
 
-Task 2
-state       WWWWRRRRSSEWWWWRRRRSSEWWWWRRRRSS
-util_avg    DDDDAAAADD DDDDAAAADD DDDDAAAADD
-running_avg     AAAADDC    AAAADDC    AAAADD
-
-R : Running 1ms, S: Sleep 1ms , W: Wait 1ms, E: Enqueue event 
-A: Accumulate 1ms, D: Decay 1ms, C: Copy util_avg value
-
-the util_avg of T1 and T2 have the same pattern which is:
-  AAAADDDDDDAAAADDDDDDAAAADDDDDD
-and as a result, the same value which represents their utilization
-
-For the running_avg of T2, there is only 2 decays aftert the last running
-phase and before the next enqueue
-so the pattern will be AAAADDAAAA
-instead of the         AAAADDDDDDAAAA
-
-the runninh_avg will report a higher value than reality
-
->
-> 
-> [...]
-> 
-> > > @@ -3161,6 +3161,8 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
-> > >                 sa->runnable_load_sum =
-> > >                         decay_load(sa->runnable_load_sum, periods);
-> > >                 sa->util_sum = decay_load((u64)(sa->util_sum), periods);
-> > > +               if (running)
-> > > +                       sa->running_sum = decay_load(sa->running_sum, periods);
-> > 
-> > so you make some time disappearing from the equation as the signal
-> > will not be decayed and make the period looking shorter than reality.
-> 
-> Since at enqueue time we always initialize running_avg to whatever is
-> util_avg, I don't think we are messing up with the period at all.
-> 
-> The util_avg signal properly accounts for the period.
-> Thus, the combined effect of:
-> 
->   - initializing running_avg at enqueue time with the value of
->     util_avg, already decayed to properly account for the task period
->   - not decaying running_avg when the task is RUNNABLE but !RUNNING
-> 
-> should just result into "virtually" considering the two tasks of your
-> example "as if" they was running concurrently on two different CPUs.
-> 
-> Isn't it?
-
-No because part of the "sleep" phase is done during the waiting time and
-you don't take into account this sleep time
-
-see my explanation above
-
-> 
-> > With the example I mentioned above, the 2nd task will be seen as if
-> > its period becomes 6ms instead of 10ms which is not true and the
-> > utilization of the task is overestimated without any good reason
-> 
-> I don't see that overestimation... and I cannot even measure it.
-> 
-> If I run an experiment with your example above, while using the
-> performance governor to rule out any possible scale invariance
-> difference, here is what I measure:
-> 
->    Task1 (40ms delayed by the following Task2):
-
-the 40ms above is a typo mistake ? you mean 4ms, isn't it ?
-
->                                mean          std     max
->       running_avg        455.387449    22.940168   492.i0
-
-the 492 is the overestimation generated by running_avg and not a rounding
-effect. With 4ms and 10ms the number of missing decay steps is small but if
-you use 40ms/100ms instead you will see a greater difference in the max number
-
->       util_avg           433.233288    17.395477   458.0
-> 
->    Task2 (waking up at same time of Task1 and running before):
->                                mean          std     max
->       running_avg        430.281834    22.405175   455.0
->       util_avg           421.745331    22.098873   456.0
-> 
-> and if I compare Task1 above with another experiment where Task1 is
-> running alone:
-> 
->    Task1 (running alone):
->                                mean          std     min
->       running_avg        460.257895    22.103704   460.0
->       util_avg           435.119737    17.647556   461.0
-> 
-> 
-> Thus, there are some variations ok, but I think they are more due to
-> the rounding errors we have.
-> Task1 is still seen as a 455 expected utilization, which is not the
-> 4/6 ~= 660 you say above if it should be accounted as a task running
-> 4ms every 6ms.
-> 
-> > Furthermore, this new signal doesn't have clear meaning because it's
-> > not utilization but it's also not the waiting time of the task.
-> 
-> The meaning is: the utilization of the task _if_ it should be running
-> alone on that CPU. Tehe numbers above shows that since
->     455 (Task1 delayed) ~= 460 (Task1 running alone)
-
-you should look at the max and not the mean that what util_est is interested
-in IIUC
-
-Vincent
-
-> 
-> If it's running alone it would be exactly util_avg (minus rounding
-> errors), but if it's preempted it will be a better representation of
-> the task's needed CPU bandwidth.
-> 
-> Unless we really need to track the "waiting time of a task" I would
-> say that the signal above should make util_est much more accurate on
-> knowing, at wakeup time, how much CPU a task will likely need...
-> independently from preemption sources.
-> 
-> Here are some other experiments / workloads I'm testing:
-> 
->    https://gist.github.com/derkling/fe01e5ddf639e18b5d85a3b1d2e84b7d
-> 
-> > >
-> > >                 /*
-> > >                  * Step 2
-> > > @@ -3176,8 +3178,10 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
-> > >                 sa->load_sum += load * contrib;
-> > >         if (runnable)
-> > >                 sa->runnable_load_sum += runnable * contrib;
-> > > -       if (running)
-> > > +       if (running) {
-> > >                 sa->util_sum += contrib * scale_cpu;
-> > > +               sa->running_sum += contrib * scale_cpu;
-> > > +       }
-> > >
-> > >         return periods;
-> > >  }
-> > > @@ -3963,6 +3967,12 @@ static inline void util_est_enqueue(struct cfs_rq *cfs_rq,
-> > >         WRITE_ONCE(cfs_rq->avg.util_est.enqueued, enqueued);
-> > >  }
-> > >
-> > > +static inline void util_est_enqueue_running(struct task_struct *p)
-> > > +{
-> > > +       /* Initilize the (non-preempted) utilization */
-> > > +       p->se.avg.running_sum = p->se.avg.util_sum;
-> 
-> This line above is what should ensure we do not mess up with the task
-> period.
-> 
-> > > +}
-> > > +
-> > >  /*
-> > >   * Check if a (signed) value is within a specified (unsigned) margin,
-> > >   * based on the observation that:
-> > > @@ -4018,7 +4028,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
-> > >          * Skip update of task's estimated utilization when its EWMA is
-> > >          * already ~1% close to its last activation value.
-> > >          */
-> > > -       ue.enqueued = (task_util(p) | UTIL_AVG_UNCHANGED);
-> > > +       ue.enqueued = p->se.avg.running_sum / LOAD_AVG_MAX;
-> > >         last_ewma_diff = ue.enqueued - ue.ewma;
-> > >         if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
-> > >                 return;
-> > > @@ -5437,6 +5447,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> > >         if (!se)
-> > >                 add_nr_running(rq, 1);
-> > >
-> > > +       util_est_enqueue_running(p);
-> > > +
-> > >         hrtick_update(rq);
-> > >  }
-> > >
-> > > --
-> > > 2.15.1
-> > >
-> 
-> -- 
-> #include <best/regards.h>
-> 
-> Patrick Bellasi
+-- 
+2.7.4
