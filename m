@@ -1,266 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F7B4601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 23AEA601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752120AbeFFOTj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:19:39 -0400
-Received: from mga04.intel.com ([192.55.52.120]:13959 "EHLO mga04.intel.com"
+        id S932551AbeFFIWL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:22:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37863 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751912AbeFFOTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:19:38 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="234894639"
-Date: Wed, 6 Jun 2018 22:19:43 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: bhelgaas@google.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        linux-pci@vger.kernel.org, dan.daly@intel.com,
-        mark.d.rustad@intel.com, alexander.h.duyck@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: Re: [virtio-dev] Re: [PATCH v3] virtio_pci: support enabling VFs
-Message-ID: <20180606141943.GA13904@debian>
-References: <20180601040239.1151-1-tiwei.bie@intel.com>
- <20180604192222-mutt-send-email-mst@kernel.org>
- <20180605013653.GA1045@debian>
- <20180605152151-mutt-send-email-mst@kernel.org>
- <20180606121154.GA9599@debian>
- <20180606153236-mutt-send-email-mst@kernel.org>
+        id S932389AbeFFIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:22:10 -0400
+Date: Wed, 6 Jun 2018 10:22:07 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, vbabka@suse.cz,
+        Aaron Lu <aaron.lu@intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
+ in swap cache
+Message-ID: <20180606082207.GC32433@dhcp22.suse.cz>
+References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
+ <bfc2e579-915f-24db-0ff0-29bd9148b8c0@intel.com>
+ <20180605191245.3owve7gfut22tyob@techsingularity.net>
+ <ecb75c29-3d1b-3b5e-ec9d-59c4f6c1ef08@intel.com>
+ <20180605195140.afc7xzgbre26m76l@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180606153236-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180605195140.afc7xzgbre26m76l@techsingularity.net>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 03:44:11PM +0300, Michael S. Tsirkin wrote:
-> On Wed, Jun 06, 2018 at 08:11:54PM +0800, Tiwei Bie wrote:
-> > On Tue, Jun 05, 2018 at 03:23:11PM +0300, Michael S. Tsirkin wrote:
-> > > On Tue, Jun 05, 2018 at 09:36:53AM +0800, Tiwei Bie wrote:
-> > > > On Mon, Jun 04, 2018 at 07:32:25PM +0300, Michael S. Tsirkin wrote:
-> > > > > On Fri, Jun 01, 2018 at 12:02:39PM +0800, Tiwei Bie wrote:
-> > > > > > There is a new feature bit allocated in virtio spec to
-> > > > > > support SR-IOV (Single Root I/O Virtualization):
-> > > > > > 
-> > > > > > https://github.com/oasis-tcs/virtio-spec/issues/11
-> > > > > > 
-> > > > > > This patch enables the support for this feature bit in
-> > > > > > virtio driver.
-> > > > > > 
-> > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > > > > ---
-> > > > > 
-> > > > > OK but what about freeze/restore functions?
-> > > 
-> > > So for restore, don't you need to restore the
-> > > sriov capability?
-> > 
-> > Currently I'm not familiar with the PM part.
-> > But I still think the sriov capability should
-> > be handled by PCI core.
+On Tue 05-06-18 20:51:40, Mel Gorman wrote:
+[...]
+> mremap: Avoid excessive TLB flushing for anonymous pages that are not in swap cache
 > 
-> OK but the point is restore looks just like power up for device.
+> Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
+> fixed races between mremap and other operations for both file-backed and
+> anonymous mappings. The file-backed was the most critical as it allowed the
+> possibility that data could be changed on a physical page after page_mkclean
+> returned which could trigger data loss or data integrity issues. A customer
+> reported that the cost of the TLBs for anonymous regressions was excessive
+> and resulting in a 30-50% drop in performance overall since this commit
+> on a microbenchmark. Unfortunately I neither have access to the test-case
+> nor can I describe what it does other than saying that mremap operations
+> dominate heavily.
 > 
-> > I'm trying to understand
-> > all the relevant code..
-> > For your question, based on what I found from
-> > the code currently, I guess the sriov capability
-> > will be restored by pci_restore_state() which
-> > will be called by the ops in pci_dev_pm_ops.
-> > The sriov_restore_state() will be called
-> > eventually.
-> > 
-> > Best regards,
-> > Tiwei Bie
+> The anonymous page race fix is overkill for two reasons. Pages that are
+> not in the swap cache are not going to be issued for IO and if a stale TLB
+> entry is used, the write still occurs on the same physical page. Any race
+> with mmap replacing the address space is handled by mmap_sem. As anonymous
+> pages are often dirty, it can mean that mremap always has to flush even
+> when it is not necessary.
 > 
-> Right but my point is during resume SRIOV gets enabled first before
-> driver ok.
+> This patch special cases anonymous pages to only flush ranges under the
+> page table lock if the page is in swap cache and can be potentially queued
+> for IO. Note that the full flush of the range being mremapped is still
+> flushed so TLB flushes are not eliminated entirely.
 > 
-> Maybe we should relax the requirements in the spec:
-> - only require FEATURES_OK from device, not DRIVER_OK from driver
-> - explain that it only has to happen once, not on each reset,
->   and driver can remember the result
+> It uses the page lock to serialise against any potential reclaim. If the
+> page is added to the swap cache on the reclaim side after the page lock is
+> dropped on the mremap side then reclaim will call try_to_unmap_flush_dirty()
+> before issuing any IO so there is no data integrity issue. This means that
+> in the common case where a workload avoids swap entirely that mremap is
+> a much cheaper operation due to the lack of TLB flushes.
+> 
+> Using another testcase that simply calls mremap heavily with varying number
+> of threads, it was found that very broadly speaking that TLB shootdowns
+> were reduced by 31% on average throughout the entire test case but your
+> milage will vary.
 
-I got your point now! I'd like to relax the
-requirements in the spec.
+LGTM and it would be great to add some perf numbers for the specific
+workload which triggered this (a mremap heavy workload which is real
+unfortunately).
 
-Best regards,
-Tiwei Bie
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  mm/mremap.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 40 insertions(+), 5 deletions(-)
 > 
+> diff --git a/mm/mremap.c b/mm/mremap.c
+> index 049470aa1e3e..5b9767b0446e 100644
+> --- a/mm/mremap.c
+> +++ b/mm/mremap.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/mm-arch-hooks.h>
+>  #include <linux/userfaultfd_k.h>
+> +#include <linux/mm_inline.h>
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/tlbflush.h>
+> @@ -112,6 +113,44 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+>  	return pte;
+>  }
+>  
+> +/* Returns true if a TLB must be flushed before PTL is dropped */
+> +static bool should_force_flush(pte_t pte)
+> +{
+> +	bool is_swapcache;
+> +	struct page *page;
+> +
+> +	if (!pte_present(pte) || !pte_dirty(pte))
+> +		return false;
+> +
+> +	/*
+> +	 * If we are remapping a dirty file PTE, make sure to flush TLB
+> +	 * before we drop the PTL for the old PTE or we may race with
+> +	 * page_mkclean().
+> +	 */
+> +	page = pte_page(pte);
+> +	if (page_is_file_cache(page))
+> +		return true;
+> +
+> +	/*
+> +	 * For anonymous pages, only flush swap cache pages that could
+> +	 * be unmapped and queued for swap since flush_tlb_batched_pending was
+> +	 * last called. Reclaim itself takes care that the TLB is flushed
+> +	 * before IO is queued. If a page is not in swap cache and a stale TLB
+> +	 * is used before mremap is complete then the write hits the same
+> +	 * physical page and there is no lost data loss.
+> +	 *
+> +	 * Check under the page lock to avoid any potential race with reclaim.
+> +	 * trylock is necessary as spinlocks are currently held. In the unlikely
+> +	 * event of contention, flush the TLB to be safe.
+> +	 */
+> +	if (!trylock_page(page))
+> +		return true;
+> +	is_swapcache = PageSwapCache(page);
+> +	unlock_page(page);
+> +
+> +	return is_swapcache;
+> +}
+> +
+>  static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+>  		unsigned long old_addr, unsigned long old_end,
+>  		struct vm_area_struct *new_vma, pmd_t *new_pmd,
+> @@ -163,15 +202,11 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+>  
+>  		pte = ptep_get_and_clear(mm, old_addr, old_pte);
+>  		/*
+> -		 * If we are remapping a dirty PTE, make sure
+> -		 * to flush TLB before we drop the PTL for the
+> -		 * old PTE or we may race with page_mkclean().
+> -		 *
+>  		 * This check has to be done after we removed the
+>  		 * old PTE from page tables or another thread may
+>  		 * dirty it after the check and before the removal.
+>  		 */
+> -		if (pte_present(pte) && pte_dirty(pte))
+> +		if (should_force_flush(pte))
+>  			force_flush = true;
+>  		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
+>  		pte = move_soft_dirty_pte(pte);
 > 
-> > 
-> > > 
-> > > 
-> > > > > I also wonder about kexec - virtio.c currently does:
-> > > > > 
-> > > > >         /* We always start by resetting the device, in case a previous
-> > > > >          * driver messed it up.  This also tests that code path a little. */
-> > > > >         dev->config->reset(dev);
-> > > > > 
-> > > > > Do we need to do something like this for sriov?
-> > > > 
-> > > > I think VFs are managed by PCI core. Once they are
-> > > > allocated, virtio driver doesn't have to care too
-> > > > much about how to manage them. The proposal for the
-> > > > spec is just to provide a feature bit based virtio
-> > > > way for virtio drivers to know whether a virtio
-> > > > device is SR-IOV capable (and virtio drivers can
-> > > > support configuring SR-IOV based on the feature
-> > > > bit negotiation result).
-> > > > 
-> > > > > 
-> > > > > I also wonder whether PCI core should disable sriov for us.
-> > > > > 
-> > > > > 
-> > > > > I wish there was a patch emulating this without vDPA for QEMU,
-> > > > > would make it easy to test your patches. Do you happen
-> > > > > to have something like this?
-> > > > 
-> > > > Sorry, currently I don't have anything like this..
-> > > > 
-> > > > Best regards,
-> > > > Tiwei Bie
-> > > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > 
-> > > > > 
-> > > > > > v3:
-> > > > > > - Drop the acks;
-> > > > > > 
-> > > > > > v2:
-> > > > > > - Disable VFs when unbinding the driver (Alex, MST);
-> > > > > > - Don't use pci_sriov_configure_simple (Alex);
-> > > > > > 
-> > > > > >  drivers/virtio/virtio_pci_common.c | 30 ++++++++++++++++++++++++++++++
-> > > > > >  drivers/virtio/virtio_pci_modern.c | 14 ++++++++++++++
-> > > > > >  include/uapi/linux/virtio_config.h |  7 ++++++-
-> > > > > >  3 files changed, 50 insertions(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> > > > > > index 48d4d1cf1cb6..1d4467b2dc31 100644
-> > > > > > --- a/drivers/virtio/virtio_pci_common.c
-> > > > > > +++ b/drivers/virtio/virtio_pci_common.c
-> > > > > > @@ -577,6 +577,8 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> > > > > >  	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> > > > > >  	struct device *dev = get_device(&vp_dev->vdev.dev);
-> > > > > >  
-> > > > > > +	pci_disable_sriov(pci_dev);
-> > > > > > +
-> > > > > >  	unregister_virtio_device(&vp_dev->vdev);
-> > > > > >  
-> > > > > >  	if (vp_dev->ioaddr)
-> > > > > > @@ -588,6 +590,33 @@ static void virtio_pci_remove(struct pci_dev *pci_dev)
-> > > > > >  	put_device(dev);
-> > > > > >  }
-> > > > > >  
-> > > > > > +static int virtio_pci_sriov_configure(struct pci_dev *pci_dev, int num_vfs)
-> > > > > > +{
-> > > > > > +	struct virtio_pci_device *vp_dev = pci_get_drvdata(pci_dev);
-> > > > > > +	struct virtio_device *vdev = &vp_dev->vdev;
-> > > > > > +	int ret;
-> > > > > > +
-> > > > > > +	if (!(vdev->config->get_status(vdev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> > > > > > +		return -EBUSY;
-> > > > > > +
-> > > > > > +	if (!__virtio_test_bit(vdev, VIRTIO_F_SR_IOV))
-> > > > > > +		return -EINVAL;
-> > > > > > +
-> > > > > > +	if (pci_vfs_assigned(pci_dev))
-> > > > > > +		return -EPERM;
-> > > > > > +
-> > > > > > +	if (num_vfs == 0) {
-> > > > > > +		pci_disable_sriov(pci_dev);
-> > > > > > +		return 0;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	ret = pci_enable_sriov(pci_dev, num_vfs);
-> > > > > > +	if (ret < 0)
-> > > > > > +		return ret;
-> > > > > > +
-> > > > > > +	return num_vfs;
-> > > > > > +}
-> > > > > > +
-> > > > > >  static struct pci_driver virtio_pci_driver = {
-> > > > > >  	.name		= "virtio-pci",
-> > > > > >  	.id_table	= virtio_pci_id_table,
-> > > > > > @@ -596,6 +625,7 @@ static struct pci_driver virtio_pci_driver = {
-> > > > > >  #ifdef CONFIG_PM_SLEEP
-> > > > > >  	.driver.pm	= &virtio_pci_pm_ops,
-> > > > > >  #endif
-> > > > > > +	.sriov_configure = virtio_pci_sriov_configure,
-> > > > > >  };
-> > > > > >  
-> > > > > >  module_pci_driver(virtio_pci_driver);
-> > > > > > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> > > > > > index 2555d80f6eec..07571daccfec 100644
-> > > > > > --- a/drivers/virtio/virtio_pci_modern.c
-> > > > > > +++ b/drivers/virtio/virtio_pci_modern.c
-> > > > > > @@ -153,14 +153,28 @@ static u64 vp_get_features(struct virtio_device *vdev)
-> > > > > >  	return features;
-> > > > > >  }
-> > > > > >  
-> > > > > > +static void vp_transport_features(struct virtio_device *vdev, u64 features)
-> > > > > > +{
-> > > > > > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > > > > > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> > > > > > +
-> > > > > > +	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
-> > > > > > +			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
-> > > > > > +		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
-> > > > > > +}
-> > > > > > +
-> > > > > >  /* virtio config->finalize_features() implementation */
-> > > > > >  static int vp_finalize_features(struct virtio_device *vdev)
-> > > > > >  {
-> > > > > >  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > > > > > +	u64 features = vdev->features;
-> > > > > >  
-> > > > > >  	/* Give virtio_ring a chance to accept features. */
-> > > > > >  	vring_transport_features(vdev);
-> > > > > >  
-> > > > > > +	/* Give virtio_pci a chance to accept features. */
-> > > > > > +	vp_transport_features(vdev, features);
-> > > > > > +
-> > > > > >  	if (!__virtio_test_bit(vdev, VIRTIO_F_VERSION_1)) {
-> > > > > >  		dev_err(&vdev->dev, "virtio: device uses modern interface "
-> > > > > >  			"but does not have VIRTIO_F_VERSION_1\n");
-> > > > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > > > > > index 308e2096291f..b7c1f4e7d59e 100644
-> > > > > > --- a/include/uapi/linux/virtio_config.h
-> > > > > > +++ b/include/uapi/linux/virtio_config.h
-> > > > > > @@ -49,7 +49,7 @@
-> > > > > >   * transport being used (eg. virtio_ring), the rest are per-device feature
-> > > > > >   * bits. */
-> > > > > >  #define VIRTIO_TRANSPORT_F_START	28
-> > > > > > -#define VIRTIO_TRANSPORT_F_END		34
-> > > > > > +#define VIRTIO_TRANSPORT_F_END		38
-> > > > > >  
-> > > > > >  #ifndef VIRTIO_CONFIG_NO_LEGACY
-> > > > > >  /* Do we get callbacks when the ring is completely used, even if we've
-> > > > > > @@ -71,4 +71,9 @@
-> > > > > >   * this is for compatibility with legacy systems.
-> > > > > >   */
-> > > > > >  #define VIRTIO_F_IOMMU_PLATFORM		33
-> > > > > > +
-> > > > > > +/*
-> > > > > > + * Does the device support Single Root I/O Virtualization?
-> > > > > > + */
-> > > > > > +#define VIRTIO_F_SR_IOV			37
-> > > > > >  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> > > > > > -- 
-> > > > > > 2.17.0
-> > > > > 
-> > > > > ---------------------------------------------------------------------
-> > > > > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> > > > > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
-> > > > > 
+> -- 
+> Mel Gorman
+> SUSE Labs
+
+-- 
+Michal Hocko
+SUSE Labs
