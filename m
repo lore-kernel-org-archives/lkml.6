@@ -1,92 +1,409 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JxpPJi+JGls6EAAAmS7hNA
-	; Fri, 08 Jun 2018 13:48:31 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oPlkK09NGFs9IAAAmS7hNA
+	; Wed, 06 Jun 2018 21:09:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7FE23608BA; Fri,  8 Jun 2018 13:48:31 +0000 (UTC)
+	id 8863F607F7; Wed,  6 Jun 2018 21:09:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D55B260590;
-	Fri,  8 Jun 2018 13:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D55B260590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id AAECD607E4;
+	Wed,  6 Jun 2018 21:09:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AAECD607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mess.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752769AbeFHNs3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 09:48:29 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:24138 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752693AbeFHNs1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:48:27 -0400
-X-IronPort-AV: E=Sophos;i="5.49,490,1520924400";
-   d="scan'208";a="12312498"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Jun 2018 06:48:27 -0700
-Received: from localhost.localdomain.com (10.10.76.4) by
- chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Fri, 8 Jun 2018 06:48:26 -0700
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
-To: <marek.vasut@gmail.com>, <cyrille.pitchen@microchip.com>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <boris.brezillon@bootlin.com>, <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <nicolas.ferre@microchip.com>, <Cristian.Birsan@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH] add support to non-uniform SFDP SPI NOR flash memories
-Date: Fri, 8 Jun 2018 16:48:17 +0300
-Message-ID: <20180608134818.21387-1-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.9.4
+        id S1752996AbeFFVJ4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:09:56 -0400
+Received: from gofer.mess.org ([88.97.38.141]:39061 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752850AbeFFVJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:09:45 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 765B860442; Wed,  6 Jun 2018 22:09:40 +0100 (BST)
+Date: Wed, 6 Jun 2018 22:09:40 +0100
+From: Sean Young <sean@mess.org>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Matthias Reichl <hias@horus.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        netdev@vger.kernel.org,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Y Song <ys114321@gmail.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: [PATCH] bpf: attach type BPF_LIRC_MODE2 should not depend on
+ CONFIG_BPF_CGROUP
+Message-ID: <20180606210939.q3vviyc4b2h6gu3c@gofer.mess.org>
+References: <cover.1527419762.git.sean@mess.org>
+ <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
+ <20180604174730.sctfoklq7klswebp@camel2.lan>
+ <20180605101629.yffyp64o7adg6hu5@gofer.mess.org>
+ <04cc36e7-4597-dc57-4ad7-71afcc17244a@iogearbox.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <04cc36e7-4597-dc57-4ad7-71afcc17244a@iogearbox.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit message became wall-of-text, my feeling is that I heavily
-reworked the code so I changed the author. If someone thinks differently,
-please say and I'll change back to the initial authorship. What I've done:
+Compile bpf_prog_{attach,detach,query} even if CONFIG_BPF_CGROUP is not
+set.
 
-- minimize the amount of erase() calls by using the best sequence of erase
-  type commands depending on alignment.
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ include/linux/bpf-cgroup.h |  31 +++++++++++
+ kernel/bpf/cgroup.c        | 110 +++++++++++++++++++++++++++++++++++++
+ kernel/bpf/syscall.c       | 105 ++---------------------------------
+ 3 files changed, 145 insertions(+), 101 deletions(-)
 
-- build the list of best fitted erase commands to be executed once we
-  validate that the erase can be performed.
-
-- add improvements on how the erase map is handled. The regions are
-  consecutive in the address space, walk through the regions incrementally.
-
-- speed up finding the best erase type command. Order erase types by
-  size, iterate them from the biggest to the smallest and stop when best
-  fitted command is found.
-
-- determine at init if there are erase types that can erase the entire
-  memory
-
-- fix the erase size in overlaid regions. S25FS512S states that 'if a sector
-  erase command is applied to a 256KB range that is overlaid by 4KB secors,
-  the overlaid 4kB sectors are not affected by the erase'
-
-Backward compatibility test done on MX25L25673G.
-
-Changes since RFC PATCH:
-- build a list of erase commands to be executed once we validate
-  that the erase can be performed
-- fix walking through the address space in overlaid regions
-- drop wall-of-text description commit message, change author
-
-
-Tudor Ambarus (1):
-  mtd: spi-nor: add support to non-uniform SFDP SPI NOR flash memories
-
- drivers/mtd/spi-nor/spi-nor.c | 357 ++++++++++++++++++++++++++++++++++++++++--
- include/linux/mtd/spi-nor.h   | 108 +++++++++++++
- 2 files changed, 451 insertions(+), 14 deletions(-)
-
+diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+index 975fb4cf1bb7..ee67cd35f426 100644
+--- a/include/linux/bpf-cgroup.h
++++ b/include/linux/bpf-cgroup.h
+@@ -188,12 +188,43 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
+ 									      \
+ 	__ret;								      \
+ })
++int sockmap_get_from_fd(const union bpf_attr *attr, int type, bool attach);
++int cgroup_bpf_prog_attach(const union bpf_attr *attr,
++			   enum bpf_prog_type ptype);
++int cgroup_bpf_prog_detach(const union bpf_attr *attr,
++			   enum bpf_prog_type ptype);
++int cgroup_bpf_prog_query(const union bpf_attr *attr,
++			  union bpf_attr __user *uattr);
+ #else
+ 
+ struct cgroup_bpf {};
+ static inline void cgroup_bpf_put(struct cgroup *cgrp) {}
+ static inline int cgroup_bpf_inherit(struct cgroup *cgrp) { return 0; }
+ 
++static inline int sockmap_get_from_fd(const union bpf_attr *attr,
++				      int type, bool attach)
++{
++	return -EINVAL;
++}
++
++static inline int cgroup_bpf_prog_attach(const union bpf_attr *attr,
++					 enum bpf_prog_type ptype)
++{
++	return -EINVAL;
++}
++
++static inline int cgroup_bpf_prog_detach(const union bpf_attr *attr,
++					 enum bpf_prog_type ptype)
++{
++	return -EINVAL;
++}
++
++static inline int cgroup_bpf_prog_query(const union bpf_attr *attr,
++					union bpf_attr __user *uattr)
++{
++	return -EINVAL;
++}
++
+ #define cgroup_bpf_enabled (0)
+ #define BPF_CGROUP_PRE_CONNECT_ENABLED(sk) (0)
+ #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk,skb) ({ 0; })
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index f7c00bd6f8e4..d6e18f9dc0c4 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -428,6 +428,116 @@ int __cgroup_bpf_query(struct cgroup *cgrp, const union bpf_attr *attr,
+ 	return ret;
+ }
+ 
++int bpf_prog_attach_check_attach_type(const struct bpf_prog *prog,
++				      enum bpf_attach_type attach_type)
++{
++	switch (prog->type) {
++	case BPF_PROG_TYPE_CGROUP_SOCK:
++	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
++		return attach_type == prog->expected_attach_type ? 0 : -EINVAL;
++	default:
++		return 0;
++	}
++}
++
++int sockmap_get_from_fd(const union bpf_attr *attr, int type, bool attach)
++{
++	struct bpf_prog *prog = NULL;
++	int ufd = attr->target_fd;
++	struct bpf_map *map;
++	struct fd f;
++	int err;
++
++	f = fdget(ufd);
++	map = __bpf_map_get(f);
++	if (IS_ERR(map))
++		return PTR_ERR(map);
++
++	if (attach) {
++		prog = bpf_prog_get_type(attr->attach_bpf_fd, type);
++		if (IS_ERR(prog)) {
++			fdput(f);
++			return PTR_ERR(prog);
++		}
++	}
++
++	err = sock_map_prog(map, prog, attr->attach_type);
++	if (err) {
++		fdput(f);
++		if (prog)
++			bpf_prog_put(prog);
++		return err;
++	}
++
++	fdput(f);
++	return 0;
++}
++
++int cgroup_bpf_prog_attach(const union bpf_attr *attr, enum bpf_prog_type ptype)
++{
++	struct bpf_prog *prog;
++	struct cgroup *cgrp;
++	int ret;
++
++	prog = bpf_prog_get_type(attr->attach_bpf_fd, ptype);
++	if (IS_ERR(prog))
++		return PTR_ERR(prog);
++
++	if (bpf_prog_attach_check_attach_type(prog, attr->attach_type)) {
++		bpf_prog_put(prog);
++		return -EINVAL;
++	}
++
++	cgrp = cgroup_get_from_fd(attr->target_fd);
++	if (IS_ERR(cgrp)) {
++		bpf_prog_put(prog);
++		return PTR_ERR(cgrp);
++	}
++
++	ret = cgroup_bpf_attach(cgrp, prog, attr->attach_type,
++				attr->attach_flags);
++	if (ret)
++		bpf_prog_put(prog);
++	cgroup_put(cgrp);
++
++	return ret;
++}
++
++int cgroup_bpf_prog_detach(const union bpf_attr *attr, enum bpf_prog_type ptype)
++{
++	struct bpf_prog *prog;
++	struct cgroup *cgrp;
++	int ret;
++
++	cgrp = cgroup_get_from_fd(attr->target_fd);
++	if (IS_ERR(cgrp))
++		return PTR_ERR(cgrp);
++
++	prog = bpf_prog_get_type(attr->attach_bpf_fd, ptype);
++	if (IS_ERR(prog))
++		prog = NULL;
++
++	ret = cgroup_bpf_detach(cgrp, prog, attr->attach_type, 0);
++	if (prog)
++		bpf_prog_put(prog);
++	cgroup_put(cgrp);
++	return ret;
++}
++
++int cgroup_bpf_prog_query(const union bpf_attr *attr,
++			  union bpf_attr __user *uattr)
++{
++	struct cgroup *cgrp;
++	int ret;
++
++	cgrp = cgroup_get_from_fd(attr->query.target_fd);
++	if (IS_ERR(cgrp))
++		return PTR_ERR(cgrp);
++	ret = cgroup_bpf_query(cgrp, attr, uattr);
++	cgroup_put(cgrp);
++	return ret;
++}
++
+ /**
+  * __cgroup_bpf_run_filter_skb() - Run a program for packet filtering
+  * @sk: The socket sending or receiving traffic
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 0fa20624707f..52fa44856623 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1489,65 +1489,14 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
+ 	return err;
+ }
+ 
+-#ifdef CONFIG_CGROUP_BPF
+-
+-static int bpf_prog_attach_check_attach_type(const struct bpf_prog *prog,
+-					     enum bpf_attach_type attach_type)
+-{
+-	switch (prog->type) {
+-	case BPF_PROG_TYPE_CGROUP_SOCK:
+-	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
+-		return attach_type == prog->expected_attach_type ? 0 : -EINVAL;
+-	default:
+-		return 0;
+-	}
+-}
+-
+ #define BPF_PROG_ATTACH_LAST_FIELD attach_flags
+ 
+-static int sockmap_get_from_fd(const union bpf_attr *attr,
+-			       int type, bool attach)
+-{
+-	struct bpf_prog *prog = NULL;
+-	int ufd = attr->target_fd;
+-	struct bpf_map *map;
+-	struct fd f;
+-	int err;
+-
+-	f = fdget(ufd);
+-	map = __bpf_map_get(f);
+-	if (IS_ERR(map))
+-		return PTR_ERR(map);
+-
+-	if (attach) {
+-		prog = bpf_prog_get_type(attr->attach_bpf_fd, type);
+-		if (IS_ERR(prog)) {
+-			fdput(f);
+-			return PTR_ERR(prog);
+-		}
+-	}
+-
+-	err = sock_map_prog(map, prog, attr->attach_type);
+-	if (err) {
+-		fdput(f);
+-		if (prog)
+-			bpf_prog_put(prog);
+-		return err;
+-	}
+-
+-	fdput(f);
+-	return 0;
+-}
+-
+ #define BPF_F_ATTACH_MASK \
+ 	(BPF_F_ALLOW_OVERRIDE | BPF_F_ALLOW_MULTI)
+ 
+ static int bpf_prog_attach(const union bpf_attr *attr)
+ {
+ 	enum bpf_prog_type ptype;
+-	struct bpf_prog *prog;
+-	struct cgroup *cgrp;
+-	int ret;
+ 
+ 	if (!capable(CAP_NET_ADMIN))
+ 		return -EPERM;
+@@ -1593,28 +1542,7 @@ static int bpf_prog_attach(const union bpf_attr *attr)
+ 		return -EINVAL;
+ 	}
+ 
+-	prog = bpf_prog_get_type(attr->attach_bpf_fd, ptype);
+-	if (IS_ERR(prog))
+-		return PTR_ERR(prog);
+-
+-	if (bpf_prog_attach_check_attach_type(prog, attr->attach_type)) {
+-		bpf_prog_put(prog);
+-		return -EINVAL;
+-	}
+-
+-	cgrp = cgroup_get_from_fd(attr->target_fd);
+-	if (IS_ERR(cgrp)) {
+-		bpf_prog_put(prog);
+-		return PTR_ERR(cgrp);
+-	}
+-
+-	ret = cgroup_bpf_attach(cgrp, prog, attr->attach_type,
+-				attr->attach_flags);
+-	if (ret)
+-		bpf_prog_put(prog);
+-	cgroup_put(cgrp);
+-
+-	return ret;
++	return cgroup_bpf_prog_attach(attr, ptype);
+ }
+ 
+ #define BPF_PROG_DETACH_LAST_FIELD attach_type
+@@ -1622,9 +1550,6 @@ static int bpf_prog_attach(const union bpf_attr *attr)
+ static int bpf_prog_detach(const union bpf_attr *attr)
+ {
+ 	enum bpf_prog_type ptype;
+-	struct bpf_prog *prog;
+-	struct cgroup *cgrp;
+-	int ret;
+ 
+ 	if (!capable(CAP_NET_ADMIN))
+ 		return -EPERM;
+@@ -1667,19 +1592,7 @@ static int bpf_prog_detach(const union bpf_attr *attr)
+ 		return -EINVAL;
+ 	}
+ 
+-	cgrp = cgroup_get_from_fd(attr->target_fd);
+-	if (IS_ERR(cgrp))
+-		return PTR_ERR(cgrp);
+-
+-	prog = bpf_prog_get_type(attr->attach_bpf_fd, ptype);
+-	if (IS_ERR(prog))
+-		prog = NULL;
+-
+-	ret = cgroup_bpf_detach(cgrp, prog, attr->attach_type, 0);
+-	if (prog)
+-		bpf_prog_put(prog);
+-	cgroup_put(cgrp);
+-	return ret;
++	return cgroup_bpf_prog_detach(attr, ptype);
+ }
+ 
+ #define BPF_PROG_QUERY_LAST_FIELD query.prog_cnt
+@@ -1687,9 +1600,6 @@ static int bpf_prog_detach(const union bpf_attr *attr)
+ static int bpf_prog_query(const union bpf_attr *attr,
+ 			  union bpf_attr __user *uattr)
+ {
+-	struct cgroup *cgrp;
+-	int ret;
+-
+ 	if (!capable(CAP_NET_ADMIN))
+ 		return -EPERM;
+ 	if (CHECK_ATTR(BPF_PROG_QUERY))
+@@ -1717,14 +1627,9 @@ static int bpf_prog_query(const union bpf_attr *attr,
+ 	default:
+ 		return -EINVAL;
+ 	}
+-	cgrp = cgroup_get_from_fd(attr->query.target_fd);
+-	if (IS_ERR(cgrp))
+-		return PTR_ERR(cgrp);
+-	ret = cgroup_bpf_query(cgrp, attr, uattr);
+-	cgroup_put(cgrp);
+-	return ret;
++
++	return cgroup_bpf_prog_query(attr, uattr);
+ }
+-#endif /* CONFIG_CGROUP_BPF */
+ 
+ #define BPF_PROG_TEST_RUN_LAST_FIELD test.duration
+ 
+@@ -2371,7 +2276,6 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
+ 	case BPF_OBJ_GET:
+ 		err = bpf_obj_get(&attr);
+ 		break;
+-#ifdef CONFIG_CGROUP_BPF
+ 	case BPF_PROG_ATTACH:
+ 		err = bpf_prog_attach(&attr);
+ 		break;
+@@ -2381,7 +2285,6 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
+ 	case BPF_PROG_QUERY:
+ 		err = bpf_prog_query(&attr, uattr);
+ 		break;
+-#endif
+ 	case BPF_PROG_TEST_RUN:
+ 		err = bpf_prog_test_run(&attr, uattr);
+ 		break;
 -- 
-2.9.4
+2.17.1
