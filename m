@@ -1,80 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id s0bgABVOGVtKdQAAmS7hNA
-	; Thu, 07 Jun 2018 15:26:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DM0fH0k6GFsEdAAAmS7hNA
+	; Wed, 06 Jun 2018 19:48:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 508E0608B8; Thu,  7 Jun 2018 15:26:55 +0000 (UTC)
+	id 0E35D608BA; Wed,  6 Jun 2018 19:48:28 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LH8PnK+E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NyhApi6B"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DF3F1601B4;
-	Thu,  7 Jun 2018 15:26:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DF3F1601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5F9AF607F7;
+	Wed,  6 Jun 2018 19:48:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F9AF607F7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934874AbeFGO5a (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:57:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60210 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933205AbeFGO51 (ORCPT
+        id S1752943AbeFFTsZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 15:48:25 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34108 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752304AbeFFTsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QKH8PoXeHU53llWIDaCCGPfS6h6juRwuJA6oGiO9+VA=; b=LH8PnK+EydDfWdvK5in24KG2F
-        SuUT1u1HDEFK8ymlHYbPANavlfMfWjU2VWlPXmRY6Bk7/Ke64RPgBlcClGsiGosLcIMMl1FakL0ZG
-        Ki7LMNPmy2J32O99iDB1QYjIeW2Q0XTv3cWJiFtRixwSKH8bsRwHvVBySDtDcMLO2SttcZQoPzsD7
-        AZ3NGwxxdt54q+GCkhLyJfuyo5h31P2yMLYY4ZWHrwfoWTbUGbmb68OOc08sSAXn+u3qr/akdwf5g
-        KY5m6rfbYdWqaPGvTJy5MLk2qNcSwdZKkCo5T+WPSWFpgkSCGB4xxABSGdTPc1qjt8naECXcBwNsj
-        7hGc+uXeg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fQwLs-0005ti-Cw; Thu, 07 Jun 2018 14:57:24 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH 1/6] Convert virtio_console to struct_size
-Date: Thu,  7 Jun 2018 07:57:15 -0700
-Message-Id: <20180607145720.22590-2-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607145720.22590-1-willy@infradead.org>
-References: <20180607145720.22590-1-willy@infradead.org>
+        Wed, 6 Jun 2018 15:48:23 -0400
+Received: by mail-pl0-f68.google.com with SMTP id g20-v6so4469375plq.1;
+        Wed, 06 Jun 2018 12:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LwbfeGI/CGq1zn+Ua4uL5IZCLnQ25ixHYrEJK2l/45Y=;
+        b=NyhApi6BJLKuXK6gknsh9AOe7VlesYChH9YED8xVJKK/froivr+V6zRHkFczAcH+CW
+         diVDdkx910F6MHDtPiAMaqa19U6H2uJEQanmbcyb9l9y4NI45oBHwDpv30QRgOYUM3oN
+         HyYwKrUOkk7+St2uCMdL2fedyHDUccclPF5rf969h/0uXArtUZXi2hgSXBLSlIVxQ/hp
+         wW1WdQ5HuF8QqeIPFmtNdk0lCrATEq/VwgQvl5U7hl+Rm3kv/LRVzNyg6UOx1ePdc+gn
+         BC41dhuPxl5g+i3yTWyxxV7AyKt3xvUagyn5fwBzhL6ZgGw73tHuCwoksreTlnu4Kmu8
+         67gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LwbfeGI/CGq1zn+Ua4uL5IZCLnQ25ixHYrEJK2l/45Y=;
+        b=Ck5TdjYZ8fSZnUXOLrlkQIAquM/QhxGwhYGx7pA3XvR6Xnwl4k59Ir5TYt3jTkK1s0
+         uZwcfn1B2WqHC6XaTR0zcSUUVeav+L8Zg05wpjdBbY3tOdwP8bVdE2E4fIEG7cgLG6qX
+         l5mvbxrv3M+4zXK+nAlanZgqH3Jf27ZBjUoHIVJlr3W/at2wdYYG4Nf7bpN1CkyCEQHI
+         03sAsA82GXdSRBwRWNfz4dyW1uZh//tLWiE9AoGDuDLNdPC+L5MxEH+BFfGVIrdjnx2f
+         RPjpiPuEpdGzMZ3chHLoFkPQJVEn/mlsucq88H5Qhhr3i740SlEnUcdtE+j8dk8a+MER
+         SGxQ==
+X-Gm-Message-State: APt69E1UexaFCqfmX+V3t/7Zof43iCKBRr2XT9INv0e5Di5XJzLt/5xU
+        nXsP1aPqs1IvlzpYnEkXcI+5H3gtlq2DmTqYvHzCbOwN
+X-Google-Smtp-Source: ADUXVKLNbkGX3jCmHd9o2zdYRQZbMOvOIi0UD5QExqtEvw4fNuEaOz3higsgAKTUAtDVHw5WfevSwie+8fp5kb0/Q24=
+X-Received: by 2002:a17:902:8f8b:: with SMTP id z11-v6mr4536294plo.203.1528314502605;
+ Wed, 06 Jun 2018 12:48:22 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:bc04:0:0:0:0 with HTTP; Wed, 6 Jun 2018 12:47:42
+ -0700 (PDT)
+In-Reply-To: <20180522212932.5357-2-jprvita@endlessm.com>
+References: <20180522212932.5357-1-jprvita@endlessm.com> <20180522212932.5357-2-jprvita@endlessm.com>
+From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Date: Wed, 6 Jun 2018 12:47:42 -0700
+Message-ID: <CA+A7VXVcvhU293-hhGfkjL1evxVju_XednQySxytjF1gNOFehg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rfkill: Create rfkill-none LED trigger
+To: Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux@endlessm.com,
+        =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Tue, May 22, 2018 at 2:29 PM, Jo=C3=A3o Paulo Rechi Vita
+<jprvita@gmail.com> wrote:
+> Creates a new trigger rfkill-none, as a complement to rfkill-any, which
+> drives LEDs when any radio is enabled. The new trigger is meant to turn
+> a LED ON whenever all radios are OFF, and turn it OFF otherwise.
+>
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- drivers/char/virtio_console.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Johannes, do you have any feedback here? This will be used by
+asus-wireless in the same way fujitsu-laptop uses rfkill-any.
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 21085515814f..4bf7c06c2343 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -433,8 +433,7 @@ static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size
- 	 * Allocate buffer and the sg list. The sg list array is allocated
- 	 * directly after the port_buffer struct.
- 	 */
--	buf = kmalloc(sizeof(*buf) + sizeof(struct scatterlist) * pages,
--		      GFP_KERNEL);
-+	buf = kmalloc(struct_size(buf, sg, pages), GFP_KERNEL);
- 	if (!buf)
- 		goto fail;
- 
--- 
-2.17.0
+--
+Jo=C3=A3o Paulo Rechi Vita
+http://about.me/jprvita
