@@ -1,83 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AE7tLwbVG1shGQAAmS7hNA
-	; Sat, 09 Jun 2018 13:24:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1owfIS1nGFs3ZgAAmS7hNA
+	; Wed, 06 Jun 2018 22:59:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AF790608B8; Sat,  9 Jun 2018 13:24:22 +0000 (UTC)
+	id 803FA6089E; Wed,  6 Jun 2018 22:59:09 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rGvDps2A";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y0nizlWL"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 19DB8600D0;
-	Sat,  9 Jun 2018 13:24:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 19DB8600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 010EB607E4;
+	Wed,  6 Jun 2018 22:59:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 010EB607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753355AbeFINYU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:24:20 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:46842 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753216AbeFINYS (ORCPT
+        id S1752504AbeFFW7H (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 18:59:07 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35654 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752323AbeFFW7F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:24:18 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 4130Nv4dhDz1qtHZ;
-        Sat,  9 Jun 2018 15:24:15 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 4130Nv3zYCz1qsM0;
-        Sat,  9 Jun 2018 15:24:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id KXl1NNzGQfTE; Sat,  9 Jun 2018 15:24:14 +0200 (CEST)
-X-Auth-Info: 42KY0/EE2aPl6b9VVfluJkOWDGpRLkeBSM3hHqh0c0PE7oRBJvS8oUamly40OzSu
-Received: from igel.home (ppp-188-174-144-94.dynamic.mnet-online.de [188.174.144.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sat,  9 Jun 2018 15:24:14 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id 218602C4D47; Sat,  9 Jun 2018 15:24:14 +0200 (CEST)
-From: Andreas Schwab <schwab@linux-m68k.org>
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-m68k@lists.linux-m68k.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2 08/12] macintosh/via-pmu68k: Don't load driver on unsupported hardware
-References: <cover.1528423341.git.fthain@telegraphics.com.au>
-        <d9d626ca4e7ac9c7e81b24a34f5fbcae9d1d5046.1528423341.git.fthain@telegraphics.com.au>
-        <9f015684-4d91-70e4-d2a4-89fe167ff8ab@gmail.com>
-        <m2h8mc4ejw.fsf@linux-m68k.org>
-        <e1006b0a-a429-4744-7525-203cb91f1d5f@gmail.com>
-        <alpine.LNX.2.21.1806092140410.26@nippy.intranet>
-X-Yow: The FALAFEL SANDWICH lands on my HEAD and I become a VEGETARIAN...
-Date: Sat, 09 Jun 2018 15:24:14 +0200
-In-Reply-To: <alpine.LNX.2.21.1806092140410.26@nippy.intranet> (Finn Thain's
-        message of "Sat, 9 Jun 2018 22:21:06 +1000 (AEST)")
-Message-ID: <87a7s4854x.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 6 Jun 2018 18:59:05 -0400
+Received: by mail-vk0-f68.google.com with SMTP id o17-v6so4857745vka.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 15:59:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=9/MCRAw6El6GMdHZ6B+DcFE8CdMu7X5TOUdkyX7zuP4=;
+        b=rGvDps2AMj7hSpfBJswG0a5BxvLRr9LVUDOPC51TJHAJmqOZECEzDyPFee6Czf7Nrx
+         h+pAXVhGTCBEDmS3bpRM+WcLOcHV+oaUFOTCgGlv61ViWcCjOm1i7jYeS0iYjuEOVN1o
+         +XrnPbKlGgHoqgnO1Rn6JLxHDhI//+big2Xwl83guihC9wXczA90kReTTDDzOn0vteGB
+         U4ygUjsDzODfB1Q9XvXRBT8RSUAPmUGRIwV4VKKbip6zDdwnYrW9W3ueK9jnr3xNpwWW
+         rdAd2HzWKEKjZVJghP44+auoN9Wsz4bG/Rzq3X9L73k5YUV+GeZ7sJQGTvHkN0YjEFV1
+         /3vg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=9/MCRAw6El6GMdHZ6B+DcFE8CdMu7X5TOUdkyX7zuP4=;
+        b=Y0nizlWL7DoCsjxthzZJps2eHj49nDBAomdm96dFmzAiGU9NSGN4KSqd66rpVlwtOR
+         TXTw/XN9YRzbQRZKKQbeBKYeeqnd2GRpwOadqvNqmiCHsBE+lWNTqfZy8HWaKD0AnsPg
+         8z8WgE8cbIOxjQkXqS9Y0aUf+SoIwmRqZGfVU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=9/MCRAw6El6GMdHZ6B+DcFE8CdMu7X5TOUdkyX7zuP4=;
+        b=jJBceK78vSB9eSxRtrLzxTG6UUjPTDJM9er+rAXcQ+Vp1DaIvoz30EWRjylBYVG1tJ
+         +0bj4mt18rzsjqJDNc2ped8QeHK+lHsUHjCFfCjIgSwU5UOayU+gSL+Q2oyUcbsDcUxV
+         IhM2o6f1VN8ilXOhUL50BV4M2/un/ycmnnezMu73hFSu+pkCSdkNs19P26GFpNwsDxZO
+         21ADLtMRhoIUyxMqyjTLaV1OhzYztJPRH7J8y39wl0N/RXXGmM46maBJKKul7Pa8quDC
+         RKUVO7ZJG1LO8ZyrvFiKxBvzZ34qH08gm/fx0cGg2oF4L1m/o1bcNmHUGAwSf8CFZGjH
+         4VPQ==
+X-Gm-Message-State: APt69E3Dm669f4hqvi52a6IJ5ZKkwVyHp4dZ5ywMo29HoiU5yRzeXInX
+        2N4blnKK4BPtu2LsSmklMwa7VDaDmQaB/I63AcktFA==
+X-Google-Smtp-Source: ADUXVKJlES1MXW7UYGgbp43kyV5svC0dbVlpjgDkmdsIosbvc5rBE0+DKuEo7rOVLwSolibKcjeuXhyJQ84gASAbg3g=
+X-Received: by 2002:a1f:e92:: with SMTP id 140-v6mr3249735vko.90.1528325943758;
+ Wed, 06 Jun 2018 15:59:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 6 Jun 2018 15:59:02 -0700 (PDT)
+In-Reply-To: <38cb1906c96504f74517018ca4e0aed63bb77356.1528138319.git.collinsd@codeaurora.org>
+References: <cover.1528138319.git.collinsd@codeaurora.org> <38cb1906c96504f74517018ca4e0aed63bb77356.1528138319.git.collinsd@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 6 Jun 2018 15:59:02 -0700
+X-Google-Sender-Auth: mvzh8eq0a49rEID1iJ8CERNe9Ms
+Message-ID: <CAD=FV=X_b0nuGzccTg03WOaNQ81nCtJ2=98btoVf7AQ1W-mkMA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
+To: David Collins <collinsd@codeaurora.org>
+Cc: Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jun 09 2018, Finn Thain <fthain@telegraphics.com.au> wrote:
+Hi,
 
-> There is no ABI issue AFAIK. The value of pmu_kind is visible to userland 
-> only on powerpc. /dev/pmu and /proc/pmu/* do not exist on m68k.
+On Mon, Jun 4, 2018 at 12:15 PM, David Collins <collinsd@codeaurora.org> wrote:
+> Introduce bindings for RPMh regulator devices found on some
+> Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
+> processor within the SoC to make PMIC regulator requests which
+> are aggregated within the RPMh hardware block along with requests
+> from other processors in the SoC to determine the final PMIC
+> regulator hardware state.
+>
+> Signed-off-by: David Collins <collinsd@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++++++++++++++++++
+>  .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +++++
+>  2 files changed, 196 insertions(+)
 
-Then why are PMU_68K_V1 and PMU_68K_V2 defined in the first place?
-
-Andreas.
-
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
