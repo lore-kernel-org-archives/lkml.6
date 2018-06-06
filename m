@@ -1,430 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 342F360763
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=LandisGyr.onmicrosoft.com header.i=@LandisGyr.onmicrosoft.com header.b="GC//Wmoz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DDB46063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=landisgyr.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933709AbeFFRJS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:09:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33516 "EHLO mx1.redhat.com"
+        id S932436AbeFFIDm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:03:42 -0400
+Received: from mail-ve1eur01on0099.outbound.protection.outlook.com ([104.47.1.99]:26944
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933647AbeFFRJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:09:14 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: eparis@parisplace.org, Steve Grubb <sgrubb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghau51/ghau40 v3 4/6] add ausearch containerid support
-Date: Wed,  6 Jun 2018 13:07:27 -0400
-Message-Id: <1528304849-31826-5-git-send-email-rgb@redhat.com>
-In-Reply-To: <1528304849-31826-1-git-send-email-rgb@redhat.com>
-References: <1528304849-31826-1-git-send-email-rgb@redhat.com>
+        id S932304AbeFFIDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:03:37 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Onnasch@landisgyr.com;
+From: Alexander Onnasch <alexander.onnasch@landisgyr.com>
+Cc: alexander.onnasch@landisgyr.com, Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net/phy: Micrel KSZ8061 PHY link failure after cable connect
+Date: Wed,  6 Jun 2018 10:03:18 +0200
+Message-Id: <1528272198-10825-1-git-send-email-alexander.onnasch@landisgyr.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [80.239.165.1]
+X-ClientProxiedBy: VI1P190CA0028.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:802:2b::41) To DB7PR01MB4267.eurprd01.prod.exchangelabs.com
+ (2603:10a6:5:2d::32)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(2017052603328)(7153060)(7193020);SRVR:DB7PR01MB4267;
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR01MB4267;3:jFJd24nFD28atdGm/ipEca0RK9fOv4KBz6xrjVl7ZpepaZ8QhFhlyTf9tGUS1HzH8Gs++Pkz8DZd2aisj2C4j/Ga2U+21BhjwPgvghOwDpqjWF5gzzGzAck90VE8wzQJ058gB/+PtTLChi6kuKboTYZ0QJ9sIdzM0JKAYkyaA/jvu03NKObrdGwNbg5UhW1xgvE9Znqznrg7/uswwC8Bxo7B4XnSVhLxIxccmwHDjDd92WD4edzWReLG4zZ9nfa8;25:t25g3JvWyVPEHspdJvWjPf3Q/qd8/AqcUtIwEaD+/n+4iyKNiRsNrI8Yf0J56LGuWZbSLEAYidt10b/M9dJ7pMm2GzfP/E6uTEFeeP1+ZphKa8O/wCS8jbbdSaebxClaZD50M10MNvj5d7kU0XlpxOIeYiAlMIvtbCBpVv45w0r9ZmLGmO/DuQATpftrn5iQ4v6+eRpMHRgG0V3ebq/jGcqZepWNBqhoxJSiPrHtO9VVSQBudTz5UjN33kR9j/y/3Anzwgnb/qgfW/xNl7meRUh/c1vFSVpItEHsGcBfgrJ2JA9aMDcMlkD+sGMJowjaUiQ32LCMNwRlRegpXbjOIQ==;31:yFJAZdr/JrsJnqXs3Nuiisjw/XBbcdgwWMujQXx+5s1BqSMdsdGs8gUSaZIqnaOrjUBpUbmYh8H7kaRTwO847j4r/ZuGXIOMCPxRhu1QBWBXSQX7c7pk1LRupxDsebcef9pOHiM4U8FKb1xr2xLTZY6jh7yvWFJ6P3RT4C27Jf+mR3Q0EKZUr4SU6chGhPkpDCwo67jxAc9B4jPu/IG2IpAs5647sjqd3UN3k9NxixM=
+X-MS-TrafficTypeDiagnostic: DB7PR01MB4267:
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR01MB4267;20:IEYC3hlNZdWvR+l118gw6U3YRmYhGKLq8FrhENSvKmdy5ugPBRqhG3eamFPg4Wo2EEqsWevRv5lz8336v5vdxG0ZaLNZ8WIBb2ACM19noJ+XpZKWW4e/QfidRdMty1W5xFZH/aMe1HnAKyyW0OkOXhlq33HYccyHHRvtHajZkJBobj4NqODaxcWuT2kbHm3zXUQOlMGdjvv5ESjNeSd5Chl7bg/YnFVjH+oPK3CYdq2IaH9gvZs0kt/8xiKBJNCkiSCXNMcUiQ4xykz6ULeBpadYG6pt2wzQ9eUN2xbgiBSFDHvE4sJYPumKaeDBB9V5uDFQzY+1qtCs9+K8IfUhOjrbqp80MnjNxlsJW4ByJkSh4k5B5EiR/k7lbdzwWbbg/orsTUVQ8stjbPWRsPV9QzGpcpq25EjsHXssHtY1UBda41Us5UUTV8PpwtU7QLX/pCWiHCb3GDON6Ll1mkIPQH28veRmoZu03U/xC6nE8u5jpDERLoGyPrKb6bKyGJLd;4:WhQb09XRkDIYTmF0iRByu3xaq8TuOLzp/+uu8F6KNyJLVpFeAUNQ0MYhvKTBH1m3QkItSLbC1vyIYbVaEvIun1oUqnzmrTOZNbm0mqAVrcNvf0G2QFJuTa9fgBl46cM5xj7Xdwi7FXRvfmI326O12TvUflirkcrORsIOdFmwF/xRRbVqwrZm7/VfUGEZfVG6yZaNpCC+D+pjgbIwCi57iKzmy09Iu7PQ2p9KZ0E5iaTRmF9cC+z1yCwwZTw9UaB0C0FxYr+1kLYYPX8dWmFUHMnWPILi/P6NC7+fh6IHH4udKDElFs91VifuKhfVdhJ/aKNy4NzjJ+QWw7fUUwYbRgkN1M7AOPhSGVKK0WPlDvQ=
+X-Microsoft-Antispam-PRVS: <DB7PR01MB426778583CD3005963B47A7AF0650@DB7PR01MB4267.eurprd01.prod.exchangelabs.com>
+X-Exchange-Antispam-Report-Test: UriScan:(144836121648609)(21532816269658);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB7PR01MB4267;BCL:0;PCL:0;RULEID:;SRVR:DB7PR01MB4267;
+X-Forefront-PRVS: 06952FC175
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(396003)(39860400002)(39380400002)(199004)(189003)(2906002)(97736004)(316002)(54906003)(2616005)(1857600001)(6486002)(53936002)(7736002)(476003)(956004)(486006)(44832011)(386003)(52116002)(25786009)(5660300001)(26005)(16526019)(39060400002)(4326008)(6512007)(305945005)(109986005)(8936002)(8676002)(81166006)(50226002)(23676004)(6506007)(6666003)(50466002)(1671002)(575784001)(47776003)(81156014)(59450400001)(68736007)(6116002)(2870700001)(72206003)(478600001)(86362001)(106356001)(105586002)(66066001)(3846002)(36756003)(266003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR01MB4267;H:CHZUGPC352.eu.bm.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjdQUjAxTUI0MjY3OzIzOitQNGpGb1k3TlQraEEvbFlCRGNlc2NoR0w5?=
+ =?utf-8?B?UmRySm5yU1JiZlJCSm9tVUJzMmtpaW56RCs3bm1zT1hwamhQMDg3Q0Rld2VV?=
+ =?utf-8?B?dDNIZ1Z5RWU5cisyQ01zS2djaVFPUEZZSnVORUR3bm92ai9QSmRtOXFqZWFN?=
+ =?utf-8?B?T1lBUTdxNXZjTWh6K0E2M29WMTZPRXJ2Qnp1ekxxejluRWFXZnpodlVzVmNY?=
+ =?utf-8?B?REU3U2hWRDkvRW5ZS2g1UXJFMlg2dlRVS2J3d3BDSFRiYUJOeWRDcEQ0NkpD?=
+ =?utf-8?B?WnIrN3FNcjU0ajk5RDdiMU5pc3MrREhhWFhyWXZxNVJ1QTdaUHhyV2tzZUFD?=
+ =?utf-8?B?d1lZR20yQ2VsKzFjZHlVbnR6dG12NHljcHcrTTBmeFlydUJQYlZ3UjAxeExv?=
+ =?utf-8?B?L3FCcHVSZDltYXNZb0tKa25jMjJkTzFMci9hdXhGZERmRTdoakMvbDgvZ1ZW?=
+ =?utf-8?B?akJWMVEwNzJ2M1lBT1hnbnUzMm41cjNMdVVqL212RVpYQ01WZmtuVFg0amFC?=
+ =?utf-8?B?ZStvdFpDQTZSMkM1SnR0NFBSajR4aVkzM2tsWG1za1ZKLzVTbisrZW1IWmd3?=
+ =?utf-8?B?cW9vVlRjZW0xc2Nvam5yYU9ya2pmQTh0QXJTRVp4bVNVWHIxVVUvTGV6RDg5?=
+ =?utf-8?B?WVM2eEg3MUEyQ2pXSzVtNndmYzBxOFpvcUVGZFZUNi9kbjVDZXllNlo3TWpr?=
+ =?utf-8?B?cStnUW1LbDQ1NnV0TGUzdFI2a01KbzVYRkwrVnN2SnRhNXdDblRHYmZqNkdF?=
+ =?utf-8?B?M3c5TEoxeHNZbnNuR1plNHJrM1BhOXg4Vld3MW9VaWczbUtBSUxBSHRIcU5o?=
+ =?utf-8?B?SzZBWFI0QmYvZGxqMS9pdDY1QXdIeVBzL3RVWkZmamsrWE8rV0R6MDAvdnBm?=
+ =?utf-8?B?SHVpZzduL2JCVjA0WjdkdXlmTTFHdGN6YlpINUMvam1aUHlmaHg3WDZzRlp4?=
+ =?utf-8?B?bnM0Mmk5T09zeHhHUHA2a3ZHYi90ZEhKSW5YajB4MEJFRG1paERUV0tKSHUr?=
+ =?utf-8?B?cTltbStnTjZsZkdrRC9FaXZGMkVoNVErVTR2eklIcXUyTUpvdGd4dHZUdmtV?=
+ =?utf-8?B?L3dDY3dkSG1KK1JzSnpMMmEyNyt2amdpSm1yL05XOERZU0JYaFhaSUIzL3p2?=
+ =?utf-8?B?MndxVktkdWo5d2pydlIxMEtWWmt5YXFQZThEUEYwaUJxZUxVem83N1dQNklL?=
+ =?utf-8?B?YWxwOFlOb1A5OG1kenJ3eUdHUCtRelZyVDJGYWQyNXh2QVRPUWNNV2VtL096?=
+ =?utf-8?B?b0lYdDMxKy9ESHA3SFlVOWt3bFNtVGRCaGlrbTY3UFlSeUFqK3lKSTA5Nk0v?=
+ =?utf-8?B?Sk5tbUVzRlhpbXkyb1lzbmRrVm40WUZjaHMxTUthSkJnUzBsTG9Yc1dyeDZT?=
+ =?utf-8?B?bHBBQVhKb0RCUG9iYzJUc2drOFFaNG9oOTJYdForUHFUYXp2UjJxazZvamxo?=
+ =?utf-8?B?aVdDZU5uRjFOdlc5bzdCZzNzT2M0NFFjS0pvbHJ4Z0pod1dsQWVQWlByYm53?=
+ =?utf-8?B?YjZMckEwSG9RbEROSXd5RkVreEsvVG1OQ0JZeGQ0N21iOHdJR1ZQL3hXckxw?=
+ =?utf-8?B?RVVySTd1QXVEbnY3VFkxUjl6Q24xLytDVHVsTmxmOG5VUXArRDRJR2xKeUhs?=
+ =?utf-8?B?TjF3clp2WGVPdkNzUzkwOGdvc1ZWREhkSTQ1SmZtdHF3UmU5NVhYeEVsOVln?=
+ =?utf-8?B?QmpySmp3aWRCa2FkcXdhOFdDT1VzWDFTbDBKdEg1Qno0bWdTeFZNK24vYWw3?=
+ =?utf-8?B?M2Z1bkNSOHFJVmxJaWdCUT09?=
+X-Microsoft-Antispam-Message-Info: t50TlQmP9250m4Im1MYoYEsWkDFj0haanN+v9Klt5QQQ/H4PIQGktydxMKvkYy3XtF8Ett4nwvqPTppJ8uYEfFLb34ITHSTPyg7Td8RCk9pIr59iLyNji0ub6bidnuq1e7g4ePBkMkiX3lH2o0I2G6N6bcccA8R17vaMg4zwPO8f1+v5B12XhytaRz92C/Tl
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR01MB4267;6:Wptehk7fovtclP76cUsIUl4NKksYwCPUIQ63F5nuu6uE1aG3f1zp8DcMg1jCyG0Z0sljiFKZmsZ5txqtBVGYh/MSCXMLNmNB/uEt9Dy7/r+lEvEcozyDM+0dAqnsa0iMTTFCs32aE3pBfAid9IpcKEWOUF3ezBSQ5jMy/ZcsDagHyYLv58BgSFteqSQSv1UknuaoQEE56ynJI5Zd941ALcWElBA0+KsAB8oDtTKO/pQMmH/mocCzqT2bAVURygC1ltDJOw90qrwoTJJW7lAzBS/1cFqafENjsQRD03l50j3VOocQUJmJwBBoKMA8SfSU02AgK/ZUPPzaeQA79MvFF7J+OXUQwkoS+d7OP+Cg2rhg0Hg/+OPqwotDJU4KSWJU3PULczLaxamxJiZEGkzu/l58LN3/mKg96yhKlX7M46M/yH28DQFYDhxfPwW9sQLmEPwFi9Z5MEe0gLPURaiwKw==;5:yLrLqWCojac69aJgUqeUSuL7AjRvAmOHRXTkshjsZpGATEcagOyr36zwt+lCXU/MIH5MXw89qFT6zbocNdDqmmeXSmb3X6hp5WU92JyyxJ24F8z2zsf06WnG59Bxg9Ue2o0vYjqy+TcXdZ9QbuncW7QUQe1Xan1j6+ca0BF1k7Q=;24:SvQnQdGHwjiwdJW3HM0b2ofGZhLYL0mBjX1ZMHx3/MaKmKpBAlSsp5ik5LZSdxQId1EUzXWL5TfavgdWovmTN2xzCyR2GDl4SQUEFDT+WZI=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR01MB4267;7:dAJ/4xawPJCgo1lXU5AtVYsyyJrkNguq1P6XBSdzpwZpkNoQppRaIQqHv+FHz2dn0Pq2ZWSl1XGuhgMTfFEgnj/gCbIoYM2qp3wQF4B9emhApWkhnG6hnP3m6cbKOnW95VP12nq2LkHknJ/K4c/D7JWw+zFV5thd/bR1pUCcjaHhQdwNx41RMw1KkhYG6pZlpOSG5HtoqBSB7qaWfVPx2nCKcC+1/hA8OqtF2byZADCm0EVlCbf5LeGq1v8+YLX0
+X-MS-Office365-Filtering-Correlation-Id: d008f33c-4c17-4f99-053b-08d5cb840047
+X-OriginatorOrg: landisgyr.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2018 08:03:33.8935
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d008f33c-4c17-4f99-053b-08d5cb840047
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: ee2cd48b-958f-4be4-9852-b8f104c001b9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR01MB4267
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to ausearch for searching on the containerid field in
-records.
+With Micrel KSZ8061 PHY, the link may occasionally not come up after
+Ethernet cable connect. The vendor's (Microchip, former Micrel) errata
+sheet 80000688A.pdf describes the problem and possible workarounds in
+detail, see below.
+The patch implements workaround 1, which permanently fixes the issue.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+DESCRIPTION
+Link-up may not occur properly when the Ethernet cable is initially
+connected. This issue occurs more commonly when the cable is connected
+slowly, but it may occur any time a cable is connected. This issue occurs
+in the auto-negotiation circuit, and will not occur if auto-negotiation
+is disabled (which requires that the two link partners be set to the
+same speed and duplex).
+
+END USER IMPLICATIONS
+When this issue occurs, link is not established. Subsequent cable
+plug/unplug cycles will not correct the issue.
+
+WORK AROUND
+There are four approaches to work around this issue:
+1.  This issue can be prevented by setting bit 15 in MMD device address 1,
+    register 2, prior to connecting the  cable or prior to setting the
+    Restart Auto-Negotiation bit in register 0h.The MMD registers are
+    accessed via the indirect access registers Dh and Eh, or via the Micrel
+    EthUtil utility as shown here:
+    •  If using the EthUtil utility (usually with a Micrel KSZ8061
+       Evaluation Board), type the following commands:
+       > address 1
+       > mmd 1
+       > iw 2 b61a
+    •  Alternatively, write the following registers to write to the
+       indirect MMD register:
+       Write register Dh, data 0001h
+       Write register Eh, data 0002h
+       Write register Dh, data 4001h
+       Write register Eh, data B61Ah
+2.  The issue can be avoided by disabling auto-negotiation in the KSZ8061,
+    either by the strapping option, or by clearing bit 12 in register 0h.
+    Care must be taken to ensure that the KSZ8061 and the link partner
+    will link with the same speed and duplex. Note that the KSZ8061
+    defaults to full-duplex when auto-negotiation is off, but other
+    devices may default to half-duplex in the event of failed
+    auto-negotiation.
+3.  The issue can be avoided by connecting the cable prior to powering-up
+    or resetting the KSZ8061, and leaving it plugged in thereafter.
+4.  If the above measures are not taken and the problem occurs, link can
+    be recovered by setting the Restart Auto-Negotiation bit in
+    register 0h, or by resetting or power cycling the device. Reset may
+    be either hardware reset or software reset (register 0h, bit 15).
+
+PLAN
+This errata will not be corrected in a future revision.
+
+Signed-off-by: Alexander Onnasch <alexander.onnasch@landisgyr.com>
 ---
- src/aureport-options.c |   1 +
- src/ausearch-llist.c   |   2 +
- src/ausearch-llist.h   |   1 +
- src/ausearch-match.c   |   3 +
- src/ausearch-options.c |  47 +++++++++++-
- src/ausearch-options.h |   1 +
- src/ausearch-parse.c   | 199 +++++++++++++++++++++++++++++++++++++++++++++++++
- 7 files changed, 253 insertions(+), 1 deletion(-)
+ drivers/net/phy/micrel.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/src/aureport-options.c b/src/aureport-options.c
-index 9b914ed..f5a2cfb 100644
---- a/src/aureport-options.c
-+++ b/src/aureport-options.c
-@@ -62,6 +62,7 @@ const char *event_vmname = NULL;
- long long event_exit = 0;
- int event_exit_is_set = 0;
- int event_ppid = -1, event_session_id = -2;
-+unsigned long long int event_container_id = -1;
- int event_debug = 0, event_machine = -1;
- 
- /* These are used by aureport */
-diff --git a/src/ausearch-llist.c b/src/ausearch-llist.c
-index ef5503c..c910724 100644
---- a/src/ausearch-llist.c
-+++ b/src/ausearch-llist.c
-@@ -60,6 +60,7 @@ void list_create(llist *l)
- 	l->s.arch = 0;
- 	l->s.syscall = 0;
- 	l->s.session_id = -2;
-+	l->s.container_id = -2;
- 	l->s.uuid = NULL;
- 	l->s.vmname = NULL;
- 	l->s.tuid = NULL;
-@@ -211,6 +212,7 @@ void list_clear(llist* l)
- 	l->s.arch = 0;
- 	l->s.syscall = 0;
- 	l->s.session_id = -2;
-+	l->s.container_id = -2;
- 	free(l->s.uuid);
- 	l->s.uuid = NULL;
- 	free(l->s.vmname);
-diff --git a/src/ausearch-llist.h b/src/ausearch-llist.h
-index 64e4ee1..2ddd863 100644
---- a/src/ausearch-llist.h
-+++ b/src/ausearch-llist.h
-@@ -56,6 +56,7 @@ typedef struct
-   int arch;             // arch
-   int syscall;          // syscall
-   uint32_t session_id;  // Login session id
-+  __u64 container_id;   // Container id
-   long long exit;       // Syscall exit code
-   int exit_is_set;      // Syscall exit code is valid
-   char *hostname;       // remote hostname
-diff --git a/src/ausearch-match.c b/src/ausearch-match.c
-index 61a11d3..78e72aa 100644
---- a/src/ausearch-match.c
-+++ b/src/ausearch-match.c
-@@ -113,6 +113,9 @@ int match(llist *l)
- 				if ((event_session_id != -2) &&
- 					(event_session_id != l->s.session_id))
- 					return 0;
-+				if ((event_container_id != -1) &&
-+					(event_container_id != l->s.container_id))
-+					return 0;
- 				if (event_exit_is_set) {
- 					if (l->s.exit_is_set == 0)
- 						return 0;
-diff --git a/src/ausearch-options.c b/src/ausearch-options.c
-index a3f08e7..dbb302d 100644
---- a/src/ausearch-options.c
-+++ b/src/ausearch-options.c
-@@ -60,6 +60,7 @@ int event_syscall = -1, event_machine = -1;
- int event_ua = 0, event_ga = 0, event_se = 0;
- int just_one = 0;
- uint32_t event_session_id = -2;
-+unsigned long long int event_container_id = -1;
- long long event_exit = 0;
- int event_exit_is_set = 0;
- int line_buffered = 0;
-@@ -88,7 +89,7 @@ struct nv_pair {
- 
- enum { S_EVENT, S_COMM, S_FILENAME, S_ALL_GID, S_EFF_GID, S_GID, S_HELP,
- S_HOSTNAME, S_INTERP, S_INFILE, S_MESSAGE_TYPE, S_PID, S_SYSCALL, S_OSUCCESS,
--S_TIME_END, S_TIME_START, S_TERMINAL, S_ALL_UID, S_EFF_UID, S_UID, S_LOGINID,
-+S_TIME_END, S_TIME_START, S_TERMINAL, S_ALL_UID, S_EFF_UID, S_UID, S_LOGINID, S_CONTAINERID,
- S_VERSION, S_EXACT_MATCH, S_EXECUTABLE, S_CONTEXT, S_SUBJECT, S_OBJECT,
- S_PPID, S_KEY, S_RAW, S_NODE, S_IN_LOGS, S_JUST_ONE, S_SESSION, S_EXIT,
- S_LINEBUFFERED, S_UUID, S_VMNAME, S_DEBUG, S_CHECKPOINT, S_ARCH, S_FORMAT,
-@@ -100,6 +101,7 @@ static struct nv_pair optiontab[] = {
- 	{ S_EVENT, "--event" },
- 	{ S_COMM, "-c" },
- 	{ S_COMM, "--comm" },
-+	{ S_CONTAINERID, "--containerid" },
- 	{ S_CHECKPOINT, "--checkpoint" },
- 	{ S_DEBUG, "--debug" },
- 	{ S_EXIT, "-e" },
-@@ -197,6 +199,7 @@ static void usage(void)
- 	"\t-a,--event <Audit event id>\tsearch based on audit event id\n"
- 	"\t--arch <CPU>\t\t\tsearch based on the CPU architecture\n"
- 	"\t-c,--comm  <Comm name>\t\tsearch based on command line name\n"
-+	"\t--containerid <audit container id>\tsearch based on the task's audit container id\n"
- 	"\t--checkpoint <checkpoint file>\tsearch from last complete event\n"
- 	"\t--debug\t\t\tWrite malformed events that are skipped to stderr\n"
- 	"\t-e,--exit  <Exit code or errno>\tsearch based on syscall exit code\n"
-@@ -1182,6 +1185,48 @@ int check_params(int count, char *vars[])
- 			}
- 			c++;
- 			break;
-+		case S_CONTAINERID:
-+			if (!optarg) {
-+				if ((c+1 < count) && vars[c+1])
-+					optarg = vars[c+1];
-+				else {
-+					fprintf(stderr,
-+						"Argument is required for %s\n",
-+						vars[c]);
-+					retval = -1;
-+					break;
-+				}
-+			}
-+			{
-+			size_t len = strlen(optarg);
-+			if (isdigit(optarg[0])) {
-+				errno = 0;
-+				event_container_id = strtoull(optarg,NULL,0);
-+				if (errno) {
-+					fprintf(stderr, 
-+			"Numeric container ID conversion error (%s) for %s\n",
-+						strerror(errno), optarg);
-+					retval = -1;
-+				}
-+			} else if (len >= 2 && *(optarg)=='-' &&
-+					(isdigit(optarg[1]))) {
-+				errno = 0;
-+				event_container_id = strtoll(optarg, NULL, 0);
-+				if (errno) {
-+					retval = -1;
-+					fprintf(stderr, "Error converting %s\n",
-+						optarg);
-+				}
-+			} else {
-+				fprintf(stderr, 
-+			"Container ID is non-numeric and unknown (%s)\n",
-+						optarg);
-+				retval = -1;
-+				break;
-+			}
-+			}
-+			c++;
-+			break;
- 		case S_UUID:
- 			if (!optarg) {
- 				fprintf(stderr,
-diff --git a/src/ausearch-options.h b/src/ausearch-options.h
-index 1372762..b7830a1 100644
---- a/src/ausearch-options.h
-+++ b/src/ausearch-options.h
-@@ -40,6 +40,7 @@ extern int line_buffered;
- extern int event_debug;
- extern pid_t event_ppid;
- extern uint32_t event_session_id;
-+extern unsigned long long int event_container_id;
- extern ilist *event_type;
- 
- /* Data type to govern output format */
-diff --git a/src/ausearch-parse.c b/src/ausearch-parse.c
-index e915165..b249ea6 100644
---- a/src/ausearch-parse.c
-+++ b/src/ausearch-parse.c
-@@ -52,6 +52,8 @@ static int parse_path(const lnode *n, search_items *s);
- static int parse_user(const lnode *n, search_items *s);
- static int parse_obj(const lnode *n, search_items *s);
- static int parse_login(const lnode *n, search_items *s);
-+static int parse_container_id(const lnode *n, search_items *s);
-+static int parse_container(const lnode *n, search_items *s);
- static int parse_daemon1(const lnode *n, search_items *s);
- static int parse_daemon2(const lnode *n, search_items *s);
- static int parse_sockaddr(const lnode *n, search_items *s);
-@@ -112,6 +114,9 @@ int extract_search_items(llist *l)
- 			case AUDIT_LOGIN:
- 				ret = parse_login(n, s);
- 				break;
-+			case AUDIT_CONTAINER_ID:
-+				ret = parse_container_id(n, s);
-+				break;
- 			case AUDIT_IPC:
- 			case AUDIT_OBJ_PID:
- 				ret = parse_obj(n, s);
-@@ -177,6 +182,9 @@ int extract_search_items(llist *l)
- 			case AUDIT_TTY:
- 				ret = parse_tty(n, s);
- 				break;
-+			case AUDIT_CONTAINER:
-+				ret = parse_container(n, s);
-+				break;
- 			default:
- 				if (event_debug)
- 					fprintf(stderr,
-@@ -1408,6 +1416,197 @@ static int parse_login(const lnode *n, search_items *s)
- 	return 0;
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 6c45ff6..7d80a00 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -339,6 +339,28 @@ static int ksz8041_config_aneg(struct phy_device *phydev)
+ 	return genphy_config_aneg(phydev);
  }
  
-+static int parse_container_id(const lnode *n, search_items *s)
++#define MII_KSZ8061RN_MMD_CTRL_REG	    0x0d
++#define MII_KSZ8061RN_MMD_REGDATA_REG	0x0e
++
++static int ksz8061_extended_write(struct phy_device *phydev,
++				  u8 mode, u32 dev_addr, u32 regnum, u16 val)
 +{
-+	char *ptr, *str, *term = n->message;
-+
-+	// skip op
-+	// skip opid
-+	// skip old-contid
-+	// get contid
-+	if (event_container_id != -1) {
-+		str = strstr(term, "contid=");
-+		if (str == NULL) {
-+			return 45;
-+		} else
-+			ptr = str + 7;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 46;
-+		*term = 0;
-+		errno = 0;
-+		s->container_id = strtoull(ptr, NULL, 10);
-+		if (errno)
-+			return 47;
-+		*term = ' ';
-+	}
-+	// get pid
-+	if (event_pid != -1) {
-+		str = strstr(term, "pid=");
-+		if (str == NULL)
-+			return 48;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 49;
-+		*term = 0;
-+		errno = 0;
-+		s->pid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 50;
-+		*term = ' ';
-+	}
-+	// get loginuid
-+	if (event_loginuid != -2 || event_tauid) {
-+		str = strstr(term, "auid=");
-+		if (str == NULL) {
-+			return 51;
-+		} else
-+			ptr = str + 5;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 52;
-+		*term = 0;
-+		errno = 0;
-+		s->loginuid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 53;
-+		*term = ' ';
-+		s->tauid = lookup_uid("auid", s->loginuid);
-+	}
-+	// get uid
-+	if (event_uid != -1 || event_tuid) {
-+		str = strstr(term, "uid=");
-+		if (str == NULL)
-+			return 54;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 55;
-+		*term = 0;
-+		errno = 0;
-+		s->uid = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 56;
-+		*term = ' ';
-+		s->tuid = lookup_uid("uid", s->uid);
-+	}
-+	// skip tty
-+	// ses
-+	if (event_session_id != -2 ) {
-+		str = strstr(term, "ses=");
-+		if (str == NULL)
-+			return 57;
-+		else
-+			ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 58;
-+		*term = 0;
-+		errno = 0;
-+		s->session_id = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 59;
-+		*term = ' ';
-+	}
-+	// get subj
-+	if (event_subject) {
-+		str = strstr(term, "subj=");
-+		if (str == NULL)
-+			return 60;
-+		ptr = str + 5;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 61;
-+		*term = 0;
-+		if (audit_avc_init(s) == 0) {
-+			anode an;
-+
-+			anode_init(&an);
-+			an.scontext = strdup(str);
-+			alist_append(s->avc, &an);
-+			*term = ' ';
-+		} else
-+			return 62;
-+		*term = ' ';
-+	}
-+	// get comm
-+	if (event_comm) {
-+		str = strstr(ptr, "comm=");
-+		if (str == NULL)
-+			return 63;
-+		str += 5;
-+		if (*str == '"') {
-+			str++;
-+			term = strchr(str, '"');
-+			if (term == NULL)
-+				return 64;
-+			*term = 0;
-+			s->comm = strdup(str);
-+			*term = '"';
-+		} else 
-+			s->comm = unescape(str);
-+	}
-+	// get exe
-+	if (event_exe) {
-+		str = strstr(term, "exe=");
-+		if (str == NULL)
-+			return 65;
-+		str += 4;
-+		if (*str == '"') {
-+			str++;
-+			term = strchr(str, '"');
-+			if (term == NULL)
-+				return 66;
-+			*term = 0;
-+			s->exe = strdup(str);
-+			*term = '"';
-+		} else 
-+			s->exe = unescape(str);
-+	}
-+	// success
-+	if (event_success != S_UNSET) {
-+		str = strstr(term, "res=");
-+		if (str == NULL)
-+			return 67;
-+		ptr = str + 4;
-+		term = strchr(ptr, ' ');
-+		if (term)
-+			return 68;
-+		*term = 0;
-+		errno = 0;
-+		s->success = strtoul(ptr, NULL, 10);
-+		if (errno)
-+			return 69;
-+		*term = ' ';
-+	}
-+	return 0;
++	phy_write(phydev, MII_KSZ8061RN_MMD_CTRL_REG, dev_addr);
++	phy_write(phydev, MII_KSZ8061RN_MMD_REGDATA_REG, regnum);
++	phy_write(phydev, MII_KSZ8061RN_MMD_CTRL_REG, (mode << 14) | dev_addr);
++	return phy_write(phydev, MII_KSZ8061RN_MMD_REGDATA_REG, val);
 +}
 +
-+static int parse_container(const lnode *n, search_items *s)
++static int ksz8061_config_init(struct phy_device *phydev)
 +{
-+	char *ptr, *str, *term = n->message;
++	int ret;
 +
-+	// skip op
-+	// get contid
-+	if (event_container_id != -1) {
-+		str = strstr(term, "contid=");
-+		if (str == NULL)
-+			return 70;
-+		ptr = str + 7;
-+		term = strchr(ptr, ' ');
-+		if (term == NULL)
-+			return 71;
-+		*term = 0;
-+		errno = 0;
-+		s->container_id = strtoull(ptr, NULL, 10);
-+		if (errno)
-+			return 72;
-+		*term = ' ';
-+	}
-+	return 0;
++	ret = ksz8061_extended_write(phydev, 0x1, 0x1, 0x2, 0xB61A);
++	if (ret)
++		return ret;
++	return kszphy_config_init(phydev);
 +}
 +
- static int parse_daemon1(const lnode *n, search_items *s)
- {
- 	char *ptr, *str, *term, saved, *mptr;
+ static int ksz9021_load_values_from_of(struct phy_device *phydev,
+ 				       const struct device_node *of_node,
+ 				       u16 reg,
+@@ -938,7 +960,7 @@ static struct phy_driver ksphy_driver[] = {
+ 	.phy_id_mask	= MICREL_PHY_ID_MASK,
+ 	.features	= PHY_BASIC_FEATURES,
+ 	.flags		= PHY_HAS_INTERRUPT,
+-	.config_init	= kszphy_config_init,
++	.config_init	= ksz8061_config_init,
+ 	.config_aneg	= genphy_config_aneg,
+ 	.read_status	= genphy_read_status,
+ 	.ack_interrupt	= kszphy_ack_interrupt,
 -- 
-1.8.3.1
+2.7.4
