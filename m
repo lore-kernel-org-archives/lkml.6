@@ -1,105 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D5F28601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC42A60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932669AbeFFIew (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:34:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58114 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932628AbeFFIea (ORCPT
+        id S932514AbeFFJkN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:40:13 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47759 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932415AbeFFJkM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:34:30 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 6/7] Uprobes/sdt: Document about reference counter
-Date: Wed,  6 Jun 2018 14:03:43 +0530
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
-References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18060608-0008-0000-0000-00000244A8B3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060608-0009-0000-0000-000021AAB211
-Message-Id: <20180606083344.31320-7-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806060099
+        Wed, 6 Jun 2018 05:40:12 -0400
+Message-ID: <1528278003.3438.3.camel@pengutronix.de>
+Subject: Re: [RFC PATCH 2/2] media: docs-rst: Add encoder UAPI specification
+ to Codec Interfaces
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        Tiffany Lin =?UTF-8?Q?=28=E6=9E=97=E6=85=A7=E7=8F=8A=29?=
+        <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen =?UTF-8?Q?=28=E9=99=B3=E6=99=BA=E8=BF=AA=29?=
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        todor.tomov@linaro.org, nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Wed, 06 Jun 2018 11:40:03 +0200
+In-Reply-To: <CAAFQd5DqHj65AdzfYmvHWkqHnZntiiA2AhAfgHbLA3AuWvsOTQ@mail.gmail.com>
+References: <20180605103328.176255-1-tfiga@chromium.org>
+         <20180605103328.176255-3-tfiga@chromium.org>
+         <1528199628.4074.15.camel@pengutronix.de>
+         <CAAFQd5DYu+Oehr1UUvvdmWk7toO0i_=NFgvZcAKQ8ZURKy51fA@mail.gmail.com>
+         <1528208578.4074.19.camel@pengutronix.de>
+         <CAAFQd5DqHj65AdzfYmvHWkqHnZntiiA2AhAfgHbLA3AuWvsOTQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reference counter gate the invocation of probe. If present,
-by default reference count is 0. Kernel needs to increment
-it before tracing the probe and decrement it when done. This
-is identical to semaphore in Userspace Statically Defined
-Tracepoints (USDT).
+On Wed, 2018-06-06 at 18:17 +0900, Tomasz Figa wrote:
+> On Tue, Jun 5, 2018 at 11:23 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > 
+> > On Tue, 2018-06-05 at 21:31 +0900, Tomasz Figa wrote:
+> > [...]
+> > > +Initialization
+> > > > > +--------------
+> > > > > +
+> > > > > +1. (optional) Enumerate supported formats and resolutions. See
+> > > > > +   capability enumeration.
+> > > > > +
+> > > > > +2. Set a coded format on the CAPTURE queue via :c:func:`VIDIOC_S_FMT`
+> > > > > +
+> > > > > +   a. Required fields:
+> > > > > +
+> > > > > +      i.  type = CAPTURE
+> > > > > +
+> > > > > +      ii. fmt.pix_mp.pixelformat set to a coded format to be produced
+> > > > > +
+> > > > > +   b. Return values:
+> > > > > +
+> > > > > +      i.  EINVAL: unsupported format.
+> > > > > +
+> > > > > +      ii. Others: per spec
+> > > > > +
+> > > > > +   c. Return fields:
+> > > > > +
+> > > > > +      i. fmt.pix_mp.width, fmt.pix_mp.height should be 0.
+> > > > > +
+> > > > > +   .. note::
+> > > > > +
+> > > > > +      After a coded format is set, the set of raw formats
+> > > > > +      supported as source on the OUTPUT queue may change.
+> > > > 
+> > > > So setting CAPTURE potentially also changes OUTPUT format?
+> > > 
+> > > Yes, but at this point userspace hasn't yet set the desired format.
+> > > 
+> > > > If the encoded stream supports colorimetry information, should that
+> > > > information be taken from the CAPTURE queue?
+> > > 
+> > > What's colorimetry? Is it something that is included in
+> > > v4l2_pix_format(_mplane)? Is it something that can vary between raw
+> > > input and encoded output?
+> > 
+> > FTR, yes, I meant the colorspace, ycbcr_enc, quantization, and xfer_func
+> > fields of the v4l2_pix_format(_mplane) structs. GStreamer uses the term
+> > "colorimetry" to pull these fields together into a single parameter.
+> > 
+> > The codecs usually don't care at all about this information, except some
+> > streams (such as h.264 in the VUI parameters section of the SPS header)
+> > may optionally contain a representation of these fields, so it may be
+> > desirable to let encoders write the configured colorimetry or to let
+> > decoders return the detected colorimetry via G_FMT(CAP) after a source
+> > change event.
+> > 
+> > I think it could be useful to enforce the same colorimetry on CAPTURE
+> > and OUTPUT queue if the hardware doesn't do any colorspace conversion.
+> 
+> After thinking a bit more on this, I guess it wouldn't overly
+> complicate things if we require that the values from OUTPUT queue are
+> copied to CAPTURE queue, if the stream doesn't include such
+> information or the hardware just can't parse them.
 
-Document usage of reference counter.
+And for encoders it would be copied from CAPTURE queue to OUTPUT queue?
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- Documentation/trace/uprobetracer.rst | 16 +++++++++++++---
- kernel/trace/trace.c                 |  2 +-
- 2 files changed, 14 insertions(+), 4 deletions(-)
+> Also, userspace
+> that can't parse them wouldn't have to do anything, as the colorspace
+> default on OUTPUT would be V4L2_COLORSPACE_DEFAULT and if hardware
+> can't parse it either, it would just be propagated to CAPTURE.
 
-diff --git a/Documentation/trace/uprobetracer.rst b/Documentation/trace/uprobetracer.rst
-index 98d3f69..0c27c65 100644
---- a/Documentation/trace/uprobetracer.rst
-+++ b/Documentation/trace/uprobetracer.rst
-@@ -22,15 +22,25 @@ Synopsis of uprobe_tracer
- -------------------------
- ::
- 
--  p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe
--  r[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a return uprobe (uretprobe)
--  -:[GRP/]EVENT                           : Clear uprobe or uretprobe event
-+  p[:[GRP/]EVENT] PATH:OFFSET[(REF_CTR_OFFSET)] [FETCHARGS]
-+  r[:[GRP/]EVENT] PATH:OFFSET[(REF_CTR_OFFSET)] [FETCHARGS]
-+  -:[GRP/]EVENT
-+
-+  p : Set a uprobe
-+  r : Set a return uprobe (uretprobe)
-+  - : Clear uprobe or uretprobe event
- 
-   GRP           : Group name. If omitted, "uprobes" is the default value.
-   EVENT         : Event name. If omitted, the event name is generated based
-                   on PATH+OFFSET.
-   PATH          : Path to an executable or a library.
-   OFFSET        : Offset where the probe is inserted.
-+  REF_CTR_OFFSET: Reference counter offset. Optional field. Reference count
-+                 gate the invocation of probe. If present, by default
-+                 reference count is 0. Kernel needs to increment it before
-+                 tracing the probe and decrement it when done. This is
-+                 identical to semaphore in Userspace Statically Defined
-+                 Tracepoints (USDT).
- 
-   FETCHARGS     : Arguments. Each probe can have up to 128 args.
-    %REG         : Fetch register REG
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index bcd9303..f85639b 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4616,7 +4616,7 @@ static int tracing_trace_options_open(struct inode *inode, struct file *file)
-   "place (kretprobe): [<module>:]<symbol>[+<offset>]|<memaddr>\n"
- #endif
- #ifdef CONFIG_UPROBE_EVENTS
--	"\t    place: <path>:<offset>\n"
-+  "   place (uprobe): <path>:<offset>[(ref_ctr_offset)]\n"
- #endif
- 	"\t     args: <name>=fetcharg[:type]\n"
- 	"\t fetcharg: %<register>, @<address>, @<symbol>[+|-<offset>],\n"
--- 
-1.8.3.1
+I wonder if this wouldn't change the meaning of V4L2_COLORSPACE_DEFAULT?
+Documentation/media/uapi/v4l/colorspaces-defs.rst states:
+
+      - The default colorspace. This can be used by applications to let
+        the driver fill in the colorspace.
+
+This sounds to me like it is intended to be used by the application
+only, like V4L2_FIELD_ANY. If we let decoders return
+V4L2_COLORSPACE_DEFAULT on the CAPTURE queue to indicate they have no
+idea about colorspace, it should be mentioned explicitly and maybe
+clarify in colorspaces-defs.rst as well.
+
+[...]
+> > > > > +Encoding parameter changes
+> > > > > +--------------------------
+> > > > > +
+> > > > > +The client is allowed to use :c:func:`VIDIOC_S_CTRL` to change encoder
+> > > > > +parameters at any time. The driver must apply the new setting starting
+> > > > > +at the next frame queued to it.
+> > > > > +
+> > > > > +This specifically means that if the driver maintains a queue of buffers
+> > > > > +to be encoded and at the time of the call to :c:func:`VIDIOC_S_CTRL` not all the
+> > > > > +buffers in the queue are processed yet, the driver must not apply the
+> > > > > +change immediately, but schedule it for when the next buffer queued
+> > > > > +after the :c:func:`VIDIOC_S_CTRL` starts being processed.
+> > > > 
+> > > > Does this mean that hardware that doesn't support changing parameters at
+> > > > runtime at all must stop streaming and restart streaming internally with
+> > > > every parameter change? Or is it acceptable to not allow the controls to
+> > > > be changed during streaming?
+> > > 
+> > > That's a good question. I'd be leaning towards the latter (not allow),
+> > > as to keep kernel code simple, but maybe we could have others
+> > > (especially Pawel) comment on this.
+> > 
+> > Same here.
+> 
+> Same as where? :)
+
+I'd be leaning towards the latter (not allow) as well.
+
+> > [...]
+> > > > > +2. Enumerating formats on OUTPUT queue must only return OUTPUT formats
+> > > > > +   supported for the CAPTURE format currently set.
+> > > > > +
+> > > > > +3. Setting/changing format on OUTPUT queue does not change formats
+> > > > > +   available on CAPTURE queue. An attempt to set OUTPUT format that
+> > > > > +   is not supported for the currently selected CAPTURE format must
+> > > > > +   result in an error (-EINVAL) from :c:func:`VIDIOC_S_FMT`.
+> > > > 
+> > > > Same as for decoding, is this limited to pixel format? Why isn't the
+> > > > pixel format corrected to a supported choice? What about
+> > > > width/height/colorimetry?
+> > > 
+> > > Width/height/colorimetry(Do you mean color space?) is a part of
+> > > v4l2_pix_format(_mplane). I believe that's what this point was about.
+> > 
+> > Yes. My question was more about whether this should return -EINVAL or
+> > whether TRY_FMT/S_FMT should change the parameters to valid values.
+> 
+> As per the standard semantics of TRY_/S_FMT, they should adjust the
+> format on given queue. We only require that the state on other queue
+> is left intact.
+
+This contradicts 3. above, which says S_FMT(OUT) should instead return
+-EINVAL if the format doesn't match.
+
+regards
+Philipp
