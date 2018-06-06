@@ -1,83 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BBA3360764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGuQKTGG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 955F86086A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeFFPoI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:44:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:42212 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751546AbeFFPoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:44:07 -0400
-Date: Wed, 6 Jun 2018 16:44:38 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Chintan Pandya <cpandya@codeaurora.org>
-Cc: catalin.marinas@arm.com, mark.rutland@arm.com,
-        akpm@linux-foundation.org, toshi.kani@hpe.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Joerg Roedel <joro@8bytes.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v13 1/3] ioremap: Update pgtable free interfaces with addr
-Message-ID: <20180606154437.GE6631@arm.com>
-References: <1528268481-19299-1-git-send-email-cpandya@codeaurora.org>
- <1528268481-19299-2-git-send-email-cpandya@codeaurora.org>
+        id S1752237AbeFFGH2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:07:28 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:37485 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeFFGH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 02:07:27 -0400
+X-Google-Smtp-Source: ADUXVKJiALejZ7nasiBXarzb4bZ4tyxtmxGtd62BszmVUyZkmGHHpZbHoyDQ5kKGWy1CcRveE3WhngH+TqKDyLMuIcw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528268481-19299-2-git-send-email-cpandya@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180526193523.3896-1-mattst88@gmail.com>
+References: <20180526193523.3896-1-mattst88@gmail.com>
+From: Matt Turner <mattst88@gmail.com>
+Date: Tue, 5 Jun 2018 23:07:05 -0700
+Message-ID: <CAEdQ38GR7XzjfjARuYxnr0dYGnCr_Sxn9bwwZJGZu7CJf6syvw@mail.gmail.com>
+Subject: Re: [PATCH] parport: Add support for the WCH384 4S multi-IO card
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Sergej Pupykin <ml@sergej.pp.ru>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 12:31:19PM +0530, Chintan Pandya wrote:
-> From: Chintan Pandya <cpandya@codeaurora.org>
-> 
-> The following kernel panic was observed on ARM64 platform due to a stale
-> TLB entry.
-> 
->  1. ioremap with 4K size, a valid pte page table is set.
->  2. iounmap it, its pte entry is set to 0.
->  3. ioremap the same address with 2M size, update its pmd entry with
->     a new value.
->  4. CPU may hit an exception because the old pmd entry is still in TLB,
->     which leads to a kernel panic.
-> 
-> Commit b6bdb7517c3d ("mm/vmalloc: add interfaces to free unmapped page
-> table") has addressed this panic by falling to pte mappings in the above
-> case on ARM64.
-> 
-> To support pmd mappings in all cases, TLB purge needs to be performed
-> in this case on ARM64.
-> 
-> Add a new arg, 'addr', to pud_free_pmd_page() and pmd_free_pte_page()
-> so that TLB purge can be added later in seprate patches.
-> 
-> [toshi@hpe.com: merge changes, rewrite patch description]
-> Fixes: 28ee90fe6048 ("x86/mm: implement free pmd/pte page interfaces")
-> Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
-> Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: <stable@vger.kernel.org>
-> 
+On Sat, May 26, 2018 at 12:35 PM, Matt Turner <mattst88@gmail.com> wrote:
+> This Multi-IO card has one serial 16550-like serial connectors. Here's
+> the lspci output, after this commit is applied:
+>
+> 01:00.0 Serial controller [0700]: Device [1c00:3470] (rev 10) (prog-if 05 [16850])
+>         Subsystem: Device [1c00:3470]
+>         Flags: fast devsel, IRQ 16
+>         I/O ports at e000 [size=256]
+>         Memory at f0100000 (32-bit, prefetchable) [size=32K]
+>         I/O ports at e100 [size=4]
+>         Expansion ROM at f7d00000 [disabled] [size=32K]
+>         Capabilities: [60] Power Management version 3
+>         Capabilities: [68] MSI: Enable- Count=1/32 Maskable+ 64bit+
+>         Capabilities: [80] Express Legacy Endpoint, MSI 00
+>         Capabilities: [100] Advanced Error Reporting
+>         Kernel driver in use: parport_serial
+>
+> This card was already added to the blacklist of 8250_pci.c in commit
+> 72a3c0e4e662 ("tty: Add support for the WCH384 4S multi-IO card").
+>
+> Cc: Sergej Pupykin <ml@sergej.pp.ru>
+> Signed-off-by: Matt Turner <mattst88@gmail.com>
 > ---
->  arch/arm64/mm/mmu.c           | 4 ++--
->  arch/x86/mm/pgtable.c         | 8 +++++---
->  include/asm-generic/pgtable.h | 8 ++++----
->  lib/ioremap.c                 | 4 ++--
->  4 files changed, 13 insertions(+), 11 deletions(-)
 
-Reviewed-by: Will Deacon <will.deacon@arm.com>
+Hi,
 
-Thanks,
+Can I expect this to be picked up for the 4.18 merge window?
 
-Will
+Matt
