@@ -1,171 +1,675 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="jhYDQUY/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6184F60767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uDdCBpou"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86A50607CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932248AbeFFGgd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:36:33 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:9917 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932103AbeFFGga (ORCPT
+        id S1752137AbeFFMKT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:10:19 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33779 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeFFMKR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:36:30 -0400
-X-IronPort-AV: E=Sophos;i="5.49,482,1520866800";
-   d="scan'208";a="281698661"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: Frank Rowand <frowand.list@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>
-CC: Michel Pollet <buserror+upstream@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        "Florian Fainelli" <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Douglas Anderson <dianders@chromium.org>,
-        "Chen-Yu Tsai" <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-Thread-Topic: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler
- driver
-Thread-Index: AQHT/MEwPjoauwcadUW/vfsUGOHwuqRR7WMAgADZHRA=
-Date: Wed, 6 Jun 2018 06:36:24 +0000
-Message-ID: <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
- <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com>
-In-Reply-To: <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=michel.pollet@bp.renesas.com;
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB1878;7:92fxQXvdSjwc1Pg8gi94YXHt82D9my+VwMyEJWopXUmzgoFjopMD69eNHSloPBbNrzUKlMcihOy6xblBx2EFCvBWJBd+Ygyl4C9MQHf75s2N1MZhHnpCZZqnEVvAGRoTCxxGpToIA4360LZ6TZYh+nIGpnxqohFut45QDTGV5LYTNd9pwBFdj6Zx2/1cRm5v4vhIg5OPVG4U+RVtnMRcGlO+/XSVcP1HVnEopxypIrvzcKvSa+A0VYFVE4mNV/w9;20:VD0HMUYqE6sf4cNCl08AMVsBduJIL7C0G5klWgSPTG+v7oaFaXNqkuULTsXf4+DHWqCBrLNuf8ftIA1GJRC4P32Qy2ZLJyvuB2gg5dHVDF27443EWxri87vk6rQxXO6y3YhQQbjaSPcPUFTrWv46pjk0UvO7j7vLeLIvYeD7uWE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1878;
-x-ms-traffictypediagnostic: OSBPR01MB1878:
-x-microsoft-antispam-prvs: <OSBPR01MB1878D97E1BB4F9BEEE6058EED2650@OSBPR01MB1878.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB1878;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1878;
-x-forefront-prvs: 06952FC175
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(346002)(39380400002)(39860400002)(199004)(189003)(8936002)(5250100002)(110136005)(44832011)(54906003)(316002)(99286004)(8656006)(2501003)(8676002)(106356001)(105586002)(81156014)(81166006)(9686003)(53936002)(229853002)(55016002)(7696005)(478600001)(6116002)(6436002)(26005)(3846002)(486006)(476003)(186003)(2900100001)(76176011)(86362001)(6246003)(6506007)(53546011)(446003)(66066001)(102836004)(11346002)(59450400001)(25786009)(7736002)(7416002)(68736007)(5660300001)(305945005)(3280700002)(97736004)(74316002)(2906002)(14454004)(3660700001)(4326008)(39060400002)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1878;H:OSBPR01MB2054.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-x-microsoft-antispam-message-info: aEyhuLkOCtJH1+xGwM9pUpKV8bmLHakDiYtMCQ6S1e/p2a75IBp4KXgOZLCKuVxhDs8ZIh9eCDUB+NeZog3PpGX0NPNJHnYpxltB8N1KCVsItFX2ZWjFS5teABSeeYkNkYr0eYksNq416gZDK8fWaimzh2Uy6UVBlyBnX6OcyphUVS4KLRTa3VVIsGt+imgp
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 6 Jun 2018 08:10:17 -0400
+X-Google-Smtp-Source: ADUXVKINm+DXv3gBZabgFUf9lMgMD1jgscRK/QAnC5Q5gyeDYlBx0VWpxeVlYFFKW89HHn1jA/GTLw==
+Subject: Re: [PATCH v2 7/9] xen/gntdev: Implement dma-buf export functionality
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-8-andr2000@gmail.com>
+ <96dd30f5-6ac6-498f-06e7-352e46994576@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <117e05b3-69f6-b879-50d9-0cddd8e4c313@gmail.com>
+Date: Wed, 6 Jun 2018 15:10:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 43403403-69fc-4f65-259c-08d5cb77d33e
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43403403-69fc-4f65-259c-08d5cb77d33e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2018 06:36:24.6061
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1878
+In-Reply-To: <96dd30f5-6ac6-498f-06e7-352e46994576@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRnJhbmssDQoNCk9uIDA1IEp1bmUgMjAxOCAxODozNCwgRnJhbmsgd3JvdGU6DQo+IE9uIDA2
-LzA1LzE4IDA0OjI4LCBNaWNoZWwgUG9sbGV0IHdyb3RlOg0KPiA+IFRoZSBSZW5lc2FzIFI5QTA2
-RzAzMiBzZWNvbmQgQ0E3IGlzIHBhcmtlZCBpbiBhIFJPTSBwZW4gYXQgYm9vdCB0aW1lLA0KPiA+
-IGl0IHJlcXVpcmVzIGEgc3BlY2lhbCBlbmFibGUgbWV0aG9kIHRvIGdldCBpdCBzdGFydGVkLg0K
-PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTWljaGVsIFBvbGxldCA8bWljaGVsLnBvbGxldEBicC5y
-ZW5lc2FzLmNvbT4NCj4gPiAtLS0NCj4gPiAgYXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9NYWtlZmls
-ZSAgICAgICAgfCAgMSArDQo+ID4gIGFyY2gvYXJtL21hY2gtc2htb2JpbGUvc21wLXI5YTA2ZzAz
-Mi5jIHwgNzkNCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDIg
-ZmlsZXMgY2hhbmdlZCwgODAgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
-YXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9zbXAtcjlhMDZnMDMyLmMNCj4gPg0KPiA+IGRpZmYgLS1n
-aXQgYS9hcmNoL2FybS9tYWNoLXNobW9iaWxlL01ha2VmaWxlDQo+ID4gYi9hcmNoL2FybS9tYWNo
-LXNobW9iaWxlL01ha2VmaWxlIGluZGV4IDE5MzlmNTIuLmQ3ZmM5OGYgMTAwNjQ0DQo+ID4gLS0t
-IGEvYXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9NYWtlZmlsZQ0KPiA+ICsrKyBiL2FyY2gvYXJtL21h
-Y2gtc2htb2JpbGUvTWFrZWZpbGUNCj4gPiBAQCAtMzQsNiArMzQsNyBAQCBzbXAtJChDT05GSUdf
-QVJDSF9TSDczQTApKz0gc21wLXNoNzNhMC5vDQo+IGhlYWRzbXAtc2N1Lm8gcGxhdHNtcC1zY3Uu
-bw0KPiA+ICBzbXAtJChDT05GSUdfQVJDSF9SOEE3Nzc5KSs9IHNtcC1yOGE3Nzc5Lm8gaGVhZHNt
-cC1zY3Uubw0KPiBwbGF0c21wLXNjdS5vDQo+ID4gIHNtcC0kKENPTkZJR19BUkNIX1I4QTc3OTAp
-Kz0gc21wLXI4YTc3OTAubw0KPiA+ICBzbXAtJChDT05GSUdfQVJDSF9SOEE3NzkxKSs9IHNtcC1y
-OGE3NzkxLm8NCj4gPiArc21wLSQoQ09ORklHX0FSQ0hfUjlBMDZHMDMyKSs9IHNtcC1yOWEwNmcw
-MzIubw0KPiA+ICBzbXAtJChDT05GSUdfQVJDSF9FTUVWMikrPSBzbXAtZW1ldjIubyBoZWFkc21w
-LXNjdS5vDQo+IHBsYXRzbXAtc2N1Lm8NCj4gPg0KPiA+ICAjIFBNIG9iamVjdHMNCj4gPiBkaWZm
-IC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zaG1vYmlsZS9zbXAtcjlhMDZnMDMyLmMNCj4gPiBiL2Fy
-Y2gvYXJtL21hY2gtc2htb2JpbGUvc21wLXI5YTA2ZzAzMi5jDQo+ID4gbmV3IGZpbGUgbW9kZSAx
-MDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwLi5jZDQwZTZlDQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+
-ICsrKyBiL2FyY2gvYXJtL21hY2gtc2htb2JpbGUvc21wLXI5YTA2ZzAzMi5jDQo+ID4gQEAgLTAs
-MCArMSw3OSBAQA0KPiA+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiA+
-ICsvKg0KPiA+ICsgKiBSOUEwNkcwMzIgU2Vjb25kIENBNyBlbmFibGVyLg0KPiA+ICsgKg0KPiA+
-ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTggUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTGltaXRl
-ZA0KPiA+ICsgKg0KPiA+ICsgKiBNaWNoZWwgUG9sbGV0IDxtaWNoZWwucG9sbGV0QGJwLnJlbmVz
-YXMuY29tPiwNCj4gPGJ1c2Vycm9yQGdtYWlsLmNvbT4NCj4gPiArICogRGVyaXZlZCBmcm9tIGFj
-dGlvbixzNTAwLXNtcA0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9pby5o
-Pg0KPiA+ICsjaW5jbHVkZSA8bGludXgvb2YuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L29mX2Fk
-ZHJlc3MuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L3NtcC5oPg0KPiA+ICsNCj4gPiArLyoNCj4g
-PiArICogVGhlIHNlY29uZCBDUFUgaXMgcGFya2VkIGluIFJPTSBhdCBib290IHRpbWUuIEl0IHJl
-cXVpcmVzIHdha2luZw0KPiA+ICtpdCBhZnRlcg0KPiA+ICsgKiB3cml0aW5nIGFuIGFkZHJlc3Mg
-aW50byB0aGUgQk9PVEFERFIgcmVnaXN0ZXIgb2Ygc3lzY3RybC4NCj4gPiArICoNCj4gPiArICog
-U28gdGhlIGRlZmF1bHQgdmFsdWUgb2YgdGhlICJjcHUtcmVsZWFzZS1hZGRyIiBjb3JyZXNwb25k
-cyB0bw0KPiBCT09UQUREUi4uLg0KPiA+ICsgKg0KPiA+ICsgKiAqSG93ZXZlciogdGhlIEJPT1RB
-RERSIHJlZ2lzdGVyIGlzIG5vdCBhdmFpbGFibGUgd2hlbiB0aGUga2VybmVsDQo+ID4gKyAqIHN0
-YXJ0cyBpbiBOT05TRUMgbW9kZS4NCj4gPiArICoNCj4gPiArICogU28gZm9yIE5PTlNFQyBtb2Rl
-LCB0aGUgYm9vdGxvYWRlciByZS1wYXJrcyB0aGUgc2Vjb25kIENQVSBpbnRvIGENCj4gPiArcGVu
-DQo+ID4gKyAqIGluIFNSQU0sIGFuZCBjaGFuZ2VzIHRoZSAiY3B1LXJlbGVhc2UtYWRkciIgb2Yg
-bGludXgncyBEVCB0byBhDQo+ID4gK1NSQU0gYWRkcmVzcywNCj4gPiArICogd2hpY2ggaXMgbm90
-IHJlc3RyaWN0ZWQuDQo+DQo+IFRoZSBiaW5kaW5nIGRvY3VtZW50IGZvciBjcHUtcmVsZWFzZS1h
-ZGRyIGRvZXMgbm90IGhhdmUgYSBkZWZpbml0aW9uIGZvciAzMg0KPiBiaXQgYXJtLiAgVGhlIGV4
-aXN0aW5nIGRlZmluaXRpb24gaXMgb25seSA2NCBiaXQgYXJtLiAgUGxlYXNlIGFkZCB0aGUgZGVm
-aW5pdGlvbg0KPiBmb3IgMzIgYml0IGFybSB0byBwYXRjaCAxLg0KDQpIbW1tIEkgZG8gZmluZCBh
-IGRlZmluaXRpb24gaW4NCkRvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vY3B1
-cy50eHQgLS0ganVzdCB1bmRlciB3aGVyZSBJDQphZGRlZCBteSAnZW5hYmxlLW1ldGhvZCcgLS0g
-QW5kIGl0IGlzIGFscmVhZHkgdXNlZCBhcyAzMiBiaXRzIGluIGF0IGxlYXN0DQphcmNoL2FybS9i
-b290L2R0cy9zdGloNDA3LWZhbWlseS5kdHNpLg0KDQpXaGF0IGRvIHlvdSB3YW50IG1lIHRvIGFk
-ZCB0byB0aGlzIGV4YWN0bHk/IERvIHlvdSB3YW50IG1lIHRvIGp1c3QNCmNoYW5nZSAicmVxdWly
-ZWQgZm9yIHN5c3RlbXMgdGhhdCBoYXZlIGFuICJlbmFibGUtbWV0aG9kIiBwcm9wZXJ0eQ0KdmFs
-dWUgb2YgInNwaW4tdGFibGUiIHRvIGFsc28gc3BlY2lmeSByZW5lc2FzLHI5YTA2ZzAzMiA/DQoN
-ClRoYW5rcyENCk1pY2hlbA0KDQo+DQo+IC1GcmFuaw0KPg0KPg0KPiA+ICsgKi8NCj4gPiArDQo+
-ID4gK3N0YXRpYyB2b2lkIF9faW9tZW0gKmNwdV9ib290YWRkcjsNCj4gPiArDQo+ID4gK3N0YXRp
-YyBERUZJTkVfU1BJTkxPQ0soY3B1X2xvY2spOw0KPiA+ICsNCj4gPiArc3RhdGljIGludCByOWEw
-NmcwMzJfc21wX2Jvb3Rfc2Vjb25kYXJ5KHVuc2lnbmVkIGludCBjcHUsIHN0cnVjdA0KPiA+ICt0
-YXNrX3N0cnVjdCAqaWRsZSkgew0KPiA+ICtpZiAoIWNwdV9ib290YWRkcikNCj4gPiArcmV0dXJu
-IC1FTk9ERVY7DQo+ID4gKw0KPiA+ICtzcGluX2xvY2soJmNwdV9sb2NrKTsNCj4gPiArDQo+ID4g
-K3dyaXRlbChfX3BhX3N5bWJvbChzZWNvbmRhcnlfc3RhcnR1cCksIGNwdV9ib290YWRkcik7DQo+
-ID4gK2FyY2hfc2VuZF93YWtldXBfaXBpX21hc2soY3B1bWFza19vZihjcHUpKTsNCj4gPiArDQo+
-ID4gK3NwaW5fdW5sb2NrKCZjcHVfbG9jayk7DQo+ID4gKw0KPiA+ICtyZXR1cm4gMDsNCj4gPiAr
-fQ0KPiA+ICsNCj4gPiArc3RhdGljIHZvaWQgX19pbml0IHI5YTA2ZzAzMl9zbXBfcHJlcGFyZV9j
-cHVzKHVuc2lnbmVkIGludCBtYXhfY3B1cykNCj4gPiArew0KPiA+ICtzdHJ1Y3QgZGV2aWNlX25v
-ZGUgKmRuOw0KPiA+ICtpbnQgcmV0Ow0KPiA+ICt1MzIgYm9vdGFkZHI7DQo+ID4gKw0KPiA+ICtk
-biA9IG9mX2dldF9jcHVfbm9kZSgxLCBOVUxMKTsNCj4gPiAraWYgKCFkbikgew0KPiA+ICtwcl9l
-cnIoIkNQVSMxOiBtaXNzaW5nIGRldmljZSB0cmVlIG5vZGVcbiIpOw0KPiA+ICtyZXR1cm47DQo+
-ID4gK30NCj4gPiArLyoNCj4gPiArICogRGV0ZXJtaW5lIHRoZSBhZGRyZXNzIGZyb20gd2hpY2gg
-dGhlIENQVSBpcyBwb2xsaW5nLg0KPiA+ICsgKiBUaGUgYm9vdGxvYWRlciAqZG9lcyogY2hhbmdl
-IHRoaXMgcHJvcGVydHkNCj4gPiArICovDQo+ID4gK3JldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMy
-KGRuLCAiY3B1LXJlbGVhc2UtYWRkciIsICZib290YWRkcik7DQo+ID4gK29mX25vZGVfcHV0KGRu
-KTsNCj4gPiAraWYgKHJldCkgew0KPiA+ICtwcl9lcnIoIkNQVSMxOiBpbnZhbGlkIGNwdS1yZWxl
-YXNlLWFkZHIgcHJvcGVydHlcbiIpOw0KPiA+ICtyZXR1cm47DQo+ID4gK30NCj4gPiArcHJfaW5m
-bygiQ1BVIzE6IGNwdS1yZWxlYXNlLWFkZHIgJTA4eFxuIiwgYm9vdGFkZHIpOw0KPiA+ICsNCj4g
-PiArY3B1X2Jvb3RhZGRyID0gaW9yZW1hcChib290YWRkciwgc2l6ZW9mKGJvb3RhZGRyKSk7IH0N
-Cj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc21wX29wZXJhdGlvbnMgcjlhMDZnMDMy
-X3NtcF9vcHMgX19pbml0Y29uc3QgPSB7DQo+ID4gKy5zbXBfcHJlcGFyZV9jcHVzID0gcjlhMDZn
-MDMyX3NtcF9wcmVwYXJlX2NwdXMsDQo+ID4gKy5zbXBfYm9vdF9zZWNvbmRhcnkgPSByOWEwNmcw
-MzJfc21wX2Jvb3Rfc2Vjb25kYXJ5LCB9Ow0KPiA+ICtDUFVfTUVUSE9EX09GX0RFQ0xBUkUocjlh
-MDZnMDMyX3NtcCwgInJlbmVzYXMscjlhMDZnMDMyLXNtcCIsDQo+ID4gKyZyOWEwNmcwMzJfc21w
-X29wcyk7DQo+ID4NCg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtl
-cyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hpcmUsIFNM
-OCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdpc3RlcmVk
-IE5vLiAwNDU4NjcwOS4NCg==
+On 06/05/2018 01:07 AM, Boris Ostrovsky wrote:
+> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> 1. Create a dma-buf from grant references provided by the foreign
+>>     domain. By default dma-buf is backed by system memory pages, but
+>>     by providing GNTDEV_DMA_FLAG_XXX flags it can also be created
+>>     as a DMA write-combine/coherent buffer, e.g. allocated with
+>>     corresponding dma_alloc_xxx API.
+>>     Export the resulting buffer as a new dma-buf.
+>>
+>> 2. Implement waiting for the dma-buf to be released: block until the
+>>     dma-buf with the file descriptor provided is released.
+>>     If within the time-out provided the buffer is not released then
+>>     -ETIMEDOUT error is returned. If the buffer with the file descriptor
+>>     does not exist or has already been released, then -ENOENT is
+>>     returned. For valid file descriptors this must not be treated as
+>>     error.
+>>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> ---
+>>   drivers/xen/gntdev-dmabuf.c | 393 +++++++++++++++++++++++++++++++++++-
+>>   drivers/xen/gntdev-dmabuf.h |   9 +-
+>>   drivers/xen/gntdev.c        |  90 ++++++++-
+>>   3 files changed, 486 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/xen/gntdev-dmabuf.c b/drivers/xen/gntdev-dmabuf.c
+>> index 6bedd1387bd9..f612468879b4 100644
+>> --- a/drivers/xen/gntdev-dmabuf.c
+>> +++ b/drivers/xen/gntdev-dmabuf.c
+>> @@ -3,15 +3,58 @@
+>>   /*
+>>    * Xen dma-buf functionality for gntdev.
+>>    *
+>> + * DMA buffer implementation is based on drivers/gpu/drm/drm_prime.c.
+>> + *
+>>    * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+>>    */
+>>   
+>> +#include <linux/dma-buf.h>
+>>   #include <linux/slab.h>
+>>   
+>>   #include "gntdev-dmabuf.h"
+>>   
+>> +struct gntdev_dmabuf {
+>> +	struct gntdev_dmabuf_priv *priv;
+>> +	struct dma_buf *dmabuf;
+>> +	struct list_head next;
+>> +	int fd;
+>> +
+>> +	union {
+>> +		struct {
+>> +			/* Exported buffers are reference counted. */
+>> +			struct kref refcount;
+>> +
+>> +			struct gntdev_priv *priv;
+>> +			struct grant_map *map;
+>> +			void (*release)(struct gntdev_priv *priv,
+>> +					struct grant_map *map);
+>> +		} exp;
+>> +	} u;
+>> +
+>> +	/* Number of pages this buffer has. */
+>> +	int nr_pages;
+>> +	/* Pages of this buffer. */
+>> +	struct page **pages;
+>> +};
+>> +
+>> +struct gntdev_dmabuf_wait_obj {
+>> +	struct list_head next;
+>> +	struct gntdev_dmabuf *gntdev_dmabuf;
+>> +	struct completion completion;
+>> +};
+>> +
+>> +struct gntdev_dmabuf_attachment {
+>> +	struct sg_table *sgt;
+>> +	enum dma_data_direction dir;
+>> +};
+>> +
+>>   struct gntdev_dmabuf_priv {
+>> -	int dummy;
+>> +	/* List of exported DMA buffers. */
+>> +	struct list_head exp_list;
+>> +	/* List of wait objects. */
+>> +	struct list_head exp_wait_list;
+>> +	/* This is the lock which protects dma_buf_xxx lists. */
+>> +	struct mutex lock;
+>>   };
+>>   
+>>   /* ------------------------------------------------------------------ */
+>> @@ -22,19 +65,359 @@ struct gntdev_dmabuf_priv {
+>>   /* Implementation of wait for exported DMA buffer to be released.     */
+>>   /* ------------------------------------------------------------------ */
+>>   
+>> +static void dmabuf_exp_release(struct kref *kref);
+>> +
+>> +static struct gntdev_dmabuf_wait_obj *
+>> +dmabuf_exp_wait_obj_new(struct gntdev_dmabuf_priv *priv,
+>> +			struct gntdev_dmabuf *gntdev_dmabuf)
+>> +{
+>> +	struct gntdev_dmabuf_wait_obj *obj;
+>> +
+>> +	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
+>> +	if (!obj)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	init_completion(&obj->completion);
+>> +	obj->gntdev_dmabuf = gntdev_dmabuf;
+>> +
+>> +	mutex_lock(&priv->lock);
+>> +	list_add(&obj->next, &priv->exp_wait_list);
+>> +	/* Put our reference and wait for gntdev_dmabuf's release to fire. */
+>> +	kref_put(&gntdev_dmabuf->u.exp.refcount, dmabuf_exp_release);
+>> +	mutex_unlock(&priv->lock);
+>> +	return obj;
+>> +}
+>> +
+>> +static void dmabuf_exp_wait_obj_free(struct gntdev_dmabuf_priv *priv,
+>> +				     struct gntdev_dmabuf_wait_obj *obj)
+>> +{
+>> +	struct gntdev_dmabuf_wait_obj *cur_obj, *q;
+>> +
+>> +	mutex_lock(&priv->lock);
+>> +	list_for_each_entry_safe(cur_obj, q, &priv->exp_wait_list, next)
+>> +		if (cur_obj == obj) {
+>> +			list_del(&obj->next);
+>> +			kfree(obj);
+>> +			break;
+>> +		}
+>> +	mutex_unlock(&priv->lock);
+>> +}
+>> +
+>> +static int dmabuf_exp_wait_obj_wait(struct gntdev_dmabuf_wait_obj *obj,
+>> +				    u32 wait_to_ms)
+>> +{
+>> +	if (wait_for_completion_timeout(&obj->completion,
+>> +			msecs_to_jiffies(wait_to_ms)) <= 0)
+>> +		return -ETIMEDOUT;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void dmabuf_exp_wait_obj_signal(struct gntdev_dmabuf_priv *priv,
+>> +				       struct gntdev_dmabuf *gntdev_dmabuf)
+>> +{
+>> +	struct gntdev_dmabuf_wait_obj *obj, *q;
+>> +
+>> +	list_for_each_entry_safe(obj, q, &priv->exp_wait_list, next)
+>> +		if (obj->gntdev_dmabuf == gntdev_dmabuf) {
+>> +			pr_debug("Found gntdev_dmabuf in the wait list, wake\n");
+>> +			complete_all(&obj->completion);
+> break ?
+sure, thank you
+>> +		}
+>> +}
+>> +
+>> +static struct gntdev_dmabuf *
+>> +dmabuf_exp_wait_obj_get_by_fd(struct gntdev_dmabuf_priv *priv, int fd)
+>> +{
+>> +	struct gntdev_dmabuf *q, *gntdev_dmabuf, *ret = ERR_PTR(-ENOENT);
+>> +
+>> +	mutex_lock(&priv->lock);
+>> +	list_for_each_entry_safe(gntdev_dmabuf, q, &priv->exp_list, next)
+>> +		if (gntdev_dmabuf->fd == fd) {
+>> +			pr_debug("Found gntdev_dmabuf in the wait list\n");
+>> +			kref_get(&gntdev_dmabuf->u.exp.refcount);
+>> +			ret = gntdev_dmabuf;
+>> +			break;
+>> +		}
+>> +	mutex_unlock(&priv->lock);
+>> +	return ret;
+>> +}
+>> +
+>>   int gntdev_dmabuf_exp_wait_released(struct gntdev_dmabuf_priv *priv, int fd,
+>>   				    int wait_to_ms)
+>>   {
+>> -	return -EINVAL;
+>> +	struct gntdev_dmabuf *gntdev_dmabuf;
+>> +	struct gntdev_dmabuf_wait_obj *obj;
+>> +	int ret;
+>> +
+>> +	pr_debug("Will wait for dma-buf with fd %d\n", fd);
+>> +	/*
+>> +	 * Try to find the DMA buffer: if not found means that
+>> +	 * either the buffer has already been released or file descriptor
+>> +	 * provided is wrong.
+>> +	 */
+>> +	gntdev_dmabuf = dmabuf_exp_wait_obj_get_by_fd(priv, fd);
+>> +	if (IS_ERR(gntdev_dmabuf))
+>> +		return PTR_ERR(gntdev_dmabuf);
+>> +
+>> +	/*
+>> +	 * gntdev_dmabuf still exists and is reference count locked by us now,
+>> +	 * so prepare to wait: allocate wait object and add it to the wait list,
+>> +	 * so we can find it on release.
+>> +	 */
+>> +	obj = dmabuf_exp_wait_obj_new(priv, gntdev_dmabuf);
+>> +	if (IS_ERR(obj)) {
+>> +		pr_err("Failed to setup wait object, ret %ld\n", PTR_ERR(obj));
+>
+> No need for pr_err. We are out of memory.
+Will remove
+>
+>> +		return PTR_ERR(obj);
+>> +}
+>> +
+>> +	ret = dmabuf_exp_wait_obj_wait(obj, wait_to_ms);
+>> +	dmabuf_exp_wait_obj_free(priv, obj);
+>> +	return ret;
+>>   }
+>>   
+>>   /* ------------------------------------------------------------------ */
+>>   /* DMA buffer export support.                                         */
+>>   /* ------------------------------------------------------------------ */
+>>   
+>> +static struct sg_table *
+>> +dmabuf_pages_to_sgt(struct page **pages, unsigned int nr_pages)
+>> +{
+>> +	struct sg_table *sgt;
+>> +	int ret;
+>> +
+>> +	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
+>> +	if (!sgt) {
+>> +		ret = -ENOMEM;
+>> +		goto out;
+>> +	}
+>> +
+>> +	ret = sg_alloc_table_from_pages(sgt, pages, nr_pages, 0,
+>> +					nr_pages << PAGE_SHIFT,
+>> +					GFP_KERNEL);
+>> +	if (ret)
+>> +		goto out;
+>> +
+>> +	return sgt;
+>> +
+>> +out:
+>> +	kfree(sgt);
+>> +	return ERR_PTR(ret);
+>> +}
+>> +
+>> +static int dmabuf_exp_ops_attach(struct dma_buf *dma_buf,
+>> +				 struct device *target_dev,
+>> +				 struct dma_buf_attachment *attach)
+>> +{
+>> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach;
+>> +
+>> +	gntdev_dmabuf_attach = kzalloc(sizeof(*gntdev_dmabuf_attach),
+>> +				       GFP_KERNEL);
+>> +	if (!gntdev_dmabuf_attach)
+>> +		return -ENOMEM;
+>> +
+>> +	gntdev_dmabuf_attach->dir = DMA_NONE;
+>> +	attach->priv = gntdev_dmabuf_attach;
+>> +	/* Might need to pin the pages of the buffer now. */
+>
+> Who is supposed to pin the pages? The caller?
+Ok, as we do not implement .mmap for Xen dma-buf and there is
+no plan to mmap kernel memory (either ballooned or dma_alloc'ed),
+then we can remove this comment as there is no need to pin/unpin
+pages.
+>
+>> +	return 0;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_detach(struct dma_buf *dma_buf,
+>> +				  struct dma_buf_attachment *attach)
+>> +{
+>> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach = attach->priv;
+>> +
+>> +	if (gntdev_dmabuf_attach) {
+>> +		struct sg_table *sgt = gntdev_dmabuf_attach->sgt;
+>> +
+>> +		if (sgt) {
+>> +			if (gntdev_dmabuf_attach->dir != DMA_NONE)
+>> +				dma_unmap_sg_attrs(attach->dev, sgt->sgl,
+>> +						   sgt->nents,
+>> +						   gntdev_dmabuf_attach->dir,
+>> +						   DMA_ATTR_SKIP_CPU_SYNC);
+>> +			sg_free_table(sgt);
+>> +		}
+>> +
+>> +		kfree(sgt);
+>> +		kfree(gntdev_dmabuf_attach);
+>> +		attach->priv = NULL;
+>> +	}
+>> +	/* Might need to unpin the pages of the buffer now. */
+> Same question.
+Please see above
+>> +}
+>> +
+>> +static struct sg_table *
+>> +dmabuf_exp_ops_map_dma_buf(struct dma_buf_attachment *attach,
+>> +			   enum dma_data_direction dir)
+>> +{
+>> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach = attach->priv;
+>> +	struct gntdev_dmabuf *gntdev_dmabuf = attach->dmabuf->priv;
+>> +	struct sg_table *sgt;
+>> +
+>> +	pr_debug("Mapping %d pages for dev %p\n", gntdev_dmabuf->nr_pages,
+>> +		 attach->dev);
+>> +
+>> +	if (WARN_ON(dir == DMA_NONE || !gntdev_dmabuf_attach))
+>
+> WARN_ON_ONCE. Here and elsewhere.
+Why? The UAPI may be used by different applications, thus we might
+lose warnings for some of them. Having WARN_ON will show problems
+for multiple users, not for the first one.
+Does this make sense to still use WARN_ON?
+>
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	/* Return the cached mapping when possible. */
+>> +	if (gntdev_dmabuf_attach->dir == dir)
+>> +		return gntdev_dmabuf_attach->sgt;
+>> +
+>> +	/*
+>> +	 * Two mappings with different directions for the same attachment are
+>> +	 * not allowed.
+>> +	 */
+>> +	if (WARN_ON(gntdev_dmabuf_attach->dir != DMA_NONE))
+>> +		return ERR_PTR(-EBUSY);
+>> +
+>> +	sgt = dmabuf_pages_to_sgt(gntdev_dmabuf->pages,
+>> +				  gntdev_dmabuf->nr_pages);
+>> +	if (!IS_ERR(sgt)) {
+>> +		if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
+>> +				      DMA_ATTR_SKIP_CPU_SYNC)) {
+>> +			sg_free_table(sgt);
+>> +			kfree(sgt);
+>> +			sgt = ERR_PTR(-ENOMEM);
+>> +		} else {
+>> +			gntdev_dmabuf_attach->sgt = sgt;
+>> +			gntdev_dmabuf_attach->dir = dir;
+>> +		}
+>> +	}
+>> +	if (IS_ERR(sgt))
+>> +		pr_err("Failed to map sg table for dev %p\n", attach->dev);
+>> +	return sgt;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_unmap_dma_buf(struct dma_buf_attachment *attach,
+>> +					 struct sg_table *sgt,
+>> +					 enum dma_data_direction dir)
+>> +{
+>> +	/* Not implemented. The unmap is done at dmabuf_exp_ops_detach(). */
+>> +}
+>> +
+>> +static void dmabuf_exp_release(struct kref *kref)
+>> +{
+>> +	struct gntdev_dmabuf *gntdev_dmabuf =
+>> +		container_of(kref, struct gntdev_dmabuf, u.exp.refcount);
+>> +
+>> +	dmabuf_exp_wait_obj_signal(gntdev_dmabuf->priv, gntdev_dmabuf);
+>> +	list_del(&gntdev_dmabuf->next);
+>> +	kfree(gntdev_dmabuf);
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_release(struct dma_buf *dma_buf)
+>> +{
+>> +	struct gntdev_dmabuf *gntdev_dmabuf = dma_buf->priv;
+>> +	struct gntdev_dmabuf_priv *priv = gntdev_dmabuf->priv;
+>> +
+>> +	gntdev_dmabuf->u.exp.release(gntdev_dmabuf->u.exp.priv,
+>> +				     gntdev_dmabuf->u.exp.map);
+>> +	mutex_lock(&priv->lock);
+>> +	kref_put(&gntdev_dmabuf->u.exp.refcount, dmabuf_exp_release);
+>> +	mutex_unlock(&priv->lock);
+>> +}
+>> +
+>> +static void *dmabuf_exp_ops_kmap_atomic(struct dma_buf *dma_buf,
+>> +					unsigned long page_num)
+>> +{
+>> +	/* Not implemented. */
+>> +	return NULL;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_kunmap_atomic(struct dma_buf *dma_buf,
+>> +					 unsigned long page_num, void *addr)
+>> +{
+>> +	/* Not implemented. */
+>> +}
+>> +
+>> +static void *dmabuf_exp_ops_kmap(struct dma_buf *dma_buf,
+>> +				 unsigned long page_num)
+>> +{
+>> +	/* Not implemented. */
+>> +	return NULL;
+>> +}
+>> +
+>> +static void dmabuf_exp_ops_kunmap(struct dma_buf *dma_buf,
+>> +				  unsigned long page_num, void *addr)
+>> +{
+>> +	/* Not implemented. */
+>> +}
+>> +
+>> +static int dmabuf_exp_ops_mmap(struct dma_buf *dma_buf,
+>> +			       struct vm_area_struct *vma)
+>> +{
+>> +	/* Not implemented. */
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct dma_buf_ops dmabuf_exp_ops =  {
+>> +	.attach = dmabuf_exp_ops_attach,
+>> +	.detach = dmabuf_exp_ops_detach,
+>> +	.map_dma_buf = dmabuf_exp_ops_map_dma_buf,
+>> +	.unmap_dma_buf = dmabuf_exp_ops_unmap_dma_buf,
+>> +	.release = dmabuf_exp_ops_release,
+>> +	.map = dmabuf_exp_ops_kmap,
+>> +	.map_atomic = dmabuf_exp_ops_kmap_atomic,
+>> +	.unmap = dmabuf_exp_ops_kunmap,
+>> +	.unmap_atomic = dmabuf_exp_ops_kunmap_atomic,
+>> +	.mmap = dmabuf_exp_ops_mmap,
+>> +};
+>> +
+>>   int gntdev_dmabuf_exp_from_pages(struct gntdev_dmabuf_export_args *args)
+>>   {
+>> -	return -EINVAL;
+>> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+>> +	struct gntdev_dmabuf *gntdev_dmabuf;
+>> +	int ret = 0;
+>> +
+>> +	gntdev_dmabuf = kzalloc(sizeof(*gntdev_dmabuf), GFP_KERNEL);
+>> +	if (!gntdev_dmabuf)
+>> +		return -ENOMEM;
+>> +
+>> +	kref_init(&gntdev_dmabuf->u.exp.refcount);
+>> +
+>> +	gntdev_dmabuf->priv = args->dmabuf_priv;
+>> +	gntdev_dmabuf->nr_pages = args->count;
+>> +	gntdev_dmabuf->pages = args->pages;
+>> +	gntdev_dmabuf->u.exp.priv = args->priv;
+>> +	gntdev_dmabuf->u.exp.map = args->map;
+>> +	gntdev_dmabuf->u.exp.release = args->release;
+>> +
+>> +	exp_info.exp_name = KBUILD_MODNAME;
+>> +	if (args->dev->driver && args->dev->driver->owner)
+>> +		exp_info.owner = args->dev->driver->owner;
+>> +	else
+>> +		exp_info.owner = THIS_MODULE;
+>> +	exp_info.ops = &dmabuf_exp_ops;
+>> +	exp_info.size = args->count << PAGE_SHIFT;
+>> +	exp_info.flags = O_RDWR;
+>> +	exp_info.priv = gntdev_dmabuf;
+>> +
+>> +	gntdev_dmabuf->dmabuf = dma_buf_export(&exp_info);
+>> +	if (IS_ERR(gntdev_dmabuf->dmabuf)) {
+>> +		ret = PTR_ERR(gntdev_dmabuf->dmabuf);
+>> +		gntdev_dmabuf->dmabuf = NULL;
+>> +		goto fail;
+>> +	}
+>> +
+>> +	ret = dma_buf_fd(gntdev_dmabuf->dmabuf, O_CLOEXEC);
+>> +	if (ret < 0)
+>> +		goto fail;
+>> +
+>> +	gntdev_dmabuf->fd = ret;
+>> +	args->fd = ret;
+>> +
+>> +	pr_debug("Exporting DMA buffer with fd %d\n", ret);
+>> +
+>> +	mutex_lock(&args->dmabuf_priv->lock);
+>> +	list_add(&gntdev_dmabuf->next, &args->dmabuf_priv->exp_list);
+>> +	mutex_unlock(&args->dmabuf_priv->lock);
+>> +	return 0;
+>> +
+>> +fail:
+>> +	if (gntdev_dmabuf->dmabuf)
+>> +		dma_buf_put(gntdev_dmabuf->dmabuf);
+>> +	kfree(gntdev_dmabuf);
+>> +	return ret;
+>>   }
+>>   
+>>   /* ------------------------------------------------------------------ */
+>> @@ -66,6 +449,10 @@ struct gntdev_dmabuf_priv *gntdev_dmabuf_init(void)
+>>   	if (!priv)
+>>   		return ERR_PTR(-ENOMEM);
+>>   
+>> +	mutex_init(&priv->lock);
+>> +	INIT_LIST_HEAD(&priv->exp_list);
+>> +	INIT_LIST_HEAD(&priv->exp_wait_list);
+>> +
+>>   	return priv;
+>>   }
+>>   
+>> diff --git a/drivers/xen/gntdev-dmabuf.h b/drivers/xen/gntdev-dmabuf.h
+>> index 040b2de904ac..95c23a24f640 100644
+>> --- a/drivers/xen/gntdev-dmabuf.h
+>> +++ b/drivers/xen/gntdev-dmabuf.h
+>> @@ -18,7 +18,14 @@ struct gntdev_dmabuf;
+>>   struct device;
+>>   
+>>   struct gntdev_dmabuf_export_args {
+>> -	int dummy;
+>> +	struct gntdev_priv *priv;
+>> +	struct grant_map *map;
+>> +	void (*release)(struct gntdev_priv *priv, struct grant_map *map);
+>> +	struct gntdev_dmabuf_priv *dmabuf_priv;
+>> +	struct device *dev;
+>> +	int count;
+>> +	struct page **pages;
+>> +	u32 fd;
+>>   };
+>>   
+>>   struct gntdev_dmabuf_priv *gntdev_dmabuf_init(void);
+>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+>> index 7d58dfb3e5e8..cf255d45f20f 100644
+>> --- a/drivers/xen/gntdev.c
+>> +++ b/drivers/xen/gntdev.c
+>> @@ -319,6 +319,16 @@ static void gntdev_put_map(struct gntdev_priv *priv, struct grant_map *map)
+>>   	gntdev_free_map(map);
+>>   }
+>>   
+>> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
+>> +static void gntdev_remove_map(struct gntdev_priv *priv, struct grant_map *map)
+>> +{
+>> +	mutex_lock(&priv->lock);
+>> +	list_del(&map->next);
+>> +	gntdev_put_map(NULL /* already removed */, map);
+>> +	mutex_unlock(&priv->lock);
+>> +}
+>> +#endif
+>> +
+>>   /* ------------------------------------------------------------------ */
+>>   
+>>   static int find_grant_ptes(pte_t *pte, pgtable_t token,
+>> @@ -1063,12 +1073,88 @@ static long gntdev_ioctl_grant_copy(struct gntdev_priv *priv, void __user *u)
+>>   /* DMA buffer export support.                                         */
+>>   /* ------------------------------------------------------------------ */
+>>   
+>> +static struct grant_map *
+>> +dmabuf_exp_alloc_backing_storage(struct gntdev_priv *priv, int dmabuf_flags,
+>> +				 int count)
+>> +{
+>> +	struct grant_map *map;
+>> +
+>> +	if (unlikely(count <= 0))
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	if ((dmabuf_flags & GNTDEV_DMA_FLAG_WC) &&
+>> +	    (dmabuf_flags & GNTDEV_DMA_FLAG_COHERENT)) {
+>> +		pr_err("Wrong dma-buf flags: either WC or coherent, not both\n");
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>> +	map = gntdev_alloc_map(priv, count, dmabuf_flags);
+>> +	if (!map)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	if (unlikely(atomic_add_return(count, &pages_mapped) > limit)) {
+>> +		pr_err("can't map: over limit\n");
+>> +		gntdev_put_map(NULL, map);
+>> +		return ERR_PTR(-ENOMEM);
+>> +	}
+>> +	return map;
+>> +}
+>> +
+>>   int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
+>>   				int count, u32 domid, u32 *refs, u32 *fd)
+>>   {
+>> -	/* XXX: this will need to work with gntdev's map, so leave it here. */
+>> +	struct grant_map *map;
+>> +	struct gntdev_dmabuf_export_args args;
+>> +	int i, ret;
+>> +
+>>   	*fd = -1;
+>> -	return -EINVAL;
+>> +
+>> +	if (use_ptemod) {
+>> +		pr_err("Cannot provide dma-buf: use_ptemode %d\n",
+>> +		       use_ptemod);
+> No pr_err here please. This can potentially become a DoS vector as it
+> comes directly from ioctl.
+>
+> I would, in fact, revisit other uses of pr_err in this file.
+Sure, all of pr_err can actually be pr_debug...
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	map = dmabuf_exp_alloc_backing_storage(priv, flags, count);
+>
+> @count comes from userspace. dmabuf_exp_alloc_backing_storage only
+> checks for it to be >0. Should it be checked for some sane max value?
+This is not easy as it is hard to tell what could be that
+max value. For DMA buffers if count is too big then allocation
+will fail, so need to check for max here  (dma_alloc_{xxx} will
+filter out too big allocations).
+For Xen balloon allocations I cannot tell what could be that
+max value neither. Tough question how to limit.
+>
+> -boris
+Thank you,
+Oleksandr
+>> +	if (IS_ERR(map))
+>> +		return PTR_ERR(map);
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		map->grants[i].domid = domid;
+>> +		map->grants[i].ref = refs[i];
+>> +	}
+>> +
+>> +	mutex_lock(&priv->lock);
+>> +	gntdev_add_map(priv, map);
+>> +	mutex_unlock(&priv->lock);
+>> +
+>> +	map->flags |= GNTMAP_host_map;
+>> +#if defined(CONFIG_X86)
+>> +	map->flags |= GNTMAP_device_map;
+>> +#endif
+>> +
+>> +	ret = map_grant_pages(map);
+>> +	if (ret < 0)
+>> +		goto out;
+>> +
+>> +	args.priv = priv;
+>> +	args.map = map;
+>> +	args.release = gntdev_remove_map;
+>> +	args.dev = priv->dma_dev;
+>> +	args.dmabuf_priv = priv->dmabuf_priv;
+>> +	args.count = map->count;
+>> +	args.pages = map->pages;
+>> +
+>> +	ret = gntdev_dmabuf_exp_from_pages(&args);
+>> +	if (ret < 0)
+>> +		goto out;
+>> +
+>> +	*fd = args.fd;
+>> +	return 0;
+>> +
+>> +out:
+>> +	gntdev_remove_map(priv, map);
+>> +	return ret;
+>>   }
+>>   
+>>   /* ------------------------------------------------------------------ */
