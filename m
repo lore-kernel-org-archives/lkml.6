@@ -1,84 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVDfqjrb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05C07605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CD09601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932288AbeFFGoF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:44:05 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43863 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932164AbeFFGoD (ORCPT
+        id S932480AbeFFIEP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:04:15 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34400 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932290AbeFFIEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:44:03 -0400
-X-Google-Smtp-Source: ADUXVKLb6wqTwJhrNYPDefuFytyn/Daos6Kjf2mhP7hdS2yH6Ua+MvdnRYWxG6HGk+PZAGAIWtFzU7QxfI9LSxPHvX0=
+        Wed, 6 Jun 2018 04:04:11 -0400
+X-Google-Smtp-Source: ADUXVKK4T4ml1uB0y7C5QTM86vpUZze24RowKJqZc7aUi5fmtxlIhkIVFJ5fIUsJnzddOS8Pom72rw==
+Date: Wed, 6 Jun 2018 10:04:08 +0200
+From: Oscar Salvador <osalvador@techadventures.net>
+To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Subject: Re: kernel panic in reading /proc/kpageflags when enabling
+ RAM-simulated PMEM
+Message-ID: <20180606080408.GA31794@techadventures.net>
+References: <20180605005402.GA22975@hori1.linux.bs1.fc.nec.co.jp>
+ <20180605011836.GA32444@bombadil.infradead.org>
+ <20180605073500.GA23766@hori1.linux.bs1.fc.nec.co.jp>
+ <20180606051624.GA16021@hori1.linux.bs1.fc.nec.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <559de2f1-fdf6-7010-2e01-d20765551065@kernel.org>
-References: <559de2f1-fdf6-7010-2e01-d20765551065@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 6 Jun 2018 08:44:02 +0200
-X-Google-Sender-Auth: 6uedceDtWl7xl_cfxCpNcc71gIE
-Message-ID: <CAJZ5v0jB+=cC5gJTT538Rci1kGdWK4vUqSu2c_xPBGS=nTVjbg@mail.gmail.com>
-Subject: Re: [GIT PULL] cpupower update for Linux 4.18-rc1
-To: Shuah Khan <shuah@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180606051624.GA16021@hori1.linux.bs1.fc.nec.co.jp>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 12:03 AM, Shuah Khan <shuah@kernel.org> wrote:
-> Hi Rafael,
+On Wed, Jun 06, 2018 at 05:16:24AM +0000, Naoya Horiguchi wrote:
+> On Tue, Jun 05, 2018 at 07:35:01AM +0000, Horiguchi Naoya(堀口 直也) wrote:
+> > On Mon, Jun 04, 2018 at 06:18:36PM -0700, Matthew Wilcox wrote:
+> > > On Tue, Jun 05, 2018 at 12:54:03AM +0000, Naoya Horiguchi wrote:
+> > > > Reproduction precedure is like this:
+> > > >  - enable RAM based PMEM (with a kernel boot parameter like memmap=1G!4G)
+> > > >  - read /proc/kpageflags (or call tools/vm/page-types with no arguments)
+> > > >  (- my kernel config is attached)
+> > > > 
+> > > > I spent a few days on this, but didn't reach any solutions.
+> > > > So let me report this with some details below ...
+> > > > 
+> > > > In the critial page request, stable_page_flags() is called with an argument
+> > > > page whose ->compound_head was somehow filled with '0xffffffffffffffff'.
+> > > > And compound_head() returns (struct page *)(head - 1), which explains the
+> > > > address 0xfffffffffffffffe in the above message.
+> > > 
+> > > Hm.  compound_head shares with:
+> > > 
+> > >                         struct list_head lru;
+> > >                                 struct list_head slab_list;     /* uses lru */
+> > >                                 struct {        /* Partial pages */
+> > >                                         struct page *next;
+> > >                         unsigned long _compound_pad_1;  /* compound_head */
+> > >                         unsigned long _pt_pad_1;        /* compound_head */
+> > >                         struct dev_pagemap *pgmap;
+> > >                 struct rcu_head rcu_head;
+> > > 
+> > > None of them should be -1.
+> > > 
+> > > > It seems that this kernel panic happens when reading kpageflags of pfn range
+> > > > [0xbffd7, 0xc0000), which coresponds to a 'reserved' range.
+> > > > 
+> > > > [    0.000000] user-defined physical RAM map:
+> > > > [    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
+> > > > [    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+> > > > [    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+> > > > [    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
+> > > > [    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved
+> > > > [    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+> > > > [    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+> > > > [    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12)
+> > > > 
+> > > > So I guess 'memmap=' parameter might badly affect the memory initialization process.
+> > > > 
+> > > > This problem doesn't reproduce on v4.17, so some pre-released patch introduces it.
+> > > > I hope this info helps you find the solution/workaround.
+> > > 
+> > > Can you try bisecting this?  It could be one of my patches to reorder struct
+> > > page, or it could be one of Pavel's deferred page initialisation patches.
+> > > Or something else ;-)
+> > 
+> > Thank you for the comment. I'm trying bisecting now, let you know the result later.
+> > 
+> > And I found that my statement "not reproduce on v4.17" was wrong (I used
+> > different kvm guests, which made some different test condition and misguided me),
+> > this seems an older (at least < 4.15) bug.
+> 
+> (Cc: Pavel)
+> 
+> Bisection showed that the following commit introduced this issue:
+> 
+>   commit f7f99100d8d95dbcf09e0216a143211e79418b9f
+>   Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+>   Date:   Wed Nov 15 17:36:44 2017 -0800
+>   
+>       mm: stop zeroing memory during allocation in vmemmap
+> 
+> This patch postpones struct page zeroing to later stage of memory initialization.
+> My kernel config disabled CONFIG_DEFERRED_STRUCT_PAGE_INIT so two callsites of
+> __init_single_page() were never reached. So in such case, struct pages populated
+> by vmemmap_pte_populate() could be left uninitialized?
+> And I'm not sure yet how this issue becomes visible with memmap= setting.
 
-Hi Shuah,
+I think that this becomes visible because memmap=x!y creates a persistent memory region:
 
-> If it isn't too late, please pull this update. A fix came in last
-> week to refine the cpupower monitor command.
->
-> This cpupower update for 4.18-rc1 consists of two minor fixes.
->
-> diff is attached.
+parse_memmap_one
+{
+	...
+        } else if (*p == '!') {
+                start_at = memparse(p+1, &p);
+                e820__range_add(start_at, mem_size, E820_TYPE_PRAM);
+	...
+}
 
-Pulled, thanks!
+and this region it is not added neither in memblock.memory nor in memblock.reserved.
+Ranges in memblock.memory get zeroed in memmap_init_zone(), while memblock.reserved get zeroed 
+in free_low_memory_core_early():
 
-I'll queue it up for the second half of the merge window.
+static unsigned long __init free_low_memory_core_early(void)
+{
+	...
+	for_each_reserved_mem_region(i, &start, &end)
+		reserve_bootmem_region(start, end);
+	...
+}
 
-Cheers,
-Rafael
+
+Maybe I am mistaken, but I think that persistent memory regions should be marked as reserved.
+A comment in do_mark_busy() suggests this:
+
+static bool __init do_mark_busy(enum e820_type type, struct resource *res)
+{
+
+	...
+        /*
+         * Treat persistent memory like device memory, i.e. reserve it
+         * for exclusive use of a driver
+         */
+	...
+}
 
 
-> ----------------------------------------------------------------
->
-> The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
->
->   Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-cpupower-4.18-rc1
->
-> for you to fetch changes up to f9652d5cae04eb5e85303c087f5842d320499c65:
->
->   cpupower : Fix header name to read idle state name (2018-05-29 10:48:33 -0600)
->
-> ----------------------------------------------------------------
-> linux-cpupower-4.18-rc1
->
-> This cpupower update for 4.18-rc1 consists of two minor fixes.
->
-> ----------------------------------------------------------------
-> Abhishek Goel (1):
->       cpupower : Fix header name to read idle state name
->
-> Colin Ian King (1):
->       cpupower: fix spelling mistake: "logilename" -> "logfilename"
->
->  tools/power/cpupower/bench/parse.c                 |  2 +-
->  .../cpupower/utils/idle_monitor/cpuidle_sysfs.c    | 15 ++++++++++
->  .../cpupower/utils/idle_monitor/cpupower-monitor.c | 35 ++++++++++++----------
->  .../cpupower/utils/idle_monitor/cpupower-monitor.h |  9 ++++++
->  4 files changed, 45 insertions(+), 16 deletions(-)
-> ----------------------------------------------------------------
+I wonder if something like this could work and if so, if it is right (i haven't tested it yet):
+
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 71c11ad5643e..3c9686ef74e5 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1247,6 +1247,11 @@ void __init e820__memblock_setup(void)
+                if (end != (resource_size_t)end)
+                        continue;
+ 
++               if (entry->type == E820_TYPE_PRAM || entry->type == E820_TYPE_PMEM) {
++                       memblock_reserve(entry->addr, entry->size);
++                       continue;
++               }
++
+                if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+                        continue;
+
+Best Regards
+Oscar Salvador
