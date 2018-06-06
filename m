@@ -1,66 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcOgaCGH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92C40601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Olm5fVcf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8BA4C601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932525AbeFFITw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:19:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932394AbeFFITu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:19:50 -0400
-Date: Wed, 6 Jun 2018 10:19:24 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/37] 4.4.136-stable review
-Message-ID: <20180606081924.GA19727@kroah.com>
-References: <20180605170108.884872354@linuxfoundation.org>
- <20180606003032.GA10046@flashbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606003032.GA10046@flashbox>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S932710AbeFFKCh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:02:37 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52183 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932496AbeFFKA1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:00:27 -0400
+X-Google-Smtp-Source: ADUXVKLUmrI3RjJNtC9Kjl5v7wZYZtcOJqPS7qtxmLeZVl9GF2kthKPgF6w+hlXSiKpzbRua7tVuog==
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 05/14] mfd: da9063: Use PLATFORM_DEVID_NONE
+Date: Wed,  6 Jun 2018 11:59:54 +0200
+Message-Id: <20180606100003.17067-5-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 05:30:32PM -0700, Nathan Chancellor wrote:
-> On Tue, Jun 05, 2018 at 07:01:05PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.136 release.
-> > There are 37 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.136-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Merged, compiled with -Werror, and installed onto my Pixel 2 XL and
-> OnePlus 5.
-> 
-> No issues in general usage or dmesg (although I somehow didn't catch the
-> VTI issue in 4.4.134 so don't know how valuable this is anymore...)
+Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
 
-Great, thanks for testing.  The VTI issue was odd in that it required
-the AOSP networking tests to be run to be triggered, and they were a
-"stress-test" more than a "functional test", which is why I think no one
-else caught it.
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V4: New patch
+V5: Rebase on top of new 01 and 02 patches
+---
+ drivers/mfd/da9063-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-greg k-h
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 76258e5709f8..f57558590283 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -226,9 +226,9 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 
+ 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
+ 
+-	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
+-				   ARRAY_SIZE(da9063_devs), NULL,
+-				   da9063->irq_base, NULL);
++	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
++				   da9063_devs, ARRAY_SIZE(da9063_devs),
++				   NULL, da9063->irq_base, NULL);
+ 	if (ret)
+ 		dev_err(da9063->dev, "Cannot add MFD cells\n");
+ 
+-- 
+2.16.2
