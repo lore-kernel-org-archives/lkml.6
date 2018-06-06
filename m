@@ -1,95 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE636606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0g7aVu7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16E41601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeFFMzn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:55:43 -0400
-Received: from mga09.intel.com ([134.134.136.24]:9650 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751914AbeFFMzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:55:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="55204285"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH V4 1/3] kallsyms: Simplify update_iter_mod()
-Date: Wed,  6 Jun 2018 15:54:09 +0300
-Message-Id: <1528289651-4113-2-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
-References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1753417AbeFFQTZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:19:25 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44635 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752854AbeFFQTX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:19:23 -0400
+X-Google-Smtp-Source: ADUXVKJ4iCBcLqc1FhS/h0Iu+dVjS981izXwdxDKdMFHwMaFZVxHblE6nXbpWDKlmwkF2MchH5wTNg==
+Subject: Re: [PATCH v4 1/6] Documentation: DT: Consolidate SP805 binding docs
+To: Rob Herring <robh@kernel.org>, Ray Jui <ray.jui@broadcom.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+References: <1527530497-10392-1-git-send-email-ray.jui@broadcom.com>
+ <1527530497-10392-2-git-send-email-ray.jui@broadcom.com>
+ <20180605194124.GA26885@rob-hp-laptop>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <e91c75f3-f7a4-6f51-9911-7e22d5d05084@roeck-us.net>
+Date: Wed, 6 Jun 2018 09:19:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605194124.GA26885@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The logic in update_iter_mod() is overcomplicated and gets worse every time
-another get_ksymbol_* function is added.
+On 06/05/2018 12:41 PM, Rob Herring wrote:
+> On Mon, May 28, 2018 at 11:01:32AM -0700, Ray Jui wrote:
+>> Consolidate two SP805 binding documents "arm,sp805.txt" and
+>> "sp805-wdt.txt" into "arm,sp805.txt" that matches the naming of the
+>> desired compatible string to be used
+>>
+>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>> ---
+>>   .../devicetree/bindings/watchdog/arm,sp805.txt     | 27 ++++++++++++++-----
+>>   .../devicetree/bindings/watchdog/sp805-wdt.txt     | 31 ----------------------
+>>   2 files changed, 20 insertions(+), 38 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+> 
+> Would be good to get a ACK from FSL/NXP person on this. It looks to me
+> like the driver fetches the wrong clock as it gets the first one and the
+> driver really wants 'wdog_clk'. In any case, their dts files should be
+> updated.
+>
 
-In preparation for adding another get_ksymbol_* function, simplify logic in
-update_iter_mod().
+This is really confusing, since he deleted file lists apb_pclk first.
+Does the watchdog driver need apb_pclk or wdog_clk ? That isn't clear to me.
+arch/arm64/boot/dts/hisilicon/hi3660.dtsi only provides apb_pclk, or at least
+it says so. The fsl dts files all have apb_pclk first.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Andi Kleen <ak@linux.intel.com>
----
- kernel/kallsyms.c | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+Either case, why are two clocks asked for in the first place ? Are there
+situations where the second clock is actually used/useful ?
 
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index a23e21ada81b..aa31aa07f2ef 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -506,27 +506,24 @@ static void reset_iter(struct kallsym_iter *iter, loff_t new_pos)
- 	}
- }
- 
-+/*
-+ * The end position (last + 1) of each additional kallsyms section is recorded
-+ * in iter->pos_..._end as each section is added, and so can be used to
-+ * determine which get_ksymbol_...() function to call next.
-+ */
- static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
- {
- 	iter->pos = pos;
- 
--	if (iter->pos_ftrace_mod_end > 0 &&
--	    iter->pos_ftrace_mod_end < iter->pos)
--		return get_ksymbol_bpf(iter);
--
--	if (iter->pos_mod_end > 0 &&
--	    iter->pos_mod_end < iter->pos) {
--		if (!get_ksymbol_ftrace_mod(iter))
--			return get_ksymbol_bpf(iter);
-+	if ((!iter->pos_mod_end || iter->pos_mod_end > pos) &&
-+	    get_ksymbol_mod(iter))
- 		return 1;
--	}
- 
--	if (!get_ksymbol_mod(iter)) {
--		if (!get_ksymbol_ftrace_mod(iter))
--			return get_ksymbol_bpf(iter);
--	}
-+	if ((!iter->pos_ftrace_mod_end || iter->pos_ftrace_mod_end > pos) &&
-+	    get_ksymbol_ftrace_mod(iter))
-+		return 1;
- 
--	return 1;
-+	return get_ksymbol_bpf(iter);
- }
- 
- /* Returns false if pos at or past end of file. */
--- 
-1.9.1
+Guenter
+
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> Rob
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
