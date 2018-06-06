@@ -1,124 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 452F260555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="JEkPL87O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63C1060767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752141AbeFFMt0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:49:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34395 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751906AbeFFMtY (ORCPT
+        id S1752097AbeFFMHy (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:07:54 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:60257 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751968AbeFFMHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:49:24 -0400
-Date: Wed, 6 Jun 2018 05:48:46 -0700
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-cd77849a69cf5d81a86dd88dac7a594a67cb5c87@git.kernel.org>
-Cc: hpa@zytor.com, mingo@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, jpoimboe@redhat.com, lkp@intel.com,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          jpoimboe@redhat.com, peterz@infradead.org, lkp@intel.com,
-          hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <d3ba52662cbc8e3a64a3b64d44b4efc5674fd9ab.1527855808.git.jpoimboe@redhat.com>
-References: <d3ba52662cbc8e3a64a3b64d44b4efc5674fd9ab.1527855808.git.jpoimboe@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] objtool: Fix GCC 8 cold subfunction detection for
- aliased functions
-Git-Commit-ID: cd77849a69cf5d81a86dd88dac7a594a67cb5c87
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 6 Jun 2018 08:07:49 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+Subject: Re: [PATCH 4/4] serial: core: Mask mctrl with TIOCM_RTS too if rs485
+ on and RTS_AFTER_SEND set.
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: matwey.kornilov@gmail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Kees Cook <keescook@chromium.org>, Sean Young <sean@mess.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
+ <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
+ <20180606094942.71190-3-giulio.benetti@micronovasrl.com>
+ <a156ce90ab7e45ecf6936c29cc5d976c56f49a51.camel@linux.intel.com>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <5bda9e82-369a-ff5f-fef8-f3933c6f1c64@micronovasrl.com>
+Date: Wed, 6 Jun 2018 14:07:45 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <a156ce90ab7e45ecf6936c29cc5d976c56f49a51.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cd77849a69cf5d81a86dd88dac7a594a67cb5c87
-Gitweb:     https://git.kernel.org/tip/cd77849a69cf5d81a86dd88dac7a594a67cb5c87
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Fri, 1 Jun 2018 07:23:51 -0500
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 14:45:22 +0200
+Il 06/06/2018 14:03, Andy Shevchenko ha scritto:
+> On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
+>> If rs485 is enabled and RTS_AFTER_SEND is set on startup need to keep
+>> TIOCM_RTS asserted to keep rs485 transceiver in RX when idle.
+>>
+>> Check if rs485 is on and RTS_AFTER_SEND is set and mask port->mctrl
+>> with
+>> TIOCM_RTS too and not only TIOCM_DTR.
+>>
+> 
+> This one feels wrong to be in serial_core.c. Perhaps in 8250/8250*.c.
 
-objtool: Fix GCC 8 cold subfunction detection for aliased functions
+I've tried to avoid modifying serial_core.c but if it masks mctrl only 
+with TIOCM_DTR, it forces RTS unasserted.
+Another way could be:
+If rs485 ON and RTS_AFTER_SEND set, then ignore RTS driving in 
+8250_set_mctrl, would it make sense?
 
-The kbuild test robot reported the following issue:
+Thanks
 
-  kernel/time/posix-stubs.o: warning: objtool: sys_ni_posix_timers.cold.1()+0x0: unreachable instruction
+-- 
+Giulio Benetti
+CTO
 
-This file creates symbol aliases for the sys_ni_posix_timers() function.
-So there are multiple ELF function symbols for the same function:
-
-  23: 0000000000000150     26 FUNC    GLOBAL DEFAULT        1 __x64_sys_timer_create
-  24: 0000000000000150     26 FUNC    GLOBAL DEFAULT        1 sys_ni_posix_timers
-  25: 0000000000000150     26 FUNC    GLOBAL DEFAULT        1 __ia32_sys_timer_create
-  26: 0000000000000150     26 FUNC    GLOBAL DEFAULT        1 __x64_sys_timer_gettime
-
-Here's the corresponding cold subfunction:
-
-  11: 0000000000000000     45 FUNC    LOCAL  DEFAULT        6 sys_ni_posix_timers.cold.1
-
-When analyzing overlapping functions, objtool only looks at the first
-one in the symbol list.  The rest of the functions are basically ignored
-because they point to instructions which have already been analyzed.
-
-So in this case it analyzes the __x64_sys_timer_create() function, but
-then it fails to recognize that its cold subfunction is
-sys_ni_posix_timers.cold.1(), because the names are different.
-
-Make the subfunction detection a little smarter by associating each
-subfunction with the first function which jumps to it, since that's the
-one which will be analyzed.
-
-Unfortunately we still have to leave the original subfunction detection
-code in place, thanks to GCC switch tables.  (See the comment for more
-details.)
-
-Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/d3ba52662cbc8e3a64a3b64d44b4efc5674fd9ab.1527855808.git.jpoimboe@redhat.com
-
----
- tools/objtool/check.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 3a31b238f885..38047c6aa575 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -543,6 +543,28 @@ static int add_jump_destinations(struct objtool_file *file)
- 				  dest_off);
- 			return -1;
- 		}
-+
-+		/*
-+		 * For GCC 8+, create parent/child links for any cold
-+		 * subfunctions.  This is _mostly_ redundant with a similar
-+		 * initialization in read_symbols().
-+		 *
-+		 * If a function has aliases, we want the *first* such function
-+		 * in the symbol table to be the subfunction's parent.  In that
-+		 * case we overwrite the initialization done in read_symbols().
-+		 *
-+		 * However this code can't completely replace the
-+		 * read_symbols() code because this doesn't detect the case
-+		 * where the parent function's only reference to a subfunction
-+		 * is through a switch table.
-+		 */
-+		if (insn->func && insn->jump_dest->func &&
-+		    insn->func != insn->jump_dest->func &&
-+		    !strstr(insn->func->name, ".cold.") &&
-+		    strstr(insn->jump_dest->func->name, ".cold.")) {
-+			insn->func->cfunc = insn->jump_dest->func;
-+			insn->jump_dest->func->pfunc = insn->func;
-+		}
- 	}
- 
- 	return 0;
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
