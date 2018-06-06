@@ -1,68 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkKJ4QEr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6066606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F14CB601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeFFSSD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:18:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752243AbeFFSSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:18:01 -0400
-X-Google-Smtp-Source: ADUXVKJsrceQb3obGj/SMlh3EqA4n9JPtXXP9oxNJ3a+Kgdax/hD9CEV4mxHWBFDs5HQ//peFepYMPp5WFuxYZhj8zM=
+        id S932524AbeFFIFT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:05:19 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48865 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932290AbeFFIFR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:05:17 -0400
+Date: Wed, 6 Jun 2018 10:04:39 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+cc: LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Song Liu <liu.song.a23@gmail.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Mike Travis <mike.travis@hpe.com>, stable@vger.kernel.org
+Subject: Re: [patch 3/8] x86/apic: Provide apic_ack_irq()
+In-Reply-To: <de96585f-9b8d-4536-a9d5-32a718e3eb4d@cn.fujitsu.com>
+Message-ID: <alpine.DEB.2.21.1806061003310.1584@nanos.tec.linutronix.de>
+References: <20180604162224.471925894@linutronix.de> <94117bd8-352b-1077-e8ae-8722d7ec213f@cn.fujitsu.com> <alpine.DEB.2.21.1806051339020.1591@nanos.tec.linutronix.de> <de96585f-9b8d-4536-a9d5-32a718e3eb4d@cn.fujitsu.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20180601082811.4c0d33ba@imladris.surriel.com> <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
- <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
- <1527882207.7898.86.camel@surriel.com> <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
- <1527885324.7898.88.camel@surriel.com> <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
- <20180601181327.367f0fe3@imladris.surriel.com> <CALCETrXTLqcro4uu5f77EmeaDvNqGZNLpsk-w_BApRNmzvcz=Q@mail.gmail.com>
- <1527915842.7898.93.camel@surriel.com> <CALCETrW5m3Y3CGnRZwDTMT9g-1an_LO6Fp_6FWOokydhN9BDLQ@mail.gmail.com>
- <A87157D6-4A0A-44F8-8AC8-4411F5EDC57A@fb.com> <1527989886.7898.96.camel@surriel.com>
-In-Reply-To: <1527989886.7898.96.camel@surriel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Wed, 6 Jun 2018 11:17:46 -0700
-X-Gmail-Original-Message-ID: <CALCETrU6bqVyBzeMu9RSoXq1Fm6rdHA6rDskqVqo5+W9snkz=A@mail.gmail.com>
-Message-ID: <CALCETrU6bqVyBzeMu9RSoXq1Fm6rdHA6rDskqVqo5+W9snkz=A@mail.gmail.com>
-Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
-To: Rik van Riel <riel@surriel.com>
-Cc: songliubraving@fb.com, Andrew Lutomirski <luto@kernel.org>,
-        Mike Galbraith <efault@gmx.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <Kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 2, 2018 at 6:38 PM Rik van Riel <riel@surriel.com> wrote:
->
-> On Sun, 2018-06-03 at 00:51 +0000, Song Liu wrote:
->
-> > > Just to check: in the workload where you're seeing this problem,
-> > > are
-> > > you using an mm with many threads?  I would imagine that, if you
-> > > only
-> > > have one or two threads, the bit operations aren't so bad.
-> >
-> > Yes, we are running netperf/netserver with 300 threads. We don't see
-> > this much overhead in with real workload.
->
-> We may not, but there are some crazy workloads out
-> there in the world. Think of some Java programs with
-> thousands of threads, causing a million context
-> switches a second on a large system.
->
-> I like Andy's idea of having one cache line with
-> a cpumask per node. That seems like it will have
-> fewer downsides for tasks with fewer threads running
-> on giant systems.
->
-> I'll throw out the code I was working on, and look
-> into implementing that :)
->
+On Wed, 6 Jun 2018, Dou Liyang wrote:
 
-I'm not sure you should throw your patch out.  It's a decent idea, too.
+> Hi Thomas,
+> 
+> At 06/05/2018 07:41 PM, Thomas Gleixner wrote:
+> > On Tue, 5 Jun 2018, Dou Liyang wrote:
+> > > > +{
+> > > > +	if (unlikely(irqd_is_setaffinity_pending(irqd)))
+> > > 
+> > > Affinity pending is also judged in
+> > > 
+> > > > +		irq_move_irq(irqd);
+> > > 
+> > > If we can remove the if(...) statement here
+> > 
+> > That requires to fix all call sites in ia64 and that's why I didn't.  But
+> 
+> I didn't express clearly, I meant remove the if(...) statement from
+> apic_ack_irq(), it doesn't require to fix the call sites in ia64.
+
+I put the check there on purpose as I explained in the changelog:
+
+   Making the invocation of irq_move_irq() conditional avoids the out of
+   line call if the pending bit is not set.
+
+Thanks,
+
+	tglx
