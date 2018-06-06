@@ -1,73 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeFFBdJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 21:33:09 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:41540 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbeFFBdI (ORCPT
+        id S1752729AbeFFBfB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 21:35:01 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51717 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752063AbeFFBe7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 21:33:08 -0400
-X-Google-Smtp-Source: ADUXVKJUS1TtYsuWWJ/mc/U5on6maBHY0FF8OquAX65SVC8ZZ5Ufv/5Gs9GE5TLB2VbOTLzjAY4PsM0+JTnxRpzekFE=
+        Tue, 5 Jun 2018 21:34:59 -0400
+X-Google-Smtp-Source: ADUXVKLRVtz8HySzT72neNY/AZziKZKX1sn3ShAPM6Ip4X2OdIkBk+KKjvry4LDD9DyG/EjOSXEbzA==
 MIME-Version: 1.0
-In-Reply-To: <20180606000822.GE4423@redhat.com>
-References: <152694211402.5484.2277538346144115181.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20180524001026.GA3527@redhat.com> <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com>
- <CAPM=9tzMJq=KC+ijoj-JGmc1R3wbshdwtfR3Zpmyaw3jYJ9+gw@mail.gmail.com>
- <CAPcyv4g2XQtuYGPu8HMbPj6wXqGwxiL5jDRznf5fmW4WgC2DTw@mail.gmail.com>
- <CAPM=9twm=17t=2=M27ELB=vZWzpqM7GuwCUsC891jJ0t3JM4vg@mail.gmail.com>
- <CAPcyv4jTty4k1xXCOWbeRjzv-KjxNH1L4oOkWW1EbJt66jF4_w@mail.gmail.com>
- <20180605184811.GC4423@redhat.com> <CAPM=9twgL_tzkPO=V2mmecSzLjKJkEsJ8A4426fO2Nuus0N_UQ@mail.gmail.com>
- <CAPcyv4gSEYdnJKd=D-_yc3M=sY0HWjYzYhh5ha-v7KA4-40dsg@mail.gmail.com> <20180606000822.GE4423@redhat.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 5 Jun 2018 18:33:04 -0700
-Message-ID: <CAPcyv4gsS4xDXahZdOggURBHS2y-oJ5tPG9vXPDdY2p6jPufxA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] mm: rework hmm to use devm_memremap_pages
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: Dave Airlie <airlied@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>, Christoph Hellwig <hch@lst.de>,
-        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-2-git-send-email-vgarodia@codeaurora.org>
+ <894ab678-bc1d-da04-b552-d53301bd3980@linaro.org> <20180605105716.GT16230@vkoul-mobl>
+In-Reply-To: <20180605105716.GT16230@vkoul-mobl>
+From: Alexandre Courbot <acourbot@chromium.org>
+Date: Wed, 6 Jun 2018 10:34:45 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MWSOFQT0ZuV_MJhjPzTYUhoPgRXUhT_dawTqDCtVXEmBA@mail.gmail.com>
+Message-ID: <CAPBb6MWSOFQT0ZuV_MJhjPzTYUhoPgRXUhT_dawTqDCtVXEmBA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] media: venus: add a routine to reset ARM9
+To: vkoul@kernel.org
+Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 5:08 PM, Jerome Glisse <jglisse@redhat.com> wrote:
-> On Tue, Jun 05, 2018 at 04:06:12PM -0700, Dan Williams wrote:
-[..]
->> I want the EXPORT_SYMBOL_GPL on devm_memremap_pages() primarily for
->> development purposes. Any new users of devm_memremap_pages() should be
->> aware that they are subscribing to the whims of the core-VM, i.e. the
->> ongoing evolution of 'struct page', and encourage those drivers to be
->> upstream to improve the implementation, and consolidate use cases. I'm
->> not qualified to comment on your "nor will it change anyone's legal
->> position.", but I'm saying it's in the Linux kernel's best interest
->> that new users of this interface assume they need to be GPL.
+On Tue, Jun 5, 2018 at 7:57 PM Vinod <vkoul@kernel.org> wrote:
 >
-> Note that HMM isolate the device driver from struct page as long as
-> the driver only use HMM helpers to get to the information it needs.
-> I intend to be pedantic about that with any driver using HMM. I want
-> HMM to be an impedance layer that provide stable and simple API to
-> device driver while preserving freedom of change to mm.
+> On 02-06-18, 01:15, Stanimir Varbanov wrote:
+> > Hi Vikash,
+> >
+> > On  1.06.2018 23:26, Vikash Garodia wrote:
+> > > Add a new routine to reset the ARM9 and brings it
+> > > out of reset. This is in preparation to add PIL
+> > > functionality in venus driver.
+> >
+> > please squash this patch with 4/5. I don't see a reason to add a function
+> > which is not used. Shouldn't this produce gcc warnings?
 >
+> Yes this would but in a multi patch series that is okay as subsequent
+> patches would use that and end result in no warning.
 
-I would not classify redefining put_page() and recompiling the
-entirety of the kernel to turn on HMM as "isolating the driver from
-'struct page'". HMM is instead isolating these out of drivers from
-ever needing to go upstream.
+Except during bisect.
 
-Unless the nouveau patches are using the entirety of what is already
-upstream for HMM, we should look to pare HMM back.
+>
+> Splitting logically is good and typical practice in kernel to add the
+> routine followed by usages..
 
-There is plenty of precedent of building a large capability
-out-of-tree and piecemeal merging it later, so I do not buy the
-"chicken-egg" argument. The change in the export is to make sure we
-don't repeat this backward "merge first, ask questions later" mistake
-in the future as devm_memremap_pages() is continuing to find new users
-like peer-to-peer DMA support and Linux is better off if that
-development is upstream. From a purely technical standpoint
-devm_memremap_pages() is EXPORT_SYMBOL_GPL because it hacks around
-several implementation details in the core kernel to achieve its goal,
-and it leaks new assumptions all over the kernel. It is strictly not a
-self contained interface.
+Is it in this case though? If this code was shared across multiple
+users I could understand but this function is only used locally (and
+only in one place IIUC). Also the patch is not so big that the code
+would become confusing if this was squashed into 4/5. I don't see any
+reason to keep this separate.
