@@ -1,64 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiQ7lPjo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8C3360555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F230460767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753017AbeFFP5G (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:57:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752880AbeFFPzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:55:37 -0400
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: don't acquire orphan ino during recovery
-Date: Wed,  6 Jun 2018 23:55:01 +0800
-Message-Id: <20180606155502.11619-1-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
+        id S1752193AbeFFNIu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:08:50 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58546 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752046AbeFFNIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:08:47 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, Xi Wang <wangxi11@huawei.com>
+Subject: [PATCH V2 net-next 1/3] net: hns3: Fix for VF mailbox cannot receiving PF response
+Date: Wed, 6 Jun 2018 14:07:51 +0100
+Message-ID: <20180606130753.54428-2-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20180606130753.54428-1-salil.mehta@huawei.com>
+References: <20180606130753.54428-1-salil.mehta@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.202.227.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Xi Wang <wangxi11@huawei.com>
 
-During orphan inode recovery, checkpoint should never succeed due to
-SBI_POR_DOING flag, so we don't need acquire orphan ino which only be
-used by checkpoint.
+When the VF frequently switches the CMDQ interrupt, if the CMDQ_SRC is not
+cleared, the VF will not receive the new PF response after the interrupt
+is re-enabled, the corresponding log is as follows:
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+[  317.482222] hns3 0000:00:03.0: VF could not get mbx resp(=0) from PF
+in 500 tries
+[  317.483137] hns3 0000:00:03.0: VF request to get tqp info from PF
+failed -5
+
+This patch fixes this problem by clearing CMDQ_SRC before enabling
+interrupt and syncing pending IRQ handlers after disabling interrupt.
+
+Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
+Signed-off-by: Xi Wang <wangxi11@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- fs/f2fs/checkpoint.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 9f825a5a5c9f..ae0a06a8dec1 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -578,12 +578,7 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- {
- 	struct inode *inode;
- 	struct node_info ni;
--	int err = f2fs_acquire_orphan_inode(sbi);
--
--	if (err)
--		goto err_out;
--
--	__add_ino_entry(sbi, ino, 0, ORPHAN_INO);
-+	int err;
- 
- 	inode = f2fs_iget_retry(sbi->sb, ino);
- 	if (IS_ERR(inode)) {
-@@ -613,7 +608,6 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- 		err = -EIO;
- 		goto err_out;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index dd8e8e6..d55ee9c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -1576,6 +1576,8 @@ static int hclgevf_misc_irq_init(struct hclgevf_dev *hdev)
+ 		return ret;
  	}
--	__remove_ino_entry(sbi, ino, ORPHAN_INO);
- 	return 0;
  
- err_out:
++	hclgevf_clear_event_cause(hdev, 0);
++
+ 	/* enable misc. vector(vector 0) */
+ 	hclgevf_enable_vector(&hdev->misc_vector, true);
+ 
+@@ -1586,6 +1588,7 @@ static void hclgevf_misc_irq_uninit(struct hclgevf_dev *hdev)
+ {
+ 	/* disable misc vector(vector 0) */
+ 	hclgevf_enable_vector(&hdev->misc_vector, false);
++	synchronize_irq(hdev->misc_vector.vector_irq);
+ 	free_irq(hdev->misc_vector.vector_irq, hdev);
+ 	hclgevf_free_vector(hdev, 0);
+ }
 -- 
-2.16.2.17.g38e79b1fd
+2.7.4
