@@ -1,62 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753067AbeFFAl6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 20:41:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58094 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752741AbeFFAl4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 20:41:56 -0400
-Subject: Re: [PATCH v3] kbuild: check for pkg-config on make
- {menu,n,g.x}config
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Bj=c3=b8rn_Forsman?= <bjorn.forsman@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-References: <f13a8e3c-ebc6-53f7-1bac-965c0f30b110@infradead.org>
- <CAK7LNASN_L0An5OBwif7S4wt5Lz54yAdSNw_8ODV0UETa+aDjw@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d74293e3-02a2-b5fc-4f69-9e6924726278@infradead.org>
-Date: Tue, 5 Jun 2018 17:41:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNASN_L0An5OBwif7S4wt5Lz54yAdSNw_8ODV0UETa+aDjw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S932905AbeFFAnI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 20:43:08 -0400
+Received: from mga06.intel.com ([134.134.136.31]:57109 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752980AbeFFAnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 20:43:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,481,1520924400";
+   d="scan'208";a="55064226"
+From: "Brett T. Warden" <brett.t.warden@intel.com>
+To: linux-kernel@vger.kernel.org, jeyu@kernel.org
+Subject: [PATCH] module: Implement sig_unenforce parameter
+Date: Tue,  5 Jun 2018 17:43:06 -0700
+Message-Id: <20180606004306.18899-1-brett.t.warden@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 11:53 PM, Masahiro Yamada wrote:
-> Hi Randy,
-> 
-> 
-> 2018-06-04 11:59 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Each of 'make {menu,n,g,x}config' uses (needs) pkg-config to make sure
->> that other required files are present and to determine build flags
->> settings, but none of these check that pkg-config itself is present.
->> Add a check for all 4 of these targets and update
->> Documentation/process/changes.rst to mention 'pkg-config'.
->>
->> Fixes kernel bugzilla #77511:
->> https://bugzilla.kernel.org/show_bug.cgi?id=77511
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Bjørn Forsman <bjorn.forsman@gmail.com>
->> ---
->> Strictly speaking, pkg-config is not required if someone is only
->> using 'make {menu,n}config' since there are fallbacks for those
->> two targets.
->>
+When CONFIG_MODULE_SIG_FORCE is enabled, also provide a boot-time-only
+parameter, module.sig_unenforce, to disable signature enforcement. This
+allows distributions to ship with signature verification enforcement
+enabled by default, but for users to elect to disable it without
+recompiling, to support building and loading out-of-tree modules.
 
+Signed-off-by: Brett T. Warden <brett.t.warden@intel.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  4 +++
+ kernel/module.c                               | 25 +++++++++++++++++--
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
-OK, I made your suggested changes and will test it later and then resend it.
-
-thanks,
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1beb30d8d7fc..87909e021558 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2380,6 +2380,10 @@
+ 			Note that if CONFIG_MODULE_SIG_FORCE is set, that
+ 			is always true, so this option does nothing.
+ 
++	module.sig_unenforce
++			[KNL] This parameter allows modules without signatures
++			to be loaded, overriding CONFIG_MODULE_SIG_FORCE.
++
+ 	module_blacklist=  [KNL] Do not load a comma-separated list of
+ 			modules.  Useful for debugging problem modules.
+ 
+diff --git a/kernel/module.c b/kernel/module.c
+index c9bea7f2b43e..53cd6cd52dc6 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -64,6 +64,7 @@
+ #include <linux/bsearch.h>
+ #include <linux/dynamic_debug.h>
+ #include <linux/audit.h>
++#include <linux/efi.h>
+ #include <uapi/linux/module.h>
+ #include "module-internal.h"
+ 
+@@ -274,9 +275,13 @@ static void module_assert_mutex_or_preempt(void)
+ }
+ 
+ static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+-#ifndef CONFIG_MODULE_SIG_FORCE
++#ifdef CONFIG_MODULE_SIG_FORCE
++/* Allow disabling module signature requirement by adding boot param */
++static bool sig_unenforce;
++module_param(sig_unenforce, bool_enable_only, 0444);
++#else /* !CONFIG_MODULE_SIG_FORCE */
+ module_param(sig_enforce, bool_enable_only, 0644);
+-#endif /* !CONFIG_MODULE_SIG_FORCE */
++#endif /* CONFIG_MODULE_SIG_FORCE */
+ 
+ /*
+  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+@@ -415,6 +420,8 @@ extern const s32 __start___kcrctab_unused[];
+ extern const s32 __start___kcrctab_unused_gpl[];
+ #endif
+ 
++extern struct boot_params boot_params;
++
+ #ifndef CONFIG_MODVERSIONS
+ #define symversion(base, idx) NULL
+ #else
+@@ -4243,6 +4250,20 @@ static const struct file_operations proc_modules_operations = {
+ static int __init proc_modules_init(void)
+ {
+ 	proc_create("modules", 0, NULL, &proc_modules_operations);
++
++#ifdef CONFIG_MODULE_SIG_FORCE
++	switch (boot_params.secure_boot) {
++	case efi_secureboot_mode_unset:
++	case efi_secureboot_mode_unknown:
++	case efi_secureboot_mode_disabled:
++		/*
++		 * sig_unenforce is only applied if SecureBoot is not
++		 * enabled.
++		 */
++		sig_enforce = !sig_unenforce;
++	}
++#endif
++
+ 	return 0;
+ }
+ module_init(proc_modules_init);
 -- 
-~Randy
+2.17.1
