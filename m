@@ -1,111 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVENQxzp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6CC3605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PgrtQs0U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F2D9601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753676AbeFFQvv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:51:51 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:36209 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752425AbeFFQvs (ORCPT
+        id S933517AbeFFQo0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:44:26 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39776 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933494AbeFFQoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:51:48 -0400
-X-Google-Smtp-Source: ADUXVKLV8RG9oQdJcP1sHcXFcYqhFtoe/Er4DY403dVi740ANYAomuOHHz2ylkP45CPIEp8BYXet5g9QdSPtuaIBgYo=
+        Wed, 6 Jun 2018 12:44:23 -0400
+X-Google-Smtp-Source: ADUXVKKhoe7qc8CNtv8IN2LfZl6hG1r46qT/iE886VUZkqXJSZojE5MrY/w6efTspSpBHXv1pLQIKg==
+Date: Wed, 6 Jun 2018 09:46:28 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Tomasz Figa <tfiga@chromium.org>, vgarodia@codeaurora.org,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, andy.gross@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware
+ device
+Message-ID: <20180606164628.GF510@tuxbook-pro>
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
+ <CAAFQd5D39CkA=GucUs7YOHwsdj0gbk55BiY_gSvArY_RH4uDkg@mail.gmail.com>
+ <2cf4f7e8-f9e6-d62b-45a8-2c348af4aafe@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180606095156.72628-4-giulio.benetti@micronovasrl.com>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
- <20180606095156.72628-1-giulio.benetti@micronovasrl.com> <20180606095156.72628-4-giulio.benetti@micronovasrl.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 6 Jun 2018 19:51:46 +0300
-Message-ID: <CAHp75VfgYmX5WiG5HpN7hLiW1CfhDYV2gya58OGYyBQwVGTY2A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] serial: 8250_dw: add em485 support
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Ed Blake <ed.blake@sondrel.com>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2cf4f7e8-f9e6-d62b-45a8-2c348af4aafe@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 12:51 PM, Giulio Benetti
-<giulio.benetti@micronovasrl.com> wrote:
-> Need to use rs485 transceiver so let's use existing em485 485 emulation
-> layer on top of 8250.
->
-> Add rs485_config callback to port.
+On Mon 04 Jun 06:56 PDT 2018, Stanimir Varbanov wrote:
+> On 06/04/2018 04:18 PM, Tomasz Figa wrote:
+> > On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+[..]
+> >> +               venus-firmware {
+> >> +                       compatible = "qcom,venus-firmware-no-tz";
+> > 
+> > I don't think "-no-tz" should be mentioned here in DT, since it's a
+> > firmware/software detail.
+> 
+> I have to agree with Tomasz, non-tz or tz is a software detail and it
+> shouldn't be reflected in compatible string.
+> 
 
-Besides the fact the series lacks of cover letter, I think it should
-be postponed until we get a clear understanding how RS485 is supposed
-to be initialized and what exact problems you are trying to address.
-
->
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> ---
->  drivers/tty/serial/8250/8250_dw.c | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->
-> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-> index 6fcdb90f616a..45366e6e5411 100644
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -314,6 +314,36 @@ static void dw8250_set_ldisc(struct uart_port *p, struct ktermios *termios)
->         serial8250_do_set_ldisc(p, termios);
->  }
->
-> +static int dw8250_rs485_config(struct uart_port *p,
-> +                              struct serial_rs485 *rs485)
-> +{
-> +       struct uart_8250_port *up = up_to_u8250p(p);
-> +
-> +       /* Clamp the delays to [0, 100ms] */
-> +       rs485->delay_rts_before_send = min(rs485->delay_rts_before_send, 100U);
-> +       rs485->delay_rts_after_send  = min(rs485->delay_rts_after_send, 100U);
-> +
-> +       p->rs485 = *rs485;
-> +
-> +       /*
-> +        * Both serial8250_em485_init and serial8250_em485_destroy
-> +        * are idempotent
-> +        */
-> +       if (rs485->flags & SER_RS485_ENABLED) {
-> +               int ret = serial8250_em485_init(up);
-> +
-> +               if (ret) {
-> +                       rs485->flags &= ~SER_RS485_ENABLED;
-> +                       p->rs485.flags &= ~SER_RS485_ENABLED;
-> +               }
-> +               return ret;
-> +       }
-> +
-> +       serial8250_em485_destroy(up);
-> +
-> +       return 0;
-> +}
-> +
->  /*
->   * dw8250_fallback_dma_filter will prevent the UART from getting just any free
->   * channel on platforms that have DMA engines, but don't have any channels
-> @@ -449,6 +479,7 @@ static int dw8250_probe(struct platform_device *pdev)
->         p->serial_out   = dw8250_serial_out;
->         p->set_ldisc    = dw8250_set_ldisc;
->         p->set_termios  = dw8250_set_termios;
-> +       p->rs485_config = dw8250_rs485_config;
->
->         p->membase = devm_ioremap(dev, regs->start, resource_size(regs));
->         if (!p->membase)
-> --
-> 2.17.1
->
+While it is software, the alternative boot and security configuration
+does imply different requirements on how the driver deals with the
+hardware. I'm not sure how you expect the kernel to be informed about
+the abilities of the boot/security capabilities if it's not passed
+through DT.
 
 
+In the other cases of firmware loading for co-processors this means that
+a number of additional resources (clocks, resets) needs to be specified
+in the DT node; something it seems like Venus doesn't have to do.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Also I'm not sure but what will happen if this video-firmware subnode is
+> not added, do you expect that backward compatibility is satisfied for
+> older venus versions?
+> 
+
+I do expect that the driver should be possible to run on a 845 with the
+normal TZ based security model we've seen on e.g. 820. I don't know the
+details of Venus well enough to see if this differentiation would be
+sufficient.
+
+Regards,
+Bjorn
