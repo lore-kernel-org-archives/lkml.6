@@ -1,132 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 24E7B60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADV0BQpk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D5BB60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeFFNd0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:33:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57521 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752161AbeFFNdX (ORCPT
+        id S1753877AbeFFRob (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:44:31 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44777 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752393AbeFFRo3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:33:23 -0400
-Date: Wed, 6 Jun 2018 06:32:51 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-8a2b7d142e7ac477d52f5f92251e59fc136d7ddd@git.kernel.org>
-Cc: liu.song.a23@gmail.com, songliubraving@fb.com,
-        peterz@infradead.org, bp@alien8.de, mingo@kernel.org,
-        mike.travis@hpe.com, 0x7f454c46@gmail.com, hpa@zytor.com,
-        tariqt@mellanox.com, linux-kernel@vger.kernel.org, jroedel@suse.de,
-        tglx@linutronix.de
-Reply-To: peterz@infradead.org, bp@alien8.de, mike.travis@hpe.com,
-          0x7f454c46@gmail.com, mingo@kernel.org, liu.song.a23@gmail.com,
-          songliubraving@fb.com, tglx@linutronix.de, tariqt@mellanox.com,
-          hpa@zytor.com, jroedel@suse.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20180604162224.555716895@linutronix.de>
-References: <20180604162224.555716895@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] irq_remapping: Use apic_ack_irq()
-Git-Commit-ID: 8a2b7d142e7ac477d52f5f92251e59fc136d7ddd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 6 Jun 2018 13:44:29 -0400
+X-Google-Smtp-Source: ADUXVKIxQi7Slbz/4uZxEColbO22KHfygo3U2F/3F9eOwBpWMWNaTmThOG+QTN4DMAKYNOywyuQA0Q==
+From: Rafael David Tinoco <rafael.tinoco@linaro.org>
+To: bamv2005@gmail.com
+Cc: brgl@bgdev.pl, shuah@kernel.org, linux-gpio@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rafael.tinoco@linaro.org
+Subject: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT fix
+Date: Wed,  6 Jun 2018 14:44:24 -0300
+Message-Id: <20180606174424.9630-1-rafael.tinoco@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8a2b7d142e7ac477d52f5f92251e59fc136d7ddd
-Gitweb:     https://git.kernel.org/tip/8a2b7d142e7ac477d52f5f92251e59fc136d7ddd
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 4 Jun 2018 17:33:56 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 15:18:20 +0200
+Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
+should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
+the following error occurs:
 
-irq_remapping: Use apic_ack_irq()
+gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
+such file or directory
 
-To address the EBUSY fail of interrupt affinity settings in case that the
-previous setting has not been cleaned up yet, use the new apic_ack_irq()
-function instead of the special ir_ack_apic_edge() implementation which is
-merily a wrapper around ack_APIC_irq().
+despite the real result of gpio_pin_test(), gpio_debugfs_get() and
+gpiotools_request_linehandle() functions.
 
-Preparatory change for the real fix
-
-Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Song Liu <songliubraving@fb.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <liu.song.a23@gmail.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tariq Toukan <tariqt@mellanox.com>
-Link: https://lkml.kernel.org/r/20180604162224.555716895@linutronix.de
-
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
 ---
- drivers/iommu/amd_iommu.c           | 2 +-
- drivers/iommu/intel_irq_remapping.c | 2 +-
- drivers/iommu/irq_remapping.c       | 5 -----
- drivers/iommu/irq_remapping.h       | 2 --
- 4 files changed, 2 insertions(+), 9 deletions(-)
+ tools/testing/selftests/gpio/gpio-mockup-chardev.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 8fb8c737fffe..b0b30a568db7 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -4379,7 +4379,7 @@ static void ir_compose_msi_msg(struct irq_data *irq_data, struct msi_msg *msg)
+diff --git a/tools/testing/selftests/gpio/gpio-mockup-chardev.c b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+index 667e916fa7cc..f8d468f54e98 100644
+--- a/tools/testing/selftests/gpio/gpio-mockup-chardev.c
++++ b/tools/testing/selftests/gpio/gpio-mockup-chardev.c
+@@ -225,10 +225,10 @@ int gpio_pin_test(struct gpiochip_info *cinfo, int line, int flag, int value)
+ 		if (flag & GPIOHANDLE_REQUEST_ACTIVE_LOW)
+ 			debugfs_value = !debugfs_value;
  
- static struct irq_chip amd_ir_chip = {
- 	.name			= "AMD-IR",
--	.irq_ack		= ir_ack_apic_edge,
-+	.irq_ack		= apic_ack_irq,
- 	.irq_set_affinity	= amd_ir_set_affinity,
- 	.irq_set_vcpu_affinity	= amd_ir_set_vcpu_affinity,
- 	.irq_compose_msi_msg	= ir_compose_msi_msg,
-diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
-index 3062a154a9fb..967450bd421a 100644
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -1223,7 +1223,7 @@ static int intel_ir_set_vcpu_affinity(struct irq_data *data, void *info)
- 
- static struct irq_chip intel_ir_chip = {
- 	.name			= "INTEL-IR",
--	.irq_ack		= ir_ack_apic_edge,
-+	.irq_ack		= apic_ack_irq,
- 	.irq_set_affinity	= intel_ir_set_affinity,
- 	.irq_compose_msi_msg	= intel_ir_compose_msi_msg,
- 	.irq_set_vcpu_affinity	= intel_ir_set_vcpu_affinity,
-diff --git a/drivers/iommu/irq_remapping.c b/drivers/iommu/irq_remapping.c
-index 496deee3ae3a..7d0f3074d41d 100644
---- a/drivers/iommu/irq_remapping.c
-+++ b/drivers/iommu/irq_remapping.c
-@@ -156,11 +156,6 @@ void panic_if_irq_remap(const char *msg)
- 		panic(msg);
- }
- 
--void ir_ack_apic_edge(struct irq_data *data)
--{
--	ack_APIC_irq();
--}
+-		if (!(debugfs_dir == OUT && value == debugfs_value))
++		if (!(debugfs_dir == OUT && value == debugfs_value)) {
+ 			errno = -EINVAL;
+-		ret = -errno;
 -
- /**
-  * irq_remapping_get_ir_irq_domain - Get the irqdomain associated with the IOMMU
-  *				     device serving request @info
-diff --git a/drivers/iommu/irq_remapping.h b/drivers/iommu/irq_remapping.h
-index 039c7af7b190..0afef6e43be4 100644
---- a/drivers/iommu/irq_remapping.h
-+++ b/drivers/iommu/irq_remapping.h
-@@ -65,8 +65,6 @@ struct irq_remap_ops {
- extern struct irq_remap_ops intel_irq_remap_ops;
- extern struct irq_remap_ops amd_iommu_irq_ops;
++			ret = -errno;
++		}
+ 	}
+ 	gpiotools_release_linehandle(fd);
  
--extern void ir_ack_apic_edge(struct irq_data *data);
--
- #else  /* CONFIG_IRQ_REMAP */
- 
- #define irq_remapping_enabled 0
+-- 
+2.17.1
