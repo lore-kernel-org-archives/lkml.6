@@ -1,85 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Hr/NyfWG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD488601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SShTEU+O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 27A0A605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752504AbeFFQEF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:04:05 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41955 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeFFQEE (ORCPT
+        id S932399AbeFFP5T (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:57:19 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34872 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932163AbeFFP5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:04:04 -0400
-X-Google-Smtp-Source: ADUXVKL81l4D6tba/5Aqtof5tFgIX9CDao9Q8VIDfUfuIi8FBNZw6hs49vTZHCjp7SJfAsjieVz17g==
-Subject: Re: [PATCH] ARM: dts: cygnus: Add HWRNG node
-To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        devicetree@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-References: <20180606093441.16483-1-peron.clem@gmail.com>
-From: Scott Branden <scott.branden@broadcom.com>
-Message-ID: <c8836130-1d96-b813-4e87-5011db679ba8@broadcom.com>
-Date: Wed, 6 Jun 2018 09:03:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 6 Jun 2018 11:57:16 -0400
+To: himanshu.madhani@cavium.com
+Cc: quinn.tran@cavium.com, martin.petersen@oracle.com,
+        William.Kuzeja@stratus.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, Li Wang <liwang@redhat.com>
+Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
+Date: Wed, 06 Jun 2018 11:56:55 -0400
+In-Reply-To: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
+        (Li Wang's message of "Fri, 1 Jun 2018 11:33:37 +0800")
+Message-ID: <yq1a7s7ewmw.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180606093441.16483-1-peron.clem@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=933
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806060181
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Clement,
 
+Himanshu,
 
-On 18-06-06 02:34 AM, Clément Péron wrote:
-> From: Clément Peron <clement.peron@devialet.com>
+Ping?
+
+> Hi scsi experts,
 >
-> There is a HWRNG in Broadcom Cygnus SoC, so enable it.
+> Not sure who is the right person to ask, I just hit this bug on my HP
+> DL385 platform, can any one of you take a look?
 >
-> Signed-off-by: Clément Peron <clement.peron@devialet.com>
-Thanks for upstreaming some missing Cygnus components.
-
-But, the problem is the tarball release from Broadcom you are extracting 
-these changes from does not contain git history; so, you are missing the 
-original authors and signed-off's.
-I checked our internal git repository and for this commit the author is:
-Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
-
-Please adjust author and signed-off appropriately.  If there are other 
-changes you are extracting from the source tarballs you have please 
-contact me so we can construct patch appropriately.
-
-Regards,
-Scott
-> ---
->   arch/arm/boot/dts/bcm-cygnus.dtsi | 5 +++++
->   1 file changed, 5 insertions(+)
+> system config:
+> -----------------
+> HP ProLiant DL385 G7
+> AMD Opteron(TM) Processor 6234
+> 16384 MB memory, 369 GB disk space
 >
-> diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
-> index 1cee40ac4613..b7178e84d56d 100644
-> --- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-> +++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-> @@ -452,6 +452,11 @@
->   			status = "disabled";
->   		};
->   
-> +		hwrng: hwrng@18032000 {
-> +			compatible = "brcm,iproc-rng200";
-> +			reg = <0x18032000 0x28>;
-> +		};
-> +
->   		sdhci0: sdhci@18041000 {
->   			compatible = "brcm,sdhci-iproc-cygnus";
->   			reg = <0x18041000 0x100>;
+>
+> [   24.539274] qla2xxx [0000:0c:00.7]-500a:5: LOOP UP detected (10 Gbps).
+> [   24.577259] BUG: unable to handle kernel NULL pointer dereference
+> at 0000000000000102
+> [   24.623133] PGD 0 P4D 0
+> [   24.636760] Oops: 0000 [#1] SMP NOPTI
+> [   24.656942] Modules linked in: i2c_algo_bit drm_kms_helper
+> sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom fb_sys_fops
+> ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+) qla2xxx(+)
+> libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+)
+> nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel libata
+> nvme_core i2c_core scsi_transport_iscsi tg3 scsi_transport_fc bnx2
+> iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash dm_log dm_mod
+> [   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not tainted 4.17.0-rc6 #1
+> [   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS A18 08/15/2012
+> [   24.962106] Workqueue: events work_for_cpu_fn
+> [   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
+> [   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
+> [   25.042116] RAX: 0000000000000082 RBX: 0000000000000082 RCX:
+> 0000000000000000
+> [   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000 RDI:
+> 0000000000002000
+> [   25.123094] RBP: 0000000000000000 R08: 0000000000025a40 R09:
+> ffff8cf9aade2880
+> [   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0 R12:
+> ffff8cf9abc6d7d0
+> [   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8 R15:
+> 0000000000002000
+> [   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000)
+> knlGS:0000000000000000
+> [   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   26.010457] CR2: 0000000000000102 CR3: 000000030760a000 CR4:
+> 00000000000406f0
+> [   26.051048] Call Trace:
+> [   26.063572]  ? __switch_to_asm+0x34/0x70
+> [   26.086079]  queue_work_on+0x24/0x40
+> [   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
+> [   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
+> [   26.164075]  ? lock_timer_base+0x67/0x80
+> [   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
+> [   26.212284]  ? del_timer_sync+0x35/0x40
+> [   26.234080]  ? schedule_timeout+0x165/0x2f0
+> [   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
+> [   26.285740]  qla2x00_mailbox_command+0x74b/0xf50 [qla2xxx]
+> [   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0 [qla2xxx]
+> [   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
+> [   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0 [qla2xxx]
+> [   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
+> [   26.442055]  local_pci_probe+0x3f/0xa0
+> [   26.463108]  work_for_cpu_fn+0x10/0x20
+> [   26.483295]  process_one_work+0x152/0x350
+> [   26.505730]  worker_thread+0x1cf/0x3e0
+> [   26.527090]  kthread+0xf5/0x130
+> [   26.545085]  ? max_active_store+0x80/0x80
+> [   26.568085]  ? kthread_bind+0x10/0x10
+> [   26.589533]  ret_from_fork+0x22/0x40
+> [   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
+> 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48 89 f5 53
+> 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0 ec 01 00 41
+> [   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP: ffff992642ceba10
+> [   27.341591] CR2: 0000000000000102
+> [   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
