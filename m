@@ -1,64 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fE0liA4a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB25C60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 662EC60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752211AbeFFEnF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 00:43:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750785AbeFFEnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 00:43:03 -0400
-Date: Wed, 6 Jun 2018 13:42:58 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH -tip v5 06/27] arm64: kprobes: Remove jprobe
- implementation
-Message-Id: <20180606134258.9f75aab9fa4bfd50d0cca96d@kernel.org>
-In-Reply-To: <20180605153420.GA26352@arm.com>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
-        <152812748464.10068.10380156315388629319.stgit@devbox>
-        <20180605153420.GA26352@arm.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S932376AbeFFPzv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:55:51 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:36040 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S932198AbeFFPzs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:55:48 -0400
+Date: Wed, 6 Jun 2018 11:55:47 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Roman Penyaev <roman.penyaev@profitbricks.com>
+cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
+In-Reply-To: <CAJrWOzB8hz2qzNJAWfNdW_U_ArHmvCpzZVJBebsfQ3=eEiSh7w@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1806061142020.1359-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Jun 2018 16:34:21 +0100
-Will Deacon <will.deacon@arm.com> wrote:
+On Wed, 6 Jun 2018, Roman Penyaev wrote:
 
-> On Tue, Jun 05, 2018 at 12:51:24AM +0900, Masami Hiramatsu wrote:
-> > Remove arch dependent setjump/longjump functions
-> > and unused fields in kprobe_ctlblk for jprobes
-> > from arch/arm64.
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > ---
-> >  arch/arm64/include/asm/kprobes.h   |    1 -
-> >  arch/arm64/kernel/probes/kprobes.c |   68 ------------------------------------
-> >  2 files changed, 69 deletions(-)
+> On Wed, Jun 6, 2018 at 3:54 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> > On Wed, 6 Jun 2018, Roman Penyaev wrote:
+> >
+> >> > Preserving the order of volatile accesses isn't sufficient.  The
+> >> > compiler is still allowed to translate
+> >> >
+> >> >         r1 = READ_ONCE(x);
+> >> >         if (r1) {
+> >> >                 ...
+> >> >         }
+> >> >         WRITE_ONCE(y, r2);
+> >> >
+> >> > into something resembling
+> >> >
+> >> >         r1 = READ_ONCE(x);
+> >> >         WRITE_ONCE(y, r2);
+> >> >         if (r1) {
+> >> >                 ...
+> >> >         }
+> >>
+> >> Hi Alan,
+> >>
+> >> According to the standard C99 Annex C "the controlling expression of
+> >> a selection statement (if or switch)" are the sequence points, just
+> >> like a volatile access (READ_ONCE or WRITE_ONCE).
+> >>
+> >> "5.1.2.3 Program execution" states:
+> >> "At certain specified points in the execution sequence called sequence
+> >> points, all side effects of previous evaluations shall be complete
+> >> and no side effects of subsequent evaluations shall have taken place."
+> >>
+> >> So in the example we have 3 sequence points: "READ_ONCE", "if" and
+> >> "WRITE_ONCE", which it seems can't be reordered.  Am I mistaken
+> >> interpreting standard?  Could you please clarify.
+> >
+> > Well, for one thing, we're talking about C11, not C99.
 > 
-> Acked-by: Will Deacon <will.deacon@arm.com>
+> C11 is a n1570, ISO/IEC 9899:2011 ? (according to wiki).  Found pdf on
+> the web contains similar lines, so should not be any differences for
+> that particular case.
+> 
+> > For another, as far as I understand it, the standard means the program
+> > should behave _as if_ the side effects are completed in the order
+> > stated.  It doesn't mean that the generated code has to behave that way
+> > literally.
+> 
+> Then I do not understand what are the differences between "side effects
+> are completed" and "code generated".  Abstract machine state should
+> provide some guarantees between sequence points, e.g.:
+> 
+>     foo();    /* function call */
+>     ------------|
+>     *a = 1;     |
+>     *b = 12;    | Compiler in his right to reorder.
+>     *c = 123;   |
+>     ------------|
+>     boo();    /* function call */
+> 
+> compiler in his right to reorder memory accesses between foo() and
+> boo() calls (foo and boo are sequence points, but memory accesses
+> are not), but:
+> 
+>    foo();    /* function call */
+>    *(volatile int *)a = 1;
+>    *(volatile int *)b = 12;
+>    *(volatile int *)c = 123;
+>    boo();    /* function call */
+> 
+> are all sequence points, so compiler can't reorder them.
+> 
+> Where am I mistaken?
 
-Thank you Will!
+You are right so far.  Now suppose one of the sequence points is an
+"if" statement:
 
+	foo();		// sequence point
+	*a = 1;
+	if (*b)		// sequence point
+		*c = 2;
+	*d = 3;
+	boo();		// sequence point
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+The object code has to behave _as though_ the write to *a was completed 
+before the write to *d begins, because of the sequence point in 
+between.  But nevertheless, the object code is allowed to be like this:
+
+	foo();
+	*d = 3;
+	*a = 1;
+	if (*b)
+		*c = 2;
+	boo();
+
+because the overall effect is the same, if all you are concerned with
+is this single thread.  (And assuming that none of the pointers alias
+each other.)
+
+The compiler must not move the "*d = 3" write up before the call to
+foo(), because foo() might read the value of *d and then it would get
+an incorrect answer.  Moving the write before the "if" statement and
+the assignment to *a is okay, however, because those statements would
+do the same thing no matter what value was stored in *d.
+
+Alan
+
+> > And in particular, the standard is referring to the
+> > behavior of a single thread, not the interaction between multiple
+> > concurrent threads.
+> 
+> Yes, that is clear: we are talking about code reordering in one
+> particular function in a single threaded environment.
+> 
+> --
+> Roman
