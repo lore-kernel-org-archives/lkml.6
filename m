@@ -1,91 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LNfau4iA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F82A601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LOUeuWzI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m75zf81c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CFC560764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932624AbeFFKpd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:45:33 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38195 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932589AbeFFKpb (ORCPT
+        id S1752175AbeFFNEA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:04:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33432 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751864AbeFFND6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:45:31 -0400
-X-Google-Smtp-Source: ADUXVKIMItIr+fqRjueD129pTsnEO2VW6g9qDI6qJkJmcJCgDcJs8hIhKXE61KboGwxdC/nqmd+Lfg==
-Date: Wed, 6 Jun 2018 16:15:28 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180606104528.nhwcd2qnxeouk6il@vireshk-i7>
-References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
- <20180605103917.pyhhcobdvaivqv6g@vireshk-i7>
- <57d769f8-46ea-512e-8f89-a0439c9d053f@linaro.org>
- <20180606042708.mtwd66ecy2cnjp7a@vireshk-i7>
- <2bebd1bc-e1ad-6d22-ad1e-aee2cf8ba878@linaro.org>
+        Wed, 6 Jun 2018 09:03:58 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2bebd1bc-e1ad-6d22-ad1e-aee2cf8ba878@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 06 Jun 2018 18:33:56 +0530
+From: Vikash Garodia <vgarodia@codeaurora.org>
+To: Tomasz Figa <tfiga@google.com>
+Cc: Rob Herring <robh@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>, bjorn.andersson@linaro.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        linux-media-owner@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware
+ device
+In-Reply-To: <CAAFQd5DGKnU15pjF2+eyMUaSuE0FCr2FMF90WrJb+kXt80xBCw@mail.gmail.com>
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
+ <20180605210758.GA19888@rob-hp-laptop>
+ <CAAFQd5DGKnU15pjF2+eyMUaSuE0FCr2FMF90WrJb+kXt80xBCw@mail.gmail.com>
+Message-ID: <f220c6aef40ea3fbcc3b6adcec234527@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-06-18, 12:22, Daniel Lezcano wrote:
-> (mb() are done in the atomic operations AFAICT).
-
-AFAIU, it is required to make sure the operations are seen in a particular order
-on another CPU and the compiler doesn't reorganize code to optimize it.
-
-For example, in our case what if the compiler reorganizes the atomic-set
-operation after wakeup-process ? But maybe that wouldn't happen across function
-calls and we should be safe then.
-
-> What about:
+On 2018-06-06 10:16, Tomasz Figa wrote:
+> Hi Rob,
 > 
-> 	get_online_cpus();
+> On Wed, Jun 6, 2018 at 6:08 AM Rob Herring <robh@kernel.org> wrote:
+>> 
+>> On Sat, Jun 02, 2018 at 01:56:08AM +0530, Vikash Garodia wrote:
+>> > A separate child device is added for video firmware.
+>> > This is needed to
+>> > [1] configure the firmware context bank with the desired SID.
+>> > [2] ensure that the iova for firmware region is from 0x0.
+>> >
+>> > Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+>> > ---
+>> >  .../devicetree/bindings/media/qcom,venus.txt       |  8 +++-
+>> >  drivers/media/platform/qcom/venus/core.c           | 48 +++++++++++++++++++---
+>> >  drivers/media/platform/qcom/venus/firmware.c       | 20 ++++++++-
+>> >  drivers/media/platform/qcom/venus/firmware.h       |  2 +
+>> >  4 files changed, 71 insertions(+), 7 deletions(-)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
+>> > index 00d0d1b..701cbe8 100644
+>> > --- a/Documentation/devicetree/bindings/media/qcom,venus.txt
+>> > +++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
+>> > @@ -53,7 +53,7 @@
+>> >
+>> >  * Subnodes
+>> >  The Venus video-codec node must contain two subnodes representing
+>> > -video-decoder and video-encoder.
+>> > +video-decoder and video-encoder, one optional firmware subnode.
+>> >
+>> >  Every of video-encoder or video-decoder subnode should have:
+>> >
+>> > @@ -79,6 +79,8 @@ Every of video-encoder or video-decoder subnode should have:
+>> >                   power domain which is responsible for collapsing
+>> >                   and restoring power to the subcore.
+>> >
+>> > +The firmware sub node must contain the iommus specifiers for ARM9.
+>> > +
+>> >  * An Example
+>> >       video-codec@1d00000 {
+>> >               compatible = "qcom,msm8916-venus";
+>> > @@ -105,4 +107,8 @@ Every of video-encoder or video-decoder subnode should have:
+>> >                       clock-names = "core";
+>> >                       power-domains = <&mmcc VENUS_CORE1_GDSC>;
+>> >               };
+>> > +             venus-firmware {
+>> > +                     compatible = "qcom,venus-firmware-no-tz";
+>> > +                     iommus = <&apps_smmu 0x10b2 0x0>;
+>> 
+>> This mostly looks like you are adding a node in order to create a
+>> platform device. DT is not the only way to create platform devices and
+>> shouldn't be used when the device is not really a separate h/w device.
+>> Plus it seems like it is debatable that you even need a driver.
+>> 
+>> For iommus, just move it up to the parent (or add to existing prop).
 > 
-> 	nr_tasks = cpumask_weight(
-> 		cpumask_and(ii_dev->cpumask, cpu_online_mask);
-> 			
-> 	atomic_set(&ii_dev->count, nr_tasks);
+> As far as I understood the issue from reading this series and also
+> talking a bit with Stanimir, there are multiple (physical?) ports from
+> the Venus hardware block and that includes one dedicated for firmware
+> loading, which has IOVA range restrictions up to 6 MiBs or something
+> like that.
 > 
-> 	for_each_cpu_and(cpu, ii_dev->cpumask, cpu_online_mask) {
-> 		iit = per_cpu_ptr(&idle_injection_thread, cpu);
-> 		iit->should_run = 1;
-> 		wake_up_process(iit->tsk);
-> 	}
-> 
-> 	put_online_cpus();
-> ?
+> If we add the firmware port to the iommus property of the main node,
+> we would bind it to the same IOVA address space as the other ports and
+> so it would be part of the main full 32-bit IOMMU domain.
 
-Looks good this time.
+Not really port-wise, but the restriction part is right. Once the 
+firmware
+is loaded, the ARM9 can only execute those firmware instructions if it 
+is
+present in iova address 0x0.
+Merging it to parent device cannot guarantee that the firmware memory is
+mapped from 0x0.
 
-> I'm wondering if we can have a CPU hotplugged right after the
-> 'put_online_cpus', resulting in the 'should park' flag set and then the
-> thread goes in the kthread_parkme instead of jumping back the idle
-> injection function and decrease the count, leading up to the timer not
-> being set again.
-
-True. That looks like a valid problem to me as well.
-
-What about starting the hrtimer right from this routine itself, after taking
-into account running-time, idle-time, delay, etc ? That would get rid of the
-count stuff, this get_online_cpus(), etc.
-
-Even if we restart the next play-idle cycle a bit early or with some delay, sky
-wouldn't fall :)
-
--- 
-viresh
+> Best regards,
+> Tomasz
