@@ -1,80 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6B9+iUB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EEFF606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94D69601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932669AbeFFKAz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:00:55 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35846 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932601AbeFFKAi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:38 -0400
-X-Google-Smtp-Source: ADUXVKL6f3fVZLOnsBXL9EZKQXR/bTXrDfPr0PViA+5bASQzFYsfY2YprBcNN1eQyUFHSQNc7N03ZQ==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 14/14] mfd: da9063: Add DA9063L support
-Date: Wed,  6 Jun 2018 12:00:03 +0200
-Message-Id: <20180606100003.17067-14-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+        id S1752037AbeFFMDq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:03:46 -0400
+Received: from mga07.intel.com ([134.134.136.100]:25923 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750864AbeFFMDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:03:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
+   d="scan'208";a="234863348"
+Message-ID: <a156ce90ab7e45ecf6936c29cc5d976c56f49a51.camel@linux.intel.com>
+Subject: Re: [PATCH 4/4] serial: core: Mask mctrl with TIOCM_RTS too if
+ rs485 on and RTS_AFTER_SEND set.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: matwey.kornilov@gmail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Kees Cook <keescook@chromium.org>, Sean Young <sean@mess.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date: Wed, 06 Jun 2018 15:03:40 +0300
+In-Reply-To: <20180606094942.71190-3-giulio.benetti@micronovasrl.com>
+References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
+         <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
+         <20180606094942.71190-3-giulio.benetti@micronovasrl.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for DA9063L, which is a reduced variant of the DA9063
-with less regulators and without RTC.
+On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
+> If rs485 is enabled and RTS_AFTER_SEND is set on startup need to keep
+> TIOCM_RTS asserted to keep rs485 transceiver in RX when idle.
+> 
+> Check if rs485 is on and RTS_AFTER_SEND is set and mask port->mctrl
+> with
+> TIOCM_RTS too and not only TIOCM_DTR.
+> 
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V2: No change
-V3: No change
-V4: No change
-V5: No change
----
- drivers/mfd/da9063-i2c.c | 2 ++
- 1 file changed, 2 insertions(+)
+This one feels wrong to be in serial_core.c. Perhaps in 8250/8250*.c.
 
-diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
-index a449a9263dd7..50a24b1921d0 100644
---- a/drivers/mfd/da9063-i2c.c
-+++ b/drivers/mfd/da9063-i2c.c
-@@ -186,6 +186,7 @@ static struct regmap_config da9063_regmap_config = {
- 
- static const struct of_device_id da9063_dt_ids[] = {
- 	{ .compatible = "dlg,da9063", },
-+	{ .compatible = "dlg,da9063l", },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, da9063_dt_ids);
-@@ -231,6 +232,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
- 
- static const struct i2c_device_id da9063_i2c_id[] = {
- 	{ "da9063", PMIC_TYPE_DA9063 },
-+	{ "da9063l", PMIC_TYPE_DA9063L },
- 	{},
- };
- MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> ---
+>  drivers/tty/serial/serial_core.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/serial_core.c
+> b/drivers/tty/serial/serial_core.c
+> index 0466f9f08a91..06d9441f6d20 100644
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -2288,6 +2288,16 @@ uart_configure_port(struct uart_driver *drv,
+> struct uart_state *state,
+>  
+>  	if (port->type != PORT_UNKNOWN) {
+>  		unsigned long flags;
+> +		int rs485_on = port->rs485_config &&
+> +			(port->rs485.flags & SER_RS485_ENABLED);
+> +		int RTS_after_send = !!(port->rs485.flags &
+> +				SER_RS485_RTS_AFTER_SEND);
+> +		int mctrl;
+> +
+> +		if (rs485_on && RTS_after_send)
+> +			mctrl = port->mctrl & (TIOCM_DTR |
+> TIOCM_RTS);
+> +		else
+> +			mctrl = port->mctrl & TIOCM_DTR;
+>  
+>  		uart_report_port(drv, port);
+>  
+> @@ -2300,7 +2310,7 @@ uart_configure_port(struct uart_driver *drv,
+> struct uart_state *state,
+>  		 * We probably don't need a spinlock around this, but
+>  		 */
+>  		spin_lock_irqsave(&port->lock, flags);
+> -		port->ops->set_mctrl(port, port->mctrl & TIOCM_DTR);
+> +		port->ops->set_mctrl(port, mctrl);
+>  		spin_unlock_irqrestore(&port->lock, flags);
+>  
+>  		/*
+
 -- 
-2.16.2
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
