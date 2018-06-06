@@ -1,259 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F8206070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DAF48601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932270AbeFFGLq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:11:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52313 "EHLO mx2.suse.de"
+        id S933483AbeFFQiw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:38:52 -0400
+Received: from foss.arm.com ([217.140.101.70]:42946 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932205AbeFFGLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:11:43 -0400
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Simmons <jsimmons@infradead.org>,
-        Andreas Dilger <andreas.dilger@intel.com>
-Date: Wed, 06 Jun 2018 16:05:19 +1000
-Subject: [PATCH 05/11] staging: lustre: convert ldlm extent locks to linux
- extent-tree
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152826511905.16761.134377818890309985.stgit@noble>
-In-Reply-To: <152826510267.16761.14361003167157833896.stgit@noble>
-References: <152826510267.16761.14361003167157833896.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S932971AbeFFQiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:38:51 -0400
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: Sudeep.Holla@arm.com
+Cc: Will.Deacon@arm.com, Catalin.Marinas@arm.com, Robin.Murphy@arm.com,
+        Morten.Rasmussen@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, geert@linux-m68k.org,
+        linux-acpi@vger.kernel.org, ard.biesheuvel@linaro.org,
+        Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v2] arm64: topology: Avoid checking numa mask for scheduler MC selection
+Date: Wed,  6 Jun 2018 11:38:46 -0500
+Message-Id: <20180606163846.495725-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As linux has a fully customizable extent tree implementation,
-use that instead of the one in lustre.
-This has a small benefit in that the start/end only need to
-be stored in the ldlm_lock once instead of twice - in both
-l_policy_data.l_exent and l_tree_node.
-It also makes the code simpler.
+The numa mask subset check can often lead to system hang or crash during
+CPU hotplug and system suspend operation if NUMA is disabled. This is
+mostly observed on HMP systems where the CPU compute capacities are
+different and ends up in different scheduler domains. Since
+cpumask_of_node is returned instead core_sibling, the scheduler is
+confused with incorrect cpumasks(e.g. one CPU in two different sched
+domains at the same time) on CPU hotplug.
 
-Signed-off-by: NeilBrown <neilb@suse.com>
+Lets disable the NUMA siblings checks for the time being, as NUMA in
+socket machines have LLC's that will assure that the scheduler topology
+isn't "borken".
+
+The NUMA check exists to assure that if a LLC within a socket crosses
+NUMA nodes/chiplets the scheduler domains remain consistent. This code will
+likely have to be re-enabled in the near future once the NUMA mask story
+is sorted.  At the moment its not necessary because the NUMA in socket
+machines LLC's are contained within the NUMA domains.
+
+Further, as a defensive mechanism during hot-plug, lets assure that the
+LLC siblings are also masked.
+
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 ---
- drivers/staging/lustre/lustre/include/lustre_dlm.h |    9 ++-
- drivers/staging/lustre/lustre/ldlm/ldlm_extent.c   |   61 ++++++++------------
- drivers/staging/lustre/lustre/ldlm/ldlm_internal.h |    4 +
- drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     |   11 ++--
- drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |    2 -
- 5 files changed, 36 insertions(+), 51 deletions(-)
+ arch/arm64/kernel/topology.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/include/lustre_dlm.h b/drivers/staging/lustre/lustre/include/lustre_dlm.h
-index baeb8c63352b..4f196c27b76b 100644
---- a/drivers/staging/lustre/lustre/include/lustre_dlm.h
-+++ b/drivers/staging/lustre/lustre/include/lustre_dlm.h
-@@ -49,7 +49,6 @@
- #include <lustre_net.h>
- #include <lustre_import.h>
- #include <lustre_handles.h>
--#include <interval_tree.h>	/* for interval_node{}, ldlm_extent */
- #include <lu_ref.h>
+diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+index 7415c166281f..f845a8617812 100644
+--- a/arch/arm64/kernel/topology.c
++++ b/arch/arm64/kernel/topology.c
+@@ -215,13 +215,8 @@ EXPORT_SYMBOL_GPL(cpu_topology);
  
- #include "lustre_dlm_flags.h"
-@@ -523,7 +522,7 @@ struct ldlm_interval_tree {
- 	/** Tree size. */
- 	int			lit_size;
- 	enum ldlm_mode		lit_mode;  /* lock mode */
--	struct interval_node	*lit_root; /* actual ldlm_interval */
-+	struct rb_root_cached	lit_root; /* actual interval tree */
- };
- 
- /** Whether to track references to exports by LDLM locks. */
-@@ -619,9 +618,11 @@ struct ldlm_lock {
- 	 */
- 	struct list_head		l_res_link;
- 	/**
--	 * Tree node for ldlm_extent.
-+	 * Interval-tree node for ldlm_extent.
- 	 */
--	struct interval_node	l_tree_node;
-+	struct rb_node		l_rb;
-+	__u64			__subtree_last;
-+
- 	/**
- 	 * Requested mode.
- 	 * Protected by lr_lock.
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_extent.c b/drivers/staging/lustre/lustre/ldlm/ldlm_extent.c
-index eb1a9077a514..225c023b0bba 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_extent.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_extent.c
-@@ -53,6 +53,12 @@
- #include <obd_class.h>
- #include <lustre_lib.h>
- #include "ldlm_internal.h"
-+#include <linux/interval_tree_generic.h>
-+
-+#define START(node) ((node)->l_policy_data.l_extent.start)
-+#define LAST(node) ((node)->l_policy_data.l_extent.end)
-+INTERVAL_TREE_DEFINE(struct ldlm_lock, l_rb, __u64, __subtree_last,
-+		     START, LAST, static, extent);
- 
- /* When a lock is cancelled by a client, the KMS may undergo change if this
-  * is the "highest lock".  This function returns the new KMS value.
-@@ -108,26 +114,20 @@ static inline int lock_mode_to_index(enum ldlm_mode mode)
- void ldlm_extent_add_lock(struct ldlm_resource *res,
- 			  struct ldlm_lock *lock)
+ const struct cpumask *cpu_coregroup_mask(int cpu)
  {
--	struct interval_node **root;
--	struct ldlm_extent *extent;
--	int idx, rc;
-+	struct ldlm_interval_tree *tree;
-+	int idx;
+-	const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
++	const cpumask_t *core_mask = &cpu_topology[cpu].core_sibling;
  
- 	LASSERT(lock->l_granted_mode == lock->l_req_mode);
+-	/* Find the smaller of NUMA, core or LLC siblings */
+-	if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
+-		/* not numa in package, lets use the package siblings */
+-		core_mask = &cpu_topology[cpu].core_sibling;
+-	}
+ 	if (cpu_topology[cpu].llc_id != -1) {
+ 		if (cpumask_subset(&cpu_topology[cpu].llc_siblings, core_mask))
+ 			core_mask = &cpu_topology[cpu].llc_siblings;
+@@ -239,8 +234,10 @@ static void update_siblings_masks(unsigned int cpuid)
+ 	for_each_possible_cpu(cpu) {
+ 		cpu_topo = &cpu_topology[cpu];
  
--	LASSERT(!interval_is_intree(&lock->l_tree_node));
-+	LASSERT(RB_EMPTY_NODE(&lock->l_rb));
+-		if (cpuid_topo->llc_id == cpu_topo->llc_id)
++		if (cpuid_topo->llc_id == cpu_topo->llc_id) {
+ 			cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
++			cpumask_set_cpu(cpuid, &cpu_topo->llc_siblings);
++		}
  
- 	idx = lock_mode_to_index(lock->l_granted_mode);
- 	LASSERT(lock->l_granted_mode == 1 << idx);
- 	LASSERT(lock->l_granted_mode == res->lr_itree[idx].lit_mode);
- 
--	/* node extent initialize */
--	extent = &lock->l_policy_data.l_extent;
--	rc = interval_set(&lock->l_tree_node, extent->start, extent->end);
--	LASSERT(!rc);
--
--	root = &res->lr_itree[idx].lit_root;
--	interval_insert(&lock->l_tree_node, root);
--	res->lr_itree[idx].lit_size++;
-+	tree = &res->lr_itree[idx];
-+	extent_insert(lock, &tree->lit_root);
-+	tree->lit_size++;
- 
- 	/* even though we use interval tree to manage the extent lock, we also
- 	 * add the locks into grant list, for debug purpose, ..
-@@ -163,17 +163,15 @@ void ldlm_extent_unlink_lock(struct ldlm_lock *lock)
- 	struct ldlm_interval_tree *tree;
- 	int idx;
- 
--	if (!interval_is_intree(&lock->l_tree_node)) /* duplicate unlink */
-+	if (RB_EMPTY_NODE(&lock->l_rb)) /* duplicate unlink */
- 		return;
- 
- 	idx = lock_mode_to_index(lock->l_granted_mode);
- 	LASSERT(lock->l_granted_mode == 1 << idx);
- 	tree = &res->lr_itree[idx];
- 
--	LASSERT(tree->lit_root); /* assure the tree is not null */
--
- 	tree->lit_size--;
--	interval_erase(&lock->l_tree_node, &tree->lit_root);
-+	extent_remove(lock, &tree->lit_root);
- }
- 
- void ldlm_extent_policy_wire_to_local(const union ldlm_wire_policy_data *wpolicy,
-@@ -193,29 +191,16 @@ void ldlm_extent_policy_local_to_wire(const union ldlm_policy_data *lpolicy,
- 	wpolicy->l_extent.gid = lpolicy->l_extent.gid;
- }
- 
--struct cb {
--	void *arg;
--	bool (*found)(struct ldlm_lock *lock, void *arg);
--};
--
--static enum interval_iter itree_overlap_cb(struct interval_node *in, void *arg)
--{
--	struct cb *cb = arg;
--	struct ldlm_lock *lock = container_of(in, struct ldlm_lock,
--					      l_tree_node);
--
--	return cb->found(lock, cb->arg) ?
--		INTERVAL_ITER_STOP : INTERVAL_ITER_CONT;
--}
--
--void ldlm_extent_search(struct interval_node *root,
--			struct interval_node_extent *ext,
-+void ldlm_extent_search(struct rb_root_cached *root,
-+			__u64 start, __u64 end,
- 			bool (*matches)(struct ldlm_lock *lock, void *data),
- 			void *data)
- {
--	struct cb cb = {
--		.arg = data,
--		.found = matches,
--	};
--	interval_search(root, ext, itree_overlap_cb, &cb);
-+	struct ldlm_lock *lock;
-+
-+	for (lock = extent_iter_first(root, start, end);
-+	     lock;
-+	     lock = extent_iter_next(lock, start, end))
-+		if (matches(lock, data))
-+			break;
- }
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_internal.h b/drivers/staging/lustre/lustre/ldlm/ldlm_internal.h
-index 756fa3d9db3c..60a15b963c8a 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_internal.h
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_internal.h
-@@ -169,8 +169,8 @@ extern struct kmem_cache *ldlm_lock_slab;
- /* ldlm_extent.c */
- void ldlm_extent_add_lock(struct ldlm_resource *res, struct ldlm_lock *lock);
- void ldlm_extent_unlink_lock(struct ldlm_lock *lock);
--void ldlm_extent_search(struct interval_node *root,
--			struct interval_node_extent *ext,
-+void ldlm_extent_search(struct rb_root_cached *root,
-+			__u64 start, __u64 end,
- 			bool (*matches)(struct ldlm_lock *lock, void *data),
- 			void *data);
- 
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-index 4213fe047073..2fb2e088dc87 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
-@@ -405,6 +405,7 @@ static struct ldlm_lock *ldlm_lock_new(struct ldlm_resource *resource)
- 	lock->l_blocking_lock = NULL;
- 	INIT_LIST_HEAD(&lock->l_sl_mode);
- 	INIT_LIST_HEAD(&lock->l_sl_policy);
-+	RB_CLEAR_NODE(&lock->l_rb);
- 
- 	lprocfs_counter_incr(ldlm_res_to_ns(resource)->ns_stats,
- 			     LDLM_NSS_LOCKS);
-@@ -1147,22 +1148,20 @@ static bool lock_matches(struct ldlm_lock *lock, void *vdata)
- static struct ldlm_lock *search_itree(struct ldlm_resource *res,
- 				      struct lock_match_data *data)
- {
--	struct interval_node_extent ext = {
--		.start	= data->lmd_policy->l_extent.start,
--		.end	= data->lmd_policy->l_extent.end
--	};
- 	int idx;
- 
- 	for (idx = 0; idx < LCK_MODE_NUM; idx++) {
- 		struct ldlm_interval_tree *tree = &res->lr_itree[idx];
- 
--		if (!tree->lit_root)
-+		if (RB_EMPTY_ROOT(&tree->lit_root.rb_root))
+ 		if (cpuid_topo->package_id != cpu_topo->package_id)
  			continue;
- 
- 		if (!(tree->lit_mode & *data->lmd_mode))
- 			continue;
- 
--		ldlm_extent_search(tree->lit_root, &ext,
-+		ldlm_extent_search(&tree->lit_root,
-+				   data->lmd_policy->l_extent.start,
-+				   data->lmd_policy->l_extent.end,
- 				   lock_matches, data);
- 	}
- 	return data->lmd_lock;
-diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-index c93b019b8e37..3946d62ff009 100644
---- a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-+++ b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-@@ -1017,7 +1017,7 @@ static struct ldlm_resource *ldlm_resource_new(void)
- 	for (idx = 0; idx < LCK_MODE_NUM; idx++) {
- 		res->lr_itree[idx].lit_size = 0;
- 		res->lr_itree[idx].lit_mode = 1 << idx;
--		res->lr_itree[idx].lit_root = NULL;
-+		res->lr_itree[idx].lit_root = RB_ROOT_CACHED;
- 	}
- 
- 	atomic_set(&res->lr_refcount, 1);
+-- 
+2.14.3
