@@ -1,87 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="X5DrEHMV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA8DC6070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BxQgY/MH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 853946070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752751AbeFFSaG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:30:06 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33768 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752005AbeFFSaE (ORCPT
+        id S1752296AbeFFGQ3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:16:29 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39948 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751536AbeFFGQ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:30:04 -0400
-X-Google-Smtp-Source: ADUXVKKk8vsrZ5lpTUaxwjIBbTPnjidT7qERo0mbxRKeJEXKg8znuCNps0cDbfET+YwE0buvPF+23Q==
-Date: Wed, 6 Jun 2018 20:29:59 +0200
-From: Miklos Szeredi <miklos@szeredi.hu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [GIT PULL] fuse update for 4.18
-Message-ID: <20180606182959.GE23785@veci.piliscsaba.redhat.com>
+        Wed, 6 Jun 2018 02:16:27 -0400
+X-Google-Smtp-Source: ADUXVKIjBNEZConqxJo7f5msqq5i2XiGykyUM0lpeMBvmPWB9GeG1SgG/7uNR4O1Lnri/ie3iaiATA==
+Date: Wed, 6 Jun 2018 07:16:23 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 08/10] mfd: da9063: Register RTC only on DA9063L
+Message-ID: <20180606061623.GT21163@dell>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-8-marek.vasut+renesas@gmail.com>
+ <20180605075321.GM21163@dell>
+ <ac43842f-7d8a-1d6d-7077-9fb58ab852b7@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac43842f-7d8a-1d6d-7077-9fb58ab852b7@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, 05 Jun 2018, Marek Vasut wrote:
 
-Please pull from:
+> On 06/05/2018 09:53 AM, Lee Jones wrote:
+> > On Sat, 02 Jun 2018, Marek Vasut wrote:
+> > 
+> >> The DA9063L does not contain RTC block, unlike the full DA9063.
+> >> Split the RTC block into separate mfd cell and register it only
+> >> on DA9063.
+> >>
+> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Cc: Lee Jones <lee.jones@linaro.org>
+> >> Cc: Mark Brown <broonie@kernel.org>
+> >> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> >> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> Cc: linux-renesas-soc@vger.kernel.org
+> >> ---
+> >> V2: No change
+> >> V3: Rework of mfd: da9063: Disallow RTC on DA9063L
+> >> ---
+> >>  drivers/mfd/da9063-core.c | 30 +++++++++++++++++++++++-------
+> >>  1 file changed, 23 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+> >> index eebca3442cf3..b05910c797af 100644
+> >> --- a/drivers/mfd/da9063-core.c
+> >> +++ b/drivers/mfd/da9063-core.c
+> >> @@ -76,7 +76,7 @@ static struct resource da9063_hwmon_resources[] = {
+> >>  };
+> >>  
+> >>  
+> >> -static const struct mfd_cell da9063_devs[] = {
+> >> +static const struct mfd_cell da9063_common_devs[] = {
+> >>  	{
+> >>  		.name		= DA9063_DRVNAME_REGULATORS,
+> > 
+> > Appreciate that these are historical, but these device name defines
+> > make me shudder.  They only serve to act as an obfuscation layer when
+> > debugging at platform level.  Please consider getting rid of them.
+> 
+> The macro can be shared between the core and the drivers, so the names
+> never run out of sync.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-4.18
+Platform driver name changes are vary rare.  Even if they are changed,
+even light testing would uncover the fact that child drivers do not
+.probe().  Due to the current obfuscation, I currently have no idea
+what this device's name is.  This technique is not allowed for new
+drivers - unfortunately I didn't not review this driver in the first
+instance.
 
-The most interesting part of this update is user namespace support, mostly
-done by Eric Biederman.  This enables safe unprivileged fuse mounts within
-a user namespace.
+It doesn't bother me enough to go and change it myself and I'm not
+going to have a baby over patches not being submitted to fix it.
 
-There are also a couple of fixes for bugs found by syzbot and miscellaneous
-fixes and cleanups.
+> >>  		.num_resources	= ARRAY_SIZE(da9063_regulators_resources),
+> >> @@ -100,15 +100,19 @@ static const struct mfd_cell da9063_devs[] = {
+> >>  		.resources	= da9063_onkey_resources,
+> >>  		.of_compatible = "dlg,da9063-onkey",
+> >>  	},
+> >> +	{
+> >> +		.name		= DA9063_DRVNAME_VIBRATION,
+> >> +	},
+> > 
+> > Place this on a single line please.
+> 
+> This would only make the style inconsistent with the ie. LEDs entry.
+> 
+> >         { .name	= DA9063_DRVNAME_VIBRATION },
 
-Thanks,
-Miklos
+If that is a one line entry spaced over multiple lines, then that
+should also be changed.
 
----
-Eric W. Biederman (5):
-      fuse: Remove the buggy retranslation of pids in fuse_dev_do_read
-      fuse: Fail all requests with invalid uids or gids
-      fuse: Support fuse filesystems outside of init_user_ns
-      fuse: Ensure posix acls are translated outside of init_user_ns
-      fuse: Allow fully unprivileged mounts
+Maybe I will go through and stylise this driver a bit after all (but
+as time is short at the moment, maybe not!) :)
 
-Miklos Szeredi (5):
-      fuse: atomic_o_trunc should truncate pagecache
-      fuse: honor AT_STATX_DONT_SYNC
-      fuse: honor AT_STATX_FORCE_SYNC
-      fuse: add writeback documentation
-      fuse: fix control dir setup and teardown
+[...]
 
-Seth Forshee (1):
-      fuse: Restrict allow_other to the superblock's namespace or a descendant
+> >> +err_mfd_cleanup:
+> >> +	mfd_remove_devices(da9063->dev);
+> > 
+> > Any reason why you can't use devm_*?
+> 
+> Because we need to undo the MFD setup before the IRQ setup.
 
-Szymon Lukasz (1):
-      fuse: return -ECONNABORTED on /dev/fuse read after abort
+Sounds like a good enough reason.
 
-Tejun Heo (1):
-      fuse: fix congested state leak on aborted connections
-
-Tetsuo Handa (1):
-      fuse: don't keep dead fuse_conn at fuse_fill_super().
-
----
- Documentation/filesystems/fuse-io.txt | 38 ++++++++++++++++++++++++++
- fs/fuse/acl.c                         |  4 +--
- fs/fuse/control.c                     | 15 ++++++++---
- fs/fuse/cuse.c                        | 11 +++++---
- fs/fuse/dev.c                         | 43 +++++++++++++++---------------
- fs/fuse/dir.c                         | 45 ++++++++++++++++++++++---------
- fs/fuse/fuse_i.h                      | 15 +++++++++--
- fs/fuse/inode.c                       | 50 ++++++++++++++++++++++++-----------
- fs/fuse/xattr.c                       | 43 ++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h             |  7 ++++-
- kernel/user_namespace.c               |  1 +
- 11 files changed, 209 insertions(+), 63 deletions(-)
- create mode 100644 Documentation/filesystems/fuse-io.txt
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
