@@ -1,69 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTtdPQBN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8AFD8601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnxjE0sj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EDB760764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932522AbeFFImr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:42:47 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46488 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932394AbeFFImp (ORCPT
+        id S932350AbeFFHol (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:44:41 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38592 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932216AbeFFHoj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:42:45 -0400
-X-Google-Smtp-Source: ADUXVKKrY3WvetRSNJ/MguEx7fc4iX5w2AycME7xG3w4SI13F/iRsUqFgN1tO5SQRXn2M/V8kHyrlCeHpv1P08GwBB0=
-MIME-Version: 1.0
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F3B6EABDF@ORSMSX114.amr.corp.intel.com>
-References: <1527560464-19466-1-git-send-email-sai.praneeth.prakhya@intel.com>
- <CAFoFrHYcD7fGYaJzKwcPCtu+XyR+mh5ORDqmCpiBjLmEkDfwOQ@mail.gmail.com> <FFF73D592F13FD46B8700F0A279B802F3B6EABDF@ORSMSX114.amr.corp.intel.com>
-From: Naresh Bhat <naresh.bhat@linaro.org>
-Date: Wed, 6 Jun 2018 14:12:43 +0530
-Message-ID: <CAFoFrHbOkKpfrt-NVX9wm49aR1Mv7dXLVrDuXGQPiD0ZNbvyrw@mail.gmail.com>
-Subject: Re: [PATCH V5 0/3] Use efi_rts_wq to invoke EFI Runtime Services
-To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
+        Wed, 6 Jun 2018 03:44:39 -0400
+X-Google-Smtp-Source: ADUXVKLGlFqpNqrSU29CIXMMwPFydhBuVjHyCuX6Xe6XoCJZm7GYi9F15MDvuE2g/f6Aapt9v9qSPg==
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
+Date: Wed, 6 Jun 2018 10:44:34 +0300
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        "Neri, Ricardo" <ricardo.neri@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>
-Content-Type: text/plain; charset="UTF-8"
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
+        linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180606074434.GE20078@localhost.localdomain>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4 June 2018 at 09:57, Prakhya, Sai Praneeth
-<sai.praneeth.prakhya@intel.com> wrote:
->> > Testing:
->> > --------
->> > Tested using LUV (Linux UEFI Validation) for x86_64, x86_32 and arm64
->> > (qemu only). Will appreciate the effort if someone could test the
->> > patches on real ARM/ARM64 machines.
->> > LUV: https://01.org/linux-uefi-validation
->>
->> I have tested V4 series on ThunderX2 Val1 and Saber platform by integrating the
->> patches with LUV project.
->> I will test V5 version soon and let you know the outcome.
->
-> Thanks a lot! for taking time to test the patch set, Naresh. Will be waiting to see the result.
 
-Sai, I did upgrade LUV kernel to v4.17, apply and test your patches by
-running LUV on QEMU and ThunderX2 hardware.  All efi test results
-looks ok. But as Ard pointed, I also noticed hang issue after
-executing reboot command on console on real hardware.
+On Tue, Jun 05, 2018 at 04:58:43PM +0300, Andy Shevchenko wrote:
+> On Tue, May 29, 2018 at 1:02 PM, Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+> > Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
+> 
 
+Thanks for the comments Andy. The regulator part of patch set v4 was
+already applied by Mark but I am going to do some further work on this
+afer I get the MFD and clk portions done. I'll store these comments and
+address issues in next set of patches.
 
->
-> Regards,
-> Sai
+Br,
+	Matti Vaittinen
