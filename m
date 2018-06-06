@@ -1,156 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EBCB4601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93B8F601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932992AbeFFQYx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:24:53 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61008 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753330AbeFFQXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:23:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="62323463"
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/8] x86/fsgsbase/64: Make ptrace read FS/GS base accurately
-Date: Wed,  6 Jun 2018 09:23:13 -0700
-Message-Id: <1528302199-29619-3-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com>
-References: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com>
+        id S932489AbeFFJcI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:32:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50052 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932395AbeFFJcH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:32:07 -0400
+From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH] selftests/ftrace: Add ppc support for kprobe args tests
+Date: Wed,  6 Jun 2018 15:01:54 +0530
+X-Mailer: git-send-email 2.17.0
+X-TM-AS-GCONF: 00
+x-cbid: 18060609-0016-0000-0000-000001D8AB73
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060609-0017-0000-0000-0000322BB6F9
+Message-Id: <20180606093154.10408-1-naveen.n.rao@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806060109
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+Add powerpc support for the recently added kprobe args tests.
 
-ptrace can read FS/GS base using the register access API
-(PTRACE_PEEKUSER, etc) or PTRACE_ARCH_PRCTL.  Make both of these
-mechanisms return the actual FS/GS base.
-
-This will improve debuggability by providing the correct information
-to ptracer (GDB and etc).
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-[chang: Rebase and revise patch description]
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 ---
- arch/x86/kernel/process_64.c | 67 +++++++++++++++++++++++++++++++++-----------
- 1 file changed, 51 insertions(+), 16 deletions(-)
+ .../selftests/ftrace/test.d/kprobe/kprobe_args_string.tc  | 8 ++++++++
+ .../selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc  | 7 +++++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index ace0158..e498671 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -279,6 +279,49 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
- 	}
- }
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+index 5ba73035e1d9..a0002563e9ee 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
+@@ -24,6 +24,14 @@ arm*)
+   ARG2=%r1
+   OFFS=4
+ ;;
++ppc64*)
++  ARG2=%r4
++  OFFS=8
++;;
++ppc*)
++  ARG2=%r4
++  OFFS=4
++;;
+ *)
+   echo "Please implement other architecture here"
+   exit_untested
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+index 231bcd2c4eb5..d026ff4e562f 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+@@ -34,6 +34,13 @@ arm*)
+   GOODREG=%r0
+   BADREG=%ax
+ ;;
++ppc*)
++  GOODREG=%r3
++  BADREG=%msr
++;;
++*)
++  echo "Please implement other architecture here"
++  exit_untested
+ esac
  
-+static unsigned long task_seg_base(struct task_struct *task,
-+				   unsigned short selector)
-+{
-+	unsigned short idx = selector >> 3;
-+	unsigned long base;
-+
-+	if (likely((selector & SEGMENT_TI_MASK) == 0)) {
-+		if (unlikely(idx >= GDT_ENTRIES))
-+			return 0;
-+
-+		/*
-+		 * There are no user segments in the GDT with nonzero bases
-+		 * other than the TLS segments.
-+		 */
-+		if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
-+			return 0;
-+
-+		idx -= GDT_ENTRY_TLS_MIN;
-+		base = get_desc_base(&task->thread.tls_array[idx]);
-+	} else {
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+		struct ldt_struct *ldt;
-+
-+		/*
-+		 * If performance here mattered, we could protect the LDT
-+		 * with RCU.  This is a slow path, though, so we can just
-+		 * take the mutex.
-+		 */
-+		mutex_lock(&task->mm->context.lock);
-+		ldt = task->mm->context.ldt;
-+		if (unlikely(idx >= ldt->nr_entries))
-+			base = 0;
-+		else
-+			base = get_desc_base(ldt->entries + idx);
-+		mutex_unlock(&task->mm->context.lock);
-+#else
-+		base = 0;
-+#endif
-+	}
-+
-+	return base;
-+}
-+
- void write_fsbase(unsigned long fsbase)
- {
- 	/* set the selector to 0 to not confuse __switch_to */
-@@ -297,16 +340,12 @@ unsigned long read_task_fsbase(struct task_struct *task)
- {
- 	unsigned long fsbase;
- 
--	if (task == current) {
-+	if (task == current)
- 		fsbase = read_fsbase();
--	} else {
--		/*
--		 * XXX: This will not behave as expected if called
--		 * if fsindex != 0. This preserves an existing bug
--		 * that will be fixed.
--		 */
-+	else if (task->thread.fsindex == 0)
- 		fsbase = task->thread.fsbase;
--	}
-+	else
-+		fsbase = task_seg_base(task, task->thread.fsindex);
- 
- 	return fsbase;
- }
-@@ -315,16 +354,12 @@ unsigned long read_task_gsbase(struct task_struct *task)
- {
- 	unsigned long gsbase;
- 
--	if (task == current) {
-+	if (task == current)
- 		gsbase = read_inactive_gsbase();
--	} else {
--		/*
--		 * XXX: This will not behave as expected if called
--		 * if gsindex != 0. Same bug preservation as above
--		 * read_task_fsbase.
--		 */
-+	else if (task->thread.gsindex == 0)
- 		gsbase = task->thread.gsbase;
--	}
-+	else
-+		gsbase = task_seg_base(task, task->thread.gsindex);
- 
- 	return gsbase;
- }
+ test_goodarg() # Good-args
 -- 
-2.7.4
+2.17.0
