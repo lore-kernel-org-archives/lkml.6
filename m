@@ -1,168 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 23AEA601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B420760555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932551AbeFFIWL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:22:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37863 "EHLO mx2.suse.de"
+        id S932977AbeFFQYj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:24:39 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61007 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932389AbeFFIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:22:10 -0400
-Date: Wed, 6 Jun 2018 10:22:07 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, vbabka@suse.cz,
-        Aaron Lu <aaron.lu@intel.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mremap: Avoid TLB flushing anonymous pages that are not
- in swap cache
-Message-ID: <20180606082207.GC32433@dhcp22.suse.cz>
-References: <20180605171319.uc5jxdkxopio6kg3@techsingularity.net>
- <bfc2e579-915f-24db-0ff0-29bd9148b8c0@intel.com>
- <20180605191245.3owve7gfut22tyob@techsingularity.net>
- <ecb75c29-3d1b-3b5e-ec9d-59c4f6c1ef08@intel.com>
- <20180605195140.afc7xzgbre26m76l@techsingularity.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605195140.afc7xzgbre26m76l@techsingularity.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1753415AbeFFQXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:23:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
+   d="scan'208";a="62323466"
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: Andy Lutomirski <luto@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 3/8] x86/fsgsbase/64: Use FS/GS base helpers in core dump
+Date: Wed,  6 Jun 2018 09:23:14 -0700
+Message-Id: <1528302199-29619-4-git-send-email-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com>
+References: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 05-06-18 20:51:40, Mel Gorman wrote:
-[...]
-> mremap: Avoid excessive TLB flushing for anonymous pages that are not in swap cache
-> 
-> Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
-> fixed races between mremap and other operations for both file-backed and
-> anonymous mappings. The file-backed was the most critical as it allowed the
-> possibility that data could be changed on a physical page after page_mkclean
-> returned which could trigger data loss or data integrity issues. A customer
-> reported that the cost of the TLBs for anonymous regressions was excessive
-> and resulting in a 30-50% drop in performance overall since this commit
-> on a microbenchmark. Unfortunately I neither have access to the test-case
-> nor can I describe what it does other than saying that mremap operations
-> dominate heavily.
-> 
-> The anonymous page race fix is overkill for two reasons. Pages that are
-> not in the swap cache are not going to be issued for IO and if a stale TLB
-> entry is used, the write still occurs on the same physical page. Any race
-> with mmap replacing the address space is handled by mmap_sem. As anonymous
-> pages are often dirty, it can mean that mremap always has to flush even
-> when it is not necessary.
-> 
-> This patch special cases anonymous pages to only flush ranges under the
-> page table lock if the page is in swap cache and can be potentially queued
-> for IO. Note that the full flush of the range being mremapped is still
-> flushed so TLB flushes are not eliminated entirely.
-> 
-> It uses the page lock to serialise against any potential reclaim. If the
-> page is added to the swap cache on the reclaim side after the page lock is
-> dropped on the mremap side then reclaim will call try_to_unmap_flush_dirty()
-> before issuing any IO so there is no data integrity issue. This means that
-> in the common case where a workload avoids swap entirely that mremap is
-> a much cheaper operation due to the lack of TLB flushes.
-> 
-> Using another testcase that simply calls mremap heavily with varying number
-> of threads, it was found that very broadly speaking that TLB shootdowns
-> were reduced by 31% on average throughout the entire test case but your
-> milage will vary.
+When new FSGSBASE instructions enabled, this read will
+become faster.
 
-LGTM and it would be great to add some perf numbers for the specific
-workload which triggered this (a mremap heavy workload which is real
-unfortunately).
+Based-on-code-from: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/include/asm/elf.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/mremap.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 40 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index 049470aa1e3e..5b9767b0446e 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -24,6 +24,7 @@
->  #include <linux/uaccess.h>
->  #include <linux/mm-arch-hooks.h>
->  #include <linux/userfaultfd_k.h>
-> +#include <linux/mm_inline.h>
->  
->  #include <asm/cacheflush.h>
->  #include <asm/tlbflush.h>
-> @@ -112,6 +113,44 @@ static pte_t move_soft_dirty_pte(pte_t pte)
->  	return pte;
->  }
->  
-> +/* Returns true if a TLB must be flushed before PTL is dropped */
-> +static bool should_force_flush(pte_t pte)
-> +{
-> +	bool is_swapcache;
-> +	struct page *page;
-> +
-> +	if (!pte_present(pte) || !pte_dirty(pte))
-> +		return false;
-> +
-> +	/*
-> +	 * If we are remapping a dirty file PTE, make sure to flush TLB
-> +	 * before we drop the PTL for the old PTE or we may race with
-> +	 * page_mkclean().
-> +	 */
-> +	page = pte_page(pte);
-> +	if (page_is_file_cache(page))
-> +		return true;
-> +
-> +	/*
-> +	 * For anonymous pages, only flush swap cache pages that could
-> +	 * be unmapped and queued for swap since flush_tlb_batched_pending was
-> +	 * last called. Reclaim itself takes care that the TLB is flushed
-> +	 * before IO is queued. If a page is not in swap cache and a stale TLB
-> +	 * is used before mremap is complete then the write hits the same
-> +	 * physical page and there is no lost data loss.
-> +	 *
-> +	 * Check under the page lock to avoid any potential race with reclaim.
-> +	 * trylock is necessary as spinlocks are currently held. In the unlikely
-> +	 * event of contention, flush the TLB to be safe.
-> +	 */
-> +	if (!trylock_page(page))
-> +		return true;
-> +	is_swapcache = PageSwapCache(page);
-> +	unlock_page(page);
-> +
-> +	return is_swapcache;
-> +}
-> +
->  static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
->  		unsigned long old_addr, unsigned long old_end,
->  		struct vm_area_struct *new_vma, pmd_t *new_pmd,
-> @@ -163,15 +202,11 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
->  
->  		pte = ptep_get_and_clear(mm, old_addr, old_pte);
->  		/*
-> -		 * If we are remapping a dirty PTE, make sure
-> -		 * to flush TLB before we drop the PTL for the
-> -		 * old PTE or we may race with page_mkclean().
-> -		 *
->  		 * This check has to be done after we removed the
->  		 * old PTE from page tables or another thread may
->  		 * dirty it after the check and before the removal.
->  		 */
-> -		if (pte_present(pte) && pte_dirty(pte))
-> +		if (should_force_flush(pte))
->  			force_flush = true;
->  		pte = move_pte(pte, new_vma->vm_page_prot, old_addr, new_addr);
->  		pte = move_soft_dirty_pte(pte);
-> 
-> -- 
-> Mel Gorman
-> SUSE Labs
-
+diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+index 0d157d2..49acefb 100644
+--- a/arch/x86/include/asm/elf.h
++++ b/arch/x86/include/asm/elf.h
+@@ -10,6 +10,7 @@
+ #include <asm/ptrace.h>
+ #include <asm/user.h>
+ #include <asm/auxvec.h>
++#include <asm/fsgsbase.h>
+ 
+ typedef unsigned long elf_greg_t;
+ 
+@@ -205,7 +206,6 @@ void set_personality_ia32(bool);
+ 
+ #define ELF_CORE_COPY_REGS(pr_reg, regs)			\
+ do {								\
+-	unsigned long base;					\
+ 	unsigned v;						\
+ 	(pr_reg)[0] = (regs)->r15;				\
+ 	(pr_reg)[1] = (regs)->r14;				\
+@@ -228,8 +228,8 @@ do {								\
+ 	(pr_reg)[18] = (regs)->flags;				\
+ 	(pr_reg)[19] = (regs)->sp;				\
+ 	(pr_reg)[20] = (regs)->ss;				\
+-	rdmsrl(MSR_FS_BASE, base); (pr_reg)[21] = base;		\
+-	rdmsrl(MSR_KERNEL_GS_BASE, base); (pr_reg)[22] = base;	\
++	(pr_reg)[21] = read_fsbase();				\
++	(pr_reg)[22] = read_inactive_gsbase();			\
+ 	asm("movl %%ds,%0" : "=r" (v)); (pr_reg)[23] = v;	\
+ 	asm("movl %%es,%0" : "=r" (v)); (pr_reg)[24] = v;	\
+ 	asm("movl %%fs,%0" : "=r" (v)); (pr_reg)[25] = v;	\
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
