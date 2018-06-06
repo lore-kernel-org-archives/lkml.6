@@ -1,119 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41910601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0+WwH87P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E5BB0607B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeFFLBt convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Wed, 6 Jun 2018 07:01:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17568 "EHLO mga18.intel.com"
+        id S1752237AbeFFMj7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:39:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750808AbeFFLBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 07:01:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="64756718"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-Thread-Topic: [PATCH] tpm: separate cmd_ready/go_idle from runtime_pm
-Thread-Index: AQHT7VevIUY7rd7ojEqiu0sBZix5jKQ7TnMAgAAymDCAAaJwAIAAMykwgAqkdACAADKekIAAo8MAgApfPCA=
-Date: Wed, 6 Jun 2018 11:01:42 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D945893@hasmsx108.ger.corp.intel.com>
-References: <20180516194600.28189-1-tomas.winkler@intel.com>
- <20180522091732.GA5228@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D89D350@hasmsx109.ger.corp.intel.com>
- <20180523131616.GD363@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D8A1269@hasmsx109.ger.corp.intel.com>
- <20180530105034.GA14905@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D940DC6@hasmsx108.ger.corp.intel.com>
- <20180530233752.GA31296@linux.intel.com>
-In-Reply-To: <20180530233752.GA31296@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzY0ODc0YjAtMDc5Zi00NWE2LTg5MWEtZTU1NzZkOGI2MjI2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiR01GWE9JTWdBWlhGZjhtMEJGb3BHQ1l6TFBMRUUySGlcLzZvZm1DY1FNdEpvREJyVmc4ZWc0MFQzOTlJU25UZGEifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.162]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752194AbeFFMj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:39:56 -0400
+Date: Wed, 6 Jun 2018 09:39:53 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Hank Qiu <hank.qiu@dji.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux/tools/perf cannot be compiled for Android - linux-4.15
+Message-ID: <20180606123953.GB24381@kernel.org>
+References: <5a9b4a082c534984b1b84fa5e0f28d6d@CWMAIL-AP-F11.dji.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a9b4a082c534984b1b84fa5e0f28d6d@CWMAIL-AP-F11.dji.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On Wed, May 30, 2018 at 10:52:28AM +0000, Winkler, Tomas wrote:
-> > >
-> > > On Wed, May 23, 2018 at 01:48:17PM +0000, Winkler, Tomas wrote:
-> > > >
-> > > > > On Tue, May 22, 2018 at 09:27:46AM +0000, Winkler, Tomas wrote:
-> > > > > > >
-> > > > > > > On Wed, May 16, 2018 at 10:46:00PM +0300, Tomas Winkler
-> wrote:
-> > > > > > > > New wrappers are added tpm_cmd_ready() and tpm_go_idle()
-> > > > > wrappers
-> > > > > > > > to streamline tpm_try_transmit code.
-> TPM_TRANSMIT_UNLOCKED
-> > > > > > > > flag
-> > > > > is
-> > > > > > > abused
-> > > > > > > > to resolve tpm spaces recursive calls to tpm_transmit().
-> > > > > > >
-> > > > > > > This looks good and all but I don't think we want to abuse
-> > > > > > > anything in the driver code, do we?
-> > > > > >
-> > > > > > It's not abuse just the flag UNLOCKED is not really named
-> > > > > > correctly I think this has to be backported so wanted to do
-> > > > > > less invasive
-> > > change.
-> > > > >
-> > > > > It should be renamed anyway and possible merge conflicts are not
-> > > > > hard to sort out in this change. Can you rename it as SPACE?
-> > > >
-> > > > Not sure, I believe UNLOCKED is still better name than SPACE, I'm
-> > > >not  sure this is Do you also want to remove TPM_TRANSMIT_RAW?
-> > > > clk_enable is handling its own anti recursion counter 'data-
-> > > >clkrun_enabled'
-> > > > but it should be all handled under one flag I guess.
-> > > >
-> > > > > Right, and even without rename this will probably cause merge
-> > > > > conflicts at least in v4.4 an v4.9 since in-kernel RM landed in
-> > > > > v4.12, so not much gain not do the rename :-)
-> > > >
-> > > > I belive we should do minimal change and the big cleanup after that.
-> > > > Not sure, I believe UNLOCKED is still better name than SPACE even
-> > > > it wasn't
-> > > the original intention.
-> > > > No the SPACE is the issue, but any recursion call into
-> > > > tpm_transmit. A bigger change is needed and rename to SPACE would
-> > > > be just another
-> > > intermediat change.
-> > > >
-> > > > Please reconsider.
-> > > >
-> > > > Thanks
-> > > > Tomas
-> > >
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >
-> >
-> > Does it mean you're Okay with the patch now?
-> > Thanks
-> > Tomas
-> 
-> The change looks good but I'll have to test it.
-Any updates?
-Thanks
+Em Wed, Jun 06, 2018 at 05:39:33AM +0000, Hank Qiu escreveu:
+> Hi
+> I am trying to use tools/perf to tuning my Android devices.
+
+> But I cannot build it for Android successfully following the
+> instructions in tools/perf/Documentation/android.txt.
+ 
+> I download the latest NDK, which is android-ndk-r17 and follow the
+> instructions in section a to export NDK_TOOLCHAIN and NDK_SYSROOT for
+> arm.
+
+r17, ok, I'll create a new container with that one to see if there is
+something new, but see below for how I test it with r15c.
+
+> Then I compile perf for Android using the exact same command in this
+> documentation, but it cannot work and throw me an error "No
+> gnu/libc-version.h found, please install glibc-dev[el]".  This
+> confuses me a lot, since I am using CROSS_COMPILE toolchain for
+> Android, and I cannot just use apt install glibc-dev to solve this
+> problem, because it will install glibc to my host rather than the
+> toolchain. By the way, I already installed glibc in my host.
+ 
+>          My code is linux-4.15 and here are the instructions I used:
+>              export NDK_TOOLCHAIN=~/android-ndk-r17/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-
+> export NDK_SYSROOT=~/android-ndk-r17/platforms/android-24/arch-arm
+> make WERROR=0 ARCH=arm CROSS_COMPILE=${NDK_TOOLCHAIN} EXTRA_CFLAGS="-pie -sysroot=${NDK_SYSROOT}"
+
+> I am wondering why I cannot build it successfully for Android
+> following the documentation.
+ 
+> I have google it for a long time, but they all suggest me to use
+> linux-tools-perf, which don't answer why linux/tools/perf cannot be
+> used.
+ 
+> If anyone know how to solve this issue, please help me. Looking
+> forward to your reply.
+
+I regularly test build it using a docker container, the one below, check
+if there is something you're missing. To make it clear, the build
+process is all in the rx_and_build.sh script, the Dockerfile is just to
+setup the environment, which you already have done, so just check the
+env vars and how they get used up to the point where the build takes
+place in rx_and_build.sh, which is in this line:
+
+make $EXTRA_MAKE_ARGS ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE EXTRA_CFLAGS="$EXTRA_CFLAGS" -C /git/linux/tools/perf O=/tmp/build/perf
+
+# cat ~/git/linux-perf-tools-build/android/r15c/arm/Dockerfile
+# docker.io/acmel/linux-perf-tools-build-android-ndk:r15c-arm
+FROM docker.io/fedora:26
+MAINTAINER Arnaldo Carvalho de Melo <acme@kernel.org>
+ENV VERSION=android-ndk-r15c
+ENV NDK=/opt/${VERSION}
+ENV SOURCEFILE=${VERSION}-linux-x86_64.zip
+RUN dnf -y install make bison flex gcc unzip findutils tar xz && \
+    dnf -y clean all && \
+    mkdir -m 777 -p /tmp/build/perf /tmp/build/objtool && \
+    curl -OL https://dl.google.com/android/repository/${SOURCEFILE} && \
+    unzip -d /opt ${SOURCEFILE} && \
+    rm -f ${SOURCEFILE} && \
+    rm -rf ${NDK}/sources \
+	   ${NDK}/platforms/android-[19]* \
+	   ${NDK}/platforms/android-2[0-5]* \
+	   ${NDK}/platforms/android-26/arch-mips* \
+	   ${NDK}/platforms/android-26/arch-x86* \
+	   ${NDK}/toolchains/x86* \
+	   ${NDK}/toolchains/mips* \
+	   ${NDK}/toolchains/llvm* \
+	   ${NDK}/prebuilt/ \
+	   ${NDK}/python* \
+	   ${NDK}/shader-tools/ &&\
+    rm -rf /usr/share/doc /usr/share/gtk-doc /usr/share/locale /usr/share/man
+RUN mkdir -m 777 -p /git /tmp/build/perf /tmp/build/objtool /tmp/build/linux && \
+    groupadd -r perfbuilder && \
+    useradd -m -r -g perfbuilder perfbuilder && \
+    chown -R perfbuilder.perfbuilder /tmp/build/ /git/
+ENV ARCH=arm
+ENV ARM_NDK_TOOLCHAIN=${NDK}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-
+ENV ARM_NDK_SYSROOT=${NDK}/platforms/android-26/arch-arm
+ENV EXTRA_CFLAGS="-Wno-attributes -Wno-unused-function -pie --sysroot=${ARM_NDK_SYSROOT}"
+ENV CROSS_COMPILE=${ARM_NDK_TOOLCHAIN}
+ENV EXTRA_MAKE_ARGS=WERROR=0
+USER perfbuilder
+COPY rx_and_build.sh /
+ENTRYPOINT ["/rx_and_build.sh"]
+
+
+And then the rx_and_build.sh is:
+
+
+#!/bin/sh
+# Copyright (c) Red Hat Inc. 2017-
+# Arnaldo Carvalho de Melo <acme@redhat.com>
+# cross build Dockerfiles must have ENV lines for ARCH and CROSS_COMPILE
+
+export PATH=$PATH:$EXTRA_PATH
+
+if [ -z "$1" ] ; then
+	export PERF_TARBALL=http://localhost/perf/perf-latest.tar.xz
+else
+	export PERF_TARBALL=$1
+fi
+
+cd /git
+echo "Downloading $PERF_TARBALL..."
+curl -OL $PERF_TARBALL || wget $PERF_TARBALL
+xzcat `basename $PERF_TARBALL` | tar xf - && \
+mv perf-*/ linux && \
+
+cat /git/linux/HEAD
+
+# print the version for dm to harvest and put in the status line
+${CROSS_COMPILE}gcc -v
+
+make $EXTRA_MAKE_ARGS ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE EXTRA_CFLAGS="$EXTRA_CFLAGS" -C /git/linux/tools/perf O=/tmp/build/perf && \
+rm -rf /tmp/build/perf/{.[^.]*,*} && \
+make $EXTRA_MAKE_ARGS ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE EXTRA_CFLAGS="$EXTRA_CFLAGS" NO_LIBELF=1 -C /git/linux/tools/perf O=/tmp/build/perf || exit 1
+
+# Bail ou if we don't have clang, print the version for dm to harvest and put in the status line
+${CROSS_COMPILE}clang -v || exit 0
+
+rm -rf /tmp/build/perf/{.[^.]*,*} && \
+make $EXTRA_MAKE_ARGS ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE EXTRA_CFLAGS="$EXTRA_CFLAGS" -C /git/linux/tools/perf O=/tmp/build/perf CC=clang && \
+rm -rf /tmp/build/perf/{.[^.]*,*} && \
+make $EXTRA_MAKE_ARGS ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE EXTRA_CFLAGS="$EXTRA_CFLAGS" NO_LIBELF=1 -C /git/linux/tools/perf O=/tmp/build/perf CC=clang
+
+rm -rf /tmp/build/perf/{.[^.]*,*} && \
+make $EXTRA_MAKE_ARGS ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE EXTRA_CFLAGS="$EXTRA_CFLAGS" LIBCLANGLLVM=1 -C /git/linux/tools/perf O=/tmp/build/perf CC=clang
+
+rm -rf /tmp/build/perf/{.[^.]*,*} && \
+make $EXTRA_MAKE_ARGS ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE EXTRA_CFLAGS="$EXTRA_CFLAGS" LIBCLANGLLVM=1 -C /git/linux/tools/perf O=/tmp/build/perf
+
+# Need tp create a MANIFEST on tools/objtool and/or make sure it uses
+# only stuff in tools/include/, etc.
+#make -C /git/linux/tools/objtool O=/tmp/build/objtool && \
+#
+# We now use just a detached tarball, not the whole kernel sources
+# accessed via NFS, so...
+#make -C /git/linux O=/tmp/build/linux defconfig && \
+#make -C /git/linux O=/tmp/build/linux headers_install && \
+#make -C /git/linux O=/tmp/build/linux samples/bpf/
