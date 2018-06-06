@@ -1,102 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="J51/VRhq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6173F60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwcJbOYw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 762C96086B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752042AbeFFMP3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:15:29 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:60514 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750864AbeFFMP1 (ORCPT
+        id S932191AbeFFEjv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 00:39:51 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43520 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932143AbeFFEjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:15:27 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-Subject: Re: [PATCH 1/4] serial: 8250: Copy em485 from port to real port.
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: matwey.kornilov@gmail.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
- <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
- <20180606094942.71190-4-giulio.benetti@micronovasrl.com>
- <069f5cd3309e83d13c74929f240720b232ea7251.camel@linux.intel.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <0bc400b1-6178-2021-c9a3-3190d1a1de32@micronovasrl.com>
-Date: Wed, 6 Jun 2018 14:15:14 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <069f5cd3309e83d13c74929f240720b232ea7251.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+        Wed, 6 Jun 2018 00:39:48 -0400
+X-Google-Smtp-Source: ADUXVKIoU8UDEhJ0c3XTDCZ8b2Z0fZmc5faeHOIs3bNXsMXsUAnIGHaqJcIir+rAkB0jOznBZi/mhQ==
+From: Jun Yao <yaojun8558363@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
+        robin.murphy@arm.com, labbott@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: [PATCH v3 3/3] arm64/mm: migrate swapper_pg_dir and tramp_pg_dir
+Date: Wed,  6 Jun 2018 12:39:21 +0800
+Message-Id: <20180606043921.19851-4-yaojun8558363@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180606043921.19851-1-yaojun8558363@gmail.com>
+References: <20180606043921.19851-1-yaojun8558363@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il 06/06/2018 13:56, Andy Shevchenko ha scritto:
-> On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
->> em485 gets lost during serial8250_register_8250_port().
->>
->> Copy em485 to final uart port.
->>
-> 
-> Is it needed at all?
-> 
-> The individual driver decides either to use software emulation (and
-> calls explicitly serial8250_em485_init() for that) or do HW assisted
-> stuff.
+Migrate swapper_pg_dir and tramp_pg_dir. And their virtual addresses
+do not correlate with kernel's address.
 
-In 8250_dw.c, during probe(), I need to call dw8250_rs485_config() 
-against local struct uart_8250_port uart = {};
-Inside serial8250_register_8250_port() not all uart fields are 
-copied(em485 too).
-So after probe, em485 is NULL.
+Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
+---
+ arch/arm64/include/asm/pgtable.h |  1 +
+ arch/arm64/mm/mmu.c              | 79 +++++++++++++++++++++-----------
+ 2 files changed, 52 insertions(+), 28 deletions(-)
 
-Another way could be to call dw8250_rs485_config() against real uart 
-port, after calling serial8250_register_8250_port(),
-would it make sense?
-
-> 
->> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
->> ---
->>   drivers/tty/serial/8250/8250_core.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/tty/serial/8250/8250_core.c
->> b/drivers/tty/serial/8250/8250_core.c
->> index 9342fc2ee7df..c8c2b260c681 100644
->> --- a/drivers/tty/serial/8250/8250_core.c
->> +++ b/drivers/tty/serial/8250/8250_core.c
->> @@ -994,6 +994,7 @@ int serial8250_register_8250_port(struct
->> uart_8250_port *up)
->>   		uart->port.rs485_config	= up-
->>> port.rs485_config;
->>   		uart->port.rs485	= up->port.rs485;
->>   		uart->dma		= up->dma;
->> +		uart->em485		= up->em485;
->>   
->>   		/* Take tx_loadsz from fifosize if it wasn't set
->> separately */
->>   		if (uart->port.fifosize && !uart->tx_loadsz)
-> 
-
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 2bda899dcf22..b032d6c2e390 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -722,6 +722,7 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+ extern pgd_t swapper_pg_end[];
+ extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
+ extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
++extern pgd_t reserved_ttbr0[PTRS_PER_PGD];
+ extern volatile phys_addr_t __pa_swapper_pg_dir;
+ extern pgd_t *new_swapper_pg_dir;
+ 
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 94056e064c6f..ba0b55158971 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -63,6 +63,9 @@ volatile phys_addr_t __section(".mmuoff.data.read")
+ __pa_swapper_pg_dir;
+ 
+ pgd_t *new_swapper_pg_dir = swapper_pg_dir;
++#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++pgd_t *new_tramp_pg_dir;
++#endif
+ 
+ /*
+  * Empty_zero_page is a special page that is used for zero-initialized data
+@@ -86,19 +89,14 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ }
+ EXPORT_SYMBOL(phys_mem_access_prot);
+ 
+-static phys_addr_t __init early_pgtable_alloc(void)
++static void __init clear_page_phys(phys_addr_t phys)
+ {
+-	phys_addr_t phys;
+-	void *ptr;
+-
+-	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+-
+ 	/*
+ 	 * The FIX_{PGD,PUD,PMD} slots may be in active use, but the FIX_PTE
+ 	 * slot will be free, so we can (ab)use the FIX_PTE slot to initialise
+ 	 * any level of table.
+ 	 */
+-	ptr = pte_set_fixmap(phys);
++	void *ptr = pte_set_fixmap(phys);
+ 
+ 	memset(ptr, 0, PAGE_SIZE);
+ 
+@@ -107,6 +105,14 @@ static phys_addr_t __init early_pgtable_alloc(void)
+ 	 * table walker
+ 	 */
+ 	pte_clear_fixmap();
++}
++
++static phys_addr_t __init early_pgtable_alloc(void)
++{
++	phys_addr_t phys;
++
++	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
++	clear_page_phys(phys);
+ 
+ 	return phys;
+ }
+@@ -560,6 +566,10 @@ static int __init map_entry_trampoline(void)
+ 	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
+ 			     prot, pgd_pgtable_alloc, 0);
+ 
++	memcpy(new_tramp_pg_dir, tramp_pg_dir, PGD_SIZE);
++	memblock_free(__pa_symbol(tramp_pg_dir),
++		__pa_symbol(swapper_pg_dir) - __pa_symbol(tramp_pg_dir));
++
+ 	/* Map both the text and data into the kernel page table */
+ 	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
+ 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
+@@ -637,10 +647,29 @@ static void __init map_kernel(pgd_t *pgdp)
+  */
+ void __init paging_init(void)
+ {
+-	phys_addr_t pgd_phys = early_pgtable_alloc();
+-	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
++	phys_addr_t pgd_phys;
++	pgd_t *pgdp;
++	phys_addr_t mem_size;
+ 
+-	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
++	mem_size = __pa_symbol(swapper_pg_dir) + PAGE_SIZE
++			- (__pa_symbol(idmap_pg_dir) + IDMAP_DIR_SIZE);
++
++	if (mem_size == PAGE_SIZE) {
++		pgd_phys = early_pgtable_alloc();
++		__pa_swapper_pg_dir = pgd_phys;
++	} else {
++		phys_addr_t p;
++
++		pgd_phys = memblock_alloc(mem_size, PAGE_SIZE);
++
++		for (p = pgd_phys; p < pgd_phys + mem_size; p += PAGE_SIZE)
++			clear_page_phys(p);
++
++		#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
++		new_tramp_pg_dir = __va(pgd_phys);
++		#endif
++		__pa_swapper_pg_dir = pgd_phys + mem_size - PAGE_SIZE;
++	}
+ 
+ 	/*
+ 	 * We need to clean '__pa_swapper_pg_dir' to the PoC, so that
+@@ -649,31 +678,25 @@ void __init paging_init(void)
+ 	__flush_dcache_area((void *)&__pa_swapper_pg_dir,
+ 			    sizeof(__pa_swapper_pg_dir));
+ 
++	new_swapper_pg_dir = __va(__pa_swapper_pg_dir);
++
++	pgdp = pgd_set_fixmap(__pa_swapper_pg_dir);
++
+ 	map_kernel(pgdp);
+ 	map_mem(pgdp);
+ 
+-	/*
+-	 * We want to reuse the original swapper_pg_dir so we don't have to
+-	 * communicate the new address to non-coherent secondaries in
+-	 * secondary_entry, and so cpu_switch_mm can generate the address with
+-	 * adrp+add rather than a load from some global variable.
+-	 *
+-	 * To do this we need to go via a temporary pgd.
+-	 */
+-	cpu_replace_ttbr1(pgd_phys);
+-	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
+ 	cpu_replace_ttbr1(__pa_swapper_pg_dir);
++	init_mm.pgd = new_swapper_pg_dir;
+ 
+ 	pgd_clear_fixmap();
+-	memblock_free(pgd_phys, PAGE_SIZE);
+ 
+-	/*
+-	 * We only reuse the PGD from the swapper_pg_dir, not the pud + pmd
+-	 * allocated with it.
+-	 */
+-	memblock_free(__pa_symbol(swapper_pg_dir) + PAGE_SIZE,
+-		      __pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir)
+-		      - PAGE_SIZE);
++#ifdef CONFIG_ARM64_SW_TTBR0_PAN
++	memblock_free(__pa_symbol(reserved_ttbr0), RESERVED_TTBR0_SIZE);
++#endif
++
++	memblock_free(__pa_symbol(swapper_pg_dir),
++		__pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir));
++
+ }
+ 
+ /*
 -- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+2.17.0
