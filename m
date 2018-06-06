@@ -1,289 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p33Op+KD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96649601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF41E606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932506AbeFFIOS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:14:18 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43609 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932405AbeFFIOQ (ORCPT
+        id S1754125AbeFFSFu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:05:50 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:42682 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752316AbeFFSFr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:14:16 -0400
-X-Google-Smtp-Source: ADUXVKKufe5XcHCmTUEr2gVjs4gRrYvwQQwxND76CBEpEdgu/ZsLlHiaNbJI/9XwfFKR0uGyqEJJRw==
-Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
- buffers
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
-        dongwon.kim@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180601114132.22596-1-andr2000@gmail.com>
- <20180601114132.22596-6-andr2000@gmail.com>
- <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
-Date: Wed, 6 Jun 2018 11:14:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 6 Jun 2018 14:05:47 -0400
+X-Google-Smtp-Source: ADUXVKLDBscy8KHM7vP/EWiLNNkUheppqONByBNFa9c2UpU+fJUKgtnkZb1YJrZbpwK5rXaKL+2QGg==
+Message-ID: <1528308343.17774.3.camel@redhat.com>
+Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
+From: Laurence Oberman <loberman@redhat.com>
+To: "Madhani, Himanshu" <Himanshu.Madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: "Tran, Quinn" <Quinn.Tran@cavium.com>,
+        "William.Kuzeja@stratus.com" <William.Kuzeja@stratus.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Li Wang <liwang@redhat.com>
+Date: Wed, 06 Jun 2018 14:05:43 -0400
+In-Reply-To: <7988FB77-4AE4-4935-B7B7-F7584674981B@cavium.com>
+References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
+         <yq1a7s7ewmw.fsf@oracle.com>
+         <7988FB77-4AE4-4935-B7B7-F7584674981B@cavium.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2018 11:12 PM, Boris Ostrovsky wrote:
-> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Allow mappings for DMA backed  buffers if grant table module
->> supports such: this extends grant device to not only map buffers
->> made of balloon pages, but also from buffers allocated with
->> dma_alloc_xxx.
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> ---
->>   drivers/xen/gntdev.c      | 99 ++++++++++++++++++++++++++++++++++++++-
->>   include/uapi/xen/gntdev.h | 15 ++++++
->>   2 files changed, 112 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
->> index bd56653b9bbc..9813fc440c70 100644
->> --- a/drivers/xen/gntdev.c
->> +++ b/drivers/xen/gntdev.c
->> @@ -37,6 +37,9 @@
->>   #include <linux/slab.h>
->>   #include <linux/highmem.h>
->>   #include <linux/refcount.h>
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +#include <linux/of_device.h>
->> +#endif
->>   
->>   #include <xen/xen.h>
->>   #include <xen/grant_table.h>
->> @@ -72,6 +75,11 @@ struct gntdev_priv {
->>   	struct mutex lock;
->>   	struct mm_struct *mm;
->>   	struct mmu_notifier mn;
->> +
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	/* Device for which DMA memory is allocated. */
->> +	struct device *dma_dev;
->> +#endif
->>   };
->>   
->>   struct unmap_notify {
->> @@ -96,10 +104,27 @@ struct grant_map {
->>   	struct gnttab_unmap_grant_ref *kunmap_ops;
->>   	struct page **pages;
->>   	unsigned long pages_vm_start;
->> +
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	/*
->> +	 * If dmabuf_vaddr is not NULL then this mapping is backed by DMA
->> +	 * capable memory.
->> +	 */
->> +
->> +	struct device *dma_dev;
->> +	/* Flags used to create this DMA buffer: GNTDEV_DMA_FLAG_XXX. */
->> +	int dma_flags;
->> +	void *dma_vaddr;
->> +	dma_addr_t dma_bus_addr;
->> +	/* This is required for gnttab_dma_{alloc|free}_pages. */
-> How about
->
-> /* Needed to avoid allocation in gnttab_dma_free_pages(). */
->
-Ok
->> +	xen_pfn_t *frames;
->> +#endif
->>   };
->>   
->>   static int unmap_grant_pages(struct grant_map *map, int offset, int pages);
->>   
->> +static struct miscdevice gntdev_miscdev;
->> +
->>   /* ------------------------------------------------------------------ */
->>   
->>   static void gntdev_print_maps(struct gntdev_priv *priv,
->> @@ -121,8 +146,27 @@ static void gntdev_free_map(struct grant_map *map)
->>   	if (map == NULL)
->>   		return;
->>   
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	if (map->dma_vaddr) {
->> +		struct gnttab_dma_alloc_args args;
->> +
->> +		args.dev = map->dma_dev;
->> +		args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
->> +		args.nr_pages = map->count;
->> +		args.pages = map->pages;
->> +		args.frames = map->frames;
->> +		args.vaddr = map->dma_vaddr;
->> +		args.dev_bus_addr = map->dma_bus_addr;
->> +
->> +		gnttab_dma_free_pages(&args);
->> +	} else
->> +#endif
->>   	if (map->pages)
->>   		gnttab_free_pages(map->count, map->pages);
->> +
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	kfree(map->frames);
->> +#endif
->
-> Can this be done under if (map->dma_vaddr) ?
+On Wed, 2018-06-06 at 16:01 +0000, Madhani, Himanshu wrote:
+> > On Jun 6, 2018, at 8:56 AM, Martin K. Petersen <martin.petersen@ora
+> > cle.com> wrote:
+> > 
+> > 
+> > Himanshu,
+> > 
+> > Ping?
+> > 
+> 
+> Will look at this one. Sorry, somehow fell thru cracks. 
+> 
+> 
+> > > Hi scsi experts,
+> > > 
+> > > Not sure who is the right person to ask, I just hit this bug on
+> > > my HP
+> > > DL385 platform, can any one of you take a look?
+> > > 
+> > > system config:
+> > > -----------------
+> > > HP ProLiant DL385 G7
+> > > AMD Opteron(TM) Processor 6234
+> > > 16384 MB memory, 369 GB disk space
+> > > 
+> > > 
+> > > [   24.539274] qla2xxx [0000:0c:00.7]-500a:5: LOOP UP detected
+> > > (10 Gbps).
+> > > [   24.577259] BUG: unable to handle kernel NULL pointer
+> > > dereference
+> > > at 0000000000000102
+> > > [   24.623133] PGD 0 P4D 0
+> > > [   24.636760] Oops: 0000 [#1] SMP NOPTI
+> > > [   24.656942] Modules linked in: i2c_algo_bit drm_kms_helper
+> > > sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom fb_sys_fops
+> > > ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+)
+> > > qla2xxx(+)
+> > > libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+)
+> > > nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel libata
+> > > nvme_core i2c_core scsi_transport_iscsi tg3 scsi_transport_fc
+> > > bnx2
+> > > iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash dm_log
+> > > dm_mod
+> > > [   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not tainted
+> > > 4.17.0-rc6 #1
+> > > [   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS A18
+> > > 08/15/2012
+> > > [   24.962106] Workqueue: events work_for_cpu_fn
+> > > [   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
+> > > [   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
+> > > [   25.042116] RAX: 0000000000000082 RBX: 0000000000000082 RCX:
+> > > 0000000000000000
+> > > [   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000 RDI:
+> > > 0000000000002000
+> > > [   25.123094] RBP: 0000000000000000 R08: 0000000000025a40 R09:
+> > > ffff8cf9aade2880
+> > > [   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0 R12:
+> > > ffff8cf9abc6d7d0
+> > > [   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8 R15:
+> > > 0000000000002000
+> > > [   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000)
+> > > knlGS:0000000000000000
+> > > [   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [   26.010457] CR2: 0000000000000102 CR3: 000000030760a000 CR4:
+> > > 00000000000406f0
+> > > [   26.051048] Call Trace:
+> > > [   26.063572]  ? __switch_to_asm+0x34/0x70
+> > > [   26.086079]  queue_work_on+0x24/0x40
+> > > [   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
+> > > [   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
+> > > [   26.164075]  ? lock_timer_base+0x67/0x80
+> > > [   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
+> > > [   26.212284]  ? del_timer_sync+0x35/0x40
+> > > [   26.234080]  ? schedule_timeout+0x165/0x2f0
+> > > [   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
+> > > [   26.285740]  qla2x00_mailbox_command+0x74b/0xf50 [qla2xxx]
+> > > [   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0 [qla2xxx]
+> > > [   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
+> > > [   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0 [qla2xxx]
+> > > [   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
+> > > [   26.442055]  local_pci_probe+0x3f/0xa0
+> > > [   26.463108]  work_for_cpu_fn+0x10/0x20
+> > > [   26.483295]  process_one_work+0x152/0x350
+> > > [   26.505730]  worker_thread+0x1cf/0x3e0
+> > > [   26.527090]  kthread+0xf5/0x130
+> > > [   26.545085]  ? max_active_store+0x80/0x80
+> > > [   26.568085]  ? kthread_bind+0x10/0x10
+> > > [   26.589533]  ret_from_fork+0x22/0x40
+> > > [   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44
+> > > 00
+> > > 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48 89 f5
+> > > 53
+> > > 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0 ec 01
+> > > 00 41
+> > > [   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP: ffff992642ceba10
+> > > [   27.341591] CR2: 0000000000000102
+> > > [   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
+> > 
+> > -- 
+> > Martin K. Petersen	Oracle Linux Engineering
+> 
+> Thanks,
+> - Himanshu
+> 
 
->   In other words, is it
-> possible for dma_vaddr to be NULL and still have unallocated frames pointer?
-It is possible to have vaddr == NULL and frames != NULL as we
-allocate frames outside of gnttab_dma_alloc_pages which
-may fail. Calling kfree on NULL pointer is safe, so
-I see no reason to change this code.
->
->>   	kfree(map->pages);
->>   	kfree(map->grants);
->>   	kfree(map->map_ops);
->> @@ -132,7 +176,8 @@ static void gntdev_free_map(struct grant_map *map)
->>   	kfree(map);
->>   }
->>   
->> -static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count)
->> +static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count,
->> +					  int dma_flags)
->>   {
->>   	struct grant_map *add;
->>   	int i;
->> @@ -155,6 +200,37 @@ static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv, int count)
->>   	    NULL == add->pages)
->>   		goto err;
->>   
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	add->dma_flags = dma_flags;
->> +
->> +	/*
->> +	 * Check if this mapping is requested to be backed
->> +	 * by a DMA buffer.
->> +	 */
->> +	if (dma_flags & (GNTDEV_DMA_FLAG_WC | GNTDEV_DMA_FLAG_COHERENT)) {
->> +		struct gnttab_dma_alloc_args args;
->> +
->> +		add->frames = kcalloc(count, sizeof(add->frames[0]),
->> +				      GFP_KERNEL);
->> +		if (!add->frames)
->> +			goto err;
->> +
->> +		/* Remember the device, so we can free DMA memory. */
->> +		add->dma_dev = priv->dma_dev;
->> +
->> +		args.dev = priv->dma_dev;
->> +		args.coherent = dma_flags & GNTDEV_DMA_FLAG_COHERENT;
->> +		args.nr_pages = count;
->> +		args.pages = add->pages;
->> +		args.frames = add->frames;
->> +
->> +		if (gnttab_dma_alloc_pages(&args))
->> +			goto err;
->> +
->> +		add->dma_vaddr = args.vaddr;
->> +		add->dma_bus_addr = args.dev_bus_addr;
->> +	} else
->> +#endif
->>   	if (gnttab_alloc_pages(count, add->pages))
->>   		goto err;
->>   
->> @@ -325,6 +401,14 @@ static int map_grant_pages(struct grant_map *map)
->>   		map->unmap_ops[i].handle = map->map_ops[i].handle;
->>   		if (use_ptemod)
->>   			map->kunmap_ops[i].handle = map->kmap_ops[i].handle;
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +		else if (map->dma_vaddr) {
->> +			unsigned long mfn;
->> +
->> +			mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
->
-> Not pfn_to_mfn()?
-I'd love to, but pfn_to_mfn is only defined for x86, not ARM: [1] and [2]
-Thus,
+I can't find the original message for this that Martin reminded us of.
 
-drivers/xen/gntdev.c:408:10: error: implicit declaration of function 
-‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
-     mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+To the person who logged this:
+How many times has this happened and was it after a kernel update.
+What is the history, what is the exact Qlogic card, etc.
+Do you have the rest of the log log leading to the invalid pointer
+fault
 
-So, I'll keep __pfn_to_mfn
->
->
-> -boris
-Thank you,
-Oleksandr
->> +			map->unmap_ops[i].dev_bus_addr = __pfn_to_phys(mfn);
->> +		}
->> +#endif
->>   	}
->>   	return err;
->>   }
->> @@ -548,6 +632,17 @@ static int gntdev_open(struct inode *inode, struct file *flip)
->>   	}
->>   
->>   	flip->private_data = priv;
->> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
->> +	priv->dma_dev = gntdev_miscdev.this_device;
->> +
->> +	/*
->> +	 * The device is not spawn from a device tree, so arch_setup_dma_ops
->> +	 * is not called, thus leaving the device with dummy DMA ops.
->> +	 * Fix this call of_dma_configure() with a NULL node to set
->> +	 * default DMA ops.
->> +	 */
->> +	of_dma_configure(priv->dma_dev, NULL);
->> +#endif
->>   	pr_debug("priv %p\n", priv);
->>   
->>   	return 0;
->> @@ -589,7 +684,7 @@ static long gntdev_ioctl_map_grant_ref(struct gntdev_priv *priv,
->>   		return -EINVAL;
->>   
->>   	err = -ENOMEM;
->> -	map = gntdev_alloc_map(priv, op.count);
->> +	map = gntdev_alloc_map(priv, op.count, 0 /* This is not a dma-buf. */);
->>   	if (!map)
->>   		return err;
->>   
->> diff --git a/include/uapi/xen/gntdev.h b/include/uapi/xen/gntdev.h
->> index 6d1163456c03..4b9d498a31d4 100644
->> --- a/include/uapi/xen/gntdev.h
->> +++ b/include/uapi/xen/gntdev.h
->> @@ -200,4 +200,19 @@ struct ioctl_gntdev_grant_copy {
->>   /* Send an interrupt on the indicated event channel */
->>   #define UNMAP_NOTIFY_SEND_EVENT 0x2
->>   
->> +/*
->> + * Flags to be used while requesting memory mapping's backing storage
->> + * to be allocated with DMA API.
->> + */
->> +
->> +/*
->> + * The buffer is backed with memory allocated with dma_alloc_wc.
->> + */
->> +#define GNTDEV_DMA_FLAG_WC		(1 << 0)
->> +
->> +/*
->> + * The buffer is backed with memory allocated with dma_alloc_coherent.
->> + */
->> +#define GNTDEV_DMA_FLAG_COHERENT	(1 << 1)
->> +
->>   #endif /* __LINUX_PUBLIC_GNTDEV_H__ */
->
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xenproject.org
-> https://lists.xenproject.org/mailman/listinfo/xen-devel
-[1] https://elixir.bootlin.com/linux/v4.17/ident/pfn_to_mfn
-[2] https://elixir.bootlin.com/linux/v4.17/ident/__pfn_to_mfn
+Thanks
+Laurence
