@@ -1,46 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53D7C606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UPlY35z4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9EBAB606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932426AbeFFJLx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:11:53 -0400
-Received: from mx1.emlix.com ([46.4.235.150]:46872 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932265AbeFFJLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:11:52 -0400
-From: Philipp Puschmann <pp@emlix.com>
-To: slongerbeam@gmail.com
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org, pp@emlix.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: ov5640: adjust xclk_max
-Date: Wed,  6 Jun 2018 11:11:38 +0200
-Message-Id: <20180606091138.9522-1-pp@emlix.com>
-Organization: emlix gmbh, Goettingen, Germany
+        id S1752520AbeFFSUK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:20:10 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41076 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbeFFSUJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 14:20:09 -0400
+X-Google-Smtp-Source: ADUXVKJXZrSJhxpDB6XkN0VmalX+Mtvy9eP1x81xxNkKdkW2jSkJHfrqJSvMGhUuw1MFKSQTdzfgGA==
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] mremap: Increase LATENCY_LIMIT of mremap to reduce the
+ number of TLB shootdowns
+From: Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20180606174723.bag3o55fvqp6nbvc@techsingularity.net>
+Date: Wed, 6 Jun 2018 11:20:08 -0700
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>, mhocko@kernel.org,
+        vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <70CFD0DC-FEBD-4B51-9AE9-0786AF66149F@gmail.com>
+References: <20180606140255.br5ztpeqdmwfto47@techsingularity.net>
+ <C86F5DE4-DAAE-4C12-B509-E5807ADA471E@gmail.com>
+ <20180606174723.bag3o55fvqp6nbvc@techsingularity.net>
+To: Mel Gorman <mgorman@techsingularity.net>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to ov5640 datasheet xvclk is allowed to be between 6 and 54 MHz.
-I run a successful test with 27 MHz.
+Mel Gorman <mgorman@techsingularity.net> wrote:
 
-Signed-off-by: Philipp Puschmann <pp@emlix.com>
----
- drivers/media/i2c/ov5640.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Wed, Jun 06, 2018 at 08:55:15AM -0700, Nadav Amit wrote:
+>>> -#define LATENCY_LIMIT	(64 * PAGE_SIZE)
+>>> +#define LATENCY_LIMIT	(PMD_SIZE)
+>>>=20
+>>> unsigned long move_page_tables(struct vm_area_struct *vma,
+>>> 		unsigned long old_addr, struct vm_area_struct *new_vma,
+>>=20
+>> This LATENCY_LIMIT is only used in move_page_tables() in the =
+following
+>> manner:
+>>=20
+>>  next =3D (new_addr + PMD_SIZE) & PMD_MASK;
+>>  if (extent > next - new_addr)
+>>      extent =3D next - new_addr;
+>>  if (extent > LATENCY_LIMIT)
+>>      extent =3D LATENCY_LIMIT;
+>>=20
+>> If LATENCY_LIMIT is to be changed to PMD_SIZE, then IIUC the last =
+condition
+>> is not required, and LATENCY_LIMIT can just be removed (assuming =
+there is no
+>> underflow case that hides somewhere).
+>=20
+> I see no problem removing it other than we may forget that we ever =
+limited
+> PTE lock hold times for any reason. I'm skeptical it will matter =
+unless
+> mremap-intensive workloads are a lot more common than I believe.
 
-diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-index 852026baa2e7..a713cf1909ed 100644
---- a/drivers/media/i2c/ov5640.c
-+++ b/drivers/media/i2c/ov5640.c
-@@ -30,7 +30,7 @@
- 
- /* min/typical/max system clock (xclk) frequencies */
- #define OV5640_XCLK_MIN  6000000
--#define OV5640_XCLK_MAX 24000000
-+#define OV5640_XCLK_MAX 54000000
- 
- #define OV5640_DEFAULT_SLAVE_ID 0x3c
- 
--- 
-2.17.0
+I have no opinion regarding the behavior change. It is just that code =
+with
+no effect is oftentimes confusing. A comment (if needed) can replace the
+code, and git history would provide how it was once supported.
