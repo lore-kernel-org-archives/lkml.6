@@ -1,64 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE4B6601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F33C760555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753488AbeFFQpS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:45:18 -0400
-Received: from mga01.intel.com ([192.55.52.88]:8289 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752277AbeFFQpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:45:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="60932373"
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, linux-nvdimm@lists.01.org
-Subject: [PATCH v3 1/4] pmem, libnvdimm: complete REQ_FLUSH => REQ_PREFLUSH
-Date: Wed,  6 Jun 2018 10:45:12 -0600
-Message-Id: <20180606164515.25677-1-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.4
+        id S1752289AbeFFODH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:03:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56356 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752046AbeFFODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 10:03:05 -0400
+Date: Wed, 06 Jun 2018 23:03:02 +0900 (JST)
+Message-Id: <20180606.230302.980331656652452057.yamato@redhat.com>
+To: tglx@linutronix.de
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, joro@8bytes.org
+Subject: Re: [PATCH] x86/iommu: Fix a typo in a macro parameter
+From: Masatake YAMATO <yamato@redhat.com>
+In-Reply-To: <alpine.DEB.2.21.1806061440000.1579@nanos.tec.linutronix.de>
+References: <20180606.201529.867663362891798169.yamato@redhat.com>
+        <alpine.DEB.2.21.1806061409150.1579@nanos.tec.linutronix.de>
+        <alpine.DEB.2.21.1806061440000.1579@nanos.tec.linutronix.de>
+Organization: Red Hat Japan, Inc.
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Complete the move from REQ_FLUSH to REQ_PREFLUSH that apparently started
-way back in v4.8.
+On Wed, 6 Jun 2018 14:41:57 +0200 (CEST), Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Wed, 6 Jun 2018, Thomas Gleixner wrote:
+>> On Wed, 6 Jun 2018, Masatake YAMATO wrote:
+>> > On Wed, 6 Jun 2018 12:37:34 +0200 (CEST), Thomas Gleixner <tglx@linutronix.de> wrote:
+>> > > On Wed, 6 Jun 2018, Masatake YAMATO wrote:
+>> > > 
+>> > > Can you please explain why 0 is the wrong value.
+>> > 
+>> > I don't know such constants, 0 and 1.
+>> > 
+>> > What I change is just the name of macro parameter as 
+>> > 
+>> >      s/detect/_detect/
+>> 
+>> OOps. Misread the patch. Sorry.
+> 
+> But the fix is pretty pointless. IOMMU_INIT_POST_FINISH() is completely
+> unused and should just be removed.
 
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
----
- drivers/nvdimm/pmem.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Oh, I see. Thank you for taking your time.
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 9d714926ecf5..252adfab1e47 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -164,11 +164,6 @@ static blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
- 	return rc;
- }
- 
--/* account for REQ_FLUSH rename, replace with REQ_PREFLUSH after v4.8-rc1 */
--#ifndef REQ_FLUSH
--#define REQ_FLUSH REQ_PREFLUSH
--#endif
--
- static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
- {
- 	blk_status_t rc = 0;
-@@ -179,7 +174,7 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
- 	struct pmem_device *pmem = q->queuedata;
- 	struct nd_region *nd_region = to_region(pmem);
- 
--	if (bio->bi_opf & REQ_FLUSH)
-+	if (bio->bi_opf & REQ_PREFLUSH)
- 		nvdimm_flush(nd_region);
- 
- 	do_acct = nd_iostat_start(bio, &start);
--- 
-2.14.4
+Masatake YAMATO
+
+> Thanks,
+> 
+> 	tglx
