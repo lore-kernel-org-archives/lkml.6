@@ -1,274 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OhLkBmBjGlsVHgAAmS7hNA
-	; Fri, 08 Jun 2018 11:07:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kiXFIlk8GFuICgAAmS7hNA
+	; Wed, 06 Jun 2018 19:57:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5EB30608BF; Fri,  8 Jun 2018 11:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528456038;
-	bh=abz67/x/qgi7O0XM5vb/G5luB5qDIaGSZ7DLb4NYwfE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=URXFjVi6Ie+cm0rU95LikI4dIQHfA0V6WFuDInXqINQ/xbrw1wPMLg/6LZMdU4Yqe
-	 OQu5Tl+/2yjmtVuxeVe6Cc8dMPPvxHdcFViIAEdJGMVB3E0nlNW1JZUniynVLoS4hU
-	 1ap8GR5Ve3Xfg2WqXm326H2TXqrnmGku2ejF8nNI=
+	id 81992608BF; Wed,  6 Jun 2018 19:57:02 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qNqUwsj3"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AA8B5607A4;
-	Fri,  8 Jun 2018 11:07:17 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="L+quvW2a";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mX+XnYyg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA8B5607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id E44216089E;
+	Wed,  6 Jun 2018 19:57:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E44216089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752680AbeFHLHQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 07:07:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48468 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751220AbeFHLHL (ORCPT
+        id S1752322AbeFFT47 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 15:56:59 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:38673 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeFFT46 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 07:07:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 440D1608BF; Fri,  8 Jun 2018 11:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528456031;
-        bh=abz67/x/qgi7O0XM5vb/G5luB5qDIaGSZ7DLb4NYwfE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L+quvW2auPyS3eW5IEbLkzyuRQGAOX0hxaBZPHjyRbERsScFfiLxVvOWng7Rgy+ii
-         y4FUwpN+OD/3gzS9tkPuAPQ7sMbzDjViSUOfmPPoMbLebDV38O7hxJ3qiAy6DnWCbQ
-         cbHe3c3nrkGahg12T2HwZEae5NQ1sMfWe5JNLrvg=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AA54960590;
-        Fri,  8 Jun 2018 11:07:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528456029;
-        bh=abz67/x/qgi7O0XM5vb/G5luB5qDIaGSZ7DLb4NYwfE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mX+XnYyg+yrMjLhpvFGmFiXuj67q813+cIsAuoziPCAToRnlYJBLuwboAlbWfXfUx
-         7a3HXT+zt5+ZOpkjLc/bcAmNjZy6xNzf1OITIrjSPilwoKXe4oxnGu3UbZrnxt31LL
-         NCp1G9IWEEnPCGSaliJLddnNe0VCje6CUSFNM2qI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA54960590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From: Sayali Lokhande <sayalil@codeaurora.org>
-To: subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org
-Cc: linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V2 1/3] scsi: ufs: set the device reference clock setting
-Date: Fri,  8 Jun 2018 16:36:28 +0530
-Message-Id: <1528455990-24572-2-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org>
-References: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org>
+        Wed, 6 Jun 2018 15:56:58 -0400
+Received: by mail-yb0-f194.google.com with SMTP id q62-v6so2409073ybg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 12:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RU/E6mZ7r/1Hv2ig8R8cwwB69MB5t1QJ4ZFABEgMVTY=;
+        b=qNqUwsj3CCQr8echyrP83Q/usfqXu7AtDo3L4szDrCaYsfS0CBIZCJlP49cpPHkqNJ
+         C85yWZVbIR/CeP+ICmItdvb0CKU90Nyeo7FQ6Ry33NaQQaQrBQbWLDnw3o27v2gviZ97
+         ZnTHuhq5L3ulzQrZ80EAyEfxzzAK2DpDJiCxul0USKBbNb7H/oM1Y9UNky0FlnSu0w/H
+         GFr7Ud/Srx3QhbkzRJZYEr39m1mECm3ZnQiIzfPdfxuXV5PWwZLF/dq0yp/D7nGE299d
+         ngSzOaHHsReIBdVRkVnM/FTBiCpoOT0lx4SnhkeiKAUE9rVh49A6iTwAEKbZD4lwMozZ
+         nS4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RU/E6mZ7r/1Hv2ig8R8cwwB69MB5t1QJ4ZFABEgMVTY=;
+        b=gmvZsBaQGuNDS03X5SFz4YtFsRPGNOXiVlXwdblW4DzWSt7Wn+s0je4hkeH4HRDZ+G
+         cbH7kTGLTpIFKvwKdwZFDhdMeEfEaNG5oJ6DoAwdeewaSM2sVJ64UHw8bg8eBN218Y6T
+         J8go9xXeDj/VxHnbjONCXcu+wrfmM0tA+pG7ZS3lJAYoYabeYUqCUp3lDfA9tTH4f8hz
+         P9u4mJR7FNvRKB31Pcmv52TfQr5ZN85y4SoG36FKO/bO3aZLriOhFsjr/7XgT3DktYjs
+         bf++5CSuBG0goam+eFo8qA1qVWrnGSpiqTa+RfYcT+4mtfrv33Lf1dQVeRTsKB8dwCJj
+         CxWw==
+X-Gm-Message-State: APt69E3JOrHzgxC2RRFGfhQbd4E7d6pgXbeRYp+rZC/T6tPQoQGexZbO
+        Cf4gmazbkvTKkhg7Kdtm2l0=
+X-Google-Smtp-Source: ADUXVKLqhzPJr31zhBz1EhHUfY5AMikbbeLFS+V0KjFI520EZYO8asVxji+uEFWHtNokjxwAGTz6hg==
+X-Received: by 2002:a25:3b8a:: with SMTP id i132-v6mr2141391yba.239.1528315017688;
+        Wed, 06 Jun 2018 12:56:57 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::d0a1])
+        by smtp.gmail.com with ESMTPSA id 136-v6sm7502916ywk.11.2018.06.06.12.56.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Jun 2018 12:56:56 -0700 (PDT)
+Date: Wed, 6 Jun 2018 12:56:55 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Christoph Lameter <cl@linux.com>,
+        Dennis Zhou <dennisszhou@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] percpu_counter: `percpu_counter_read_positive' should
+ not return negative number
+Message-ID: <20180606195655.GO1351649@devbig577.frc2.facebook.com>
+References: <20180606193940.16126-1-malat@debian.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606193940.16126-1-malat@debian.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Subhash Jadavani <subhashj@codeaurora.org>
+On Wed, Jun 06, 2018 at 09:39:40PM +0200, Mathieu Malaterre wrote:
+> Since function `percpu_counter_add' may result in a signed integer overflow
+> the result stored in `fbc->count' could be negative. Make sure that
+> function `percpu_counter_read_positive' does not return a negative number
+> in this case. This will match behavior when CONFIG_SMP=y.
+> 
+> Detected wth CONFIG_UBSAN=y
+> 
+> [76404.888450] ================================================================================
+> [76404.888477] UBSAN: Undefined behaviour in ../include/linux/percpu_counter.h:136:13
+> [76404.888485] signed integer overflow:
+> [76404.888490] 9223308017647617321 + 76624449492175 cannot be represented in type 'long long int'
+> [76404.888501] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #50
+> [76404.888506] Call Trace:
+> [76404.888523] [dffedd30] [c0478b90] ubsan_epilogue+0x18/0x4c (unreliable)
+> [76404.888533] [dffedd40] [c0479530] handle_overflow+0xbc/0xdc
+> [76404.888548] [dffeddc0] [c0439044] cfq_completed_request+0x560/0x1234
+> [76404.888557] [dffede40] [c03f3fc4] __blk_put_request+0xb0/0x2dc
+> [76404.888570] [dffede80] [c05a81d0] scsi_end_request+0x19c/0x344
+> [76404.888579] [dffedeb0] [c05a9954] scsi_io_completion+0x4b4/0x854
+> [76404.888592] [dffedf10] [c04046b4] blk_done_softirq+0xe4/0x1e0
+> [76404.888605] [dffedf60] [c07ec1d4] __do_softirq+0x16c/0x5f0
+> [76404.888617] [dffedfd0] [c0065160] irq_exit+0x110/0x1a8
+> [76404.888629] [dffedff0] [c001646c] call_do_irq+0x24/0x3c
+> [76404.888641] [c0cdbe80] [c0009a2c] do_IRQ+0x98/0x1a0
+> [76404.888649] [c0cdbeb0] [c001b93c] ret_from_except+0x0/0x14
+> [76404.888659] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
+>                    LR = arch_cpu_idle+0x30/0x78
+> [76404.888667] [c0cdbf70] [c0cda000] 0xc0cda000 (unreliable)
+> [76404.888679] [c0cdbf80] [c00a3844] do_idle+0xc4/0x158
+> [76404.888687] [c0cdbfb0] [c00a3a90] cpu_startup_entry+0x24/0x28
+> [76404.888696] [c0cdbfc0] [c097f820] start_kernel+0x47c/0x490
+> [76404.888703] [c0cdbff0] [00003444] 0x3444
 
-UFS host supplies the reference clock to UFS device and UFS device
-specification allows host to provide one of the 4 frequencies (19.2 MHz,
-26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
-device reference clock frequency setting in the device based on what
-frequency it is supplying to UFS device.
+So, the _positive versions are there to deal with small negative reads
+coming from percpu propagation delays.  It's not there to protect
+against actual counter overflow although it can't detect that on SMP.
+It's just outright wrong to report 0 when the counter actually
+overflowed and applying the suggested patch masks a real problem
+undetectable.
 
-Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  7 +++
- drivers/scsi/ufs/ufs.h                             |  9 ++++
- drivers/scsi/ufs/ufshcd-pltfrm.c                   | 24 ++++++++++
- drivers/scsi/ufs/ufshcd.c                          | 52 ++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.h                          |  1 +
- 5 files changed, 93 insertions(+)
+I think the right thing to do is actually undersatnding what's going
+on (why is a 64bit counter overflowing?) and fix the underlying issue.
 
-diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-index c39dfef..4522434 100644
---- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-+++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-@@ -41,6 +41,12 @@ Optional properties:
- -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
- 			  Note that it is assume same number of lanes is used both
- 			  directions at once. If not specified, default is 2 lanes per direction.
-+- dev-ref-clk-freq	: Specify the device reference clock frequency, must be one of the following:
-+			  0: 19.2 MHz
-+			  1: 26 MHz
-+			  2: 38.4 MHz
-+			  3: 52 MHz
-+			  Defaults to 26 MHz if not specified.
- 
- Note: If above properties are not defined it can be assumed that the supply
- regulators or clocks are always on.
-@@ -66,4 +72,5 @@ Example:
- 		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
- 		phys = <&ufsphy1>;
- 		phy-names = "ufsphy";
-+		dev-ref-clk-freq = <0>; /* reference clock freq: 19.2 MHz */
- 	};
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 14e5bf7..e15deb0 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -378,6 +378,15 @@ enum query_opcode {
- 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
- };
- 
-+/* bRefClkFreq attribute values */
-+enum ref_clk_freq {
-+	REF_CLK_FREQ_19_2_MHZ	= 0x0,
-+	REF_CLK_FREQ_26_MHZ	= 0x1,
-+	REF_CLK_FREQ_38_4_MHZ	= 0x2,
-+	REF_CLK_FREQ_52_MHZ	= 0x3,
-+	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
-+};
-+
- /* Query response result code */
- enum {
- 	QUERY_RESULT_SUCCESS                    = 0x00,
-diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
-index e82bde0..6c877f3 100644
---- a/drivers/scsi/ufs/ufshcd-pltfrm.c
-+++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
-@@ -221,6 +221,28 @@ static int ufshcd_parse_regulator_info(struct ufs_hba *hba)
- 	return err;
- }
- 
-+static void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
-+{
-+	struct device *dev = hba->dev;
-+	struct device_node *np = dev->of_node;
-+	int ret;
-+
-+	if (!np)
-+		return;
-+
-+	ret = of_property_read_u32(np, "dev-ref-clk-freq",
-+				   &hba->dev_ref_clk_freq);
-+	if (ret ||
-+	    (hba->dev_ref_clk_freq < 0) ||
-+	    (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ)) {
-+		dev_err(hba->dev,
-+		"%s: invalid ref_clk setting = %d, set to default\n",
-+		__func__, hba->dev_ref_clk_freq);
-+		/* default setting */
-+		hba->dev_ref_clk_freq = REF_CLK_FREQ_26_MHZ;
-+	}
-+}
-+
- #ifdef CONFIG_PM
- /**
-  * ufshcd_pltfrm_suspend - suspend power management function
-@@ -343,6 +365,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
- 	pm_runtime_set_active(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
-+	ufshcd_parse_dev_ref_clk_freq(hba);
-+
- 	ufshcd_init_lanes_per_dir(hba);
- 
- 	err = ufshcd_init(hba, mmio_base, irq);
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c5b1bf1..4abc7ae 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -6297,6 +6297,53 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
- }
- 
- /**
-+ * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
-+ * @hba: per-adapter instance
-+ *
-+ * Read the current value of the bRefClkFreq attribute from device and update it
-+ * if host is supplying different reference clock frequency than one mentioned
-+ * in bRefClkFreq attribute.
-+ *
-+ * Returns zero on success, non-zero error value on failure.
-+ */
-+static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
-+{
-+	int err = 0;
-+	int ref_clk = -1;
-+	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
-+						     "38.4 MHz", "52 MHz"};
-+
-+	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
-+
-+	if (err) {
-+		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
-+			 __func__, err);
-+		goto out;
-+	}
-+
-+	if (ref_clk == hba->dev_ref_clk_freq)
-+		goto out; /* nothing to update */
-+
-+	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-+			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
-+			&hba->dev_ref_clk_freq);
-+
-+	if (err)
-+		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
-+			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
-+	/*
-+	 * It is good to print this out here to debug any later failures
-+	 * related to gear switch.
-+	 */
-+	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
-+			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
-+
-+out:
-+	return err;
-+}
-+
-+/**
-  * ufshcd_probe_hba - probe hba to detect device and initialize
-  * @hba: per-adapter instance
-  *
-@@ -6361,6 +6408,11 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
- 			"%s: Failed getting max supported power mode\n",
- 			__func__);
- 	} else {
-+		/*
-+		 * Set the right value to bRefClkFreq before attempting to
-+		 * switch to HS gears.
-+		 */
-+		ufshcd_set_dev_ref_clk(hba);
- 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
- 		if (ret) {
- 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 8110dcd..b026ad8 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -548,6 +548,7 @@ struct ufs_hba {
- 	void *priv;
- 	unsigned int irq;
- 	bool is_irq_enabled;
-+	u32 dev_ref_clk_freq;
- 
- 	/* Interrupt aggregation support is broken */
- 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+Thanks.
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+tejun
