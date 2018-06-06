@@ -1,87 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65167601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D757601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752214AbeFFNd4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:33:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38797 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeFFNdy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:33:54 -0400
-Date: Wed, 6 Jun 2018 06:33:21 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-2b04e46d8d0b9b7ac08ded672e3eab823f01d77a@git.kernel.org>
-Cc: jroedel@suse.de, 0x7f454c46@gmail.com, peterz@infradead.org,
-        tariqt@mellanox.com, songliubraving@fb.com,
-        linux-kernel@vger.kernel.org, bp@alien8.de, mingo@kernel.org,
-        tglx@linutronix.de, mike.travis@hpe.com, liu.song.a23@gmail.com,
-        hpa@zytor.com
-Reply-To: mike.travis@hpe.com, liu.song.a23@gmail.com, hpa@zytor.com,
-          tglx@linutronix.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, bp@alien8.de,
-          songliubraving@fb.com, tariqt@mellanox.com, peterz@infradead.org,
-          0x7f454c46@gmail.com, jroedel@suse.de
-In-Reply-To: <20180604162224.639011135@linutronix.de>
-References: <20180604162224.639011135@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/ioapic: Use apic_ack_irq()
-Git-Commit-ID: 2b04e46d8d0b9b7ac08ded672e3eab823f01d77a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S932294AbeFFIu5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:50:57 -0400
+Received: from mga07.intel.com ([134.134.136.100]:35166 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932150AbeFFIu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:50:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,482,1520924400";
+   d="scan'208";a="205734181"
+Date: Wed, 6 Jun 2018 16:50:54 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Tejun Heo <tj@kernel.org>, lkp@01.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        Huang Ying <ying.huang@intel.com>
+Subject: Re: [LKP] [lkp-robot] [mm, memcontrol] 309fe96bfc:
+ vm-scalability.throughput +23.0% improvement
+Message-ID: <20180606085053.GA21167@intel.com>
+References: <20180528114019.GF9904@yexl-desktop>
+ <20180601072604.GB27302@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180601072604.GB27302@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2b04e46d8d0b9b7ac08ded672e3eab823f01d77a
-Gitweb:     https://git.kernel.org/tip/2b04e46d8d0b9b7ac08ded672e3eab823f01d77a
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 4 Jun 2018 17:33:57 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 15:18:21 +0200
+On Fri, Jun 01, 2018 at 03:26:04PM +0800, Aaron Lu wrote:
+> On Mon, May 28, 2018 at 07:40:19PM +0800, kernel test robot wrote:
+> > 
+> > Greeting,
+> > 
+> > FYI, we noticed a +23.0% improvement of vm-scalability.throughput due to commit:
+> > 
+> > 
+> > commit: 309fe96bfc0ae387f53612927a8f0dc3eb056efd ("mm, memcontrol: implement memory.swap.events")
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> > 
+> > in testcase: vm-scalability
+> > on test machine: 144 threads Intel(R) Xeon(R) CPU E7-8890 v3 @ 2.50GHz with 512G memory
+> > with following parameters:
+> > 
+> > 	runtime: 300s
+> > 	size: 1T
+> > 	test: lru-shm
+> > 	cpufreq_governor: performance
+> > 
+> > test-description: The motivation behind this suite is to exercise functions and regions of the mm/ of the Linux kernel which are of interest to us.
+> > test-url: https://git.kernel.org/cgit/linux/kernel/git/wfg/vm-scalability.git/
+> > 
+> 
+> With the patch I just sent out:
+> "mem_cgroup: make sure moving_account, move_lock_task and stat_cpu in the
+> same cacheline"
+> 
+> Applying this commit on top doesn't yield 23% improvement any more, but
+> a 6% performace drop...
+> I found the culprit being the following one line introduced in this commit:
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index d90b0201a8c4..07ab974c0a49 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -6019,13 +6019,17 @@ int mem_cgroup_try_charge_swap(struct page *page, swp_entry_t entry)
+>  	if (!memcg)
+>  		return 0;
+>  
+> -	if (!entry.val)
+> +	if (!entry.val) {
+> +		memcg_memory_event(memcg, MEMCG_SWAP_FAIL);
 
-x86/ioapic: Use apic_ack_irq()
+Removing this line restored performance but it really doesn't make any
+sense. Ying suggested it might be code alignment related and suggested
+to use a different compiler than gcc-7.2. Then I used gcc-6.4 and turned
+out the test result to be pretty much the same for the two commits:
 
-To address the EBUSY fail of interrupt affinity settings in case that the
-previous setting has not been cleaned up yet, use the new apic_ack_irq()
-function instead of directly invoking ack_APIC_irq().
+(each test has run for 3 times)
+$ grep throughput base/*/stats.json
+base/0/stats.json: "vm-scalability.throughput": 89207489,
+base/1/stats.json: "vm-scalability.throughput": 89982933,
+base/2/stats.json: "vm-scalability.throughput": 90436592,
 
-Preparatory change for the real fix
+$ grep throughput head/*/stats.json
+head/0/stats.json: "vm-scalability.throughput": 90882775,
+head/1/stats.json: "vm-scalability.throughput": 90675220,
+head/2/stats.json: "vm-scalability.throughput": 91173479,
 
-Fixes: dccfe3147b42 ("x86/vector: Simplify vector move cleanup")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Song Liu <songliubraving@fb.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <liu.song.a23@gmail.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tariq Toukan <tariqt@mellanox.com>
-Link: https://lkml.kernel.org/r/20180604162224.639011135@linutronix.de
+So probably it's really related to code alignment and this bisected
+commit doesn't cause performance change(as expected).
 
----
- arch/x86/kernel/apic/io_apic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index 7553819c74c3..3982f79d2377 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -1851,7 +1851,7 @@ static void ioapic_ir_ack_level(struct irq_data *irq_data)
- 	 * intr-remapping table entry. Hence for the io-apic
- 	 * EOI we use the pin number.
- 	 */
--	ack_APIC_irq();
-+	apic_ack_irq(irq_data);
- 	eoi_ioapic_pin(data->entry.vector, data);
- }
- 
+>  		return 0;
+> +	}
+>  
+>  	memcg = mem_cgroup_id_get_online(memcg);
+>  
+> If I remove that memcg_memory_event() call, performance will restore.
+> 
+> It's beyond my understanding why this code path matters since there is
+> no swap device setup in the test machine so I don't see how possible
+> get_swap_page() could ever be called.
+> 
+> Still investigating...
+> 
