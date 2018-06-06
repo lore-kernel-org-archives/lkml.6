@@ -1,33 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7zYJ6g8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A419607C7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dn2SCo0y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 150F560763
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751914AbeFFLkd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 07:40:33 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:38223 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750864AbeFFLkc (ORCPT
+        id S932522AbeFFS7b (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:59:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44916 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932498AbeFFS73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 07:40:32 -0400
-X-Google-Smtp-Source: ADUXVKKxGDgxuHr2GQK4L/JXbKyTl04WoCBoeib9C/fHTLHiTSAdfAgBYD/OOX5Smq3GTDQ2A2QGfw==
-From: John Whitmore <johnfwhitmore@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, colin.king@canonical.com,
-        tglx@linutronix.de, kstewart@linuxfoundation.org,
-        devel@driverdev.osuosl.org
-Subject: staging: rtl8192e: Series of coding style changes
-Date: Wed,  6 Jun 2018 12:39:55 +0100
-Message-Id: <20180606114003.22654-1-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 6 Jun 2018 14:59:29 -0400
+Date: Wed, 6 Jun 2018 20:59:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Kohli, Gaurav" <gkohli@codeaurora.org>, tglx@linutronix.de,
+        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
+ wakeup
+Message-ID: <20180606185920.GI12198@hirez.programming.kicks-ass.net>
+References: <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
+ <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
+ <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
+ <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
+ <20180605150841.GA24053@redhat.com>
+ <20180605152212.GY12180@hirez.programming.kicks-ass.net>
+ <20180605154053.GB12235@hirez.programming.kicks-ass.net>
+ <20180605163515.GB24053@redhat.com>
+ <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
+ <20180606135115.GA4609@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606135115.GA4609@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Version 6 : Sorry to send this out again but version 5 contained a little less
-verbosity then required.
+On Wed, Jun 06, 2018 at 03:51:16PM +0200, Oleg Nesterov wrote:
+> IIUC, this will only affect smpboot_update_cpumask_percpu_thread() which can hit
+> an already parked thread, but it doesn't need to wait.
+> 
+> And it seems that smpboot_update_cpumask_percpu_thread() in turn needs some cleanups.
+> Hmm. and its single user: kernel/watchdog.c.
+> 
+> And speaking of watchdog.c, can't we simply kill the "watchdog/%u" threads? This is
+> off-topic, but can't watchdog_timer_fn() use stop_one_cpu_nowait(watchdog) ?
+> 
+> And I really think we should unexport kthread_park/unpark(), only smpboot_thread_fn()
+> should use them. kthread() should not play with __kthread_parkme(). And even
+> KTHREAD_SHOULD_PARK must die, I mean it should live in struct smp_hotplug_thread,
+> not in struct kthread.
+> 
+> OK, this is off-topic too.
 
-Again these are just some simple coding style changes to the file, so nothing
-of importance.
+> And, let me repeat, can't we avoid complete_all() ?
+
+Yes, or at least if that watchdog crap is the only user.
+
+I have most of the patch reworking watchdog.c to use stop_one_cpu*(),
+and that cleans up lots -- of course, I've not tested it yet, so it
+could also be breaking lots :-)
