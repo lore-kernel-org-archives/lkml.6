@@ -1,152 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DO8zDwmlGluZAgAAmS7hNA
-	; Fri, 08 Jun 2018 15:47:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oIU4HNBPGFumRgAAmS7hNA
+	; Wed, 06 Jun 2018 21:19:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9DF49607DC; Fri,  8 Jun 2018 15:47:24 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vIvh/EhW"
+	id 5E67B608BF; Wed,  6 Jun 2018 21:19:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0DAB8602FC;
-	Fri,  8 Jun 2018 15:47:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DAB8602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id B073F607E4;
+	Wed,  6 Jun 2018 21:19:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B073F607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeFHPrV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 11:47:21 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33556 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751141AbeFHPrU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 11:47:20 -0400
-Received: by mail-it0-f68.google.com with SMTP id k17-v6so5380490ita.0;
-        Fri, 08 Jun 2018 08:47:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=2BIEOZ0MbFMZyTmkftMOWA2usEwmvl6V+4H4DW7It5E=;
-        b=vIvh/EhWJ90FIH52nELON+yxUat9nwQb0h28Bz7bZo9ty1ppQG8HrwFYN73y/1wvUt
-         16xWl5HYssl8Skl8QhwkIepOqo8DUNicvyhucYI/zOIp7n0ujiKJUbn4gx2u5Sk/bxm2
-         fPuyU0EaR3S/5uZxa5dWFLN+BrvzK8UzfehATyfjRFuuzl0ln4rPDm63IeeY6LByT0CS
-         nHwHeFtII2AkzeJHw/+0bY6A0djFcdtbY8trmKsMk5/dzDOPaUsAnl9W109DuGzUjO23
-         NKk/huxW1h674X94eEqv7eK/7vUUqn/yUIVrFNmNwJmh+PP+hzHAxUye1wKd2VnOl2Ri
-         Ko6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=2BIEOZ0MbFMZyTmkftMOWA2usEwmvl6V+4H4DW7It5E=;
-        b=Z/S7+PFiMj3Ts38WoZAZSKNElAHh2i7GgEjEITNQL6e2Jjt7rRYQhvEeH3NYR6CcCx
-         NvL1JvwuL+MRk9YilWLD+itdz2/TR6adj2/5GBRKbnsnKE4uXrYx1qzQP8WMmzuhMZgz
-         Idx3w0zKYnw2Jn7uJ6m5bKKv6kzYnEKVZVEE74fgHbhDUZdnB/8vJf+Qr8qGHtHJGCzI
-         iuAUPndsFg5uWGka1yO1NKA5wRWqoCkHycQOfWv31ao50EWAaKjsezKpuRktTOkSyyaq
-         hwn9sPEZKfXN0PEPsa7Nbo8Jef2xFzN4lEEnyA5xKNcCvF63nmsNItFhPqBsz+qLs01U
-         cpmQ==
-X-Gm-Message-State: APt69E0ShaQcy8tQfIGO/EXoDZloLu+3ZHzpAkaVzEhe6j0EF/G8QCLN
-        TijWw2jQTBVmZF2Hu2IswFdjwXsk0+eOCKXEgr0=
-X-Google-Smtp-Source: ADUXVKLDhULxv5rXE/Q19Vja4u2vj1xyNcVG4hJLrP5OwlEqdrIFUOPaNsalrd0pv128Ba5h3e+5qyq485SA/YFUqko=
-X-Received: by 2002:a24:43cf:: with SMTP id s198-v6mr2094554itb.28.1528472839186;
- Fri, 08 Jun 2018 08:47:19 -0700 (PDT)
+        id S1752554AbeFFVTJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:19:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:35759 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752282AbeFFVTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:19:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 14:19:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,484,1520924400";
+   d="scan'208";a="46993196"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga007.jf.intel.com with ESMTP; 06 Jun 2018 14:19:04 -0700
+Date: Wed, 6 Jun 2018 14:22:04 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Yi L <yi.l.liu@linux.intel.com>,
+        Auger Eric <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v4 04/22] iommu/vt-d: add bind_pasid_table function
+Message-ID: <20180606142204.529adec5@jacob-builder>
+In-Reply-To: <2831caf1-d40b-58c3-313c-afb7262e1861@arm.com>
+References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1523915351-54415-5-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20180417131047.0a9c310f@w520.home>
+        <AM4PR0802MB2369F739C91B630CA99B3D3BA3B40@AM4PR0802MB2369.eurprd08.prod.outlook.com>
+        <20180420164251.5245f822@jacob-builder>
+        <20180529140915.1f174689@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1911E59C4@SHSMSX101.ccr.corp.intel.com>
+        <20180529211746.74f1dd23@w520.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1911E5F06@SHSMSX101.ccr.corp.intel.com>
+        <a07a0a0a-ebdd-c81a-7ed6-cff19e6078d7@arm.com>
+        <20180530125240.34e0e80c@jacob-builder>
+        <1c1094e8-ecbb-7731-910c-59e4de1e5c70@arm.com>
+        <20180605103253.634ef8fd@jacob-builder>
+        <2831caf1-d40b-58c3-313c-afb7262e1861@arm.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a4f:7515:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 08:47:18 -0700 (PDT)
-In-Reply-To: <04758f3a-0f03-4fe9-6eb8-10ebb2430a98@codeaurora.org>
-References: <20180608144617.2900894-1-arnd@arndb.de> <04758f3a-0f03-4fe9-6eb8-10ebb2430a98@codeaurora.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 8 Jun 2018 17:47:18 +0200
-X-Google-Sender-Auth: 1ZLOPNdjKtFtJOwOkMLMOIzzci0
-Message-ID: <CAK8P3a2=uMFOcw=gZGuwsH+V=1DMXGgxf_hZHw3tMJD1nDdG2Q@mail.gmail.com>
-Subject: Re: [PATCH] scsi: ipr: fix build on 32-bit architectures
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Brian King <brking@us.ibm.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Wen Xiong <wenxiong@linux.vnet.ibm.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 5:27 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
-> +Will,
->
-> On 6/8/2018 10:46 AM, Arnd Bergmann wrote:
->> Replacing writeq() with writeq_relaxed() doesn't work on many architectures,
->> as that variant is not available in general:
->>
->> net/Makefile:24: CC cannot link executables. Skipping bpfilter.
->> drivers/scsi/ipr.c: In function 'ipr_mask_and_clear_interrupts':
->> drivers/scsi/ipr.c:767:3: error: implicit declaration of function 'writeq_relaxed'; did you mean 'writew_relaxed'? [-Werror=implicit-function-declaration]
->>    writeq_relaxed(~0, ioa_cfg->regs.set_interrupt_mask_reg);
->>    ^~~~~~~~~~~~~~
->>    writew_relaxed
->>
->> The other issue here is that the patch eliminated the wrong barrier.
->> As per a long discussion that followed Sinan's original patch submission,
->> the conclusion was that drivers should generally assume that the barrier
->> implied by writel() is sufficient for ordering DMA, so this reverts his
->> change and instead removes the extraneous wmb() before it, which is no
->> longer needed on any architecture now.
->>
->> Fixes: 0109a4f2e02d ("scsi: ipr: Eliminate duplicate barriers on weakly-ordered archs")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> This looks good on paper however we need an input from the driver maintainer
-> because some drivers like Intel NIC are using write barriers in place of
-> a SMP barrier + write barrier combination as an optimizatin.
->
-> Removing the barrier itself can actually break the driver if SMP barrier is
-> actually needed instead.
->
-> So, it is difficult to judge how this barrier has been used without an
-> expert opinion.
->
-> Changing
->
-> wmb() + writel()
->
-> to
->
-> wmb() + writel_relaxed()
->
-> is safer than dropping the wmb() altogether.
+On Wed, 6 Jun 2018 12:20:51 +0100
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
 
-If the wmb() was not just about the writeq() then I would argue your patch
-description was misleading. We certainly shouldn't replace random writeq()
-calls with writeq_relaxed() just because we can show that the driver has
-a barrier in front of it.
+> On 05/06/18 18:32, Jacob Pan wrote:
+> >> "bytes" could be passed by VFIO as argument to bind_pasid_table,
+> >> since it can deduce it from argsz
+> >>  
+> > Are you suggesting we wrap this struct in a vfio struct with argsz?
+> > or we directly use this struct?
+> > 
+> > I need to clarify how vfio will use this.  
+> 
+> Right, I think we've diverged a bit since the last discussion :)
+> 
+> > - User program:
+> > struct pasid_table_config ptc = { .bytes = sizeof(ptc) };
+> > ptc.version = 1;
+> > ioctl(device, VFIO_DEVICE_BIND_PASID_TABLE, &ptc);  
+> 
+> Any reason to do the ioctl on device instead of container? As we're
+> binding address spaces we probably want a consistent view for the
+> whole container, like the MAP/UNMAP ioctls do.
+> 
+I was thinking the pasid table storage is per device, it would be
+more secure if the pasid table is contained within the device. We
+should have one device per container in most cases.
+in case of two or more devices in the same container shares the same
+pasid table, isolation may not be good in that the second device can
+dma with pasids it does not own but in the shared pasid table.
 
-In particular, the ipr_mask_and_clear_interrupts() function has multiple
-writeq() or writel() calls, and even a readl() and your patch only changes
-one of them, which seems like a rather pointless exercise as the function
-still fully synchronizes the I/O multiple times.
+> As I remember it the userspace interface would use a VFIO header and
+> the BIND ioctl. I can't find the email in my archive though, so I
+> might be imagining it. This is what I remember, on the user side:
+> 
+> struct {
+> 	struct vfio_iommu_type1_bind	hdr;
+> 	struct pasid_table_config	cfg;
+> } bind = {
+> 	.hdr.argsz	= sizeof(bind),
+> 	.hdr.flags	= VFIO_IOMMU_BIND_PASID_TABLE,
+> 	/* cfg data here */
+> };
+> 
+> ioctl(container, VFIO_DEVICE_BIND, &bind);
+> 
+or maybe just use your VFIO_IOMMU_BIND command and vfio_iommu_type1_bind
+with a new flag and PTC as the data. there can be future extensions,
+bind pasid table can be too narrow. And i agree below using argsz and
+flags are more flexible.
 
-> Will Deacon should probably look at why writeq_relaxed is missing on some ARM
-> arches too.
->
-> Drivers shouldn't worry about write derivatives.
+i.e.
+/* takes pasid_table_config as data for flag VFIO_IOMMU_BIND_PASIDTBL */
+struct vfio_iommu_type1_bind {
+	__u32	argsz;
+	__u32	flags;
+#define VFIO_IOMMU_BIND_PROCESS		(1 << 0)
+#define VFIO_IOMMU_BIND_PASIDTBL	(1 << 1)
+	__u8	data[];
+};
 
-This driver defines writeq() itself for architectures that don't have it, but
-it doesn't define writeq_relaxed() and doesn't include
-linux/io-64-nonatomic-lo-hi.h
-or linux/io-64-nonatomic-hi-lo.h. It seems that it needs a different behavior
-from all other drivers here, storing the upper 32 bits into the lower
-address and
-the lower 32 bits into the upper address.
+pseudo code in kernel:
+	switch (bind.flags) {
+	case VFIO_IOMMU_BIND_PROCESS:
+		return vfio_iommu_type1_bind_process(iommu, (void *)arg,
+						     &bind);
+	case VFIO_IOMMU_BIND_PASIDTBL:
+		return vfio_iommu_type1_bind_pasid_tbl(iommu, &bind);
+}
 
-         Arnd
+vfio_iommu_type1_bind_pasid_tbl(iommu, bind)
+{
+	/* loop through domain list, group, device */
+	struct pasid_table_cfg *ptc = bind->data;
+	iommu_bind_pasid_table(domain, device, ptc);
+}
+
+
+> 
+> But I don't feel strongly about the interface. However I'd suggest to
+> keep incremental versioning like the rest of VFIO, with argsz and
+> flags, instead of version numbers, because it's more flexible.
+> 
+> Initially the PTC struct would look like:
+> struct pasid_table_config {
+>   u32 argsz;		/* sizeof(pasid_table_config) */
+>   u32 flags;		/* Should be zero */
+>   u64 base_ptr;
+>   u8 model;
+>   u8 pasid_bits;
+> };
+> 
+> (Even though it doesn't use a version field let's call this version 1
+> for the sake of the example)
+> 
+> ------
+> If someone wants to add a new field to the structure, then they also
+> add a flag (let's call this version 2):
+> 
+> struct pasid_table_config {
+>   u32 argsz;
+> #define PASID_TABLE_CONFIG_EXTN (1 << 0)
+>   u32 flags;
+>   u64 base_ptr;
+>   u8 model;
+>   u8 pasid_bits;
+>   u64 some_extension;
+> };
+> 
+> * Assume user has a version 2 header and kernel has a version 1
+> header.
+>   * If user doesn't want the extension, it doesn't set the EXTN flag.
+>     The ioctl succeeds because the kernel checks that argsz >=
+>     offsetofend(pasid_bits) and that (flags == 0).
+>   * If user wants to use the extension, it sets the EXTN flag. The
+> ioctl fails because the kernel doesn't recognize the flag.
+> * Assume user has version 1 and kernel has version 2.
+>   * User doesn't use the extension. The kernel still checks that
+>     argsz >= offsetofend(pasid_bits), but also that (flags &
+>     ~PASID_TABLE_CONFIG_EXTN), which succeeds.
+>   * User wants the extension, sets PASID_TABLE_CONFIG_EXTN. When
+>     seeing the flag, the kernel additionally checks that argsz >=
+>     offsetofend(some_extension), which succeeds.
+> 
+> ------
+> Adding model-specific fields is a bit more complicated, because I
+> think they should always stay at the end of the struct. One solution
+> is to add padding for common extensions:
+> 
+> struct pasid_table_config {
+>   u32 argsz;
+>   u32 flags;
+>   u64 base_ptr;
+>   u8 model;
+>   u8 pasid_bits;
+>   u8 padding[64];
+> 
+>   union {
+>     struct {
+>       u8 s1dss;
+>       u8 s1fmt;
+>     } model_arm;
+>     struct {
+>       u64 foo;
+>     } model_bar;
+>   };
+> };
+> 
+> (we might call this version 3, but can be added before or after
+> version 2, it doesn't matter)
+> 
+> A subsequent extension can still add the "some_extension" field and a
+> flag. If the kernel sees model "ARM", then it checks argsz >=
+> offsetofend(model_arm). If it sees model "BAR" then it checks argsz >=
+> offsetofend(model_bar). A model could also have flags to make the
+> model-specific structure extensible.
+> 
+> The problem is when we run out of space in the padding area, but we
+> might not need much extensibility in the common part.
+> 
+> Thanks,
+> Jean
+
+[Jacob Pan]
