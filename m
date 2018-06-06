@@ -1,94 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E296C60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 244716070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752724AbeFFPf5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:35:57 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57096 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752548AbeFFPf4 (ORCPT
+        id S932367AbeFFKKt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:10:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54413 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932265AbeFFKKr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:35:56 -0400
-Subject: Re: [PATCH] arm64: dts: rockchip: Switch to SPDX identifier.
-To: klaus.goger@theobroma-systems.com
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com,
-        Simon Xue <xxm@rock-chips.com>,
-        Yakir Yang <kuankuan.y@gmail.com>,
-        Liang Chen <cl@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        William Wu <william.wu@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        linux-rockchip@lists.infradead.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        =?UTF-8?Q?Kamil_Trzci=c5=84ski?= <ayufan@ayufan.eu>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        devicetree@vger.kernel.org, Pierre-Hugues Husson <phh@phh.me>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        linux-arm-kernel@lists.infradead.org,
-        Jianqun Xu <jay.xu@rock-chips.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Yao <markyao0591@gmail.com>,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Caesar Wang <wxt@rock-chips.com>,
-        Joseph Chen <chenjh@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20180606152109.12359-1-enric.balletbo@collabora.com>
- <DCD2814D-35CD-4856-9479-3A09922586DD@theobroma-systems.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <a0b5807f-54c4-d2a7-00ed-bb8fad87acf0@collabora.com>
-Date: Wed, 6 Jun 2018 17:35:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 6 Jun 2018 06:10:47 -0400
+Date: Wed, 6 Jun 2018 03:10:37 -0700
+From: tip-bot for Laurentiu Tudor <tipbot@zytor.com>
+Message-ID: <tip-0cdd431c337e99177e68597f3de34bedd3a20a74@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        hpa@zytor.com, laurentiu.tudor@nxp.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          laurentiu.tudor@nxp.com
+In-Reply-To: <20180605122727.12831-1-laurentiu.tudor@nxp.com>
+References: <20180605122727.12831-1-laurentiu.tudor@nxp.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/urgent] irqchip/ls-scfg-msi: Map MSIs in the iommu
+Git-Commit-ID: 0cdd431c337e99177e68597f3de34bedd3a20a74
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <DCD2814D-35CD-4856-9479-3A09922586DD@theobroma-systems.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  0cdd431c337e99177e68597f3de34bedd3a20a74
+Gitweb:     https://git.kernel.org/tip/0cdd431c337e99177e68597f3de34bedd3a20a74
+Author:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
+AuthorDate: Tue, 5 Jun 2018 15:27:27 +0300
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 6 Jun 2018 12:05:19 +0200
 
+irqchip/ls-scfg-msi: Map MSIs in the iommu
 
-On 06/06/18 17:31, klaus.goger@theobroma-systems.com wrote:
-> Hi Enric,
-> 
->> On 06.06.2018, at 17:21, Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
->>
->> Adopt the SPDX license identifier headers to ease license compliance
->> management.
-> 
-> [snip]
-> 
-> Heiko merged a similar patch 2 days ago
-> http://lists.infradead.org/pipermail/linux-rockchip/2018-June/020939.html
-> 
+Add the required iommu_dma_map_msi_msg() when composing the MSI message,
+otherwise the interrupts will not work.
 
-Nice, then forget this patch. I had this in my list of patches to send and I did
-not noticed that another patch was send.
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: jason@lakedaemon.net
+Cc: marc.zyngier@arm.com
+Cc: zhiqiang.hou@nxp.com
+Cc: minghuan.lian@nxp.com
+Link: https://lkml.kernel.org/r/20180605122727.12831-1-laurentiu.tudor@nxp.com
 
-Cheers,
- Enric
+---
+ drivers/irqchip/irq-ls-scfg-msi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> Cheers,
-> Klaus
-> 
+diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
+index 57e3d900f19e..1ec3bfe56693 100644
+--- a/drivers/irqchip/irq-ls-scfg-msi.c
++++ b/drivers/irqchip/irq-ls-scfg-msi.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_pci.h>
+ #include <linux/of_platform.h>
+ #include <linux/spinlock.h>
++#include <linux/dma-iommu.h>
+ 
+ #define MSI_IRQS_PER_MSIR	32
+ #define MSI_MSIR_OFFSET		4
+@@ -94,6 +95,8 @@ static void ls_scfg_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
+ 
+ 	if (msi_affinity_flag)
+ 		msg->data |= cpumask_first(data->common->affinity);
++
++	iommu_dma_map_msi_msg(data->irq, msg);
+ }
+ 
+ static int ls_scfg_msi_set_affinity(struct irq_data *irq_data,
