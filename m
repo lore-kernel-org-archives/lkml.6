@@ -1,128 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B0E0607B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICje85nX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B221360263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752128AbeFFNRF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:17:05 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:32844 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeFFNRD (ORCPT
+        id S932109AbeFFEjj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 00:39:39 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37990 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751330AbeFFEjh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:17:03 -0400
-X-Google-Smtp-Source: ADUXVKKeP50fDEFoy+F6SLZ7TOEaHTD1OyiToGL+GkKfCMTklTubnjvTeQl9kSB8CZLIaZ01Bk7Bf5wlipKhJLUFtMDxhv8duMyS
-MIME-Version: 1.0
-Date: Wed, 06 Jun 2018 06:17:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000832e70056df8fb38@google.com>
-Subject: general protection fault in open_fs_devices
-From: syzbot <syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, jbacik@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Wed, 6 Jun 2018 00:39:37 -0400
+X-Google-Smtp-Source: ADUXVKIU3ejlfLIrhLWOWH+Fq6udA2k90MSN8TmYttp1gQF6JGxTfLXkfUWStj4Rl8R8E11h7hdl+Q==
+From: Jun Yao <yaojun8558363@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
+        robin.murphy@arm.com, labbott@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: [PATCH v3 1/3] arm64/mm: pass swapper_pg_dir as an argument to __enable_mmu()
+Date: Wed,  6 Jun 2018 12:39:19 +0800
+Message-Id: <20180606043921.19851-2-yaojun8558363@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180606043921.19851-1-yaojun8558363@gmail.com>
+References: <20180606043921.19851-1-yaojun8558363@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Introduce __pa_swapper_pg_dir to save physical address of
+swapper_pg_dir. And pass it as an argument to __enable_mmu().
 
-syzbot found the following crash on:
-
-HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1732a6f7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
-dashboard link: https://syzkaller.appspot.com/bug?extid=909a5177749d7990ffa4
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16ba31f7800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d4ac8f800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-BTRFS: device fsid ecf6f2a2-2997-48ae-b81e-1b00920efd9a devid 0 transid 0  
-/dev/loop0
-print_req_error: I/O error, dev loop1, sector 128
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 4540 Comm: syz-executor962 Not tainted 4.17.0+ #86
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:open_fs_devices+0x7e8/0xc60 fs/btrfs/volumes.c:1124
-Code: 48 8b 85 e0 fe ff ff 41 c7 87 14 01 00 00 01 00 00 00 48 8d b8 a0 00  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 01 04 00 00 48 8b 85 e0 fe ff ff 49 8d 7f 50 48
-RSP: 0018:ffff8801d06971d8 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff82c386af
-RDX: 0000000000000014 RSI: ffffffff82c386bd RDI: 00000000000000a0
-RBP: ffff8801d0697348 R08: ffff8801ad4fc580 R09: ffff8801d0697240
-R10: ffffed003a0d2e5c R11: ffff8801d06972e7 R12: ffff8801ad4f8158
-R13: ffff8801ad4f80d8 R14: dffffc0000000000 R15: ffff8801ad4f8080
-FS:  00000000017dd880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000ede000 CR3: 00000001adaac000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  btrfs_open_devices+0xc0/0xd0 fs/btrfs/volumes.c:1155
-  btrfs_mount_root+0x91f/0x1e70 fs/btrfs/super.c:1568
-  mount_fs+0xae/0x328 fs/super.c:1277
-  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
-  vfs_kern_mount+0x40/0x60 fs/namespace.c:1027
-  btrfs_mount+0x4a1/0x213e fs/btrfs/super.c:1661
-  mount_fs+0xae/0x328 fs/super.c:1277
-  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:1027 [inline]
-  do_new_mount fs/namespace.c:2518 [inline]
-  do_mount+0x564/0x30b0 fs/namespace.c:2848
-  ksys_mount+0x12d/0x140 fs/namespace.c:3064
-  __do_sys_mount fs/namespace.c:3078 [inline]
-  __se_sys_mount fs/namespace.c:3075 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4431fa
-Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 fd e5 fb ff c3 66 2e 0f  
-1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 da e5 fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007ffc2d953358 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004431fa
-RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007ffc2d953370
-RBP: 0000000000000004 R08: 00000000200000c0 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000297 R12: 000000000000000d
-R13: 0000000008100000 R14: 0030656c69662f2e R15: fe03f80fe03f80ff
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace d8b96c29a3ffd356 ]---
-RIP: 0010:open_fs_devices+0x7e8/0xc60 fs/btrfs/volumes.c:1124
-Code: 48 8b 85 e0 fe ff ff 41 c7 87 14 01 00 00 01 00 00 00 48 8d b8 a0 00  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 01 04 00 00 48 8b 85 e0 fe ff ff 49 8d 7f 50 48
-RSP: 0018:ffff8801d06971d8 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff82c386af
-RDX: 0000000000000014 RSI: ffffffff82c386bd RDI: 00000000000000a0
-RBP: ffff8801d0697348 R08: ffff8801ad4fc580 R09: ffff8801d0697240
-R10: ffffed003a0d2e5c R11: ffff8801d06972e7 R12: ffff8801ad4f8158
-R13: ffff8801ad4f80d8 R14: dffffc0000000000 R15: ffff8801ad4f8080
-FS:  00000000017dd880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000ede000 CR3: 00000001adaac000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/arm64/include/asm/mmu_context.h |  4 +---
+ arch/arm64/include/asm/pgtable.h     |  1 +
+ arch/arm64/kernel/cpufeature.c       |  2 +-
+ arch/arm64/kernel/head.S             |  6 ++++--
+ arch/arm64/kernel/hibernate.c        |  2 +-
+ arch/arm64/kernel/sleep.S            |  1 +
+ arch/arm64/mm/kasan_init.c           |  4 ++--
+ arch/arm64/mm/mmu.c                  | 20 ++++++++++++++++++--
+ 8 files changed, 29 insertions(+), 11 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
+index 39ec0b8a689e..3eddb871f251 100644
+--- a/arch/arm64/include/asm/mmu_context.h
++++ b/arch/arm64/include/asm/mmu_context.h
+@@ -141,14 +141,12 @@ static inline void cpu_install_idmap(void)
+  * Atomically replaces the active TTBR1_EL1 PGD with a new VA-compatible PGD,
+  * avoiding the possibility of conflicting TLB entries being allocated.
+  */
+-static inline void cpu_replace_ttbr1(pgd_t *pgdp)
++static inline void cpu_replace_ttbr1(phys_addr_t pgd_phys)
+ {
+ 	typedef void (ttbr_replace_func)(phys_addr_t);
+ 	extern ttbr_replace_func idmap_cpu_replace_ttbr1;
+ 	ttbr_replace_func *replace_phys;
+ 
+-	phys_addr_t pgd_phys = virt_to_phys(pgdp);
+-
+ 	replace_phys = (void *)__pa_symbol(idmap_cpu_replace_ttbr1);
+ 
+ 	cpu_install_idmap();
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 7c4c8f318ba9..519ab5581b08 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -722,6 +722,7 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+ extern pgd_t swapper_pg_end[];
+ extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
+ extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
++extern volatile phys_addr_t __pa_swapper_pg_dir;
+ 
+ /*
+  * Encode and decode a swap entry:
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index d2856b129097..e3d76a9dd67a 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -917,7 +917,7 @@ kpti_install_ng_mappings(const struct arm64_cpu_capabilities *__unused)
+ 	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+ 
+ 	cpu_install_idmap();
+-	remap_fn(cpu, num_online_cpus(), __pa_symbol(swapper_pg_dir));
++	remap_fn(cpu, num_online_cpus(), __pa_swapper_pg_dir);
+ 	cpu_uninstall_idmap();
+ 
+ 	if (!cpu)
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index b0853069702f..2e871b1cb75f 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -706,6 +706,7 @@ secondary_startup:
+ 	 * Common entry point for secondary CPUs.
+ 	 */
+ 	bl	__cpu_setup			// initialise processor
++	ldr_l   x26, __pa_swapper_pg_dir
+ 	bl	__enable_mmu
+ 	ldr	x8, =__secondary_switched
+ 	br	x8
+@@ -748,6 +749,7 @@ ENDPROC(__secondary_switched)
+  * Enable the MMU.
+  *
+  *  x0  = SCTLR_EL1 value for turning on the MMU.
++ *  x26 = TTBR1 value for turning on the MMU.
+  *
+  * Returns to the caller via x30/lr. This requires the caller to be covered
+  * by the .idmap.text section.
+@@ -762,9 +764,8 @@ ENTRY(__enable_mmu)
+ 	b.ne	__no_granule_support
+ 	update_early_cpu_boot_status 0, x1, x2
+ 	adrp	x1, idmap_pg_dir
+-	adrp	x2, swapper_pg_dir
+ 	phys_to_ttbr x3, x1
+-	phys_to_ttbr x4, x2
++	phys_to_ttbr x4, x26
+ 	msr	ttbr0_el1, x3			// load TTBR0
+ 	msr	ttbr1_el1, x4			// load TTBR1
+ 	isb
+@@ -823,6 +824,7 @@ __primary_switch:
+ 	mrs	x20, sctlr_el1			// preserve old SCTLR_EL1 value
+ #endif
+ 
++	adrp    x26, swapper_pg_dir
+ 	bl	__enable_mmu
+ #ifdef CONFIG_RELOCATABLE
+ 	bl	__relocate_kernel
+diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+index 6b2686d54411..0a0a0ca19f9b 100644
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -125,7 +125,7 @@ int arch_hibernation_header_save(void *addr, unsigned int max_size)
+ 		return -EOVERFLOW;
+ 
+ 	arch_hdr_invariants(&hdr->invariants);
+-	hdr->ttbr1_el1		= __pa_symbol(swapper_pg_dir);
++	hdr->ttbr1_el1          = __pa_swapper_pg_dir;
+ 	hdr->reenter_kernel	= _cpu_resume;
+ 
+ 	/* We can't use __hyp_get_vectors() because kvm may still be loaded */
+diff --git a/arch/arm64/kernel/sleep.S b/arch/arm64/kernel/sleep.S
+index bebec8ef9372..03854c329449 100644
+--- a/arch/arm64/kernel/sleep.S
++++ b/arch/arm64/kernel/sleep.S
+@@ -101,6 +101,7 @@ ENTRY(cpu_resume)
+ 	bl	el2_setup		// if in EL2 drop to EL1 cleanly
+ 	bl	__cpu_setup
+ 	/* enable the MMU early - so we can access sleep_save_stash by va */
++	ldr_l   x26, __pa_swapper_pg_dir
+ 	bl	__enable_mmu
+ 	ldr	x8, =_cpu_resume
+ 	br	x8
+diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+index 12145874c02b..dd4f28c19165 100644
+--- a/arch/arm64/mm/kasan_init.c
++++ b/arch/arm64/mm/kasan_init.c
+@@ -199,7 +199,7 @@ void __init kasan_init(void)
+ 	 */
+ 	memcpy(tmp_pg_dir, swapper_pg_dir, sizeof(tmp_pg_dir));
+ 	dsb(ishst);
+-	cpu_replace_ttbr1(lm_alias(tmp_pg_dir));
++	cpu_replace_ttbr1(__pa_symbol(tmp_pg_dir));
+ 
+ 	clear_pgds(KASAN_SHADOW_START, KASAN_SHADOW_END);
+ 
+@@ -236,7 +236,7 @@ void __init kasan_init(void)
+ 			pfn_pte(sym_to_pfn(kasan_zero_page), PAGE_KERNEL_RO));
+ 
+ 	memset(kasan_zero_page, 0, PAGE_SIZE);
+-	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
++	cpu_replace_ttbr1(__pa_swapper_pg_dir);
+ 
+ 	/* At this point kasan is fully initialized. Enable error messages */
+ 	init_task.kasan_depth = 0;
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 2dbb2c9f1ec1..d518e27792ef 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -55,6 +55,13 @@ u64 idmap_ptrs_per_pgd = PTRS_PER_PGD;
+ u64 kimage_voffset __ro_after_init;
+ EXPORT_SYMBOL(kimage_voffset);
+ 
++/*
++ * Ensure that hibernate will re-clean this value to the PoC once
++ * it has restored the memory.
++ */
++volatile phys_addr_t __section(".mmuoff.data.read")
++__pa_swapper_pg_dir;
++
+ /*
+  * Empty_zero_page is a special page that is used for zero-initialized data
+  * and COW.
+@@ -631,6 +638,15 @@ void __init paging_init(void)
+ 	phys_addr_t pgd_phys = early_pgtable_alloc();
+ 	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
+ 
++	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
++
++	/*
++	 * We need to clean '__pa_swapper_pg_dir' to the PoC, so that
++	 * secondaries will read the new value.
++	 */
++	__flush_dcache_area((void *)&__pa_swapper_pg_dir,
++			    sizeof(__pa_swapper_pg_dir));
++
+ 	map_kernel(pgdp);
+ 	map_mem(pgdp);
+ 
+@@ -642,9 +658,9 @@ void __init paging_init(void)
+ 	 *
+ 	 * To do this we need to go via a temporary pgd.
+ 	 */
+-	cpu_replace_ttbr1(__va(pgd_phys));
++	cpu_replace_ttbr1(pgd_phys);
+ 	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
+-	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
++	cpu_replace_ttbr1(__pa_swapper_pg_dir);
+ 
+ 	pgd_clear_fixmap();
+ 	memblock_free(pgd_phys, PAGE_SIZE);
+-- 
+2.17.0
