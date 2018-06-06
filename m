@@ -1,102 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hFFroDlh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C09D3605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnIfFgQw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1126660764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932596AbeFFI2X (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:28:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932417AbeFFI2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:28:22 -0400
-Date: Wed, 6 Jun 2018 10:27:57 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Rik van Riel <riel@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <treding@nvidia.com>,
-        Todd Kjos <tkjos@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 03/14] coresight: move shared barrier_pkt[] to
- coresight_priv.h
-Message-ID: <20180606082757.GD19727@kroah.com>
-References: <20180605210710.22227-1-kim.phillips@arm.com>
- <20180605210710.22227-4-kim.phillips@arm.com>
+        id S1752114AbeFFNra (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:47:30 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34248 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751575AbeFFNr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:47:28 -0400
+X-Google-Smtp-Source: ADUXVKL4lUlmj0FuPvSx7hCDa8+X28Qq27ya7KFhDb/l58jkJpNCCqxKPigZJBTOMUhq/viqoZwA0dSB2OE0gHdmKUo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605210710.22227-4-kim.phillips@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180606204116.5b01ed36@canb.auug.org.au>
+References: <20180606204116.5b01ed36@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 6 Jun 2018 15:47:25 +0200
+X-Google-Sender-Auth: QYFso4fqB6O_2PjNuBClBo0h99I
+Message-ID: <CAK8P3a3YmgpSNC3m8vW=tkMXxVVVR+riuw4=snwhYYW-rP_htg@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the y2038 tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 04:06:59PM -0500, Kim Phillips wrote:
-> barrier_pkt[] is used in the etb and tmc-etf coresight
-> components.  Change barrier_pkt[] to a static definition,
-> so as to allow them to be built as modules.
-> 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Leo Yan <leo.yan@linaro.org>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> ---
->  drivers/hwtracing/coresight/coresight-priv.h | 8 +++++++-
->  drivers/hwtracing/coresight/coresight.c      | 7 -------
->  2 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-> index 158c720119dd..e76f19ca9e04 100644
-> --- a/drivers/hwtracing/coresight/coresight-priv.h
-> +++ b/drivers/hwtracing/coresight/coresight-priv.h
-> @@ -57,7 +57,13 @@ static DEVICE_ATTR_RO(name)
->  #define coresight_simple_reg64(type, name, lo_off, hi_off)		\
->  	__coresight_simple_func(type, NULL, name, lo_off, hi_off)
->  
-> -extern const u32 barrier_pkt[4];
-> +/*
-> + * When losing synchronisation a new barrier packet needs to be inserted at the
-> + * beginning of the data collected in a buffer.  That way the decoder knows that
-> + * it needs to look for another sync sequence.
-> + */
-> +static const u32 barrier_pkt[4] = { 0x7fffffff, 0x7fffffff,
-> +				    0x7fffffff, 0x7fffffff };
+On Wed, Jun 6, 2018 at 12:41 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the y2038 tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> fs/pstore/ram.c: In function 'ramoops_read_kmsg_hdr':
+> fs/pstore/ram.c:39:29: warning: format '%ld' expects argument of type 'long int *', but argument 3 has type 'time64_t * {aka long long int *}' [-Wformat=]
+>  #define RAMOOPS_KERNMSG_HDR "===="
+>                              ^
+> fs/pstore/ram.c:167:21: note: in expansion of macro 'RAMOOPS_KERNMSG_HDR'
+>   if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n%n",
+>                      ^~~~~~~~~~~~~~~~~~~
+> fs/pstore/ram.c:42:23: note: format string is defined here
+>  # define TVSEC_FMT "%ld"
+>                      ~~^
+>                      %lld
+> fs/pstore/ram.c:39:29: warning: format '%ld' expects argument of type 'long int *', but argument 3 has type 'time64_t * {aka long long int *}' [-Wformat=]
+>  #define RAMOOPS_KERNMSG_HDR "===="
+>                              ^
+> fs/pstore/ram.c:174:28: note: in expansion of macro 'RAMOOPS_KERNMSG_HDR'
+>   } else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu\n%n",
+>                             ^~~~~~~~~~~~~~~~~~~
+> fs/pstore/ram.c:42:23: note: format string is defined here
+>  # define TVSEC_FMT "%ld"
+>                      ~~^
+>                      %lld
+> fs/pstore/ram.c: In function 'ramoops_write_kmsg_hdr':
+> fs/pstore/ram.c:39:29: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'time64_t {aka long long int}' [-Wformat=]
+>  #define RAMOOPS_KERNMSG_HDR "===="
+>                              ^
+> fs/pstore/ram.c:370:30: note: in expansion of macro 'RAMOOPS_KERNMSG_HDR'
+>   hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n",
+>                               ^~~~~~~~~~~~~~~~~~~
+> fs/pstore/ram.c:42:23: note: format string is defined here
+>  # define TVSEC_FMT "%ld"
+>                      ~~^
+>                      %lld
+>
+> Introduced by commit
+>
+>   0f0d83b99ef7 ("pstore: Convert internal records to timespec64")
+>
 
-Are you _sure_ this is doing what you think it is doing?
+Thanks for the report, I had actually provided a fix for this earlier
+(it was a clash
+between a patch in Deepa's tree with one of mine that Thomas had picked up
+into tip) but forgot to apply it before I pushed out the merged tree.
 
-You now just created a bunch of different copies of this structure,
-which might change the logic involved, right?
+I've updated my tree now.
 
-Putting a static variable in a .h file is generally considered a very
-bad thing to do, I need a lot more "proof" this is ok before I can
-accept this.  Worse case, just put the variable in the individual places
-where it is needed.
-
-thanks,
-
-greg k-h
+      Arnd
