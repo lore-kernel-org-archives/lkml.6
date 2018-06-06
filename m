@@ -1,94 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJ1LxOzF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10BFE60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V5Vw9GLa";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VbVuG37+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0DE160263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932142AbeFFEjp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 00:39:45 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41124 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932113AbeFFEjm (ORCPT
+        id S1752012AbeFFEou (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 00:44:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56698 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750803AbeFFEos (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 00:39:42 -0400
-X-Google-Smtp-Source: ADUXVKKUXIMfOb4Qj0Ah0fhEFbIvAU/+dK1Bw2MH73G6LAHXVxP93KsJokQZbZZXn4ku+L1G/XZRCg==
-From: Jun Yao <yaojun8558363@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, labbott@redhat.com,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH v3 2/3] arm64/mm: introduce variable to save new swapper_pg_dir address
-Date: Wed,  6 Jun 2018 12:39:20 +0800
-Message-Id: <20180606043921.19851-3-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180606043921.19851-1-yaojun8558363@gmail.com>
-References: <20180606043921.19851-1-yaojun8558363@gmail.com>
+        Wed, 6 Jun 2018 00:44:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0307E60263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
+Date: Wed, 06 Jun 2018 07:44:39 +0300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180606040929.tksvznlmb3ogtgur@vireshk-i7>
+References: <20180605114453.1381941-1-arnd@arndb.de> <20180606040929.tksvznlmb3ogtgur@vireshk-i7>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] cpufreq: kryo: allow building as a loadable module
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Ilia Lin <ilialin@codeaurora.org>
+Message-ID: <85F1CCF0-F937-4EAA-9628-D8AA6C4EDE0E@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prepare for migrating swapper_pg_dir, introduce new_swapper_pg_dir
-to save virtual address of swapper_pg_dir.
+Viresh got ahead of my answer a bit=2E :)
+Sure I'll post the module exit later=2E
 
-Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
----
- arch/arm64/include/asm/mmu_context.h | 2 +-
- arch/arm64/include/asm/pgtable.h     | 1 +
- arch/arm64/mm/kasan_init.c           | 2 +-
- arch/arm64/mm/mmu.c                  | 2 ++
- 4 files changed, 5 insertions(+), 2 deletions(-)
+On June 6, 2018 7:09:29 AM GMT+03:00, Viresh Kumar <viresh=2Ekumar@linaro=
+=2Eorg> wrote:
+>On 05-06-18, 13:44, Arnd Bergmann wrote:
+>> Building the kryo cpufreq driver while QCOM_SMEM is a loadable module
+>> results in a link error:
+>>=20
+>> drivers/cpufreq/qcom-cpufreq-kryo=2Eo: In function
+>`qcom_cpufreq_kryo_probe':
+>> qcom-cpufreq-kryo=2Ec:(=2Etext+0xbc): undefined reference to
+>`qcom_smem_get'
+>>=20
+>> The problem is that Kconfig ignores interprets the dependency as met
+>> when the dependent symbol is a 'bool' one=2E By making it 'tristate',
+>> it will be forced to be a module here, which builds successfully=2E
+>>=20
+>> Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb=2Ede>
+>> ---
+>>  drivers/cpufreq/Kconfig=2Earm | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/cpufreq/Kconfig=2Earm
+>b/drivers/cpufreq/Kconfig=2Earm
+>> index c7ce928fbf1f=2E=2E52f5f1a2040c 100644
+>> --- a/drivers/cpufreq/Kconfig=2Earm
+>> +++ b/drivers/cpufreq/Kconfig=2Earm
+>> @@ -125,7 +125,7 @@ config ARM_OMAP2PLUS_CPUFREQ
+>>  	default ARCH_OMAP2PLUS
+>> =20
+>>  config ARM_QCOM_CPUFREQ_KRYO
+>> -	bool "Qualcomm Kryo based CPUFreq"
+>> +	tristate "Qualcomm Kryo based CPUFreq"
+>>  	depends on ARM64
+>>  	depends on QCOM_QFPROM
+>>  	depends on QCOM_SMEM
+>
+>Okay, so we really need this to be a module=2E But the driver can't
+>really work as
+>a module right now if we do this: insmod, rmmod, insmod=2E Because it
+>doesn't free
+>resources at rmmmod and will fail on second insmod=2E
+>
+>Because what you are fixing is a critical build error, we better get it
+>merged
+>right now=2E
+>
+>Acked-by: Viresh Kumar <viresh=2Ekumar@linaro=2Eorg>
+>
+>But Ilia needs to cook another patch to add the module removal code for
+>the
+>driver and mark your patch's commit id in the fixes tag=2E
 
-diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
-index 3eddb871f251..481c2d16adeb 100644
---- a/arch/arm64/include/asm/mmu_context.h
-+++ b/arch/arm64/include/asm/mmu_context.h
-@@ -57,7 +57,7 @@ static inline void cpu_set_reserved_ttbr0(void)
- 
- static inline void cpu_switch_mm(pgd_t *pgd, struct mm_struct *mm)
- {
--	BUG_ON(pgd == swapper_pg_dir);
-+	BUG_ON(pgd == new_swapper_pg_dir);
- 	cpu_set_reserved_ttbr0();
- 	cpu_do_switch_mm(virt_to_phys(pgd),mm);
- }
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 519ab5581b08..2bda899dcf22 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -723,6 +723,7 @@ extern pgd_t swapper_pg_end[];
- extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
- extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
- extern volatile phys_addr_t __pa_swapper_pg_dir;
-+extern pgd_t *new_swapper_pg_dir;
- 
- /*
-  * Encode and decode a swap entry:
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index dd4f28c19165..08bcaae4725e 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -197,7 +197,7 @@ void __init kasan_init(void)
- 	 * tmp_pg_dir used to keep early shadow mapped until full shadow
- 	 * setup will be finished.
- 	 */
--	memcpy(tmp_pg_dir, swapper_pg_dir, sizeof(tmp_pg_dir));
-+	memcpy(tmp_pg_dir, new_swapper_pg_dir, sizeof(tmp_pg_dir));
- 	dsb(ishst);
- 	cpu_replace_ttbr1(__pa_symbol(tmp_pg_dir));
- 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index d518e27792ef..94056e064c6f 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -62,6 +62,8 @@ EXPORT_SYMBOL(kimage_voffset);
- volatile phys_addr_t __section(".mmuoff.data.read")
- __pa_swapper_pg_dir;
- 
-+pgd_t *new_swapper_pg_dir = swapper_pg_dir;
-+
- /*
-  * Empty_zero_page is a special page that is used for zero-initialized data
-  * and COW.
--- 
-2.17.0
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
