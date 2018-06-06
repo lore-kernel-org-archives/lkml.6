@@ -1,45 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WYbbGSbf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F3D860555
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N35zAyLg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EF9E601D9
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933015AbeFFQ0N (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:26:13 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:34934 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932514AbeFFQ0L (ORCPT
+        id S932823AbeFFQMf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:12:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48072 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932552AbeFFQMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:26:11 -0400
-Subject: Re: general protection fault in open_fs_devices
-To: syzbot <syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com>,
+        Wed, 6 Jun 2018 12:12:31 -0400
+Subject: Re: kernel BUG at fs/btrfs/volumes.c:LINE!
+To: syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>,
         clm@fb.com, dsterba@suse.com, jbacik@fb.com,
         linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
-References: <000000000000832e70056df8fb38@google.com>
+References: <00000000000096009b056df92dc1@google.com>
 From: Anand Jain <anand.jain@oracle.com>
-Message-ID: <0dff7b42-65d2-a29e-2086-938031859004@oracle.com>
-Date: Thu, 7 Jun 2018 00:28:48 +0800
+Message-ID: <70a3c2d1-3f53-d4c0-13b3-29f836ec46d9@oracle.com>
+Date: Thu, 7 Jun 2018 00:15:04 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000832e70056df8fb38@google.com>
+In-Reply-To: <00000000000096009b056df92dc1@google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806060186
+ engine=8.0.1-1805220000 definitions=main-1806060183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 06/06/2018 09:17 PM, syzbot wrote:
+On 06/06/2018 09:31 PM, syzbot wrote:
 > Hello,
 > 
 > syzbot found the following crash on:
@@ -47,61 +47,64 @@ On 06/06/2018 09:17 PM, syzbot wrote:
 > HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of 
 > git://git.kernel.o..
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1732a6f7800000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15f700af800000
 > kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
 > dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=909a5177749d7990ffa4
+> https://syzkaller.appspot.com/bug?extid=5b658d997a83984507a6
 > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16ba31f7800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d4ac8f800000
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
 > 
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com
+> Reported-by: syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com
 > 
-> random: sshd: uninitialized urandom read (32 bytes read)
-> BTRFS: device fsid ecf6f2a2-2997-48ae-b81e-1b00920efd9a devid 0 transid 
-> 0 /dev/loop0
-> print_req_error: I/O error, dev loop1, sector 128
-> kasan: CONFIG_KASAN_INLINE enabled
-
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-
-> general protection fault: 0000 [#1] SMP KASAN
-> CPU: 0 PID: 4540 Comm: syz-executor962 Not tainted 4.17.0+ #86
+> RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007f787067fbf0
+> RBP: 0000000000000001 R08: 00000000200000c0 R09: 0000000020000080
+> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000014
+> R13: 0000000000000001 R14: 0000000000700008 R15: 0000000000000043
+> ------------[ cut here ]------------
+> kernel BUG at fs/btrfs/volumes.c:1032!
+> invalid opcode: 0000 [#1] SMP KASAN
+> CPU: 1 PID: 22303 Comm: syz-executor1 Not tainted 4.17.0+ #86
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS 
 > Google 01/01/2011
-> RIP: 0010:open_fs_devices+0x7e8/0xc60 fs/btrfs/volumes.c:1124
+> RIP: 0010:btrfs_prepare_close_one_device fs/btrfs/volumes.c:1032 [inline]
 
-  Which means there was some other thread which freed our %fs_devices.
-  As this thread is still in open_ctree() so the contending thread can't
-  be the ioctl(). So btrfs_free_stale_devices() is the only thread which
-  can free our %fs_devices in this case.
+btrfs_prepare_close_one_device()
+::
+1031           name = rcu_string_strdup(device->name->str, GFP_NOFS);
+1032           BUG_ON(!name); /* -ENOMEM */
 
-  This is fixed in [1] in the mailing list.
+The way we close our devices needs new memory allocations
+at the time of device close. By doing this apart from the BUG_ON
+reported here, there _were_ other complications like managing the sysfs
+links and moving them to the newly allocated btrfs_fs_devices.
+So sometime back I attempted to correct this approach to a simple
+device close without fresh allocation, however it wasn't successful.
+I am going to try that again, but its not p1.
 
-  [1]
-    [PATCH 3/3] btrfs: fix race between mkfs and mount
+Thanks, Anand
 
-  Thanks, Anand
 
-> Code: 48 8b 85 e0 fe ff ff 41 c7 87 14 01 00 00 01 00 00 00 48 8d b8 a0 
-> 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 
-> 00 0f 85 01 04 00 00 48 8b 85 e0 fe ff ff 49 8d 7f 50 48
-> RSP: 0018:ffff8801d06971d8 EFLAGS: 00010206
-> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff82c386af
-> RDX: 0000000000000014 RSI: ffffffff82c386bd RDI: 00000000000000a0
-> RBP: ffff8801d0697348 R08: ffff8801ad4fc580 R09: ffff8801d0697240
-> R10: ffffed003a0d2e5c R11: ffff8801d06972e7 R12: ffff8801ad4f8158
-> R13: ffff8801ad4f80d8 R14: dffffc0000000000 R15: ffff8801ad4f8080
-> FS:  00000000017dd880(0000) GS:ffff8801dae00000(0000) 
+> RIP: 0010:close_fs_devices+0xba7/0xfa0 fs/btrfs/volumes.c:1052
+> Code: 56 18 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2b 03 00 00 49 83 6c 
+> 24 30 01 e9 25 f8 ff ff e8 90 f4 b3 fe 0f 0b e8 89 f4 b3 fe <0f> 0b 48 
+> 89 f7 e8 ef 64 f0 fe e9 f6 f5 ff ff e8 75 f4 b3 fe 0f 0b
+> RSP: 0018:ffff8801af6ff050 EFLAGS: 00010246
+> RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000c70c000
+> RDX: 0000000000040000 RSI: ffffffff82c56437 RDI: 0000000000000286
+> RBP: ffff8801af6ff350 R08: ffffed003b5e46d7 R09: ffffed003b5e46d6
+> R10: ffffed003b5e46d6 R11: ffff8801daf236b3 R12: ffff8801c58ac190
+> R13: 0000000000000000 R14: ffff8801b1a6a940 R15: ffff8801b4d7d680
+> FS:  00007f7870680700(0000) GS:ffff8801daf00000(0000) 
 > knlGS:0000000000000000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000ede000 CR3: 00000001adaac000 CR4: 00000000001406f0
+> CR2: 0000000000704094 CR3: 00000001c51e8000 CR4: 00000000001406e0
 > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > Call Trace:
->   btrfs_open_devices+0xc0/0xd0 fs/btrfs/volumes.c:1155
->   btrfs_mount_root+0x91f/0x1e70 fs/btrfs/super.c:1568
+>   btrfs_close_devices+0x29/0x150 fs/btrfs/volumes.c:1085
+>   btrfs_mount_root+0x1419/0x1e70 fs/btrfs/super.c:1610
 >   mount_fs+0xae/0x328 fs/super.c:1277
 >   vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
 >   vfs_kern_mount+0x40/0x60 fs/namespace.c:1027
@@ -117,34 +120,35 @@ On 06/06/2018 09:17 PM, syzbot wrote:
 >   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
 >   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
 >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4431fa
-> Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 fd e5 fb ff c3 66 2e 
+> RIP: 0033:0x45843a
+> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 dd 8f fb ff c3 66 2e 
 > 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 
-> f0 ff ff 0f 83 da e5 fb ff c3 66 0f 1f 84 00 00 00 00 00
-> RSP: 002b:00007ffc2d953358 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004431fa
-> RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007ffc2d953370
-> RBP: 0000000000000004 R08: 00000000200000c0 R09: 000000000000000a
-> R10: 0000000000000000 R11: 0000000000000297 R12: 000000000000000d
-> R13: 0000000008100000 R14: 0030656c69662f2e R15: fe03f80fe03f80ff
+> f0 ff ff 0f 83 ba 8f fb ff c3 66 0f 1f 84 00 00 00 00 00
+> RSP: 002b:00007f787067fba8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000020000080 RCX: 000000000045843a
+> RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007f787067fbf0
+> RBP: 0000000000000001 R08: 00000000200000c0 R09: 0000000020000080
+> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000014
+> R13: 0000000000000001 R14: 0000000000700008 R15: 0000000000000043
 > Modules linked in:
 > Dumping ftrace buffer:
 >     (ftrace buffer empty)
-> ---[ end trace d8b96c29a3ffd356 ]---
-> RIP: 0010:open_fs_devices+0x7e8/0xc60 fs/btrfs/volumes.c:1124
-> Code: 48 8b 85 e0 fe ff ff 41 c7 87 14 01 00 00 01 00 00 00 48 8d b8 a0 
-> 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 
-> 00 0f 85 01 04 00 00 48 8b 85 e0 fe ff ff 49 8d 7f 50 48
-> RSP: 0018:ffff8801d06971d8 EFLAGS: 00010206
-> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff82c386af
-> RDX: 0000000000000014 RSI: ffffffff82c386bd RDI: 00000000000000a0
-> RBP: ffff8801d0697348 R08: ffff8801ad4fc580 R09: ffff8801d0697240
-> R10: ffffed003a0d2e5c R11: ffff8801d06972e7 R12: ffff8801ad4f8158
-> R13: ffff8801ad4f80d8 R14: dffffc0000000000 R15: ffff8801ad4f8080
-> FS:  00000000017dd880(0000) GS:ffff8801dae00000(0000) 
+> ---[ end trace 383b0406a01f2edd ]---
+> RIP: 0010:btrfs_prepare_close_one_device fs/btrfs/volumes.c:1032 [inline]
+> RIP: 0010:close_fs_devices+0xba7/0xfa0 fs/btrfs/volumes.c:1052
+> Code: 56 18 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2b 03 00 00 49 83 6c 
+> 24 30 01 e9 25 f8 ff ff e8 90 f4 b3 fe 0f 0b e8 89 f4 b3 fe <0f> 0b 48 
+> 89 f7 e8 ef 64 f0 fe e9 f6 f5 ff ff e8 75 f4 b3 fe 0f 0b
+> RSP: 0018:ffff8801af6ff050 EFLAGS: 00010246
+> RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000c70c000
+> RDX: 0000000000040000 RSI: ffffffff82c56437 RDI: 0000000000000286
+> RBP: ffff8801af6ff350 R08: ffffed003b5e46d7 R09: ffffed003b5e46d6
+> R10: ffffed003b5e46d6 R11: ffff8801daf236b3 R12: ffff8801c58ac190
+> R13: 0000000000000000 R14: ffff8801b1a6a940 R15: ffff8801b4d7d680
+> FS:  00007f7870680700(0000) GS:ffff8801daf00000(0000) 
 > knlGS:0000000000000000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000ede000 CR3: 00000001adaac000 CR4: 00000000001406f0
+> CR2: 0000000000704094 CR3: 00000001c51e8000 CR4: 00000000001406e0
 > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > 
@@ -157,8 +161,6 @@ On 06/06/2018 09:17 PM, syzbot wrote:
 > syzbot will keep track of this bug report. See:
 > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with 
 > syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
 > -- 
 > To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
 > the body of a message to majordomo@vger.kernel.org
