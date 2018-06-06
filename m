@@ -1,64 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="yD2/JIGP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5DA8D60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A7528607E5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754083AbeFFR6D (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:58:03 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37174 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752609AbeFFR6A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:58:00 -0400
-X-Google-Smtp-Source: ADUXVKIrU+QLLHMjKYbVSGPKHtPfHqr69Rs988cJ3ONlu+SnsdISYaFotff04q1FJH9FB82noctd4PGIS72m1NCsjz0=
+        id S933524AbeFFQ7x (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:59:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43240 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932200AbeFFQ7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:59:52 -0400
+Date: Wed, 6 Jun 2018 17:59:46 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: peterz@infradead.org, rjw@rjwysocki.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joelaf@google.com, smuckle@google.com,
+        adharmap@quicinc.com, skannan@quicinc.com, pkondeti@codeaurora.org,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180606165946.GK10870@e108498-lin.cambridge.arm.com>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <20180606164734.GC15894@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180606164515.25677-2-ross.zwisler@linux.intel.com>
-References: <20180606164515.25677-1-ross.zwisler@linux.intel.com> <20180606164515.25677-2-ross.zwisler@linux.intel.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 6 Jun 2018 10:57:59 -0700
-Message-ID: <CAPcyv4h8NBfCOMUiY_0Do0YgwA18Lqb_QTiAJVO0x3t5+TPMBQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] libnvdimm: unconditionally deep flush on *sync
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606164734.GC15894@localhost.localdomain>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 9:45 AM, Ross Zwisler
-<ross.zwisler@linux.intel.com> wrote:
-> Prior to this commit we would only do a "deep flush" (have nvdimm_flush()
-> write to each of the flush hints for a region) in response to an
-> msync/fsync/sync call if the nvdimm_has_cache() returned true at the time
-> we were setting up the request queue.  This happens due to the write cache
-> value passed in to blk_queue_write_cache(), which then causes the block
-> layer to send down BIOs with REQ_FUA and REQ_PREFLUSH set.  We do have a
-> "write_cache" sysfs entry for namespaces, i.e.:
->
->   /sys/bus/nd/devices/pfn0.1/block/pmem0/dax/write_cache
->
-> which can be used to control whether or not the kernel thinks a given
-> namespace has a write cache, but this didn't modify the deep flush behavior
-> that we set up when the driver was initialized.  Instead, it only modified
-> whether or not DAX would flush CPU caches via dax_flush() in response to
-> *sync calls.
->
-> Simplify this by making the *sync deep flush always happen, regardless of
-> the write cache setting of a namespace.  The DAX CPU cache flushing will
-> still be controlled the write_cache setting of the namespace.
->
-> Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+On Wednesday 06 Jun 2018 at 18:47:34 (+0200), Juri Lelli wrote:
+> Hi Quentin,
+> 
+> On 21/05/18 15:24, Quentin Perret wrote:
+> 
+> [...]
+> 
+> > +#ifdef CONFIG_ENERGY_MODEL
+> 
+> [...]
+> 
+> > +struct em_data_callback {
+> > +	/**
+> > +	 * active_power() - Provide power at the next capacity state of a CPU
+> > +	 * @power	: Active power at the capacity state (modified)
+> > +	 * @freq	: Frequency at the capacity state (modified)
+> > +	 * @cpu		: CPU for which we do this operation
+> > +	 *
+> > +	 * active_power() must find the lowest capacity state of 'cpu' above
+> > +	 * 'freq' and update 'power' and 'freq' to the matching active power
+> > +	 * and frequency.
+> > +	 *
+> > +	 * Return 0 on success.
+> > +	 */
+> > +	int (*active_power) (unsigned long *power, unsigned long *freq, int cpu);
+> > +};
+> 
+> [...]
+> 
+> > +#else
+> > +struct em_freq_domain;
+> > +struct em_data_callback;
+> 
+> This doesn't compile for CONFIG_ENERGY_MODEL=n:
+> 
+> drivers/cpufreq/cpufreq-dt.c:164:9: error: variable 'em_cb' has initializer but incomplete type                                                          
+>   struct em_data_callback em_cb = { &dev_pm_opp_of_estimate_power };                       
+>            ^~~~~~~~~~~~~~~~
 
-Looks, good. I believe we want this one and ["PATCH v3 4/4] libnvdimm:
-don't flush power-fail protected CPU caches" marked for -stable and
-tagged with:
+Ah, this is an issue with a patch which isn't part of this patch-set ...
+But yeah, that's a valid point :-)
 
-Fixes: 5fdf8e5ba566 ("libnvdimm: re-enable deep flush for pmem devices
-via fsync()")
+> Guess you need some sort of macro to init the struct (w/o introducing
+> ifdeffery into drivers code)?
 
-...any concerns with that?
+Yes, the EM framework should provide a generic way of doing this
+initialization with nice stubs for CONFIG_ENERGY_MODEL=n, otherwise we
+risk wild fixes in the drivers I suppose. I'll fix that in v4.
+
+Thanks for pointing that out !
+Quentin
