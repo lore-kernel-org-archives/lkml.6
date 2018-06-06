@@ -1,73 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C871F60767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PY4i56As"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D8DA60764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeFFLPd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 07:15:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35732 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750864AbeFFLPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 07:15:32 -0400
-Date: Wed, 06 Jun 2018 20:15:29 +0900 (JST)
-Message-Id: <20180606.201529.867663362891798169.yamato@redhat.com>
-To: tglx@linutronix.de
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, joro@8bytes.org
-Subject: Re: [PATCH] x86/iommu: Fix a typo in a macro parameter
-From: Masatake YAMATO <yamato@redhat.com>
-In-Reply-To: <alpine.DEB.2.21.1806061235330.1579@nanos.tec.linutronix.de>
-References: <20180606051026.29535-1-yamato@redhat.com>
-        <alpine.DEB.2.21.1806061235330.1579@nanos.tec.linutronix.de>
-Organization: Red Hat Japan, Inc.
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        id S1752174AbeFFNwZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:52:25 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:48681 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751912AbeFFNwX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:52:23 -0400
+X-IronPort-AV: E=Sophos;i="5.49,483,1520899200";
+   d="scan'208";a="735681358"
+From: Norbert Manthey <nmanthey@amazon.de>
+To: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <x86@kernel.org>
+Subject: Make CONFIG_NET and CONFIG_SECCOMP_FILTER independent of CONFIG_NET
+Date: Wed, 6 Jun 2018 15:52:00 +0200
+Message-ID: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Jun 2018 12:37:34 +0200 (CEST), Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Wed, 6 Jun 2018, Masatake YAMATO wrote:
-> 
-> Can you please explain why 0 is the wrong value.
+Dear all,
 
-I don't know such constants, 0 and 1.
+currently, KVM and SECCOMP rely on functionality of CONFIG_NET, and hence the
+latter has to be enabled when building the kernel for the first two
+configurations. However, there exists scenarios where the system does not need
+networking, but KVM and SECCOMP filters. To reduce the kernel image size for
+these scenarios, and to be able to drop active code, this commit series allows
+to enable CONFIG_KVM and CONFIG_SECCOMP_FILTER without using CONFIG_NET.
 
-What I change is just the name of macro parameter as 
+The functionality that is required for seccomp filters is kept in the same
+files and - after reordering the source code - is guarded with a single ifdef
+per file.
 
-     s/detect/_detect/
+I hope these changes are useful for other scenarios than the one I currently
+face.
 
-I don't change the definition of macro.
+Best,
+Norbert
 
-Masatake YAMATO
-
-> That's not a typo, that's
-> a functional change and both the subject line and the changelog itself
-> should be explanatory.
-> 
-> Thanks,
-> 
-> 	tglx
-> 
->> Signed-off-by: Masatake YAMATO <yamato@redhat.com>
->> ---
->>  arch/x86/include/asm/iommu_table.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/arch/x86/include/asm/iommu_table.h b/arch/x86/include/asm/iommu_table.h
->> index 1fb3fd1a83c2..2a0d5f7d1ed1 100644
->> --- a/arch/x86/include/asm/iommu_table.h
->> +++ b/arch/x86/include/asm/iommu_table.h
->> @@ -66,7 +66,7 @@ struct iommu_table_entry {
->>  #define IOMMU_INIT_POST(_detect)					\
->>  	__IOMMU_INIT(_detect, pci_swiotlb_detect_4gb,  NULL, NULL, 0)
->>  
->> -#define IOMMU_INIT_POST_FINISH(detect)					\
->> +#define IOMMU_INIT_POST_FINISH(_detect)					\
->>  	__IOMMU_INIT(_detect, pci_swiotlb_detect_4gb,  NULL, NULL, 1)
->>  
->>  /*
->> -- 
->> 2.17.0
->> 
->> 
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
