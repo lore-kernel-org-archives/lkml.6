@@ -1,53 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=uwks.ac.id header.i=@uwks.ac.id header.b="Gl6HcC4I"
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=permerror header.from=uwks.ac.id
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcOgaCGH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92C40601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeFFCck (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Tue, 5 Jun 2018 22:32:40 -0400
-Received: from suro.uwks.ac.id ([103.53.76.24]:35338 "EHLO suro.uwks.ac.id"
+        id S932525AbeFFITw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:19:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752726AbeFFCcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 22:32:39 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 suro.uwks.ac.id 619F721D9555F
-Content-Type: text/plain; charset="iso-8859-1"
+        id S932394AbeFFITu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:19:50 -0400
+Date: Wed, 6 Jun 2018 10:19:24 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Nathan Chancellor <natechancellor@gmail.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/37] 4.4.136-stable review
+Message-ID: <20180606081924.GA19727@kroah.com>
+References: <20180605170108.884872354@linuxfoundation.org>
+ <20180606003032.GA10046@flashbox>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?b?QVRFTkNJw5NO?=
-To: Recipients <indatamun@uwks.ac.id>
-From: Sistemas administrador <indatamun@uwks.ac.id>
-Date: Tue, 05 Jun 2018 17:37:59 +0530
-Reply-To: mailsss@mail2world.com
-Message-Id: <20180605120815.E951321DE748D@suro.uwks.ac.id>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606003032.GA10046@flashbox>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ATENCI=D3N;
+On Tue, Jun 05, 2018 at 05:30:32PM -0700, Nathan Chancellor wrote:
+> On Tue, Jun 05, 2018 at 07:01:05PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.4.136 release.
+> > There are 37 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.136-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Merged, compiled with -Werror, and installed onto my Pixel 2 XL and
+> OnePlus 5.
+> 
+> No issues in general usage or dmesg (although I somehow didn't catch the
+> VTI issue in 4.4.134 so don't know how valuable this is anymore...)
 
-Su buz=F3n ha superado el l=EDmite de almacenamiento, que es de 5 GB defini=
-dos por el administrador, quien actualmente est=E1 ejecutando en 10.9GB, no=
- puede ser capaz de enviar o recibir correo nuevo hasta que vuelva a valida=
-r su buz=F3n de correo electr=F3nico. Para revalidar su buz=F3n de correo, =
-env=EDe la siguiente informaci=F3n a continuaci=F3n:
+Great, thanks for testing.  The VTI issue was odd in that it required
+the AOSP networking tests to be run to be triggered, and they were a
+"stress-test" more than a "functional test", which is why I think no one
+else caught it.
 
-nombre: =
-
-Nombre de usuario: =
-
-contrase=F1a:
-Confirmar contrase=F1a:
-E-mail: =
-
-tel=E9fono: =
-
-Si usted no puede revalidar su buz=F3n, el buz=F3n se deshabilitar=E1!
-
-Disculpa las molestias.
-C=F3digo de verificaci=F3n: es: 006524
-Correo Soporte T=E9cnico =A9 2018
-
-=A1gracias
-Sistemas administrador
+greg k-h
