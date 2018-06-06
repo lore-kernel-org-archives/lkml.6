@@ -1,68 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dn2SCo0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 150F560763
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Hr/NyfWG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD488601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932522AbeFFS7b (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:59:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44916 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932498AbeFFS73 (ORCPT
+        id S1752504AbeFFQEF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:04:05 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:41955 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeFFQEE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:59:29 -0400
-Date: Wed, 6 Jun 2018 20:59:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Kohli, Gaurav" <gkohli@codeaurora.org>, tglx@linutronix.de,
-        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180606185920.GI12198@hirez.programming.kicks-ass.net>
-References: <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
- <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
- <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
- <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
- <20180605150841.GA24053@redhat.com>
- <20180605152212.GY12180@hirez.programming.kicks-ass.net>
- <20180605154053.GB12235@hirez.programming.kicks-ass.net>
- <20180605163515.GB24053@redhat.com>
- <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
- <20180606135115.GA4609@redhat.com>
+        Wed, 6 Jun 2018 12:04:04 -0400
+X-Google-Smtp-Source: ADUXVKL81l4D6tba/5Aqtof5tFgIX9CDao9Q8VIDfUfuIi8FBNZw6hs49vTZHCjp7SJfAsjieVz17g==
+Subject: Re: [PATCH] ARM: dts: cygnus: Add HWRNG node
+To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
+References: <20180606093441.16483-1-peron.clem@gmail.com>
+From: Scott Branden <scott.branden@broadcom.com>
+Message-ID: <c8836130-1d96-b813-4e87-5011db679ba8@broadcom.com>
+Date: Wed, 6 Jun 2018 09:03:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606135115.GA4609@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180606093441.16483-1-peron.clem@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 03:51:16PM +0200, Oleg Nesterov wrote:
-> IIUC, this will only affect smpboot_update_cpumask_percpu_thread() which can hit
-> an already parked thread, but it doesn't need to wait.
-> 
-> And it seems that smpboot_update_cpumask_percpu_thread() in turn needs some cleanups.
-> Hmm. and its single user: kernel/watchdog.c.
-> 
-> And speaking of watchdog.c, can't we simply kill the "watchdog/%u" threads? This is
-> off-topic, but can't watchdog_timer_fn() use stop_one_cpu_nowait(watchdog) ?
-> 
-> And I really think we should unexport kthread_park/unpark(), only smpboot_thread_fn()
-> should use them. kthread() should not play with __kthread_parkme(). And even
-> KTHREAD_SHOULD_PARK must die, I mean it should live in struct smp_hotplug_thread,
-> not in struct kthread.
-> 
-> OK, this is off-topic too.
+Hi Clement,
 
-> And, let me repeat, can't we avoid complete_all() ?
 
-Yes, or at least if that watchdog crap is the only user.
+On 18-06-06 02:34 AM, Clément Péron wrote:
+> From: Clément Peron <clement.peron@devialet.com>
+>
+> There is a HWRNG in Broadcom Cygnus SoC, so enable it.
+>
+> Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Thanks for upstreaming some missing Cygnus components.
 
-I have most of the patch reworking watchdog.c to use stop_one_cpu*(),
-and that cleans up lots -- of course, I've not tested it yet, so it
-could also be breaking lots :-)
+But, the problem is the tarball release from Broadcom you are extracting 
+these changes from does not contain git history; so, you are missing the 
+original authors and signed-off's.
+I checked our internal git repository and for this commit the author is:
+Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
+
+Please adjust author and signed-off appropriately.  If there are other 
+changes you are extracting from the source tarballs you have please 
+contact me so we can construct patch appropriately.
+
+Regards,
+Scott
+> ---
+>   arch/arm/boot/dts/bcm-cygnus.dtsi | 5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
+> index 1cee40ac4613..b7178e84d56d 100644
+> --- a/arch/arm/boot/dts/bcm-cygnus.dtsi
+> +++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
+> @@ -452,6 +452,11 @@
+>   			status = "disabled";
+>   		};
+>   
+> +		hwrng: hwrng@18032000 {
+> +			compatible = "brcm,iproc-rng200";
+> +			reg = <0x18032000 0x28>;
+> +		};
+> +
+>   		sdhci0: sdhci@18041000 {
+>   			compatible = "brcm,sdhci-iproc-cygnus";
+>   			reg = <0x18041000 0x100>;
