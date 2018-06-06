@@ -1,257 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id x8oWLVzpGVv6EwAAmS7hNA
-	; Fri, 08 Jun 2018 02:27:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id p5ZZKlxuGFt2GgAAmS7hNA
+	; Wed, 06 Jun 2018 23:30:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CC4F5608BA; Fri,  8 Jun 2018 02:27:18 +0000 (UTC)
+	id 649836089E; Wed,  6 Jun 2018 23:30:29 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="UBEB398k";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lyciAezF"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1E1DF601B4;
-	Fri,  8 Jun 2018 02:27:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E1DF601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by smtp.codeaurora.org (Postfix) with ESMTP id CD7DF607E4;
+	Wed,  6 Jun 2018 23:30:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD7DF607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752936AbeFHC1E (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 22:27:04 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58530 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752461AbeFHCY3 (ORCPT
+        id S932188AbeFFXa0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 19:30:26 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39491 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932100AbeFFXaZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 22:24:29 -0400
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 1205D2A334; Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <linux-m68k@lists.linux-m68k.org>,
-        <linux-kernel@vger.kernel.org>
-Message-Id: <36d753a57f26d248531ea3a6487b1b134b9b9906.1528423341.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1528423341.git.fthain@telegraphics.com.au>
-References: <cover.1528423341.git.fthain@telegraphics.com.au>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v2 04/12] macintosh/via-pmu: Enhance state machine with new
- 'uninitialized' state
-Date: Thu,  7 Jun 2018 22:24:29 -0400 (EDT)
+        Wed, 6 Jun 2018 19:30:25 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id C893B21DE0;
+        Wed,  6 Jun 2018 19:30:24 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Wed, 06 Jun 2018 19:30:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=G0VaqNWCx8vU+6PPKv3l1D8FBm0YrzTwnrhrZ1GizLY=; b=UBEB398k
+        ttcGadKghy2CVZ9gnUtzgZNW17OuyHMESKS9JL5qAOhCCnYf9DsAdcCnns7vOBAw
+        1toPHRKdkmYmQ8SXalhDF71HXrz9XwMkKs8pUBHFgtJx+mjGBW3M83X8Nap/OnSw
+        ++/1uSrIYAd8W5ygAuLAhQW3oDH6LFEvur6FQsPusbfeAYcMz0yTWGRU/3eU8HGL
+        M9rs0/1+eYBZxWLDX6RpPggVWeb3Yrhq737ypdFVXgiT6u8JFo0LKrIZPu/VUNXI
+        cC/bdPEY8QykSpGTyccE9Lal6pVSiogRtWxa1zGqvdNClYA46RiEmltS/XNJkvYW
+        OhobxI7HZJ5eKQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm2; bh=G0VaqNWCx8vU+6PPKv3l1D8FBm0Yr
+        zTwnrhrZ1GizLY=; b=lyciAezFLG63JBQUj364R/1VoNScuEyj8RQhaOgzxi2tr
+        eTTwyPjvvwRt2EcL3zkyodlOPf0sLtR837doxnNzHlPReww6BERhmXkGUTBXS20y
+        6Lq+8Nh1/OPSXYX1L1s1irF40X7GgtMTjRwmioBkMXwjVVC6rJvC27qwxgBYbS6q
+        GW1IE8BfKi/AOh4FjYCakjxeLBFpDcPWtLnsPGXuwHMx9+Oe3Xl5+X35+thRGIDN
+        DimQ6M1edTJ0KXgKsBguumFkRx52E2VWtUJm0FM4JsxPcuznX8P6E1NNNgKYTPHC
+        +ZYx2kqxExvI+WQL0azaS0orv4vmeIsEfj/59Iqpw==
+X-ME-Proxy: <xmx:kG4YW-CdLDZ8PVCg29HEn8xre_sy2QFEvaeGV6myrkiHgvhinJkMug>
+X-ME-Proxy: <xmx:kG4YW0_55dSHzx-SbDndetpNAh8ikxya-UCW22gFuoI8fnOBTaODGQ>
+X-ME-Proxy: <xmx:kG4YW41rmqWCjEeOb7VnoQZ4UospRTklr0wZMHKRGPfOLYuDcn09Vw>
+X-ME-Proxy: <xmx:kG4YWzSVsWjpf-neGPEq0NHSbDRt8jDZ8nYvB3XCpYI8ua2Q49GY2w>
+X-ME-Proxy: <xmx:kG4YWzikfBduDfMV9VZD1GmCFLhp32oxhPknjkYld7vz3nTC2R2Ovg>
+X-ME-Proxy: <xmx:kG4YW_Hd9wzvR3SXt2Or0-c2zq1M_8HwynseaBkKTaROIngf3gebPw>
+X-ME-Sender: <xms:kG4YWwFykdXQUSIrtiRMjwQaOOfgK0XXxl6yTrTbJM06NOCQvKERVw>
+Received: from localhost (124-169-155-53.dyn.iinet.net.au [124.169.155.53])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0D280E452C;
+        Wed,  6 Jun 2018 19:30:23 -0400 (EDT)
+Date: Thu, 7 Jun 2018 09:30:21 +1000
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] enable early printing of hashed pointers
+Message-ID: <20180606233021.GB21148@eros>
+References: <1527472002-11571-1-git-send-email-me@tobin.cc>
+ <alpine.DEB.2.21.1806061501130.1579@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1806061501130.1579@nanos.tec.linutronix.de>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 68k Macs, the via/vias pointer can't be used to determine whether
-the PMU driver has been initialized. For portability, add a new state
-to indicate that via_find_pmu() succeeded.
+On Wed, Jun 06, 2018 at 03:02:20PM +0200, Thomas Gleixner wrote:
+> On Mon, 28 May 2018, Tobin C. Harding wrote:
+> 
+> > Currently printing pointers early in the boot sequence can result in a
+> > dummy string '(____ptrval____)' being printed.  While resolving this
+> > issue it was noticed that we can use the hw RNG if available for hashing
+> > pointers.
+> > 
+> > Patch one and two do the ground work to be able to use hw RNG removing
+> > from get_random_bytes_arch() the call to get_random_bytes() and
+> > returning the number of bytes of random material successfully returned. 
+> > 
+> > Patch three uses the hw RNG to get keying material if it is available.
+> > 
+> > Patch four further assists debugging early in the boot sequence for
+> > machines that do not have a hw RNG by adding a command line option
+> > 'debug_boot_weak_hash'.  If enabled, non-cryptographically secure hashing
+> > is used instead of siphash so we can hash at any time. 
+> > 
+> > During the versions of this set I have been totally confused about which
+> > patches go through which tree.  This version again puts all 4 patches
+> > together in the hope they will go through Andrew's tree.
+> > 
+> > 
+> > Steve,
+> > 
+> > Could you please take a quick squiz at the final 2 patches if you get a
+> > chance.  I assumed we are in preemptible context during early_init based
+> > on your code (and code comment) and called static_branch_disable()
+> > directly if hw RNG returned keying material.  It's a pretty simple
+> > change but I'd love to get someone else to check I've not noob'ed it.
+> 
+> early_initcalls() are not that early :) They run in thread context fully
+> preemtible so calling static_branch_disable() is perfectly fine.
 
-After via_find_pmu() executes, testing vias == NULL is equivalent to
-testing via == NULL. Replace these tests with pmu_state == uninitialized
-which is simpler and more consistent. No functional change.
+Thanks for the explanation.
 
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- drivers/macintosh/via-pmu.c | 44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
-index 4c1bae5380c2..c4c324fb5fa6 100644
---- a/drivers/macintosh/via-pmu.c
-+++ b/drivers/macintosh/via-pmu.c
-@@ -114,6 +114,7 @@ static volatile unsigned char __iomem *via;
- #define CB1_INT		0x10		/* transition on CB1 input */
- 
- static volatile enum pmu_state {
-+	uninitialized = 0,
- 	idle,
- 	sending,
- 	intack,
-@@ -274,7 +275,7 @@ int __init find_via_pmu(void)
- 	u64 taddr;
- 	const u32 *reg;
- 
--	if (via != 0)
-+	if (pmu_state != uninitialized)
- 		return 1;
- 	vias = of_find_node_by_name(NULL, "via-pmu");
- 	if (vias == NULL)
-@@ -369,20 +370,19 @@ int __init find_via_pmu(void)
-  fail:
- 	of_node_put(vias);
- 	vias = NULL;
-+	pmu_state = uninitialized;
- 	return 0;
- }
- 
- #ifdef CONFIG_ADB
- static int pmu_probe(void)
- {
--	return vias == NULL? -ENODEV: 0;
-+	return pmu_state == uninitialized ? -ENODEV : 0;
- }
- 
- static int pmu_init(void)
- {
--	if (vias == NULL)
--		return -ENODEV;
--	return 0;
-+	return pmu_state == uninitialized ? -ENODEV : 0;
- }
- #endif /* CONFIG_ADB */
- 
-@@ -397,7 +397,7 @@ static int __init via_pmu_start(void)
- {
- 	unsigned int irq;
- 
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return -ENODEV;
- 
- 	batt_req.complete = 1;
-@@ -463,7 +463,7 @@ arch_initcall(via_pmu_start);
-  */
- static int __init via_pmu_dev_init(void)
- {
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return -ENODEV;
- 
- #ifdef CONFIG_PMAC_BACKLIGHT
-@@ -966,7 +966,7 @@ static int pmu_send_request(struct adb_request *req, int sync)
- {
- 	int i, ret;
- 
--	if ((vias == NULL) || (!pmu_fully_inited)) {
-+	if (pmu_state == uninitialized || !pmu_fully_inited) {
- 		req->complete = 1;
- 		return -ENXIO;
- 	}
-@@ -1060,7 +1060,7 @@ static int __pmu_adb_autopoll(int devs)
- 
- static int pmu_adb_autopoll(int devs)
- {
--	if ((vias == NULL) || (!pmu_fully_inited) || !pmu_has_adb)
-+	if (pmu_state == uninitialized || !pmu_fully_inited || !pmu_has_adb)
- 		return -ENXIO;
- 
- 	adb_dev_map = devs;
-@@ -1073,7 +1073,7 @@ static int pmu_adb_reset_bus(void)
- 	struct adb_request req;
- 	int save_autopoll = adb_dev_map;
- 
--	if ((vias == NULL) || (!pmu_fully_inited) || !pmu_has_adb)
-+	if (pmu_state == uninitialized || !pmu_fully_inited || !pmu_has_adb)
- 		return -ENXIO;
- 
- 	/* anyone got a better idea?? */
-@@ -1109,7 +1109,7 @@ pmu_request(struct adb_request *req, void (*done)(struct adb_request *),
- 	va_list list;
- 	int i;
- 
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return -ENXIO;
- 
- 	if (nbytes < 0 || nbytes > 32) {
-@@ -1134,7 +1134,7 @@ pmu_queue_request(struct adb_request *req)
- 	unsigned long flags;
- 	int nsend;
- 
--	if (via == NULL) {
-+	if (pmu_state == uninitialized) {
- 		req->complete = 1;
- 		return -ENXIO;
- 	}
-@@ -1247,7 +1247,7 @@ pmu_start(void)
- void
- pmu_poll(void)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	if (disable_poll)
- 		return;
-@@ -1257,7 +1257,7 @@ pmu_poll(void)
- void
- pmu_poll_adb(void)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	if (disable_poll)
- 		return;
-@@ -1272,7 +1272,7 @@ pmu_poll_adb(void)
- void
- pmu_wait_complete(struct adb_request *req)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	while((pmu_state != idle && pmu_state != locked) || !req->complete)
- 		via_pmu_interrupt(0, NULL);
-@@ -1288,7 +1288,7 @@ pmu_suspend(void)
- {
- 	unsigned long flags;
- 
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return;
- 	
- 	spin_lock_irqsave(&pmu_lock, flags);
-@@ -1319,7 +1319,7 @@ pmu_resume(void)
- {
- 	unsigned long flags;
- 
--	if (!via || (pmu_suspended < 1))
-+	if (pmu_state == uninitialized || pmu_suspended < 1)
- 		return;
- 
- 	spin_lock_irqsave(&pmu_lock, flags);
-@@ -1681,7 +1681,7 @@ pmu_enable_irled(int on)
- {
- 	struct adb_request req;
- 
--	if (vias == NULL)
-+	if (pmu_state == uninitialized)
- 		return ;
- 	if (pmu_kind == PMU_KEYLARGO_BASED)
- 		return ;
-@@ -1696,7 +1696,7 @@ pmu_restart(void)
- {
- 	struct adb_request req;
- 
--	if (via == NULL)
-+	if (pmu_state == uninitialized)
- 		return;
- 
- 	local_irq_disable();
-@@ -1721,7 +1721,7 @@ pmu_shutdown(void)
- {
- 	struct adb_request req;
- 
--	if (via == NULL)
-+	if (pmu_state == uninitialized)
- 		return;
- 
- 	local_irq_disable();
-@@ -1749,7 +1749,7 @@ pmu_shutdown(void)
- int
- pmu_present(void)
- {
--	return via != 0;
-+	return pmu_state != uninitialized;
- }
- 
- #if defined(CONFIG_SUSPEND) && defined(CONFIG_PPC32)
-@@ -2415,7 +2415,7 @@ static struct miscdevice pmu_device = {
- 
- static int pmu_device_init(void)
- {
--	if (!via)
-+	if (pmu_state == uninitialized)
- 		return 0;
- 	if (misc_register(&pmu_device) < 0)
- 		printk(KERN_ERR "via-pmu: cannot register misc device.\n");
--- 
-2.16.4
+	Tobin.
