@@ -1,70 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F20F960290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 98FA160555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeFFPJV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:09:21 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56824 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752482AbeFFPJO (ORCPT
+        id S932429AbeFFISY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:18:24 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:3004 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932340AbeFFISW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:09:14 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v3 08/12] extcon: usbc-cros-ec: Switch to SPDX identifier.
-Date: Wed,  6 Jun 2018 17:08:56 +0200
-Message-Id: <20180606150900.8342-9-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180606150900.8342-1-enric.balletbo@collabora.com>
-References: <20180606150900.8342-1-enric.balletbo@collabora.com>
+        Wed, 6 Jun 2018 04:18:22 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="40794049"
+Subject: Re: [patch 3/8] x86/apic: Provide apic_ack_irq()
+To: Thomas Gleixner <tglx@linutronix.de>
+CC: LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Song Liu <liu.song.a23@gmail.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Mike Travis <mike.travis@hpe.com>, <stable@vger.kernel.org>
+References: <20180604162224.471925894@linutronix.de>
+ <94117bd8-352b-1077-e8ae-8722d7ec213f@cn.fujitsu.com>
+ <alpine.DEB.2.21.1806051339020.1591@nanos.tec.linutronix.de>
+ <de96585f-9b8d-4536-a9d5-32a718e3eb4d@cn.fujitsu.com>
+ <alpine.DEB.2.21.1806061003310.1584@nanos.tec.linutronix.de>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <5db4a904-5ae4-fb1e-ff10-0ac6c1479ccd@cn.fujitsu.com>
+Date: Wed, 6 Jun 2018 16:18:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1806061003310.1584@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 0453A48029E5.ABB6E
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adopt the SPDX license identifier headers to ease license compliance
-management.
+Hi Thomas,
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+At 06/06/2018 04:04 PM, Thomas Gleixner wrote:
+> On Wed, 6 Jun 2018, Dou Liyang wrote:
+> 
+>> Hi Thomas,
+>>
+>> At 06/05/2018 07:41 PM, Thomas Gleixner wrote:
+>>> On Tue, 5 Jun 2018, Dou Liyang wrote:
+>>>>> +{
+>>>>> +	if (unlikely(irqd_is_setaffinity_pending(irqd)))
+>>>>
+>>>> Affinity pending is also judged in
+>>>>
+>>>>> +		irq_move_irq(irqd);
+>>>>
+>>>> If we can remove the if(...) statement here
+>>>
+>>> That requires to fix all call sites in ia64 and that's why I didn't.  But
+>>
+>> I didn't express clearly, I meant remove the if(...) statement from
+>> apic_ack_irq(), it doesn't require to fix the call sites in ia64.
+> 
+> I put the check there on purpose as I explained in the changelog:
+> 
+>     Making the invocation of irq_move_irq() conditional avoids the out of
+>     line call if the pending bit is not set.
+> 
 
-Changes in v3: None
-Changes in v2: None
+I completely understand now, thank you so much. :-)
 
- drivers/extcon/extcon-usbc-cros-ec.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+Thanks,
+	dou
 
-diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
-index a5b75a12cfc9..43c0a936ab82 100644
---- a/drivers/extcon/extcon-usbc-cros-ec.c
-+++ b/drivers/extcon/extcon-usbc-cros-ec.c
-@@ -1,18 +1,8 @@
--/**
-- * drivers/extcon/extcon-usbc-cros-ec - ChromeOS Embedded Controller extcon
-- *
-- * Copyright (C) 2017 Google, Inc
-- * Author: Benson Leung <bleung@chromium.org>
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
-+// SPDX-License-Identifier: GPL-2.0
-+// ChromeOS Embedded Controller extcon
-+//
-+// Copyright (C) 2017 Google, Inc.
-+// Author: Benson Leung <bleung@chromium.org>
- 
- #include <linux/extcon-provider.h>
- #include <linux/kernel.h>
--- 
-2.17.1
+> Thanks,
+> 
+> 	tglx
+> 
+> 
+> 
