@@ -1,70 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 025EA601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D768960767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933651AbeFFRJO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:09:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35818 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753839AbeFFRJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:09:10 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: eparis@parisplace.org, Steve Grubb <sgrubb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghau51/ghau40 v3 2/6] AUDIT_CONTAINER message type basic support
-Date: Wed,  6 Jun 2018 13:07:25 -0400
-Message-Id: <1528304849-31826-3-git-send-email-rgb@redhat.com>
-In-Reply-To: <1528304849-31826-1-git-send-email-rgb@redhat.com>
-References: <1528304849-31826-1-git-send-email-rgb@redhat.com>
+        id S1753928AbeFFRr0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:47:26 -0400
+Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:47787 "EHLO
+        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752255AbeFFRrZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:47:25 -0400
+Date: Wed, 6 Jun 2018 18:47:23 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>, mhocko@kernel.org,
+        vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mremap: Increase LATENCY_LIMIT of mremap to reduce the
+ number of TLB shootdowns
+Message-ID: <20180606174723.bag3o55fvqp6nbvc@techsingularity.net>
+References: <20180606140255.br5ztpeqdmwfto47@techsingularity.net>
+ <C86F5DE4-DAAE-4C12-B509-E5807ADA471E@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <C86F5DE4-DAAE-4C12-B509-E5807ADA471E@gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This defines the message number for the audit container identifier
-information record should the kernel headers not be up to date and gives
-the record number a name for printing.
+On Wed, Jun 06, 2018 at 08:55:15AM -0700, Nadav Amit wrote:
+> > -#define LATENCY_LIMIT	(64 * PAGE_SIZE)
+> > +#define LATENCY_LIMIT	(PMD_SIZE)
+> > 
+> > unsigned long move_page_tables(struct vm_area_struct *vma,
+> > 		unsigned long old_addr, struct vm_area_struct *new_vma,
+> 
+> This LATENCY_LIMIT is only used in move_page_tables() in the following
+> manner:
+> 
+>   next = (new_addr + PMD_SIZE) & PMD_MASK;
+>   if (extent > next - new_addr)
+>       extent = next - new_addr;
+>   if (extent > LATENCY_LIMIT)
+>       extent = LATENCY_LIMIT;
+>    
+> If LATENCY_LIMIT is to be changed to PMD_SIZE, then IIUC the last condition
+> is not required, and LATENCY_LIMIT can just be removed (assuming there is no
+> underflow case that hides somewhere).
+> 
 
-See: https://github.com/linux-audit/audit-userspace/issues/51
-See: https://github.com/linux-audit/audit-kernel/issues/90
-See: https://github.com/linux-audit/audit-testsuite/issues/64
-See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- lib/libaudit.h    | 4 ++++
- lib/msg_typetab.h | 1 +
- 2 files changed, 5 insertions(+)
+I see no problem removing it other than we may forget that we ever limited
+PTE lock hold times for any reason. I'm skeptical it will matter unless
+mremap-intensive workloads are a lot more common than I believe.
 
-diff --git a/lib/libaudit.h b/lib/libaudit.h
-index 6cdd269..2dcd9e5 100644
---- a/lib/libaudit.h
-+++ b/lib/libaudit.h
-@@ -282,6 +282,10 @@ extern "C" {
- #define AUDIT_FANOTIFY		1331 /* Fanotify access decision */
- #endif
- 
-+#ifndef AUDIT_CONTAINER
-+#define AUDIT_CONTAINER		1332 /* Container ID details */
-+#endif
-+
- #ifndef AUDIT_ANOM_LINK
- #define AUDIT_ANOM_LINK		1702 /* Suspicious use of file links */
- #endif
-diff --git a/lib/msg_typetab.h b/lib/msg_typetab.h
-index e94bfb2..1ff6605 100644
---- a/lib/msg_typetab.h
-+++ b/lib/msg_typetab.h
-@@ -124,6 +124,7 @@ _S(AUDIT_PROCTITLE,                  "PROCTITLE"                     )
- _S(AUDIT_FEATURE_CHANGE,             "FEATURE_CHANGE"                )
- _S(AUDIT_KERN_MODULE,                "KERN_MODULE"                   )
- _S(AUDIT_FANOTIFY,                   "FANOTIFY"                      )
-+_S(AUDIT_CONTAINER,                  "CONTAINER"                     )
- _S(AUDIT_AVC,                        "AVC"                           )
- _S(AUDIT_SELINUX_ERR,                "SELINUX_ERR"                   )
- _S(AUDIT_AVC_PATH,                   "AVC_PATH"                      )
 -- 
-1.8.3.1
+Mel Gorman
+SUSE Labs
