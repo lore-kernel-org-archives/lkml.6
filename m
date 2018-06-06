@@ -1,73 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9EE2B60263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o2j2RGyJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B26946070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752393AbeFFJ5j (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:57:39 -0400
-Received: from foss.arm.com ([217.140.101.70]:38760 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752215AbeFFJ5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:57:37 -0400
-Subject: Re: [PATCH v4 14/14] coresight: allow the coresight core driver to be
- built as a module
-To: Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Leo Yan <leo.yan@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Rik van Riel <riel@redhat.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <treding@nvidia.com>,
-        Todd Kjos <tkjos@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180605210710.22227-1-kim.phillips@arm.com>
- <20180605210710.22227-15-kim.phillips@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <46a026b2-0140-c1c0-2205-f5750233b152@arm.com>
-Date: Wed, 6 Jun 2018 10:57:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180605210710.22227-15-kim.phillips@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752077AbeFFLkx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 07:40:53 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52667 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752034AbeFFLkp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 07:40:45 -0400
+X-Google-Smtp-Source: ADUXVKIs4dqEypCvpsNNNuP6ufJnHYbP3P4jh6+kftQV59HL9OMWH9KGy6fjWBXVQ6aHoEE7/aY0Xw==
+From: John Whitmore <johnfwhitmore@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, colin.king@canonical.com,
+        tglx@linutronix.de, kstewart@linuxfoundation.org,
+        devel@driverdev.osuosl.org, John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH v6 8/8] staging: rtl8192e: remove unnecessary parentheses - Coding Style
+Date: Wed,  6 Jun 2018 12:40:03 +0100
+Message-Id: <20180606114003.22654-9-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180606114003.22654-1-johnfwhitmore@gmail.com>
+References: <20180606114003.22654-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 10:07 PM, Kim Phillips wrote:
-> Allow to build coresight as a module.  This enhances
-> coresight developer efficiency by allowing the development to
-> take place exclusively on the target, and without needing to
-> reboot in between changes.
-> 
-> - Kconfig becomes a tristate, to allow =m
-> - append -core to source file name to allow module to
->    be called coresight by the Makefile
-> - modules can have only one init/exit, so we add the core bus
->    register/unregister function calls to the etm_perf init/exit
->    functions, since coresight.c does not have etm_pmu defined.
+Remove unneccessary parentheses - Coding Style change
 
-It feels a bit weird to move the coresight core specific steps to
-etm_perf_init. Why not call etm_perf_init from coresight init routine
-and keep everything core specific in the coresight-core.c ?
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-
-Suzuki
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 9cca4a8f1cf5..fad740309558 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -529,7 +529,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
+ 
+ 		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
+-		pCapELE = (PHT_CAPABILITY_ELE)&(posHTCap[4]);
++		pCapELE = (PHT_CAPABILITY_ELE)&posHTCap[4];
+ 	} else {
+ 		pCapELE = (PHT_CAPABILITY_ELE)posHTCap;
+ 	}
+@@ -1072,10 +1072,10 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+ 	pHTInfo->CurrentAMPDUFactor = pHTInfo->AMPDU_Factor;
+ 
+ 	// Initialize all of the parameters related to 11n
+-	memset((void *)(&(pHTInfo->SelfHTCap)), 0, sizeof(pHTInfo->SelfHTCap));
+-	memset((void *)(&(pHTInfo->SelfHTInfo)), 0, sizeof(pHTInfo->SelfHTInfo));
+-	memset((void *)(&(pHTInfo->PeerHTCapBuf)), 0, sizeof(pHTInfo->PeerHTCapBuf));
+-	memset((void *)(&(pHTInfo->PeerHTInfoBuf)), 0, sizeof(pHTInfo->PeerHTInfoBuf));
++	memset((void *)(&pHTInfo->SelfHTCap), 0, sizeof(pHTInfo->SelfHTCap));
++	memset((void *)(&pHTInfo->SelfHTInfo), 0, sizeof(pHTInfo->SelfHTInfo));
++	memset((void *)(&pHTInfo->PeerHTCapBuf), 0, sizeof(pHTInfo->PeerHTCapBuf));
++	memset((void *)(&pHTInfo->PeerHTInfoBuf), 0, sizeof(pHTInfo->PeerHTInfoBuf));
+ 
+ 	pHTInfo->bSwBwInProgress = false;
+ 	pHTInfo->ChnlOp = CHNLOP_NONE;
+@@ -1091,7 +1091,7 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+ 
+ 	//MCS rate initialized here
+ 	{
+-		u8 *RegHTSuppRateSets = &(ieee->RegHTSuppRateSet[0]);
++		u8 *RegHTSuppRateSets = &ieee->RegHTSuppRateSet[0];
+ 
+ 		RegHTSuppRateSets[0] = 0xFF;	//support MCS 0~7
+ 		RegHTSuppRateSets[1] = 0xFF;	//support MCS 8~15
+-- 
+2.17.0
