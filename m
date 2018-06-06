@@ -1,167 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPpBhinz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43A8E601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C6F56070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932443AbeFFIca (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:32:30 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:43079 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932364AbeFFIc3 (ORCPT
+        id S1752462AbeFFKOK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:14:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33033 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750808AbeFFKOJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:32:29 -0400
-X-Google-Smtp-Source: ADUXVKIAN8n84kgr/aPEtt+QjRrvfVC6IiyrHfBj7Js/5QYQtGsOH2vYehtYTeHo6uzQM/NuVx4lAIiup2EOJQzdRzI=
+        Wed, 6 Jun 2018 06:14:09 -0400
+Date: Wed, 6 Jun 2018 03:12:50 -0700
+From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-046c0dbec0238c25b7526c26c9a9687664229ce2@git.kernel.org>
+Cc: gregkh@linuxfoundation.org, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, akpm@linux-foundation.org, zi.yan@cs.rutgers.edu,
+        n-horiguchi@ah.jp.nec.com, dave.hansen@linux.intel.com,
+        arnd@arndb.de, mingo@kernel.org
+Reply-To: mingo@kernel.org, arnd@arndb.de, dave.hansen@linux.intel.com,
+          n-horiguchi@ah.jp.nec.com, zi.yan@cs.rutgers.edu,
+          akpm@linux-foundation.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+          tglx@linutronix.de, gregkh@linuxfoundation.org
+In-Reply-To: <20180605113715.1133726-1-arnd@arndb.de>
+References: <20180605113715.1133726-1-arnd@arndb.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86: Mark native_set_p4d() as __always_inline
+Git-Commit-ID: 046c0dbec0238c25b7526c26c9a9687664229ce2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <1528231092-31472-1-git-send-email-arun.parameswaran@broadcom.com> <8bb9ab39-a38b-9492-975e-d76c864ff8ff@broadcom.com>
-In-Reply-To: <8bb9ab39-a38b-9492-975e-d76c864ff8ff@broadcom.com>
-From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date: Wed, 6 Jun 2018 10:32:16 +0200
-Message-ID: <CAJiuCccVEMAzAsv61P60pEC6tvNGBpjgOPgbGE8En+CBDyx7wQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] net: dsa: b53: Fix for brcm tag issue in Cygnus SoC
-To: scott.branden@broadcom.com
-Cc: arun.parameswaran@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        vivien.didelot@savoirfairelinux.com, andrew@lunn.ch,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Scott,
+Commit-ID:  046c0dbec0238c25b7526c26c9a9687664229ce2
+Gitweb:     https://git.kernel.org/tip/046c0dbec0238c25b7526c26c9a9687664229ce2
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Tue, 5 Jun 2018 13:35:15 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 6 Jun 2018 12:09:45 +0200
 
-On Tue, 5 Jun 2018 at 22:55, Scott Branden <scott.branden@broadcom.com> wro=
-te:
->
-> Clement,
->
-> Please test this works for your issue.
+x86: Mark native_set_p4d() as __always_inline
 
-Tested on top of 4.17.0 with a BCM58305
+When CONFIG_OPTIMIZE_INLINING is enabled, the function native_set_p4d()
+may not be fully inlined into the caller, resulting in a false-positive
+warning about an access to the __pgtable_l5_enabled variable from a
+non-__init function, despite the original caller being an __init function:
 
-Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+WARNING: vmlinux.o(.text.unlikely+0x1429): Section mismatch in reference from the function native_set_p4d() to the variable .init.data:__pgtable_l5_enabled
+WARNING: vmlinux.o(.text.unlikely+0x1429): Section mismatch in reference from the function native_p4d_clear() to the variable .init.data:__pgtable_l5_enabled
 
->
->
-> On 18-06-05 01:38 PM, Arun Parameswaran wrote:
-> > In the Broadcom Cygnus SoC, the brcm tag needs to be inserted
-> > in between the mac address and the ether type (should use
-> > 'DSA_PROTO_TAG_BRCM') for the packets sent to the internal
-> > b53 switch.
-> >
-> > Since the Cygnus was added with the BCM58XX device id and the
-> > BCM58XX uses 'DSA_PROTO_TAG_BRCM_PREPEND', the data path is
-> > broken, due to the incorrect brcm tag location.
-> >
-> > Add a new b53 device id (BCM583XX) for Cygnus family to fix the
-> > issue. Add the new device id to the BCM58XX family as Cygnus
-> > is similar to the BCM58XX in most other functionalities.
-> >
-> > Fixes: 11606039604c ("net: dsa: b53: Support prepended Broadcom tags")
-> >
-> > Signed-off-by: Arun Parameswaran <arun.parameswaran@broadcom.com>
-> Acked-by: Scott Branden <scott.branden@broadcom.com>
-> > ---
-> >   drivers/net/dsa/b53/b53_common.c | 15 ++++++++++++++-
-> >   drivers/net/dsa/b53/b53_priv.h   |  2 ++
-> >   drivers/net/dsa/b53/b53_srab.c   |  4 ++--
-> >   3 files changed, 18 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53=
-_common.c
-> > index 3da5fca..bbc6cc6 100644
-> > --- a/drivers/net/dsa/b53/b53_common.c
-> > +++ b/drivers/net/dsa/b53/b53_common.c
-> > @@ -684,7 +684,8 @@ static int b53_switch_reset(struct b53_device *dev)
-> >        * still use this driver as a library and need to perform the res=
-et
-> >        * earlier.
-> >        */
-> > -     if (dev->chip_id =3D=3D BCM58XX_DEVICE_ID) {
-> > +     if (dev->chip_id =3D=3D BCM58XX_DEVICE_ID ||
-> > +         dev->chip_id =3D=3D BCM583XX_DEVICE_ID) {
-> >               b53_read8(dev, B53_CTRL_PAGE, B53_SOFTRESET, &reg);
-> >               reg |=3D SW_RST | EN_SW_RST | EN_CH_RST;
-> >               b53_write8(dev, B53_CTRL_PAGE, B53_SOFTRESET, reg);
-> > @@ -1880,6 +1881,18 @@ struct b53_chip_data {
-> >               .jumbo_size_reg =3D B53_JUMBO_MAX_SIZE,
-> >       },
-> >       {
-> > +             .chip_id =3D BCM583XX_DEVICE_ID,
-> > +             .dev_name =3D "BCM583xx/11360",
-> > +             .vlans =3D 4096,
-> > +             .enabled_ports =3D 0x103,
-> > +             .arl_entries =3D 4,
-> > +             .cpu_port =3D B53_CPU_PORT,
-> > +             .vta_regs =3D B53_VTA_REGS,
-> > +             .duplex_reg =3D B53_DUPLEX_STAT_GE,
-> > +             .jumbo_pm_reg =3D B53_JUMBO_PORT_MASK,
-> > +             .jumbo_size_reg =3D B53_JUMBO_MAX_SIZE,
-> > +     },
-> > +     {
-> >               .chip_id =3D BCM7445_DEVICE_ID,
-> >               .dev_name =3D "BCM7445",
-> >               .vlans  =3D 4096,
-> > diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_p=
-riv.h
-> > index 3b57f47..b232aaa 100644
-> > --- a/drivers/net/dsa/b53/b53_priv.h
-> > +++ b/drivers/net/dsa/b53/b53_priv.h
-> > @@ -62,6 +62,7 @@ enum {
-> >       BCM53018_DEVICE_ID =3D 0x53018,
-> >       BCM53019_DEVICE_ID =3D 0x53019,
-> >       BCM58XX_DEVICE_ID =3D 0x5800,
-> > +     BCM583XX_DEVICE_ID =3D 0x58300,
-> >       BCM7445_DEVICE_ID =3D 0x7445,
-> >       BCM7278_DEVICE_ID =3D 0x7278,
-> >   };
-> > @@ -181,6 +182,7 @@ static inline int is5301x(struct b53_device *dev)
-> >   static inline int is58xx(struct b53_device *dev)
-> >   {
-> >       return dev->chip_id =3D=3D BCM58XX_DEVICE_ID ||
-> > +             dev->chip_id =3D=3D BCM583XX_DEVICE_ID ||
-> >               dev->chip_id =3D=3D BCM7445_DEVICE_ID ||
-> >               dev->chip_id =3D=3D BCM7278_DEVICE_ID;
-> >   }
-> > diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_s=
-rab.c
-> > index c37ffd1..8247481 100644
-> > --- a/drivers/net/dsa/b53/b53_srab.c
-> > +++ b/drivers/net/dsa/b53/b53_srab.c
-> > @@ -364,7 +364,7 @@ static int b53_srab_write64(struct b53_device *dev,=
- u8 page, u8 reg,
-> >       { .compatible =3D "brcm,bcm53018-srab" },
-> >       { .compatible =3D "brcm,bcm53019-srab" },
-> >       { .compatible =3D "brcm,bcm5301x-srab" },
-> > -     { .compatible =3D "brcm,bcm11360-srab", .data =3D (void *)BCM58XX=
-_DEVICE_ID },
-> > +     { .compatible =3D "brcm,bcm11360-srab", .data =3D (void *)BCM583X=
-X_DEVICE_ID },
-> >       { .compatible =3D "brcm,bcm58522-srab", .data =3D (void *)BCM58XX=
-_DEVICE_ID },
-> >       { .compatible =3D "brcm,bcm58525-srab", .data =3D (void *)BCM58XX=
-_DEVICE_ID },
-> >       { .compatible =3D "brcm,bcm58535-srab", .data =3D (void *)BCM58XX=
-_DEVICE_ID },
-> > @@ -372,7 +372,7 @@ static int b53_srab_write64(struct b53_device *dev,=
- u8 page, u8 reg,
-> >       { .compatible =3D "brcm,bcm58623-srab", .data =3D (void *)BCM58XX=
-_DEVICE_ID },
-> >       { .compatible =3D "brcm,bcm58625-srab", .data =3D (void *)BCM58XX=
-_DEVICE_ID },
-> >       { .compatible =3D "brcm,bcm88312-srab", .data =3D (void *)BCM58XX=
-_DEVICE_ID },
-> > -     { .compatible =3D "brcm,cygnus-srab", .data =3D (void *)BCM58XX_D=
-EVICE_ID },
-> > +     { .compatible =3D "brcm,cygnus-srab", .data =3D (void *)BCM583XX_=
-DEVICE_ID },
-> >       { .compatible =3D "brcm,nsp-srab", .data =3D (void *)BCM58XX_DEVI=
-CE_ID },
-> >       { /* sentinel */ },
-> >   };
->
+The function native_set_p4d() references the variable __initdata
+__pgtable_l5_enabled.  This is often because native_set_p4d lacks a
+__initdata annotation or the annotation of __pgtable_l5_enabled is wrong.
+
+Marking the native_set_p4d function and its caller native_p4d_clear()
+avoids this problem.
+
+I did not bisect the original cause, but I assume this is related to the
+recent rework that turned pgtable_l5_enabled() into an inline function,
+which in turn caused the compiler to make different inlining decisions.
+
+Fixes: ad3fe525b950 ("x86/mm: Unify pgtable_l5_enabled usage in early boot code")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Link: https://lkml.kernel.org/r/20180605113715.1133726-1-arnd@arndb.de
+
+---
+ arch/x86/include/asm/pgtable_64.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 877bc27718ae..c750112cb416 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -216,7 +216,7 @@ static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
+ }
+ #endif
+ 
+-static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
++static __always_inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ {
+ 	pgd_t pgd;
+ 
+@@ -230,7 +230,7 @@ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ 	*p4dp = native_make_p4d(native_pgd_val(pgd));
+ }
+ 
+-static inline void native_p4d_clear(p4d_t *p4d)
++static __always_inline void native_p4d_clear(p4d_t *p4d)
+ {
+ 	native_set_p4d(p4d, native_make_p4d(0));
+ }
