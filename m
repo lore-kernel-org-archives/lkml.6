@@ -1,100 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8463B60263
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B2C1060555
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932309AbeFFG6Z (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:58:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37366 "EHLO mail.bootlin.com"
+        id S932306AbeFFH2t (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:28:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38419 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932239AbeFFG6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:58:23 -0400
-Date: Wed, 6 Jun 2018 08:58:11 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, arm-soc <arm@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        ionela.voinescu@arm.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        chris.redpath@arm.com, devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 2/2] arm: dts: sunxi: Add missing cooling device
- properties for CPUs
-Message-ID: <20180606065811.moklm4pbrhleasly@flea>
-References: <20180601151701.sshwfdbflic6mybv@flea>
- <d894f425b7c32bce4dc4a982db8f4dface2db31d.1528173943.git.viresh.kumar@linaro.org>
- <a313ec0be4104494de319e8318e05614fb97b2fd.1528173943.git.viresh.kumar@linaro.org>
- <20180605071139.osu2pgpg3ychdxln@flea>
- <CAGb2v65EX2RwKjxPw+EK4i6rkfgOJoCU2amuFkF-tHQT40isxw@mail.gmail.com>
+        id S932122AbeFFH2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 03:28:47 -0400
+Date: Wed, 6 Jun 2018 09:28:44 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de,
+        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
+        krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] mtd: rawnand: add an option to specify NAND chip
+ as a boot device
+Message-ID: <20180606092844.3ab746b2@bbrezillon>
+In-Reply-To: <20180605201102.GA22487@rob-hp-laptop>
+References: <20180531221637.6017-1-stefan@agner.ch>
+        <20180531221637.6017-3-stefan@agner.ch>
+        <20180605201102.GA22487@rob-hp-laptop>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yyunednjohhozaln"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v65EX2RwKjxPw+EK4i6rkfgOJoCU2amuFkF-tHQT40isxw@mail.gmail.com>
-User-Agent: NeoMutt/20180512
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
 
---yyunednjohhozaln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 5 Jun 2018 14:11:02 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-On Wed, Jun 06, 2018 at 12:02:20AM +0800, Chen-Yu Tsai wrote:
-> On Tue, Jun 5, 2018 at 3:11 PM, Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> > On Tue, Jun 05, 2018 at 10:17:49AM +0530, Viresh Kumar wrote:
-> >> The cooling device properties, like "#cooling-cells" and
-> >> "dynamic-power-coefficient", should either be present for all the CPUs
-> >> of a cluster or none. If these are present only for a subset of CPUs of
-> >> a cluster then things will start falling apart as soon as the CPUs are
-> >> brought online in a different order. For example, this will happen
-> >> because the operating system looks for such properties in the CPU node
-> >> it is trying to bring up, so that it can register a cooling device.
-> >>
-> >> Add such missing properties.
-> >>
-> >> Fix other missing properties (clocks, OPP, clock latency) as well to
-> >> make it all work.
-> >>
-> >> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> >
-> > Applied both, thanks!
->=20
-> Please fix the "ARM" prefix when applying. :)
+> On Fri, Jun 01, 2018 at 12:16:33AM +0200, Stefan Agner wrote:
+> > Allow to define a NAND chip as a boot device. This can be helpful
+> > for the selection of the ECC algorithm and strength in case the boot
+> > ROM supports only a subset of controller provided options.
+> > 
+> > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > ---
+> >  Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
+> >  drivers/mtd/nand/raw/nand_base.c               | 3 +++
+> >  include/linux/mtd/rawnand.h                    | 6 ++++++
+> >  3 files changed, 13 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
+> > index 8bb11d809429..8daf81b9748c 100644
+> > --- a/Documentation/devicetree/bindings/mtd/nand.txt
+> > +++ b/Documentation/devicetree/bindings/mtd/nand.txt
+> > @@ -43,6 +43,10 @@ Optional NAND chip properties:
+> >  		     This is particularly useful when only the in-band area is
+> >  		     used by the upper layers, and you want to make your NAND
+> >  		     as reliable as possible.
+> > +- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
+> > +		       this information to select ECC algorithms supported by
+> > +		       the boot ROM or similar restrictions.
+> > +  
+> 
+> Shouldn't this be a partition level option? You could conceivably do one 
+> ECC type for boot area and something else for the rest of the NAND.
 
-Done, thanks for the reminder :)
+I tried that a long time ago [1]. The result was far from perfect. I'm
+not saying it's impossible to do it, but it definitely requires a lot
+of work if we want to do it properly.
 
-Maxime
+Also, what about boards that are not defining their partitions in the
+DT but through the command line (using mtdparts)? That means patching
+the mtdparts part parser to also take the ECC setup into account.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards,
 
---yyunednjohhozaln
-Content-Type: application/pgp-signature; name="signature.asc"
+Boris
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsXhgIACgkQ0rTAlCFN
-r3SpHw//Q0Tq2mev9+RBCUU4pHRg4oFhrh8cuVYbAENhw3Lsld3QjfDM0OlUubg2
-cJHQNbpZzKmNg3Of2U2BIR2ZWOncQNItn7tCwZ7p6hGtM3AO72Zv1bzwyHnZUIOm
-22biaTtyF5TPO4m4sThbVa0xo2lpYBcNbM4ZZiH5Ss8pObpJeZBysHTAvXb/TKPW
-l5rlTO08NfFSF1XfyUNmJtGQAOSoGC+Wb+0vSxVOsMdSfMvuTbRa8Lx18f2xuMNL
-kTLsrGUir9RjWE/33M0SUEmFONKAmbZUpyEiazBsmIFQ6HqFq+1/oNPg0AKeV2M5
-cJSbRutZl0/hao4Jqu4P4mdsWarTPHyN22Tuh3mORauBcRuM95ro8sNfxCFHRKit
-AOEFGn3MarZymmzVVegctwZfQkSprspmWE9WdH867zViKK1d6nNrl9iN8eYhX6De
-HVTUeyEgVdxxVIT3XBOfuenBr36mnxus0xgRZxrxuyNfcOE8225vPhnfT/xEhSj0
-bPvhLj6oXWPJFkcxd+sXe+LgK7Qogm7Zz55zU6yCzN9zU/LLfiCP2YS3ftl83leY
-gHKp6Al5cpNqeegjMGKiKqzZZAYURooyFcLSe6g4xcRFxoRvYwza+UGxcNhwk38x
-W3ze64MAfwqCYqDvyKVwKHRlOqqu2Dv3PucN3MMhEIOHbHe+fRE=
-=Osr5
------END PGP SIGNATURE-----
-
---yyunednjohhozaln--
+[1]http://lists.infradead.org/pipermail/linux-mtd/2015-July/060600.html
