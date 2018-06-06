@@ -1,153 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fl55tfb7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E090F60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC9D360555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752175AbeFFOJ5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:09:57 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43024 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751851AbeFFOJ4 (ORCPT
+        id S1752240AbeFFOC7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:02:59 -0400
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:52022 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751973AbeFFOC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:09:56 -0400
-X-Google-Smtp-Source: ADUXVKKKeVfUagIPkDmI/56XlyYftLdRAOuYDrwTsUBupMbkhFIOvYIAykM4NVZ70aFEMvcuAoh8ivG0B11vN/J9ZiE=
+        Wed, 6 Jun 2018 10:02:58 -0400
+Date: Wed, 6 Jun 2018 15:02:55 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>, mhocko@kernel.org,
+        vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH] mremap: Increase LATENCY_LIMIT of mremap to reduce the
+ number of TLB shootdowns
+Message-ID: <20180606140255.br5ztpeqdmwfto47@techsingularity.net>
 MIME-Version: 1.0
-In-Reply-To: <20180606132228.GF3539@twin.jikos.cz>
-References: <20180605154635.GA27201@jordon-HP-15-Notebook-PC> <20180606132228.GF3539@twin.jikos.cz>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Wed, 6 Jun 2018 19:39:53 +0530
-Message-ID: <CAFqt6zY-q4xV+PAFKXfa+NjNYyiBy4K5VSykKqbeN0XGpCTudw@mail.gmail.com>
-Subject: Re: [PATCH] fs: btrfs: Change return type to vm_fault_t
-To: dsterba@suse.cz, Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
-        jbacik@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 6:52 PM, David Sterba <dsterba@suse.cz> wrote:
-> On Tue, Jun 05, 2018 at 09:16:35PM +0530, Souptick Joarder wrote:
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
->>
->> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>
->> vmf_error() is the newly introduce inline function
->> in 4.17-rc6.
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> ---
->>  fs/btrfs/ctree.h |  2 +-
->>  fs/btrfs/inode.c | 28 +++++++++++++---------------
->>  2 files changed, 14 insertions(+), 16 deletions(-)
->>
->> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
->> index 0d422c9..1f52d9fd 100644
->> --- a/fs/btrfs/ctree.h
->> +++ b/fs/btrfs/ctree.h
->> @@ -3218,7 +3218,7 @@ int btrfs_merge_bio_hook(struct page *page, unsigned long offset,
->>                        size_t size, struct bio *bio,
->>                        unsigned long bio_flags);
->>  void btrfs_set_range_writeback(void *private_data, u64 start, u64 end);
->> -int btrfs_page_mkwrite(struct vm_fault *vmf);
->> +vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf);
->>  int btrfs_readpage(struct file *file, struct page *page);
->>  void btrfs_evict_inode(struct inode *inode);
->>  int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc);
->> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
->> index 0b86cf1..20bde86 100644
->> --- a/fs/btrfs/inode.c
->> +++ b/fs/btrfs/inode.c
->> @@ -8873,7 +8873,7 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
->>   * beyond EOF, then the page is guaranteed safe against truncation until we
->>   * unlock the page.
->>   */
->> -int btrfs_page_mkwrite(struct vm_fault *vmf)
->> +vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->>  {
->>       struct page *page = vmf->page;
->>       struct inode *inode = file_inode(vmf->vma->vm_file);
->> @@ -8885,8 +8885,9 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->>       char *kaddr;
->>       unsigned long zero_start;
->>       loff_t size;
->> -     int ret;
->> +     int err;
->
-> Please use ret2 for the variable name. We're leaving the err/ret naming
-> pattern and use 'ret' to match the function return value and ret2, ret3
-> for the temporary return values.
+Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
+fixed races between mremap and other operations for both file-backed and
+anonymous mappings. The file-backed was the most critical as it allowed the
+possibility that data could be changed on a physical page after page_mkclean
+returned which could trigger data loss or data integrity issues. A customer
+reported that the cost of the TLBs for anonymous regressions was excessive
+and resulting in a 30-50% drop in performance overall since this commit
+on a microbenchmark. Unfortunately I neither have access to the test-case
+nor can I describe what it does other than saying that mremap operations
+dominate heavily.
 
-Is this new pattern specific to fs/btrfs file system ?
->
->>       int reserved = 0;
->> +     vm_fault_t ret;
->>       u64 reserved_space;
->>       u64 page_start;
->>       u64 page_end;
->> @@ -8907,17 +8908,14 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->>        * end up waiting indefinitely to get a lock on the page currently
->>        * being processed by btrfs_page_mkwrite() function.
->>        */
->> -     ret = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
->> +     err = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
->>                                          reserved_space);
->> -     if (!ret) {
->> -             ret = file_update_time(vmf->vma->vm_file);
->> +     if (!err) {
->> +             err = file_update_time(vmf->vma->vm_file);
->>               reserved = 1;
->>       }
->> -     if (ret) {
->> -             if (ret == -ENOMEM)
->> -                     ret = VM_FAULT_OOM;
->> -             else /* -ENOSPC, -EIO, etc */
->> -                     ret = VM_FAULT_SIGBUS;
->> +     if (err) {
->> +             ret = vmf_error(err);
->>               if (reserved)
->>                       goto out;
->>               goto out_noreserve;
->> @@ -8976,15 +8974,15 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->>                         EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
->>                         0, 0, &cached_state);
->>
->> -     ret = btrfs_set_extent_delalloc(inode, page_start, end, 0,
->> +     err = btrfs_set_extent_delalloc(inode, page_start, end, 0,
->>                                       &cached_state, 0);
->> -     if (ret) {
->> +     if (err) {
->>               unlock_extent_cached(io_tree, page_start, page_end,
->>                                    &cached_state);
->>               ret = VM_FAULT_SIGBUS;
->>               goto out_unlock;
->>       }
->> -     ret = 0;
->> +     err = 0;
->>
->>       /* page is wholly or partially inside EOF */
->>       if (page_start + PAGE_SIZE > size)
->> @@ -9009,11 +9007,11 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->>       unlock_extent_cached(io_tree, page_start, page_end, &cached_state);
->>
->>  out_unlock:
->> -     if (!ret) {
->> +     if (!err) {
->>               btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
->>               sb_end_pagefault(inode->i_sb);
->>               extent_changeset_free(data_reserved);
->> -             return VM_FAULT_LOCKED;
->> +             ret = VM_FAULT_LOCKED;
->
-> That's not a direct change as it changes the code flow and lets the
-> branch continue. As the error handling and cleanup code is partially
-> done in this branch continuing wrong AFAICS.
+This patch increases the LATENCY_LIMIT to handle TLB flushes on a
+PMD boundary instead of every 64 pages. This reduces the number of TLB
+shootdowns by a factor of 8 which is not reported to completely restore
+performance but gets it within an acceptable percentage. The given metric
+here is simply described as "higher is better".
 
-Sorry about it, I will correct and send v2.
-Is it possible to get it merge in 4.18 / 4.18-rc-X ?
+Baseline that was known good
+002:  Metric:       91.05
+004:  Metric:      109.45
+008:  Metric:       73.08
+016:  Metric:       58.14
+032:  Metric:       61.09
+064:  Metric:       57.76
+128:  Metric:       55.43
+
+Current
+001:  Metric:       54.98
+002:  Metric:       56.56
+004:  Metric:       41.22
+008:  Metric:       35.96
+016:  Metric:       36.45
+032:  Metric:       35.71
+064:  Metric:       35.73
+128:  Metric:       34.96
+
+With patch
+001:  Metric:       61.43
+002:  Metric:       81.64
+004:  Metric:       67.92
+008:  Metric:       51.67
+016:  Metric:       50.47
+032:  Metric:       52.29
+064:  Metric:       50.01
+128:  Metric:       49.04
+
+So for low threads, it's not restored but for larger number of threads,
+it's closer to the "known good" baseline. The downside is that PTL lock
+hold times will be slightly higher but it's unlikely that an mremap and
+another operation will contend on the same PMD. This is the first time I
+encountered a realistic workload that was mremap intensive (thousands of
+calls per second with small ranges dominating).
+
+Using a different mremap-intensive workload that is not representative of
+the real workload there is little difference observed outside of noise in
+the headline metrics However, the TLB shootdowns are reduced by 11% on
+average and at the peak, TLB shootdowns were reduced by 21%. Interrupts
+were sampled every second while the workload ran to get those figures.
+It's known that the figures will vary as the non-representative load is
+non-deterministic.
+
+An alternative patch was posted that should have significantly reduced the
+TLB flushes but unfortunately it does not perform as well as this version
+on the customer test case. If revisited, the two patches can stack on top
+of each other.
+
+Signed-off-by: Mel Gorman <mgorman@suse.com>
+---
+ mm/mremap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 049470aa1e3e..b5017cb2e1e9 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -191,7 +191,7 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 		drop_rmap_locks(vma);
+ }
+ 
+-#define LATENCY_LIMIT	(64 * PAGE_SIZE)
++#define LATENCY_LIMIT	(PMD_SIZE)
+ 
+ unsigned long move_page_tables(struct vm_area_struct *vma,
+ 		unsigned long old_addr, struct vm_area_struct *new_vma,
