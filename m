@@ -1,314 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 968F9601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJTarXqH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41DBC601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932552AbeFFI0E convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Wed, 6 Jun 2018 04:26:04 -0400
-Received: from lhrrgout.huawei.com ([194.213.3.17]:39108 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932330AbeFFI0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:26:00 -0400
-From: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
-To: Vasily Averin <vvs@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] lib/mpi: headers cleanup
-Thread-Topic: [PATCH] lib/mpi: headers cleanup
-Thread-Index: AQHT+cXBAVxkaj+A3k+H4e5xnjYqzqRS6yAE
-Date: Wed, 6 Jun 2018 08:25:55 +0000
-Message-ID: <C2D7A727C393B644B70DF4B4DCFB60B921E34DDC@FRAEML521-MBX.china.huawei.com>
-References: <fb2fc1ef-1185-f0a3-d8d0-173d2f97bbaf@virtuozzo.com>
-In-Reply-To: <fb2fc1ef-1185-f0a3-d8d0-173d2f97bbaf@virtuozzo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.122.225.32]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S932643AbeFFIeb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:34:31 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39850 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932397AbeFFIe1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:34:27 -0400
+X-Google-Smtp-Source: ADUXVKJVw3dp3VUBkGGl5You9POwacb/M8QSEgxryhBn3ICJwrNYDNeTLGwI3n7MRyWK4P9PIb7d6w==
+Date: Wed, 6 Jun 2018 10:34:23 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: shenwei.wang@nxp.com
+Cc: linux-pwm@vger.kernel.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] pwm: fsl-ftm: Support the new version of FTM block
+ on i.MX8x
+Message-ID: <20180606083423.GE11810@ulmo>
+References: <20180524180848.61844-1-shenwei.wang@nxp.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XuV1QlJbYrcVoo+x"
+Content-Disposition: inline
+In-Reply-To: <20180524180848.61844-1-shenwei.wang@nxp.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks goo, you also updated comments of location of some functions.
 
-Acked-by: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+--XuV1QlJbYrcVoo+x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
-________________________________________
-From: Vasily Averin [vvs@virtuozzo.com]
-Sent: Friday, June 01, 2018 7:29 PM
-To: Andrew Morton; linux-kernel@vger.kernel.org
-Cc: Dmitry Kasatkin
-Subject: [PATCH] lib/mpi: headers cleanup
+On Thu, May 24, 2018 at 01:08:48PM -0500, shenwei.wang@nxp.com wrote:
+> On the new i.MX8x SoC family, the following changes were made on the FTM
+> block:
+>=20
+> 1. Need to enable the IPG clock before accessing any FTM registers. Becau=
+se
+> the IPG clock is not an option for FTM counter clock source, it can't be
+> used as the ftm_sys clock.
+>=20
+> 2. An additional PWM enable bit was added for each PWM channel in register
+> FTM_SC[16:23]. It supports 8 channels. Bit16 is for channel 0, and bit23
+> for channel 7.
 
-MPI headers contain definitions for huge number of non-existing functions.
-Most part of these functions was removed in 2012 by Dmitry Kasatkin
-commit 7cf4206a99d1 ("Remove unused code from MPI library")
-commit 9e235dcaf4f6 ("Revert "crypto: GnuPG based MPI lib - additional ...")
-commit bc95eeadf5c6 ("lib/mpi: removed unused functions")
-however headers was not updated properly.
+Generally if you need to itemize changes in your commit message it is a
+good indication that you should be splitting up the patch into multiple
+logical changes. In this case, one possibility would be to turn this
+into three patches:
 
-Also I deleted some unused macros.
+	1. Introduce the concept on an "interface" clock which is by
+	   default the same as the ftm_sys clock.
 
-cc: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+	2. Add support for enable bits, based on some per-compatible
+	   data structure (see for example pwm-tegra.c for an example of
+	   how to do this).
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
----
- include/linux/mpi.h    | 61 ----------------------------------------
- lib/mpi/mpi-internal.h | 75 ++++----------------------------------------------
- 2 files changed, 5 insertions(+), 131 deletions(-)
+	3. Enable support for the new SoC family by adding an instance
+	   of the per-compatible structure for that compatible string.
 
-diff --git a/include/linux/mpi.h b/include/linux/mpi.h
-index 1cc5ffb..7cd1473 100644
---- a/include/linux/mpi.h
-+++ b/include/linux/mpi.h
-@@ -53,93 +53,32 @@ struct gcry_mpi {
- typedef struct gcry_mpi *MPI;
+> As the IP version information can not be obtained in any of the FTM
+> registers, a property of "fsl,has-pwmen-bits" is added in the ftm pwm
+> device node. If it has the property, the driver set the PWM enable bit
+> when a PWM channel is requested.
 
- #define mpi_get_nlimbs(a)     ((a)->nlimbs)
--#define mpi_is_neg(a)        ((a)->sign)
+I don't see a corresponding device tree bindings update for this change.
+Also, I don't think doing this via a separate property is the right way,
+you can just derive this from the new compatible string which you need
+to add anyway.
 
- /*-- mpiutil.c --*/
- MPI mpi_alloc(unsigned nlimbs);
--MPI mpi_alloc_secure(unsigned nlimbs);
--MPI mpi_alloc_like(MPI a);
- void mpi_free(MPI a);
- int mpi_resize(MPI a, unsigned nlimbs);
--int mpi_copy(MPI *copy, const MPI a);
--void mpi_clear(MPI a);
--int mpi_set(MPI w, MPI u);
--int mpi_set_ui(MPI w, ulong u);
--MPI mpi_alloc_set_ui(unsigned long u);
--void mpi_m_check(MPI a);
--void mpi_swap(MPI a, MPI b);
+So to the above patches, add:
 
- /*-- mpicoder.c --*/
--MPI do_encode_md(const void *sha_buffer, unsigned nbits);
- MPI mpi_read_raw_data(const void *xbuffer, size_t nbytes);
- MPI mpi_read_from_buffer(const void *buffer, unsigned *ret_nread);
- MPI mpi_read_raw_from_sgl(struct scatterlist *sgl, unsigned int len);
--int mpi_fromstr(MPI val, const char *str);
--u32 mpi_get_keyid(MPI a, u32 *keyid);
- void *mpi_get_buffer(MPI a, unsigned *nbytes, int *sign);
- int mpi_read_buffer(MPI a, uint8_t *buf, unsigned buf_len, unsigned *nbytes,
-                    int *sign);
--void *mpi_get_secure_buffer(MPI a, unsigned *nbytes, int *sign);
- int mpi_write_to_sgl(MPI a, struct scatterlist *sg, unsigned nbytes,
-                     int *sign);
+	0. Add DT bindings for new SoC family with a mention that they
+	   need to provide the new IPG clock.
 
--#define log_mpidump g10_log_mpidump
--
--/*-- mpi-add.c --*/
--int mpi_add_ui(MPI w, MPI u, ulong v);
--int mpi_add(MPI w, MPI u, MPI v);
--int mpi_addm(MPI w, MPI u, MPI v, MPI m);
--int mpi_sub_ui(MPI w, MPI u, ulong v);
--int mpi_sub(MPI w, MPI u, MPI v);
--int mpi_subm(MPI w, MPI u, MPI v, MPI m);
--
--/*-- mpi-mul.c --*/
--int mpi_mul_ui(MPI w, MPI u, ulong v);
--int mpi_mul_2exp(MPI w, MPI u, ulong cnt);
--int mpi_mul(MPI w, MPI u, MPI v);
--int mpi_mulm(MPI w, MPI u, MPI v, MPI m);
--
--/*-- mpi-div.c --*/
--ulong mpi_fdiv_r_ui(MPI rem, MPI dividend, ulong divisor);
--int mpi_fdiv_r(MPI rem, MPI dividend, MPI divisor);
--int mpi_fdiv_q(MPI quot, MPI dividend, MPI divisor);
--int mpi_fdiv_qr(MPI quot, MPI rem, MPI dividend, MPI divisor);
--int mpi_tdiv_r(MPI rem, MPI num, MPI den);
--int mpi_tdiv_qr(MPI quot, MPI rem, MPI num, MPI den);
--int mpi_tdiv_q_2exp(MPI w, MPI u, unsigned count);
--int mpi_divisible_ui(const MPI dividend, ulong divisor);
--
--/*-- mpi-gcd.c --*/
--int mpi_gcd(MPI g, const MPI a, const MPI b);
--
- /*-- mpi-pow.c --*/
--int mpi_pow(MPI w, MPI u, MPI v);
- int mpi_powm(MPI res, MPI base, MPI exp, MPI mod);
+>=20
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> ---
+>  drivers/pwm/pwm-fsl-ftm.c | 35 +++++++++++++++++++++++++++++------
+>  1 file changed, 29 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-fsl-ftm.c b/drivers/pwm/pwm-fsl-ftm.c
+> index 557b4ea..0426458f 100644
+> --- a/drivers/pwm/pwm-fsl-ftm.c
+> +++ b/drivers/pwm/pwm-fsl-ftm.c
+> @@ -86,7 +86,9 @@ struct fsl_pwm_chip {
+>  	struct regmap *regmap;
+> =20
+>  	int period_ns;
+> +	bool has_pwmen;
+> =20
+> +	struct clk *ipg_clk;
+>  	struct clk *clk[FSL_PWM_CLK_MAX];
+>  };
+> =20
+> @@ -97,16 +99,31 @@ static inline struct fsl_pwm_chip *to_fsl_chip(struct=
+ pwm_chip *chip)
+> =20
+>  static int fsl_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+>  {
+> +	int ret;
+>  	struct fsl_pwm_chip *fpc =3D to_fsl_chip(chip);
+> =20
+> -	return clk_prepare_enable(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	ret =3D clk_prepare_enable(fpc->ipg_clk);
 
--/*-- mpi-mpow.c --*/
--int mpi_mulpowm(MPI res, MPI *basearray, MPI *exparray, MPI mod);
--
- /*-- mpi-cmp.c --*/
- int mpi_cmp_ui(MPI u, ulong v);
- int mpi_cmp(MPI u, MPI v);
+This is confusing because it looks as if you're breaking existing
+drivers, until you realize that...
 
--/*-- mpi-scan.c --*/
--int mpi_getbyte(MPI a, unsigned idx);
--void mpi_putbyte(MPI a, unsigned idx, int value);
--unsigned mpi_trailing_zeros(MPI a);
--
- /*-- mpi-bit.c --*/
- void mpi_normalize(MPI a);
- unsigned mpi_get_nbits(MPI a);
--int mpi_test_bit(MPI a, unsigned n);
--int mpi_set_bit(MPI a, unsigned n);
--int mpi_set_highbit(MPI a, unsigned n);
--void mpi_clear_highbit(MPI a, unsigned n);
--void mpi_clear_bit(MPI a, unsigned n);
--int mpi_rshift(MPI x, MPI a, unsigned n);
--
--/*-- mpi-inv.c --*/
--int mpi_invm(MPI x, MPI u, MPI v);
+> +
+> +	if ((!ret) && (fpc->has_pwmen)) {
+> +		mutex_lock(&fpc->lock);
+> +		regmap_update_bits(fpc->regmap, FTM_SC,
+> +				BIT(pwm->hwpwm + 16), BIT(pwm->hwpwm + 16));
+> +		mutex_unlock(&fpc->lock);
+> +	}
+> +
+> +	return ret;
+>  }
+> =20
+>  static void fsl_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+>  {
+>  	struct fsl_pwm_chip *fpc =3D to_fsl_chip(chip);
+> =20
+> -	clk_disable_unprepare(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	if (fpc->has_pwmen) {
+> +		mutex_lock(&fpc->lock);
+> +		regmap_update_bits(fpc->regmap, FTM_SC, BIT(pwm->hwpwm + 16), 0);
+> +		mutex_unlock(&fpc->lock);
+> +	}
+> +	clk_disable_unprepare(fpc->ipg_clk);
+>  }
+> =20
+>  static int fsl_pwm_calculate_default_ps(struct fsl_pwm_chip *fpc,
+> @@ -363,7 +380,7 @@ static int fsl_pwm_init(struct fsl_pwm_chip *fpc)
+>  {
+>  	int ret;
+> =20
+> -	ret =3D clk_prepare_enable(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	ret =3D clk_prepare_enable(fpc->ipg_clk);
+>  	if (ret)
+>  		return ret;
+> =20
+> @@ -371,7 +388,7 @@ static int fsl_pwm_init(struct fsl_pwm_chip *fpc)
+>  	regmap_write(fpc->regmap, FTM_OUTINIT, 0x00);
+>  	regmap_write(fpc->regmap, FTM_OUTMASK, 0xFF);
+> =20
+> -	clk_disable_unprepare(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	clk_disable_unprepare(fpc->ipg_clk);
+> =20
+>  	return 0;
+>  }
+> @@ -428,6 +445,10 @@ static int fsl_pwm_probe(struct platform_device *pde=
+v)
+>  		return PTR_ERR(fpc->clk[FSL_PWM_CLK_SYS]);
+>  	}
+> =20
+> +	fpc->ipg_clk =3D devm_clk_get(&pdev->dev, "ipg");
+> +	if (IS_ERR(fpc->ipg_clk))
+> +		fpc->ipg_clk =3D fpc->clk[FSL_PWM_CLK_SYS];
 
- /* inline functions */
+=2E.. fpc->ipg_clk is actually the same as fpc->clk[FSL_PWM_CLK_SYS] for
+older chips. I think this could be made more obvious by splitting this
+patch into several smaller ones as suggested above.
 
-diff --git a/lib/mpi/mpi-internal.h b/lib/mpi/mpi-internal.h
-index 7eceedd..c2d6f4e 100644
---- a/lib/mpi/mpi-internal.h
-+++ b/lib/mpi/mpi-internal.h
-@@ -65,13 +65,6 @@
- typedef mpi_limb_t *mpi_ptr_t; /* pointer to a limb */
- typedef int mpi_size_t;                /* (must be a signed type) */
+> +
+>  	fpc->clk[FSL_PWM_CLK_FIX] =3D devm_clk_get(fpc->chip.dev, "ftm_fix");
+>  	if (IS_ERR(fpc->clk[FSL_PWM_CLK_FIX]))
+>  		return PTR_ERR(fpc->clk[FSL_PWM_CLK_FIX]);
+> @@ -446,6 +467,8 @@ static int fsl_pwm_probe(struct platform_device *pdev)
+>  	fpc->chip.of_pwm_n_cells =3D 3;
+>  	fpc->chip.base =3D -1;
+>  	fpc->chip.npwm =3D 8;
+> +	fpc->has_pwmen =3D of_property_read_bool(pdev->dev.of_node,
+> +						"fsl,ftm-has-pwmen-bits");
 
--static inline int RESIZE_IF_NEEDED(MPI a, unsigned b)
--{
--       if (a->alloced < b)
--               return mpi_resize(a, b);
--       return 0;
--}
--
- /* Copy N limbs from S to D.  */
- #define MPN_COPY(d, s, n) \
-        do {                                    \
-@@ -80,13 +73,6 @@ static inline int RESIZE_IF_NEEDED(MPI a, unsigned b)
-                        (d)[_i] = (s)[_i];      \
-        } while (0)
+As I said earlier, I think this should be derived from the compatible
+string. That is, you could have a data structure such as:
 
--#define MPN_COPY_INCR(d, s, n) \
--       do {                                    \
--               mpi_size_t _i;                  \
--               for (_i = 0; _i < (n); _i++)    \
--                       (d)[_i] = (s)[_i];      \
--       } while (0)
--
- #define MPN_COPY_DECR(d, s, n) \
-        do {                                    \
-                mpi_size_t _i;                  \
-@@ -111,15 +97,6 @@ static inline int RESIZE_IF_NEEDED(MPI a, unsigned b)
-                }                               \
-        } while (0)
+	struct fsl_pwm_soc {
+		bool has_enable_bits;
+	};
 
--#define MPN_NORMALIZE_NOT_ZERO(d, n) \
--       do {                            \
--               for (;;) {              \
--                       if ((d)[(n)-1]) \
--                               break;  \
--                       (n)--;          \
--               }                       \
--       } while (0)
--
- #define MPN_MUL_N_RECURSE(prodp, up, vp, size, tspace) \
-        do {                                                    \
-                if ((size) < KARATSUBA_THRESHOLD)               \
-@@ -128,46 +105,11 @@ static inline int RESIZE_IF_NEEDED(MPI a, unsigned b)
-                        mul_n(prodp, up, vp, size, tspace);     \
-        } while (0);
+	static const struct fsl_pwm_soc vf610_ftm_pwm =3D {
+		.has_enable_bits =3D false,
+	};
 
--/* Divide the two-limb number in (NH,,NL) by D, with DI being the largest
-- * limb not larger than (2**(2*BITS_PER_MP_LIMB))/D - (2**BITS_PER_MP_LIMB).
-- * If this would yield overflow, DI should be the largest possible number
-- * (i.e., only ones).  For correct operation, the most significant bit of D
-- * has to be set.  Put the quotient in Q and the remainder in R.
-- */
--#define UDIV_QRNND_PREINV(q, r, nh, nl, d, di) \
--       do {                                                            \
--               mpi_limb_t _q, _ql, _r;                                 \
--               mpi_limb_t _xh, _xl;                                    \
--               umul_ppmm(_q, _ql, (nh), (di));                         \
--               _q += (nh);     /* DI is 2**BITS_PER_MPI_LIMB too small */ \
--               umul_ppmm(_xh, _xl, _q, (d));                           \
--               sub_ddmmss(_xh, _r, (nh), (nl), _xh, _xl);              \
--               if (_xh) {                                              \
--                       sub_ddmmss(_xh, _r, _xh, _r, 0, (d));           \
--                       _q++;                                           \
--                       if (_xh) {                                      \
--                               sub_ddmmss(_xh, _r, _xh, _r, 0, (d));   \
--                               _q++;                                   \
--                       }                                               \
--               }                                                       \
--               if (_r >= (d)) {                                        \
--                       _r -= (d);                                      \
--                       _q++;                                           \
--               }                                                       \
--               (r) = _r;                                               \
--               (q) = _q;                                               \
--       } while (0)
--
- /*-- mpiutil.c --*/
- mpi_ptr_t mpi_alloc_limb_space(unsigned nlimbs);
- void mpi_free_limb_space(mpi_ptr_t a);
- void mpi_assign_limb_space(MPI a, mpi_ptr_t ap, unsigned nlimbs);
+	/* up to here would be part of patch 2 */
 
--/*-- mpi-bit.c --*/
--void mpi_rshift_limbs(MPI a, unsigned int count);
--int mpi_lshift_limbs(MPI a, unsigned int count);
--
--/*-- mpihelp-add.c --*/
- static inline mpi_limb_t mpihelp_add_1(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
-                         mpi_size_t s1_size, mpi_limb_t s2_limb);
- mpi_limb_t mpihelp_add_n(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
-@@ -175,7 +117,6 @@ mpi_limb_t mpihelp_add_n(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
- static inline mpi_limb_t mpihelp_add(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr, mpi_size_t s1_size,
-                       mpi_ptr_t s2_ptr, mpi_size_t s2_size);
+	/* and this is part of patch 3, along with an entry in the OF
+	 * match table */
+	static const struct fsl_pwm_soc imx8x_ftm_pwm =3D {
+		.has_enable_bits =3D true,
+	};
 
--/*-- mpihelp-sub.c --*/
- static inline mpi_limb_t mpihelp_sub_1(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
-                         mpi_size_t s1_size, mpi_limb_t s2_limb);
- mpi_limb_t mpihelp_sub_n(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
-@@ -183,10 +124,10 @@ mpi_limb_t mpihelp_sub_n(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
- static inline mpi_limb_t mpihelp_sub(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr, mpi_size_t s1_size,
-                       mpi_ptr_t s2_ptr, mpi_size_t s2_size);
+Thierry
 
--/*-- mpihelp-cmp.c --*/
-+/*-- mpih-cmp.c --*/
- int mpihelp_cmp(mpi_ptr_t op1_ptr, mpi_ptr_t op2_ptr, mpi_size_t size);
+--XuV1QlJbYrcVoo+x
+Content-Type: application/pgp-signature; name="signature.asc"
 
--/*-- mpihelp-mul.c --*/
-+/*-- mpih-mul.c --*/
+-----BEGIN PGP SIGNATURE-----
 
- struct karatsuba_ctx {
-        struct karatsuba_ctx *next;
-@@ -202,7 +143,6 @@ mpi_limb_t mpihelp_addmul_1(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
-                            mpi_size_t s1_size, mpi_limb_t s2_limb);
- mpi_limb_t mpihelp_submul_1(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
-                            mpi_size_t s1_size, mpi_limb_t s2_limb);
--int mpihelp_mul_n(mpi_ptr_t prodp, mpi_ptr_t up, mpi_ptr_t vp, mpi_size_t size);
- int mpihelp_mul(mpi_ptr_t prodp, mpi_ptr_t up, mpi_size_t usize,
-                mpi_ptr_t vp, mpi_size_t vsize, mpi_limb_t *_result);
- void mpih_sqr_n_basecase(mpi_ptr_t prodp, mpi_ptr_t up, mpi_size_t size);
-@@ -214,21 +154,16 @@ int mpihelp_mul_karatsuba_case(mpi_ptr_t prodp,
-                               mpi_ptr_t vp, mpi_size_t vsize,
-                               struct karatsuba_ctx *ctx);
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsXnIwACgkQ3SOs138+
+s6GZMw/9Fpn2QrvI7aIOf1dAZDhR5JDtMV28XOGGLCJ/eRvyol+ApUp+AE1R0mUb
+CswVojEYCx+lWRewD96ESw6vvyQ0gt/6JWwsW5+0dAxr5+tis1dAdh5nqATU/nNV
+b7o2au+wKceweqghxfmdhPLdnKXfii7D54vMvait+PNl+pZWp55jwZil3x4ivDMz
+xfgmNH0IUwulQ10Mz/oPDYe/4QS5CIyIzfVRrtNNtiBo9Clez21Kna+qVWEGQvO0
+iJhV9uFXx99yfBFmZkKoYHTNi5Ycz6o3RuEy+HJv8B5WXnnQ5Rh2SJPkmGXT31Fw
+4HaOfQayB4n9JxEyh2NARiTxIL+ma1MZLjGJTuXxdJz+Q11shMALoopPA1xf2DKm
+XXLKl8qX+33KVE3Ez9ywVJCQFNw0ZtJPfq2yRXXaSuZyT5UZfS4igzcYFPau1U4r
+MCXIe7Ix94tCQkBUI5HVJsxKEM8y48MuIeP9VdPvJ08PPjHsgwvTG0matNHdFa1M
+t9cr30finADbgjd2h4dn/FGgCFDqHHoWS7/Euhl0ab1LNWQU6/797BV822rMar9B
+6c+lc4cZLlr7u25suU/XZydp/Xg91FPCZUpVhMGfhJDNSBiT02kevUoGUTFH+vZX
+ELXKZRHAPSg08PoLHEU4Zj+4tCFD1RNiUm3A1Ub1hJI+v0HeSYg=
+=qFyJ
+-----END PGP SIGNATURE-----
 
--/*-- mpihelp-mul_1.c (or xxx/cpu/ *.S) --*/
-+/*-- generic_mpih-mul1.c --*/
- mpi_limb_t mpihelp_mul_1(mpi_ptr_t res_ptr, mpi_ptr_t s1_ptr,
-                         mpi_size_t s1_size, mpi_limb_t s2_limb);
-
--/*-- mpihelp-div.c --*/
--mpi_limb_t mpihelp_mod_1(mpi_ptr_t dividend_ptr, mpi_size_t dividend_size,
--                        mpi_limb_t divisor_limb);
-+/*-- mpih-div.c --*/
- mpi_limb_t mpihelp_divrem(mpi_ptr_t qp, mpi_size_t qextra_limbs,
-                          mpi_ptr_t np, mpi_size_t nsize,
-                          mpi_ptr_t dp, mpi_size_t dsize);
--mpi_limb_t mpihelp_divmod_1(mpi_ptr_t quot_ptr,
--                           mpi_ptr_t dividend_ptr, mpi_size_t dividend_size,
--                           mpi_limb_t divisor_limb);
-
--/*-- mpihelp-shift.c --*/
-+/*-- generic_mpih-[lr]shift.c --*/
- mpi_limb_t mpihelp_lshift(mpi_ptr_t wp, mpi_ptr_t up, mpi_size_t usize,
-                          unsigned cnt);
- mpi_limb_t mpihelp_rshift(mpi_ptr_t wp, mpi_ptr_t up, mpi_size_t usize,
---
-2.7.4
+--XuV1QlJbYrcVoo+x--
