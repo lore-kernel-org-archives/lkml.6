@@ -1,77 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ecV5oyRO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D30F606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76563605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932418AbeFFJJW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:09:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:51747 "EHLO ozlabs.org"
+        id S1752322AbeFFGLH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:11:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52225 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932323AbeFFJJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:09:09 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 6 Jun 2018 19:08:58 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: linux-next: manual merge of the staging tree with Linus' tree
-Message-ID: <20180606190858.7d4c27ac@canb.auug.org.au>
+        id S1750864AbeFFGLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 02:11:06 -0400
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Simmons <jsimmons@infradead.org>,
+        Andreas Dilger <andreas.dilger@intel.com>
+Date: Wed, 06 Jun 2018 16:05:18 +1000
+Subject: [md PATCH 00/11] staging: More lustre cleanup - particularly
+ interval-trees
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152826510267.16761.14361003167157833896.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qUPQreRBfUw7dMPULvPzkiS"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/qUPQreRBfUw7dMPULvPzkiS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi all,
+ here is my next batch of cleanups for lustre.
+ Note that this series conflicts with a patch that Greg posted recently
+ but that has not yet landed in staging-next (it is in
+ staging-testing).
+ Up to Greg which gets into staging-next first of course.
 
-Hi Greg,
+ I started with the last 5 patches but noticed interval-tree and
+ decided I should deal with that first.  So I added the
+ interval-tree clean-up.  That set is more work to review,
+ so I put it first.
 
-Today's linux-next merge of the staging tree got a conflict in:
+ Comments welcome,
 
-  drivers/staging/ncpfs/dir.c
+Thanks,
+NeilBrown
 
-between commit:
+---
 
-  1c5fedbb508f ("ncp_lookup(): use d_splice_alias()")
+NeilBrown (11):
+      staging: lustre: simplify use of interval-tree.
+      staging: lustre: change lock_matches() to return bool.
+      staging: lustre: move interval_insert call from ldlm_lock to ldlm_extent
+      staging: lustre: convert range_lock to linux interval_trees.
+      staging: lustre: convert ldlm extent locks to linux extent-tree
+      staging: lustre: remove interval_tree
+      staging: lustre: fold lprocfs_call_handler functionality into lnet_debugfs_*
+      staging: lustre: obdclass: move linux/linux-foo.c to foo.c
+      staging: lustre: discard WIRE_ATTR
+      staging: lustre: move ldlm into ptlrpc
+      staging: lustre: centralize setting of subdir-ccflags-y
 
-from Linus' tree and commit:
 
-  bd32895c750b ("staging: ncpfs: delete it")
+ drivers/staging/lustre/Makefile                    |    3 
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |    4 
+ .../staging/lustre/include/linux/lnet/socklnd.h    |    8 
+ .../lustre/include/uapi/linux/lnet/lnet-types.h    |   28 
+ .../lustre/include/uapi/linux/lnet/lnetst.h        |    4 
+ drivers/staging/lustre/lnet/klnds/o2iblnd/Makefile |    2 
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    |   22 
+ drivers/staging/lustre/lnet/klnds/socklnd/Makefile |    2 
+ drivers/staging/lustre/lnet/libcfs/Makefile        |    2 
+ drivers/staging/lustre/lnet/libcfs/module.c        |   84 -
+ drivers/staging/lustre/lnet/lnet/Makefile          |    2 
+ drivers/staging/lustre/lnet/lnet/router_proc.c     |   41 
+ drivers/staging/lustre/lnet/selftest/Makefile      |    2 
+ drivers/staging/lustre/lnet/selftest/rpc.h         |   48 
+ drivers/staging/lustre/lustre/fid/Makefile         |    2 
+ drivers/staging/lustre/lustre/fld/Makefile         |    2 
+ .../staging/lustre/lustre/include/interval_tree.h  |  119 -
+ drivers/staging/lustre/lustre/include/lustre_dlm.h |   19 
+ drivers/staging/lustre/lustre/ldlm/interval_tree.c |  599 ------
+ drivers/staging/lustre/lustre/ldlm/l_lock.c        |   73 -
+ drivers/staging/lustre/lustre/ldlm/ldlm_extent.c   |  258 --
+ drivers/staging/lustre/lustre/ldlm/ldlm_flock.c    |  486 -----
+ .../staging/lustre/lustre/ldlm/ldlm_inodebits.c    |   69 -
+ drivers/staging/lustre/lustre/ldlm/ldlm_internal.h |  342 ---
+ drivers/staging/lustre/lustre/ldlm/ldlm_lib.c      |  842 --------
+ drivers/staging/lustre/lustre/ldlm/ldlm_lock.c     | 2135 --------------------
+ drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c    | 1163 -----------
+ drivers/staging/lustre/lustre/ldlm/ldlm_plain.c    |   68 -
+ drivers/staging/lustre/lustre/ldlm/ldlm_pool.c     | 1013 ---------
+ drivers/staging/lustre/lustre/ldlm/ldlm_request.c  | 2033 -------------------
+ drivers/staging/lustre/lustre/ldlm/ldlm_resource.c | 1318 ------------
+ drivers/staging/lustre/lustre/llite/Makefile       |    2 
+ drivers/staging/lustre/lustre/llite/file.c         |    8 
+ drivers/staging/lustre/lustre/llite/range_lock.c   |  141 -
+ drivers/staging/lustre/lustre/llite/range_lock.h   |   25 
+ drivers/staging/lustre/lustre/lmv/Makefile         |    2 
+ drivers/staging/lustre/lustre/lov/Makefile         |    2 
+ drivers/staging/lustre/lustre/mdc/Makefile         |    2 
+ drivers/staging/lustre/lustre/mgc/Makefile         |    2 
+ drivers/staging/lustre/lustre/obdclass/Makefile    |    4 
+ .../lustre/lustre/obdclass/linux/linux-module.c    |  514 -----
+ .../lustre/lustre/obdclass/linux/linux-sysctl.c    |  162 --
+ drivers/staging/lustre/lustre/obdclass/module.c    |  514 +++++
+ drivers/staging/lustre/lustre/obdclass/sysctl.c    |  162 ++
+ drivers/staging/lustre/lustre/obdecho/Makefile     |    2 
+ drivers/staging/lustre/lustre/osc/Makefile         |    2 
+ drivers/staging/lustre/lustre/ptlrpc/Makefile      |   17 
+ drivers/staging/lustre/lustre/ptlrpc/l_lock.c      |   73 +
+ drivers/staging/lustre/lustre/ptlrpc/ldlm_extent.c |  206 ++
+ drivers/staging/lustre/lustre/ptlrpc/ldlm_flock.c  |  486 +++++
+ .../staging/lustre/lustre/ptlrpc/ldlm_inodebits.c  |   69 +
+ .../staging/lustre/lustre/ptlrpc/ldlm_internal.h   |  329 +++
+ drivers/staging/lustre/lustre/ptlrpc/ldlm_lib.c    |  842 ++++++++
+ drivers/staging/lustre/lustre/ptlrpc/ldlm_lock.c   | 2103 ++++++++++++++++++++
+ drivers/staging/lustre/lustre/ptlrpc/ldlm_lockd.c  | 1154 +++++++++++
+ drivers/staging/lustre/lustre/ptlrpc/ldlm_plain.c  |   68 +
+ drivers/staging/lustre/lustre/ptlrpc/ldlm_pool.c   | 1013 +++++++++
+ .../staging/lustre/lustre/ptlrpc/ldlm_request.c    | 2033 +++++++++++++++++++
+ .../staging/lustre/lustre/ptlrpc/ldlm_resource.c   | 1318 ++++++++++++
+ .../staging/lustre/lustre/ptlrpc/ptlrpc_internal.h |    2 
+ 60 files changed, 10527 insertions(+), 11523 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lustre/include/interval_tree.h
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/interval_tree.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/l_lock.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_extent.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_flock.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_inodebits.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_internal.h
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_lib.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_lock.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_lockd.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_plain.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_pool.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_request.c
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
+ delete mode 100644 drivers/staging/lustre/lustre/obdclass/linux/linux-module.c
+ delete mode 100644 drivers/staging/lustre/lustre/obdclass/linux/linux-sysctl.c
+ create mode 100644 drivers/staging/lustre/lustre/obdclass/module.c
+ create mode 100644 drivers/staging/lustre/lustre/obdclass/sysctl.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/l_lock.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_extent.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_flock.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_inodebits.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_internal.h
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_lib.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_lock.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_lockd.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_plain.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_pool.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_request.c
+ create mode 100644 drivers/staging/lustre/lustre/ptlrpc/ldlm_resource.c
 
-from the staging tree.
-
-I fixed it up (the latter removed the file, so I did that) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/qUPQreRBfUw7dMPULvPzkiS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXpKoACgkQAVBC80lX
-0Gz7WggAgGGB18HKT5IFllrnkrt4dQfrot5xWUH4J7v7hLUbZEKBjFZxfBwBYE0h
-7ATl9uLCExWy5QABQ+5Lr/4qFBdNnssR4dmN2OSu8MtOC3JTo0efiCvLB1NRNDl/
-8RE0GC0KxDUlypZGTtFLibPIzF1zFpm0XOhKi4IpvOD1FxFSFhwqaYbz5rLelJ1Z
-BHiyh00SyNPhIT0RaxiJDU5p2oH1kJN7Dd5Z8k7drCSIwGVVx8+IZIncdhXWTSGL
-j2lJRyHJCcHXRXVIoGbhSD82YkEw6Uupl0dlM3T0xL0p+hO7n2YlXXBwGX5rf4/p
-+d7CxGMZ5lg+Lj5RoStGtNEG0f681g==
-=C8xb
------END PGP SIGNATURE-----
-
---Sig_/qUPQreRBfUw7dMPULvPzkiS--
+--
+Signature
