@@ -1,74 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JozOM7dP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DA2E60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZfSucTwU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74F3A607B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753084AbeFFTZG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:25:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752488AbeFFTZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:25:04 -0400
-Date: Wed, 6 Jun 2018 22:25:00 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Doug Ledford <dledford@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-netdev <netdev@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>
-Subject: linux-next: Please add mlx5-next tree
-Message-ID: <20180606192500.GZ2958@mtr-leonro.mtl.com>
+        id S1752004AbeFFNQi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:16:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40842 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbeFFNQh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:16:37 -0400
+Date: Wed, 6 Jun 2018 15:16:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH V4 3/3] x86: Add entry trampolines to kcore
+Message-ID: <20180606131631.GD12180@hirez.programming.kicks-ass.net>
+References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
+ <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XStn23h1fwudRqtG"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 06, 2018 at 03:54:11PM +0300, Adrian Hunter wrote:
+> Without program headers for PTI entry trampoline pages, the trampoline
+> virtual addresses do not map to anything.
+> 
 
---XStn23h1fwudRqtG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> 
+> In addition, entry trampolines all map to the same page.  Represent that by
+> giving the corresponding program headers in kcore the same offset.
+> 
+> This has the benefit that, when perf tools uses /proc/kcore as a source for
+> kernel object code, samples from different CPU trampolines are aggregated
+> together.  Note, such aggregation is normal for profiling i.e. people want
+> to profile the object code, not every different virtual address the object
+> code might be mapped to (across different processes for example).
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Acked-by: Andi Kleen <ak@linux.intel.com>
+> ---
+>  arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
+>  fs/proc/kcore.c              |  7 +++++--
+>  include/linux/kcore.h        | 13 +++++++++++++
+>  3 files changed, 28 insertions(+), 2 deletions(-)
 
-Hi Stephen,
+This also adds the KCORE_REMAP functionality, but isn't mentioned at all
+in the Changelog.
 
-Can you please add the branch "mlx5-next" from the following tree to the
-linux-next integration tree?
+Still, looks OK I suppose,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/
-
-The mlx5-next branch is used to send shared pull requests to both netdev
-and RDMA subsystems and it is worth to have linux-next coverage on it
-before.
-
-Thanks
-
---XStn23h1fwudRqtG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbGDUMAAoJEORje4g2clingz0P/0RlnQ1cFCde5nlT8RO3LXRm
-tLs174jZmZesAQ3WtTJEqTC9sG+NpREYysbZsSX+2EQmfRTPUdJeKj8uDvFXe8vo
-GR5x2zDbEWUshz+Wc/0YzqEf1Ny8qriDynZi8hJzwhIOTLc+gla6LbpKTy5dX3y0
-+MYOtviCJvt/C28f44pjwNzzKQiqd83uoCFoIFlq1W1s/gcorgWPrNfsyGDIlX3u
-63b4zBC+ZEeCAyaqVPxJhT2rhjIRuP9+cakCFim2ul1EYzztsJnpSW729biFZ/hd
-8oJu8U5GmSVZgjvFjyg6r5FVttFueyhFPCTCI1pm52YHXiC8fEQ83xlj2XErRvVx
-QfP2wOc9ZVGercjfHA6FDq53H7ZuQhwjWdCqUfz4MAu9oLqoC3E1k4YQ3S+J6uLa
-8HJVdPslYHUZ0sJ379xa3Lz+1rSN6+8Nyit746P9K3K/Cl+lI4cwKeOdHwHOtW3i
-WrJP0D5a6NFosJ0jCstPCGpYSWYF9wmPHzRy7JtMhqehfggPMjUVgvHMIFr4bGC7
-GoshUncAb51XnnU3MtbbN5YWwTNHjrB12GHLbs+qj4TlimCrFuml0aU155MT3UeB
-3aLgZxdB+Ym5wPqdldNlZnMyC1wlHhrYRodz+dMEGRFBKPM58+WGznuIdvSHENWG
-P/kwfsyjl/r8KopXZokK
-=bCJz
------END PGP SIGNATURE-----
-
---XStn23h1fwudRqtG--
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
