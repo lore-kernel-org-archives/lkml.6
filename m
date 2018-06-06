@@ -1,176 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6SM/GmaZGlvxMQAAmS7hNA
-	; Fri, 08 Jun 2018 15:03:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id u0azK/xcGFvkJAAAmS7hNA
+	; Wed, 06 Jun 2018 22:16:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8B5C5607DC; Fri,  8 Jun 2018 15:03:21 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="SPvitThs"
+	id E53866089E; Wed,  6 Jun 2018 22:16:16 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 55FA760290;
-	Fri,  8 Jun 2018 15:03:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55FA760290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6CA3A605BD;
+	Wed,  6 Jun 2018 22:16:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CA3A605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752810AbeFHPDS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 11:03:18 -0400
-Received: from 8bytes.org ([81.169.241.247]:36232 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751140AbeFHPDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 11:03:17 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id C345E104; Fri,  8 Jun 2018 17:03:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1528470195; bh=ZV8E0dTHEb9fn9ZzLmVtYBwG7vNQq5ICbitvQVLdCHw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SPvitThsPy8Dr6xJVbPyAm5CDWQP1wZFJApJMZU8Hl4WOXmqeOjzQkqpJieYfyE3u
-         /2EutpQC0H4oTiiX/QRO0ryhL+t2dZ6eaes76Dsvy1VxRImBgflIu5uyXODczteoYj
-         UOIoUs7GiLyFKCdyzKhlgVwNBm0uDaHcwcdxH2kX0YyD1Q0QoUVV32ILsgyUCrgvkU
-         mYfv/P+8J1AMPE15IEha5pLtEN9ZymKYkrQ36rTo1YLJLxol7vCaYgd9zSrYJWqEaD
-         37yDbZ133pVfUdvszWLiWZflzR7j9Usw0ApPGSroHN+L3OdCjeeul9DOHF2q1TUnYi
-         pK7UWrW7VYa9Q==
-Date: Fri, 8 Jun 2018 17:03:14 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [git pull] IOMMU Updates for Linux v4.18
-Message-ID: <20180608150309.esh35cutnhpf5ry4@8bytes.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="p6fvj5zx4uwog74f"
-Content-Disposition: inline
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1752997AbeFFWQO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 18:16:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41862 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752854AbeFFWPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 18:15:43 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0F4A3407574B;
+        Wed,  6 Jun 2018 22:15:42 +0000 (UTC)
+Received: from krava.redhat.com (ovpn-204-89.brq.redhat.com [10.40.204.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1AABF2026DEF;
+        Wed,  6 Jun 2018 22:15:39 +0000 (UTC)
+From: Jiri Olsa <jolsa@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH 09/10] perf/cputime: Don't stop idle tick if there's live cputime event
+Date: Thu,  7 Jun 2018 00:15:12 +0200
+Message-Id: <20180606221513.11302-10-jolsa@kernel.org>
+In-Reply-To: <20180606221513.11302-1-jolsa@kernel.org>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 06 Jun 2018 22:15:42 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 06 Jun 2018 22:15:42 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Disable stopping of the idle tick when having live cputime
+event. When the tick is disabled, the idle counts are out
+of date until next tick/update and perf cputime PMU provides
+misleading counts.
 
---p6fvj5zx4uwog74f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ include/linux/perf_event.h |  1 +
+ kernel/events/cputime.c    | 13 +++++++++++++
+ kernel/time/tick-sched.c   |  4 ++++
+ 3 files changed, 18 insertions(+)
 
-Hi Linus,
-
-The following changes since commit b04e217704b7f879c6b91222b066983a44a7a09f:
-
-  Linux 4.17-rc7 (2018-05-27 13:01:47 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v4.18
-
-for you to fetch changes up to 1f568357117cafb48aafb10413cbd1567dc015b1:
-
-  Merge branches 'arm/io-pgtable', 'arm/qcom', 'arm/tegra', 'x86/vt-d', 'x86/amd' and 'core' into next (2018-05-29 16:58:17 +0200)
-
-----------------------------------------------------------------
-IOMMU Updates for Linux v4.18
-
-Nothing big this time. In particular:
-
-	- Debugging code for Tegra-GART
-
-	- Improvement in Intel VT-d fault printing to prevent
-	  soft-lockups when on fault storms
-
-	- Improvements in AMD IOMMU event reporting
-
-	- NUMA aware allocation in io-pgtable code for ARM
-
-	- Various other small fixes and cleanups all over the place
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      iommu: Remove extra NULL check when call strtobool()
-
-Anna-Maria Gleixner (2):
-      iommu/amd: Fix grammar of comments
-      iommu/amd: Prevent possible null pointer dereference and infinite loop
-
-Dmitry Osipenko (2):
-      iommu/tegra: gart: Add debugging facility
-      iommu/tegra: gart: Fix gart_iommu_unmap()
-
-Dmitry Safonov (1):
-      iommu/vt-d: Ratelimit each dmar fault printing
-
-Gary R Hook (2):
-      iommu/amd: Update the PASID information printed to the system log
-      iommu/amd: Update logging information for new event type
-
-Geert Uytterhoeven (1):
-      iommu: Remove depends on HAS_DMA in case of platform dependency
-
-Joerg Roedel (1):
-      Merge branches 'arm/io-pgtable', 'arm/qcom', 'arm/tegra', 'x86/vt-d', 'x86/amd' and 'core' into next
-
-Lu Baolu (4):
-      iommu/vt-d: Clean up unused variable in find_or_alloc_domain
-      iommu/vt-d: Clean up pasid quirk for pre-production devices
-      iommu/vt-d: Remove unnecessary parentheses
-      iommu: Clean up the comments for iommu_group_alloc
-
-Peter Xu (2):
-      iommu/vt-d: Introduce __mapping_notify_one()
-      iommu/vt-d: Fix iotlb psi missing for mappings
-
-Robin Murphy (1):
-      iommu/io-pgtable-arm: Make allocations NUMA-aware
-
-Wolfram Sang (1):
-      iommu/qcom: Simplify getting .drvdata
-
-YueHaibing (1):
-      iommu/io-pgtable-arm: Use for_each_set_bit to simplify code
-
- drivers/iommu/Kconfig              |   5 +-
- drivers/iommu/amd_iommu.c          |  69 ++++++++++++-------------
- drivers/iommu/amd_iommu_types.h    |   1 +
- drivers/iommu/dmar.c               |   8 ++-
- drivers/iommu/intel-iommu.c        | 101 ++++++++++++++++++-------------------
- drivers/iommu/intel-svm.c          |   2 +-
- drivers/iommu/io-pgtable-arm-v7s.c |   5 +-
- drivers/iommu/io-pgtable-arm.c     |  18 ++++---
- drivers/iommu/iommu.c              |   7 +--
- drivers/iommu/qcom_iommu.c         |   6 +--
- drivers/iommu/tegra-gart.c         |  15 +++++-
- include/linux/intel-iommu.h        |   1 -
- 12 files changed, 122 insertions(+), 116 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---p6fvj5zx4uwog74f
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJbGpqtAAoJECvwRC2XARrjD/IQANukc6nV57m4V1r1n3z0RSsE
-h4hR2/vZdYDKOFVOVfP6x6fRaLTfcPOVYsFPAhzuT1I94QTN/pj5r1Xb+EbpUe7S
-NvLPXez9m3oZWm+fReRma/szbymvq1kDham5S6UsVmSdi79pI++A+gDBq2aJymar
-ovsj4tTmLo9lVa9orKfSGHrTVo6DC5FOJi6RYwSCbMVqgsO8a5FH7yWEIvVmTo0u
-vGdq9WuCvXEFFcln0Um+ZQSWItJ9FUhjjF0VCkzReq4wdLcZqB8qBSu54xr8iBqA
-aukdfzLmtlb26+/lCmrSIuYkArghSun20tezcmQZCNUSxEt4tn/bfPbvozpngiaG
-ly9ruJoWTfSP/y8nwL1nq8qmHJRNtkkbQFYABFAXkaW6U8qM/6pt0htAKgEIucdz
-+1Up6eHVk7TtP95cXK1Mz0M49TFc3cZjxRp+mWo9i9/6ksIHSLyitE240RoKKDbG
-YHDYsjUFeea/MRNjYirvsKutV4IHdghbnYTL4Gj2AkqJqrMmi4H+IxOCq+NovioR
-zCqZ+FQ8eUkhcIMBiA1V0vh6T2LW8vYJ7t8vJpwsPnB227lSe/0mwbq6NvoGMLwU
-b4TpWAny67HwNkhqy5r/U+fyi2KsurZUBIs9xegBXa4YYDzq8SuSW7b9Gl7FarGx
-xkGb6wDOk1Sbwr+9T9/g
-=PuDY
------END PGP SIGNATURE-----
-
---p6fvj5zx4uwog74f--
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index aa9eaab370be..ba61d2f9602a 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1407,4 +1407,5 @@ int perf_event_exit_cpu(unsigned int cpu);
+ #define perf_event_exit_cpu	NULL
+ #endif
+ 
++bool has_cputime_event(int cpu);
+ #endif /* _LINUX_PERF_EVENT_H */
+diff --git a/kernel/events/cputime.c b/kernel/events/cputime.c
+index efad24543f13..32d3cde0047e 100644
+--- a/kernel/events/cputime.c
++++ b/kernel/events/cputime.c
+@@ -1,6 +1,7 @@
+ #include <linux/kernel_stat.h>
+ #include <linux/sched.h>
+ #include <linux/perf_event.h>
++#include <linux/tick.h>
+ 
+ enum perf_cputime_id {
+ 	PERF_CPUTIME_USER,
+@@ -16,6 +17,13 @@ enum perf_cputime_id {
+ 	PERF_CPUTIME_MAX,
+ };
+ 
++static DEFINE_PER_CPU(int, has_cputime);
++
++bool has_cputime_event(int cpu)
++{
++	return per_cpu(has_cputime, cpu) != 0;
++}
++
+ static enum cpu_usage_stat map[PERF_CPUTIME_MAX] = {
+ 	[PERF_CPUTIME_USER]		= CPUTIME_USER,
+ 	[PERF_CPUTIME_NICE]		= CPUTIME_NICE,
+@@ -143,12 +151,17 @@ static int cputime_event_add(struct perf_event *event, int flags)
+ 	if (flags & PERF_EF_START)
+ 		cputime_event_start(event, flags);
+ 
++	if (event->hw.config == PERF_CPUTIME_IDLE)
++		tick_nohz_idle_restart_tick();
++
++	this_cpu_inc(has_cputime);
+ 	return 0;
+ }
+ 
+ static void cputime_event_del(struct perf_event *event, int flags)
+ {
+ 	cputime_event_stop(event, PERF_EF_UPDATE);
++	this_cpu_dec(has_cputime);
+ }
+ 
+ static void perf_cputime_read(struct perf_event *event)
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index da9455a6b42b..1c105bc2a92e 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -28,6 +28,7 @@
+ #include <linux/posix-timers.h>
+ #include <linux/context_tracking.h>
+ #include <linux/mm.h>
++#include <linux/perf_event.h>
+ 
+ #include <asm/irq_regs.h>
+ 
+@@ -912,6 +913,9 @@ static bool can_stop_idle_tick(int cpu, struct tick_sched *ts)
+ 			return false;
+ 	}
+ 
++	if (has_cputime_event(cpu))
++		return false;
++
+ 	return true;
+ }
+ 
+-- 
+2.13.6
