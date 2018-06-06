@@ -1,238 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BED1960555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="XIQHlB7Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56AFB60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeFFOKt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:10:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:40916 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751851AbeFFOKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:10:48 -0400
-Date: Wed, 6 Jun 2018 15:10:44 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Claudio Scordino <claudio@evidence.eu.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>
-Subject: Re: [PATCH v5 00/10] track CPU utilization
-Message-ID: <20180606141044.GE10870@e108498-lin.cambridge.arm.com>
-References: <CAKfTPtB0MHN3=VbS4mYqVH_0fv1WwKq6N1-ogU84mNUAxfCwjw@mail.gmail.com>
- <20180605105721.GA12193@e108498-lin.cambridge.arm.com>
- <20180605121153.GD16081@localhost.localdomain>
- <20180605130548.GB12193@e108498-lin.cambridge.arm.com>
- <20180605131518.GG16081@localhost.localdomain>
- <20180605140101.GE12193@e108498-lin.cambridge.arm.com>
- <20180605141317.GJ16081@localhost.localdomain>
- <6c2dc1aa-3e19-be14-0ed8-b29003c72e61@evidence.eu.com>
- <20180606132046.GC10870@e108498-lin.cambridge.arm.com>
- <CAGWmfYrUGPABWB3MY+zOaB3HWhsX=Wkacx17B20aq04dcWtZjg@mail.gmail.com>
+        id S1752201AbeFFMTv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:19:51 -0400
+Received: from mail-co1nam03on0066.outbound.protection.outlook.com ([104.47.40.66]:61760
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750864AbeFFMTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:19:48 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com;
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: Gabriel C <nix.or.die@gmail.com>
+Cc: Jean-Marc Valin <jmvalin@mozilla.com>,
+        Dave Airlie <airlied@linux.ie>, alexander.deucher@amd.com,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        michel.daenzer@amd.com, dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
+ <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
+ <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
+ <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+ <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com>
+ <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
+ <CAEJqkgjfhmjwYo74xivsfgvoPQUFh2dFeXFwtEKoN+DXG1riMg@mail.gmail.com>
+ <CAEJqkgiVdeBf9konX4OJi59dYp4y_b+J02ns=yf-D6tjtZ7P1g@mail.gmail.com>
+ <52eceaff-987d-4c1d-a2cb-73b28e48c01c@amd.com>
+ <CAEJqkgiBZ6G+tXWULYoGKqq3BsgvH7TrqkFbhtRL4JnGM+dLuA@mail.gmail.com>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Message-ID: <89d91028-c800-b6db-38de-4ece84e5effd@amd.com>
+Date: Wed, 6 Jun 2018 14:19:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGWmfYrUGPABWB3MY+zOaB3HWhsX=Wkacx17B20aq04dcWtZjg@mail.gmail.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <CAEJqkgiBZ6G+tXWULYoGKqq3BsgvH7TrqkFbhtRL4JnGM+dLuA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
+X-ClientProxiedBy: AM0PR07CA0001.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::14) To DM5PR12MB1724.namprd12.prod.outlook.com
+ (2603:10b6:3:10f::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1724;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1724;3:y287bHJ+xiYc8UTuh+nrIkuc3+A+MxieJBxB5HSHcj7hIXhg2aAHS1iyk/8bV77+ODxXJDEp0hMQ47KLq1Zf5HWlpgfBDUSduyUfXCG6TTtBH2pait4v9RQPTcE9FRs9x0Y/+X5Gd8XRgx5gCxNq4EHJugfc01YnlsR4MMj9STG+rg4HwLJPg92zO/wC18inEPBlrkhj180Puaw1RLY1yGjapY1nz91Rpz7fhsreElQO58L+4/K82xuyrQrAuFS9;25:OFhTpwyAI+HkIPHWemtI+fPY6GOD5LHR+K20dgFrlaYwfJYflDdA3oo5UAgh+kmZOG52cKRDEmlJbGSGhlL6+V5xruGLPxEObNOAGNOuNzgP08tivDaoWJOpslyo880+HNaQml7RPzLznxbxyhUn0N9R5YCesd7qAGCavTAP+vmR+xAXUblyZZ0+plmKfVGJinQiB5Bx5Iqmhbr6pVPKXVTlJ9jgDN5IX9GmzoNZpbN2yaDchHstxbDnc1a3alZxShlGvtJtNKKZrquW1bASMDwL4+3C/VWSzqSf6EGHRDUQUyqKwSerrUJ3oT+CUsFyrZaB01PEDCIjkM2FZJL13A==;31:4jkvMkBgIx4m6wXRHkOQz5Eh8PQ/LSPeQ3YwFoA9+vSWF16QovxEy6bcK8qFmwVwCsJ2hpYpFXgHN4kz736wP4niv5SQAtz1NPMJkLiAR6b4E+hDvp3R5DmlT4dJV2zRS4lxNKOAi5ZRH745feVDDT3sHZ7TTG2tqKV/zH/H2Oxww2qA2bbnWPp/W4hX/1YwvgD38QaaOoF1YJkq6f+6dQ4MIBoOTXyZx1OCuLyOA3k=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1724:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1724;20:62n3qXKkSl/VxeuoCQIdDQDKnDrsiNgA4T87ECE5hbi9K/B8resmlzCYTK+oaCi+u6fCx/Zm2KlZSZycl51OJ/z0pTdoqoCB6Ps/3e/kmUmF0mT6yRfRIdXGcCSi/7KroeS+BZuBoq1qqz7ePQh6KmwbQ5IzG1tbjDjs39FG55WfiwUS43E/+kMme2FKVTTuq6zSYv1RlfqBm1Rj8x9e1ob1SADZItK1PfDlQCLWBjEnonqeKZLihmMzW2jxDbzjah0MKRti+zh3Gy58NUuRyxH3QF+cY65RlGtDxfQTc1ljfDprmDmy6vUSFbQTDF7sMxb53xIZjA6Tch27nfv0WU+YSaEM8Mv7hZIsQc5ofaGskYVrd36Tv84nJIEwz309bdb5lYZfVLTgZNKVdk1eSNmAbm4gLB8AjrUpGTAbLE0+LioKE+Q4wwYMXPFmao3GRdT3wiULD5MyNcxrHJCj6ihMS5F2yU9OV0FP5hZ2mvSWPDNWjP/YRruXVPbF1tpA;4:d82Gz4KtSJEQF2QoYSG56NqTM1dg9PszQl3GZfvQH8P4HvlB/o5qJexUUEtHB7IozYxEcP1ieshL1uhWj8VjFJDCKDlVD3JYjZaEJjcNZzUoYz3a4ryGfLXBm3Vo/3YuI5lS+nRACizCUq/EkBHLnSOFPoCOxS8poED9N3fNGYqQgt/kZQiWuNHTEv/ndiSyCdmj+4Q9SDa1bIw3hU3sLP0b7kOZ+dcyhCuPbd9IcC0HVTEN/D2kjRnU+6918OiA/u6vt1FP21x/oC6snISpVi9PDpfyThPO3VSzyWvmGUEw1eIivr/thHo/h+r8AQYI9th5hhaT432xt1fROJDgWw==
+X-Microsoft-Antispam-PRVS: <DM5PR12MB1724EC6C155670069CF15A4A83650@DM5PR12MB1724.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(767451399110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM5PR12MB1724;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1724;
+X-Forefront-PRVS: 06952FC175
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(39380400002)(396003)(366004)(189003)(199004)(8676002)(305945005)(229853002)(2870700001)(2616005)(476003)(93886005)(2906002)(8936002)(6246003)(46003)(36756003)(31686004)(106356001)(52146003)(23676004)(39060400002)(81166006)(316002)(2486003)(16526019)(4326008)(186003)(64126003)(11346002)(6666003)(67846002)(68736007)(52396003)(81156014)(7736002)(1706002)(105586002)(6486002)(54906003)(52116002)(59450400001)(446003)(6116002)(72206003)(486006)(6306002)(58126008)(76176011)(97736004)(65806001)(478600001)(65956001)(47776003)(86362001)(50466002)(31696002)(5660300001)(25786009)(386003)(53936002)(65826007)(6916009)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1724;H:[IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxNzI0OzIzOjYwV2tNZFplSkRuVU55ZnV2Tmc2M0RSRXJQ?=
+ =?utf-8?B?aHhFT3lnc1M0Y0lEWWczQ0g5STF4cHd5bjE4T1VLYStVOEI1dDAyVmJrRTVZ?=
+ =?utf-8?B?YS8ySmFTd1JQcklwaUVsUmF4cjF1QWVIckVoMHlEbENLOWU5WmpuSEx4TURZ?=
+ =?utf-8?B?RjB5c29xUG04alRxZkExcUFJYzhPSUZHdGFKWDl6dWdOQUdvckx6RnJ1R2Fo?=
+ =?utf-8?B?M2xmbmtrOS9OdnFEK0JYN3dMNW5xTjJOYXE4ZGpSQkdhdXJXM0YxOWJqTUlX?=
+ =?utf-8?B?VmJiYXdaektoV3RQRmJVQ25DUWlSeG56K1pHU0pTRTBrQjIza1FOdHFKOFA5?=
+ =?utf-8?B?RjViVXJYUE5naG5ldEJwTVBxZjA5ZGpTYUpyeVlpM2hxRjhHT2U1OWg5MG13?=
+ =?utf-8?B?WUkyKzhlZldaMWh0RjJRZk1BdFBhblA0M3lJVHlXaFAwQXhSc2VSNTRVWEI4?=
+ =?utf-8?B?NXRVUTlvVTVyZ3huanp3Z1V2VXh5dUFJM0dwVzJxKzdIUmplNng4eXRocVJj?=
+ =?utf-8?B?L21TeW1sc2hnTFZ2blYyU21US2JHc0dDNjNuOVlGYWFkelVtTitOVFd0WCtU?=
+ =?utf-8?B?R3FPVGZmS2p6bXZLWHczbEpCRVNXVUt6OXNLRVBidXVSWDlZandZS3ovZmEz?=
+ =?utf-8?B?bkpYZm1SdzJyYmV5STNxSDNKaUFFU0dRdWQwT3ZGenducUhHNERIdHlJUmla?=
+ =?utf-8?B?Tjh6Z1FEMXBFYnppM2EyNFhyRHk0Q0ZnS3VWZ0wwYUgvcUFPMGZjL3FtcE9q?=
+ =?utf-8?B?SFB0MU81ZndMVHZ1Vmc0L2pYaGNRTUNucGhNY0FLYlpqVlY3Y2pPMS8yeld3?=
+ =?utf-8?B?TGdldWx2Nzlpc1JRVHgwdXdybTB0VVhCcUhrenprNFRsZlNJbSs3YWVqbStP?=
+ =?utf-8?B?dm9wMzVzNUpxVmJScjhESzErQkFDMFhUeW13RFNraWVoVUNlYkxnem14TUhy?=
+ =?utf-8?B?SGRQd3hGM0JMY1JycHpYTTZpZGVqcnNWMXdtZDRqWHNVUkpyMnk4MXpES2hw?=
+ =?utf-8?B?SktYNEpJRXp0b2F2K0UzUEF6eVhYT3I3bU1TWmU4Mk9WSFJsZDdEUWFqSVgw?=
+ =?utf-8?B?UVh4dWhsK01qSWYvWkdRNGNnbXcvclNCYnJpYUNQK2xlVkxlSkxqRzVKUVJD?=
+ =?utf-8?B?a0JQVjBaVVpsWm1rRHJiYzFjNlhoV2ZpSTBmblRSR2s1OVUvQkVnaFlvWjFW?=
+ =?utf-8?B?dStjOEhBUzlXcnhVYnhtU3BpNzdIYW9CNXhuT3hFckc1a0JYR2VYSEtUYWdT?=
+ =?utf-8?B?WW96aDI2ZGtTaStUWEhnTnM0SkRPRnRtaEhWdE05WkdlU09NanBscXhINWFa?=
+ =?utf-8?B?Sm1Fc3lKb011eG9hVE5Mbmt0YkRhL2RqYzFJTHRrdVgrakRlZ2pOVzJqNXZS?=
+ =?utf-8?B?NUwzWDBoc3E2aUVyQ2YycTVIWUI0YjhacTBWWUhseEV2ZHlVN29RSVY3c2pR?=
+ =?utf-8?B?ZVV4NUtNN1Z0d3lrUVJtUHZJcmMxWGZGZndqTHRnTkg5eTFtTkQ4TjlkTFFD?=
+ =?utf-8?B?WW1OTFk5NnFvR1p1aWMrTDRWeGc3WURaYlAxTzJnWnZqVElUalFMTGFWMm1a?=
+ =?utf-8?B?d3FYUXd2UWllblE5NUt4MTVrNWtycHRLUlFTSzJNUDJJeTJoQnRiQmwrdEVy?=
+ =?utf-8?B?RlRyeGFFNzBsRzlGVkhLZUZ1NjI0VmpPVElxeXU5ZXJ5ZnUwczc4bU9KaFhH?=
+ =?utf-8?B?SDhISVY2OFVPYmtNTnJLK3l5aUdpZjdBMENxVndxeGJoa3lKZ0MrNStLcDZu?=
+ =?utf-8?B?b3I1bmlIaW83WUdIa050RzlHQ2FZeEppUTBKZ0EzTjdkQy8zRE5xOE5JMTFH?=
+ =?utf-8?B?MWhGWDlaUXpZYUJKQjVyQmI3cjlQQkZBRGJOSndjRTFnSVBJYlJsSGtnYUpW?=
+ =?utf-8?B?aWFIdWQ3b0xEd2NwN3lLaVhLQllKbmpBZTlUWGRuNU5Kemcyd256MU1xbTdt?=
+ =?utf-8?B?YmZ4d1A0a0s5RklZT3ZleWxYRmZwalljZzVnR0I2bk9SRy9OM0NjaXFYUWhW?=
+ =?utf-8?B?cHVET2x1UE41d2w3dXg0bkFSZno4MzVvV0RMQT09?=
+X-Microsoft-Antispam-Message-Info: 6WZaLw3K9I0OxklFPL+fK3j9HP3fpB3dCYZ/EpweeJ0bi4kwkS8M3ywF9kx46PKr94cnpM3lfxc++M1qBVM7IvjlmFRe9R1dKbqBjorQRL+k9OVPJAHAXZ1V4yqICBZxc//+kb5vM1MafbJLkyDrY51lvFfhfQjX7WPOJpKvVjEdWIzjPV2SHTrWB3gmBA12
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1724;6:prt+mHMivtLlQABzlUiUcT8dxfJuMlzSvSBG0438TiJ+CBk92x8IlRBBfm4dCDpMs92DLEnPjRMLGT7wxcbyrq1nZxeEDnjsIUe+b8caPLSw8p+hR1I+SCGk+oX4bnHljACFl6lrx3/DpTuwh6ZulzVGHalSe29P7i8KX5H4Q2fId88oF+iSZqH+jCioYHX+ZrlXcVDZlV02zd7m3iq6cRcaEGP4NtUCoiPHYCOfBIFRhSzTBY3xBC5MCVgumdbn8Ec+imD2gVe+rFXLaPJVUxou0rj7yuK/w4op67cu2iMjTpOXhmR+393tWGbP0YErccy9ToVKKj4NeZwulei6NXRub/PXKeFGB12NCuvNkVOkcNzrW0WiZ8c0vJIrTpSaohSs7zXPv/CDa9ZTFrLHOtWD+TIM/aQSyIeGNT5UCluVsw0eim5CwX0a31gNTTJqPSu4Jhy6BKw4o/W7MCo27Q==;5:ra0pgUTkMwmTOy/J7wzWpdQkmIo84txEuMTey5saBKyXYGi/vfZgFfIe8yLJQOpXgBKKjZYZ1zrGCgkBUTPff9IKMBUdQ9IiaYpDyxBmICdgngu4Ms7w09FS7bx9ydx/5e9DBC1DXOmhgkkt8U5oPdywBhraD53nW0AM6Q6EXts=;24:q/WczEbno1xDJW+VKGXGiDILqPtzgRB0PNn8E4rCib0HuA/G8FaWrcLheqXAWJieXqwLbX+syPBb9vl5timsawlExxsh8OHQetjallj6xsc=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1724;7:vzgA3wiLoA0PB8R4G8QUBSU+4xWLSgfQyxf+dIMhr7R8guHTtURFBHDUF+bXVpGh9rMPPYaroIgwajEx2WBxhop9ADs9PsGBHnwrbZN3joK2BEmEM0lImNoED21c6ZCs+k6EKKAyLpuvzWfsRwALmEio3jaX4GTO1XUT+ZfdVI2/oXw2a9uMALMADKZGBbjPCzqjmSTKC7wSHu6USwj+8Uz+ofL1dhLbTLl1ypQim6AQZXf6qq30cbBv6KBmQFw5;20:YlseplIJC/VlK5juil5XXQyIYQmnStofiAorLPSDLMLf4NL1dTMdkkqw06BT7MTIpGJWIdzmzny4quDrxEaP9eUsYkjTq/1NGBro1C8aqH5RJ+2f/H/Rxdz3abVaYBJ++3vA1zoZwRC0D8p5mPF+zRttmTm6oiYSp7IHi7mTZf0SWKMC70moQNxHwxDOTIi+Fof2vf0z4uvxPaldEItYgxOB6wMdHpOnrgaiVsmtc9JhrpigyXRNQ3Kp2HA33ejy
+X-MS-Office365-Filtering-Correlation-Id: 15f7dcf9-2ca2-46cf-05f4-08d5cba7cace
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2018 12:19:44.4019 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15f7dcf9-2ca2-46cf-05f4-08d5cba7cace
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1724
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 06 Jun 2018 at 15:53:27 (+0200), Claudio Scordino wrote:
-> Hi Quentin,
-> 
-> 2018-06-06 15:20 GMT+02:00 Quentin Perret <quentin.perret@arm.com>:
-> >
-> > Hi Claudio,
-> >
-> > On Wednesday 06 Jun 2018 at 15:05:58 (+0200), Claudio Scordino wrote:
-> > > Hi Quentin,
-> > >
-> > > Il 05/06/2018 16:13, Juri Lelli ha scritto:
-> > > > On 05/06/18 15:01, Quentin Perret wrote:
-> > > > > On Tuesday 05 Jun 2018 at 15:15:18 (+0200), Juri Lelli wrote:
-> > > > > > On 05/06/18 14:05, Quentin Perret wrote:
-> > > > > > > On Tuesday 05 Jun 2018 at 14:11:53 (+0200), Juri Lelli wrote:
-> > > > > > > > Hi Quentin,
-> > > > > > > >
-> > > > > > > > On 05/06/18 11:57, Quentin Perret wrote:
-> > > > > > > >
-> > > > > > > > [...]
-> > > > > > > >
-> > > > > > > > > What about the diff below (just a quick hack to show the idea) applied
-> > > > > > > > > on tip/sched/core ?
-> > > > > > > > >
-> > > > > > > > > ---8<---
-> > > > > > > > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > > > > > > > > index a8ba6d1f262a..23a4fb1c2c25 100644
-> > > > > > > > > --- a/kernel/sched/cpufreq_schedutil.c
-> > > > > > > > > +++ b/kernel/sched/cpufreq_schedutil.c
-> > > > > > > > > @@ -180,9 +180,12 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
-> > > > > > > > >           sg_cpu->util_dl  = cpu_util_dl(rq);
-> > > > > > > > >   }
-> > > > > > > > > +unsigned long scale_rt_capacity(int cpu);
-> > > > > > > > >   static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> > > > > > > > >   {
-> > > > > > > > >           struct rq *rq = cpu_rq(sg_cpu->cpu);
-> > > > > > > > > + int cpu = sg_cpu->cpu;
-> > > > > > > > > + unsigned long util, dl_bw;
-> > > > > > > > >           if (rq->rt.rt_nr_running)
-> > > > > > > > >                   return sg_cpu->max;
-> > > > > > > > > @@ -197,7 +200,14 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> > > > > > > > >            * util_cfs + util_dl as requested freq. However, cpufreq is not yet
-> > > > > > > > >            * ready for such an interface. So, we only do the latter for now.
-> > > > > > > > >            */
-> > > > > > > > > - return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
-> > > > > > > > > + util = arch_scale_cpu_capacity(NULL, cpu) * scale_rt_capacity(cpu);
-> > > > > > > >
-> > > > > > > > Sorry to be pedantinc, but this (ATM) includes DL avg contribution, so,
-> > > > > > > > since we use max below, we will probably have the same problem that we
-> > > > > > > > discussed on Vincent's approach (overestimation of DL contribution while
-> > > > > > > > we could use running_bw).
-> > > > > > >
-> > > > > > > Ah no, you're right, this isn't great for long running deadline tasks.
-> > > > > > > We should definitely account for the running_bw here, not the dl avg...
-> > > > > > >
-> > > > > > > I was trying to address the issue of RT stealing time from CFS here, but
-> > > > > > > the DL integration isn't quite right which this patch as-is, I agree ...
-> > > > > > >
-> > > > > > > >
-> > > > > > > > > + util >>= SCHED_CAPACITY_SHIFT;
-> > > > > > > > > + util = arch_scale_cpu_capacity(NULL, cpu) - util;
-> > > > > > > > > + util += sg_cpu->util_cfs;
-> > > > > > > > > + dl_bw = (rq->dl.this_bw * SCHED_CAPACITY_SCALE) >> BW_SHIFT;
-> > > > > > > >
-> > > > > > > > Why this_bw instead of running_bw?
-> > > > > > >
-> > > > > > > So IIUC, this_bw should basically give you the absolute reservation (== the
-> > > > > > > sum of runtime/deadline ratios of all DL tasks on that rq).
-> > > > > >
-> > > > > > Yep.
-> > > > > >
-> > > > > > > The reason I added this max is because I'm still not sure to understand
-> > > > > > > how we can safely drop the freq below that point ? If we don't guarantee
-> > > > > > > to always stay at least at the freq required by DL, aren't we risking to
-> > > > > > > start a deadline tasks stuck at a low freq because of rate limiting ? In
-> > > > > > > this case, if that tasks uses all of its runtime then you might start
-> > > > > > > missing deadlines ...
-> > > > > >
-> > > > > > We decided to avoid (software) rate limiting for DL with e97a90f7069b
-> > > > > > ("sched/cpufreq: Rate limits for SCHED_DEADLINE").
-> > > > >
-> > > > > Right, I spotted that one, but yeah you could also be limited by HW ...
-> > > > >
-> > > > > >
-> > > > > > > My feeling is that the only safe thing to do is to guarantee to never go
-> > > > > > > below the freq required by DL, and to optimistically add CFS tasks
-> > > > > > > without raising the OPP if we have good reasons to think that DL is
-> > > > > > > using less than it required (which is what we should get by using
-> > > > > > > running_bw above I suppose). Does that make any sense ?
-> > > > > >
-> > > > > > Then we can't still avoid the hardware limits, so using running_bw is a
-> > > > > > trade off between safety (especially considering soft real-time
-> > > > > > scenarios) and energy consumption (which seems to be working in
-> > > > > > practice).
-> > > > >
-> > > > > Ok, I see ... Have you guys already tried something like my patch above
-> > > > > (keeping the freq >= this_bw) in real world use cases ? Is this costing
-> > > > > that much energy in practice ? If we fill the gaps left by DL (when it
-> > > >
-> > > > IIRC, Claudio (now Cc-ed) did experiment a bit with both approaches, so
-> > > > he might add some numbers to my words above. I didn't (yet). But, please
-> > > > consider that I might be reserving (for example) 50% of bandwidth for my
-> > > > heavy and time sensitive task and then have that task wake up only once
-> > > > in a while (but I'll be keeping clock speed up for the whole time). :/
-> > >
-> > > As far as I can remember, we never tested energy consumption of running_bw
-> > > vs this_bw, as at OSPM'17 we had already decided to use running_bw
-> > > implementing GRUB-PA.
-> > > The rationale is that, as Juri pointed out, the amount of spare (i.e.
-> > > reclaimable) bandwidth in this_bw is very user-dependent. For example,
-> > > the user can let this_bw be much higher than the measured bandwidth, just
-> > > to be sure that the deadlines are met even in corner cases.
-> >
-> > Ok I see the issue. Trusting userspace isn't necessarily the right thing
-> > to do, I totally agree with that.
-> >
-> > > In practice, this means that the task executes for quite a short time and
-> > > then blocks (with its bandwidth reclaimed, hence the CPU frequency reduced,
-> > > at the 0lag time).
-> > > Using this_bw rather than running_bw, the CPU frequency would remain at
-> > > the same fixed value even when the task is blocked.
-> > > I understand that on some cases it could even be better (i.e. no waste
-> > > of energy in frequency switch).
-> >
-> > +1, I'm pretty sure using this_bw is pretty much always worst than
-> > using running_bw from an energy standpoint,. The waste of energy in
-> > frequency changes should be less than the energy wasted by staying at a
-> > too high frequency for a long time, otherwise DVFS isn't a good idea to
-> > begin with :-)
-> >
-> > > However, IMHO, these are corner cases and in the average case it is better
-> > > to rely on running_bw and reduce the CPU frequency accordingly.
-> >
-> > My point was that accepting to go at a lower frequency than required by
-> > this_bw is fundamentally unsafe. If you're at a low frequency when a DL
-> > task starts, there are real situations where you won't be able to
-> > increase the frequency immediately, which can eventually lead to missing
-> > deadlines.
-> 
-> 
-> I see. Unfortunately, I'm having quite crazy days so I couldn't follow
-> the original discussion on LKML properly. My fault.
+Am 06.06.2018 um 14:08 schrieb Gabriel C:
+> 2018-06-06 13:33 GMT+02:00 Christian König <christian.koenig@amd.com>:
+>> Am 06.06.2018 um 13:28 schrieb Gabriel C:
+>>> 2018-04-11 7:02 GMT+02:00 Gabriel C <nix.or.die@gmail.com>:
+>>>>> 2018-04-11 6:00 GMT+02:00 Gabriel C <nix.or.die@gmail.com>:
+>>>>> 2018-04-09 11:42 GMT+02:00 Christian König
+>>>>> <ckoenig.leichtzumerken@gmail.com>:
+>>>>>> Am 07.04.2018 um 00:00 schrieb Jean-Marc Valin:
+>>>> ...
+>>>>> I can help testing code for 4.17/++ if you wish but that is *different*
+>>>>> storry.
+>>>>>
+>>>> Quick tested an 4.16.0-11490-gb284d4d5a678 , amdgpu and radeon driver
+>>>> are broken now in this one.
+>>>>
+>>>> radeon tells:
+>>>>
+>>>> ...
+>>>>
+>>>> [    6.337838] [drm] PCIE GART of 2048M enabled (table at
+>>>> 0x00000000001D6000).
+>>>> [    6.338210] radeon 0000:21:00.0: (-12) create WB bo failed
+>>>> [    6.338214] radeon 0000:21:00.0: disabling GPU acceleration
+>>>>
+>>>> ...
+>>>>
+>>> I have the same Issue now on final 4.17.
+>>
+>> Actually Michel came up with a fix for the performance regression which is
+>> now backported to older kernels as well.
+>>
+>> So the original issue of this mail thread should be fixed by now.
+> Ok , will test as soon I get the GPU to work :))
+>
+>>> Also I played with BIOS options also which does not fix anything but
+>>> changes the error message.
+>>>
+>>> IOMMU && SR-IOV disabled the error changes to this :
+>>>
+>>> [    7.092044] [drm:r600_ring_test [radeon]] *ERROR* radeon: ring 0
+>>> test failed (scratch(0x850C)=0xCAFEDEAD)
+>>> [    7.092059] radeon 0000:21:00.0: disabling GPU acceleration
+>>>
+>>>
+>>> While I could workaround SWIOTLB bugs in 4.15 and 4.16 , 4.17 seems to
+>>> kill the GPU with no way
+>>> for me to make it work ( at least I could not find any workaround by now )
+>>
+>> That actually sounds like something completely different. Can you provide a
+>> full dmesg of radeon and/or amdgpu?
+> Sure here from boot with IOMMU/SR-IOV ON/OFF in BIOS :
+>
+> http://ftp.frugalware.org/pub/other/people/crazy/radeon/dmesg-iommu-sr-iov-off.txt
+> http://ftp.frugalware.org/pub/other/people/crazy/radeon/dmesg-iommu-sr-iov-on.txt
+>
+> Also nothing else changed in that setup just testing kernel 4.17.
 
-No problem !
+That has nothing TODO with the driver nor the original bug you reported. 
+The problem is that SME is active and that is currently not supported at 
+all with a that hardware.
 
-> Anyway, to answer your question (if this time I have understood it correctly).
-> 
-> You're right: the tests have shown that whenever the DL task period
-> gets comparable with the time for switching frequency, the amount of
-> missed deadlines becomes not negligible.
-> To give you a rough idea, this already happens with periods of 10msec
-> on a Odroid XU4.
-> The reason is that the task instance starts at a too low frequency,
-> and the system can't switch frequency in time for meeting the
-> deadline.
+Try to disable SME either in the BIOS or on the kernel command line.
 
-Ok that's very interesting ...
+Regards,
+Christian.
 
-> 
-> This is a known issue, partially discussed during the RT Summit'17.
-> However, the community has been more in favour of reducing the energy
-> consumption than meeting firm deadlines.
-> If you need a safe system, in fact, you'd better thinking about
-> disabling DVFS completely and relying on a fixed CPU frequency.
-
-Yeah, understood. My proposition was sort of a middle-ground solution. I
-was basically suggesting to select OPPs with something like:
-
-        max(this_bw, running_bw + cfs_util)
-
-The idea is that you're always guaranteed to always request a high enough
-frequency for this_bw, and you can opportunistically try to run CFS tasks
-without raising the OPP if running_bw is low. In the worst case, the CFS
-tasks will be preempted and delayed a bit. But DL should always be safe.
-And if the CFS activity is sufficient to fill the gap between running_bw
-and this_bw, then you should be pretty energy efficient as well.
-
-Now, that doesn't always solve the issue you mentioned earlier. If there
-isn't much CFS traffic going on, and if the delta between this_bw and
-running_bw is high, they you'll be stuck at a high freq although the
-system utilization is low ... As usual, it's just a trade off :-)
-
-> 
-> A possible trade-off could be a further entry in sys to let system
-> designers switching from (default) running_bw to (more pessimistic)
-> this_bw.
-> However, I'm not sure the community wants a further knob on sysfs just
-> to make RT people happier :)
-> 
-> Best,
-> 
->               Claudio
+>
+> I can force the GPU to use amdgpu if you wish and post dmesg's too.
+> Just let me know
