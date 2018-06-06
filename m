@@ -1,99 +1,373 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Lw+dObfyG1v4XwAAmS7hNA
-	; Sat, 09 Jun 2018 15:31:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kcrQOrRDGFvvXQAAmS7hNA
+	; Wed, 06 Jun 2018 20:27:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F333E608C8; Sat,  9 Jun 2018 15:31:19 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nx+ic8QU"
+	id D912560861; Wed,  6 Jun 2018 20:27:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 626E0608B8;
-	Sat,  9 Jun 2018 15:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 626E0608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id BDAD4601C3;
+	Wed,  6 Jun 2018 20:27:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDAD4601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753543AbeFIPbR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:31:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33750 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753330AbeFIPbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:31:12 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S932305AbeFFU13 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 16:27:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54434 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932085AbeFFU12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 16:27:28 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AEC9204EC;
-        Sat,  9 Jun 2018 15:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558272;
-        bh=UnndZdOZCDrdj3/VX8NRmtJqy4IpWqsz3dTv5daQK/A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nx+ic8QUT8LZrlRZ4Ekn8yQE+HtxQeE/ZRIdV7H6nc7uhZ3j9fyskqKOBjTiblGVC
-         381fzJBmGEsaboK0sxqBYvjXGQDkWoDlIu6qFXA0wV1DWqGpVmiUZfCOs5pJnmMXQ5
-         UuCoAZUNEqtsW5tPF9mSlUKubr30O4Bd6+4HQhvg=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.17 06/15] netdev-FAQ: clarify DaveMs position for stable backports
-Date: Sat,  9 Jun 2018 17:29:41 +0200
-Message-Id: <20180609150001.065994217@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609150000.746833461@linuxfoundation.org>
-References: <20180609150000.746833461@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        by mx1.redhat.com (Postfix) with ESMTPS id 29D9FBB42F;
+        Wed,  6 Jun 2018 20:27:27 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-57.rdu2.redhat.com [10.10.112.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B3A482026DEF;
+        Wed,  6 Jun 2018 20:27:23 +0000 (UTC)
+Date: Wed, 6 Jun 2018 16:26:09 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Steve Grubb <sgrubb@redhat.com>
+Cc: linux-audit@redhat.com, cgroups@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
+        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com, eparis@parisplace.org,
+        serge@hallyn.com
+Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 01/10] audit: add container id
+Message-ID: <20180606202609.upqmhbfkp4jvmhpk@madcap2.tricolour.ca>
+References: <cover.1528304203.git.rgb@redhat.com>
+ <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
+ <1828967.ZGm5HJUlmN@x2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1828967.ZGm5HJUlmN@x2>
+User-Agent: NeoMutt/20180512
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 06 Jun 2018 20:27:27 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 06 Jun 2018 20:27:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+On 2018-06-06 13:56, Steve Grubb wrote:
+> On Wednesday, June 6, 2018 12:58:28 PM EDT Richard Guy Briggs wrote:
+> > Implement the proc fs write to set the audit container identifier of a
+> > process, emitting an AUDIT_CONTAINER_ID record to document the event.
+> > 
+> > This is a write from the container orchestrator task to a proc entry of
+> > the form /proc/PID/audit_containerid where PID is the process ID of the
+> > newly created task that is to become the first task in a container, or
+> > an additional task added to a container.
+> > 
+> > The write expects up to a u64 value (unset: 18446744073709551615).
+> > 
+> > The writer must have capability CAP_AUDIT_CONTROL.
+> > 
+> > This will produce a record such as this:
+> >   type=CONTAINER_ID msg=audit(2018-06-06 12:39:29.636:26949) : op=set
+> > opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root
+> > uid=root tty=ttyS0 ses=1
+> > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash
+> > exe=/usr/bin/bash res=yes
+> > 
+> > The "op" field indicates an initial set.  The "pid" to "ses" fields are
+> > the orchestrator while the "opid" field is the object's PID, the process
+> > being "contained".  Old and new audit container identifier values are
+> > given in the "contid" fields, while res indicates its success.
+> > 
+> > It is not permitted to unset or re-set the audit container identifier.
+> > A child inherits its parent's audit container identifier, but then can
+> > be set only once after.
+> > 
+> > See: https://github.com/linux-audit/audit-kernel/issues/90
+> > See: https://github.com/linux-audit/audit-userspace/issues/51
+> > See: https://github.com/linux-audit/audit-testsuite/issues/64
+> > See:
+> > https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> > 
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  fs/proc/base.c             | 37 ++++++++++++++++++++++++
+> >  include/linux/audit.h      | 25 ++++++++++++++++
+> >  include/uapi/linux/audit.h |  2 ++
+> >  kernel/auditsc.c           | 71
+> > ++++++++++++++++++++++++++++++++++++++++++++++ 4 files changed, 135
+> > insertions(+)
+> > 
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index eafa39a..318dff4 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -1302,6 +1302,41 @@ static ssize_t proc_sessionid_read(struct file *
+> > file, char __user * buf, .read		= proc_sessionid_read,
+> >  	.llseek		= generic_file_llseek,
+> >  };
+> > +
+> > +static ssize_t proc_contid_write(struct file *file, const char __user
+> > *buf, +				   size_t count, loff_t *ppos)
+> > +{
+> > +	struct inode *inode = file_inode(file);
+> > +	u64 contid;
+> > +	int rv;
+> > +	struct task_struct *task = get_proc_task(inode);
+> > +
+> > +	if (!task)
+> > +		return -ESRCH;
+> > +	if (*ppos != 0) {
+> > +		/* No partial writes. */
+> > +		put_task_struct(task);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	rv = kstrtou64_from_user(buf, count, 10, &contid);
+> > +	if (rv < 0) {
+> > +		put_task_struct(task);
+> > +		return rv;
+> > +	}
+> > +
+> > +	rv = audit_set_contid(task, contid);
+> > +	put_task_struct(task);
+> > +	if (rv < 0)
+> > +		return rv;
+> > +	return count;
+> > +}
+> > +
+> > +static const struct file_operations proc_contid_operations = {
+> > +	.write		= proc_contid_write,
+> > +	.llseek		= generic_file_llseek,
+> > +};
+> > +
+> >  #endif
+> > 
+> >  #ifdef CONFIG_FAULT_INJECTION
+> > @@ -2995,6 +3030,7 @@ static int proc_pid_patch_state(struct seq_file *m,
+> > struct pid_namespace *ns, #ifdef CONFIG_AUDITSYSCALL
+> >  	REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
+> >  	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
+> > +	REG("audit_containerid", S_IWUSR, proc_contid_operations),
+> >  #endif
+> >  #ifdef CONFIG_FAULT_INJECTION
+> >  	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
+> > @@ -3386,6 +3422,7 @@ static int proc_tid_comm_permission(struct inode
+> > *inode, int mask) #ifdef CONFIG_AUDITSYSCALL
+> >  	REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
+> >  	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
+> > +	REG("audit_containerid", S_IWUSR, proc_contid_operations),
+> >  #endif
+> >  #ifdef CONFIG_FAULT_INJECTION
+> >  	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 4f824c4..497cd81 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -219,6 +219,8 @@ static inline void audit_log_task_info(struct
+> > audit_buffer *ab, struct audit_task_info {
+> >  	kuid_t			loginuid;
+> >  	unsigned int		sessionid;
+> > +	u64			contid;
+> > +	bool			inherited; /* containerid inheritance */
+> >  	struct audit_context	*ctx;
+> >  };
+> >  extern struct audit_task_info init_struct_audit;
+> > @@ -331,6 +333,7 @@ static inline void audit_ptrace(struct task_struct *t)
+> >  extern int auditsc_get_stamp(struct audit_context *ctx,
+> >  			      struct timespec64 *t, unsigned int *serial);
+> >  extern int audit_set_loginuid(kuid_t loginuid);
+> > +extern int audit_set_contid(struct task_struct *tsk, u64 contid);
+> > 
+> >  static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+> >  {
+> > @@ -348,6 +351,14 @@ static inline unsigned int audit_get_sessionid(struct
+> > task_struct *tsk) return AUDIT_SID_UNSET;
+> >  }
+> > 
+> > +static inline u64 audit_get_contid(struct task_struct *tsk)
+> > +{
+> > +	if (!tsk->audit)
+> > +		return AUDIT_CID_UNSET;
+> > +	else
+> > +		return tsk->audit->contid;
+> > +}
+> > +
+> >  extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
+> >  extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t
+> > gid, umode_t mode); extern void __audit_bprm(struct linux_binprm *bprm);
+> > @@ -542,6 +553,10 @@ static inline unsigned int audit_get_sessionid(struct
+> > task_struct *tsk) {
+> >  	return AUDIT_SID_UNSET;
+> >  }
+> > +static inline kuid_t audit_get_contid(struct task_struct *tsk)
+> > +{
+> > +	return AUDIT_CID_UNSET;
+> > +}
+> >  static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+> >  { }
+> >  static inline void audit_ipc_set_perm(unsigned long qbytes, uid_t uid,
+> > @@ -606,6 +621,16 @@ static inline bool audit_loginuid_set(struct
+> > task_struct *tsk) return uid_valid(audit_get_loginuid(tsk));
+> >  }
+> > 
+> > +static inline bool cid_valid(u64 contid)
+> > +{
+> > +	return contid != AUDIT_CID_UNSET;
+> > +}
+> > +
+> > +static inline bool audit_contid_set(struct task_struct *tsk)
+> > +{
+> > +	return cid_valid(audit_get_contid(tsk));
+> > +}
+> > +
+> >  static inline void audit_log_string(struct audit_buffer *ab, const char
+> > *buf) {
+> >  	audit_log_n_string(ab, buf, strlen(buf));
+> > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> > index 04f9bd2..c3b1aca 100644
+> > --- a/include/uapi/linux/audit.h
+> > +++ b/include/uapi/linux/audit.h
+> > @@ -71,6 +71,7 @@
+> >  #define AUDIT_TTY_SET		1017	/* Set TTY auditing status */
+> >  #define AUDIT_SET_FEATURE	1018	/* Turn an audit feature on or off */
+> >  #define AUDIT_GET_FEATURE	1019	/* Get which features are enabled */
+> > +#define AUDIT_CONTAINER_ID	1020	/* Define the container id and 
+> information
+> > */
+> > 
+> >  #define AUDIT_FIRST_USER_MSG	1100	/* Userspace messages mostly
+> > uninteresting to kernel */ #define AUDIT_USER_AVC		1107	/* We filter this
+> > differently */
+> > @@ -466,6 +467,7 @@ struct audit_tty_status {
+> > 
+> >  #define AUDIT_UID_UNSET (unsigned int)-1
+> >  #define AUDIT_SID_UNSET ((unsigned int)-1)
+> > +#define AUDIT_CID_UNSET ((u64)-1)
+> > 
+> >  /* audit_rule_data supports filter rules with both integer and string
+> >   * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 59ef7a81..611e926 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -956,6 +956,8 @@ int audit_alloc(struct task_struct *tsk)
+> >  		return -ENOMEM;
+> >  	info->loginuid = audit_get_loginuid(current);
+> >  	info->sessionid = audit_get_sessionid(current);
+> > +	info->contid = audit_get_contid(current);
+> > +	info->inherited = true;
+> >  	tsk->audit = info;
+> > 
+> >  	if (likely(!audit_ever_enabled))
+> > @@ -985,6 +987,8 @@ int audit_alloc(struct task_struct *tsk)
+> >  struct audit_task_info init_struct_audit = {
+> >  	.loginuid = INVALID_UID,
+> >  	.sessionid = AUDIT_SID_UNSET,
+> > +	.contid = AUDIT_CID_UNSET,
+> > +	.inherited = true,
+> >  	.ctx = NULL,
+> >  };
+> > 
+> > @@ -2112,6 +2116,73 @@ int audit_set_loginuid(kuid_t loginuid)
+> >  }
+> > 
+> >  /**
+> > + * audit_set_contid - set current task's audit_context contid
+> > + * @contid: contid value
+> > + *
+> > + * Returns 0 on success, -EPERM on permission failure.
+> > + *
+> > + * Called (set) from fs/proc/base.c::proc_contid_write().
+> > + */
+> > +int audit_set_contid(struct task_struct *task, u64 contid)
+> > +{
+> > +	u64 oldcontid;
+> > +	int rc = 0;
+> > +	struct audit_buffer *ab;
+> > +	uid_t uid;
+> > +	struct tty_struct *tty;
+> > +	char comm[sizeof(current->comm)];
+> > +
+> > +	/* Can't set if audit disabled */
+> > +	if (!task->audit)
+> > +		return -ENOPROTOOPT;
+> > +	oldcontid = audit_get_contid(task);
+> > +	/* Don't allow the audit containerid to be unset */
+> > +	if (!cid_valid(contid))
+> > +		rc = -EINVAL;
+> > +	/* if we don't have caps, reject */
+> > +	else if (!capable(CAP_AUDIT_CONTROL))
+> > +		rc = -EPERM;
+> > +	/* if task has children or is not single-threaded, deny */
+> > +	else if (!list_empty(&task->children))
+> > +		rc = -EBUSY;
+> > +	else if (!(thread_group_leader(task) && thread_group_empty(task)))
+> > +		rc = -EALREADY;
+> > +	/* it is already set, and not inherited from the parent, reject */
+> > +	else if (cid_valid(oldcontid) && !task->audit->inherited)
+> > +		rc = -EEXIST;
+> > +	if (!rc) {
+> > +		task_lock(task);
+> > +		task->audit->contid = contid;
+> > +		task->audit->inherited = false;
+> > +		task_unlock(task);
+> > +	}
+> > +
+> > +	if (!audit_enabled)
+> > +		return rc;
+> > +
+> > +	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_ID);
+> > +	if (!ab)
+> > +		return rc;
+> > +
+> > +	uid = from_kuid(&init_user_ns, task_uid(current));
+> > +	tty = audit_get_tty(current);
+> > +	audit_log_format(ab, "op=set opid=%d old-contid=%llu contid=%llu pid=%d
+> > uid=%u auid=%u tty=%s ses=%u", +			 task_tgid_nr(task), oldcontid, 
+> contid,
+> > +			 task_tgid_nr(current), uid
+> > +			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> > +			 tty ? tty_name(tty) : "(none)",
+> > +			 audit_get_sessionid(current));
+> 
+> The event code doesn't match the example event at the top. (uid and auid are 
+> transposed.) But the code looks right. 
 
-------------------
+Hmmm, I thought I checked that explicitly...  That event sample must
+have come from the previous compile before I fixed that.
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+> Ack for the event format.
 
-[ Upstream commit 75d4e704fa8d2cf33ff295e5b441317603d7f9fd ]
+Thanks!
 
-Per discussion with David at netconf 2018, let's clarify
-DaveM's position of handling stable backports in netdev-FAQ.
+> -Steve
+> 
+> > +	audit_put_tty(tty);
+> > +	audit_log_task_context(ab);
+> > +	audit_log_format(ab, " comm=");
+> > +	audit_log_untrustedstring(ab, get_task_comm(comm, current));
+> > +	audit_log_d_path_exe(ab, current->mm);
+> > +	audit_log_format(ab, " res=%d", !rc);
+> > +	audit_log_end(ab);
+> > +	return rc;
+> > +}
+> > +
+> > +/**
+> >   * __audit_mq_open - record audit data for a POSIX MQ open
+> >   * @oflag: open flag
+> >   * @mode: mode bits
 
-This is important for people relying on upstream -stable
-releases.
+- RGB
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- Documentation/networking/netdev-FAQ.txt |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- a/Documentation/networking/netdev-FAQ.txt
-+++ b/Documentation/networking/netdev-FAQ.txt
-@@ -179,6 +179,15 @@ A: No.  See above answer.  In short, if
-    dash marker line as described in Documentation/process/submitting-patches.rst to
-    temporarily embed that information into the patch that you send.
- 
-+Q: Are all networking bug fixes backported to all stable releases?
-+
-+A: Due to capacity, Dave could only take care of the backports for the last
-+   2 stable releases. For earlier stable releases, each stable branch maintainer
-+   is supposed to take care of them. If you find any patch is missing from an
-+   earlier stable branch, please notify stable@vger.kernel.org with either a
-+   commit ID or a formal patch backported, and CC Dave and other relevant
-+   networking developers.
-+
- Q: Someone said that the comment style and coding convention is different
-    for the networking content.  Is this true?
- 
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
