@@ -1,70 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="UyvtqKOe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 534796070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcyiikX8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D69606070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932694AbeFFJwg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:52:36 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:56118 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932641AbeFFJwR (ORCPT
+        id S932363AbeFFIx5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:53:57 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44927 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932263AbeFFIxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:52:17 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: matwey.kornilov@gmail.com,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Ed Blake <ed.blake@sondrel.com>,
-        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/4] serial: 8250_dw: treat rpm suspend with -EBUSY if RS485 ON and RTS_AFTER_SEND
-Date: Wed,  6 Jun 2018 11:51:53 +0200
-Message-Id: <20180606095156.72628-3-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180606095156.72628-1-giulio.benetti@micronovasrl.com>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
- <20180606095156.72628-1-giulio.benetti@micronovasrl.com>
-To: unlisted-recipients:; (no To-header on input)
+        Wed, 6 Jun 2018 04:53:54 -0400
+X-Google-Smtp-Source: ADUXVKIcregdNZj2hWX0XliozQ1h3FaL4Pa1tB9FE6OA/wJ+l2oQjS/RzvAyu2mWfWceCCb2moeo2Q==
+Date: Wed, 6 Jun 2018 11:53:50 +0300
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: grygorii.strashko@ti.com, davem@davemloft.net, corbet@lwn.net,
+        akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, henrik@austad.us,
+        jesus.sanchez-palencia@intel.com
+Subject: Re: [RFC PATCH 0/6] net: ethernet: ti: cpsw: add MQPRIO and CBS
+ Qdisc offload
+Message-ID: <20180606085348.GB5346@khorivan>
+Mail-Followup-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        grygorii.strashko@ti.com, davem@davemloft.net, corbet@lwn.net,
+        akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, henrik@austad.us,
+        jesus.sanchez-palencia@intel.com
+References: <20180518211510.13341-1-ivan.khoronzhuk@linaro.org>
+ <87602y1n4j.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <87602y1n4j.fsf@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If rs485 is on and RTS_AFTER_SEND it means that in idle state rts pin
-must be asserted, othwerwise rs485 transceiver will enter tx state.
-dw8250 when clocks are stopped keeps rts line de-asserted(high),
-resulting in keeping rs485 transceiver in tx state when port is idle.
+On Mon, Jun 04, 2018 at 02:23:56PM -0300, Vinicius Costa Gomes wrote:
+>Hi Ivan,
+>
+>Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> writes:
+>
+>> This series adds MQPRIO and CBS Qdisc offload for TI cpsw driver.
+>> It potentially can be used in audio video bridging (AVB) and time
+>> sensitive networking (TSN).
+>>
+>> Patchset was tested on AM572x EVM and BBB boards. Last patch from this
+>> series adds detailed description of configuration with examples. For
+>> consistency reasons, in role of talker and listener, tools from
+>> patchset "TSN: Add qdisc based config interface for CBS" were used and
+>> can be seen here: https://www.spinics.net/lists/netdev/msg460869.html
+>>
+>> Based on net-next/master
+>>
+>
+>I didn't test this, but it looks fine from my side.
+>
+>I agree with Grygorii, that if no comments, this should be re-sent as a
+>patch series next.
+Thanks, I'll do it on this week.
 
-Check if rs485 is on with RTS_AFTER_SEND set, if so return -EBUSY in
-rpm_suspend,
+>
+>
+>> Ivan Khoronzhuk (6):
+>>   net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
+>>   net: ethernet: ti: cpdma: fit rated channels in backward order
+>>   net: ethernet: ti: cpsw: add MQPRIO Qdisc offload
+>>   net: ethernet: ti: cpsw: add CBS Qdisc offload
+>>   net: ethernet: ti: cpsw: restore shaper configuration while down/up
+>>   Documentation: networking: cpsw: add MQPRIO & CBS offload examples
+>>
+>>  Documentation/networking/cpsw.txt       | 540 ++++++++++++++++++++++++
+>>  drivers/net/ethernet/ti/cpsw.c          | 364 +++++++++++++++-
+>>  drivers/net/ethernet/ti/davinci_cpdma.c |  31 +-
+>>  3 files changed, 913 insertions(+), 22 deletions(-)
+>>  create mode 100644 Documentation/networking/cpsw.txt
+>>
+>> --
+>> 2.17.0
+>
+>
+>Cheers,
+>--
+>Vinicius
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- drivers/tty/serial/8250/8250_dw.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 888280ff5451..6b0ee6dc8ad0 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -668,6 +668,11 @@ static int dw8250_resume(struct device *dev)
- static int dw8250_runtime_suspend(struct device *dev)
- {
- 	struct dw8250_data *data = dev_get_drvdata(dev);
-+	struct uart_8250_port *up = serial8250_get_port(data->line);
-+	struct uart_port *p = &up->port;
-+
-+	if (p->rs485.flags & (SER_RS485_ENABLED | SER_RS485_RTS_AFTER_SEND))
-+		return -EBUSY;
- 
- 	if (!IS_ERR(data->clk))
- 		clk_disable_unprepare(data->clk);
 -- 
-2.17.1
+Regards,
+Ivan Khoronzhuk
