@@ -1,153 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752772AbeFFBi5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 21:38:57 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:65424 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752718AbeFFBiy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 21:38:54 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w561cVd4030989
-X-Nifty-SrcIP: [209.85.213.54]
-X-Google-Smtp-Source: ADUXVKJVGdLR8GYlz/ZmMAN3egTlbViotOpp3qb/epZNC7QvRxHpT7yBCXJSmcOrtbxhOyVlxysiYshQ1Q9v0gTd4f0=
+        id S1752677AbeFFBnb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 21:43:31 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57179 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751977AbeFFBna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 21:43:30 -0400
+Subject: Re: [PATCH] irqchip/gic-v3-its: fix ITS queue timeout
+To: Julien Thierry <julien.thierry@arm.com>, <marc.zyngier@arm.com>
+References: <1528180225-16144-1-git-send-email-yangyingliang@huawei.com>
+ <834fde1b-5ae0-afc6-283f-2a470757e54a@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+From: Yang Yingliang <yangyingliang@huawei.com>
+Message-ID: <5B173C27.30401@huawei.com>
+Date: Wed, 6 Jun 2018 09:43:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
-References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
- <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org> <CA+55aFwJAbr8_Xs0ZX9K2iAr8bf=ZgNnKTLopQe6jPCgEBemrA@mail.gmail.com>
- <7a5458da-4222-7480-00ed-a51bed2c1e39@mageia.org> <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
- <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org> <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 6 Jun 2018 10:37:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
-Message-ID: <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
-Subject: Re: building in 32bit chroot on x86_64 host broken
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: tmb@mageia.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <834fde1b-5ae0-afc6-283f-2a470757e54a@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus, Thomas,
+Hi, Julien
 
-
-2018-06-06 4:13 GMT+09:00 Linus Torvalds <torvalds@linux-foundation.org>:
-> On Tue, Jun 5, 2018 at 11:50 AM Thomas Backlund <tmb@mageia.org> wrote:
->> >
->> > but why do you care?
+On 2018/6/5 18:16, Julien Thierry wrote:
+> Hi Yang,
+>
+> On 05/06/18 07:30, Yang Yingliang wrote:
+>> When the kernel booted with maxcpus=x, 'x' is smaller
+>> than actual cpu numbers, the TAs of offline cpus won't
+>> be set to its->collection.
 >>
->> Because without it running the build in the 32bit chroot will get the
->> initial reported issue:
+>> If LPI is bind to offline cpu, sync cmd will use zero TA,
+>> it leads to ITS queue timeout.  Fix this by choosing a
+>> online cpu, if there is no online cpu in cpu_mask.
+>>
+>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+>> ---
+>>   drivers/irqchip/irq-gic-v3-its.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+>> b/drivers/irqchip/irq-gic-v3-its.c
+>> index 5416f2b..edd92a9 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -2309,7 +2309,9 @@ static int its_irq_domain_activate(struct 
+>> irq_domain *domain,
+>>           cpu_mask = cpumask_of_node(its_dev->its->numa_node);
+>>         /* Bind the LPI to the first possible CPU */
+>> -    cpu = cpumask_first(cpu_mask);
+>> +    cpu = cpumask_first_and(cpu_mask, cpu_online_mask);
+>> +    if (!cpu_online(cpu))
 >
-> Ahh. I can re-create that now.
+> Testing for cpu being online here feels a bit redundant.
 >
-> Yes, doing
+> Since cpu is online if the cpumask_first_and returns a valid cpu, I 
+> think you could replace this test with:
 >
->       make ARCH=i386 allnoconfig
+>     if (cpu >= nr_cpu_ids)
+Yes, I used wrong check here, according to comment of cpumask_first_and, 
+this func will returns >= nr_cpu_ids if no cpus set in both.
+
+I'll send v2 later.
 >
-> followed by
+>> +        cpu = cpumask_first(cpu_online_mask);
+>>       its_dev->event_map.col_map[event] = cpu;
+>>       irq_data_update_effective_affinity(d, cpumask_of(cpu));
+>>   @@ -2466,7 +2468,10 @@ static int its_vpe_set_affinity(struct 
+>> irq_data *d,
+>>                   bool force)
+>>   {
+>>       struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+>> -    int cpu = cpumask_first(mask_val);
+>> +    int cpu = cpumask_first_and(mask_val, cpu_online_mask);
+>> +
+>> +    if (!cpu_online(cpu))
 >
->       make oldconfig
+> Same thing here.
 >
-> is broken. And doing a trivial "git bisect run" to pinpoint where
-> CONFIG_64BIT goes away gives us
+>> +        cpu = cpumask_first(cpu_online_mask);
+>>         /*
+>>        * Changing affinity is mega expensive, so let's be as lazy as
+>>
 >
-> f467c5640c29ad258c3cd8186a776c82fc3b8057 is the first bad commit
+> Cheers,
 >
-> which does that
->
->   "kconfig: only write '# CONFIG_FOO is not set' for visible symbols"
->
-> and it turns out that CONFIG_64BIT is not a visible symbol on x86-32,
-> because that question is disabled when ARCH != "x86".
->
->         bool "64-bit kernel" if ARCH = "x86"
->
-> And the problem with that, is that *next* time around this config file
-> is used, because we don't have that
->
->   # CONFIG_64BIT is not set
->
-> line, we don't turn it into
->
->   CONFIG_64BIT=n
->
-> and then the "depends on" in X86_64
->
->   config X86_64
->           def_bool y
->           depends on 64BIT
->
-> no longer hides it.
->
-> Hmm. Ulf, Masahiro, comments?
->
-> Should we just revert that commit?
 
-
-Hmm.
-
-Was the v4.16 behavior intentional,
-or just something people found to work?
-
-
-IMHO, the current behavior in v4.17 is expected
-from the Kconfig point of view.
-
-
-"make ARCH=i386 allnoconfig" hides the prompt
-of 64BIT.
-
-Then, "make oldconfig" makes the prompt newly visible,
-so it is asking for user input.
-
-
-
-However, the previous behavior is desired,
-I think we can change the course.
-
-
-
-
-If a symbol is visible (i.e. there is no unmet direct dependency),
-'# CONFIG_... is not set' should be written out to the .config
-even if its prompt is invisible.
-
-
-For example,
-
-
-config FOO
-       bool
-
-
-should write out "# CONFIG_FOO is not set"
-
-
-I think this will fix the reported problem,
-and Kconfig can still keep the grammatical consistency.
-
-
-Ulf, what do you think?
-
-
-
-
-
-
-
-
-> Thomas, can you verify that a
->
->         git revert f467c5640c29ad258c3cd8186a776c82fc3b8057
->
-> fixes the problem for you?
->
->               Linus
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Yang
