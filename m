@@ -1,208 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D5B8F601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RwPOIXM/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bK2/pzU3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC436601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932366AbeFFJHc convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Wed, 6 Jun 2018 05:07:32 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:49130 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932253AbeFFJHa (ORCPT
+        id S932630AbeFFKrY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:47:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48834 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750972AbeFFKrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:07:30 -0400
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To: Oscar Salvador <osalvador@techadventures.net>
-CC: Matthew Wilcox <willy@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>
-Subject: Re: kernel panic in reading /proc/kpageflags when enabling
- RAM-simulated PMEM
-Thread-Topic: kernel panic in reading /proc/kpageflags when enabling
- RAM-simulated PMEM
-Thread-Index: AQHT/GeymmpDVR1XWE69lshFJtmzcqRQRpEAgABpKgCAAWucAIAALt0AgAANvoCAAAOvAA==
-Date: Wed, 6 Jun 2018 09:06:30 +0000
-Message-ID: <20180606090630.GA27065@hori1.linux.bs1.fc.nec.co.jp>
-References: <20180605005402.GA22975@hori1.linux.bs1.fc.nec.co.jp>
- <20180605011836.GA32444@bombadil.infradead.org>
- <20180605073500.GA23766@hori1.linux.bs1.fc.nec.co.jp>
- <20180606051624.GA16021@hori1.linux.bs1.fc.nec.co.jp>
- <20180606080408.GA31794@techadventures.net>
- <20180606085319.GA32052@techadventures.net>
-In-Reply-To: <20180606085319.GA32052@techadventures.net>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.81]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <FA01F9358404DB46B837CAE13C18D29C@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Wed, 6 Jun 2018 06:47:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DA6D260555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From: "sayali" <sayalil@codeaurora.org>
+To: "'Bart Van Assche'" <Bart.VanAssche@wdc.com>,
+        <vinholikatti@gmail.com>, <asutoshd@codeaurora.org>,
+        <evgreen@chromium.org>, <cang@codeaurora.org>,
+        <martin.petersen@oracle.com>, <subhashj@codeaurora.org>,
+        <vivek.gautam@codeaurora.org>, <rnayak@codeaurora.org>,
+        <jejb@linux.vnet.ibm.com>
+Cc: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1527849774-7623-1-git-send-email-sayalil@codeaurora.org>    <1527849774-7623-3-git-send-email-sayalil@codeaurora.org> <39ab956b95a645c6e63eb9713ea9547fdc265a22.camel@wdc.com>
+In-Reply-To: <39ab956b95a645c6e63eb9713ea9547fdc265a22.camel@wdc.com>
+Subject: RE: [PATCH V1 2/3] scsi: ufs: Add ufs provisioning support
+Date: Wed, 6 Jun 2018 16:17:14 +0530
+Message-ID: <000d01d3fd83$bee3ce60$3cab6b20$@codeaurora.org>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQKGja9h2+sAa9B7VDYjBpPLWNjYigHtkbPiAeBCQBaiz30wkA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 10:53:19AM +0200, Oscar Salvador wrote:
-> On Wed, Jun 06, 2018 at 10:04:08AM +0200, Oscar Salvador wrote:
-> > On Wed, Jun 06, 2018 at 05:16:24AM +0000, Naoya Horiguchi wrote:
-> > > On Tue, Jun 05, 2018 at 07:35:01AM +0000, Horiguchi Naoya(堀口 直也) wrote:
-> > > > On Mon, Jun 04, 2018 at 06:18:36PM -0700, Matthew Wilcox wrote:
-> > > > > On Tue, Jun 05, 2018 at 12:54:03AM +0000, Naoya Horiguchi wrote:
-> > > > > > Reproduction precedure is like this:
-> > > > > >  - enable RAM based PMEM (with a kernel boot parameter like memmap=1G!4G)
-> > > > > >  - read /proc/kpageflags (or call tools/vm/page-types with no arguments)
-> > > > > >  (- my kernel config is attached)
-> > > > > >
-> > > > > > I spent a few days on this, but didn't reach any solutions.
-> > > > > > So let me report this with some details below ...
-> > > > > >
-> > > > > > In the critial page request, stable_page_flags() is called with an argument
-> > > > > > page whose ->compound_head was somehow filled with '0xffffffffffffffff'.
-> > > > > > And compound_head() returns (struct page *)(head - 1), which explains the
-> > > > > > address 0xfffffffffffffffe in the above message.
-> > > > >
-> > > > > Hm.  compound_head shares with:
-> > > > >
-> > > > >                         struct list_head lru;
-> > > > >                                 struct list_head slab_list;     /* uses lru */
-> > > > >                                 struct {        /* Partial pages */
-> > > > >                                         struct page *next;
-> > > > >                         unsigned long _compound_pad_1;  /* compound_head */
-> > > > >                         unsigned long _pt_pad_1;        /* compound_head */
-> > > > >                         struct dev_pagemap *pgmap;
-> > > > >                 struct rcu_head rcu_head;
-> > > > >
-> > > > > None of them should be -1.
-> > > > >
-> > > > > > It seems that this kernel panic happens when reading kpageflags of pfn range
-> > > > > > [0xbffd7, 0xc0000), which coresponds to a 'reserved' range.
-> > > > > >
-> > > > > > [    0.000000] user-defined physical RAM map:
-> > > > > > [    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
-> > > > > > [    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-> > > > > > [    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-> > > > > > [    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
-> > > > > > [    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved
-> > > > > > [    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
-> > > > > > [    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
-> > > > > > [    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12)
-> > > > > >
-> > > > > > So I guess 'memmap=' parameter might badly affect the memory initialization process.
-> > > > > >
-> > > > > > This problem doesn't reproduce on v4.17, so some pre-released patch introduces it.
-> > > > > > I hope this info helps you find the solution/workaround.
-> > > > >
-> > > > > Can you try bisecting this?  It could be one of my patches to reorder struct
-> > > > > page, or it could be one of Pavel's deferred page initialisation patches.
-> > > > > Or something else ;-)
-> > > >
-> > > > Thank you for the comment. I'm trying bisecting now, let you know the result later.
-> > > >
-> > > > And I found that my statement "not reproduce on v4.17" was wrong (I used
-> > > > different kvm guests, which made some different test condition and misguided me),
-> > > > this seems an older (at least < 4.15) bug.
-> > >
-> > > (Cc: Pavel)
-> > >
-> > > Bisection showed that the following commit introduced this issue:
-> > >
-> > >   commit f7f99100d8d95dbcf09e0216a143211e79418b9f
-> > >   Author: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > >   Date:   Wed Nov 15 17:36:44 2017 -0800
-> > >
-> > >       mm: stop zeroing memory during allocation in vmemmap
-> > >
-> > > This patch postpones struct page zeroing to later stage of memory initialization.
-> > > My kernel config disabled CONFIG_DEFERRED_STRUCT_PAGE_INIT so two callsites of
-> > > __init_single_page() were never reached. So in such case, struct pages populated
-> > > by vmemmap_pte_populate() could be left uninitialized?
-> > > And I'm not sure yet how this issue becomes visible with memmap= setting.
-> >
-> > I think that this becomes visible because memmap=x!y creates a persistent memory region:
-> >
-> > parse_memmap_one
-> > {
-> > 	...
-> >         } else if (*p == '!') {
-> >                 start_at = memparse(p+1, &p);
-> >                 e820__range_add(start_at, mem_size, E820_TYPE_PRAM);
-> > 	...
-> > }
-> >
-> > and this region it is not added neither in memblock.memory nor in memblock.reserved.
-> > Ranges in memblock.memory get zeroed in memmap_init_zone(), while memblock.reserved get zeroed
-> > in free_low_memory_core_early():
-> >
-> > static unsigned long __init free_low_memory_core_early(void)
-> > {
-> > 	...
-> > 	for_each_reserved_mem_region(i, &start, &end)
-> > 		reserve_bootmem_region(start, end);
-> > 	...
-> > }
-> >
-> >
-> > Maybe I am mistaken, but I think that persistent memory regions should be marked as reserved.
-> > A comment in do_mark_busy() suggests this:
-> >
-> > static bool __init do_mark_busy(enum e820_type type, struct resource *res)
-> > {
-> >
-> > 	...
-> >         /*
-> >          * Treat persistent memory like device memory, i.e. reserve it
-> >          * for exclusive use of a driver
-> >          */
-> > 	...
-> > }
-> >
-> >
-> > I wonder if something like this could work and if so, if it is right (i haven't tested it yet):
-> >
-> > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> > index 71c11ad5643e..3c9686ef74e5 100644
-> > --- a/arch/x86/kernel/e820.c
-> > +++ b/arch/x86/kernel/e820.c
-> > @@ -1247,6 +1247,11 @@ void __init e820__memblock_setup(void)
-> >                 if (end != (resource_size_t)end)
-> >                         continue;
-> >
-> > +               if (entry->type == E820_TYPE_PRAM || entry->type == E820_TYPE_PMEM) {
-> > +                       memblock_reserve(entry->addr, entry->size);
-> > +                       continue;
-> > +               }
-> > +
-> >                 if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-> >                         continue;
->
-> It does not seem to work, so the reasoning might be incorrect.
+-----Original Message-----
+From: Bart Van Assche [mailto:Bart.VanAssche@wdc.com]=20
+Sent: Monday, June 04, 2018 2:48 PM
+To: vinholikatti@gmail.com; asutoshd@codeaurora.org; =
+sayalil@codeaurora.org; evgreen@chromium.org; cang@codeaurora.org; =
+martin.petersen@oracle.com; subhashj@codeaurora.org; =
+vivek.gautam@codeaurora.org; rnayak@codeaurora.org; =
+jejb@linux.vnet.ibm.com
+Cc: linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V1 2/3] scsi: ufs: Add ufs provisioning support
 
-Thank you for the comment.
+On Fri, 2018-06-01 at 16:12 +0530, Sayali Lokhande wrote:
+> +	qTotalRawDeviceCapacity =3D
+> +		(uint64_t)geo_buf[0x0b] | ((uint64_t)geo_buf[0x0a] << 8) |
+> +		((uint64_t)geo_buf[0x09] << 16) |
+> +		((uint64_t)geo_buf[0x08] << 24) |
+> +		((uint64_t)geo_buf[0x07] << 32) |
+> +		((uint64_t)geo_buf[0x06] << 40) |
+> +		((uint64_t)geo_buf[0x05] << 48) |
+> +		((uint64_t)geo_buf[0x04] << 56);
+> +	wEnhanced1CapAdjFac =3D
+> +		(uint16_t)geo_buf[0x31] | ((uint16_t)geo_buf[0x30] << 8);
 
-One note is that the memory region with "broken struct page" is a typical
-reserved region, not a pmem region. Strangely reading offset 0xbffd7 of
-/proc/kpageflags is OK if pmem region does not exist, but NG if pmem region exists.
-Reading the offset like 0x100000 (on pmem region) does not cause the crash,
-so pmem region seems properly set up.
+Please use get_unaligned_be*() instead of open-coding these functions.
+[Sayali]Agreed. Will update.
 
-[    0.000000] user-defined physical RAM map:
-[    0.000000] user: [mem 0x0000000000000000-0x000000000009fbff] usable
-[    0.000000] user: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-[    0.000000] user: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-[    0.000000] user: [mem 0x0000000000100000-0x00000000bffd6fff] usable
-[    0.000000] user: [mem 0x00000000bffd7000-0x00000000bfffffff] reserved   ===> "broken struct page" region
-[    0.000000] user: [mem 0x00000000feffc000-0x00000000feffffff] reserved
-[    0.000000] user: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
-[    0.000000] user: [mem 0x0000000100000000-0x000000013fffffff] persistent (type 12) => pmem region
-[    0.000000] user: [mem 0x0000000140000000-0x000000023fffffff] usable
+> +		*pt++ =3D (cfg->unit[i].dNumAllocUnits >> 24) & 0xff;
+> +		*pt++ =3D (cfg->unit[i].dNumAllocUnits >> 16) & 0xff;
+> +		*pt++ =3D (cfg->unit[i].dNumAllocUnits >> 8) & 0xff;
+> +		*pt++ =3D (cfg->unit[i].dNumAllocUnits) & 0xff;
+
+Please use put_unaligned_be() instead of open-coding this function.
+[Sayali]Agreed. Will update.
 
 Thanks,
-Naoya Horiguchi
+
+Bart.
