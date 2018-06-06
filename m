@@ -1,116 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ABBA4606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="JQQy8fl9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51603601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752097AbeFFOgc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:36:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41118 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751987AbeFFOga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:36:30 -0400
-Subject: Re: [PATCH] arm64: topology: Avoid checking numa mask for scheduler
- MC selection
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Will.Deacon@arm.com, Catalin.Marinas@arm.com, Robin.Murphy@arm.com,
-        Morten.Rasmussen@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, geert@linux-m68k.org,
-        linux-acpi@vger.kernel.org, ard.biesheuvel@linaro.org
-References: <20180605190837.493505-1-jeremy.linton@arm.com>
- <3c8a541d-78a1-389a-112c-494f7c1a543d@arm.com>
-From: Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <120c2793-8826-4a7c-cf5c-cb6661602b5a@arm.com>
-Date: Wed, 6 Jun 2018 09:36:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <3c8a541d-78a1-389a-112c-494f7c1a543d@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S932567AbeFFKE1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:04:27 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:38219 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752215AbeFFKEZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:04:25 -0400
+From: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+To: Christoph Hellwig <hch@infradead.org>,
+        Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>
+CC: Milan Broz <gmazyland@gmail.com>, Alasdair Kergon <agk@redhat.com>,
+        "Mike Snitzer" <snitzer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Manjunath M Bettegowda <Manjunath.MB@synopsys.com>,
+        Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        Tejas Joglekar <Tejas.Joglekar@synopsys.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH] md: dm-crypt: Add Inline Encryption support for dmcrypt
+Thread-Topic: [PATCH] md: dm-crypt: Add Inline Encryption support for dmcrypt
+Thread-Index: AQHT9qGCqs8Dj7X7aUOxjJFw2Ba+qw==
+Date: Wed, 6 Jun 2018 10:04:14 +0000
+Message-ID: <BD7FB879CC136E419544C8E2AE7B9C3020C5D6@IN01WEMBXA.internal.synopsys.com>
+References: <e9120efc-1e25-79c8-6132-9062dd030539@synopsys.com>
+ <7a510610-9133-39aa-6841-3925c532f3c0@gmail.com>
+ <BD7FB879CC136E419544C8E2AE7B9C3020BB94@IN01WEMBXA.internal.synopsys.com>
+ <20180601081642.GA25973@infradead.org>
+Accept-Language: en-US, en-IN
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.12.239.235]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 05:05 AM, Sudeep Holla wrote:
-> 
-> 
-> On 05/06/18 20:08, Jeremy Linton wrote:
->> The numa mask subset check has problems if !CONFIG_NUMA, over hotplug
->> operations or during early boot. Lets disable the NUMA siblings checks
->> for the time being, as NUMA in socket machines have LLC's that will
->> assure that the scheduler topology isn't "borken".
->>
-> 
-> ^ broken ? (not sure if usage of borken is intentional :))
-
-Well that is what the scheduler says when it doesn't like the topology.
-
-> 
->> Futher, as a defensive mechanism during hotplug, lets assure that the
-> 
-> ^ Further
-
-Sure.
-
-> 
->> LLC siblings are also masked.
->>
-> 
-> Also add the symptoms of the issue we say as Geert suggested me.
-> Something like:
-> " This often leads to system hang or crash during CPU hotplug and system
-> suspend operation. This is mostly observed on HMP systems where the
-> CPU compute capacities are different and ends up in different scheduler
-> domains. Since cpumask_of_node is returned instead core_sibling, the
-> scheduler is confused with incorrect cpumasks(e.g. one CPU in two
-> different sched domains at the same time) on CPU hotplug."
-> 
-> You can add Reported-by: Geert... ?
-
-ok.
-
-> 
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>   arch/arm64/kernel/topology.c | 11 ++++-------
->>   1 file changed, 4 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
->> index 7415c166281f..f845a8617812 100644
->> --- a/arch/arm64/kernel/topology.c
->> +++ b/arch/arm64/kernel/topology.c
->> @@ -215,13 +215,8 @@ EXPORT_SYMBOL_GPL(cpu_topology);
->>   
->>   const struct cpumask *cpu_coregroup_mask(int cpu)
->>   {
->> -	const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
->> +	const cpumask_t *core_mask = &cpu_topology[cpu].core_sibling;
->>   
->> -	/* Find the smaller of NUMA, core or LLC siblings */
->> -	if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
->> -		/* not numa in package, lets use the package siblings */
->> -		core_mask = &cpu_topology[cpu].core_sibling;
->> -	}
->>   	if (cpu_topology[cpu].llc_id != -1) {
->>   		if (cpumask_subset(&cpu_topology[cpu].llc_siblings, core_mask))
->>   			core_mask = &cpu_topology[cpu].llc_siblings;
->> @@ -239,8 +234,10 @@ static void update_siblings_masks(unsigned int cpuid)
->>   	for_each_possible_cpu(cpu) {
->>   		cpu_topo = &cpu_topology[cpu];
->>   
->> -		if (cpuid_topo->llc_id == cpu_topo->llc_id)
->> +		if (cpuid_topo->llc_id == cpu_topo->llc_id) {
->>   			cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
->> +			cpumask_set_cpu(cpuid, &cpu_topo->llc_siblings);
->> +		}
->>   
->>   		if (cpuid_topo->package_id != cpu_topo->package_id)
->>   			continue;
->>
-> 
-> Looks good to me for now. I might need to tweek it a bit when I add the
-> support to update topology on hotplug. But that's for latter. For now,
-> 
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> 
+On Friday 01 June 2018 09:16 AM, Christoph Hellwig wrote:=0A=
+> On Wed, May 30, 2018 at 02:52:07PM +0000, Ladvine D Almeida wrote:=0A=
+>> when the optional argument "perform_inline_encrypt" is set, we are not u=
+nconditionally sending the bio=0A=
+>> to the block devices. The steps are explained below:=0A=
+>> 1. user invokes the dm-setup command with the registered cipher "xts" an=
+d with the optional argument=0A=
+>> "perform_inline_encrypt".=0A=
+>> 2. dm-setup invokes the setkey function of the newly introduced algorith=
+m, which finds the available key slots=0A=
+>> to be programmed(UFS Host controller Inline Encryption engine has multip=
+le keyslots), program the key slot,=0A=
+>> and return the key slot index as return value of the set key function.=
+=0A=
+>> 3. When read/write operation happens, crypt_map() function in dm-crypt v=
+alidates whether there is associated=0A=
+>> key configuration index for the request. The Bio will be submitted direc=
+tly in this case only with the associated=0A=
+>> crypto context.=0A=
+>> 4. Block device driver, eg. UFS host controller driver will create the T=
+ransfer requests as per this crypto context and=0A=
+>> encryption happens inside the controller.=0A=
+> Why isn't this all controlled by the ufs drivers, using helpers as=0A=
+> required?=0A=
+=0A=
+The idea is to make use of the existing utilities like dmsetup to configure=
+ the keys, mapping etc.=0A=
+=0A=
+>=0A=
+> Also why do we even need this API over just implementing TCG=0A=
+> Opal/Opalite on the device?=0A=
+>=0A=
+TCG Opal/Opalite is FDE solution. right?=0A=
+=0A=
+File Based Encryption is accomplished in the ext4/f2fs layer by invoking th=
+e registered algorithms from LKCF.=0A=
+=0A=
+There is a scope for FBE, if the implementation is crypto API.=0A=
+=0A=
+=0A=
+Regards,=0A=
+=0A=
+Ladvine=0A=
+=0A=
