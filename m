@@ -1,101 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932903AbeFFAQa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 20:16:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:35131 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932125AbeFFAQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 20:16:28 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 6 Jun 2018 10:16:23 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Russell King <rmk@armlinux.org.uk>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the userns tree with the arm tree
-Message-ID: <20180606101623.1eacd4be@canb.auug.org.au>
-In-Reply-To: <20180530183058.06a26dbe@canb.auug.org.au>
-References: <20180530183058.06a26dbe@canb.auug.org.au>
+        id S1753054AbeFFA3q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 20:29:46 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54975 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752729AbeFFA3p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 20:29:45 -0400
+X-Google-Smtp-Source: ADUXVKLAnmvXXE3gG4AuK0nPN4bJTk+CX0RrFTyJyhVdzczJHwI/mgeLfUZGEuxswI3eNIU+zcMgoA==
+Date: Tue, 5 Jun 2018 17:30:32 -0700
+From: Nathan Chancellor <natechancellor@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/37] 4.4.136-stable review
+Message-ID: <20180606003032.GA10046@flashbox>
+References: <20180605170108.884872354@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n0R.KydN=e3r=CWLZ7sM920"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605170108.884872354@linuxfoundation.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/n0R.KydN=e3r=CWLZ7sM920
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 05, 2018 at 07:01:05PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.136 release.
+> There are 37 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.136-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Hi all,
+Merged, compiled with -Werror, and installed onto my Pixel 2 XL and
+OnePlus 5.
 
-On Wed, 30 May 2018 18:30:58 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the userns tree got a conflict in:
->=20
->   arch/arm/mm/fault.c
->=20
-> between commit:
->=20
->   93a24d7e23e7 ("ARM: spectre-v2: harden user aborts in kernel space")
->=20
-> from the arm tree and commit:
->=20
->   3eb0f5193b49 ("signal: Ensure every siginfo we send has all bits initia=
-lized")
->=20
-> from the userns tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc arch/arm/mm/fault.c
-> index 3b1ba003c4f9,32034543f49c..000000000000
-> --- a/arch/arm/mm/fault.c
-> +++ b/arch/arm/mm/fault.c
-> @@@ -163,9 -163,8 +163,11 @@@ __do_user_fault(struct task_struct *tsk
->   {
->   	struct siginfo si;
->  =20
->  +	if (addr > TASK_SIZE)
->  +		harden_branch_predictor();
->  +
-> + 	clear_siginfo(&si);
-> +=20
->   #ifdef CONFIG_DEBUG_USER
->   	if (((user_debug & UDBG_SEGV) && (sig =3D=3D SIGSEGV)) ||
->   	    ((user_debug & UDBG_BUS)  && (sig =3D=3D SIGBUS))) {
+No issues in general usage or dmesg (although I somehow didn't catch the
+VTI issue in 4.4.134 so don't know how valuable this is anymore...)
 
-This is now a conflict between the arm tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n0R.KydN=e3r=CWLZ7sM920
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXJ9cACgkQAVBC80lX
-0GwX5Qf9E7Uih5osvX8kLykC/NtUQEVKKQVQgFOzuTRByWSXAQBlGs3hw9dq4K3m
-OUUqsmMfzqluPewluBnMOBJVQwTBisY0ZUxZLVIXgXKpFMxfnboDtg6D/e3XDLEk
-dMcJPq+GhC93jTbl5eGbQmhbq3I0hWU05zrzxU7FdyKTYi3qdPgxwJ2HNiTVQW3j
-JKvtOQb+IoiQm1Y6tlOriOvnp0qfPBq4ofk4LVuxQdmnYmL4daLyrA/m9d4bfKg/
-GFbhaLitmCSiUf+VOdEt3r4bsQwMoCynIN8+2v2y8LYtTcWKquJMacEh70fycpwp
-zfHR//sygxu3KEr1HuExhQ3/T9ajVw==
-=VVCT
------END PGP SIGNATURE-----
-
---Sig_/n0R.KydN=e3r=CWLZ7sM920--
+Thanks!
+Nathan
