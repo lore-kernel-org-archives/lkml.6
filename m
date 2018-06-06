@@ -1,112 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id U5+uONRNGVtTcwAAmS7hNA
-	; Thu, 07 Jun 2018 15:23:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5VtoB3BUGFuYbwAAmS7hNA
+	; Wed, 06 Jun 2018 21:38:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D2515608B8; Thu,  7 Jun 2018 15:23:00 +0000 (UTC)
+	id F3BE5601D2; Wed,  6 Jun 2018 21:38:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9zv72AG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 04CFD6063F;
-	Thu,  7 Jun 2018 15:23:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04CFD6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 76876607E4;
+	Wed,  6 Jun 2018 21:38:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76876607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935803AbeFGPW6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:22:58 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41219 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935544AbeFGO6u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:58:50 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbe-0005hL-EK; Thu, 07 Jun 2018 15:09:38 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb6-000324-Ot; Thu, 07 Jun 2018 15:09:04 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "=?UTF-8?q?Horia=20Geant=C4=83?=" <horia.geanta@nxp.com>,
-        "Auer Lukas" <lukas.auer@aisec.fraunhofer.de>,
-        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.855397034@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 218/410] crypto: caam - fix endless loop when DECO
- acquire fails
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S1752282AbeFFVix (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:38:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752056AbeFFViw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:38:52 -0400
+Received: from garbanzo.do-not-panic.com (c-73-15-241-2.hsd1.ca.comcast.net [73.15.241.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71A1E2077B;
+        Wed,  6 Jun 2018 21:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528321131;
+        bh=Wyd65UTrjffzlEPpIzMHKusVfGqS9t1ks/VelatkRAA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=d9zv72AGr7ktu/XkAONbAzL2Fc1qJdqwSLP77zLCGU+iRtVKqxKBjaqix7NWvROtz
+         K3SThcASsI8rqYqfNcJ2IUbG1B+rO7yFkYejCk2xJP7/dMuP4bV1tpdB8kL5mjrX1s
+         iCHtHNYV61Z8rX7qkCbpvaiOES9DBAQdQskRSN8Q=
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: keescook@chromium.org, josh@joshtriplett.org, maco@android.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, teg@jklm.no, wagi@monom.org,
+        hdegoede@redhat.com, andresx7@gmail.com, zohar@linux.vnet.ibm.com,
+        kubakici@wp.pl, shuah@kernel.org, mfuzzey@parkeon.com,
+        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
+        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
+        markivx@codeaurora.org, broonie@kernel.org,
+        dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, oneukum@suse.com,
+        cantabile.desu@gmail.com, khc@pm.waw.pl, arve@android.com,
+        tkjos@android.com, corbet@lwn.net, mchehab+samsung@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH] Documentation: update firmware loader fallback reference
+Date: Wed,  6 Jun 2018 14:38:47 -0700
+Message-Id: <20180606213847.12050-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+The firmware loader has a fallback mechanism, and it now has some proper
+kdoc, but we forgot to update the Documentation to use the new kdoc. Fix
+that.
 
-------------------
-
-From: Horia Geantă <horia.geanta@nxp.com>
-
-commit 225ece3e7dad4cfc44cca38ce7a3a80f255ea8f1 upstream.
-
-In case DECO0 cannot be acquired - i.e. run_descriptor_deco0() fails
-with -ENODEV, caam_probe() enters an endless loop:
-
-run_descriptor_deco0
-	ret -ENODEV
-	-> instantiate_rng
-		-ENODEV, overwritten by -EAGAIN
-		ret -EAGAIN
-		-> caam_probe
-			-EAGAIN results in endless loop
-
-It turns out the error path in instantiate_rng() is incorrect,
-the checks are done in the wrong order.
-
-Fixes: 1005bccd7a4a6 ("crypto: caam - enable instantiation of all RNG4 state handles")
-Reported-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Suggested-by: Auer Lukas <lukas.auer@aisec.fraunhofer.de>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/crypto/caam/ctrl.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ Documentation/driver-api/firmware/fallback-mechanisms.rst | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/caam/ctrl.c
-+++ b/drivers/crypto/caam/ctrl.c
-@@ -196,12 +196,16 @@ static int instantiate_rng(struct device
- 		 * without any error (HW optimizations for later
- 		 * CAAM eras), then try again.
- 		 */
-+		if (ret)
-+			break;
-+
- 		rdsta_val =
- 			rd_reg32(&topregs->ctrl.r4tst[0].rdsta) & RDSTA_IFMASK;
--		if (status || !(rdsta_val & (1 << sh_idx)))
-+		if (status || !(rdsta_val & (1 << sh_idx))) {
- 			ret = -EAGAIN;
--		if (ret)
- 			break;
-+		}
-+
+diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+index d35fed65eae9..8b041d0ab426 100644
+--- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
++++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+@@ -92,7 +92,7 @@ the loading file.
  
- 		dev_info(ctrldev, "Instantiated RNG4 SH%d\n", sh_idx);
- 		/* Clear the contents before recreating the descriptor */
+ The firmware device used to help load firmware using sysfs is only created if
+ direct firmware loading fails and if the fallback mechanism is enabled for your
+-firmware request, this is set up with fw_load_from_user_helper().  It is
++firmware request, this is set up with :c:func:`firmware_fallback_sysfs`. It is
+ important to re-iterate that no device is created if a direct filesystem lookup
+ succeeded.
+ 
+@@ -108,6 +108,11 @@ firmware_data_read() and firmware_loading_show() are just provided for the
+ test_firmware driver for testing, they are not called in normal use or
+ expected to be used regularly by userspace.
+ 
++firmware_fallback_sysfs
++-----------------------
++.. kernel-doc:: drivers/base/firmware_loader/fallback.c
++   :functions: firmware_fallback_sysfs
++
+ Firmware kobject uevent fallback mechanism
+ ==========================================
+ 
+-- 
+2.16.3
