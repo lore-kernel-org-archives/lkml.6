@@ -1,58 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 599B3607E8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkKJ4QEr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6066606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752482AbeFFNdd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:33:33 -0400
-Received: from mail.us.es ([193.147.175.20]:59300 "EHLO mail.us.es"
+        id S1752374AbeFFSSD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:18:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751946AbeFFNd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:33:29 -0400
-Date: Wed, 6 Jun 2018 15:33:24 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: David Miller <davem@davemloft.net>
-Cc: arnd@arndb.de, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        ecklm94@gmail.com, pabeni@redhat.com, willemb@google.com,
-        edumazet@google.com, dsahern@gmail.com, kafai@fb.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: provide udp*_lib_lookup for nf_tproxy
-Message-ID: <20180606133324.537naj6trahiq26f@salvia>
-References: <20180605114056.1239571-1-arnd@arndb.de>
- <20180605.105453.339908802413146875.davem@davemloft.net>
+        id S1752243AbeFFSSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 14:18:01 -0400
+X-Google-Smtp-Source: ADUXVKJsrceQb3obGj/SMlh3EqA4n9JPtXXP9oxNJ3a+Kgdax/hD9CEV4mxHWBFDs5HQ//peFepYMPp5WFuxYZhj8zM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605.105453.339908802413146875.davem@davemloft.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20180601082811.4c0d33ba@imladris.surriel.com> <CALCETrUVFdrtorJBVg1fizUx+c23MVVqNnzGs3oWpN8LHyEvMA@mail.gmail.com>
+ <1527877328.7898.80.camel@surriel.com> <1527878882.4448.11.camel@gmx.de>
+ <1527882207.7898.86.camel@surriel.com> <CALCETrVE5ugmiSOjQ5sw7V+S4bRpMDs419rgrbTzfvjfhbWeqA@mail.gmail.com>
+ <1527885324.7898.88.camel@surriel.com> <CALCETrWMouz7VzYgwC=Ys3-C2O7ZVCn4FNwesH1np4c9iG1g_A@mail.gmail.com>
+ <20180601181327.367f0fe3@imladris.surriel.com> <CALCETrXTLqcro4uu5f77EmeaDvNqGZNLpsk-w_BApRNmzvcz=Q@mail.gmail.com>
+ <1527915842.7898.93.camel@surriel.com> <CALCETrW5m3Y3CGnRZwDTMT9g-1an_LO6Fp_6FWOokydhN9BDLQ@mail.gmail.com>
+ <A87157D6-4A0A-44F8-8AC8-4411F5EDC57A@fb.com> <1527989886.7898.96.camel@surriel.com>
+In-Reply-To: <1527989886.7898.96.camel@surriel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 6 Jun 2018 11:17:46 -0700
+X-Gmail-Original-Message-ID: <CALCETrU6bqVyBzeMu9RSoXq1Fm6rdHA6rDskqVqo5+W9snkz=A@mail.gmail.com>
+Message-ID: <CALCETrU6bqVyBzeMu9RSoXq1Fm6rdHA6rDskqVqo5+W9snkz=A@mail.gmail.com>
+Subject: Re: [PATCH] x86,switch_mm: skip atomic operations for init_mm
+To: Rik van Riel <riel@surriel.com>
+Cc: songliubraving@fb.com, Andrew Lutomirski <luto@kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <Kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:54:53AM -0400, David Miller wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> Date: Tue,  5 Jun 2018 13:40:34 +0200
-> 
-> > It is now possible to enable the libified nf_tproxy modules without
-> > also enabling NETFILTER_XT_TARGET_TPROXY, which throws off the
-> > ifdef logic in the udp core code:
-> > 
-> > net/ipv6/netfilter/nf_tproxy_ipv6.o: In function `nf_tproxy_get_sock_v6':
-> > nf_tproxy_ipv6.c:(.text+0x1a8): undefined reference to `udp6_lib_lookup'
-> > net/ipv4/netfilter/nf_tproxy_ipv4.o: In function `nf_tproxy_get_sock_v4':
-> > nf_tproxy_ipv4.c:(.text+0x3d0): undefined reference to `udp4_lib_lookup'
-> > 
-> > We can actually simplify the conditions now to provide the two functions
-> > exactly when they are needed.
-> > 
-> > Fixes: 45ca4e0cf273 ("netfilter: Libify xt_TPROXY")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Pablo, I'm going to apply this directly to fix the link failure.
+On Sat, Jun 2, 2018 at 6:38 PM Rik van Riel <riel@surriel.com> wrote:
+>
+> On Sun, 2018-06-03 at 00:51 +0000, Song Liu wrote:
+>
+> > > Just to check: in the workload where you're seeing this problem,
+> > > are
+> > > you using an mm with many threads?  I would imagine that, if you
+> > > only
+> > > have one or two threads, the bit operations aren't so bad.
+> >
+> > Yes, we are running netperf/netserver with 300 threads. We don't see
+> > this much overhead in with real workload.
+>
+> We may not, but there are some crazy workloads out
+> there in the world. Think of some Java programs with
+> thousands of threads, causing a million context
+> switches a second on a large system.
+>
+> I like Andy's idea of having one cache line with
+> a cpumask per node. That seems like it will have
+> fewer downsides for tasks with fewer threads running
+> on giant systems.
+>
+> I'll throw out the code I was working on, and look
+> into implementing that :)
+>
 
-BTW, could you also pick this fix for net-next?
-
-http://patchwork.ozlabs.org/patch/924706/
-
-Thanks.
+I'm not sure you should throw your patch out.  It's a decent idea, too.
