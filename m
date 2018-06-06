@@ -1,48 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlPxAWE3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B495260764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49E82601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeFFNHV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:07:21 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34866 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeFFNHT (ORCPT
+        id S932393AbeFFJPe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:15:34 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49168 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932265AbeFFJPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:07:19 -0400
-X-Google-Smtp-Source: ADUXVKJPHl/phTyjq1ICrIVxDx13eJO+FQ3i5wRabACe6YKUZ0MvnJKBfYgJBqVrBlnMYbQk9RRHH3UYQezCBULtCmI=
+        Wed, 6 Jun 2018 05:15:33 -0400
+Date: Wed, 6 Jun 2018 11:15:31 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Pingfan Liu <kernelfans@gmail.com>
+cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: question about the limited interrupt vector resource on a single
+ cpu
+In-Reply-To: <CAFgQCTudugoNc26P22V+G_awzj2srKHhWBJubFoa7-K=cDtQyw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1806061114290.1584@nanos.tec.linutronix.de>
+References: <CAFgQCTudugoNc26P22V+G_awzj2srKHhWBJubFoa7-K=cDtQyw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180606092928.11724-1-pp@emlix.com>
-References: <20180606092928.11724-1-pp@emlix.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 6 Jun 2018 10:07:18 -0300
-Message-ID: <CAOMZO5B-T2UWdv-tf5vsCuRQ6f_o1gw1pAn-b6h9zfmi5ng4Ug@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6SX_CLK_CKO1_SEL
-To: Philipp Puschmann <pp@emlix.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 6:29 AM, Philipp Puschmann <pp@emlix.com> wrote:
-> q/dl datasheets list the 5th selection value for ck01_sel as
-> video_27M_clk_root.
->
-> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
-> as parent for IMX6QDL_CLK_CKO1_SEL.
->
-> Signed-off-by: Philipp Puschmann <pp@emlix.com>
+On Wed, 6 Jun 2018, Pingfan Liu wrote:
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> For x86, there is around 200 vectors left for external device on a
+> single logic cpu.
+>
+> Is there any case that we exhaust them in real world, and is it worth to fix?
+
+Exhaustion is unlikely, but how would you fix it? The vector space per CPU
+is limited by hardware not software.
+
+Thanks,
+
+	tglx
