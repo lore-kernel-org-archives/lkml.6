@@ -1,76 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4D1F60763
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=darmarit.de
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvcdUUvo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 873D66070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933018AbeFFQbN convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Wed, 6 Jun 2018 12:31:13 -0400
-Received: from smtp1-3.goneo.de ([85.220.129.32]:56826 "EHLO smtp1-3.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932152AbeFFQbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:31:12 -0400
+        id S1752189AbeFFFKY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 01:10:24 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45495 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbeFFFKW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 01:10:22 -0400
+X-Google-Smtp-Source: ADUXVKJSUSvelqejpInXaxKjzRVAfExOUuXqO1hCaa+ZkoNkAxhsHaem11UTgzySoVNd3GlJi8aU5g==
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
+Date: Wed, 6 Jun 2018 08:10:17 +0300
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v5 3/4] clk: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180606051017.GB20078@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <da121dede6d79460c5653a5bc360d413cb988c74.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180605154932.GA20204@rob-hp-laptop>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v2 53/53] kernel-doc: describe the ``literal`` syntax
-From: Markus Heiser <markus.heiser@darmarit.de>
-In-Reply-To: <5d47c31b59f6c2c7ddce0fcb1be0f85ad39a56fe.1494935649.git.mchehab@s-opensource.com>
-Date: Wed, 6 Jun 2018 18:31:05 +0200
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
-        linux-mtd@lists.infradead.org, Jani Nikula <jani.nikula@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <EF34D78D-738B-47F4-B188-9777440B7E70@darmarit.de>
-References: <cover.1494935649.git.mchehab@s-opensource.com>
- <cover.1494935649.git.mchehab@s-opensource.com>
- <5d47c31b59f6c2c7ddce0fcb1be0f85ad39a56fe.1494935649.git.mchehab@s-opensource.com>
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-X-Mailer: Apple Mail (2.3273)
+Content-Disposition: inline
+In-Reply-To: <20180605154932.GA20204@rob-hp-laptop>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
-
-> Am 16.05.2017 um 14:16 schrieb Mauro Carvalho Chehab <mchehab@s-opensource.com>:
+On Tue, Jun 05, 2018 at 09:49:32AM -0600, Rob Herring wrote:
+> On Mon, Jun 04, 2018 at 04:18:53PM +0300, Matti Vaittinen wrote:
+> > Document devicetree bindings for ROHM BD71837 PMIC clock output.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  .../bindings/clock/rohm,bd71837-clock.txt          | 38 ++++++++++++++++++++++
+> >  1 file changed, 38 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+> > new file mode 100644
+> > index 000000000000..771acfe34114
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+> > @@ -0,0 +1,38 @@
+> > +ROHM BD71837 Power Management Integrated Circuit clock bindings
 > 
-> changeset b97f193abf83 ("scripts/kernel-doc: fix parser
-> for apostrophes") added support for ``literal`` inside
-> kernel-doc, in order to allow using the "%" symbol inside
-> a literal block, as this is used at printk() description.
-> 
-> Document it.
-> 
-> Fixes: b97f193abf83 ("scripts/kernel-doc: fix parser for apostrophes")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> ---
-> Documentation/doc-guide/kernel-doc.rst | 10 ++++++++++
-> 1 file changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
-> index b32e4813ff6f..b24854b5d6be 100644
-> --- a/Documentation/doc-guide/kernel-doc.rst
-> +++ b/Documentation/doc-guide/kernel-doc.rst
-> @@ -149,6 +149,16 @@ Domain`_ references.
-> ``%CONST``
->   Name of a constant. (No cross-referencing, just formatting.)
-> 
-> +````literal````
-> +  A literal block that should be handled as-is. The output will use a
-> +  ``monospaced font``.
+> This needs to be added to the MFD doc. One node should be covered by at 
+> most 1 document.
 
-just nitpicking; this is not literal block, this is called an inline literal [1]
+I was thinking of that too. But then I asked why? I also thought that if
+one knows there is clock block in the chip - where does he look for
+binding document? From clock folder. Then I saw how bindings for
+MAX77686 chip were written and thought that this is beneficial for all.
+MFD document directs to clock and regulator docs and on othe other hand,
+clock document clearly states that properties it describes must be
+present "in main device node of the MFD chip".
 
-To be complete: "blocks" are allways indented.
+Don't you think on searching for clock bindings should find something
+from clock folder? I can follow your instruction here but I think
+the user might be happy if he found something under bindings/clock for
+clock related properties.
 
-[1] http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#inline-literals
-
---- Markus --
+Br,
+	Matti Vaittinen
