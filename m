@@ -1,121 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9w22jNi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1604C60767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fyZ9Ya0F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C85C160290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeFFLYz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 07:24:55 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39557 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751700AbeFFLYx (ORCPT
+        id S1752316AbeFFPCN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:02:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49286 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752021AbeFFPCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 07:24:53 -0400
-X-Google-Smtp-Source: ADUXVKJAoPVa+IW3CRcspk13lYraZ83Q3okJ3TCCfICCHa6dvFh2aKVkjV+xUa8fn+ZoxpdbUPv7eKDfjP+Hz0khy1s=
+        Wed, 6 Jun 2018 11:02:11 -0400
+Date: Wed, 6 Jun 2018 17:02:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180606150203.GE12180@hirez.programming.kicks-ass.net>
+References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180606122357.GN12258@hirez.programming.kicks-ass.net>
+ <22f5cf0b-049e-7938-55f6-4b4b154f8389@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180605170117.643936916@linuxfoundation.org>
-References: <20180605170117.643936916@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 6 Jun 2018 16:54:51 +0530
-Message-ID: <CA+G9fYu4MPfE10F_fR_FxmqL-YbgDmiGVKKMCjWZeoG4YKGMJQ@mail.gmail.com>
-Subject: Re: [PATCH 4.9 00/61] 4.9.107-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22f5cf0b-049e-7938-55f6-4b4b154f8389@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 June 2018 at 22:31, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wr=
-ote:
-> This is the start of the stable review cycle for the 4.9.107 release.
-> There are 61 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu Jun  7 17:00:59 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.107-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Jun 06, 2018 at 03:42:08PM +0200, Daniel Lezcano wrote:
+> On 06/06/2018 14:23, Peter Zijlstra wrote:
+> > On Tue, Jun 05, 2018 at 11:16:40AM +0200, Daniel Lezcano wrote:
+> >> +	atomic_t idle_duration_ms;
+> >> +	atomic_t run_duration_ms;
+> > 
+> >> +	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+> > 
+> >> +	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+> > 
+> >> +	atomic_set(&ii_dev->run_duration_ms, run_duration_ms);
+> >> +	atomic_set(&ii_dev->idle_duration_ms, idle_duration_ms);
+> > 
+> >> +	*run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+> >> +	*idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+> > 
+> >> +	if (!atomic_read(&ii_dev->idle_duration_ms))
+> > 
+> >> +	if (!atomic_read(&ii_dev->run_duration_ms))
+> > 
+> > What is the point of atomic_t here ?!
+> 
+> idle_duration and run_duration can be changed from different places at
+> the same time. The atomic is here to ensure the read/write are consistent.
+> 
+> Do you think it is pointless ?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.9.107-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.9.y
-git commit: 0a593cdaaec3e50857380c79ccf9eaebcde7f862
-git describe: v4.9.106-62-g0a593cdaaec3
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.106-62-g0a593cdaaec3
-
-
-No regressions (compared to build v4.9.106-60-gc9f5af2d0154)
-
-
-Ran 9882 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_x86_64
-- x15
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Yes, atomic_read() / atomic_set() are no more atomic than READ_ONCE() /
+WRITE_ONCE().
