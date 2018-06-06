@@ -1,75 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8NCdzLo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9518860764
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQA2uOTz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1ACF605BD
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeFFLls (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 07:41:48 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54061 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751925AbeFFLki (ORCPT
+        id S1752227AbeFFFKg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 01:10:36 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45493 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbeFFFKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 07:40:38 -0400
-X-Google-Smtp-Source: ADUXVKIhFdtwLzDmzbS0AMggDxWmlGp028m9eZRjr5KuZzKPIM1bcRIbqOLLvo1gxp9vVE66H/e2pA==
-From: John Whitmore <johnfwhitmore@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, colin.king@canonical.com,
-        tglx@linutronix.de, kstewart@linuxfoundation.org,
-        devel@driverdev.osuosl.org, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v6 3/8] staging: rtl8192e: Remove unnecessary return statements - Coding style
-Date: Wed,  6 Jun 2018 12:39:58 +0100
-Message-Id: <20180606114003.22654-4-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180606114003.22654-1-johnfwhitmore@gmail.com>
-References: <20180606114003.22654-1-johnfwhitmore@gmail.com>
+        Wed, 6 Jun 2018 01:10:34 -0400
+X-Google-Smtp-Source: ADUXVKL7cqDItFDoYO2C9XOc9r3qDSbIKB8y2FRaLD1oFxQN7VhtfW9tWdR7Y91oQlOBZVqa8i62FA==
+Date: Wed, 6 Jun 2018 14:10:29 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, "4 . 13+" <stable@vger.kernel.org>
+Subject: Re: [PATCH] printk/nmi: Prevent deadlock when serializing NMI
+ backtraces
+Message-ID: <20180606051029.GA19211@tigerII.localdomain>
+References: <20180517143903.19339-1-pmladek@suse.com>
+ <20180605124729.3vix5nlkjpjzdljx@pathway.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605124729.3vix5nlkjpjzdljx@pathway.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return statments from void functions are not required by the coding standard.
+On (06/05/18 14:47), Petr Mladek wrote:
+[..]
+> Grr, the ABBA deadlock is still there. NMIs are not sent to the other
+> CPUs atomically. Even if we detect that logbuf_lock is available
+> in printk_nmi_enter() on some CPUs, it might still get locked on
+> another CPU before the other CPU gets NMI.
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 4 ----
- 1 file changed, 4 deletions(-)
+Can we do something about "B"? :) I mean - any chance we can rework
+locking in nmi_cpu_backtrace()?
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 0db98c77a8e9..65b2cd692ec8 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -145,7 +145,6 @@ void HTDebugHTCapability(u8 *CapIE, u8 *TitleString)
- 	IEEE80211_DEBUG(IEEE80211_DL_HT,  "\tMPDU Density = %d\n", pCapELE->MPDUDensity);
- 	IEEE80211_DEBUG(IEEE80211_DL_HT,  "\tMCS Rate Set = [%x][%x][%x][%x][%x]\n", pCapELE->MCS[0],\
- 				pCapELE->MCS[1], pCapELE->MCS[2], pCapELE->MCS[3], pCapELE->MCS[4]);
--	return;
- }
- 
- /********************************************************************************************************************
-@@ -207,7 +206,6 @@ void HTDebugHTInfo(u8 *InfoIE, u8 *TitleString)
- 
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "\tBasic MCS Rate Set = [%x][%x][%x][%x][%x]\n", pHTInfoEle->BasicMSC[0],\
- 				pHTInfoEle->BasicMSC[1], pHTInfoEle->BasicMSC[2], pHTInfoEle->BasicMSC[3], pHTInfoEle->BasicMSC[4]);
--	return;
- }
- 
- /*
-@@ -611,7 +609,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 
- 	//Print each field in detail. Driver should not print out this message by default
- //	HTDebugHTCapability(posHTCap, (u8*)"HTConstructCapability()");
--	return;
- }
- 
- /********************************************************************************************************************
-@@ -661,7 +658,6 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
- 	}
- 	//IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA | IEEE80211_DL_HT, posHTInfo, *len - 2);
- 	//HTDebugHTInfo(posHTInfo, "HTConstructInforElement");
--	return;
- }
- 
- /*
--- 
-2.17.0
+> By other words, any check in printk_safe_enter() is racy and not
+> sufficient
+
+I suppose you meant printk_nmi_enter().
+
+>   => I suggest to revert the commit 719f6a7040f1bdaf96fcc70
+>      "printk: Use the main logbuf in NMI when logbuf_lock is available"
+>      for-4.18 and stable until we get a better solution.
+
+Just random thoughts.
+
+May be we need to revert it, but let's not "panic". I think [but don't
+insist on it] that the patch in question is *probably* "good enough". It
+addresses a bug report after all.
+How often do we have arch_trigger_cpumask_backtrace() on all CPUs these
+days? I tend to think that it used to be much more popular in the past,
+because we had a loops_per_jiffy based spin_lock lockup detection which
+would trigger NMI backtracase, but this functionality has gone, see
+bc88c10d7e6900916f5e1ba3829d66a9de92b633 for details. I'm not saying
+that the race condition that you found is unrealistic, I'm just saying
+that _it seems_ that nmi_panic()->printk() on a single CPU is more common
+now, so having that nmi_printk()->printk_deferred() might be quite
+valuable at the end of the day.
+
+May be I'm wrong!
+
+> The only safe solution seems to be a trylock() in NMI in
+> vprintk_emit() and fallback to vprintk_safe() when the lock
+> is not taken. I mean something like:
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 247808333ba4..4a5a0bf221b3 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1845,7 +1845,13 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  	printk_delay();
+>  
+>  	/* This stops the holder of console_sem just where we want him */
+> -	logbuf_lock_irqsave(flags);
+> +	printk_safe_enter_irqsave(flags);
+> +	if (in_nmi() && !raw_spin_trylock(&logbuf_lock)) {
+> +		vprintk_nmi(fmt, args);
+> +		printk_safe_exit_irqrestore(flags);
+> +		return;
+> +	} else
+> +		raw_spin_lock(&logbuf_lock);
+>  	/*
+>  	 * The printf needs to come first; we need the syslog
+>  	 * prefix which might be passed-in as a parameter.
+
+I need some time to think about it.
+
+> Sigh, this looks like a material for-4.19.
+
+Agreed.
+
+> We might need to revisit if printk_context still makes sense, ...
+
+What do you mean by this?
+
+> PS: I realized this when writing the pull request for-4.18.
+> I removed this patch from the pull request.
+
+Yep. Good job!
+
+	-ss
