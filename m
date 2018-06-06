@@ -1,120 +1,378 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RD5wN7oG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="COFvXnXk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF0D4607C7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 741EC60767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932242AbeFFHBe (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 03:01:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55584 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932113AbeFFHBd (ORCPT
+        id S1752606AbeFFPL7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:11:59 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56810 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752178AbeFFPJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:01:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DFC7960263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-From: Chintan Pandya <cpandya@codeaurora.org>
-To: will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
-        akpm@linux-foundation.org
-Cc: toshi.kani@hpe.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v13 0/3] Fix issues with huge mapping in ioremap for ARM64
-Date: Wed,  6 Jun 2018 12:31:18 +0530
-Message-Id: <1528268481-19299-1-git-send-email-cpandya@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 6 Jun 2018 11:09:11 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Kees Cook <keescook@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH v3 02/12] platform/chrome: Switch to SPDX identifier.
+Date: Wed,  6 Jun 2018 17:08:50 +0200
+Message-Id: <20180606150900.8342-3-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180606150900.8342-1-enric.balletbo@collabora.com>
+References: <20180606150900.8342-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches re-bring huge vmap back for arm64.
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
-Patch 1/3 has been taken by Toshi in his series of patches
-by name "[PATCH v3 0/3] fix free pmd/pte page handlings on x86"
-to avoid merge conflict with this series.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-These patches are tested on 4.16 kernel with Cortex-A75 based SoC.
+Changes in v3: None
+Changes in v2: None
 
-The test used for verifying these patches is a stress test on
-ioremap/unmap which tries to re-use same io-address but changes
-size of mapping randomly i.e. 4K to 2M to 1G etc. The same test
-used to reproduce 3rd level translation fault without these fixes
-(and also of course with Revert "arm64: Enforce BBM for huge IO/VMAP
-mappings" being part of the tree).
+ drivers/platform/chrome/chromeos_pstore.c     | 13 +++----
+ drivers/platform/chrome/cros_ec_debugfs.c     | 22 +++---------
+ drivers/platform/chrome/cros_ec_lightbar.c    | 22 +++---------
+ drivers/platform/chrome/cros_ec_lpc.c         | 34 +++++++------------
+ drivers/platform/chrome/cros_ec_lpc_mec.c     | 34 +++++++------------
+ drivers/platform/chrome/cros_ec_lpc_reg.c     | 34 +++++++------------
+ drivers/platform/chrome/cros_ec_proto.c       | 19 +++--------
+ drivers/platform/chrome/cros_ec_sysfs.c       | 22 +++---------
+ drivers/platform/chrome/cros_ec_vbc.c         | 24 +++----------
+ .../platform/chrome/cros_kbd_led_backlight.c  | 19 +++--------
+ 10 files changed, 65 insertions(+), 178 deletions(-)
 
-These patches can also go into '-stable' branch (if accepted)
-for 4.6 onwards.
-
->From V12->V13:
- - Dropped v12 3/5 and v12 5/5
- - Using existing APIs like pte_offset_kernel and pmd_offset
-   instead of pmd_page_vaddr & pud_page_vaddr
- - Updated commit log message for 3/3
- - Some other cosmetic corrections in 3/3
-
->From V11->V12:
- - Introduced p*d_page_vaddr helper macros and using them
- - Rebased over current tip
-
->From V10->V11:
- - Updated pud_free_pmd_page & pmd_free_pte_page to use consistent
-   conding style
- - Fixed few bugs by using pmd_page_paddr & pud_page_paddr
-
->From V9->V10:
- - Updated commit log for patch 1/4 by Toshi
- - Addressed review comments by Will on patch 3/4
-
->From V8->V9:
- - Used __TLBI_VADDR macros in new TLB flush API
-
->From V7->V8:
- - Properly fixed compilation issue in x86 file
-
->From V6->V7:
- - Fixed compilation issue in x86 case
- - V6 patches were not properly enumarated
-
->From V5->V6:
- - Use __flush_tlb_kernel_pgtable() for both PUD and PMD. Remove
-   "bool tlb_inv" based variance as it is not need now
- - Re-naming for consistency
-
->From V4->V5:
- - Add new API __flush_tlb_kernel_pgtable(unsigned long addr)
-   for kernel addresses
-
->From V3->V4:
- - Add header for 'addr' in x86 implementation
- - Re-order pmd/pud clear and table free
- - Avoid redundant TLB invalidatation in one perticular case
-
->From V2->V3:
- - Use the exisiting page table free interface to do arm64
-   specific things
-
->From V1->V2:
- - Rebased my patches on top of "[PATCH v2 1/2] mm/vmalloc:
-   Add interfaces to free unmapped page table"
- - Honored BBM for ARM64
-
-
-Chintan Pandya (3):
-  ioremap: Update pgtable free interfaces with addr
-  arm64: tlbflush: Introduce __flush_tlb_kernel_pgtable
-  arm64: Implement page table free interfaces
-
- arch/arm64/include/asm/tlbflush.h |  7 ++++++
- arch/arm64/mm/mmu.c               | 48 +++++++++++++++++++++++++++++++++++----
- arch/x86/mm/pgtable.c             |  8 ++++---
- include/asm-generic/pgtable.h     |  8 +++----
- lib/ioremap.c                     |  4 ++--
- 5 files changed, 62 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
+index 57138ced4ca7..721400fcf14a 100644
+--- a/drivers/platform/chrome/chromeos_pstore.c
++++ b/drivers/platform/chrome/chromeos_pstore.c
+@@ -1,12 +1,7 @@
+-/*
+- *  chromeos_pstore.c - Driver to instantiate Chromebook ramoops device
+- *
+- *  Copyright (C) 2013 Google, Inc.
+- *
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation, version 2 of the License.
+- */
++// SPDX-License-Identifier: GPL-2.0
++// Driver to instantiate Chromebook ramoops device.
++//
++// Copyright (C) 2013 Google, Inc.
+ 
+ #include <linux/acpi.h>
+ #include <linux/dmi.h>
+diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+index c62ee8e610a0..450dac3996ff 100644
+--- a/drivers/platform/chrome/cros_ec_debugfs.c
++++ b/drivers/platform/chrome/cros_ec_debugfs.c
+@@ -1,21 +1,7 @@
+-/*
+- * cros_ec_debugfs - debug logs for Chrome OS EC
+- *
+- * Copyright 2015 Google, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++// Debug logs for ChromeOS EC.
++//
++// Copyright (C) 2015 Google, Inc.
+ 
+ #include <linux/circ_buf.h>
+ #include <linux/debugfs.h>
+diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+index 68193bb53383..c5a6dd4ffa01 100644
+--- a/drivers/platform/chrome/cros_ec_lightbar.c
++++ b/drivers/platform/chrome/cros_ec_lightbar.c
+@@ -1,21 +1,7 @@
+-/*
+- * cros_ec_lightbar - expose the Chromebook Pixel lightbar to userspace
+- *
+- * Copyright (C) 2014 Google, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++// Expose the Chromebook Pixel lightbar to userspace.
++//
++// Copyright (C) 2014 Google, Inc.
+ 
+ #define pr_fmt(fmt) "cros_ec_lightbar: " fmt
+ 
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 26f4fe6e9b04..19c7deab1e3b 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -1,25 +1,15 @@
+-/*
+- * cros_ec_lpc - LPC access to the Chrome OS Embedded Controller
+- *
+- * Copyright (C) 2012-2015 Google, Inc
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * This driver uses the Chrome OS EC byte-level message-based protocol for
+- * communicating the keyboard state (which keys are pressed) from a keyboard EC
+- * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
+- * but everything else (including deghosting) is done here.  The main
+- * motivation for this is to keep the EC firmware as simple as possible, since
+- * it cannot be easily upgraded and EC flash/IRAM space is relatively
+- * expensive.
+- */
++// SPDX-License-Identifier: GPL-2.0
++// LPC access to the ChromeOS Embedded Controller.
++//
++// Copyright (C) 2012-2015 Google, Inc.
++//
++// This driver uses the ChromeOS EC byte-level message-based protocol for
++// communicating the keyboard state (which keys are pressed) from a keyboard EC
++// to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
++// but everything else (including deghosting) is done here.  The main
++// motivation for this is to keep the EC firmware as simple as possible, since
++// it cannot be easily upgraded and EC flash/IRAM space is relatively
++// expensive.
+ 
+ #include <linux/acpi.h>
+ #include <linux/dmi.h>
+diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.c b/drivers/platform/chrome/cros_ec_lpc_mec.c
+index 2eda2c2fc210..b37ac077cd3b 100644
+--- a/drivers/platform/chrome/cros_ec_lpc_mec.c
++++ b/drivers/platform/chrome/cros_ec_lpc_mec.c
+@@ -1,25 +1,15 @@
+-/*
+- * cros_ec_lpc_mec - LPC variant I/O for Microchip EC
+- *
+- * Copyright (C) 2016 Google, Inc
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * This driver uses the Chrome OS EC byte-level message-based protocol for
+- * communicating the keyboard state (which keys are pressed) from a keyboard EC
+- * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
+- * but everything else (including deghosting) is done here.  The main
+- * motivation for this is to keep the EC firmware as simple as possible, since
+- * it cannot be easily upgraded and EC flash/IRAM space is relatively
+- * expensive.
+- */
++// SPDX-License-Identifier: GPL-2.0
++// LPC variant I/O for Microchip EC.
++//
++// Copyright (C) 2016 Google, Inc.
++//
++// This driver uses the ChromeOS EC byte-level message-based protocol for
++// communicating the keyboard state (which keys are pressed) from a keyboard EC
++// to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
++// but everything else (including deghosting) is done here.  The main
++// motivation for this is to keep the EC firmware as simple as possible, since
++// it cannot be easily upgraded and EC flash/IRAM space is relatively
++// expensive
+ 
+ #include <linux/delay.h>
+ #include <linux/io.h>
+diff --git a/drivers/platform/chrome/cros_ec_lpc_reg.c b/drivers/platform/chrome/cros_ec_lpc_reg.c
+index dcc7a3e30604..69d622e51da9 100644
+--- a/drivers/platform/chrome/cros_ec_lpc_reg.c
++++ b/drivers/platform/chrome/cros_ec_lpc_reg.c
+@@ -1,25 +1,15 @@
+-/*
+- * cros_ec_lpc_reg - LPC access to the Chrome OS Embedded Controller
+- *
+- * Copyright (C) 2016 Google, Inc
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * This driver uses the Chrome OS EC byte-level message-based protocol for
+- * communicating the keyboard state (which keys are pressed) from a keyboard EC
+- * to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
+- * but everything else (including deghosting) is done here.  The main
+- * motivation for this is to keep the EC firmware as simple as possible, since
+- * it cannot be easily upgraded and EC flash/IRAM space is relatively
+- * expensive.
+- */
++// SPDX-License-Identifier: GPL-2.0
++// LPC access to the ChromeOS Embedded Controller.
++//
++// Copyright (C) 2016 Google, Inc.
++//
++// This driver uses the ChromeOS EC byte-level message-based protocol for
++// communicating the keyboard state (which keys are pressed) from a keyboard EC
++// to the AP over some bus (such as i2c, lpc, spi).  The EC does debouncing,
++// but everything else (including deghosting) is done here.  The main
++// motivation for this is to keep the EC firmware as simple as possible, since
++// it cannot be easily upgraded and EC flash/IRAM space is relatively
++// expensive.
+ 
+ #include <linux/io.h>
+ #include <linux/mfd/cros_ec.h>
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index 8350ca2311c7..6ec006d6ff58 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -1,18 +1,7 @@
+-/*
+- * ChromeOS EC communication protocol helper functions
+- *
+- * Copyright (C) 2015 Google, Inc
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0
++// ChromeOS EC communication protocol helper functions.
++//
++// Copyright (C) 2015 Google, Inc.
+ 
+ #include <linux/mfd/cros_ec.h>
+ #include <linux/delay.h>
+diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+index f34a50121064..68979cebb2c8 100644
+--- a/drivers/platform/chrome/cros_ec_sysfs.c
++++ b/drivers/platform/chrome/cros_ec_sysfs.c
+@@ -1,21 +1,7 @@
+-/*
+- * cros_ec_sysfs - expose the Chrome OS EC through sysfs
+- *
+- * Copyright (C) 2014 Google, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++// Expose the ChromeOS EC through sysfs.
++//
++// Copyright (C) 2014 Google, Inc.
+ 
+ #define pr_fmt(fmt) "cros_ec_sysfs: " fmt
+ 
+diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
+index 5356f26bc022..a4934f41f462 100644
+--- a/drivers/platform/chrome/cros_ec_vbc.c
++++ b/drivers/platform/chrome/cros_ec_vbc.c
+@@ -1,22 +1,8 @@
+-/*
+- * cros_ec_vbc - Expose the vboot context nvram to userspace
+- *
+- * Copyright (C) 2015 Collabora Ltd.
+- *
+- * based on vendor driver,
+- *
+- * Copyright (C) 2012 The Chromium OS Authors
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++// Expose the vboot context nvram to userspace.
++//
++// Copyright (C) 2012 Google, Inc.
++// Copyright (C) 2015 Collabora Ltd.
+ 
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/platform/chrome/cros_kbd_led_backlight.c b/drivers/platform/chrome/cros_kbd_led_backlight.c
+index ca3e4da852b4..bd4aa9331806 100644
+--- a/drivers/platform/chrome/cros_kbd_led_backlight.c
++++ b/drivers/platform/chrome/cros_kbd_led_backlight.c
+@@ -1,18 +1,7 @@
+-/*
+- *  Keyboard backlight LED driver for Chrome OS.
+- *
+- *  Copyright (C) 2012 Google, Inc.
+- *
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License, or
+- *  (at your option) any later version.
+- *
+- *  This program is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *  GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++// Keyboard backlight LED driver for ChromeOS.
++//
++// Copyright (C) 2012 Google, Inc.
+ 
+ #include <linux/acpi.h>
+ #include <linux/leds.h>
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+2.17.1
