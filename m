@@ -1,128 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 97A2760764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03E5C60763
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752348AbeFFO21 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:28:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56530 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752177AbeFFO2Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:28:25 -0400
-Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
- callback
-To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
- <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
- <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
- <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
- <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Wed, 6 Jun 2018 10:28:17 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S933020AbeFFQ0z (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:26:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42876 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752483AbeFFQ0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:26:54 -0400
+Date: Wed, 6 Jun 2018 17:26:47 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, peterz@infradead.org,
+        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180606162647.GI10870@e108498-lin.cambridge.arm.com>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
+ <20180606143739.GF10870@e108498-lin.cambridge.arm.com>
+ <20180606152000.GB15894@localhost.localdomain>
+ <20180606152950.GH10870@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18060614-0068-0000-0000-000003044104
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009139; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01043027; UDB=6.00534142; IPR=6.00822157;
- MB=3.00021491; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-06 14:28:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060614-0069-0000-0000-00004496FF2A
-Message-Id: <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806060166
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606152950.GH10870@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05/2018 08:19 AM, Pierre Morel wrote:
-> On 30/05/2018 16:33, Tony Krowiak wrote:
->> On 05/24/2018 05:08 AM, Pierre Morel wrote:
->>> On 23/05/2018 16:45, Tony Krowiak wrote:
->>>> On 05/16/2018 04:03 AM, Pierre Morel wrote:
->>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
->>>>>> Implements the open callback on the mediated matrix device.
->>>>>> The function registers a group notifier to receive notification
->>>>>> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
->>>>>> the vfio_ap device driver will get access to the guest's
->>>>>> kvm structure. With access to this structure the driver will:
->>>>>>
->>>>>> 1. Ensure that only one mediated device is opened for the guest
->>>
->>> You should explain why.
->>>
->>>>>>
->>>>>> 2. Configure access to the AP devices for the guest.
->>>>>>
->>> ...snip...
->>>>>> +void kvm_ap_refcount_inc(struct kvm *kvm)
->>>>>> +{
->>>>>> +    atomic_inc(&kvm->arch.crypto.aprefs);
->>>>>> +}
->>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_inc);
->>>>>> +
->>>>>> +void kvm_ap_refcount_dec(struct kvm *kvm)
->>>>>> +{
->>>>>> +    atomic_dec(&kvm->arch.crypto.aprefs);
->>>>>> +}
->>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_dec);
->>>>>
->>>>> Why are these functions inside kvm-ap ?
->>>>> Will anyone use this outer of vfio-ap ?
->>>>
->>>> As I've stated before, I made the choice to contain all interfaces 
->>>> that
->>>> access KVM in kvm-ap because I don't think it is appropriate for 
->>>> the device
->>>> driver to have to have "knowledge" of the inner workings of KVM. 
->>>> Why does
->>>> it matter whether any entity outside of the vfio_ap device driver 
->>>> calls
->>>> these functions? I could ask a similar question if the interfaces were
->>>> contained in vfio-ap; what if another device driver needs access to 
->>>> these
->>>> interfaces?
->>>
->>> This is very driver specific and only used during initialization.
->>> It is not a common property of the cryptographic interface.
->>>
->>> I really think you should handle this inside the driver.
->>
->> We are going to have to agree to disagree on this one. Is it not 
->> possible
->> that future drivers - e.g., when full virtualization is implemented - 
->> will
->> require access to KVM?
->
-> I do not think that an access to KVM is required for full virtualization.
+On Wednesday 06 Jun 2018 at 16:29:50 (+0100), Quentin Perret wrote:
+> On Wednesday 06 Jun 2018 at 17:20:00 (+0200), Juri Lelli wrote:
+> > > > This brings me to another question. Let's say there are multiple users of
+> > > > the Energy Model in the system. Shouldn't the units of frequency and power
+> > > > not standardized, maybe Mhz and mW?
+> > > > The task scheduler doesn't care since it is only interested in power diffs
+> > > > but other user might do.
+> > > 
+> > > So the good thing about specifying units is that we can probably assume
+> > > ranges on the values. If the power is in mW, assuming that we're talking
+> > > about a single CPU, it'll probably fit in 16 bits. 65W/core should be
+> > > a reasonable upper-bound ?
+> > > But there are also vendors who might not be happy with disclosing absolute
+> > > values ... These are sometimes considered sensitive and only relative
+> > > numbers are discussed publicly. Now, you can also argue that we already
+> > > have units specified in IPA for ex, and that it doesn't really matter if
+> > > a driver "lies" about the real value, as long as the ratios are correct.
+> > > And I guess that anyone can do measurement on the hardware and get those
+> > > values anyway. So specifying a unit (mW) for the power is probably a
+> > > good idea.
+> > 
+> > Mmm, I remember we fought quite a bit while getting capacity-dmpis-mhz
+> > binding accepted, and one of the musts was that the values were going to
+> > be normalized. So, normalized power values again maybe?
+> 
+> Hmmm, that's a very good point ... There should be no problems on the
+> scheduler side -- we're only interested in correct ratios. But I'm not
+> sure on the thermal side ... I will double check that.
 
-You may be right, but at this point, there is no guarantee. I stand by my
-design on this one.
+So, IPA needs to compare the power of the CPUs with the power of other
+things (e.g. GPUs). So we can't normalize the power of the CPUs without
+normalizing in the same scale the power of the other devices. I see two
+possibilities:
 
->
->
->
+1) we don't normalize the CPU power values, we specify them in mW, and
+   we document (and maybe throw a warning if we see an issue at runtime)
+   the max range of values. The max expected power for a single core
+   could be 65K for ex (16bits). And based on that we can verify
+   overflow and precision issues in the algorithms, and we keep it easy
+   to compare the CPU power numbers with other devices.
+
+2) we normalize the power values, but that means that the EM framework
+   has to manage not only CPUs, but also other types of devices, and
+   normalized their power values as well. That's required to keep the
+   scale consistent across all of them, and keep comparisons doable.
+   But if we do this, we still have to keep a normalized and a "raw"
+   version of the power for all devices. And the "raw" power must still
+   be in the same unit across all devices, otherwise the re-scaling is
+   broken. The main benefit of doing this is that the range of
+   acceptable "raw" power values can be larger, probably 32bits, and
+   that the precision of the normalized range is arbitrary.
+
+I feel like 2) involves a lot of complexity, and not so many benefits,
+so I'd be happy to go with 1). Unless I forgot something ?
+
+Thanks,
+Quentin
