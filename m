@@ -1,66 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3339F601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9945A60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933656AbeFFRB1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:01:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47512 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933630AbeFFRBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:01:23 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak90 (was ghak32) V3 05/10] audit: add containerid support for tty_audit
-Date: Wed,  6 Jun 2018 12:58:32 -0400
-Message-Id: <28ab8ad3c4e5de6f61b928eeb2af030b04a8820b.1528304204.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
+        id S1752154AbeFFNbE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:31:04 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:39514 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeFFNbD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:31:03 -0400
+X-Google-Smtp-Source: ADUXVKK3sqDI+TuRagXLdxHTejy8jq/ByXeRJAU987JC9r+69IPdwVSYrVBewBV4Ro+2u1CGgj+bl9oO9AmYj6jd/JBma0jIAcLJ
+MIME-Version: 1.0
+Date: Wed, 06 Jun 2018 06:31:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000096009b056df92dc1@google.com>
+Subject: kernel BUG at fs/btrfs/volumes.c:LINE!
+From: syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, jbacik@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add audit container identifier auxiliary record to tty logging rule
-event standalone records.
+Hello,
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+syzbot found the following crash on:
+
+HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f700af800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
+dashboard link: https://syzkaller.appspot.com/bug?extid=5b658d997a83984507a6
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com
+
+RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007f787067fbf0
+RBP: 0000000000000001 R08: 00000000200000c0 R09: 0000000020000080
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000014
+R13: 0000000000000001 R14: 0000000000700008 R15: 0000000000000043
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/volumes.c:1032!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 1 PID: 22303 Comm: syz-executor1 Not tainted 4.17.0+ #86
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:btrfs_prepare_close_one_device fs/btrfs/volumes.c:1032 [inline]
+RIP: 0010:close_fs_devices+0xba7/0xfa0 fs/btrfs/volumes.c:1052
+Code: 56 18 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2b 03 00 00 49 83 6c 24  
+30 01 e9 25 f8 ff ff e8 90 f4 b3 fe 0f 0b e8 89 f4 b3 fe <0f> 0b 48 89 f7  
+e8 ef 64 f0 fe e9 f6 f5 ff ff e8 75 f4 b3 fe 0f 0b
+RSP: 0018:ffff8801af6ff050 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000c70c000
+RDX: 0000000000040000 RSI: ffffffff82c56437 RDI: 0000000000000286
+RBP: ffff8801af6ff350 R08: ffffed003b5e46d7 R09: ffffed003b5e46d6
+R10: ffffed003b5e46d6 R11: ffff8801daf236b3 R12: ffff8801c58ac190
+R13: 0000000000000000 R14: ffff8801b1a6a940 R15: ffff8801b4d7d680
+FS:  00007f7870680700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000704094 CR3: 00000001c51e8000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  btrfs_close_devices+0x29/0x150 fs/btrfs/volumes.c:1085
+  btrfs_mount_root+0x1419/0x1e70 fs/btrfs/super.c:1610
+  mount_fs+0xae/0x328 fs/super.c:1277
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount+0x40/0x60 fs/namespace.c:1027
+  btrfs_mount+0x4a1/0x213e fs/btrfs/super.c:1661
+  mount_fs+0xae/0x328 fs/super.c:1277
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x564/0x30b0 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45843a
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 dd 8f fb ff c3 66 2e 0f  
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 ba 8f fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f787067fba8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000080 RCX: 000000000045843a
+RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007f787067fbf0
+RBP: 0000000000000001 R08: 00000000200000c0 R09: 0000000020000080
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000014
+R13: 0000000000000001 R14: 0000000000700008 R15: 0000000000000043
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace 383b0406a01f2edd ]---
+RIP: 0010:btrfs_prepare_close_one_device fs/btrfs/volumes.c:1032 [inline]
+RIP: 0010:close_fs_devices+0xba7/0xfa0 fs/btrfs/volumes.c:1052
+Code: 56 18 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2b 03 00 00 49 83 6c 24  
+30 01 e9 25 f8 ff ff e8 90 f4 b3 fe 0f 0b e8 89 f4 b3 fe <0f> 0b 48 89 f7  
+e8 ef 64 f0 fe e9 f6 f5 ff ff e8 75 f4 b3 fe 0f 0b
+RSP: 0018:ffff8801af6ff050 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000c70c000
+RDX: 0000000000040000 RSI: ffffffff82c56437 RDI: 0000000000000286
+RBP: ffff8801af6ff350 R08: ffffed003b5e46d7 R09: ffffed003b5e46d6
+R10: ffffed003b5e46d6 R11: ffff8801daf236b3 R12: ffff8801c58ac190
+R13: 0000000000000000 R14: ffff8801b1a6a940 R15: ffff8801b4d7d680
+FS:  00007f7870680700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000704094 CR3: 00000001c51e8000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- drivers/tty/tty_audit.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
-index e30aa6b..66bd850 100644
---- a/drivers/tty/tty_audit.c
-+++ b/drivers/tty/tty_audit.c
-@@ -66,8 +66,9 @@ static void tty_audit_log(const char *description, dev_t dev,
- 	uid_t uid = from_kuid(&init_user_ns, task_uid(tsk));
- 	uid_t loginuid = from_kuid(&init_user_ns, audit_get_loginuid(tsk));
- 	unsigned int sessionid = audit_get_sessionid(tsk);
-+	struct audit_context *context = audit_alloc_local();
- 
--	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_TTY);
-+	ab = audit_log_start(context, GFP_KERNEL, AUDIT_TTY);
- 	if (ab) {
- 		char name[sizeof(tsk->comm)];
- 
-@@ -80,6 +81,8 @@ static void tty_audit_log(const char *description, dev_t dev,
- 		audit_log_n_hex(ab, data, size);
- 		audit_log_end(ab);
- 	}
-+	audit_log_contid(context, "tty", audit_get_contid(tsk));
-+	audit_free_context(context);
- }
- 
- /**
--- 
-1.8.3.1
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
