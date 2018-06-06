@@ -1,210 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUIi8tos"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E731B601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79127606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932654AbeFFKAk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:00:40 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50963 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752425AbeFFKAh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:37 -0400
-X-Google-Smtp-Source: ADUXVKI0s/gcKq22bXqUZIAq8iDgOWrlt61mB9B24UHMa57l14Zjyz+NZU9wRqOQty/qrgHRg6HXAw==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 13/14] regulator: da9063: Handle less LDOs on DA9063L
-Date: Wed,  6 Jun 2018 12:00:02 +0200
-Message-Id: <20180606100003.17067-13-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+        id S1752237AbeFFOhq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:37:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:41150 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752114AbeFFOhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 10:37:45 -0400
+Date: Wed, 6 Jun 2018 15:37:39 +0100
+From: Quentin Perret <quentin.perret@arm.com>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: peterz@infradead.org, rjw@rjwysocki.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, mingo@redhat.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180606143739.GF10870@e108498-lin.cambridge.arm.com>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the LDOs present only on DA9063 at the end of the list, so that
-the DA9063L can simply indicate less LDOs and still share the list of
-regulators with DA9063.
+Hi Dietmar,
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V2: No change
-V3: No change
-V4: Change subject s/mfd/regulator/
-V5: No change
----
- drivers/regulator/da9063-regulator.c | 76 +++++++++++++++++++++---------------
- 1 file changed, 45 insertions(+), 31 deletions(-)
+On Wednesday 06 Jun 2018 at 15:12:15 (+0200), Dietmar Eggemann wrote:
+> > +static void fd_update_cs_table(struct em_cs_table *cs_table, int cpu)
+> > +{
+> > +	unsigned long cmax = arch_scale_cpu_capacity(NULL, cpu);
+> > +	int max_cap_state = cs_table->nr_cap_states - 1;
+> > +	unsigned long fmax = cs_table->state[max_cap_state].frequency;
+> > +	int i;
+> > +
+> > +	for (i = 0; i < cs_table->nr_cap_states; i++)
+> > +		cs_table->state[i].capacity = cmax *
+> > +					cs_table->state[i].frequency / fmax;
+> > +}
+> 
+> This has issues on a 32bit system. cs_table->state[i].capacity (unsigned
+> long) overflows with the frequency values stored in Hz.
 
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index eeb0d431dda1..0c09e73e0b23 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -529,6 +529,32 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
- 		.ilimit = BFIELD(DA9063_REG_BUCK_ILIM_A,
- 				 DA9063_BMEM_ILIM_MASK),
- 	},
-+	{
-+		DA9063_LDO(DA9063, LDO3, 900, 20, 3440),
-+		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO3_SEL),
-+		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO3_LIM),
-+	},
-+	{
-+		DA9063_LDO(DA9063, LDO7, 900, 50, 3600),
-+		.suspend = BFIELD(DA9063_REG_LDO7_CONT, DA9063_VLDO7_SEL),
-+		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO7_LIM),
-+	},
-+	{
-+		DA9063_LDO(DA9063, LDO8, 900, 50, 3600),
-+		.suspend = BFIELD(DA9063_REG_LDO8_CONT, DA9063_VLDO8_SEL),
-+		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO8_LIM),
-+	},
-+	{
-+		DA9063_LDO(DA9063, LDO9, 950, 50, 3600),
-+		.suspend = BFIELD(DA9063_REG_LDO9_CONT, DA9063_VLDO9_SEL),
-+	},
-+	{
-+		DA9063_LDO(DA9063, LDO11, 900, 50, 3600),
-+		.suspend = BFIELD(DA9063_REG_LDO11_CONT, DA9063_VLDO11_SEL),
-+		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO11_LIM),
-+	},
-+
-+	/* The following LDOs are present only on DA9063, not on DA9063L */
- 	{
- 		DA9063_LDO(DA9063, LDO1, 600, 20, 1860),
- 		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO1_SEL),
-@@ -537,11 +563,6 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
- 		DA9063_LDO(DA9063, LDO2, 600, 20, 1860),
- 		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO2_SEL),
- 	},
--	{
--		DA9063_LDO(DA9063, LDO3, 900, 20, 3440),
--		.suspend = BFIELD(DA9063_REG_DVC_1, DA9063_VLDO3_SEL),
--		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO3_LIM),
--	},
- 	{
- 		DA9063_LDO(DA9063, LDO4, 900, 20, 3440),
- 		.suspend = BFIELD(DA9063_REG_DVC_2, DA9063_VLDO4_SEL),
-@@ -555,29 +576,11 @@ static const struct da9063_regulator_info da9063_regulator_info[] = {
- 		DA9063_LDO(DA9063, LDO6, 900, 50, 3600),
- 		.suspend = BFIELD(DA9063_REG_LDO6_CONT, DA9063_VLDO6_SEL),
- 	},
--	{
--		DA9063_LDO(DA9063, LDO7, 900, 50, 3600),
--		.suspend = BFIELD(DA9063_REG_LDO7_CONT, DA9063_VLDO7_SEL),
--		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO7_LIM),
--	},
--	{
--		DA9063_LDO(DA9063, LDO8, 900, 50, 3600),
--		.suspend = BFIELD(DA9063_REG_LDO8_CONT, DA9063_VLDO8_SEL),
--		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO8_LIM),
--	},
--	{
--		DA9063_LDO(DA9063, LDO9, 950, 50, 3600),
--		.suspend = BFIELD(DA9063_REG_LDO9_CONT, DA9063_VLDO9_SEL),
--	},
-+
- 	{
- 		DA9063_LDO(DA9063, LDO10, 900, 50, 3600),
- 		.suspend = BFIELD(DA9063_REG_LDO10_CONT, DA9063_VLDO10_SEL),
- 	},
--	{
--		DA9063_LDO(DA9063, LDO11, 900, 50, 3600),
--		.suspend = BFIELD(DA9063_REG_LDO11_CONT, DA9063_VLDO11_SEL),
--		.oc_event = BFIELD(DA9063_REG_STATUS_D, DA9063_LDO11_LIM),
--	},
- };
- 
- /* Link chip model with regulators info table */
-@@ -587,6 +590,11 @@ static struct da9063_dev_model regulators_models[] = {
- 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
- 		.type = PMIC_TYPE_DA9063,
- 	},
-+	{
-+		.regulator_info = da9063_regulator_info,
-+		.n_regulators = ARRAY_SIZE(da9063_regulator_info) - 6,
-+		.type = PMIC_TYPE_DA9063L,
-+	},
- 	{ }
- };
- 
-@@ -641,28 +649,34 @@ static struct of_regulator_match da9063_matches[] = {
- 	[DA9063_ID_BPERI]            = { .name = "bperi",           },
- 	[DA9063_ID_BCORES_MERGED]    = { .name = "bcores-merged"    },
- 	[DA9063_ID_BMEM_BIO_MERGED]  = { .name = "bmem-bio-merged", },
-+	[DA9063_ID_LDO3]             = { .name = "ldo3",            },
-+	[DA9063_ID_LDO7]             = { .name = "ldo7",            },
-+	[DA9063_ID_LDO8]             = { .name = "ldo8",            },
-+	[DA9063_ID_LDO9]             = { .name = "ldo9",            },
-+	[DA9063_ID_LDO11]            = { .name = "ldo11",           },
-+	/* The following LDOs are present only on DA9063, not on DA9063L */
- 	[DA9063_ID_LDO1]             = { .name = "ldo1",            },
- 	[DA9063_ID_LDO2]             = { .name = "ldo2",            },
--	[DA9063_ID_LDO3]             = { .name = "ldo3",            },
- 	[DA9063_ID_LDO4]             = { .name = "ldo4",            },
- 	[DA9063_ID_LDO5]             = { .name = "ldo5",            },
- 	[DA9063_ID_LDO6]             = { .name = "ldo6",            },
--	[DA9063_ID_LDO7]             = { .name = "ldo7",            },
--	[DA9063_ID_LDO8]             = { .name = "ldo8",            },
--	[DA9063_ID_LDO9]             = { .name = "ldo9",            },
- 	[DA9063_ID_LDO10]            = { .name = "ldo10",           },
--	[DA9063_ID_LDO11]            = { .name = "ldo11",           },
- };
- 
- static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
- 		struct platform_device *pdev,
- 		struct of_regulator_match **da9063_reg_matches)
- {
-+	struct da9063 *da9063 = dev_get_drvdata(pdev->dev.parent);
- 	struct da9063_regulators_pdata *pdata;
- 	struct da9063_regulator_data *rdata;
- 	struct device_node *node;
-+	int da9063_matches_len = ARRAY_SIZE(da9063_matches);
- 	int i, n, num;
- 
-+	if (da9063->type == PMIC_TYPE_DA9063L)
-+		da9063_matches_len -= 6;
-+
- 	node = of_get_child_by_name(pdev->dev.parent->of_node, "regulators");
- 	if (!node) {
- 		dev_err(&pdev->dev, "Regulators device node not found\n");
-@@ -670,7 +684,7 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
- 	}
- 
- 	num = of_regulator_match(&pdev->dev, node, da9063_matches,
--				 ARRAY_SIZE(da9063_matches));
-+				 da9063_matches_len);
- 	of_node_put(node);
- 	if (num < 0) {
- 		dev_err(&pdev->dev, "Failed to match regulators\n");
-@@ -689,7 +703,7 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
- 	pdata->n_regulators = num;
- 
- 	n = 0;
--	for (i = 0; i < ARRAY_SIZE(da9063_matches); i++) {
-+	for (i = 0; i < da9063_matches_len; i++) {
- 		if (!da9063_matches[i].init_data)
- 			continue;
- 
--- 
-2.16.2
+Ah, thank you very much for pointing this out ! I haven't tried on a 32bit
+machine yet, my bad. I'll fix that for v4.
+
+> 
+> Maybe something like this to cure it:
+> 
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index 6ad53f1cf7e6..c13b3eb8bf35 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -144,9 +144,11 @@ static void fd_update_cs_table(struct em_cs_table *cs_table, int cpu)
+>  	unsigned long fmax = cs_table->state[max_cap_state].frequency;
+>  	int i;
+>  
+> -	for (i = 0; i < cs_table->nr_cap_states; i++)
+> -		cs_table->state[i].capacity = cmax *
+> -					cs_table->state[i].frequency / fmax;
+> +	for (i = 0; i < cs_table->nr_cap_states; i++) {
+> +		u64 val = (u64)cmax * cs_table->state[i].frequency;
+> +		do_div(val, fmax);
+> +		cs_table->state[i].capacity = (unsigned long)val;
+> +	}
+>  }
+
+Hmmm yes, that should work.
+
+> 
+> This brings me to another question. Let's say there are multiple users of
+> the Energy Model in the system. Shouldn't the units of frequency and power
+> not standardized, maybe Mhz and mW?
+> The task scheduler doesn't care since it is only interested in power diffs
+> but other user might do.
+
+So the good thing about specifying units is that we can probably assume
+ranges on the values. If the power is in mW, assuming that we're talking
+about a single CPU, it'll probably fit in 16 bits. 65W/core should be
+a reasonable upper-bound ?
+But there are also vendors who might not be happy with disclosing absolute
+values ... These are sometimes considered sensitive and only relative
+numbers are discussed publicly. Now, you can also argue that we already
+have units specified in IPA for ex, and that it doesn't really matter if
+a driver "lies" about the real value, as long as the ratios are correct.
+And I guess that anyone can do measurement on the hardware and get those
+values anyway. So specifying a unit (mW) for the power is probably a
+good idea.
+
+For the frequency, I would rather keep it consistent with what CPUFreq
+manages. But that should be specified somewhere, I agree.
+
+What do you think ?
+
+Thanks !
+Quentin
