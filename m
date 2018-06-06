@@ -1,92 +1,268 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2C8B6070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=anholt.net
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 541CE60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754003AbeFFRs4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:48:56 -0400
-Received: from anholt.net ([50.246.234.109]:49560 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753895AbeFFRsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:48:53 -0400
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        amd-gfx@lists.freedesktop.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH 1/3 v2] drm/v3d: Take a lock across GPU scheduler job creation and queuing.
-Date: Wed,  6 Jun 2018 10:48:51 -0700
-Message-Id: <20180606174851.12433-1-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <1528274797.26063.6.camel@pengutronix.de>
-References: <1528274797.26063.6.camel@pengutronix.de>
+        id S1752986AbeFFSjU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:39:20 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37793 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752387AbeFFSjS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 14:39:18 -0400
+X-Google-Smtp-Source: ADUXVKKqMFAeYnAS70bMVB54uru5Lsvot4J9Or6inPGTqe5mz+k432NuHGTGU+p2K/+iJTYKz+Jydg==
+Subject: Re: [PATCH v6 2/5] efi: Add embedded peripheral firmware support
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        dmitry.torokhov@gmail.com, mfuzzey@parkeon.com,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        nbroeking@me.com, bjorn.andersson@linaro.org,
+        Torsten Duwe <duwe@suse.de>, Kees Cook <keescook@chromium.org>,
+        x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180601125330.25054-1-hdegoede@redhat.com>
+ <20180601125330.25054-3-hdegoede@redhat.com>
+ <20180605210753.GC4511@wotan.suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <30260c62-eb8b-7d88-4ce1-83e969546790@redhat.com>
+Date: Wed, 6 Jun 2018 20:39:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605210753.GC4511@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Between creation and queueing of a job, you need to prevent any other
-job from being created and queued.  Otherwise the scheduler's fences
-may be signaled out of seqno order.
+Hi,
 
-v2: move mutex unlock to the error label.
+On 05-06-18 23:07, Luis R. Rodriguez wrote:
+> On Fri, Jun 01, 2018 at 02:53:27PM +0200, Hans de Goede wrote:
+>> Just like with PCI options ROMs, which we save in the setup_efi_pci*
+>> functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
+>> sometimes may contain data which is useful/necessary for peripheral drivers
+>> to have access to.
+>>
+>> Specifically the EFI code may contain an embedded copy of firmware which
+>> needs to be (re)loaded into the peripheral. Normally such firmware would be
+>> part of linux-firmware, but in some cases this is not feasible, for 2
+>> reasons:
+>>
+>> 1) The firmware is customized for a specific use-case of the chipset / use
+>> with a specific hardware model, so we cannot have a single firmware file
+>> for the chipset. E.g. touchscreen controller firmwares are compiled
+>> specifically for the hardware model they are used with, as they are
+>> calibrated for a specific model digitizer.
+>>
+>> 2) Despite repeated attempts we have failed to get permission to
+>> redistribute the firmware. This is especially a problem with customized
+>> firmwares, these get created by the chip vendor for a specific ODM and the
+>> copyright may partially belong with the ODM, so the chip vendor cannot
+>> give a blanket permission to distribute these.
+>>
+>> This commit adds support for finding peripheral firmware embedded in the
+>> EFI code and making this available to peripheral drivers through the
+>> standard firmware loading mechanism.
+>>
+>> Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware near the end
+>> of start_kernel(), just before calling rest_init(), this is on purpose
+>> because the typical EFI_BOOT_SERVICES_CODE memory-segment is too large for
+>> early_memremap(), so the check must be done after mm_init(). This relies
+>> on EFI_BOOT_SERVICES_CODE not being free-ed until efi_free_boot_services()
+>> is called, which means that this will only work on x86 for now.
+>>
+>> Reported-by: Dave Olsthoorn <dave@bewaar.me>
+>> Suggested-by: Peter Jones <pjones@redhat.com>
+>> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>> ---
+>> Changes in v6:
+>> -Rework code to remove casts from if (prefix == mem) comparison
+>> -Use SHA256 hashes instead of crc32 sums
+>> -Add new READING_FIRMWARE_EFI_EMBEDDED read_file_id and use it
+>> -Call security_kernel_read_file(NULL, READING_FIRMWARE_EFI_EMBEDDED)
+>>   to check if this is allowed before looking at EFI embedded fw
+>> -Document why we are not using the PI Firmware Volume protocol
+>>
+>> Changes in v5:
+>> -Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
+>>
+>> Changes in v4:
+>> -Drop note in docs about EFI_FIRMWARE_VOLUME_PROTOCOL, it is not part of
+>>   UEFI proper, so the EFI maintainers don't want us referring people to it
+>> -Use new EFI_BOOT_SERVICES flag
+>> -Put the new fw_get_efi_embedded_fw() function in its own fallback_efi.c
+>>   file which only gets built when EFI_EMBEDDED_FIRMWARE is selected
+>> -Define an empty stub for fw_get_efi_embedded_fw() in fallback.h hwen
+>>   EFI_EMBEDDED_FIRMWARE is not selected, to avoid the need for #ifdefs
+>>   in firmware_loader/main.c
+>> -Properly call security_kernel_post_read_file() on the firmware returned
+>>   by efi_get_embedded_fw() to make sure that we are allowed to use it
+>>
+>> Changes in v3:
+>> -Fix the docs using "efi-embedded-fw" as property name instead of
+>>   "efi-embedded-firmware"
+>>
+>> Changes in v2:
+>> -Rebased on driver-core/driver-core-next
+>> -Add documentation describing the EFI embedded firmware mechanism to:
+>>   Documentation/driver-api/firmware/request_firmware.rst
+>> -Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
+>>   fw support if this is set. This is an invisible option which should be
+>>   selected by drivers which need this
+>> -Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
+>>   from the efi-embedded-fw code, instead drivers using this are expected to
+>>   export a dmi_system_id array, with each entries' driver_data pointing to a
+>>   efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
+>> -Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
+>>   this avoids us messing with the EFI memmap and avoids the need to make
+>>   changes to efi_mem_desc_lookup()
+>> -Make the firmware-loader code only fallback to efi_get_embedded_fw() if the
+>>   passed in device has the "efi-embedded-firmware" device-property bool set
+>> -Skip usermodehelper fallback when "efi-embedded-firmware" device-property
+>>   is set
+>> ---
+>>   .../driver-api/firmware/request_firmware.rst  |  76 +++++++++
+>>   drivers/base/firmware_loader/Makefile         |   1 +
+>>   drivers/base/firmware_loader/fallback.h       |  12 ++
+>>   drivers/base/firmware_loader/fallback_efi.c   |  56 +++++++
+>>   drivers/base/firmware_loader/main.c           |   2 +
+>>   drivers/firmware/efi/Kconfig                  |   3 +
+>>   drivers/firmware/efi/Makefile                 |   1 +
+>>   drivers/firmware/efi/embedded-firmware.c      | 148 ++++++++++++++++++
+>>   include/linux/efi.h                           |   6 +
+>>   include/linux/efi_embedded_fw.h               |  25 +++
+>>   include/linux/fs.h                            |   1 +
+>>   init/main.c                                   |   3 +
+>>   12 files changed, 334 insertions(+)
+>>   create mode 100644 drivers/base/firmware_loader/fallback_efi.c
+>>   create mode 100644 drivers/firmware/efi/embedded-firmware.c
+>>   create mode 100644 include/linux/efi_embedded_fw.h
+>>
+>> diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
+>> index f62bdcbfed5b..66ab91f3357d 100644
+>> --- a/Documentation/driver-api/firmware/request_firmware.rst
+>> +++ b/Documentation/driver-api/firmware/request_firmware.rst
+>> @@ -73,3 +73,79 @@ If something went wrong request_firmware() returns non-zero and fw_entry
+>>   is set to NULL. Once your driver is done with processing the firmware it
+>>   can call call release_firmware(fw_entry) to release the firmware image
+>>   and any related resource.
+>> +
+>> +EFI embedded firmware support
+>> +=============================
+>> +
+>> +On some devices the system's EFI code / ROM may contain an embedded copy
+>> +of firmware for some of the system's integrated peripheral devices and
+>> +the peripheral's Linux device-driver needs to access this firmware.
+>> +
+>> +A device driver which needs this can describe the firmware it needs
+>> +using an efi_embedded_fw_desc struct:
+>> +
+>> +.. kernel-doc:: include/linux/efi_embedded_fw.h
+>> +   :functions: efi_embedded_fw_desc
+>> +
+>> +The EFI embedded-fw code works by scanning all EFI_BOOT_SERVICES_CODE memory
+>> +segments for an eight byte sequence matching prefix, if the prefix is found it
+>> +then does a crc32
+> 
+> You still refer to crc32 here. This needs to be updated.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
----
- drivers/gpu/drm/v3d/v3d_drv.h | 5 +++++
- drivers/gpu/drm/v3d/v3d_gem.c | 4 ++++
- 2 files changed, 9 insertions(+)
+Ack.
 
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-index a043ac3aae98..26005abd9c5d 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.h
-+++ b/drivers/gpu/drm/v3d/v3d_drv.h
-@@ -85,6 +85,11 @@ struct v3d_dev {
- 	 */
- 	struct mutex reset_lock;
- 
-+	/* Lock taken when creating and pushing the GPU scheduler
-+	 * jobs, to keep the sched-fence seqnos in order.
-+	 */
-+	struct mutex sched_lock;
-+
- 	struct {
- 		u32 num_allocated;
- 		u32 pages_allocated;
-diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-index b513f9189caf..269fe16379c0 100644
---- a/drivers/gpu/drm/v3d/v3d_gem.c
-+++ b/drivers/gpu/drm/v3d/v3d_gem.c
-@@ -550,6 +550,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	if (ret)
- 		goto fail;
- 
-+	mutex_lock(&v3d->sched_lock);
- 	if (exec->bin.start != exec->bin.end) {
- 		ret = drm_sched_job_init(&exec->bin.base,
- 					 &v3d->queue[V3D_BIN].sched,
-@@ -576,6 +577,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	kref_get(&exec->refcount); /* put by scheduler job completion */
- 	drm_sched_entity_push_job(&exec->render.base,
- 				  &v3d_priv->sched_entity[V3D_RENDER]);
-+	mutex_unlock(&v3d->sched_lock);
- 
- 	v3d_attach_object_fences(exec);
- 
-@@ -594,6 +596,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	return 0;
- 
- fail_unreserve:
-+	mutex_unlock(&v3d->sched_lock);
- 	v3d_unlock_bo_reservations(dev, exec, &acquire_ctx);
- fail:
- 	v3d_exec_put(exec);
-@@ -615,6 +618,7 @@ v3d_gem_init(struct drm_device *dev)
- 	spin_lock_init(&v3d->job_lock);
- 	mutex_init(&v3d->bo_lock);
- 	mutex_init(&v3d->reset_lock);
-+	mutex_init(&v3d->sched_lock);
- 
- 	/* Note: We don't allocate address 0.  Various bits of HW
- 	 * treat 0 as special, such as the occlusion query counters
--- 
-2.17.0
+>> over length bytes and if that matches makes a copy of length
+>> +bytes and adds that to its list with found firmwares.
+>> +
+>> +To avoid doing this somewhat expensive scan on all systems, dmi matching is
+>> +used. Drivers are expected to export a dmi_system_id array, with each entries'
+>> +driver_data pointing to an efi_embedded_fw_desc.
+>> +
+>> +To register this array with the efi-embedded-fw code, a driver needs to:
+>> +
+>> +1. Always be builtin to the kernel or store the dmi_system_id array in a
+>> +   separate object file which always gets builtin.
+>> +
+>> +2. Add an extern declaration for the dmi_system_id array to
+>> +   include/linux/efi_embedded_fw.h.
+>> +
+>> +3. Add the dmi_system_id array to the embedded_fw_table in
+>> +   drivers/firmware/efi/embedded-firmware.c wrapped in a #ifdef testing that
+>> +   the driver is being builtin.
+>> +
+>> +4. Add "select EFI_EMBEDDED_FIRMWARE if EFI_STUB" to its Kconfig entry.
+>> +
+>> +The request_firmware() function will always first try to load firmware with
+>> +the specified name directly from the disk, so the EFI embedded-fw can always
+>> +be overridden by placing a file under /lib/firmare.
+>> +
+>> +To make request_firmware() fallback to trying EFI embedded firmwares after this,
+>> +the driver must set a boolean "efi-embedded-firmware" device-property on the
+>> +device before passing it to request_firmware().
+> 
+> No, as I have requested before I don't want this, it is silly to have such
+> functionality always be considered as a fallback if we only have 2 drivers
+> which need this. > Please add a call which only if used would then *evaluate*
+> such fallback prospect.
+
+Ok, so I've a few questions about this:
+
+1) You want me to add a:
+
+int firmware_request_with_system_firmware_fallback(struct device *device, const char *name);
+
+function? Note I've deliberately named it with_system_firmware_fallback
+and not with_efi_fallback to have the name be platform agnostic in
+case we want something similar on other platforms in the future.
+
+And then have this pass a new FW_OPT_SYS_FW_FALLBACK flag to
+_request_firmware(), right ?
+
+2) Should this flag then be checked inside _request_firmware() before it
+calls fw_get_efi_embedded_fw() (which may be an empty stub), or
+inside fw_get_efi_embedded_fw()?
+
+3) Also should I then still check device_property_read_bool(dev,
+"efi-embedded-firmware") inside fw_get_efi_embedded_fw(), or do you
+want to simply always try the fallback if the driver indicates this ?
+
+The reason I'm asking this is because the presence or not of the
+firmware inside the system-firmware is a per board thing, not
+a per driver thing. But since the firmware is unique per board
+anyways it would be fine to skip the "efi-embedded-firmware"
+device-prop check. If we're going to have a separate
+firmware_request_with_system_firmware_fallback() function for
+this then I'm leaning towards dropping the whole check myself.
+
+So are you ok with dropping the device-prop check then ?
+
+4) Since I'm naming the new function
+int firmware_request_with_system_firmware_fallback()
+I'm thinking that fw_get_efi_embedded_fw() should be renamed
+to firmware_fallback_system_firmware() and the EFI based code
+will just be the first (and for now only) provider of this
+fallback with an empty stub (inline in the .h file) for when
+there is no provider defined. Do you agree with renaming
+fw_get_efi_embedded_fw() to
+firmware_request_with_system_firmware_fallback() ?
+
+(note this is the wrapper which calls efi_get_embedded_fw()
+which itself will not be renamed of course).
+
+Regards,
+
+Hans
