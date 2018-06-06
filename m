@@ -1,114 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 813D6601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="o53JA4dY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D3BB607B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeFFNbp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:31:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35913 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeFFNbn (ORCPT
+        id S1752348AbeFFNyU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:54:20 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:32798 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752302AbeFFNyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:31:43 -0400
-Date: Wed, 6 Jun 2018 06:30:56 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-80ae7b1a918e78b0bae88b0c0ad413d3fdced968@git.kernel.org>
-Cc: liu.song.a23@gmail.com, peterz@infradead.org, jroedel@suse.de,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, songliubraving@fb.com,
-        tglx@linutronix.de, 0x7f454c46@gmail.com, bp@alien8.de,
-        tariqt@mellanox.com, mingo@kernel.org, mike.travis@hpe.com
-Reply-To: liu.song.a23@gmail.com, peterz@infradead.org, hpa@zytor.com,
-          jroedel@suse.de, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, songliubraving@fb.com, tariqt@mellanox.com,
-          0x7f454c46@gmail.com, bp@alien8.de, mike.travis@hpe.com,
-          mingo@kernel.org
-In-Reply-To: <20180604162224.303870257@linutronix.de>
-References: <20180604162224.303870257@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/apic/vector: Prevent hlist corruption and
- leaks
-Git-Commit-ID: 80ae7b1a918e78b0bae88b0c0ad413d3fdced968
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 6 Jun 2018 09:54:15 -0400
+X-IronPort-AV: E=Sophos;i="5.49,483,1520899200";
+   d="scan'208";a="346934929"
+From: Norbert Manthey <nmanthey@amazon.de>
+CC: Norbert Manthey <nmanthey@amazon.de>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [less-CONFIG_NET 3/7] seccomp: include net and bpf files
+Date: Wed, 6 Jun 2018 15:53:22 +0200
+Message-ID: <1528293206-24298-3-git-send-email-nmanthey@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
+References: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
+ <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  80ae7b1a918e78b0bae88b0c0ad413d3fdced968
-Gitweb:     https://git.kernel.org/tip/80ae7b1a918e78b0bae88b0c0ad413d3fdced968
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 4 Jun 2018 17:33:53 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 15:18:19 +0200
+When we want to use CONFIG_SECCOMP_FILTER without CONFIG_NET, we have
+to ensure that the required files that would be pulled in via
+CONFIG_NET are compiled when dropping CONFIG_NET.
 
-x86/apic/vector: Prevent hlist corruption and leaks
-
-Several people observed the WARN_ON() in irq_matrix_free() which triggers
-when the caller tries to free an vector which is not in the allocation
-range. Song provided the trace information which allowed to decode the root
-cause.
-
-The rework of the vector allocation mechanism failed to preserve a sanity
-check, which prevents setting a new target vector/CPU when the previous
-affinity change has not fully completed.
-
-As a result a half finished affinity change can be overwritten, which can
-cause the leak of a irq descriptor pointer on the previous target CPU and
-double enqueue of the hlist head into the cleanup lists of two or more
-CPUs. After one CPU cleaned up its vector the next CPU will invoke the
-cleanup handler with vector 0, which triggers the out of range warning in
-the matrix allocator.
-
-Prevent this by checking the apic_data of the interrupt whether the
-move_in_progress flag is false and the hlist node is not hashed. Return
--EBUSY if not.
-
-This prevents the damage and restores the behaviour before the vector
-allocation rework, but due to other changes in that area it also widens the
-chance that user space can observe -EBUSY. In theory this should be fine,
-but actually not all user space tools handle -EBUSY correctly. Addressing
-that is not part of this fix, but will be addressed in follow up patches.
-
-Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
-Reported-by: Dmitry Safonov <0x7f454c46@gmail.com>
-Reported-by: Tariq Toukan <tariqt@mellanox.com>
-Reported-by: Song Liu <liu.song.a23@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Song Liu <songliubraving@fb.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Link: https://lkml.kernel.org/r/20180604162224.303870257@linutronix.de
-
+Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
 ---
- arch/x86/kernel/apic/vector.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ kernel/bpf/Makefile | 3 ++-
+ net/Makefile        | 5 +++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index bb6f7a2148d7..72b575a0b662 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -235,6 +235,15 @@ static int allocate_vector(struct irq_data *irqd, const struct cpumask *dest)
- 	if (vector && cpu_online(cpu) && cpumask_test_cpu(cpu, dest))
- 		return 0;
- 
-+	/*
-+	 * Careful here. @apicd might either have move_in_progress set or
-+	 * be enqueued for cleanup. Assigning a new vector would either
-+	 * leave a stale vector on some CPU around or in case of a pending
-+	 * cleanup corrupt the hlist.
-+	 */
-+	if (apicd->move_in_progress || !hlist_unhashed(&apicd->clist))
-+		return -EBUSY;
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index a713fd2..5d13269 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -4,7 +4,8 @@ obj-y := core.o
+ obj-$(CONFIG_BPF_SYSCALL) += syscall.o verifier.o inode.o helpers.o tnum.o
+ obj-$(CONFIG_BPF_SYSCALL) += hashtab.o arraymap.o percpu_freelist.o bpf_lru_list.o lpm_trie.o map_in_map.o
+ obj-$(CONFIG_BPF_SYSCALL) += disasm.o
+-ifeq ($(CONFIG_NET),y)
 +
- 	vector = irq_matrix_alloc(vector_matrix, dest, resvd, &cpu);
- 	if (vector > 0)
- 		apic_update_vector(irqd, vector, cpu);
++ifneq ($(filter y,$(CONFIG_NET) $(CONFIG_SECCOMP_FILTER)),)
+ obj-$(CONFIG_BPF_SYSCALL) += devmap.o
+ obj-$(CONFIG_BPF_SYSCALL) += cpumap.o
+ obj-$(CONFIG_BPF_SYSCALL) += offload.o
+diff --git a/net/Makefile b/net/Makefile
+index a6147c6..08f1875 100644
+--- a/net/Makefile
++++ b/net/Makefile
+@@ -11,6 +11,11 @@ obj-$(CONFIG_NET)		:= socket.o core/
+ tmp-$(CONFIG_COMPAT) 		:= compat.o
+ obj-$(CONFIG_NET)		+= $(tmp-y)
+ 
++ifneq ($(CONFIG_NET),y)
++obj-$(CONFIG_SECCOMP_FILTER)    += core/filter.o
++obj-$(CONFIG_SECCOMP_FILTER)    += core/flow_dissector.o
++endif
++
+ # LLC has to be linked before the files in net/802/
+ obj-$(CONFIG_LLC)		+= llc/
+ obj-$(CONFIG_NET)		+= ethernet/ 802/ sched/ netlink/ bpf/
+-- 
+2.7.4
+
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
