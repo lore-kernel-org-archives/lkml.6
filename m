@@ -1,68 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 327EE601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsTKgZCE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 560886063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932394AbeFFP4g (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:56:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42049 "EHLO mx2.suse.de"
+        id S932413AbeFFIHA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:07:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932212AbeFFP4f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:56:35 -0400
-Date: Wed, 6 Jun 2018 17:53:47 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: willy@infradead.org, clm@fb.com, jbacik@fb.com, dsterba@suse.com,
-        dsterba@suse.cz, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fs: btrfs: Change return type to vm_fault_t
-Message-ID: <20180606155347.GL3539@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Souptick Joarder <jrdr.linux@gmail.com>,
-        willy@infradead.org, clm@fb.com, jbacik@fb.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180606142444.GA3806@jordon-HP-15-Notebook-PC>
+        id S932280AbeFFIG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:06:58 -0400
+Date: Wed, 6 Jun 2018 10:06:33 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/61] 4.9.107-stable review
+Message-ID: <20180606080633.GA15647@kroah.com>
+References: <20180605170117.643936916@linuxfoundation.org>
+ <5b3b383d-ced2-a00c-3c8c-5b3f506cfe38@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180606142444.GA3806@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <5b3b383d-ced2-a00c-3c8c-5b3f506cfe38@kernel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 07:54:44PM +0530, Souptick Joarder wrote:
-> @@ -9009,7 +9007,7 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->  	unlock_extent_cached(io_tree, page_start, page_end, &cached_state);
->  
->  out_unlock:
-> -	if (!ret) {
-> +	if (!ret2) {
->  		btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
->  		sb_end_pagefault(inode->i_sb);
->  		extent_changeset_free(data_reserved);
+On Tue, Jun 05, 2018 at 04:01:05PM -0600, Shuah Khan wrote:
+> On 06/05/2018 11:01 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.107 release.
+> > There are 61 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu Jun  7 17:00:59 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.107-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Compiled and booted on my test system. No dmesg regressions.
 
-9013                 return VM_FAULT_LOCKED;
-9014         }
-9015         unlock_page(page);
-9016 out:
-9017         btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, (ret != 0));
-9018         btrfs_delalloc_release_space(inode, data_reserved, page_start,
-9019                                      reserved_space, (ret != 0));
+Thanks for testing these and letting me know.
 
-I've noticed that there's 'ret' used on lines 9017 and 19, comparing to
-a raw number. Is this going to be ok once vm_fault_t is it's own type?
-
-There's no corresponding define for 0 among the VM_FAULT_* values, I'd
-expect 0 to work interchangeably, similar to the blk_status_t type:
-
-https://elixir.bootlin.com/linux/latest/source/include/linux/blk_types.h#L30
-
-#define	BLK_STS_OK 0
-#define BLK_STS_NOTSUPP		((__force blk_status_t)1)
-#define BLK_STS_TIMEOUT		((__force blk_status_t)2)
-#define BLK_STS_NOSPC		((__force blk_status_t)3)
-...
-
-Your patch is otherwise ok, I'm just curious if this is something to
-watch for once vmfault type is switched.
+greg k-h
