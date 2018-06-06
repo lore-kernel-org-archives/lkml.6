@@ -1,125 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="u5k5E2UG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EBF360764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTtdPQBN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8AFD8601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752093AbeFFOcO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:32:14 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:38466 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751994AbeFFOcM (ORCPT
+        id S932522AbeFFImr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:42:47 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:46488 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932394AbeFFImp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:32:12 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-Subject: Re: [PATCH 1/4] serial: 8250: Copy em485 from port to real port.
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: matwey.kornilov@gmail.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
- <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
- <20180606094942.71190-4-giulio.benetti@micronovasrl.com>
- <069f5cd3309e83d13c74929f240720b232ea7251.camel@linux.intel.com>
- <0bc400b1-6178-2021-c9a3-3190d1a1de32@micronovasrl.com>
- <2abe2137e699e5ae3100b97316da469f6d1c9bb9.camel@linux.intel.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <e312f1be-30e7-b379-3baa-8ae51fda61b2@micronovasrl.com>
-Date: Wed, 6 Jun 2018 16:32:07 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 6 Jun 2018 04:42:45 -0400
+X-Google-Smtp-Source: ADUXVKKrY3WvetRSNJ/MguEx7fc4iX5w2AycME7xG3w4SI13F/iRsUqFgN1tO5SQRXn2M/V8kHyrlCeHpv1P08GwBB0=
 MIME-Version: 1.0
-In-Reply-To: <2abe2137e699e5ae3100b97316da469f6d1c9bb9.camel@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F3B6EABDF@ORSMSX114.amr.corp.intel.com>
+References: <1527560464-19466-1-git-send-email-sai.praneeth.prakhya@intel.com>
+ <CAFoFrHYcD7fGYaJzKwcPCtu+XyR+mh5ORDqmCpiBjLmEkDfwOQ@mail.gmail.com> <FFF73D592F13FD46B8700F0A279B802F3B6EABDF@ORSMSX114.amr.corp.intel.com>
+From: Naresh Bhat <naresh.bhat@linaro.org>
+Date: Wed, 6 Jun 2018 14:12:43 +0530
+Message-ID: <CAFoFrHbOkKpfrt-NVX9wm49aR1Mv7dXLVrDuXGQPiD0ZNbvyrw@mail.gmail.com>
+Subject: Re: [PATCH V5 0/3] Use efi_rts_wq to invoke EFI Runtime Services
+To: "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        "Neri, Ricardo" <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
-
-Il 06/06/2018 15:11, Andy Shevchenko ha scritto:
-> On Wed, 2018-06-06 at 14:15 +0200, Giulio Benetti wrote:
->> Il 06/06/2018 13:56, Andy Shevchenko ha scritto:
->>> On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
->>>> em485 gets lost during
->>>>
->>>> Copy em485 to final uart port.
->>>>
->>>
->>> Is it needed at all?
->>>
->>> The individual driver decides either to use software emulation (and
->>> calls explicitly serial8250_em485_init() for that) or do HW assisted
->>> stuff.
+On 4 June 2018 at 09:57, Prakhya, Sai Praneeth
+<sai.praneeth.prakhya@intel.com> wrote:
+>> > Testing:
+>> > --------
+>> > Tested using LUV (Linux UEFI Validation) for x86_64, x86_32 and arm64
+>> > (qemu only). Will appreciate the effort if someone could test the
+>> > patches on real ARM/ARM64 machines.
+>> > LUV: https://01.org/linux-uefi-validation
 >>
->> In 8250_dw.c, during probe(), I need to call dw8250_rs485_config()
->> against local struct uart_8250_port uart = {};
->> Inside serial8250_register_8250_port() not all uart fields are
->> copied(em485 too).
->> So after probe, em485 is NULL.
->>
->> Another way could be to call dw8250_rs485_config() against real uart
->> port, after calling serial8250_register_8250_port(),
->> would it make sense?
-> 
-> Look at OMAP case closely. They have a callback to configure RS485 which
-> is called in uart_set_rs485_config()  which is called whenever user
-> space does TIOCGRS485 IOCTL.
-> 
-> So, it's completely driven by user space which makes sense by my
-> opinion.
+>> I have tested V4 series on ThunderX2 Val1 and Saber platform by integrating the
+>> patches with LUV project.
+>> I will test V5 version soon and let you know the outcome.
+>
+> Thanks a lot! for taking time to test the patch set, Naresh. Will be waiting to see the result.
 
-This is my problem, being driven only by userspace means that until you 
-don't open ttyS* from there, dw8250_rs485_config() won't be called and 
-rs485 won't be configured.
-In the case you have RTS_AFTER_SEND and 
-"linux,rs485-enabled-at-boot-time" in dts, you need to handle RTS correctly.
-Without calling:
-- uart_get_rs485_mode() to collect dts properties
-and
-- dw8250_rs485_config() to configure according properties
-the result is RTS NOT asserted, then pin is HIGH, meaning that rs485 
-transceiver will be in tx mode until port is open.
+Sai, I did upgrade LUV kernel to v4.17, apply and test your patches by
+running LUV on QEMU and ThunderX2 hardware.  All efi test results
+looks ok. But as Ard pointed, I also noticed hang issue after
+executing reboot command on console on real hardware.
 
-Other drivers I've watched to for insipiration are:
-- atmel_serial.c
-- fsl_lpuart.c
-- imx.c
-etc.
 
-everything containing uart_get_rs485_mode().
-
-The main difficulty to understand this without a scope is that on 
-rs485.txt documentation the property "rs485-rts-active-low" is described as:
-"drive RTS low when sending (default is high)"
-Instead it should report:
-"de-assert RTS when sending(pin high), default is asserted(pin low)"
-
-Maybe I should send a patch for that also.
-I ended to this conclusion because on every check of RTS_AFTER_SEND and 
-SER_RS485_RTS_ON_SEND RTS is treated this way.
-
-Try to take a look at uart_port_dtr_rts() in serial_core.c for example.
-Or serial8250_em485_rts_after_send() in 8250_port.c
-
-What do you think?
--- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+>
+> Regards,
+> Sai
