@@ -1,72 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsgVEkzw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B61A6037B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JibJHGsJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0353B601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932167AbeFFG2f (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:28:35 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:39328 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932097AbeFFG2d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:28:33 -0400
-X-Google-Smtp-Source: ADUXVKIT+fECegZOosT4RnG2ucwoVIvZmyitFQMFBA1bEFgEVNyML+joc8U3IEMxHZzHkWV6pGL62GuK2WuAWcSGf1k=
+        id S933045AbeFFQd3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:33:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36534 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932514AbeFFQd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:33:26 -0400
+X-Google-Smtp-Source: ADUXVKLLKJZA4FYsz+szuj0J0SkewPHzPoSmowmI6jFKNaofYX7Ir2Q1POao6jUpigrXPbJ7hbvyrOXx6JJuHpx6eu4=
 MIME-Version: 1.0
-In-Reply-To: <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
-References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com> <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Jun 2018 08:28:32 +0200
-X-Google-Sender-Auth: tc94Vrmp48Hz-0hdKZv9sp5CwCs
-Message-ID: <CAMuHMdVTNv8WufhX4E-aae2G5EOMhQcCjtzsQB+c-c8-MQ8dNQ@mail.gmail.com>
-Subject: Re: [PATCH v4 04/12] mfd: da9063: Replace DA9063_NUM_IRQ with ARRAY_SIZE
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <e91c75f3-f7a4-6f51-9911-7e22d5d05084@roeck-us.net>
+References: <1527530497-10392-1-git-send-email-ray.jui@broadcom.com>
+ <1527530497-10392-2-git-send-email-ray.jui@broadcom.com> <20180605194124.GA26885@rob-hp-laptop>
+ <e91c75f3-f7a4-6f51-9911-7e22d5d05084@roeck-us.net>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 6 Jun 2018 11:33:04 -0500
+X-Gmail-Original-Message-ID: <CABGGisxEvWDy16SKE2RG-vhUHBZHSCCHyfwJsPY16B1fQS-=cA@mail.gmail.com>
+Message-ID: <CABGGisxEvWDy16SKE2RG-vhUHBZHSCCHyfwJsPY16B1fQS-=cA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] Documentation: DT: Consolidate SP805 binding docs
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Rob Herring <robh@kernel.org>, Ray Jui <ray.jui@broadcom.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
-
-On Wed, Jun 6, 2018 at 1:10 AM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> Replace DA9063_NUM_IRQ macro which is not used anywhere with
-> plain ARRAY_SIZE().
-
-Thanks for your patch!
-
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-
-With the issue below fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/include/linux/mfd/da9063/core.h
-> +++ b/include/linux/mfd/da9063/core.h
-> @@ -73,7 +73,6 @@ enum da9063_irqs {
->  };
+On Wed, Jun 6, 2018 at 11:19 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 06/05/2018 12:41 PM, Rob Herring wrote:
+>>
+>> On Mon, May 28, 2018 at 11:01:32AM -0700, Ray Jui wrote:
+>>>
+>>> Consolidate two SP805 binding documents "arm,sp805.txt" and
+>>> "sp805-wdt.txt" into "arm,sp805.txt" that matches the naming of the
+>>> desired compatible string to be used
+>>>
+>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>> ---
+>>>   .../devicetree/bindings/watchdog/arm,sp805.txt     | 27
+>>> ++++++++++++++-----
+>>>   .../devicetree/bindings/watchdog/sp805-wdt.txt     | 31
+>>> ----------------------
+>>>   2 files changed, 20 insertions(+), 38 deletions(-)
+>>>   delete mode 100644
+>>> Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
+>>
+>>
+>> Would be good to get a ACK from FSL/NXP person on this. It looks to me
+>> like the driver fetches the wrong clock as it gets the first one and the
+>> driver really wants 'wdog_clk'. In any case, their dts files should be
+>> updated.
+>>
 >
->  #define DA9063_IRQ_BASE_OFFSET 0
+> This is really confusing, since he deleted file lists apb_pclk first.
+> Does the watchdog driver need apb_pclk or wdog_clk ? That isn't clear to me.
+> arch/arm64/boot/dts/hisilicon/hi3660.dtsi only provides apb_pclk, or at
+> least
+> it says so.
 
-DA9063_IRQ_BASE_OFFSET is now unused, so please remove it
-(before someone starts using it, and makes it non-zero ;-)
+Note that that clock source is 32KHz. That is obviously a mistake
+because no one clocks their bus/register interface at 32KHz. Someone
+just filled in something that happened to work.
 
-> -#define DA9063_NUM_IRQ         (DA9063_IRQ_GPI15 + 1 - DA9063_IRQ_BASE_OFFSET)
+> The fsl dts files all have apb_pclk first.
 
-Gr{oetje,eeting}s,
+It's all kind of a mess, but fortunately one we should be able to clean-up.
 
-                        Geert
+The compatible string changes too, but AMBA bus devices don't actually
+use the compatible string as they use the ID registers to match. I
+suppose some other OS could do things differently. Worth the risk to
+clean-up IMO.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> Either case, why are two clocks asked for in the first place ? Are there
+> situations where the second clock is actually used/useful ?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+For clocks, the bus needs "apb_pclk" and the driver just gets the
+first clock. The driver is obviously going to want the functional
+clock that determines the counter rate. That should
+
+Primecell peripherals are about the only ones that have clear specs
+WRT clock inputs. Yet we've still managed to screw them up. There are
+2 clocks in the spec, so the DT has (or should have) 2 clocks.
+
+Rob
