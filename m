@@ -1,186 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E92816070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D57C4605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeFFLoM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 07:44:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41005 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751729AbeFFLoL (ORCPT
+        id S932300AbeFFG5Q (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:57:16 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:43886 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932239AbeFFG5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 07:44:11 -0400
-Date: Wed, 6 Jun 2018 04:43:00 -0700
-From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-94d49eb30e854c84d1319095b5dd0405a7da9362@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        kirill.shutemov@linux.intel.com, mingo@kernel.org,
-        thomas.lendacky@amd.com
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          kirill.shutemov@linux.intel.com, mingo@kernel.org,
-          thomas.lendacky@amd.com
-In-Reply-To: <20180518113028.79825-1-kirill.shutemov@linux.intel.com>
-References: <20180518113028.79825-1-kirill.shutemov@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mm: Decouple dynamic __PHYSICAL_MASK from AMD
- SME
-Git-Commit-ID: 94d49eb30e854c84d1319095b5dd0405a7da9362
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 6 Jun 2018 02:57:14 -0400
+Date: Wed, 6 Jun 2018 16:57:31 +1000 (AEST)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 08/11] macintosh/via-pmu: Replace via-pmu68k driver with
+ via-pmu driver
+In-Reply-To: <CAMuHMdVheowFa8bx0fg-_Dvx+TMZhPbvouTs82Y3tq1gtSpRMQ@mail.gmail.com>
+Message-ID: <alpine.LNX.2.21.1806061619240.8@nippy.intranet>
+References: <cover.1527909627.git.fthain@telegraphics.com.au> <f32f4e3a0fd736152f768b7a00bfc731daba1629.1527909627.git.fthain@telegraphics.com.au> <7ce9a8c3996506ae6f9ab16b3cf73c287e205a89.1527909627.git.fthain@telegraphics.com.au>
+ <8597ac466215f573d8bea40e74fdec2bf72fabbb.1527909627.git.fthain@telegraphics.com.au> <878b389293851359e53de186bf302ce52d95ad95.1527909627.git.fthain@telegraphics.com.au> <adba0545c06cd6c67e26c433990d036b0d7e968c.1527909627.git.fthain@telegraphics.com.au>
+ <166b4c3a7347fe27f12bda86d50533cd01ee11b9.1527909627.git.fthain@telegraphics.com.au> <73507a3e9444da17c222cf74df41842ce30d15ee.1527909627.git.fthain@telegraphics.com.au> <de8edb03dbd2fd25b53d0bdf9c6d65adf9aa0aa3.1527909627.git.fthain@telegraphics.com.au>
+ <CAMuHMdVheowFa8bx0fg-_Dvx+TMZhPbvouTs82Y3tq1gtSpRMQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  94d49eb30e854c84d1319095b5dd0405a7da9362
-Gitweb:     https://git.kernel.org/tip/94d49eb30e854c84d1319095b5dd0405a7da9362
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Fri, 18 May 2018 14:30:28 +0300
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 13:38:01 +0200
+On Mon, 4 Jun 2018, Geert Uytterhoeven wrote:
 
-x86/mm: Decouple dynamic __PHYSICAL_MASK from AMD SME
+> 
+> > Don't call pmu_shutdown() or pmu_restart() on early PowerBooks: the 
+> > PMU device found in these PowerBooks isn't supported.
+> 
+> Shouldn't that be a separate patch?
+> 
+> > --- a/arch/m68k/mac/misc.c
+> > +++ b/arch/m68k/mac/misc.c
+> 
+> > @@ -477,9 +445,8 @@ void mac_poweroff(void)
+> >                    macintosh_config->adb_type == MAC_ADB_CUDA) {
+> >                 cuda_shutdown();
+> >  #endif
+> > -#ifdef CONFIG_ADB_PMU68K
+> > -       } else if (macintosh_config->adb_type == MAC_ADB_PB1
+> > -               || macintosh_config->adb_type == MAC_ADB_PB2) {
+> > +#ifdef CONFIG_ADB_PMU
+> > +       } else if (macintosh_config->adb_type == MAC_ADB_PB2) {
+> >                 pmu_shutdown();
+> >  #endif
+> >         }
+> > @@ -519,9 +486,8 @@ void mac_reset(void)
+> >                    macintosh_config->adb_type == MAC_ADB_CUDA) {
+> >                 cuda_restart();
+> >  #endif
+> > -#ifdef CONFIG_ADB_PMU68K
+> > -       } else if (macintosh_config->adb_type == MAC_ADB_PB1
+> > -               || macintosh_config->adb_type == MAC_ADB_PB2) {
+> > +#ifdef CONFIG_ADB_PMU
+> > +       } else if (macintosh_config->adb_type == MAC_ADB_PB2) {
+> >                 pmu_restart();
+> >  #endif
+> >         } else if (CPU_IS_030) {
+> 
 
-AMD SME claims one bit from physical address to indicate whether the
-page is encrypted or not. To achieve that we clear out the bit from
-__PHYSICAL_MASK.
+The stability problem here is bigger than just pmu_restart() and 
+pmu_shutdown(), so those hunks are insufficient. You need to prevent the 
+via-pmu68k driver from loading in the first place and to drop all the 
+PMU_68K_V1 cases.
 
-The capability to adjust __PHYSICAL_MASK is required beyond AMD SME.
-For instance for upcoming Intel Multi-Key Total Memory Encryption.
+But splitting this patch in that way creates potential merge conflicts, 
+which is a hassle. E.g. this hunk:
 
-Factor it out into a separate feature with own Kconfig handle.
+-       ....
+-       switch (macintosh_config->adb_type) {
+-       case MAC_ADB_PB1:
+-               pmu_kind = PMU_68K_V1;
+-               break;
+-       case MAC_ADB_PB2:
+-               pmu_kind = PMU_68K_V2;
+-               break;
+-       default:
+-               pmu_kind = PMU_UNKNOWN;
+-               return -ENODEV;
+-       }
+-       ...
 
-It also helps with overhead of AMD SME. It saves more than 3k in .text
-on defconfig + AMD_MEM_ENCRYPT:
+would get split over two patches.
 
-	add/remove: 3/2 grow/shrink: 5/110 up/down: 189/-3753 (-3564)
+The way I see it, having no PMU driver for PMU_68K_V1 machines is a bug. 
+And loading any of the existing PMU drivers on that hardware is also a 
+bug. These bugs are equivalent in that either one means you can't use the 
+keyboard, trackpad etc. So there's no value in cherry-picking the other 
+bug.
 
-We would need to return to this once we have infrastructure to patch
-constants in code. That's good candidate for it.
+If you are using v4.17 on a PMU_68K_V1 machine, you probably already have 
+CONFIG_ADB_PMU68K=n. With that config, here's nothing to be gained from 
+bisecting these changes.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-mm@kvack.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180518113028.79825-1-kirill.shutemov@linux.intel.com
+Does that make sense? Did I overlook other possible reason(s) to split up 
+this patch?
 
----
- arch/x86/Kconfig                    | 4 ++++
- arch/x86/boot/compressed/kaslr_64.c | 5 +++++
- arch/x86/include/asm/page_types.h   | 8 +++++++-
- arch/x86/mm/mem_encrypt_identity.c  | 3 +++
- arch/x86/mm/pgtable.c               | 5 +++++
- 5 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c07f492b871a..43a8fc476296 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -337,6 +337,9 @@ config ARCH_SUPPORTS_UPROBES
- config FIX_EARLYCON_MEM
- 	def_bool y
- 
-+config DYNAMIC_PHYSICAL_MASK
-+	bool
-+
- config PGTABLE_LEVELS
- 	int
- 	default 5 if X86_5LEVEL
-@@ -1508,6 +1511,7 @@ config ARCH_HAS_MEM_ENCRYPT
- config AMD_MEM_ENCRYPT
- 	bool "AMD Secure Memory Encryption (SME) support"
- 	depends on X86_64 && CPU_SUP_AMD
-+	select DYNAMIC_PHYSICAL_MASK
- 	---help---
- 	  Say yes to enable support for the encryption of system memory.
- 	  This requires an AMD processor that supports Secure Memory
-diff --git a/arch/x86/boot/compressed/kaslr_64.c b/arch/x86/boot/compressed/kaslr_64.c
-index 522d11431433..748456c365f4 100644
---- a/arch/x86/boot/compressed/kaslr_64.c
-+++ b/arch/x86/boot/compressed/kaslr_64.c
-@@ -69,6 +69,8 @@ static struct alloc_pgt_data pgt_data;
- /* The top level page table entry pointer. */
- static unsigned long top_level_pgt;
- 
-+phys_addr_t physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-+
- /*
-  * Mapping information structure passed to kernel_ident_mapping_init().
-  * Due to relocation, pointers must be assigned at run time not build time.
-@@ -81,6 +83,9 @@ void initialize_identity_maps(void)
- 	/* If running as an SEV guest, the encryption mask is required. */
- 	set_sev_encryption_mask();
- 
-+	/* Exclude the encryption mask from __PHYSICAL_MASK */
-+	physical_mask &= ~sme_me_mask;
-+
- 	/* Init mapping_info with run-time function/buffer pointers. */
- 	mapping_info.alloc_pgt_page = alloc_pgt_page;
- 	mapping_info.context = &pgt_data;
-diff --git a/arch/x86/include/asm/page_types.h b/arch/x86/include/asm/page_types.h
-index 1e53560a84bb..c85e15010f48 100644
---- a/arch/x86/include/asm/page_types.h
-+++ b/arch/x86/include/asm/page_types.h
-@@ -17,7 +17,6 @@
- #define PUD_PAGE_SIZE		(_AC(1, UL) << PUD_SHIFT)
- #define PUD_PAGE_MASK		(~(PUD_PAGE_SIZE-1))
- 
--#define __PHYSICAL_MASK		((phys_addr_t)(__sme_clr((1ULL << __PHYSICAL_MASK_SHIFT) - 1)))
- #define __VIRTUAL_MASK		((1UL << __VIRTUAL_MASK_SHIFT) - 1)
- 
- /* Cast *PAGE_MASK to a signed type so that it is sign-extended if
-@@ -55,6 +54,13 @@
- 
- #ifndef __ASSEMBLY__
- 
-+#ifdef CONFIG_DYNAMIC_PHYSICAL_MASK
-+extern phys_addr_t physical_mask;
-+#define __PHYSICAL_MASK		physical_mask
-+#else
-+#define __PHYSICAL_MASK		((phys_addr_t)((1ULL << __PHYSICAL_MASK_SHIFT) - 1))
-+#endif
-+
- extern int devmem_is_allowed(unsigned long pagenr);
- 
- extern unsigned long max_low_pfn_mapped;
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index 1b2197d13832..7ae36868aed2 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -527,6 +527,7 @@ void __init sme_enable(struct boot_params *bp)
- 		/* SEV state cannot be controlled by a command line option */
- 		sme_me_mask = me_mask;
- 		sev_enabled = true;
-+		physical_mask &= ~sme_me_mask;
- 		return;
- 	}
- 
-@@ -561,4 +562,6 @@ void __init sme_enable(struct boot_params *bp)
- 		sme_me_mask = 0;
- 	else
- 		sme_me_mask = active_by_default ? me_mask : 0;
-+
-+	physical_mask &= ~sme_me_mask;
- }
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ffc8c13c50e4..3ca59cf7a7f9 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -8,6 +8,11 @@
- #include <asm/fixmap.h>
- #include <asm/mtrr.h>
- 
-+#ifdef CONFIG_DYNAMIC_PHYSICAL_MASK
-+phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-+EXPORT_SYMBOL(physical_mask);
-+#endif
-+
- #define PGALLOC_GFP (GFP_KERNEL_ACCOUNT | __GFP_ZERO)
- 
- #ifdef CONFIG_HIGHPTE
+-- 
