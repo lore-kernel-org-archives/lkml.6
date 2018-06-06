@@ -1,117 +1,252 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5ak/Bbm9GFtWFgAAmS7hNA
-	; Thu, 07 Jun 2018 05:08:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4icxCMZOGFtjLgAAmS7hNA
+	; Wed, 06 Jun 2018 21:16:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EE7496089E; Thu,  7 Jun 2018 05:08:08 +0000 (UTC)
+	id 480AF60861; Wed,  6 Jun 2018 21:16:18 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="euEcTOeY"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X1mf9IN/"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 476926063F;
-	Thu,  7 Jun 2018 05:08:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 476926063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8F4576063F;
+	Wed,  6 Jun 2018 21:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F4576063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752619AbeFGFIF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 01:08:05 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35186 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeFGFIE (ORCPT
+        id S1752434AbeFFVQP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:16:15 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:49336 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751885AbeFFVQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 01:08:04 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j15-v6so16166920wme.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 22:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=saN0P3aMk8uZ7XdzVkuQgIQh9rnFYnS3HHSOAGCTEFA=;
-        b=euEcTOeYagOzfjLceWsWIGdbReHA8sRBWVddL9hb70KLsLxLlAnsXNR2mB4wl/Gj8x
-         rMxZ6pyFaphGH0XhMoBAK+sTpJZZM6wpUtgX6ZXiEWwUUQ9aB4ZuwUIYjAu52wLCH6Xv
-         +Gw823hSZI8CzAgJ1xscYHCOGi801SrhLLT04=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=saN0P3aMk8uZ7XdzVkuQgIQh9rnFYnS3HHSOAGCTEFA=;
-        b=F60XwAx8gcWtDGramIzS8s4osgbwkocIhNCF2gsdU7RxO9j+XjdT8Sh7shUJ3mXt1W
-         YQyVG97+xtHvu7CYoPlhAhYX4b+TiHTB8QjZm1RJI/TxckhmavgjHIamHHyGYdjDHKGq
-         2Q2kuEHr4QYA3cpC7mXhPh+HWPbbqmZjfxe3RG/xug7lrDTjVB3AXyPGHw3etBDkxvB8
-         Z0FVUrtlRslWgH3uzTcNq0ZcvRr08tlU0L+weVttcLcIwFYpsxRrv2De0DmywOWeh+xz
-         SstHjQLzx7SuDDeLzRP63k6vpRBeyfvTSQmT6mkzp2iHzTMv148IHFlK56YNLmlfoX5B
-         8Eng==
-X-Gm-Message-State: APt69E22HTuLX++esIFPks7E33OoJCKPOP8zTNvhFn3WicG+88NgzifF
-        rx87sPZbtPCERk1ndXU5p996VA==
-X-Google-Smtp-Source: ADUXVKIE9gZ45IbVwfNtJejC4ebgCS+5u8VE9kW8uxtNhyeUlPPWWZ4QQ5/+pD4UccvfYgZ5rS9RLw==
-X-Received: by 2002:a1c:5ec9:: with SMTP id s192-v6mr425915wmb.54.1528348082885;
-        Wed, 06 Jun 2018 22:08:02 -0700 (PDT)
-Received: from dell ([2.31.163.53])
-        by smtp.gmail.com with ESMTPSA id f133-v6sm600639wme.42.2018.06.06.22.08.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Jun 2018 22:08:02 -0700 (PDT)
-Date: Thu, 7 Jun 2018 06:08:00 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: stm32: enforce dependency on CONFIG_MFD_STM32_TIMERS
-Message-ID: <20180607050800.GD21163@dell>
-References: <20180525160523.29124-1-arnd@arndb.de>
- <20180606081314.GC11810@ulmo>
+        Wed, 6 Jun 2018 17:16:13 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w56LAY0f151728;
+        Wed, 6 Jun 2018 21:16:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=SRzU9/PKn5iP0dYZW9pIzVgedfKVdXA7picpDQoIryg=;
+ b=X1mf9IN/PcBaG3HVn0Fj9i0m4kb3PomD1kKCAucHa6p5C9xa+h5wAJC16891nr0dG2Uf
+ WJoVANK5yJfruSWY8YealvqHGsmad3xrgZQUlP2YLa3L3g9vNcLPoZWoGpyPOD6S4qM6
+ zzAAQZARdJGmvNH5o+C2CgRhI6B4FnS2NS4bBWX76ezGKxW/td7UYiC3LAduFWVRNVj4
+ q+LZSZz6aAq4L8xoVxCwFeQb+imG2itqdt9CYZUKbOOMA7XAuv8vZ0j49QyLKteWzcVc
+ WdDiL28xTeHrUZBO9nVUl/HZzg+3wg05uHMS6dC7naG4wNoAhm5mJjxV04uUUgvK2Nyp Rg==
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jbvyp6ckr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Jun 2018 21:16:02 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w56LG2ru002086
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 6 Jun 2018 21:16:02 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w56LG1KV018912;
+        Wed, 6 Jun 2018 21:16:01 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Jun 2018 14:16:01 -0700
+Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
+ buffers
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-6-andr2000@gmail.com>
+ <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
+ <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
+Date: Wed, 6 Jun 2018 17:19:51 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180606081314.GC11810@ulmo>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=890
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806060234
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 06 Jun 2018, Thierry Reding wrote:
+On 06/06/2018 04:14 AM, Oleksandr Andrushchenko wrote:
+> On 06/04/2018 11:12 PM, Boris Ostrovsky wrote:
+>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
 
-> On Fri, May 25, 2018 at 06:04:54PM +0200, Arnd Bergmann wrote:
-> > When compile-testing the pwm driver without also enabling the
-> > stm32_timers MFD, we run into a link error:
-> > 
-> > drivers/pwm/pwm-stm32.o: In function `stm32_pwm_raw_capture.isra.6':
-> > pwm-stm32.c:(.text+0xcb0): undefined reference to `stm32_timers_dma_burst_read'
-> > 
-> > We don't need the '|| COMPILE_TEST' here, since stm32_timers itself
-> > can be built with CONFIG_COMPILE_TEST on all architectures, so we do
-> > get the coverage through allmodconfig and randconfig builds even
-> > when we make it a hard dependency.
-> > 
-> > Fixes: 7edf7369205b ("pwm: Add driver for STM32 plaftorm")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  drivers/pwm/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> I think Lee already picked up a patch by Fabrice that fixes this by
-> adding a dummy implementation, see:
-> 
-> 	http://patchwork.ozlabs.org/patch/916435/
-> 
-> I prefer your solution, though, because the dummy is pretty redundant if
-> we can just make this a hard-dependency and still get the same coverage.
+>> @@ -121,8 +146,27 @@ static void gntdev_free_map(struct grant_map *map)
+>>       if (map == NULL)
+>>           return;
+>>   +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>> +    if (map->dma_vaddr) {
+>> +        struct gnttab_dma_alloc_args args;
+>> +
+>> +        args.dev = map->dma_dev;
+>> +        args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+>> +        args.nr_pages = map->count;
+>> +        args.pages = map->pages;
+>> +        args.frames = map->frames;
+>> +        args.vaddr = map->dma_vaddr;
+>> +        args.dev_bus_addr = map->dma_bus_addr;
+>> +
+>> +        gnttab_dma_free_pages(&args);
+>> +    } else
+>> +#endif
+>>       if (map->pages)
+>>           gnttab_free_pages(map->count, map->pages);
+>> +
+>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>> +    kfree(map->frames);
+>> +#endif
+>>
+>> Can this be done under if (map->dma_vaddr) ?
+>
+>>   In other words, is it
+>> possible for dma_vaddr to be NULL and still have unallocated frames
+>> pointer?
+> It is possible to have vaddr == NULL and frames != NULL as we
+> allocate frames outside of gnttab_dma_alloc_pages which
+> may fail. Calling kfree on NULL pointer is safe,
 
-The two patches aren't mutually exclusive. :)
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I am not questioning safety of the code, I would like avoid another ifdef.
+
+
+> so
+> I see no reason to change this code.
+>>
+>>>       kfree(map->pages);
+>>>       kfree(map->grants);
+>>>       kfree(map->map_ops);
+>>> @@ -132,7 +176,8 @@ static void gntdev_free_map(struct grant_map *map)
+>>>       kfree(map);
+>>>   }
+>>>   -static struct grant_map *gntdev_alloc_map(struct gntdev_priv
+>>> *priv, int count)
+>>> +static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv,
+>>> int count,
+>>> +                      int dma_flags)
+>>>   {
+>>>       struct grant_map *add;
+>>>       int i;
+>>> @@ -155,6 +200,37 @@ static struct grant_map
+>>> *gntdev_alloc_map(struct gntdev_priv *priv, int count)
+>>>           NULL == add->pages)
+>>>           goto err;
+>>>   +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>> +    add->dma_flags = dma_flags;
+>>> +
+>>> +    /*
+>>> +     * Check if this mapping is requested to be backed
+>>> +     * by a DMA buffer.
+>>> +     */
+>>> +    if (dma_flags & (GNTDEV_DMA_FLAG_WC | GNTDEV_DMA_FLAG_COHERENT)) {
+>>> +        struct gnttab_dma_alloc_args args;
+>>> +
+>>> +        add->frames = kcalloc(count, sizeof(add->frames[0]),
+>>> +                      GFP_KERNEL);
+>>> +        if (!add->frames)
+>>> +            goto err;
+>>> +
+>>> +        /* Remember the device, so we can free DMA memory. */
+>>> +        add->dma_dev = priv->dma_dev;
+>>> +
+>>> +        args.dev = priv->dma_dev;
+>>> +        args.coherent = dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+>>> +        args.nr_pages = count;
+>>> +        args.pages = add->pages;
+>>> +        args.frames = add->frames;
+>>> +
+>>> +        if (gnttab_dma_alloc_pages(&args))
+>>> +            goto err;
+>>> +
+>>> +        add->dma_vaddr = args.vaddr;
+>>> +        add->dma_bus_addr = args.dev_bus_addr;
+>>> +    } else
+>>> +#endif
+>>>       if (gnttab_alloc_pages(count, add->pages))
+>>>           goto err;
+>>>   @@ -325,6 +401,14 @@ static int map_grant_pages(struct grant_map
+>>> *map)
+>>>           map->unmap_ops[i].handle = map->map_ops[i].handle;
+>>>           if (use_ptemod)
+>>>               map->kunmap_ops[i].handle = map->kmap_ops[i].handle;
+>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>> +        else if (map->dma_vaddr) {
+>>> +            unsigned long mfn;
+>>> +
+>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>
+>> Not pfn_to_mfn()?
+> I'd love to, but pfn_to_mfn is only defined for x86, not ARM: [1] and [2]
+> Thus,
+>
+> drivers/xen/gntdev.c:408:10: error: implicit declaration of function
+> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
+>     mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+>
+> So, I'll keep __pfn_to_mfn
+
+
+How will this work on non-PV x86?
+
+-boris
