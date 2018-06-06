@@ -1,100 +1,313 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3IfNB2UFGlt0fwAAmS7hNA
-	; Fri, 08 Jun 2018 04:27:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m57bLYtIGFusdgAAmS7hNA
+	; Wed, 06 Jun 2018 20:50:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4802A6074D; Fri,  8 Jun 2018 04:27:14 +0000 (UTC)
+	id 8C24460861; Wed,  6 Jun 2018 20:50:11 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fn6rWApI"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nRU7REFF"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C0CB960290;
-	Fri,  8 Jun 2018 04:27:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C0CB960290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9864C605BD;
+	Wed,  6 Jun 2018 20:50:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9864C605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751112AbeFHE1M (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 00:27:12 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41148 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750822AbeFHE1K (ORCPT
+        id S1752976AbeFFUuI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 16:50:08 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36322 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752265AbeFFUuG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 00:27:10 -0400
-Received: by mail-pl0-f66.google.com with SMTP id az12-v6so7481350plb.8;
-        Thu, 07 Jun 2018 21:27:09 -0700 (PDT)
+        Wed, 6 Jun 2018 16:50:06 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v131-v6so14538203wma.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 13:50:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tNe2s+ngtcIsg7+GbuVKJMa6kU73NDn6hfT8xfgVVWI=;
-        b=fn6rWApIZHzbkICIK884y/LQT+edJzrGM2SMsD1GGneDPmGqn4Doo01AnrFHPoeAM7
-         vvHKufMhaHIBjqRAr1WehRxseczHelOf36+i+fhjFfVHuBoTdfngparzjPhB23LBHUzf
-         XgwLyKFgYW/c4l1uWRMA6wf/hZ74AI7fim1U9NVf6wQYRMgc/IKVhMXrOezWYJZlg+mL
-         TisOkEICyQLm+AI+TymH1i6Ag3dPD80Ayr7NKug3exiYonnTyst0Fbjg1FFq5dgQ4384
-         drnjDMardABkGmAyX13koM8zXJEx5jKnLSLpQNJhGHRsAF79J9z+QcPusYc+mALdb8nz
-         rFEA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4ffmpEUh6Z/c4OcaBFw1QbfqKOUGPKoLDo9CqFtoKYg=;
+        b=nRU7REFFZwrSgwxwnucfUzB+IZdLedcrEV8KFRCtoyaZmgCAJdngF9kMF0GUZHpzM4
+         7RNNS8vsjZOt870soVXSeVno89oLM79wIs17tEHEGgCc8MvoYO9HPH0I2lYpE875M5L2
+         E47vTIjrq304eMzEheYUo7F87FK2mzsfZDwQhGoZjEnuOuu6gcqoHB25D0nfhf6EsFPO
+         PhSdIMpOmPbjN11xWS2bpKoUQPpnEWD7xzQnKBdlkxzORqUrEphO190IRv5H3FN+vJlq
+         dA3uJVh2u3p7nD+uNDVCMWgn9HpfdJ1zMtuwIeegcZnj6UmLYLWquKgZi7+loKaYhweD
+         tU1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tNe2s+ngtcIsg7+GbuVKJMa6kU73NDn6hfT8xfgVVWI=;
-        b=fSSfCgiJOk88Voy0Hhm3rOWfjEmwwEGInuTOmA5tBK5YsqvVKZGkxpgSq7GV72kxxh
-         qNZ5hAOGUSpnvrq8U4jUhSOAf+jcANfnSMPb5R0JoVxRdysARRTuN0woOY21979zln2j
-         pG6HXgLJ0rUBAfWDQ2hnRYDAn1TUnsSNam1Bv6eXte31JmhugHXEso5If1pp94ujGz01
-         0Y2U3J58cSIIat4IMTIgW1pp7iXDX6Y9f4hdMfYCtfqwaT9Po6/EvD90dHvo37FpfHeE
-         QLeFoiyGz77YJh+/ZKdzQale0oRQE5f05AVIu5s2K501SE5AwPh2gaLxRhLXynxLoUaE
-         pUkA==
-X-Gm-Message-State: APt69E0DTv2jWWyzUJSKD5CGGawfQIcfN18nfyckY6FtRB+gl6iedtXb
-        cQqQ19UpM5wOHvzk//FcfHQ=
-X-Google-Smtp-Source: ADUXVKJeufC4v9OqOu9ZA5URSid52c7Amel5AzXpm6uWtxbDKNsozebYo+Tn5RpbvV4judxioCdRPQ==
-X-Received: by 2002:a17:902:a518:: with SMTP id s24-v6mr2222978plq.144.1528432029473;
-        Thu, 07 Jun 2018 21:27:09 -0700 (PDT)
-Received: from localhost (c-24-4-232-150.hsd1.ca.comcast.net. [24.4.232.150])
-        by smtp.gmail.com with ESMTPSA id y7-v6sm95083374pfy.52.2018.06.07.21.27.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 21:27:08 -0700 (PDT)
-Date: Thu, 7 Jun 2018 21:27:06 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: netdev@vger.kernel.org, madalin.bucur@nxp.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3, 00/10] Support DPAA PTP clock and timestamping
-Message-ID: <20180608042706.7gfg5p6574ntc2lq@localhost>
-References: <20180607092050.46128-1-yangbo.lu@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4ffmpEUh6Z/c4OcaBFw1QbfqKOUGPKoLDo9CqFtoKYg=;
+        b=tDH++GMXTorK+B0HjI0JW7hS31b4y4hG2JikSOqmvPh8KWNQ7GeV3hq+DFdaxsgU4c
+         afqZMAq4g73unPPy6tjMmWXUUJXotvxd6KNniUZN0ixJtUoBWL7QPTBBCATHvgN1HUYw
+         bJgXNrm+tdCTmgvP1ovcIfrpb8Y3cpzcDqIawA2sl7/bMXoVYev1vATurw/g1qinU4Oc
+         qA81i35ZIwjnXV5NI/2UIRI5JRMX4L84/Q6L+3+gI8PorGlrZ31o6BZvfDzORvky5rhE
+         VNFMVCQtj8Ou0FbBtGXd2AvND+XFvPQlIpm5rN1MDEHeI899WyHr4dEWlnC3payHWSL8
+         5yvw==
+X-Gm-Message-State: APt69E2a5DnP/EwTnN791byohiqvs17vSa4n/L7Jf42OCqXUv1xAq0e7
+        HQ04mi/CA1NktCwjwY0bJH84IoGWufQFtiVD6Tre1Q==
+X-Google-Smtp-Source: ADUXVKJb3TGrY6+vTMVN6TJwFpk79T/Atu7JqR/v30znNcv4SWUYdpL4J+t24opZ66qRfzHi2iDXtYfc7+Rrcup8Auo=
+X-Received: by 2002:a1c:20c7:: with SMTP id g190-v6mr2954240wmg.2.1528318204100;
+ Wed, 06 Jun 2018 13:50:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607092050.46128-1-yangbo.lu@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
+In-Reply-To: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Wed, 6 Jun 2018 13:49:52 -0700
+Message-ID: <CALvZod5==RV=emZ_gqC1UhGsx7W=YkMtSXJ-Uzc04HQH29zERA@mail.gmail.com>
+Subject: Re: [PATCH v7 00/17] Improve shrink_slab() scalability (old
+ complexity was O(n^2), new is O(n))
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        stummala@codeaurora.org, gregkh@linuxfoundation.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Roman Gushchin <guro@fb.com>, mka@chromium.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Chris Wilson <chris@chris-wilson.co.uk>, longman@redhat.com,
+        Minchan Kim <minchan@kernel.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>, jbacik@fb.com,
+        Guenter Roeck <linux@roeck-us.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>, lirongqing@baidu.com,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 05:20:40PM +0800, Yangbo Lu wrote:
-> This patchset is to support DPAA FMAN PTP clock and HW timestamping.
-> It had been verified on both ARM platform and PPC platform.
-> - The patch #1 to patch #5 are to support DPAA FMAN 1588 timer in
->   ptp_qoriq driver.
-> - The patch #6 to patch #10 are to add HW timestamping support in
->   DPAA ethernet driver.
+On Tue, May 22, 2018 at 3:07 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> Hi,
+>
+> this patches solves the problem with slow shrink_slab() occuring
+> on the machines having many shrinkers and memory cgroups (i.e.,
+> with many containers). The problem is complexity of shrink_slab()
+> is O(n^2) and it grows too fast with the growth of containers
+> numbers.
+>
+> Let we have 200 containers, and every container has 10 mounts
+> and 10 cgroups. All container tasks are isolated, and they don't
+> touch foreign containers mounts.
+>
+> In case of global reclaim, a task has to iterate all over the memcgs
+> and to call all the memcg-aware shrinkers for all of them. This means,
+> the task has to visit 200 * 10 = 2000 shrinkers for every memcg,
+> and since there are 2000 memcgs, the total calls of do_shrink_slab()
+> are 2000 * 2000 = 4000000.
+>
+> 4 million calls are not a number operations, which can takes 1 cpu cycle.
+> E.g., super_cache_count() accesses at least two lists, and makes arifmetical
+> calculations. Even, if there are no charged objects, we do these calculations,
+> and replaces cpu caches by read memory. I observed nodes spending almost 100%
+> time in kernel, in case of intensive writing and global reclaim. The writer
+> consumes pages fast, but it's need to shrink_slab() before the reclaimer
+> reached shrink pages function (and frees SWAP_CLUSTER_MAX pages). Even if
+> there is no writing, the iterations just waste the time, and slows reclaim down.
+>
+> Let's see the small test below:
+>
+> $echo 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
+> $mkdir /sys/fs/cgroup/memory/ct
+> $echo 4000M > /sys/fs/cgroup/memory/ct/memory.kmem.limit_in_bytes
+> $for i in `seq 0 4000`;
+>         do mkdir /sys/fs/cgroup/memory/ct/$i;
+>         echo $$ > /sys/fs/cgroup/memory/ct/$i/cgroup.procs;
+>         mkdir -p s/$i; mount -t tmpfs $i s/$i; touch s/$i/file;
+> done
+>
+> Then, let's see drop caches time (5 sequential calls):
+> $time echo 3 > /proc/sys/vm/drop_caches
+>
+> 0.00user 13.78system 0:13.78elapsed 99%CPU
+> 0.00user 5.59system 0:05.60elapsed 99%CPU
+> 0.00user 5.48system 0:05.48elapsed 99%CPU
+> 0.00user 8.35system 0:08.35elapsed 99%CPU
+> 0.00user 8.34system 0:08.35elapsed 99%CPU
+>
+>
+> Last four calls don't actually shrink something. So, the iterations
+> over slab shrinkers take 5.48 seconds. Not so good for scalability.
+>
+> The patchset solves the problem by making shrink_slab() of O(n)
+> complexity. There are following functional actions:
+>
+> 1)Assign id to every registered memcg-aware shrinker.
+> 2)Maintain per-memcgroup bitmap of memcg-aware shrinkers,
+>   and set a shrinker-related bit after the first element
+>   is added to lru list (also, when removed child memcg
+>   elements are reparanted).
+> 3)Split memcg-aware shrinkers and !memcg-aware shrinkers,
+>   and call a shrinker if its bit is set in memcg's shrinker
+>   bitmap.
+>   (Also, there is a functionality to clear the bit, after
+>   last element is shrinked).
+>
+> This gives signify performance increase. The result after patchset is applied:
+>
+> $time echo 3 > /proc/sys/vm/drop_caches
+>
+> 0.00user 1.10system 0:01.10elapsed 99%CPU
+> 0.00user 0.00system 0:00.01elapsed 64%CPU
+> 0.00user 0.01system 0:00.01elapsed 82%CPU
+> 0.00user 0.00system 0:00.01elapsed 64%CPU
+> 0.00user 0.01system 0:00.01elapsed 82%CPU
+>
+> The results show the performance increases at least in 548 times.
+>
+> So, the patchset makes shrink_slab() of less complexity and improves
+> the performance in such types of load I pointed. This will give a profit
+> in case of !global reclaim case, since there also will be less
+> do_shrink_slab() calls.
+>
+> This patchset is made against linux-next.git tree.
+>
+> v7: Refactorings and readability improvements.
+>
+> v6: Added missed rcu_dereference() to memcg_set_shrinker_bit().
+>     Use different functions for allocation and expanding map.
+>     Use new memcg_shrinker_map_size variable in memcontrol.c.
+>     Refactorings.
+>
+> v5: Make the optimizing logic under CONFIG_MEMCG_SHRINKER instead of MEMCG && !SLOB
+>
+> v4: Do not use memcg mem_cgroup_idr for iteration over mem cgroups
+>
+> v3: Many changes requested in commentaries to v2:
+>
+> 1)rebase on prealloc_shrinker() code base
+> 2)root_mem_cgroup is made out of memcg maps
+> 3)rwsem replaced with shrinkers_nr_max_mutex
+> 4)changes around assignment of shrinker id to list lru
+> 5)everything renamed
+>
+> v2: Many changes requested in commentaries to v1:
+>
+> 1)the code mostly moved to mm/memcontrol.c;
+> 2)using IDR instead of array of shrinkers;
+> 3)added a possibility to assign list_lru shrinker id
+>   at the time of shrinker registering;
+> 4)reorginized locking and renamed functions and variables.
+>
+> ---
+>
+> Kirill Tkhai (16):
+>       list_lru: Combine code under the same define
+>       mm: Introduce CONFIG_MEMCG_KMEM as combination of CONFIG_MEMCG && !CONFIG_SLOB
+>       mm: Assign id to every memcg-aware shrinker
+>       memcg: Move up for_each_mem_cgroup{,_tree} defines
+>       mm: Assign memcg-aware shrinkers bitmap to memcg
+>       mm: Refactoring in workingset_init()
+>       fs: Refactoring in alloc_super()
+>       fs: Propagate shrinker::id to list_lru
+>       list_lru: Add memcg argument to list_lru_from_kmem()
+>       list_lru: Pass dst_memcg argument to memcg_drain_list_lru_node()
+>       list_lru: Pass lru argument to memcg_drain_list_lru_node()
+>       mm: Export mem_cgroup_is_root()
+>       mm: Set bit in memcg shrinker bitmap on first list_lru item apearance
+>       mm: Iterate only over charged shrinkers during memcg shrink_slab()
+>       mm: Add SHRINK_EMPTY shrinker methods return value
+>       mm: Clear shrinker bit if there are no objects related to memcg
+>
+> Vladimir Davydov (1):
+>       mm: Generalize shrink_slab() calls in shrink_node()
+>
+>
+>  fs/super.c                 |   11 ++
+>  include/linux/list_lru.h   |   18 ++--
+>  include/linux/memcontrol.h |   46 +++++++++-
+>  include/linux/sched.h      |    2
+>  include/linux/shrinker.h   |   11 ++
+>  include/linux/slab.h       |    2
+>  init/Kconfig               |    5 +
+>  mm/list_lru.c              |   90 ++++++++++++++-----
+>  mm/memcontrol.c            |  173 +++++++++++++++++++++++++++++++------
+>  mm/slab.h                  |    6 +
+>  mm/slab_common.c           |    8 +-
+>  mm/vmscan.c                |  204 +++++++++++++++++++++++++++++++++++++++-----
+>  mm/workingset.c            |   11 ++
+>  13 files changed, 478 insertions(+), 109 deletions(-)
+>
+> --
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-Right now, net-next is closed for new stuff.  You will have to post
-the series again after the merge window closes.  You can check the
-status here:
+Hi Kirill,
 
-    http://vger.kernel.org/~davem/net-next.html
+I tested this patch series on mmotm tree's
+v4.17-rc6-mmotm-2018-05-25-14-52 tag. I did experiment similar to the
+one I did for your lockless lru_list patch but on an actual machine.
 
-When you do re-post, you can add my:
+I created 255 memcgs, 255 ext4 mounts and made each memcg create a
+file containing few KiBs on corresponding mount. Then in a separate
+memcg of 200 MiB limit ran a fork-bomb.
 
-Acked-by: Richard Cochran <richardcochran@gmail.com>
+I ran the "perf record -ag -- sleep 60" and below are the results:
+
+Without the patch series:
+Samples: 4M of event 'cycles', Event count (approx.): 3279403076005
++  36.40%            fb.sh  [kernel.kallsyms]    [k] shrink_slab
++  18.97%            fb.sh  [kernel.kallsyms]    [k] list_lru_count_one
++   6.75%            fb.sh  [kernel.kallsyms]    [k] super_cache_count
++   0.49%            fb.sh  [kernel.kallsyms]    [k] down_read_trylock
++   0.44%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_iter
++   0.27%            fb.sh  [kernel.kallsyms]    [k] up_read
++   0.21%            fb.sh  [kernel.kallsyms]    [k] osq_lock
++   0.13%            fb.sh  [kernel.kallsyms]    [k] shmem_unused_huge_count
++   0.08%            fb.sh  [kernel.kallsyms]    [k] shrink_node_memcg
++   0.08%            fb.sh  [kernel.kallsyms]    [k] shrink_node
+
+With the patch series:
+Samples: 4M of event 'cycles', Event count (approx.): 2756866824946
++  47.49%            fb.sh  [kernel.kallsyms]    [k] down_read_trylock
++  30.72%            fb.sh  [kernel.kallsyms]    [k] up_read
++   9.51%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_iter
++   1.69%            fb.sh  [kernel.kallsyms]    [k] shrink_node_memcg
++   1.35%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_protected
++   1.05%            fb.sh  [kernel.kallsyms]    [k] queued_spin_lock_slowpath
++   0.85%            fb.sh  [kernel.kallsyms]    [k] _raw_spin_lock
++   0.78%            fb.sh  [kernel.kallsyms]    [k] lruvec_lru_size
++   0.57%            fb.sh  [kernel.kallsyms]    [k] shrink_node
++   0.54%            fb.sh  [kernel.kallsyms]    [k] queue_work_on
++   0.46%            fb.sh  [kernel.kallsyms]    [k] shrink_slab_memcg
+
+
+Next I did a simple hack by removing shrinker_rwsem lock/unlock from
+shrink_slab_memcg (which is functionally not correct but I made sure
+there aren't any parallel mounts). I got the following result:
+
+Samples: 5M of event 'cycles', Event count (approx.): 3473394237366
++  40.13%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_protected
++  17.66%            fb.sh  [kernel.kallsyms]    [k] shrink_node_memcg
++  14.78%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_iter
++   7.07%            fb.sh  [kernel.kallsyms]    [k] lruvec_lru_size
++   3.19%            fb.sh  [kernel.kallsyms]    [k] shrink_slab_memcg
++   2.82%            fb.sh  [kernel.kallsyms]    [k] queued_spin_lock_slowpath
++   1.96%            fb.sh  [kernel.kallsyms]    [k] try_charge
++   1.81%            fb.sh  [kernel.kallsyms]    [k] shrink_node
++   0.91%            fb.sh  [kernel.kallsyms]    [k] page_counter_try_charge
++   0.65%            fb.sh  [kernel.kallsyms]    [k] css_next_descendant_pre
++   0.62%            fb.sh  [kernel.kallsyms]    [k] cgroup_file_notify
+
+>From the result it seems like, in the workload where one job is
+thrashing and affecting the whole system, this patch series moves the
+load from shrinker list traversal to the shrinker_rwsem lock as there
+isn't much to traverse. Since shrink_slab_memcg only takes read lock
+on shrinker_rwsem, this seems like cache misses/thrashing for rwsem.
+Maybe next direction is to go lockless.
+
+thanks,
+Shakeel
