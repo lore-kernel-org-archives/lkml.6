@@ -1,50 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PZ/INFaG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0789460555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KGk/SF7y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 40DA2607CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932375AbeFFSov (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:44:51 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34499 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932137AbeFFSot (ORCPT
+        id S932252AbeFFGJD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:09:03 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:35811 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752260AbeFFGHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:44:49 -0400
-X-Google-Smtp-Source: ADUXVKJfRUYGkUT6h8XWzrZp2GhI0NcopCFpuBSWN9Pkf1n7HHol+Sinle3759SQwVXmEUqq4fDUYg==
-From: Corentin Labbe <clabbe@baylibre.com>
-To: ulf.hansson@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] mmc: dw_mmc should depend on COMMON_CLK
-Date: Wed,  6 Jun 2018 18:43:32 +0000
-Message-Id: <1528310612-10158-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 6 Jun 2018 02:07:30 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
+        <mark.rutland@arm.com>
+Subject: [PATCH v3 0/6] Add MCAN Support for dra76x
+Date: Wed, 6 Jun 2018 11:38:20 +0530
+Message-ID: <20180606060826.14671-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fix the following build failure on m68k:
-ERROR: "clk_set_rate" [drivers/mmc/host/dw_mmc.ko] undefined!
+The following patches add dts and sysconfig support
+for MCAN on TI's dra76 SOCs
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/mmc/host/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patches depend on the following series:
+https://patchwork.kernel.org/patch/10221105/
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 0581c199c996..77d6ba090436 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -666,7 +666,7 @@ config MMC_CAVIUM_THUNDERX
- 
- config MMC_DW
- 	tristate "Synopsys DesignWare Memory Card Interface"
--	depends on ARC || ARM || ARM64 || MIPS || COMPILE_TEST
-+	depends on COMMON_CLK && (ARC || ARM || ARM64 || MIPS || COMPILE_TEST)
- 	help
- 	  This selects support for the Synopsys DesignWare Mobile Storage IP
- 	  block, this provides host support for SD and MMC interfaces, in both
+Changes in v3:
+ 1. Added reset functionality to the ti-sysc
+    driver. This enables me to drop the hwmod
+    data patch as everything is being done in dt.
+
+ 2. Dropped ti,hwmods from the dts nodes
+
+ 3. Fixed the unit address of target-module
+    and mcan
+
+ 4. Removed the status="disabled" in dtsi
+    followed by status="okay" in dts.
+
+Changes in v2:
+ 1. Added Support for mcan in the ti-sysc driver
+    Also added the target-module node for the same
+
+ 2. Added clkctrl data for mcan clocks
+
+Faiz Abbas (4):
+  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
+  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
+  bus: ti-sysc: Add support for software reset
+  ARM: dts: Add generic interconnect target module node for MCAN
+
+Franklin S Cooper Jr (1):
+  ARM: dts: dra76x: Add MCAN node
+
+Lokesh Vutla (1):
+  ARM: dts: dra762: Add MCAN clock support
+
+ .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
+ arch/arm/boot/dts/dra76-evm.dts               |  6 ++
+ arch/arm/boot/dts/dra76x.dtsi                 | 65 +++++++++++++++++++
+ drivers/bus/ti-sysc.c                         | 58 +++++++++++++++++
+ drivers/clk/ti/clk-7xx.c                      |  1 +
+ include/dt-bindings/bus/ti-sysc.h             |  2 +
+ include/dt-bindings/clock/dra7.h              |  1 +
+ include/linux/platform_data/ti-sysc.h         |  1 +
+ 8 files changed, 135 insertions(+)
+
 -- 
-2.16.4
+2.17.0
