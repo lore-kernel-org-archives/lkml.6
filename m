@@ -1,161 +1,296 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HA37KP9wHFunXAAAmS7hNA
-	; Sun, 10 Jun 2018 00:29:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nffuF9hPGFtXOQAAmS7hNA
+	; Wed, 06 Jun 2018 21:19:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8C3BD608BA; Sun, 10 Jun 2018 00:29:51 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0upaJi1"
+	id 4DEBD607F7; Wed,  6 Jun 2018 21:19:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CE7DE605A2;
-	Sun, 10 Jun 2018 00:29:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CE7DE605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 725D0605BD;
+	Wed,  6 Jun 2018 21:19:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 725D0605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753571AbeFJA3s (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 20:29:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41936 "EHLO mail.kernel.org"
+        id S932066AbeFFVTR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:19:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36510 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751254AbeFJA3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 20:29:47 -0400
-Received: from mail.kernel.org (host-091-097-086-238.ewe-ip-backbone.de [91.97.86.238])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3159B2089F;
-        Sun, 10 Jun 2018 00:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528590586;
-        bh=V6MpmzO96YHYDMlJkjPinczpZ2tTJK/8/jwhmTu7/9I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G0upaJi1XBW6lRaNDz04kVjh/+R5scbAjT9c2SxZCSzVIW3YovB2iiQpP+z4x72iu
-         BUp3ks1wAO8X3pD1K9tYqqH7uZwfq5tzPX2j0+y/7gsY1woq9lCwxFseGGpvPBG93k
-         bgLJRpKH+U7avZPqbyYZlypquV8LJV5gpfsIFdgM=
-Date: Sun, 10 Jun 2018 02:29:44 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Corentin Labbe <clabbe@baylibre.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
-Subject: Re: [PATCH] bluetooth: remove unused bt-nokia-h4p.h header
-Message-ID: <20180610002944.ivdgzojt2akquwwv@earth.universe>
-References: <1528401038-36287-1-git-send-email-clabbe@baylibre.com>
+        id S1752579AbeFFVTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:19:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 72D80AED9;
+        Wed,  6 Jun 2018 21:19:11 +0000 (UTC)
+Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than one
+ root
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>, Mark Fasheh <mfasheh@suse.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>
+References: <20180508180436.716-1-mfasheh@suse.de>
+ <20180508233840.GM10363@dastard>
+ <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com>
+ <20180509064103.GP10363@dastard>
+ <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
+ <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Openpgp: preference=signencrypt
+Message-ID: <7e983476-df86-2624-ee6d-7c5415ea349a@suse.com>
+Date: Wed, 6 Jun 2018 17:19:05 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3mog5phdl7t5ijen"
-Content-Disposition: inline
-In-Reply-To: <1528401038-36287-1-git-send-email-clabbe@baylibre.com>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE
+Content-Type: multipart/mixed; boundary="3rlAACrR3TWVLZFtt4tO4jUviWoeoDI9Z";
+ protected-headers="v1"
+From: Jeff Mahoney <jeffm@suse.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>, Mark Fasheh <mfasheh@suse.de>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ Linux Btrfs <linux-btrfs@vger.kernel.org>, Miklos Szeredi
+ <miklos@szeredi.hu>, David Howells <dhowells@redhat.com>,
+ Jan Kara <jack@suse.cz>
+Message-ID: <7e983476-df86-2624-ee6d-7c5415ea349a@suse.com>
+Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than one
+ root
+References: <20180508180436.716-1-mfasheh@suse.de>
+ <20180508233840.GM10363@dastard>
+ <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com>
+ <20180509064103.GP10363@dastard>
+ <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
+ <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
 
---3mog5phdl7t5ijen
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--3rlAACrR3TWVLZFtt4tO4jUviWoeoDI9Z
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Amir -
 
-On Thu, Jun 07, 2018 at 07:50:38PM +0000, Corentin Labbe wrote:
-> Nothing in tree use this header which seems a remains of a staging
-> driver.
-> This patch remove it.
+Mark's answered some of your questions already, so I'll skip those.
+
+On 6/6/18 5:49 AM, Amir Goldstein wrote:
+> On Tue, Jun 5, 2018 at 11:17 PM, Jeff Mahoney <jeffm@suse.com> wrote:
+>> Sorry, just getting back to this.
+>>
+>> On 5/9/18 2:41 AM, Dave Chinner wrote:
+>>> On Tue, May 08, 2018 at 10:06:44PM -0400, Jeff Mahoney wrote:
+>>>> On 5/8/18 7:38 PM, Dave Chinner wrote:
+>>>>> On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> The VFS's super_block covers a variety of filesystem functionality=
+=2E In
+>>>>>> particular we have a single structure representing both I/O and
+>>>>>> namespace domains.
+>>>>>>
+>>>>>> There are requirements to de-couple this functionality. For exampl=
+e,
+>>>>>> filesystems with more than one root (such as btrfs subvolumes) can=
+
+>>>>>> have multiple inode namespaces. This starts to confuse userspace w=
+hen
+>>>>>> it notices multiple inodes with the same inode/device tuple on a
+>>>>>> filesystem.
+>>>>>
 >=20
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-
-Right, this is not used by drivers/bluetooth/hci_nokia.c, but a
-leftover from the staging driver.
-
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-
--- Sebastian
-
-> ---
->  include/linux/platform_data/bt-nokia-h4p.h | 38 ------------------------=
-------
->  1 file changed, 38 deletions(-)
->  delete mode 100644 include/linux/platform_data/bt-nokia-h4p.h
+> Speaking as someone who joined this discussion late, maybe years after
+> it started, it would help to get an overview of existing problems and h=
+ow
+> fs_view aims to solve them.
 >=20
-> diff --git a/include/linux/platform_data/bt-nokia-h4p.h b/include/linux/p=
-latform_data/bt-nokia-h4p.h
-> deleted file mode 100644
-> index 30d169dfadf3..000000000000
-> --- a/include/linux/platform_data/bt-nokia-h4p.h
-> +++ /dev/null
-> @@ -1,38 +0,0 @@
-> -/*
-> - * This file is part of Nokia H4P bluetooth driver
-> - *
-> - * Copyright (C) 2010 Nokia Corporation.
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License
-> - * version 2 as published by the Free Software Foundation.
-> - *
-> - * This program is distributed in the hope that it will be useful, but
-> - * WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> - * General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-> - * 02110-1301 USA
-> - *
-> - */
-> -
-> -
-> -/**
-> - * struct hci_h4p_platform data - hci_h4p Platform data structure
-> - */
-> -struct hci_h4p_platform_data {
-> -	int chip_type;
-> -	int bt_sysclk;
-> -	unsigned int bt_wakeup_gpio;
-> -	unsigned int host_wakeup_gpio;
-> -	unsigned int reset_gpio;
-> -	int reset_gpio_shared;
-> -	unsigned int uart_irq;
-> -	phys_addr_t uart_base;
-> -	const char *uart_iclk;
-> -	const char *uart_fclk;
-> -	void (*set_pm_limits)(struct device *dev, bool set);
-> -};
-> --=20
-> 2.16.4
+> I do believe that both Overlayfs and Btrfs can benefit from a layer of
+> abstraction
+> in the VFS, but I think it is best if we start with laying all the
+> common problems
+> and then see how a solution would look like.
 >=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-bluetooth=
-" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Even the name of the abstraction (fs_view) doesn't make it clear to me =
+what
+> it is we are abstracting (security context? st_dev? what else?). probab=
+ly best
+> to try to describe the abstraction from user POV rather then give spora=
+dic
+> examples of what MAY go into fs_view.
+>=20
+> While at it, need to see if this discussion has any intersections with =
+David
+> Howell's fs_context work, because if we consider adding sub volume supp=
+ort
+> to VFS, we may want to leave some reserved bits in the API for it.
+>=20
+> [...]
+>=20
+>> One thing is clear: If we want to solve the btrfs and overlayfs proble=
+ms
+>> in the same way, the view approach with a simple static mapping doesn'=
+t
+>> work.  Sticking something between the inode and superblock doesn't get=
 
---3mog5phdl7t5ijen
+>> the job done when the belongs to a different file system.  Overlayfs
+>> needs a per-object remapper, which means a callback that takes a path.=
+
+>> Suddenly the way we do things in the SUSE kernel doesn't seem so hacky=
+
+>> anymore.
+>>
+>=20
+> And what is the SUSE way?
+>=20
+>> I'm not sure we need the same solution for btrfs and overlayfs.  It's
+>> not the same problem.  Every object in overlayfs as a unique mapping
+>> already.  If we report s_dev and i_ino from the inode, it still maps t=
+o
+>> a unique user-visible object.  It may not map back to the overlayfs
+>> name, but that's a separate issue that's more difficult to solve.  The=
+
+>> btrfs issue isn't one of presenting an alternative namespace to the
+>> user.  Btrfs has multiple internal namespaces and no way to publish th=
+em
+>> to the rest of the kernel.
+>>
+>=20
+> FYI, the Overlayfs file/inode mapping is about to change with many
+> VFS hacks queued for removal, so stay tuned.
+>=20
+> [...]
+
+I have to admit I'm curious how this will work.  I've heard rumor of
+using overlayfs inodes and calling the underlying file system's
+inode_operations.  If part of that work removes the danger of overlayfs
+inode numbers colliding with xino mode, I'm definitely interested.
+
+>>> My point is that if we are talking about infrastructure to remap
+>>> what userspace sees from different mountpoint views into a
+>>> filesystem, then it should be done above the filesystem layers in
+>>> the VFS so all filesystems behave the same way. And in this case,
+>>> the vfsmount maps exactly to the "fs_view" that Mark has proposed we
+>>> add to the superblock.....
+>>
+>> It's proposed to be above the superblock with a default view in the
+>> superblock.  It would sit between the inode and the superblock so we
+>> have access to it anywhere we already have an inode.  That's the main
+>> difference.  We already have the inode everywhere it's needed.  Plumbi=
+ng
+>> a vfsmount everywhere needed means changing code that only requires an=
+
+>> inode and doesn't need a vfsmount.
+>>
+>> The two biggest problem areas:
+>> - Writeback tracepoints print a dev/inode pair.  Do we want to plumb a=
+
+>> vfsmount into __mark_inode_dirty, super_operations->write_inode,
+>> __writeback_single_inode, writeback_sb_inodes, etc?
+>> - Audit.  As it happens, most of audit has a path or file that can be
+>> used.  We do run into problems with fsnotify.  fsnotify_move is called=
+
+>> from vfs_rename which turns into a can of worms pretty quickly.
+>>
+>=20
+> Can you please elaborate on that problem.
+> Do you mean when watching a directory for changes, you need to
+> be able to tell in which fs_view the directory inode that is being watc=
+hed?
+
+I was investigating whether Dave's suggestion of using a vfsmount was
+feasible.  When following the audit call graph up, I found
+fsnotify_move, called by vfs_rename.  Piping a vfsmount into the vfs_*
+operations has historically been rejected by Al (see Apparmor
+discussions, among others), and with good reason.  The file system
+implementation shouldn't care about where it's mounted.  While piping it
+into vfs_rename doesn't seem too invasive, it's called by various file
+systems' ->rename callback, so then we're stuck piping vfsmounts into
+inode_operations, which is what Al's been wanting to avoid for years.
+
+>>>> It makes sense for that to be above the
+>>>> superblock because the file system doesn't care about them.  We're
+>>>> interested in the inode namespace, which for every other file system=
+ can
+>>>> be described using an inode and a superblock pair, but btrfs has ano=
+ther
+>>>> layer in the middle: inode -> btrfs_root -> superblock.
+>>>
+>>> Which seems to me to be irrelevant if there's a vfsmount per
+>>> subvolume that can hold per-subvolume information.
+>>
+>> I disagree.  There are a ton of places where we only have access to an=
+
+>> inode and only need access to an inode.  It also doesn't solve the
+>> overlayfs issue.
+>>
+>=20
+> I have an interest of solving another problem.
+> In VFS operations where only inode is available, I would like to be abl=
+e to
+> report fsnotify events (e.g. fsnotify_move()) only in directories under=
+ a
+> certain subtree root. That could be achieved either by bind mount the s=
+ubtree
+> root and passing vfsmount into vfs_rename() or by defining an fs_view o=
+n the
+> subtree and mounting that fs_view.
+
+I'm not sure there's a lot of overlap, but I expect that this will end
+up running into the same review feedback that Al gave during the
+AppArmor merge: vfsmounts have no business at the lower level and you
+can get the same behavior by hooking in at a higher level.  See
+security_path_* vs security_inode_* for how that was resolved.
+
+What you're talking about isn't really what we had in mind for the
+fs_view.  In our case, it sits between the inode and superblock, which
+would be at too low a level for determining whether an inode is under a
+certain subtree.  In any event, wouldn't you need a path instead of an
+inode to do what you're proposing?
+
+-Jeff
+
+--=20
+Jeff Mahoney
+SUSE Labs
+
+
+--3rlAACrR3TWVLZFtt4tO4jUviWoeoDI9Z--
+
+--q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlsccPUACgkQ2O7X88g7
-+pognA//Uk9rcAkWZyykAdmm+Xd9JmHjPotXeRxM+Rb1Hum7p4CPqov5g2gAvSaX
-11OKnCqUwbBPgQJcIg0fxWAZqEuYwH2re4mohb6UPNF+8TxaKe2XmafiuMxygons
-2zJzyF65f7tF1E5qk9mNuJMg+O2VkA3Zt5S6VnaCBpdEAtij98cwg3aPieKdaLvn
-eIb9P44AxowvQv/Q9E4YiRAgX71s37XAPK+7jn7l3FJEMRhL3B9t/V8Br+ig3BGl
-sWtemkcPA8cak3wC9k4zTkn03LPE6SLgeooh5M3LUdv0jgFbiSit2nZ45JLYdOEL
-SRK3zKuKsUQ69vWHi+gl2f0WRbfElvbUnz4sQWkQ8uP2YHe9nmGMJYexHw74MKF9
-WSPJ60UrM4svPuF4NNPaR26ao3YnhXyrVQh9CUOHsF3Vqw8mmMdoQ/1QRZvMV7pQ
-0Gx8P/tAbGeTNZEc5TBbDFAgmriXf96ZedP1hUnhOC8GVSG6cszcKPQEmvsZ1ryK
-E4KkE9maTgooIn0NYddLHWBq5euf+ve0//lGbsFOwzinbWpnW5w+nrUCCV2EWjD5
-ilVlc3v5gq+ZPYYwIX6zn7doOSrcbLBseu8oc/1BDzZwj2cIIYzlX5kkaLwbzUXY
-QWQa839Pv4VHmkzH1SQpxHAmS9Ct3R9oGqx9eNzN1tmNgT66+Xo=
-=dS1p
+iQIzBAEBCAAdFiEE8wzgbmZ74SnKPwtDHntLYyF55bIFAlsYT8kACgkQHntLYyF5
+5bL05Q//SBuwroylj9DIyWLPNYBxoF7VwEE20tjeQsB2sY//xcpzN24XXfBH4Fdf
+nT8MkLLAS5FPidaTBhKKvn/jwOW0qufX8ZCTa8jATZDfqMliiEEGuGKEWTvm6qEK
+RRiaswJuvE25Sp8imaX1BNtBaXA61AAxNJI47Ez66uLiRQ7OZxHb4c8I1ojjnU6o
+YODOeW6NMDw9nozERocFK+pUEkH/wCbFU18nIeqp3AhtIaaIwT3b6Cic5Tinu1t4
+QUuiZ0yKpHT3p9NteSvvR8cVoUcErDkGiQ8/9/umpdi4nh07wYAMZmBYZ4liuRuG
+vbbMee7pCCrO4zccMpBNNJ7zQqao4QcXhQjlx6hpPnyHNLBWj6H3sP237BgmnL5r
+iJvkS6/jj3dI8kt1GFbUR91yOsqwvBzG8pdV53cHuQ0GJxKZBjJIDkOkOyP0pdb3
+I2SCjb+W/wPNFbW1BXCTaeG+Ys3h2Ywxrg3qJKFG8cfXq9Y2gt/QfV0cXMFNWUtE
+azAeEZsbHsb5O796+giCu55HvkWCl3hxInt0e3V7qzYH/Nsw2MMnv16c/iuugC8V
+NgAARk0v7+VEfP8Ddq/9N6MlIh25GI7YqQnqtgKE32ssQHU/TKavln6rPmm4OTTQ
+zHGVBzmp8Y1w6/yljmyPOOVorvq1koM+ISjC5orVjo8I4KQF6SQ=
+=INwO
 -----END PGP SIGNATURE-----
 
---3mog5phdl7t5ijen--
+--q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE--
