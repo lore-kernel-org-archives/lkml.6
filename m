@@ -1,92 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xDNCW3AN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74C18607C7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B6D860767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932426AbeFFHvc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 03:51:32 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:31723 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932320AbeFFHv2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:51:28 -0400
-Subject: Re: [PATCH] can: m_can: Move acessing of message ram to after clocks
- are enabled
-To: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
-CC: <mkl@pengutronix.de>, <wg@grandegger.com>
-References: <20180529141940.1682-1-faiz_abbas@ti.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <19e1af1d-047e-3acf-3ba3-71811f30f50e@ti.com>
-Date: Wed, 6 Jun 2018 13:22:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752213AbeFFOBi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:01:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751567AbeFFOBf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 10:01:35 -0400
+Date: Wed, 6 Jun 2018 10:01:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: changbin.du@intel.com, kbuild-all@01.org, mingo@redhat.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, rdunlap@infradead.org,
+        x86@kernel.org, linux@armlinux.org.uk, lgirdwood@gmail.com,
+        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sparse@vger.kernel.org,
+        changbin.du@gmail.com
+Subject: Re: [PATCH v5 2/4] kernel hacking: new config NO_AUTO_INLINE to
+ disable compiler auto-inline optimizations
+Message-ID: <20180606100132.772e29a5@vmware.local.home>
+In-Reply-To: <201806060444.hdHcKOBy%fengguang.wu@intel.com>
+References: <1528186420-6615-3-git-send-email-changbin.du@intel.com>
+        <201806060444.hdHcKOBy%fengguang.wu@intel.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180529141940.1682-1-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 6 Jun 2018 05:34:29 +0800
+kbuild test robot <lkp@intel.com> wrote:
 
-On Tuesday 29 May 2018 07:49 PM, Faiz Abbas wrote:
-> MCAN message ram should only be accessed once clocks are enabled.
-> Therefore, move the call to parse/init the message ram to after
-> clocks are enabled.
+> Hi Changbin,
 > 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v4.17 next-20180605]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/changbin-du-intel-com/kernel-hacking-GCC-optimization-for-better-debug-experience-Og/20180606-001415
+> config: sparc64-allyesconfig (attached as .config)
+> compiler: sparc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=sparc64 
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> WARNING: vmlinux.o(.text.unlikely+0x1fc): Section mismatch in reference from the function init_tick_ops() to the function .init.text:get_tick_patch()  
+>    The function init_tick_ops() references
+>    the function __init get_tick_patch().
+>    This is often because init_tick_ops lacks a __init
+>    annotation or the annotation of get_tick_patch is wrong.
+
+And again this patch uncovered a bug someplace else.
+
+-- Steve
+
+> 
 > ---
->  drivers/net/can/m_can/m_can.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-> index b397a33f3d32..a9fbf81ac3d4 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -1642,8 +1642,6 @@ static int m_can_plat_probe(struct platform_device *pdev)
->  	priv->can.clock.freq = clk_get_rate(cclk);
->  	priv->mram_base = mram_addr;
->  
-> -	m_can_of_parse_mram(priv, mram_config_vals);
-> -
->  	platform_set_drvdata(pdev, dev);
->  	SET_NETDEV_DEV(dev, &pdev->dev);
->  
-> @@ -1666,6 +1664,8 @@ static int m_can_plat_probe(struct platform_device *pdev)
->  		goto clk_disable;
->  	}
->  
-> +	m_can_of_parse_mram(priv, mram_config_vals);
-> +
->  	devm_can_led_init(dev);
->  
->  	of_can_transceiver(dev);
-> @@ -1715,8 +1715,6 @@ static __maybe_unused int m_can_resume(struct device *dev)
->  
->  	pinctrl_pm_select_default_state(dev);
->  
-> -	m_can_init_ram(priv);
-> -
->  	priv->can.state = CAN_STATE_ERROR_ACTIVE;
->  
->  	if (netif_running(ndev)) {
-> @@ -1726,6 +1724,7 @@ static __maybe_unused int m_can_resume(struct device *dev)
->  		if (ret)
->  			return ret;
->  
-> +		m_can_init_ram(priv);
->  		m_can_start(ndev);
->  		netif_device_attach(ndev);
->  		netif_start_queue(ndev);
-> 
-
-Gentle ping.
-
-Thanks,
-Faiz
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
