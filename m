@@ -1,63 +1,265 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9CFB607CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A20146070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752204AbeFFPHw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:07:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41590 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751891AbeFFPHu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:07:50 -0400
-Date: Wed, 6 Jun 2018 16:07:45 +0100
-From: Morten Rasmussen <morten.rasmussen@arm.com>
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Sudeep.Holla@arm.com, Will.Deacon@arm.com, Catalin.Marinas@arm.com,
-        Robin.Murphy@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, geert@linux-m68k.org,
-        linux-acpi@vger.kernel.org, ard.biesheuvel@linaro.org
-Subject: Re: [PATCH] arm64: topology: Avoid checking numa mask for scheduler
- MC selection
-Message-ID: <20180606150745.GC8461@e105550-lin.cambridge.arm.com>
-References: <20180605190837.493505-1-jeremy.linton@arm.com>
- <20180606144444.GB8461@e105550-lin.cambridge.arm.com>
- <be5f7066-0b44-ff11-37e9-87512df2294f@arm.com>
+        id S932256AbeFFGLj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:11:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52305 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932128AbeFFGLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 02:11:37 -0400
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Simmons <jsimmons@infradead.org>,
+        Andreas Dilger <andreas.dilger@intel.com>
+Date: Wed, 06 Jun 2018 16:05:19 +1000
+Subject: [PATCH 04/11] staging: lustre: convert range_lock to linux
+ interval_trees.
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152826511902.16761.12169723574817283239.stgit@noble>
+In-Reply-To: <152826510267.16761.14361003167157833896.stgit@noble>
+References: <152826510267.16761.14361003167157833896.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be5f7066-0b44-ff11-37e9-87512df2294f@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 09:53:39AM -0500, Jeremy Linton wrote:
-> On 06/06/2018 09:44 AM, Morten Rasmussen wrote:
-> >On Tue, Jun 05, 2018 at 02:08:37PM -0500, Jeremy Linton wrote:
-> >>The numa mask subset check has problems if !CONFIG_NUMA, over hotplug
-> >>operations or during early boot. Lets disable the NUMA siblings checks
-> >>for the time being, as NUMA in socket machines have LLC's that will
-> >>assure that the scheduler topology isn't "borken".
-> >
-> >Could we add an explanation why the numa node mask check is needed in
-> >the first place. >
-> >IIUC, we have the check in case the LLC is shared across numa nodes as
-> >this would cause core_siblings > cpumask_of_node() which breaks the
-> >scheduler topology.
-> 
-> Yes, that sounds like a good idea, my comments probably assume that the
-> reader has been part of these conversations.
-> 
-> >
-> >While sharing LLC across numa nodes seems quite unusual, I think it is
-> >allowed by ACPI. Those systems might already be broken before, so might
-> >not change anything. It is just worth noting why the check should be
-> >added back later.
-> 
-> Right, there isn't anything in ACPI that dictates a system topology
-> restriction like this. Given that other architectures have built machines
-> with large directory caches that span numa nodes the check was a safety
-> measure.
+Linux has a fully-generic interval tree implementation
+which can be tailored to different use cases.
+Use it for range_lock rather than the lustre version.
+This allows us to get rid of some call-backs and generally
+simplifies the code.
 
-Agreed, it seems that another architecture has recently merged support
-for that: 1340ccfa9a9a
+We cannot use the pre-built version in lib/interval_tree.c
+as we need 64bit endpoints and it only provides "unsigned long".
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ drivers/staging/lustre/lustre/llite/file.c       |    8 +-
+ drivers/staging/lustre/lustre/llite/range_lock.c |   94 ++++++++--------------
+ drivers/staging/lustre/lustre/llite/range_lock.h |   17 ++--
+ 3 files changed, 47 insertions(+), 72 deletions(-)
+
+diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
+index 02295931883b..e888ed6e74bc 100644
+--- a/drivers/staging/lustre/lustre/llite/file.c
++++ b/drivers/staging/lustre/lustre/llite/file.c
+@@ -1086,8 +1086,8 @@ ll_file_io_generic(const struct lu_env *env, struct vvp_io_args *args,
+ 		     (iot == CIT_READ && (file->f_flags & O_DIRECT))) &&
+ 		    !(vio->vui_fd->fd_flags & LL_FILE_GROUP_LOCKED)) {
+ 			CDEBUG(D_VFSTRACE, "Range lock [%llu, %llu]\n",
+-			       range.rl_node.in_extent.start,
+-			       range.rl_node.in_extent.end);
++			       range.rl_start,
++			       range.rl_last);
+ 			rc = range_lock(&lli->lli_write_tree, &range);
+ 			if (rc < 0)
+ 				goto out;
+@@ -1099,8 +1099,8 @@ ll_file_io_generic(const struct lu_env *env, struct vvp_io_args *args,
+ 		ll_cl_remove(file, env);
+ 		if (range_locked) {
+ 			CDEBUG(D_VFSTRACE, "Range unlock [%llu, %llu]\n",
+-			       range.rl_node.in_extent.start,
+-			       range.rl_node.in_extent.end);
++			       range.rl_start,
++			       range.rl_last);
+ 			range_unlock(&lli->lli_write_tree, &range);
+ 		}
+ 	} else {
+diff --git a/drivers/staging/lustre/lustre/llite/range_lock.c b/drivers/staging/lustre/lustre/llite/range_lock.c
+index eaa23f4c414e..acdb0dc00a89 100644
+--- a/drivers/staging/lustre/lustre/llite/range_lock.c
++++ b/drivers/staging/lustre/lustre/llite/range_lock.c
+@@ -37,7 +37,13 @@
+ #include "range_lock.h"
+ #include <uapi/linux/lustre/lustre_idl.h>
+ #include <linux/libcfs/libcfs.h>
++#include <linux/interval_tree_generic.h>
+ 
++#define START(node) ((node)->rl_start)
++#define LAST(node)  ((node)->rl_last)
++
++INTERVAL_TREE_DEFINE(struct range_lock, rl_rb, __u64, __subtree_last,
++		     START, LAST, static, range);
+ /**
+  * Initialize a range lock tree
+  *
+@@ -48,7 +54,7 @@
+  */
+ void range_lock_tree_init(struct range_lock_tree *tree)
+ {
+-	tree->rlt_root = NULL;
++	tree->rlt_root = RB_ROOT_CACHED;
+ 	tree->rlt_sequence = 0;
+ 	spin_lock_init(&tree->rlt_lock);
+ }
+@@ -65,43 +71,19 @@ void range_lock_tree_init(struct range_lock_tree *tree)
+  */
+ int range_lock_init(struct range_lock *lock, __u64 start, __u64 end)
+ {
+-	int rc;
++	RB_CLEAR_NODE(&lock->rl_rb);
+ 
+-	memset(&lock->rl_node, 0, sizeof(lock->rl_node));
+ 	if (end != LUSTRE_EOF)
+ 		end >>= PAGE_SHIFT;
+-	rc = interval_set(&lock->rl_node, start >> PAGE_SHIFT, end);
+-	if (rc)
+-		return rc;
++	lock->rl_start = start >> PAGE_SHIFT;
++	lock->rl_last = end;
++	if (lock->rl_start > lock->rl_last)
++		return -ERANGE;
+ 
+ 	lock->rl_task = NULL;
+ 	lock->rl_blocking_ranges = 0;
+ 	lock->rl_sequence = 0;
+-	return rc;
+-}
+-
+-/**
+- * Helper function of range_unlock()
+- *
+- * \param node [in]	a range lock found overlapped during interval node
+- *			search
+- * \param arg [in]	the range lock to be tested
+- *
+- * \retval INTERVAL_ITER_CONT	indicate to continue the search for next
+- *				overlapping range node
+- * \retval INTERVAL_ITER_STOP	indicate to stop the search
+- */
+-static enum interval_iter range_unlock_cb(struct interval_node *node, void *arg)
+-{
+-	struct range_lock *lock = arg;
+-	struct range_lock *overlap = node2rangelock(node);
+-
+-	if (overlap->rl_sequence > lock->rl_sequence) {
+-		--overlap->rl_blocking_ranges;
+-		if (overlap->rl_blocking_ranges == 0)
+-			wake_up_process(overlap->rl_task);
+-	}
+-	return INTERVAL_ITER_CONT;
++	return 0;
+ }
+ 
+ /**
+@@ -112,36 +94,27 @@ static enum interval_iter range_unlock_cb(struct interval_node *node, void *arg)
+  *
+  * If this lock has been granted, relase it; if not, just delete it from
+  * the tree or the same region lock list. Wake up those locks only blocked
+- * by this lock through range_unlock_cb().
++ * by this lock.
+  */
+ void range_unlock(struct range_lock_tree *tree, struct range_lock *lock)
+ {
+-	spin_lock(&tree->rlt_lock);
+-	LASSERT(interval_is_intree(&lock->rl_node));
+-	interval_erase(&lock->rl_node, &tree->rlt_root);
++	struct range_lock *overlap;
+ 
+-	interval_search(tree->rlt_root, &lock->rl_node.in_extent,
+-			range_unlock_cb, lock);
+-	spin_unlock(&tree->rlt_lock);
+-}
++	spin_lock(&tree->rlt_lock);
++	LASSERT(!RB_EMPTY_NODE(&lock->rl_rb));
++	range_remove(lock, &tree->rlt_root);
+ 
+-/**
+- * Helper function of range_lock()
+- *
+- * \param node [in]	a range lock found overlapped during interval node
+- *			search
+- * \param arg [in]	the range lock to be tested
+- *
+- * \retval INTERVAL_ITER_CONT	indicate to continue the search for next
+- *				overlapping range node
+- * \retval INTERVAL_ITER_STOP	indicate to stop the search
+- */
+-static enum interval_iter range_lock_cb(struct interval_node *node, void *arg)
+-{
+-	struct range_lock *lock = arg;
++	for (overlap = range_iter_first(&tree->rlt_root,
++					lock->rl_start, lock->rl_last);
++	     overlap;
++	     overlap = range_iter_next(overlap, lock->rl_start, lock->rl_last))
++		if (overlap->rl_sequence > lock->rl_sequence) {
++			--overlap->rl_blocking_ranges;
++			if (overlap->rl_blocking_ranges == 0)
++				wake_up_process(overlap->rl_task);
++		}
+ 
+-	lock->rl_blocking_ranges++;
+-	return INTERVAL_ITER_CONT;
++	spin_unlock(&tree->rlt_lock);
+ }
+ 
+ /**
+@@ -160,15 +133,20 @@ static enum interval_iter range_lock_cb(struct interval_node *node, void *arg)
+ int range_lock(struct range_lock_tree *tree, struct range_lock *lock)
+ {
+ 	int rc = 0;
++	struct range_lock *it;
+ 
+ 	spin_lock(&tree->rlt_lock);
+ 	/*
+ 	 * We need to check for all conflicting intervals
+ 	 * already in the tree.
+ 	 */
+-	interval_search(tree->rlt_root, &lock->rl_node.in_extent,
+-			range_lock_cb, lock);
+-	interval_insert(&lock->rl_node, &tree->rlt_root);
++	for (it = range_iter_first(&tree->rlt_root,
++				   lock->rl_start, lock->rl_last);
++	     it;
++	     it = range_iter_next(it, lock->rl_start, lock->rl_last))
++		lock->rl_blocking_ranges++;
++
++	range_insert(lock, &tree->rlt_root);
+ 	lock->rl_sequence = ++tree->rlt_sequence;
+ 
+ 	while (lock->rl_blocking_ranges > 0) {
+diff --git a/drivers/staging/lustre/lustre/llite/range_lock.h b/drivers/staging/lustre/lustre/llite/range_lock.h
+index 10ef1a995d26..2a0704d21481 100644
+--- a/drivers/staging/lustre/lustre/llite/range_lock.h
++++ b/drivers/staging/lustre/lustre/llite/range_lock.h
+@@ -38,10 +38,12 @@
+ #define _RANGE_LOCK_H
+ 
+ #include <linux/spinlock.h>
+-#include <interval_tree.h>
++#include <linux/rbtree.h>
+ 
+ struct range_lock {
+-	struct interval_node	rl_node;
++	struct rb_node		rl_rb;
++	__u64			rl_start, rl_last;
++	__u64			__subtree_last;
+ 	/**
+ 	 * Process to enqueue this lock.
+ 	 */
+@@ -57,15 +59,10 @@ struct range_lock {
+ 	__u64			rl_sequence;
+ };
+ 
+-static inline struct range_lock *node2rangelock(const struct interval_node *n)
+-{
+-	return container_of(n, struct range_lock, rl_node);
+-}
+-
+ struct range_lock_tree {
+-	struct interval_node	*rlt_root;
+-	spinlock_t		 rlt_lock;	/* protect range lock tree */
+-	__u64			 rlt_sequence;
++	struct rb_root_cached	rlt_root;
++	spinlock_t		rlt_lock;	/* protect range lock tree */
++	__u64			rlt_sequence;
+ };
+ 
+ void range_lock_tree_init(struct range_lock_tree *tree);
