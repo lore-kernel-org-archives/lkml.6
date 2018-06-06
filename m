@@ -1,63 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D80E6086D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Bp/n2VM9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 886E36063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932560AbeFFJc1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:32:27 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40072 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932395AbeFFJcZ (ORCPT
+        id S932113AbeFFDcE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Tue, 5 Jun 2018 23:32:04 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:36808 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752762AbeFFDcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:32:25 -0400
-X-Google-Smtp-Source: ADUXVKJmQ6HMDLktpYsPGPsNZHaSwznj/BzfbPhwkQa/mIk/ps9yMdGuTTacg3kE4tDxo7T0udXLWg==
-Subject: Re: [PATCH 0/3] Provide more fine grained control over multipathing
-To: Christoph Hellwig <hch@lst.de>,
-        Roland Dreier <roland@purestorage.com>
-Cc: Mike Snitzer <snitzer@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Laurence Oberman <loberman@redhat.com>,
-        Ewan Milne <emilne@redhat.com>,
-        James Smart <james.smart@broadcom.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Martin George <marting@netapp.com>,
-        John Meneghini <John.Meneghini@netapp.com>
-References: <20180525125322.15398-1-jthumshirn@suse.de>
- <20180525130535.GA24239@lst.de> <20180525135813.GB9591@redhat.com>
- <db1aa53f-1152-c003-ccc1-3e439ca6916d@grimberg.me>
- <CAL1RGDV0eT4juuMwHWkjqc2oTsk-CHRJ0A90veXxLsVZYa5esQ@mail.gmail.com>
- <20180605044222.GA29384@lst.de>
-From: Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <4203e888-df87-efd6-f61a-24b43fb710e2@grimberg.me>
-Date: Wed, 6 Jun 2018 12:32:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 5 Jun 2018 23:32:03 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w563VppX029387
+X-Nifty-SrcIP: [209.85.217.176]
+X-Google-Smtp-Source: ADUXVKLxHbwjmjxE3GKSu9EPZe62024XAf5tx2AxnoBDel3nGXBEchueAIFCePWmVFnUhZ+zlT0WwHlmS+6JF4n9l/A=
 MIME-Version: 1.0
-In-Reply-To: <20180605044222.GA29384@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+55aFwAwoDdZRP6n9xXDPkeCUm35mmGH3fXv=r1HOZq1bpiGw@mail.gmail.com>
+References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
+ <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org> <CA+55aFwJAbr8_Xs0ZX9K2iAr8bf=ZgNnKTLopQe6jPCgEBemrA@mail.gmail.com>
+ <7a5458da-4222-7480-00ed-a51bed2c1e39@mageia.org> <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
+ <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org> <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
+ <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
+ <CA+55aFzNCQZHEz9P2a4ZSyWB0RxZcTkh5TVfwTmup-Y-6b8qjw@mail.gmail.com> <CA+55aFwAwoDdZRP6n9xXDPkeCUm35mmGH3fXv=r1HOZq1bpiGw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 6 Jun 2018 12:31:10 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS4Xb_CQ31t_cqt3q0zRFZ-O2n3+qkxXfxZB_jmqvFmWQ@mail.gmail.com>
+Message-ID: <CAK7LNAS4Xb_CQ31t_cqt3q0zRFZ-O2n3+qkxXfxZB_jmqvFmWQ@mail.gmail.com>
+Subject: Re: building in 32bit chroot on x86_64 host broken
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: tmb@mageia.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
->> We plan to implement all the fancy NVMe standards like ANA, but it
->> seems that there is still a requirement to let the host side choose
->> policies about how to use paths (round-robin vs least queue depth for
->> example).  Even in the modern SCSI world with VPD pages and ALUA,
->> there are still knobs that are needed.  Maybe NVMe will be different
->> and we can find defaults that work in all cases but I have to admit
->> I'm skeptical...
-> 
-> The sensible thing to do in nvme is to use different paths for
-> different queues.
+2018-06-06 11:19 GMT+09:00 Linus Torvalds <torvalds@linux-foundation.org>:
+> On Tue, Jun 5, 2018 at 6:54 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> But once you *have* that particular Kconfig, I do think that "make
+>> oldconfig" should just work. And it apparently used to.
+>>
+>> So I think this is a behavioral regression.
+>
+> That doesn't necessarily mean that he fix should be to revert.
 
-Huh? different paths == different controllers so this sentence can't
-be right... you mean that a path selector will select a controller
-based on the home node of the local rdma device connecting to it and
-the running cpu right?
+
+If this is a regression, I am OK with the revert,
+and it is the only quick solution.
+
+
+
+> Maybe the fix is to simply change how we generate the ARCH variable.
+>
+> Right now, in the Makefile, it is
+>
+>     ARCH ?= $(SUBARCH)
+>
+> so basically "if the user didn't specify ARCH, we pick it from SUBARCH".
+>
+> But that doesn't make much sense for "make oldconfig" does it?
+>
+> So maybe we could make the rule be that if the user didn't specify
+> ARCH explicitly, we take it from SUBARCH, _except_ if we are doing
+> "make oldconfig", in which case we take it from the .config file.
+>
+> That makes a certain amount of sense, wouldn't you agree? Doing
+> "oldconfig" and silently changing ARCH under the user seems pretty
+> user-hostile.
+>
+> In fact, I think it would _always_ make sense to take ARCH from the
+> config file, _unless_ we're actively generating a new config file
+> entirely (ie "make *config", not counting "oldconfig").
+>
+> Hmm?
+>
+>                 Linus
+
+
+This is a big hammer.
+
+It is difficult to make a quick answer.
+
+
+In fact, I saw a patch series a few years ago.
+
+https://lkml.org/lkml/2014/9/1/70
+
+It was not accepted.
+(I was not a maintainer at that time)
+
+I do not remember the details,
+but I thought it was a double-edged sword.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
