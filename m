@@ -1,133 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVuaARut"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D175C606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BSB3meC1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E92C605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeFFPXH (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:23:07 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36293 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752224AbeFFPXD (ORCPT
+        id S1752649AbeFFSVu (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:21:50 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41612 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752263AbeFFSVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:23:03 -0400
-X-Google-Smtp-Source: ADUXVKIFJ+2m2bynJtCICnxzDFTRxxs4BM3AR8yK36r4i5Js3po/mU7sgWhbQBmBwNJP+LuhQesWVQ==
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v4 2/7] dt-bindings: Introduce interconnect provider
- bindings
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        skannan@codeaurora.org, seansw@qti.qualcomm.com,
-        khilman@baylibre.com, mturquette@baylibre.com, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, davidai@quicinc.com,
-        vincent.guittot@linaro.org, linux-arm-kernel@lists.infradead.org
-References: <20180309210958.16672-1-georgi.djakov@linaro.org>
- <20180309210958.16672-3-georgi.djakov@linaro.org>
- <7723f351-2460-7378-411a-cfcdf4138d8f@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <8fd1092a-40cd-b2a4-b153-df67e16bb4b3@linaro.org>
-Date: Wed, 6 Jun 2018 18:23:00 +0300
-MIME-Version: 1.0
-In-Reply-To: <7723f351-2460-7378-411a-cfcdf4138d8f@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 6 Jun 2018 14:21:48 -0400
+X-Google-Smtp-Source: ADUXVKJNHF1tKwbRFJWkrvqCOcneHGPGxdVe1GUywgAPjm+r2keKPbuSPJbbVu4c8xkid4hsNoDRSA==
+From: Scott Branden <scott.branden@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Clement Peron <peron.clem@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Mohamed Ismail Abdul Packir Mohamed
+        <mohamed-ismail.abdul@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH v2 1/1] ARM: dts: cygnus: enable iproc-hwrng
+Date: Wed,  6 Jun 2018 11:21:31 -0700
+Message-Id: <1528309291-25579-1-git-send-email-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+From: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
 
-Apologies for the delayed response.
+Enable the HW rng driver "iproc-rng200" for all cygnus platforms.
 
-On 12.04.18 г. 16:15, Neil Armstrong wrote:
-> On 09/03/2018 22:09, Georgi Djakov wrote:
->> This binding is intended to represent the interconnect hardware present
->> in some of the modern SoCs. Currently it consists only of a binding for
->> the interconnect hardware devices (provider).
->>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
->>  .../bindings/interconnect/interconnect.txt         | 47 ++++++++++++++++++++++
->>  1 file changed, 47 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
->>
->> diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
->> new file mode 100644
->> index 000000000000..70612bb201e4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
->> @@ -0,0 +1,47 @@
->> +Interconnect Provider Device Tree Bindings
->> +=========================================
->> +
->> +The purpose of this document is to define a common set of generic interconnect
->> +providers/consumers properties.
->> +
->> +
->> += interconnect providers =
->> +
->> +The interconnect provider binding is intended to represent the interconnect
->> +controllers in the system. Each provider registers a set of interconnect
->> +nodes, which expose the interconnect related capabilities of the interconnect
->> +to consumer drivers. These capabilities can be throughput, latency, priority
->> +etc. The consumer drivers set constraints on interconnect path (or endpoints)
->> +depending on the usecase. Interconnect providers can also be interconnect
->> +consumers, such as in the case where two network-on-chip fabrics interface
->> +directly
-> 
-> Hi,
-> 
-> Can't we specify the number of cells for the phandle ? It should be aligned with other consumer/provider bindings.
+Signed-off-by: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+---
+ arch/arm/boot/dts/bcm-cygnus.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Yes, that's the plan. Will align it!
-
-Thanks,
-Georgi
+diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
+index 9fe4f5a..b0e38fa 100644
+--- a/arch/arm/boot/dts/bcm-cygnus.dtsi
++++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
+@@ -417,6 +417,11 @@
+ 			status = "disabled";
+ 		};
+ 
++		rng: rng@18032000 {
++			compatible = "brcm,iproc-rng200";
++			reg = <0x18032000 0x28>;
++		};
++
+ 		sdhci0: sdhci@18041000 {
+ 			compatible = "brcm,sdhci-iproc-cygnus";
+ 			reg = <0x18041000 0x100>;
+-- 
+2.5.0
