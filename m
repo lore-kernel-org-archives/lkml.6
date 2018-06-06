@@ -1,64 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96D0E606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ajNJb/u8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 031566087B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752972AbeFFShc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:37:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752347AbeFFShb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:37:31 -0400
-Date: Wed, 6 Jun 2018 14:37:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, daniel@iogearbox.net
-Subject: Re: [PATCH V4 1/3] kallsyms: Simplify update_iter_mod()
-Message-ID: <20180606143727.03da2e26@vmware.local.home>
-In-Reply-To: <20180606131302.GB12180@hirez.programming.kicks-ass.net>
-References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
-        <1528289651-4113-2-git-send-email-adrian.hunter@intel.com>
-        <20180606131302.GB12180@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S932235AbeFFGIJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:08:09 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:42366 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932128AbeFFGIG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 02:08:06 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
+        <mark.rutland@arm.com>
+Subject: [PATCH v3 6/6] ARM: dts: dra76x: Add MCAN node
+Date: Wed, 6 Jun 2018 11:38:26 +0530
+Message-ID: <20180606060826.14671-7-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Jun 2018 15:13:02 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+From: Franklin S Cooper Jr <fcooper@ti.com>
 
-> On Wed, Jun 06, 2018 at 03:54:09PM +0300, Adrian Hunter wrote:
-> > The logic in update_iter_mod() is overcomplicated and gets worse every time
-> > another get_ksymbol_* function is added.
-> > 
-> > In preparation for adding another get_ksymbol_* function, simplify logic in
-> > update_iter_mod().
-> > 
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Acked-by: Andi Kleen <ak@linux.intel.com>  
-> 
-> Both Daniel and Steven touched this function last year, let's also Cc
-> them.
+Add support for the MCAN peripheral which supports both classic
+CAN messages along with the new CAN-FD message.
 
-Thanks for Ccing me. I tested the patch to make sure my changes still
-work and they do:
+Add MCAN node to evm and enable it with a maximum datarate of 5 mbps
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ arch/arm/boot/dts/dra76-evm.dts |  6 ++++++
+ arch/arm/boot/dts/dra76x.dtsi   | 13 +++++++++++++
+ 2 files changed, 19 insertions(+)
 
--- Steve
-
-
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
+index 2deb96405d06..b6ac2b6ffc6e 100644
+--- a/arch/arm/boot/dts/dra76-evm.dts
++++ b/arch/arm/boot/dts/dra76-evm.dts
+@@ -404,3 +404,9 @@
+ 	phys = <&pcie1_phy>, <&pcie2_phy>;
+ 	phy-names = "pcie-phy0", "pcie-phy1";
+ };
++
++&m_can0 {
++	can-transceiver {
++		max-bitrate = <5000000>;
++	};
++};
+diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+index 5157cc431574..613e4dc0ed3e 100644
+--- a/arch/arm/boot/dts/dra76x.dtsi
++++ b/arch/arm/boot/dts/dra76x.dtsi
+@@ -26,6 +26,19 @@
+ 			ti,syss-mask = <1>;
+ 			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+ 			clock-names = "fck";
++
++			m_can0: mcan@1a00 {
++				compatible = "bosch,m_can";
++				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
++				reg-names = "m_can", "message_ram";
++				interrupt-parent = <&gic>;
++				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "int0", "int1";
++				clocks = <&mcan_clk>, <&l3_iclk_div>;
++				clock-names = "cclk", "hclk";
++				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
++			};
+ 		};
+ 	};
+ 
+-- 
+2.17.0
