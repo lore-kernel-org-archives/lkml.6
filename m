@@ -1,151 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF41E606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FAA860767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754125AbeFFSFu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:05:50 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:42682 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752316AbeFFSFr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:05:47 -0400
-X-Google-Smtp-Source: ADUXVKLDBscy8KHM7vP/EWiLNNkUheppqONByBNFa9c2UpU+fJUKgtnkZb1YJrZbpwK5rXaKL+2QGg==
-Message-ID: <1528308343.17774.3.camel@redhat.com>
-Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
-From: Laurence Oberman <loberman@redhat.com>
-To: "Madhani, Himanshu" <Himanshu.Madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: "Tran, Quinn" <Quinn.Tran@cavium.com>,
-        "William.Kuzeja@stratus.com" <William.Kuzeja@stratus.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        Li Wang <liwang@redhat.com>
-Date: Wed, 06 Jun 2018 14:05:43 -0400
-In-Reply-To: <7988FB77-4AE4-4935-B7B7-F7584674981B@cavium.com>
-References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
-         <yq1a7s7ewmw.fsf@oracle.com>
-         <7988FB77-4AE4-4935-B7B7-F7584674981B@cavium.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1751878AbeFFLNi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 07:13:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59224 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750857AbeFFLNh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 07:13:37 -0400
+Date: Wed, 6 Jun 2018 13:13:33 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, mingo@kernel.org,
+        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
+        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        Balbir Singh <balbir@linux.vnet.ibm.com>,
+        Tejun Heo <tj@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RFC][PATCH 1/2] memcg: Ensure every task that uses an mm is in
+ the same memory cgroup
+Message-ID: <20180606111333.GF32433@dhcp22.suse.cz>
+References: <20180510121418.GD5325@dhcp22.suse.cz>
+ <20180522125757.GL20020@dhcp22.suse.cz>
+ <87wovu889o.fsf@xmission.com>
+ <20180524111002.GB20441@dhcp22.suse.cz>
+ <20180524141635.c99b7025a73a709e179f92a2@linux-foundation.org>
+ <20180530121721.GD27180@dhcp22.suse.cz>
+ <87wovjacrh.fsf@xmission.com>
+ <87wovj8e1d.fsf_-_@xmission.com>
+ <87y3fywodn.fsf_-_@xmission.com>
+ <87sh66wobu.fsf_-_@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sh66wobu.fsf_-_@xmission.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-06 at 16:01 +0000, Madhani, Himanshu wrote:
-> > On Jun 6, 2018, at 8:56 AM, Martin K. Petersen <martin.petersen@ora
-> > cle.com> wrote:
-> > 
-> > 
-> > Himanshu,
-> > 
-> > Ping?
-> > 
-> 
-> Will look at this one. Sorry, somehow fell thru cracks. 
-> 
-> 
-> > > Hi scsi experts,
-> > > 
-> > > Not sure who is the right person to ask, I just hit this bug on
-> > > my HP
-> > > DL385 platform, can any one of you take a look?
-> > > 
-> > > system config:
-> > > -----------------
-> > > HP ProLiant DL385 G7
-> > > AMD Opteron(TM) Processor 6234
-> > > 16384 MB memory, 369 GB disk space
-> > > 
-> > > 
-> > > [   24.539274] qla2xxx [0000:0c:00.7]-500a:5: LOOP UP detected
-> > > (10 Gbps).
-> > > [   24.577259] BUG: unable to handle kernel NULL pointer
-> > > dereference
-> > > at 0000000000000102
-> > > [   24.623133] PGD 0 P4D 0
-> > > [   24.636760] Oops: 0000 [#1] SMP NOPTI
-> > > [   24.656942] Modules linked in: i2c_algo_bit drm_kms_helper
-> > > sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom fb_sys_fops
-> > > ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+)
-> > > qla2xxx(+)
-> > > libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+)
-> > > nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel libata
-> > > nvme_core i2c_core scsi_transport_iscsi tg3 scsi_transport_fc
-> > > bnx2
-> > > iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash dm_log
-> > > dm_mod
-> > > [   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not tainted
-> > > 4.17.0-rc6 #1
-> > > [   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS A18
-> > > 08/15/2012
-> > > [   24.962106] Workqueue: events work_for_cpu_fn
-> > > [   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
-> > > [   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
-> > > [   25.042116] RAX: 0000000000000082 RBX: 0000000000000082 RCX:
-> > > 0000000000000000
-> > > [   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000 RDI:
-> > > 0000000000002000
-> > > [   25.123094] RBP: 0000000000000000 R08: 0000000000025a40 R09:
-> > > ffff8cf9aade2880
-> > > [   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0 R12:
-> > > ffff8cf9abc6d7d0
-> > > [   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8 R15:
-> > > 0000000000002000
-> > > [   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000)
-> > > knlGS:0000000000000000
-> > > [   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [   26.010457] CR2: 0000000000000102 CR3: 000000030760a000 CR4:
-> > > 00000000000406f0
-> > > [   26.051048] Call Trace:
-> > > [   26.063572]  ? __switch_to_asm+0x34/0x70
-> > > [   26.086079]  queue_work_on+0x24/0x40
-> > > [   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
-> > > [   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
-> > > [   26.164075]  ? lock_timer_base+0x67/0x80
-> > > [   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
-> > > [   26.212284]  ? del_timer_sync+0x35/0x40
-> > > [   26.234080]  ? schedule_timeout+0x165/0x2f0
-> > > [   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
-> > > [   26.285740]  qla2x00_mailbox_command+0x74b/0xf50 [qla2xxx]
-> > > [   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0 [qla2xxx]
-> > > [   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
-> > > [   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0 [qla2xxx]
-> > > [   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
-> > > [   26.442055]  local_pci_probe+0x3f/0xa0
-> > > [   26.463108]  work_for_cpu_fn+0x10/0x20
-> > > [   26.483295]  process_one_work+0x152/0x350
-> > > [   26.505730]  worker_thread+0x1cf/0x3e0
-> > > [   26.527090]  kthread+0xf5/0x130
-> > > [   26.545085]  ? max_active_store+0x80/0x80
-> > > [   26.568085]  ? kthread_bind+0x10/0x10
-> > > [   26.589533]  ret_from_fork+0x22/0x40
-> > > [   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44
-> > > 00
-> > > 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48 89 f5
-> > > 53
-> > > 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0 ec 01
-> > > 00 41
-> > > [   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP: ffff992642ceba10
-> > > [   27.341591] CR2: 0000000000000102
-> > > [   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
-> > 
-> > -- 
-> > Martin K. Petersen	Oracle Linux Engineering
-> 
-> Thanks,
-> - Himanshu
-> 
+On Fri 01-06-18 09:53:09, Eric W. Biederman wrote:
+[...]
+> +static int mem_cgroup_mm_can_attach(struct cgroup_taskset *tset)
+> +{
+> +	struct cgroup_subsys_state *css, *tcss;
+> +	struct task_struct *p, *t;
+> +	struct mm_struct *mm = NULL;
+> +	int ret = -EINVAL;
+> +
+> +	/*
+> +	 * Ensure all references for every mm can be accounted for by
+> +	 * tasks that are being migrated.
+> +	 */
+> +	rcu_read_lock();
+> +	cgroup_taskset_for_each(p, css, tset) {
+> +		int mm_users, mm_count;
+> +
+> +		/* Does this task have an mm that has not been visited? */
+> +		if (!p->mm || (p->flags & PF_KTHREAD) || (p->mm == mm))
+> +			continue;
+> +
+> +		mm = p->mm;
+> +		mm_users = atomic_read(&mm->mm_users);
+> +		if (mm_users == 1)
+> +			continue;
+> +
+> +		mm_count = 0;
+> +		cgroup_taskset_for_each(t, tcss, tset) {
+> +			if (t->mm != mm)
+> +				continue;
+> +			mm_count++;
+> +		}
+> +		/*
+> +		 * If there are no non-task references mm_users will
+> +		 * be stable as holding cgroup_thread_rwsem for write
+> +		 * blocks fork and exit.
+> +		 */
+> +		if (mm_count != mm_users)
+> +			goto out;
 
-I can't find the original message for this that Martin reminded us of.
+Wouldn't it be much more simple to do something like this instead? Sure
+it will break migration of non-thread tasks sharing mms but I would like
+to see that this actually matters to anybody rather than make the code
+more complicated and maintain it forever without a good reason. So yes
+this is a bit harsh but considering that the migration suceeded silently
+and that was simply broken as well, I am not sure this is any worse.
 
-To the person who logged this:
-How many times has this happened and was it after a kernel update.
-What is the history, what is the exact Qlogic card, etc.
-Do you have the rest of the log log leading to the invalid pointer
-fault
+Btw. MMF_ALIEN_MM could be used in the OOM proper as well.
 
-Thanks
-Laurence
+diff --git a/kernel/fork.c b/kernel/fork.c
+index dfe8e14c0fba..285cd0397307 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1303,6 +1303,8 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+ 	if (clone_flags & CLONE_VM) {
+ 		mmget(oldmm);
+ 		mm = oldmm;
++		if (unlikely(!(clone_flags & CLONE_THREAD)))
++			set_bit(MMF_ALIEN_MM, &mm->flags);
+ 		goto good_mm;
+ 	}
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2f5dac193431..fa0248fcdb36 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5103,6 +5103,18 @@ static int mem_cgroup_can_attach(struct cgroup_taskset *tset)
+ 	if (!mm)
+ 		return 0;
+ 
++	/*
++	 * Migrating a task which shares mm with other thread group
++	 * has never been really well defined. Shout to the log when
++	 * this happens and see whether anybody really complains.
++	 * If so make sure to support migration if all processes sharing
++	 * this mm are migrating together.
++	 */
++	if (WARN_ON_ONCE(test_bit(MMF_ALIEN_MM, &mm->flags))) {
++		mmput(mm);
++		return -EBUSY;
++	}
++
+ 	/* We move charges except for creative uses of CLONE_VM */
+ 	if (mm->memcg == from) {
+ 		VM_BUG_ON(mc.from);
+
+-- 
+Michal Hocko
+SUSE Labs
