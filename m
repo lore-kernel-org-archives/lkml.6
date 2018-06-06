@@ -1,126 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kBMVDXQnHluZBwAAmS7hNA
-	; Mon, 11 Jun 2018 07:43:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Hx6gISdRGFtpTgAAmS7hNA
+	; Wed, 06 Jun 2018 21:32:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2343B607A4; Mon, 11 Jun 2018 07:43:01 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pH5uTzXv"
+	id 165EF608BF; Wed,  6 Jun 2018 21:32:42 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7EFDA60385;
-	Mon, 11 Jun 2018 07:43:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EFDA60385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 86332607F7;
+	Wed,  6 Jun 2018 21:32:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86332607F7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754080AbeFKHm5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 03:42:57 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41347 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753955AbeFKHm4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:42:56 -0400
-Received: by mail-lf0-f68.google.com with SMTP id d24-v6so28990535lfa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=AB9HW+MbAX/UIhbYC4nArSowRt9LtNbjBvoEqCJX8Ck=;
-        b=pH5uTzXvdFe0lObw0tPGVziqPLV9fQ8PTGw6k4wz0ZniAzbbdRO4GSx7P8zNvu6kNf
-         P9fpPu5Oj2BfbB6oydfQbbn5sVkIxP89P6ZyF9yVQn73RtGG2VFxrUyBTZTKcOO5I+0/
-         0FdXrPbo/iHnWMDrLOAWzgKj8yCzQ36v/iiHjZRsYWCwYMlcNqYjC3AS8Qyazy/vLBrf
-         8HBaMbECVD/inqRL65XeVv1mUB22yHU3Vag+oVemAIa5A2x0hUVQw5xH7TfT1W6rr/Qz
-         lSRMrxtbU2yHKRF1si86Lt6v4GcCVI3xpY7NVdQC6jqqqPF7sUpSUJ6uiXqJwaT86CtJ
-         cr8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=AB9HW+MbAX/UIhbYC4nArSowRt9LtNbjBvoEqCJX8Ck=;
-        b=FPap3VTGlT9KFUzk+6kFTlIiqUuyt852b9UHwxExAUDiLzOij5h/AztfBNRDyW8Pgx
-         wFDkDtjptbWnnzjeLyH190KtF2dNgjbQnAiANsuxG/NqihY/Nereq2Wm2tX7gztOjvGk
-         HelNYCpNEag7ueF3wca2XiOuukUdeR4Qb/UjH+Vyh5hFWW3f0W6VTDaMwknBuP3oTIlz
-         jeeLWbdvKarNcWzvt7bq3MCXrPj7w94ps6MOT0XPsxwali9WRZKF4tvbrp4SPZVwx8i4
-         ECopQDrVrbM24op0BC9V9KpaUkCO+jxt5nWvi7L6jj+56BIW7wPXmvp4YH/W8/UgOt9J
-         hfiw==
-X-Gm-Message-State: APt69E0+GI7tBHzLyJONjfJngHH1/QrZFKdsGvPvC5V+dvEHyZgNgeS8
-        O7rfGTt1lpBl2EmYugQ2wVQ=
-X-Google-Smtp-Source: ADUXVKJbI/+a7Hga4pb23iYD9tsXD4/4ItgF1gOG3VbMcW/hTAZtwlQxjibHEX6He48XcsFUIjbgIA==
-X-Received: by 2002:a19:de0a:: with SMTP id v10-v6mr9165535lfg.94.1528702975049;
-        Mon, 11 Jun 2018 00:42:55 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id u3-v6sm4548661ljg.84.2018.06.11.00.42.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 00:42:54 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.90_1)
-        (envelope-from <johan@xi.terra>)
-        id 1fSHTD-0002mt-VV; Mon, 11 Jun 2018 09:42:32 +0200
-From: Johan Hovold <johan@kernel.org>
+        id S932108AbeFFVci (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 17:32:38 -0400
+Received: from mga17.intel.com ([192.55.52.151]:11662 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752042AbeFFVcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 17:32:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 14:32:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,484,1520924400";
+   d="scan'208";a="47331358"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.43])
+  by orsmga008.jf.intel.com with ESMTP; 06 Jun 2018 14:32:34 -0700
+From: Tomas Winkler <tomas.winkler@intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Johan Hovold <johan@kernel.org>, Alex Elder <elder@linaro.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Bryan ODonoghue <pure.logic@nexus-software.ie>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH] MAINTAINERS: update two greybus sections
-Date: Mon, 11 Jun 2018 09:42:02 +0200
-Message-Id: <20180611074202.10668-1-johan@kernel.org>
-X-Mailer: git-send-email 2.17.1
+Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc 2/2] mei: discard messages from not connected client during power down.
+Date: Thu,  7 Jun 2018 00:31:48 +0300
+Message-Id: <20180606213148.9469-3-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180606213148.9469-1-tomas.winkler@intel.com>
+References: <20180606213148.9469-1-tomas.winkler@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix a file entry typo and drop the obsolete timesync entries, which were
-all caught by:
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-	scripts/get_maintainer.pl --self-test=patterns
+This fixes regression introduced by
+commit 8d52af6795c0 ("mei: speed up the power down flow")
 
-Reported-by: Joe Perches <joe@perches.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+In power down or suspend flow a message can still be received
+from the FW because the clients fake disconnection.
+In normal case we interpret messages w/o destination as corrupted
+and link reset is performed in order to clean the channel,
+but during power down link reset is already in progress resulting
+in endless loop. To resolve the issue under power down flow we
+discard messages silently.
+
+Cc: <stable@vger.kernel.org> 4.16+
+Fixes: 8d52af6795c0 ("mei: speed up the power down flow")
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199541
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
+ drivers/misc/mei/interrupt.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-This has been reported and at least partially fixed in the past, but due
-to various other clean-up work that was going on in MAINTAINERS at the
-time, was never applied.
-
-Johan
-
-
- MAINTAINERS | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9c125f705f78..09d7f9eb5c13 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6065,7 +6065,7 @@ F:	drivers/staging/greybus/bootrom.c
- F:	drivers/staging/greybus/firmware.h
- F:	drivers/staging/greybus/fw-core.c
- F:	drivers/staging/greybus/fw-download.c
--F:	drivers/staging/greybus/fw-managament.c
-+F:	drivers/staging/greybus/fw-management.c
- F:	drivers/staging/greybus/greybus_authentication.h
- F:	drivers/staging/greybus/greybus_firmware.h
- F:	drivers/staging/greybus/hid.c
-@@ -6074,12 +6074,10 @@ F:	drivers/staging/greybus/spi.c
- F:	drivers/staging/greybus/spilib.c
- F:	drivers/staging/greybus/spilib.h
- 
--GREYBUS LOOPBACK/TIME PROTOCOLS DRIVERS
-+GREYBUS LOOPBACK DRIVER
- M:	Bryan O'Donoghue <pure.logic@nexus-software.ie>
- S:	Maintained
- F:	drivers/staging/greybus/loopback.c
--F:	drivers/staging/greybus/timesync.c
--F:	drivers/staging/greybus/timesync_platform.c
- 
- GREYBUS PLATFORM DRIVERS
- M:	Vaibhav Hiremath <hvaibhav.linux@gmail.com>
+diff --git a/drivers/misc/mei/interrupt.c b/drivers/misc/mei/interrupt.c
+index b0b8f18a85e3..6649f0d56d2f 100644
+--- a/drivers/misc/mei/interrupt.c
++++ b/drivers/misc/mei/interrupt.c
+@@ -310,8 +310,11 @@ int mei_irq_read_handler(struct mei_device *dev,
+ 	if (&cl->link == &dev->file_list) {
+ 		/* A message for not connected fixed address clients
+ 		 * should be silently discarded
++		 * On power down client may be force cleaned,
++		 * silently discard such messages
+ 		 */
+-		if (hdr_is_fixed(mei_hdr)) {
++		if (hdr_is_fixed(mei_hdr) ||
++		    dev->dev_state == MEI_DEV_POWER_DOWN) {
+ 			mei_irq_discard_msg(dev, mei_hdr);
+ 			ret = 0;
+ 			goto reset_slots;
 -- 
-2.17.1
+2.14.4
