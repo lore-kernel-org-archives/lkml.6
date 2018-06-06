@@ -1,104 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwdK3Dk5"
-X-Spam-Flag: YES
-X-Spam-Report: 
-	*  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail provider
-	*      (lovethankgod1[at]gmail.com)
-	*  1.3 DATE_IN_PAST_24_48 Date: is 24 to 48 hours before Received: date
-	*  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in digit
-	*      (suniewendy44[at]gmail.com)
-	*  0.6 URG_BIZ BODY: Contains urgent matter
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4971]
-	* -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from author's
-	*       domain
-	* -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-	*  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-	*      valid
-	*  0.0 LOTS_OF_MONEY Huge... sums of money
-	* -1.0 MAILING_LIST_MULTI Multiple indicators imply a widely-seen list
-	*      manager
-	*  1.7 ADVANCE_FEE_5_NEW_MONEY Advance Fee fraud and lots of money
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1353C6037B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dsitri.de header.i=@dsitri.de header.b="b8xW1VmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD7F16070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=computer.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751919AbeFEUdC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Tue, 5 Jun 2018 16:33:02 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:39321 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751807AbeFEUdA (ORCPT
+        id S1752260AbeFFFdr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 01:33:47 -0400
+Received: from mo4-p05-ob.smtp.rzone.de ([85.215.255.133]:27421 "EHLO
+        mo4-p05-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbeFFFdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 16:33:00 -0400
-X-Google-Smtp-Source: ADUXVKJauKD+PU2ZNSUfJRuTrPfpHS5n2RgbfZ4vwiI6bPWoLvrF1xIuoQVZdaj/dioNUkQ50zN2giDzp/vMds7YlwE=
-MIME-Version: 1.0
-Reply-To: suniewendy44@gmail.com
-From: sunie wendy <lovethankgod1@gmail.com>
-Date: Mon, 4 Jun 2018 13:17:15 +0430
-Message-ID: <CAN1Q6c=QKKXpJor2_fHbCkm4rST3B6a+QVKkM6kyMtBmbhS7Fw@mail.gmail.com>
-Subject: I want to know your opinion in doing this project.
-To: undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 6 Jun 2018 01:33:45 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBi5Qpz9LpBMKKLaHMpnzg="
+X-RZG-CLASS-ID: mo05
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v7 3/3] gpio: pca953x: fix address calculation for pcal6524
+From: "H. Nikolaus Schaller" <hns@computer.org>
+In-Reply-To: <20180605203941.GA28143@amd>
+Date: Wed, 6 Jun 2018 07:33:32 +0200
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kumar Gala <galak@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+Content-Transfer-Encoding: 7bit
+Message-Id: <A639885E-0E5D-4FB0-BE51-AFF35BF4F76B@computer.org>
+References: <cover.1526533188.git.hns@goldelico.com> <e70e83f07aebaf702fef90a9fac61e41d8b558b0.1526533188.git.hns@goldelico.com> <20180523140635.GB27215@amd> <CAHp75VfxN1RZBFRK6oJ5AzCe_2ej9eYdwt96X+fJZgFy65eaFg@mail.gmail.com> <20180605203941.GA28143@amd>
+To: Pavel Machek <pavel@ucw.cz>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear, Good day to you
+Hi,
 
-I got my contact via the internet database of your country,
+> Am 05.06.2018 um 22:39 schrieb Pavel Machek <pavel@ucw.cz>:
+> 
+> On Tue 2018-06-05 18:37:21, Andy Shevchenko wrote:
+>> On Wed, May 23, 2018 at 5:06 PM, Pavel Machek <pavel@ucw.cz> wrote:
+>>> On Thu 2018-05-17 06:59:49, H. Nikolaus Schaller wrote:
+>>>> The register constants are so far defined in a way that they fit
+>>>> for the pcal9555a when shifted by the number of banks, i.e. are
+>>>> multiplied by 2 in the accessor function.
+>>>> 
+>>>> Now, the pcal6524 has 3 banks which means the relative offset
+>>>> is multiplied by 4 for the standard registers.
+>>>> 
+>>>> Simply applying the bit shift to the extended registers gives
+>>>> a wrong result, since the base offset is already included in
+>>>> the offset.
+>>>> 
+>>>> Therefore, we have to add code to the 24 bit accessor functions
+>>>> that adjusts the register number for these exended registers.
+>>>> 
+>>>> The formula finally used was developed and proposed by
+>>>> Andy Shevchenko <andy.shevchenko@gmail.com>.
+>> 
+>>>>      int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+>>>> +     int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+>>>> +     int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+>> 
+>>> Is this reasonable to do on each register access? Compiler will not be
+>>> able to optimize out fls and shifts, right?
+>> 
+>> On modern CPUs fls() is one assembly command. OTOH, any proposal to do
+>> this better?
+>> 
+>> What I can see is that bank_shift is invariant to the function, and
+>> maybe cached.
+> 
+> Yes, I thought that caching bank_shift might be good idea. I thought
+> it was constant for given chip...
 
-My name is Mr. Rungsun Klinkaeo, from Thailand and  lawyer, to Late
-Engineer Vladimir D. Soloviev, a citizen of your country who was lived
-in Petrograd, Russia.
+Yes, it is an f(chip), but the question that comes to my mind is if
+optimization is worth any effort. This is an accessor method over i2c
+which tends to be slow (100 / 400kHz SCL) compared to the CPU. So saving
+1 or 2 CPU cycles here doesn't seem to be a significant improvement.
+Maybe it is more valuable to improve the code path through the i2c core?
 
- I am writing to present you as a relative to a Later Engr. Vladimir
-Solovyov to secure his $ 10.5 million ($ 10.5 million) deposit on his
-bank account in Lom=C3=A9 Togo before his death,
-
-With this transaction, I'm contacting you to prevent the Bank from
-confiscation the fund in Mr Solovyov's account due to the fact that
-the fund has not been activated the bank accounts since his death
-because Mr. Vladimir Solovyov, who is from the same country with you
-and then you and me we will invest the fund in your country
-
-For this reason, based on your interest in this transaction, I will
-send you all the important details of the fund's return to the
-account; the transaction deserves maximum honesty, confidence and
-confidentiality
-
-Finally, if you want to see the fund in the online bank account of
-late Mr. Vladimir Solovyov,
-
-Name of the bank; ORABANK Lome Togo
-
-Bank address; Place of Independence x Av des Nimes et Nicolas,
-Grunitzky, BP, 65 Lome, Togo WA.
-
- Account name; Vladimir Solovyov.
-
- Account number: TG - 20691464517.
-
-
-To view the bank account and make a transfer Visit the bank's website
-at http://www.orabantogo.cf
-
- Click on the compte-en-ligne to sign in (French) or Online Banking
-English Or http://www.orabantogo.cf/compte-en-ligne
-
-Enter your username; WladimirD.Solovjev,
-
-Then enter your password; efthimia00000000
-
-please Do not try to transfer money from this bank account until the
-process is complete.
-
-Note, you must treat this transaction as being secret for another person
-
-I await your urgent reply and your interest. reply via e-mail :
-(suniewendy44@gmail.com)
-
-Sincerely,
-
-Mr Rungsun Klinkaeo
+BR,
+Nikolaus
