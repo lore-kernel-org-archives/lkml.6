@@ -1,170 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13B46601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCPEEg9J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 024EB601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933725AbeFFRBt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:01:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35498 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933699AbeFFRBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:01:45 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak90 (was ghak32) V3 08/10] audit: NETFILTER_PKT: record each container ID associated with a netNS
-Date: Wed,  6 Jun 2018 12:58:35 -0400
-Message-Id: <c6b64f6540e2e531636142ced36d51f0744d0e1f.1528304204.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
+        id S932695AbeFFKp5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:45:57 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53502 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932630AbeFFKpy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:45:54 -0400
+X-Google-Smtp-Source: ADUXVKLNIcN7d5iQAJN6gl86MEXxoYJLrxjpREg03Wyn4WXcoi8arJ/vL38UFtue/RbngGem/21oOA==
+Date: Wed, 6 Jun 2018 12:45:50 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Tegra20 External Memory Controller driver
+Message-ID: <20180606104550.GK11810@ulmo>
+References: <20180603223654.23324-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RVlUGXxwBj5SDcM9"
+Content-Disposition: inline
+In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add audit container identifier auxiliary record(s) to NETFILTER_PKT
-event standalone records.  Iterate through all potential audit container
-identifiers associated with a network namespace.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- include/linux/audit.h    |  5 +++++
- kernel/audit.c           | 20 +++++++++++++++++++-
- kernel/auditsc.c         |  2 ++
- net/netfilter/xt_AUDIT.c | 12 ++++++++++--
- 4 files changed, 36 insertions(+), 3 deletions(-)
+--RVlUGXxwBj5SDcM9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 7e2e51c..4560a4e 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -167,6 +167,8 @@ extern int audit_log_contid(struct audit_context *context,
- extern void audit_contid_add(struct net *net, u64 contid);
- extern void audit_contid_del(struct net *net, u64 contid);
- extern void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p);
-+extern void audit_log_contid_list(struct net *net,
-+				 struct audit_context *context);
- 
- extern int		    audit_update_lsm_rules(void);
- 
-@@ -231,6 +233,9 @@ static inline void audit_contid_del(struct net *net, u64 contid)
- { }
- static inline void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
- { }
-+static inline void audit_log_contid_list(struct net *net,
-+					struct audit_context *context)
-+{ }
- 
- #define audit_enabled 0
- #endif /* CONFIG_AUDIT */
-diff --git a/kernel/audit.c b/kernel/audit.c
-index ecd2de4..8cca41a 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -382,6 +382,20 @@ void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
- 		audit_contid_add(new->net_ns, contid);
- }
- 
-+void audit_log_contid_list(struct net *net, struct audit_context *context)
-+{
-+	struct audit_contid *cont;
-+	int i = 0;
-+
-+	list_for_each_entry(cont, audit_get_contid_list(net), list) {
-+		char buf[14];
-+
-+		sprintf(buf, "net%u", i++);
-+		audit_log_contid(context, buf, cont->id);
-+	}
-+}
-+EXPORT_SYMBOL(audit_log_contid_list);
-+
- void audit_panic(const char *message)
- {
- 	switch (audit_failure) {
-@@ -2132,17 +2146,21 @@ int audit_log_contid(struct audit_context *context,
- 			      char *op, u64 contid)
- {
- 	struct audit_buffer *ab;
-+	gfp_t gfpflags;
- 
- 	if (!cid_valid(contid))
- 		return 0;
-+	/* We can be called in atomic context via audit_tg() */
-+	gfpflags = (in_atomic() || irqs_disabled()) ? GFP_ATOMIC : GFP_KERNEL;
- 	/* Generate AUDIT_CONTAINER record with container ID */
--	ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
-+	ab = audit_log_start(context, gfpflags, AUDIT_CONTAINER);
- 	if (!ab)
- 		return -ENOMEM;
- 	audit_log_format(ab, "op=%s contid=%llu", op, contid);
- 	audit_log_end(ab);
- 	return 0;
- }
-+EXPORT_SYMBOL(audit_log_contid);
- 
- void audit_log_key(struct audit_buffer *ab, char *key)
- {
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 6ab5e5e..e2a16d2 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1015,6 +1015,7 @@ struct audit_context *audit_alloc_local(void)
- 	context->in_syscall = 1;
- 	return context;
- }
-+EXPORT_SYMBOL(audit_alloc_local);
- 
- void audit_free_context(struct audit_context *context)
- {
-@@ -1029,6 +1030,7 @@ void audit_free_context(struct audit_context *context)
- 	audit_proctitle_free(context);
- 	kfree(context);
- }
-+EXPORT_SYMBOL(audit_free_context);
- 
- static int audit_log_pid_context(struct audit_context *context, pid_t pid,
- 				 kuid_t auid, kuid_t uid, unsigned int sessionid,
-diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-index f368ee6..10d2707 100644
---- a/net/netfilter/xt_AUDIT.c
-+++ b/net/netfilter/xt_AUDIT.c
-@@ -71,10 +71,13 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
- {
- 	struct audit_buffer *ab;
- 	int fam = -1;
-+	struct audit_context *context;
-+	struct net *net;
- 
- 	if (audit_enabled == 0)
--		goto errout;
--	ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
-+		goto out;
-+	context = audit_alloc_local();
-+	ab = audit_log_start(context, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
- 	if (ab == NULL)
- 		goto errout;
- 
-@@ -104,7 +107,12 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
- 
- 	audit_log_end(ab);
- 
-+	net = xt_net(par);
-+	audit_log_contid_list(net, context);
-+
- errout:
-+	audit_free_context(context);
-+out:
- 	return XT_CONTINUE;
- }
- 
--- 
-1.8.3.1
+On Mon, Jun 04, 2018 at 01:36:49AM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> Couple years ago the Tegra20 EMC driver was removed from the kernel
+> due to incompatible changes in the Tegra's clock driver. This patchset
+> introduces a modernized EMC driver. Currently the sole purpose of the
+> driver is to initialize DRAM frequency to maximum rate during of the
+> kernels boot-up. Later we may consider implementing dynamic memory
+> frequency scaling, utilizing functionality provided by this driver.
+>=20
+> Changelog:
+>=20
+> v2:
+> 	- Minor code cleanups like consistent use of writel_relaxed instead
+> 	  of non-relaxed version, reworded error messages, etc.
+>=20
+> 	- Factored out use_pllm_ud bit checking into a standalone patch for
+> 	  consistency.
+>=20
+> Dmitry Osipenko (5):
+>   dt: bindings: tegra20-emc: Document interrupt property
+>   ARM: dts: tegra20: Add interrupt to External Memory Controller
+>   clk: tegra20: Turn EMC clock gate into divider
+>   clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+>   memory: tegra: Introduce Tegra20 EMC driver
+
+I took a brief look and didn't spot any dependencies between the clk and
+memory patches. Is it correct that these can be applied separately?
+
+Thierry
+
+--RVlUGXxwBj5SDcM9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsXu14ACgkQ3SOs138+
+s6ESmRAAgk7ByRH8GWRq1Ksk7cukW8gtj4BjXdmxXTZ3g3WpV48CSdZ96NemAfqw
+yZU3YzV/sb1D32i8hbCwrDWU5C1SmuKSkjnrBePyA+brHtzzuWI9KY149DjTi2Y3
+qzoh+5/hgQ0lAxbh18RqpyTzfUSFOdBAUhhDyhdWO7pirdB59tMuNidiPNmZFFKB
+9hDLaIjHWUOLDGFR3G48AgQDhwnN8xxgmNCpoCNUBsO5kkiQb/xDvOgzsQ+I8rjs
+m+x1iY6LxqfrB/oxyh1uUj/m5Gd0vJTnIqJ981bUhPSUezeQQ/6Up9mP/v6lPOzw
+dqIbIA7BG5vkOJ0mgi0CFeV6kdwmx8M6I3ZAAzvD1+FpcqgTqNpHSNNKTz1ro9iU
+Nr6KStV2Dhu/enRqDuhtcE/OanPV90Q8/R/W5+wkIaG3bMVYMhgcjJTiPZCObXiD
+pqQI+34TZj4M4EGQkRov/ZzBlSiknXGewsFdf0FD3sZIhLmDQfhm+9urApB8qmGt
+vcwff3HkejKtpe4RwT1gbiL/log9um3+U5/Jdua0AOer/cs4hH/i9qiV8LSmCKeg
+PKEBqnDkpNwuuHTgJEHR639jiqhnDCoR8kYDZOZYjv4Af9sfqmugQ4PpaiZXWyeU
+rNGIaIrmOBO+RPDKrEaBWx4aQqAElQp8Z30TQvBW6cWTSIlzRb0=
+=k4kO
+-----END PGP SIGNATURE-----
+
+--RVlUGXxwBj5SDcM9--
