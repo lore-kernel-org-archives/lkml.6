@@ -1,95 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WocHgy+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 167CB60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gVU5VjED";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gVU5VjED"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49D5A6070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932213AbeFFShC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:37:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932138AbeFFShA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:37:00 -0400
-Date: Wed, 6 Jun 2018 15:36:57 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        Kan Liang <kan.liang@intel.com>
-Subject: Re: [PATCH v2 2/3] perf script python: Add more PMU fields
-Message-ID: <20180606183657.GI24381@kernel.org>
-References: <1527843663-32288-1-git-send-email-yao.jin@linux.intel.com>
- <1527843663-32288-3-git-send-email-yao.jin@linux.intel.com>
+        id S932638AbeFFJv1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:51:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49058 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752074AbeFFJvY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:51:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFF1C6070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH] remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
+To: Vinod <vkoul@kernel.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        sibis@codeaurora.org
+References: <1528177361-8883-1-git-send-email-sricharan@codeaurora.org>
+ <20180605061919.GQ16230@vkoul-mobl>
+ <3a4c102b-7228-153a-c588-b1bf00291fa8@codeaurora.org>
+ <20180605164031.GZ16230@vkoul-mobl>
+ <1b376fc2-6a1b-1457-ffff-332954d1bef8@codeaurora.org>
+ <20180606064909.GC16230@vkoul-mobl>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <dbcbdb1c-7721-62ea-8f97-f0952a490052@codeaurora.org>
+Date: Wed, 6 Jun 2018 15:21:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1527843663-32288-3-git-send-email-yao.jin@linux.intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180606064909.GC16230@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jun 01, 2018 at 05:01:02PM +0800, Jin Yao escreveu:
+Hi Vinod,
 
-<SNIP>
+On 6/6/2018 12:19 PM, Vinod wrote:
+> Hi Sricharan,
+> 
+> On 06-06-18, 12:09, Sricharan R wrote:
+> 
+>>>>>> +config QCOM_Q6V5_WCSS
+>>>>>> +	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+>>>>>> +	depends on OF && ARCH_QCOM
+>>>>>> +	depends on QCOM_SMEM
+>>>>>> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+>>>>>> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>>>>>
+>>>>> Is there a reason why it depends on RPMSG_QCOM_GLINK_SMEM=n? What would
+>>>>> happen if distro wants both this and RPMSG_QCOM_GLINK_SMEM
+>>>>>
+>>>>   RPMSG_QCOM_GLINK_SMEM=n should be for the COMPILE_TEST. Probably that
+>>>
+>>> why would that be a limitation? I am more worried about
+>>> RPMSG_QCOM_GLINK_SMEM=n being the condition here. In new drivers we
+>>> should not typically have dependency on some symbol being not there
+>>
+>> Without that, if RPMSG_QCOM_GLINK_SMEM=m is compiled as a module, then
+>> it would break the build.
+> 
+> Okay I do not know the details, but that doesn't sound correct to me.
+> Breaking build sounds a bit extreme to me. Can you give details on this
+> part..
+> 
 
-> +static int get_symoff(struct symbol *sym, struct addr_location *al,
-> +		      bool print_off, char *bf, int size)
-> +{
-> +	unsigned long offset;
-> +
-> +	if (!sym || !sym->name)
-> +		return scnprintf(bf, size, "%s", "[unknown]");
+ Having, just, depends on RPMSG_QCOM_GLINK_SMEM || COMPILE_TEST,
+ is going to break when RPMSG_QCOM_GLINK_SMEM=m and COMPILE_TEST=y.
+ Hence the COMPILE_TEST && RPMSG_QCOM_GLINK_SMEM=n.
 
-  52    54.22 ubuntu:17.04                  : FAIL gcc (Ubuntu 6.3.0-12ubuntu2) 6.3.0 20170406
+ Having said that, COMPILE_TEST is getting tested for RPMSG_QCOM_SMD=n in
+ the previous line. So that's the reason for not having it in below line for
+ RPMSG_QCOM_GLINK_SMEM.
 
-  CC       /tmp/build/perf/util/scripting-engines/trace-event-python.o
-util/scripting-engines/trace-event-python.c:534:20: error: address of array 'sym->name' will always evaluate to 'true' [-Werror,-Wpointer-bool-conversion]
-        if (!sym || !sym->name)
-                    ~~~~~~^~~~
-1 error generated.
-mv: cannot stat '/tmp/build/perf/util/scripting-engines/.trace-event-python.o.tmp': No such file or directory
-/git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/scripting-engines/trace-event-python.o' failed
-make[5]: *** [/tmp/build/perf/util/scripting-engines/trace-event-python.o] Error 1
+>>>>   means that it should be corrected here and for ADSP, Q6V5_PIL as well.
+>>>>   Bjorn, is that correct ?, should it be, below ?
+>>>>  
+>>>>   depends on (RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)) || (RPMSG_QCOM_GLINK_SMEM || (COMPILE_TEST && RPMSG_QCOM_GLINK_SMEM=n))
+>>>
+>>> that doesnt really sound good :(
+>>
+>>  Hmm, but i was thinking it should functionally depend on either SMD or GLINK and not both.
+> 
+> If you are depedent upon a symbol provided by a module you should say
+> depends on. If a machine is not supposed to have both SMD or GLINK then
+> the driver will not get probed.
+> 
 
-Because:
+This is where, i was thinking, it should be functional if either of SMD or GLINK
+is there, but should not require both.
 
-struct symbol {
-        struct rb_node  rb_node;
-        u64             start;
-        u64             end;
-        u16             namelen;
-<SNIP>
-        char            name[0];
-};
+Regards,
+ Sricharan
 
-It sym->name is not a pointer, in symbol's constructor we have:
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
 
-struct symbol *symbol__new(u64 start, u64 len, u8 binding, u8 type, const char *name)
-{       
-        size_t namelen = strlen(name) + 1;
-        struct symbol *sym = calloc(1, (symbol_conf.priv_size +
-                                        sizeof(*sym) + namelen));
-        if (sym == NULL)
-                return NULL;
-<SNIP>
-        sym->namelen = namelen - 1;
-        memcpy(sym->name, name, namelen);
-
-        return sym;
-}
-
-So it is at least 1 char long, the test above should be:
-
-	if (!sym || !sym->name[0])
-		return scnprintf(bf, size, "%s", "[unknown]");
-
-I'm fixing this up here.
-
-- Arnaldo
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
