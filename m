@@ -1,84 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="KgLp9pa1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B6DDD60764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B22E601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752389AbeFFNye (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:54:34 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:49236 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752359AbeFFNyb (ORCPT
+        id S932480AbeFFKbb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:31:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44995 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932291AbeFFKba (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:54:31 -0400
-X-IronPort-AV: E=Sophos;i="5.49,483,1520899200";
-   d="scan'208";a="723031022"
-From: Norbert Manthey <nmanthey@amazon.de>
-CC: Norbert Manthey <nmanthey@amazon.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chris Mason <clm@fb.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nick Terrell <terrelln@fb.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Jinbum Park <jinb.park7@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Dave Young <dyoung@redhat.com>,
-        Tom Herbert <tom@quantonium.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [less-CONFIG_NET 4/7] seccomp: include nlattr
-Date: Wed, 6 Jun 2018 15:53:23 +0200
-Message-ID: <1528293206-24298-4-git-send-email-nmanthey@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
-References: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
- <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
+        Wed, 6 Jun 2018 06:31:30 -0400
+From: Colin King <colin.king@canonical.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: ak4458: make structure soc_codec_dev_ak4458 static const
+Date: Wed,  6 Jun 2018 11:31:23 +0100
+Message-Id: <20180606103123.31719-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we want to use CONFIG_SECCOMP_FILTER without CONFIG_NET, we have
-to ensure that the required files that would be pulled in via
-CONFIG_NET are compiled when dropping CONFIG_NET.
+From: Colin Ian King <colin.king@canonical.com>
 
-Here, we could also select CONFIG_NLATTR instead of pulling the file
-in explicitly. One could go even one step further and cut the only
-required function off, namely nla_find.
+The structure soc_codec_dev_ak4458 is local to the source and do not
+need to be in global scope and can be const, make it static const.
 
-This is part of the effort to split CONFIG_SECCOMP_FILTER and
-CONFIG_NET.
+Cleans up sparse warnings:
+warning: symbol 'soc_codec_dev_ak4458' was not declared. Should it
+be static?
 
-Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- lib/Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/soc/codecs/ak4458.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/Makefile b/lib/Makefile
-index ce20696..bbe09f3 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -163,7 +163,9 @@ obj-$(CONFIG_HAVE_ARCH_TRACEHOOK) += syscall.o
+diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
+index 31ec0ba2e639..299ada4dfaa0 100644
+--- a/sound/soc/codecs/ak4458.c
++++ b/sound/soc/codecs/ak4458.c
+@@ -558,7 +558,7 @@ static int __maybe_unused ak4458_runtime_resume(struct device *dev)
+ }
+ #endif /* CONFIG_PM */
  
- obj-$(CONFIG_DYNAMIC_DEBUG) += dynamic_debug.o
- 
--obj-$(CONFIG_NLATTR) += nlattr.o
-+ifneq ($(filter y,$(CONFIG_NLATTR) $(CONFIG_SECCOMP_FILTER)),)
-+obj-y += nlattr.o
-+endif
- 
- obj-$(CONFIG_LRU_CACHE) += lru_cache.o
- 
+-struct snd_soc_component_driver soc_codec_dev_ak4458 = {
++static const struct snd_soc_component_driver soc_codec_dev_ak4458 = {
+ 	.probe			= ak4458_probe,
+ 	.remove			= ak4458_remove,
+ 	.controls		= ak4458_snd_controls,
 -- 
-2.7.4
-
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+2.17.0
