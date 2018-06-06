@@ -1,145 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D228607CF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0AD9660555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=theobroma-systems.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeFFCN0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Tue, 5 Jun 2018 22:13:26 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43437 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751977AbeFFCNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 22:13:25 -0400
-Subject: Re: [PATCH v3 1/2] PCI: Avoid panic when PCI IO resource's size is
- not page aligned
-To: Bjorn Helgaas <helgaas@kernel.org>
-References: <1527596299-57567-1-git-send-email-xieyisheng1@huawei.com>
- <20180605235303.GE226399@bhelgaas-glaptop.roam.corp.google.com>
-CC: <bhelgaas@google.com>, <rjw@rjwysocki.net>, <lenb@kernel.org>,
-        <guohanjun@huawei.com>, <jcm@redhat.com>, <toshi.kani@hpe.com>,
-        <tanxiaojun@huawei.com>, <wangzhou1@hisilicon.com>,
-        <linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <f1e62ee9-cb19-1139-c9e4-e3a5c9f16b72@huawei.com>
-Date: Wed, 6 Jun 2018 10:11:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
-MIME-Version: 1.0
-In-Reply-To: <20180605235303.GE226399@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+        id S1752659AbeFFPb4 convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Wed, 6 Jun 2018 11:31:56 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:44646 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751914AbeFFPby (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:31:54 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] arm64: dts: rockchip: Switch to SPDX identifier.
+From: klaus.goger@theobroma-systems.com
+In-Reply-To: <20180606152109.12359-1-enric.balletbo@collabora.com>
+Date: Wed, 6 Jun 2018 17:31:34 +0200
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel@collabora.com,
+        Simon Xue <xxm@rock-chips.com>,
+        Yakir Yang <kuankuan.y@gmail.com>,
+        Liang Chen <cl@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        David Wu <david.wu@rock-chips.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        William Wu <william.wu@rock-chips.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        linux-rockchip@lists.infradead.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Rocky Hao <rocky.hao@rock-chips.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        =?utf-8?Q?Kamil_Trzci=C5=84ski?= <ayufan@ayufan.eu>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        devicetree@vger.kernel.org, Pierre-Hugues Husson <phh@phh.me>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        linux-arm-kernel@lists.infradead.org,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Yao <markyao0591@gmail.com>,
+        Sugar Zhang <sugar.zhang@rock-chips.com>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Caesar Wang <wxt@rock-chips.com>,
+        Joseph Chen <chenjh@rock-chips.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <DCD2814D-35CD-4856-9479-3A09922586DD@theobroma-systems.com>
+References: <20180606152109.12359-1-enric.balletbo@collabora.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Hi Enric,
 
-On 2018/6/6 7:53, Bjorn Helgaas wrote:
-> On Tue, May 29, 2018 at 08:18:18PM +0800, Yisheng Xie wrote:
->> Zhou reported a bug on Hisilicon arm64 D06 platform with 64KB page size:
->>
->>  [    2.470908] kernel BUG at lib/ioremap.c:72!
->>  [    2.475079] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
->>  [    2.480551] Modules linked in:
->>  [    2.483594] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc7-00062-g0b41260-dirty #23
->>  [    2.491756] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI Nemo 2.0 RC0 - B120 03/23/2018
->>  [    2.500614] pstate: 80c00009 (Nzcv daif +PAN +UAO)
->>  [    2.505395] pc : ioremap_page_range+0x268/0x36c
->>  [    2.509912] lr : pci_remap_iospace+0xe4/0x100
->>  [...]
->>  [    2.603733] Call trace:
->>  [    2.606168]  ioremap_page_range+0x268/0x36c
->>  [    2.610337]  pci_remap_iospace+0xe4/0x100
->>  [    2.614334]  acpi_pci_probe_root_resources+0x1d4/0x214
->>  [    2.619460]  pci_acpi_root_prepare_resources+0x18/0xa8
->>  [    2.624585]  acpi_pci_root_create+0x98/0x214
->>  [    2.628843]  pci_acpi_scan_root+0x124/0x20c
->>  [    2.633013]  acpi_pci_root_add+0x224/0x494
->>  [    2.637096]  acpi_bus_attach+0xf8/0x200
->>  [    2.640918]  acpi_bus_attach+0x98/0x200
->>  [    2.644740]  acpi_bus_attach+0x98/0x200
->>  [    2.648562]  acpi_bus_scan+0x48/0x9c
->>  [    2.652125]  acpi_scan_init+0x104/0x268
->>  [    2.655948]  acpi_init+0x308/0x374
->>  [    2.659337]  do_one_initcall+0x48/0x14c
->>  [    2.663160]  kernel_init_freeable+0x19c/0x250
->>  [    2.667504]  kernel_init+0x10/0x100
->>  [    2.670979]  ret_from_fork+0x10/0x18
->>
->> The cause is the size of PCI IO resource is 32KB, which is 4K aligned but
->> not 64KB aligned, however, ioremap_page_range() request the range as page
->> aligned or it will trigger a BUG_ON() on ioremap_pte_range() it calls, as
->> ioremap_pte_range increase the addr by PAGE_SIZE, which makes addr != end
->> until trigger BUG_ON, if its incoming end is not page aligned. More detail
->> trace is as following:
->>
->>  ioremap_page_range
->>  -> ioremap_p4d_range
->>     -> ioremap_p4d_range
->>        -> ioremap_pud_range
->>           -> ioremap_pmd_range
->>              -> ioremap_pte_range
->>
->> This patch avoid panic by return -EINVAL if vaddr or resource size is not
->> page aligned.
->>
->> Reported-by: Zhou Wang <wangzhou1@hisilicon.com>
->> Tested-by: Xiaojun Tan <tanxiaojun@huawei.com>
->> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
->> ---
->> v3:
->>  - pci_remap_iospace() sanitize its arguments instead - per Rafael
->>
->> v2:
->>  - Let the caller of ioremap_page_range() align the request by PAGE_SIZE - per Toshi
->>
->>  drivers/pci/pci.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index dbfe7c4..0eb0381 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -3544,6 +3544,9 @@ int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr)
->>  	if (res->end > IO_SPACE_LIMIT)
->>  		return -EINVAL;
->>  
->> +	if (!PAGE_ALIGNED(vaddr) || !PAGE_ALIGNED(resource_size(res)))
->> +		return -EINVAL;
+> On 06.06.2018, at 17:21, Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
 > 
-> Most other callers of ioremap_page_range() are in the ioremap() path,
-> and they align phys_addr themselves.  In some cases that results in a
-> mapping that covers more than necessary.  For instance, see the
-> function comment at the x86 version of __ioremap_caller().
-> 
-> Is there any reason we couldn't similarly align vaddr and phys_addr
-> here?
-> 
-> The acpi_pci_probe_root_resources() path you mention above basically
-> ignores the errors you're returning.  Your patches will avoid the
-> panic, which is an improvement, but I/O port space will not work, and
-> I don't see anything that gives the user a hint about why not.
-> 
-> If we could align vaddr and phys_addr (and possibly map more than
-> necessary), I/O port space would still work.
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
 
-Right, I will send another version, soon.
+[snip]
 
-Thanks
-Yisheng
-> 
->>  	return ioremap_page_range(vaddr, vaddr + resource_size(res), phys_addr,
->>  				  pgprot_device(PAGE_KERNEL));
->>  #else
->> -- 
->> 1.7.12.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> .
-> 
+Heiko merged a similar patch 2 days ago
+http://lists.infradead.org/pipermail/linux-rockchip/2018-June/020939.html
+
+Cheers,
+Klaus
