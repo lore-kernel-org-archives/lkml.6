@@ -1,253 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA19060764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F30E606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932380AbeFFHs4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 03:48:56 -0400
-Received: from mga12.intel.com ([192.55.52.136]:60016 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932263AbeFFHsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:48:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,482,1520924400";
-   d="scan'208";a="64712513"
-Message-ID: <05c0f2af4e9160ef4c02373dac4141a2018f00ae.camel@linux.intel.com>
-Subject: Re: [PATCH v8 7/8] lib: Add module to simulate atomic sections for
- testing preemptoff tracers
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com, Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>,
+        id S1752215AbeFFSRc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:17:32 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35556 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752000AbeFFSR3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 14:17:29 -0400
+X-Google-Smtp-Source: ADUXVKLEAu1RVgC1QcnscZt6p1I4Mxpkn91ee7B/ZkXUAWzTki0YFZYShsGcoEy1rrmbG+qUwItYRQ==
+Subject: Re: [PATCH v6 0/5] efi/firmware/platform-x86: Add EFI embedded fw
+ support
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Date: Wed, 06 Jun 2018 10:48:48 +0300
-In-Reply-To: <20180605235305.GA72953@joelaf.mtv.corp.google.com>
-References: <20180530000500.257225-1-joel@joelfernandes.org>
-         <20180530000500.257225-8-joel@joelfernandes.org>
-         <20180605235305.GA72953@joelaf.mtv.corp.google.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        "H . Peter Anvin" <hpa@zytor.com>, Peter Jones <pjones@redhat.com>,
+        Dave Olsthoorn <dave@bewaar.me>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        David Howells <dhowells@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        dmitry.torokhov@gmail.com, mfuzzey@parkeon.com,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        nbroeking@me.com, bjorn.andersson@linaro.org,
+        Torsten Duwe <duwe@suse.de>, Kees Cook <keescook@chromium.org>,
+        x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180601125330.25054-1-hdegoede@redhat.com>
+ <20180605204623.GB4511@wotan.suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <350930d6-5a0f-11e1-1b04-e5c11961931b@redhat.com>
+Date: Wed, 6 Jun 2018 20:17:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605204623.GB4511@wotan.suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-05 at 16:53 -0700, Joel Fernandes wrote:
-> (Resending since Andy wasn't on CC - sorry)
+Hi,
 
-> Andy, previously made some suggestions to this patch. The updated
-> version is
-> below and I am planning to send it along with this series as v9. I
-> have
-> included it in advance below for your Review.
+On 05-06-18 22:46, Luis R. Rodriguez wrote:
+> On Fri, Jun 01, 2018 at 02:53:25PM +0200, Hans de Goede wrote:
+>> Hi All,
+>>
+>> Here is v6 of my patch-set to add support for EFI embedded fw to the kernel.
+>>
+>> This patch-set applies on top of the "[PATCH v7 00/14] firmware_loader
+>> changes for v4.18" series from mcgrof.
+>>
+>> It now also depends on the series from Andy Lutomirski which allow using the
+>> sha256 code in a standalone manner. Andy what is the status of those?
+>>
+>> Changes since v5:
+>> -Rework code to remove casts from if (prefix == mem) comparison
+>> -Use SHA256 hashes instead of crc32 sums
 > 
-> Andy, would you be Ok with adding your Reviewed-by to it?
-> 
+> Nice! I see no updates on this progress, but it would seem this
+> may then mean this cannot be merged until the release after?
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Once the sha256 bits are in place the subsys tree which has them
+merged can create an immutable branch for Greg to merge and
+then these can be applied on top of that merge.
 
-P.S. I'm not familiar with the topic so much to have any insights about
-implementation, though.
+But yes this means that these probably won't go in for another
+cycle or 2, that is fine.
 
-> ---8<-----------------------
+>> -Add new READING_FIRMWARE_EFI_EMBEDDED read_file_id and use it
+>> -Call security_kernel_read_file(NULL, READING_FIRMWARE_EFI_EMBEDDED)
+>>   to check if this is allowed before looking at EFI embedded fw
 > 
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> Date: Wed, 16 May 2018 23:46:06 -0700
-> Subject: [PATCH v9 7/8] lib: Add module to simulate atomic sections
-> for testing
->  preemptoff tracers
+> There's a discussion over having security_kernel_read_file(NULL,
+> READING_WHATEVER) become another LSM hook. So your series would conflict with
+> that at the moment.
 > 
-> In this patch we introduce a test module for simulating a long atomic
-> section in the kernel which the preemptoff or irqsoff tracers can
-> detect. This module is to be used only for test purposes and is
-> default
-> disabled.
-> 
-> Following is the expected output (only briefly shown) that can be
-> parsed
-> to verify that the tracers are working correctly. We will use this
-> from
-> the kselftests in future patches.
-> 
-> For the preemptoff tracer:
-> 
-> echo preemptoff > /d/tracing/current_tracer
-> sleep 1
-> insmod ./test_atomic_sections.ko atomic_mode=preempt
-> atomic_time=500000
-> sleep 1
-> bash-4.3# cat /d/tracing/trace
-> preempt -1066    2...2    0us@: atomic_sect_run <-atomic_sect_run
-> preempt -1066    2...2 500002us : atomic_sect_run <-atomic_sect_run
-> preempt -1066    2...2 500004us : tracer_preempt_on <-atomic_sect_run
-> preempt -1066    2...2 500012us : <stack trace>
->  => kthread
->  => ret_from_fork
-> 
-> For the irqsoff tracer:
-> 
-> echo irqsoff > /d/tracing/current_tracer
-> sleep 1
-> insmod ./test_atomic_sections.ko atomic_mode=irq atomic_time=500000
-> sleep 1
-> bash-4.3# cat /d/tracing/trace
-> irq dis -1069    1d..1    0us@: atomic_sect_run
-> irq dis -1069    1d..1 500001us : atomic_sect_run
-> irq dis -1069    1d..1 500002us : tracer_hardirqs_on <-atomic_sect_run
-> irq dis -1069    1d..1 500005us : <stack trace>
->  => ret_from_fork
-> 
-> Co-developed-by: Erick Reyes <erickreyes@google.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  lib/Kconfig.debug          |  8 ++++
->  lib/Makefile               |  1 +
->  lib/test_atomic_sections.c | 77
-> ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 86 insertions(+)
->  create mode 100644 lib/test_atomic_sections.c
-> 
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index c40c7b734cd1..faebf0fe3bcf 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1933,6 +1933,14 @@ config TEST_KMOD
->  
->  	  If unsure, say N.
->  
-> +config TEST_ATOMIC_SECTIONS
-> +	tristate "Simulate atomic sections for tracers to detect"
-> +	depends on m
-> +	help
-> +	  Select this option to build a test module that can help
-> test atomic
-> +	  sections by simulating them with a duration supplied as a
-> module
-> +	  parameter. Preempt disable and irq disable modes can be
-> requested.
-> +
->  config TEST_DEBUG_VIRTUAL
->  	tristate "Test CONFIG_DEBUG_VIRTUAL feature"
->  	depends on DEBUG_VIRTUAL
-> diff --git a/lib/Makefile b/lib/Makefile
-> index ce20696d5a92..e82cf5445b7b 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -46,6 +46,7 @@ obj-y += string_helpers.o
->  obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
->  obj-y += hexdump.o
->  obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
-> +obj-$(CONFIG_TEST_ATOMIC_SECTIONS) += test_atomic_sections.o
->  obj-y += kstrtox.o
->  obj-$(CONFIG_FIND_BIT_BENCHMARK) += find_bit_benchmark.o
->  obj-$(CONFIG_TEST_BPF) += test_bpf.o
-> diff --git a/lib/test_atomic_sections.c b/lib/test_atomic_sections.c
-> new file mode 100644
-> index 000000000000..1eef518f0974
-> --- /dev/null
-> +++ b/lib/test_atomic_sections.c
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Atomic section emulation test module
-> + *
-> + * Emulates atomic sections by disabling IRQs or preemption
-> + * and doing a busy wait for a specified amount of time.
-> + * This can be used for testing of different atomic section
-> + * tracers such as irqsoff tracers.
-> + *
-> + * (c) 2018. Google LLC
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kthread.h>
-> +#include <linux/ktime.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/string.h>
-> +
-> +static ulong atomic_time = 100;
-> +static char atomic_mode[10] = "irq";
-> +
-> +module_param_named(atomic_time, atomic_time, ulong, S_IRUGO);
-> +module_param_string(atomic_mode, atomic_mode, 10, S_IRUGO);
-> +MODULE_PARM_DESC(atomic_time, "Period in microseconds (100 uS
-> default)");
-> +MODULE_PARM_DESC(atomic_mode, "Mode of the test such as preempt or
-> irq (default irq)");
-> +
-> +static void busy_wait(ulong time)
-> +{
-> +	ktime_t start, end;
-> +	start = ktime_get();
-> +	do {
-> +		end = ktime_get();
-> +		if (kthread_should_stop())
-> +			break;
-> +	} while (ktime_to_ns(ktime_sub(end, start)) < (time * 1000));
-> +}
-> +
-> +int atomic_sect_run(void *data)
-> +{
-> +	unsigned long flags;
-> +
-> +	if (!strcmp(atomic_mode, "irq")) {
-> +		local_irq_save(flags);
-> +		busy_wait(atomic_time);
-> +		local_irq_restore(flags);
-> +	} else if (!strcmp(atomic_mode, "preempt")) {
-> +		preempt_disable();
-> +		busy_wait(atomic_time);
-> +		preempt_enable();
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init atomic_sect_init(void)
-> +{
-> +	char task_name[50];
-> +	struct task_struct *test_task;
-> +
-> +	snprintf(task_name, sizeof(task_name), "%s_test",
-> atomic_mode);
-> +
-> +	test_task = kthread_run(atomic_sect_run, NULL, task_name);
-> +	return PTR_ERR_OR_ZERO(test_task);
-> +}
-> +
-> +static void __exit atomic_sect_exit(void)
-> +{
-> +	return;
-> +}
-> +
-> +module_init(atomic_sect_init)
-> +module_exit(atomic_sect_exit)
-> +MODULE_LICENSE("GPL v2");
+> So yet another piece of code which this series depends on.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Ah well, I'm in no big hurry to get this merged. OTOH if this is
+ready and that discussion is not yet finished it might be better
+to merge this as is and then have the security_kernel_read_file / LSM
+hook series fix this up as necessary when it is merged.
+
+Regards,
+
+Hans
+
+
+
+> 
+>> -Document why we are not using the PI Firmware Volume protocol
+>>
+>> For reference I've included the coverletter from v4 (which includes
+>> previous covverletters) below.
+>>
+>> Regards,
+>>
+>> Hans
+>>
+>>
+>> Previous coverletter:
+>>
+>> Here is v5 of my patch-set to add support for EFI embedded fw to the kernel.
+>>
+>> Changes since v4:
+>> -Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
+>>
+>> So I think this patch-set is getting close to ready for merging, which
+>> brings us to the question of how to merge this, I think that patches 1
+>> and 2 should probably both be merged through the same tree. Then an
+>> unmutable branch should be created on that tree, merged into the
+>> platform/x86 tree and then the last 3 patches can be merged through
+>> that tree.
+>>
+>> Ard has already indicated he is fine with the EFI bits going upstream
+>> through another tree, so perhaps patches 1-2 can be merged through the
+>> firmware-loader-tree and then do an unmutable branch on the
+>> firmware-loader-tree for the platform/x86 tree to merge?
+>>
+>> I don't think taking all 5 through 1 tree is a good idea because of
+>> the file rename under platform/x86.
+>>
+>>
+>> For the record here are the cover letters of the previous versions:
+>>
+>> Changes since v3:
+>> -Drop note in docs about EFI_FIRMWARE_VOLUME_PROTOCOL, it is not part of
+>>   UEFI proper, so the EFI maintainers don't want us referring people to it
+>> -Use new EFI_BOOT_SERVICES flag
+>> -Put the new fw_get_efi_embedded_fw() function in its own fallback_efi.c
+>>   file which only gets built when EFI_EMBEDDED_FIRMWARE is selected
+>> -Define an empty stub for fw_get_efi_embedded_fw() in fallback.h hwen
+>>   EFI_EMBEDDED_FIRMWARE is not selected, to avoid the need for #ifdefs
+>>   in firmware_loader/main.c
+>> -Properly call security_kernel_post_read_file() on the firmware returned
+>>   by efi_get_embedded_fw() to make sure that we are allowed to use it
+>>
+>> The 3 most prominent changes in v2 are:
+>>
+>> 1) Add documentation describing the EFI embedded firmware mechanism to:
+>>     Documentation/driver-api/firmware/request_firmware.rst
+>>
+>> 2) Instead of having a single dmi_system_id array with its driver_data
+>>     members pointing to efi_embedded_fw_desc structs, have the drivers which
+>>     need EFI embedded-fw support export a dmi_system_id array and register
+>>     that with the EFI embedded-fw code
+>>
+>>     This series also includes the first driver to use this, in the form of
+>>     the touchscreen_dmi code (formerly silead_dmi) from drivers/platfrom/x86
+>>
+>> 3) As discussed during the review of v1 we want to make the firmware_loader
+>>     code fallback to EFI embedded-fw optional.  Rather the adding yet another
+>>     firmware_request_foo variant for this, with the risk of later also needing
+>>     firmware_request_foo_nowait, etc. variants I've decided to make the code
+>>     check if the device has a "efi-embedded-firmware" device-property bool set.
+>>
+>>     This also seemed better because the same driver may want to use the
+>>     fallback on some systems, but not on others since e.g. not all (x86)
+>>     systems with a silead touchscreen have their touchscreen firmware embedded
+>>     in their EFI.
+>>
+>>     Note that (as discussed) when the EFI fallback path is requested, the
+>>     usermodehelper fallback path is skipped.
+>>
+>> Here is the full changelog of patch 2/5 which is where most of the changes are:
+>>
+>> Changes in v2:
+>> -Rebased on driver-core/driver-core-next
+>> -Add documentation describing the EFI embedded firmware mechanism to:
+>>   Documentation/driver-api/firmware/request_firmware.rst
+>> -Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
+>>   fw support if this is set. This is an invisible option which should be
+>>   selected by drivers which need this
+>> -Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
+>>   from the efi-embedded-fw code, instead drivers using this are expected to
+>>   export a dmi_system_id array, with each entries' driver_data pointing to a
+>>   efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
+>> -Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
+>>   this avoids us messing with the EFI memmap and avoids the need to make
+>>   changes to efi_mem_desc_lookup()
+>> -Make the firmware-loader code only fallback to efi_get_embedded_fw() if the
+>>   passed in device has the "efi-embedded-firmware" device-property bool set
+>> -Skip usermodehelper fallback when "efi-embedded-firmware" device-property
+>>   is set
+>>
+>> Patches 3-5 are new and implement using the EFI embedded-fw mechanism for
+>> Silead gslXXXX and Chipone icn8505 touchscreens on x86 devices.
+>>
+>>
+> 
