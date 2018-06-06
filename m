@@ -1,166 +1,776 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B7E5607F1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4B8D605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932197AbeFFGbq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:31:46 -0400
-Received: from mga02.intel.com ([134.134.136.20]:22681 "EHLO mga02.intel.com"
+        id S932286AbeFFGLx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:11:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52329 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932097AbeFFGbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:31:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,482,1520924400";
-   d="scan'208";a="47659498"
-Subject: Re: [PATCH V2 1/4] mmc: sdhci-msm: Define new Register address map
-To: Vijay Viswanath <vviswana@codeaurora.org>, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, jeremymc@redhat.com,
-        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        vbadigan@codeaurora.org, dianders@google.com,
-        sayalil@codeaurora.org
-References: <1527587561-27448-1-git-send-email-vviswana@codeaurora.org>
- <1527587561-27448-2-git-send-email-vviswana@codeaurora.org>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <2adfe55e-1c75-046b-594c-aa80b732c68d@intel.com>
-Date: Wed, 6 Jun 2018 09:30:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932205AbeFFGLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 02:11:52 -0400
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Simmons <jsimmons@infradead.org>,
+        Andreas Dilger <andreas.dilger@intel.com>
+Date: Wed, 06 Jun 2018 16:05:19 +1000
+Subject: [PATCH 06/11] staging: lustre: remove interval_tree
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152826511909.16761.11573648246807449778.stgit@noble>
+In-Reply-To: <152826510267.16761.14361003167157833896.stgit@noble>
+References: <152826510267.16761.14361003167157833896.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <1527587561-27448-2-git-send-email-vviswana@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/05/18 12:52, Vijay Viswanath wrote:
-> From: Sayali Lokhande <sayalil@codeaurora.org>
-> 
-> For SDCC version 5.0.0, MCI registers are removed from SDCC
-> interface and some registers are moved to HC.
-> Define a new data structure where we can statically define
-> the address offsets for the registers in different SDCC versions.
-> 
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+There are no remaining users for this library,
+so discard it.
 
-It would be prettier to line up the '=' and use BIT() not << but nevertheless:
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ .../staging/lustre/lustre/include/interval_tree.h  |  119 ----
+ drivers/staging/lustre/lustre/ldlm/interval_tree.c |  590 --------------------
+ drivers/staging/lustre/lustre/ptlrpc/Makefile      |    1 
+ 3 files changed, 710 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lustre/include/interval_tree.h
+ delete mode 100644 drivers/staging/lustre/lustre/ldlm/interval_tree.c
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-
-> ---
->  drivers/mmc/host/sdhci-msm.c | 89 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index bb11916..4050c99 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -137,6 +137,95 @@
->  /* Timeout value to avoid infinite waiting for pwr_irq */
->  #define MSM_PWR_IRQ_TIMEOUT_MS 5000
->  
-> +struct sdhci_msm_offset {
-> +	u32 core_hc_mode;
-> +	u32 core_mci_data_cnt;
-> +	u32 core_mci_status;
-> +	u32 core_mci_fifo_cnt;
-> +	u32 core_mci_version;
-> +	u32 core_generics;
-> +	u32 core_testbus_config;
-> +	u32 core_testbus_sel2_bit;
-> +	u32 core_testbus_ena;
-> +	u32 core_testbus_sel2;
-> +	u32 core_pwrctl_status;
-> +	u32 core_pwrctl_mask;
-> +	u32 core_pwrctl_clear;
-> +	u32 core_pwrctl_ctl;
-> +	u32 core_sdcc_debug_reg;
-> +	u32 core_dll_config;
-> +	u32 core_dll_status;
-> +	u32 core_vendor_spec;
-> +	u32 core_vendor_spec_adma_err_addr0;
-> +	u32 core_vendor_spec_adma_err_addr1;
-> +	u32 core_vendor_spec_func2;
-> +	u32 core_vendor_spec_capabilities0;
-> +	u32 core_ddr_200_cfg;
-> +	u32 core_vendor_spec3;
-> +	u32 core_dll_config_2;
-> +	u32 core_ddr_config;
-> +	u32 core_ddr_config_2;
-> +};
-> +
-> +static const struct sdhci_msm_offset sdhci_msm_v5_offset = {
-> +	.core_mci_data_cnt = 0x35c,
-> +	.core_mci_status = 0x324,
-> +	.core_mci_fifo_cnt = 0x308,
-> +	.core_mci_version = 0x318,
-> +	.core_generics = 0x320,
-> +	.core_testbus_config = 0x32c,
-> +	.core_testbus_sel2_bit = 3,
-> +	.core_testbus_ena = (1 << 31),
-> +	.core_testbus_sel2 = (1 << 3),
-> +	.core_pwrctl_status = 0x240,
-> +	.core_pwrctl_mask = 0x244,
-> +	.core_pwrctl_clear = 0x248,
-> +	.core_pwrctl_ctl = 0x24c,
-> +	.core_sdcc_debug_reg = 0x358,
-> +	.core_dll_config = 0x200,
-> +	.core_dll_status = 0x208,
-> +	.core_vendor_spec = 0x20c,
-> +	.core_vendor_spec_adma_err_addr0 = 0x214,
-> +	.core_vendor_spec_adma_err_addr1 = 0x218,
-> +	.core_vendor_spec_func2 = 0x210,
-> +	.core_vendor_spec_capabilities0 = 0x21c,
-> +	.core_ddr_200_cfg = 0x224,
-> +	.core_vendor_spec3 = 0x250,
-> +	.core_dll_config_2 = 0x254,
-> +	.core_ddr_config = 0x258,
-> +	.core_ddr_config_2 = 0x25c,
-> +};
-> +
-> +static const struct sdhci_msm_offset sdhci_msm_mci_offset = {
-> +	.core_hc_mode = 0x78,
-> +	.core_mci_data_cnt = 0x30,
-> +	.core_mci_status = 0x34,
-> +	.core_mci_fifo_cnt = 0x44,
-> +	.core_mci_version = 0x050,
-> +	.core_generics = 0x70,
-> +	.core_testbus_config = 0x0cc,
-> +	.core_testbus_sel2_bit = 4,
-> +	.core_testbus_ena = (1 << 3),
-> +	.core_testbus_sel2 = (1 << 4),
-> +	.core_pwrctl_status = 0xdc,
-> +	.core_pwrctl_mask = 0xe0,
-> +	.core_pwrctl_clear = 0xe4,
-> +	.core_pwrctl_ctl = 0xe8,
-> +	.core_sdcc_debug_reg = 0x124,
-> +	.core_dll_config = 0x100,
-> +	.core_dll_status = 0x108,
-> +	.core_vendor_spec = 0x10c,
-> +	.core_vendor_spec_adma_err_addr0 = 0x114,
-> +	.core_vendor_spec_adma_err_addr1 = 0x118,
-> +	.core_vendor_spec_func2 = 0x110,
-> +	.core_vendor_spec_capabilities0 = 0x11c,
-> +	.core_ddr_200_cfg = 0x184,
-> +	.core_vendor_spec3 = 0x1b0,
-> +	.core_dll_config_2 = 0x1b4,
-> +	.core_ddr_config = 0x1b8,
-> +	.core_ddr_config_2 = 0x1bc,
-> +};
-> +
->  struct sdhci_msm_host {
->  	struct platform_device *pdev;
->  	void __iomem *core_mem;	/* MSM SDCC mapped address */
-> 
+diff --git a/drivers/staging/lustre/lustre/include/interval_tree.h b/drivers/staging/lustre/lustre/include/interval_tree.h
+deleted file mode 100644
+index bcda74fc7875..000000000000
+--- a/drivers/staging/lustre/lustre/include/interval_tree.h
++++ /dev/null
+@@ -1,119 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * GPL HEADER START
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- * GPL HEADER END
+- */
+-/*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+- * Use is subject to license terms.
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Sun Microsystems, Inc.
+- *
+- * lustre/include/interval_tree.h
+- *
+- * Author: Huang Wei <huangwei@clusterfs.com>
+- * Author: Jay Xiong <jinshan.xiong@sun.com>
+- */
+-
+-#ifndef _INTERVAL_H__
+-#define _INTERVAL_H__
+-
+-#include <linux/errno.h>
+-#include <linux/string.h>
+-#include <linux/types.h>
+-
+-struct interval_node {
+-	struct interval_node   *in_left;
+-	struct interval_node   *in_right;
+-	struct interval_node   *in_parent;
+-	unsigned		in_color:1,
+-				in_intree:1, /** set if the node is in tree */
+-				in_res1:30;
+-	__u8		    in_res2[4];  /** tags, 8-bytes aligned */
+-	__u64		   in_max_high;
+-	struct interval_node_extent {
+-		__u64 start;
+-		__u64 end;
+-	} in_extent;
+-};
+-
+-enum interval_iter {
+-	INTERVAL_ITER_CONT = 1,
+-	INTERVAL_ITER_STOP = 2
+-};
+-
+-static inline int interval_is_intree(struct interval_node *node)
+-{
+-	return node->in_intree == 1;
+-}
+-
+-static inline __u64 interval_low(struct interval_node *node)
+-{
+-	return node->in_extent.start;
+-}
+-
+-static inline __u64 interval_high(struct interval_node *node)
+-{
+-	return node->in_extent.end;
+-}
+-
+-static inline int interval_set(struct interval_node *node,
+-			       __u64 start, __u64 end)
+-{
+-	if (start > end)
+-		return -ERANGE;
+-	node->in_extent.start = start;
+-	node->in_extent.end = end;
+-	node->in_max_high = end;
+-	return 0;
+-}
+-
+-/*
+- * Rules to write an interval callback.
+- *  - the callback returns INTERVAL_ITER_STOP when it thinks the iteration
+- *    should be stopped. It will then cause the iteration function to return
+- *    immediately with return value INTERVAL_ITER_STOP.
+- *  - callbacks for interval_iterate and interval_iterate_reverse: Every
+- *    nodes in the tree will be set to @node before the callback being called
+- *  - callback for interval_search: Only overlapped node will be set to @node
+- *    before the callback being called.
+- */
+-typedef enum interval_iter (*interval_callback_t)(struct interval_node *node,
+-						  void *args);
+-
+-void interval_insert(struct interval_node *node,
+-		     struct interval_node **root);
+-void interval_erase(struct interval_node *node, struct interval_node **root);
+-
+-/*
+- * Search the extents in the tree and call @func for each overlapped
+- * extents.
+- */
+-enum interval_iter interval_search(struct interval_node *root,
+-				   struct interval_node_extent *ex,
+-				   interval_callback_t func, void *data);
+-
+-enum interval_iter interval_iterate_reverse(struct interval_node *root,
+-					    interval_callback_t func,
+-					    void *data);
+-
+-#endif
+diff --git a/drivers/staging/lustre/lustre/ldlm/interval_tree.c b/drivers/staging/lustre/lustre/ldlm/interval_tree.c
+deleted file mode 100644
+index f5232059d1b1..000000000000
+--- a/drivers/staging/lustre/lustre/ldlm/interval_tree.c
++++ /dev/null
+@@ -1,590 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * GPL HEADER START
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- * GPL HEADER END
+- */
+-/*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+- * Use is subject to license terms.
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Sun Microsystems, Inc.
+- *
+- * lustre/ldlm/interval_tree.c
+- *
+- * Interval tree library used by ldlm extent lock code
+- *
+- * Author: Huang Wei <huangwei@clusterfs.com>
+- * Author: Jay Xiong <jinshan.xiong@sun.com>
+- */
+-#include <lustre_dlm.h>
+-#include <obd_support.h>
+-#include <interval_tree.h>
+-
+-enum {
+-	INTERVAL_RED = 0,
+-	INTERVAL_BLACK = 1
+-};
+-
+-static inline int node_is_left_child(struct interval_node *node)
+-{
+-	return node == node->in_parent->in_left;
+-}
+-
+-static inline int node_is_right_child(struct interval_node *node)
+-{
+-	return node == node->in_parent->in_right;
+-}
+-
+-static inline int node_is_red(struct interval_node *node)
+-{
+-	return node->in_color == INTERVAL_RED;
+-}
+-
+-static inline int node_is_black(struct interval_node *node)
+-{
+-	return node->in_color == INTERVAL_BLACK;
+-}
+-
+-static inline int extent_compare(struct interval_node_extent *e1,
+-				 struct interval_node_extent *e2)
+-{
+-	int rc;
+-
+-	if (e1->start == e2->start) {
+-		if (e1->end < e2->end)
+-			rc = -1;
+-		else if (e1->end > e2->end)
+-			rc = 1;
+-		else
+-			rc = 0;
+-	} else {
+-		if (e1->start < e2->start)
+-			rc = -1;
+-		else
+-			rc = 1;
+-	}
+-	return rc;
+-}
+-
+-static inline int extent_equal(struct interval_node_extent *e1,
+-			       struct interval_node_extent *e2)
+-{
+-	return (e1->start == e2->start) && (e1->end == e2->end);
+-}
+-
+-static inline int extent_overlapped(struct interval_node_extent *e1,
+-				    struct interval_node_extent *e2)
+-{
+-	return (e1->start <= e2->end) && (e2->start <= e1->end);
+-}
+-
+-static struct interval_node *interval_first(struct interval_node *node)
+-{
+-	if (!node)
+-		return NULL;
+-	while (node->in_left)
+-		node = node->in_left;
+-	return node;
+-}
+-
+-static struct interval_node *interval_last(struct interval_node *node)
+-{
+-	if (!node)
+-		return NULL;
+-	while (node->in_right)
+-		node = node->in_right;
+-	return node;
+-}
+-
+-static struct interval_node *interval_next(struct interval_node *node)
+-{
+-	if (!node)
+-		return NULL;
+-	if (node->in_right)
+-		return interval_first(node->in_right);
+-	while (node->in_parent && node_is_right_child(node))
+-		node = node->in_parent;
+-	return node->in_parent;
+-}
+-
+-static struct interval_node *interval_prev(struct interval_node *node)
+-{
+-	if (!node)
+-		return NULL;
+-
+-	if (node->in_left)
+-		return interval_last(node->in_left);
+-
+-	while (node->in_parent && node_is_left_child(node))
+-		node = node->in_parent;
+-
+-	return node->in_parent;
+-}
+-
+-enum interval_iter interval_iterate_reverse(struct interval_node *root,
+-					    interval_callback_t func,
+-					    void *data)
+-{
+-	enum interval_iter rc = INTERVAL_ITER_CONT;
+-	struct interval_node *node;
+-
+-	for (node = interval_last(root); node; node = interval_prev(node)) {
+-		rc = func(node, data);
+-		if (rc == INTERVAL_ITER_STOP)
+-			break;
+-	}
+-
+-	return rc;
+-}
+-EXPORT_SYMBOL(interval_iterate_reverse);
+-
+-static void __rotate_change_maxhigh(struct interval_node *node,
+-				    struct interval_node *rotate)
+-{
+-	__u64 left_max, right_max;
+-
+-	rotate->in_max_high = node->in_max_high;
+-	left_max = node->in_left ? node->in_left->in_max_high : 0;
+-	right_max = node->in_right ? node->in_right->in_max_high : 0;
+-	node->in_max_high  = max(interval_high(node),
+-				 max(left_max, right_max));
+-}
+-
+-/* The left rotation "pivots" around the link from node to node->right, and
+- * - node will be linked to node->right's left child, and
+- * - node->right's left child will be linked to node's right child.
+- */
+-static void __rotate_left(struct interval_node *node,
+-			  struct interval_node **root)
+-{
+-	struct interval_node *right = node->in_right;
+-	struct interval_node *parent = node->in_parent;
+-
+-	node->in_right = right->in_left;
+-	if (node->in_right)
+-		right->in_left->in_parent = node;
+-
+-	right->in_left = node;
+-	right->in_parent = parent;
+-	if (parent) {
+-		if (node_is_left_child(node))
+-			parent->in_left = right;
+-		else
+-			parent->in_right = right;
+-	} else {
+-		*root = right;
+-	}
+-	node->in_parent = right;
+-
+-	/* update max_high for node and right */
+-	__rotate_change_maxhigh(node, right);
+-}
+-
+-/* The right rotation "pivots" around the link from node to node->left, and
+- * - node will be linked to node->left's right child, and
+- * - node->left's right child will be linked to node's left child.
+- */
+-static void __rotate_right(struct interval_node *node,
+-			   struct interval_node **root)
+-{
+-	struct interval_node *left = node->in_left;
+-	struct interval_node *parent = node->in_parent;
+-
+-	node->in_left = left->in_right;
+-	if (node->in_left)
+-		left->in_right->in_parent = node;
+-	left->in_right = node;
+-
+-	left->in_parent = parent;
+-	if (parent) {
+-		if (node_is_right_child(node))
+-			parent->in_right = left;
+-		else
+-			parent->in_left = left;
+-	} else {
+-		*root = left;
+-	}
+-	node->in_parent = left;
+-
+-	/* update max_high for node and left */
+-	__rotate_change_maxhigh(node, left);
+-}
+-
+-#define interval_swap(a, b) do {			\
+-	struct interval_node *c = a; a = b; b = c;      \
+-} while (0)
+-
+-/*
+- * Operations INSERT and DELETE, when run on a tree with n keys,
+- * take O(logN) time.Because they modify the tree, the result
+- * may violate the red-black properties.To restore these properties,
+- * we must change the colors of some of the nodes in the tree
+- * and also change the pointer structure.
+- */
+-static void interval_insert_color(struct interval_node *node,
+-				  struct interval_node **root)
+-{
+-	struct interval_node *parent, *gparent;
+-
+-	while ((parent = node->in_parent) && node_is_red(parent)) {
+-		gparent = parent->in_parent;
+-		/* Parent is RED, so gparent must not be NULL */
+-		if (node_is_left_child(parent)) {
+-			struct interval_node *uncle;
+-
+-			uncle = gparent->in_right;
+-			if (uncle && node_is_red(uncle)) {
+-				uncle->in_color = INTERVAL_BLACK;
+-				parent->in_color = INTERVAL_BLACK;
+-				gparent->in_color = INTERVAL_RED;
+-				node = gparent;
+-				continue;
+-			}
+-
+-			if (parent->in_right == node) {
+-				__rotate_left(parent, root);
+-				interval_swap(node, parent);
+-			}
+-
+-			parent->in_color = INTERVAL_BLACK;
+-			gparent->in_color = INTERVAL_RED;
+-			__rotate_right(gparent, root);
+-		} else {
+-			struct interval_node *uncle;
+-
+-			uncle = gparent->in_left;
+-			if (uncle && node_is_red(uncle)) {
+-				uncle->in_color = INTERVAL_BLACK;
+-				parent->in_color = INTERVAL_BLACK;
+-				gparent->in_color = INTERVAL_RED;
+-				node = gparent;
+-				continue;
+-			}
+-
+-			if (node_is_left_child(node)) {
+-				__rotate_right(parent, root);
+-				interval_swap(node, parent);
+-			}
+-
+-			parent->in_color = INTERVAL_BLACK;
+-			gparent->in_color = INTERVAL_RED;
+-			__rotate_left(gparent, root);
+-		}
+-	}
+-
+-	(*root)->in_color = INTERVAL_BLACK;
+-}
+-
+-void interval_insert(struct interval_node *node,
+-		     struct interval_node **root)
+-
+-{
+-	struct interval_node **p, *parent = NULL;
+-
+-	LASSERT(!interval_is_intree(node));
+-	p = root;
+-	while (*p) {
+-		parent = *p;
+-
+-		/* max_high field must be updated after each iteration */
+-		if (parent->in_max_high < interval_high(node))
+-			parent->in_max_high = interval_high(node);
+-
+-		if (extent_compare(&node->in_extent, &parent->in_extent) < 0)
+-			p = &parent->in_left;
+-		else
+-			p = &parent->in_right;
+-	}
+-
+-	/* link node into the tree */
+-	node->in_parent = parent;
+-	node->in_color = INTERVAL_RED;
+-	node->in_left = NULL;
+-	node->in_right = NULL;
+-	*p = node;
+-
+-	interval_insert_color(node, root);
+-	node->in_intree = 1;
+-}
+-EXPORT_SYMBOL(interval_insert);
+-
+-static inline int node_is_black_or_0(struct interval_node *node)
+-{
+-	return !node || node_is_black(node);
+-}
+-
+-static void interval_erase_color(struct interval_node *node,
+-				 struct interval_node *parent,
+-				 struct interval_node **root)
+-{
+-	struct interval_node *tmp;
+-
+-	while (node_is_black_or_0(node) && node != *root) {
+-		if (parent->in_left == node) {
+-			tmp = parent->in_right;
+-			if (node_is_red(tmp)) {
+-				tmp->in_color = INTERVAL_BLACK;
+-				parent->in_color = INTERVAL_RED;
+-				__rotate_left(parent, root);
+-				tmp = parent->in_right;
+-			}
+-			if (node_is_black_or_0(tmp->in_left) &&
+-			    node_is_black_or_0(tmp->in_right)) {
+-				tmp->in_color = INTERVAL_RED;
+-				node = parent;
+-				parent = node->in_parent;
+-			} else {
+-				if (node_is_black_or_0(tmp->in_right)) {
+-					struct interval_node *o_left;
+-
+-					o_left = tmp->in_left;
+-					if (o_left)
+-						o_left->in_color = INTERVAL_BLACK;
+-					tmp->in_color = INTERVAL_RED;
+-					__rotate_right(tmp, root);
+-					tmp = parent->in_right;
+-				}
+-				tmp->in_color = parent->in_color;
+-				parent->in_color = INTERVAL_BLACK;
+-				if (tmp->in_right)
+-					tmp->in_right->in_color = INTERVAL_BLACK;
+-				__rotate_left(parent, root);
+-				node = *root;
+-				break;
+-			}
+-		} else {
+-			tmp = parent->in_left;
+-			if (node_is_red(tmp)) {
+-				tmp->in_color = INTERVAL_BLACK;
+-				parent->in_color = INTERVAL_RED;
+-				__rotate_right(parent, root);
+-				tmp = parent->in_left;
+-			}
+-			if (node_is_black_or_0(tmp->in_left) &&
+-			    node_is_black_or_0(tmp->in_right)) {
+-				tmp->in_color = INTERVAL_RED;
+-				node = parent;
+-				parent = node->in_parent;
+-			} else {
+-				if (node_is_black_or_0(tmp->in_left)) {
+-					struct interval_node *o_right;
+-
+-					o_right = tmp->in_right;
+-					if (o_right)
+-						o_right->in_color = INTERVAL_BLACK;
+-					tmp->in_color = INTERVAL_RED;
+-					__rotate_left(tmp, root);
+-					tmp = parent->in_left;
+-				}
+-				tmp->in_color = parent->in_color;
+-				parent->in_color = INTERVAL_BLACK;
+-				if (tmp->in_left)
+-					tmp->in_left->in_color = INTERVAL_BLACK;
+-				__rotate_right(parent, root);
+-				node = *root;
+-				break;
+-			}
+-		}
+-	}
+-	if (node)
+-		node->in_color = INTERVAL_BLACK;
+-}
+-
+-/*
+- * if the @max_high value of @node is changed, this function traverse  a path
+- * from node  up to the root to update max_high for the whole tree.
+- */
+-static void update_maxhigh(struct interval_node *node,
+-			   __u64  old_maxhigh)
+-{
+-	__u64 left_max, right_max;
+-
+-	while (node) {
+-		left_max = node->in_left ? node->in_left->in_max_high : 0;
+-		right_max = node->in_right ? node->in_right->in_max_high : 0;
+-		node->in_max_high = max(interval_high(node),
+-					max(left_max, right_max));
+-
+-		if (node->in_max_high >= old_maxhigh)
+-			break;
+-		node = node->in_parent;
+-	}
+-}
+-
+-void interval_erase(struct interval_node *node,
+-		    struct interval_node **root)
+-{
+-	struct interval_node *child, *parent;
+-	int color;
+-
+-	LASSERT(interval_is_intree(node));
+-	node->in_intree = 0;
+-	if (!node->in_left) {
+-		child = node->in_right;
+-	} else if (!node->in_right) {
+-		child = node->in_left;
+-	} else { /* Both left and right child are not NULL */
+-		struct interval_node *old = node;
+-
+-		node = interval_next(node);
+-		child = node->in_right;
+-		parent = node->in_parent;
+-		color = node->in_color;
+-
+-		if (child)
+-			child->in_parent = parent;
+-		if (parent == old)
+-			parent->in_right = child;
+-		else
+-			parent->in_left = child;
+-
+-		node->in_color = old->in_color;
+-		node->in_right = old->in_right;
+-		node->in_left = old->in_left;
+-		node->in_parent = old->in_parent;
+-
+-		if (old->in_parent) {
+-			if (node_is_left_child(old))
+-				old->in_parent->in_left = node;
+-			else
+-				old->in_parent->in_right = node;
+-		} else {
+-			*root = node;
+-		}
+-
+-		old->in_left->in_parent = node;
+-		if (old->in_right)
+-			old->in_right->in_parent = node;
+-		update_maxhigh(child ? : parent, node->in_max_high);
+-		update_maxhigh(node, old->in_max_high);
+-		if (parent == old)
+-			parent = node;
+-		goto color;
+-	}
+-	parent = node->in_parent;
+-	color = node->in_color;
+-
+-	if (child)
+-		child->in_parent = parent;
+-	if (parent) {
+-		if (node_is_left_child(node))
+-			parent->in_left = child;
+-		else
+-			parent->in_right = child;
+-	} else {
+-		*root = child;
+-	}
+-
+-	update_maxhigh(child ? : parent, node->in_max_high);
+-
+-color:
+-	if (color == INTERVAL_BLACK)
+-		interval_erase_color(child, parent, root);
+-}
+-EXPORT_SYMBOL(interval_erase);
+-
+-static inline int interval_may_overlap(struct interval_node *node,
+-				       struct interval_node_extent *ext)
+-{
+-	return (ext->start <= node->in_max_high &&
+-		ext->end >= interval_low(node));
+-}
+-
+-/*
+- * This function finds all intervals that overlap interval ext,
+- * and calls func to handle resulted intervals one by one.
+- * in lustre, this function will find all conflicting locks in
+- * the granted queue and add these locks to the ast work list.
+- *
+- * {
+- *	if (!node)
+- *		return 0;
+- *	if (ext->end < interval_low(node)) {
+- *		interval_search(node->in_left, ext, func, data);
+- *	} else if (interval_may_overlap(node, ext)) {
+- *		if (extent_overlapped(ext, &node->in_extent))
+- *			func(node, data);
+- *		interval_search(node->in_left, ext, func, data);
+- *		interval_search(node->in_right, ext, func, data);
+- *	}
+- *	return 0;
+- * }
+- *
+- */
+-enum interval_iter interval_search(struct interval_node *node,
+-				   struct interval_node_extent *ext,
+-				   interval_callback_t func,
+-				   void *data)
+-{
+-	enum interval_iter rc = INTERVAL_ITER_CONT;
+-	struct interval_node *parent;
+-
+-	LASSERT(ext);
+-	LASSERT(func);
+-
+-	while (node) {
+-		if (ext->end < interval_low(node)) {
+-			if (node->in_left) {
+-				node = node->in_left;
+-				continue;
+-			}
+-		} else if (interval_may_overlap(node, ext)) {
+-			if (extent_overlapped(ext, &node->in_extent)) {
+-				rc = func(node, data);
+-				if (rc == INTERVAL_ITER_STOP)
+-					break;
+-			}
+-
+-			if (node->in_left) {
+-				node = node->in_left;
+-				continue;
+-			}
+-			if (node->in_right) {
+-				node = node->in_right;
+-				continue;
+-			}
+-		}
+-
+-		parent = node->in_parent;
+-		while (parent) {
+-			if (node_is_left_child(node) &&
+-			    parent->in_right) {
+-				/*
+-				 * If we ever got the left, it means that the
+-				 * parent met ext->end<interval_low(parent), or
+-				 * may_overlap(parent). If the former is true,
+-				 * we needn't go back. So stop early and check
+-				 * may_overlap(parent) after this loop.
+-				 */
+-				node = parent->in_right;
+-				break;
+-			}
+-			node = parent;
+-			parent = parent->in_parent;
+-		}
+-		if (!parent || !interval_may_overlap(parent, ext))
+-			break;
+-	}
+-
+-	return rc;
+-}
+-EXPORT_SYMBOL(interval_search);
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/Makefile b/drivers/staging/lustre/lustre/ptlrpc/Makefile
+index 1deb1971b39e..77f8eabb2e28 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/Makefile
++++ b/drivers/staging/lustre/lustre/ptlrpc/Makefile
+@@ -11,7 +11,6 @@ ldlm_objs += $(LDLM)ldlm_plain.o $(LDLM)ldlm_extent.o
+ ldlm_objs += $(LDLM)ldlm_request.o $(LDLM)ldlm_lockd.o
+ ldlm_objs += $(LDLM)ldlm_flock.o $(LDLM)ldlm_inodebits.o
+ ldlm_objs += $(LDLM)ldlm_pool.o
+-ldlm_objs += $(LDLM)interval_tree.o
+ ptlrpc_objs := client.o recover.o connection.o niobuf.o pack_generic.o
+ ptlrpc_objs += events.o ptlrpc_module.o service.o pinger.o
+ ptlrpc_objs += llog_net.o llog_client.o import.o ptlrpcd.o
