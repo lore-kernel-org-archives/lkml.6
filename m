@@ -1,77 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="RwZg/WS0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38BF160263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDEhsSaH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 07B5F601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932535AbeFFJuL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:50:11 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:55582 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932378AbeFFJuH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:50:07 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: matwey.kornilov@gmail.com,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Kees Cook <keescook@chromium.org>, Sean Young <sean@mess.org>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Tomas Melin <tomas.melin@vaisala.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Rafael Gago <rafael.gago@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/4] serial: 8250: Make em485_rts_after_send() set mctrl according to rts state.
-Date: Wed,  6 Jun 2018 11:49:38 +0200
-Message-Id: <20180606094942.71190-2-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
- <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
-To: unlisted-recipients:; (no To-header on input)
+        id S933787AbeFFRCT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:02:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933753AbeFFRCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:02:04 -0400
+X-Google-Smtp-Source: ADUXVKKJmOWYjIrHwvMB3funWZJsVmG6q7yci8okFuRTMJjA1E1yE+aau2jPtkN9XedDD6zPgPpDbi6hFAAS5sghnz4=
+MIME-Version: 1.0
+References: <5B1672FE.4050705@huawei.com> <5B1792C9.8010203@huawei.com> <5B17A6B6.70300@huawei.com>
+In-Reply-To: <5B17A6B6.70300@huawei.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 6 Jun 2018 10:01:50 -0700
+X-Gmail-Original-Message-ID: <CALCETrXiaqyAKzcT17P35Gf6fNBchPYF_JsQ+3ezNeETs_UTbA@mail.gmail.com>
+Message-ID: <CALCETrXiaqyAKzcT17P35Gf6fNBchPYF_JsQ+3ezNeETs_UTbA@mail.gmail.com>
+Subject: Re: Is this a kernel BUG? ///Re: [Question] Can we use SIGRTMIN when
+ vdso disabled on X86?
+To: thunder.leizhen@huawei.com
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, yaomin2@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When rs485 enabled and RTS_AFTER_SEND set on startup, need to preserve
-mctrl status, because later functions will call set_mctrl passing
-port->mctrl=0 overriding rts status, resulting in rts pin in
-transmission when idle.
+On Wed, Jun 6, 2018 at 2:18 AM Leizhen (ThunderTown)
+<thunder.leizhen@huawei.com> wrote:
+>
+> I found that glibc has already dealt with this case. So this issue must have been met before, should it be maintained by libc/user?
+>
+>         if (GLRO(dl_sysinfo_dso) == NULL)
+>         {
+>                 kact.sa_flags |= SA_RESTORER;
+>
+>                 kact.sa_restorer = ((act->sa_flags & SA_SIGINFO)
+>                         ? &restore_rt : &restore);
+>         }
+>
+>
+> On 2018/6/6 15:52, Leizhen (ThunderTown) wrote:
+> >
+> >
+> > On 2018/6/5 19:24, Leizhen (ThunderTown) wrote:
+> >> After I executed "echo 0 > /proc/sys/abi/vsyscall32" to disable vdso, the rt_sigaction01 test case from ltp_2015 failed.
+> >> The test case source code please refer to the attachment, and the output as blow:
+> >>
+> >> -----------------
+> >> ./rt_sigaction01
+> >> rt_sigaction01    0  TINFO  :  signal: 34
+> >> rt_sigaction01    1  TPASS  :  rt_sigaction call succeeded: result = 0
+> >> rt_sigaction01    0  TINFO  :  sa.sa_flags = SA_RESETHAND|SA_SIGINFO
+> >> rt_sigaction01    0  TINFO  :  Signal Handler Called with signal number 34
+> >>
+> >> Segmentation fault
+> >> ------------------
+> >>
+> >>
+> >> Is this the desired result? In function ia32_setup_rt_frame, I found below code:
+> >>
+> >>      if (ksig->ka.sa.sa_flags & SA_RESTORER)
+> >>              restorer = ksig->ka.sa.sa_restorer;
+> >>      else
+> >>              restorer = current->mm->context.vdso +
+> >>                      vdso_image_32.sym___kernel_rt_sigreturn;
+> >>      put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
+> >>
+> >> Because the vdso is disabled, so current->mm->context.vdso is NULL, which cause the result of frame->pretcode invalid.
+> >>
+> >> I'm not sure whether this is a kernel bug or just an error of test case itself. Can anyone help me?
+> >>
+> >
+>
+>
 
-Make mctrl reflect rts pin state.
+I can't tell from your email what you're testing, what behavior you
+expect, and what you saw.  A program that sets up a signal handler
+without supplying a restorer will not work if the vDSO is off, and
+this is by design.
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- drivers/tty/serial/8250/8250_port.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+(FWIW, there is a very longstanding libc bug that causes this case to
+get severely screwed up if the user's SS is not the expected value,
+and that bug was just fixed very recently.  But I doubt this is what
+you're seeing.)
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 95833cbc4338..c8c10b5ec6d6 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -562,10 +562,13 @@ static inline void serial8250_em485_rts_after_send(struct uart_8250_port *p)
- {
- 	unsigned char mcr = serial8250_in_MCR(p);
- 
--	if (p->port.rs485.flags & SER_RS485_RTS_AFTER_SEND)
-+	if (p->port.rs485.flags & SER_RS485_RTS_AFTER_SEND) {
- 		mcr |= UART_MCR_RTS;
--	else
-+		p->port.mctrl |= TIOCM_RTS;
-+	} else {
- 		mcr &= ~UART_MCR_RTS;
-+		p->port.mctrl &= ~TIOCM_RTS;
-+	}
- 	serial8250_out_MCR(p, mcr);
- }
- 
--- 
-2.17.1
+I suppose we could improve the kernel to at least push NULL instead of
+some random address a bit above 0, but it'll still crash.
