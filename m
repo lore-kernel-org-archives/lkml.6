@@ -1,89 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oQAnMDFJGVshTgAAmS7hNA
-	; Thu, 07 Jun 2018 15:03:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QVNfAB9bGFvYHAAAmS7hNA
+	; Wed, 06 Jun 2018 22:07:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B3CA1608BF; Thu,  7 Jun 2018 15:03:13 +0000 (UTC)
+	id C3F026089E; Wed,  6 Jun 2018 22:07:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 10B59601C3;
-	Thu,  7 Jun 2018 15:03:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 10B59601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 326ED607E4;
+	Wed,  6 Jun 2018 22:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 326ED607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965049AbeFGPDK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:03:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41474 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965004AbeFGPDE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:04 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbj-0005Zl-8X; Thu, 07 Jun 2018 15:09:43 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002yL-6e; Thu, 07 Jun 2018 15:09:03 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1752714AbeFFWHx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 18:07:53 -0400
+Received: from mga05.intel.com ([192.55.52.43]:3522 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751885AbeFFWHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 18:07:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 15:07:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,484,1520924400";
+   d="scan'208";a="235283996"
+Received: from downor-z87x-ud5h.fm.intel.com (HELO downor-Z87X-UD5H) ([10.1.122.107])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Jun 2018 15:07:50 -0700
+Date: Wed, 6 Jun 2018 15:05:21 -0700
+From: Dongwon Kim <dongwon.kim@intel.com>
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        matthew.d.roper@intel.com, jgross@suse.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        daniel.vetter@intel.com, xen-devel@lists.xenproject.org,
+        linux-media@vger.kernel.org
+Subject: Re: [Xen-devel] [PATCH v2 9/9] xen/gntdev: Expose gntdev's dma-buf
+ API for in-kernel use
+Message-ID: <20180606220521.GA7054@downor-Z87X-UD5H>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-10-andr2000@gmail.com>
+ <86f5b340-856c-204f-4ba7-dd51f1e92639@oracle.com>
+ <984bcf75-9bea-aceb-3d3a-62e3c65709c7@gmail.com>
+ <398d53c9-9c47-d86a-89bd-b9941e638434@oracle.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David Sterba" <dsterba@suse.com>,
-        "Liu Bo" <bo.li.liu@oracle.com>, "Josef Bacik" <jbacik@fb.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.991373183@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 186/410] Btrfs: fix deadlock in run_delalloc_nocow
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <398d53c9-9c47-d86a-89bd-b9941e638434@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed, Jun 06, 2018 at 05:51:38PM -0400, Boris Ostrovsky wrote:
+> On 06/06/2018 08:46 AM, Oleksandr Andrushchenko wrote:
+> > On 06/05/2018 01:36 AM, Boris Ostrovsky wrote:
+> >> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+> >>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> >>>
+> >>> Allow creating grant device context for use by kernel modules which
+> >>> require functionality, provided by gntdev. Export symbols for dma-buf
+> >>> API provided by the module.
+> >> Can you give an example of who'd be using these interfaces?
+> > There is no use-case at the moment I can think of, but hyper dma-buf
+> > [1], [2]
+> > I let Intel folks (CCed) to defend this patch as it was done primarily
+> > for them
+> > and I don't use it in any of my use-cases. So, from this POV it can be
+> > dropped,
+> > at least from this series.
+> 
+> 
+> Yes, let's drop this until someone actually needs it.
+> 
+> -boris
 
-------------------
+I agree. We are working on re-architecturing hyper_dmabuf. We would use zcopy
+apis however, not sure if we are going to do it from kernel or from userspace.
+So please do not expose those for now.
 
-From: Liu Bo <bo.li.liu@oracle.com>
-
-commit e89166990f11c3f21e1649d760dd35f9e410321c upstream.
-
-@cur_offset is not set back to what it should be (@cow_start) if
-btrfs_next_leaf() returns something wrong, and the range [cow_start,
-cur_offset) remains locked forever.
-
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/btrfs/inode.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1235,8 +1235,11 @@ next_slot:
- 		leaf = path->nodes[0];
- 		if (path->slots[0] >= btrfs_header_nritems(leaf)) {
- 			ret = btrfs_next_leaf(root, path);
--			if (ret < 0)
-+			if (ret < 0) {
-+				if (cow_start != (u64)-1)
-+					cur_offset = cow_start;
- 				goto error;
-+			}
- 			if (ret > 0)
- 				break;
- 			leaf = path->nodes[0];
+> 
+> 
+> >>
+> >> -boris
+> >>
+> > [1] https://patchwork.freedesktop.org/series/38207/
+> > [2] https://patchwork.freedesktop.org/patch/204447/
+> >
+> > _______________________________________________
+> > Xen-devel mailing list
+> > Xen-devel@lists.xenproject.org
+> > https://lists.xenproject.org/mailman/listinfo/xen-devel
+> 
