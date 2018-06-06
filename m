@@ -1,124 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="zHj/8C0s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3F85601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC6AB606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752187AbeFFOln (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:41:43 -0400
-Received: from mail-io0-f181.google.com ([209.85.223.181]:35415 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751994AbeFFOll (ORCPT
+        id S1752185AbeFFMRF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:17:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33113 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751849AbeFFMRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:41:41 -0400
-X-Google-Smtp-Source: ADUXVKKYDfMoiaZHf7skTPWO3BiqWqvwMeR723I9ZinB1Ij/jF2jOtTYJAic5wuLHv/Od0h74iJs+IsDGyFrT1LnJJs=
+        Wed, 6 Jun 2018 08:17:03 -0400
+Date: Wed, 6 Jun 2018 05:16:53 -0700
+From: tip-bot for Konrad Rzeszutek Wilk <tipbot@zytor.com>
+Message-ID: <tip-108fab4b5c8f12064ef86e02cb0459992affb30f@git.kernel.org>
+Cc: konrad.wilk@oracle.com, dwmw@amazon.co.uk, mingo@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, bp@suse.de,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        karahmed@amazon.de
+Reply-To: hpa@zytor.com, dwmw@amazon.co.uk, tglx@linutronix.de,
+          mingo@kernel.org, konrad.wilk@oracle.com, karahmed@amazon.de,
+          linux-kernel@vger.kernel.org, keescook@chromium.org, bp@suse.de
+In-Reply-To: <20180601145921.9500-4-konrad.wilk@oracle.com>
+References: <20180601145921.9500-4-konrad.wilk@oracle.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/bugs: Switch the selection of mitigation from CPU
+ vendor to CPU features
+Git-Commit-ID: 108fab4b5c8f12064ef86e02cb0459992affb30f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1806060950050.1359-100000@iolanthe.rowland.org>
-References: <CAJrWOzBMB-6e1pKms4L216k=TN_Lr52_gWxj-ny8yitgf+K5gg@mail.gmail.com>
- <Pine.LNX.4.44L0.1806060950050.1359-100000@iolanthe.rowland.org>
-From: Roman Penyaev <roman.penyaev@profitbricks.com>
-Date: Wed, 6 Jun 2018 16:41:20 +0200
-Message-ID: <CAJrWOzB8hz2qzNJAWfNdW_U_ArHmvCpzZVJBebsfQ3=eEiSh7w@mail.gmail.com>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        andrea.parri@amarulasolutions.com,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 3:54 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Wed, 6 Jun 2018, Roman Penyaev wrote:
->
->> > Preserving the order of volatile accesses isn't sufficient.  The
->> > compiler is still allowed to translate
->> >
->> >         r1 = READ_ONCE(x);
->> >         if (r1) {
->> >                 ...
->> >         }
->> >         WRITE_ONCE(y, r2);
->> >
->> > into something resembling
->> >
->> >         r1 = READ_ONCE(x);
->> >         WRITE_ONCE(y, r2);
->> >         if (r1) {
->> >                 ...
->> >         }
->>
->> Hi Alan,
->>
->> According to the standard C99 Annex C "the controlling expression of
->> a selection statement (if or switch)" are the sequence points, just
->> like a volatile access (READ_ONCE or WRITE_ONCE).
->>
->> "5.1.2.3 Program execution" states:
->> "At certain specified points in the execution sequence called sequence
->> points, all side effects of previous evaluations shall be complete
->> and no side effects of subsequent evaluations shall have taken place."
->>
->> So in the example we have 3 sequence points: "READ_ONCE", "if" and
->> "WRITE_ONCE", which it seems can't be reordered.  Am I mistaken
->> interpreting standard?  Could you please clarify.
->
-> Well, for one thing, we're talking about C11, not C99.
+Commit-ID:  108fab4b5c8f12064ef86e02cb0459992affb30f
+Gitweb:     https://git.kernel.org/tip/108fab4b5c8f12064ef86e02cb0459992affb30f
+Author:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+AuthorDate: Fri, 1 Jun 2018 10:59:21 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 6 Jun 2018 14:13:17 +0200
 
-C11 is a n1570, ISO/IEC 9899:2011 ? (according to wiki).  Found pdf on
-the web contains similar lines, so should not be any differences for
-that particular case.
+x86/bugs: Switch the selection of mitigation from CPU vendor to CPU features
 
-> For another, as far as I understand it, the standard means the program
-> should behave _as if_ the side effects are completed in the order
-> stated.  It doesn't mean that the generated code has to behave that way
-> literally.
+Both AMD and Intel can have SPEC_CTRL_MSR for SSBD.
 
-Then I do not understand what are the differences between "side effects
-are completed" and "code generated".  Abstract machine state should
-provide some guarantees between sequence points, e.g.:
+However AMD also has two more other ways of doing it - which
+are !SPEC_CTRL MSR ways.
 
-    foo();    /* function call */
-    ------------|
-    *a = 1;     |
-    *b = 12;    | Compiler in his right to reorder.
-    *c = 123;   |
-    ------------|
-    boo();    /* function call */
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: kvm@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: andrew.cooper3@citrix.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180601145921.9500-4-konrad.wilk@oracle.com
 
-compiler in his right to reorder memory accesses between foo() and
-boo() calls (foo and boo are sequence points, but memory accesses
-are not), but:
+---
+ arch/x86/kernel/cpu/bugs.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-   foo();    /* function call */
-   *(volatile int *)a = 1;
-   *(volatile int *)b = 12;
-   *(volatile int *)c = 123;
-   boo();    /* function call */
-
-are all sequence points, so compiler can't reorder them.
-
-Where am I mistaken?
-
-> And in particular, the standard is referring to the
-> behavior of a single thread, not the interaction between multiple
-> concurrent threads.
-
-Yes, that is clear: we are talking about code reordering in one
-particular function in a single threaded environment.
-
---
-Roman
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 6bea81855cdd..cd0fda1fff6d 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -532,17 +532,12 @@ static enum ssb_mitigation __init __ssb_select_mitigation(void)
+ 		 * Intel uses the SPEC CTRL MSR Bit(2) for this, while AMD may
+ 		 * use a completely different MSR and bit dependent on family.
+ 		 */
+-		switch (boot_cpu_data.x86_vendor) {
+-		case X86_VENDOR_INTEL:
+-		case X86_VENDOR_AMD:
+-			if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL)) {
+-				x86_amd_ssb_disable();
+-				break;
+-			}
++		if (!static_cpu_has(X86_FEATURE_MSR_SPEC_CTRL))
++			x86_amd_ssb_disable();
++		else {
+ 			x86_spec_ctrl_base |= SPEC_CTRL_SSBD;
+ 			x86_spec_ctrl_mask |= SPEC_CTRL_SSBD;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+-			break;
+ 		}
+ 	}
+ 
