@@ -1,265 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A20146070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 02D7560555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932256AbeFFGLj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:11:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52305 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932128AbeFFGLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:11:37 -0400
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Simmons <jsimmons@infradead.org>,
-        Andreas Dilger <andreas.dilger@intel.com>
-Date: Wed, 06 Jun 2018 16:05:19 +1000
-Subject: [PATCH 04/11] staging: lustre: convert range_lock to linux
- interval_trees.
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152826511902.16761.12169723574817283239.stgit@noble>
-In-Reply-To: <152826510267.16761.14361003167157833896.stgit@noble>
-References: <152826510267.16761.14361003167157833896.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
+        id S932369AbeFFJrY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:47:24 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.5]:60440 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932294AbeFFJrW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:47:22 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRWlGSWpSXmKPExsUSt3Opse6KteL
+  RBtteyVpMffiEzWLu7EmMFs9u7WWyuP/1KKPF5V1z2Cy2vnzHZPFw5RwWi6N77jFb9J1zd+D0
+  mHhW12PnrLvsHptWdbJ53Lm2h83j0OEORo9nC9ezeHzeJBfAHsWamZeUX5HAmrFo6SSWgmNWF
+  VsvLmVsYHxi2cXIxSEksJRRYsepLuYuRk4ONgFDiXlv3jOC2CICwRIL/t1gAyliFvjBJLG6eR
+  VYkbCAh8TVrh/sEEWeEi+/vIGy/SQezjoDVsMioCJx5OA8sEG8AgES647uY4LY9opJYl77HLA
+  Ep4CtxLq9O8CaGQVkJb40rgZrZhYQl7j1ZD4TiC0hICCxZM95ZghbVOLl43+sELaCxL5fK9kg
+  bHuJ1/fesUDY+hKPHj9ihLANJVZNOwAVN5c40vQaqJcDaL6mxPpd+hCrFCWmdD9kh7hTUOLkz
+  CcsExjFZyG5YhZCxywkHbOQdCxgZFnFaJlUlJmeUZKbmJmja2hgoGtoaKxrqGtkYKKXWKWbqJ
+  daqpucmldSlAiU1UssL9YrrsxNzknRy0st2cQITAMMQLCDceavlEOMkhxMSqK8B4XEo4X4kvJ
+  TKjMSizPii0pzUosPMcpwcChJ8F5eA5QTLEpNT61Iy8wBJiSYtAQHj5IIrxJImre4IDG3ODMd
+  InWKUZfjyeVpPcxCLHn5ealS4ryLQYoEQIoySvPgRsCS4yVGWSlhXkago4R4ClKLcjNLUOVfM
+  YpzMCoJ82aCTOHJzCuB2/QK6AgmoCM25YEdUZKIkJJqYDR1vMI8Kz6X7/e5894Pt66eeWX6n2
+  Kh0z+r3K67rtBlOb6WwdCzvPvzHg5Gea/JNjnzD3J7xrK/tr4fMe3SrCepc7cs0XkwYe43b7Z
+  7Ky+Zdtif722eJHi3WyxBXLmhOXSFpVNo8Ymzy7g0I9/GZfR/zem5qDthcc3h8/Y1R7b21d77
+  ks/8rEyJpTgj0VCLuag4EQCMVeYziQMAAA==
+X-Env-Sender: stwiss.opensource@diasemi.com
+X-Msg-Ref: server-26.tower-229.messagelabs.com!1528278440!1279248!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+From: Steve Twiss <stwiss.opensource@diasemi.com>
+To: Marek Vasut <marek.vasut@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Support Opensource <Support.Opensource@diasemi.com>
+Subject: RE: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+Thread-Topic: [PATCH v3 06/10] mfd: da9063: Add custom regmap for DA9063L
+Thread-Index: AQHT+loyTNLUFIsUX0quSWUZLNEKZqRPqPaAgACS0gCAAb6+UIAAQo2AgACgSNA=
+Date: Wed, 6 Jun 2018 09:47:18 +0000
+Message-ID: <6ED8E3B22081A4459DAC7699F3695FB701941AE842@SW-EX-MBX02.diasemi.com>
+References: <20180602101155.26375-1-marek.vasut+renesas@gmail.com>
+ <20180602101155.26375-6-marek.vasut+renesas@gmail.com>
+ <CAMuHMdV-o0_G76vR0i9nTnSowpzP3Wrt2rC7jVnoFSR3SdObYA@mail.gmail.com>
+ <9acdc0af-4be9-91cb-ffed-25133bba73c3@gmail.com>
+ <6ED8E3B22081A4459DAC7699F3695FB701941AD701@SW-EX-MBX02.diasemi.com>
+ <ab8fa587-a33a-5906-9403-ff5e23e09ff0@gmail.com>
+In-Reply-To: <ab8fa587-a33a-5906-9403-ff5e23e09ff0@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.20.27.121]
+x-kse-attachmentfiltering-interceptor-info: protection disabled
+x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 06/06/2018 07:49:00
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux has a fully-generic interval tree implementation
-which can be tailored to different use cases.
-Use it for range_lock rather than the lustre version.
-This allows us to get rid of some call-backs and generally
-simplifies the code.
-
-We cannot use the pre-built version in lib/interval_tree.c
-as we need 64bit endpoints and it only provides "unsigned long".
-
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- drivers/staging/lustre/lustre/llite/file.c       |    8 +-
- drivers/staging/lustre/lustre/llite/range_lock.c |   94 ++++++++--------------
- drivers/staging/lustre/lustre/llite/range_lock.h |   17 ++--
- 3 files changed, 47 insertions(+), 72 deletions(-)
-
-diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
-index 02295931883b..e888ed6e74bc 100644
---- a/drivers/staging/lustre/lustre/llite/file.c
-+++ b/drivers/staging/lustre/lustre/llite/file.c
-@@ -1086,8 +1086,8 @@ ll_file_io_generic(const struct lu_env *env, struct vvp_io_args *args,
- 		     (iot == CIT_READ && (file->f_flags & O_DIRECT))) &&
- 		    !(vio->vui_fd->fd_flags & LL_FILE_GROUP_LOCKED)) {
- 			CDEBUG(D_VFSTRACE, "Range lock [%llu, %llu]\n",
--			       range.rl_node.in_extent.start,
--			       range.rl_node.in_extent.end);
-+			       range.rl_start,
-+			       range.rl_last);
- 			rc = range_lock(&lli->lli_write_tree, &range);
- 			if (rc < 0)
- 				goto out;
-@@ -1099,8 +1099,8 @@ ll_file_io_generic(const struct lu_env *env, struct vvp_io_args *args,
- 		ll_cl_remove(file, env);
- 		if (range_locked) {
- 			CDEBUG(D_VFSTRACE, "Range unlock [%llu, %llu]\n",
--			       range.rl_node.in_extent.start,
--			       range.rl_node.in_extent.end);
-+			       range.rl_start,
-+			       range.rl_last);
- 			range_unlock(&lli->lli_write_tree, &range);
- 		}
- 	} else {
-diff --git a/drivers/staging/lustre/lustre/llite/range_lock.c b/drivers/staging/lustre/lustre/llite/range_lock.c
-index eaa23f4c414e..acdb0dc00a89 100644
---- a/drivers/staging/lustre/lustre/llite/range_lock.c
-+++ b/drivers/staging/lustre/lustre/llite/range_lock.c
-@@ -37,7 +37,13 @@
- #include "range_lock.h"
- #include <uapi/linux/lustre/lustre_idl.h>
- #include <linux/libcfs/libcfs.h>
-+#include <linux/interval_tree_generic.h>
- 
-+#define START(node) ((node)->rl_start)
-+#define LAST(node)  ((node)->rl_last)
-+
-+INTERVAL_TREE_DEFINE(struct range_lock, rl_rb, __u64, __subtree_last,
-+		     START, LAST, static, range);
- /**
-  * Initialize a range lock tree
-  *
-@@ -48,7 +54,7 @@
-  */
- void range_lock_tree_init(struct range_lock_tree *tree)
- {
--	tree->rlt_root = NULL;
-+	tree->rlt_root = RB_ROOT_CACHED;
- 	tree->rlt_sequence = 0;
- 	spin_lock_init(&tree->rlt_lock);
- }
-@@ -65,43 +71,19 @@ void range_lock_tree_init(struct range_lock_tree *tree)
-  */
- int range_lock_init(struct range_lock *lock, __u64 start, __u64 end)
- {
--	int rc;
-+	RB_CLEAR_NODE(&lock->rl_rb);
- 
--	memset(&lock->rl_node, 0, sizeof(lock->rl_node));
- 	if (end != LUSTRE_EOF)
- 		end >>= PAGE_SHIFT;
--	rc = interval_set(&lock->rl_node, start >> PAGE_SHIFT, end);
--	if (rc)
--		return rc;
-+	lock->rl_start = start >> PAGE_SHIFT;
-+	lock->rl_last = end;
-+	if (lock->rl_start > lock->rl_last)
-+		return -ERANGE;
- 
- 	lock->rl_task = NULL;
- 	lock->rl_blocking_ranges = 0;
- 	lock->rl_sequence = 0;
--	return rc;
--}
--
--/**
-- * Helper function of range_unlock()
-- *
-- * \param node [in]	a range lock found overlapped during interval node
-- *			search
-- * \param arg [in]	the range lock to be tested
-- *
-- * \retval INTERVAL_ITER_CONT	indicate to continue the search for next
-- *				overlapping range node
-- * \retval INTERVAL_ITER_STOP	indicate to stop the search
-- */
--static enum interval_iter range_unlock_cb(struct interval_node *node, void *arg)
--{
--	struct range_lock *lock = arg;
--	struct range_lock *overlap = node2rangelock(node);
--
--	if (overlap->rl_sequence > lock->rl_sequence) {
--		--overlap->rl_blocking_ranges;
--		if (overlap->rl_blocking_ranges == 0)
--			wake_up_process(overlap->rl_task);
--	}
--	return INTERVAL_ITER_CONT;
-+	return 0;
- }
- 
- /**
-@@ -112,36 +94,27 @@ static enum interval_iter range_unlock_cb(struct interval_node *node, void *arg)
-  *
-  * If this lock has been granted, relase it; if not, just delete it from
-  * the tree or the same region lock list. Wake up those locks only blocked
-- * by this lock through range_unlock_cb().
-+ * by this lock.
-  */
- void range_unlock(struct range_lock_tree *tree, struct range_lock *lock)
- {
--	spin_lock(&tree->rlt_lock);
--	LASSERT(interval_is_intree(&lock->rl_node));
--	interval_erase(&lock->rl_node, &tree->rlt_root);
-+	struct range_lock *overlap;
- 
--	interval_search(tree->rlt_root, &lock->rl_node.in_extent,
--			range_unlock_cb, lock);
--	spin_unlock(&tree->rlt_lock);
--}
-+	spin_lock(&tree->rlt_lock);
-+	LASSERT(!RB_EMPTY_NODE(&lock->rl_rb));
-+	range_remove(lock, &tree->rlt_root);
- 
--/**
-- * Helper function of range_lock()
-- *
-- * \param node [in]	a range lock found overlapped during interval node
-- *			search
-- * \param arg [in]	the range lock to be tested
-- *
-- * \retval INTERVAL_ITER_CONT	indicate to continue the search for next
-- *				overlapping range node
-- * \retval INTERVAL_ITER_STOP	indicate to stop the search
-- */
--static enum interval_iter range_lock_cb(struct interval_node *node, void *arg)
--{
--	struct range_lock *lock = arg;
-+	for (overlap = range_iter_first(&tree->rlt_root,
-+					lock->rl_start, lock->rl_last);
-+	     overlap;
-+	     overlap = range_iter_next(overlap, lock->rl_start, lock->rl_last))
-+		if (overlap->rl_sequence > lock->rl_sequence) {
-+			--overlap->rl_blocking_ranges;
-+			if (overlap->rl_blocking_ranges == 0)
-+				wake_up_process(overlap->rl_task);
-+		}
- 
--	lock->rl_blocking_ranges++;
--	return INTERVAL_ITER_CONT;
-+	spin_unlock(&tree->rlt_lock);
- }
- 
- /**
-@@ -160,15 +133,20 @@ static enum interval_iter range_lock_cb(struct interval_node *node, void *arg)
- int range_lock(struct range_lock_tree *tree, struct range_lock *lock)
- {
- 	int rc = 0;
-+	struct range_lock *it;
- 
- 	spin_lock(&tree->rlt_lock);
- 	/*
- 	 * We need to check for all conflicting intervals
- 	 * already in the tree.
- 	 */
--	interval_search(tree->rlt_root, &lock->rl_node.in_extent,
--			range_lock_cb, lock);
--	interval_insert(&lock->rl_node, &tree->rlt_root);
-+	for (it = range_iter_first(&tree->rlt_root,
-+				   lock->rl_start, lock->rl_last);
-+	     it;
-+	     it = range_iter_next(it, lock->rl_start, lock->rl_last))
-+		lock->rl_blocking_ranges++;
-+
-+	range_insert(lock, &tree->rlt_root);
- 	lock->rl_sequence = ++tree->rlt_sequence;
- 
- 	while (lock->rl_blocking_ranges > 0) {
-diff --git a/drivers/staging/lustre/lustre/llite/range_lock.h b/drivers/staging/lustre/lustre/llite/range_lock.h
-index 10ef1a995d26..2a0704d21481 100644
---- a/drivers/staging/lustre/lustre/llite/range_lock.h
-+++ b/drivers/staging/lustre/lustre/llite/range_lock.h
-@@ -38,10 +38,12 @@
- #define _RANGE_LOCK_H
- 
- #include <linux/spinlock.h>
--#include <interval_tree.h>
-+#include <linux/rbtree.h>
- 
- struct range_lock {
--	struct interval_node	rl_node;
-+	struct rb_node		rl_rb;
-+	__u64			rl_start, rl_last;
-+	__u64			__subtree_last;
- 	/**
- 	 * Process to enqueue this lock.
- 	 */
-@@ -57,15 +59,10 @@ struct range_lock {
- 	__u64			rl_sequence;
- };
- 
--static inline struct range_lock *node2rangelock(const struct interval_node *n)
--{
--	return container_of(n, struct range_lock, rl_node);
--}
--
- struct range_lock_tree {
--	struct interval_node	*rlt_root;
--	spinlock_t		 rlt_lock;	/* protect range lock tree */
--	__u64			 rlt_sequence;
-+	struct rb_root_cached	rlt_root;
-+	spinlock_t		rlt_lock;	/* protect range lock tree */
-+	__u64			rlt_sequence;
- };
- 
- void range_lock_tree_init(struct range_lock_tree *tree);
+SGkgTWFyZWsgYW5kIEdlZXJ0LA0KDQpPbiAwNiBKdW5lIDIwMTggMDA6MDIgTWFyZWsgVmFzdXQg
+d3JvdGUsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAwNi8xMF0gbWZkOiBkYTkwNjM6IEFk
+ZCBjdXN0b20gcmVnbWFwIGZvciBEQTkwNjNMDQo+IA0KPiBPbiAwNi8wNS8yMDE4IDEwOjE3IFBN
+LCBTdGV2ZSBUd2lzcyB3cm90ZToNCj4gPiBIaSBNYXJlayBhbmQgR2VlcnQsDQo+ID4NCj4gPiBP
+biAwNCBKdW5lIDIwMTggMTc6MjUgTWFyZWsgVmFzdXQgd3JvdGUsDQo+ID4NCj4gPj4gU3ViamVj
+dDogUmU6IFtQQVRDSCB2MyAwNi8xMF0gbWZkOiBkYTkwNjM6IEFkZCBjdXN0b20gcmVnbWFwIGZv
+ciBEQTkwNjNMDQo+ID4+DQo+ID4+IE9uIDA2LzA0LzIwMTggMDk6MzkgQU0sIEdlZXJ0IFV5dHRl
+cmhvZXZlbiB3cm90ZToNCj4gPj4+IEhpIE1hcmVrLCBTdGV2ZSwNCj4gPj4+DQo+ID4+PiBPbiBT
+YXQsIEp1biAyLCAyMDE4IGF0IDEyOjExIFBNLCBNYXJlayBWYXN1dCA8bWFyZWsudmFzdXRAZ21h
+aWwuY29tPiB3cm90ZToNCj4gPj4+PiBXaGlsZSB0aGUgZGF0YXNoZWV0IGZvciBEQTkwNjNMICgy
+djEsIDIzLU1hci0yMDE3KSBsaXN0cyB0aGUgUlRDIHJlZ2lzdGVyDQo+ID4+Pj4gYmxvY2ssIHRo
+ZSBEQTkwNjNMIGRvZXMgbm90IGhhdmUgYW4gUlRDLiBBZGQgY3VzdG9tIHJlZ21hcCBmb3IgREE5
+MDYzTCB0bw0KPiA+Pj4+IHByZXZlbnQgYWNjZXNzIGludG8gdGhhdCByZWdpc3RlciBibG9jay4N
+Cj4gPg0KPiA+IE9rLiBJJ3ZlIHNhaWQgcHJldmlvdXNseSBpbiBbdjMgMDcvMTBdLCBidXQgSSds
+bCBjb3B5IGFnYWluOg0KPiA+IFRoZXJlIGlzIG5vdyBhbiBpbnRlcm5hbCBEaWFsb2cgcmVxdWVz
+dCB0byByZW1vdmUgdGhlIFJUQyByZWZlcmVuY2VzIGZyb20gdGhlIERBOTA2M0wgZGF0YXNoZWV0
+Lg0KPiA+IEFkZGluZyB0aGF0IGZpcnN0IHBhcnQgdG8gdGhlIHNlbnRlbmNlIGluIHRoZSBjb21t
+aXQgbG9nOiAiV2hpbGUgdGhlIGRhdGFzaGVldCBmb3IgREE5MDYzTA0KPiA+ICgydjEsIDIzLU1h
+ci0yMDE3KSBsaXN0cyB0aGUgUlRDIHJlZ2lzdGVyIGJsb2NrIiAtLSBpdCBleGlzdHMgaW4gZXJy
+b3IgZm9yIHRoZSByZWdpc3RlciBtYXAgdGFibGUNCj4gPiBvbiBwYWdlIDkxLCBidXQgdGhlIGRh
+dGFzaGVldCBhbHNvIGlkZW50aWZpZXMgdGhvc2UgcmVnaXN0ZXJzIGluIFRhYmxlIDEwMiBvbiBw
+YWdlIDEyNiBhcw0KPiA+ICJSZXNlcnZlZCIuDQo+ID4NCj4gPiBQb2ludGluZyBvdXQgdGhlIGFt
+YmlndWl0eSBpbiB0aGlzIHZlcnNpb24gb2YgdGhlIGRhdGFzaGVldCBzZWVtcyByZWR1bmRhbnQg
+aW4gdGhlIGNvbW1pdCBsb2cuDQo+ID4gQWxzbyBEaWFsb2cgZG8gbm90IHN0b3JlIGEgaGlzdG9y
+eSBvZiBEYXRhc2hlZXRzIG9uIHRoZWlyIHdlYnNpdGUgc28gb25jZSB0aGlzIGlzIHVwZGF0ZWQg
+KGFsdGhvdWdoDQo+ID4gdGhpcyB1cGRhdGUgaXMgbm90IGluIG15IGhhbmRzKSB0aGUgZGF0YXNo
+ZWV0IHdpbGwgYmUgcmVwbGFjZWQuIFNvLCBpdCBzZWVtcyB0aGlzIGNvbW1lbnQgY291bGQNCj4g
+PiBtYWtlIHRoZSBjb21taXQgbWVzc2FnZSBqdXN0IGFzIG1pc2xlYWRpbmcgYXMgdGhlIGN1cnJl
+bnQgZGF0YXNoZWV0Lg0KPiA+DQo+ID4gSG93IGFib3V0IHNvbWV0aGluZyBzaW1wbGVyPw0KPiA+
+ICJUaGUgREE5MDYzTCBkb2VzIG5vdCBoYXZlIGFuIFJUQy4gQWRkIGN1c3RvbSByZWdtYXAgZm9y
+IERBOTA2M0wgdG8gcHJldmVudCBhY2Nlc3MNCj4gPiBpbnRvIHRoYXQgcmVnaXN0ZXIgYmxvY2su
+Ig0KPiA+DQo+ID4+Pj4NCj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBWYXN1dCA8bWFyZWsu
+dmFzdXQrcmVuZXNhc0BnbWFpbC5jb20+DQo+ID4+Pg0KPiA+Pj4gVGhhbmtzIGZvciB5b3VyIHBh
+dGNoIQ0KPiA+Pj4NCj4gPj4+PiAtLS0gYS9kcml2ZXJzL21mZC9kYTkwNjMtaTJjLmMNCj4gPj4+
+PiArKysgYi9kcml2ZXJzL21mZC9kYTkwNjMtaTJjLmMNCj4gPj4+PiBAQCAtMjU0LDYgKzM0MSwx
+MCBAQCBzdGF0aWMgaW50IGRhOTA2M19pMmNfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmkyYywN
+Cj4gPj4+DQo+ID4+PiBOb3RlIHRoYXQgdGhlIGxpbmUgYWJvdmUgZG9lc24ndCBjaGVjayBkYTkw
+NjMtPnR5cGUsIGJ1dCBkYTkwNjMtDQo+ID4+PiB2YXJpYW50X2NvZGUuLi4NCj4gPj4+DQo+ID4+
+Pj4gICAgICAgICAgICAgICAgIGRhOTA2M19yZWdtYXBfY29uZmlnLnJkX3RhYmxlID0gJmRhOTA2
+M19hZF9yZWFkYWJsZV90YWJsZTsNCj4gPj4+PiAgICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21h
+cF9jb25maWcud3JfdGFibGUgPSAmZGE5MDYzX2FkX3dyaXRlYWJsZV90YWJsZTsNCj4gPj4+PiAg
+ICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25maWcudm9sYXRpbGVfdGFibGUgPSAmZGE5
+MDYzX2FkX3ZvbGF0aWxlX3RhYmxlOw0KPiA+Pj4+ICsgICAgICAgfSBlbHNlIGlmIChkYTkwNjMt
+PnR5cGUgPT0gUE1JQ19UWVBFX0RBOTA2M0wpIHsNCj4gPj4+DQo+ID4+PiAuLi4gc28gdGhpcyBt
+YXkgYmUgc2xpZ2h0bHkgY29uZnVzaW5nLg0KPiA+Pg0KPiA+PiBJIGtub3cuDQo+ID4+DQo+ID4+
+Pj4gKyAgICAgICAgICAgICAgIGRhOTA2M19yZWdtYXBfY29uZmlnLnJkX3RhYmxlID0gJmRhOTA2
+M2xfYmJfcmVhZGFibGVfdGFibGU7DQo+ID4+Pj4gKyAgICAgICAgICAgICAgIGRhOTA2M19yZWdt
+YXBfY29uZmlnLndyX3RhYmxlID0gJmRhOTA2M2xfYmJfd3JpdGVhYmxlX3RhYmxlOw0KPiA+Pj4+
+ICsgICAgICAgICAgICAgICBkYTkwNjNfcmVnbWFwX2NvbmZpZy52b2xhdGlsZV90YWJsZSA9ICZk
+YTkwNjNsX2JiX3ZvbGF0aWxlX3RhYmxlOw0KPiA+Pj4+ICAgICAgICAgfSBlbHNlIHsNCj4gPj4+
+PiAgICAgICAgICAgICAgICAgZGE5MDYzX3JlZ21hcF9jb25maWcucmRfdGFibGUgPSAmZGE5MDYz
+X2JiX3JlYWRhYmxlX3RhYmxlOw0KPiA+Pj4+ICAgICAgICAgICAgICAgICBkYTkwNjNfcmVnbWFw
+X2NvbmZpZy53cl90YWJsZSA9ICZkYTkwNjNfYmJfd3JpdGVhYmxlX3RhYmxlOw0KPiA+Pj4NCj4g
+Pj4+IEhvd2V2ZXIsIGRhOTA2My0+dmFyaWFudF9jb2RlIGRvZXNuJ3Qgc2VlbSB0byBoYXZlIGJl
+ZW4gZmlsbGVkIGluIGF0IHRoaXMNCj4gPj4+IHBvaW50IHlldCAodGhlIGNhbGwgdG8gZGE5MDYz
+X2RldmljZV9pbml0KCkgZG9pbmcgc28gaXMgYmVsb3csIGF0IHRoZSBlbmQNCj4gPj4+IG9mIHRo
+ZSBwcm9iZSBmdW5jdGlvbiEpLCBzbyBjb21taXQgOWNiNDJlMmE4ZWQwNmU5MSAoIm1mZDogZGE5
+MDYzOiBBZGQNCj4gPj4+IHN1cHBvcnQgZm9yIEFEIHNpbGljb24gdmFyaWFudCIpIG5ldmVyIGFj
+dHVhbGx5IGhhbmRsZWQgdGhlIEFEIHNpbGljb24gdmFyaWFudA0KPiA+Pj4gY29ycmVjdGx5PyBP
+ciBhbSBJIG1pc3Npbmcgc29tZXRoaW5nPw0KPiA+DQo+ID4gT2theSAuLi4gTm8uIFlvdSdyZSBu
+b3QgbWlzc2luZyBhbnl0aGluZy4gSSBoYWQgbm90aWNlZCB0aGF0Lg0KPiA+IFRoZSBBRCBjaGlw
+IG1vZGVsIGlzIG5vdCByZWZlcmVuY2VkIGFuZCBieSBkZWZhdWx0IG9ubHkgdGhlIEJCIGNoaXAg
+bW9kZWwgaXMgdXNlZC4NCj4gPg0KPiA+PiBIYSwgdGhhdCBpcyBhIGdvb2QgcG9pbnQuDQo+ID4N
+Cj4gPiBZZWFoLCBpdCdzIGEgZ29vZCBwb2ludCwgYnV0IGl0J3Mgbm90IGFuIGFtdXNpbmcgcG9p
+bnQuDQo+ID4gVGhlIGRldmljZSB0cmVlIG9ubHkgZGlzdGluZ3Vpc2hlcyBhICJkbGcsZGE5MDYz
+IiwgdGhlcmUgaXMgbm8gQUQgdHlwZSBpbiB0aGUgRFQgc2NoZW1hLg0KPiA+IFRoZXJlIGlzIG5v
+IGRhdGFzaGVldCBsaXN0aW5nIEFEIHJlZ2lzdGVycyBzdXBwb3J0ZWQgYnkgRGlhbG9nLCBvbmx5
+IEJCLg0KPiA+DQo+ID4gQnV0LCBBRCByZWdpc3RlcnMgd2VyZSBhZGRlZCBiYWNrIGludG8gdGhl
+IGhlYWRlciBmaWxlIGluIGNvbW1pdCA5Y2I0MmUyYThlZDA2ZTkxDQo+ID4gYW5kIHRoZSBSVEMg
+ZHJpdmVyIHdhcyB1cGRhdGVkIHRvIGRpc3Rpbmd1aXNoIGJldHdlZW4gdGhlIEFEIGFuZCBCQiBh
+Y2NvcmRpbmcgdG8NCj4gPiB0aGUgdHlwZSBvZiB2YXJpYW50IGRldGVjdGVkIGF0IHJ1bi10aW1l
+IGR1cmluZyB0aGUgZGE5MDYzX2RldmljZV9pbml0KCkgY2FsbC4NCj4gPg0KPiA+IFRoZSByZWFs
+IHByb2JsZW0gaXMgdGhhdCB0aGlzIGxlYWRzIHRvIHR3byBjb21wZXRpbmcgY2hpcCBkZXRlY3Rp
+b24gbWV0aG9kcyBmb3IgdGhlDQo+ID4gREE5MDYzLiBUaGUgZnVuY3Rpb24gZGE5MDYzX2Rldmlj
+ZV9pbml0KCkgYXV0b2RldGVjdHMgdGhlIGNoaXAgdmFyaWFudCwgYnV0DQo+ID4gYXV0b2RldGVj
+dGlvbiBjYW5ub3QgZGVmaW5lIHRoZSBjaGlwIG1vZGVsLiBJdCdzIGNpcmN1bGFyOiB0aGUgY2hp
+cCBtb2RlbCBjYW5ub3QgYmUNCj4gPiBhdXRvZGV0ZWN0ZWQgYmVjYXVzZSBhIGNoaXAgbW9kZWwg
+aXMgbmVlZGVkIHRvIGFjY2VzcyB0aGUgcmVnaXN0ZXIgdXNlZCBkdXJpbmcNCj4gPiBhdXRvZGV0
+ZWN0aW9uLg0KPiA+DQo+ID4gV2hpY2ggbGVhZHMgbWUgYmFjayB0byB3aGF0IEkgc2FpZCB0d28g
+cGFyYWdyYXBocyB1cDoNCj4gPj4gVGhlIGRldmljZSB0cmVlIG9ubHkgZGlzdGluZ3Vpc2hlcyBh
+ICJkbGcsZGE5MDYzIiwgdGhlcmUgaXMgbm8gQUQgdHlwZSBpbiB0aGUgRFQgc2NoZW1hLg0KPiA+
+PiBUaGVyZSBpcyBubyBkYXRhc2hlZXQgbGlzdGluZyBBRCByZWdpc3RlcnMgc3VwcG9ydGVkIGJ5
+IERpYWxvZywgb25seSBCQi4NCj4gPg0KPiA+IFRoaXMgaXMgbm90IGhvdyBpdCBpcyBkb25lIGlu
+IHRoZSBEQTkwNjIgYW5kIERBOTA2MSBkcml2ZXI6IHRoZSB2YXJpYW50IGNvZGUgaXMgb25seQ0K
+PiA+IHVzZWQgdG8gcHJpbnQgdGhlIGluZm9ybWF0aW9uIHRvIHRoZSBjb25zb2xlIGR1cmluZyBz
+dGFydC11cCBhbmQgaXQgaXMgdGhlIERUIHRoYXQgZGVmaW5lcw0KPiA+IHRoZSBjaGlwIG1vZGVs
+IGJhc2VkIHVwb24gImRsZyxkYTkwNjIiIG9yICJkbGcsZGE5MDYxIi4NCj4gDQo+IFNvIHRoZSBB
+RCB3YXMgYnJva2VuIHNpbmNlIGZvcmV2ZXIgYW5kIG5vb25lIG5vdGljZWQgPyA6KQ0KDQpOb3Qg
+cXVpdGUuIA0KVGhlIEFEIHN1cHBvcnQgaXMgd29ya2luZywgYnV0IHRoZSBkcml2ZXIgZG9lc24n
+dCB3b3JrIGxpa2UgZXZlcnlib2R5DQpleHBlY3RzIGJlY2F1c2UgaXQgdXNlcyB0aGUgQkIgY2hp
+cCBtb2RlbC4gQnV0IGl0IGRvZXMgd29yayBiZWNhdXNlIHRoZSBjaGlwDQptb2RlbCBmb3IgQkIg
+aXMgdmFsaWQgZm9yIEFEOyBpbiB0aGlzIGNhc2UgQkIgcmVwcmVzZW50cyBhIHN1cGVyc2V0IG9m
+IEFEDQpyZWdpc3RlcnMgKGFuZCBhbnkgbWlzbWF0Y2hlcyBhcmUgbmV2ZXIgYWNjZXNzZWQgb3Ig
+bWVhbiBhbnl0aGluZyBpbiBBRCkuDQoNCj4gRG8geW91IGhhdmUgYW4gQUQgaGFyZHdhcmUgYW5k
+IGNhbiB5b3UgZml4IGl0ID8NCg0KUGFydCBvZiBteSB3b3JrIGlzIHRvIHN1cHBvcnQgdGhlIGNv
+bW11bml0eSBhbmQgSSB0aGluayB0aGlzIGlzIGZpeGFibGUuDQoNCkJ1dCBhbGwgb2YgdGhpcyBz
+aG91bGRuJ3QgYWZmZWN0IHlvdXIgREE5MDYzTCBzdWJtaXNzaW9uIHNob3VsZCBpdD8NCg0KUmVn
+YXJkcywNClN0ZXZlDQoNCg==
