@@ -1,85 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PeTMhAsG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C2D2A60764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="svbbJ0qO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFFB4601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeFFPIZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:08:25 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51785 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbeFFPIV (ORCPT
+        id S933552AbeFFQr0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:47:26 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:41465 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932848AbeFFQrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:08:21 -0400
-X-Google-Smtp-Source: ADUXVKKsP/LM6i4Biqjhc0UzB9WNeizbkcm582O/9bkpBJIvmUEx6h4pcC9JhF1pw9GGuQPm+aLUbQ==
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v4 1/7] interconnect: Add generic on-chip interconnect API
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>,
-        gregkh@linuxfoundation.org, Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        seansw@qti.qualcomm.com, khilman@baylibre.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, davidai@quicinc.com,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        lakml <linux-arm-kernel@lists.infradead.org>
-References: <20180309210958.16672-1-georgi.djakov@linaro.org>
- <20180309210958.16672-2-georgi.djakov@linaro.org>
- <CAHLCerNmBAbu4UcQ+uksXN8z-o-kxLct9ryfy5qBY0Z2jDNRGg@mail.gmail.com>
+        Wed, 6 Jun 2018 12:47:23 -0400
+X-Google-Smtp-Source: ADUXVKIlm6AKZCohOXudsT4HygmJ2Gcc85eCsjwzRM1iUG8OsExXwIPWcXUQYEjNDa/SZCWhpreVFA==
+Subject: Re: [PATCH] ARM: dts: cygnus: Add HWRNG node
+To: Scott Branden <scott.branden@broadcom.com>,
+        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
+References: <20180606093441.16483-1-peron.clem@gmail.com>
+ <c8836130-1d96-b813-4e87-5011db679ba8@broadcom.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- xsFNBFjTuRcBEACyAOVzghvyN19Sa/Nit4LPBWkICi5W20p6bwiZvdjhtuh50H5q4ktyxJtp
- 1+s8dMSa/j58hAWhrc2SNL3fttOCo+MM1bQWwe8uMBQJP4swgXf5ZUYkSssQlXxGKqBSbWLB
- uFHOOBTzaQBaNgsdXo+mQ1h8UCgM0zQOmbs2ort8aHnH2i65oLs5/Xgv/Qivde/FcFtvEFaL
- 0TZ7odM67u+M32VetH5nBVPESmnEDjRBPw/DOPhFBPXtal53ZFiiRr6Bm1qKVu3dOEYXHHDt
- nF13gB+vBZ6x5pjl02NUEucSHQiuCc2Aaavo6xnuBc3lnd4z/xk6GLBqFP3P/eJ56eJv4d0B
- 0LLgQ7c1T3fU4/5NDRRCnyk6HJ5+HSxD4KVuluj0jnXW4CKzFkKaTxOp7jE6ZD/9Sh74DM8v
- etN8uwDjtYsM07I3Szlh/I+iThxe/4zVtUQsvgXjwuoOOBWWc4m4KKg+W4zm8bSCqrd1DUgL
- f67WiEZgvN7tPXEzi84zT1PiUOM98dOnmREIamSpKOKFereIrKX2IcnZn8jyycE12zMkk+Sc
- ASMfXhfywB0tXRNmzsywdxQFcJ6jblPNxscnGMh2VlY2rezmqJdcK4G4Lprkc0jOHotV/6oJ
- mj9h95Ouvbq5TDHx+ERn8uytPygDBR67kNHs18LkvrEex/Z1cQARAQABzShHZW9yZ2kgRGph
- a292IDxnZW9yZ2kuZGpha292QGxpbmFyby5vcmc+wsF+BBMBAgAoBQJY07kXAhsDBQkHhM4A
- BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyi/eZcnWWUuvsD/4miikUeAO6fU2Xy3fT
- l7RUCeb2Uuh1/nxYoE1vtXcow6SyAvIVTD32kHXucJJfYy2zFzptWpvD6Sa0Sc58qe4iLY4j
- M54ugOYK7XeRKkQHFqqR2T3g/toVG1BOLS2atooXEU+8OFbpLkBXbIdItqJ1M1SEw8YgKmmr
- JlLAaKMq3hMb5bDQx9erq7PqEKOB/Va0nNu17IL58q+Q5Om7S1x54Oj6LiG/9kNOxQTklOQZ
- t61oW1Ewjbl325fW0/Lk0QzmfLCrmGXXiedFEMRLCJbVImXVKdIt/Ubk6SAAUrA5dFVNBzm2
- L8r+HxJcfDeEpdOZJzuwRyFnH96u1Xz+7X2V26zMU6Wl2+lhvr2Tj7spxjppR+nuFiybQq7k
- MIwyEF0mb75RLhW33sdGStCZ/nBsXIGAUS7OBj+a5fm47vQKv6ekg60oRTHWysFSJm1mlRyq
- exhI6GwUo5GM/vE36rIPSJFRRgkt6nynoba/1c4VXxfhok2rkP0x3CApJ5RimbvITTnINY0o
- CU6f1ng1I0A1UTi2YcLjFq/gmCdOHExT4huywfu1DDf0p1xDyPA1FJaii/gJ32bBP3zK53hM
- dj5S7miqN7F6ZpvGSGXgahQzkGyYpBR5pda0m0k8drV2IQn+0W8Qwh4XZ6/YdfI81+xyFlXc
- CJjljqsMCJW6PdgEH87BTQRY07kXARAAvupGd4Jdd8zRRiF+jMpv6ZGz8L55Di1fl1YRth6m
- lIxYTLwGf0/p0oDLIRldKswena3fbWh5bbTMkJmRiOQ/hffhPSNSyyh+WQeLY2kzl6geiHxD
- zbw37e2hd3rWAEfVFEXOLnmenaUeJFyhA3Wd8OLdRMuoV+RaLhNfeHctiEn1YGy2gLCq4VNb
- 4Wj5hEzABGO7+LZ14hdw3hJIEGKtQC65Jh/vTayGD+qdwedhINnIqslk9tCQ33a+jPrCjXLW
- X29rcgqigzsLHH7iVHWA9R5Aq7pCy5hSFsl4NBn1uV6UHlyOBUuiHBDVwTIAUnZ4S8EQiwgv
- WQxEkXEWLM850V+G6R593yZndTr3yydPgYv0xEDACd6GcNLR/x8mawmHKzNmnRJoOh6Rkfw2
- fSiVGesGo83+iYq0NZASrXHAjWgtZXO1YwjW9gCQ2jYu9RGuQM8zIPY1VDpQ6wJtjO/KaOLm
- NehSR2R6tgBJK7XD9it79LdbPKDKoFSqxaAvXwWgXBj0Oz+Y0BqfClnAbxx3kYlSwfPHDFYc
- R/ppSgnbR5j0Rjz/N6Lua3S42MDhQGoTlVkgAi1btbdV3qpFE6jglJsJUDlqnEnwf03EgjdJ
- 6KEh0z57lyVcy5F/EUKfTAMZweBnkPo+BF2LBYn3Qd+CS6haZAWaG7vzVJu4W/mPQzsAEQEA
- AcLBZQQYAQIADwUCWNO5FwIbDAUJB4TOAAAKCRCyi/eZcnWWUhlHD/0VE/2x6lKh2FGP+QHH
- UTKmiiwtMurYKJsSJlQx0T+j/1f+zYkY3MDX+gXa0d0xb4eFv8WNlEjkcpSPFr+pQ7CiAI33
- 99kAVMQEip/MwoTYvM9NXSMTpyRJ/asnLeqa0WU6l6Z9mQ41lLzPFBAJ21/ddT4xeBDv0dxM
- GqaH2C6bSnJkhSfSja9OxBe+F6LIAZgCFzlogbmSWmUdLBg+sh3K6aiBDAdZPUMvGHzHK3fj
- gHK4GqGCFK76bFrHQYgiBOrcR4GDklj4Gk9osIfdXIAkBvRGw8zg1zzUYwMYk+A6v40gBn00
- OOB13qJe9zyKpReWMAhg7BYPBKIm/qSr82aIQc4+FlDX2Ot6T/4tGUDr9MAHaBKFtVyIqXBO
- xOf0vQEokkUGRKWBE0uA3zFVRfLiT6NUjDQ0vdphTnsdA7h01MliZLQ2lLL2Mt5lsqU+6sup
- Tfql1omgEpjnFsPsyFebzcKGbdEr6vySGa3Cof+miX06hQXKe99a5+eHNhtZJcMAIO89wZmj
- 7ayYJIXFqjl/X0KBcCbiAl4vbdBw1bqFnO4zd1lMXKVoa29UHqby4MPbQhjWNVv9kqp8A39+
- E9xw890l1xdERkjVKX6IEJu2hf7X3MMl9tOjBK6MvdOUxvh1bNNmXh7OlBL1MpJYY/ydIm3B
- KEmKjLDvB0pePJkdTw==
-Message-ID: <3f0e5606-c28d-6bd9-387e-23be1d0185fc@linaro.org>
-Date: Wed, 6 Jun 2018 18:08:19 +0300
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <c7990001-00e6-d828-bafd-3d472fcfee20@gmail.com>
+Date: Wed, 6 Jun 2018 09:47:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAHLCerNmBAbu4UcQ+uksXN8z-o-kxLct9ryfy5qBY0Z2jDNRGg@mail.gmail.com>
+In-Reply-To: <c8836130-1d96-b813-4e87-5011db679ba8@broadcom.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -87,200 +76,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amit,
-
-On 25.05.18 г. 11:26, Amit Kucheria wrote:
-> On Fri, Mar 9, 2018 at 11:09 PM, Georgi Djakov <georgi.djakov@linaro.org> wrote:
->> This patch introduce a new API to get requirements and configure the
->> interconnect buses across the entire chipset to fit with the current
->> demand.
+On 06/06/2018 09:03 AM, Scott Branden wrote:
+> Hi Clement,
+> 
+> 
+> On 18-06-06 02:34 AM, Clément Péron wrote:
+>> From: Clément Peron <clement.peron@devialet.com>
 >>
->> The API is using a consumer/provider-based model, where the providers are
->> the interconnect buses and the consumers could be various drivers.
->> The consumers request interconnect resources (path) between endpoints and
->> set the desired constraints on this data flow path. The providers receive
->> requests from consumers and aggregate these requests for all master-slave
->> pairs on that path. Then the providers configure each participating in the
->> topology node according to the requested data flow path, physical links and
->> constraints. The topology could be complicated and multi-tiered and is SoC
->> specific.
+>> There is a HWRNG in Broadcom Cygnus SoC, so enable it.
 >>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
-[..]
-
->> +Interconnect consumers
->> +----------------------
->> +
->> +Interconnect consumers are the clients which use the interconnect APIs to
->> +get paths between endpoints and set their bandwidth/latency/QoS requirements
->> +for these interconnect paths.
->> +
+>> Signed-off-by: Clément Peron <clement.peron@devialet.com>
+> Thanks for upstreaming some missing Cygnus components.
 > 
-> This document is missing a section on the locking semantics of the
-> framework. Does the core ensure that the entire path is locked for
-> set() to propagate?
-
-Yes, the core will ensure that the path is locked. Will add this to the
-function description.
-
-[..]
-
->> +
->> +static int path_init(struct icc_path *path)
->> +{
->> +       struct icc_node *node;
->> +       size_t i;
->> +
->> +       for (i = 0; i < path->num_nodes; i++) {
->> +               node = path->reqs[i].node;
->> +
->> +               mutex_lock(&node->provider->lock);
->> +               node->provider->users++;
->> +               mutex_unlock(&node->provider->lock);
->> +       }
->> +
->> +       return 0;
->> +}
->> +
+> But, the problem is the tarball release from Broadcom you are extracting
+> these changes from does not contain git history; so, you are missing the
+> original authors and signed-off's.
+> I checked our internal git repository and for this commit the author is:
+> Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadcom.com>
 > 
-> Consider adding some comments for node_aggregate and
-> provider_aggregate's aggregation algorithm
-> 
-> "We want the path to honor all bandwidth requests, so the average
-> bandwidth requirements from each consumer are aggregated at each node
-> and provider level. The peak bandwidth requirements will then be the
-> highest of all the peak bw requests"
-> 
-> or something to the effect that.
+> Please adjust author and signed-off appropriately.  If there are other
+> changes you are extracting from the source tarballs you have please
+> contact me so we can construct patch appropriately.
 
-Ok, thanks.
+If you want the original author's Signed-off-by to be preserved, why
+don't you extract it from your internal git tree and submit the patch on
+Mohamed's behalf?
 
->> +static void node_aggregate(struct icc_node *node)
->> +{
->> +       struct icc_req *r;
->> +       u32 agg_avg = 0;
->> +       u32 agg_peak = 0;
->> +
->> +       hlist_for_each_entry(r, &node->req_list, req_node) {
->> +               /* sum(averages) and max(peaks) */
->> +               agg_avg += r->avg_bw;
->> +               agg_peak = max(agg_peak, r->peak_bw);
->> +       }
->> +
->> +       node->avg_bw = agg_avg;
->> +       node->peak_bw = agg_peak;
->> +}
->> +
->> +static void provider_aggregate(struct icc_provider *provider, u32 *avg_bw,
->> +                              u32 *peak_bw)
->> +{
->> +       struct icc_node *n;
->> +       u32 agg_avg = 0;
->> +       u32 agg_peak = 0;
->> +
->> +       /* aggregate for the interconnect provider */
-> 
-> You could get rid of this, the function name says as much.
-
-Ok.
-
->> +       list_for_each_entry(n, &provider->nodes, node_list) {
->> +               /* sum the average and max the peak */
->> +               agg_avg += n->avg_bw;
->> +               agg_peak = max(agg_peak, n->peak_bw);
->> +       }
->> +
->> +       *avg_bw = agg_avg;
->> +       *peak_bw = agg_peak;
->> +}
->> +
->> +static int constraints_apply(struct icc_path *path)
->> +{
->> +       struct icc_node *next, *prev = NULL;
->> +       int i;
->> +
->> +       for (i = 0; i < path->num_nodes; i++, prev = next) {
->> +               struct icc_provider *provider;
->> +               u32 avg_bw = 0;
->> +               u32 peak_bw = 0;
->> +               int ret;
->> +
->> +               next = path->reqs[i].node;
->> +               /*
->> +                * Both endpoints should be valid master-slave pairs of the
->> +                * same interconnect provider that will be configured.
->> +                */
->> +               if (!next || !prev)
->> +                       continue;
->> +
->> +               if (next->provider != prev->provider)
->> +                       continue;
->> +
->> +               provider = next->provider;
->> +               mutex_lock(&provider->lock);
->> +
->> +               /* aggregate requests for the provider */
-> 
-> Get rid of comment.
-
-Ok.
-
->> +               provider_aggregate(provider, &avg_bw, &peak_bw);
->> +
->> +               if (provider->set) {
->> +                       /* set the constraints */
->> +                       ret = provider->set(prev, next, avg_bw, peak_bw);
->> +               }
->> +
->> +               mutex_unlock(&provider->lock);
->> +
->> +               if (ret)
->> +                       return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +/**
->> + * icc_set() - set constraints on an interconnect path between two endpoints
->> + * @path: reference to the path returned by icc_get()
->> + * @avg_bw: average bandwidth in kbps
->> + * @peak_bw: peak bandwidth in kbps
->> + *
->> + * This function is used by an interconnect consumer to express its own needs
->> + * in term of bandwidth and QoS for a previously requested path between two
->> + * endpoints. The requests are aggregated and each node is updated accordingly.
->> + *
->> + * Returns 0 on success, or an approproate error code otherwise.
-> 
-> *appropriate*
-
-Ok.
-
-[..]
->> +/**
->> + * struct icc_node - entity that is part of the interconnect topology
->> + *
->> + * @id: platform specific node id
->> + * @name: node name used in debugfs
->> + * @links: a list of targets where we can go next when traversing
->> + * @num_links: number of links to other interconnect nodes
->> + * @provider: points to the interconnect provider of this node
->> + * @node_list: list of interconnect nodes associated with @provider
->> + * @search_list: list used when walking the nodes graph
->> + * @reverse: pointer to previous node when walking the nodes graph
->> + * @is_traversed: flag that is used when walking the nodes graph
->> + * @req_list: a list of QoS constraint requests associated with this node
-> 
-> 
->> + * @avg_bw: aggregated value of average bandwidth
->> + * @peak_bw: aggregated value of peak bandwidth
-> 
-> Consider changing to "aggregated value of {average|peak} bandwidth
-> requests from all consumers"
-
-Ok, will clarify.
-
-Thanks,
-Georgi
+AFAICT what Clement is doing here is permissible given the Linux
+developer certificate of origin though I am not a lawyer of course.
+-- 
+Florian
