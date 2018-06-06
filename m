@@ -1,67 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAF0p8nr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32F8D60767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o6pZEtar"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A61A560290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932267AbeFFGgp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:36:45 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55815 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932249AbeFFGgm (ORCPT
+        id S1752491AbeFFPbI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:31:08 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34144 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752366AbeFFPbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:36:42 -0400
-X-Google-Smtp-Source: ADUXVKJM9zYWG8EJwzP4HT0N3s6biqaes82n004yIdu0UFBGleVJ0E3LjzPyqLtBFrvwe2m31lGC7g==
-Date: Wed, 6 Jun 2018 07:36:38 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 04/12] mfd: da9063: Replace DA9063_NUM_IRQ with
- ARRAY_SIZE
-Message-ID: <20180606063638.GX21163@dell>
-References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
- <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
+        Wed, 6 Jun 2018 11:31:04 -0400
+Subject: Re: linux-next: Tree for May 29 (usb/gadget/udc/aspeed-vhub)
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20180529204410.63477f88@canb.auug.org.au>
+ <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
+ <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <be9159d4-f53e-1f1a-e87b-dfd55c458c9a@infradead.org>
+Date: Wed, 6 Jun 2018 08:30:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 06 Jun 2018, Marek Vasut wrote:
-
-> Replace DA9063_NUM_IRQ macro which is not used anywhere with
-> plain ARRAY_SIZE().
+On 05/29/2018 03:16 PM, Benjamin Herrenschmidt wrote:
+> On Tue, 2018-05-29 at 10:04 -0700, Randy Dunlap wrote:
+>> On 05/29/2018 03:44 AM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20180525:
+>>>
+>>
+>> on i386:
+>>
+>> when builtin:
+>> drivers/usb/gadget/udc/aspeed-vhub/hub.o: In function `ast_vhub_std_hub_request':
+>> hub.c:(.text+0x3aa): undefined reference to `usb_gadget_get_string'
+>>
+>> or when modular:
+>> ERROR: "usb_gadget_get_string" [drivers/usb/gadget/udc/aspeed-vhub/aspeed-vhub.ko] undefined!
+>>
+>>
+>> Full randconfig for modular build is attached.
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V4: New patch
-> ---
->  drivers/mfd/da9063-irq.c        | 2 +-
->  include/linux/mfd/da9063/core.h | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
+> Somebody already sent a fix for this. Thanks. (Missing a dependency on
+> LIBCOMPOSITE).
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Hi,
 
+linux-next is still having this build error.
+Can we get that fix merged somewhere, please?
+
+thanks,
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+~Randy
