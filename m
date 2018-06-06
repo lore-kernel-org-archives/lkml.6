@@ -1,65 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqloCnbU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1DF09606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="irXH15bx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EAE52607F1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752097AbeFFMPk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:15:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751849AbeFFMPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:15:38 -0400
-Date: Wed, 6 Jun 2018 14:15:14 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.4 00/37] 4.4.136-stable review
-Message-ID: <20180606121514.GB16874@kroah.com>
-References: <20180605170108.884872354@linuxfoundation.org>
- <CA+G9fYsVEn_v+BxVc-SOnDJB4GYHmhzJzeYgJ2bZ+hKkwxJcwA@mail.gmail.com>
+        id S932472AbeFFJr5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:47:57 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:33561 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932268AbeFFJr4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:47:56 -0400
+X-ME-Proxy: <xmx:y60XW_4-GUJ08HIl0LEGrsCp-8Jxfadrcy6oC7OOP6K7U1P-LqKiMw>
+X-ME-Proxy: <xmx:y60XW9bHEgfZwSufWGtp1WPDmTNQ-TzJE9UgHqGko-x_VStMibng6Q>
+X-ME-Proxy: <xmx:y60XW7x2DhkdtibIuRAXsdHaRe3RHegJiUOCVq_UInGa5oNmpgdFbA>
+X-ME-Proxy: <xmx:y60XW45ERHS67RtB4L6_PIX6f4scOl7RL9Hs8OuorAQW7uIFLLn6nw>
+X-ME-Proxy: <xmx:y60XW6QwQC73guhBm2D34B2S-SvGD9yaKdIHtwdE6Xt8GLfCbQBUrg>
+X-ME-Proxy: <xmx:y60XW6V5jREYuc9ndVuWXogbPZO7UyXAQmQ6dA49a0lPoRqVvjf5YA>
+X-ME-Sender: <xms:y60XW2A5fuucF7i6RC4vqMhGs2ywj6ptCUeaCOWJcFb9_LikfeiTlg>
+Date: Wed, 6 Jun 2018 11:47:32 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
+Message-ID: <20180606094732.GA30903@kroah.com>
+References: <20180606191205.27b1290c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYsVEn_v+BxVc-SOnDJB4GYHmhzJzeYgJ2bZ+hKkwxJcwA@mail.gmail.com>
+In-Reply-To: <20180606191205.27b1290c@canb.auug.org.au>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 04:48:21PM +0530, Naresh Kamboju wrote:
-> On 5 June 2018 at 22:31, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.4.136 release.
-> > There are 37 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu Jun  7 17:00:49 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.136-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Wed, Jun 06, 2018 at 07:12:05PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm and x86_64.
+> Today's linux-next merge of the staging tree got conflicts in:
 > 
+>   drivers/staging/ipx/af_ipx.c
+>   drivers/staging/ipx/ipx_proc.c
+> 
+> between commits:
+> 
+>   fddda2b7b521 ("proc: introduce proc_create_seq{,_data}")
+>   db5051ead64a ("net: convert datagram_poll users tp ->poll_mask")
+> 
+> from Linus' tree and commit:
+> 
+>   7a2e838d28cf ("staging: ipx: delete it from the tree")
+> 
+> from the staging tree.
+> 
+> I fixed it up (I just removed the files) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Thanks for testing both of these and letting me know.
+Thanks, those files should just be removed.
 
 greg k-h
