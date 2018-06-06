@@ -1,90 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 14EC960767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxbGKhZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 28C4460555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932412AbeFFP5k (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:57:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57268 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752221AbeFFPyW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:54:22 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org
-Subject: [PATCH 2/8] ARM: dts: am335x-sl50: use phy-phandle declarations
-Date: Wed,  6 Jun 2018 17:54:07 +0200
-Message-Id: <20180606155413.23542-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180606155413.23542-1-enric.balletbo@collabora.com>
-References: <20180606155413.23542-1-enric.balletbo@collabora.com>
+        id S1752186AbeFFMsS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:48:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53086 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751914AbeFFMsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:48:16 -0400
+Date: Wed, 6 Jun 2018 14:47:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>, devel@driverdev.osuosl.org,
+        linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] android: binder: Drop dependency on !M68K
+Message-ID: <20180606124751.GA21439@kroah.com>
+References: <1528288856-11841-1-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528288856-11841-1-git-send-email-geert@linux-m68k.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-phy-phandle is now a preferred method to reference a PHY device. The new
-method also allows you to specify a reset gpio which is required for
-this board.
+On Wed, Jun 06, 2018 at 02:40:56PM +0200, Geert Uytterhoeven wrote:
+> As of commit 7124330dabe5b3cb ("m68k/uaccess: Revive 64-bit
+> get_user()"), the 64-bit Android binder interface builds fine on m68k.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  drivers/android/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
+> index ee4880bfdcdc98d2..432e9ad770703275 100644
+> --- a/drivers/android/Kconfig
+> +++ b/drivers/android/Kconfig
+> @@ -10,7 +10,7 @@ if ANDROID
+>  
+>  config ANDROID_BINDER_IPC
+>  	bool "Android Binder IPC Driver"
+> -	depends on MMU && !M68K
+> +	depends on MMU
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Wonderful!  Thanks for this, I'll queue it up after 4.18-rc1 is out.
 
- arch/arm/boot/dts/am335x-sl50.dts | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/boot/dts/am335x-sl50.dts b/arch/arm/boot/dts/am335x-sl50.dts
-index 6d78bf828bbf..58fe84f2ec8b 100644
---- a/arch/arm/boot/dts/am335x-sl50.dts
-+++ b/arch/arm/boot/dts/am335x-sl50.dts
-@@ -253,6 +253,8 @@
- 			/* MDIO */
- 			AM33XX_IOPAD(0x948, PIN_INPUT_PULLUP | SLEWCTRL_FAST | MUX_MODE0)	/* mdio_data.mdio_data */
- 			AM33XX_IOPAD(0x94c, PIN_OUTPUT_PULLUP | MUX_MODE0)			/* mdio_clk.mdio_clk */
-+			/* Ethernet */
-+			AM33XX_IOPAD(0x838, PIN_INPUT_PULLUP | MUX_MODE7)	/* Ethernet_nRST - gpmc_ad14.gpio1_14 */
- 		>;
- 	};
- 
-@@ -324,7 +326,6 @@
- 			AM33XX_IOPAD(0x828, PIN_OUTPUT | MUX_MODE7)	/* nKbdOnC - gpmc_ad10.gpio0_26 */
- 			AM33XX_IOPAD(0x830, PIN_INPUT_PULLUP | MUX_MODE7)	/* nKbdInt - gpmc_ad12.gpio1_12 */
- 			AM33XX_IOPAD(0x834, PIN_INPUT_PULLUP | MUX_MODE7)	/* nKbdReset - gpmc_ad13.gpio1_13 */
--			AM33XX_IOPAD(0x838, PIN_INPUT_PULLUP | MUX_MODE7)	/* nDispReset - gpmc_ad14.gpio1_14 */
- 			AM33XX_IOPAD(0x844, PIN_INPUT_PULLUP | MUX_MODE7)	/* USB1_enPower - gpmc_a1.gpio1_17 */
- 			/* PDI Bus - Battery system */
- 			AM33XX_IOPAD(0x840, PIN_INPUT_PULLUP | MUX_MODE7)	/* nBattReset  gpmc_a0.gpio1_16 */
-@@ -553,13 +554,8 @@
- };
- 
- &cpsw_emac0 {
--	phy_id = <&davinci_mdio>, <0>;
--	phy-mode = "mii";
--};
--
--&cpsw_emac1 {
--	phy_id = <&davinci_mdio>, <1>;
- 	phy-mode = "mii";
-+	phy-handle = <&ethphy0>;
- };
- 
- &mac {
-@@ -574,6 +570,12 @@
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&davinci_mdio_default>;
- 	pinctrl-1 = <&davinci_mdio_sleep>;
-+	reset-gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
-+	reset-delay-us = <100>;   /* PHY datasheet states 100us min */
-+
-+	ethphy0: ethernet-phy@0 {
-+		reg = <0>;
-+	};
- };
- 
- &sham {
--- 
-2.17.1
+greg k-h
