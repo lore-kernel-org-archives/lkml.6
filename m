@@ -1,77 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="RwpTsBpv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C150760555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EDBEC606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932582AbeFFJhB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:37:01 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:54862 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932472AbeFFJg7 (ORCPT
+        id S932270AbeFFSiH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:38:07 -0400
+Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:44111 "EHLO
+        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932138AbeFFSiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:36:59 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-Subject: Re: [PATCH 4/8] serial: 8250: Handle case port doesn't have TEMT
- interrupt using em485.
-To: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Vignesh R <vigneshr@ti.com>,
-        Rolf Evers-Fischer <rolf.evers.fischer@aptiv.com>,
-        Aaron Sierra <asierra@xes-inc.com>,
-        Rafael Gago <rafael.gago@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Sean Wang <sean.wang@mediatek.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180601124021.102970-1-giulio.benetti@micronovasrl.com>
- <20180601124021.102970-5-giulio.benetti@micronovasrl.com>
- <b14d4970-f14d-d59f-2072-b7d5704dd842@gmail.com>
- <d130718a-444d-3a39-4da8-0f0b907f850d@micronovasrl.com>
- <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <2654fba0-e16e-4f53-4913-bd718e42497c@micronovasrl.com>
-Date: Wed, 6 Jun 2018 11:36:40 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 6 Jun 2018 14:38:05 -0400
+Date: Wed, 6 Jun 2018 19:38:03 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>, mhocko@kernel.org,
+        vbabka@suse.cz, Aaron Lu <aaron.lu@intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Hugh Dickins <hughd@google.com>
+Subject: [PATCH] mremap: Remove LATENCY_LIMIT from mremap to reduce the
+ number of TLB shootdowns
+Message-ID: <20180606183803.k7qaw2xnbvzshv34@techsingularity.net>
 MIME-Version: 1.0
-In-Reply-To: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit 5d1904204c99 ("mremap: fix race between mremap() and page cleanning")
+fixed races between mremap and other operations for both file-backed and
+anonymous mappings. The file-backed was the most critical as it allowed the
+possibility that data could be changed on a physical page after page_mkclean
+returned which could trigger data loss or data integrity issues. A customer
+reported that the cost of the TLBs for anonymous regressions was excessive
+and resulting in a 30-50% drop in performance overall since this commit
+on a microbenchmark. Unfortunately I neither have access to the test-case
+nor can I describe what it does other than saying that mremap operations
+dominate heavily.
 
-Il 05/06/2018 12:51, Matwey V. Kornilov ha scritto:
-> Could I ask to split the series into fixes and new features? I see
-> that the fixes can be applied, probably it would be better to apply
-> them separately from discussing new features.
+This patch removes the LATENCY_LIMIT to handle TLB flushes on a PMD boundary
+instead of every 64 pages to reduce the number of TLB shootdowns by a factor
+of 8 in the ideal case. LATENCY_LIMIT was almost certainly used originally
+to limit the PTL hold times but the latency savings are likely offset by
+the cost of IPIs in many cases. This patch is not reported to completely
+restore performance but gets it within an acceptable percentage. The given
+metric here is simply described as "higher is better".
 
-Sure, I'm going to send 2 different patchsets.
+Baseline that was known good
+002:  Metric:       91.05
+004:  Metric:      109.45
+008:  Metric:       73.08
+016:  Metric:       58.14
+032:  Metric:       61.09
+064:  Metric:       57.76
+128:  Metric:       55.43
 
-Thanks
+Current
+001:  Metric:       54.98
+002:  Metric:       56.56
+004:  Metric:       41.22
+008:  Metric:       35.96
+016:  Metric:       36.45
+032:  Metric:       35.71
+064:  Metric:       35.73
+128:  Metric:       34.96
 
--- 
-Giulio Benetti
-CTO
+With patch
+001:  Metric:       61.43
+002:  Metric:       81.64
+004:  Metric:       67.92
+008:  Metric:       51.67
+016:  Metric:       50.47
+032:  Metric:       52.29
+064:  Metric:       50.01
+128:  Metric:       49.04
 
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+So for low threads, it's not restored but for larger number of threads,
+it's closer to the "known good" baseline.
+
+Using a different mremap-intensive workload that is not representative of
+the real workload there is little difference observed outside of noise in
+the headline metrics However, the TLB shootdowns are reduced by 11% on
+average and at the peak, TLB shootdowns were reduced by 21%. Interrupts
+were sampled every second while the workload ran to get those figures.
+It's known that the figures will vary as the non-representative load is
+non-deterministic.
+
+An alternative patch was posted that should have significantly reduced the
+TLB flushes but unfortunately it does not perform as well as this version
+on the customer test case. If revisited, the two patches can stack on top
+of each other.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/mremap.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 049470aa1e3e..5c2e18505f75 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -191,8 +191,6 @@ static void move_ptes(struct vm_area_struct *vma, pmd_t *old_pmd,
+ 		drop_rmap_locks(vma);
+ }
+ 
+-#define LATENCY_LIMIT	(64 * PAGE_SIZE)
+-
+ unsigned long move_page_tables(struct vm_area_struct *vma,
+ 		unsigned long old_addr, struct vm_area_struct *new_vma,
+ 		unsigned long new_addr, unsigned long len,
+@@ -247,8 +245,6 @@ unsigned long move_page_tables(struct vm_area_struct *vma,
+ 		next = (new_addr + PMD_SIZE) & PMD_MASK;
+ 		if (extent > next - new_addr)
+ 			extent = next - new_addr;
+-		if (extent > LATENCY_LIMIT)
+-			extent = LATENCY_LIMIT;
+ 		move_ptes(vma, old_pmd, old_addr, old_addr + extent, new_vma,
+ 			  new_pmd, new_addr, need_rmap_locks, &need_flush);
+ 	}
