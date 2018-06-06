@@ -1,102 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96FAA601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="jNPoeM1x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFF5D6070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933496AbeFFQlw convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Wed, 6 Jun 2018 12:41:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37503 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932724AbeFFQlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:41:50 -0400
-Date: Wed, 06 Jun 2018 09:39:25 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CA+icZUXEpe954z0TSbhSJPdFCfOqsBtpO9mPZBcJ2HWubSo_zQ@mail.gmail.com>
-References: <20180605170532.170361-1-ndesaulniers@google.com> <20180605170532.170361-2-ndesaulniers@google.com> <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com> <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com> <CA+icZUXEpe954z0TSbhSJPdFCfOqsBtpO9mPZBcJ2HWubSo_zQ@mail.gmail.com>
+        id S932186AbeFFSbn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:31:43 -0400
+Received: from mail-dm3nam03on0081.outbound.protection.outlook.com ([104.47.41.81]:13222
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752164AbeFFSbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 14:31:41 -0400
+From: "Madhani, Himanshu" <Himanshu.Madhani@cavium.com>
+To: Li Wang <liwang@redhat.com>
+CC: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Tran, Quinn" <Quinn.Tran@cavium.com>,
+        "William.Kuzeja@stratus.com" <William.Kuzeja@stratus.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Laurence Oberman <loberman@redhat.com>
+Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
+Thread-Topic: qla2xxx cause BUG on kernel-4.17-rc6
+Thread-Index: AQHT+VlWebSsauP2jUycx2vUO1XVIqRTa1NGgAABKYCAACLJgIAABz4A
+Date: Wed, 6 Jun 2018 18:31:39 +0000
+Message-ID: <B3C74965-4B74-404A-9BA3-395F49F64179@cavium.com>
+References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
+ <yq1a7s7ewmw.fsf@oracle.com>
+ <7988FB77-4AE4-4935-B7B7-F7584674981B@cavium.com>
+ <1528308343.17774.3.camel@redhat.com>
+In-Reply-To: <1528308343.17774.3.camel@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Himanshu.Madhani@cavium.com;
+x-originating-ip: [173.186.134.106]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR0701MB3654;7:kv4B0MmtDQevUzm2wRo7NOxgRdXBVjITFfrBBIYuvvCv3aTFIAHTDVJ/iB/mtfPsPnXDfgEETqaYckJOqSpHLuXcF4eFvbGlk2sPTq4dXy4xtN6MaJuNhxvCci4LDCrbyCUQGMjsMKQVOrCz6WScyQMdpprUJ0OEA3pAqva/CAZD4aKnYYS0P1qKQ5XF2UskYu4oOo47FhN6HpiTe2JHJleE3Yt9PGCVSTHTiGbb3pPckMHHEJKmxYa0qKtrWkp/
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(346002)(376002)(366004)(396003)(199004)(189003)(51234002)(99286004)(76176011)(6116002)(3846002)(8656006)(66066001)(72206003)(6506007)(26005)(105586002)(229853002)(59450400001)(5250100002)(305945005)(106356001)(186003)(53546011)(54906003)(8936002)(14454004)(102836004)(97736004)(68736007)(7736002)(6486002)(25786009)(2616005)(53936002)(5660300001)(6916009)(6512007)(93886005)(11346002)(316002)(6436002)(83716003)(6246003)(476003)(4326008)(36756003)(2900100001)(33656002)(446003)(86362001)(486006)(82746002)(3280700002)(3660700001)(478600001)(8676002)(45080400002)(81166006)(81156014)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0701MB3654;H:DM5PR0701MB3750.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR0701MB3654;
+x-ms-traffictypediagnostic: DM5PR0701MB3654:
+x-microsoft-antispam-prvs: <DM5PR0701MB365451B4153BD5F794C86276F5650@DM5PR0701MB3654.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM5PR0701MB3654;BCL:0;PCL:0;RULEID:;SRVR:DM5PR0701MB3654;
+x-forefront-prvs: 06952FC175
+x-microsoft-antispam-message-info: E30gOzccG4/S68VkEQlKTAZgOYweylNSbY5V+TCyrUveLIjJyDj+BOL0OsU3bSB/dWl31CZjQktYrgQd12LGkHItHcwKQmkofuKLtvlZ6Qbc9r+e3JQYx9FEiJSrOtYeVB5i514o0j/0nrRoeWbj8ykXsofeVBVfK8NQmtVHVSQkiPPt2ifDRSMPHNxXlyGZg9icdXuGDrnkxRUikRXEww==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9807786EC3C8104A80DFFBB101D48A7F@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline declarations
-To: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@gmail.com>,
-        Joe Perches <joe@perches.com>
-CC: Nick Desaulniers <ndesaulniers@google.com>,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        aryabinin@virtuozzo.com, akataria@vmware.com,
-        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
-        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org,
-        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, mingo@redhat.com,
-        mjg59@google.com, mka@chromium.org, pombredanne@nexb.com,
-        rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
-        tweek@google.com, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        virtualization@lists.linux-foundation.org, astrachan@google.com,
-        manojgupta@google.com, ghackmann@google.com, tstellar@redhat.com,
-        keescook@google.com, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, linux-kbuild@vger.kernel.org,
-        geert@linux-m68k.org, will.deacon@arm.com, mawilcox@microsoft.com,
-        Arnd Bergmann <arnd@arndb.de>, rientjes@google.com
-From: hpa@zytor.com
-Message-ID: <5C97550D-BEF4-4069-9373-F7543E3878FB@zytor.com>
+X-MS-Office365-Filtering-Correlation-Id: 99709119-5c8d-4325-1c6c-08d5cbdbbe5e
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99709119-5c8d-4325-1c6c-08d5cbdbbe5e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2018 18:31:39.4297
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0701MB3654
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On June 6, 2018 1:05:45 AM PDT, Sedat Dilek <sedat.dilek@gmail.com> wrote:
->Hi,
->
->when discovering 'gnu_inline', I found ...
->
->$ git grep -w  __FORTIFY_INLINE
->include/linux/string.h:#define __FORTIFY_INLINE extern __always_inline
->__attribute__((gnu_inline))
->include/linux/string.h:__FORTIFY_INLINE char *strncpy(char *p, const
->char *q, __kernel_size_t size)
->include/linux/string.h:__FORTIFY_INLINE char *strcat(char *p, const
->char *q)
->include/linux/string.h:__FORTIFY_INLINE __kernel_size_t strlen(const
->char *p)
->include/linux/string.h:__FORTIFY_INLINE __kernel_size_t strnlen(const
->char *p, __kernel_size_t maxlen)
->include/linux/string.h:__FORTIFY_INLINE size_t strlcpy(char *p, const
->char *q, size_t size)
->include/linux/string.h:__FORTIFY_INLINE char *strncat(char *p, const
->char *q, __kernel_size_t count)
->include/linux/string.h:__FORTIFY_INLINE void *memset(void *p, int c,
->__kernel_size_t size)
->include/linux/string.h:__FORTIFY_INLINE void *memcpy(void *p, const
->void *q, __kernel_size_t size)
->include/linux/string.h:__FORTIFY_INLINE void *memmove(void *p, const
->void *q, __kernel_size_t size)
->include/linux/string.h:__FORTIFY_INLINE void *memscan(void *p, int c,
->__kernel_size_t size)
->include/linux/string.h:__FORTIFY_INLINE int memcmp(const void *p,
->const void *q, __kernel_size_t size)
->include/linux/string.h:__FORTIFY_INLINE void *memchr(const void *p,
->int c, __kernel_size_t size)
->include/linux/string.h:__FORTIFY_INLINE void *memchr_inv(const void
->*p, int c, size_t size)
->include/linux/string.h:__FORTIFY_INLINE void *kmemdup(const void *p,
->size_t size, gfp_t gfp)
->include/linux/string.h:__FORTIFY_INLINE char *strcpy(char *p, const
->char *q)
->
->After the inline changes suggested by Joe this can be adapted?
->
->Beyond this, a general question: Can someone explain why all these
->inline defines are in compiler-gcc.h (as there exists compiler.h and
->compiler-clang.h)?
->
->Thanks.
->
->Regards,
->- Sedat -
-
-Because gcc itself also supports both GNU89-style and C99-style inlines, but the kernel was built with the former, and it is not necessarily a trivial modification, except for "static inline" which is the same for both.
-
-The other option is to pass -fgnu89-inline on the command line, which is supported by both gcc and clang. The two methods are fully equivalent.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+SGkgTGksIA0KDQo+IE9uIEp1biA2LCAyMDE4LCBhdCAxMTowNSBBTSwgTGF1cmVuY2UgT2Jlcm1h
+biA8bG9iZXJtYW5AcmVkaGF0LmNvbT4gd3JvdGU6DQo+IA0KPiBPbiBXZWQsIDIwMTgtMDYtMDYg
+YXQgMTY6MDEgKzAwMDAsIE1hZGhhbmksIEhpbWFuc2h1IHdyb3RlOg0KPj4+IE9uIEp1biA2LCAy
+MDE4LCBhdCA4OjU2IEFNLCBNYXJ0aW4gSy4gUGV0ZXJzZW4gPG1hcnRpbi5wZXRlcnNlbkBvcmEN
+Cj4+PiBjbGUuY29tPiB3cm90ZToNCj4+PiANCj4+PiANCj4+PiBIaW1hbnNodSwNCj4+PiANCj4+
+PiBQaW5nPw0KPj4+IA0KPj4gDQo+PiBXaWxsIGxvb2sgYXQgdGhpcyBvbmUuIFNvcnJ5LCBzb21l
+aG93IGZlbGwgdGhydSBjcmFja3MuIA0KPj4gDQo+PiANCj4+Pj4gSGkgc2NzaSBleHBlcnRzLA0K
+Pj4+PiANCj4+Pj4gTm90IHN1cmUgd2hvIGlzIHRoZSByaWdodCBwZXJzb24gdG8gYXNrLCBJIGp1
+c3QgaGl0IHRoaXMgYnVnIG9uDQo+Pj4+IG15IEhQDQo+Pj4+IERMMzg1IHBsYXRmb3JtLCBjYW4g
+YW55IG9uZSBvZiB5b3UgdGFrZSBhIGxvb2s/DQo+Pj4+IA0KPj4+PiBzeXN0ZW0gY29uZmlnOg0K
+Pj4+PiAtLS0tLS0tLS0tLS0tLS0tLQ0KPj4+PiBIUCBQcm9MaWFudCBETDM4NSBHNw0KPj4+PiBB
+TUQgT3B0ZXJvbihUTSkgUHJvY2Vzc29yIDYyMzQNCj4+Pj4gMTYzODQgTUIgbWVtb3J5LCAzNjkg
+R0IgZGlzayBzcGFjZQ0KPj4+PiANCj4+Pj4gDQo+Pj4+IFsgICAyNC41MzkyNzRdIHFsYTJ4eHgg
+WzAwMDA6MGM6MDAuN10tNTAwYTo1OiBMT09QIFVQIGRldGVjdGVkDQo+Pj4+ICgxMCBHYnBzKS4N
+Cj4+Pj4gWyAgIDI0LjU3NzI1OV0gQlVHOiB1bmFibGUgdG8gaGFuZGxlIGtlcm5lbCBOVUxMIHBv
+aW50ZXINCj4+Pj4gZGVyZWZlcmVuY2UNCj4+Pj4gYXQgMDAwMDAwMDAwMDAwMDEwMg0KPj4+PiBb
+ICAgMjQuNjIzMTMzXSBQR0QgMCBQNEQgMA0KPj4+PiBbICAgMjQuNjM2NzYwXSBPb3BzOiAwMDAw
+IFsjMV0gU01QIE5PUFRJDQo+Pj4+IFsgICAyNC42NTY5NDJdIE1vZHVsZXMgbGlua2VkIGluOiBp
+MmNfYWxnb19iaXQgZHJtX2ttc19oZWxwZXINCj4+Pj4gc3JfbW9kKCspIHN5c2NvcHlhcmVhIHN5
+c2ZpbGxyZWN0IHN5c2ltZ2JsdCBjZHJvbSBmYl9zeXNfZm9wcw0KPj4+PiBhdGFfZ2VuZXJpYyB0
+dG0gcGF0YV9hY3BpIHNkX21vZCBhaGNpIHBhdGFfYXRpaXhwIHNmYygrKQ0KPj4+PiBxbGEyeHh4
+KCspDQo+Pj4+IGxpYmFoY2kgZHJtIHFsYTR4eHgoKykgbnZtZV9mYyBocHNhIG1kaW8gbGliaXNj
+c2kgcWxjbmljKCspDQo+Pj4+IG52bWVfZmFicmljcyBzY3NpX3RyYW5zcG9ydF9zYXMgc2VyaW9f
+cmF3IG10ZCBjcmMzMmNfaW50ZWwgbGliYXRhDQo+Pj4+IG52bWVfY29yZSBpMmNfY29yZSBzY3Np
+X3RyYW5zcG9ydF9pc2NzaSB0ZzMgc2NzaV90cmFuc3BvcnRfZmMNCj4+Pj4gYm54Mg0KPj4+PiBp
+c2NzaV9ib290X3N5c2ZzIGRtX211bHRpcGF0aCBkbV9taXJyb3IgZG1fcmVnaW9uX2hhc2ggZG1f
+bG9nDQo+Pj4+IGRtX21vZA0KPj4+PiBbICAgMjQuODg3NDQ5XSBDUFU6IDAgUElEOiAxNzcgQ29t
+bToga3dvcmtlci8wOjMgTm90IHRhaW50ZWQNCj4+Pj4gNC4xNy4wLXJjNiAjMQ0KPj4+PiBbICAg
+MjQuOTI1MTE5XSBIYXJkd2FyZSBuYW1lOiBIUCBQcm9MaWFudCBETDM4NSBHNywgQklPUyBBMTgN
+Cj4+Pj4gMDgvMTUvMjAxMg0KPj4+PiBbICAgMjQuOTYyMTA2XSBXb3JrcXVldWU6IGV2ZW50cyB3
+b3JrX2Zvcl9jcHVfZm4NCj4+Pj4gWyAgIDI0Ljk4NzA5OF0gUklQOiAwMDEwOl9fcXVldWVfd29y
+aysweDFmLzB4M2EwDQo+Pj4+IFsgICAyNS4wMTE2NzJdIFJTUDogMDAxODpmZmZmOTkyNjQyY2Vi
+YTEwIEVGTEFHUzogMDAwMTAwODINCj4+Pj4gWyAgIDI1LjA0MjExNl0gUkFYOiAwMDAwMDAwMDAw
+MDAwMDgyIFJCWDogMDAwMDAwMDAwMDAwMDA4MiBSQ1g6DQo+Pj4+IDAwMDAwMDAwMDAwMDAwMDAN
+Cj4+Pj4gWyAgIDI1LjA4MzI5M10gUkRYOiBmZmZmOGNmOWFiYzZkN2QwIFJTSTogMDAwMDAwMDAw
+MDAwMDAwMCBSREk6DQo+Pj4+IDAwMDAwMDAwMDAwMDIwMDANCj4+Pj4gWyAgIDI1LjEyMzA5NF0g
+UkJQOiAwMDAwMDAwMDAwMDAwMDAwIFIwODogMDAwMDAwMDAwMDAyNWE0MCBSMDk6DQo+Pj4+IGZm
+ZmY4Y2Y5YWFkZTI4ODANCj4+Pj4gWyAgIDI1LjE2NDA4N10gUjEwOiAwMDAwMDAwMDAwMDAwMDAw
+IFIxMTogZmZmZjk5MjY0MmNlYjZmMCBSMTI6DQo+Pj4+IGZmZmY4Y2Y5YWJjNmQ3ZDANCj4+Pj4g
+WyAgIDI1LjIwMjI4MF0gUjEzOiAwMDAwMDAwMDAwMDAyMDAwIFIxNDogZmZmZjhjZjlhYmM2ZDdi
+OCBSMTU6DQo+Pj4+IDAwMDAwMDAwMDAwMDIwMDANCj4+Pj4gWyAgIDI1LjI0MjA1MF0gRlM6ICAw
+MDAwMDAwMDAwMDAwMDAwKDAwMDApIGY5YjVjMDAwMDAoMDAwMCkNCj4+Pj4ga25sR1M6MDAwMDAw
+MDAwMDAwMDAwMA0KPj4+PiBbICAgMjUuOTc3NTY1XSBDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAw
+MDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQo+Pj4+IFsgICAyNi4wMTA0NTddIENSMjogMDAwMDAw
+MDAwMDAwMDEwMiBDUjM6IDAwMDAwMDAzMDc2MGEwMDAgQ1I0Og0KPj4+PiAwMDAwMDAwMDAwMDQw
+NmYwDQo+Pj4+IFsgICAyNi4wNTEwNDhdIENhbGwgVHJhY2U6DQo+Pj4+IFsgICAyNi4wNjM1NzJd
+ICA/IF9fc3dpdGNoX3RvX2FzbSsweDM0LzB4NzANCj4+Pj4gWyAgIDI2LjA4NjA3OV0gIHF1ZXVl
+X3dvcmtfb24rMHgyNC8weDQwDQo+Pj4+IFsgICAyNi4xMDcwOTBdICBxbGEyeDAwX3Bvc3Rfd29y
+aysweDgxLzB4YjAgW3FsYTJ4eHhdDQo+Pj4+IFsgICAyNi4xMzMzNTZdICBxbGEyeDAwX2FzeW5j
+X2V2ZW50KzB4MWFkLzB4MWEyMCBbcWxhMnh4eF0NCj4+Pj4gWyAgIDI2LjE2NDA3NV0gID8gbG9j
+a190aW1lcl9iYXNlKzB4NjcvMHg4MA0KPj4+PiBbICAgMjYuMTg2NDIwXSAgPyB0cnlfdG9fZGVs
+X3RpbWVyX3N5bmMrMHg0ZC8weDgwDQo+Pj4+IFsgICAyNi4yMTIyODRdICA/IGRlbF90aW1lcl9z
+eW5jKzB4MzUvMHg0MA0KPj4+PiBbICAgMjYuMjM0MDgwXSAgPyBzY2hlZHVsZV90aW1lb3V0KzB4
+MTY1LzB4MmYwDQo+Pj4+IFsgICAyNi4yNTk1NzVdICBxbGE4Mnh4X3BvbGwrMHgxM2UvMHgxODAg
+W3FsYTJ4eHhdDQo+Pj4+IFsgICAyNi4yODU3NDBdICBxbGEyeDAwX21haWxib3hfY29tbWFuZCsw
+eDc0Yi8weGY1MCBbcWxhMnh4eF0NCj4+Pj4gWyAgIDI2LjMxOTA0MF0gIHFsYTgyeHhfc2V0X2Ry
+aXZlcl92ZXJzaW9uKzB4MTNiLzB4MWMwIFtxbGEyeHh4XQ0KPj4+PiBbICAgMjYuMzUyMTA4XSAg
+PyBxbGEyeDAwX2luaXRfcmluZ3MrMHgyMDYvMHgzZjAgW3FsYTJ4eHhdDQo+Pj4+IFsgICAyNi4z
+ODE3MzNdICBxbGEyeDAwX2luaXRpYWxpemVfYWRhcHRlcisweDM1Yy8weDdmMCBbcWxhMnh4eF0N
+Cj4+Pj4gWyAgIDI2LjQxMzI0MF0gIHFsYTJ4MDBfcHJvYmVfb25lKzB4MTQ3OS8weDIzOTAgW3Fs
+YTJ4eHhdDQo+Pj4+IFsgICAyNi40NDIwNTVdICBsb2NhbF9wY2lfcHJvYmUrMHgzZi8weGEwDQo+
+Pj4+IFsgICAyNi40NjMxMDhdICB3b3JrX2Zvcl9jcHVfZm4rMHgxMC8weDIwDQo+Pj4+IFsgICAy
+Ni40ODMyOTVdICBwcm9jZXNzX29uZV93b3JrKzB4MTUyLzB4MzUwDQo+Pj4+IFsgICAyNi41MDU3
+MzBdICB3b3JrZXJfdGhyZWFkKzB4MWNmLzB4M2UwDQo+Pj4+IFsgICAyNi41MjcwOTBdICBrdGhy
+ZWFkKzB4ZjUvMHgxMzANCj4+Pj4gWyAgIDI2LjU0NTA4NV0gID8gbWF4X2FjdGl2ZV9zdG9yZSsw
+eDgwLzB4ODANCj4+Pj4gWyAgIDI2LjU2ODA4NV0gID8ga3RocmVhZF9iaW5kKzB4MTAvMHgxMA0K
+Pj4+PiBbICAgMjYuNTg5NTMzXSAgcmV0X2Zyb21fZm9yaysweDIyLzB4NDANCj4+Pj4gWyAgIDI2
+LjYxMDE5Ml0gQ29kZTogMDAgMDAgNjYgMmUgMGYgMWYgODQgMDAgMDAgMDAgMDAgMDAgMGYgMWYg
+NDQNCj4+Pj4gMDANCj4+Pj4gMDAgNDEgNTcgNDEgODkgZmYgNDEgNTYgNDEgNTUgNDEgODkgZmQg
+NDEgNTQgNDkgODkgZDQgNTUgNDggODkgZjUNCj4+Pj4gNTMNCj4+Pj4gNDggODMgZWMgMCA4NiAw
+MiAwMSAwMCAwMCAwMSAwZiA4NSA4MCAwMiAwMCAwMCA0OSBjNyBjNiBjMCBlYyAwMQ0KPj4+PiAw
+MCA0MQ0KPj4+PiBbICAgMjcuMzA4NTQwXSBSSVA6IF9fcXVldWVfd29yaysweDFmLzB4M2EwIFJT
+UDogZmZmZjk5MjY0MmNlYmExMA0KPj4+PiBbICAgMjcuMzQxNTkxXSBDUjI6IDAwMDAwMDAwMDAw
+MDAxMDINCj4+Pj4gWyAgIDI3LjM2MDIwOF0gLS0tWyBlbmQgdHJhY2UgMDFiN2I3YWUyYzAwNWNm
+MyBdLS0tDQo+Pj4gDQo+Pj4gLS0gDQo+Pj4gTWFydGluIEsuIFBldGVyc2VuCU9yYWNsZSBMaW51
+eCBFbmdpbmVlcmluZw0KPj4gDQo+PiBUaGFua3MsDQo+PiAtIEhpbWFuc2h1DQo+PiANCj4gDQo+
+IEkgY2FuJ3QgZmluZCB0aGUgb3JpZ2luYWwgbWVzc2FnZSBmb3IgdGhpcyB0aGF0IE1hcnRpbiBy
+ZW1pbmRlZCB1cyBvZi4NCj4gDQo+IFRvIHRoZSBwZXJzb24gd2hvIGxvZ2dlZCB0aGlzOg0KPiBI
+b3cgbWFueSB0aW1lcyBoYXMgdGhpcyBoYXBwZW5lZCBhbmQgd2FzIGl0IGFmdGVyIGEga2VybmVs
+IHVwZGF0ZS4NCj4gV2hhdCBpcyB0aGUgaGlzdG9yeSwgd2hhdCBpcyB0aGUgZXhhY3QgUWxvZ2lj
+IGNhcmQsIGV0Yy4NCj4gRG8geW91IGhhdmUgdGhlIHJlc3Qgb2YgdGhlIGxvZyBsb2cgbGVhZGlu
+ZyB0byB0aGUgaW52YWxpZCBwb2ludGVyDQo+IGZhdWx0DQo+IA0KPiBUaGFua3MNCj4gTGF1cmVu
+Y2UNCg0KRnJvbSB0aGUgU25pcHBldCBvZiBMb2cgcHJvdmlkZWQgbG9va3MgbGlrZSB0aGUgY3Jh
+c2ggaXMgd2l0aCAxMEcgRkNvRSBhZGFwdGVyLiANCg0KQ2FuIHlvdSB0cnkgdGhpcyB1bnRlc3Rl
+ZCBkaWZmIHRvIHNlZSBpZiBpdCByZXNvbHZlcyBpc3N1ZS4gDQoNCkJhc2ljYWxseSB3ZSBhcmUg
+aW5pdGlhbGl6aW5nIGFkYXB0ZXIgc28gZHJpdmVyIHdpbGwgc3RhcnQgcmVjZWl2aW5nIEFFTiBu
+b3RpZmljYXRpb24NCmJ1dCB3ZSBoYXZlIG5vdCB5ZXQgYWxsb2NhdGVkIHdvcmsgcXVldWUgZm9y
+IGl0LiANCg0KDQrigJTigJTigJTigJTigJQgPHNuaXA+IOKAlOKAlOKAlOKAlA0KDQpkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9zY3NpL3FsYTJ4eHgvcWxhX29zLmMgYi9kcml2ZXJzL3Njc2kvcWxhMnh4
+eC9xbGFfb3MuYw0KaW5kZXggMzBiZjRiOS4uNDYyZDgyNSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMv
+c2NzaS9xbGEyeHh4L3FsYV9vcy5jDQorKysgYi9kcml2ZXJzL3Njc2kvcWxhMnh4eC9xbGFfb3Mu
+Yw0KQEAgLTMyMjksNiArMzIyOSw4IEBAIHFsYTJ4MDBfcHJvYmVfb25lKHN0cnVjdCBwY2lfZGV2
+ICpwZGV2LCBjb25zdCBzdHJ1Y3QgcGNpX2RldmljZV9pZCAqaWQpDQogICAgICAgICAgICAicmVx
+LT5yZXFfcV9pbj0lcCByZXEtPnJlcV9xX291dD0lcCByc3AtPnJzcF9xX2luPSVwIHJzcC0+cnNw
+X3Ffb3V0PSVwLlxuIiwNCiAgICAgICAgICAgIHJlcS0+cmVxX3FfaW4sIHJlcS0+cmVxX3Ffb3V0
+LCByc3AtPnJzcF9xX2luLCByc3AtPnJzcF9xX291dCk7DQorICAgICAgIGhhLT53cSA9IGFsbG9j
+X3dvcmtxdWV1ZSgicWxhMnh4eF93cSIsIDAsIDApOw0KKw0KICAgICAgICBpZiAoaGEtPmlzcF9v
+cHMtPmluaXRpYWxpemVfYWRhcHRlcihiYXNlX3ZoYSkpIHsNCiAgICAgICAgICAgICAgICBxbF9s
+b2cocWxfbG9nX2ZhdGFsLCBiYXNlX3ZoYSwgMHgwMGQ2LA0KICAgICAgICAgICAgICAgICAgICAi
+RmFpbGVkIHRvIGluaXRpYWxpemUgYWRhcHRlciAtIEFkYXB0ZXIgZmxhZ3MgJXguXG4iLA0KQEAg
+LTMyNzAsNyArMzI3Miw3IEBAIHFsYTJ4MDBfcHJvYmVfb25lKHN0cnVjdCBwY2lfZGV2ICpwZGV2
+LCBjb25zdCBzdHJ1Y3QgcGNpX2RldmljZV9pZCAqaWQpDQogICAgICAgICAgICBob3N0LT5jYW5f
+cXVldWUsIGJhc2VfdmhhLT5yZXEsDQogICAgICAgICAgICBiYXNlX3ZoYS0+bWdtdF9zdnJfbG9v
+cF9pZCwgaG9zdC0+c2dfdGFibGVzaXplKTsNCiAgICAgICAgSU5JVF9XT1JLKCZiYXNlX3ZoYS0+
+aW9jYl93b3JrLCBxbGEyeDAwX2lvY2Jfd29ya19mbik7DQotICAgICAgIGhhLT53cSA9IGFsbG9j
+X3dvcmtxdWV1ZSgicWxhMnh4eF93cSIsIDAsIDApOw0KKw0KICAgICAgICBpZiAoaGEtPm1xZW5h
+YmxlKSB7DQogICAgICAgICAgICAgICAgYm9vbCBtcSA9IGZhbHNlOw0KDQrigJTigJTigJTigJTi
+gJQgPC9zbmlwPiDigJTigJTigJTigJQNCg0KVGhhbmtzLA0KLSBIaW1hbnNodQ0KDQo=
