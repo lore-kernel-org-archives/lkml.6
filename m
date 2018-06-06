@@ -1,180 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BFD760555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A570607C7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753015AbeFFRAn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:00:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752005AbeFFRAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:00:40 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak90 (was ghak32) V3 00/10] audit: implement container identifier
-Date: Wed,  6 Jun 2018 12:58:27 -0400
-Message-Id: <cover.1528304203.git.rgb@redhat.com>
+        id S1752319AbeFFHHF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:07:05 -0400
+Received: from verein.lst.de ([213.95.11.211]:36081 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751899AbeFFHHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 03:07:04 -0400
+Date: Wed, 6 Jun 2018 09:14:18 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Jerome Glisse <jglisse@redhat.com>,
+        Dave Airlie <airlied@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] mm: rework hmm to use devm_memremap_pages
+Message-ID: <20180606071418.GA7660@lst.de>
+References: <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com> <CAPM=9tzMJq=KC+ijoj-JGmc1R3wbshdwtfR3Zpmyaw3jYJ9+gw@mail.gmail.com> <CAPcyv4g2XQtuYGPu8HMbPj6wXqGwxiL5jDRznf5fmW4WgC2DTw@mail.gmail.com> <CAPM=9twm=17t=2=M27ELB=vZWzpqM7GuwCUsC891jJ0t3JM4vg@mail.gmail.com> <CAPcyv4jTty4k1xXCOWbeRjzv-KjxNH1L4oOkWW1EbJt66jF4_w@mail.gmail.com> <20180605184811.GC4423@redhat.com> <CAPM=9twgL_tzkPO=V2mmecSzLjKJkEsJ8A4426fO2Nuus0N_UQ@mail.gmail.com> <CAPcyv4gSEYdnJKd=D-_yc3M=sY0HWjYzYhh5ha-v7KA4-40dsg@mail.gmail.com> <20180606000822.GE4423@redhat.com> <CAPcyv4gsS4xDXahZdOggURBHS2y-oJ5tPG9vXPDdY2p6jPufxA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4gsS4xDXahZdOggURBHS2y-oJ5tPG9vXPDdY2p6jPufxA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement kernel audit container identifier.
+On Tue, Jun 05, 2018 at 06:33:04PM -0700, Dan Williams wrote:
+> Unless the nouveau patches are using the entirety of what is already
+> upstream for HMM, we should look to pare HMM back.
+> 
+> There is plenty of precedent of building a large capability
+> out-of-tree and piecemeal merging it later, so I do not buy the
+> "chicken-egg" argument. The change in the export is to make sure we
+> don't repeat this backward "merge first, ask questions later" mistake
+> in the future as devm_memremap_pages() is continuing to find new users
+> like peer-to-peer DMA support and Linux is better off if that
+> development is upstream. From a purely technical standpoint
+> devm_memremap_pages() is EXPORT_SYMBOL_GPL because it hacks around
+> several implementation details in the core kernel to achieve its goal,
+> and it leaks new assumptions all over the kernel. It is strictly not a
+> self contained interface.
 
-This patchset is a third based on the proposal document (V3)
-posted:
-	https://www.redhat.com/archives/linux-audit/2018-January/msg00014.html
+Agreed with all of that.  And remember EXPORT_SYMBOL_GPL really just is
+a clear expression of the authors they think these are internals.
+The lack of it doesn't make it any less a derived work, we just remove
+a very clear hint to users that they are poking very deeply into internals.
 
-The first patch implements the proc fs write to set the audit container
-identifier of a process, emitting an AUDIT_CONTAINER_ID record to announce the
-registration of that audit container identifier on that process.  This patch
-requires userspace support for record acceptance and proper type
-display.
-
-The second implements the auxiliary record AUDIT_CONTAINER if an
-audit container identifier is identifiable with an event.  This patch
-requires userspace support for proper type display.
-
-The third adds signal and ptrace support.
-
-The 4th creates a local audit context to be able to bind a standalone
-record with a locally created auxiliary record.
-
-The 5th patch adds audit container identifier records to the tty
-standalone record.
-
-The 6th adds audit container identifier filtering to the exit,
-exclude and user lists.  This patch adds the AUDIT_CONTID field and
-requires auditctl userspace support for the --contid option.
-
-The 7th adds network namespace audit container identifier labelling
-based on member tasks' audit container identifier labels.
-
-The 8th adds audit container identifier support to standalone netfilter
-records that don't have a task context and lists each container to which
-that net namespace belongs.
-
-The 9th implements reading the audit container identifier from the proc
-filesystem for debugging.  This patch isn't planned for upstream
-inclusion.
-
-The 10th fixes an rfkill spelling mistake in a comment that is otherwise
-the only match for "contid" in the kernel.
-
-
-Example: Set an audit container identifier of 123456 to the "sleep" task:
-
-  sleep 2&  
-  child=$!
-  echo 123456 > /proc/$child/audit_containerid; echo $?
-  ausearch -ts recent -m container
-  echo child:$child contid:$( cat /proc/$child/audit_containerid)
-
-This should produce a record such as:
-
-  type=CONTAINER_ID msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root uid=root tty=ttyS0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash exe=/usr/bin/bash res=yes 
-
-
-Example: Set a filter on an audit container identifier 123459 on /tmp/tmpcontainerid:
-
-  contid=123459
-  key=tmpcontainerid
-  auditctl -a exit,always -F dir=/tmp -F perm=wa -F contid=$contid -F key=$key
-  perl -e "sleep 1; open(my \$tmpfile, '>', \"/tmp/$key\"); close(\$tmpfile);" &
-  child=$!
-  echo $contid > /proc/$child/audit_containerid
-  sleep 2
-  ausearch -i -ts recent -k $key
-  auditctl -d exit,always -F dir=/tmp -F perm=wa -F contid=$contid -F key=$key
-  rm -f /tmp/$key
-
-This should produce an event such as:
-
-  type=CONTAINER msg=audit(2018-06-06 12:46:31.707:26953) : op=task contid=123459 
-  type=PROCTITLE msg=audit(2018-06-06 12:46:31.707:26953) : proctitle=perl -e sleep 1; open(my $tmpfile, '>', "/tmp/tmpcontainerid"); close($tmpfile); 
-  type=PATH msg=audit(2018-06-06 12:46:31.707:26953) : item=1 name=/tmp/tmpcontainerid inode=25656 dev=00:26 mode=file,644 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-  type=PATH msg=audit(2018-06-06 12:46:31.707:26953) : item=0 name=/tmp/ inode=8985 dev=00:26 mode=dir,sticky,777 ouid=root ogid=root rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 
-  type=CWD msg=audit(2018-06-06 12:46:31.707:26953) : cwd=/root 
-  type=SYSCALL msg=audit(2018-06-06 12:46:31.707:26953) : arch=x86_64 syscall=openat success=yes exit=3 a0=0xffffffffffffff9c a1=0x5621f2b81900 a2=O_WRONLY|O_CREAT|O_TRUNC a3=0x1b6 items=2 ppid=628 pid=2232 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=perl exe=/usr/bin/perl subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=tmpcontainerid 
-
-
-Requires: https://github.com/linux-audit/audit-kernel/issues/81
-See: https://github.com/linux-audit/audit-kernel/issues/90
-See: https://github.com/linux-audit/audit-userspace/issues/40
-See: https://github.com/linux-audit/audit-testsuite/issues/64
-See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-
-Changelog:
-
-v3
-- switched from containerid in task_struct to audit_task_info (depends on ghak81)
-- drop INVALID_CID in favour of only AUDIT_CID_UNSET
-- check for !audit_task_info, throw -ENOPROTOOPT on set
-- changed -EPERM to -EEXIST for parent check
-- return AUDIT_CID_UNSET if !audit_enabled
-- squash child/thread check patch into AUDIT_CONTAINER_ID patch
-- changed -EPERM to -EBUSY for child check
-- separate child and thread checks, use -EALREADY for latter
-- move addition of op= from ptrace/signal patch to AUDIT_CONTAINER patch
-- fix && to || bashism in ptrace/signal patch
-- uninline and export function for audit_free_context()
-- drop CONFIG_CHANGE, FEATURE_CHANGE, ANOM_ABEND, ANOM_SECCOMP patches
-- move audit_enabled check (xt_AUDIT)
-- switched from containerid list in struct net to net_generic's struct audit_net
-- move containerid list iteration into audit (xt_AUDIT)
-- create function to move namespace switch into audit
-- switched /proc/PID/ entry from containerid to audit_containerid
-- call kzalloc with GFP_ATOMIC on in_atomic() in audit_alloc_context()
-- call kzalloc with GFP_ATOMIC on in_atomic() in audit_log_container_info()
-- use xt_net(par) instead of sock_net(skb->sk) to get net
-- switched record and field names: initial CONTAINER_ID, aux CONTAINER, field CONTID
-- allow to set own contid
-- open code audit_set_containerid
-- add contid inherited flag
-- ccontainerid and pcontainerid eliminated due to inherited flag
-- change name of container list funcitons
-- rename containerid to contid
-- convert initial container record to syscall aux
-- fix spelling mistake of contidion in net/rfkill/core.c to avoid contid name collision
-
-v2
-- add check for children and threads
-- add network namespace container identifier list
-- add NETFILTER_PKT audit container identifier logging
-- patch description and documentation clean-up and example
-- reap unused ppid
-
-Richard Guy Briggs (10):
-  audit: add container id
-  audit: log container info of syscalls
-  audit: add containerid support for ptrace and signals
-  audit: add support for non-syscall auxiliary records
-  audit: add containerid support for tty_audit
-  audit: add containerid filtering
-  audit: add support for containerid to network namespaces
-  audit: NETFILTER_PKT: record each container ID associated with a netNS
-  debug audit: read container ID of a process
-  rfkill: fix spelling mistake contidion to condition
-
- drivers/tty/tty_audit.c    |   5 +-
- fs/proc/base.c             |  53 +++++++++++++++++++
- include/linux/audit.h      |  68 ++++++++++++++++++++++++
- include/uapi/linux/audit.h |   8 ++-
- kernel/audit.c             | 114 ++++++++++++++++++++++++++++++++++++++++
- kernel/audit.h             |   3 ++
- kernel/auditfilter.c       |  47 +++++++++++++++++
- kernel/auditsc.c           | 128 ++++++++++++++++++++++++++++++++++++++++++---
- kernel/nsproxy.c           |   4 ++
- net/netfilter/xt_AUDIT.c   |  12 ++++-
- net/rfkill/core.c          |   2 +-
- 11 files changed, 433 insertions(+), 11 deletions(-)
-
--- 
-1.8.3.1
+And with HMM they very clearly do.
