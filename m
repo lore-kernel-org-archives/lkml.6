@@ -1,101 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJoTAybY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03A0C606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wc7odDBg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 461E3601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932434AbeFFKAY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:00:24 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:39105 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbeFFKAW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:22 -0400
-X-Google-Smtp-Source: ADUXVKIx6bADFIgb2BmrB9UJ/sFg/t2EymJ+947aq7mHNFBCEhYnh9Iu50lUsTfevzLX6MdoHL1XHA==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        id S932518AbeFFIZ6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:25:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932330AbeFFIZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 04:25:57 -0400
+Date: Wed, 6 Jun 2018 10:25:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Gargi Sharma <gs051095@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 01/14] mfd: da9063: Replace regmap_add_irq_chip with devm counterpart
-Date: Wed,  6 Jun 2018 11:59:50 +0200
-Message-Id: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Rik van Riel <riel@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        Todd Kjos <tkjos@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 01/14] coresight: cpu_debug: minor module fixups
+Message-ID: <20180606082531.GC19727@kroah.com>
+References: <20180605210710.22227-1-kim.phillips@arm.com>
+ <20180605210710.22227-2-kim.phillips@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605210710.22227-2-kim.phillips@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_regmap_add_irq_chip() instead of plain regmap_add_irq_chip(),
-which removes the need for da9063_irq_exit() altogether and also
-fixes a bug in da9063_device_init() where the da9063_irq_exit() was
-not called in a failpath.
+On Tue, Jun 05, 2018 at 04:06:57PM -0500, Kim Phillips wrote:
+>  - provide the name of the module in the Kconfig help section
+>  - define a MODULE_DEVICE_TABLE in order to be autoloaded on boot
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Leo Yan <leo.yan@linaro.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+> ---
+>  drivers/hwtracing/coresight/Kconfig               | 3 +++
+>  drivers/hwtracing/coresight/coresight-cpu-debug.c | 2 ++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+> index ef9cb3c164e1..d1209f5acf76 100644
+> --- a/drivers/hwtracing/coresight/Kconfig
+> +++ b/drivers/hwtracing/coresight/Kconfig
+> @@ -103,4 +103,7 @@ config CORESIGHT_CPU_DEBUG
+>  	  properly, please refer Documentation/trace/coresight-cpu-debug.txt
+>  	  for detailed description and the example for usage.
+>  
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called coresight-cpu-debug.
+> +
+>  endif
+> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> index 45b2460f3166..1efe9626eb6c 100644
+> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> @@ -671,6 +671,8 @@ static const struct amba_id debug_ids[] = {
+>  	{ 0, 0 },
+>  };
+>  
+> +MODULE_DEVICE_TABLE(amba, debug_ids);
+> +
+>  static struct amba_driver debug_driver = {
+>  	.drv = {
+>  		.name   = "coresight-cpu-debug",
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V5: New patch
----
- drivers/mfd/da9063-core.c       | 1 -
- drivers/mfd/da9063-irq.c        | 8 ++------
- include/linux/mfd/da9063/core.h | 1 -
- 3 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 6c2870d4e754..2647bb371d86 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -238,7 +238,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
- void da9063_device_exit(struct da9063 *da9063)
- {
- 	mfd_remove_devices(da9063->dev);
--	da9063_irq_exit(da9063);
- }
- 
- MODULE_DESCRIPTION("PMIC driver for Dialog DA9063");
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index 207bbfe55449..da6ceb41f0d1 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -170,7 +170,8 @@ int da9063_irq_init(struct da9063 *da9063)
- 		return -EINVAL;
- 	}
- 
--	ret = regmap_add_irq_chip(da9063->regmap, da9063->chip_irq,
-+	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
-+			da9063->chip_irq,
- 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
- 			da9063->irq_base, &da9063_irq_chip,
- 			&da9063->regmap_irq);
-@@ -182,8 +183,3 @@ int da9063_irq_init(struct da9063 *da9063)
- 
- 	return 0;
- }
--
--void da9063_irq_exit(struct da9063 *da9063)
--{
--	regmap_del_irq_chip(da9063->chip_irq, da9063->regmap_irq);
--}
-diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
-index f3ae65db4c86..9ab7049977aa 100644
---- a/include/linux/mfd/da9063/core.h
-+++ b/include/linux/mfd/da9063/core.h
-@@ -95,6 +95,5 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq);
- int da9063_irq_init(struct da9063 *da9063);
- 
- void da9063_device_exit(struct da9063 *da9063);
--void da9063_irq_exit(struct da9063 *da9063);
- 
- #endif /* __MFD_DA9063_CORE_H__ */
--- 
-2.16.2
+This should be 2 patches as you are doing two different things here.
+
+thanks,
+
+greg k-h
