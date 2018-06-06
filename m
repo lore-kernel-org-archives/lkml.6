@@ -1,86 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C053B6070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dRDLI0T6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BSCaqDAX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F798607CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752262AbeFFLoj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 07:44:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35735 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbeFFLog (ORCPT
+        id S932260AbeFFGkF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:40:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45620 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932103AbeFFGkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 07:44:36 -0400
-Date: Wed, 6 Jun 2018 04:43:58 -0700
-From: tip-bot for Dou Liyang <tipbot@zytor.com>
-Message-ID: <tip-336628128826a9acb045571a960e32e4414ccb61@git.kernel.org>
-Cc: douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org
-Reply-To: mingo@kernel.org, douly.fnst@cn.fujitsu.com, tglx@linutronix.de,
-          hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20180523023555.2933-1-douly.fnst@cn.fujitsu.com>
-References: <20180523023555.2933-1-douly.fnst@cn.fujitsu.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/idt: Simplify the
- idt_setup_apic_and_irq_gates()
-Git-Commit-ID: 336628128826a9acb045571a960e32e4414ccb61
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 6 Jun 2018 02:40:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A720607C7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+Subject: Re: [PATCH] remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
+To: Vinod Koul <vinod.koul@linaro.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        sibis@codeaurora.org
+References: <1528177361-8883-1-git-send-email-sricharan@codeaurora.org>
+ <20180605061919.GQ16230@vkoul-mobl>
+ <3a4c102b-7228-153a-c588-b1bf00291fa8@codeaurora.org>
+ <20180605164031.GZ16230@vkoul-mobl>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <1b376fc2-6a1b-1457-ffff-332954d1bef8@codeaurora.org>
+Date: Wed, 6 Jun 2018 12:09:55 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180605164031.GZ16230@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  336628128826a9acb045571a960e32e4414ccb61
-Gitweb:     https://git.kernel.org/tip/336628128826a9acb045571a960e32e4414ccb61
-Author:     Dou Liyang <douly.fnst@cn.fujitsu.com>
-AuthorDate: Wed, 23 May 2018 10:35:55 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 13:38:01 +0200
+Hi Vinod,
 
-x86/idt: Simplify the idt_setup_apic_and_irq_gates()
+On 6/5/2018 10:10 PM, Vinod Koul wrote:
+> On 05-06-18, 18:26, Sricharan R wrote:
+>> Hi Vinod,
+>>
+>> On 6/5/2018 11:49 AM, Vinod wrote:
+>>> On 05-06-18, 11:12, Sricharan R wrote:
+>>>
+>>>> +config QCOM_Q6V5_WCSS
+>>>> +	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+>>>> +	depends on OF && ARCH_QCOM
+>>>> +	depends on QCOM_SMEM
+>>>> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+>>>> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>>>
+>>> Is there a reason why it depends on RPMSG_QCOM_GLINK_SMEM=n? What would
+>>> happen if distro wants both this and RPMSG_QCOM_GLINK_SMEM
+>>>
+>>   RPMSG_QCOM_GLINK_SMEM=n should be for the COMPILE_TEST. Probably that
+> 
+> why would that be a limitation? I am more worried about
+> RPMSG_QCOM_GLINK_SMEM=n being the condition here. In new drivers we
+> should not typically have dependency on some symbol being not there
+> 
 
-The idt_setup_apic_and_irq_gates() sets the gates from
-FIRST_EXTERNAL_VECTOR up to FIRST_SYSTEM_VECTOR first. then secondly, from
-FIRST_SYSTEM_VECTOR to NR_VECTORS, it takes both APIC=y and APIC=n into
-account.
+Without that, if RPMSG_QCOM_GLINK_SMEM=m is compiled as a module, then
+it would break the build.
 
-But for APIC=n, the FIRST_SYSTEM_VECTOR is equal to NR_VECTORS, all
-vectors has been set at the first step.
+>>   means that it should be corrected here and for ADSP, Q6V5_PIL as well.
+>>   Bjorn, is that correct ?, should it be, below ?
+>>  
+>>   depends on (RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)) || (RPMSG_QCOM_GLINK_SMEM || (COMPILE_TEST && RPMSG_QCOM_GLINK_SMEM=n))
+> 
+> that doesnt really sound good :(
+> 
 
-Simplify the second step, make it just work for APIC=y.
+ Hmm, but i was thinking it should functionally depend on either SMD or GLINK and not both.
 
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20180523023555.2933-1-douly.fnst@cn.fujitsu.com
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
 
 ---
- arch/x86/kernel/idt.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
-index 2c3a1b4294eb..74383a3780dc 100644
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -317,15 +317,12 @@ void __init idt_setup_apic_and_irq_gates(void)
- 		set_intr_gate(i, entry);
- 	}
- 
--	for_each_clear_bit_from(i, system_vectors, NR_VECTORS) {
- #ifdef CONFIG_X86_LOCAL_APIC
-+	for_each_clear_bit_from(i, system_vectors, NR_VECTORS) {
- 		set_bit(i, system_vectors);
- 		set_intr_gate(i, spurious_interrupt);
--#else
--		entry = irq_entries_start + 8 * (i - FIRST_EXTERNAL_VECTOR);
--		set_intr_gate(i, entry);
--#endif
- 	}
-+#endif
- }
- 
- /**
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
