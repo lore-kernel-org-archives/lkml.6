@@ -1,348 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwhHIXd9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3E7B60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5DA9C605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932253AbeFFHe5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 03:34:57 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:42230 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932114AbeFFHez (ORCPT
+        id S1753842AbeFFRkm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:40:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37166 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752077AbeFFRkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:34:55 -0400
-X-Google-Smtp-Source: ADUXVKIPJ6sGuScvjWX3kB+9Xd1ocuZlh52BI4rrjuvqXGyh6+MoATrW+ZKcNnWhb5g+qMsTCnGShw==
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
-Date: Wed, 6 Jun 2018 10:34:49 +0300
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180606073449.GD20078@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
- <20180531102315.GA5150@localhost.localdomain>
- <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
- <20180601062540.GB5150@localhost.localdomain>
- <CAL_JsqJNMxR=zdwR41iLfWU=u3J_=_VkxVL+g3a12_4vvNwBtw@mail.gmail.com>
- <20180604113225.GE5150@localhost.localdomain>
- <CAL_JsqL3Z_o2CFeYDvb3PqgiskTSHuOVqwdUP+gFymLDTKhn2g@mail.gmail.com>
+        Wed, 6 Jun 2018 13:40:40 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
+ callback
+From: Pierre Morel <pmorel@linux.ibm.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
+ <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
+ <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
+ <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
+ <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
+ <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
+ <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
+Date: Wed, 6 Jun 2018 19:40:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqL3Z_o2CFeYDvb3PqgiskTSHuOVqwdUP+gFymLDTKhn2g@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18060617-0016-0000-0000-000001D8D567
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060617-0017-0000-0000-0000322BE4EA
+Message-Id: <d6455b0b-804f-b58e-41bc-83731979911a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806060199
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:46:14AM -0500, Rob Herring wrote:
-> On Mon, Jun 4, 2018 at 6:32 AM, Matti Vaittinen
-> <mazziesaccount@gmail.com> wrote:
-> > On Fri, Jun 01, 2018 at 12:32:16PM -0500, Rob Herring wrote:
-> >> On Fri, Jun 1, 2018 at 1:25 AM, Matti Vaittinen
-> >> <mazziesaccount@gmail.com> wrote:
-> >> > On Thu, May 31, 2018 at 09:07:24AM -0500, Rob Herring wrote:
-> >> >> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
-> >> >> <mazziesaccount@gmail.com> wrote:
-> >> >> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> >> >> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> >> >> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> >> >> >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> >> >> >> > > + - interrupts            : The interrupt line the device is connected to.
-> >> >> >> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
-> >> >> >> >
-> >> >> >> > What sub blocks have interrupts?
-> >> >> >>
-> >> >> >> The PMIC can generate interrupts from events which cause it to reset.
-> >> >> >> Eg, irq from watchdog line change, power button pushes, reset request
-> >> >> >> via register interface etc. I don't know any generic handling for these
-> >> >> >> interrupts. In "normal" use-case this PMIC is powering the processor
-> >> >> >> where driver is running and I do not see reasonable handling because
-> >> >> >> power-reset is going to follow the irq.
-> >> >> >>
-> >> >> >
-> >> >> > Oh, but when reading this I understand that the interrupt-controller
-> >> >> > property should at least be optional.
-> >> >>
-> >> >> I don't think it should. The h/w either has an interrupt controller or
-> >> >> it doesn't.
-> >> >
-> >> > I hope this explains why I did this interrupt controller - please tell
-> >> > me if this is legitimate use-case and what you think of following:
-> >> >
-> >> > +Optional properties:
-> >> > + - interrupt-controller        : Marks the device node as an interrupt controller.
-> >> > +                         BD71837MWV can report different power state change
-> >> > +                         events to other devices. Different events can be seen
-> >> > +                         as separate BD71837 domain interrupts.
-> >>
-> >> To what other devices?
-> >
-> > Would it be better if I wrote "other drivers" instead? I think I've seen
-> > examples where MFD driver is just providing the interrupts for other
-> > drivers - like power-button input driver. Currently I have no such "irq
-> > consumer" drivers written. Still I would like to expose these interrupts
-> > so that they are ready for using if any platform using PMIC needs them.
-> 
-> No, worse. Interrupt binding describes interrupt connections between a
-> controller and devices (which could be sub-blocks in a device), not to
-> drivers.
+On 06/06/2018 18:08, Pierre Morel wrote:
+> On 06/06/2018 16:28, Tony Krowiak wrote:
+>> On 06/05/2018 08:19 AM, Pierre Morel wrote:
+>>> On 30/05/2018 16:33, Tony Krowiak wrote:
+>>>> On 05/24/2018 05:08 AM, Pierre Morel wrote:
+>>>>> On 23/05/2018 16:45, Tony Krowiak wrote:
+>>>>>> On 05/16/2018 04:03 AM, Pierre Morel wrote:
+>>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>>>>>> Implements the open callback on the mediated matrix device.
+>>>>>>>> The function registers a group notifier to receive notification
+>>>>>>>> of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
+>>>>>>>> the vfio_ap device driver will get access to the guest's
+>>>>>>>> kvm structure. With access to this structure the driver will:
+>>>>>>>>
+>>>>>>>> 1. Ensure that only one mediated device is opened for the guest
+>>>>>
+>>>>> You should explain why.
+>>>>>
+>>>>>>>>
+>>>>>>>> 2. Configure access to the AP devices for the guest.
+>>>>>>>>
+>>>>> ...snip...
+>>>>>>>> +void kvm_ap_refcount_inc(struct kvm *kvm)
+>>>>>>>> +{
+>>>>>>>> +    atomic_inc(&kvm->arch.crypto.aprefs);
+>>>>>>>> +}
+>>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_inc);
+>>>>>>>> +
+>>>>>>>> +void kvm_ap_refcount_dec(struct kvm *kvm)
+>>>>>>>> +{
+>>>>>>>> +    atomic_dec(&kvm->arch.crypto.aprefs);
+>>>>>>>> +}
+>>>>>>>> +EXPORT_SYMBOL(kvm_ap_refcount_dec);
+>>>>>>>
+>>>>>>> Why are these functions inside kvm-ap ?
+>>>>>>> Will anyone use this outer of vfio-ap ?
+>>>>>>
+>>>>>> As I've stated before, I made the choice to contain all 
+>>>>>> interfaces that
+>>>>>> access KVM in kvm-ap because I don't think it is appropriate for 
+>>>>>> the device
+>>>>>> driver to have to have "knowledge" of the inner workings of KVM. 
+>>>>>> Why does
+>>>>>> it matter whether any entity outside of the vfio_ap device driver 
+>>>>>> calls
+>>>>>> these functions? I could ask a similar question if the interfaces 
+>>>>>> were
+>>>>>> contained in vfio-ap; what if another device driver needs access 
+>>>>>> to these
+>>>>>> interfaces?
+>>>>>
+>>>>> This is very driver specific and only used during initialization.
+>>>>> It is not a common property of the cryptographic interface.
+>>>>>
+>>>>> I really think you should handle this inside the driver.
+>>>>
+>>>> We are going to have to agree to disagree on this one. Is it not 
+>>>> possible
+>>>> that future drivers - e.g., when full virtualization is implemented 
+>>>> - will
+>>>> require access to KVM?
+>>>
+>>> I do not think that an access to KVM is required for full 
+>>> virtualization.
+>>
+>> You may be right, but at this point, there is no guarantee. I stand 
+>> by my
+>> design on this one.
+>
+> I really regret that we abandoned the initial design with the matrix 
+> bus and one
+> single parent matrix device per guest.
+> We would not have the problem of these KVM dependencies.
+>
+> It had the advantage of taking care of having only one device per guest
+> (available_instance = 1), could take care of provisioning as you have
+> sysfs entries available for a matrix without having a guest and a 
+> mediated
+> device.
+>
+> it also had advantage for virtualization to keep host side and guest 
+> side matrix
+> separate inside parent (host side) and mediated device (guest side).
+>
+> Shouldn't we treat this problem with a design using standard interfaces
+> Instead of adding new dedicated interfaces?
+>
+> Regards,
+>
+> Pierre
+>
+>
 
-Ok.
- 
-> I'm just curious as to what sub-blocks/devices there are. You don't
-> have to have a driver (yet) to define the devices.
+Forget it.
 
-Right. I should have done this from the start. I just thought everyone
-is busy with other things and pushing people to read data sheets might
-be considered as lazines. "Go and read from data sheet what my driver
-does, I am too lazy to try to explain what I am doing" - type of thing
-you know... But as people asked me for more information about HW:
+I am not happy with the design but the design I was speaking of may not 
+be the solution either.
 
-Datasheet:
-https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-(Would it be good idea to add this link to comments in MFD driver or to
-binding document(s)?) Page 8 contains roughly the same picture I drew
-below. Page 69 shows the interrupt registers. And for interested ones,
-HW state transitions are described on page 24.
+Sorry for the noise.
 
-                    +--------------------------------------------------+
-                    |                                                  |
-VSYS           +-----------------+                    +-----------+    |
-                    |            |                    |           |    |
-                    |  +-------+ |                    | BUCKS 1-4 +-------->
-                    |  |       | |                    |           |    |
-I2C IF         +------->   H   | +--------------------+  DVS      +-------->
-                    |  |   O   | |                    |  Support  |    |
-PWRON_B        +------->   S   | |                    |           +-------->
-                    |  |   T   | |                    |           |    |
-PMIC_STBY_REQ  +------->       | |                    |           +-------->
-                    |  |   I   | |                    |           |    |
-PMIC_ON_REQ    +------->   /   | |                    +-----------+    |
-                    |  |   F   | |                                     |
-WDOG_B         +------->       | |                    +-----------+    |
-                    |  |       | |                    |           +-------->
-                    |  |       | +--------------------+ BUCKS 5,8 |    |
-                    |  |       | |                    |           +-------->
-                    |  |       | |                    +-----------+    |
-                    |  |       | |                                     |
-                    |  |       | |                     +----------+    |
-IRQ_OUT        <-------+       | |                     |          |    |
-                    |  |       | +---------------------+ LDO1     +-------->
-C32K_OUT       <-------+       | |                     |          |    |
-                    |  |       | |                     +----------+    |
-                    |  |       | |                                     |
-                    |  |       | |                     +----------+    |
-                    |  |       | |                     |          |    |
-                    |  |       | +---------------------+ LDO2     +-------->
-                    |  |       | |                     |          |    |
-                    |  |       | |                     +----------+    |
-                    |  |       | |                                     |
-                    |  |       | |                     +----------+    |
-                    |  |       | |                     |          |    |
-                    |  |       | +---------------------+ LDO7     +-------->
-                    |  +-------+ |                     |          |    |
-                    |            |                     +----------+    |
-                    |            |                                     |
-                    |            | +----------+ +-------------------------->
-                    |            | |          | |                      |
-                    |            +-+ BUCK6    +-+      +----------+    |
-                    |            | |          | |      |          |    |
-                    |            | +----------+ +------> LDO5     +-------->
-                    |            |              |      |          |    |
-                    |            |              |      +----------+    |
-                    |            |              |                      |
-                    |  +-------+ |              |      +----------+    |
-                    |  |       | |              o      |          |    |
- XIN         +---------+ 32K   | |               \-----> LDO3     +-------->
-                    |  |Crystal| +--------------o      |          |    |
-                    |  |Driver | |  +---------+        +----------+    |
- XOUT        +---------+       | |  |         |                        |
-                    |  |       | +--+ BUCK7   +-+-------------------------->
-                    |  +-------+ |  |         | |                      |
-                    |            |  +---------+ |      +-----------+   |
-                    |            |              |      |           |   |
-                    |            |              +------>   LDO6    +------->
-                    |            |              |      |           |   |
-                    |            |              |      +-----------+   |
-                    |            |              |                      |
-                    |            |              |      +-----------+   |
-                    |            |              o      |           |   |
-                    |            |               \----->   LDO4    +------->
-                    |            +--------------o      |           |   |
-                    |                                  +-----------+   |
-                    |                                                  |
-                    +--------------------------------------------------+
+Regards,
 
-On the left we see input lines to PMIC. PWRON_B intended to be connected
-to power button. PMIC_STBY_REQ and PMIC_ON_REQ lines for controlling HW
-state machine PMIC has. And WDOG_B from watch dog.
-
-PMIC has control register for controlling what happens to BUCK/LDO
-outputs when input line states change. PMIC reports change in input
-lines via the IRQ_OUT line and IRQ status register.
-
-So HW mapping for interrup(s) from PMIC would be:
-
-(HW) event => BD71837 domain IRQ
-
-PMIC_STBY_REQ line level change		=> 0
-PMIC_ON_REQ line level change		=> 1
-PMIC_WDOG_B line level change		=> 2
-PMIC_PWRON_B line level change		=> 3
-PMIC_PWRON_B line/long push detected	=> 4
-PMIC_PWRON_B line/short push detected	=> 5
-SWRESET register on PMIC written	=> 6
-
-> > "The BD71837 driver only provides the infrastructure for the IRQs. The
-> > users can write his own driver to convert the IRQ into the event they
-> > wish. The IRQ can be used with the standard
-> > request_irq/enable_irq/disable_irq API inside the kernel." (I found this
-> > text from NXP forums and ruthlessly copied and modified it over here)
-> 
-> That's all OS details that have nothing to do with the binding. The
-> binding describes the h/w.
-
-Right. I'll drop it.
-
-> 
-> > If this is not feasible, then I will remove the irq handling from MFD
-> > (or leave code there but remove the binding information?) as I don't
-> > know what the irq handles should do in generic case.
-> 
-> I don't understand what you mean by generic. An IRQ has to be wired to
-> something. The only generic IRQs are GPIOs.
-
-By generic case I mean for example when PMIC_WDOG_B line changes. In
-example use-case I have seen, this would be cutting the power from
-processor. But this is not necessarily the case. This can be configured
-from PMIC register so that action can be warm or cold reset, or no
-action. Finally, I'd rather not expect that the BUCKs are supplying
-power to processor which is controlling the PMIC. Thus I do not know how
-to do generic _handler_ for these interrupts.
-
-So from PMIC HW point of view I know that the interrupt is tied to
-PMIC_WDOG_B line change. And this can be described in binding document.
-(I tried doing this to v5 patch). Still from system/SW point of view I
-don't know what action should be taken (or by which driver) when such
-change happens. Hence I liked the idea of hiding the irq register
-details in MFD driver by declaring it as interrupt controller - and
-leaving the interrupts to be used by what ever drivers need the change
-information is system the PMIC is used.
-
-> >> > + - #interrupt-cells    : The number of cells to describe an IRQ should be 1.
-> >> > +                           The first cell is the IRQ number.
-> >> > +                           masks from ../interrupt-controller/interrupts.txt.
-> >
-> > Sorry this "masks from ../interrupt-controller/interrupts.txt." was
-> > accidentally pasted here. I should have deleted it.
-> >
-> >> I'm still not clear. Generally in a PMIC, you'd define an interrupt
-> >> controller when there's a common set of registers to manage sub-block
-> >> interrupts (typical mask/unmask, ack regs) and the subblocks
-> >> themselves have control of masking/unmasking interrupts. If there's
-> >> not a need to have these 2 levels of interrupt handling, then you
-> >> don't really need to define an interrupt controller.
-> >
-> > And to clarify - the PMIC can generate irq via one irq line. This is
-> > typical ACTIVE_LOW irq with 8 bit "write 1 to clear" status register and
-> > 8 bit mask register. The role of interrupt-controller code here is just
-> > to allow these 8 irq reasons to be seen as individual BD71837 domain
-> > interrupts. I just don't have the driver(s) for handling these
-> > interrupts.
-> 
-> If what I'm asking for above is still not clear, what are the 8 bits
-> defined as or what are those 8 lines connected to?
-
-I am sorry - there were only 7 bits. One bit was unused. I hope my
-explanation abowe did clarify this.
-
-> >  Or should I just
-> > somehow state that irq X in BD71837 is a "power button short push"
-> > event and power button driver should be the consumer for it?
-> 
-> Yes, at least, but who is the consumer is an OS detail that is not
-> relevant to the binding. Ideally, you would describe the node with the
-> interrupts property for "irq X".
-
-I think I need to try changing my mind set. I tend to think the DT nodes
-are for drivers so that drivers can get the information they need. An as
-I don't know what kind of driver would be handling the irq, I don't know
-what kind of DT node would be good for it. Hence I would rather leave
-constructing the node who consumes the IRQ to someone who knows what
-they want to do with this IRQ information.
-
-> 
-> > Rest of the interrupts are not so obvious. I have no idea how I should
-> > handle rest of the interrupts. Those are interrupts which cause the PMIC
-> > to reset and cut the powers from most of the regulators too. I can
-> > easily think setup where one processor is controlling PMIC which powers
-> > for the other processor. And getting IRQ if for example watchdog reset
-> > the other processor would probably be very usefull. But doing any
-> > 'de-facto' handler for this is hard. Only generally usefull thing would
-> > be notifying the user-space but I don't think I should invent any new
-> > kernelspace - userspace interfaces for this. I believe that when such
-> > are needed those should be implemented by ones knowing the platform.
-> 
-> Don't think about the OS or driver details. Think about sub-blocks of
-> the hardware and the connections between them (like irqs) and to board
-> that need to be described in DT.
-> 
-> If you can't describe that, then you just probably shouldn't have
-> sub-nodes in DT (ever).
-
-This is why I did not add any "irq consumer" nodes in example DT. But I
-believe someone can think of a board/setup where such are needed. Thus I
-liked the idea of providing the interrupt-controller.
-
-> >
-> > So please bear with me but do you mean I should
-> > a) document what conditions generate which IRQ
-> >    or
-> > b)  should I tell what kind of driver is needed for handling the IRQs
-> >    or
-> > c) should I first write code using IRQs before addinf MFD binding?
-> 
-> A.
+Pierre
 
 
-So what do you think of this:
-
-+Optional properties:
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+			  BD71837MWV can report input line state change and SW
-+			  reset events via interrupts. Different events can be seen
-+			  as separate BD71837 domain interrupts.
-+ - #interrupt-cells	: The number of cells to describe an IRQ should be 1.
-+			  The value in cell is the IRQ number.
-+			    Meaningfull numbers are:
-+			      0 => PMIC_STBY_REQ level change
-+			      1 => PMIC_ON_REQ level change
-+			      2 => WDOG_B level change
-+			      3 => Power Button level change
-+			      4 => Power Button Long Push
-+			      5 => Power Button Short Push
-+			      6 => SWRESET register is written 1
-
-Would this be getting closer to what is needed from binding document?
-
-Oh, and thanks for the patience =)
-
-Br,
-	Matti Vaittinen
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
