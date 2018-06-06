@@ -1,63 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oQPm8yvU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 320F460764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="QmwlYPkf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9553460555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752369AbeFFM4U (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:56:20 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:38144 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752077AbeFFM4S (ORCPT
+        id S1752484AbeFFMms (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:42:48 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54209 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752356AbeFFMlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:56:18 -0400
-X-Google-Smtp-Source: ADUXVKJednbIbxGz5nyYHUtCPR3esiTcnTwxpETeiYZGEzqFwbNiqAfgrCGps+Eg08ed3vkWHUabDTNDpOd+fkUmYtY=
-MIME-Version: 1.0
-In-Reply-To: <20180606125009.GA29162@jra-laptop.brq.redhat.com>
-References: <20180606122731.GB27707@jra-laptop.brq.redhat.com>
- <CAJZ5v0hTTe9zYwYKtoQKjJJbazFeaGVO2SdbaODyvTFiNpGTdw@mail.gmail.com> <20180606125009.GA29162@jra-laptop.brq.redhat.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 6 Jun 2018 14:56:17 +0200
-X-Google-Sender-Auth: 4D-O6GVsAwimdQJZkDnTq0a_894
-Message-ID: <CAJZ5v0iSfrfbcq3Un888Jmk1xLbSYymOX=eepsGOc7qcVe-P2w@mail.gmail.com>
-Subject: Re: Performance drop on kernel-4.17 visible on Stream, Linpack and
- NAS parallel benchmarks
-To: Jakub Racek <jracek@redhat.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Jun 2018 08:41:52 -0400
+X-Google-Smtp-Source: ADUXVKIcpfehs87UdYvTklG3+X+UGgs0JakPt6KFO95LgO42rq0/v+sIO2klzWMoANiTZ/wIXy4k5Q==
+From: Michal Simek <michal.simek@xilinx.com>
+To: linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        gnomes@lxorguk.ukuu.org.uk, Alexander Graf <agraf@suse.de>,
+        shubhraj@xilinx.com, robh@kernel.org
+Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH v2 5/6] serial: uartps: Fill struct uart_driver in probe()
+Date: Wed,  6 Jun 2018 14:41:38 +0200
+Message-Id: <b035a7b7014c4aa2b9192a945cf75c9c7143b16f.1528288895.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1528288895.git.michal.simek@xilinx.com>
+References: <cover.1528288895.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1528288895.git.michal.simek@xilinx.com>
+References: <cover.1528288895.git.michal.simek@xilinx.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 2:50 PM, Jakub Racek <jracek@redhat.com> wrote:
-> +++ Rafael J. Wysocki [06/06/18 14:34 +0200]:
->>
->> On Wed, Jun 6, 2018 at 2:27 PM, Jakub Racek <jracek@redhat.com> wrote:
->>>
->>> Hi,
->>>
->>> There is a huge performance regression on the 2 and 4 NUMA node systems
->>> on
->>> stream benchmark with 4.17 kernel compared to 4.16 kernel. Stream,
->>> Linpack
->>> and NAS parallel benchmarks show upto 50% performance drop.
->>
->>
->> OK, and why do you think that it is related to ACPI?
->
->
-> I don't know where the problems is or who to CC.
-> What information should be added? I can probably provide it, if I know
-> what.
+This is preparation step for dynamic port allocation without
+CDNS_UART_NR_PORTS macro. Fill the structure only once at probe.
 
-The problem appears to be reproducible 100% of the time, so can you
-possibly carry out a "git bisect" binary search to find the
-problematic commit?
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
-Thanks,
-Rafael
+Changes in v2:
+- new patch - it can be sent separately too
+
+ drivers/tty/serial/xilinx_uartps.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index b47d7ccbc38d..d76efe8cb3df 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1260,18 +1260,6 @@ static int __init cdns_uart_console_setup(struct console *co, char *options)
+ };
+ #endif /* CONFIG_SERIAL_XILINX_PS_UART_CONSOLE */
+ 
+-static struct uart_driver cdns_uart_uart_driver = {
+-	.owner		= THIS_MODULE,
+-	.driver_name	= CDNS_UART_NAME,
+-	.dev_name	= CDNS_UART_TTY_NAME,
+-	.major		= CDNS_UART_MAJOR,
+-	.minor		= CDNS_UART_MINOR,
+-	.nr		= CDNS_UART_NR_PORTS,
+-#ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
+-	.cons		= &cdns_uart_console,
+-#endif
+-};
+-
+ #ifdef CONFIG_PM_SLEEP
+ /**
+  * cdns_uart_suspend - suspend event
+@@ -1451,6 +1439,16 @@ static int cdns_uart_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (!cdns_uart_uart_driver.state) {
++		cdns_uart_uart_driver.owner = THIS_MODULE,
++		cdns_uart_uart_driver.driver_name = CDNS_UART_NAME,
++		cdns_uart_uart_driver.dev_name = CDNS_UART_TTY_NAME,
++		cdns_uart_uart_driver.major = CDNS_UART_MAJOR,
++		cdns_uart_uart_driver.minor = CDNS_UART_MINOR,
++		cdns_uart_uart_driver.nr = CDNS_UART_NR_PORTS,
++#ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
++		cdns_uart_uart_driver.cons = &cdns_uart_console,
++#endif
++
+ 		rc = uart_register_driver(&cdns_uart_uart_driver);
+ 		if (rc < 0) {
+ 			dev_err(&pdev->dev, "Failed to register driver\n");
+-- 
+1.9.1
