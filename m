@@ -1,155 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 662EC60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 035D060290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932376AbeFFPzv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:55:51 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:36040 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S932198AbeFFPzs (ORCPT
+        id S1752710AbeFFPm3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:42:29 -0400
+Received: from smtprelay0132.hostedemail.com ([216.40.44.132]:46944 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751546AbeFFPm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:55:48 -0400
-Date: Wed, 6 Jun 2018 11:55:47 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Roman Penyaev <roman.penyaev@profitbricks.com>
-cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-In-Reply-To: <CAJrWOzB8hz2qzNJAWfNdW_U_ArHmvCpzZVJBebsfQ3=eEiSh7w@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1806061142020.1359-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Wed, 6 Jun 2018 11:42:26 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: mine84_6bcbbd078f712
+X-Filterd-Recvd-Size: 2845
+Message-ID: <517d33d8219f22126ec8caaf41072c14b5ebf407.camel@perches.com>
+Subject: Re: [PATCH v3 00/12] cros_ec: Match licenses and switch to SPDX
+ identifier.
+From: Joe Perches <joe@perches.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Paolo Cretaro <paolocretaro@gmail.com>,
+        linux-iio@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i2c@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        linux-rtc@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        linux-input@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Colin Cross <ccross@android.com>,
+        Kees Cook <keescook@chromium.org>
+Date: Wed, 06 Jun 2018 08:42:19 -0700
+In-Reply-To: <20180606150900.8342-1-enric.balletbo@collabora.com>
+References: <20180606150900.8342-1-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 6 Jun 2018, Roman Penyaev wrote:
+On Wed, 2018-06-06 at 17:08 +0200, Enric Balletbo i Serra wrote:
+> Dear all,
+> 
+> This patchset is just to adopt the SPDX license identifier for all
+> ChromeOS Embedded Controller related drivers.
 
-> On Wed, Jun 6, 2018 at 3:54 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > On Wed, 6 Jun 2018, Roman Penyaev wrote:
-> >
-> >> > Preserving the order of volatile accesses isn't sufficient.  The
-> >> > compiler is still allowed to translate
-> >> >
-> >> >         r1 = READ_ONCE(x);
-> >> >         if (r1) {
-> >> >                 ...
-> >> >         }
-> >> >         WRITE_ONCE(y, r2);
-> >> >
-> >> > into something resembling
-> >> >
-> >> >         r1 = READ_ONCE(x);
-> >> >         WRITE_ONCE(y, r2);
-> >> >         if (r1) {
-> >> >                 ...
-> >> >         }
-> >>
-> >> Hi Alan,
-> >>
-> >> According to the standard C99 Annex C "the controlling expression of
-> >> a selection statement (if or switch)" are the sequence points, just
-> >> like a volatile access (READ_ONCE or WRITE_ONCE).
-> >>
-> >> "5.1.2.3 Program execution" states:
-> >> "At certain specified points in the execution sequence called sequence
-> >> points, all side effects of previous evaluations shall be complete
-> >> and no side effects of subsequent evaluations shall have taken place."
-> >>
-> >> So in the example we have 3 sequence points: "READ_ONCE", "if" and
-> >> "WRITE_ONCE", which it seems can't be reordered.  Am I mistaken
-> >> interpreting standard?  Could you please clarify.
-> >
-> > Well, for one thing, we're talking about C11, not C99.
-> 
-> C11 is a n1570, ISO/IEC 9899:2011 ? (according to wiki).  Found pdf on
-> the web contains similar lines, so should not be any differences for
-> that particular case.
-> 
-> > For another, as far as I understand it, the standard means the program
-> > should behave _as if_ the side effects are completed in the order
-> > stated.  It doesn't mean that the generated code has to behave that way
-> > literally.
-> 
-> Then I do not understand what are the differences between "side effects
-> are completed" and "code generated".  Abstract machine state should
-> provide some guarantees between sequence points, e.g.:
-> 
->     foo();    /* function call */
->     ------------|
->     *a = 1;     |
->     *b = 12;    | Compiler in his right to reorder.
->     *c = 123;   |
->     ------------|
->     boo();    /* function call */
-> 
-> compiler in his right to reorder memory accesses between foo() and
-> boo() calls (foo and boo are sequence points, but memory accesses
-> are not), but:
-> 
->    foo();    /* function call */
->    *(volatile int *)a = 1;
->    *(volatile int *)b = 12;
->    *(volatile int *)c = 123;
->    boo();    /* function call */
-> 
-> are all sequence points, so compiler can't reorder them.
-> 
-> Where am I mistaken?
+This bit is fine,
 
-You are right so far.  Now suppose one of the sequence points is an
-"if" statement:
-
-	foo();		// sequence point
-	*a = 1;
-	if (*b)		// sequence point
-		*c = 2;
-	*d = 3;
-	boo();		// sequence point
-
-The object code has to behave _as though_ the write to *a was completed 
-before the write to *d begins, because of the sequence point in 
-between.  But nevertheless, the object code is allowed to be like this:
-
-	foo();
-	*d = 3;
-	*a = 1;
-	if (*b)
-		*c = 2;
-	boo();
-
-because the overall effect is the same, if all you are concerned with
-is this single thread.  (And assuming that none of the pointers alias
-each other.)
-
-The compiler must not move the "*d = 3" write up before the call to
-foo(), because foo() might read the value of *d and then it would get
-an incorrect answer.  Moving the write before the "if" statement and
-the assignment to *a is okay, however, because those statements would
-do the same thing no matter what value was stored in *d.
-
-Alan
-
-> > And in particular, the standard is referring to the
-> > behavior of a single thread, not the interaction between multiple
-> > concurrent threads.
+>  The patches touches
+> different subsystems but every patch can be picked from their respective
+> maintainer independently.
 > 
-> Yes, that is clear: we are talking about code reordering in one
-> particular function in a single threaded environment.
-> 
-> --
-> Roman
+> This third version takes the license note as the valid license (I did
+> the contrary in the second version) so apart from add the SPDX tags it
+> also introduces new patches to match the license.
+
+But why change any MODULE_LICENSE text?
+
+There are uses of MODULE_LICENSE("GPL") where
+the SPDX license identifier is some GPL variant
+
+For instance:
+$ git grep -P --name-only
+'MODULE_LICENSE\s*\("GPL"\s*\)\s*;'| \
+  xargs grep "SPDX-License-
+Identifier:" | \
+  cut -f3- -d: | \
+  sed -r 's@\s*\*/\s*$@@' | \
+  sort |
+uniq -c | sort -rn
+    551  GPL-2.0+
+    281  GPL-2.0
+     13  GPL-1.0+
+    
+  9  GPL-2.0-only
+      2  GPL-2.0 OR MIT
+      1  (GPL-2.0 OR MPL-1.1)
+   
+   1  (GPL-2.0+ OR BSD-3-Clause)
+      1  (GPL-2.0 OR BSD-3-Clause)
+
+And if you were to do this, please do it tree-wide,
+and ideally via a script
