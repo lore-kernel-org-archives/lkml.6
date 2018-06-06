@@ -1,46 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F25B5601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9EE2B60263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933741AbeFFRJn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:09:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47808 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933592AbeFFRJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:09:16 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: containers@lists.linux-foundation.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: eparis@parisplace.org, Steve Grubb <sgrubb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghau51/ghau40 v3 5/6] start normalization containerid support
-Date: Wed,  6 Jun 2018 13:07:28 -0400
-Message-Id: <1528304849-31826-6-git-send-email-rgb@redhat.com>
-In-Reply-To: <1528304849-31826-1-git-send-email-rgb@redhat.com>
-References: <1528304849-31826-1-git-send-email-rgb@redhat.com>
+        id S1752393AbeFFJ5j (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:57:39 -0400
+Received: from foss.arm.com ([217.140.101.70]:38760 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752215AbeFFJ5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:57:37 -0400
+Subject: Re: [PATCH v4 14/14] coresight: allow the coresight core driver to be
+ built as a module
+To: Kim Phillips <kim.phillips@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Leo Yan <leo.yan@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Gargi Sharma <gs051095@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Rik van Riel <riel@redhat.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <treding@nvidia.com>,
+        Todd Kjos <tkjos@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180605210710.22227-1-kim.phillips@arm.com>
+ <20180605210710.22227-15-kim.phillips@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <46a026b2-0140-c1c0-2205-f5750233b152@arm.com>
+Date: Wed, 6 Jun 2018 10:57:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180605210710.22227-15-kim.phillips@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- auparse/normalize_record_map.h | 1 +
- 1 file changed, 1 insertion(+)
+On 06/05/2018 10:07 PM, Kim Phillips wrote:
+> Allow to build coresight as a module.  This enhances
+> coresight developer efficiency by allowing the development to
+> take place exclusively on the target, and without needing to
+> reboot in between changes.
+> 
+> - Kconfig becomes a tristate, to allow =m
+> - append -core to source file name to allow module to
+>    be called coresight by the Makefile
+> - modules can have only one init/exit, so we add the core bus
+>    register/unregister function calls to the etm_perf init/exit
+>    functions, since coresight.c does not have etm_pmu defined.
 
-diff --git a/auparse/normalize_record_map.h b/auparse/normalize_record_map.h
-index 1507bb5..41f7c4a 100644
---- a/auparse/normalize_record_map.h
-+++ b/auparse/normalize_record_map.h
-@@ -25,6 +25,7 @@
- 
- _S(AUDIT_USER, "sent-message")
- _S(AUDIT_LOGIN, "changed-login-id-to")
-+_S(AUDIT_CONTAINER_ID, "changed-container-id-to")
- _S(AUDIT_USER_AUTH, "authenticated")
- _S(AUDIT_USER_ACCT, "was-authorized")
- _S(AUDIT_USER_MGMT, "modified-user-account")
--- 
-1.8.3.1
+It feels a bit weird to move the coresight core specific steps to
+etm_perf_init. Why not call etm_perf_init from coresight init routine
+and keep everything core specific in the coresight-core.c ?
+
+
+Suzuki
