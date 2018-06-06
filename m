@@ -1,132 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4819060555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3936460764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752430AbeFFNdW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:33:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52999 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeFFNcA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:32:00 -0400
-Date: Wed, 6 Jun 2018 06:31:25 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-a33a5d2d16cb84bea8d5f5510f3a41aa48b5c467@git.kernel.org>
-Cc: tariqt@mellanox.com, bp@alien8.de, mingo@kernel.org,
-        liu.song.a23@gmail.com, jroedel@suse.de, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, songliubraving@fb.com,
-        0x7f454c46@gmail.com, mike.travis@hpe.com, hpa@zytor.com,
-        peterz@infradead.org
-Reply-To: mingo@kernel.org, jroedel@suse.de, liu.song.a23@gmail.com,
-          bp@alien8.de, tariqt@mellanox.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, 0x7f454c46@gmail.com, songliubraving@fb.com,
-          peterz@infradead.org, hpa@zytor.com, mike.travis@hpe.com
-In-Reply-To: <20180604162224.386544292@linutronix.de>
-References: <20180604162224.386544292@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] genirq/generic_pending: Do not lose pending
- affinity update
-Git-Commit-ID: a33a5d2d16cb84bea8d5f5510f3a41aa48b5c467
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S932377AbeFFHpK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:45:10 -0400
+Received: from mga11.intel.com ([192.55.52.93]:58668 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932352AbeFFHpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 03:45:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,482,1520924400";
+   d="scan'208";a="62196153"
+Message-ID: <2fe122f7fa0040509dcc049b48e7934b54ee0a55.camel@linux.intel.com>
+Subject: Re: [GIT PULL] Device properties framework update for v4.18-rc1
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Wed, 06 Jun 2018 10:45:05 +0300
+In-Reply-To: <CA+55aFw8yUOweiQSEp-ZHzEeSAGggZ0-Ksy0e4GQgEhKvmwLog@mail.gmail.com>
+References: <CAJZ5v0jq45atkapwSjJ4DkHhB1bfOA-Sh1TiA3dPXwKyFTBheA@mail.gmail.com>
+         <CA+55aFyoxvrA-7X_8ZfQXd1=GfLT96ZaHAM+o5gKwOOfiy_HDA@mail.gmail.com>
+         <CA+55aFw8yUOweiQSEp-ZHzEeSAGggZ0-Ksy0e4GQgEhKvmwLog@mail.gmail.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a33a5d2d16cb84bea8d5f5510f3a41aa48b5c467
-Gitweb:     https://git.kernel.org/tip/a33a5d2d16cb84bea8d5f5510f3a41aa48b5c467
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 4 Jun 2018 17:33:54 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 6 Jun 2018 15:18:19 +0200
+On Tue, 2018-06-05 at 10:39 -0700, Linus Torvalds wrote:
+> On Tue, Jun 5, 2018 at 10:30 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > 
+> > Honestly, this looks questionable to me.
+> > 
+> > I'm not talking about the changes themselves - I can live with them.
+> > But the _rationale_ is pure and utter garbage, and dangerously so.
+> 
+> Side note: I've merged it, and it's going through my build tests, so
+> it's really not that I hate the code.
 
-genirq/generic_pending: Do not lose pending affinity update
+Thanks for merging.
 
-The generic pending interrupt mechanism moves interrupts from the interrupt
-handler on the original target CPU to the new destination CPU. This is
-required for x86 and ia64 due to the way the interrupt delivery and
-acknowledge works if the interrupts are not remapped.
+> 
+> But I really find that kind of one-sided rationale that ignores
+> reality unacceptable.
 
-However that update can fail for various reasons. Some of them are valid
-reasons to discard the pending update, but the case, when the previous move
-has not been fully cleaned up is not a legit reason to fail.
+Yeah, there were few reasons why I decide to make that patch (OK, it
+seems I staked on not the best reason).
 
-Check the return value of irq_do_set_affinity() for -EBUSY, which indicates
-a pending cleanup, and rearm the pending move in the irq dexcriptor so it's
-tried again when the next interrupt arrives.
+Like Rafael said there is no need to use it here and code initially was
+without union aliasing be in place.
 
-Fixes: 996c591227d9 ("x86/irq: Plug vector cleanup race")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Song Liu <songliubraving@fb.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <liu.song.a23@gmail.com>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tariq Toukan <tariqt@mellanox.com>
-Link: https://lkml.kernel.org/r/20180604162224.386544292@linutronix.de
+> And I find it dangerous, because it *sounds* so "obviously correct" to
+> people who don't know any better. If you don't know that gcc
+> explicitly says that you should use unions to do type punning to avoid
+> aliasing issues, you might believe that union type punning is a bad
+> thing from that commit message.
+> 
+> So it's dangerously misleading, because lots of people have a
+> dangerous reverence for paper over reality.
 
----
- kernel/irq/migration.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+I agree with you, because type punning via unions feels natural and
+that's why I even didn't notice when made a refactoring there several
+releases before.
 
-diff --git a/kernel/irq/migration.c b/kernel/irq/migration.c
-index 86ae0eb80b53..8b8cecd18cce 100644
---- a/kernel/irq/migration.c
-+++ b/kernel/irq/migration.c
-@@ -38,17 +38,18 @@ bool irq_fixup_move_pending(struct irq_desc *desc, bool force_clear)
- void irq_move_masked_irq(struct irq_data *idata)
- {
- 	struct irq_desc *desc = irq_data_to_desc(idata);
--	struct irq_chip *chip = desc->irq_data.chip;
-+	struct irq_data *data = &desc->irq_data;
-+	struct irq_chip *chip = data->chip;
- 
--	if (likely(!irqd_is_setaffinity_pending(&desc->irq_data)))
-+	if (likely(!irqd_is_setaffinity_pending(data)))
- 		return;
- 
--	irqd_clr_move_pending(&desc->irq_data);
-+	irqd_clr_move_pending(data);
- 
- 	/*
- 	 * Paranoia: cpu-local interrupts shouldn't be calling in here anyway.
- 	 */
--	if (irqd_is_per_cpu(&desc->irq_data)) {
-+	if (irqd_is_per_cpu(data)) {
- 		WARN_ON(1);
- 		return;
- 	}
-@@ -73,9 +74,20 @@ void irq_move_masked_irq(struct irq_data *idata)
- 	 * For correct operation this depends on the caller
- 	 * masking the irqs.
- 	 */
--	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids)
--		irq_do_set_affinity(&desc->irq_data, desc->pending_mask, false);
--
-+	if (cpumask_any_and(desc->pending_mask, cpu_online_mask) < nr_cpu_ids) {
-+		int ret;
-+
-+		ret = irq_do_set_affinity(data, desc->pending_mask, false);
-+		/*
-+		 * If the there is a cleanup pending in the underlying
-+		 * vector management, reschedule the move for the next
-+		 * interrupt. Leave desc->pending_mask intact.
-+		 */
-+		if (ret == -EBUSY) {
-+			irqd_set_move_pending(data);
-+			return;
-+		}
-+	}
- 	cpumask_clear(desc->pending_mask);
- }
- 
+> In programming, "Appeal to Standards" should be considered a potential
+> logical fallacy. Standards have their place, but they definitely have
+> their caveats too.
+
+Yes, even outside of programming.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
