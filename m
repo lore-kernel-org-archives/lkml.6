@@ -1,197 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4CmrE/1QGVsgCwAAmS7hNA
-	; Thu, 07 Jun 2018 15:36:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nLsXGvo3GFvEXgAAmS7hNA
+	; Wed, 06 Jun 2018 19:38:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3DC84607E7; Thu,  7 Jun 2018 15:36:29 +0000 (UTC)
+	id 74140608BA; Wed,  6 Jun 2018 19:38:26 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JacDx+Sw"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A3D21601B4;
-	Thu,  7 Jun 2018 15:36:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A3D21601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D38746074D;
+	Wed,  6 Jun 2018 19:38:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D38746074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935242AbeFGPgZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:36:25 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61234 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933959AbeFGOmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:42:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="235505957"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Jun 2018 07:42:30 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 7/7] x86/cet: Add PTRACE interface for CET
-Date: Thu,  7 Jun 2018 07:38:55 -0700
-Message-Id: <20180607143855.3681-8-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143855.3681-1-yu-cheng.yu@intel.com>
-References: <20180607143855.3681-1-yu-cheng.yu@intel.com>
+        id S1752758AbeFFTiY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 15:38:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38095 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752641AbeFFTiV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 15:38:21 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 69-v6so1125939wmf.3;
+        Wed, 06 Jun 2018 12:38:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=iZtBVOWqAYziJ/NdJ7U6CZ/xJhq//WZIkEI3sVArBcE=;
+        b=JacDx+SwS1JRLUJv6DyMFn7+7FcNTuVed3PvLd3spNSjsPaIDoup/ZE6uPH3wX5yZn
+         z+3ehdclDtg8hEdP7G5FWns22Q7qHzeck2N+Q/rOBkEWZE3sAWAJ/9kIDaNeYGVl2Mwu
+         6WWjPBmhgl4EX1I37RzR5+7gpFqdyEb3i3+dyLY1C3i7p33eb3iUZiZEHkjcrt9fwFzE
+         PchcqMMQfkMjXvXC7sS+Iq2FC/okfGcXjLA2udY2+UKr+C9RXPYdMX4UMjlLUvYGnZ8+
+         LiWOB6py4Jxey6hRJ6VxXVA6Itl55pd6CtVKmKRhGCWaPupcDSWj3cdNtZxoynUm0C96
+         bgOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=iZtBVOWqAYziJ/NdJ7U6CZ/xJhq//WZIkEI3sVArBcE=;
+        b=bIFLuGY9WTGeOpMoSNLEv677aQKn386HuqKaKzeQqWehu7Vr8xDDADBasw06FjjgDd
+         8DpcGB4dB/CHxR1+IWF2XvPDsI/vpbL2fVUfT8+WHxTB1SnnE/F3D+KXfX+XO2zR9FA4
+         O3WIkgCpOoJnYXFSdd2f3X5Zxm2ioEpuNMQkR8DiS+3zaj5cxf26SkCOEzj4L9+/hjyU
+         JFa25luRLFRWXR0nG7NwM6iTgsrEGceYYDV8V6zpbJPxXtDtESzPz/CaxFnZzmoeC8vP
+         11EYw3scG3ZZ1tgBTdQ9LSdKhqeQxqFrNFcuSK+AjYYOLIQJ7EJF7sg/FY43N1eZ9o1x
+         oDQw==
+X-Gm-Message-State: APt69E0ILUYSK5l/GrmjIzmcFzY0NIP9wV+7RiWFNMPzNxWxemTife5k
+        /iEtQzAq5bQu+prl8iTWI0Y=
+X-Google-Smtp-Source: ADUXVKJioHcccl2ND0wTYMDWNRoGPt67a0qrvVfo4nZoX7FJWTiRP1/pwYEUEMo2Ten4uBjlIrOBGg==
+X-Received: by 2002:a1c:688:: with SMTP id 130-v6mr2807867wmg.82.1528313900423;
+        Wed, 06 Jun 2018 12:38:20 -0700 (PDT)
+Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
+        by smtp.gmail.com with ESMTPSA id l142-v6sm7111830wmd.16.2018.06.06.12.38.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Jun 2018 12:38:19 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id D1B0F10C2B81; Wed,  6 Jun 2018 21:38:18 +0200 (CEST)
+From: Mathieu Malaterre <malat@debian.org>
+To: James Hogan <jhogan@kernel.org>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, devicetree@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: [PATCH 3/3] MIPS: jz4780: DTS: Probe the jz4740-i2s driver from devicetree
+Date: Wed,  6 Jun 2018 21:38:10 +0200
+Message-Id: <20180606193811.16007-3-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180606193811.16007-1-malat@debian.org>
+References: <20180606193811.16007-1-malat@debian.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PTRACE interface for CET MSRs.
+Since commit 967beb2e8777 ("ASoC: jz4740: Add jz4780 support"), jz4740-i2s
+driver supports jz4780 hardware. Use proper compatible string.
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/x86/include/asm/fpu/regset.h |  7 ++++---
- arch/x86/kernel/fpu/regset.c      | 41 +++++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/ptrace.c          | 16 +++++++++++++++
- include/uapi/linux/elf.h          |  1 +
- 4 files changed, 62 insertions(+), 3 deletions(-)
+ arch/mips/boot/dts/ingenic/jz4780.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/x86/include/asm/fpu/regset.h b/arch/x86/include/asm/fpu/regset.h
-index d5bdffb9d27f..edad0d889084 100644
---- a/arch/x86/include/asm/fpu/regset.h
-+++ b/arch/x86/include/asm/fpu/regset.h
-@@ -7,11 +7,12 @@
+diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+index ae57976bc016..308079ee8dd3 100644
+--- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+@@ -57,6 +57,18 @@
+ 		clock-names = "rtc";
+ 	};
  
- #include <linux/regset.h>
- 
--extern user_regset_active_fn regset_fpregs_active, regset_xregset_fpregs_active;
-+extern user_regset_active_fn regset_fpregs_active, regset_xregset_fpregs_active,
-+				cetregs_active;
- extern user_regset_get_fn fpregs_get, xfpregs_get, fpregs_soft_get,
--				xstateregs_get;
-+				xstateregs_get, cetregs_get;
- extern user_regset_set_fn fpregs_set, xfpregs_set, fpregs_soft_set,
--				 xstateregs_set;
-+				 xstateregs_set, cetregs_set;
- 
- /*
-  * xstateregs_active == regset_fpregs_active. Please refer to the comment
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index bc02f5144b95..7008eb084d36 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -160,6 +160,47 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
- 	return ret;
- }
- 
-+int cetregs_active(struct task_struct *target, const struct user_regset *regset)
-+{
-+#ifdef CONFIG_X86_INTEL_CET
-+	if (target->thread.cet.shstk_enabled || target->thread.cet.ibt_enabled)
-+		return regset->n;
-+#endif
-+	return 0;
-+}
++	i2s: i2s@10020000 {
++		compatible = "ingenic,jz4780-i2s";
++		reg = <0x10020000 0x94>;
 +
-+int cetregs_get(struct task_struct *target, const struct user_regset *regset,
-+		unsigned int pos, unsigned int count,
-+		void *kbuf, void __user *ubuf)
-+{
-+	struct fpu *fpu = &target->thread.fpu;
-+	struct cet_user_state *cetregs;
++		clocks = <&cgu JZ4780_CLK_AIC>, <&cgu JZ4780_CLK_I2SPLL>;
++		clock-names = "aic", "i2s";
 +
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return -ENODEV;
++		dmas = <&dma 0 JZ4780_DMA_I2S0_RX 0xffffffff>,
++		       <&dma JZ4780_DMA_I2S0_TX 0 0xffffffff>;
++		dma-names = "rx" , "tx";
++	};
 +
-+	cetregs = get_xsave_addr(&fpu->state.xsave, XFEATURE_MASK_SHSTK_USER);
-+
-+	fpu__prepare_read(fpu);
-+	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, cetregs, 0, -1);
-+}
-+
-+int cetregs_set(struct task_struct *target, const struct user_regset *regset,
-+		  unsigned int pos, unsigned int count,
-+		  const void *kbuf, const void __user *ubuf)
-+{
-+	struct fpu *fpu = &target->thread.fpu;
-+	struct cet_user_state *cetregs;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return -ENODEV;
-+
-+	cetregs = get_xsave_addr(&fpu->state.xsave, XFEATURE_MASK_SHSTK_USER);
-+
-+	fpu__prepare_write(fpu);
-+	return user_regset_copyin(&pos, &count, &kbuf, &ubuf, cetregs, 0, -1);
-+}
-+
- #if defined CONFIG_X86_32 || defined CONFIG_IA32_EMULATION
- 
- /*
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index ed5c4cdf0a34..a4501b8d086a 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -49,7 +49,9 @@ enum x86_regset {
- 	REGSET_IOPERM64 = REGSET_XFP,
- 	REGSET_XSTATE,
- 	REGSET_TLS,
-+	REGSET_CET64 = REGSET_TLS,
- 	REGSET_IOPERM32,
-+	REGSET_CET32,
- };
- 
- struct pt_regs_offset {
-@@ -1276,6 +1278,13 @@ static struct user_regset x86_64_regsets[] __ro_after_init = {
- 		.size = sizeof(long), .align = sizeof(long),
- 		.active = ioperm_active, .get = ioperm_get
- 	},
-+	[REGSET_CET64] = {
-+		.core_note_type = NT_X86_CET,
-+		.n = sizeof(struct cet_user_state) / sizeof(u64),
-+		.size = sizeof(u64), .align = sizeof(u64),
-+		.active = cetregs_active, .get = cetregs_get,
-+		.set = cetregs_set
-+	},
- };
- 
- static const struct user_regset_view user_x86_64_view = {
-@@ -1331,6 +1340,13 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
- 		.size = sizeof(u32), .align = sizeof(u32),
- 		.active = ioperm_active, .get = ioperm_get
- 	},
-+	[REGSET_CET32] = {
-+		.core_note_type = NT_X86_CET,
-+		.n = sizeof(struct cet_user_state) / sizeof(u64),
-+		.size = sizeof(u64), .align = sizeof(u64),
-+		.active = cetregs_active, .get = cetregs_get,
-+		.set = cetregs_set
-+	},
- };
- 
- static const struct user_regset_view user_x86_32_view = {
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index f69ed8702271..0dd1f9dc6e14 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -401,6 +401,7 @@ typedef struct elf64_shdr {
- #define NT_386_TLS	0x200		/* i386 TLS slots (struct user_desc) */
- #define NT_386_IOPERM	0x201		/* x86 io permission bitmap (1=deny) */
- #define NT_X86_XSTATE	0x202		/* x86 extended state using xsave */
-+#define NT_X86_CET	0x203		/* x86 cet state */
- #define NT_S390_HIGH_GPRS	0x300	/* s390 upper register halves */
- #define NT_S390_TIMER	0x301		/* s390 timer register */
- #define NT_S390_TODCMP	0x302		/* s390 TOD clock comparator register */
+ 	pinctrl: pin-controller@10010000 {
+ 		compatible = "ingenic,jz4780-pinctrl";
+ 		reg = <0x10010000 0x600>;
 -- 
-2.15.1
+2.11.0
