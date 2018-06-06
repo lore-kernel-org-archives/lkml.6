@@ -1,87 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DAF48601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wg7quHh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C69626070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933483AbeFFQiw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:38:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:42946 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932971AbeFFQiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:38:51 -0400
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: Sudeep.Holla@arm.com
-Cc: Will.Deacon@arm.com, Catalin.Marinas@arm.com, Robin.Murphy@arm.com,
-        Morten.Rasmussen@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, geert@linux-m68k.org,
-        linux-acpi@vger.kernel.org, ard.biesheuvel@linaro.org,
-        Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v2] arm64: topology: Avoid checking numa mask for scheduler MC selection
-Date: Wed,  6 Jun 2018 11:38:46 -0500
-Message-Id: <20180606163846.495725-1-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.14.3
+        id S933672AbeFFRv1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:51:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43166 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752455AbeFFRv0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:51:26 -0400
+Date: Wed, 6 Jun 2018 10:50:49 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: dsterba@suse.cz, Souptick Joarder <jrdr.linux@gmail.com>,
+        clm@fb.com, jbacik@fb.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs: btrfs: Change return type to vm_fault_t
+Message-ID: <20180606175049.GB12439@bombadil.infradead.org>
+References: <20180606142444.GA3806@jordon-HP-15-Notebook-PC>
+ <20180606155347.GL3539@twin.jikos.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606155347.GL3539@twin.jikos.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The numa mask subset check can often lead to system hang or crash during
-CPU hotplug and system suspend operation if NUMA is disabled. This is
-mostly observed on HMP systems where the CPU compute capacities are
-different and ends up in different scheduler domains. Since
-cpumask_of_node is returned instead core_sibling, the scheduler is
-confused with incorrect cpumasks(e.g. one CPU in two different sched
-domains at the same time) on CPU hotplug.
+On Wed, Jun 06, 2018 at 05:53:47PM +0200, David Sterba wrote:
+> On Wed, Jun 06, 2018 at 07:54:44PM +0530, Souptick Joarder wrote:
+> > @@ -9009,7 +9007,7 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
+> >  	unlock_extent_cached(io_tree, page_start, page_end, &cached_state);
+> >  
+> >  out_unlock:
+> > -	if (!ret) {
+> > +	if (!ret2) {
+> >  		btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
+> >  		sb_end_pagefault(inode->i_sb);
+> >  		extent_changeset_free(data_reserved);
+> 
+> 9013                 return VM_FAULT_LOCKED;
+> 9014         }
+> 9015         unlock_page(page);
+> 9016 out:
+> 9017         btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, (ret != 0));
+> 9018         btrfs_delalloc_release_space(inode, data_reserved, page_start,
+> 9019                                      reserved_space, (ret != 0));
+> 
+> I've noticed that there's 'ret' used on lines 9017 and 19, comparing to
+> a raw number. Is this going to be ok once vm_fault_t is it's own type?
+> 
+> There's no corresponding define for 0 among the VM_FAULT_* values, I'd
+> expect 0 to work interchangeably, similar to the blk_status_t type:
+> 
+> https://elixir.bootlin.com/linux/latest/source/include/linux/blk_types.h#L30
+> 
+> #define	BLK_STS_OK 0
+> #define BLK_STS_NOTSUPP		((__force blk_status_t)1)
+> #define BLK_STS_TIMEOUT		((__force blk_status_t)2)
+> #define BLK_STS_NOSPC		((__force blk_status_t)3)
+> ...
+> 
+> Your patch is otherwise ok, I'm just curious if this is something to
+> watch for once vmfault type is switched.
 
-Lets disable the NUMA siblings checks for the time being, as NUMA in
-socket machines have LLC's that will assure that the scheduler topology
-isn't "borken".
+Yes, sparse treats 0 specially for these kinds of types.  It goes back to
+the original use of __bitwise to mean "this is a special-endian type",
+but it's also meaningful for types which aren't _numbers_ so much as a
+collection of bits.
 
-The NUMA check exists to assure that if a LLC within a socket crosses
-NUMA nodes/chiplets the scheduler domains remain consistent. This code will
-likely have to be re-enabled in the near future once the NUMA mask story
-is sorted.  At the moment its not necessary because the NUMA in socket
-machines LLC's are contained within the NUMA domains.
-
-Further, as a defensive mechanism during hot-plug, lets assure that the
-LLC siblings are also masked.
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
----
- arch/arm64/kernel/topology.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 7415c166281f..f845a8617812 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -215,13 +215,8 @@ EXPORT_SYMBOL_GPL(cpu_topology);
- 
- const struct cpumask *cpu_coregroup_mask(int cpu)
- {
--	const cpumask_t *core_mask = cpumask_of_node(cpu_to_node(cpu));
-+	const cpumask_t *core_mask = &cpu_topology[cpu].core_sibling;
- 
--	/* Find the smaller of NUMA, core or LLC siblings */
--	if (cpumask_subset(&cpu_topology[cpu].core_sibling, core_mask)) {
--		/* not numa in package, lets use the package siblings */
--		core_mask = &cpu_topology[cpu].core_sibling;
--	}
- 	if (cpu_topology[cpu].llc_id != -1) {
- 		if (cpumask_subset(&cpu_topology[cpu].llc_siblings, core_mask))
- 			core_mask = &cpu_topology[cpu].llc_siblings;
-@@ -239,8 +234,10 @@ static void update_siblings_masks(unsigned int cpuid)
- 	for_each_possible_cpu(cpu) {
- 		cpu_topo = &cpu_topology[cpu];
- 
--		if (cpuid_topo->llc_id == cpu_topo->llc_id)
-+		if (cpuid_topo->llc_id == cpu_topo->llc_id) {
- 			cpumask_set_cpu(cpu, &cpuid_topo->llc_siblings);
-+			cpumask_set_cpu(cpuid, &cpu_topo->llc_siblings);
-+		}
- 
- 		if (cpuid_topo->package_id != cpu_topo->package_id)
- 			continue;
--- 
-2.14.3
+By the way, do you really think it improves this function to use 'ret' and
+'ret2' like this?  It's your code, and you're entitled to adopt whatever
+stylistic preferences you like, but I personally find it easier to read
+with 'err' being an errno and 'ret' being the vm_fault_t.
