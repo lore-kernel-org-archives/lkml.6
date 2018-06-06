@@ -1,91 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="laTR+n85"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74CFF601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B05560879
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932449AbeFFINV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:13:21 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34386 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932340AbeFFINS (ORCPT
+        id S932143AbeFFPZL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:25:11 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57006 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752401AbeFFPZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:13:18 -0400
-X-Google-Smtp-Source: ADUXVKJ7P7TbWnO+xXeNmrkswXcTmSr0eO83MZo+UfDQOg/uCP3/4sV0p7PO0l6ig1PGZDMC1PaJOQ==
-Date: Wed, 6 Jun 2018 10:13:14 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: stm32: enforce dependency on CONFIG_MFD_STM32_TIMERS
-Message-ID: <20180606081314.GC11810@ulmo>
-References: <20180525160523.29124-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JgQwtEuHJzHdouWu"
-Content-Disposition: inline
-In-Reply-To: <20180525160523.29124-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 6 Jun 2018 11:25:09 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Enric Balletbo i Serra <eballetbo@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: igep: Relicense the IGEP boards under GPLv2/X11
+Date: Wed,  6 Jun 2018 17:24:59 +0200
+Message-Id: <20180606152500.14034-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current GPLv2 only licensing on IGEP boards makes it very impractical
+for other software components licensed under another license.
 
---JgQwtEuHJzHdouWu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In order to make it easier for them to reuse our device trees, relicense
+all boards under a GPLv2/X11 dual-license. Also switch to use the SPDX
+identifiers and remove the boiler plate license text.
 
-On Fri, May 25, 2018 at 06:04:54PM +0200, Arnd Bergmann wrote:
-> When compile-testing the pwm driver without also enabling the
-> stm32_timers MFD, we run into a link error:
->=20
-> drivers/pwm/pwm-stm32.o: In function `stm32_pwm_raw_capture.isra.6':
-> pwm-stm32.c:(.text+0xcb0): undefined reference to `stm32_timers_dma_burst=
-_read'
->=20
-> We don't need the '|| COMPILE_TEST' here, since stm32_timers itself
-> can be built with CONFIG_COMPILE_TEST on all architectures, so we do
-> get the coverage through allmodconfig and randconfig builds even
-> when we make it a hard dependency.
->=20
-> Fixes: 7edf7369205b ("pwm: Add driver for STM32 plaftorm")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/pwm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-I think Lee already picked up a patch by Fabrice that fixes this by
-adding a dummy implementation, see:
+ arch/arm/boot/dts/am335x-igep0033.dtsi       | 7 ++-----
+ arch/arm/boot/dts/omap3-igep.dtsi            | 6 ++----
+ arch/arm/boot/dts/omap3-igep0020-common.dtsi | 5 +----
+ arch/arm/boot/dts/omap3-igep0020-rev-f.dts   | 5 +----
+ arch/arm/boot/dts/omap3-igep0020.dts         | 5 +----
+ arch/arm/boot/dts/omap3-igep0030-common.dtsi | 5 +----
+ arch/arm/boot/dts/omap3-igep0030-rev-g.dts   | 5 +----
+ arch/arm/boot/dts/omap3-igep0030.dts         | 5 +----
+ 8 files changed, 10 insertions(+), 33 deletions(-)
 
-	http://patchwork.ozlabs.org/patch/916435/
-
-I prefer your solution, though, because the dummy is pretty redundant if
-we can just make this a hard-dependency and still get the same coverage.
-
-Thierry
-
---JgQwtEuHJzHdouWu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsXl5oACgkQ3SOs138+
-s6EhkQ/+Nb9QA68rmBNxxuyFBujn6V180hqcmJV/+5diFzHDzABHk+WvAV8sZN+e
-ngGg/65oOx+TRLLFHwbvKl0rzIh1k2BMGnpjZXcQvMFXzacf9Asgi6+7vecvedk0
-6fU6PX+Gro9AUq5MPxshKdh/84Nze7RZuI6knW5TbUIcAe8k0UJvgHduJkSLWWKE
-HDoCANXoLasVnH2zlgAdd545G7prAdfibCViAHBjB5MhBskHT9Qm6qzjrr/QnwBl
-z7HyWhDlsE6o667LbhM2ygdjPMPfWZ3gz1IxJLJzUEPw4TMTps3YFg9LHFSAo35S
-0IAo8gbTj29lipzIAhZcqRqeJmzMg5ORth37VmHUqqVmbqxKlM+kY1AAa4jH5N7x
-xTbs6MPoFyNewGGlGpO64J7+lGAEfCDkPu7QXXejZdl+f3bmkCptFpNgm6xlECnD
-s+0ac85ozmAdeSL9KcfSAoh651EY0sBzL6DswMwThBLDe26+eJyFECEaKO0L0Wvg
-Dy+/SINKyVnzzHaVRjAudPOJUx7K4r49B7RMEUCguoXL0T4LCfobGxt3VZSP+RmL
-dyaggBY7DBmK/CKHsv0+CsQP8BP1BHHhie2JE4AkhKxn341Vshd7vVNYzf7FFHq3
-aefP/py+5DgMw9eIs0OboqOwSuFn82kdP9Dh+hWmix5CMk3cBfU=
-=hpfr
------END PGP SIGNATURE-----
-
---JgQwtEuHJzHdouWu--
+diff --git a/arch/arm/boot/dts/am335x-igep0033.dtsi b/arch/arm/boot/dts/am335x-igep0033.dtsi
+index a5769a8f5fc8..c79066df4e0c 100644
+--- a/arch/arm/boot/dts/am335x-igep0033.dtsi
++++ b/arch/arm/boot/dts/am335x-igep0033.dtsi
+@@ -1,11 +1,8 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+- * am335x-igep0033.dtsi - Device Tree file for IGEP COM AQUILA AM335x
++ * Device Tree file for IGEP COM AQUILA AM335x
+  *
+  * Copyright (C) 2013 ISEE 2007 SL - http://www.isee.biz
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ /dts-v1/;
+diff --git a/arch/arm/boot/dts/omap3-igep.dtsi b/arch/arm/boot/dts/omap3-igep.dtsi
+index f33cc80c9dbc..9c02942a58a7 100644
+--- a/arch/arm/boot/dts/omap3-igep.dtsi
++++ b/arch/arm/boot/dts/omap3-igep.dtsi
+@@ -1,13 +1,11 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Common device tree for IGEP boards based on AM/DM37x
+  *
+  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
+  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
++
+ /dts-v1/;
+ 
+ #include "omap36xx.dtsi"
+diff --git a/arch/arm/boot/dts/omap3-igep0020-common.dtsi b/arch/arm/boot/dts/omap3-igep0020-common.dtsi
+index ecbec23af49f..9675ce2cf069 100644
+--- a/arch/arm/boot/dts/omap3-igep0020-common.dtsi
++++ b/arch/arm/boot/dts/omap3-igep0020-common.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Common Device Tree Source for IGEPv2
+  *
+  * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
+  * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include "omap3-igep.dtsi"
+diff --git a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
+index 321c2b7a4e9f..8b8959930d19 100644
+--- a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
++++ b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Device Tree Source for IGEPv2 Rev. F (TI OMAP AM/DM37x)
+  *
+  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
+  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include "omap3-igep0020-common.dtsi"
+diff --git a/arch/arm/boot/dts/omap3-igep0020.dts b/arch/arm/boot/dts/omap3-igep0020.dts
+index 33d6b4ead092..770b69f13c9e 100644
+--- a/arch/arm/boot/dts/omap3-igep0020.dts
++++ b/arch/arm/boot/dts/omap3-igep0020.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Device Tree Source for IGEPv2 Rev. C (TI OMAP AM/DM37x)
+  *
+  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
+  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include "omap3-igep0020-common.dtsi"
+diff --git a/arch/arm/boot/dts/omap3-igep0030-common.dtsi b/arch/arm/boot/dts/omap3-igep0030-common.dtsi
+index 443f71707437..9cd3e427ae22 100644
+--- a/arch/arm/boot/dts/omap3-igep0030-common.dtsi
++++ b/arch/arm/boot/dts/omap3-igep0030-common.dtsi
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Common Device Tree Source for IGEP COM MODULE
+  *
+  * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
+  * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include "omap3-igep.dtsi"
+diff --git a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
+index 76dc08868bfb..8b2d01e7996b 100644
+--- a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
++++ b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Device Tree Source for IGEP COM MODULE Rev. G (TI OMAP AM/DM37x)
+  *
+  * Copyright (C) 2014 Javier Martinez Canillas <javier@osg.samsung.com>
+  * Copyright (C) 2014 Enric Balletbo i Serra <eballetbo@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include "omap3-igep0030-common.dtsi"
+diff --git a/arch/arm/boot/dts/omap3-igep0030.dts b/arch/arm/boot/dts/omap3-igep0030.dts
+index 55b0cc4f5ee5..22329ae502c5 100644
+--- a/arch/arm/boot/dts/omap3-igep0030.dts
++++ b/arch/arm/boot/dts/omap3-igep0030.dts
+@@ -1,12 +1,9 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Device Tree Source for IGEP COM MODULE Rev. E (TI OMAP AM/DM37x)
+  *
+  * Copyright (C) 2012 Javier Martinez Canillas <javier@osg.samsung.com>
+  * Copyright (C) 2012 Enric Balletbo i Serra <eballetbo@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
+ 
+ #include "omap3-igep0030-common.dtsi"
+-- 
+2.17.1
