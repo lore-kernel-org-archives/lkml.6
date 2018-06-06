@@ -1,80 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ajRveAFu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A89B460290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BIxbYL1O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F41D601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752669AbeFFPJl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:09:41 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50456 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752136AbeFFPJh (ORCPT
+        id S1752304AbeFFFl4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 01:41:56 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:41262 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752112AbeFFFlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:09:37 -0400
-Date: Wed, 6 Jun 2018 08:09:05 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>, ocfs2-devel@oss.oracle.com
-Subject: Re: [PATCH 01/39] vfs: dedpue: return loff_t
-Message-ID: <20180606150905.GC9426@magnolia>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
- <20180529144339.16538-2-mszeredi@redhat.com>
- <20180604084336.GA11333@infradead.org>
- <CAJfpegun8HyjODXguHstxYrGE2nuSoCCicaHT3yfYWMkxxmVWg@mail.gmail.com>
+        Wed, 6 Jun 2018 01:41:52 -0400
+X-Google-Smtp-Source: ADUXVKJWmyCOxEaiZrdznrWE1e5C3rZciIZqvvtpWksYNNrDSXdv30sYZR2CIsc+suxGeOaZkJqM6A==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegun8HyjODXguHstxYrGE2nuSoCCicaHT3yfYWMkxxmVWg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8915 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=881
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806060173
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
+ <CAAFQd5D39CkA=GucUs7YOHwsdj0gbk55BiY_gSvArY_RH4uDkg@mail.gmail.com>
+ <2cf4f7e8-f9e6-d62b-45a8-2c348af4aafe@linaro.org> <CAAFQd5BFq+pdEpBmpw5QsO+m+fsAhexhqA_uJg1G39Mpv5E3HQ@mail.gmail.com>
+ <fd74c277-e8d3-a026-fbd2-914a029e8efe@linaro.org>
+In-Reply-To: <fd74c277-e8d3-a026-fbd2-914a029e8efe@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 6 Jun 2018 14:41:38 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AtjVdB2uZrvYs=VBr-0XfwmUc4NhD1yHv9L4sAOtZD2Q@mail.gmail.com>
+Message-ID: <CAAFQd5AtjVdB2uZrvYs=VBr-0XfwmUc4NhD1yHv9L4sAOtZD2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware device
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>, bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:33:22AM +0200, Miklos Szeredi wrote:
-> On Mon, Jun 4, 2018 at 10:43 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> > On Tue, May 29, 2018 at 04:43:01PM +0200, Miklos Szeredi wrote:
-> >> f_op->dedupe_file_range() gets a u64 length to dedup and returns an ssize_t
-> >> actual length deduped.  This breaks badly on 32bit archs since the returned
-> >> length will be truncated and possibly overflow into the sign bit (xfs and
-> >> ocfs2 are affected, btrfs limits actual length to 16MiB).
+On Tue, Jun 5, 2018 at 5:45 PM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
+>
+> Cc: Arnd
+>
+> On 06/05/2018 07:08 AM, Tomasz Figa wrote:
+> > On Mon, Jun 4, 2018 at 10:56 PM Stanimir Varbanov
+> > <stanimir.varbanov@linaro.org> wrote:
+> >>
+> >> Hi Tomasz,
+> >>
+> >> On 06/04/2018 04:18 PM, Tomasz Figa wrote:
+> >>> Hi Vikash,
+> >>>
+> >>> On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+> >>>> +static int __init venus_init(void)
+> >>>> +{
+> >>>> +       int ret;
+> >>>> +
+> >>>> +       ret = platform_driver_register(&qcom_video_firmware_driver);
+> >>>> +       if (ret)
+> >>>> +               return ret;
+> >>>
+> >>> Do we really need this firmware driver? As far as I can see, the
+> >>> approach used here should work even without any driver bound to the
+> >>> firmware device.
+> >>
+> >> We need device/driver bind because we need to call dma_configure() which
+> >> internally doing iommus sID parsing.
 > >
-> > Can we just make it return 0 vs errno?  The only time we return
-> > a different length than the one passed in is due to the btrfs cap.
+> > I can see some drivers calling of_dma_configure() directly:
+> > https://elixir.bootlin.com/linux/latest/ident/of_dma_configure
 > >
-> > Given that this API started out on btrfs we should just do the cap
-> > everywhere to not confuse userspace.
-> 
-> And that's a completely arbitrary cap; sure btrfs started out with
-> that, but there's no fundamental reason for that becoming the global
-> limit.  Xfs now added a different, larger limit, so based on what
-> reason should that limit be reduced?
-> 
-> I don't care either way, but at this stage I'm not going to change
-> this patch, unless there's a very good reason to do so, because if I
-> do someone will come and suggest another improvement, ad-infinitum...
+> > I'm not sure if it's more elegant, but should at least require less code.
+>
+> I think that in this case of non-TZ where we do iommu mapping by hand we
+> can use shared-dma-pool reserved memory see how venus_boot has been
+> implemented in the beginning [1].
 
-I think we should hoist the MAX_RW_COUNT/2 limit to the VFS helpers
-since afaict we generally cap max IO per call at MAX_RW_COUNT.  (I
-probably should've capped ocfs2 back when I did xfs, but forgot).  If
-btrfs wants to keep their lower (16M) limit then they're free to do so;
-the interface documentation allows for this.  One of the btrfs
-developers seems to be working on a patch series to raise the limit[1]
-anyway.
+I might have misunderstood something, but wasn't the shared-dma-pool
+about reserving physical memory, while the venus firmware problem is
+about reserving certain range of IOVA?
 
---D
+>
+> Arnd what do you think?
+>
+> Some background, we have a use-case where the memory for firmware needs
+> to be mapped by the venus driver by hand instead of TZ firmware calls.
+> I.e. we want to support both, iommu mapping from the driver and mapping
+> done by TZ firmware. How we will differentiate what mapping (TZ or
+> non-TZ) will be used is a separate issue.
+>
+> >
+> > By the way, can we really assume that probe of firmware platform
+> > device really completes before we call venus_boot()?
+>
+> I'd say we cannot.
 
-[1] https://www.spinics.net/lists/linux-btrfs/msg78392.html
+Looking at current implementation in driver core,
+of_platform_populate() would actually trigger a synchronous probe, so
+I guess it could work. However, I'm not sure if this is a general
+guarantee here or it's an implementation detail that shouldn't be
+relied on.
 
-> 
-> Thanks,
-> Miklos
+If we end up really need to have this platform_driver, I guess we
+could call platform_driver_probe() after of_platform_populate(),
+rather than pre-registering the driver. That seems to be the way to
+ensure that the probe is synchronous and we can also check that a
+matching device was found by the return value.
+
+Best regards,
+Tomasz
