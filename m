@@ -1,175 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CE207601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RwqgZ97m";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RwqgZ97m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21946607E8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932553AbeFFIeJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 04:34:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42812 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932520AbeFFIeF (ORCPT
+        id S1752221AbeFFLmW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 07:42:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43188 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752189AbeFFLmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 04:34:05 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH 1/7] Uprobes: Simplify uprobe_register() body
-Date: Wed,  6 Jun 2018 14:03:38 +0530
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
-References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18060608-4275-0000-0000-0000028AA926
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060608-4276-0000-0000-00003791B124
-Message-Id: <20180606083344.31320-2-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806060098
+        Wed, 6 Jun 2018 07:42:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A795607E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
+Date: Wed,  6 Jun 2018 17:11:45 +0530
+Message-Id: <1528285308-25477-2-git-send-email-anischal@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify uprobe_register() function body and let __uprobe_register()
-handle everything. Also move dependency functions around to fix build
-failures.
+For some of the GDSCs, there is a requirement to enable/disable the
+few clocks before turning on/off the gdsc power domain. Add support
+for the same by specifying a list of clk_hw pointers per gdsc and
+enable/disable them along with power domain on/off callbacks.
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
- kernel/events/uprobes.c | 69 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 36 insertions(+), 33 deletions(-)
+ drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h |  5 +++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 1725b90..c377a85 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -840,13 +840,8 @@ static inline struct map_info *free_map_info(struct map_info *info)
- 	return err;
- }
- 
--static int __uprobe_register(struct uprobe *uprobe, struct uprobe_consumer *uc)
--{
--	consumer_add(uprobe, uc);
--	return register_for_each_vma(uprobe, uc);
--}
--
--static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
-+static void
-+__uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
- {
- 	int err;
- 
-@@ -860,24 +855,46 @@ static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *u
- }
- 
- /*
-- * uprobe_register - register a probe
-+ * uprobe_unregister - unregister a already registered probe.
-+ * @inode: the file in which the probe has to be removed.
-+ * @offset: offset from the start of the file.
-+ * @uc: identify which probe if multiple probes are colocated.
-+ */
-+void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-+{
-+	struct uprobe *uprobe;
-+
-+	uprobe = find_uprobe(inode, offset);
-+	if (WARN_ON(!uprobe))
-+		return;
-+
-+	down_write(&uprobe->register_rwsem);
-+	__uprobe_unregister(uprobe, uc);
-+	up_write(&uprobe->register_rwsem);
-+	put_uprobe(uprobe);
-+}
-+EXPORT_SYMBOL_GPL(uprobe_unregister);
-+
-+/*
-+ * __uprobe_register - register a probe
-  * @inode: the file in which the probe has to be placed.
-  * @offset: offset from the start of the file.
-  * @uc: information on howto handle the probe..
-  *
-- * Apart from the access refcount, uprobe_register() takes a creation
-+ * Apart from the access refcount, __uprobe_register() takes a creation
-  * refcount (thro alloc_uprobe) if and only if this @uprobe is getting
-  * inserted into the rbtree (i.e first consumer for a @inode:@offset
-  * tuple).  Creation refcount stops uprobe_unregister from freeing the
-  * @uprobe even before the register operation is complete. Creation
-  * refcount is released when the last @uc for the @uprobe
-- * unregisters. Caller of uprobe_register() is required to keep @inode
-+ * unregisters. Caller of __uprobe_register() is required to keep @inode
-  * (and the containing mount) referenced.
-  *
-  * Return errno if it cannot successully install probes
-  * else return 0 (success)
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a077133..b6adca1 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -12,6 +12,8 @@
   */
--int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-+static int __uprobe_register(struct inode *inode, loff_t offset,
-+			     struct uprobe_consumer *uc)
- {
- 	struct uprobe *uprobe;
- 	int ret;
-@@ -904,7 +921,8 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
- 	down_write(&uprobe->register_rwsem);
- 	ret = -EAGAIN;
- 	if (likely(uprobe_is_active(uprobe))) {
--		ret = __uprobe_register(uprobe, uc);
-+		consumer_add(uprobe, uc);
-+		ret = register_for_each_vma(uprobe, uc);
- 		if (ret)
- 			__uprobe_unregister(uprobe, uc);
- 	}
-@@ -915,6 +933,12 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
- 		goto retry;
- 	return ret;
+
+ #include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/jiffies.h>
+@@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
+ 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+ 			   GMEM_RESET_MASK, 0);
  }
 +
-+int uprobe_register(struct inode *inode, loff_t offset,
-+		    struct uprobe_consumer *uc)
++static int gdsc_clk_prepare_enable(struct gdsc *sc)
 +{
-+	return __uprobe_register(inode, offset, uc);
++	int i, ret;
++
++	for (i = 0; i < sc->clk_count; i++) {
++		ret = clk_prepare_enable(sc->clk_hws[i]->clk);
++		if (ret) {
++			for (i--; i >= 0; i--)
++				clk_disable_unprepare(sc->clk_hws[i]->clk);
++			return ret;
++		}
++	}
++	return 0;
 +}
- EXPORT_SYMBOL_GPL(uprobe_register);
- 
- /*
-@@ -946,27 +970,6 @@ int uprobe_apply(struct inode *inode, loff_t offset,
- 	return ret;
- }
- 
--/*
-- * uprobe_unregister - unregister a already registered probe.
-- * @inode: the file in which the probe has to be removed.
-- * @offset: offset from the start of the file.
-- * @uc: identify which probe if multiple probes are colocated.
-- */
--void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
--{
--	struct uprobe *uprobe;
--
--	uprobe = find_uprobe(inode, offset);
--	if (WARN_ON(!uprobe))
--		return;
--
--	down_write(&uprobe->register_rwsem);
--	__uprobe_unregister(uprobe, uc);
--	up_write(&uprobe->register_rwsem);
--	put_uprobe(uprobe);
--}
--EXPORT_SYMBOL_GPL(uprobe_unregister);
--
- static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
++
++static void gdsc_clk_disable_unprepare(struct gdsc *sc)
++{
++	int i;
++
++	for (i = 0; i < sc->clk_count; i++)
++		clk_disable_unprepare(sc->clk_hws[i]->clk);
++}
++
+ static int gdsc_enable(struct generic_pm_domain *domain)
  {
- 	struct vm_area_struct *vma;
--- 
-1.8.3.1
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+
++	if (sc->clk_count) {
++		ret = gdsc_clk_prepare_enable(sc);
++		if (ret)
++			return ret;
++	}
++
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_deassert_reset(sc);
+
+@@ -260,6 +292,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 		udelay(1);
+ 	}
+
++	if (sc->clk_count)
++		gdsc_clk_disable_unprepare(sc);
++
+ 	return 0;
+ }
+
+@@ -268,6 +303,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+
++	if (sc->clk_count) {
++		ret = gdsc_clk_prepare_enable(sc);
++		if (ret)
++			return ret;
++	}
++
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_assert_reset(sc);
+
+@@ -299,6 +340,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	if (sc->flags & CLAMP_IO)
+ 		gdsc_assert_clamp_io(sc);
+
++	if (sc->clk_count)
++		gdsc_clk_disable_unprepare(sc);
++
+ 	return 0;
+ }
+
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index bd1f2c7..59957d7 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -17,6 +17,7 @@
+ #include <linux/err.h>
+ #include <linux/pm_domain.h>
+
++struct clk_hw;
+ struct regmap;
+ struct reset_controller_dev;
+
+@@ -32,6 +33,8 @@
+  * @resets: ids of resets associated with this gdsc
+  * @reset_count: number of @resets
+  * @rcdev: reset controller
++ * @clk_count: number of associated clocks
++ * @clk_hws: clk_hw pointers for associated clocks with gdsc
+  */
+ struct gdsc {
+ 	struct generic_pm_domain	pd;
+@@ -60,6 +63,8 @@ struct gdsc {
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
++	unsigned int			clk_count;
++	struct clk_hw			*clk_hws[];
+ };
+
+ struct gdsc_desc {
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
