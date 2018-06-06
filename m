@@ -1,60 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BC3B60764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="lS8sIbFu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39BF760555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932611AbeFFJfZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:35:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44196 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932395AbeFFJfX (ORCPT
+        id S1752346AbeFFJuc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:50:32 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:55658 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932441AbeFFJuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:35:23 -0400
-From: Colin King <colin.king@canonical.com>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: twl6040: make pointer dmic_codec_dev static
-Date: Wed,  6 Jun 2018 10:35:04 +0100
-Message-Id: <20180606093504.30255-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 6 Jun 2018 05:50:10 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: matwey.kornilov@gmail.com,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Kees Cook <keescook@chromium.org>, Sean Young <sean@mess.org>,
+        linux-serial@vger.kernel.org (open list:SERIAL DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 4/4] serial: core: Mask mctrl with TIOCM_RTS too if rs485 on and RTS_AFTER_SEND set.
+Date: Wed,  6 Jun 2018 11:49:39 +0200
+Message-Id: <20180606094942.71190-3-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
+References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
+ <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+If rs485 is enabled and RTS_AFTER_SEND is set on startup need to keep
+TIOCM_RTS asserted to keep rs485 transceiver in RX when idle.
 
-The pointer dmic_codec_dev is local to the source and does not need
-to be in global scope, so make it static.
+Check if rs485 is on and RTS_AFTER_SEND is set and mask port->mctrl with
+TIOCM_RTS too and not only TIOCM_DTR.
 
-Cleans up sparse warning:
-warning: symbol 'dmic_codec_dev' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
- sound/soc/omap/omap-abe-twl6040.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/serial_core.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
-index 15ccbf479c96..d5ae9eb8c756 100644
---- a/sound/soc/omap/omap-abe-twl6040.c
-+++ b/sound/soc/omap/omap-abe-twl6040.c
-@@ -40,7 +40,7 @@ struct abe_twl6040 {
- 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
- };
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 0466f9f08a91..06d9441f6d20 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -2288,6 +2288,16 @@ uart_configure_port(struct uart_driver *drv, struct uart_state *state,
  
--struct platform_device *dmic_codec_dev;
-+static struct platform_device *dmic_codec_dev;
+ 	if (port->type != PORT_UNKNOWN) {
+ 		unsigned long flags;
++		int rs485_on = port->rs485_config &&
++			(port->rs485.flags & SER_RS485_ENABLED);
++		int RTS_after_send = !!(port->rs485.flags &
++				SER_RS485_RTS_AFTER_SEND);
++		int mctrl;
++
++		if (rs485_on && RTS_after_send)
++			mctrl = port->mctrl & (TIOCM_DTR | TIOCM_RTS);
++		else
++			mctrl = port->mctrl & TIOCM_DTR;
  
- static int omap_abe_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_pcm_hw_params *params)
+ 		uart_report_port(drv, port);
+ 
+@@ -2300,7 +2310,7 @@ uart_configure_port(struct uart_driver *drv, struct uart_state *state,
+ 		 * We probably don't need a spinlock around this, but
+ 		 */
+ 		spin_lock_irqsave(&port->lock, flags);
+-		port->ops->set_mctrl(port, port->mctrl & TIOCM_DTR);
++		port->ops->set_mctrl(port, mctrl);
+ 		spin_unlock_irqrestore(&port->lock, flags);
+ 
+ 		/*
 -- 
-2.17.0
+2.17.1
