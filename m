@@ -1,86 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2192C60290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18C4C60764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933560AbeFFQso (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:48:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:43076 "EHLO foss.arm.com"
+        id S1752210AbeFFOsX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:48:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60986 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932390AbeFFQsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:48:43 -0400
-Date: Wed, 6 Jun 2018 17:48:39 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, robin.murphy@arm.com
-Subject: Re: [PATCH v2 3/5] arm_pmu: Add support for 64bit event counters
-Message-ID: <20180606164838.zeuygsp4teq64zor@lakrids.cambridge.arm.com>
-References: <1527591356-10934-1-git-send-email-suzuki.poulose@arm.com>
- <1527591356-10934-4-git-send-email-suzuki.poulose@arm.com>
+        id S1752047AbeFFOsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 10:48:22 -0400
+Date: Wed, 6 Jun 2018 16:45:35 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        Chris Mason <clm@fb.com>, jbacik@fb.com, dsterba@suse.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: btrfs: Change return type to vm_fault_t
+Message-ID: <20180606144535.GH3539@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Souptick Joarder <jrdr.linux@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@fb.com>,
+        jbacik@fb.com, dsterba@suse.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180605154635.GA27201@jordon-HP-15-Notebook-PC>
+ <20180606132228.GF3539@twin.jikos.cz>
+ <CAFqt6zY-q4xV+PAFKXfa+NjNYyiBy4K5VSykKqbeN0XGpCTudw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527591356-10934-4-git-send-email-suzuki.poulose@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAFqt6zY-q4xV+PAFKXfa+NjNYyiBy4K5VSykKqbeN0XGpCTudw@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 11:55:54AM +0100, Suzuki K Poulose wrote:
-> Each PMU has a set of 32bit event counters. But in some
-> special cases, the events could be counted using counters
-> which are effectively 64bit wide.
+On Wed, Jun 06, 2018 at 07:39:53PM +0530, Souptick Joarder wrote:
+> >> @@ -8885,8 +8885,9 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
+> >>       char *kaddr;
+> >>       unsigned long zero_start;
+> >>       loff_t size;
+> >> -     int ret;
+> >> +     int err;
+> >
+> > Please use ret2 for the variable name. We're leaving the err/ret naming
+> > pattern and use 'ret' to match the function return value and ret2, ret3
+> > for the temporary return values.
 > 
-> e.g, Arm V8 PMUv3 has a 64 bit cycle counter which can count
-> only the CPU cycles. Also, the PMU can chain the event counters
-> to effectively count as a 64bit counter.
+> Is this new pattern specific to fs/btrfs file system ?
+
+Yes it is, you're not expected to know it in advance but as this was not
+the only thing to update in the patch I did not fix it myself.
+
+> >> -     ret = 0;
+> >> +     err = 0;
+> >>
+> >>       /* page is wholly or partially inside EOF */
+> >>       if (page_start + PAGE_SIZE > size)
+> >> @@ -9009,11 +9007,11 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
+> >>       unlock_extent_cached(io_tree, page_start, page_end, &cached_state);
+> >>
+> >>  out_unlock:
+> >> -     if (!ret) {
+> >> +     if (!err) {
+> >>               btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
+> >>               sb_end_pagefault(inode->i_sb);
+> >>               extent_changeset_free(data_reserved);
+> >> -             return VM_FAULT_LOCKED;
+> >> +             ret = VM_FAULT_LOCKED;
+> >
+> > That's not a direct change as it changes the code flow and lets the
+> > branch continue. As the error handling and cleanup code is partially
+> > done in this branch continuing wrong AFAICS.
 > 
-> Add support for tracking the events that uses 64bit counters.
-> This only affects the periods set for each counter in the core
-> driver.
-> 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Changes since v1:
->  - Rename ARMPMU_EVT_LONG => ARMPMU_EVT_64BIT
-> ---
->  drivers/perf/arm_pmu.c       | 14 ++++++++------
->  include/linux/perf/arm_pmu.h |  6 ++++++
->  2 files changed, 14 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index 8962d26..ff858e6 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -28,9 +28,10 @@
->  static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
->  static DEFINE_PER_CPU(int, cpu_irq);
->  
-> -static inline u64 arm_pmu_max_period(void)
-> +static inline u64 arm_pmu_event_max_period(struct perf_event *event)
->  {
-> -	return (1ULL << 32) - 1;
-> +	return (event->hw.flags & ARMPMU_EVT_64BIT) ?
-> +		~0ULL : (1ULL << 32) - 1;
->  }
+> Sorry about it, I will correct and send v2.
+> Is it possible to get it merge in 4.18 / 4.18-rc-X ?
 
-Could we please have:
-
-static inline u64 arm_pmu_event_max_period(struct perf_event *event)
-{
-	if (event->hw.flags & ARMPMU_EVT_64BIT)
-		return GENMASK_ULL(63, 0);
-	else
-		return GENMASK_ULL(31, 0);
-}
-
-... since that's obviously balanced, with both values generated in the
-same way.
-
-Otherwise this looks good to me.
-
-Thanks,
-Mark.
+Ok.
