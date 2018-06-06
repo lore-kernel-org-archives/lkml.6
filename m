@@ -1,152 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9DA1F607B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.cz
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 337BF60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeFFNZR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:25:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51470 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750795AbeFFNZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:25:16 -0400
-Date: Wed, 6 Jun 2018 15:22:28 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: willy@infradead.org, clm@fb.com, jbacik@fb.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: btrfs: Change return type to vm_fault_t
-Message-ID: <20180606132228.GF3539@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Souptick Joarder <jrdr.linux@gmail.com>,
-        willy@infradead.org, clm@fb.com, jbacik@fb.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180605154635.GA27201@jordon-HP-15-Notebook-PC>
+        id S1752122AbeFFMQD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:16:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39269 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751849AbeFFMQC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:16:02 -0400
+Date: Wed, 6 Jun 2018 05:15:47 -0700
+From: tip-bot for Konrad Rzeszutek Wilk <tipbot@zytor.com>
+Message-ID: <tip-24809860012e0130fbafe536709e08a22b3e959e@git.kernel.org>
+Cc: konrad.wilk@oracle.com, dwmw@amazon.co.uk, thomas.lendacky@amd.com,
+        bp@suse.de, Janakarajan.Natarajan@amd.com, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        luto@kernel.org
+Reply-To: hpa@zytor.com, tglx@linutronix.de, Janakarajan.Natarajan@amd.com,
+          mingo@kernel.org, luto@kernel.org, linux-kernel@vger.kernel.org,
+          dwmw@amazon.co.uk, konrad.wilk@oracle.com, bp@suse.de,
+          thomas.lendacky@amd.com
+In-Reply-To: <20180601145921.9500-2-konrad.wilk@oracle.com>
+References: <20180601145921.9500-2-konrad.wilk@oracle.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/bugs: Add AMD's variant of SSB_NO
+Git-Commit-ID: 24809860012e0130fbafe536709e08a22b3e959e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180605154635.GA27201@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 09:16:35PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler. For
-> now, this is just documenting that the function returns
-> a VM_FAULT value rather than an errno. Once all instances
-> are converted, vm_fault_t will become a distinct type.
-> 
-> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
-> 
-> vmf_error() is the newly introduce inline function
-> in 4.17-rc6.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  fs/btrfs/ctree.h |  2 +-
->  fs/btrfs/inode.c | 28 +++++++++++++---------------
->  2 files changed, 14 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index 0d422c9..1f52d9fd 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -3218,7 +3218,7 @@ int btrfs_merge_bio_hook(struct page *page, unsigned long offset,
->  			 size_t size, struct bio *bio,
->  			 unsigned long bio_flags);
->  void btrfs_set_range_writeback(void *private_data, u64 start, u64 end);
-> -int btrfs_page_mkwrite(struct vm_fault *vmf);
-> +vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf);
->  int btrfs_readpage(struct file *file, struct page *page);
->  void btrfs_evict_inode(struct inode *inode);
->  int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc);
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 0b86cf1..20bde86 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -8873,7 +8873,7 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
->   * beyond EOF, then the page is guaranteed safe against truncation until we
->   * unlock the page.
->   */
-> -int btrfs_page_mkwrite(struct vm_fault *vmf)
-> +vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
->  {
->  	struct page *page = vmf->page;
->  	struct inode *inode = file_inode(vmf->vma->vm_file);
-> @@ -8885,8 +8885,9 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->  	char *kaddr;
->  	unsigned long zero_start;
->  	loff_t size;
-> -	int ret;
-> +	int err;
+Commit-ID:  24809860012e0130fbafe536709e08a22b3e959e
+Gitweb:     https://git.kernel.org/tip/24809860012e0130fbafe536709e08a22b3e959e
+Author:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+AuthorDate: Fri, 1 Jun 2018 10:59:19 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 6 Jun 2018 14:13:16 +0200
 
-Please use ret2 for the variable name. We're leaving the err/ret naming
-pattern and use 'ret' to match the function return value and ret2, ret3
-for the temporary return values.
+x86/bugs: Add AMD's variant of SSB_NO
 
->  	int reserved = 0;
-> +	vm_fault_t ret;
->  	u64 reserved_space;
->  	u64 page_start;
->  	u64 page_end;
-> @@ -8907,17 +8908,14 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->  	 * end up waiting indefinitely to get a lock on the page currently
->  	 * being processed by btrfs_page_mkwrite() function.
->  	 */
-> -	ret = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
-> +	err = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
->  					   reserved_space);
-> -	if (!ret) {
-> -		ret = file_update_time(vmf->vma->vm_file);
-> +	if (!err) {
-> +		err = file_update_time(vmf->vma->vm_file);
->  		reserved = 1;
->  	}
-> -	if (ret) {
-> -		if (ret == -ENOMEM)
-> -			ret = VM_FAULT_OOM;
-> -		else /* -ENOSPC, -EIO, etc */
-> -			ret = VM_FAULT_SIGBUS;
-> +	if (err) {
-> +		ret = vmf_error(err);
->  		if (reserved)
->  			goto out;
->  		goto out_noreserve;
-> @@ -8976,15 +8974,15 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->  			  EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
->  			  0, 0, &cached_state);
->  
-> -	ret = btrfs_set_extent_delalloc(inode, page_start, end, 0,
-> +	err = btrfs_set_extent_delalloc(inode, page_start, end, 0,
->  					&cached_state, 0);
-> -	if (ret) {
-> +	if (err) {
->  		unlock_extent_cached(io_tree, page_start, page_end,
->  				     &cached_state);
->  		ret = VM_FAULT_SIGBUS;
->  		goto out_unlock;
->  	}
-> -	ret = 0;
-> +	err = 0;
->  
->  	/* page is wholly or partially inside EOF */
->  	if (page_start + PAGE_SIZE > size)
-> @@ -9009,11 +9007,11 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
->  	unlock_extent_cached(io_tree, page_start, page_end, &cached_state);
->  
->  out_unlock:
-> -	if (!ret) {
-> +	if (!err) {
->  		btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
->  		sb_end_pagefault(inode->i_sb);
->  		extent_changeset_free(data_reserved);
-> -		return VM_FAULT_LOCKED;
-> +		ret = VM_FAULT_LOCKED;
+The AMD document outlining the SSBD handling
+124441_AMD64_SpeculativeStoreBypassDisable_Whitepaper_final.pdf
+mentions that the CPUID 8000_0008.EBX[26] will mean that the
+speculative store bypass disable is no longer needed.
 
-That's not a direct change as it changes the code flow and lets the
-branch continue. As the error handling and cleanup code is partially
-done in this branch continuing wrong AFAICS.
+A copy of this document is available at:
+    https://bugzilla.kernel.org/show_bug.cgi?id=199889
 
->  	}
->  	unlock_page(page);
->  out:
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Cc: kvm@vger.kernel.org
+Cc: andrew.cooper3@citrix.com
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180601145921.9500-2-konrad.wilk@oracle.com
+
+---
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/kernel/cpu/common.c       | 3 ++-
+ arch/x86/kvm/cpuid.c               | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index fb00a2fca990..b6d7ce32927a 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -283,6 +283,7 @@
+ #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
+ #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
++#define X86_FEATURE_AMD_SSB_NO		(13*32+26) /* "" Speculative Store Bypass is fixed in hardware. */
+ 
+ /* Thermal and Power Management Leaf, CPUID level 0x00000006 (EAX), word 14 */
+ #define X86_FEATURE_DTHERM		(14*32+ 0) /* Digital Thermal Sensor */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 95c8e507580d..8e3f062f462d 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -992,7 +992,8 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, ia32_cap);
+ 
+ 	if (!x86_match_cpu(cpu_no_spec_store_bypass) &&
+-	   !(ia32_cap & ARCH_CAP_SSB_NO))
++	   !(ia32_cap & ARCH_CAP_SSB_NO) &&
++	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
+ 
+ 	if (x86_match_cpu(cpu_no_meltdown))
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 92bf2f2e7cdd..132f8a58692e 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -379,7 +379,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD);
++		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD) | F(AMD_SSB_NO);
+ 
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_cpuid_C000_0001_edx_x86_features =
