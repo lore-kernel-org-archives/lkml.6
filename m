@@ -1,65 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22A1860555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wLraYgQe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4CE7960263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932553AbeFFKZJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:25:09 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:49488 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932304AbeFFKZI (ORCPT
+        id S1752189AbeFFEqf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 00:46:35 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:44266 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeFFEqc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:25:08 -0400
-Date: Wed, 6 Jun 2018 12:25:01 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Mark Rutland <mark.rutland@arm.com>
-cc: Dan Williams <dan.j.williams@intel.com>, mingo@kernel.org,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/spectre_v1: Disable compiler optimizations over
- array_index_mask_nospec()
-In-Reply-To: <20180530060546.jnjoltsturoduohh@salmiak>
-Message-ID: <alpine.DEB.2.21.1806061223560.1579@nanos.tec.linutronix.de>
-References: <152726886796.10827.14538693708255560877.stgit@dwillia2-desk3.amr.corp.intel.com> <20180530060546.jnjoltsturoduohh@salmiak>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 6 Jun 2018 00:46:32 -0400
+X-Google-Smtp-Source: ADUXVKKLloMTSFnMq0H1EdHPgMv61muKwh5Ti6OJc4Dbhv7zdVS1Iyf8xDWgwweA/YYKZuxNV0U35pkb1bHDAcv0U/s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
+ <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org> <20180605210758.GA19888@rob-hp-laptop>
+In-Reply-To: <20180605210758.GA19888@rob-hp-laptop>
+From: Tomasz Figa <tfiga@google.com>
+Date: Wed, 6 Jun 2018 13:46:20 +0900
+Message-ID: <CAAFQd5DGKnU15pjF2+eyMUaSuE0FCr2FMF90WrJb+kXt80xBCw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware device
+To: Rob Herring <robh@kernel.org>
+Cc: vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>, bjorn.andersson@linaro.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandre Courbot <acourbot@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan,
+Hi Rob,
 
-On Wed, 30 May 2018, Mark Rutland wrote:
-> > diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
-> > index 042b5e892ed1..41f7435c84a7 100644
-> > --- a/arch/x86/include/asm/barrier.h
-> > +++ b/arch/x86/include/asm/barrier.h
-> > @@ -38,10 +38,11 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
-> >  {
-> >  	unsigned long mask;
-> >  
-> > -	asm ("cmp %1,%2; sbb %0,%0;"
-> > +	asm volatile ("cmp %1,%2; sbb %0,%0;"
-> >  			:"=r" (mask)
-> >  			:"g"(size),"r" (index)
-> >  			:"cc");
-> > +	barrier();
-> >  	return mask;
-> >  }
-> 
-> What does the barrier() prevent?
-> 
-> I don't think that inhibits the insertion of branches, and AFAIK the volatile
-> is sufficient to prevent elision of identical array_idx_nospec() calls.
-> 
-> I don't have an objection to it, regardless.
-> 
-> So long as the example is updated in the commit message, feel free to add:
+On Wed, Jun 6, 2018 at 6:08 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Sat, Jun 02, 2018 at 01:56:08AM +0530, Vikash Garodia wrote:
+> > A separate child device is added for video firmware.
+> > This is needed to
+> > [1] configure the firmware context bank with the desired SID.
+> > [2] ensure that the iova for firmware region is from 0x0.
+> >
+> > Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> > ---
+> >  .../devicetree/bindings/media/qcom,venus.txt       |  8 +++-
+> >  drivers/media/platform/qcom/venus/core.c           | 48 +++++++++++++++++++---
+> >  drivers/media/platform/qcom/venus/firmware.c       | 20 ++++++++-
+> >  drivers/media/platform/qcom/venus/firmware.h       |  2 +
+> >  4 files changed, 71 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> > index 00d0d1b..701cbe8 100644
+> > --- a/Documentation/devicetree/bindings/media/qcom,venus.txt
+> > +++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> > @@ -53,7 +53,7 @@
+> >
+> >  * Subnodes
+> >  The Venus video-codec node must contain two subnodes representing
+> > -video-decoder and video-encoder.
+> > +video-decoder and video-encoder, one optional firmware subnode.
+> >
+> >  Every of video-encoder or video-decoder subnode should have:
+> >
+> > @@ -79,6 +79,8 @@ Every of video-encoder or video-decoder subnode should have:
+> >                   power domain which is responsible for collapsing
+> >                   and restoring power to the subcore.
+> >
+> > +The firmware sub node must contain the iommus specifiers for ARM9.
+> > +
+> >  * An Example
+> >       video-codec@1d00000 {
+> >               compatible = "qcom,msm8916-venus";
+> > @@ -105,4 +107,8 @@ Every of video-encoder or video-decoder subnode should have:
+> >                       clock-names = "core";
+> >                       power-domains = <&mmcc VENUS_CORE1_GDSC>;
+> >               };
+> > +             venus-firmware {
+> > +                     compatible = "qcom,venus-firmware-no-tz";
+> > +                     iommus = <&apps_smmu 0x10b2 0x0>;
+>
+> This mostly looks like you are adding a node in order to create a
+> platform device. DT is not the only way to create platform devices and
+> shouldn't be used when the device is not really a separate h/w device.
+> Plus it seems like it is debatable that you even need a driver.
+>
+> For iommus, just move it up to the parent (or add to existing prop).
 
-Any update on this?
+As far as I understood the issue from reading this series and also
+talking a bit with Stanimir, there are multiple (physical?) ports from
+the Venus hardware block and that includes one dedicated for firmware
+loading, which has IOVA range restrictions up to 6 MiBs or something
+like that.
 
-Thanks,
+If we add the firmware port to the iommus property of the main node,
+we would bind it to the same IOVA address space as the other ports and
+so it would be part of the main full 32-bit IOMMU domain.
 
-	tglx
+Best regards,
+Tomasz
