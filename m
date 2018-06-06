@@ -1,116 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BIxbYL1O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F41D601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDD2qFSP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A54A5601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752304AbeFFFl4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 01:41:56 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:41262 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeFFFlw (ORCPT
+        id S932632AbeFFKAi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:00:38 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54024 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932554AbeFFKAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 01:41:52 -0400
-X-Google-Smtp-Source: ADUXVKJWmyCOxEaiZrdznrWE1e5C3rZciIZqvvtpWksYNNrDSXdv30sYZR2CIsc+suxGeOaZkJqM6A==
-MIME-Version: 1.0
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
- <1527884768-22392-6-git-send-email-vgarodia@codeaurora.org>
- <CAAFQd5D39CkA=GucUs7YOHwsdj0gbk55BiY_gSvArY_RH4uDkg@mail.gmail.com>
- <2cf4f7e8-f9e6-d62b-45a8-2c348af4aafe@linaro.org> <CAAFQd5BFq+pdEpBmpw5QsO+m+fsAhexhqA_uJg1G39Mpv5E3HQ@mail.gmail.com>
- <fd74c277-e8d3-a026-fbd2-914a029e8efe@linaro.org>
-In-Reply-To: <fd74c277-e8d3-a026-fbd2-914a029e8efe@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Wed, 6 Jun 2018 14:41:38 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AtjVdB2uZrvYs=VBr-0XfwmUc4NhD1yHv9L4sAOtZD2Q@mail.gmail.com>
-Message-ID: <CAAFQd5AtjVdB2uZrvYs=VBr-0XfwmUc4NhD1yHv9L4sAOtZD2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] venus: register separate driver for firmware device
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>, bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Jun 2018 06:00:34 -0400
+X-Google-Smtp-Source: ADUXVKLBz1mjQASAU/cUPB8M5sLvSgUpn/xqJTKPrjUlp/ZucisN8MsRDRWFqIgQkrSeGwvs3QyVPQ==
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 11/14] mfd: da9063: Add custom IRQ map for DA9063L
+Date: Wed,  6 Jun 2018 12:00:00 +0200
+Message-Id: <20180606100003.17067-11-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 5:45 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Cc: Arnd
->
-> On 06/05/2018 07:08 AM, Tomasz Figa wrote:
-> > On Mon, Jun 4, 2018 at 10:56 PM Stanimir Varbanov
-> > <stanimir.varbanov@linaro.org> wrote:
-> >>
-> >> Hi Tomasz,
-> >>
-> >> On 06/04/2018 04:18 PM, Tomasz Figa wrote:
-> >>> Hi Vikash,
-> >>>
-> >>> On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
-> >>>> +static int __init venus_init(void)
-> >>>> +{
-> >>>> +       int ret;
-> >>>> +
-> >>>> +       ret = platform_driver_register(&qcom_video_firmware_driver);
-> >>>> +       if (ret)
-> >>>> +               return ret;
-> >>>
-> >>> Do we really need this firmware driver? As far as I can see, the
-> >>> approach used here should work even without any driver bound to the
-> >>> firmware device.
-> >>
-> >> We need device/driver bind because we need to call dma_configure() which
-> >> internally doing iommus sID parsing.
-> >
-> > I can see some drivers calling of_dma_configure() directly:
-> > https://elixir.bootlin.com/linux/latest/ident/of_dma_configure
-> >
-> > I'm not sure if it's more elegant, but should at least require less code.
->
-> I think that in this case of non-TZ where we do iommu mapping by hand we
-> can use shared-dma-pool reserved memory see how venus_boot has been
-> implemented in the beginning [1].
+The DA9063L does not have an RTC. Add custom IRQ map for DA9063L to
+ignore the Alarm and Tick IRQs from the PMIC.
 
-I might have misunderstood something, but wasn't the shared-dma-pool
-about reserving physical memory, while the venus firmware problem is
-about reserving certain range of IOVA?
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+V3: New patch
+V4: - Formatting fixes
+    - Drop extra newline in da9063l_irq_chip
+    - Drop mention of the buggy datasheet in commit message
+V5: Rebase on top of new 01 and 02 patches
+---
+ drivers/mfd/da9063-irq.c | 81 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 79 insertions(+), 2 deletions(-)
 
->
-> Arnd what do you think?
->
-> Some background, we have a use-case where the memory for firmware needs
-> to be mapped by the venus driver by hand instead of TZ firmware calls.
-> I.e. we want to support both, iommu mapping from the driver and mapping
-> done by TZ firmware. How we will differentiate what mapping (TZ or
-> non-TZ) will be used is a separate issue.
->
-> >
-> > By the way, can we really assume that probe of firmware platform
-> > device really completes before we call venus_boot()?
->
-> I'd say we cannot.
-
-Looking at current implementation in driver core,
-of_platform_populate() would actually trigger a synchronous probe, so
-I guess it could work. However, I'm not sure if this is a general
-guarantee here or it's an implementation detail that shouldn't be
-relied on.
-
-If we end up really need to have this platform_driver, I guess we
-could call platform_driver_probe() after of_platform_populate(),
-rather than pre-registering the driver. That seems to be the way to
-ensure that the probe is synchronous and we can also check that a
-matching device was found by the return value.
-
-Best regards,
-Tomasz
+diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+index 579947f83486..ecc0c8ce6c58 100644
+--- a/drivers/mfd/da9063-irq.c
++++ b/drivers/mfd/da9063-irq.c
+@@ -102,8 +102,81 @@ static const struct regmap_irq_chip da9063_irq_chip = {
+ 	.init_ack_masked = true,
+ };
+ 
++static const struct regmap_irq da9063l_irqs[] = {
++	/* DA9063 event A register */
++	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
++	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
++		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
++	/* DA9063 event B register */
++	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
++	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
++	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
++	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
++	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
++	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
++	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
++	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
++		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
++	/* DA9063 event C register */
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
++		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
++	/* DA9063 event D register */
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
++	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
++		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
++};
++
++static const struct regmap_irq_chip da9063l_irq_chip = {
++	.name = "da9063l-irq",
++	.irqs = da9063l_irqs,
++	.num_irqs = ARRAY_SIZE(da9063l_irqs),
++	.num_regs = 4,
++	.status_base = DA9063_REG_EVENT_A,
++	.mask_base = DA9063_REG_IRQ_MASK_A,
++	.ack_base = DA9063_REG_EVENT_A,
++	.init_ack_masked = true,
++};
++
+ int da9063_irq_init(struct da9063 *da9063)
+ {
++	const struct regmap_irq_chip *irq_chip;
+ 	int ret;
+ 
+ 	if (!da9063->chip_irq) {
+@@ -111,11 +184,15 @@ int da9063_irq_init(struct da9063 *da9063)
+ 		return -EINVAL;
+ 	}
+ 
++	if (da9063->type == PMIC_TYPE_DA9063)
++		irq_chip = &da9063_irq_chip;
++	else
++		irq_chip = &da9063l_irq_chip;
++
+ 	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
+ 			da9063->chip_irq,
+ 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
+-			da9063->irq_base, &da9063_irq_chip,
+-			&da9063->regmap_irq);
++			da9063->irq_base, irq_chip, &da9063->regmap_irq);
+ 	if (ret) {
+ 		dev_err(da9063->dev, "Failed to reguest IRQ %d: %d\n",
+ 				da9063->chip_irq, ret);
+-- 
+2.16.2
