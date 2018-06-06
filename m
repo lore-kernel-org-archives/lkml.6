@@ -1,136 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="LblwiefC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 569A760555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FFB8606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932573AbeFFJkh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:40:37 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36429 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932518AbeFFJke (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:40:34 -0400
-X-Google-Smtp-Source: ADUXVKLPea3rMQEQbmvc3hbUjGc0TM6SkBslbjdPBGeY/CG8J3GHejxk95ArsrxMaPLTKOsBM1ilGQm1w5SnB0WS1mo=
-MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1805301449350.1502-100000@iolanthe.rowland.org>
-References: <20180530183826.GI7063@linux.vnet.ibm.com> <Pine.LNX.4.44L0.1805301449350.1502-100000@iolanthe.rowland.org>
-From: Roman Penyaev <roman.penyaev@profitbricks.com>
-Date: Wed, 6 Jun 2018 11:40:13 +0200
-Message-ID: <CAJrWOzBMB-6e1pKms4L216k=TN_Lr52_gWxj-ny8yitgf+K5gg@mail.gmail.com>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        andrea.parri@amarulasolutions.com,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
+        id S1751951AbeFFL4k (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 07:56:40 -0400
+Received: from mga11.intel.com ([192.55.52.93]:3972 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751851AbeFFL4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 07:56:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
+   d="scan'208";a="46860440"
+Message-ID: <069f5cd3309e83d13c74929f240720b232ea7251.camel@linux.intel.com>
+Subject: Re: [PATCH 1/4] serial: 8250: Copy em485 from port to real port.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: matwey.kornilov@gmail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date: Wed, 06 Jun 2018 14:56:34 +0300
+In-Reply-To: <20180606094942.71190-4-giulio.benetti@micronovasrl.com>
+References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
+         <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
+         <20180606094942.71190-4-giulio.benetti@micronovasrl.com>
+Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 9:08 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Wed, 30 May 2018, Paul E. McKenney wrote:
->
->> On Wed, May 30, 2018 at 09:59:28AM -0500, Linus Torvalds wrote:
->> > On Wed, May 30, 2018 at 9:29 AM Alan Stern <stern@rowland.harvard.edu>
->> > wrote:
->> >
->> > > >
->> > > > Can't we simplify the whole sequence as basically
->> > > >
->> > > >      A
->> > > >      if (!B)
->> > > >          D
->> > > >
->> > > > for that "not B" case, and just think about that. IOW, let's ignore the
->> > > > whole "not executed" code.
->> >
->> > > Your listing is slightly misleading.
->> >
->> > No. You're confused.
->> >
->> > You're confused because you're conflating two *entirely* different things.
->> >
->> > You're conflating the static source code with the dynamic execution. They
->> > are NOT THE SAME.
->>
->> I am going to go out on a limb and assert that Linus is talking about
->> what gcc and hardware do, while Alan is talking about what the tool and
->> memory model do.
->
-> Indeed.  The very first line Linus quoted in his first reply to me
-> (elided above) was:
->
->         Putting this into herd would be extremely difficult, if not impossible,
->         because it involves analyzing code that was not executed.
->
-> It should be clear from this that I was talking about herd.  Not gcc or
-> real hardware.
->
-> (After rereading his message a few times, I'm not sure exactly what
-> Linus was talking about...)
->
->>  In a perfect world, these would be the same, but it
->> appears that the world might not be perfect just now.
->>
->> My current guess is that we need to change the memory-model tool.  If
->> that is the case, here are some possible resolutions:
->>
->> 1.    Make herd's C-language control dependencies work the same as its
->>       assembly language, so that they extend beyond the end of the
->>       "if" statement.  I believe that this would make Roman's case
->>       work, but it could claim that other situations are safe that
->>       are actually problematic due to compiler optimizations.
->>
->>       The fact that the model currently handles only READ_ONCE()
->>       and WRITE_ONCE() and not unmarked reads and writes make this
->>       option more attractive than it otherwise be, compilers not
->>       being allowed to reorder volatile accesses, but we are likely
->>       to introduce unmarked accesses sometime in the future.
->
-> Preserving the order of volatile accesses isn't sufficient.  The
-> compiler is still allowed to translate
->
->         r1 = READ_ONCE(x);
->         if (r1) {
->                 ...
->         }
->         WRITE_ONCE(y, r2);
->
-> into something resembling
->
->         r1 = READ_ONCE(x);
->         WRITE_ONCE(y, r2);
->         if (r1) {
->                 ...
->         }
+On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
+> em485 gets lost during serial8250_register_8250_port().
+> 
+> Copy em485 to final uart port.
+> 
 
-Hi Alan,
+Is it needed at all?
 
-According to the standard C99 Annex C "the controlling expression of
-a selection statement (if or switch)" are the sequence points, just
-like a volatile access (READ_ONCE or WRITE_ONCE).
+The individual driver decides either to use software emulation (and
+calls explicitly serial8250_em485_init() for that) or do HW assisted
+stuff.
 
-"5.1.2.3 Program execution" states:
-"At certain specified points in the execution sequence called sequence
-points, all side effects of previous evaluations shall be complete
-and no side effects of subsequent evaluations shall have taken place."
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> ---
+>  drivers/tty/serial/8250/8250_core.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_core.c
+> b/drivers/tty/serial/8250/8250_core.c
+> index 9342fc2ee7df..c8c2b260c681 100644
+> --- a/drivers/tty/serial/8250/8250_core.c
+> +++ b/drivers/tty/serial/8250/8250_core.c
+> @@ -994,6 +994,7 @@ int serial8250_register_8250_port(struct
+> uart_8250_port *up)
+>  		uart->port.rs485_config	= up-
+> >port.rs485_config;
+>  		uart->port.rs485	= up->port.rs485;
+>  		uart->dma		= up->dma;
+> +		uart->em485		= up->em485;
+>  
+>  		/* Take tx_loadsz from fifosize if it wasn't set
+> separately */
+>  		if (uart->port.fifosize && !uart->tx_loadsz)
 
-So in the example we have 3 sequence points: "READ_ONCE", "if" and
-"WRITE_ONCE", which it seems can't be reordered.  Am I mistaken
-interpreting standard?  Could you please clarify.
-
---
-Roman
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
