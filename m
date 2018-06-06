@@ -1,76 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtIrf89w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E4E360263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 813D6601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751965AbeFFNTu (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:19:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751714AbeFFNTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:19:49 -0400
-Date: Wed, 6 Jun 2018 10:19:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH V4 3/3] x86: Add entry trampolines to kcore
-Message-ID: <20180606131946.GF24381@kernel.org>
-References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
- <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
- <20180606131631.GD12180@hirez.programming.kicks-ass.net>
+        id S1752174AbeFFNbp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:31:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35913 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeFFNbn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:31:43 -0400
+Date: Wed, 6 Jun 2018 06:30:56 -0700
+From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-80ae7b1a918e78b0bae88b0c0ad413d3fdced968@git.kernel.org>
+Cc: liu.song.a23@gmail.com, peterz@infradead.org, jroedel@suse.de,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, songliubraving@fb.com,
+        tglx@linutronix.de, 0x7f454c46@gmail.com, bp@alien8.de,
+        tariqt@mellanox.com, mingo@kernel.org, mike.travis@hpe.com
+Reply-To: liu.song.a23@gmail.com, peterz@infradead.org, hpa@zytor.com,
+          jroedel@suse.de, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, songliubraving@fb.com, tariqt@mellanox.com,
+          0x7f454c46@gmail.com, bp@alien8.de, mike.travis@hpe.com,
+          mingo@kernel.org
+In-Reply-To: <20180604162224.303870257@linutronix.de>
+References: <20180604162224.303870257@linutronix.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/apic/vector: Prevent hlist corruption and
+ leaks
+Git-Commit-ID: 80ae7b1a918e78b0bae88b0c0ad413d3fdced968
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180606131631.GD12180@hirez.programming.kicks-ass.net>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Jun 06, 2018 at 03:16:31PM +0200, Peter Zijlstra escreveu:
-> On Wed, Jun 06, 2018 at 03:54:11PM +0300, Adrian Hunter wrote:
-> > Without program headers for PTI entry trampoline pages, the trampoline
-> > virtual addresses do not map to anything.
-> > 
-> 
-> > 
-> > In addition, entry trampolines all map to the same page.  Represent that by
-> > giving the corresponding program headers in kcore the same offset.
-> > 
-> > This has the benefit that, when perf tools uses /proc/kcore as a source for
-> > kernel object code, samples from different CPU trampolines are aggregated
-> > together.  Note, such aggregation is normal for profiling i.e. people want
-> > to profile the object code, not every different virtual address the object
-> > code might be mapped to (across different processes for example).
-> > 
-> > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Acked-by: Andi Kleen <ak@linux.intel.com>
-> > ---
-> >  arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
-> >  fs/proc/kcore.c              |  7 +++++--
-> >  include/linux/kcore.h        | 13 +++++++++++++
-> >  3 files changed, 28 insertions(+), 2 deletions(-)
-> 
-> This also adds the KCORE_REMAP functionality, but isn't mentioned at all
-> in the Changelog.
-> 
-> Still, looks OK I suppose,
+Commit-ID:  80ae7b1a918e78b0bae88b0c0ad413d3fdced968
+Gitweb:     https://git.kernel.org/tip/80ae7b1a918e78b0bae88b0c0ad413d3fdced968
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 4 Jun 2018 17:33:53 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 6 Jun 2018 15:18:19 +0200
 
-I can add a note about that,
+x86/apic/vector: Prevent hlist corruption and leaks
+
+Several people observed the WARN_ON() in irq_matrix_free() which triggers
+when the caller tries to free an vector which is not in the allocation
+range. Song provided the trace information which allowed to decode the root
+cause.
+
+The rework of the vector allocation mechanism failed to preserve a sanity
+check, which prevents setting a new target vector/CPU when the previous
+affinity change has not fully completed.
+
+As a result a half finished affinity change can be overwritten, which can
+cause the leak of a irq descriptor pointer on the previous target CPU and
+double enqueue of the hlist head into the cleanup lists of two or more
+CPUs. After one CPU cleaned up its vector the next CPU will invoke the
+cleanup handler with vector 0, which triggers the out of range warning in
+the matrix allocator.
+
+Prevent this by checking the apic_data of the interrupt whether the
+move_in_progress flag is false and the hlist node is not hashed. Return
+-EBUSY if not.
+
+This prevents the damage and restores the behaviour before the vector
+allocation rework, but due to other changes in that area it also widens the
+chance that user space can observe -EBUSY. In theory this should be fine,
+but actually not all user space tools handle -EBUSY correctly. Addressing
+that is not part of this fix, but will be addressed in follow up patches.
+
+Fixes: 69cde0004a4b ("x86/vector: Use matrix allocator for vector assignment")
+Reported-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Reported-by: Tariq Toukan <tariqt@mellanox.com>
+Reported-by: Song Liu <liu.song.a23@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Song Liu <songliubraving@fb.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Cc: Mike Travis <mike.travis@hpe.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Link: https://lkml.kernel.org/r/20180604162224.303870257@linutronix.de
+
+---
+ arch/x86/kernel/apic/vector.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index bb6f7a2148d7..72b575a0b662 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -235,6 +235,15 @@ static int allocate_vector(struct irq_data *irqd, const struct cpumask *dest)
+ 	if (vector && cpu_online(cpu) && cpumask_test_cpu(cpu, dest))
+ 		return 0;
  
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-Thanks, giving it some more hours and will apply and try to test it.
-
-- Arnaldo
++	/*
++	 * Careful here. @apicd might either have move_in_progress set or
++	 * be enqueued for cleanup. Assigning a new vector would either
++	 * leave a stale vector on some CPU around or in case of a pending
++	 * cleanup corrupt the hlist.
++	 */
++	if (apicd->move_in_progress || !hlist_unhashed(&apicd->clist))
++		return -EBUSY;
++
+ 	vector = irq_matrix_alloc(vector_matrix, dest, resvd, &cpu);
+ 	if (vector > 0)
+ 		apic_update_vector(irqd, vector, cpu);
