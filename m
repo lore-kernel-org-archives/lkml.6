@@ -1,50 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BuI1jTEi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DFCB960290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1AD6160290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752402AbeFFPDU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:03:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49518 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751973AbeFFPDS (ORCPT
+        id S1752642AbeFFPJW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:09:22 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56832 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752462AbeFFPJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:03:18 -0400
-Date: Wed, 6 Jun 2018 17:03:10 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Kohli, Gaurav" <gkohli@codeaurora.org>, tglx@linutronix.de,
-        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180606150310.GF12180@hirez.programming.kicks-ass.net>
-References: <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
- <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
- <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
- <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
- <20180605150841.GA24053@redhat.com>
- <20180605152212.GY12180@hirez.programming.kicks-ass.net>
- <20180605154053.GB12235@hirez.programming.kicks-ass.net>
- <20180605163515.GB24053@redhat.com>
- <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
- <20180606135115.GA4609@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180606135115.GA4609@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Wed, 6 Jun 2018 11:09:13 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH v3 07/12] extcon: usbc-cros-ec: Make license text and module license match.
+Date: Wed,  6 Jun 2018 17:08:55 +0200
+Message-Id: <20180606150900.8342-8-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180606150900.8342-1-enric.balletbo@collabora.com>
+References: <20180606150900.8342-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 03:51:16PM +0200, Oleg Nesterov wrote:
-> In particular, I think that kthread_park() on a parked kthread
-> must not be possible.
+The license text is specifying "GPLv2" but the MODULE_LICENSE is set to
+GPL which means GNU Public License v2 or later. When MODULE_LICENSE and
+boiler plate does not match, go for boiler plate license.
 
-It happens though; I put in a WARN and someone triggered it -- although
-I could not reproduce :/
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+Changes in v3: None
+Changes in v2: None
+
+ drivers/extcon/extcon-usbc-cros-ec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/extcon/extcon-usbc-cros-ec.c b/drivers/extcon/extcon-usbc-cros-ec.c
+index 6721ab01fe7d..a5b75a12cfc9 100644
+--- a/drivers/extcon/extcon-usbc-cros-ec.c
++++ b/drivers/extcon/extcon-usbc-cros-ec.c
+@@ -548,4 +548,4 @@ module_platform_driver(extcon_cros_ec_driver);
+ 
+ MODULE_DESCRIPTION("ChromeOS Embedded Controller extcon driver");
+ MODULE_AUTHOR("Benson Leung <bleung@chromium.org>");
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
+-- 
+2.17.1
