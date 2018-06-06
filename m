@@ -1,167 +1,249 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N35zAyLg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EF9E601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XAAqAIqC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2C74F60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932823AbeFFQMf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:12:35 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48072 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932552AbeFFQMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:12:31 -0400
-Subject: Re: kernel BUG at fs/btrfs/volumes.c:LINE!
-To: syzbot <syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com>,
-        clm@fb.com, dsterba@suse.com, jbacik@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <00000000000096009b056df92dc1@google.com>
-From: Anand Jain <anand.jain@oracle.com>
-Message-ID: <70a3c2d1-3f53-d4c0-13b3-29f836ec46d9@oracle.com>
-Date: Thu, 7 Jun 2018 00:15:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <00000000000096009b056df92dc1@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S932429AbeFFP6E (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:58:04 -0400
+Received: from mail-eopbgr00049.outbound.protection.outlook.com ([40.107.0.49]:32768
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932183AbeFFP6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 11:58:02 -0400
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/1] pwm: fsl-ftm: Support the new version of FTM block on
+ i.MX8x
+Thread-Topic: [PATCH 1/1] pwm: fsl-ftm: Support the new version of FTM block
+ on i.MX8x
+Thread-Index: AQHT84pNMjdFhAI/vUSobBw7N99yZ6RS+0KAgAB6QGA=
+Date: Wed, 6 Jun 2018 15:57:57 +0000
+Message-ID: <HE1PR04MB3289F832BAC9F430241E394E89650@HE1PR04MB3289.eurprd04.prod.outlook.com>
+References: <20180524180848.61844-1-shenwei.wang@nxp.com>
+ <20180606083423.GE11810@ulmo>
+In-Reply-To: <20180606083423.GE11810@ulmo>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806060183
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shenwei.wang@nxp.com;
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB1420;7:YfEi0itfP+5W+g3HpvZe4aLyAGvAYMNQ7F67ppuGCGbgl4NZLaZMzkeumhdL7khQfEuNLrBnK5SwL2dIBvDECY3Co5Q1ZLoG6OrfJem1F6K3q98s4l4uasX0Hr6rAzuisItSdRMJnTBAJLluv8vTi5QvmrDPlcUELQl/3Y59IChFVJGmITfyGF9QWmwHItqQoEz+JGIT8co/hX6YoBs2E0uFQhDAQ+RPZuvQE6y1Oe6BBjLjBnGiDqAaiHvh698W
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1420;
+x-ms-traffictypediagnostic: HE1PR04MB1420:
+x-microsoft-antispam-prvs: <HE1PR04MB1420432DE318D9705225144C89650@HE1PR04MB1420.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1420;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1420;
+x-forefront-prvs: 06952FC175
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(366004)(396003)(346002)(376002)(13464003)(199004)(189003)(9686003)(316002)(66066001)(6436002)(25786009)(486006)(44832011)(53936002)(345774005)(5660300001)(33656002)(2900100001)(106356001)(229853002)(8676002)(54906003)(8936002)(5250100002)(81156014)(81166006)(59450400001)(186003)(3280700002)(39060400002)(3660700001)(55016002)(305945005)(7736002)(99286004)(97736004)(4326008)(53546011)(86362001)(102836004)(6506007)(6916009)(76176011)(26005)(7696005)(6116002)(68736007)(476003)(105586002)(11346002)(2906002)(3846002)(478600001)(14454004)(74316002)(6246003)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1420;H:HE1PR04MB3289.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: YS9OSJpJGW72DwUPQJBEUc+LGwW5rDRfBurqs99RQmDna38pinrpKTA8UEiw8rgKMtQTeJNZCp9psg+wBIgVLCHnmUGyYZTKsIW62WKMkoWhVPT6Z/bGtOZuIqTrCLwg/JfnRhqo5+CvI2L39Sr6FyY6eInu5qC2L2Vm56k0VHNtu3DyeeJpqfAJ9cjvI+q7
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 3b086cb5-5a82-40c0-67e3-08d5cbc645e0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b086cb5-5a82-40c0-67e3-08d5cbc645e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2018 15:57:57.7215
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1420
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Thierry,
 
+Thank you for the detailed review. I was intending to avoid adding a new co=
+mpatible string, and to limit the changes. But your comments make sense, an=
+d I will split the commit and use the compatible string to identify the IP =
+differences.
 
-On 06/06/2018 09:31 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of 
-> git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15f700af800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
-> dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=5b658d997a83984507a6
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5b658d997a83984507a6@syzkaller.appspotmail.com
-> 
-> RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007f787067fbf0
-> RBP: 0000000000000001 R08: 00000000200000c0 R09: 0000000020000080
-> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000014
-> R13: 0000000000000001 R14: 0000000000700008 R15: 0000000000000043
-> ------------[ cut here ]------------
-> kernel BUG at fs/btrfs/volumes.c:1032!
-> invalid opcode: 0000 [#1] SMP KASAN
-> CPU: 1 PID: 22303 Comm: syz-executor1 Not tainted 4.17.0+ #86
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS 
-> Google 01/01/2011
-> RIP: 0010:btrfs_prepare_close_one_device fs/btrfs/volumes.c:1032 [inline]
+Thanks,
+Shenwei
 
-btrfs_prepare_close_one_device()
-::
-1031           name = rcu_string_strdup(device->name->str, GFP_NOFS);
-1032           BUG_ON(!name); /* -ENOMEM */
+-----Original Message-----
+From: Thierry Reding [mailto:thierry.reding@gmail.com]=20
+Sent: Wednesday, June 6, 2018 3:34 AM
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: linux-pwm@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; linux-kern=
+el@vger.kernel.org
+Subject: Re: [PATCH 1/1] pwm: fsl-ftm: Support the new version of FTM block=
+ on i.MX8x
 
-The way we close our devices needs new memory allocations
-at the time of device close. By doing this apart from the BUG_ON
-reported here, there _were_ other complications like managing the sysfs
-links and moving them to the newly allocated btrfs_fs_devices.
-So sometime back I attempted to correct this approach to a simple
-device close without fresh allocation, however it wasn't successful.
-I am going to try that again, but its not p1.
+On Thu, May 24, 2018 at 01:08:48PM -0500, shenwei.wang@nxp.com wrote:
+> On the new i.MX8x SoC family, the following changes were made on the=20
+> FTM
+> block:
+>=20
+> 1. Need to enable the IPG clock before accessing any FTM registers.=20
+> Because the IPG clock is not an option for FTM counter clock source,=20
+> it can't be used as the ftm_sys clock.
+>=20
+> 2. An additional PWM enable bit was added for each PWM channel in=20
+> register FTM_SC[16:23]. It supports 8 channels. Bit16 is for channel=20
+> 0, and bit23 for channel 7.
 
-Thanks, Anand
+Generally if you need to itemize changes in your commit message it is a goo=
+d indication that you should be splitting up the patch into multiple logica=
+l changes. In this case, one possibility would be to turn this into three p=
+atches:
 
+	1. Introduce the concept on an "interface" clock which is by
+	   default the same as the ftm_sys clock.
 
-> RIP: 0010:close_fs_devices+0xba7/0xfa0 fs/btrfs/volumes.c:1052
-> Code: 56 18 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2b 03 00 00 49 83 6c 
-> 24 30 01 e9 25 f8 ff ff e8 90 f4 b3 fe 0f 0b e8 89 f4 b3 fe <0f> 0b 48 
-> 89 f7 e8 ef 64 f0 fe e9 f6 f5 ff ff e8 75 f4 b3 fe 0f 0b
-> RSP: 0018:ffff8801af6ff050 EFLAGS: 00010246
-> RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000c70c000
-> RDX: 0000000000040000 RSI: ffffffff82c56437 RDI: 0000000000000286
-> RBP: ffff8801af6ff350 R08: ffffed003b5e46d7 R09: ffffed003b5e46d6
-> R10: ffffed003b5e46d6 R11: ffff8801daf236b3 R12: ffff8801c58ac190
-> R13: 0000000000000000 R14: ffff8801b1a6a940 R15: ffff8801b4d7d680
-> FS:  00007f7870680700(0000) GS:ffff8801daf00000(0000) 
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000704094 CR3: 00000001c51e8000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   btrfs_close_devices+0x29/0x150 fs/btrfs/volumes.c:1085
->   btrfs_mount_root+0x1419/0x1e70 fs/btrfs/super.c:1610
->   mount_fs+0xae/0x328 fs/super.c:1277
->   vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
->   vfs_kern_mount+0x40/0x60 fs/namespace.c:1027
->   btrfs_mount+0x4a1/0x213e fs/btrfs/super.c:1661
->   mount_fs+0xae/0x328 fs/super.c:1277
->   vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
->   vfs_kern_mount fs/namespace.c:1027 [inline]
->   do_new_mount fs/namespace.c:2518 [inline]
->   do_mount+0x564/0x30b0 fs/namespace.c:2848
->   ksys_mount+0x12d/0x140 fs/namespace.c:3064
->   __do_sys_mount fs/namespace.c:3078 [inline]
->   __se_sys_mount fs/namespace.c:3075 [inline]
->   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
->   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x45843a
-> Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 dd 8f fb ff c3 66 2e 
-> 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 
-> f0 ff ff 0f 83 ba 8f fb ff c3 66 0f 1f 84 00 00 00 00 00
-> RSP: 002b:00007f787067fba8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000020000080 RCX: 000000000045843a
-> RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007f787067fbf0
-> RBP: 0000000000000001 R08: 00000000200000c0 R09: 0000000020000080
-> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000014
-> R13: 0000000000000001 R14: 0000000000700008 R15: 0000000000000043
-> Modules linked in:
-> Dumping ftrace buffer:
->     (ftrace buffer empty)
-> ---[ end trace 383b0406a01f2edd ]---
-> RIP: 0010:btrfs_prepare_close_one_device fs/btrfs/volumes.c:1032 [inline]
-> RIP: 0010:close_fs_devices+0xba7/0xfa0 fs/btrfs/volumes.c:1052
-> Code: 56 18 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2b 03 00 00 49 83 6c 
-> 24 30 01 e9 25 f8 ff ff e8 90 f4 b3 fe 0f 0b e8 89 f4 b3 fe <0f> 0b 48 
-> 89 f7 e8 ef 64 f0 fe e9 f6 f5 ff ff e8 75 f4 b3 fe 0f 0b
-> RSP: 0018:ffff8801af6ff050 EFLAGS: 00010246
-> RAX: 0000000000040000 RBX: dffffc0000000000 RCX: ffffc9000c70c000
-> RDX: 0000000000040000 RSI: ffffffff82c56437 RDI: 0000000000000286
-> RBP: ffff8801af6ff350 R08: ffffed003b5e46d7 R09: ffffed003b5e46d6
-> R10: ffffed003b5e46d6 R11: ffff8801daf236b3 R12: ffff8801c58ac190
-> R13: 0000000000000000 R14: ffff8801b1a6a940 R15: ffff8801b4d7d680
-> FS:  00007f7870680700(0000) GS:ffff8801daf00000(0000) 
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000704094 CR3: 00000001c51e8000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
+	2. Add support for enable bits, based on some per-compatible
+	   data structure (see for example pwm-tegra.c for an example of
+	   how to do this).
+
+	3. Enable support for the new SoC family by adding an instance
+	   of the per-compatible structure for that compatible string.
+
+> As the IP version information can not be obtained in any of the FTM=20
+> registers, a property of "fsl,has-pwmen-bits" is added in the ftm pwm=20
+> device node. If it has the property, the driver set the PWM enable bit=20
+> when a PWM channel is requested.
+
+I don't see a corresponding device tree bindings update for this change.
+Also, I don't think doing this via a separate property is the right way, yo=
+u can just derive this from the new compatible string which you need to add=
+ anyway.
+
+So to the above patches, add:
+
+	0. Add DT bindings for new SoC family with a mention that they
+	   need to provide the new IPG clock.
+
+>=20
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with 
-> syzbot.
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  drivers/pwm/pwm-fsl-ftm.c | 35 +++++++++++++++++++++++++++++------
+>  1 file changed, 29 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-fsl-ftm.c b/drivers/pwm/pwm-fsl-ftm.c=20
+> index 557b4ea..0426458f 100644
+> --- a/drivers/pwm/pwm-fsl-ftm.c
+> +++ b/drivers/pwm/pwm-fsl-ftm.c
+> @@ -86,7 +86,9 @@ struct fsl_pwm_chip {
+>  	struct regmap *regmap;
+> =20
+>  	int period_ns;
+> +	bool has_pwmen;
+> =20
+> +	struct clk *ipg_clk;
+>  	struct clk *clk[FSL_PWM_CLK_MAX];
+>  };
+> =20
+> @@ -97,16 +99,31 @@ static inline struct fsl_pwm_chip=20
+> *to_fsl_chip(struct pwm_chip *chip)
+> =20
+>  static int fsl_pwm_request(struct pwm_chip *chip, struct pwm_device=20
+> *pwm)  {
+> +	int ret;
+>  	struct fsl_pwm_chip *fpc =3D to_fsl_chip(chip);
+> =20
+> -	return clk_prepare_enable(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	ret =3D clk_prepare_enable(fpc->ipg_clk);
+
+This is confusing because it looks as if you're breaking existing drivers, =
+until you realize that...
+
+> +
+> +	if ((!ret) && (fpc->has_pwmen)) {
+> +		mutex_lock(&fpc->lock);
+> +		regmap_update_bits(fpc->regmap, FTM_SC,
+> +				BIT(pwm->hwpwm + 16), BIT(pwm->hwpwm + 16));
+> +		mutex_unlock(&fpc->lock);
+> +	}
+> +
+> +	return ret;
+>  }
+> =20
+>  static void fsl_pwm_free(struct pwm_chip *chip, struct pwm_device=20
+> *pwm)  {
+>  	struct fsl_pwm_chip *fpc =3D to_fsl_chip(chip);
+> =20
+> -	clk_disable_unprepare(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	if (fpc->has_pwmen) {
+> +		mutex_lock(&fpc->lock);
+> +		regmap_update_bits(fpc->regmap, FTM_SC, BIT(pwm->hwpwm + 16), 0);
+> +		mutex_unlock(&fpc->lock);
+> +	}
+> +	clk_disable_unprepare(fpc->ipg_clk);
+>  }
+> =20
+>  static int fsl_pwm_calculate_default_ps(struct fsl_pwm_chip *fpc, @@=20
+> -363,7 +380,7 @@ static int fsl_pwm_init(struct fsl_pwm_chip *fpc)  {
+>  	int ret;
+> =20
+> -	ret =3D clk_prepare_enable(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	ret =3D clk_prepare_enable(fpc->ipg_clk);
+>  	if (ret)
+>  		return ret;
+> =20
+> @@ -371,7 +388,7 @@ static int fsl_pwm_init(struct fsl_pwm_chip *fpc)
+>  	regmap_write(fpc->regmap, FTM_OUTINIT, 0x00);
+>  	regmap_write(fpc->regmap, FTM_OUTMASK, 0xFF);
+> =20
+> -	clk_disable_unprepare(fpc->clk[FSL_PWM_CLK_SYS]);
+> +	clk_disable_unprepare(fpc->ipg_clk);
+> =20
+>  	return 0;
+>  }
+> @@ -428,6 +445,10 @@ static int fsl_pwm_probe(struct platform_device *pde=
+v)
+>  		return PTR_ERR(fpc->clk[FSL_PWM_CLK_SYS]);
+>  	}
+> =20
+> +	fpc->ipg_clk =3D devm_clk_get(&pdev->dev, "ipg");
+> +	if (IS_ERR(fpc->ipg_clk))
+> +		fpc->ipg_clk =3D fpc->clk[FSL_PWM_CLK_SYS];
+
+... fpc->ipg_clk is actually the same as fpc->clk[FSL_PWM_CLK_SYS] for olde=
+r chips. I think this could be made more obvious by splitting this patch in=
+to several smaller ones as suggested above.
+
+> +
+>  	fpc->clk[FSL_PWM_CLK_FIX] =3D devm_clk_get(fpc->chip.dev, "ftm_fix");
+>  	if (IS_ERR(fpc->clk[FSL_PWM_CLK_FIX]))
+>  		return PTR_ERR(fpc->clk[FSL_PWM_CLK_FIX]);
+> @@ -446,6 +467,8 @@ static int fsl_pwm_probe(struct platform_device *pdev=
+)
+>  	fpc->chip.of_pwm_n_cells =3D 3;
+>  	fpc->chip.base =3D -1;
+>  	fpc->chip.npwm =3D 8;
+> +	fpc->has_pwmen =3D of_property_read_bool(pdev->dev.of_node,
+> +						"fsl,ftm-has-pwmen-bits");
+
+As I said earlier, I think this should be derived from the compatible strin=
+g. That is, you could have a data structure such as:
+
+	struct fsl_pwm_soc {
+		bool has_enable_bits;
+	};
+
+	static const struct fsl_pwm_soc vf610_ftm_pwm =3D {
+		.has_enable_bits =3D false,
+	};
+
+	/* up to here would be part of patch 2 */
+
+	/* and this is part of patch 3, along with an entry in the OF
+	 * match table */
+	static const struct fsl_pwm_soc imx8x_ftm_pwm =3D {
+		.has_enable_bits =3D true,
+	};
+
+Thierry
