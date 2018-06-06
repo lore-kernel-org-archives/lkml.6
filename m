@@ -1,105 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="sRIR4o+Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D5F96070B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JePnL6Fj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B077606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752997AbeFFTPb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:15:31 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:45497 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752290AbeFFTP2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:15:28 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-Subject: Re: [PATCH 1/4] serial: 8250: Copy em485 from port to real port.
-To: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Allen Pais <allen.lkml@gmail.com>, Sean Young <sean@mess.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <CAJs94EZqdQAQG+inWvj89FCQtv06LxhY_J4YgNmK8mtvgDTchQ@mail.gmail.com>
- <20180606094942.71190-1-giulio.benetti@micronovasrl.com>
- <20180606094942.71190-4-giulio.benetti@micronovasrl.com>
- <069f5cd3309e83d13c74929f240720b232ea7251.camel@linux.intel.com>
- <0bc400b1-6178-2021-c9a3-3190d1a1de32@micronovasrl.com>
- <2abe2137e699e5ae3100b97316da469f6d1c9bb9.camel@linux.intel.com>
- <CAJs94EZx2ZdEL14SCEBomEfXLRPN4FfOp4yE44kfpnE+5+Ze-g@mail.gmail.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <d3c4e356-2c04-731f-a665-a445a6bf68af@micronovasrl.com>
-Date: Wed, 6 Jun 2018 21:15:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933718AbeFFRZa (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:25:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933527AbeFFRZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:25:29 -0400
+X-Google-Smtp-Source: ADUXVKIU3jqyuOLjpcyRwZAXCA+g8R17F80ju8rlFhyX93C8eK6shOMea6qPDTH6UUrTIPg6iUKNWjMRr35ixda6bSo=
 MIME-Version: 1.0
-In-Reply-To: <CAJs94EZx2ZdEL14SCEBomEfXLRPN4FfOp4yE44kfpnE+5+Ze-g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+References: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com> <1528302199-29619-9-git-send-email-chang.seok.bae@intel.com>
+In-Reply-To: <1528302199-29619-9-git-send-email-chang.seok.bae@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 6 Jun 2018 10:25:15 -0700
+X-Gmail-Original-Message-ID: <CALCETrVkFvC4R6dfrUL5B9iN1v3X6hE3QNHBrAHjPBrA9S7FWg@mail.gmail.com>
+Message-ID: <CALCETrVkFvC4R6dfrUL5B9iN1v3X6hE3QNHBrAHjPBrA9S7FWg@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] x86/vdso: Move out the CPU number store
+To: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Il 06/06/2018 20:55, Matwey V. Kornilov ha scritto:
-> 2018-06-06 16:11 GMT+03:00 Andy Shevchenko <andriy.shevchenko@linux.intel.com>:
->> On Wed, 2018-06-06 at 14:15 +0200, Giulio Benetti wrote:
->>> Il 06/06/2018 13:56, Andy Shevchenko ha scritto:
->>>> On Wed, 2018-06-06 at 11:49 +0200, Giulio Benetti wrote:
->>>>> em485 gets lost during
->>>>>
->>>>> Copy em485 to final uart port.
->>>>>
->>>>
->>>> Is it needed at all?
->>>>
->>>> The individual driver decides either to use software emulation (and
->>>> calls explicitly serial8250_em485_init() for that) or do HW assisted
->>>> stuff.
->>>
->>> In 8250_dw.c, during probe(), I need to call dw8250_rs485_config()
->>> against local struct uart_8250_port uart = {};
->>> Inside serial8250_register_8250_port() not all uart fields are
->>> copied(em485 too).
->>> So after probe, em485 is NULL.
->>>
->>> Another way could be to call dw8250_rs485_config() against real uart
->>> port, after calling serial8250_register_8250_port(),
->>> would it make sense?
->>
->> Look at OMAP case closely. They have a callback to configure RS485 which
->> is called in uart_set_rs485_config()  which is called whenever user
->> space does TIOCGRS485 IOCTL.
->>
->> So, it's completely driven by user space which makes sense by my
->> opinion.
-> 
-> AFAIU, Giulio wants to add support for rs485-enabled-at-boot-time
-> device tree option (see bindings/serial/rs485.txt for reference).
+On Wed, Jun 6, 2018 at 9:23 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+>
+> The CPU (and node) number will be written, as early enough,
+> to the segment limit of per CPU data and TSC_AUX MSR entry.
+> The information has been retrieved by vgetcpu in user space
+> and will be also loaded from the paranoid entry, when
+> FSGSBASE enabled. So, it is moved out from vDSO to the CPU
+> initialization path where IST setup is serialized.
+>
 
-Yes, I want to add support for "rs485-enabled-at-boot-time" property,
-maybe I had to write better commit log and a cover letter. Sorry.
+Please split this into two patches.  One patch should do the cleanups
+and one patch should move the code.
 
-> I suppose it is only important for use-case when rs485 used as slave
-> (peripheral role).
+> diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
+> index 8ec3d1f..3284069 100644
+> --- a/arch/x86/entry/vdso/vgetcpu.c
+> +++ b/arch/x86/entry/vdso/vgetcpu.c
+> @@ -18,9 +18,9 @@ __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
+>         p = __getcpu();
+>
+>         if (cpu)
+> -               *cpu = p & VGETCPU_CPU_MASK;
+> +               *cpu = lsl_tscp_to_cpu(p);
+>         if (node)
+> -               *node = p >> 12;
+> +               *node = lsl_tscp_to_node(p);
+>         return 0;
 
-It's important also for master, because RTS, if RTS_AFTER_SEND is set, 
-remains not asserted(trasnmission) until userspace opens that serial port.
+This goes in the cleanup patch.
 
-Sorry again for not explaining myself well.
+> +/* Bit size and mask of CPU number stored in the per CPU data (and TSC_AUX) */
+> +#define LSL_TSCP_CPU_SIZE              12
+> +#define LSL_TSCP_CPU_MASK              0xfff
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +/* Helper functions to store/load CPU and node numbers */
+> +
+> +static inline unsigned long make_lsl_tscp(int cpu, unsigned long node)
+> +{
+> +       return ((node << LSL_TSCP_CPU_SIZE) | cpu);
+> +}
+> +
+> +static inline unsigned int lsl_tscp_to_cpu(unsigned long x)
+> +{
+> +       return (x & LSL_TSCP_CPU_MASK);
+> +}
+> +
+> +static inline unsigned int lsl_tscp_to_node(unsigned long x)
+> +{
+> +       return (x >> LSL_TSCP_CPU_SIZE);
+> +}
 
--- 
-Giulio Benetti
-CTO
+As do these.  But maybe they should be #ifdef CONFIG_X86_64 to make it
+clear that they are not presently supported on 32-bit systems.
+(Unless I'm wrong and they are supported.)
 
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> index 38276f5..c7b54f0 100644
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -1665,6 +1665,11 @@ void cpu_init(void)
+>
+>         wrmsrl(MSR_FS_BASE, 0);
+>         wrmsrl(MSR_KERNEL_GS_BASE, 0);
+> +#ifdef CONFIG_NUMA
+> +       write_rdtscp_aux(make_lsl_tscp(cpu, early_cpu_to_node(cpu)));
+> +#else
+> +       write_rdtscp_aux(make_lsl_tscp(cpu, 0));
+> +#endif
+
+Why the ifdef?  early_cpu_to_node() should return 0 if !CONFIG_NUMA.
+
+> +static inline void setup_cpu_number_segment(int cpu)
+> +{
+> +#ifdef CONFIG_NUMA
+> +       unsigned long node = early_cpu_to_node(cpu);
+> +#else
+> +       unsigned long node = 0;
+> +#endif
+
+This duplicates half the rdtscp_aux code.  How about making this one
+function setup_cpu_number() that does all of it?
+
+> +       struct desc_struct d = GDT_ENTRY_INIT(0x40f5, 0x0,
+> +                          make_lsl_tscp(cpu, node));
+
+Please get rid of the GDT_ENTRY_INIT stuff and just fill out all the
+fields, just like it is in the code that you're moving.  No one enjoys
+decoding hex segment descriptors.  (Well, Linus and hpa probably
+*love* doing it just to show off.)
