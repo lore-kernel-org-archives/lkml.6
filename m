@@ -1,253 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJuRPQiU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D1C1606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D04260764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932724AbeFFKCi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 06:02:38 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:44970 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752384AbeFFKA0 (ORCPT
+        id S1752026AbeFFNCc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:02:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50111 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeFFNCb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:00:26 -0400
-X-Google-Smtp-Source: ADUXVKK2zI3T/IIAQZtRvcattzEa3haG5YQRbva0AmcwgSm6bOcpub0JN0zfcDAItnYQcKa2wnQMug==
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5 04/14] mfd: da9063: Use REGMAP_IRQ_REG
-Date: Wed,  6 Jun 2018 11:59:53 +0200
-Message-Id: <20180606100003.17067-4-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+        Wed, 6 Jun 2018 09:02:31 -0400
+Date: Wed, 6 Jun 2018 15:02:20 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Tobin C. Harding" <me@tobin.cc>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] enable early printing of hashed pointers
+In-Reply-To: <1527472002-11571-1-git-send-email-me@tobin.cc>
+Message-ID: <alpine.DEB.2.21.1806061501130.1579@nanos.tec.linutronix.de>
+References: <1527472002-11571-1-git-send-email-me@tobin.cc>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the regmap_irq table to use REGMAP_IRQ_REG().
+On Mon, 28 May 2018, Tobin C. Harding wrote:
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
-V3: New patch
-Note: A sed oneliner was used:
-      sed -i "/\[DA9063_IRQ_/ {N;N;N;s/\n//g;s/.*\[\(DA9063_IRQ_[^]]\+\)].*reg_offset = \([^,]\+\),.* = \([^,]\+\),.*/\tREGMAP_IRQ_REG(\1, \2, \3),/}" drivers/mfd/da9063-irq.c
-V4: Formatting fixes with "s/,/&\r\t\t      /" on the array
-    Drop extra newline in da9063_irq_chip
-V5: No change
----
- drivers/mfd/da9063-irq.c | 175 ++++++++++++++++-------------------------------
- 1 file changed, 58 insertions(+), 117 deletions(-)
+> Currently printing pointers early in the boot sequence can result in a
+> dummy string '(____ptrval____)' being printed.  While resolving this
+> issue it was noticed that we can use the hw RNG if available for hashing
+> pointers.
+> 
+> Patch one and two do the ground work to be able to use hw RNG removing
+> from get_random_bytes_arch() the call to get_random_bytes() and
+> returning the number of bytes of random material successfully returned. 
+> 
+> Patch three uses the hw RNG to get keying material if it is available.
+> 
+> Patch four further assists debugging early in the boot sequence for
+> machines that do not have a hw RNG by adding a command line option
+> 'debug_boot_weak_hash'.  If enabled, non-cryptographically secure hashing
+> is used instead of siphash so we can hash at any time. 
+> 
+> During the versions of this set I have been totally confused about which
+> patches go through which tree.  This version again puts all 4 patches
+> together in the hope they will go through Andrew's tree.
+> 
+> 
+> Steve,
+> 
+> Could you please take a quick squiz at the final 2 patches if you get a
+> chance.  I assumed we are in preemptible context during early_init based
+> on your code (and code comment) and called static_branch_disable()
+> directly if hw RNG returned keying material.  It's a pretty simple
+> change but I'd love to get someone else to check I've not noob'ed it.
 
-diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
-index da6ceb41f0d1..044bd867f540 100644
---- a/drivers/mfd/da9063-irq.c
-+++ b/drivers/mfd/da9063-irq.c
-@@ -28,132 +28,73 @@
- 
- static const struct regmap_irq da9063_irqs[] = {
- 	/* DA9063 event A register */
--	[DA9063_IRQ_ONKEY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ONKEY,
--	},
--	[DA9063_IRQ_ALARM] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ALARM,
--	},
--	[DA9063_IRQ_TICK] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_TICK,
--	},
--	[DA9063_IRQ_ADC_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_ADC_RDY,
--	},
--	[DA9063_IRQ_SEQ_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_A_OFFSET,
--		.mask = DA9063_M_SEQ_RDY,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_ONKEY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ONKEY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ALARM,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ALARM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TICK,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_TICK),
-+	REGMAP_IRQ_REG(DA9063_IRQ_ADC_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_ADC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_SEQ_RDY,
-+		       DA9063_REG_EVENT_A_OFFSET, DA9063_M_SEQ_RDY),
- 	/* DA9063 event B register */
--	[DA9063_IRQ_WAKE] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_WAKE,
--	},
--	[DA9063_IRQ_TEMP] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_TEMP,
--	},
--	[DA9063_IRQ_COMP_1V2] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_COMP_1V2,
--	},
--	[DA9063_IRQ_LDO_LIM] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_LDO_LIM,
--	},
--	[DA9063_IRQ_REG_UVOV] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_UVOV,
--	},
--	[DA9063_IRQ_DVC_RDY] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_DVC_RDY,
--	},
--	[DA9063_IRQ_VDD_MON] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_VDD_MON,
--	},
--	[DA9063_IRQ_WARN] = {
--		.reg_offset = DA9063_REG_EVENT_B_OFFSET,
--		.mask = DA9063_M_VDD_WARN,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_WAKE,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_WAKE),
-+	REGMAP_IRQ_REG(DA9063_IRQ_TEMP,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_TEMP),
-+	REGMAP_IRQ_REG(DA9063_IRQ_COMP_1V2,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_COMP_1V2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_LDO_LIM,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_LDO_LIM),
-+	REGMAP_IRQ_REG(DA9063_IRQ_REG_UVOV,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_UVOV),
-+	REGMAP_IRQ_REG(DA9063_IRQ_DVC_RDY,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_DVC_RDY),
-+	REGMAP_IRQ_REG(DA9063_IRQ_VDD_MON,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_MON),
-+	REGMAP_IRQ_REG(DA9063_IRQ_WARN,
-+		       DA9063_REG_EVENT_B_OFFSET, DA9063_M_VDD_WARN),
- 	/* DA9063 event C register */
--	[DA9063_IRQ_GPI0] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI0,
--	},
--	[DA9063_IRQ_GPI1] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI1,
--	},
--	[DA9063_IRQ_GPI2] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI2,
--	},
--	[DA9063_IRQ_GPI3] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI3,
--	},
--	[DA9063_IRQ_GPI4] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI4,
--	},
--	[DA9063_IRQ_GPI5] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI5,
--	},
--	[DA9063_IRQ_GPI6] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI6,
--	},
--	[DA9063_IRQ_GPI7] = {
--		.reg_offset = DA9063_REG_EVENT_C_OFFSET,
--		.mask = DA9063_M_GPI7,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI0,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI0),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI1,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI1),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI2,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI2),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI3,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI3),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI4,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI4),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI5,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI5),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI6,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI6),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI7,
-+		       DA9063_REG_EVENT_C_OFFSET, DA9063_M_GPI7),
- 	/* DA9063 event D register */
--	[DA9063_IRQ_GPI8] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI8,
--	},
--	[DA9063_IRQ_GPI9] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI9,
--	},
--	[DA9063_IRQ_GPI10] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI10,
--	},
--	[DA9063_IRQ_GPI11] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI11,
--	},
--	[DA9063_IRQ_GPI12] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI12,
--	},
--	[DA9063_IRQ_GPI13] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI13,
--	},
--	[DA9063_IRQ_GPI14] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI14,
--	},
--	[DA9063_IRQ_GPI15] = {
--		.reg_offset = DA9063_REG_EVENT_D_OFFSET,
--		.mask = DA9063_M_GPI15,
--	},
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI8,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI8),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI9,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI9),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI10,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI10),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI11,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI11),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI12,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI12),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI13,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI13),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI14,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI14),
-+	REGMAP_IRQ_REG(DA9063_IRQ_GPI15,
-+		       DA9063_REG_EVENT_D_OFFSET, DA9063_M_GPI15),
- };
- 
- static const struct regmap_irq_chip da9063_irq_chip = {
- 	.name = "da9063-irq",
- 	.irqs = da9063_irqs,
- 	.num_irqs = DA9063_NUM_IRQ,
--
- 	.num_regs = 4,
- 	.status_base = DA9063_REG_EVENT_A,
- 	.mask_base = DA9063_REG_IRQ_MASK_A,
--- 
-2.16.2
+early_initcalls() are not that early :) They run in thread context fully
+preemtible so calling static_branch_disable() is perfectly fine.
+
+Thanks,
+
+	tglx
