@@ -1,59 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Xr9NkUOD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 097CC60763
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96FAA601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933029AbeFFQcj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:32:39 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:46841 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932514AbeFFQch (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:32:37 -0400
-X-Google-Smtp-Source: ADUXVKKS1jwJs4QF5/yJ+ToINPO1mk+p8tLb81HZqOuujWN0LZG9qFyFlceRI4vFuoEJXHQaqeDp8DsPXlzk6aoYRIU=
+        id S933496AbeFFQlw convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Wed, 6 Jun 2018 12:41:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37503 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932724AbeFFQlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:41:50 -0400
+Date: Wed, 06 Jun 2018 09:39:25 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CA+icZUXEpe954z0TSbhSJPdFCfOqsBtpO9mPZBcJ2HWubSo_zQ@mail.gmail.com>
+References: <20180605170532.170361-1-ndesaulniers@google.com> <20180605170532.170361-2-ndesaulniers@google.com> <202492204c2d5bd5ca27307cbca5e44673b739ed.camel@perches.com> <5ad1876557235a089a50e6ed6c558a7dcb0da714.camel@perches.com> <CA+icZUXEpe954z0TSbhSJPdFCfOqsBtpO9mPZBcJ2HWubSo_zQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180606125938.12986-1-abrodkin@synopsys.com>
-References: <20180606125938.12986-1-abrodkin@synopsys.com>
-From: Kevin Hilman <khilman@baylibre.com>
-Date: Wed, 6 Jun 2018 09:32:35 -0700
-Message-ID: <CAOi56cVxHKh4V1i8W8wS+n3E88UbzBiCo0PozhCeoN3YEnVmBw@mail.gmail.com>
-Subject: Re: [PATCH] ARC: Remove CONFIG_INITRAMFS_SOURCE from defconfigs
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: linux-snps-arc@lists.infradead.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v2 1/2] compiler-gcc.h: add gnu_inline to all inline declarations
+To: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@gmail.com>,
+        Joe Perches <joe@perches.com>
+CC: Nick Desaulniers <ndesaulniers@google.com>,
+        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
+        aryabinin@virtuozzo.com, akataria@vmware.com,
+        boris.ostrovsky@oracle.com, brijesh.singh@amd.com,
+        caoj.fnst@cn.fujitsu.com, gregkh@linuxfoundation.org,
+        jan.kiszka@siemens.com, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, mingo@redhat.com,
+        mjg59@google.com, mka@chromium.org, pombredanne@nexb.com,
+        rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
+        tweek@google.com, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        virtualization@lists.linux-foundation.org, astrachan@google.com,
+        manojgupta@google.com, ghackmann@google.com, tstellar@redhat.com,
+        keescook@google.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, linux-kbuild@vger.kernel.org,
+        geert@linux-m68k.org, will.deacon@arm.com, mawilcox@microsoft.com,
+        Arnd Bergmann <arnd@arndb.de>, rientjes@google.com
+From: hpa@zytor.com
+Message-ID: <5C97550D-BEF4-4069-9373-F7543E3878FB@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 5:59 AM, Alexey Brodkin
-<Alexey.Brodkin@synopsys.com> wrote:
-> We used to have pre-set CONFIG_INITRAMFS_SOURCE with local path
-> to intramfs in ARC defconfigs. This was quite convenient for
-> in-house development but not that convenient for newcomers
-> who obviusly don't have folders like "arc_initramfs" next to
-> the Linux source tree. Which leads to quite surprising failure
-> of defconfig building:
-> ------------------------------->8-----------------------------
->   ../scripts/gen_initramfs_list.sh: Cannot open '../../arc_initramfs_hs/'
-> ../usr/Makefile:57: recipe for target 'usr/initramfs_data.cpio.gz' failed
-> make[2]: *** [usr/initramfs_data.cpio.gz] Error 1
-> ------------------------------->8-----------------------------
+On June 6, 2018 1:05:45 AM PDT, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>Hi,
 >
-> So now when more and more people start to deal with our defconfigs
-> let's make their life easier with removal of CONFIG_INITRAMFS_SOURCE.
+>when discovering 'gnu_inline', I found ...
 >
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: stable@vger.kernel.org
+>$ git grep -w  __FORTIFY_INLINE
+>include/linux/string.h:#define __FORTIFY_INLINE extern __always_inline
+>__attribute__((gnu_inline))
+>include/linux/string.h:__FORTIFY_INLINE char *strncpy(char *p, const
+>char *q, __kernel_size_t size)
+>include/linux/string.h:__FORTIFY_INLINE char *strcat(char *p, const
+>char *q)
+>include/linux/string.h:__FORTIFY_INLINE __kernel_size_t strlen(const
+>char *p)
+>include/linux/string.h:__FORTIFY_INLINE __kernel_size_t strnlen(const
+>char *p, __kernel_size_t maxlen)
+>include/linux/string.h:__FORTIFY_INLINE size_t strlcpy(char *p, const
+>char *q, size_t size)
+>include/linux/string.h:__FORTIFY_INLINE char *strncat(char *p, const
+>char *q, __kernel_size_t count)
+>include/linux/string.h:__FORTIFY_INLINE void *memset(void *p, int c,
+>__kernel_size_t size)
+>include/linux/string.h:__FORTIFY_INLINE void *memcpy(void *p, const
+>void *q, __kernel_size_t size)
+>include/linux/string.h:__FORTIFY_INLINE void *memmove(void *p, const
+>void *q, __kernel_size_t size)
+>include/linux/string.h:__FORTIFY_INLINE void *memscan(void *p, int c,
+>__kernel_size_t size)
+>include/linux/string.h:__FORTIFY_INLINE int memcmp(const void *p,
+>const void *q, __kernel_size_t size)
+>include/linux/string.h:__FORTIFY_INLINE void *memchr(const void *p,
+>int c, __kernel_size_t size)
+>include/linux/string.h:__FORTIFY_INLINE void *memchr_inv(const void
+>*p, int c, size_t size)
+>include/linux/string.h:__FORTIFY_INLINE void *kmemdup(const void *p,
+>size_t size, gfp_t gfp)
+>include/linux/string.h:__FORTIFY_INLINE char *strcpy(char *p, const
+>char *q)
 >
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+>After the inline changes suggested by Joe this can be adapted?
+>
+>Beyond this, a general question: Can someone explain why all these
+>inline defines are in compiler-gcc.h (as there exists compiler.h and
+>compiler-clang.h)?
+>
+>Thanks.
+>
+>Regards,
+>- Sedat -
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+Because gcc itself also supports both GNU89-style and C99-style inlines, but the kernel was built with the former, and it is not necessarily a trivial modification, except for "static inline" which is the same for both.
 
-Kevin
+The other option is to pass -fgnu89-inline on the command line, which is supported by both gcc and clang. The two methods are fully equivalent.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
