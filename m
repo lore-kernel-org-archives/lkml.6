@@ -1,85 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B420760555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpxSN/UP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8847601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932977AbeFFQYj (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:24:39 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61007 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753415AbeFFQXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:23:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="62323466"
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/8] x86/fsgsbase/64: Use FS/GS base helpers in core dump
-Date: Wed,  6 Jun 2018 09:23:14 -0700
-Message-Id: <1528302199-29619-4-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com>
-References: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com>
+        id S932698AbeFFKCD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:02:03 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35083 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932573AbeFFKAb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:00:31 -0400
+X-Google-Smtp-Source: ADUXVKJnjTKNNGd/ttjacRwRL7LwzUmP2tqFR3xm8yMRWYUavxdhCSJ0vO71JlXS7NU9mloStke9wA==
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 08/14] mfd: da9063: Replace model with type
+Date: Wed,  6 Jun 2018 11:59:57 +0200
+Message-Id: <20180606100003.17067-8-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When new FSGSBASE instructions enabled, this read will
-become faster.
+The model number stored in the struct da9063 is the same for all
+variants of the da9063 since it is the chip ID, which is always
+the same. Replace that with a separate identifier instead, which
+allows us to discern the DA9063 variants by setting the type
+based on either DT match or otherwise.
 
-Based-on-code-from: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Acked-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/x86/include/asm/elf.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+V2: Drop useless cast of id->driver_data
+V3: Fix kernel 0day error , s/dev_model/type/
+V4: No change
+V5: No change
+---
+ drivers/mfd/da9063-core.c            | 1 -
+ drivers/mfd/da9063-i2c.c             | 5 +++--
+ drivers/regulator/da9063-regulator.c | 6 +++---
+ include/linux/mfd/da9063/core.h      | 6 +++++-
+ 4 files changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
-index 0d157d2..49acefb 100644
---- a/arch/x86/include/asm/elf.h
-+++ b/arch/x86/include/asm/elf.h
-@@ -10,6 +10,7 @@
- #include <asm/ptrace.h>
- #include <asm/user.h>
- #include <asm/auxvec.h>
-+#include <asm/fsgsbase.h>
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index c54777cc2f12..ded59990f18c 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -215,7 +215,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ 		return -ENODEV;
+ 	}
  
- typedef unsigned long elf_greg_t;
+-	da9063->model = model;
+ 	da9063->variant_code = variant_code;
  
-@@ -205,7 +206,6 @@ void set_personality_ia32(bool);
+ 	ret = da9063_irq_init(da9063);
+diff --git a/drivers/mfd/da9063-i2c.c b/drivers/mfd/da9063-i2c.c
+index d1fe88777e3f..6fe9c3464b41 100644
+--- a/drivers/mfd/da9063-i2c.c
++++ b/drivers/mfd/da9063-i2c.c
+@@ -146,7 +146,7 @@ static const struct of_device_id da9063_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, da9063_dt_ids);
+ static int da9063_i2c_probe(struct i2c_client *i2c,
+-	const struct i2c_device_id *id)
++			    const struct i2c_device_id *id)
+ {
+ 	struct da9063 *da9063;
+ 	int ret;
+@@ -158,6 +158,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ 	i2c_set_clientdata(i2c, da9063);
+ 	da9063->dev = &i2c->dev;
+ 	da9063->chip_irq = i2c->irq;
++	da9063->type = id->driver_data;
  
- #define ELF_CORE_COPY_REGS(pr_reg, regs)			\
- do {								\
--	unsigned long base;					\
- 	unsigned v;						\
- 	(pr_reg)[0] = (regs)->r15;				\
- 	(pr_reg)[1] = (regs)->r14;				\
-@@ -228,8 +228,8 @@ do {								\
- 	(pr_reg)[18] = (regs)->flags;				\
- 	(pr_reg)[19] = (regs)->sp;				\
- 	(pr_reg)[20] = (regs)->ss;				\
--	rdmsrl(MSR_FS_BASE, base); (pr_reg)[21] = base;		\
--	rdmsrl(MSR_KERNEL_GS_BASE, base); (pr_reg)[22] = base;	\
-+	(pr_reg)[21] = read_fsbase();				\
-+	(pr_reg)[22] = read_inactive_gsbase();			\
- 	asm("movl %%ds,%0" : "=r" (v)); (pr_reg)[23] = v;	\
- 	asm("movl %%es,%0" : "=r" (v)); (pr_reg)[24] = v;	\
- 	asm("movl %%fs,%0" : "=r" (v)); (pr_reg)[25] = v;	\
+ 	if (da9063->variant_code == PMIC_DA9063_AD) {
+ 		da9063_regmap_config.rd_table = &da9063_ad_readable_table;
+@@ -181,7 +182,7 @@ static int da9063_i2c_probe(struct i2c_client *i2c,
+ }
+ 
+ static const struct i2c_device_id da9063_i2c_id[] = {
+-	{ "da9063", PMIC_CHIP_ID_DA9063 },
++	{ "da9063", PMIC_TYPE_DA9063 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(i2c, da9063_i2c_id);
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 87c884ae0064..eeb0d431dda1 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -98,7 +98,7 @@ struct da9063_regulator_info {
+ struct da9063_dev_model {
+ 	const struct da9063_regulator_info	*regulator_info;
+ 	unsigned				n_regulators;
+-	unsigned				dev_model;
++	enum da9063_type			type;
+ };
+ 
+ /* Single regulator settings */
+@@ -585,7 +585,7 @@ static struct da9063_dev_model regulators_models[] = {
+ 	{
+ 		.regulator_info = da9063_regulator_info,
+ 		.n_regulators = ARRAY_SIZE(da9063_regulator_info),
+-		.dev_model = PMIC_CHIP_ID_DA9063,
++		.type = PMIC_TYPE_DA9063,
+ 	},
+ 	{ }
+ };
+@@ -741,7 +741,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
+ 
+ 	/* Find regulators set for particular device model */
+ 	for (model = regulators_models; model->regulator_info; model++) {
+-		if (model->dev_model == da9063->model)
++		if (model->type == da9063->type)
+ 			break;
+ 	}
+ 	if (!model->regulator_info) {
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index e015b065db7e..9e36097adc42 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -31,6 +31,10 @@
+ 
+ #define PMIC_CHIP_ID_DA9063		0x61
+ 
++enum da9063_type {
++	PMIC_TYPE_DA9063 = 0,
++};
++
+ enum da9063_variant_codes {
+ 	PMIC_DA9063_AD = 0x3,
+ 	PMIC_DA9063_BB = 0x5,
+@@ -73,7 +77,7 @@ enum da9063_irqs {
+ struct da9063 {
+ 	/* Device */
+ 	struct device	*dev;
+-	unsigned short	model;
++	enum da9063_type type;
+ 	unsigned char	variant_code;
+ 	unsigned int	flags;
+ 
 -- 
-2.7.4
+2.16.2
