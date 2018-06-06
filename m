@@ -1,84 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B2C1060555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E94D1606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932306AbeFFH2t (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 03:28:49 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38419 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932122AbeFFH2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:28:47 -0400
-Date: Wed, 6 Jun 2018 09:28:44 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        mark.rutland@arm.com, thierry.reding@gmail.com, dev@lynxeye.de,
-        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
-        krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] mtd: rawnand: add an option to specify NAND chip
- as a boot device
-Message-ID: <20180606092844.3ab746b2@bbrezillon>
-In-Reply-To: <20180605201102.GA22487@rob-hp-laptop>
-References: <20180531221637.6017-1-stefan@agner.ch>
-        <20180531221637.6017-3-stefan@agner.ch>
-        <20180605201102.GA22487@rob-hp-laptop>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932449AbeFFJVH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:21:07 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55158 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932339AbeFFJVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:21:05 -0400
+Subject: Re: [PATCH v2 6/8] pwm: cros-ec: Switch to SPDX identifier.
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        linux-pwm@vger.kernel.org
+References: <20180605175429.9072-1-enric.balletbo@collabora.com>
+ <20180605175429.9072-7-enric.balletbo@collabora.com>
+ <20180606090848.GF11810@ulmo>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <32b22e93-d8d3-d20a-f497-723c62d1bd2b@collabora.com>
+Date: Wed, 6 Jun 2018 11:21:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180606090848.GF11810@ulmo>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi Thierry,
 
-On Tue, 5 Jun 2018 14:11:02 -0600
-Rob Herring <robh@kernel.org> wrote:
-
-> On Fri, Jun 01, 2018 at 12:16:33AM +0200, Stefan Agner wrote:
-> > Allow to define a NAND chip as a boot device. This can be helpful
-> > for the selection of the ECC algorithm and strength in case the boot
-> > ROM supports only a subset of controller provided options.
-> > 
-> > Signed-off-by: Stefan Agner <stefan@agner.ch>
-> > ---
-> >  Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
-> >  drivers/mtd/nand/raw/nand_base.c               | 3 +++
-> >  include/linux/mtd/rawnand.h                    | 6 ++++++
-> >  3 files changed, 13 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-> > index 8bb11d809429..8daf81b9748c 100644
-> > --- a/Documentation/devicetree/bindings/mtd/nand.txt
-> > +++ b/Documentation/devicetree/bindings/mtd/nand.txt
-> > @@ -43,6 +43,10 @@ Optional NAND chip properties:
-> >  		     This is particularly useful when only the in-band area is
-> >  		     used by the upper layers, and you want to make your NAND
-> >  		     as reliable as possible.
-> > +- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
-> > +		       this information to select ECC algorithms supported by
-> > +		       the boot ROM or similar restrictions.
-> > +  
+On 06/06/18 11:08, Thierry Reding wrote:
+> On Tue, Jun 05, 2018 at 07:54:27PM +0200, Enric Balletbo i Serra wrote:
+>> Adopt the SPDX license identifier headers to ease license compliance
+>> management.
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>> Changes in v2: None
+>>
+>>  drivers/pwm/pwm-cros-ec.c | 13 ++++---------
+>>  1 file changed, 4 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/pwm/pwm-cros-ec.c b/drivers/pwm/pwm-cros-ec.c
+>> index 9c13694eaa24..9bf4cde86765 100644
+>> --- a/drivers/pwm/pwm-cros-ec.c
+>> +++ b/drivers/pwm/pwm-cros-ec.c
+>> @@ -1,12 +1,7 @@
+>> -/*
+>> - * Copyright (C) 2016 Google, Inc
+>> - *
+>> - * This program is free software; you can redistribute it and/or modify it
+>> - * under the terms of the GNU General Public License version 2, as published by
+>> - * the Free Software Foundation.
+>> - *
+>> - * Expose a PWM controlled by the ChromeOS EC to the host processor.
+>> - */
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Expose a PWM controlled by the ChromeOS EC to the host processor.
+>> +//
+>> +// Copyright (C) 2016 Google, Inc.
 > 
-> Shouldn't this be a partition level option? You could conceivably do one 
-> ECC type for boot area and something else for the rest of the NAND.
+> This is odd. I understand that for some reason there is an exception for
+> SPDX license identifies to use C++ style comments, but why would you
+> make the whole comment C++ style? Why not just something like the below:
+> 
 
-I tried that a long time ago [1]. The result was far from perfect. I'm
-not saying it's impossible to do it, but it definitely requires a lot
-of work if we want to do it properly.
+Seems that there is some kind of controversy between different maintainers. I
+did in that way because I was complained to use the c-style on other patches,
+and seems, that putting everything as // is Linus Torvalds' preferred style:
 
-Also, what about boards that are not defining their partitions in the
-DT but through the command line (using mtdparts)? That means patching
-the mtdparts part parser to also take the ECC setup into account.
+https://lkml.org/lkml/2017/11/25/133
 
-Regards,
+I don't mind to change if the c-style is preferred by the maintainer (others
+prefer the c++ style) but I think that would be good get an agreement between
+subsystems maintainers and document properly.
 
-Boris
+Best regards,
+ Enric
 
-[1]http://lists.infradead.org/pipermail/linux-mtd/2015-July/060600.html
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (C) 2016 Google, Inc
+>   *
+> - * This program is free software; you can redistribute it and/or modify it
+> - * under the terms of the GNU General Public License version 2, as published by
+> - * the Free Software Foundation.
+> - *
+>   * Expose a PWM controlled by the ChromeOS EC to the host processor.
+>   */
+> 
+> Thierry
+> 
