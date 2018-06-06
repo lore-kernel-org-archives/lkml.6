@@ -1,94 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF7F660767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 249F060764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752213AbeFFNcF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:32:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:43963 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752019AbeFFNcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:32:03 -0400
-X-Google-Smtp-Source: ADUXVKJyzu6ELxpkDvwaouDI/abNx50wSdgNdxrTA3SOh9iQa7LCdVoivPUMHV+0f/9sfWUe2NB/ygyTm/4PKujFLbKUpWAob769
+        id S1752111AbeFFMbb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:31:31 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44758 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751878AbeFFMba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:31:30 -0400
+Date: Wed, 6 Jun 2018 14:31:17 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        benjamin.lindqvist@endian.se, pgaikwad@nvidia.com, dev@lynxeye.de,
+        mirza.krak@gmail.com, richard@nod.at, pdeschrijver@nvidia.com,
+        linux-kernel@vger.kernel.org, krzk@kernel.org,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        linux-mtd@lists.infradead.org, marcel@ziswiler.com,
+        miquel.raynal@bootlin.com, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] mtd: rawnand: tegra: add devicetree binding
+Message-ID: <20180606143117.2f6a56b1@bbrezillon>
+In-Reply-To: <c687fc59e2662d07568f94efb55bc250@agner.ch>
+References: <20180531221637.6017-1-stefan@agner.ch>
+        <20180531221637.6017-4-stefan@agner.ch>
+        <20180601093025.2817ff30@bbrezillon>
+        <faa40dac-ab2a-2d43-3a43-2d46cebcd539@gmail.com>
+        <20180606103903.GJ11810@ulmo>
+        <20180606124540.46bfa00b@bbrezillon>
+        <20180606110735.GM11810@ulmo>
+        <c687fc59e2662d07568f94efb55bc250@agner.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Date: Wed, 06 Jun 2018 06:32:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000026a9d3056df931ea@google.com>
-Subject: WARNING: refcount bug in smc_tcp_listen_work
-From: syzbot <syzbot+9e60d2428a42049a592a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, 06 Jun 2018 14:14:23 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-syzbot found the following crash on:
+> On 06.06.2018 13:07, Thierry Reding wrote:
+> > On Wed, Jun 06, 2018 at 12:45:40PM +0200, Boris Brezillon wrote:  
+> >> Hi Thierry,
+> >>
+> >> On Wed, 6 Jun 2018 12:39:03 +0200
+> >> Thierry Reding <thierry.reding@gmail.com> wrote:
+> >>  
+> >> > On Tue, Jun 05, 2018 at 11:19:14PM +0300, Dmitry Osipenko wrote:  
+> >> > > On 01.06.2018 10:30, Boris Brezillon wrote:  
+> >> > > > On Fri,  1 Jun 2018 00:16:34 +0200
+> >> > > > Stefan Agner <stefan@agner.ch> wrote:
+> >> > > >  
+> >> > > >> This adds the devicetree binding for the Tegra 2 NAND flash
+> >> > > >> controller.
+> >> > > >>
+> >> > > >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> >> > > >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> > > >> ---
+> >> > > >>  .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
+> >> > > >>  1 file changed, 64 insertions(+)
+> >> > > >>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+> >> > > >>
+> >> > > >> diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+> >> > > >> new file mode 100644
+> >> > > >> index 000000000000..5cd984ef046b
+> >> > > >> --- /dev/null
+> >> > > >> +++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+> >> > > >> @@ -0,0 +1,64 @@
+> >> > > >> +NVIDIA Tegra NAND Flash controller
+> >> > > >> +
+> >> > > >> +Required properties:
+> >> > > >> +- compatible: Must be one of:
+> >> > > >> +  - "nvidia,tegra20-nand"  
+> >> > > >
+> >> > > > As discussed previously, I prefer "nvidia,tegra20-nand-controller" or
+> >> > > > "nvidia,tegra20-nfc".
+> >> > > >  
+> >> > > >> +- reg: MMIO address range
+> >> > > >> +- interrupts: interrupt output of the NFC controller
+> >> > > >> +- clocks: Must contain an entry for each entry in clock-names.
+> >> > > >> +  See ../clocks/clock-bindings.txt for details.
+> >> > > >> +- clock-names: Must include the following entries:
+> >> > > >> +  - nand
+> >> > > >> +- resets: Must contain an entry for each entry in reset-names.
+> >> > > >> +  See ../reset/reset.txt for details.
+> >> > > >> +- reset-names: Must include the following entries:
+> >> > > >> +  - nand
+> >> > > >> +
+> >> > > >> +Optional children nodes:
+> >> > > >> +Individual NAND chips are children of the NAND controller node. Currently
+> >> > > >> +only one NAND chip supported.
+> >> > > >> +
+> >> > > >> +Required children node properties:
+> >> > > >> +- reg: An integer ranging from 1 to 6 representing the CS line to use.
+> >> > > >> +
+> >> > > >> +Optional children node properties:
+> >> > > >> +- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
+> >> > > >> +		 "hw" is supported.
+> >> > > >> +- nand-ecc-algo: string, algorithm of NAND ECC.
+> >> > > >> +		 Supported values with "hw" ECC mode are: "rs", "bch".
+> >> > > >> +- nand-bus-width : See nand.txt
+> >> > > >> +- nand-on-flash-bbt: See nand.txt
+> >> > > >> +- nand-ecc-strength: integer representing the number of bits to correct
+> >> > > >> +		     per ECC step (always 512). Supported strength using HW ECC
+> >> > > >> +		     modes are:
+> >> > > >> +		     - RS: 4, 6, 8
+> >> > > >> +		     - BCH: 4, 8, 14, 16
+> >> > > >> +- nand-ecc-maximize: See nand.txt
+> >> > > >> +- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
+> >> > > >> +		       are choosen.
+> >> > > >> +- wp-gpios: GPIO specifier for the write protect pin.
+> >> > > >> +
+> >> > > >> +Optional child node of NAND chip nodes:
+> >> > > >> +Partitions: see partition.txt
+> >> > > >> +
+> >> > > >> +  Example:
+> >> > > >> +	nand@70008000 {  
+> >> > > >
+> >> > > > 	nand-controller@70008000 {
+> >> > > >  
+> >> > > >> +		compatible = "nvidia,tegra20-nand";  
+> >> > > >
+> >> > > > 		compatible = "nvidia,tegra20-nand-controller";
+> >> > > >
+> >> > > > or
+> >> > > >
+> >> > > > 		compatible = "nvidia,tegra20-nfc";
+> >> > > >  
+> >> > >
+> >> > > Maybe it's just me, but when I'm reading "nfc", my first association is the
+> >> > > "Near Field Communication". Probably an explicit
+> >> > > "nvidia,tegra20-nand-controller" variant is more preferable.  
+> >>
+> >> I also prefer nvidia,tegra20-nand-controller.
+> >>  
+> >> >
+> >> > We don't really use a -controller suffix for any of the other
+> >> > controllers because it is kind of implied. "nfc" is also not something
+> >> > that is ever referred to in the technical documentation.
+> >> >
+> >> > "nvidia,tegra20-nand" would be most consistent with all the rest of
+> >> > Tegra (c.f. "nvidia,tegra*-ahci", "nvidia,tegra*-pci",
+> >> > "nvidia,tegra*-hda", "nvidia,tegra*-gmi", ...).  
+> >>
+> >> People get confused about what this node represents when you just have
+> >> "nvidia,tegra20-nand", and then you start seeing NAND related props or
+> >> partition nodes being defined under the NAND controller node.
+> >> I really prefer to have the "-controller" prefix here to avoid such
+> >> confusions.  
+> > 
+> > Hmm... odd. I mean, the node is already called nand-controller@...,
+> > which makes it pretty obvious to me that this represents a controller
+> > rather than a NAND chip. Also, the placement of this in the DT hierarchy
+> > should make it pretty obvious that it is a controller since you can't
+> > just put a NAND chip directly on the CPU's address bus.
+> > 
+> > In addition I think the nvidia,tegra* part already pretty strongly
+> > suggests that this is part of an SoC, so further implies "controller".  
+> 
+> The reference manual states:
+> "16.0 NAND FLASH CONTROLLER
+> 
+> The NAND flash controller allows Tegra 2 Processor to access NAND flash
+> memories for mass storage."
+> 
+> So I guess "nvidia,tegra20-nand-flash-controller" would be most
+> explicit. But the manual also has "GPIO controller" and we use
+> "nvidia,tegra20-gpio" as compatible string.
+> 
+> I dislike nfc since it is an increasingly less known abbreviation and
+> not used in the reference manual at all.
+> 
+> "nvidia,tegra20-nand" or "nvidia,tegra20-nand-flash-controller" is fine
+> for me...
 
-HEAD commit:    75d4e704fa8d netdev-FAQ: clarify DaveM's position for stab..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1632a6f7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7b76ec81cd4aad4b
-dashboard link: https://syzkaller.appspot.com/bug?extid=9e60d2428a42049a592a
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9e60d2428a42049a592a@syzkaller.appspotmail.com
-
-A link change request failed with some changes committed already. Interface  
-bridge0 may have been left with an inconsistent configuration, please check.
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 0 PID: 23870 at lib/refcount.c:187  
-refcount_sub_and_test+0x2d3/0x330 lib/refcount.c:187
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 23870 Comm: kworker/0:4 Not tainted 4.17.0-rc7+ #79
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events smc_tcp_listen_work
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:refcount_sub_and_test+0x2d3/0x330 lib/refcount.c:187
-RSP: 0018:ffff880194aaf4f8 EFLAGS: 00010286
-RAX: 0000000000000026 RBX: 0000000000000000 RCX: ffffffff8160b8ad
-RDX: 0000000000000000 RSI: ffffffff81610561 RDI: ffff880194aaf058
-RBP: ffff880194aaf5e0 R08: ffff88014148e500 R09: 0000000000000006
-R10: ffff88014148e500 R11: 0000000000000000 R12: 00000000ffffffff
-R13: ffff880194aaf5b8 R14: 0000000000000001 R15: ffff880194aaf728
-  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
-  sock_put include/net/sock.h:1668 [inline]
-  smc_tcp_listen_work+0xb94/0xec0 net/smc/af_smc.c:1073
-  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
-  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
-  kthread+0x345/0x410 kernel/kthread.c:240
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Enough bikeshedding, let's go for "nvidia,tegra20-nand" :-). As long as
+the representation clearly differentiate the NAND controller and the
+NAND chips I'm fine with it.
