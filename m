@@ -1,62 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36210606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAF0p8nr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32F8D60767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752480AbeFFOpq (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:45:46 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:37733 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752152AbeFFOpp (ORCPT
+        id S932267AbeFFGgp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:36:45 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55815 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932249AbeFFGgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:45:45 -0400
-X-Google-Smtp-Source: ADUXVKKiGC4s13aDjl+c9onK+fVGQJH3q4dymdtBDcPHCvN71ARg/nZNNeqKBQI8zBTg5P6bTWrGpigmTU3Wx0RlSjs=
+        Wed, 6 Jun 2018 02:36:42 -0400
+X-Google-Smtp-Source: ADUXVKJM9zYWG8EJwzP4HT0N3s6biqaes82n004yIdu0UFBGleVJ0E3LjzPyqLtBFrvwe2m31lGC7g==
+Date: Wed, 6 Jun 2018 07:36:38 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 04/12] mfd: da9063: Replace DA9063_NUM_IRQ with
+ ARRAY_SIZE
+Message-ID: <20180606063638.GX21163@dell>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+ <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180605171604.GA221901@dtor-ws>
-References: <20180605171604.GA221901@dtor-ws>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Wed, 6 Jun 2018 16:45:43 +0200
-Message-ID: <CAO-hwJ++CB6xy9jwRmBz1Gj0LjF368D8w5nYiqkObo5Xy3g84g@mail.gmail.com>
-Subject: Re: [RFC/PATCH] Input: make input_report_slot_state() return boolean
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605231013.1803-4-marek.vasut+renesas@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 7:16 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> Let's make input_report_slot_state() return boolean representing whether
-> the contact is active or not. This will allow writing code like:
->
->         if (input_mt_report_slot_state(input, obj->mt_tool,
->                                         obj->type != RMI_2D_OBJECT_NONE) {
->
->                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
->                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
->                 ...
->         }
->
-> instead of:
->
->         input_mt_report_slot_state(input, obj->mt_tool,
->                                    obj->type != RMI_2D_OBJECT_NONE);
->         if (obj->type != RMI_2D_OBJECT_NONE) {
->                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_X, obj->x);
->                 input_event(sensor->input, EV_ABS, ABS_MT_POSITION_Y, obj->y);
->                 ...
->         }
->
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On Wed, 06 Jun 2018, Marek Vasut wrote:
+
+> Replace DA9063_NUM_IRQ macro which is not used anywhere with
+> plain ARRAY_SIZE().
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
 > ---
+> V4: New patch
+> ---
+>  drivers/mfd/da9063-irq.c        | 2 +-
+>  include/linux/mfd/da9063/core.h | 1 -
+>  2 files changed, 1 insertion(+), 2 deletions(-)
 
-Looks good to me as well.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-In case you still need it:
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redaht.com>
-
-Cheers,
-Benjamin
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
