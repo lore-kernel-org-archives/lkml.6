@@ -1,72 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D04260764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5yz+Rv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68294606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752026AbeFFNCc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:02:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50111 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbeFFNCb (ORCPT
+        id S1754146AbeFFSGe (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 14:06:34 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35274 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752401AbeFFSGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:02:31 -0400
-Date: Wed, 6 Jun 2018 15:02:20 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "Tobin C. Harding" <me@tobin.cc>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] enable early printing of hashed pointers
-In-Reply-To: <1527472002-11571-1-git-send-email-me@tobin.cc>
-Message-ID: <alpine.DEB.2.21.1806061501130.1579@nanos.tec.linutronix.de>
-References: <1527472002-11571-1-git-send-email-me@tobin.cc>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 6 Jun 2018 14:06:32 -0400
+X-Google-Smtp-Source: ADUXVKI7lYObkZaWEgWRcXDxTHGnkJ2D6KwL94P2jTIb7t8kFb4Ubaxho2GdLwC+LEy3wsDiDIZRMS8Gql/Y9tLhUZU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
+References: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 6 Jun 2018 21:06:31 +0300
+Message-ID: <CAHp75VdRPA_29hLKLvDe+VZZunGCtffUusamH0YQyQpWcNOY6g@mail.gmail.com>
+Subject: Re: [PATCH 0/5] can: enable multi-queue for SocketCAN devices
+To: Mark Jonas <mark.jonas@de.bosch.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Heiko Schocher <hs@denx.de>, Zhu Yi <yi.zhu5@cn.bosch.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 May 2018, Tobin C. Harding wrote:
+On Tue, Jun 5, 2018 at 9:43 PM, Mark Jonas <mark.jonas@de.bosch.com> wrote:
+> Upon request by Marc Kleine-Budde this patch series does not only
+> contain our patch to enable enable multi-queue for SocketCAN devices
+> but also a driver (Companion driver suite) which makes active use of
+> this feature.
+>
+> The driver suite implements
+>   - two CAN interfaces
+>   - one generic command interfaces
+> and offers a SocketCAN as well as a char device interface. The
+> SocketCAN interface supports multi-queue.
+>
+> The functionality bases on an external peripheral chip named Companion.
+> It offers two CAN interfaces, each has 8 prioritized transmit FIFOs as
+> well as one receive FIFO. Besides CAN, undisclosed additional functions
+> can be accessed through the char device.
+>
+> A standard SPI interface with two additional lines for flow control is
+> used. The Companion chip is the SPI slave.
 
-> Currently printing pointers early in the boot sequence can result in a
-> dummy string '(____ptrval____)' being printed.  While resolving this
-> issue it was noticed that we can use the hw RNG if available for hashing
-> pointers.
-> 
-> Patch one and two do the ground work to be able to use hw RNG removing
-> from get_random_bytes_arch() the call to get_random_bytes() and
-> returning the number of bytes of random material successfully returned. 
-> 
-> Patch three uses the hw RNG to get keying material if it is available.
-> 
-> Patch four further assists debugging early in the boot sequence for
-> machines that do not have a hw RNG by adding a command line option
-> 'debug_boot_weak_hash'.  If enabled, non-cryptographically secure hashing
-> is used instead of siphash so we can hash at any time. 
-> 
-> During the versions of this set I have been totally confused about which
-> patches go through which tree.  This version again puts all 4 patches
-> together in the hope they will go through Andrew's tree.
-> 
-> 
-> Steve,
-> 
-> Could you please take a quick squiz at the final 2 patches if you get a
-> chance.  I assumed we are in preemptible context during early_init based
-> on your code (and code comment) and called static_branch_disable()
-> directly if hw RNG returned keying material.  It's a pretty simple
-> change but I'd love to get someone else to check I've not noob'ed it.
+Can remoteproc API be utilized here?
 
-early_initcalls() are not that early :) They run in thread context fully
-preemtible so calling static_branch_disable() is perfectly fine.
+>
+> The driver suite consists of three separate drivers. The following
+> diagram illustrates the dependencies in layers.
+>
+>            /dev/companion       SocketCAN                User Space
+> -------------------------------------------------------------------
+>          +----------------+ +---------------+
+>          | companion-char | | companion-can |
+>          +----------------+ +---------------+
+>          +----------------------------------+
+>          |          companion-spi           |
+>          +----------------------------------+
+>          +----------------------------------+
+>          |     standard SPI subsystem       |
+>          +----------------------------------+          Linux Kernel
+> -------------------------------------------------------------------
+>                | | | |      | |                            Hardware
+>             CS-+ | | |      | +-BUSY
+>             CLK--+ | |      +---REQUEST
+>             MOSI---+ |
+>             MISO-----+
+>
+> companion-spi
+>    core.c: handles SPI, sysfs entry and interface to upper layer
+>    protocol-manager.c: handles protocol with the SPI HW
+>    queue-manager.c: handles buffering and packets scheduling
+>
+> companion-can
+>    makes use of multi-queue support and allows to use tc to configure
+>    the queuing discipline (e.g. mqprio). Together with the SO_PRIORITY
+>    socket option this allows to specify the FIFO a CAN frame shall be
+>    sent to.
+>
+> companion-char
+>    handles messages to other undisclosed functionality beyond CAN.
+>
+> Zhu Yi (5):
+>   can: enable multi-queue for SocketCAN devices
+>   spi: implement companion-spi driver
+>   char: implement companion-char driver
+>   can: implement companion-can driver
+>   spi,can,char: add companion DT binding documentation
+>
+>  .../devicetree/bindings/spi/bosch,companion.txt    |   82 ++
+>  drivers/char/Kconfig                               |    7 +
+>  drivers/char/Makefile                              |    2 +
+>  drivers/char/companion-char.c                      |  367 ++++++
+>  drivers/net/can/Kconfig                            |    8 +
+>  drivers/net/can/Makefile                           |    1 +
+>  drivers/net/can/companion-can.c                    |  694 ++++++++++++
+>  drivers/net/can/dev.c                              |    8 +-
+>  drivers/spi/Kconfig                                |    2 +
+>  drivers/spi/Makefile                               |    2 +
+>  drivers/spi/companion/Kconfig                      |    5 +
+>  drivers/spi/companion/Makefile                     |    2 +
+>  drivers/spi/companion/core.c                       | 1189 ++++++++++++++++++++
+>  drivers/spi/companion/protocol-manager.c           | 1035 +++++++++++++++++
+>  drivers/spi/companion/protocol-manager.h           |  348 ++++++
+>  drivers/spi/companion/protocol.h                   |  273 +++++
+>  drivers/spi/companion/queue-manager.c              |  146 +++
+>  drivers/spi/companion/queue-manager.h              |  245 ++++
+>  include/linux/can/dev.h                            |    7 +-
+>  include/linux/companion.h                          |  258 +++++
+>  20 files changed, 4677 insertions(+), 4 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/bosch,companion.txt
+>  create mode 100644 drivers/char/companion-char.c
+>  create mode 100644 drivers/net/can/companion-can.c
+>  create mode 100644 drivers/spi/companion/Kconfig
+>  create mode 100644 drivers/spi/companion/Makefile
+>  create mode 100644 drivers/spi/companion/core.c
+>  create mode 100644 drivers/spi/companion/protocol-manager.c
+>  create mode 100644 drivers/spi/companion/protocol-manager.h
+>  create mode 100644 drivers/spi/companion/protocol.h
+>  create mode 100644 drivers/spi/companion/queue-manager.c
+>  create mode 100644 drivers/spi/companion/queue-manager.h
+>  create mode 100644 include/linux/companion.h
+>
+> --
+> 2.7.4
+>
 
-Thanks,
 
-	tglx
+
+-- 
+With Best Regards,
+Andy Shevchenko
