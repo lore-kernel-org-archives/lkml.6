@@ -1,121 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JjMLH+cj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 837036037B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxjetDxF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A0D8C60764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932207AbeFFGH5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:07:57 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:27635 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932131AbeFFGHv (ORCPT
+        id S932368AbeFFHrt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 03:47:49 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36762 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932275AbeFFHrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:07:51 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-Date: Wed, 6 Jun 2018 11:38:24 +0530
-Message-ID: <20180606060826.14671-5-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
+        Wed, 6 Jun 2018 03:47:45 -0400
+X-Google-Smtp-Source: ADUXVKJ/YBXLSkY+tm6ozdzK0fEsSiLO2sPxglgTCVDjmFP8uh1zmA63u+7ruVXc0npju47LdfgBCx+mjzK4coQHuDs=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180529131014.18641-1-ricardo.ribalda@gmail.com>
+ <20180529131014.18641-19-ricardo.ribalda@gmail.com> <CAHp75VfFTtysSBvYfmCMoKZz8BpHb73qh=Zy-gpn6RKO2DE-5Q@mail.gmail.com>
+ <CAPybu_0zByhDeVf6_Tv_PwU0WL_y6bkVPn0ha+VBvPcxWV4rLA@mail.gmail.com>
+In-Reply-To: <CAPybu_0zByhDeVf6_Tv_PwU0WL_y6bkVPn0ha+VBvPcxWV4rLA@mail.gmail.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Date: Wed, 6 Jun 2018 09:47:27 +0200
+Message-ID: <CAPybu_2dqG1HX39e+oG8rYvzMG_vGDBQjiLewNjwUvkh+AiF=w@mail.gmail.com>
+Subject: Re: [PATCH 18/19] serdev: ttydev: Serdev driver that creates an
+ standard TTY port
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the software reset of a target interconnect
-module using its sysconfig and sysstatus registers.
+Hi Andy,
+On Wed, Jun 6, 2018 at 8:58 AM Ricardo Ribalda Delgado
+<ricardo.ribalda@gmail.com> wrote:
+>
+> Hi Andy
+> On Tue, Jun 5, 2018 at 3:42 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Tue, May 29, 2018 at 4:10 PM, Ricardo Ribalda Delgado
+> > <ricardo.ribalda@gmail.com> wrote:
+> > > Standard TTY port that can be loaded/unloaded via serdev sysfs. This
+> > > serdev driver can only be used by serdev controllers that are compatible
+> > > with ttyport.
+> >
+> > > +config SERIAL_DEV_CTRL_TTYDEV
+> > > +       tristate "TTY port dynamically loaded by the Serial Device Bus"
+> > > +       help
+> > > +         Say Y here if you want to create a bridge driver between the Serial
+> > > +         device bus and the TTY chardevice. This driver can be dynamically
+> > > +         loaded/unloaded by the Serial Device Bus.
+> > > +
+> > > +         If unsure, say Y.
+> > > +       depends on SERIAL_DEV_CTRL_TTYPORT
+> >
+> > > +       default m
+> >
+> > Hmm... Can't we survive w/o this by default?
+>
+> If this module is not available and serdev is enabled the user would
+> miss his /dev/ttyS* nodes, so I rather leave this on.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- drivers/bus/ti-sysc.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Sorry, brain fart. This is exactly what #if
+IS_ENABLED(CONFIG_SERIAL_DEV_CTRL_TTYDEV) prevents.
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 4a2244419b9b..74d716a7bd6e 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -22,11 +22,14 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/slab.h>
-+#include <linux/iopoll.h>
- 
- #include <linux/platform_data/ti-sysc.h>
- 
- #include <dt-bindings/bus/ti-sysc.h>
- 
-+#define MAX_MODULE_SOFTRESET_WAIT		10000
-+
- static const char * const reg_names[] = { "rev", "sysc", "syss", };
- 
- enum sysc_clocks {
-@@ -74,6 +77,11 @@ struct sysc {
- 	struct delayed_work idle_work;
- };
- 
-+void sysc_write(struct sysc *ddata, int offset, u32 value)
-+{
-+	writel_relaxed(value, ddata->module_va + offset);
-+}
-+
- static u32 sysc_read(struct sysc *ddata, int offset)
- {
- 	if (ddata->cfg.quirks & SYSC_QUIRK_16BIT) {
-@@ -700,6 +708,26 @@ static void sysc_init_revision_quirks(struct sysc *ddata)
- 	}
- }
- 
-+static int sysc_reset(struct sysc *ddata)
-+{
-+	int offset = ddata->offsets[SYSC_SYSCONFIG];
-+	int val = sysc_read(ddata, offset);
-+
-+	val |= (0x1 << ddata->cap->regbits->srst_shift);
-+	sysc_write(ddata, offset, val);
-+
-+	/* Poll on reset status */
-+	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
-+		offset = ddata->offsets[SYSC_SYSSTATUS];
-+
-+		return readl_poll_timeout(ddata->module_va + offset, val,
-+				(val & ddata->cfg.syss_mask) == 0x0,
-+				100, MAX_MODULE_SOFTRESET_WAIT);
-+	}
-+
-+	return 0;
-+}
-+
- /* At this point the module is configured enough to read the revision */
- static int sysc_init_module(struct sysc *ddata)
- {
-@@ -716,6 +744,18 @@ static int sysc_init_module(struct sysc *ddata)
- 
- 		return 0;
- 	}
-+
-+	if (!(ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT) &&
-+	    !ddata->legacy_mode) {
-+		error = sysc_reset(ddata);
-+		if (error) {
-+			dev_err(ddata->dev, "Reset failed with %d\n", error);
-+			pm_runtime_put_sync(ddata->dev);
-+
-+			return error;
-+		}
-+	}
-+
- 	ddata->revision = sysc_read_revision(ddata);
- 	pm_runtime_put_sync(ddata->dev);
- 
+I have defaulted the module to n as you suggested. You can take a look
+to the patches that I plan to submit tomorrow at:
+
+https://github.com/ribalda/linux/tree/serdev2
+
+>
+> >
+> > > +static int __init ttydev_serdev_init(void)
+> > > +{
+> > > +       return serdev_device_driver_register(&ttydev_serdev_driver);
+> > > +}
+> > > +module_init(ttydev_serdev_init);
+> > > +
+> > > +static void __exit ttydev_serdev_exit(void)
+> > > +{
+> > > +       return serdev_device_driver_unregister(&ttydev_serdev_driver);
+> > > +}
+> > > +module_exit(ttydev_serdev_exit);
+> >
+> > Isn't above is just a macro in serdev.h?
+> > I.e. module_serdev_device_driver().
+>
+> ACK, thanks!
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+>
+> Best regards
+>
+> --
+> Ricardo Ribalda
+
+
+
 -- 
-2.17.0
+Ricardo Ribalda
