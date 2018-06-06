@@ -1,62 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m0F9W9Vu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6B6460555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZtDzcTC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5818D607E1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752990AbeFFP4J (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:56:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53192 "EHLO mail.kernel.org"
+        id S1752132AbeFFOBH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:01:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932351AbeFFPzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:55:39 -0400
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] f2fs: move s_res{u,g}id initialization to default_options()
-Date: Wed,  6 Jun 2018 23:55:02 +0800
-Message-Id: <20180606155502.11619-2-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
-In-Reply-To: <20180606155502.11619-1-chao@kernel.org>
-References: <20180606155502.11619-1-chao@kernel.org>
+        id S1751567AbeFFOBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 10:01:06 -0400
+Date: Wed, 6 Jun 2018 16:00:42 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Hurley <peter@hurleysoftware.com>
+Subject: Re: [PATCH 1/7] atomics/tty: add missing atomic_long_t * cast
+Message-ID: <20180606140042.GA8865@kroah.com>
+References: <20180529180746.29684-1-mark.rutland@arm.com>
+ <20180529180746.29684-2-mark.rutland@arm.com>
+ <20180605120021.GH12258@hirez.programming.kicks-ass.net>
+ <20180605142051.GB12925@kroah.com>
+ <20180605144304.GW12180@hirez.programming.kicks-ass.net>
+ <20180605145334.GA12235@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605145334.GA12235@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On Tue, Jun 05, 2018 at 04:53:34PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 05, 2018 at 04:43:04PM +0200, Peter Zijlstra wrote:
+> 
+> > I can make a proper patch, hold on.
+> 
+> ---
+> Subject: atomic/tty: Fix up atomic abuse in ldsem
+> 
+> Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
+> working after making the atomic_long interface type safe.
+> 
+> Needing casts is bad form, which made me look at the code. There are no
+> ld_semaphore::count users outside of these functions so there is no
+> reason why it can not be an atomic_long_t in the first place, obviating
+> the need for this cast.
+> 
+> That also ensures the loads use atomic_long_read(), which implies (at
+> least) READ_ONCE() in order to guarantee single-copy-atomic loads.
+> 
+> When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
+> very thin (the only difference is not changing *old on success, which
+> most callers don't seem to care about).
+> 
+> So rework the whole thing to use atomic_long_t and its accessors
+> directly.
+> 
+> While there, fixup all the horrible comment styles.
+> 
+> Cc: Peter Hurley <peter@hurleysoftware.com>
+> Reported-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Let default_options() initialize s_res{u,g}id with default value like
-other options.
+Looks good, I'll queue this up after 4.18-rc1 is out, thanks.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/super.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 73d7d7e51a61..56f3af86f62c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1355,6 +1355,8 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
- 	F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
- 	F2FS_OPTION(sbi).test_dummy_encryption = false;
-+	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
-+	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
- 	sbi->readdir_ra = 1;
- 
- 	set_opt(sbi, BG_GC);
-@@ -2702,9 +2704,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_fs_info = sbi;
- 	sbi->raw_super = raw_super;
- 
--	F2FS_OPTION(sbi).s_resuid = make_kuid(&init_user_ns, F2FS_DEF_RESUID);
--	F2FS_OPTION(sbi).s_resgid = make_kgid(&init_user_ns, F2FS_DEF_RESGID);
--
- 	/* precompute checksum seed for metadata */
- 	if (f2fs_sb_has_inode_chksum(sb))
- 		sbi->s_chksum_seed = f2fs_chksum(sbi, ~0, raw_super->uuid,
--- 
-2.16.2.17.g38e79b1fd
+greg k-h
