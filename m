@@ -1,169 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E67A60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oDqMaPBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 649056070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754103AbeFFR61 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:58:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34892 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752093AbeFFR6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:58:25 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: linux-audit@redhat.com
-Cc: Richard Guy Briggs <rgb@redhat.com>, cgroups@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
-        jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com, eparis@parisplace.org,
-        serge@hallyn.com
-Subject: Re: [RFC PATCH ghak90 (was ghak32) V3 02/10] audit: log container info of syscalls
-Date: Wed, 06 Jun 2018 13:58:23 -0400
-Message-ID: <2362206.kre0QU9EL8@x2>
-Organization: Red Hat
-In-Reply-To: <b839dc7fb29aae226b2a4602e7ef3c2a406ee90a.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com> <b839dc7fb29aae226b2a4602e7ef3c2a406ee90a.1528304203.git.rgb@redhat.com>
+        id S932536AbeFFKhh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:37:37 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35956 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932378AbeFFKhg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:37:36 -0400
+X-Google-Smtp-Source: ADUXVKLA74BKL0AFgTLJc8Lm05ci7vqKKroBEhye1p14hZqehVQJndPYXv23kBw2m5sOcGnC+X2a2Q==
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20180605103328.176255-1-tfiga@chromium.org> <20180605103328.176255-3-tfiga@chromium.org>
+ <1528199628.4074.15.camel@pengutronix.de> <CAAFQd5DYu+Oehr1UUvvdmWk7toO0i_=NFgvZcAKQ8ZURKy51fA@mail.gmail.com>
+ <1528208578.4074.19.camel@pengutronix.de> <CAAFQd5DqHj65AdzfYmvHWkqHnZntiiA2AhAfgHbLA3AuWvsOTQ@mail.gmail.com>
+ <1528278003.3438.3.camel@pengutronix.de>
+In-Reply-To: <1528278003.3438.3.camel@pengutronix.de>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Wed, 6 Jun 2018 19:37:21 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5A2hsgrmwJ3bgv6EDKqqy5Y86CnMcktrWa+YihWGjxtHg@mail.gmail.com>
+Message-ID: <CAAFQd5A2hsgrmwJ3bgv6EDKqqy5Y86CnMcktrWa+YihWGjxtHg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] media: docs-rst: Add encoder UAPI specification
+ to Codec Interfaces
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?=
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        todor.tomov@linaro.org, nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, June 6, 2018 12:58:29 PM EDT Richard Guy Briggs wrote:
-> Create a new audit record AUDIT_CONTAINER to document the audit
-> container identifier of a process if it is present.
-> 
-> Called from audit_log_exit(), syscalls are covered.
-> 
-> A sample raw event:
-> type=SYSCALL msg=audit(1519924845.499:257): arch=c000003e syscall=257
-> success=yes exit=3 a0=ffffff9c a1=56374e1cef30 a2=241 a3=1b6 items=2
-> ppid=606 pid=635 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0
-> fsgid=0 tty=pts0 ses=3 comm="bash" exe="/usr/bin/bash"
-> subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> key="tmpcontainerid" type=CWD msg=audit(1519924845.499:257): cwd="/root"
-> type=PATH msg=audit(1519924845.499:257): item=0 name="/tmp/" inode=13863
-> dev=00:27 mode=041777 ouid=0 ogid=0 rdev=00:00
-> obj=system_u:object_r:tmp_t:s0 nametype= PARENT cap_fp=0000000000000000
-> cap_fi=0000000000000000 cap_fe=0 cap_fver=0 type=PATH
-> msg=audit(1519924845.499:257): item=1 name="/tmp/tmpcontainerid"
-> inode=17729 dev=00:27 mode=0100644 ouid=0 ogid=0 rdev=00:00
-> obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE
-> cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
-> type=PROCTITLE msg=audit(1519924845.499:257):
-> proctitle=62617368002D6300736C65657020313B206563686F2074657374203E202F746D
-> 702F746D70636F6E7461696E65726964 type=CONTAINER
-> msg=audit(1519924845.499:257): op=task contid=123458
+On Wed, Jun 6, 2018 at 6:40 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>
+> On Wed, 2018-06-06 at 18:17 +0900, Tomasz Figa wrote:
+> > On Tue, Jun 5, 2018 at 11:23 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > >
+> > > On Tue, 2018-06-05 at 21:31 +0900, Tomasz Figa wrote:
+> > > [...]
+> > > > +Initialization
+> > > > > > +--------------
+> > > > > > +
+> > > > > > +1. (optional) Enumerate supported formats and resolutions. See
+> > > > > > +   capability enumeration.
+> > > > > > +
+> > > > > > +2. Set a coded format on the CAPTURE queue via :c:func:`VIDIOC_S_FMT`
+> > > > > > +
+> > > > > > +   a. Required fields:
+> > > > > > +
+> > > > > > +      i.  type = CAPTURE
+> > > > > > +
+> > > > > > +      ii. fmt.pix_mp.pixelformat set to a coded format to be produced
+> > > > > > +
+> > > > > > +   b. Return values:
+> > > > > > +
+> > > > > > +      i.  EINVAL: unsupported format.
+> > > > > > +
+> > > > > > +      ii. Others: per spec
+> > > > > > +
+> > > > > > +   c. Return fields:
+> > > > > > +
+> > > > > > +      i. fmt.pix_mp.width, fmt.pix_mp.height should be 0.
+> > > > > > +
+> > > > > > +   .. note::
+> > > > > > +
+> > > > > > +      After a coded format is set, the set of raw formats
+> > > > > > +      supported as source on the OUTPUT queue may change.
+> > > > >
+> > > > > So setting CAPTURE potentially also changes OUTPUT format?
+> > > >
+> > > > Yes, but at this point userspace hasn't yet set the desired format.
+> > > >
+> > > > > If the encoded stream supports colorimetry information, should that
+> > > > > information be taken from the CAPTURE queue?
+> > > >
+> > > > What's colorimetry? Is it something that is included in
+> > > > v4l2_pix_format(_mplane)? Is it something that can vary between raw
+> > > > input and encoded output?
+> > >
+> > > FTR, yes, I meant the colorspace, ycbcr_enc, quantization, and xfer_func
+> > > fields of the v4l2_pix_format(_mplane) structs. GStreamer uses the term
+> > > "colorimetry" to pull these fields together into a single parameter.
+> > >
+> > > The codecs usually don't care at all about this information, except some
+> > > streams (such as h.264 in the VUI parameters section of the SPS header)
+> > > may optionally contain a representation of these fields, so it may be
+> > > desirable to let encoders write the configured colorimetry or to let
+> > > decoders return the detected colorimetry via G_FMT(CAP) after a source
+> > > change event.
+> > >
+> > > I think it could be useful to enforce the same colorimetry on CAPTURE
+> > > and OUTPUT queue if the hardware doesn't do any colorspace conversion.
+> >
+> > After thinking a bit more on this, I guess it wouldn't overly
+> > complicate things if we require that the values from OUTPUT queue are
+> > copied to CAPTURE queue, if the stream doesn't include such
+> > information or the hardware just can't parse them.
+>
+> And for encoders it would be copied from CAPTURE queue to OUTPUT queue?
+>
 
-Ack for the audit record names.
+I guess iy would be from OUTPUT to CAPTURE for encoders as well, since
+the colorimetry of OUTPUT is ultimately defined by the raw frames that
+userspace is going to be feeding to the encoder.
 
--Steve
+> > Also, userspace
+> > that can't parse them wouldn't have to do anything, as the colorspace
+> > default on OUTPUT would be V4L2_COLORSPACE_DEFAULT and if hardware
+> > can't parse it either, it would just be propagated to CAPTURE.
+>
+> I wonder if this wouldn't change the meaning of V4L2_COLORSPACE_DEFAULT?
+> Documentation/media/uapi/v4l/colorspaces-defs.rst states:
+>
+>       - The default colorspace. This can be used by applications to let
+>         the driver fill in the colorspace.
+>
+> This sounds to me like it is intended to be used by the application
+> only, like V4L2_FIELD_ANY. If we let decoders return
+> V4L2_COLORSPACE_DEFAULT on the CAPTURE queue to indicate they have no
+> idea about colorspace, it should be mentioned explicitly and maybe
+> clarify in colorspaces-defs.rst as well.
 
-> See: https://github.com/linux-audit/audit-kernel/issues/90
-> See: https://github.com/linux-audit/audit-userspace/issues/51
-> See: https://github.com/linux-audit/audit-testsuite/issues/64
-> See:
-> https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h      |  7 +++++++
->  include/uapi/linux/audit.h |  1 +
->  kernel/audit.c             | 23 +++++++++++++++++++++++
->  kernel/auditsc.c           |  3 +++
->  4 files changed, 34 insertions(+)
-> 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 497cd81..4e1e34e 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -152,6 +152,9 @@ extern void		    audit_log_key(struct audit_buffer 
-*ab,
-> extern int audit_log_task_context(struct audit_buffer *ab);
->  extern void audit_log_task_info(struct audit_buffer *ab,
->  				struct task_struct *tsk);
-> +extern int audit_log_contid(struct task_struct *tsk,
-> +				    struct audit_context *context,
-> +				    char *op);
-> 
->  extern int		    audit_update_lsm_rules(void);
-> 
-> @@ -202,6 +205,10 @@ static inline int audit_log_task_context(struct
-> audit_buffer *ab) static inline void audit_log_task_info(struct
-> audit_buffer *ab,
->  				       struct task_struct *tsk)
->  { }
-> +static inline int audit_log_contid(struct task_struct *tsk,
-> +					   struct audit_context *context,
-> +					   char *op)
-> +{ }
->  #define audit_enabled 0
->  #endif /* CONFIG_AUDIT */
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index c3b1aca..469ab25 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -115,6 +115,7 @@
->  #define AUDIT_REPLACE		1329	/* Replace auditd if this packet unanswerd 
-*/
->  #define AUDIT_KERN_MODULE	1330	/* Kernel Module events */
->  #define AUDIT_FANOTIFY		1331	/* Fanotify access decision */
-> +#define AUDIT_CONTAINER		1332	/* Container ID */
-> 
->  #define AUDIT_AVC		1400	/* SE Linux avc denial or grant */
->  #define AUDIT_SELINUX_ERR	1401	/* Internal SE Linux Errors */
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index e7478cb..5e150c6 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2048,6 +2048,29 @@ void audit_log_session_info(struct audit_buffer *ab)
-> audit_log_format(ab, " auid=%u ses=%u", auid, sessionid);
->  }
-> 
-> +/*
-> + * audit_log_contid - report container info
-> + * @tsk: task to be recorded
-> + * @context: task or local context for record
-> + * @op: contid string description
-> + */
-> +int audit_log_contid(struct task_struct *tsk,
-> +			     struct audit_context *context, char *op)
-> +{
-> +	struct audit_buffer *ab;
-> +
-> +	if (!audit_contid_set(tsk))
-> +		return 0;
-> +	/* Generate AUDIT_CONTAINER record with container ID */
-> +	ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
-> +	if (!ab)
-> +		return -ENOMEM;
-> +	audit_log_format(ab, "op=%s contid=%llu",
-> +			 op, audit_get_contid(tsk));
-> +	audit_log_end(ab);
-> +	return 0;
-> +}
-> +
->  void audit_log_key(struct audit_buffer *ab, char *key)
->  {
->  	audit_log_format(ab, " key=");
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 611e926..a3c946c 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1490,10 +1490,13 @@ static void audit_log_exit(struct audit_context
-> *context, struct task_struct *ts
-> 
->  	audit_log_proctitle(tsk, context);
-> 
-> +	audit_log_contid(tsk, context, "task");
-> +
->  	/* Send end of event record to help user space know we are finished */
->  	ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
->  	if (ab)
->  		audit_log_end(ab);
-> +
->  	if (call_panic)
->  		audit_panic("error converting sid to string");
->  }
+Yes, it would change it slightly (in a non-contradicting way) and we
+need to update the description indeed.
+
+>
+> [...]
+> > > > > > +Encoding parameter changes
+> > > > > > +--------------------------
+> > > > > > +
+> > > > > > +The client is allowed to use :c:func:`VIDIOC_S_CTRL` to change encoder
+> > > > > > +parameters at any time. The driver must apply the new setting starting
+> > > > > > +at the next frame queued to it.
+> > > > > > +
+> > > > > > +This specifically means that if the driver maintains a queue of buffers
+> > > > > > +to be encoded and at the time of the call to :c:func:`VIDIOC_S_CTRL` not all the
+> > > > > > +buffers in the queue are processed yet, the driver must not apply the
+> > > > > > +change immediately, but schedule it for when the next buffer queued
+> > > > > > +after the :c:func:`VIDIOC_S_CTRL` starts being processed.
+> > > > >
+> > > > > Does this mean that hardware that doesn't support changing parameters at
+> > > > > runtime at all must stop streaming and restart streaming internally with
+> > > > > every parameter change? Or is it acceptable to not allow the controls to
+> > > > > be changed during streaming?
+> > > >
+> > > > That's a good question. I'd be leaning towards the latter (not allow),
+> > > > as to keep kernel code simple, but maybe we could have others
+> > > > (especially Pawel) comment on this.
+> > >
+> > > Same here.
+> >
+> > Same as where? :)
+>
+> I'd be leaning towards the latter (not allow) as well.
+
+Ack. Thanks for clarifying.
+
+>
+> > > [...]
+> > > > > > +2. Enumerating formats on OUTPUT queue must only return OUTPUT formats
+> > > > > > +   supported for the CAPTURE format currently set.
+> > > > > > +
+> > > > > > +3. Setting/changing format on OUTPUT queue does not change formats
+> > > > > > +   available on CAPTURE queue. An attempt to set OUTPUT format that
+> > > > > > +   is not supported for the currently selected CAPTURE format must
+> > > > > > +   result in an error (-EINVAL) from :c:func:`VIDIOC_S_FMT`.
+> > > > >
+> > > > > Same as for decoding, is this limited to pixel format? Why isn't the
+> > > > > pixel format corrected to a supported choice? What about
+> > > > > width/height/colorimetry?
+> > > >
+> > > > Width/height/colorimetry(Do you mean color space?) is a part of
+> > > > v4l2_pix_format(_mplane). I believe that's what this point was about.
+> > >
+> > > Yes. My question was more about whether this should return -EINVAL or
+> > > whether TRY_FMT/S_FMT should change the parameters to valid values.
+> >
+> > As per the standard semantics of TRY_/S_FMT, they should adjust the
+> > format on given queue. We only require that the state on other queue
+> > is left intact.
+>
+> This contradicts 3. above, which says S_FMT(OUT) should instead return
+> -EINVAL if the format doesn't match.
+
+Right. That point needs to be fixed.
+
+Best regards,
+Tomasz
