@@ -1,168 +1,283 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkAfCS7w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2937B60555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QeBALb2f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B6F0607C7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752322AbeFFTfc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:35:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752026AbeFFTfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:35:30 -0400
-X-Google-Smtp-Source: ADUXVKJr+DvQ1EoU1kGo1ZHwG5AjYTfFFkC/1fDj1FtQ7AGEcZlVWr3NBYOI6GMnNB1jscxJYDHOQHkvS1XPGiWjQ3o=
+        id S932351AbeFFJGI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:06:08 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:32988 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932253AbeFFJGG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:06:06 -0400
+X-Google-Smtp-Source: ADUXVKK5lSt/T/MRCJuM6Z3xIcHPFSaDXR7pZSm2z71eCHKtlVkaGQM3qp0mtbFsu6UxQxZlh2geTg==
+Subject: Re: [PATCH v2 6/9] xen/gntdev: Add initial support for dma-buf UAPI
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-7-andr2000@gmail.com>
+ <29c1f1fb-2d52-e3df-adce-44fdee135413@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <d2bbda68-af74-58b1-36a6-d8af47ad8beb@gmail.com>
+Date: Wed, 6 Jun 2018 12:06:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
-References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
- <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com> <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
- <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 6 Jun 2018 14:35:08 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJCkP_c_wKGRc7Qzkiw8sZLRf6MGz-WgVsLjnQfqK8r6Q@mail.gmail.com>
-Message-ID: <CAL_JsqJCkP_c_wKGRc7Qzkiw8sZLRf6MGz-WgVsLjnQfqK8r6Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
-To: Frank Rowand <frowand.list@gmail.com>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Douglas Anderson <dianders@chromium.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Carlo Caione <carlo@endlessm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Frank Rowand <frank.rowand@sony.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <29c1f1fb-2d52-e3df-adce-44fdee135413@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 2:30 PM, Frank Rowand <frowand.list@gmail.com> wrote:
-> Hi Michel,
->
-> On 06/05/18 23:36, Michel Pollet wrote:
->> Hi Frank,
+On 06/04/2018 11:49 PM, Boris Ostrovsky wrote:
+> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 >>
->> On 05 June 2018 18:34, Frank wrote:
->>> On 06/05/18 04:28, Michel Pollet wrote:
->>>> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time,
->>>> it requires a special enable method to get it started.
->>>>
->>>> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
->>>> ---
->>>>  arch/arm/mach-shmobile/Makefile        |  1 +
->>>>  arch/arm/mach-shmobile/smp-r9a06g032.c | 79
->>>> ++++++++++++++++++++++++++++++++++
->>>>  2 files changed, 80 insertions(+)
->>>>  create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
->>>>
->>>> diff --git a/arch/arm/mach-shmobile/Makefile
->>>> b/arch/arm/mach-shmobile/Makefile index 1939f52..d7fc98f 100644
->>>> --- a/arch/arm/mach-shmobile/Makefile
->>>> +++ b/arch/arm/mach-shmobile/Makefile
->>>> @@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)+= smp-sh73a0.o
->>> headsmp-scu.o platsmp-scu.o
->>>>  smp-$(CONFIG_ARCH_R8A7779)+= smp-r8a7779.o headsmp-scu.o
->>> platsmp-scu.o
->>>>  smp-$(CONFIG_ARCH_R8A7790)+= smp-r8a7790.o
->>>>  smp-$(CONFIG_ARCH_R8A7791)+= smp-r8a7791.o
->>>> +smp-$(CONFIG_ARCH_R9A06G032)+= smp-r9a06g032.o
->>>>  smp-$(CONFIG_ARCH_EMEV2)+= smp-emev2.o headsmp-scu.o
->>> platsmp-scu.o
->>>>
->>>>  # PM objects
->>>> diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c
->>>> b/arch/arm/mach-shmobile/smp-r9a06g032.c
->>>> new file mode 100644
->>>> index 0000000..cd40e6e
->>>> --- /dev/null
->>>> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
->>>> @@ -0,0 +1,79 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * R9A06G032 Second CA7 enabler.
->>>> + *
->>>> + * Copyright (C) 2018 Renesas Electronics Europe Limited
->>>> + *
->>>> + * Michel Pollet <michel.pollet@bp.renesas.com>,
->>> <buserror@gmail.com>
->>>> + * Derived from action,s500-smp
->>>> + */
->>>> +
->>>> +#include <linux/io.h>
->>>> +#include <linux/of.h>
->>>> +#include <linux/of_address.h>
->>>> +#include <linux/smp.h>
->>>> +
->>>> +/*
->>>> + * The second CPU is parked in ROM at boot time. It requires waking
->>>> +it after
->>>> + * writing an address into the BOOTADDR register of sysctrl.
->>>> + *
->>>> + * So the default value of the "cpu-release-addr" corresponds to
->>> BOOTADDR...
->>>> + *
->>>> + * *However* the BOOTADDR register is not available when the kernel
->>>> + * starts in NONSEC mode.
->>>> + *
->>>> + * So for NONSEC mode, the bootloader re-parks the second CPU into a
->>>> +pen
->>>> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to a
->>>> +SRAM address,
->>>> + * which is not restricted.
->>>
->>> The binding document for cpu-release-addr does not have a definition for 32
->>> bit arm.  The existing definition is only 64 bit arm.  Please add the definition
->>> for 32 bit arm to patch 1.
+>> Add UAPI and IOCTLs for dma-buf grant device driver extension:
+>> the extension allows userspace processes and kernel modules to
+>> use Xen backed dma-buf implementation. With this extension grant
+>> references to the pages of an imported dma-buf can be exported
+>> for other domain use and grant references coming from a foreign
+>> domain can be converted into a local dma-buf for local export.
+>> Implement basic initialization and stubs for Xen DMA buffers'
+>> support.
+>
+> It would be very helpful if people advocating for this interface
+> reviewed it as well.
+I would also love to see their comments here ;)
+>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> ---
+>>   drivers/xen/Kconfig         |  10 +++
+>>   drivers/xen/Makefile        |   1 +
+>>   drivers/xen/gntdev-dmabuf.c |  75 +++++++++++++++++++
+>>   drivers/xen/gntdev-dmabuf.h |  41 +++++++++++
+>>   drivers/xen/gntdev.c        | 142 ++++++++++++++++++++++++++++++++++++
+>>   include/uapi/xen/gntdev.h   |  91 +++++++++++++++++++++++
+>>   6 files changed, 360 insertions(+)
+>>   create mode 100644 drivers/xen/gntdev-dmabuf.c
+>>   create mode 100644 drivers/xen/gntdev-dmabuf.h
 >>
->> Hmmm I do find a definition in
->> Documentation/devicetree/bindings/arm/cpus.txt -- just under where I
->> added my 'enable-method' -- And it is already used as 32 bits in at least
->> arch/arm/boot/dts/stih407-family.dtsi.
+>> diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+>> index 39536ddfbce4..52d64e4b6b81 100644
+>> --- a/drivers/xen/Kconfig
+>> +++ b/drivers/xen/Kconfig
+>> @@ -152,6 +152,16 @@ config XEN_GNTDEV
+>>   	help
+>>   	  Allows userspace processes to use grants.
+>>   
+>> +config XEN_GNTDEV_DMABUF
+>> +	bool "Add support for dma-buf grant access device driver extension"
+>> +	depends on XEN_GNTDEV && XEN_GRANT_DMA_ALLOC && DMA_SHARED_BUFFER
 >
-> From cpus.txt:
+> Is there a reason to have XEN_GRANT_DMA_ALLOC without XEN_GNTDEV_DMABUF?
+One can use grant-table's DMA API without using dma-buf at all, e.g.
+dma-buf is sort of functionality on top of DMA allocated memory.
+We have a use-case for a driver domain (guest domain in fact)
+backed with IOMMU and still requiring allocations created as
+contiguous/DMA memory, so those buffers can be passed around to
+drivers expecting DMA-only buffers.
+So, IMO this is a valid use-case "to have XEN_GRANT_DMA_ALLOC
+without XEN_GNTDEV_DMABUF"
 >
->         - cpu-release-addr
->                 Usage: required for systems that have an "enable-method"
->                        property value of "spin-table".
->                 Value type: <prop-encoded-array>
->                 Definition:
->                         # On ARM v8 64-bit systems must be a two cell
->                           property identifying a 64-bit zero-initialised
->                           memory location.
+>> +	help
+>> +	  Allows userspace processes and kernel modules to use Xen backed
+>> +	  dma-buf implementation. With this extension grant references to
+>> +	  the pages of an imported dma-buf can be exported for other domain
+>> +	  use and grant references coming from a foreign domain can be
+>> +	  converted into a local dma-buf for local export.
+>> +
+>>   config XEN_GRANT_DEV_ALLOC
+>>   	tristate "User-space grant reference allocator driver"
+>>   	depends on XEN
+>> diff --git a/drivers/xen/Makefile b/drivers/xen/Makefile
+>> index 3c87b0c3aca6..33afb7b2b227 100644
+>> --- a/drivers/xen/Makefile
+>> +++ b/drivers/xen/Makefile
+>> @@ -41,5 +41,6 @@ obj-$(CONFIG_XEN_PVCALLS_BACKEND)	+= pvcalls-back.o
+>>   obj-$(CONFIG_XEN_PVCALLS_FRONTEND)	+= pvcalls-front.o
+>>   xen-evtchn-y				:= evtchn.o
+>>   xen-gntdev-y				:= gntdev.o
+>> +xen-gntdev-$(CONFIG_XEN_GNTDEV_DMABUF)	+= gntdev-dmabuf.o
+>>   xen-gntalloc-y				:= gntalloc.o
+>>   xen-privcmd-y				:= privcmd.o
+>> diff --git a/drivers/xen/gntdev-dmabuf.c b/drivers/xen/gntdev-dmabuf.c
+>> new file mode 100644
+>> index 000000000000..6bedd1387bd9
+>> --- /dev/null
+>> +++ b/drivers/xen/gntdev-dmabuf.c
+>> @@ -0,0 +1,75 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +/*
+>> + * Xen dma-buf functionality for gntdev.
+>> + *
+>> + * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+>> + */
+>> +
+>> +#include <linux/slab.h>
+>> +
+>> +#include "gntdev-dmabuf.h"
+>> +
+>> +struct gntdev_dmabuf_priv {
+>> +	int dummy;
+>> +};
+>> +
+>> +/* ------------------------------------------------------------------ */
+>> +/* DMA buffer export support.                                         */
+>> +/* ------------------------------------------------------------------ */
+>> +
+>> +/* ------------------------------------------------------------------ */
+>> +/* Implementation of wait for exported DMA buffer to be released.     */
+>> +/* ------------------------------------------------------------------ */
+> Why this comment style?
+Just a copy-paste from gntdev, will change to usual /*..*/
 >
-> The definition specifies a two cell property for 64-bit systems.
+>> +
+>> +int gntdev_dmabuf_exp_wait_released(struct gntdev_dmabuf_priv *priv, int fd,
+>> +				    int wait_to_ms)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +/* ------------------------------------------------------------------ */
+>> +/* DMA buffer export support.                                         */
+>> +/* ------------------------------------------------------------------ */
+>> +
+>> +int gntdev_dmabuf_exp_from_pages(struct gntdev_dmabuf_export_args *args)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +/* ------------------------------------------------------------------ */
+>> +/* DMA buffer import support.                                         */
+>> +/* ------------------------------------------------------------------ */
+>> +
+>> +struct gntdev_dmabuf *
+>> +gntdev_dmabuf_imp_to_refs(struct gntdev_dmabuf_priv *priv, struct device *dev,
+>> +			  int fd, int count, int domid)
+>> +{
+>> +	return ERR_PTR(-ENOMEM);
+>> +}
+>> +
+>> +u32 *gntdev_dmabuf_imp_get_refs(struct gntdev_dmabuf *gntdev_dmabuf)
+>> +{
+>> +	return NULL;
+>> +}
+>> +
+>> +int gntdev_dmabuf_imp_release(struct gntdev_dmabuf_priv *priv, u32 fd)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +struct gntdev_dmabuf_priv *gntdev_dmabuf_init(void)
+>> +{
+>> +	struct gntdev_dmabuf_priv *priv;
+>> +
+>> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	return priv;
+>> +}
+>> +
+>> +void gntdev_dmabuf_fini(struct gntdev_dmabuf_priv *priv)
+>> +{
+>> +	kfree(priv);
+>> +}
+>> diff --git a/drivers/xen/gntdev-dmabuf.h b/drivers/xen/gntdev-dmabuf.h
+>> new file mode 100644
+>> index 000000000000..040b2de904ac
+>> --- /dev/null
+>> +++ b/drivers/xen/gntdev-dmabuf.h
+>> @@ -0,0 +1,41 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +/*
+>> + * Xen dma-buf functionality for gntdev.
+>> + *
+>> + * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+>> + */
+>> +
+>> +#ifndef _GNTDEV_DMABUF_H
+>> +#define _GNTDEV_DMABUF_H
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/types.h>
+>> +
+>> +struct gntdev_dmabuf_priv;
+>> +struct gntdev_dmabuf;
+>> +struct device;
+>> +
+>> +struct gntdev_dmabuf_export_args {
+>> +	int dummy;
+>> +};
 >
-> Please add to the definition that cpu-release-addr is a one cell property
-> for 32-bit systems.
-
-Actually, this is all already documented in the DT spec and it is
-always 2 cells[1]. We should perhaps just remove whatever is
-duplicated from the spec.
-
-Rob
-
-[1]
-   ``cpu-release-addr``   | SD  | ``<u64>``        The
-cpu-release-addr property is required for
-                                                   cpu nodes that have
-an enable-method property
-                                                   value of
-``"spin-table"``. The value specifies the
-                                                   physical address of
-a spin table entry that
-                                                   releases a
-secondary CPU from its spin loop.
+> Please define the full structure (at least what you have in the next
+> patch) here.
+Ok, will define what I have in the next patch, but won't
+initialize anything until the next patch. Will this work for you?
+>
+>> +
+>> +struct gntdev_dmabuf_priv *gntdev_dmabuf_init(void);
+>> +
+>> +void gntdev_dmabuf_fini(struct gntdev_dmabuf_priv *priv);
+>> +
+>> +int gntdev_dmabuf_exp_from_pages(struct gntdev_dmabuf_export_args *args);
+>> +
+>> +int gntdev_dmabuf_exp_wait_released(struct gntdev_dmabuf_priv *priv, int fd,
+>> +				    int wait_to_ms);
+>> +
+>> +struct gntdev_dmabuf *
+>> +gntdev_dmabuf_imp_to_refs(struct gntdev_dmabuf_priv *priv, struct device *dev,
+>> +			  int fd, int count, int domid);
+>> +
+>> +u32 *gntdev_dmabuf_imp_get_refs(struct gntdev_dmabuf *gntdev_dmabuf);
+>> +
+>> +int gntdev_dmabuf_imp_release(struct gntdev_dmabuf_priv *priv, u32 fd);
+>> +
+>> +#endif
+>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+>> index 9813fc440c70..7d58dfb3e5e8 100644
+>> --- a/drivers/xen/gntdev.c
+>> +++ b/drivers/xen/gntdev.c
+> ...
+>
+>>   
+>> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
+> This code belongs in gntdev-dmabuf.c.
+The reason I have this code here is that it is heavily
+tied to gntdev's internal functionality, e.g. map/unmap.
+I do not want to extend gntdev's API, so gntdev-dmabuf can
+access these. What is more dma-buf doesn't need to know about
+maps done by gntdev as there is no use of that information
+in gntdev-dmabuf. So, it seems more naturally to have
+dma-buf's related map/unmap code where it is: in gntdev.
+>
+>> +/* ------------------------------------------------------------------ */
+>> +/* DMA buffer export support.                                         */
+>> +/* ------------------------------------------------------------------ */
+>> +
+>> +int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
+>> +				int count, u32 domid, u32 *refs, u32 *fd)
+>> +{
+>> +	/* XXX: this will need to work with gntdev's map, so leave it here. */
+> This doesn't help understanding what's going on (at least to me) and is
+> removed in the next patch. So no need for this comment.
+Will remove the comment
+> -boris
+>
+>> +	*fd = -1;
+>> +	return -EINVAL;
+>> +}
+>
