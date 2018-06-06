@@ -1,58 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnxjE0sj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EDB760764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF7F660767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932350AbeFFHol (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 03:44:41 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38592 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932216AbeFFHoj (ORCPT
+        id S1752213AbeFFNcF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:32:05 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:43963 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752019AbeFFNcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 03:44:39 -0400
-X-Google-Smtp-Source: ADUXVKLGlFqpNqrSU29CIXMMwPFydhBuVjHyCuX6Xe6XoCJZm7GYi9F15MDvuE2g/f6Aapt9v9qSPg==
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
-Date: Wed, 6 Jun 2018 10:44:34 +0300
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
-        linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180606074434.GE20078@localhost.localdomain>
-References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
- <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
- <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
+        Wed, 6 Jun 2018 09:32:03 -0400
+X-Google-Smtp-Source: ADUXVKJyzu6ELxpkDvwaouDI/abNx50wSdgNdxrTA3SOh9iQa7LCdVoivPUMHV+0f/9sfWUe2NB/ygyTm/4PKujFLbKUpWAob769
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Date: Wed, 06 Jun 2018 06:32:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026a9d3056df931ea@google.com>
+Subject: WARNING: refcount bug in smc_tcp_listen_work
+From: syzbot <syzbot+9e60d2428a42049a592a@syzkaller.appspotmail.com>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-On Tue, Jun 05, 2018 at 04:58:43PM +0300, Andy Shevchenko wrote:
-> On Tue, May 29, 2018 at 1:02 PM, Matti Vaittinen
-> <matti.vaittinen@fi.rohmeurope.com> wrote:
-> > Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
-> 
+syzbot found the following crash on:
 
-Thanks for the comments Andy. The regulator part of patch set v4 was
-already applied by Mark but I am going to do some further work on this
-afer I get the MFD and clk portions done. I'll store these comments and
-address issues in next set of patches.
+HEAD commit:    75d4e704fa8d netdev-FAQ: clarify DaveM's position for stab..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1632a6f7800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7b76ec81cd4aad4b
+dashboard link: https://syzkaller.appspot.com/bug?extid=9e60d2428a42049a592a
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Br,
-	Matti Vaittinen
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9e60d2428a42049a592a@syzkaller.appspotmail.com
+
+A link change request failed with some changes committed already. Interface  
+bridge0 may have been left with an inconsistent configuration, please check.
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 23870 at lib/refcount.c:187  
+refcount_sub_and_test+0x2d3/0x330 lib/refcount.c:187
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 23870 Comm: kworker/0:4 Not tainted 4.17.0-rc7+ #79
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events smc_tcp_listen_work
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:refcount_sub_and_test+0x2d3/0x330 lib/refcount.c:187
+RSP: 0018:ffff880194aaf4f8 EFLAGS: 00010286
+RAX: 0000000000000026 RBX: 0000000000000000 RCX: ffffffff8160b8ad
+RDX: 0000000000000000 RSI: ffffffff81610561 RDI: ffff880194aaf058
+RBP: ffff880194aaf5e0 R08: ffff88014148e500 R09: 0000000000000006
+R10: ffff88014148e500 R11: 0000000000000000 R12: 00000000ffffffff
+R13: ffff880194aaf5b8 R14: 0000000000000001 R15: ffff880194aaf728
+  refcount_dec_and_test+0x1a/0x20 lib/refcount.c:212
+  sock_put include/net/sock.h:1668 [inline]
+  smc_tcp_listen_work+0xb94/0xec0 net/smc/af_smc.c:1073
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
