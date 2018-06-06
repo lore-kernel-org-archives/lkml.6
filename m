@@ -1,84 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFQ34tMw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92626606DD
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJoTAybY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 03A0C606DD
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933672AbeFFRTU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:19:20 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55021 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932977AbeFFRTS (ORCPT
+        id S932434AbeFFKAY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:00:24 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39105 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752260AbeFFKAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:19:18 -0400
-X-Google-Smtp-Source: ADUXVKIEWwvBmGFwQrdszNt9P0F9k5W9oQm4DeS1Y4+BNMHZemajBVh+k9Sv2PQNHxM9FI5GpexgiNNr0F11WTh8jU4=
-MIME-Version: 1.0
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Wed, 6 Jun 2018 22:49:17 +0530
-Message-ID: <CABb+yY2MLfH4a+AKQfQw6fm2_Ej7F-m64RJTBb813o=_R5cxuQ@mail.gmail.com>
-Subject: [GIT PULL] Mailbox changes for v4.18
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 6 Jun 2018 06:00:22 -0400
+X-Google-Smtp-Source: ADUXVKIx6bADFIgb2BmrB9UJ/sFg/t2EymJ+947aq7mHNFBCEhYnh9Iu50lUsTfevzLX6MdoHL1XHA==
+From: Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v5 01/14] mfd: da9063: Replace regmap_add_irq_chip with devm counterpart
+Date: Wed,  6 Jun 2018 11:59:50 +0200
+Message-Id: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Use devm_regmap_add_irq_chip() instead of plain regmap_add_irq_chip(),
+which removes the need for da9063_irq_exit() altogether and also
+fixes a bug in da9063_device_init() where the da9063_irq_exit() was
+not called in a failpath.
 
-The following changes since commit 7fbb6157630f2ba6ee355689061f9596b84373ef:
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V5: New patch
+---
+ drivers/mfd/da9063-core.c       | 1 -
+ drivers/mfd/da9063-irq.c        | 8 ++------
+ include/linux/mfd/da9063/core.h | 1 -
+ 3 files changed, 2 insertions(+), 8 deletions(-)
 
-  Merge tag 'armsoc-fixes' of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc (2018-05-26
-14:05:16 -0700)
-
-are available in the Git repository at:
-
-  git://git.linaro.org/landing-teams/working/fujitsu/integration.git
-tags/mailbox-v4.18
-
-for you to fetch changes up to f83d1cfc8bcddf93bb6f55940fd59f5b047863e5:
-
-  mailbox/drivers/hisi: Consolidate the Kconfig for the MAILBOX
-(2018-06-06 22:21:59 +0530)
-
-----------------------------------------------------------------
-- Remove HAS_DMA config dependencies
-- New STMicroelectronics STM32 IPCC driver
-- Enable QCom driver to run more controllers
-- Fixed return code from null to ptr-err for Brcm driver
-- Fix kconfig dependencies for the HiSilicon driver
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      mailbox: qcom: Add msm8998 hmss compatible
-
-Daniel Lezcano (1):
-      mailbox/drivers/hisi: Consolidate the Kconfig for the MAILBOX
-
-Fabien Dessenne (2):
-      dt-bindings: mailbox: add STMicroelectronics STM32 IPCC binding
-      mailbox: add STMicroelectronics STM32 IPCC driver
-
-Geert Uytterhoeven (1):
-      mailbox: Remove depends on HAS_DMA in case of platform dependency
-
-Sibi Sankar (2):
-      dt-bindings: mailbox: Add APSS shared binding for SDM845 SoCs
-      mailbox: Add support for Qualcomm SDM845 SoCs
-
-Stefan Wahren (1):
-      mailbox: bcm2835: Fix of_xlate return value
-
- .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   2 +
- .../devicetree/bindings/mailbox/stm32-ipcc.txt     |  47 +++
- drivers/mailbox/Kconfig                            |  22 +-
- drivers/mailbox/Makefile                           |   2 +
- drivers/mailbox/bcm2835-mailbox.c                  |   2 +-
- drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   2 +
- drivers/mailbox/stm32-ipcc.c                       | 402 +++++++++++++++++++++
- 7 files changed, 472 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mailbox/stm32-ipcc.txt
- create mode 100644 drivers/mailbox/stm32-ipcc.c
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index 6c2870d4e754..2647bb371d86 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -238,7 +238,6 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+ void da9063_device_exit(struct da9063 *da9063)
+ {
+ 	mfd_remove_devices(da9063->dev);
+-	da9063_irq_exit(da9063);
+ }
+ 
+ MODULE_DESCRIPTION("PMIC driver for Dialog DA9063");
+diff --git a/drivers/mfd/da9063-irq.c b/drivers/mfd/da9063-irq.c
+index 207bbfe55449..da6ceb41f0d1 100644
+--- a/drivers/mfd/da9063-irq.c
++++ b/drivers/mfd/da9063-irq.c
+@@ -170,7 +170,8 @@ int da9063_irq_init(struct da9063 *da9063)
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = regmap_add_irq_chip(da9063->regmap, da9063->chip_irq,
++	ret = devm_regmap_add_irq_chip(da9063->dev, da9063->regmap,
++			da9063->chip_irq,
+ 			IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
+ 			da9063->irq_base, &da9063_irq_chip,
+ 			&da9063->regmap_irq);
+@@ -182,8 +183,3 @@ int da9063_irq_init(struct da9063 *da9063)
+ 
+ 	return 0;
+ }
+-
+-void da9063_irq_exit(struct da9063 *da9063)
+-{
+-	regmap_del_irq_chip(da9063->chip_irq, da9063->regmap_irq);
+-}
+diff --git a/include/linux/mfd/da9063/core.h b/include/linux/mfd/da9063/core.h
+index f3ae65db4c86..9ab7049977aa 100644
+--- a/include/linux/mfd/da9063/core.h
++++ b/include/linux/mfd/da9063/core.h
+@@ -95,6 +95,5 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq);
+ int da9063_irq_init(struct da9063 *da9063);
+ 
+ void da9063_device_exit(struct da9063 *da9063);
+-void da9063_irq_exit(struct da9063 *da9063);
+ 
+ #endif /* __MFD_DA9063_CORE_H__ */
+-- 
+2.16.2
