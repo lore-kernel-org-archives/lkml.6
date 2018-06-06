@@ -1,88 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="QmwlYPkf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9553460555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mR5WQ4Do"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 553E4606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752484AbeFFMms (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:42:48 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54209 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752356AbeFFMlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:41:52 -0400
-X-Google-Smtp-Source: ADUXVKIcpfehs87UdYvTklG3+X+UGgs0JakPt6KFO95LgO42rq0/v+sIO2klzWMoANiTZ/wIXy4k5Q==
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        gnomes@lxorguk.ukuu.org.uk, Alexander Graf <agraf@suse.de>,
-        shubhraj@xilinx.com, robh@kernel.org
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH v2 5/6] serial: uartps: Fill struct uart_driver in probe()
-Date: Wed,  6 Jun 2018 14:41:38 +0200
-Message-Id: <b035a7b7014c4aa2b9192a945cf75c9c7143b16f.1528288895.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1528288895.git.michal.simek@xilinx.com>
-References: <cover.1528288895.git.michal.simek@xilinx.com>
-In-Reply-To: <cover.1528288895.git.michal.simek@xilinx.com>
-References: <cover.1528288895.git.michal.simek@xilinx.com>
+        id S932446AbeFFJMK (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:12:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:60957 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932265AbeFFJMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:12:09 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 6 Jun 2018 19:12:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: linux-next: manual merge of the staging tree with Linus' tree
+Message-ID: <20180606191205.27b1290c@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iFQ.1rWNs5=/+=W2qkGkVed"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is preparation step for dynamic port allocation without
-CDNS_UART_NR_PORTS macro. Fill the structure only once at probe.
+--Sig_/iFQ.1rWNs5=/+=W2qkGkVed
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+Hi Greg,
 
-Changes in v2:
-- new patch - it can be sent separately too
+Today's linux-next merge of the staging tree got conflicts in:
 
- drivers/tty/serial/xilinx_uartps.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+  drivers/staging/ipx/af_ipx.c
+  drivers/staging/ipx/ipx_proc.c
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index b47d7ccbc38d..d76efe8cb3df 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1260,18 +1260,6 @@ static int __init cdns_uart_console_setup(struct console *co, char *options)
- };
- #endif /* CONFIG_SERIAL_XILINX_PS_UART_CONSOLE */
- 
--static struct uart_driver cdns_uart_uart_driver = {
--	.owner		= THIS_MODULE,
--	.driver_name	= CDNS_UART_NAME,
--	.dev_name	= CDNS_UART_TTY_NAME,
--	.major		= CDNS_UART_MAJOR,
--	.minor		= CDNS_UART_MINOR,
--	.nr		= CDNS_UART_NR_PORTS,
--#ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
--	.cons		= &cdns_uart_console,
--#endif
--};
--
- #ifdef CONFIG_PM_SLEEP
- /**
-  * cdns_uart_suspend - suspend event
-@@ -1451,6 +1439,16 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	}
- 
- 	if (!cdns_uart_uart_driver.state) {
-+		cdns_uart_uart_driver.owner = THIS_MODULE,
-+		cdns_uart_uart_driver.driver_name = CDNS_UART_NAME,
-+		cdns_uart_uart_driver.dev_name = CDNS_UART_TTY_NAME,
-+		cdns_uart_uart_driver.major = CDNS_UART_MAJOR,
-+		cdns_uart_uart_driver.minor = CDNS_UART_MINOR,
-+		cdns_uart_uart_driver.nr = CDNS_UART_NR_PORTS,
-+#ifdef CONFIG_SERIAL_XILINX_PS_UART_CONSOLE
-+		cdns_uart_uart_driver.cons = &cdns_uart_console,
-+#endif
-+
- 		rc = uart_register_driver(&cdns_uart_uart_driver);
- 		if (rc < 0) {
- 			dev_err(&pdev->dev, "Failed to register driver\n");
--- 
-1.9.1
+between commits:
+
+  fddda2b7b521 ("proc: introduce proc_create_seq{,_data}")
+  db5051ead64a ("net: convert datagram_poll users tp ->poll_mask")
+
+from Linus' tree and commit:
+
+  7a2e838d28cf ("staging: ipx: delete it from the tree")
+
+from the staging tree.
+
+I fixed it up (I just removed the files) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iFQ.1rWNs5=/+=W2qkGkVed
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXpWYACgkQAVBC80lX
+0GzvRgf/TO6TaePIKoELxpjLffGFUM4wXdZOq3SaAnMaDxRygg9bT4XP6hyVRhOh
+664iQ/qsxi0/Q8ZFMSvLuEXaHtC4y9pwOuiiBuoZw5wwuDU5RtAh+wJkqtlqVQGW
+P2HAg4QbEN/6DJ5EeiGAYbIuJ6A/QZ7TaNEWe1kbA5csmkXSO0/76UL3E/Mdp9rr
+igu9NDfiFXxlXj8iH8zCuGxNMU/wdoPo4zninT7hizdCCMN292z2hpIvG4JEIsSu
+l2YGJsbHIb9EAIBmwYHwgxMMrm7uQpR80wUoE92oktP2H46/8zZZeEag25e/XJrJ
+000LvlulBbObEcuUJ+Cf2i6MaIvksw==
+=oYXW
+-----END PGP SIGNATURE-----
+
+--Sig_/iFQ.1rWNs5=/+=W2qkGkVed--
