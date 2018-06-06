@@ -1,79 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3UfsXw5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1DA71607C7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hs8clRfx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A3306070B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932283AbeFFGp0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:45:26 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41198 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932164AbeFFGpY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:45:24 -0400
-X-Google-Smtp-Source: ADUXVKITpxktRTi4asDK4tWFZYmjI2U7YzIfuoYf0YfXTED8QX4lYDMjZlEcVbjSqSBdKYYgm1QZKQ==
-Subject: Re: [PATCH 01/20] coresight: Fix memory leak in coresight_register
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
- <1528235011-30691-2-git-send-email-suzuki.poulose@arm.com>
-Cc: mathieu.poirier@linaro.org, robh@kernel.org,
-        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
-        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
-        john.horley@arm.com, charles.garcia-tobin@arm.com,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        mike.leach@linaro.org
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Message-ID: <b0100f00-c706-3a41-ca55-3c1329c53aa3@gmail.com>
-Date: Wed, 6 Jun 2018 12:14:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        id S932408AbeFFKPH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 06:15:07 -0400
+Received: from ozlabs.org ([203.11.71.1]:34347 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932291AbeFFKPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:15:05 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 6 Jun 2018 20:15:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnd Bergmann <arnd@arndb.de>, Sage Weil <sage@newdream.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Subject: linux-next: manual merge of the y2038 tree with the ceph tree
+Message-ID: <20180606201501.249302c9@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <1528235011-30691-2-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GWleNEKy4+A5=.ab8Xyf7Ze"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+--Sig_/GWleNEKy4+A5=.ab8Xyf7Ze
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Wednesday 06 June 2018 03:13 AM, Suzuki K Poulose wrote:
-> commit 6403587a930c ("coresight: use put_device() instead of kfree()")
-> introduced a memory leak where, if we fail to register the device
-> for coresight_device, we don't free the "coresight_device" object,
-> which was allocated via kzalloc(). Fix this by jumping to the
-> appropriate error path.
-put_device() will decrement the last reference and then
-free the memory by calling dev->release.  Internally
-put_device() -> kobject_put() -> kobject_cleanup() which is
-responsible to call 'dev -> release' and also free other kobject
-resources. If you will see the coresight_device_release. There
-we are releasing all allocated memory. Still if you call kfree() again
-then it'll be redundancy.
+Today's linux-next merge of the y2038 tree got a conflict in:
 
-~arvind
->
-> Fixes: commit 6403587a930c ("coresight: use put_device() instead of kfree()")
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   drivers/hwtracing/coresight/coresight.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-> index 4969b32..2893cfe 100644
-> --- a/drivers/hwtracing/coresight/coresight.c
-> +++ b/drivers/hwtracing/coresight/coresight.c
-> @@ -1020,7 +1020,7 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->   	ret = device_register(&csdev->dev);
->   	if (ret) {
->   		put_device(&csdev->dev);
-> -		goto err_kzalloc_csdev;
-> +		goto err_kzalloc_refcnts;
->   	}
->   
->   	mutex_lock(&coresight_mutex);
+  fs/ceph/addr.c
+
+between commit:
+
+  c843d13caefa ("libceph: make abort_on_full a per-osdc setting")
+
+from the ceph tree and commit:
+
+  213ae530f442 ("vfs: change inode times to use struct timespec64")
+
+from the y2038 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/ceph/addr.c
+index ca0d5510ed50,0133ea2b784a..000000000000
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@@ -1934,7 -1936,8 +1936,7 @@@ static int __ceph_pool_perm_get(struct=20
+  				     0, false, true);
+  	err =3D ceph_osdc_start_request(&fsc->client->osdc, rd_req, false);
+ =20
+- 	wr_req->r_mtime =3D ci->vfs_inode.i_mtime;
++ 	wr_req->r_mtime =3D timespec64_to_timespec(ci->vfs_inode.i_mtime);
+ -	wr_req->r_abort_on_full =3D true;
+  	err2 =3D ceph_osdc_start_request(&fsc->client->osdc, wr_req, false);
+ =20
+  	if (!err)
+
+--Sig_/GWleNEKy4+A5=.ab8Xyf7Ze
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXtCUACgkQAVBC80lX
+0GyCeAf/dGUMXlYf0YkUECbDuJcbj6Ft87iZAypCcAHRljqmAP9pP9hZPMPFRoiS
+xPO9ZPxRGp2FB+mwFM6K8zsnFsEkDnACit6QNzzVdkr5ucmcwux1RdmvnebeCMZP
+ROsAp1Vx6papuGMFZ9Y/I5t043oTmWjFdyifUxtF0LE9otvKKTBAZmixgkPSnFfg
+7gF8KYjrppmYLS4aH7JSxsC0gAk1niG8nVhAY4w3KQqTCaQ5q1S78nHYv7m/aZ/h
+5Bn3y92I0Kfk+g3WU4TE0hAhETD8n36qLYF/TCMWa7OXJBgSiiaHHpt+eNnJoTr5
+lXtkY1NuTf7rPYabAMeUBtj5fsituA==
+=j72G
+-----END PGP SIGNATURE-----
+
+--Sig_/GWleNEKy4+A5=.ab8Xyf7Ze--
