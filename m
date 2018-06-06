@@ -1,81 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chFri+8z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4541360555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A35360767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeFFPjP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:39:15 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41522 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeFFPjO (ORCPT
+        id S1752303AbeFFPUG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:20:06 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40899 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751957AbeFFPUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:39:14 -0400
-X-Google-Smtp-Source: ADUXVKIPyIoCFnmQX+YjcSI+ABzQjUNkNpJu7ZO23rCD14Yj8pVFqTxuvKuJqvaa5GGs1pKT4WifAw==
-Subject: Re: [PATCH] hwmon: (dell-smm) Disable fan support for Dell XPS13 9333
-To: =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Helge Eichelberg <kernelorg@elchenberg.name>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180605173833.27003-1-kernelorg@elchenberg.name>
- <20180606152134.sw77aborznfy6mrj@pali>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <e657dc84-f5f9-7ef0-d622-3940195ae011@roeck-us.net>
-Date: Wed, 6 Jun 2018 08:39:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 6 Jun 2018 11:20:05 -0400
+X-Google-Smtp-Source: ADUXVKLfpbbkqwdBpgI+BNbykcFqDD/oqlR7fvFORtavcKsXX8NXcv96oF5c7L+sm6LAJ4E+p6HoyA==
+Date: Wed, 6 Jun 2018 17:20:00 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, peterz@infradead.org,
+        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180606152000.GB15894@localhost.localdomain>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <b47cb1f1-6ca1-7674-903f-724be43a57a0@arm.com>
+ <20180606143739.GF10870@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180606152134.sw77aborznfy6mrj@pali>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606143739.GF10870@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2018 08:21 AM, Pali Rohár wrote:
-> On Tuesday 05 June 2018 19:38:32 Helge Eichelberg wrote:
->> Calling fan related SMM functions implemented by Dell BIOS firmware on Dell
->> XPS13 9333 freeze kernel for about 500ms. Until Dell fixes it we need to
->> disable fan support for Dell XPS13 9333.
+On 06/06/18 15:37, Quentin Perret wrote:
+> Hi Dietmar,
 > 
-> Hi! Have you reported this firmware bug to Dell?
+> On Wednesday 06 Jun 2018 at 15:12:15 (+0200), Dietmar Eggemann wrote:
+> > > +static void fd_update_cs_table(struct em_cs_table *cs_table, int cpu)
+> > > +{
+> > > +	unsigned long cmax = arch_scale_cpu_capacity(NULL, cpu);
+> > > +	int max_cap_state = cs_table->nr_cap_states - 1;
+> > > +	unsigned long fmax = cs_table->state[max_cap_state].frequency;
+> > > +	int i;
+> > > +
+> > > +	for (i = 0; i < cs_table->nr_cap_states; i++)
+> > > +		cs_table->state[i].capacity = cmax *
+> > > +					cs_table->state[i].frequency / fmax;
+> > > +}
+> > 
+> > This has issues on a 32bit system. cs_table->state[i].capacity (unsigned
+> > long) overflows with the frequency values stored in Hz.
 > 
-> Also we should probably match also BIOS version and do not apply this
-> blacklist quirk for BIOS versions in which Dell fixed it.
+> Ah, thank you very much for pointing this out ! I haven't tried on a 32bit
+> machine yet, my bad. I'll fix that for v4.
 > 
-
-Is it known to have been fixed ? If so, why report it to Dell ?
-
-If the problem is not known to be fixed, we have no BIOS version to match against.
-
-Guenter
-
->> Via "force" module param fan support can be enabled.
->>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=195751
->> Signed-off-by: Helge Eichelberg <kernelorg@elchenberg.name>
->> ---
->>   drivers/hwmon/dell-smm-hwmon.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
->> index bf3bb7e1adab..9d3ef879dc51 100644
->> --- a/drivers/hwmon/dell-smm-hwmon.c
->> +++ b/drivers/hwmon/dell-smm-hwmon.c
->> @@ -1074,6 +1074,13 @@ static struct dmi_system_id i8k_blacklist_fan_support_dmi_table[] __initdata = {
->>   			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Vostro 3360"),
->>   		},
->>   	},
->> +	{
->> +		.ident = "Dell XPS13 9333",
->> +		.matches = {
->> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
->> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS13 9333"),
->> +		},
->> +	},
->>   	{ }
->>   };
->>   
+> > 
+> > Maybe something like this to cure it:
+> > 
+> > diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> > index 6ad53f1cf7e6..c13b3eb8bf35 100644
+> > --- a/kernel/power/energy_model.c
+> > +++ b/kernel/power/energy_model.c
+> > @@ -144,9 +144,11 @@ static void fd_update_cs_table(struct em_cs_table *cs_table, int cpu)
+> >  	unsigned long fmax = cs_table->state[max_cap_state].frequency;
+> >  	int i;
+> >  
+> > -	for (i = 0; i < cs_table->nr_cap_states; i++)
+> > -		cs_table->state[i].capacity = cmax *
+> > -					cs_table->state[i].frequency / fmax;
+> > +	for (i = 0; i < cs_table->nr_cap_states; i++) {
+> > +		u64 val = (u64)cmax * cs_table->state[i].frequency;
+> > +		do_div(val, fmax);
+> > +		cs_table->state[i].capacity = (unsigned long)val;
+> > +	}
+> >  }
 > 
+> Hmmm yes, that should work.
+> 
+> > 
+> > This brings me to another question. Let's say there are multiple users of
+> > the Energy Model in the system. Shouldn't the units of frequency and power
+> > not standardized, maybe Mhz and mW?
+> > The task scheduler doesn't care since it is only interested in power diffs
+> > but other user might do.
+> 
+> So the good thing about specifying units is that we can probably assume
+> ranges on the values. If the power is in mW, assuming that we're talking
+> about a single CPU, it'll probably fit in 16 bits. 65W/core should be
+> a reasonable upper-bound ?
+> But there are also vendors who might not be happy with disclosing absolute
+> values ... These are sometimes considered sensitive and only relative
+> numbers are discussed publicly. Now, you can also argue that we already
+> have units specified in IPA for ex, and that it doesn't really matter if
+> a driver "lies" about the real value, as long as the ratios are correct.
+> And I guess that anyone can do measurement on the hardware and get those
+> values anyway. So specifying a unit (mW) for the power is probably a
+> good idea.
+
+Mmm, I remember we fought quite a bit while getting capacity-dmpis-mhz
+binding accepted, and one of the musts was that the values were going to
+be normalized. So, normalized power values again maybe?
+
+Best,
+
+- Juri
