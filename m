@@ -1,121 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 432D0607B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WYbbGSbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F3D860555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeFFNvU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:51:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55936 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751533AbeFFNvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:51:18 -0400
-Date: Wed, 6 Jun 2018 15:51:16 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Kohli, Gaurav" <gkohli@codeaurora.org>, tglx@linutronix.de,
-        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180606135115.GA4609@redhat.com>
-References: <20180502082011.GB12180@hirez.programming.kicks-ass.net>
- <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
- <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
- <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
- <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
- <20180605150841.GA24053@redhat.com>
- <20180605152212.GY12180@hirez.programming.kicks-ass.net>
- <20180605154053.GB12235@hirez.programming.kicks-ass.net>
- <20180605163515.GB24053@redhat.com>
- <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
+        id S933015AbeFFQ0N (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 12:26:13 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:34934 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932514AbeFFQ0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:26:11 -0400
+Subject: Re: general protection fault in open_fs_devices
+To: syzbot <syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com>,
+        clm@fb.com, dsterba@suse.com, jbacik@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000832e70056df8fb38@google.com>
+From: Anand Jain <anand.jain@oracle.com>
+Message-ID: <0dff7b42-65d2-a29e-2086-938031859004@oracle.com>
+Date: Thu, 7 Jun 2018 00:28:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <000000000000832e70056df8fb38@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806060186
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/05, Peter Zijlstra wrote:
->
-> Also, I think we still need TASK_PARKED as a special state for that.
-
-I think it would be nice to kill the TASK_PARKED state altogether. But I don't
-know how. I'll try to look at this code later, but I am not sure I will find a
-way to cleanup it...
 
 
-> --- a/kernel/kthread.c
-> +++ b/kernel/kthread.c
-> @@ -177,12 +177,24 @@ void *kthread_probe_data(struct task_struct *task)
->  static void __kthread_parkme(struct kthread *self)
->  {
->  	for (;;) {
-> -		set_current_state(TASK_PARKED);
-> +		/*
-> +		 * TASK_PARKED is a special state; we must serialize against
-> +		 * possible pending wakeups to avoid store-store collisions on
-> +		 * task->state.
-> +		 *
-> +		 * Such a collision might possibly result in the task state
-> +		 * changin from TASK_PARKED and us failing the
-> +		 * wait_task_inactive() in kthread_park().
-> +		 */
-> +		set_special_state(TASK_PARKED);
+On 06/06/2018 09:17 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of 
+> git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1732a6f7800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
+> dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=909a5177749d7990ffa4
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16ba31f7800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d4ac8f800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com
+> 
+> random: sshd: uninitialized urandom read (32 bytes read)
+> BTRFS: device fsid ecf6f2a2-2997-48ae-b81e-1b00920efd9a devid 0 transid 
+> 0 /dev/loop0
+> print_req_error: I/O error, dev loop1, sector 128
+> kasan: CONFIG_KASAN_INLINE enabled
 
-Agreed,
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
 
->  		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
->  			break;
-> +
-> +		complete_all(&self->parked);
->  		schedule();
->  	}
->  	__set_current_state(TASK_RUNNING);
-> +	reinit_completion(&self->parked);
+> general protection fault: 0000 [#1] SMP KASAN
+> CPU: 0 PID: 4540 Comm: syz-executor962 Not tainted 4.17.0+ #86
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS 
+> Google 01/01/2011
+> RIP: 0010:open_fs_devices+0x7e8/0xc60 fs/btrfs/volumes.c:1124
 
-But how can we know that all the callers of kthread_park() have already returned
-from wait_for_completion() ?
+  Which means there was some other thread which freed our %fs_devices.
+  As this thread is still in open_ctree() so the contending thread can't
+  be the ioctl(). So btrfs_free_stale_devices() is the only thread which
+  can free our %fs_devices in this case.
 
-Oh. The very fact that __kthread_parkme() does complete_all() proves that we need
-some serious cleanups. In particular, I think that kthread_park() on a parked kthread
-must not be possible.
+  This is fixed in [1] in the mailing list.
 
-Just look at this code. It looks as if __kthread_parkme() can race with _unpark()
-and thus we need this wait-event-like loop.
+  [1]
+    [PATCH 3/3] btrfs: fix race between mkfs and mount
 
-But if it can race with _unpark() then kthread_park() can block forever.
+  Thanks, Anand
 
-
-For the start, can't we change kthread_park()
-
-	-	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
-	+ 	if (test_and_set_bit(...))
-	+		return -EAGAIN;
-
-and s/complete_all/complete/ in __kthread_parkme() ?
-
-IIUC, this will only affect smpboot_update_cpumask_percpu_thread() which can hit
-an already parked thread, but it doesn't need to wait.
-
-And it seems that smpboot_update_cpumask_percpu_thread() in turn needs some cleanups.
-Hmm. and its single user: kernel/watchdog.c.
-
-And speaking of watchdog.c, can't we simply kill the "watchdog/%u" threads? This is
-off-topic, but can't watchdog_timer_fn() use stop_one_cpu_nowait(watchdog) ?
-
-And I really think we should unexport kthread_park/unpark(), only smpboot_thread_fn()
-should use them. kthread() should not play with __kthread_parkme(). And even
-KTHREAD_SHOULD_PARK must die, I mean it should live in struct smp_hotplug_thread,
-not in struct kthread.
-
-OK, this is off-topic too.
-
-In short, I think this patch is fine but I didn't read it carefully, will try tomorrow.
-
-And, let me repeat, can't we avoid complete_all() ?
-
-Oleg.
+> Code: 48 8b 85 e0 fe ff ff 41 c7 87 14 01 00 00 01 00 00 00 48 8d b8 a0 
+> 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 
+> 00 0f 85 01 04 00 00 48 8b 85 e0 fe ff ff 49 8d 7f 50 48
+> RSP: 0018:ffff8801d06971d8 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff82c386af
+> RDX: 0000000000000014 RSI: ffffffff82c386bd RDI: 00000000000000a0
+> RBP: ffff8801d0697348 R08: ffff8801ad4fc580 R09: ffff8801d0697240
+> R10: ffffed003a0d2e5c R11: ffff8801d06972e7 R12: ffff8801ad4f8158
+> R13: ffff8801ad4f80d8 R14: dffffc0000000000 R15: ffff8801ad4f8080
+> FS:  00000000017dd880(0000) GS:ffff8801dae00000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000ede000 CR3: 00000001adaac000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   btrfs_open_devices+0xc0/0xd0 fs/btrfs/volumes.c:1155
+>   btrfs_mount_root+0x91f/0x1e70 fs/btrfs/super.c:1568
+>   mount_fs+0xae/0x328 fs/super.c:1277
+>   vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+>   vfs_kern_mount+0x40/0x60 fs/namespace.c:1027
+>   btrfs_mount+0x4a1/0x213e fs/btrfs/super.c:1661
+>   mount_fs+0xae/0x328 fs/super.c:1277
+>   vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+>   vfs_kern_mount fs/namespace.c:1027 [inline]
+>   do_new_mount fs/namespace.c:2518 [inline]
+>   do_mount+0x564/0x30b0 fs/namespace.c:2848
+>   ksys_mount+0x12d/0x140 fs/namespace.c:3064
+>   __do_sys_mount fs/namespace.c:3078 [inline]
+>   __se_sys_mount fs/namespace.c:3075 [inline]
+>   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+>   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4431fa
+> Code: b8 08 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 fd e5 fb ff c3 66 2e 
+> 0f 1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 
+> f0 ff ff 0f 83 da e5 fb ff c3 66 0f 1f 84 00 00 00 00 00
+> RSP: 002b:00007ffc2d953358 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004431fa
+> RDX: 0000000020000080 RSI: 0000000020000040 RDI: 00007ffc2d953370
+> RBP: 0000000000000004 R08: 00000000200000c0 R09: 000000000000000a
+> R10: 0000000000000000 R11: 0000000000000297 R12: 000000000000000d
+> R13: 0000000008100000 R14: 0030656c69662f2e R15: fe03f80fe03f80ff
+> Modules linked in:
+> Dumping ftrace buffer:
+>     (ftrace buffer empty)
+> ---[ end trace d8b96c29a3ffd356 ]---
+> RIP: 0010:open_fs_devices+0x7e8/0xc60 fs/btrfs/volumes.c:1124
+> Code: 48 8b 85 e0 fe ff ff 41 c7 87 14 01 00 00 01 00 00 00 48 8d b8 a0 
+> 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 
+> 00 0f 85 01 04 00 00 48 8b 85 e0 fe ff ff 49 8d 7f 50 48
+> RSP: 0018:ffff8801d06971d8 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff82c386af
+> RDX: 0000000000000014 RSI: ffffffff82c386bd RDI: 00000000000000a0
+> RBP: ffff8801d0697348 R08: ffff8801ad4fc580 R09: ffff8801d0697240
+> R10: ffffed003a0d2e5c R11: ffff8801d06972e7 R12: ffff8801ad4f8158
+> R13: ffff8801ad4f80d8 R14: dffffc0000000000 R15: ffff8801ad4f8080
+> FS:  00000000017dd880(0000) GS:ffff8801dae00000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000ede000 CR3: 00000001adaac000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with 
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe linux-btrfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
