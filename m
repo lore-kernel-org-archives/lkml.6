@@ -1,236 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EDAFB601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VAG3uOHC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C2DDE60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933605AbeFFRBG (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:01:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47008 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932821AbeFFRBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:01:03 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak90 (was ghak32) V3 03/10] audit: add containerid support for ptrace and signals
-Date: Wed,  6 Jun 2018 12:58:30 -0400
-Message-Id: <29359e0e6bc34c74b3a2c3ce0cdfda77f530cf18.1528304204.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
+        id S1752045AbeFFElf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 00:41:35 -0400
+Received: from ozlabs.org ([203.11.71.1]:39141 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750785AbeFFEld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 00:41:33 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 6 Jun 2018 14:41:28 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the bpf-next tree
+Message-ID: <20180606144128.2fc46517@canb.auug.org.au>
+In-Reply-To: <84481a2d-3930-93c5-9d4f-55b3d066050f@iogearbox.net>
+References: <20180507120909.1fee1683@canb.auug.org.au>
+        <20180507141003.79783848@canb.auug.org.au>
+        <84481a2d-3930-93c5-9d4f-55b3d066050f@iogearbox.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5W5QjjIozSx2Yj2DVa5YO1b"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add audit container identifier support to ptrace and signals.  In
-particular, the "op" field provides a way to label the auxiliary record
-to which it is associated.
+--Sig_/5W5QjjIozSx2Yj2DVa5YO1b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- include/linux/audit.h | 11 +++++------
- kernel/audit.c        | 13 +++++++------
- kernel/audit.h        |  2 ++
- kernel/auditsc.c      | 21 ++++++++++++++++-----
- 4 files changed, 30 insertions(+), 17 deletions(-)
+Hi all,
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 4e1e34e..ab50985 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -34,6 +34,7 @@ struct audit_sig_info {
- 	uid_t		uid;
- 	pid_t		pid;
- 	char		ctx[0];
-+	u64		cid;
- };
- 
- struct audit_buffer;
-@@ -152,9 +153,8 @@ extern void		    audit_log_key(struct audit_buffer *ab,
- extern int audit_log_task_context(struct audit_buffer *ab);
- extern void audit_log_task_info(struct audit_buffer *ab,
- 				struct task_struct *tsk);
--extern int audit_log_contid(struct task_struct *tsk,
--				    struct audit_context *context,
--				    char *op);
-+extern int audit_log_contid(struct audit_context *context,
-+				     char *op, u64 contid);
- 
- extern int		    audit_update_lsm_rules(void);
- 
-@@ -205,9 +205,8 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
- static inline void audit_log_task_info(struct audit_buffer *ab,
- 				       struct task_struct *tsk)
- { }
--static inline int audit_log_contid(struct task_struct *tsk,
--					   struct audit_context *context,
--					   char *op)
-+static inline int audit_log_contid(struct audit_context *context,
-+					    char *op, u64 contid)
- { }
- #define audit_enabled 0
- #endif /* CONFIG_AUDIT */
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 5e150c6..ba304a8 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -142,6 +142,7 @@ struct audit_net {
- kuid_t		audit_sig_uid = INVALID_UID;
- pid_t		audit_sig_pid = -1;
- u32		audit_sig_sid = 0;
-+u64		audit_sig_cid = AUDIT_CID_UNSET;
- 
- /* Records can be lost in several ways:
-    0) [suppressed in audit_alloc]
-@@ -1437,6 +1438,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 			memcpy(sig_data->ctx, ctx, len);
- 			security_release_secctx(ctx, len);
- 		}
-+		sig_data->cid = audit_sig_cid;
- 		audit_send_reply(skb, seq, AUDIT_SIGNAL_INFO, 0, 0,
- 				 sig_data, sizeof(*sig_data) + len);
- 		kfree(sig_data);
-@@ -2050,23 +2052,22 @@ void audit_log_session_info(struct audit_buffer *ab)
- 
- /*
-  * audit_log_contid - report container info
-- * @tsk: task to be recorded
-  * @context: task or local context for record
-  * @op: contid string description
-+ * @contid: container ID to report
-  */
--int audit_log_contid(struct task_struct *tsk,
--			     struct audit_context *context, char *op)
-+int audit_log_contid(struct audit_context *context,
-+			      char *op, u64 contid)
- {
- 	struct audit_buffer *ab;
- 
--	if (!audit_contid_set(tsk))
-+	if (!cid_valid(contid))
- 		return 0;
- 	/* Generate AUDIT_CONTAINER record with container ID */
- 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
- 	if (!ab)
- 		return -ENOMEM;
--	audit_log_format(ab, "op=%s contid=%llu",
--			 op, audit_get_contid(tsk));
-+	audit_log_format(ab, "op=%s contid=%llu", op, contid);
- 	audit_log_end(ab);
- 	return 0;
- }
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 214e149..1cf1c35 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -147,6 +147,7 @@ struct audit_context {
- 	kuid_t		    target_uid;
- 	unsigned int	    target_sessionid;
- 	u32		    target_sid;
-+	u64		    target_cid;
- 	char		    target_comm[TASK_COMM_LEN];
- 
- 	struct audit_tree_refs *trees, *first_trees;
-@@ -329,6 +330,7 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
- extern pid_t audit_sig_pid;
- extern kuid_t audit_sig_uid;
- extern u32 audit_sig_sid;
-+extern u64 audit_sig_cid;
- 
- extern int audit_filter(int msgtype, unsigned int listtype);
- 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index a3c946c..cface9d 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -113,6 +113,7 @@ struct audit_aux_data_pids {
- 	kuid_t			target_uid[AUDIT_AUX_PIDS];
- 	unsigned int		target_sessionid[AUDIT_AUX_PIDS];
- 	u32			target_sid[AUDIT_AUX_PIDS];
-+	u64			target_cid[AUDIT_AUX_PIDS];
- 	char 			target_comm[AUDIT_AUX_PIDS][TASK_COMM_LEN];
- 	int			pid_count;
- };
-@@ -1456,21 +1457,27 @@ static void audit_log_exit(struct audit_context *context, struct task_struct *ts
- 	for (aux = context->aux_pids; aux; aux = aux->next) {
- 		struct audit_aux_data_pids *axs = (void *)aux;
- 
--		for (i = 0; i < axs->pid_count; i++)
-+		for (i = 0; i < axs->pid_count; i++) {
-+			char axsn[sizeof("aux0xN ")];
-+
-+			sprintf(axsn, "aux0x%x", i);
- 			if (audit_log_pid_context(context, axs->target_pid[i],
- 						  axs->target_auid[i],
- 						  axs->target_uid[i],
- 						  axs->target_sessionid[i],
- 						  axs->target_sid[i],
--						  axs->target_comm[i]))
-+						  axs->target_comm[i])
-+			    || audit_log_contid(context, axsn, axs->target_cid[i]))
- 				call_panic = 1;
-+		}
- 	}
- 
- 	if (context->target_pid &&
--	    audit_log_pid_context(context, context->target_pid,
-+	    (audit_log_pid_context(context, context->target_pid,
- 				  context->target_auid, context->target_uid,
- 				  context->target_sessionid,
--				  context->target_sid, context->target_comm))
-+				  context->target_sid, context->target_comm)
-+	    || audit_log_contid(context, "target", context->target_cid)))
- 			call_panic = 1;
- 
- 	if (context->pwd.dentry && context->pwd.mnt) {
-@@ -1490,7 +1497,7 @@ static void audit_log_exit(struct audit_context *context, struct task_struct *ts
- 
- 	audit_log_proctitle(tsk, context);
- 
--	audit_log_contid(tsk, context, "task");
-+	audit_log_contid(context, "task", audit_get_contid(tsk));
- 
- 	/* Send end of event record to help user space know we are finished */
- 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_EOE);
-@@ -2375,6 +2382,7 @@ void __audit_ptrace(struct task_struct *t)
- 	context->target_uid = task_uid(t);
- 	context->target_sessionid = audit_get_sessionid(t);
- 	security_task_getsecid(t, &context->target_sid);
-+	context->target_cid = audit_get_contid(t);
- 	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
- }
- 
-@@ -2402,6 +2410,7 @@ int audit_signal_info(int sig, struct task_struct *t)
- 		else
- 			audit_sig_uid = uid;
- 		security_task_getsecid(current, &audit_sig_sid);
-+		audit_sig_cid = audit_get_contid(current);
- 	}
- 
- 	if (!audit_signals || audit_dummy_context())
-@@ -2415,6 +2424,7 @@ int audit_signal_info(int sig, struct task_struct *t)
- 		ctx->target_uid = t_uid;
- 		ctx->target_sessionid = audit_get_sessionid(t);
- 		security_task_getsecid(t, &ctx->target_sid);
-+		ctx->target_cid = audit_get_contid(t);
- 		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
- 		return 0;
- 	}
-@@ -2436,6 +2446,7 @@ int audit_signal_info(int sig, struct task_struct *t)
- 	axp->target_uid[axp->pid_count] = t_uid;
- 	axp->target_sessionid[axp->pid_count] = audit_get_sessionid(t);
- 	security_task_getsecid(t, &axp->target_sid[axp->pid_count]);
-+	axp->target_cid[axp->pid_count] = audit_get_contid(t);
- 	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
- 	axp->pid_count++;
- 
--- 
-1.8.3.1
+On Mon, 7 May 2018 10:15:45 +0200 Daniel Borkmann <daniel@iogearbox.net> wr=
+ote:
+>
+> On 05/07/2018 06:10 AM, Stephen Rothwell wrote:
+> > On Mon, 7 May 2018 12:09:09 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote: =20
+> >>
+> >> Today's linux-next merge of the tip tree got a conflict in:
+> >>
+> >>   arch/x86/net/bpf_jit_comp.c
+> >>
+> >> between commit:
+> >>
+> >>   e782bdcf58c5 ("bpf, x64: remove ld_abs/ld_ind")
+> >>
+> >> from the bpf-next tree and commit:
+> >>
+> >>   5f26c50143f5 ("x86/bpf: Clean up non-standard comments, to make the =
+code more readable")
+> >>
+> >> from the tip tree.
+> >>
+> >> I fixed it up (the former commit removed some code modified by the lat=
+ter,
+> >> so I just removed it) and can carry the fix as necessary. This is now
+> >> fixed as far as linux-next is concerned, but any non trivial conflicts
+> >> should be mentioned to your upstream maintainer when your tree is
+> >> submitted for merging.  You may also want to consider cooperating with
+> >> the maintainer of the conflicting tree to minimise any particularly
+> >> complex conflicts. =20
+> >=20
+> > Actually the tip tree commit has been added to the bpf-next tree as a
+> > different commit, so dropping it from the tip tree will clean this up. =
+=20
+>=20
+> Yep, it's been cherry-picked into bpf-next to avoid merge conflicts with
+> ongoing work.
+
+This is now a conflict between the net-next tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5W5QjjIozSx2Yj2DVa5YO1b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXZfgACgkQAVBC80lX
+0GwLfwf/TuGUTSd1ULEdms7XBs6TsK04Vc+oAEvm4XYaeMP7KjCzniKGmqZkKjhD
+7iEATWHgi9mFEkMfEoR2DqtzUNHeTCsYz/yn+GWJmWH/y9bnucM2tjxhLPISVzTh
+wlzTUKkpWluJPFNrysCz06zyoU5QEgperc4KDLvFgxTgLP7MlY8Sk2udaKXpGEpb
+pIWqtl0SaWyX2AgS5Eje1Q3PKAu3l5zInKjht6VZH690a8447vKpBUn/V2MgFTGY
+QKMSy3YyC2bspMLns92byh1wyT/brXsl5Ta7CW87m0m59fYl0yRG2VSRn8GMIqbT
+kbVzf2lS2fB/9c5AALIFUQfsJXK6WA==
+=GXvh
+-----END PGP SIGNATURE-----
+
+--Sig_/5W5QjjIozSx2Yj2DVa5YO1b--
