@@ -1,371 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 42wlNnhmGVsUDwAAmS7hNA
-	; Thu, 07 Jun 2018 17:08:24 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HkMRDT44GFsdZAAAmS7hNA
+	; Wed, 06 Jun 2018 19:39:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3ADAE6074D; Thu,  7 Jun 2018 17:08:24 +0000 (UTC)
+	id 8C8776089E; Wed,  6 Jun 2018 19:39:49 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XjJwSDTo"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5C03B60590;
-	Thu,  7 Jun 2018 17:08:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C03B60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id DF11E6074D;
+	Wed,  6 Jun 2018 19:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DF11E6074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933407AbeFGRIV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:08:21 -0400
-Received: from mga12.intel.com ([192.55.52.136]:32205 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932957AbeFGRGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:06:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 10:06:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,487,1520924400";
-   d="scan'208";a="206183211"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga004.jf.intel.com with ESMTP; 07 Jun 2018 10:06:22 -0700
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/7] x86/fsgsbase/64: Introduce FS/GS base helper functions
-Date: Thu,  7 Jun 2018 10:06:02 -0700
-Message-Id: <1528391168-22224-2-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
-References: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
+        id S1752720AbeFFTjq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 15:39:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53485 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752339AbeFFTjp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 15:39:45 -0400
+Received: by mail-wm0-f68.google.com with SMTP id x6-v6so13559089wmc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 12:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=JsoumrurWROYwPouUJKCgxM1w0ObMU2zRAdzyDcHkXk=;
+        b=XjJwSDTotPOl0AmO/eDE+tSh1Gmbw2ZLAl6RTosgrs0X8DDKKmrb52n0wrUDydtAgv
+         wgzZmDotvZY09UWM4e5BzBod++Pw2g3uw4rjvAufl6a1c5orKhnRlYDI7EH0K0O67Gjx
+         GVKsGXNIeWN8bm3xRTVqdbrPayu69VttlHDlxpLWQ9ClJ5ulaz4tCxF+ee4QVpBB6XW5
+         3EYP23Q7QSsetdC6f8OQgG/1hHtshJzo0ska8CEZBZyd7HHFPaeJ7zGTfYThwaCJH7OL
+         D68EUd9JNLwaZ1TYx2NaATdCY7InaA09U/SJyug3BI1hCYI/WrpjQ8HAUMJd4cRY9vdr
+         uF4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=JsoumrurWROYwPouUJKCgxM1w0ObMU2zRAdzyDcHkXk=;
+        b=i9nrkIWujvc+ER2eniDInIyqud0yuUPDDqIcd+MuuUGoL6BuQZ827XxJjsgjXIjMur
+         XIby0xrftddVD567Y3J5MtJb805cIrXPS5fM7DEsDM38sdq27vUBOWbb6kyhRgzCmQnd
+         eXQbmMe9+q7gci8i+TlZ1PL0GnnfcIg9moQ9pELrd3XnaT8a+JHMUa0oDvexzi70vvzq
+         n7qsZznSVLeRSxwjUSxAdTOh+NioqhaZm5BWe4wT7gYeyT+igv3sX/iApkySjzTGyAaS
+         tl+dJbK5OmuFeToacCMU3K2AOfw3aDbIi4L+NojjriSKqAPiSyUeH7YZ9UTaNZ8BU4jO
+         X5/A==
+X-Gm-Message-State: APt69E2N4qhXbu/+culbcox6xjRtgU0vrk1ISa6IKZDWJPZIz+N4Cm7h
+        uw/AxawM/eC7vEGUAaxnRlg=
+X-Google-Smtp-Source: ADUXVKLNRQnwJ3bJ/aI6RjuBxlt9jAr9REjp89RYqBBEHvvMHDJw9OdGKl/THPLbYxEv3OxHQNBy4Q==
+X-Received: by 2002:a1c:f214:: with SMTP id s20-v6mr2713029wmc.29.1528313983853;
+        Wed, 06 Jun 2018 12:39:43 -0700 (PDT)
+Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
+        by smtp.gmail.com with ESMTPSA id t13-v6sm20132513wro.62.2018.06.06.12.39.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Jun 2018 12:39:43 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 24A9210C2B80; Wed,  6 Jun 2018 21:39:42 +0200 (CEST)
+From: Mathieu Malaterre <malat@debian.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Christoph Lameter <cl@linux.com>,
+        Dennis Zhou <dennisszhou@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] percpu_counter: `percpu_counter_read_positive' should not return negative number
+Date: Wed,  6 Jun 2018 21:39:40 +0200
+Message-Id: <20180606193940.16126-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With new helpers, FS/GS base access is centralized.
-Eventually, when FSGSBASE instruction enabled, it will
-be faster.
+Since function `percpu_counter_add' may result in a signed integer overflow
+the result stored in `fbc->count' could be negative. Make sure that
+function `percpu_counter_read_positive' does not return a negative number
+in this case. This will match behavior when CONFIG_SMP=y.
 
-The helpers are used on ptrace APIs (PTRACE_ARCH_PRCTL,
-PTRACE_SETREG, PTRACE_GETREG, etc). Idea is to keep
-the FS/GS-update mechanism organized.
+Detected wth CONFIG_UBSAN=y
 
-"inactive" GS base refers to base backed up at kernel
-entries and of inactive (user) task's.
+[76404.888450] ================================================================================
+[76404.888477] UBSAN: Undefined behaviour in ../include/linux/percpu_counter.h:136:13
+[76404.888485] signed integer overflow:
+[76404.888490] 9223308017647617321 + 76624449492175 cannot be represented in type 'long long int'
+[76404.888501] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #50
+[76404.888506] Call Trace:
+[76404.888523] [dffedd30] [c0478b90] ubsan_epilogue+0x18/0x4c (unreliable)
+[76404.888533] [dffedd40] [c0479530] handle_overflow+0xbc/0xdc
+[76404.888548] [dffeddc0] [c0439044] cfq_completed_request+0x560/0x1234
+[76404.888557] [dffede40] [c03f3fc4] __blk_put_request+0xb0/0x2dc
+[76404.888570] [dffede80] [c05a81d0] scsi_end_request+0x19c/0x344
+[76404.888579] [dffedeb0] [c05a9954] scsi_io_completion+0x4b4/0x854
+[76404.888592] [dffedf10] [c04046b4] blk_done_softirq+0xe4/0x1e0
+[76404.888605] [dffedf60] [c07ec1d4] __do_softirq+0x16c/0x5f0
+[76404.888617] [dffedfd0] [c0065160] irq_exit+0x110/0x1a8
+[76404.888629] [dffedff0] [c001646c] call_do_irq+0x24/0x3c
+[76404.888641] [c0cdbe80] [c0009a2c] do_IRQ+0x98/0x1a0
+[76404.888649] [c0cdbeb0] [c001b93c] ret_from_except+0x0/0x14
+[76404.888659] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
+                   LR = arch_cpu_idle+0x30/0x78
+[76404.888667] [c0cdbf70] [c0cda000] 0xc0cda000 (unreliable)
+[76404.888679] [c0cdbf80] [c00a3844] do_idle+0xc4/0x158
+[76404.888687] [c0cdbfb0] [c00a3a90] cpu_startup_entry+0x24/0x28
+[76404.888696] [c0cdbfc0] [c097f820] start_kernel+0x47c/0x490
+[76404.888703] [c0cdbff0] [00003444] 0x3444
+[76404.888708] ================================================================================
+[76409.458652] ================================================================================
+[76409.458679] UBSAN: Undefined behaviour in ../include/linux/percpu_counter.h:136:13
+[76409.458687] signed integer overflow:
+[76409.458692] 9223369047059056210 + 76629034867964 cannot be represented in type 'long long int'
+[76409.458703] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #50
+[76409.458708] Call Trace:
+[76409.458725] [dffedd30] [c0478b90] ubsan_epilogue+0x18/0x4c (unreliable)
+[76409.458736] [dffedd40] [c0479530] handle_overflow+0xbc/0xdc
+[76409.458751] [dffeddc0] [c0438e60] cfq_completed_request+0x37c/0x1234
+[76409.458759] [dffede40] [c03f3fc4] __blk_put_request+0xb0/0x2dc
+[76409.458773] [dffede80] [c05a81d0] scsi_end_request+0x19c/0x344
+[76409.458781] [dffedeb0] [c05a9954] scsi_io_completion+0x4b4/0x854
+[76409.458794] [dffedf10] [c04046b4] blk_done_softirq+0xe4/0x1e0
+[76409.458807] [dffedf60] [c07ec1d4] __do_softirq+0x16c/0x5f0
+[76409.458820] [dffedfd0] [c0065160] irq_exit+0x110/0x1a8
+[76409.458832] [dffedff0] [c001646c] call_do_irq+0x24/0x3c
+[76409.458844] [c0cdbe80] [c0009a2c] do_IRQ+0x98/0x1a0
+[76409.458852] [c0cdbeb0] [c001b93c] ret_from_except+0x0/0x14
+[76409.458861] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
+                   LR = arch_cpu_idle+0x30/0x78
+[76409.458870] [c0cdbf70] [c0cda000] 0xc0cda000 (unreliable)
+[76409.458882] [c0cdbf80] [c00a3844] do_idle+0xc4/0x158
+[76409.458889] [c0cdbfb0] [c00a3a8c] cpu_startup_entry+0x20/0x28
+[76409.458899] [c0cdbfc0] [c097f820] start_kernel+0x47c/0x490
+[76409.458905] [c0cdbff0] [00003444] 0x3444
+[76409.458910] ================================================================================
 
-The bug that returns stale FS/GS base value (when index
-is nonzero) is preserved and will be fixed by next
-patch.
-
-Based-on-code-from: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/x86/include/asm/fsgsbase.h |  47 ++++++++++++++
- arch/x86/kernel/process_64.c    | 132 +++++++++++++++++++++++++++++-----------
- arch/x86/kernel/ptrace.c        |  28 +++------
- 3 files changed, 153 insertions(+), 54 deletions(-)
- create mode 100644 arch/x86/include/asm/fsgsbase.h
+ include/linux/percpu_counter.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-new file mode 100644
-index 0000000..f00a8a6
---- /dev/null
-+++ b/arch/x86/include/asm/fsgsbase.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_FSGSBASE_H
-+#define _ASM_FSGSBASE_H 1
+diff --git a/include/linux/percpu_counter.h b/include/linux/percpu_counter.h
+index 4f052496cdfd..fd14f629123f 100644
+--- a/include/linux/percpu_counter.h
++++ b/include/linux/percpu_counter.h
+@@ -133,6 +133,7 @@ static inline void
+ percpu_counter_add(struct percpu_counter *fbc, s64 amount)
+ {
+ 	preempt_disable();
++	/* possible signed integer overflow */
+ 	fbc->count += amount;
+ 	preempt_enable();
+ }
+@@ -154,7 +155,10 @@ static inline s64 percpu_counter_read(struct percpu_counter *fbc)
+  */
+ static inline s64 percpu_counter_read_positive(struct percpu_counter *fbc)
+ {
+-	return fbc->count;
++	if (fbc->count >= 0)
++		return fbc->count;
 +
-+#ifndef __ASSEMBLY__
-+
-+#ifdef CONFIG_X86_64
-+
-+#include <asm/msr-index.h>
-+
-+/*
-+ * Read/write a task's fsbase or gsbase. This returns the value that
-+ * the FS/GS base would have (if the task were to be resumed). These
-+ * work on current or on a different non-running task.
-+ */
-+unsigned long read_task_fsbase(struct task_struct *task);
-+unsigned long read_task_gsbase(struct task_struct *task);
-+int write_task_fsbase(struct task_struct *task, unsigned long fsbase);
-+int write_task_gsbase(struct task_struct *task, unsigned long gsbase);
-+
-+/* Helper functions for reading/writing FS/GS base */
-+
-+static inline unsigned long read_fsbase(void)
-+{
-+	unsigned long fsbase;
-+
-+	rdmsrl(MSR_FS_BASE, fsbase);
-+	return fsbase;
-+}
-+
-+void write_fsbase(unsigned long fsbase);
-+
-+static inline unsigned long read_inactive_gsbase(void)
-+{
-+	unsigned long gsbase;
-+
-+	rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+	return gsbase;
-+}
-+
-+void  write_inactive_gsbase(unsigned long gsbase);
-+
-+#endif /* CONFIG_X86_64 */
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* _ASM_FSGSBASE_H */
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 12bb445..ace0158 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -54,6 +54,7 @@
- #include <asm/vdso.h>
- #include <asm/intel_rdt_sched.h>
- #include <asm/unistd.h>
-+#include <asm/fsgsbase.h>
- #ifdef CONFIG_IA32_EMULATION
- /* Not included via unistd.h */
- #include <asm/unistd_32_ia32.h>
-@@ -278,6 +279,94 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
- 	}
++	return 0;
  }
  
-+void write_fsbase(unsigned long fsbase)
-+{
-+	/* set the selector to 0 to not confuse __switch_to */
-+	loadseg(FS, 0);
-+	wrmsrl(MSR_FS_BASE, fsbase);
-+}
-+
-+void write_inactive_gsbase(unsigned long gsbase)
-+{
-+	/* set the selector to 0 to not confuse __switch_to */
-+	loadseg(GS, 0);
-+	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+}
-+
-+unsigned long read_task_fsbase(struct task_struct *task)
-+{
-+	unsigned long fsbase;
-+
-+	if (task == current) {
-+		fsbase = read_fsbase();
-+	} else {
-+		/*
-+		 * XXX: This will not behave as expected if called
-+		 * if fsindex != 0. This preserves an existing bug
-+		 * that will be fixed.
-+		 */
-+		fsbase = task->thread.fsbase;
-+	}
-+
-+	return fsbase;
-+}
-+
-+unsigned long read_task_gsbase(struct task_struct *task)
-+{
-+	unsigned long gsbase;
-+
-+	if (task == current) {
-+		gsbase = read_inactive_gsbase();
-+	} else {
-+		/*
-+		 * XXX: This will not behave as expected if called
-+		 * if gsindex != 0. Same bug preservation as above
-+		 * read_task_fsbase.
-+		 */
-+		gsbase = task->thread.gsbase;
-+	}
-+
-+	return gsbase;
-+}
-+
-+int write_task_fsbase(struct task_struct *task, unsigned long fsbase)
-+{
-+	int cpu;
-+
-+	/*
-+	 * Not strictly needed for fs, but do it for symmetry
-+	 * with gs
-+	 */
-+	if (unlikely(fsbase >= TASK_SIZE_MAX))
-+		return -EPERM;
-+
-+	cpu = get_cpu();
-+	task->thread.fsbase = fsbase;
-+	if (task == current)
-+		write_fsbase(fsbase);
-+	task->thread.fsindex = 0;
-+	put_cpu();
-+
-+	return 0;
-+}
-+
-+int write_task_gsbase(struct task_struct *task, unsigned long gsbase)
-+{
-+	int cpu;
-+
-+	if (unlikely(gsbase >= TASK_SIZE_MAX))
-+		return -EPERM;
-+
-+	cpu = get_cpu();
-+	task->thread.gsbase = gsbase;
-+	if (task == current)
-+		write_inactive_gsbase(gsbase);
-+	task->thread.gsindex = 0;
-+	put_cpu();
-+
-+	return 0;
-+}
-+
- int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
- 		unsigned long arg, struct task_struct *p, unsigned long tls)
- {
-@@ -618,54 +707,27 @@ static long prctl_map_vdso(const struct vdso_image *image, unsigned long addr)
- long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- {
- 	int ret = 0;
--	int doit = task == current;
--	int cpu;
- 
- 	switch (option) {
--	case ARCH_SET_GS:
--		if (arg2 >= TASK_SIZE_MAX)
--			return -EPERM;
--		cpu = get_cpu();
--		task->thread.gsindex = 0;
--		task->thread.gsbase = arg2;
--		if (doit) {
--			load_gs_index(0);
--			ret = wrmsrl_safe(MSR_KERNEL_GS_BASE, arg2);
--		}
--		put_cpu();
-+	case ARCH_SET_GS: {
-+		ret = write_task_gsbase(task, arg2);
- 		break;
--	case ARCH_SET_FS:
--		/* Not strictly needed for fs, but do it for symmetry
--		   with gs */
--		if (arg2 >= TASK_SIZE_MAX)
--			return -EPERM;
--		cpu = get_cpu();
--		task->thread.fsindex = 0;
--		task->thread.fsbase = arg2;
--		if (doit) {
--			/* set the selector to 0 to not confuse __switch_to */
--			loadsegment(fs, 0);
--			ret = wrmsrl_safe(MSR_FS_BASE, arg2);
--		}
--		put_cpu();
-+	}
-+	case ARCH_SET_FS: {
-+		ret = write_task_fsbase(task, arg2);
- 		break;
-+	}
- 	case ARCH_GET_FS: {
- 		unsigned long base;
- 
--		if (doit)
--			rdmsrl(MSR_FS_BASE, base);
--		else
--			base = task->thread.fsbase;
-+		base = read_task_fsbase(task);
- 		ret = put_user(base, (unsigned long __user *)arg2);
- 		break;
- 	}
- 	case ARCH_GET_GS: {
- 		unsigned long base;
- 
--		if (doit)
--			rdmsrl(MSR_KERNEL_GS_BASE, base);
--		else
--			base = task->thread.gsbase;
-+		base = read_task_gsbase(task);
- 		ret = put_user(base, (unsigned long __user *)arg2);
- 		break;
- 	}
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index ed5c4cd..b2f0beb 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -39,6 +39,7 @@
- #include <asm/hw_breakpoint.h>
- #include <asm/traps.h>
- #include <asm/syscall.h>
-+#include <asm/fsgsbase.h>
- 
- #include "tls.h"
- 
-@@ -396,12 +397,11 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		/*
--		 * When changing the segment base, use do_arch_prctl_64
--		 * to set either thread.fs or thread.fsindex and the
--		 * corresponding GDT slot.
-+		 * When changing the FS base, use the same
-+		 * mechanism as for do_arch_prctl_64
- 		 */
- 		if (child->thread.fsbase != value)
--			return do_arch_prctl_64(child, ARCH_SET_FS, value);
-+			return write_task_fsbase(child, value);
- 		return 0;
- 	case offsetof(struct user_regs_struct,gs_base):
- 		/*
-@@ -410,7 +410,7 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		if (child->thread.gsbase != value)
--			return do_arch_prctl_64(child, ARCH_SET_GS, value);
-+			return write_task_gsbase(child, value);
- 		return 0;
- #endif
- 	}
-@@ -434,20 +434,10 @@ static unsigned long getreg(struct task_struct *task, unsigned long offset)
- 		return get_flags(task);
- 
- #ifdef CONFIG_X86_64
--	case offsetof(struct user_regs_struct, fs_base): {
--		/*
--		 * XXX: This will not behave as expected if called on
--		 * current or if fsindex != 0.
--		 */
--		return task->thread.fsbase;
--	}
--	case offsetof(struct user_regs_struct, gs_base): {
--		/*
--		 * XXX: This will not behave as expected if called on
--		 * current or if fsindex != 0.
--		 */
--		return task->thread.gsbase;
--	}
-+	case offsetof(struct user_regs_struct, fs_base):
-+		return read_task_fsbase(task);
-+	case offsetof(struct user_regs_struct, gs_base):
-+		return read_task_gsbase(task);
- #endif
- 	}
- 
+ static inline s64 percpu_counter_sum_positive(struct percpu_counter *fbc)
 -- 
-2.7.4
+2.11.0
