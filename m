@@ -1,267 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD275606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bDiu/dXG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A65FD60263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeFFMod (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 08:44:33 -0400
-Received: from mga14.intel.com ([192.55.52.115]:1034 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752579AbeFFMoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 08:44:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,483,1520924400";
-   d="scan'208";a="64775783"
-Date: Wed, 6 Jun 2018 20:33:26 +0800
-From: Wu Hao <hao.wu@intel.com>
-To: Alan Tull <atull@kernel.org>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>
-Subject: Re: [PATCH v5 09/28] fpga: dfl: add feature device infrastructure
-Message-ID: <20180606123326.GC7681@hao-dev>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
- <1525229431-3087-10-git-send-email-hao.wu@intel.com>
- <CANk1AXRyqn_Y26HZiYkFQUoWUVzc89F-znVNWQXGAk+arNB6XA@mail.gmail.com>
+        id S932103AbeFFC7e (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Tue, 5 Jun 2018 22:59:34 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42082 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752536AbeFFC7c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 22:59:32 -0400
+Date: Tue, 5 Jun 2018 19:59:08 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-xfs@vger.kernel.org,
+        Eric Sandeen <sandeen@redhat.com>,
+        Martin Sebor <msebor@gmail.com>,
+        Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] xfs: fix string handling in get/set functions
+Message-ID: <20180606025908.GR9437@magnolia>
+References: <20180525151421.2317292-1-arnd@arndb.de>
+ <7aad9fc3-ed65-a016-d477-5d830e31cb43@sandeen.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANk1AXRyqn_Y26HZiYkFQUoWUVzc89F-znVNWQXGAk+arNB6XA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <7aad9fc3-ed65-a016-d477-5d830e31cb43@sandeen.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8915 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806060031
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 04:14:43PM -0500, Alan Tull wrote:
-> On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+On Tue, Jun 05, 2018 at 02:49:20PM -0500, Eric Sandeen wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Hi Hao,
+> [sandeen: fix subject, avoid copy-out of uninit data in getlabel]
 > 
-> Some minor things, otherwise looks fine.
+> gcc-8 reports two warnings for the newly added getlabel/setlabel code:
 > 
-> > From: Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> >
-> > This patch abstracts the common operations of the sub features, and defines
-> > the feature_ops data structure, including init, uinit and ioctl function
-> > pointers. And this patch adds some common helper functions for FME and AFU
-> > drivers, e.g dfl_feature_dev_use_begin/end which are used to ensure
-> > exclusive usage of the feature device file.
-> >
-> > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-> > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-> > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-> > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-> > Signed-off-by: Kang Luwei <luwei.kang@intel.com>
-> > Signed-off-by: Zhang Yi <yi.z.zhang@intel.com>
-> > Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Acked-by: Alan Tull <atull@kernel.org>
+> fs/xfs/xfs_ioctl.c: In function 'xfs_ioc_getlabel':
+> fs/xfs/xfs_ioctl.c:1822:38: error: argument to 'sizeof' in 'strncpy' call is the same expression as the source; did you mean to use the size of the destination? [-Werror=sizeof-pointer-memaccess]
+>   strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
+>                                       ^
+> In function 'strncpy',
+>     inlined from 'xfs_ioc_setlabel' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1863:2,
+>     inlined from 'xfs_file_ioctl' at /git/arm-soc/fs/xfs/xfs_ioctl.c:1918:10:
+> include/linux/string.h:254:9: error: '__builtin_strncpy' output may be truncated copying 12 bytes from a string of length 12 [-Werror=stringop-truncation]
+>   return __builtin_strncpy(p, q, size);
 > 
-> > ---
-> > v2: rebased
-> > v3: use const for feature_ops.
-> >     replace pci related function.
-> > v4: rebase and add more comments in code.
-> > v5: remove useless WARN_ON().
-> >     reorder declarations in functions per suggestion from Moritz.
-> >     add "dfl_" prefix to functions and data structure.
-> > ---
-> >  drivers/fpga/dfl.c | 57 +++++++++++++++++++++++++++++++++++++
-> >  drivers/fpga/dfl.h | 82 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 138 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> > index 1e06efb..c4c47d6 100644
-> > --- a/drivers/fpga/dfl.c
-> > +++ b/drivers/fpga/dfl.c
-> > @@ -74,6 +74,63 @@ static enum dfl_id_type feature_dev_id_type(struct platform_device *pdev)
-> >         return DFL_ID_MAX;
-> >  }
-> >
-> > +void dfl_fpga_dev_feature_uinit(struct platform_device *pdev)
-> > +{
-> > +       struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> > +       struct dfl_feature *feature;
-> > +
-> > +       dfl_fpga_dev_for_each_feature(pdata, feature)
-> > +               if (feature->ops) {
-> > +                       feature->ops->uinit(pdev, feature);
-> > +                       feature->ops = NULL;
-> > +               }
-> > +}
-> > +EXPORT_SYMBOL_GPL(dfl_fpga_dev_feature_uinit);
+> In both cases, part of the problem is that one of the strncpy()
+> arguments is a fixed-length character array with zero-padding rather
+> than a zero-terminated string. In the first one case, we also get an
+> odd warning about sizeof-pointer-memaccess, which doesn't seem right
+> (the sizeof is for an array that happens to be the same as the second
+> strncpy argument).
 > 
-> Please add kernel-doc for functions that are exported to recommend and
-> guide their usage.
+> To work around the bogus warning, I use a plain 'XFSLABEL_MAX' for
+> the strncpy() length when copying the label in getlabel. For setlabel(),
+> using memcpy() with the correct length that is already known avoids
+> the second warning and is slightly simpler.
+> 
+> In a related issue, it appears that we accidentally skip the trailing
+> \0 when copying a 12-character label back to user space in getlabel().
+> Using the correct sizeof() argument here copies the extra character.
+> 
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85602
+> Fixes: f7664b31975b ("xfs: implement online get/set fs label")
+> Cc: Eric Sandeen <sandeen@redhat.com>
+> Cc: Martin Sebor <msebor@gmail.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
 
-Sorry, I missed uinit and init functions. will add them in v6.
+Working around strncpy warnings with memcpy?  I guess...
 
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
 > 
-> > +
-> > +static int dfl_feature_instance_init(struct platform_device *pdev,
-> > +                                    struct dfl_feature_platform_data *pdata,
-> > +                                    struct dfl_feature *feature,
-> > +                                    struct dfl_feature_driver *drv)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret = drv->ops->init(pdev, feature);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       feature->ops = drv->ops;
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +int dfl_fpga_dev_feature_init(struct platform_device *pdev,
-> > +                             struct dfl_feature_driver *feature_drvs)
-> > +{
-> > +       struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> > +       struct dfl_feature_driver *drv = feature_drvs;
-> > +       struct dfl_feature *feature;
-> > +       int ret;
-> > +
-> > +       while (drv->ops) {
-> > +               dfl_fpga_dev_for_each_feature(pdata, feature) {
-> > +                       /* match feature and drv using id */
-> > +                       if (feature->id == drv->id) {
-> > +                               ret = dfl_feature_instance_init(pdev, pdata,
-> > +                                                               feature, drv);
-> > +                               if (ret)
-> > +                                       goto exit;
-> > +                       }
-> > +               }
-> > +               drv++;
-> > +       }
-> > +
-> > +       return 0;
-> > +exit:
-> > +       dfl_fpga_dev_feature_uinit(pdev);
-> > +       return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(dfl_fpga_dev_feature_init);
-> > +
-> >  struct dfl_chardev_info {
-> >         const char *name;
-> >         dev_t devt;
-> > diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-> > index 2b6aaef..27f7a74 100644
-> > --- a/drivers/fpga/dfl.h
-> > +++ b/drivers/fpga/dfl.h
-> > @@ -132,6 +132,17 @@
-> >  #define PORT_CTRL_SFTRST_ACK   BIT_ULL(4)              /* HW ack for reset */
-> >
-> >  /**
-> > + * struct dfl_feature_driver - sub feature's driver
-> > + *
-> > + * @id: sub feature id.
-> > + * @ops: ops of this sub feature.
-> > + */
-> > +struct dfl_feature_driver {
-> > +       u64 id;
-> > +       const struct dfl_feature_ops *ops;
-> > +};
-> > +
-> > +/**
-> >   * struct dfl_feature - sub feature of the feature devices
-> >   *
-> >   * @id: sub feature id.
-> > @@ -139,13 +150,17 @@
-> >   *                 this index is used to find its mmio resource from the
-> >   *                 feature dev (platform device)'s reources.
-> >   * @ioaddr: mapped mmio resource address.
-> > + * @ops: ops of this sub feature.
-> >   */
-> >  struct dfl_feature {
-> >         u64 id;
-> >         int resource_index;
-> >         void __iomem *ioaddr;
-> > +       const struct dfl_feature_ops *ops;
-> >  };
-> >
-> > +#define DEV_STATUS_IN_USE      0
-> > +
-> >  /**
-> >   * struct dfl_feature_platform_data - platform data for feature devices
-> >   *
-> > @@ -156,6 +171,8 @@ struct dfl_feature {
-> >   * @dfl_cdev: ptr to container device.
-> >   * @disable_count: count for port disable.
-> >   * @num: number for sub features.
-> > + * @dev_status: dev status (e.g DEV_STATUS_IN_USE).
-> > + * @private: ptr to feature dev private data.
-> >   * @features: sub features of this feature dev.
-> >   */
-> >  struct dfl_feature_platform_data {
-> > @@ -165,11 +182,49 @@ struct dfl_feature_platform_data {
-> >         struct platform_device *dev;
-> >         struct dfl_fpga_cdev *dfl_cdev;
-> >         unsigned int disable_count;
-> > -
-> > +       unsigned long dev_status;
-> > +       void *private;
-> >         int num;
-> >         struct dfl_feature features[0];
-> >  };
-> >
-> > +static inline
-> > +int dfl_feature_dev_use_begin(struct dfl_feature_platform_data *pdata)
-> > +{
-> > +       /* Test and set IN_USE flags to ensure file is exclusively used */
-> > +       if (test_and_set_bit_lock(DEV_STATUS_IN_USE, &pdata->dev_status))
-> > +               return -EBUSY;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static inline
-> > +void dfl_feature_dev_use_end(struct dfl_feature_platform_data *pdata)
-> > +{
-> > +       clear_bit_unlock(DEV_STATUS_IN_USE, &pdata->dev_status);
-> > +}
-> > +
-> > +static inline
-> > +void dfl_fpga_pdata_set_private(struct dfl_feature_platform_data *pdata,
-> > +                               void *private)
-> > +{
-> > +       pdata->private = private;
-> > +}
-> > +
-> > +static inline
-> > +void *dfl_fpga_pdata_get_private(struct dfl_feature_platform_data *pdata)
-> > +{
-> > +       return pdata->private;
-> > +}
-> > +
-> > +struct dfl_feature_ops {
-> > +       int (*init)(struct platform_device *pdev, struct dfl_feature *feature);
-> > +       void (*uinit)(struct platform_device *pdev,
-> > +                     struct dfl_feature *feature);
-> > +       long (*ioctl)(struct platform_device *pdev, struct dfl_feature *feature,
-> > +                     unsigned int cmd, unsigned long arg);
-> > +};
-> > +
-> >  #define DFL_FPGA_FEATURE_DEV_FME               "dfl-fme"
-> >  #define DFL_FPGA_FEATURE_DEV_PORT              "dfl-port"
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index 82f7c83c1dad..596e176c19a6 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -1828,13 +1828,13 @@ xfs_ioc_getlabel(
+>  	/* Paranoia */
+>  	BUILD_BUG_ON(sizeof(sbp->sb_fname) > FSLABEL_MAX);
+>  
+> +	/* 1 larger than sb_fname, so this ensures a trailing NUL char */
+> +	memset(label, 0, sizeof(label));
+>  	spin_lock(&mp->m_sb_lock);
+> -	strncpy(label, sbp->sb_fname, sizeof(sbp->sb_fname));
+> +	strncpy(label, sbp->sb_fname, XFSLABEL_MAX);
+>  	spin_unlock(&mp->m_sb_lock);
+>  
+> -	/* xfs on-disk label is 12 chars, be sure we send a null to user */
+> -	label[XFSLABEL_MAX] = '\0';
+> -	if (copy_to_user(user_label, label, sizeof(sbp->sb_fname)))
+> +	if (copy_to_user(user_label, label, sizeof(label)))
+>  		return -EFAULT;
+>  	return 0;
+>  }
+> @@ -1870,7 +1870,7 @@ xfs_ioc_setlabel(
+>  
+>  	spin_lock(&mp->m_sb_lock);
+>  	memset(sbp->sb_fname, 0, sizeof(sbp->sb_fname));
+> -	strncpy(sbp->sb_fname, label, sizeof(sbp->sb_fname));
+> +	memcpy(sbp->sb_fname, label, len);
+>  	spin_unlock(&mp->m_sb_lock);
+>  
+>  	/*
 > 
-> Please move these to the same place as other things that will need to
-> be added to as feature devices are added as noted in the other reviews
-> today.
-
-as these two strings are used as platform device name, so I think we need to
-keep them in the dfl.h file, because platform driver could reuse the same.
-But I will add detailed comments to guide others to put name string for new
-feature device (platform device) in the dfl.h file together with above ones.
-
-Thanks a lot for the review.
-Hao
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
