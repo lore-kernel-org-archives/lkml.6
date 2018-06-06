@@ -1,47 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqFpQTJ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2D9C601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZEmbkxbe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3ACB3607C7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933068AbeFFQeX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 12:34:23 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:42954 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932514AbeFFQeU (ORCPT
+        id S932242AbeFFGf6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 02:35:58 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54721 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932103AbeFFGf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 12:34:20 -0400
-X-Google-Smtp-Source: ADUXVKK0wOyi3d8FvzQhT+F3hCEENEuwICCOPrszgpE7RajXx9LKw4HSolw65uA96E/yo9Ccrz00fvJDR0XGC3xJXRU=
+        Wed, 6 Jun 2018 02:35:56 -0400
+X-Google-Smtp-Source: ADUXVKIJ4LxC57ARupVr7c9nyeDuE8jAiDNxuoVeJsuVae5xae3qrdp1FXPzCQPXV4Sg7NwoEJ9TDg==
+Date: Wed, 6 Jun 2018 07:35:52 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 01/12] mfd: da9063: Fix failpath in core
+Message-ID: <20180606063552.GW21163@dell>
+References: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
-References: <1528293127-23825-1-git-send-email-nmanthey@amazon.de> <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Wed, 6 Jun 2018 12:33:39 -0400
-Message-ID: <CAF=yD-JCtvVpdxwrncFurc_-OO_VtELjkxBLh=1Gk3jTnOQmug@mail.gmail.com>
-Subject: Re: [less-CONFIG_NET 1/7] net: reorder filter code
-To: Norbert Manthey <nmanthey@amazon.de>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605231013.1803-1-marek.vasut+renesas@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 9:53 AM, Norbert Manthey <nmanthey@amazon.de> wrote:
-> This commit reorders the definition of functions and struct in the
-> file filter.c, such that in the next step we can easily cut the file
-> into a commonly used part, as well as a part that is only required in
-> case CONFIG_NET is actually set.
->
-> This is part of the effort to split CONFIG_SECCOMP_FILTER and
-> CONFIG_NET.
->
-> Signed-off-by: Norbert Manthey <nmanthey@amazon.de>
+On Wed, 06 Jun 2018, Marek Vasut wrote:
 
-Reordering patches like this and the flow-dissector patch in this
-series make cherry-picking fixes back to stable branches and
-and following code history with git blame harder.
+> In case mfd_add_devices() fails, da9063_irq_exit() is not called to
+> undo the IRQchip setup done by da9063_irq_init(). Fix this by adding
+> the missing fail path.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V3: New patch
+> V4: No change
+> ---
+>  drivers/mfd/da9063-core.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
