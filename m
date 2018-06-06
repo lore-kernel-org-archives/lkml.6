@@ -1,118 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d4cC9v2q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5155460290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sbVfK70k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E89260767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeFFTXr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:23:47 -0400
-Received: from mail-io0-f169.google.com ([209.85.223.169]:40420 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752492AbeFFTXp (ORCPT
+        id S1752333AbeFFOET (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 10:04:19 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37446 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751951AbeFFOES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:23:45 -0400
-X-Google-Smtp-Source: ADUXVKIPtXPpSVri12AiEAit/gXd96lnSu18jJNliknNV31yrSdzgP5oHAqLLZi2fkr6FhmAW4yHwSe8vrGEYnzRnvI=
+        Wed, 6 Jun 2018 10:04:18 -0400
+X-Google-Smtp-Source: ADUXVKJMt82kvQqmqYrDaVM7JVzgzy0dycDzWlrKKn5i3h0t/EbQAkYj1WpGTuwcxbb1yhpkfqooPw==
+Reply-To: minyard@acm.org
+Subject: Re: [PATCH] fix NULL device in ipmi_si error message
+To: Meelis Roos <mroos@linux.ee>,
+        openipmi-developer@lists.sourceforge.net
+Cc: Linux Kernel list <linux-kernel@vger.kernel.org>
+References: <alpine.LRH.2.21.1806061604580.20960@math.ut.ee>
+From: Corey Minyard <minyard@acm.org>
+Message-ID: <14953c8b-e461-15d1-798f-39a1adbac0a6@acm.org>
+Date: Wed, 6 Jun 2018 09:04:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180530183826.GI7063@linux.vnet.ibm.com> <Pine.LNX.4.44L0.1805301449350.1502-100000@iolanthe.rowland.org>
- <CAJrWOzBMB-6e1pKms4L216k=TN_Lr52_gWxj-ny8yitgf+K5gg@mail.gmail.com> <20180606190710.GY3593@linux.vnet.ibm.com>
-In-Reply-To: <20180606190710.GY3593@linux.vnet.ibm.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 6 Jun 2018 12:23:33 -0700
-Message-ID: <CA+55aFwZTAp3wZYGSJR1kPkc=QhPNMdEEPttsM4REcWPPDH9Bw@mail.gmail.com>
-Subject: Re: LKMM litmus test for Roman Penyaev's rcu-rr
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Roman Pen <roman.penyaev@profitbricks.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        andrea.parri@amarulasolutions.com,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.LRH.2.21.1806061604580.20960@math.ut.ee>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 12:05 PM Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
+On 06/06/2018 08:11 AM, Meelis Roos wrote:
+> I noticed that 4.17.0 logs the follwing during ipmi_si setup:
 >
-> 3.      Introduce a new marking/attribute in the .def file that indicates
->         whether an access is volatile or implies a compiler barrier.
->         This might allow herd to be more selective about control dependencies,
->         for example, extending them past the end of "if" statements
->         containing compiler barriers.
+>   ipmi_si 0000:01:04.6: probing via PCI
+>   (NULL device *): Could not setup I/O space
+>   ipmi_si 0000:01:04.6: [mem 0xf5ef0000-0xf5ef00ff] regsize 1 spacing 1 irq 21
 >
->         One tricky aspect of this approach is working out what the
->         compiler can do to the "if" statement.  We definitely do not
->         want to put the complexity of all possible compilers into herd!
+> Fix the "NULL device *) by moving io.dev assignment before its potential
+> use by ipmi_pci_probe_regspacing().
+>
+> Result:
+>   ipmi_si 0000:01:04.6: probing via PCI
+>   ipmi_si 0000:01:04.6: Could not setup I/O space
+>   ipmi_si 0000:01:04.6: [mem 0xf5ef0000-0xf5ef00ff] regsize 1 spacing 1 irq 21
 
-This _smells_ like the right thing to do.
+Looks good, queued for next release.
 
-Aren't the litmus-tests effectively always going to be using READ_ONCE
-etc volatile accesses anyway?
+It does raise the question of why the I/O space setup is failing on some 
+system (other have
+reported this, too).  I'm working on that.
 
-Most of what the LKMM litmus tests test for is things with side effects, no?
+Thanks,
 
-And honestly, that is exactly the kind of litmus test behavior we
-*want* our memory model to have, in that any CPU designer (or compiler
-designer) that uses our LKMM litmus tests should very much be aware of
-the fact that we expect a conditional->store memory ordering to be a
-ordering.
+-corey
 
-We have real code that depends on it, so I think LKMM should expose
-those ordering requirements.
-
-I'm also perfectly happy with no markings at all: all memory accesses
-are "voiatile" as fat as C is concerned, and cannot be moved around by
-the compiler at all - and all that LKMM tests is memory _ordering_,
-not "compiler can do X".
-
-Because I think your option 1. is absolutely against everything we
-want to happen:
-
-> 1.      Status quo.  This works reasonably well, but we have already
->         seen that your scenario makes it ask for more synchronization
->         than necessary.
-
-We absolutely do *not* want CPU designers etc thinking that we'll add
-insane synchronization.
-
-We were already burned by insane bad CPU design once in the form of
-the garbage that alpha desigers gave us.
-
-I am personally not at all interested in seeing our memory ordering
-rules be "nice". They should be as tight as possible, and *not* allow
-any crazy shit that some insane person can come up with. No more
-"dependent reads out of ordetr" garbage, and no more "store done
-before the condition it depends on" garbage.
-
-A CPU designer (or a C++ memory ordering person) who tries to sneak
-shit like that past us should be shunned, and not taken seriously.
-
-And our memory ordering rules should be very explicit about it, so
-that people don't even _try_ to do insane things.
-
-I want any memory ordering litmus tests to say "we depend on this, so
-as a CPU designer don't mess it up, because then we won't run on the
-resulting crap".
-
-I'm not in the least interested in the LKMM litmus tests being an
-excuse for unnecessarily weak memory ordering. That's the *opposite*
-of what I would want any litmus tests to do.
-
-If people are looking to use them that way, then I'm going to remove
-them, because such litmus tests are not in the best interest of the
-kernel.
-
-Future CPU designs need to be *saner*, not perpetuate the kind of
-garbage insanity we have seen so far.
-
-                 Linus
+> Signed-off-by: Meelis Roos <mroos@linux.ee>
+>
+> diff --git a/drivers/char/ipmi/ipmi_si_pci.c b/drivers/char/ipmi/ipmi_si_pci.c
+> index f54ca6869ed2..022e03634ce2 100644
+> --- a/drivers/char/ipmi/ipmi_si_pci.c
+> +++ b/drivers/char/ipmi/ipmi_si_pci.c
+> @@ -120,6 +120,8 @@ static int ipmi_pci_probe(struct pci_dev *pdev,
+>   	}
+>   	io.addr_data = pci_resource_start(pdev, 0);
+>   
+> +	io.dev = &pdev->dev;
+> +
+>   	io.regspacing = ipmi_pci_probe_regspacing(&io);
+>   	io.regsize = DEFAULT_REGSIZE;
+>   	io.regshift = 0;
+> @@ -128,8 +130,6 @@ static int ipmi_pci_probe(struct pci_dev *pdev,
+>   	if (io.irq)
+>   		io.irq_setup = ipmi_std_irq_setup;
+>   
+> -	io.dev = &pdev->dev;
+> -
+>   	dev_info(&pdev->dev, "%pR regsize %d spacing %d irq %d\n",
+>   		&pdev->resource[0], io.regsize, io.regspacing, io.irq);
+>   
+>
