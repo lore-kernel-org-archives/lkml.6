@@ -1,128 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JePnL6Fj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B077606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="yDwwo1G1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63A9D60555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933718AbeFFRZa (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:25:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933527AbeFFRZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:25:29 -0400
-X-Google-Smtp-Source: ADUXVKIU3jqyuOLjpcyRwZAXCA+g8R17F80ju8rlFhyX93C8eK6shOMea6qPDTH6UUrTIPg6iUKNWjMRr35ixda6bSo=
+        id S1751975AbeFFMO1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 08:14:27 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:42214 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeFFMOZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 08:14:25 -0400
 MIME-Version: 1.0
-References: <1528302199-29619-1-git-send-email-chang.seok.bae@intel.com> <1528302199-29619-9-git-send-email-chang.seok.bae@intel.com>
-In-Reply-To: <1528302199-29619-9-git-send-email-chang.seok.bae@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Wed, 6 Jun 2018 10:25:15 -0700
-X-Gmail-Original-Message-ID: <CALCETrVkFvC4R6dfrUL5B9iN1v3X6hE3QNHBrAHjPBrA9S7FWg@mail.gmail.com>
-Message-ID: <CALCETrVkFvC4R6dfrUL5B9iN1v3X6hE3QNHBrAHjPBrA9S7FWg@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] x86/vdso: Move out the CPU number store
-To: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Wed, 06 Jun 2018 14:14:23 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Dmitry Osipenko <digetx@gmail.com>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        benjamin.lindqvist@endian.se, pgaikwad@nvidia.com, dev@lynxeye.de,
+        mirza.krak@gmail.com, richard@nod.at, pdeschrijver@nvidia.com,
+        linux-kernel@vger.kernel.org, krzk@kernel.org,
+        jonathanh@nvidia.com, devicetree@vger.kernel.org,
+        linux-mtd@lists.infradead.org, marcel@ziswiler.com,
+        miquel.raynal@bootlin.com, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] mtd: rawnand: tegra: add devicetree binding
+In-Reply-To: <20180606110735.GM11810@ulmo>
+References: <20180531221637.6017-1-stefan@agner.ch>
+ <20180531221637.6017-4-stefan@agner.ch> <20180601093025.2817ff30@bbrezillon>
+ <faa40dac-ab2a-2d43-3a43-2d46cebcd539@gmail.com>
+ <20180606103903.GJ11810@ulmo> <20180606124540.46bfa00b@bbrezillon>
+ <20180606110735.GM11810@ulmo>
+Message-ID: <c687fc59e2662d07568f94efb55bc250@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[22];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 9:23 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> The CPU (and node) number will be written, as early enough,
-> to the segment limit of per CPU data and TSC_AUX MSR entry.
-> The information has been retrieved by vgetcpu in user space
-> and will be also loaded from the paranoid entry, when
-> FSGSBASE enabled. So, it is moved out from vDSO to the CPU
-> initialization path where IST setup is serialized.
->
+On 06.06.2018 13:07, Thierry Reding wrote:
+> On Wed, Jun 06, 2018 at 12:45:40PM +0200, Boris Brezillon wrote:
+>> Hi Thierry,
+>>
+>> On Wed, 6 Jun 2018 12:39:03 +0200
+>> Thierry Reding <thierry.reding@gmail.com> wrote:
+>>
+>> > On Tue, Jun 05, 2018 at 11:19:14PM +0300, Dmitry Osipenko wrote:
+>> > > On 01.06.2018 10:30, Boris Brezillon wrote:
+>> > > > On Fri,  1 Jun 2018 00:16:34 +0200
+>> > > > Stefan Agner <stefan@agner.ch> wrote:
+>> > > >
+>> > > >> This adds the devicetree binding for the Tegra 2 NAND flash
+>> > > >> controller.
+>> > > >>
+>> > > >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>> > > >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> > > >> ---
+>> > > >>  .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
+>> > > >>  1 file changed, 64 insertions(+)
+>> > > >>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+>> > > >>
+>> > > >> diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+>> > > >> new file mode 100644
+>> > > >> index 000000000000..5cd984ef046b
+>> > > >> --- /dev/null
+>> > > >> +++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+>> > > >> @@ -0,0 +1,64 @@
+>> > > >> +NVIDIA Tegra NAND Flash controller
+>> > > >> +
+>> > > >> +Required properties:
+>> > > >> +- compatible: Must be one of:
+>> > > >> +  - "nvidia,tegra20-nand"
+>> > > >
+>> > > > As discussed previously, I prefer "nvidia,tegra20-nand-controller" or
+>> > > > "nvidia,tegra20-nfc".
+>> > > >
+>> > > >> +- reg: MMIO address range
+>> > > >> +- interrupts: interrupt output of the NFC controller
+>> > > >> +- clocks: Must contain an entry for each entry in clock-names.
+>> > > >> +  See ../clocks/clock-bindings.txt for details.
+>> > > >> +- clock-names: Must include the following entries:
+>> > > >> +  - nand
+>> > > >> +- resets: Must contain an entry for each entry in reset-names.
+>> > > >> +  See ../reset/reset.txt for details.
+>> > > >> +- reset-names: Must include the following entries:
+>> > > >> +  - nand
+>> > > >> +
+>> > > >> +Optional children nodes:
+>> > > >> +Individual NAND chips are children of the NAND controller node. Currently
+>> > > >> +only one NAND chip supported.
+>> > > >> +
+>> > > >> +Required children node properties:
+>> > > >> +- reg: An integer ranging from 1 to 6 representing the CS line to use.
+>> > > >> +
+>> > > >> +Optional children node properties:
+>> > > >> +- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
+>> > > >> +		 "hw" is supported.
+>> > > >> +- nand-ecc-algo: string, algorithm of NAND ECC.
+>> > > >> +		 Supported values with "hw" ECC mode are: "rs", "bch".
+>> > > >> +- nand-bus-width : See nand.txt
+>> > > >> +- nand-on-flash-bbt: See nand.txt
+>> > > >> +- nand-ecc-strength: integer representing the number of bits to correct
+>> > > >> +		     per ECC step (always 512). Supported strength using HW ECC
+>> > > >> +		     modes are:
+>> > > >> +		     - RS: 4, 6, 8
+>> > > >> +		     - BCH: 4, 8, 14, 16
+>> > > >> +- nand-ecc-maximize: See nand.txt
+>> > > >> +- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
+>> > > >> +		       are choosen.
+>> > > >> +- wp-gpios: GPIO specifier for the write protect pin.
+>> > > >> +
+>> > > >> +Optional child node of NAND chip nodes:
+>> > > >> +Partitions: see partition.txt
+>> > > >> +
+>> > > >> +  Example:
+>> > > >> +	nand@70008000 {
+>> > > >
+>> > > > 	nand-controller@70008000 {
+>> > > >
+>> > > >> +		compatible = "nvidia,tegra20-nand";
+>> > > >
+>> > > > 		compatible = "nvidia,tegra20-nand-controller";
+>> > > >
+>> > > > or
+>> > > >
+>> > > > 		compatible = "nvidia,tegra20-nfc";
+>> > > >
+>> > >
+>> > > Maybe it's just me, but when I'm reading "nfc", my first association is the
+>> > > "Near Field Communication". Probably an explicit
+>> > > "nvidia,tegra20-nand-controller" variant is more preferable.
+>>
+>> I also prefer nvidia,tegra20-nand-controller.
+>>
+>> >
+>> > We don't really use a -controller suffix for any of the other
+>> > controllers because it is kind of implied. "nfc" is also not something
+>> > that is ever referred to in the technical documentation.
+>> >
+>> > "nvidia,tegra20-nand" would be most consistent with all the rest of
+>> > Tegra (c.f. "nvidia,tegra*-ahci", "nvidia,tegra*-pci",
+>> > "nvidia,tegra*-hda", "nvidia,tegra*-gmi", ...).
+>>
+>> People get confused about what this node represents when you just have
+>> "nvidia,tegra20-nand", and then you start seeing NAND related props or
+>> partition nodes being defined under the NAND controller node.
+>> I really prefer to have the "-controller" prefix here to avoid such
+>> confusions.
+> 
+> Hmm... odd. I mean, the node is already called nand-controller@...,
+> which makes it pretty obvious to me that this represents a controller
+> rather than a NAND chip. Also, the placement of this in the DT hierarchy
+> should make it pretty obvious that it is a controller since you can't
+> just put a NAND chip directly on the CPU's address bus.
+> 
+> In addition I think the nvidia,tegra* part already pretty strongly
+> suggests that this is part of an SoC, so further implies "controller".
 
-Please split this into two patches.  One patch should do the cleanups
-and one patch should move the code.
+The reference manual states:
+"16.0 NAND FLASH CONTROLLER
 
-> diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
-> index 8ec3d1f..3284069 100644
-> --- a/arch/x86/entry/vdso/vgetcpu.c
-> +++ b/arch/x86/entry/vdso/vgetcpu.c
-> @@ -18,9 +18,9 @@ __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
->         p = __getcpu();
->
->         if (cpu)
-> -               *cpu = p & VGETCPU_CPU_MASK;
-> +               *cpu = lsl_tscp_to_cpu(p);
->         if (node)
-> -               *node = p >> 12;
-> +               *node = lsl_tscp_to_node(p);
->         return 0;
+The NAND flash controller allows Tegra 2 Processor to access NAND flash
+memories for mass storage."
 
-This goes in the cleanup patch.
+So I guess "nvidia,tegra20-nand-flash-controller" would be most
+explicit. But the manual also has "GPIO controller" and we use
+"nvidia,tegra20-gpio" as compatible string.
 
-> +/* Bit size and mask of CPU number stored in the per CPU data (and TSC_AUX) */
-> +#define LSL_TSCP_CPU_SIZE              12
-> +#define LSL_TSCP_CPU_MASK              0xfff
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +/* Helper functions to store/load CPU and node numbers */
-> +
-> +static inline unsigned long make_lsl_tscp(int cpu, unsigned long node)
-> +{
-> +       return ((node << LSL_TSCP_CPU_SIZE) | cpu);
-> +}
-> +
-> +static inline unsigned int lsl_tscp_to_cpu(unsigned long x)
-> +{
-> +       return (x & LSL_TSCP_CPU_MASK);
-> +}
-> +
-> +static inline unsigned int lsl_tscp_to_node(unsigned long x)
-> +{
-> +       return (x >> LSL_TSCP_CPU_SIZE);
-> +}
+I dislike nfc since it is an increasingly less known abbreviation and
+not used in the reference manual at all.
 
-As do these.  But maybe they should be #ifdef CONFIG_X86_64 to make it
-clear that they are not presently supported on 32-bit systems.
-(Unless I'm wrong and they are supported.)
+"nvidia,tegra20-nand" or "nvidia,tegra20-nand-flash-controller" is fine
+for me...
 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 38276f5..c7b54f0 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -1665,6 +1665,11 @@ void cpu_init(void)
->
->         wrmsrl(MSR_FS_BASE, 0);
->         wrmsrl(MSR_KERNEL_GS_BASE, 0);
-> +#ifdef CONFIG_NUMA
-> +       write_rdtscp_aux(make_lsl_tscp(cpu, early_cpu_to_node(cpu)));
-> +#else
-> +       write_rdtscp_aux(make_lsl_tscp(cpu, 0));
-> +#endif
-
-Why the ifdef?  early_cpu_to_node() should return 0 if !CONFIG_NUMA.
-
-> +static inline void setup_cpu_number_segment(int cpu)
-> +{
-> +#ifdef CONFIG_NUMA
-> +       unsigned long node = early_cpu_to_node(cpu);
-> +#else
-> +       unsigned long node = 0;
-> +#endif
-
-This duplicates half the rdtscp_aux code.  How about making this one
-function setup_cpu_number() that does all of it?
-
-> +       struct desc_struct d = GDT_ENTRY_INIT(0x40f5, 0x0,
-> +                          make_lsl_tscp(cpu, node));
-
-Please get rid of the GDT_ENTRY_INIT stuff and just fill out all the
-fields, just like it is in the code that you're moving.  No one enjoys
-decoding hex segment descriptors.  (Well, Linus and hpa probably
-*love* doing it just to show off.)
+--
+Stefan
