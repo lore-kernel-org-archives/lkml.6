@@ -1,63 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vNqhATzjGltEPgAAmS7hNA
-	; Fri, 08 Jun 2018 20:14:30 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oFEUMd5gGFsdQAAAmS7hNA
+	; Wed, 06 Jun 2018 22:32:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 632876074D; Fri,  8 Jun 2018 20:14:30 +0000 (UTC)
+	id 675A6608D2; Wed,  6 Jun 2018 22:31:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CE318607E4;
-	Fri,  8 Jun 2018 20:14:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CE318607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 66595608FD;
+	Wed,  6 Jun 2018 22:31:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 66595608FD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753297AbeFHUO2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:14:28 -0400
-Received: from mga12.intel.com ([192.55.52.136]:30598 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752946AbeFHUO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:14:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jun 2018 13:14:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,491,1520924400";
-   d="scan'208";a="48422975"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
-  by orsmga006.jf.intel.com with ESMTP; 08 Jun 2018 13:14:25 -0700
-Date: Fri, 8 Jun 2018 14:17:13 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 09/13] PCI/AER: Move aer_irq() declaration to portdrv.h
-Message-ID: <20180608201713.GA24554@localhost.localdomain>
-References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152848834128.11888.12263280185471104825.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152848834128.11888.12263280185471104825.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S932148AbeFFWbz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 18:31:55 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:48112 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932068AbeFFWby (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 18:31:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fQgy3-00019a-Oe; Wed, 06 Jun 2018 23:31:47 +0100
+Message-ID: <1528324307.2289.61.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 19/92] sctp: delay the authentication for the
+ duplicated cookie-echo chunk
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>
+Cc: stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Wed, 06 Jun 2018 23:31:47 +0100
+In-Reply-To: <20180524093200.931521036@linuxfoundation.org>
+References: <20180524093159.286472249@linuxfoundation.org>
+         <20180524093200.931521036@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 03:05:41PM -0500, Bjorn Helgaas wrote:
-> The aer_irq() declaration is the only thing needed by aer_inject.c.  Move
-> it to portdrv.h so we eventually get rid of aerdrv.h completely.  No
-> functional change intended.
+On Thu, 2018-05-24 at 11:37 +0200, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Xin Long <lucien.xin@gmail.com>
+> 
+> [ Upstream commit 59d8d4434f429b4fa8a346fd889058bda427a837 ]
+> 
+> Now sctp only delays the authentication for the normal cookie-echo
+> chunk by setting chunk->auth_chunk in sctp_endpoint_bh_rcv(). But
+> for the duplicated one with auth, in sctp_assoc_bh_rcv(), it does
+> authentication first based on the old asoc, which will definitely
+> fail due to the different auth info in the old asoc.
+[...]
+> --- a/net/sctp/associola.c
+> +++ b/net/sctp/associola.c
+> @@ -1000,9 +1000,10 @@ static void sctp_assoc_bh_rcv(struct wor
+>  	struct sctp_endpoint *ep;
+>  	struct sctp_chunk *chunk;
+>  	struct sctp_inq *inqueue;
+> -	int state;
+>  	sctp_subtype_t subtype;
+> +	int first_time = 1;	/* is this the first time through the loop */
+>  	int error = 0;
+> +	int state;
+>  
+>  	/* The association should be held so we should be safe. */
+>  	ep = asoc->ep;
+> @@ -1013,6 +1014,30 @@ static void sctp_assoc_bh_rcv(struct wor
+>  		state = asoc->state;
+>  		subtype = SCTP_ST_CHUNK(chunk->chunk_hdr->type);
+>  
+> +		/* If the first chunk in the packet is AUTH, do special
+> +		 * processing specified in Section 6.3 of SCTP-AUTH spec
+> +		 */
+> +		if (first_time && subtype.chunk == SCTP_CID_AUTH) {
+> +			struct sctp_chunkhdr *next_hdr;
+> +
+> +			next_hdr = sctp_inq_peek(inqueue);
+> +			if (!next_hdr)
+> +				goto normal;
+> +
+> +			/* If the next chunk is COOKIE-ECHO, skip the AUTH
+> +			 * chunk while saving a pointer to it so we can do
+> +			 * Authentication later (during cookie-echo
+> +			 * processing).
+> +			 */
+> +			if (next_hdr->type == SCTP_CID_COOKIE_ECHO) {
+> +				chunk->auth_chunk = skb_clone(chunk->skb,
+> +							      GFP_ATOMIC);
+> +				chunk->auth = 1;
 
-Nothing against what you're doing here, but it does seem odd that aer_irq
-is required to be exported just for the error injection to directly call
-it. I feel like aer-inject should route it through the irq subsystem,
-like with generic_handle_irq. ?
+Doesn't the first_time flag need to be cleared here (and before the
+other continue statement in this loop)?
+
+Ben.
+
+> +				continue;
+> +			}
+> +		}
+> +
+> +normal:
+[...]
+
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
