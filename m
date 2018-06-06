@@ -1,142 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WD27DmY5GFt7bQAAmS7hNA
-	; Wed, 06 Jun 2018 19:44:19 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lyLyFstAGFvuQgAAmS7hNA
+	; Wed, 06 Jun 2018 20:15:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2F20160861; Wed,  6 Jun 2018 19:44:19 +0000 (UTC)
+	id 5FD796089E; Wed,  6 Jun 2018 20:15:28 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8306C601C3;
-	Wed,  6 Jun 2018 19:44:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8306C601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D7BEF60290;
+	Wed,  6 Jun 2018 20:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7BEF60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752538AbeFFToQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 15:44:16 -0400
-Received: from mga18.intel.com ([134.134.136.126]:43169 "EHLO mga18.intel.com"
+        id S1752800AbeFFUP0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 16:15:26 -0400
+Received: from mga02.intel.com ([134.134.136.20]:10537 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752188AbeFFToP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 15:44:15 -0400
+        id S1752114AbeFFUPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 16:15:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 12:44:14 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 13:15:02 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,484,1520924400";
-   d="scan'208";a="45793122"
-Received: from btwarden-clr.jf.intel.com ([10.54.74.129])
-  by fmsmga008.fm.intel.com with ESMTP; 06 Jun 2018 12:44:14 -0700
-From: "Brett T. Warden" <brett.t.warden@intel.com>
-To: linux-kernel@vger.kernel.org, jeyu@kernel.org
-Subject: [PATCH v2] module: Implement sig_unenforce parameter
-Date: Wed,  6 Jun 2018 12:44:14 -0700
-Message-Id: <20180606194414.14500-1-brett.t.warden@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <201806062114.40uzFbuB%fengguang.wu@intel.com>
+   d="scan'208";a="205903726"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 06 Jun 2018 13:15:02 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc: Raj Ashok <ashok.raj@intel.com>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH 2/2] iommu/vt-d: fix dev iotlb pfsid use
+Date: Wed,  6 Jun 2018 13:18:00 -0700
+Message-Id: <1528316280-24307-3-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528316280-24307-1-git-send-email-jacob.jun.pan@linux.intel.com>
+References: <1528316280-24307-1-git-send-email-jacob.jun.pan@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_MODULE_SIG_FORCE is enabled, also provide a boot-time-only
-parameter, module.sig_unenforce, to disable signature enforcement. This
-allows distributions to ship with signature verification enforcement
-enabled by default, but for users to elect to disable it without
-recompiling, to support building and loading out-of-tree modules.
+PFSID should be used in the invalidation descriptor for flushing
+device IOTLBs on SRIOV VFs.
 
-Signed-off-by: Brett T. Warden <brett.t.warden@intel.com>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
+ drivers/iommu/dmar.c        |  6 +++---
+ drivers/iommu/intel-iommu.c | 16 +++++++++++++++-
+ include/linux/intel-iommu.h |  5 ++---
+ 3 files changed, 20 insertions(+), 7 deletions(-)
 
-Added CONFIG_X86 guards around use of boot_params since this structure
-is arch-specific.
-
- .../admin-guide/kernel-parameters.txt         |  4 +++
- kernel/module.c                               | 31 +++++++++++++++++--
- 2 files changed, 33 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1beb30d8d7fc..87909e021558 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2380,6 +2380,10 @@
- 			Note that if CONFIG_MODULE_SIG_FORCE is set, that
- 			is always true, so this option does nothing.
- 
-+	module.sig_unenforce
-+			[KNL] This parameter allows modules without signatures
-+			to be loaded, overriding CONFIG_MODULE_SIG_FORCE.
-+
- 	module_blacklist=  [KNL] Do not load a comma-separated list of
- 			modules.  Useful for debugging problem modules.
- 
-diff --git a/kernel/module.c b/kernel/module.c
-index c9bea7f2b43e..27f23d85e1ba 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -64,6 +64,7 @@
- #include <linux/bsearch.h>
- #include <linux/dynamic_debug.h>
- #include <linux/audit.h>
-+#include <linux/efi.h>
- #include <uapi/linux/module.h>
- #include "module-internal.h"
- 
-@@ -274,9 +275,13 @@ static void module_assert_mutex_or_preempt(void)
+diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+index 460bed4..7852678 100644
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -1339,8 +1339,8 @@ void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+ 	qi_submit_sync(&desc, iommu);
  }
  
- static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
--#ifndef CONFIG_MODULE_SIG_FORCE
-+#ifdef CONFIG_MODULE_SIG_FORCE
-+/* Allow disabling module signature requirement by adding boot param */
-+static bool sig_unenforce;
-+module_param(sig_unenforce, bool_enable_only, 0444);
-+#else /* !CONFIG_MODULE_SIG_FORCE */
- module_param(sig_enforce, bool_enable_only, 0644);
--#endif /* !CONFIG_MODULE_SIG_FORCE */
-+#endif /* CONFIG_MODULE_SIG_FORCE */
- 
- /*
-  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-@@ -415,6 +420,10 @@ extern const s32 __start___kcrctab_unused[];
- extern const s32 __start___kcrctab_unused_gpl[];
- #endif
- 
-+#ifdef CONFIG_X86
-+extern struct boot_params boot_params;
-+#endif
-+
- #ifndef CONFIG_MODVERSIONS
- #define symversion(base, idx) NULL
- #else
-@@ -4243,6 +4252,24 @@ static const struct file_operations proc_modules_operations = {
- static int __init proc_modules_init(void)
+-void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+-			u64 addr, unsigned mask)
++void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
++			u16 qdep, u64 addr, unsigned mask)
  {
- 	proc_create("modules", 0, NULL, &proc_modules_operations);
-+
-+#ifdef CONFIG_MODULE_SIG_FORCE
-+#ifdef CONFIG_X86
-+	switch (boot_params.secure_boot) {
-+	case efi_secureboot_mode_unset:
-+	case efi_secureboot_mode_unknown:
-+	case efi_secureboot_mode_disabled:
-+		/*
-+		 * sig_unenforce is only applied if SecureBoot is not
-+		 * enabled.
-+		 */
-+		sig_enforce = !sig_unenforce;
-+	}
-+#else
-+	sig_enforce = !sig_unenforce;
-+#endif
-+#endif
-+
- 	return 0;
+ 	struct qi_desc desc;
+ 
+@@ -1355,7 +1355,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+ 		qdep = 0;
+ 
+ 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
+-		   QI_DIOTLB_TYPE;
++		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
+ 
+ 	qi_submit_sync(&desc, iommu);
  }
- module_init(proc_modules_init);
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 3d77d61..e0e80c3 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -1503,6 +1503,19 @@ static void iommu_enable_dev_iotlb(struct device_domain_info *info)
+ 		return;
+ 
+ 	pdev = to_pci_dev(info->dev);
++	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
++	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
++	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
++	 * reserved, which should be set to 0.
++	 */
++	if (!ecap_dit(info->iommu->ecap))
++		info->pfsid = 0;
++	else if (pdev && pdev->is_virtfn) {
++		if (ecap_dit(info->iommu->ecap))
++			dev_warn(&pdev->dev, "SRIOV VF device IOTLB enabled without flow control\n");
++		info->pfsid = PCI_DEVID(pdev->physfn->bus->number, pdev->physfn->devfn);
++	} else
++		info->pfsid = PCI_DEVID(info->bus, info->devfn);
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+ 	/* The PCIe spec, in its wisdom, declares that the behaviour of
+@@ -1568,7 +1581,8 @@ static void iommu_flush_dev_iotlb(struct dmar_domain *domain,
+ 
+ 		sid = info->bus << 8 | info->devfn;
+ 		qdep = info->ats_qdep;
+-		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
++		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
++				qdep, addr, mask);
+ 	}
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
+ }
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index af1c05f..7fd9fbae 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -456,9 +456,8 @@ extern void qi_flush_context(struct intel_iommu *iommu, u16 did, u16 sid,
+ 			     u8 fm, u64 type);
+ extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+ 			  unsigned int size_order, u64 type);
+-extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+-			       u64 addr, unsigned mask);
+-
++extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
++			u16 qdep, u64 addr, unsigned mask);
+ extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
+ 
+ extern int dmar_ir_support(void);
 -- 
-2.17.1
+2.7.4
