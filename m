@@ -1,126 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nmVfENhiGVs1YgAAmS7hNA
-	; Thu, 07 Jun 2018 16:53:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3i6zICI5GFtHaAAAmS7hNA
+	; Wed, 06 Jun 2018 19:42:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B64D26089E; Thu,  7 Jun 2018 16:53:00 +0000 (UTC)
+	id 80C56608BA; Wed,  6 Jun 2018 19:42:40 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvNzCZ5d"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMQ2LGCS"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3A1AF60115;
-	Thu,  7 Jun 2018 16:53:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A1AF60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E0F97608BF;
+	Wed,  6 Jun 2018 19:42:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0F97608BF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933695AbeFGQw6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:52:58 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:34247 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932630AbeFGQwy (ORCPT
+        id S1752656AbeFFTmh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 15:42:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36222 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752193AbeFFTmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:52:54 -0400
-Received: by mail-yw0-f196.google.com with SMTP id b125-v6so3228008ywe.1;
-        Thu, 07 Jun 2018 09:52:53 -0700 (PDT)
+        Wed, 6 Jun 2018 15:42:36 -0400
+Received: by mail-wm0-f68.google.com with SMTP id v131-v6so14222064wma.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 12:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5Y2vzhyZp42Ba8LdVKKQla/fC1IJp4EV39lhWJu4oF4=;
-        b=NvNzCZ5dS3bJ7s9JuZq5ICjlnKM6r3PKnHToCRAk8UCfOd7f7nmJ7YAwYzNNAwhDzE
-         ymvsIPHjANdmw4J+oaGXgpIN4MBGLnaQYLtnRyokfvNWyPZOFPVCWxjEt76BqwYh9fBa
-         4lR0g8OGQEWoIEFr0uJfdiuBSL3aWkAtpYvTWjlyc2NKz473x8YEQOdWxn6bTwC5CG0R
-         OpviUtyAnODpaO6mIA4WLkLTTS8RgGDC8ArVnpF8I+xP8NC40VU8p4E28gfxhgURZfrv
-         rxulIFWgktuHqsKo4wcV9cr+BgDJUSADAO03ct+KjgwRKG7qBMY4z3y06ByvSIIi5Dok
-         Jd5A==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6SGdZx92oNd3YIFsxTGFVyPKnIH99jNr0SeD9U8bliw=;
+        b=ZMQ2LGCSmr/LYzP/FJrJNpCIadLXQVBZal/tzmyu3GFT12pZajXdA8yQw9nrGkjD0x
+         42MhnuKiOKiys66/364AiG4ri2KZGvevuKG39AvoTyghy+tftZRfKf/2itAiNcelCUI0
+         HuRMyAEr4E2A1k/gnafD4yX8+dd1EhGhtSV7+13tYPYoSC+boiTgYo3bSx5DCTGVdJM9
+         BY78SoJlhmdB/rgauDGwBPwGlGWsqSOfLcBG3IJzgZl4heAFO/vdOFzWmfgWLQ4kIgWs
+         Tt1jlMOtFkwiQ26Sc95F/Sw24luIMIuWA3nkKT/abKIP7iRUK3t9O7t5IbjL0I0jP5JV
+         MORQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5Y2vzhyZp42Ba8LdVKKQla/fC1IJp4EV39lhWJu4oF4=;
-        b=EfuBakqgfQGgvnrCWGv3cgXnbWyetFXu7I93B2/CZ4Z5MnGYeETeligeJcNd8GTe2l
-         bCqYBi5iJMHDBWsJ1vYRILVPSdf2nTU5qcn3+IgXaGxAoGDeemhRTWccy9y64otWFuWN
-         f1CndN/yld8FDDIfsgC0T9z1ij2LF7OysyKMWp5JIe7zHrMNEstMyVtYtj9OVhKZ/QFm
-         eU7RfLtIUoskc99/2tkBjfF40z+3UAVk2uQJ4l2xDeKckhlmpRd0vD32ewXs4jPb2lo6
-         WRQvgW/2YMm1gWW9zhpNQ3bnoF2pIVH5sXAVZBHQcIkEB8zPSqcgp+iCyxa6QwMFVqIp
-         reHw==
-X-Gm-Message-State: APt69E1sztrIKNI2r+jceaz2v7YNCRdNup0M+1lox63hiJz5t/fri5/D
-        NpkwN5qaSzWRKbux/rMmTqZTDDuFFXN6aQiNOj0=
-X-Google-Smtp-Source: ADUXVKJuw09R8Ocn5IodrxzKAjU1F1UO/exjlUU/BhcvMdhbKdulmLZVmnekQxkFurDOfr1ZBhhsE/+lzdlPB7QRW60=
-X-Received: by 2002:a0d:f7c2:: with SMTP id h185-v6mr1476830ywf.457.1528390373265;
- Thu, 07 Jun 2018 09:52:53 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=6SGdZx92oNd3YIFsxTGFVyPKnIH99jNr0SeD9U8bliw=;
+        b=R9aLv7bUd6jAeVAZt7QVms0Xu7kuvgqL81MJmubID3yfbyb6WeJm62rRGOPOIEV43S
+         qPlAB+EuPaLYo0wlHpiIgmFETeUGCEuPFSTT+V5o3GH3zrkCD5qlCPop2VJitxsst4vm
+         sEsNmFglAMs1TKrQnepKpFJ+VUKpIsYtSodifCD+PAKDUiyxNKPzrEuDgHe4OpNCUnC6
+         VgfaiVi/Qfk/DEh0tWw5fbg9loRQUwj63aaahVOgagEEGM2OWLOTckT3Blh5kmY6kZMW
+         x6SgEvszrBwspfAKY+8BTKmbhE2B5PTHTfy3vJvkFDzwi1D0EWR+g6xxER1uZprKmZZW
+         FVQA==
+X-Gm-Message-State: APt69E0guNaSrlDUVKBt3UhyoH3Ap2P29yytWeO7wcpI4cYjRJMWHiRe
+        D9d9XuYV8C5nKWyPnwfhqWU=
+X-Google-Smtp-Source: ADUXVKLxW1NVoQZGt3NiLE60fycAs+6MFUexQ5Bt6anb9yJZP5IJu/L202SoryQ0BJJNO0aB59/YtA==
+X-Received: by 2002:a1c:448b:: with SMTP id r133-v6mr2499328wma.55.1528314155147;
+        Wed, 06 Jun 2018 12:42:35 -0700 (PDT)
+Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
+        by smtp.gmail.com with ESMTPSA id b16-v6sm14743265wrm.15.2018.06.06.12.42.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Jun 2018 12:42:34 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 98FEC10C2B80; Wed,  6 Jun 2018 21:42:33 +0200 (CEST)
+From: Mathieu Malaterre <malat@debian.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kernel/watchdog: add missing prototypes for weak functions
+Date: Wed,  6 Jun 2018 21:42:32 +0200
+Message-Id: <20180606194232.17653-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-References: <1528309291-25579-1-git-send-email-scott.branden@broadcom.com> <c0b4d69d-2826-320e-974e-c7cdbf341747@gmail.com>
-In-Reply-To: <c0b4d69d-2826-320e-974e-c7cdbf341747@gmail.com>
-From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date: Thu, 7 Jun 2018 18:52:42 +0200
-Message-ID: <CAJiuCcefDycphDfTM1a=Dz7vaHMQy4Bq=b4mKTiVZhRTKmWhoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] ARM: dts: cygnus: enable iproc-hwrng
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: scott.branden@broadcom.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mohamed-ismail.abdul@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+In commit 73ce0511c436 ("kernel/watchdog.c: move hardlockup detector to
+separate file") two new functions were added ‘watchdog_nmi_enable’ and
+‘watchdog_nmi_disable’ the functions were changed from static to weak.
+In which case expose the function declarations in header file.
 
-On Thu, 7 Jun 2018 at 18:35, Florian Fainelli <f.fainelli@gmail.com> wrote:
->
-> On 06/06/2018 11:21 AM, Scott Branden wrote:
-> > From: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdul@broadco=
-m.com>
-> >
-> > Enable the HW rng driver "iproc-rng200" for all cygnus platforms.
-> >
-> > Signed-off-by: Mohamed Ismail Abdul Packir Mohamed <mohamed-ismail.abdu=
-l@broadcom.com>
-> > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->
-> Clement, do you want to test this and reported back?
+Silence the following gcc warnings:
 
-Tested v1 and works fine on bcm58305
+  kernel/watchdog.c:109:12: warning: no previous prototype for ‘watchdog_nmi_enable’ [-Wmissing-prototypes]
+  kernel/watchdog.c:115:13: warning: no previous prototype for ‘watchdog_nmi_disable’ [-Wmissing-prototypes]
 
-Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+Cc: Babu Moger <babu.moger@oracle.com>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ include/linux/nmi.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
->
-> > ---
-> >  arch/arm/boot/dts/bcm-cygnus.dtsi | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-=
-cygnus.dtsi
-> > index 9fe4f5a..b0e38fa 100644
-> > --- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-> > +++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-> > @@ -417,6 +417,11 @@
-> >                       status =3D "disabled";
-> >               };
-> >
-> > +             rng: rng@18032000 {
-> > +                     compatible =3D "brcm,iproc-rng200";
-> > +                     reg =3D <0x18032000 0x28>;
-> > +             };
-> > +
-> >               sdhci0: sdhci@18041000 {
-> >                       compatible =3D "brcm,sdhci-iproc-cygnus";
-> >                       reg =3D <0x18041000 0x100>;
-> >
->
->
-> --
-> Florian
+diff --git a/include/linux/nmi.h b/include/linux/nmi.h
+index b8d868d23e79..50d143995338 100644
+--- a/include/linux/nmi.h
++++ b/include/linux/nmi.h
+@@ -113,6 +113,8 @@ static inline int hardlockup_detector_perf_init(void) { return 0; }
+ void watchdog_nmi_stop(void);
+ void watchdog_nmi_start(void);
+ int watchdog_nmi_probe(void);
++int watchdog_nmi_enable(unsigned int cpu);
++void watchdog_nmi_disable(unsigned int cpu);
+ 
+ /**
+  * touch_nmi_watchdog - restart NMI watchdog timeout.
+-- 
+2.11.0
