@@ -1,94 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V5Vw9GLa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VbVuG37+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0DE160263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="qJ2BIImR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E489601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752012AbeFFEou (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 00:44:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56698 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750803AbeFFEos (ORCPT
+        id S1752873AbeFFCuJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Tue, 5 Jun 2018 22:50:09 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54386 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752768AbeFFCuH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 00:44:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0307E60263
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-Date: Wed, 06 Jun 2018 07:44:39 +0300
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180606040929.tksvznlmb3ogtgur@vireshk-i7>
-References: <20180605114453.1381941-1-arnd@arndb.de> <20180606040929.tksvznlmb3ogtgur@vireshk-i7>
+        Tue, 5 Jun 2018 22:50:07 -0400
+X-Google-Smtp-Source: ADUXVKLkkX+BwFPXMWA1J+tFq/HJZ5uXckpADkrHIlgUDK36fWYO8CbblWquOfSLArs3Zw1Mk7aP3dPH2dfYykfWSbc=
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] cpufreq: kryo: allow building as a loadable module
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From: Ilia Lin <ilialin@codeaurora.org>
-Message-ID: <85F1CCF0-F937-4EAA-9628-D8AA6C4EDE0E@codeaurora.org>
+In-Reply-To: <362131bf-3b6b-58aa-bda6-003f5ffb5e8e@redhat.com>
+References: <20180604123238.82200-1-chiu@endlessm.com> <ea0b7233-da00-ee24-5138-9f49a63e4a5a@redhat.com>
+ <CAD8Lp45FmOMK3B537sKfnC3STtxwspNdoRVKTyaoDnsJ3EMEtg@mail.gmail.com>
+ <bad0e19f-e994-110e-fce9-b614233e66aa@redhat.com> <20180605023124.GE47042@localhost.localdomain>
+ <CAB4CAwc-J3+xaXzKKpFc-UMeuCsX8zbs0S7-a82x2LJcD5r7jA@mail.gmail.com>
+ <38cb3527-8480-bdb9-a5d9-b601bc494a5f@redhat.com> <71df09bc89619aba975147e6b07920f1dfc2f46f.camel@hadess.net>
+ <cd6a5d86-1fdb-2561-1e29-0553be53c41a@redhat.com> <94789b55b88ae5a296e1fca3b0311318e7b507ee.camel@hadess.net>
+ <0443419b-3147-163b-374d-bb8651b08837@redhat.com> <cfb6ff791a9034f8ade738085475e946b3d7519b.camel@sipsolutions.net>
+ <362131bf-3b6b-58aa-bda6-003f5ffb5e8e@redhat.com>
+From: Chris Chiu <chiu@endlessm.com>
+Date: Wed, 6 Jun 2018 10:50:05 +0800
+Message-ID: <CAB4CAwfZtA8mf4MwJq1AA1wqwJB-HLXuiMmkzkow3NykRsHkSw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: Call new led hw_changed API
+ on kbd brightness change
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Benjamin Berg <benjamin@sipsolutions.net>,
+        Bastien Nocera <hadess@hadess.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Viresh got ahead of my answer a bit=2E :)
-Sure I'll post the module exit later=2E
+On Tue, Jun 5, 2018 at 7:06 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+> Hi,
+>
+>
+> On 05-06-18 12:46, Benjamin Berg wrote:
+>>
+>> Hey,
+>>
+>> On Tue, 2018-06-05 at 12:31 +0200, Hans de Goede wrote:
+>>>
+>>> On 05-06-18 12:14, Bastien Nocera wrote:
+>>>>
+>>>> On Tue, 2018-06-05 at 12:05 +0200, Hans de Goede wrote:
+>>>>>
+>>>>> On 05-06-18 11:58, Bastien Nocera wrote:
+>>>>>>
+>>>>>> [SNIP]
+>>>>>
+>>>>>
+>>>>> Ok, so what are you suggestion, do you really want to hardcode
+>>>>> the cycle behavior in the kernel as these 2 patches are doing,
+>>>>> without any option to intervene from userspace?
+>>>>>
+>>>>> As mentioned before in the thread there are several example
+>>>>> of the kernel deciding to handle key-presses itself, putting
+>>>>> policy in the kernel and they have all ended poorly (think
+>>>>> e.g. rfkill, acpi-video dealing with LC brightnesskey presses
+>>>>> itself).
+>>>>>
+>>>>> I guess one thing we could do here is code out both solutions,
+>>>>> have a module option which controls if we:
+>>>>>
+>>>>> 1) Handle this in the kernel as these patches do
+>>>>> 2) Or send a new KEY_KBDILLUMCYCLE event
+>>>>>
+>>>>> Combined with a Kconfig option to select which is the default
+>>>>> behavior. Then Endless can select 1 for now and then in
+>>>>> Fedora (which defaults to Wayland now) we could default to
+>>>>> 2. once all the code for handling 2 is in place.
+>>>>>
+>>>>> This is ugly (on the kernel side) but it might be the best
+>>>>> compromise we can do.
+>>>>
+>>>>
+>>>> I don't really mind which option is used, I'm listing the problems with
+>>>> the different options. If you don't care about Xorg, then definitely go
+>>>> for adding a new key. Otherwise, processing it in the kernel is the
+>>>> least ugly, especially given that the key goes through the same driver
+>>>> that controls the brightness anyway. There's no crazy cross driver
+>>>> interaction as there was in the other cases you listed.
+>>>
+>>>
+>>> Unfortunately not caring about Xorg is not really an option.
+>>>
+>>> Ok, new idea, how about we make g-s-d behavior upon detecting a
+>>> KEY_KBDILLUMTOGGLE event configurable, if we're on a Mac do a
+>>> toggle, otherwise do a cycle.
+>>>
+>>> Or we could do this through hwdb, then we could add a hwdb entry
+>>> for this laptop setting the udev property to do a cycle instead of
+>>> a toggle on receiving the keypress.
+>>
+>>
+>> If we are adding hwdb entries anyway to control the userspace
+>> interpretation of the TOGGLE key, then we could also add the new CYCLE
+>> key and explicitly re-map it to TOGGLE. That requires slightly more
+>> logic in hwdb, but it does mean that we could theoretically just drop
+>> the workaround if we ever stop caring about Xorg.
+>
+>
+> Hmm, interesting proposal, I say go for it :)
+>
+> Regards,
+>
+> Hans
+>
+>
+>
 
-On June 6, 2018 7:09:29 AM GMT+03:00, Viresh Kumar <viresh=2Ekumar@linaro=
-=2Eorg> wrote:
->On 05-06-18, 13:44, Arnd Bergmann wrote:
->> Building the kryo cpufreq driver while QCOM_SMEM is a loadable module
->> results in a link error:
->>=20
->> drivers/cpufreq/qcom-cpufreq-kryo=2Eo: In function
->`qcom_cpufreq_kryo_probe':
->> qcom-cpufreq-kryo=2Ec:(=2Etext+0xbc): undefined reference to
->`qcom_smem_get'
->>=20
->> The problem is that Kconfig ignores interprets the dependency as met
->> when the dependent symbol is a 'bool' one=2E By making it 'tristate',
->> it will be forced to be a module here, which builds successfully=2E
->>=20
->> Fixes: 46e2856b8e18 ("cpufreq: Add Kryo CPU scaling driver")
->> Signed-off-by: Arnd Bergmann <arnd@arndb=2Ede>
->> ---
->>  drivers/cpufreq/Kconfig=2Earm | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/cpufreq/Kconfig=2Earm
->b/drivers/cpufreq/Kconfig=2Earm
->> index c7ce928fbf1f=2E=2E52f5f1a2040c 100644
->> --- a/drivers/cpufreq/Kconfig=2Earm
->> +++ b/drivers/cpufreq/Kconfig=2Earm
->> @@ -125,7 +125,7 @@ config ARM_OMAP2PLUS_CPUFREQ
->>  	default ARCH_OMAP2PLUS
->> =20
->>  config ARM_QCOM_CPUFREQ_KRYO
->> -	bool "Qualcomm Kryo based CPUFreq"
->> +	tristate "Qualcomm Kryo based CPUFreq"
->>  	depends on ARM64
->>  	depends on QCOM_QFPROM
->>  	depends on QCOM_SMEM
->
->Okay, so we really need this to be a module=2E But the driver can't
->really work as
->a module right now if we do this: insmod, rmmod, insmod=2E Because it
->doesn't free
->resources at rmmmod and will fail on second insmod=2E
->
->Because what you are fixing is a critical build error, we better get it
->merged
->right now=2E
->
->Acked-by: Viresh Kumar <viresh=2Ekumar@linaro=2Eorg>
->
->But Ilia needs to cook another patch to add the module removal code for
->the
->driver and mark your patch's commit id in the fixes tag=2E
-
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+So maybe the next stop is that I can follow Darren's suggestion to eliminate
+the is_kbd_led_event() and send a v2 for review?
