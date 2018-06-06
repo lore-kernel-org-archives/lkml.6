@@ -1,82 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6my/TdB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0FC66601D9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtPvDQf0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 884D2601A8
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933707AbeFFRHo (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:07:44 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:35492 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753762AbeFFRHl (ORCPT
+        id S1752762AbeFFCTL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Tue, 5 Jun 2018 22:19:11 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40378 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752424AbeFFCTK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:07:41 -0400
-X-Google-Smtp-Source: ADUXVKK/jdnTZBQP7Yi2Yw9wPUFvJiuMGcO+ECyJO6qg5ugfjBEz/Mo2V8XCkW++8Oq4AxXuG77/Nb4bSvUwSgsvlP0=
+        Tue, 5 Jun 2018 22:19:10 -0400
+X-Google-Smtp-Source: ADUXVKLAH8YJHqaBVXIlQ7NJazBkGNNLYTjnJro0XbXIncvAUhKlCvSDoZt9x39zxtaGOO0+3Azcqz91p/oqmmxU+ok=
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VepGkCyQ6gM7s2-EO3=6quiCNVGDSZooRr1uoUVeE7hmQ@mail.gmail.com>
-References: <20180526193523.3896-1-mattst88@gmail.com> <CAEdQ38GR7XzjfjARuYxnr0dYGnCr_Sxn9bwwZJGZu7CJf6syvw@mail.gmail.com>
- <CAHp75VepGkCyQ6gM7s2-EO3=6quiCNVGDSZooRr1uoUVeE7hmQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 6 Jun 2018 20:07:40 +0300
-Message-ID: <CAHp75VdWNsShoD6LzOAi=3y2XYzsd+zns4CCLe0+DD7J+XTinw@mail.gmail.com>
-Subject: Re: [PATCH] parport: Add support for the WCH384 4S multi-IO card
-To: Matt Turner <mattst88@gmail.com>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+In-Reply-To: <CAM_iQpUaK1xaZAKmPY0JnyAmebBJQ5GPJsiG8HgvXLrxNqphZg@mail.gmail.com>
+References: <CAB+yDabFuBpT5UU1Hy0s4kY5UKJzA84=6fNieNcdTjjZNq5SHQ@mail.gmail.com>
+ <CAM_iQpUaK1xaZAKmPY0JnyAmebBJQ5GPJsiG8HgvXLrxNqphZg@mail.gmail.com>
+From: shankarapailoor <shankarapailoor@gmail.com>
+Date: Tue, 5 Jun 2018 19:19:08 -0700
+Message-ID: <CAB+yDaahHYeWE1kS=4GEAC3GKyrAenaSat9Wi_iKQbt1yTp_zg@mail.gmail.com>
+Subject: Re: general protection fault in sockfs_setattr
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: David Miller <davem@davemloft.net>,
         LKML <linux-kernel@vger.kernel.org>,
-        Sergej Pupykin <ml@sergej.pp.ru>
+        syzkaller <syzkaller@googlegroups.com>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 8:04 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Wed, Jun 6, 2018 at 9:07 AM, Matt Turner <mattst88@gmail.com> wrote:
->> On Sat, May 26, 2018 at 12:35 PM, Matt Turner <mattst88@gmail.com> wrote:
->>> This Multi-IO card has one serial 16550-like serial connectors. Here's
->>> the lspci output, after this commit is applied:
->>>
->>> 01:00.0 Serial controller [0700]: Device [1c00:3470] (rev 10) (prog-if 05 [16850])
->>>         Subsystem: Device [1c00:3470]
->>>         Flags: fast devsel, IRQ 16
->>>         I/O ports at e000 [size=256]
->>>         Memory at f0100000 (32-bit, prefetchable) [size=32K]
->>>         I/O ports at e100 [size=4]
->>>         Expansion ROM at f7d00000 [disabled] [size=32K]
->>>         Capabilities: [60] Power Management version 3
->>>         Capabilities: [68] MSI: Enable- Count=1/32 Maskable+ 64bit+
->>>         Capabilities: [80] Express Legacy Endpoint, MSI 00
->>>         Capabilities: [100] Advanced Error Reporting
->>>         Kernel driver in use: parport_serial
->>>
->>> This card was already added to the blacklist of 8250_pci.c in commit
->>> 72a3c0e4e662 ("tty: Add support for the WCH384 4S multi-IO card").
->
-> First of all, this patch is in conflict with tty-next AFAICS.
->
-> Second, what card w/o parport should do in parport_serial?
->
-> Third, this patch brings more mess: either you should remove the code
-> from 8250_pci, or do not add it here. See below.
->
-> it looks like the mentioned patch mistakenly added it to blacklist by
-> unknown reason.
->
-> Feels to me like NAK to this one.
->
-> And btw, you missed s letter in the model name across the code and I
-> don't see any of cards there listed with numports == 0.
+Hi Cong,
 
-Ah, it seems that you have two identical VID:DID devices with either
-numports == 0 or 1.
+I added that check and it seems to stop the crash. Like you said, I
+don't see where the reference count for the file is increased. The
+inode lock also seems to be held during this call.
 
-First one should be served by 8250_pci. The second one indeed is good
-to have here.
+Regards,
+Shankara
 
-Though, how to distinguish them? By PCI class? by sVID:sDID?
+
+
+On Tue, Jun 5, 2018 at 12:14 PM, Cong Wang <xiyou.wangcong@gmail.com> wrote:
+> On Mon, Jun 4, 2018 at 9:53 PM, shankarapailoor
+> <shankarapailoor@gmail.com> wrote:
+>> Hi,
+>>
+>> I have been fuzzing Linux 4.17-rc7 with Syzkaller and found the
+>> following crash: https://pastebin.com/ixX3RB9j
+>>
+>> Syzkaller isolated the cause of the bug to the following program:
+>>
+>> socketpair$unix(0x1, 0x1, 0x0,
+>> &(0x7f0000000000)={<r0=>0xffffffffffffffff, <r1=>0xffffffffffffffff})
+>> getresuid(&(0x7f0000000080)=<r2=>0x0, &(0x7f00000000c0),
+>> &(0x7f0000000700))r3 = getegid()
+>> fchownat(r0, &(0x7f0000000040)='\x00', r2, r3, 0x1000)
+>> dup3(r1, r0, 0x80000)
+>>
+>>
+>> The problematic area appears to be here:
+>>
+>> static int sockfs_setattr(struct dentry *dentry, struct iattr *iattr)
+>> {
+>>     int err = simple_setattr(dentry, iattr);
+>>
+>>     if (!err && (iattr->ia_valid & ATTR_UID)) {
+>>          struct socket *sock = SOCKET_I(d_inode(dentry));
+>>
+>>          sock->sk->sk_uid = iattr->ia_uid; //KASAN GPF
+>>     }
+>>     return err;
+>> }
+>>
+>> If dup3 is called concurrently with fchownat then can sock->sk be NULL?
+>
+> Although dup3() implies a close(), fd is refcnt'ted, if dup3() runs
+> concurrently with fchownat() it should not be closed until whoever
+> the last closes it.
+>
+> Or maybe fchownat() doesn't even hold refcnt of fd, since it aims
+> to change the file backed.
+>
+>
+> Not sure if the following is sufficient, inode might need to be protected
+> with some lock...
+>
+> diff --git a/net/socket.c b/net/socket.c
+> index f10f1d947c78..6294b4b3132e 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -537,7 +537,10 @@ static int sockfs_setattr(struct dentry *dentry,
+> struct iattr *iattr)
+>         if (!err && (iattr->ia_valid & ATTR_UID)) {
+>                 struct socket *sock = SOCKET_I(d_inode(dentry));
+>
+> -               sock->sk->sk_uid = iattr->ia_uid;
+> +               if (sock->sk)
+> +                       sock->sk->sk_uid = iattr->ia_uid;
+> +               else
+> +                       err = -ENOENT;
+>         }
+>
+>         return err;
+
 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards,
+Shankara Pailoor
