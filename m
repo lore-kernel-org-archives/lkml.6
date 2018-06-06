@@ -1,69 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="o6pZEtar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A61A560290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4D1F60763
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=darmarit.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeFFPbI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:31:08 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34144 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752366AbeFFPbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:31:04 -0400
-Subject: Re: linux-next: Tree for May 29 (usb/gadget/udc/aspeed-vhub)
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20180529204410.63477f88@canb.auug.org.au>
- <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
- <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <be9159d4-f53e-1f1a-e87b-dfd55c458c9a@infradead.org>
-Date: Wed, 6 Jun 2018 08:30:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S933018AbeFFQbN convert rfc822-to-8bit (ORCPT
+        <rfc822;monsieuricon@codeaurora.org> + 25 others);
+        Wed, 6 Jun 2018 12:31:13 -0400
+Received: from smtp1-3.goneo.de ([85.220.129.32]:56826 "EHLO smtp1-3.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932152AbeFFQbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 12:31:12 -0400
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v2 53/53] kernel-doc: describe the ``literal`` syntax
+From: Markus Heiser <markus.heiser@darmarit.de>
+In-Reply-To: <5d47c31b59f6c2c7ddce0fcb1be0f85ad39a56fe.1494935649.git.mchehab@s-opensource.com>
+Date: Wed, 6 Jun 2018 18:31:05 +0200
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>,
+        linux-mtd@lists.infradead.org, Jani Nikula <jani.nikula@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <EF34D78D-738B-47F4-B188-9777440B7E70@darmarit.de>
+References: <cover.1494935649.git.mchehab@s-opensource.com>
+ <cover.1494935649.git.mchehab@s-opensource.com>
+ <5d47c31b59f6c2c7ddce0fcb1be0f85ad39a56fe.1494935649.git.mchehab@s-opensource.com>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 03:16 PM, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-05-29 at 10:04 -0700, Randy Dunlap wrote:
->> On 05/29/2018 03:44 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20180525:
->>>
->>
->> on i386:
->>
->> when builtin:
->> drivers/usb/gadget/udc/aspeed-vhub/hub.o: In function `ast_vhub_std_hub_request':
->> hub.c:(.text+0x3aa): undefined reference to `usb_gadget_get_string'
->>
->> or when modular:
->> ERROR: "usb_gadget_get_string" [drivers/usb/gadget/udc/aspeed-vhub/aspeed-vhub.ko] undefined!
->>
->>
->> Full randconfig for modular build is attached.
+Hi Mauro,
+
+> Am 16.05.2017 um 14:16 schrieb Mauro Carvalho Chehab <mchehab@s-opensource.com>:
 > 
-> Somebody already sent a fix for this. Thanks. (Missing a dependency on
-> LIBCOMPOSITE).
+> changeset b97f193abf83 ("scripts/kernel-doc: fix parser
+> for apostrophes") added support for ``literal`` inside
+> kernel-doc, in order to allow using the "%" symbol inside
+> a literal block, as this is used at printk() description.
+> 
+> Document it.
+> 
+> Fixes: b97f193abf83 ("scripts/kernel-doc: fix parser for apostrophes")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> ---
+> Documentation/doc-guide/kernel-doc.rst | 10 ++++++++++
+> 1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
+> index b32e4813ff6f..b24854b5d6be 100644
+> --- a/Documentation/doc-guide/kernel-doc.rst
+> +++ b/Documentation/doc-guide/kernel-doc.rst
+> @@ -149,6 +149,16 @@ Domain`_ references.
+> ``%CONST``
+>   Name of a constant. (No cross-referencing, just formatting.)
+> 
+> +````literal````
+> +  A literal block that should be handled as-is. The output will use a
+> +  ``monospaced font``.
 
-Hi,
+just nitpicking; this is not literal block, this is called an inline literal [1]
 
-linux-next is still having this build error.
-Can we get that fix merged somewhere, please?
+To be complete: "blocks" are allways indented.
 
-thanks,
--- 
-~Randy
+[1] http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#inline-literals
+
+--- Markus --
