@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OHA3NeeEHluEHgAAmS7hNA
-	; Mon, 11 Jun 2018 14:19:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id UPV7ANs5GFv4cAAAmS7hNA
+	; Wed, 06 Jun 2018 19:46:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6A3A2607A4; Mon, 11 Jun 2018 14:19:36 +0000 (UTC)
+	id F099D6089E; Wed,  6 Jun 2018 19:46:28 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s2QO8zNt"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ie/ER7wp"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,213 +13,159 @@ X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C22CA6074D;
-	Mon, 11 Jun 2018 14:19:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C22CA6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 68964601C3;
+	Wed,  6 Jun 2018 19:46:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 68964601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934153AbeFKOTV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:19:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45620 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933511AbeFKOGz (ORCPT
+        id S1752605AbeFFTq0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 15:46:26 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:43234 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752188AbeFFTqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=O9uY+J4/RG9YXAAfAsVm7Lcu0R0unVIN2Mssj0GLwEA=; b=s2QO8zNtN9pjpe+ok+9dK2O0T
-        AnPt7a5dWNQKxMZu5M/x7uVxt9fTcB0U7qV3TTF4Mj7y5ME0MU+no6zXk6qccQguB/KWqoEuYmD48
-        mrPbFrN0BK+AI1eTeBbyMigaDSpiG/yHtRkf4Dysjic3xno3Mir8ZxvyhHVP71IJBdJ8ourZw1ICs
-        uKZRgHysmXNbgAmPIgu0+LGAd+JrO6k9u9mKAPogiaxZ+0ZCm4S7ebr4qNAhO3PPcCeJ/pjJiMAh1
-        jp1kwR9vcllU/hlv3dam8+pjk0ozumfLZmIcQb+FnZi8UiI4+qQEKo00m6dBFpLToq6SjAjZTe90+
-        oF2CreeIQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTD-0004ji-2P; Mon, 11 Jun 2018 14:06:55 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 35/72] mm: Convert workingset to XArray
-Date: Mon, 11 Jun 2018 07:06:02 -0700
-Message-Id: <20180611140639.17215-36-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Wed, 6 Jun 2018 15:46:23 -0400
+Received: by mail-ua0-f195.google.com with SMTP id z16-v6so4852365uaz.10;
+        Wed, 06 Jun 2018 12:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=/dfOEduecKD0dNhw+SZydJsFpw/1Kw6wHU2hF4aebLA=;
+        b=ie/ER7wpvkUeXkHeRWLnAUYKJdwObyzQ4TZft1xg25BDHEzFAhkvmEcUQzvUVaAUw/
+         AA5gkfaKi5l7Jw2ppzgK1wC0cxKVkA3FfUIugSR2t3Jnl/Imt028LD0/JBpyOK3df2sl
+         FZmGmCkdu8g5SQ88fs1jVGpDq7mrW8rSSeq805ntae5l/lNn/AX+r9Bbw1pXdMAK+Cf/
+         oBDEtk7qgiQBZ1bgHzfm0otXUXuoctSNujdNhBJsVB42QPbvcQnVnJLHGKb/p3iPdI43
+         bqcrMGk19H+cYgrCNd5+geb42sIgo4Ge3yOUs9o7sc680WIB0BZLSTOOrvcJIfqTscc9
+         bhUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=/dfOEduecKD0dNhw+SZydJsFpw/1Kw6wHU2hF4aebLA=;
+        b=hgb2UHRcLUgXQYm+7fnOgo5qBans4lDoorKCpJJMqbIJ1oGS3RmnNH3BCG1MLeLGiw
+         ZSkJJZUdYtnpGipOVe+t5EKw4rg0jL7qfQBG8PnHy8afDo3CIpS3qLEwCP5toV4pU4TD
+         IwCip0j/1gX+mpPOt6kMau7DSYGU9y2k9kWqV4NZdkQOzk7yQn6UqS5npbcEVM3soO6T
+         8WVXctc26gXRViAPbt9r1fZgDWf95ug1rbkMOqxaJX2dpCj4dNLxIiHpfkEYEDtSuHXa
+         oKH0QqNPxyGk+fJe2AG9oS8cxxLaqdgomANwllvMebyN2328jNNdJdWMikF9yot2imb9
+         HFzw==
+X-Gm-Message-State: APt69E0mht5hW2m5gtIiIlq8uQtp+Slsw2KLa8yq++z8+GqlXOLVJJIZ
+        4OFyHrKAV1T0r1ypSKgXKB8NyWtEsNejr0PY6/o=
+X-Google-Smtp-Source: ADUXVKKzKAZnkskUKvSPgktVxlayUD7MBTnh3c+hNyv12zPXuXV+Cp2+Y3VB038e11O0ZwVfRwOhwVJ1nFWf49/Wejk=
+X-Received: by 2002:a9f:2e0f:: with SMTP id t15-v6mr3193009uaj.114.1528314381728;
+ Wed, 06 Jun 2018 12:46:21 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Wed, 6 Jun 2018 12:46:21 -0700 (PDT)
+In-Reply-To: <7e49c265-e332-29c5-5d91-4b5d5da6cb37@gmail.com>
+References: <1528198148-23308-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528198148-23308-3-git-send-email-michel.pollet@bp.renesas.com>
+ <0481173f-6384-98d6-707c-89dc5ef103f0@gmail.com> <OSBPR01MB2054E3A1E383495F3534B551D2650@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+ <bbbd287c-437e-d7bd-d40f-6bb914d96860@gmail.com> <7e49c265-e332-29c5-5d91-4b5d5da6cb37@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Jun 2018 21:46:21 +0200
+X-Google-Sender-Auth: JQ7qkuEPksKI8aIWwTVJuouVjXk
+Message-ID: <CAMuHMdXxAjaGA3OoD2+FEEixJjA39MtGD6zXbSJZd6RbQ-6Few@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] arm: shmobile: Add the R9A06G032 SMP enabler driver
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Frank Rowand <frowand.list@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Carlo Caione <carlo@endlessm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Frank Rowand <frank.rowand@sony.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Hi Florian,
 
-We construct a fake XA_STATE and use it to delete the node with
-xas_store() rather than adding a special function for this unique
-use case.
+On Wed, Jun 6, 2018 at 9:37 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> On 06/06/2018 12:30 PM, Frank Rowand wrote:
+>> On 06/05/18 23:36, Michel Pollet wrote:
+>>> On 05 June 2018 18:34, Frank wrote:
+>>>> On 06/05/18 04:28, Michel Pollet wrote:
+>>>>> The Renesas R9A06G032 second CA7 is parked in a ROM pen at boot time,
+>>>>> it requires a special enable method to get it started.
+>>>>>
+>>>>> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- include/linux/swap.h |  9 --------
- mm/workingset.c      | 51 +++++++++++++++++++-------------------------
- 2 files changed, 22 insertions(+), 38 deletions(-)
+>>>>> --- /dev/null
+>>>>> +++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 1b91e7f7bdeb..a450a1d40b19 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -307,15 +307,6 @@ void workingset_update_node(struct xa_node *node);
- 		xas_set_update(xas, workingset_update_node);		\
- } while (0)
- 
--/* Returns workingset_update_node() if the mapping has shadow entries. */
--#define workingset_lookup_update(mapping)				\
--({									\
--	radix_tree_update_node_t __helper = workingset_update_node;	\
--	if (dax_mapping(mapping) || shmem_mapping(mapping))		\
--		__helper = NULL;					\
--	__helper;							\
--})
--
- /* linux/mm/page_alloc.c */
- extern unsigned long totalram_pages;
- extern unsigned long totalreserve_pages;
-diff --git a/mm/workingset.c b/mm/workingset.c
-index bad4e58881cd..564e97bd5934 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -148,7 +148,7 @@
-  * and activations is maintained (node->inactive_age).
-  *
-  * On eviction, a snapshot of this counter (along with some bits to
-- * identify the node) is stored in the now empty page cache radix tree
-+ * identify the node) is stored in the now empty page cache
-  * slot of the evicted page.  This is called a shadow entry.
-  *
-  * On cache misses for which there are shadow entries, an eligible
-@@ -162,7 +162,7 @@
- 
- /*
-  * Eviction timestamps need to be able to cover the full range of
-- * actionable refaults. However, bits are tight in the radix tree
-+ * actionable refaults. However, bits are tight in the xarray
-  * entry, and after storing the identifier for the lruvec there might
-  * not be enough left to represent every single actionable refault. In
-  * that case, we have to sacrifice granularity for distance, and group
-@@ -338,7 +338,7 @@ void workingset_activation(struct page *page)
- 
- static struct list_lru shadow_nodes;
- 
--void workingset_update_node(struct radix_tree_node *node)
-+void workingset_update_node(struct xa_node *node)
- {
- 	/*
- 	 * Track non-empty nodes that contain only shadow entries;
-@@ -370,7 +370,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- 	local_irq_enable();
- 
- 	/*
--	 * Approximate a reasonable limit for the radix tree nodes
-+	 * Approximate a reasonable limit for the nodes
- 	 * containing shadow entries. We don't need to keep more
- 	 * shadow entries than possible pages on the active list,
- 	 * since refault distances bigger than that are dismissed.
-@@ -385,11 +385,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- 	 * worst-case density of 1/8th. Below that, not all eligible
- 	 * refaults can be detected anymore.
- 	 *
--	 * On 64-bit with 7 radix_tree_nodes per page and 64 slots
-+	 * On 64-bit with 7 xa_nodes per page and 64 slots
- 	 * each, this will reclaim shadow entries when they consume
- 	 * ~1.8% of available memory:
- 	 *
--	 * PAGE_SIZE / radix_tree_nodes / node_entries * 8 / PAGE_SIZE
-+	 * PAGE_SIZE / xa_nodes / node_entries * 8 / PAGE_SIZE
- 	 */
- 	if (sc->memcg) {
- 		cache = mem_cgroup_node_nr_lru_pages(sc->memcg, sc->nid,
-@@ -398,7 +398,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- 		cache = node_page_state(NODE_DATA(sc->nid), NR_ACTIVE_FILE) +
- 			node_page_state(NODE_DATA(sc->nid), NR_INACTIVE_FILE);
- 	}
--	max_nodes = cache >> (RADIX_TREE_MAP_SHIFT - 3);
-+	max_nodes = cache >> (XA_CHUNK_SHIFT - 3);
- 
- 	if (nodes <= max_nodes)
- 		return 0;
-@@ -408,11 +408,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- static enum lru_status shadow_lru_isolate(struct list_head *item,
- 					  struct list_lru_one *lru,
- 					  spinlock_t *lru_lock,
--					  void *arg)
-+					  void *arg) __must_hold(lru_lock)
- {
-+	XA_STATE(xas, NULL, 0);
- 	struct address_space *mapping;
--	struct radix_tree_node *node;
--	unsigned int i;
-+	struct xa_node *node;
- 	int ret;
- 
- 	/*
-@@ -420,7 +420,7 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 	 * the shadow node LRU under the i_pages lock and the
- 	 * lru_lock.  Because the page cache tree is emptied before
- 	 * the inode can be destroyed, holding the lru_lock pins any
--	 * address_space that has radix tree nodes on the LRU.
-+	 * address_space that has nodes on the LRU.
- 	 *
- 	 * We can then safely transition to the i_pages lock to
- 	 * pin only the address_space of the particular node we want
-@@ -449,25 +449,18 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 		goto out_invalid;
- 	if (WARN_ON_ONCE(node->count != node->nr_values))
- 		goto out_invalid;
--	for (i = 0; i < RADIX_TREE_MAP_SIZE; i++) {
--		if (node->slots[i]) {
--			if (WARN_ON_ONCE(!xa_is_value(node->slots[i])))
--				goto out_invalid;
--			if (WARN_ON_ONCE(!node->nr_values))
--				goto out_invalid;
--			if (WARN_ON_ONCE(!mapping->nrexceptional))
--				goto out_invalid;
--			node->slots[i] = NULL;
--			node->nr_values--;
--			node->count--;
--			mapping->nrexceptional--;
--		}
--	}
--	if (WARN_ON_ONCE(node->nr_values))
--		goto out_invalid;
-+	mapping->nrexceptional -= node->nr_values;
-+	xas.xa = node->array;
-+	xas.xa_node = rcu_dereference_protected(node->parent,
-+				lockdep_is_held(&mapping->i_pages.xa_lock));
-+	xas.xa_offset = node->offset;
-+	xas.xa_update = workingset_update_node;
-+	/*
-+	 * We could store a shadow entry here which was the minimum of the
-+	 * shadow entries we were tracking ...
-+	 */
-+	xas_store(&xas, NULL);
- 	inc_lruvec_page_state(virt_to_page(node), WORKINGSET_NODERECLAIM);
--	__radix_tree_delete_node(&mapping->i_pages, node,
--				 workingset_lookup_update(mapping));
- 
- out_invalid:
- 	xa_unlock(&mapping->i_pages);
+>>>>> +/*
+>>>>> + * The second CPU is parked in ROM at boot time. It requires waking
+>>>>> +it after
+>>>>> + * writing an address into the BOOTADDR register of sysctrl.
+>>>>> + *
+>>>>> + * So the default value of the "cpu-release-addr" corresponds to
+>>>> BOOTADDR...
+>>>>> + *
+>>>>> + * *However* the BOOTADDR register is not available when the kernel
+>>>>> + * starts in NONSEC mode.
+>>>>> + *
+>>>>> + * So for NONSEC mode, the bootloader re-parks the second CPU into a
+>>>>> +pen
+>>>>> + * in SRAM, and changes the "cpu-release-addr" of linux's DT to a
+>>>>> +SRAM address,
+>>>>> + * which is not restricted.
+>>>>
+>>>> The binding document for cpu-release-addr does not have a definition for 32
+>>>> bit arm.  The existing definition is only 64 bit arm.  Please add the definition
+>>>> for 32 bit arm to patch 1.
+>>>
+>>> Hmmm I do find a definition in
+>>> Documentation/devicetree/bindings/arm/cpus.txt -- just under where I
+>>> added my 'enable-method' -- And it is already used as 32 bits in at least
+>>> arch/arm/boot/dts/stih407-family.dtsi.
+>>
+>> From cpus.txt:
+>>
+>>         - cpu-release-addr
+>>                 Usage: required for systems that have an "enable-method"
+>>                        property value of "spin-table".
+>>                 Value type: <prop-encoded-array>
+>>                 Definition:
+>>                         # On ARM v8 64-bit systems must be a two cell
+>>                           property identifying a 64-bit zero-initialised
+>>                           memory location.
+>>
+>> The definition specifies a two cell property for 64-bit systems.
+>>
+>> Please add to the definition that cpu-release-addr is a one cell property
+>> for 32-bit systems.
+>
+> Or maybe phrase it such that the number of cells encoded in
+> cpu-release-addr must exactly match the CPU node's #address-cells size?
+
+The CPU node's #address-cells size is unrelated.
+You need the #address-cells value from the SoC bus (typically the root
+node, not considering heterogeneous systems with multiple CPUs ;-).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
