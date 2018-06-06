@@ -1,70 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEexE3vU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AE43601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="thRoY6E1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BBB0D60263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932382AbeFFJIU (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 05:08:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932248AbeFFJIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 05:08:19 -0400
-Date: Wed, 6 Jun 2018 11:07:53 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Daniel Rosenberg <drosen@google.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        dri-devel@lists.freedesktop.org, kernel-team@android.com,
-        Divya Ponnusamy <pdivya@codeaurora.org>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH resend] drivers: dma-buf: Change %p to %pK in debug
- messages
-Message-ID: <20180606090753.GA27744@kroah.com>
-References: <20180605234041.246060-1-drosen@google.com>
+        id S932421AbeFFJ5A (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 05:57:00 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39227 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752073AbeFFJ46 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 05:56:58 -0400
+X-Google-Smtp-Source: ADUXVKIbZm7EIv3JBUbM/LJLYXWkQzXPlxqIJa9vz8Z6/qug9rTFAQ2kQcDwn3qnyyQ+MIWgW3oMCQ==
+Subject: Re: [PATCH net-next 4/6] netxen_nic: use pci_zalloc_consistent
+To: YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jcliburn@gmail.com, chris.snook@gmail.com, benve@cisco.com,
+        jdmason@kudzu.us, chessman@tux.org, jes@trained-monkey.org,
+        rahul.verma@cavium.com
+References: <20180605122851.23912-1-yuehaibing@huawei.com>
+ <20180605122851.23912-5-yuehaibing@huawei.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <9a40ee2d-cb01-d469-602e-c4b79e6d41cf@cogentembedded.com>
+Date: Wed, 6 Jun 2018 12:56:55 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605234041.246060-1-drosen@google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180605122851.23912-5-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 04:40:41PM -0700, Daniel Rosenberg wrote:
-> The format specifier %p can leak kernel addresses
-> while not valuing the kptr_restrict system settings.
-> Use %pK instead of %p, which also evaluates whether
-> kptr_restrict is set.
-> 
-> Signed-off-by: Divya Ponnusamy <pdivya@codeaurora.org>
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> Cc: stable <stable@vger.kernel.org>
-> ---
->  drivers/dma-buf/sync_debug.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
-> index c4c8ecb24aa9..d8d340542a79 100644
-> --- a/drivers/dma-buf/sync_debug.c
-> +++ b/drivers/dma-buf/sync_debug.c
-> @@ -133,7 +133,7 @@ static void sync_print_sync_file(struct seq_file *s,
->  	char buf[128];
->  	int i;
->  
-> -	seq_printf(s, "[%p] %s: %s\n", sync_file,
-> +	seq_printf(s, "[%pK] %s: %s\n", sync_file,
+On 6/5/2018 3:28 PM, YueHaibing wrote:
 
-This is a root-only file, right?  So it's not that bad of a problem.
-Also, by default, all %p pointers are now hashed so what really is
-leaking here?
+> use pci_zalloc_consistent to remove unnecessary memset.
+> Also remove a local intermediate pointer 'void *addr'.
 
-And finally, why even print out a pointer at all?  Why not just stick
-with the name and not worry about the pointer?
+    AAgain, don't do 2 things with 1 patch.
 
-thanks,
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+[...]
 
-greg k-h
+MBR, Sergei
