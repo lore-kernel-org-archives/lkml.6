@@ -1,726 +1,676 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rLPqPWHa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BB97601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A86860263
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeFFNmK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 09:42:10 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40853 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751409AbeFFNmH (ORCPT
+        id S932580AbeFFIeM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 04:34:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47362 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932520AbeFFIeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 09:42:07 -0400
-X-Google-Smtp-Source: ADUXVKKRqVPgDp0OWCT5rBxgN683Nth3zTHWIcu8Pxmu0fS6+hiZ2+qDXLEsVqDvZwQaXeiRiVJq1w==
-Subject: Re: [PATCH v2 5/5] memory: tegra: Introduce Tegra20 EMC driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180603223654.23324-1-digetx@gmail.com>
- <20180603223654.23324-6-digetx@gmail.com> <20180606110258.GL11810@ulmo>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <c17a1edf-f87d-e5f6-b446-34505a2bbc07@gmail.com>
-Date: Wed, 6 Jun 2018 16:42:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180606110258.GL11810@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 6 Jun 2018 04:34:10 -0400
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To: oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH 2/7] Uprobes: Support SDT markers having reference count (semaphore)
+Date: Wed,  6 Jun 2018 14:03:39 +0530
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18060608-0016-0000-0000-000001D8A5CD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060608-0017-0000-0000-0000322BB0CB
+Message-Id: <20180606083344.31320-3-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806060098
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06.06.2018 14:02, Thierry Reding wrote:
-> On Mon, Jun 04, 2018 at 01:36:54AM +0300, Dmitry Osipenko wrote:
->> Introduce driver for the External Memory Controller (EMC) found on Tegra20
->> chips, which controls the external DRAM on the board. The purpose of this
->> driver is to program memory timing for external memory on the EMC clock
->> rate change.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/memory/tegra/Kconfig       |  10 +
->>  drivers/memory/tegra/Makefile      |   1 +
->>  drivers/memory/tegra/tegra20-emc.c | 586 +++++++++++++++++++++++++++++
->>  3 files changed, 597 insertions(+)
->>  create mode 100644 drivers/memory/tegra/tegra20-emc.c
->>
->> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
->> index 6d74e499e18d..34e0b70f5c5f 100644
->> --- a/drivers/memory/tegra/Kconfig
->> +++ b/drivers/memory/tegra/Kconfig
->> @@ -6,6 +6,16 @@ config TEGRA_MC
->>  	  This driver supports the Memory Controller (MC) hardware found on
->>  	  NVIDIA Tegra SoCs.
->>  
->> +config TEGRA20_EMC
->> +	bool "NVIDIA Tegra20 External Memory Controller driver"
->> +	default y
->> +	depends on ARCH_TEGRA_2x_SOC
->> +	help
->> +	  This driver is for the External Memory Controller (EMC) found on
->> +	  Tegra20 chips. The EMC controls the external DRAM on the board.
->> +	  This driver is required to change memory timings / clock rate for
->> +	  external memory.
->> +
->>  config TEGRA124_EMC
->>  	bool "NVIDIA Tegra124 External Memory Controller driver"
->>  	default y
->> diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
->> index 94ab16ba075b..3971a6b7c487 100644
->> --- a/drivers/memory/tegra/Makefile
->> +++ b/drivers/memory/tegra/Makefile
->> @@ -10,5 +10,6 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
->>  
->>  obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
->>  
->> +obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
->>  obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
->>  obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
->> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
->> new file mode 100644
->> index 000000000000..26a18b5e7941
->> --- /dev/null
->> +++ b/drivers/memory/tegra/tegra20-emc.c
->> @@ -0,0 +1,586 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Tegra20 External Memory Controller driver
->> + *
->> + * Author: Dmitry Osipenko <digetx@gmail.com>
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/completion.h>
->> +#include <linux/err.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/iopoll.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/sort.h>
->> +#include <linux/types.h>
->> +
->> +#include <soc/tegra/fuse.h>
->> +
->> +#define EMC_INTSTATUS				0x000
->> +#define EMC_INTMASK				0x004
->> +#define EMC_TIMING_CONTROL			0x028
->> +#define EMC_RC					0x02c
->> +#define EMC_RFC					0x030
->> +#define EMC_RAS					0x034
->> +#define EMC_RP					0x038
->> +#define EMC_R2W					0x03c
->> +#define EMC_W2R					0x040
->> +#define EMC_R2P					0x044
->> +#define EMC_W2P					0x048
->> +#define EMC_RD_RCD				0x04c
->> +#define EMC_WR_RCD				0x050
->> +#define EMC_RRD					0x054
->> +#define EMC_REXT				0x058
->> +#define EMC_WDV					0x05c
->> +#define EMC_QUSE				0x060
->> +#define EMC_QRST				0x064
->> +#define EMC_QSAFE				0x068
->> +#define EMC_RDV					0x06c
->> +#define EMC_REFRESH				0x070
->> +#define EMC_BURST_REFRESH_NUM			0x074
->> +#define EMC_PDEX2WR				0x078
->> +#define EMC_PDEX2RD				0x07c
->> +#define EMC_PCHG2PDEN				0x080
->> +#define EMC_ACT2PDEN				0x084
->> +#define EMC_AR2PDEN				0x088
->> +#define EMC_RW2PDEN				0x08c
->> +#define EMC_TXSR				0x090
->> +#define EMC_TCKE				0x094
->> +#define EMC_TFAW				0x098
->> +#define EMC_TRPAB				0x09c
->> +#define EMC_TCLKSTABLE				0x0a0
->> +#define EMC_TCLKSTOP				0x0a4
->> +#define EMC_TREFBW				0x0a8
->> +#define EMC_QUSE_EXTRA				0x0ac
->> +#define EMC_ODT_WRITE				0x0b0
->> +#define EMC_ODT_READ				0x0b4
->> +#define EMC_FBIO_CFG5				0x104
->> +#define EMC_FBIO_CFG6				0x114
->> +#define EMC_AUTO_CAL_INTERVAL			0x2a8
->> +#define EMC_CFG_2				0x2b8
->> +#define EMC_CFG_DIG_DLL				0x2bc
->> +#define EMC_DLL_XFORM_DQS			0x2c0
->> +#define EMC_DLL_XFORM_QUSE			0x2c4
->> +#define EMC_ZCAL_REF_CNT			0x2e0
->> +#define EMC_ZCAL_WAIT_CNT			0x2e4
->> +#define EMC_CFG_CLKTRIM_0			0x2d0
->> +#define EMC_CFG_CLKTRIM_1			0x2d4
->> +#define EMC_CFG_CLKTRIM_2			0x2d8
->> +
->> +#define EMC_CLKCHANGE_REQ_ENABLE		BIT(0)
->> +#define EMC_CLKCHANGE_PD_ENABLE			BIT(1)
->> +#define EMC_CLKCHANGE_SR_ENABLE			BIT(2)
->> +
->> +#define EMC_TIMING_UPDATE			BIT(0)
->> +
->> +#define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
->> +
->> +static const unsigned long emc_timing_registers[] = {
->> +	EMC_RC,
->> +	EMC_RFC,
->> +	EMC_RAS,
->> +	EMC_RP,
->> +	EMC_R2W,
->> +	EMC_W2R,
->> +	EMC_R2P,
->> +	EMC_W2P,
->> +	EMC_RD_RCD,
->> +	EMC_WR_RCD,
->> +	EMC_RRD,
->> +	EMC_REXT,
->> +	EMC_WDV,
->> +	EMC_QUSE,
->> +	EMC_QRST,
->> +	EMC_QSAFE,
->> +	EMC_RDV,
->> +	EMC_REFRESH,
->> +	EMC_BURST_REFRESH_NUM,
->> +	EMC_PDEX2WR,
->> +	EMC_PDEX2RD,
->> +	EMC_PCHG2PDEN,
->> +	EMC_ACT2PDEN,
->> +	EMC_AR2PDEN,
->> +	EMC_RW2PDEN,
->> +	EMC_TXSR,
->> +	EMC_TCKE,
->> +	EMC_TFAW,
->> +	EMC_TRPAB,
->> +	EMC_TCLKSTABLE,
->> +	EMC_TCLKSTOP,
->> +	EMC_TREFBW,
->> +	EMC_QUSE_EXTRA,
->> +	EMC_FBIO_CFG6,
->> +	EMC_ODT_WRITE,
->> +	EMC_ODT_READ,
->> +	EMC_FBIO_CFG5,
->> +	EMC_CFG_DIG_DLL,
->> +	EMC_DLL_XFORM_DQS,
->> +	EMC_DLL_XFORM_QUSE,
->> +	EMC_ZCAL_REF_CNT,
->> +	EMC_ZCAL_WAIT_CNT,
->> +	EMC_AUTO_CAL_INTERVAL,
->> +	EMC_CFG_CLKTRIM_0,
->> +	EMC_CFG_CLKTRIM_1,
->> +	EMC_CFG_CLKTRIM_2,
->> +};
->> +
->> +struct emc_timing {
->> +	unsigned long rate;
->> +	u32 emc_registers_data[ARRAY_SIZE(emc_timing_registers)];
->> +};
-> 
-> Nit: this seems like a very long variable name for something that is
-> really just "values" or "data" written into a set of registers.
-> 
+Userspace Statically Defined Tracepoints[1] are dtrace style markers
+inside userspace applications. Applications like PostgreSQL, MySQL,
+Pthread, Perl, Python, Java, Ruby, Node.js, libvirt, QEMU, glib etc
+have these markers embedded in them. These markers are added by developer
+at important places in the code. Each marker source expands to a single
+nop instruction in the compiled code but there may be additional
+overhead for computing the marker arguments which expands to couple of
+instructions. In case the overhead is more, execution of it can be
+omitted by runtime if() condition when no one is tracing on the marker:
 
-Ok.
+    if (reference_counter > 0) {
+        Execute marker instructions;
+    }
 
->> +struct tegra_emc {
->> +	struct device *dev;
->> +	struct notifier_block clk_nb;
->> +	struct clk *backup_clk;
->> +	struct clk *emc_mux;
->> +	struct clk *pll_m;
->> +	struct clk *clk;
->> +	void __iomem *regs;
->> +
->> +	struct completion clk_handshake_complete;
->> +	int irq;
->> +
->> +	struct emc_timing *timings;
->> +	unsigned int num_timings;
->> +};
->> +
->> +static irqreturn_t tegra_emc_isr(int irq, void *data)
->> +{
->> +	struct tegra_emc *emc = data;
->> +	u32 intmask = EMC_CLKCHANGE_COMPLETE_INT;
->> +	u32 status;
->> +
->> +	status = readl_relaxed(emc->regs + EMC_INTSTATUS) & intmask;
->> +	if (!status)
->> +		return IRQ_NONE;
->> +
->> +	/* clear interrupts */
->> +	writel_relaxed(status, emc->regs + EMC_INTSTATUS);
-> 
-> Do we really want to just clear the handshake complete interrupt or do
-> we want to clear all of them? Perhaps we should also warn if there are
-> other interrupts that we're not handling? Currently we'd only get some
-> warning if another interrupt triggered without the handshake complete
-> one triggering at the same time, but couldn't there be others asserted
-> along with the handshake complete interrupt? In which case we'd just
-> be ignoring them. Or perhaps not clearing it would get the ISR run
-> immediately again and produce the "nobody cared" warning?
-> 
+Default value of reference counter is 0. Tracer has to increment the
+reference counter before tracing on a marker and decrement it when
+done with the tracing. Implement the reference counter logic in Uprobe.
+New function uprobe_register_refctr() has been added for this. Also,
+it's not exported so, for now, the interface to use reference counter
+is only through trace_uprobe.
 
-Yes, we really want to just clear the handshake-complete interrupt. No, we
-shouldn't warn about other interrupts because IRQ subsys does it for us. Other
-interrupts shouldn't be asserted because we disabled them with the interrupts
-masking in emc_setup_hw(). Other interrupts can only be asserted in a case of a
-bug, there will be a "nobody cared" warning and interrupt will be disabled, this
-is exactly what we want in that case.
+trace_uprobe definition with reference counter will now be:
 
->> +
->> +	/* notify about EMC-CAR handshake completion */
->> +	complete(&emc->clk_handshake_complete);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static struct emc_timing *tegra_emc_find_timing(struct tegra_emc *emc,
->> +						unsigned long rate)
->> +{
->> +	struct emc_timing *timing = NULL;
->> +	unsigned int i;
->> +
->> +	for (i = 0; i < emc->num_timings; i++) {
->> +		if (emc->timings[i].rate >= rate) {
->> +			timing = &emc->timings[i];
->> +			break;
->> +		}
->> +	}
->> +
->> +	if (!timing) {
->> +		dev_err(emc->dev, "no timing for rate %lu\n", rate);
->> +		return NULL;
->> +	}
->> +
->> +	return timing;
->> +}
->> +
->> +static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
->> +{
->> +	struct emc_timing *timing = tegra_emc_find_timing(emc, rate);
->> +	unsigned int i;
->> +
->> +	if (!timing)
->> +		return -ENOENT;
->> +
->> +	dev_dbg(emc->dev, "%s: timing rate %lu emc rate %lu\n",
->> +		__func__, timing->rate, rate);
->> +
->> +	/* program shadow registers */
->> +	for (i = 0; i < ARRAY_SIZE(timing->emc_registers_data); i++)
->> +		writel_relaxed(timing->emc_registers_data[i],
->> +			       emc->regs + emc_timing_registers[i]);
->> +
->> +	/* wait until programming has settled */
->> +	readl_relaxed(emc->regs + emc_timing_registers[0]);
->> +
->> +	if (emc->irq < 0)
->> +		writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT,
->> +			       emc->regs + EMC_INTMASK);
->> +	else
->> +		reinit_completion(&emc->clk_handshake_complete);
->> +
->> +	return 0;
->> +}
->> +
->> +static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
->> +{
->> +	long timeout;
->> +	u32 value;
->> +	int err;
->> +
->> +	dev_dbg(emc->dev, "%s: flush %d\n", __func__, flush);
->> +
->> +	if (flush) {
->> +		/* manually initiate memory timing update */
->> +		writel_relaxed(EMC_TIMING_UPDATE,
->> +			       emc->regs + EMC_TIMING_CONTROL);
->> +		return 0;
->> +	}
->> +
->> +	if (emc->irq < 0) {
->> +		/* poll interrupt status if IRQ isn't available */
->> +		err = readl_relaxed_poll_timeout(emc->regs + EMC_INTSTATUS,
->> +				value, value & EMC_CLKCHANGE_COMPLETE_INT,
->> +				1, 100);
->> +		if (err) {
->> +			dev_err(emc->dev, "EMC-CAR handshake failed\n");
->> +			return -EIO;
->> +		}
->> +
->> +		return 0;
->> +	}
->> +
->> +	timeout = wait_for_completion_timeout(&emc->clk_handshake_complete,
->> +					      usecs_to_jiffies(100));
->> +	if (timeout == 0) {
->> +		dev_err(emc->dev, "EMC handshake failed\n");
->> +		return -EIO;
->> +	} else if (timeout < 0) {
->> +		dev_err(emc->dev, "failed to wait for EMC-CAR handshake: %ld\n",
->> +			timeout);
->> +		return timeout;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int load_one_timing_from_dt(struct tegra_emc *emc,
->> +				   struct emc_timing *timing,
->> +				   struct device_node *node)
->> +{
->> +	u32 rate;
->> +	int err;
->> +
->> +	if (!of_device_is_compatible(node, "nvidia,tegra20-emc-table")) {
->> +		dev_err(emc->dev, "incompatible DT node \"%s\"\n",
->> +			node->name);
->> +		return -EINVAL;
->> +	}
->> +
->> +	err = of_property_read_u32(node, "clock-frequency", &rate);
->> +	if (err) {
->> +		dev_err(emc->dev, "timing %s: failed to read rate: %d\n",
->> +			node->name, err);
->> +		return err;
->> +	}
->> +
->> +	err = of_property_read_u32_array(node, "nvidia,emc-registers",
->> +					 timing->emc_registers_data,
->> +					 ARRAY_SIZE(emc_timing_registers));
->> +	if (err) {
->> +		dev_err(emc->dev,
->> +			"timing %s: failed to read emc timing data: %d\n",
->> +			node->name, err);
->> +		return err;
->> +	}
->> +
->> +	/*
->> +	 * The EMC clock rate is twice the bus rate, and the bus rate is
->> +	 * measured in kHz.
->> +	 */
->> +	timing->rate = rate * 2 * 1000;
->> +
->> +	dev_dbg(emc->dev, "%s: emc rate %ld\n", __func__, timing->rate);
-> 
-> Nit: %lu for timing->rate?
-> 
+  <path>:<offset>[(ref_ctr_offset)]
 
-Yes.
+where ref_ctr_offset is an optional field.
 
->> +
->> +	return 0;
->> +}
->> +
->> +static int cmp_timings(const void *_a, const void *_b)
->> +{
->> +	const struct emc_timing *a = _a;
->> +	const struct emc_timing *b = _b;
->> +
->> +	if (a->rate < b->rate)
->> +		return -1;
->> +	else if (a->rate == b->rate)
->> +		return 0;
->> +	else
->> +		return 1;
-> 
-> Nit, I tend to 
-> 
+[1] https://sourceware.org/systemtap/wiki/UserSpaceProbeImplementation
 
-Tend to..?
+Note: 'reference counter' is called as 'semaphore' in original Dtrace
+(or Systemtap, bcc and even in ELF) documentation and code. But the
+term 'semaphore' is misleading in this context. This is just a counter
+used to hold number of tracers tracing on a marker. This is not really
+used for any synchronization. So we are referring it as 'reference
+counter' in kernel / perf code.
 
->> +}
->> +
->> +static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
->> +					  struct device_node *node)
->> +{
->> +	struct device_node *child;
->> +	struct emc_timing *timing;
->> +	int child_count;
->> +	int err;
->> +
->> +	child_count = of_get_child_count(node);
-> 
-> It's unfortunate that of_get_child_count() doesn't return unsigned int,
-> there's no reason why this would have to be signed.
-> 
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+---
+ include/linux/uprobes.h     |   5 +
+ kernel/events/uprobes.c     | 298 +++++++++++++++++++++++++++++++++++++++-----
+ kernel/trace/trace_uprobe.c |  38 +++++-
+ 3 files changed, 309 insertions(+), 32 deletions(-)
 
-Patches are welcome ;)
-
->> +	if (!child_count) {
->> +		dev_err(emc->dev, "no memory timings in DT node\n");
->> +		return -ENOENT;
->> +	}
->> +
->> +	emc->timings = devm_kcalloc(emc->dev, child_count, sizeof(*timing),
->> +				    GFP_KERNEL);
->> +	if (!emc->timings)
->> +		return -ENOMEM;
->> +
->> +	emc->num_timings = child_count;
->> +	timing = emc->timings;
->> +
->> +	for_each_child_of_node(node, child) {
->> +		err = load_one_timing_from_dt(emc, timing++, child);
->> +		if (err) {
->> +			of_node_put(child);
->> +			return err;
->> +		}
->> +	}
->> +
->> +	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
->> +	     NULL);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct device_node *
->> +tegra_emc_find_node_by_ram_code(struct tegra_emc *emc, u32 ram_code)
->> +{
->> +	struct device_node *np;
->> +	int err;
->> +
->> +	for_each_child_of_node(emc->dev->of_node, np) {
->> +		u32 value;
->> +
->> +		err = of_property_read_u32(np, "nvidia,ram-code", &value);
->> +		if (err || value != ram_code)
->> +			continue;
->> +
->> +		return np;
->> +	}
->> +
->> +	dev_info(emc->dev, "no memory timings for RAM code %u found in DT\n",
->> +		 ram_code);
-> 
-> This seems like it should be dev_warn() or perhaps even dev_err() given
-> that the result of it is the driver failing to probe. dev_info() may go
-> unnoticed.
-> 
-
-Absence of memory timings is a valid case, hence dev_info() suit well here.
-
-I can't see anything wrong with returning a errno if driver has nothing to do
-and prefer to keep it because in that case managed resources would be free'd by
-the driver core, though returning '0' also would work.
-
->> +
->> +	return NULL;
->> +}
->> +
->> +static int tegra_emc_clk_change_notify(struct notifier_block *nb,
->> +				       unsigned long msg, void *data)
->> +{
->> +	struct tegra_emc *emc = container_of(nb, struct tegra_emc, clk_nb);
->> +	struct clk_notifier_data *cnd = data;
->> +	int err;
->> +
->> +	switch (msg) {
->> +	case PRE_RATE_CHANGE:
->> +		err = emc_prepare_timing_change(emc, cnd->new_rate);
->> +		break;
->> +
->> +	case ABORT_RATE_CHANGE:
->> +		err = emc_prepare_timing_change(emc, cnd->old_rate);
->> +		if (err)
->> +			break;
->> +
->> +		err = emc_complete_timing_change(emc, true);
->> +		break;
->> +
->> +	case POST_RATE_CHANGE:
->> +		err = emc_complete_timing_change(emc, false);
->> +		break;
->> +
->> +	default:
->> +		return NOTIFY_DONE;
->> +	}
->> +
->> +	return notifier_from_errno(err);
->> +}
->> +
->> +static int emc_setup_hw(struct tegra_emc *emc)
->> +{
->> +	u32 emc_cfg;
->> +
->> +	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
->> +
->> +	/*
->> +	 * Depending on a memory type, DRAM should enter either self-refresh
->> +	 * or power-down state on EMC clock change.
->> +	 */
->> +	if (!(emc_cfg & EMC_CLKCHANGE_PD_ENABLE) &&
->> +	    !(emc_cfg & EMC_CLKCHANGE_SR_ENABLE))
->> +	{
->> +		dev_err(emc->dev,
->> +			"bootloader didn't specify DRAM auto-suspend mode\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* allow EMC and CAR to handshake on PLL divider/source changes */
->> +	emc_cfg |= EMC_CLKCHANGE_REQ_ENABLE;
->> +	writel_relaxed(emc_cfg, emc->regs + EMC_CFG_2);
->> +
->> +	/* initialize interrupt */
->> +	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTMASK);
->> +	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTSTATUS);
->> +
->> +	return 0;
->> +}
->> +
->> +static int emc_init(struct tegra_emc *emc, unsigned long rate)
->> +{
->> +	int err;
->> +
->> +	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
->> +	if (err) {
->> +		dev_err(emc->dev,
->> +			"failed to reparent to backup source: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	err = clk_set_rate(emc->pll_m, rate);
->> +	if (err)
->> +		dev_err(emc->dev,
->> +			"failed to change pll_m rate: %d\n", err);
->> +
->> +	err = clk_set_parent(emc->emc_mux, emc->pll_m);
->> +	if (err) {
->> +		dev_err(emc->dev,
->> +			"failed to reparent to pll_m: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int tegra_emc_probe(struct platform_device *pdev)
->> +{
->> +	struct device_node *np;
->> +	struct tegra_emc *emc;
->> +	struct resource *res;
->> +	u32 ram_code;
->> +	int err;
->> +
->> +	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
->> +	if (!emc)
->> +		return -ENOMEM;
->> +
->> +	emc->dev = &pdev->dev;
->> +
->> +	ram_code = tegra_read_ram_code();
->> +
->> +	np = tegra_emc_find_node_by_ram_code(emc, ram_code);
->> +	if (!np)
->> +		return -ENOENT;
->> +
->> +	err = tegra_emc_load_timings_from_dt(emc, np);
->> +	of_node_put(np);
->> +	if (err)
->> +		return err;
->> +
->> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	emc->regs = devm_ioremap_resource(&pdev->dev, res);
->> +	if (IS_ERR(emc->regs))
->> +		return PTR_ERR(emc->regs);
->> +
->> +	err = emc_setup_hw(emc);
->> +	if (err)
->> +		return err;
->> +
->> +	emc->irq = platform_get_irq(pdev, 0);
->> +	if (emc->irq < 0) {
->> +		dev_warn(&pdev->dev, "interrupt not specified\n");
->> +		dev_warn(&pdev->dev, "continuing, but please update your DT\n");
-> 
-> Do we really need this? I think this is a case where we don't have to
-> keep backwards-compatibility because this driver hasn't "worked" in a
-> very long time (because it was absent). Therefore, if we error out in
-> the absence of an interrupt we don't break anything.
-> 
-> There's a few places in this driver that are awkward just because the
-> interrupt isn't mandatory. I don't think it's warranted in this case.
-> 
-
-Backwards compatibility is always nice to have, but I don't really mind dropping it.
-
->> +	} else {
->> +		init_completion(&emc->clk_handshake_complete);
->> +
->> +		err = devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr, 0,
->> +				       dev_name(&pdev->dev), emc);
->> +		if (err < 0) {
->> +			dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n",
->> +				emc->irq, err);
->> +			return err;
->> +		}
->> +	}
->> +
->> +	emc->pll_m = clk_get_sys(NULL, "pll_m");
->> +	if (IS_ERR(emc->pll_m)) {
->> +		err = PTR_ERR(emc->pll_m);
->> +		dev_err(&pdev->dev, "failed to get pll_m: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	emc->backup_clk = clk_get_sys(NULL, "pll_p");
->> +	if (IS_ERR(emc->backup_clk)) {
->> +		err = PTR_ERR(emc->backup_clk);
->> +		dev_err(&pdev->dev, "failed to get pll_p: %d\n", err);
->> +		goto put_pll_m;
->> +	}
->> +
->> +	emc->clk = clk_get_sys(NULL, "emc");
->> +	if (IS_ERR(emc->clk)) {
->> +		err = PTR_ERR(emc->clk);
->> +		dev_err(&pdev->dev, "failed to get emc: %d\n", err);
->> +		goto put_backup;
->> +	}
-> 
-> Instead of using clk_get_sys(), why not specify these in the DT with
-> proper names for context ("emc", "pll", "backup")? Again, I don't think
-> we have to worry about backwards-compatibility here since there can be
-> no regression.
-> 
-
-I don't think that "pll" and "backup" could be placed in DT because it is a pure
-software-driver description.
-
-"emc" could be retrieved from DT if we don't care about backwards compatibility.
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 0a294e9..58666c6 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -123,6 +123,7 @@ struct uprobes_state {
+ extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+ extern int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
+ extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
++extern int uprobe_register_refctr(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, loff_t ref_ctr_offset);
+ extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
+ extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
+ extern int uprobe_mmap(struct vm_area_struct *vma);
+@@ -160,6 +161,10 @@ struct uprobes_state {
+ {
+ 	return -ENOSYS;
+ }
++static inline int uprobe_register_refctr(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, unsigned long ref_ctr_offset)
++{
++	return -ENOSYS;
++}
+ static inline int
+ uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool add)
+ {
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index c377a85..ed3c588 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -64,6 +64,11 @@
+ /* Have a copy of original instruction */
+ #define UPROBE_COPY_INSN	0
+ 
++enum {
++	UPROBE_OFFSET = 0,
++	REF_CTR_OFFSET
++};
++
+ struct uprobe {
+ 	struct rb_node		rb_node;	/* node in the rb tree */
+ 	atomic_t		ref;
+@@ -73,6 +78,7 @@ struct uprobe {
+ 	struct uprobe_consumer	*consumers;
+ 	struct inode		*inode;		/* Also hold a ref to inode */
+ 	loff_t			offset;
++	loff_t			ref_ctr_offset;
+ 	unsigned long		flags;
+ 
+ 	/*
+@@ -483,7 +489,8 @@ static struct uprobe *insert_uprobe(struct uprobe *uprobe)
+ 	return u;
+ }
+ 
+-static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
++static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
++				   loff_t ref_ctr_offset)
+ {
+ 	struct uprobe *uprobe, *cur_uprobe;
+ 
+@@ -493,6 +500,7 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
+ 
+ 	uprobe->inode = inode;
+ 	uprobe->offset = offset;
++	uprobe->ref_ctr_offset = ref_ctr_offset;
+ 	init_rwsem(&uprobe->register_rwsem);
+ 	init_rwsem(&uprobe->consumer_rwsem);
+ 
+@@ -840,11 +848,174 @@ static inline struct map_info *free_map_info(struct map_info *info)
+ 	return err;
+ }
+ 
+-static void
+-__uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
++static bool sdt_valid_vma(struct uprobe *uprobe,
++			  struct vm_area_struct *vma,
++			  unsigned long vaddr)
++{
++	return uprobe->ref_ctr_offset &&
++		vma->vm_file &&
++		file_inode(vma->vm_file) == uprobe->inode &&
++		vma->vm_flags & VM_WRITE &&
++		vma->vm_start <= vaddr &&
++		vma->vm_end > vaddr;
++}
++
++static struct vm_area_struct *sdt_find_vma(struct uprobe *uprobe,
++					   struct mm_struct *mm,
++					   unsigned long vaddr)
++{
++	struct vm_area_struct *vma = find_vma(mm, vaddr);
++
++	return (vma && sdt_valid_vma(uprobe, vma, vaddr)) ? vma : NULL;
++}
++
++/*
++ * Reference counter gate the invocation of probe. If present,
++ * by default reference counter is 0. One needs to increment
++ * it before tracing the probe and decrement it when done.
++ */
++static int
++sdt_update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
++{
++	void *kaddr;
++	struct page *page;
++	struct vm_area_struct *vma;
++	int ret = 0;
++	short *ptr;
++
++	if (vaddr == 0 || d == 0)
++		return -EINVAL;
++
++	ret = get_user_pages_remote(NULL, mm, vaddr, 1,
++		FOLL_FORCE | FOLL_WRITE, &page, &vma, NULL);
++	if (unlikely(ret <= 0)) {
++		/*
++		 * We are asking for 1 page. If get_user_pages_remote() fails,
++		 * it may return 0, in that case we have to return error.
++		 */
++		ret = (ret == 0) ? -EBUSY : ret;
++		pr_warn("Failed to %s ref_ctr. (%d)\n",
++			d > 0 ? "increment" : "decrement", ret);
++		return ret;
++	}
++
++	kaddr = kmap_atomic(page);
++	ptr = kaddr + (vaddr & ~PAGE_MASK);
++
++	if (unlikely(*ptr + d < 0)) {
++		pr_warn("ref_ctr going negative. vaddr: 0x%lx, "
++			"curr val: %d, delta: %d\n", vaddr, *ptr, d);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	*ptr += d;
++	ret = 0;
++out:
++	kunmap_atomic(kaddr);
++	put_page(page);
++	return ret;
++}
++
++static int sdt_increment_ref_ctr(struct uprobe *uprobe)
++{
++	struct map_info *info, *first = NULL;
++	int ctr = 0, ret = 0, tmp = 0;
++
++	percpu_down_write(&dup_mmap_sem);
++
++	info = build_map_info(uprobe->inode->i_mapping,
++			      uprobe->ref_ctr_offset, false);
++	if (IS_ERR(info)) {
++		percpu_up_write(&dup_mmap_sem);
++		return PTR_ERR(info);
++	}
++
++	first = info;
++	while (info) {
++		down_write(&info->mm->mmap_sem);
++		if (sdt_find_vma(uprobe, info->mm, info->vaddr)) {
++			ret = sdt_update_ref_ctr(info->mm, info->vaddr, 1);
++			if (unlikely(ret)) {
++				up_write(&info->mm->mmap_sem);
++				goto rollback;
++			}
++		}
++		up_write(&info->mm->mmap_sem);
++		info = info->next;
++		ctr++;
++	}
++	ret = 0;
++	goto out;
++
++rollback:
++	/*
++	 * We failed to update reference counter in any one of
++	 * the target mm. Rollback alredy updated mms.
++	 */
++	info = first;
++	while (ctr) {
++		down_write(&info->mm->mmap_sem);
++		if (sdt_find_vma(uprobe, info->mm, info->vaddr)) {
++			tmp = sdt_update_ref_ctr(info->mm, info->vaddr, -1);
++			if (unlikely(tmp))
++				pr_warn("ref_ctr rollback failed. (%d)\n", tmp);
++		}
++		up_write(&info->mm->mmap_sem);
++		info = info->next;
++		ctr--;
++	}
++
++out:
++	info = first;
++	while (info) {
++		mmput(info->mm);
++		info = free_map_info(info);
++	}
++
++	percpu_up_write(&dup_mmap_sem);
++	return ret;
++}
++
++static int sdt_decrement_ref_ctr(struct uprobe *uprobe)
++{
++	struct map_info *info;
++	int ret = 0, err = 0;
++
++	percpu_down_write(&dup_mmap_sem);
++	info = build_map_info(uprobe->inode->i_mapping,
++			      uprobe->ref_ctr_offset, false);
++	if (IS_ERR(info))
++		goto out;
++
++	while (info) {
++		down_write(&info->mm->mmap_sem);
++
++		if (sdt_find_vma(uprobe, info->mm, info->vaddr)) {
++			ret = sdt_update_ref_ctr(info->mm, info->vaddr, -1);
++			/* Save error and continue. */
++			err = !err && ret ? ret : err;
++		}
++
++		up_write(&info->mm->mmap_sem);
++		mmput(info->mm);
++		info = free_map_info(info);
++	}
++
++out:
++	percpu_up_write(&dup_mmap_sem);
++	return err;
++}
++
++static void __uprobe_unregister(struct uprobe *uprobe,
++				struct uprobe_consumer *uc,
++				bool ref_ctr_dec)
+ {
+ 	int err;
+ 
++	if (ref_ctr_dec && uprobe->ref_ctr_offset)
++		sdt_decrement_ref_ctr(uprobe);
++
+ 	if (WARN_ON(!consumer_del(uprobe, uc)))
+ 		return;
+ 
+@@ -869,7 +1040,7 @@ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consume
+ 		return;
+ 
+ 	down_write(&uprobe->register_rwsem);
+-	__uprobe_unregister(uprobe, uc);
++	__uprobe_unregister(uprobe, uc, true);
+ 	up_write(&uprobe->register_rwsem);
+ 	put_uprobe(uprobe);
+ }
+@@ -880,21 +1051,27 @@ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consume
+  * @inode: the file in which the probe has to be placed.
+  * @offset: offset from the start of the file.
+  * @uc: information on howto handle the probe..
++ * @ref_ctr_offset: Reference counter offset
+  *
+  * Apart from the access refcount, __uprobe_register() takes a creation
+  * refcount (thro alloc_uprobe) if and only if this @uprobe is getting
+- * inserted into the rbtree (i.e first consumer for a @inode:@offset
+- * tuple).  Creation refcount stops uprobe_unregister from freeing the
+- * @uprobe even before the register operation is complete. Creation
+- * refcount is released when the last @uc for the @uprobe
+- * unregisters. Caller of __uprobe_register() is required to keep @inode
+- * (and the containing mount) referenced.
++ * inserted into the rbtree (i.e first consumer for a
++ * @inode:@offset:@ref_ctr_offset tuple). Creation refcount stops
++ * uprobe_unregister from freeing the @uprobe even before the register
++ * operation is complete. Creation refcount is released when the last
++ * @uc for the @uprobe unregisters. Caller of __uprobe_register() is
++ * required to keep @inode (and the containing mount) referenced.
++ *
++ * Note that, 'refcount' and 'ref_ctr_offset' are totally different
++ * entities and each has it's own purpose. 'ref_ctr_offset' is the file
++ * offset of the counter which gates the uprobe and it has nothing to
++ * do with the value of 'refcount'.
+  *
+- * Return errno if it cannot successully install probes
+- * else return 0 (success)
++ * Return errno if it cannot successully install probes else return 0
++ * (success).
+  */
+ static int __uprobe_register(struct inode *inode, loff_t offset,
+-			     struct uprobe_consumer *uc)
++			     struct uprobe_consumer *uc, loff_t ref_ctr_offset)
+ {
+ 	struct uprobe *uprobe;
+ 	int ret;
+@@ -907,11 +1084,11 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
+ 	if (!inode->i_mapping->a_ops->readpage && !shmem_mapping(inode->i_mapping))
+ 		return -EIO;
+ 	/* Racy, just to catch the obvious mistakes */
+-	if (offset > i_size_read(inode))
++	if (offset > i_size_read(inode) || ref_ctr_offset > i_size_read(inode))
+ 		return -EINVAL;
+ 
+  retry:
+-	uprobe = alloc_uprobe(inode, offset);
++	uprobe = alloc_uprobe(inode, offset, ref_ctr_offset);
+ 	if (!uprobe)
+ 		return -ENOMEM;
+ 	/*
+@@ -922,9 +1099,13 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
+ 	ret = -EAGAIN;
+ 	if (likely(uprobe_is_active(uprobe))) {
+ 		consumer_add(uprobe, uc);
++
+ 		ret = register_for_each_vma(uprobe, uc);
++		if (!ret && ref_ctr_offset)
++			ret = sdt_increment_ref_ctr(uprobe);
++
+ 		if (ret)
+-			__uprobe_unregister(uprobe, uc);
++			__uprobe_unregister(uprobe, uc, false);
+ 	}
+ 	up_write(&uprobe->register_rwsem);
+ 	put_uprobe(uprobe);
+@@ -937,10 +1118,17 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
+ int uprobe_register(struct inode *inode, loff_t offset,
+ 		    struct uprobe_consumer *uc)
+ {
+-	return __uprobe_register(inode, offset, uc);
++	return __uprobe_register(inode, offset, uc, 0);
+ }
+ EXPORT_SYMBOL_GPL(uprobe_register);
+ 
++/* Currently, the only user of this is trace_uprobe. */
++int uprobe_register_refctr(struct inode *inode, loff_t offset,
++			   struct uprobe_consumer *uc, loff_t ref_ctr_offset)
++{
++	return __uprobe_register(inode, offset, uc, ref_ctr_offset);
++}
++
+ /*
+  * uprobe_apply - unregister a already registered probe.
+  * @inode: the file in which the probe has to be removed.
+@@ -997,22 +1185,30 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ 	return err;
+ }
+ 
++static loff_t uprobe_get_offset(struct uprobe *u, int off_type)
++{
++	return (off_type == UPROBE_OFFSET) ? u->offset : u->ref_ctr_offset;
++}
++
+ static struct rb_node *
+-find_node_in_range(struct inode *inode, loff_t min, loff_t max)
++find_node_in_range(struct inode *inode, int off_type, loff_t min, loff_t max)
+ {
+ 	struct rb_node *n = uprobes_tree.rb_node;
++	struct uprobe *u;
++	loff_t offset;
+ 
+ 	while (n) {
+-		struct uprobe *u = rb_entry(n, struct uprobe, rb_node);
++		u = rb_entry(n, struct uprobe, rb_node);
++		offset = uprobe_get_offset(u, off_type);
+ 
+ 		if (inode < u->inode) {
+ 			n = n->rb_left;
+ 		} else if (inode > u->inode) {
+ 			n = n->rb_right;
+ 		} else {
+-			if (max < u->offset)
++			if (max < offset)
+ 				n = n->rb_left;
+-			else if (min > u->offset)
++			else if (min > offset)
+ 				n = n->rb_right;
+ 			else
+ 				break;
+@@ -1025,7 +1221,7 @@ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ /*
+  * For a given range in vma, build a list of probes that need to be inserted.
+  */
+-static void build_probe_list(struct inode *inode,
++static void build_probe_list(struct inode *inode, int off_type,
+ 				struct vm_area_struct *vma,
+ 				unsigned long start, unsigned long end,
+ 				struct list_head *head)
+@@ -1033,24 +1229,27 @@ static void build_probe_list(struct inode *inode,
+ 	loff_t min, max;
+ 	struct rb_node *n, *t;
+ 	struct uprobe *u;
++	loff_t offset;
+ 
+ 	INIT_LIST_HEAD(head);
+ 	min = vaddr_to_offset(vma, start);
+ 	max = min + (end - start) - 1;
+ 
+ 	spin_lock(&uprobes_treelock);
+-	n = find_node_in_range(inode, min, max);
++	n = find_node_in_range(inode, off_type, min, max);
+ 	if (n) {
+ 		for (t = n; t; t = rb_prev(t)) {
+ 			u = rb_entry(t, struct uprobe, rb_node);
+-			if (u->inode != inode || u->offset < min)
++			offset = uprobe_get_offset(u, off_type);
++			if (u->inode != inode || offset < min)
+ 				break;
+ 			list_add(&u->pending_list, head);
+ 			get_uprobe(u);
+ 		}
+ 		for (t = n; (t = rb_next(t)); ) {
+ 			u = rb_entry(t, struct uprobe, rb_node);
+-			if (u->inode != inode || u->offset > max)
++			offset = uprobe_get_offset(u, off_type);
++			if (u->inode != inode || offset > max)
+ 				break;
+ 			list_add(&u->pending_list, head);
+ 			get_uprobe(u);
+@@ -1059,6 +1258,39 @@ static void build_probe_list(struct inode *inode,
+ 	spin_unlock(&uprobes_treelock);
+ }
+ 
++/* Called with down_write(&vma->vm_mm->mmap_sem) */
++static int sdt_uprobe_mmap(struct vm_area_struct *vma, struct inode *inode)
++{
++	struct list_head tmp_list;
++	struct uprobe *uprobe, *u;
++	struct uprobe_consumer *uc;
++	unsigned long vaddr;
++	int ret = 0, err = 0;
++
++	build_probe_list(inode, REF_CTR_OFFSET, vma, vma->vm_start,
++			 vma->vm_end, &tmp_list);
++
++	list_for_each_entry_safe(uprobe, u, &tmp_list, pending_list) {
++		if (!uprobe->ref_ctr_offset || !uprobe_is_active(uprobe))
++			continue;
++
++		vaddr = offset_to_vaddr(vma, uprobe->ref_ctr_offset);
++		if (!sdt_valid_vma(uprobe, vma, vaddr))
++			continue;
++
++		/* Increment reference counter for each consumer. */
++		down_read(&uprobe->consumer_rwsem);
++		for (uc = uprobe->consumers; uc; uc = uc->next) {
++			ret = sdt_update_ref_ctr(vma->vm_mm, vaddr, 1);
++			err = !err && ret ? ret : err;
++		}
++		up_read(&uprobe->consumer_rwsem);
++		put_uprobe(uprobe);
++	}
++
++	return err;
++}
++
+ /*
+  * Called from mmap_region/vma_adjust with mm->mmap_sem acquired.
+  *
+@@ -1071,7 +1303,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 	struct uprobe *uprobe, *u;
+ 	struct inode *inode;
+ 
+-	if (no_uprobe_events() || !valid_vma(vma, true))
++	if (no_uprobe_events())
+ 		return 0;
+ 
+ 	inode = file_inode(vma->vm_file);
+@@ -1079,7 +1311,14 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 		return 0;
+ 
+ 	mutex_lock(uprobes_mmap_hash(inode));
+-	build_probe_list(inode, vma, vma->vm_start, vma->vm_end, &tmp_list);
++	if (vma->vm_flags & VM_WRITE)
++		sdt_uprobe_mmap(vma, inode);
++
++	if (!valid_vma(vma, true))
++		goto out;
++
++	build_probe_list(inode, UPROBE_OFFSET, vma, vma->vm_start,
++			 vma->vm_end, &tmp_list);
+ 	/*
+ 	 * We can race with uprobe_unregister(), this uprobe can be already
+ 	 * removed. But in this case filter_chain() must return false, all
+@@ -1093,8 +1332,9 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 		}
+ 		put_uprobe(uprobe);
+ 	}
+-	mutex_unlock(uprobes_mmap_hash(inode));
+ 
++out:
++	mutex_unlock(uprobes_mmap_hash(inode));
+ 	return 0;
+ }
+ 
+@@ -1111,7 +1351,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+ 	max = min + (end - start) - 1;
+ 
+ 	spin_lock(&uprobes_treelock);
+-	n = find_node_in_range(inode, min, max);
++	n = find_node_in_range(inode, UPROBE_OFFSET, min, max);
+ 	spin_unlock(&uprobes_treelock);
+ 
+ 	return !!n;
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index ac89287..d5b6ca9 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -59,6 +59,7 @@ struct trace_uprobe {
+ 	struct inode			*inode;
+ 	char				*filename;
+ 	unsigned long			offset;
++	unsigned long			ref_ctr_offset;
+ 	unsigned long			nhit;
+ 	struct trace_probe		tp;
+ };
+@@ -364,10 +365,10 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+ static int create_trace_uprobe(int argc, char **argv)
+ {
+ 	struct trace_uprobe *tu;
+-	char *arg, *event, *group, *filename;
++	char *arg, *event, *group, *filename, *rctr, *rctr_end;
+ 	char buf[MAX_EVENT_NAME_LEN];
+ 	struct path path;
+-	unsigned long offset;
++	unsigned long offset, ref_ctr_offset;
+ 	bool is_delete, is_return;
+ 	int i, ret;
+ 
+@@ -376,6 +377,7 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	is_return = false;
+ 	event = NULL;
+ 	group = NULL;
++	ref_ctr_offset = 0;
+ 
+ 	/* argc must be >= 1 */
+ 	if (argv[0][0] == '-')
+@@ -450,6 +452,26 @@ static int create_trace_uprobe(int argc, char **argv)
+ 		goto fail_address_parse;
+ 	}
+ 
++	/* Parse reference counter offset if specified. */
++	rctr = strchr(arg, '(');
++	if (rctr) {
++		rctr_end = strchr(rctr, ')');
++		if (rctr > rctr_end || *(rctr_end + 1) != 0) {
++			ret = -EINVAL;
++			pr_info("Invalid reference counter offset.\n");
++			goto fail_address_parse;
++		}
++
++		*rctr++ = '\0';
++		*rctr_end = '\0';
++		ret = kstrtoul(rctr, 0, &ref_ctr_offset);
++		if (ret) {
++			pr_info("Invalid reference counter offset.\n");
++			goto fail_address_parse;
++		}
++	}
++
++	/* Parse uprobe offset. */
+ 	ret = kstrtoul(arg, 0, &offset);
+ 	if (ret)
+ 		goto fail_address_parse;
+@@ -484,6 +506,7 @@ static int create_trace_uprobe(int argc, char **argv)
+ 		goto fail_address_parse;
+ 	}
+ 	tu->offset = offset;
++	tu->ref_ctr_offset = ref_ctr_offset;
+ 	tu->path = path;
+ 	tu->filename = kstrdup(filename, GFP_KERNEL);
+ 
+@@ -602,6 +625,9 @@ static int probes_seq_show(struct seq_file *m, void *v)
+ 			trace_event_name(&tu->tp.call), tu->filename,
+ 			(int)(sizeof(void *) * 2), tu->offset);
+ 
++	if (tu->ref_ctr_offset)
++		seq_printf(m, "(0x%lx)", tu->ref_ctr_offset);
++
+ 	for (i = 0; i < tu->tp.nr_args; i++)
+ 		seq_printf(m, " %s=%s", tu->tp.args[i].name, tu->tp.args[i].comm);
+ 
+@@ -917,7 +943,13 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
+ 
+ 	tu->consumer.filter = filter;
+ 	tu->inode = d_real_inode(tu->path.dentry);
+-	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
++	if (tu->ref_ctr_offset) {
++		ret = uprobe_register_refctr(tu->inode, tu->offset,
++				&tu->consumer, tu->ref_ctr_offset);
++	} else {
++		ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
++	}
++
+ 	if (ret)
+ 		goto err_buffer;
+ 
+-- 
+1.8.3.1
