@@ -1,123 +1,286 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kM8CNWuEHlsUGwAAmS7hNA
-	; Mon, 11 Jun 2018 14:19:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id h2GSIAA/GFt9OQAAmS7hNA
+	; Wed, 06 Jun 2018 20:07:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 27BFB607E7; Mon, 11 Jun 2018 14:19:56 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ti2BeWGG"
+	id 5BF9E6089E; Wed,  6 Jun 2018 20:07:50 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A09D960791;
-	Mon, 11 Jun 2018 14:19:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A09D960791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6B3F060290;
+	Wed,  6 Jun 2018 20:07:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B3F060290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934188AbeFKOTy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:19:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45522 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933503AbeFKOGz (ORCPT
+        id S1752665AbeFFUHr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 16:07:47 -0400
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:35867 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752552AbeFFUHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sqW1jfi9fXH0Wb9SlzcbfFhp+ufIQamOcMd7GrKgp30=; b=ti2BeWGG2O8VtFgPTXfuBL08A
-        fYuk5wfFSIALiyRyiOVZYMYGq+cmtU7k/7WXmu/wpYRpkoqK/AbVGMoB/HOQ4tqx3PvwRRjOUurEe
-        JI5AJhhxiDZt2xzHTex3R+REArl+nCwQmFWVa3J0S4I63THIuPrc8ogqn7p6LwNx6ZkxWgRHtq0ku
-        5tNiZUKBM26rVuzmNRYclzQueBCbuMka4yXBMeKWR08d2DxcTmJ2hg21SWBs6jeNwjwR8uW9n1MmE
-        ewJyWeyMdDWApJSBc9BXzQW3QdLeCg5G9kOiJFQf/I03iUZ6UEEZ9tymI2JW/Fh9/gA/dWQrrfvuh
-        J8mFNoFmQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTC-0004jI-4s; Mon, 11 Jun 2018 14:06:54 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 33/72] page cache: Convert filemap_range_has_page to XArray
-Date: Mon, 11 Jun 2018 07:06:00 -0700
-Message-Id: <20180611140639.17215-34-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Wed, 6 Jun 2018 16:07:45 -0400
+Received: by mail-ot0-f178.google.com with SMTP id m11-v6so8773316otf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 13:07:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uBlszXxEyOtf/SUCRn27sddWnf8GeaTnO+KoNhu/cPw=;
+        b=j8tgEit80Fn9EkuzeK14K0PAP83NqO5Hc0QOmv0TJbwI/LUj3ev8DVuFGIsydWfhBE
+         dN/nRDBdOw0/dlDLPfmBBpuW3iGnDCR1BuQc+aBdbWihcaYo2ibvgyLamQzb+u7DqddS
+         o2p72NiyRyQgwiUFv5YAr5LwyLScOr1P2ZwssNcttadX0P3tixQSpVSCERSc1Fsoii2v
+         y6vz/XgPFm/AwFi+KwrJeVQDiNo1+6xLEXBPLA1ZivoU/sTBA8jpE12lAyR3WivzBl+9
+         ggRbGCmL7RA7JKLO/uqdZN7632DU86c50u8XGcJuNh2ZEt8GoELCIqZsRc/XpKP67xt5
+         0USA==
+X-Gm-Message-State: APt69E0dhJu0QpoRIcj56gZOeF3mNtV79Yn7pupalz4MZUqOBeVDPmot
+        0Kb8zbA3nx3IgWcoVzkYVpDJnw==
+X-Google-Smtp-Source: ADUXVKJoqYD9aFYq8YlUPvutuJYUhKpG1Huj6JWg03mvBGi1TIslI0BfaqeRCZsgeQPL+0ypBqtoJQ==
+X-Received: by 2002:a9d:4905:: with SMTP id e5-v6mr3097137otf.101.1528315664480;
+        Wed, 06 Jun 2018 13:07:44 -0700 (PDT)
+Received: from loberhel74 (174-083-000-020.dhcp.chtrptr.net. [174.83.0.20])
+        by smtp.gmail.com with ESMTPSA id n72-v6sm7269216oig.6.2018.06.06.13.07.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Jun 2018 13:07:43 -0700 (PDT)
+Message-ID: <1528315662.17774.7.camel@redhat.com>
+Subject: Re: qla2xxx cause BUG on kernel-4.17-rc6
+From: Laurence Oberman <loberman@redhat.com>
+To: "Madhani, Himanshu" <Himanshu.Madhani@cavium.com>,
+        Li Wang <liwang@redhat.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Tran, Quinn" <Quinn.Tran@cavium.com>,
+        "William.Kuzeja@stratus.com" <William.Kuzeja@stratus.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Date: Wed, 06 Jun 2018 16:07:42 -0400
+In-Reply-To: <1528313235.17774.5.camel@redhat.com>
+References: <CAEemH2dj3SVsNZOsZSjGZ0nF=a3YZp=i9z11vYTHByRQzpFkfQ@mail.gmail.com>
+         <yq1a7s7ewmw.fsf@oracle.com>
+         <7988FB77-4AE4-4935-B7B7-F7584674981B@cavium.com>
+         <1528308343.17774.3.camel@redhat.com>
+         <B3C74965-4B74-404A-9BA3-395F49F64179@cavium.com>
+         <1528313235.17774.5.camel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Wed, 2018-06-06 at 15:27 -0400, Laurence Oberman wrote:
+> On Wed, 2018-06-06 at 18:31 +0000, Madhani, Himanshu wrote:
+> > Hi Li, 
+> > 
+> > > On Jun 6, 2018, at 11:05 AM, Laurence Oberman <loberman@redhat.co
+> > > m>
+> > > wrote:
+> > > 
+> > > On Wed, 2018-06-06 at 16:01 +0000, Madhani, Himanshu wrote:
+> > > > > On Jun 6, 2018, at 8:56 AM, Martin K. Petersen
+> > > > > <martin.petersen
+> > > > > @ora
+> > > > > cle.com> wrote:
+> > > > > 
+> > > > > 
+> > > > > Himanshu,
+> > > > > 
+> > > > > Ping?
+> > > > > 
+> > > > 
+> > > > Will look at this one. Sorry, somehow fell thru cracks. 
+> > > > 
+> > > > 
+> > > > > > Hi scsi experts,
+> > > > > > 
+> > > > > > Not sure who is the right person to ask, I just hit this
+> > > > > > bug
+> > > > > > on
+> > > > > > my HP
+> > > > > > DL385 platform, can any one of you take a look?
+> > > > > > 
+> > > > > > system config:
+> > > > > > -----------------
+> > > > > > HP ProLiant DL385 G7
+> > > > > > AMD Opteron(TM) Processor 6234
+> > > > > > 16384 MB memory, 369 GB disk space
+> > > > > > 
+> > > > > > 
+> > > > > > [   24.539274] qla2xxx [0000:0c:00.7]-500a:5: LOOP UP
+> > > > > > detected
+> > > > > > (10 Gbps).
+> > > > > > [   24.577259] BUG: unable to handle kernel NULL pointer
+> > > > > > dereference
+> > > > > > at 0000000000000102
+> > > > > > [   24.623133] PGD 0 P4D 0
+> > > > > > [   24.636760] Oops: 0000 [#1] SMP NOPTI
+> > > > > > [   24.656942] Modules linked in: i2c_algo_bit
+> > > > > > drm_kms_helper
+> > > > > > sr_mod(+) syscopyarea sysfillrect sysimgblt cdrom
+> > > > > > fb_sys_fops
+> > > > > > ata_generic ttm pata_acpi sd_mod ahci pata_atiixp sfc(+)
+> > > > > > qla2xxx(+)
+> > > > > > libahci drm qla4xxx(+) nvme_fc hpsa mdio libiscsi qlcnic(+)
+> > > > > > nvme_fabrics scsi_transport_sas serio_raw mtd crc32c_intel
+> > > > > > libata
+> > > > > > nvme_core i2c_core scsi_transport_iscsi tg3
+> > > > > > scsi_transport_fc
+> > > > > > bnx2
+> > > > > > iscsi_boot_sysfs dm_multipath dm_mirror dm_region_hash
+> > > > > > dm_log
+> > > > > > dm_mod
+> > > > > > [   24.887449] CPU: 0 PID: 177 Comm: kworker/0:3 Not
+> > > > > > tainted
+> > > > > > 4.17.0-rc6 #1
+> > > > > > [   24.925119] Hardware name: HP ProLiant DL385 G7, BIOS
+> > > > > > A18
+> > > > > > 08/15/2012
+> > > > > > [   24.962106] Workqueue: events work_for_cpu_fn
+> > > > > > [   24.987098] RIP: 0010:__queue_work+0x1f/0x3a0
+> > > > > > [   25.011672] RSP: 0018:ffff992642ceba10 EFLAGS: 00010082
+> > > > > > [   25.042116] RAX: 0000000000000082 RBX: 0000000000000082
+> > > > > > RCX:
+> > > > > > 0000000000000000
+> > > > > > [   25.083293] RDX: ffff8cf9abc6d7d0 RSI: 0000000000000000
+> > > > > > RDI:
+> > > > > > 0000000000002000
+> > > > > > [   25.123094] RBP: 0000000000000000 R08: 0000000000025a40
+> > > > > > R09:
+> > > > > > ffff8cf9aade2880
+> > > > > > [   25.164087] R10: 0000000000000000 R11: ffff992642ceb6f0
+> > > > > > R12:
+> > > > > > ffff8cf9abc6d7d0
+> > > > > > [   25.202280] R13: 0000000000002000 R14: ffff8cf9abc6d7b8
+> > > > > > R15:
+> > > > > > 0000000000002000
+> > > > > > [   25.242050] FS:  0000000000000000(0000) f9b5c00000(0000)
+> > > > > > knlGS:0000000000000000
+> > > > > > [   25.977565] CS:  0010 DS: 0000 ES: 0000 CR0:
+> > > > > > 0000000080050033
+> > > > > > [   26.010457] CR2: 0000000000000102 CR3: 000000030760a000
+> > > > > > CR4:
+> > > > > > 00000000000406f0
+> > > > > > [   26.051048] Call Trace:
+> > > > > > [   26.063572]  ? __switch_to_asm+0x34/0x70
+> > > > > > [   26.086079]  queue_work_on+0x24/0x40
+> > > > > > [   26.107090]  qla2x00_post_work+0x81/0xb0 [qla2xxx]
+> > > > > > [   26.133356]  qla2x00_async_event+0x1ad/0x1a20 [qla2xxx]
+> > > > > > [   26.164075]  ? lock_timer_base+0x67/0x80
+> > > > > > [   26.186420]  ? try_to_del_timer_sync+0x4d/0x80
+> > > > > > [   26.212284]  ? del_timer_sync+0x35/0x40
+> > > > > > [   26.234080]  ? schedule_timeout+0x165/0x2f0
+> > > > > > [   26.259575]  qla82xx_poll+0x13e/0x180 [qla2xxx]
+> > > > > > [   26.285740]  qla2x00_mailbox_command+0x74b/0xf50
+> > > > > > [qla2xxx]
+> > > > > > [   26.319040]  qla82xx_set_driver_version+0x13b/0x1c0
+> > > > > > [qla2xxx]
+> > > > > > [   26.352108]  ? qla2x00_init_rings+0x206/0x3f0 [qla2xxx]
+> > > > > > [   26.381733]  qla2x00_initialize_adapter+0x35c/0x7f0
+> > > > > > [qla2xxx]
+> > > > > > [   26.413240]  qla2x00_probe_one+0x1479/0x2390 [qla2xxx]
+> > > > > > [   26.442055]  local_pci_probe+0x3f/0xa0
+> > > > > > [   26.463108]  work_for_cpu_fn+0x10/0x20
+> > > > > > [   26.483295]  process_one_work+0x152/0x350
+> > > > > > [   26.505730]  worker_thread+0x1cf/0x3e0
+> > > > > > [   26.527090]  kthread+0xf5/0x130
+> > > > > > [   26.545085]  ? max_active_store+0x80/0x80
+> > > > > > [   26.568085]  ? kthread_bind+0x10/0x10
+> > > > > > [   26.589533]  ret_from_fork+0x22/0x40
+> > > > > > [   26.610192] Code: 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f
+> > > > > > 1f 44
+> > > > > > 00
+> > > > > > 00 41 57 41 89 ff 41 56 41 55 41 89 fd 41 54 49 89 d4 55 48
+> > > > > > 89 f5
+> > > > > > 53
+> > > > > > 48 83 ec 0 86 02 01 00 00 01 0f 85 80 02 00 00 49 c7 c6 c0
+> > > > > > ec
+> > > > > > 01
+> > > > > > 00 41
+> > > > > > [   27.308540] RIP: __queue_work+0x1f/0x3a0 RSP:
+> > > > > > ffff992642ceba10
+> > > > > > [   27.341591] CR2: 0000000000000102
+> > > > > > [   27.360208] ---[ end trace 01b7b7ae2c005cf3 ]---
+> > > > > 
+> > > > > -- 
+> > > > > Martin K. Petersen	Oracle Linux Engineering
+> > > > 
+> > > > Thanks,
+> > > > - Himanshu
+> > > > 
+> > > 
+> > > I can't find the original message for this that Martin reminded
+> > > us
+> > > of.
+> > > 
+> > > To the person who logged this:
+> > > How many times has this happened and was it after a kernel
+> > > update.
+> > > What is the history, what is the exact Qlogic card, etc.
+> > > Do you have the rest of the log log leading to the invalid
+> > > pointer
+> > > fault
+> > > 
+> > > Thanks
+> > > Laurence
+> > 
+> > From the Snippet of Log provided looks like the crash is with 10G
+> > FCoE adapter. 
+> > 
+> > Can you try this untested diff to see if it resolves issue. 
+> > 
+> > Basically we are initializing adapter so driver will start
+> > receiving
+> > AEN notification
+> > but we have not yet allocated work queue for it. 
+> > 
+> > 
+> > ————— <snip> ————
+> > 
+> > diff --git a/drivers/scsi/qla2xxx/qla_os.c
+> > b/drivers/scsi/qla2xxx/qla_os.c
+> > index 30bf4b9..462d825 100644
+> > --- a/drivers/scsi/qla2xxx/qla_os.c
+> > +++ b/drivers/scsi/qla2xxx/qla_os.c
+> > @@ -3229,6 +3229,8 @@ qla2x00_probe_one(struct pci_dev *pdev, const
+> > struct pci_device_id *id)
+> >             "req->req_q_in=%p req->req_q_out=%p rsp->rsp_q_in=%p
+> > rsp-
+> > > rsp_q_out=%p.\n",
+> > 
+> >             req->req_q_in, req->req_q_out, rsp->rsp_q_in, rsp-
+> > > rsp_q_out);
+> > 
+> > +       ha->wq = alloc_workqueue("qla2xxx_wq", 0, 0);
+> > +
+> >         if (ha->isp_ops->initialize_adapter(base_vha)) {
+> >                 ql_log(ql_log_fatal, base_vha, 0x00d6,
+> >                     "Failed to initialize adapter - Adapter flags
+> > %x.\n",
+> > @@ -3270,7 +3272,7 @@ qla2x00_probe_one(struct pci_dev *pdev, const
+> > struct pci_device_id *id)
+> >             host->can_queue, base_vha->req,
+> >             base_vha->mgmt_svr_loop_id, host->sg_tablesize);
+> >         INIT_WORK(&base_vha->iocb_work, qla2x00_iocb_work_fn);
+> > -       ha->wq = alloc_workqueue("qla2xxx_wq", 0, 0);
+> > +
+> >         if (ha->mqenable) {
+> >                 bool mq = false;
+> > 
+> > ————— </snip> ————
+> > 
+> > Thanks,
+> > - Himanshu
+> > 
+> 
+> Makes sense, but how did they escape this happening before ?
+> I cannot find the one that we looked at together about this but mine
+> was not @10G 
+> 
 
-Instead of calling find_get_pages_range() and putting any reference,
-use xas_find() to iterate over any entries in the range, skipping the
-shadow/swap entries.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/filemap.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e447dd2d0f5c..68890327d1f2 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -455,20 +455,30 @@ EXPORT_SYMBOL(filemap_flush);
- bool filemap_range_has_page(struct address_space *mapping,
- 			   loff_t start_byte, loff_t end_byte)
- {
--	pgoff_t index = start_byte >> PAGE_SHIFT;
--	pgoff_t end = end_byte >> PAGE_SHIFT;
- 	struct page *page;
-+	XA_STATE(xas, &mapping->i_pages, start_byte >> PAGE_SHIFT);
-+	pgoff_t max = end_byte >> PAGE_SHIFT;
- 
- 	if (end_byte < start_byte)
- 		return false;
- 
--	if (mapping->nrpages == 0)
--		return false;
-+	rcu_read_lock();
-+	do {
-+		page = xas_find(&xas, max);
-+		if (xas_retry(&xas, page))
-+			continue;
-+		/* Shadow entries don't count */
-+		if (xa_is_value(page))
-+			continue;
-+		/*
-+		 * We don't need to try to pin this page; we're about to
-+		 * release the RCU lock anyway.  It is enough to know that
-+		 * there was a page here recently.
-+		 */
-+	} while (0);
-+	rcu_read_unlock();
- 
--	if (!find_get_pages_range(mapping, &index, end, 1, &page))
--		return false;
--	put_page(page);
--	return true;
-+	return page != NULL;
- }
- EXPORT_SYMBOL(filemap_range_has_page);
- 
--- 
-2.17.1
+I will run a test on my 82xx FCOE and see if it misbehaves as well on
+4.17-rc6, then test this patch of yours
+Thank you
