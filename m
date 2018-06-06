@@ -1,59 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lm4+gAbX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C2D260764
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 66B6C60764
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932153AbeFFPW6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 11:22:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34058 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932068AbeFFPW5 (ORCPT
+        id S1752843AbeFFDSB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Tue, 5 Jun 2018 23:18:01 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:51363 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752740AbeFFDSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 11:22:57 -0400
-Date: Wed, 6 Jun 2018 17:22:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Kohli, Gaurav" <gkohli@codeaurora.org>, tglx@linutronix.de,
-        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180606152245.GH12180@hirez.programming.kicks-ass.net>
-References: <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
- <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
- <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
- <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
- <20180605150841.GA24053@redhat.com>
- <20180605152212.GY12180@hirez.programming.kicks-ass.net>
- <20180605154053.GB12235@hirez.programming.kicks-ass.net>
- <20180605163515.GB24053@redhat.com>
- <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
- <20180606135115.GA4609@redhat.com>
+        Tue, 5 Jun 2018 23:18:00 -0400
+Date: Wed, 6 Jun 2018 11:16:56 +0800
+From: Alan Kao <alankao@andestech.com>
+To: Palmer Dabbelt <palmer@sifive.com>
+CC: <atish.patra@wdc.com>, <sols@sifive.com>, <nickhu@andestech.com>,
+        <corbet@lwn.net>, <peterz@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        <mingo@redhat.com>, <albert@sifive.com>, <namhyung@kernel.org>,
+        <linux-riscv@lists.infradead.org>, <jolsa@redhat.com>,
+        <greentime@andestech.com>
+Subject: Re: [PATCH v5 0/2] perf: riscv: Preliminary Perf Event Support on
+ RISC-V
+Message-ID: <20180606031655.GB31803@andestech.com>
+References: <20180425031936.GA7303@andestech.com>
+ <mhng-aec39091-7a3b-4def-99f3-577e023c6919@palmer-si-x1c4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180606135115.GA4609@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <mhng-aec39091-7a3b-4def-99f3-577e023c6919@palmer-si-x1c4>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w563Hl2u096787
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 03:51:16PM +0200, Oleg Nesterov wrote:
-> On 06/05, Peter Zijlstra wrote:
+On Wed, Apr 25, 2018 at 09:39:04AM -0700, Palmer Dabbelt wrote:
+> On Tue, 24 Apr 2018 20:19:36 PDT (-0700), alankao@andestech.com wrote:
+> >Hi Atish, Palmer,
 > >
-> > Also, I think we still need TASK_PARKED as a special state for that.
+> >On Tue, Apr 24, 2018 at 06:15:49PM -0700, Atish Patra wrote:
+> >>On 4/24/18 5:29 PM, Palmer Dabbelt wrote:
+> >>>On Tue, 24 Apr 2018 15:16:16 PDT (-0700), atish.patra@wdc.com wrote:
+> >>>>On 4/24/18 12:44 PM, Palmer Dabbelt wrote:
+> >>>>>On Tue, 24 Apr 2018 12:27:26 PDT (-0700), atish.patra@wdc.com wrote:
+> >>>>>>On 4/24/18 11:07 AM, Atish Patra wrote:
+> >>>>>>>On 4/19/18 4:28 PM, Alan Kao wrote:
+> >>>>>>>However, I got an rcu-stall for the test "47: Event times".
+> >>>>>>># ./perf test -v 47
+> >>>>>>Got it working. The test tries to attach the event to CPU0 which doesn't
+> >>>>>>exist in HighFive Unleashed. Changing it to cpu1 works.
+> >>>>>>
+> >>>>>>diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
+> >>>>>>index 1a2686f..eb11632f 100644
+> >>>>>>--- a/tools/perf/tests/event-times.c
+> >>>>>>+++ b/tools/perf/tests/event-times.c
+> >>>>>>@@ -113,9 +113,9 @@ static int attach__cpu_disabled(struct perf_evlist
+> >>>>>>*evlist)
+> >>>>>>           struct cpu_map *cpus;
+> >>>>>>           int err;
+> >>>>>>
+> >>>>>>-       pr_debug("attaching to CPU 0 as enabled\n");
+> >>>>>>+       pr_debug("attaching to CPU 1 as disabled\n");
+> >>>>>>
+> >>>>>>-       cpus = cpu_map__new("0");
+> >>>>>>+       cpus = cpu_map__new("1");
+> >>>>>>           if (cpus == NULL) {
+> >>>>>>                   pr_debug("failed to call cpu_map__new\n");
+> >>>>>>                   return -1;
+> >>>>>>@@ -142,9 +142,9 @@ static int attach__cpu_enabled(struct perf_evlist
+> >>>>>>*evlist)
+> >>>>>>           struct cpu_map *cpus;
+> >>>>>>           int err;
+> >>>>>>
+> >>>>>>-       pr_debug("attaching to CPU 0 as enabled\n");
+> >>>>>>+       pr_debug("attaching to CPU 1 as enabled\n");
+> >>>>>>
+> >>>>>>-       cpus = cpu_map__new("0");
+> >>>>>>+       cpus = cpu_map__new("1");
+> >>>>>>           if (cpus == NULL) {
+> >>>>>>                   pr_debug("failed to call cpu_map__new\n");
+> >>>>>>                   return -1;
+> >>>>>>
+> >>>>>>
+> >>>>>>Palmer,
+> >>>>>>Would it be better to officially document it somewhere that CPU0 doesn't
+> >>>>>>exist in the HighFive Unleashed board ?
+> >>>>>>I fear that there will be other standard tests/code path that may fail
+> >>>>>>because of inherent assumption of cpu0 presence.
+> >>>>>
+> >>>>>I think the best way to fix this is to just have BBL (or whatever the
+> >>>>>bootloader is) renumber the CPUs so they're contiguous and begin with 0.
+> >>>>
+> >>>>Do you mean BBL will update the device tree that kernel eventually parse
+> >>>>and set the hart id?
+> >>>>Sounds good to me unless it acts as a big hack in future boot loaders.
+> >>>
+> >>>Right now the machine-mode and supervisor-mode hart IDs are logically separate:
+> >>>the bootloader just provides the hart ID as a register argument when starting
+> >>>the kernel.
+> >>
+> >>Yes.
+> >>
+> >>  BBL already needs to enumerate the harts by looking through the
+> >>>device tree for various other reasons (at least to mask off the harts that
+> >>>Linux doesn't support), so it's not that much effort to just maintain a mapping
+> >>>from supervisor-mode hart IDs to machine-mode hart IDs.
+> >>>
+> >>
+> >>But Linux also parses the device tree to get hart ID in
+> >>riscv_of_processor_hart(). This is used to setup the possible/present cpu
+> >>map in setup_smp().
+> >>
+> >>Thus, Linux also need to see a device tree with cpu0-3 instead of cpu1-4.
+> >>Otherwise, present cpu map will be incorrect. Isn't it ?
+> >>
+> >>>I have some patches floating around that do this, but appear to do it
+> >>>incorrectly enough that nothing boots so maybe I'm missing something that makes
+> >>>this complicated :).
+> >>>
+> >>
+> >>Just a wild guess: May be the because of the above reason ;)
+> >>
+> >
+> >Thanks for the test and discussion.  It looks like am implementation issue from
+> >Unleash, so ... is there anything I should fix and provide a further patch?
 > 
-> I think it would be nice to kill the TASK_PARKED state altogether. But I don't
-> know how. I'll try to look at this code later, but I am not sure I will find a
-> way to cleanup it...
+> You're welcome to fix BBL if you want, but that's unrelated to this patch
+> set.  I'm going to look over the code again as soon as I get a chance to,
+> thanks for submitting the patches!
 
-So the nice thing about having TASK_PARKED is that it guarantees no
-spurious wakeups. You know the thread will not wake up while it's CPU is
-gone.
-
-We could possibly re-purpose TASK_STOPPED (because kernel threads don't
-do that) but that seems dodgy at best.
+Any updates?
