@@ -1,173 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZjGSEkPzG1vfYwAAmS7hNA
-	; Sat, 09 Jun 2018 15:33:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8ApqDjFHGFt5cgAAmS7hNA
+	; Wed, 06 Jun 2018 20:42:25 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 093F8608BF; Sat,  9 Jun 2018 15:33:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxSlQGIM"
+	id 28B91607F7; Wed,  6 Jun 2018 20:42:25 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3C24F606FA;
-	Sat,  9 Jun 2018 15:33:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C24F606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DB8DE608BA;
+	Wed,  6 Jun 2018 20:42:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB8DE608BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932456AbeFIPdt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:33:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36130 "EHLO mail.kernel.org"
+        id S1752810AbeFFUmU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 16:42:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33657 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932755AbeFIPdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:33:45 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DF9D204EC;
-        Sat,  9 Jun 2018 15:33:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558425;
-        bh=+TytJBhtKIEuNTh1vWhtnWG1R0UsvjXzeDLxFlRwoWQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FxSlQGIMWhmFrGlIR3A36E/qGYmumZKFiQ2Q3kgRt09OUr4hLwYms+cUN+/LDj4zE
-         2JKGAbOOQmKYNEIFurMqm9oTNZqmqEoTsZq377PakOuV+rhg6YfmAohPoJpSSpRPge
-         IdKHQkra4eSH3kwSoDhrjuuoMfk0w48BF9RP8n6M=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 47/48] vhost_net: flush batched heads before trying to busy polling
-Date: Sat,  9 Jun 2018 17:29:59 +0200
-Message-Id: <20180609145950.955667847@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1752093AbeFFUmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 16:42:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 257ECACF9;
+        Wed,  6 Jun 2018 20:42:16 +0000 (UTC)
+Date: Wed, 6 Jun 2018 22:42:15 +0200
+From: Mark Fasheh <mfasheh@suse.de>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jeff Mahoney <jeffm@suse.com>, Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than
+ one root
+Message-ID: <20180606204215.GD9445@wotan.suse.de>
+Reply-To: Mark Fasheh <mfasheh@suse.de>
+References: <20180508180436.716-1-mfasheh@suse.de>
+ <20180508233840.GM10363@dastard>
+ <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com>
+ <20180509064103.GP10363@dastard>
+ <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
+ <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
+Organization: SUSE Labs
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Hi Amir, thanks for the comments!
 
-------------------
+On Wed, Jun 06, 2018 at 12:49:48PM +0300, Amir Goldstein wrote:
+> On Tue, Jun 5, 2018 at 11:17 PM, Jeff Mahoney <jeffm@suse.com> wrote:
+> > Sorry, just getting back to this.
+> >
+> > On 5/9/18 2:41 AM, Dave Chinner wrote:
+> >> On Tue, May 08, 2018 at 10:06:44PM -0400, Jeff Mahoney wrote:
+> >>> On 5/8/18 7:38 PM, Dave Chinner wrote:
+> >>>> On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> The VFS's super_block covers a variety of filesystem functionality. In
+> >>>>> particular we have a single structure representing both I/O and
+> >>>>> namespace domains.
+> >>>>>
+> >>>>> There are requirements to de-couple this functionality. For example,
+> >>>>> filesystems with more than one root (such as btrfs subvolumes) can
+> >>>>> have multiple inode namespaces. This starts to confuse userspace when
+> >>>>> it notices multiple inodes with the same inode/device tuple on a
+> >>>>> filesystem.
+> >>>>
+> 
+> Speaking as someone who joined this discussion late, maybe years after
+> it started, it would help to get an overview of existing problems and how
+> fs_view aims to solve them.
+> 
+> I do believe that both Overlayfs and Btrfs can benefit from a layer of
+> abstraction
+> in the VFS, but I think it is best if we start with laying all the
+> common problems
+> and then see how a solution would look like.
+> 
+> Even the name of the abstraction (fs_view) doesn't make it clear to me what
+> it is we are abstracting (security context? st_dev? what else?). probably best
+> to try to describe the abstraction from user POV rather then give sporadic
+> examples of what MAY go into fs_view.
 
-From: Jason Wang <jasowang@redhat.com>
+The first problem fs_view intended to fix was the s_dev issue, where some
+filesystems return a different device from stat(2) than what the rest of the
+kernel exports. If you look at the e-mail record I referenced:
 
-[ Upstream commit f5a4941aa6d190e676065e8f4ed35999f52a01c3 ]
+https://marc.info/?l=linux-btrfs&m=130074451403261&w=2
 
-After commit e2b3b35eb989 ("vhost_net: batch used ring update in rx"),
-we tend to batch updating used heads. But it doesn't flush batched
-heads before trying to do busy polling, this will cause vhost to wait
-for guest TX which waits for the used RX. Fixing by flush batched
-heads before busy loop.
+you'll see how that can confuse some userspace software when they try to
+take the ino/dev pair they get from one portion of the kernel (for example,
+/proc/pid/maps) then use it to resolve to an inode on the system.
 
-1 byte TCP_RR performance recovers from 13107.83 to 50402.65.
+As it turns out, there's other places where we might want to decouple some
+superblock fields, hence why I mention security contexts. I am admittedly
+less familiar with that particular problem but as I understand it,
+containers on a btrfs subvolume have to go through an overlay to route
+around the default security context. With fs_view we could point subvolumes
+to their own security contexts.
 
-Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/vhost/net.c |   37 ++++++++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+Btw, sorry that the name is confusing. I've never been good at picking them.
+That said, if you have a minute to check out the first patch or two you'll
+see that the patches are basically putting a struct in between the super
+block and the inode.
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -101,7 +101,9 @@ struct vhost_net_virtqueue {
- 	/* vhost zerocopy support fields below: */
- 	/* last used idx for outstanding DMA zerocopy buffers */
- 	int upend_idx;
--	/* first used idx for DMA done zerocopy buffers */
-+	/* For TX, first used idx for DMA done zerocopy buffers
-+	 * For RX, number of batched heads
-+	 */
- 	int done_idx;
- 	/* an array of userspace buffers info */
- 	struct ubuf_info *ubuf_info;
-@@ -620,6 +622,18 @@ static int sk_has_rx_data(struct sock *s
- 	return skb_queue_empty(&sk->sk_receive_queue);
- }
+
+One thing I'd like to politely suggest is that anyone now following this
+conversation to please read the at least the first patch. It's an easy read
+and I feel like the conversation overall would be much more clear if
+everyone understood what we're going for. I worry that I didn't do a
+particularly good job explaining the actual code changes.
+
+https://www.spinics.net/lists/linux-fsdevel/msg125492.html
+
+
+Regarding a layout of the problems, I have a more complete e-mail coming
+soon which should describe in detail the issues I've seen with respect to
+how the kernel is exporting ino/dev pairs (outside of statx). fs_view alone
+is not enough to solve that problem. I'd be happy to CC you on that one if
+you'd like.
+
+
+> While at it, need to see if this discussion has any intersections with David
+> Howell's fs_context work, because if we consider adding sub volume support
+> to VFS, we may want to leave some reserved bits in the API for it.
+> 
+> [...]
+> 
+> > One thing is clear: If we want to solve the btrfs and overlayfs problems
+> > in the same way, the view approach with a simple static mapping doesn't
+> > work.  Sticking something between the inode and superblock doesn't get
+> > the job done when the belongs to a different file system.  Overlayfs
+> > needs a per-object remapper, which means a callback that takes a path.
+> > Suddenly the way we do things in the SUSE kernel doesn't seem so hacky
+> > anymore.
+> >
+> 
+> And what is the SUSE way?
+
+At SUSE, we carry a version of this patch:
+
+https://marc.info/?l=linux-btrfs&m=130532890824992&w=2
+
+Essentially a callback which was rejected for various reasons.
+
+The fs_view work was intended to replace that patch with an upstream
+solution.
+
  
-+static void vhost_rx_signal_used(struct vhost_net_virtqueue *nvq)
-+{
-+	struct vhost_virtqueue *vq = &nvq->vq;
-+	struct vhost_dev *dev = vq->dev;
-+
-+	if (!nvq->done_idx)
-+		return;
-+
-+	vhost_add_used_and_signal_n(dev, vq, vq->heads, nvq->done_idx);
-+	nvq->done_idx = 0;
-+}
-+
- static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
- {
- 	struct vhost_net_virtqueue *rvq = &net->vqs[VHOST_NET_VQ_RX];
-@@ -629,6 +643,8 @@ static int vhost_net_rx_peek_head_len(st
- 	int len = peek_head_len(rvq, sk);
- 
- 	if (!len && vq->busyloop_timeout) {
-+		/* Flush batched heads first */
-+		vhost_rx_signal_used(rvq);
- 		/* Both tx vq and rx socket were polled here */
- 		mutex_lock_nested(&vq->mutex, 1);
- 		vhost_disable_notify(&net->dev, vq);
-@@ -756,7 +772,7 @@ static void handle_rx(struct vhost_net *
- 	};
- 	size_t total_len = 0;
- 	int err, mergeable;
--	s16 headcount, nheads = 0;
-+	s16 headcount;
- 	size_t vhost_hlen, sock_hlen;
- 	size_t vhost_len, sock_len;
- 	struct socket *sock;
-@@ -784,8 +800,8 @@ static void handle_rx(struct vhost_net *
- 	while ((sock_len = vhost_net_rx_peek_head_len(net, sock->sk))) {
- 		sock_len += sock_hlen;
- 		vhost_len = sock_len + vhost_hlen;
--		headcount = get_rx_bufs(vq, vq->heads + nheads, vhost_len,
--					&in, vq_log, &log,
-+		headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
-+					vhost_len, &in, vq_log, &log,
- 					likely(mergeable) ? UIO_MAXIOV : 1);
- 		/* On error, stop handling until the next kick. */
- 		if (unlikely(headcount < 0))
-@@ -856,12 +872,9 @@ static void handle_rx(struct vhost_net *
- 			vhost_discard_vq_desc(vq, headcount);
- 			goto out;
- 		}
--		nheads += headcount;
--		if (nheads > VHOST_RX_BATCH) {
--			vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
--						    nheads);
--			nheads = 0;
--		}
-+		nvq->done_idx += headcount;
-+		if (nvq->done_idx > VHOST_RX_BATCH)
-+			vhost_rx_signal_used(nvq);
- 		if (unlikely(vq_log))
- 			vhost_log_write(vq, vq_log, log, vhost_len);
- 		total_len += vhost_len;
-@@ -872,9 +885,7 @@ static void handle_rx(struct vhost_net *
- 	}
- 	vhost_net_enable_vq(net, vq);
- out:
--	if (nheads)
--		vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
--					    nheads);
-+	vhost_rx_signal_used(nvq);
- 	mutex_unlock(&vq->mutex);
- }
- 
+> > I'm not sure we need the same solution for btrfs and overlayfs.  It's
+> > not the same problem.  Every object in overlayfs as a unique mapping
+> > already.  If we report s_dev and i_ino from the inode, it still maps to
+> > a unique user-visible object.  It may not map back to the overlayfs
+> > name, but that's a separate issue that's more difficult to solve.  The
+> > btrfs issue isn't one of presenting an alternative namespace to the
+> > user.  Btrfs has multiple internal namespaces and no way to publish them
+> > to the rest of the kernel.
+> >
+> 
+> FYI, the Overlayfs file/inode mapping is about to change with many
+> VFS hacks queued for removal, so stay tuned.
+> 
+> [...]
+
+Actually, would you mind giving me a pointer to this work? I'd be very
+interested to see what exactly might be changing.
+
+
+> >> My point is that if we are talking about infrastructure to remap
+> >> what userspace sees from different mountpoint views into a
+> >> filesystem, then it should be done above the filesystem layers in
+> >> the VFS so all filesystems behave the same way. And in this case,
+> >> the vfsmount maps exactly to the "fs_view" that Mark has proposed we
+> >> add to the superblock.....
+> >
+> > It's proposed to be above the superblock with a default view in the
+> > superblock.  It would sit between the inode and the superblock so we
+> > have access to it anywhere we already have an inode.  That's the main
+> > difference.  We already have the inode everywhere it's needed.  Plumbing
+> > a vfsmount everywhere needed means changing code that only requires an
+> > inode and doesn't need a vfsmount.
+> >
+> > The two biggest problem areas:
+> > - Writeback tracepoints print a dev/inode pair.  Do we want to plumb a
+> > vfsmount into __mark_inode_dirty, super_operations->write_inode,
+> > __writeback_single_inode, writeback_sb_inodes, etc?
+> > - Audit.  As it happens, most of audit has a path or file that can be
+> > used.  We do run into problems with fsnotify.  fsnotify_move is called
+> > from vfs_rename which turns into a can of worms pretty quickly.
+> >
+> 
+> Can you please elaborate on that problem.
+> Do you mean when watching a directory for changes, you need to
+> be able to tell in which fs_view the directory inode that is being watched?
+
+Here Jeff is responding to Dave's suggestion that we use a vfsmount
+instead of the fs_view. You cannot get to a vfsmount from an inode or even
+dentry alone, so this implies that we'd be passing a vfsmount down a ton of
+code that otherwise doesn't care about it.
+
+fs_view has the advantage that it is accesible from the inode so those
+places which ONLY have an inode can easily get to the correct device (the
+code changes make this pretty clear).
+
+
+
+> >>> It makes sense for that to be above the
+> >>> superblock because the file system doesn't care about them.  We're
+> >>> interested in the inode namespace, which for every other file system can
+> >>> be described using an inode and a superblock pair, but btrfs has another
+> >>> layer in the middle: inode -> btrfs_root -> superblock.
+> >>
+> >> Which seems to me to be irrelevant if there's a vfsmount per
+> >> subvolume that can hold per-subvolume information.
+> >
+> > I disagree.  There are a ton of places where we only have access to an
+> > inode and only need access to an inode.  It also doesn't solve the
+> > overlayfs issue.
+> >
+> 
+> I have an interest of solving another problem.
+> In VFS operations where only inode is available, I would like to be able to
+> report fsnotify events (e.g. fsnotify_move()) only in directories under a
+> certain subtree root. That could be achieved either by bind mount the subtree
+> root and passing vfsmount into vfs_rename() or by defining an fs_view on the
+> subtree and mounting that fs_view.
+
+I'm not sure whether fs_view works for this. Taking a quick look at
+fsnotify, the state is already on the inode? If there's a globabl fsnotify
+state that needs to be per subtree than yes we could move that to the
+fs_view and you'd simply deref it from the inode struct.
+
+I hope this helps,
+	--Mark
