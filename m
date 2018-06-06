@@ -1,125 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L+hokINg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F0896037B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D76B96037B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752419AbeFFGHg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 02:07:36 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:35808 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbeFFGH2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 02:07:28 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 3/6] bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-Date: Wed, 6 Jun 2018 11:38:23 +0530
-Message-ID: <20180606060826.14671-4-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
+        id S1752237AbeFFFaE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 01:30:04 -0400
+Received: from mga01.intel.com ([192.55.52.88]:17519 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751909AbeFFFaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 01:30:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,482,1520924400";
+   d="scan'208";a="47648024"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shameerali.kolothum.thodi@huawei.com"
+        <shameerali.kolothum.thodi@huawei.com>
+Subject: RE: [RFC PATCH] iommu/vt-d: Exclude known RMRRs from reserved ranges
+Thread-Topic: [RFC PATCH] iommu/vt-d: Exclude known RMRRs from reserved
+ ranges
+Thread-Index: AQHT/QBl3FLhGzQJLU2PykJ/hFk0XaRSs5lw
+Date: Wed, 6 Jun 2018 05:29:58 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1911F88AD@SHSMSX101.ccr.corp.intel.com>
+References: <20180605190400.22732.2998.stgit@gimli.home>
+In-Reply-To: <20180605190400.22732.2998.stgit@gimli.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTA3NTk4YWYtZTBmYi00MjFiLTljM2QtYjdmNWIyYzVhNWQwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IlErNWNtNHRYd0lWWGlKWEVVSVg0cFQyWWZLK1o2QUxvaVJISFlaWjFZSVE9In0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dra76x MCAN generic interconnect module has a its own
-format for the bits in the control registers.
-
-Therefore add a new module type, new regbits and new capabilities
-specific to the MCAN module.
-
-Acked-by: Rob Herring <robh@kernel.org>
-CC: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- .../devicetree/bindings/bus/ti-sysc.txt        |  1 +
- drivers/bus/ti-sysc.c                          | 18 ++++++++++++++++++
- include/dt-bindings/bus/ti-sysc.h              |  2 ++
- include/linux/platform_data/ti-sysc.h          |  1 +
- 4 files changed, 22 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-index 2957a9ae291f..ebbb11144b7b 100644
---- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
-+++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-@@ -36,6 +36,7 @@ Required standard properties:
- 		"ti,sysc-omap-aes"
- 		"ti,sysc-mcasp"
- 		"ti,sysc-usb-host-fs"
-+		"ti,sysc-dra7-mcan"
- 
- - reg		shall have register areas implemented for the interconnect
- 		target module in question such as revision, sysc and syss
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 7cd2fd04b212..4a2244419b9b 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -1262,6 +1262,23 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
- 	.regbits = &sysc_regbits_omap4_usb_host_fs,
- };
- 
-+static const struct sysc_regbits sysc_regbits_dra7_mcan = {
-+	.dmadisable_shift = -ENODEV,
-+	.midle_shift = -ENODEV,
-+	.sidle_shift = -ENODEV,
-+	.clkact_shift = -ENODEV,
-+	.enwkup_shift = 4,
-+	.srst_shift = 0,
-+	.emufree_shift = -ENODEV,
-+	.autoidle_shift = -ENODEV,
-+};
-+
-+static const struct sysc_capabilities sysc_dra7_mcan = {
-+	.type = TI_SYSC_DRA7_MCAN,
-+	.sysc_mask = SYSC_DRA7_MCAN_ENAWAKEUP | SYSC_OMAP4_SOFTRESET,
-+	.regbits = &sysc_regbits_dra7_mcan,
-+};
-+
- static int sysc_init_pdata(struct sysc *ddata)
- {
- 	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-@@ -1441,6 +1458,7 @@ static const struct of_device_id sysc_match[] = {
- 	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
- 	{ .compatible = "ti,sysc-usb-host-fs",
- 	  .data = &sysc_omap4_usb_host_fs, },
-+	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
- 	{  },
- };
- MODULE_DEVICE_TABLE(of, sysc_match);
-diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
-index 2c005376ac0e..7138384e2ef9 100644
---- a/include/dt-bindings/bus/ti-sysc.h
-+++ b/include/dt-bindings/bus/ti-sysc.h
-@@ -15,6 +15,8 @@
- /* SmartReflex sysc found on 36xx and later */
- #define SYSC_OMAP3_SR_ENAWAKEUP		(1 << 26)
- 
-+#define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
-+
- /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
- #define SYSC_IDLE_FORCE			0
- #define SYSC_IDLE_NO			1
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
-index 80ce28d40832..1ea3aab972b4 100644
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -14,6 +14,7 @@ enum ti_sysc_module_type {
- 	TI_SYSC_OMAP4_SR,
- 	TI_SYSC_OMAP4_MCASP,
- 	TI_SYSC_OMAP4_USB_HOST_FS,
-+	TI_SYSC_DRA7_MCAN,
- };
- 
- struct ti_sysc_cookie {
--- 
-2.17.0
+PiBGcm9tOiBBbGV4IFdpbGxpYW1zb24NCj4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDYsIDIwMTgg
+MzowNyBBTQ0KPiANCj4gZGV2aWNlX2lzX3JtcnJfbG9ja2VkKCkgYWxsb3dzIGdyYXBoaWNzIGFu
+ZCBVU0IgZGV2aWNlcyB0byBwYXJ0aWNpcGF0ZQ0KPiBpbiB0aGUgSU9NTVUgQVBJIGRlc3BpdGUs
+IGFuZCBpZ25vcmluZyB0aGVpciBSTVJSIGFzc29jaWF0aW9uLCBob3dldmVyDQo+IGludGVsX2lv
+bW11X2dldF9yZXN2X3JlZ2lvbnMoKSBzdGlsbCBpbmNsdWRlcyB0aGUgUk1SUnMgYXMgdW5hdmFp
+bGFibGUNCj4gSU9WQSBzcGFjZSBmb3IgdGhlIGRldmljZS4gIEFyZSB3ZSBpZ25vcmluZyB0aGUg
+Uk1SUiBmb3IgdGhlc2UgZGV2aWNlcw0KPiBvciBhcmUgd2Ugbm90PyAgSWYgdmZpbyBzdGFydHMg
+Y29uc3VtaW5nIHJlc2VydmVkIHJlZ2lvbnMsIHBlcmhhcHMgd2UNCj4gbm8gbG9uZ2VyIG5lZWQg
+dG8gY29uc2lkZXIgZGV2aWNlcyB3aXRoIFJNUlJzIGV4Y2x1ZGVkIGZyb20gdGhlIElPTU1VDQo+
+IEFQSSBpbnRlcmZhY2UsIGJ1dCB3ZSBoYXZlIGEgdHJhbnNpdGlvbmFsIHByb2JsZW0gdGhhdCB0
+aGVzZSBhbGxvd2VkDQo+IGRldmljZXMgc3RpbGwgaW1wb3NlIGluY29tcGF0aWJsZSBJT1ZBIHJl
+c3RyaWN0aW9ucyBwZXIgdGhlIHJlc2VydmVkDQo+IHJlZ2lvbiByZXBvcnRpbmcuICBEaXZlIGZ1
+cnRoZXIgZG93biB0aGUgcmFiYml0IGhvbGUgYnkgYWxzbyBpZ25vcmluZw0KPiBSTVJScyBmb3Ig
+Imtub3duIiBkZXZpY2VzIGluIHRoZSByZXNlcnZlZCByZWdpb24gcmVwb3J0aW5nLg0KDQppbnRl
+bF9pb21tdV9nZXRfcmVzdl9yZWdpb25zIGlzIHVzZWQgbm90IGp1c3QgZm9yIElPTU1VIEFQSS4g
+SSdtDQphZnJhaWQgZG9pbmcgc28gd2lsbCBtYWtlIFJNUlIgY29tcGxldGVseSBpZ25vcmVkLCBl
+dmVuIGluIG5vcm1hbA0KRE1BIEFQSSBwYXRoLi4uDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFs
+ZXggV2lsbGlhbXNvbiA8YWxleC53aWxsaWFtc29uQHJlZGhhdC5jb20+DQo+IC0tLQ0KPiAgZHJp
+dmVycy9pb21tdS9pbnRlbC1pb21tdS5jIHwgICAzNSArKysrKysrKysrKysrKysrKysrKystLS0t
+LS0tLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKyksIDE0IGRlbGV0
+aW9ucygtKQ0KPiANCj4gSWYgdGhpcyBpcyB0aGUgYXBwcm9hY2ggd2Ugd2FudCB0byB0YWtlLCBJ
+IGNvdWxkIHB1bGwgdGhpcyBpbiB2aWEgdGhlDQo+IHZmaW8gdHJlZSwgYWxvbmcgd2l0aCBTaGFt
+ZWVyJ3MgcGF0Y2hlcyB3aGljaCBleHBvc2UgYW4gSU9WQSBsaXN0IGFuZA0KPiBlbmZvcmNlIGl0
+IHRvIHVzZXJzcGFjZSwgb3RoZXJ3aXNlIEknbSBhZnJhaWQgU2hhbWVlcidzIHBhdGNoZXMgd2ls
+bA0KPiBiZSBibG9ja2VkIGEgd2hpbGUgbG9uZ2VyLiAgVGhhbmtzLA0KPiANCj4gQWxleA0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW9tbXUvaW50ZWwtaW9tbXUuYyBiL2RyaXZlcnMvaW9t
+bXUvaW50ZWwtaW9tbXUuYw0KPiBpbmRleCA3NDlkOGYyMzUzNDYuLmYzMTJmOTMxOTljNSAxMDA2
+NDQNCj4gLS0tIGEvZHJpdmVycy9pb21tdS9pbnRlbC1pb21tdS5jDQo+ICsrKyBiL2RyaXZlcnMv
+aW9tbXUvaW50ZWwtaW9tbXUuYw0KPiBAQCAtMjg2NCwxOSArMjg2NCwyNCBAQCBzdGF0aWMgYm9v
+bCBkZXZpY2VfaGFzX3JtcnIoc3RydWN0IGRldmljZSAqZGV2KQ0KPiAgICogYW55IHVzZSBvZiB0
+aGUgUk1SUiByZWdpb25zIHdpbGwgYmUgdG9ybiBkb3duIGJlZm9yZSBhc3NpZ25pbmcgdGhlDQo+
+IGRldmljZQ0KPiAgICogdG8gYSBndWVzdC4NCj4gICAqLw0KPiAtc3RhdGljIGJvb2wgZGV2aWNl
+X2lzX3JtcnJfbG9ja2VkKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gK3N0YXRpYyBib29sIHJtcnJf
+aXNfaWdub3JlZChzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ICB7DQo+IC0JaWYgKCFkZXZpY2VfaGFz
+X3JtcnIoZGV2KSkNCj4gLQkJcmV0dXJuIGZhbHNlOw0KPiAtDQo+ICAJaWYgKGRldl9pc19wY2ko
+ZGV2KSkgew0KPiAgCQlzdHJ1Y3QgcGNpX2RldiAqcGRldiA9IHRvX3BjaV9kZXYoZGV2KTsNCj4g
+DQo+ICAJCWlmIChJU19VU0JfREVWSUNFKHBkZXYpIHx8IElTX0dGWF9ERVZJQ0UocGRldikpDQo+
+IC0JCQlyZXR1cm4gZmFsc2U7DQo+ICsJCQlyZXR1cm4gdHJ1ZTsNCj4gIAl9DQo+IA0KPiAtCXJl
+dHVybiB0cnVlOw0KPiArCXJldHVybiBmYWxzZTsNCj4gK30NCj4gKw0KPiArc3RhdGljIGJvb2wg
+ZGV2aWNlX2lzX3JtcnJfbG9ja2VkKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gK3sNCj4gKwlpZiAo
+IWRldmljZV9oYXNfcm1ycihkZXYpKQ0KPiArCQlyZXR1cm4gZmFsc2U7DQo+ICsNCj4gKwlyZXR1
+cm4gIXJtcnJfaXNfaWdub3JlZChkZXYpOw0KPiAgfQ0KPiANCj4gIHN0YXRpYyBpbnQgaW9tbXVf
+c2hvdWxkX2lkZW50aXR5X21hcChzdHJ1Y3QgZGV2aWNlICpkZXYsIGludCBzdGFydHVwKQ0KPiBA
+QCAtNTE0MSwxNyArNTE0NiwxOSBAQCBzdGF0aWMgdm9pZA0KPiBpbnRlbF9pb21tdV9nZXRfcmVz
+dl9yZWdpb25zKHN0cnVjdCBkZXZpY2UgKmRldmljZSwNCj4gIAlzdHJ1Y3QgZGV2aWNlICppX2Rl
+djsNCj4gIAlpbnQgaTsNCj4gDQo+IC0JcmN1X3JlYWRfbG9jaygpOw0KPiAtCWZvcl9lYWNoX3Jt
+cnJfdW5pdHMocm1ycikgew0KPiAtCQlmb3JfZWFjaF9hY3RpdmVfZGV2X3Njb3BlKHJtcnItPmRl
+dmljZXMsIHJtcnItDQo+ID5kZXZpY2VzX2NudCwNCj4gLQkJCQkJICBpLCBpX2Rldikgew0KPiAt
+CQkJaWYgKGlfZGV2ICE9IGRldmljZSkNCj4gLQkJCQljb250aW51ZTsNCj4gKwlpZiAoIXJtcnJf
+aXNfaWdub3JlZChkZXZpY2UpKSB7DQo+ICsJCXJjdV9yZWFkX2xvY2soKTsNCj4gKwkJZm9yX2Vh
+Y2hfcm1ycl91bml0cyhybXJyKSB7DQo+ICsJCQlmb3JfZWFjaF9hY3RpdmVfZGV2X3Njb3BlKHJt
+cnItPmRldmljZXMsDQo+ICsJCQkJCQkgIHJtcnItPmRldmljZXNfY250LCBpLCBpX2RldikNCj4g
+ew0KPiArCQkJCWlmIChpX2RldiAhPSBkZXZpY2UpDQo+ICsJCQkJCWNvbnRpbnVlOw0KPiANCj4g
+LQkJCWxpc3RfYWRkX3RhaWwoJnJtcnItPnJlc3YtPmxpc3QsIGhlYWQpOw0KPiArCQkJCWxpc3Rf
+YWRkX3RhaWwoJnJtcnItPnJlc3YtPmxpc3QsIGhlYWQpOw0KPiArCQkJfQ0KPiAgCQl9DQo+ICsJ
+CXJjdV9yZWFkX3VubG9jaygpOw0KPiAgCX0NCj4gLQlyY3VfcmVhZF91bmxvY2soKTsNCj4gDQo+
+ICAJcmVnID0gaW9tbXVfYWxsb2NfcmVzdl9yZWdpb24oSU9BUElDX1JBTkdFX1NUQVJULA0KPiAg
+CQkJCSAgICAgIElPQVBJQ19SQU5HRV9FTkQgLQ0KPiBJT0FQSUNfUkFOR0VfU1RBUlQgKyAxLA0K
+DQo=
