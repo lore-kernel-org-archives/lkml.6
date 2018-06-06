@@ -1,192 +1,313 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwcJbOYw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 762C96086B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7CCE601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932191AbeFFEjv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 00:39:51 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43520 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932143AbeFFEjs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 00:39:48 -0400
-X-Google-Smtp-Source: ADUXVKIoU8UDEhJ0c3XTDCZ8b2Z0fZmc5faeHOIs3bNXsMXsUAnIGHaqJcIir+rAkB0jOznBZi/mhQ==
-From: Jun Yao <yaojun8558363@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, labbott@redhat.com,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH v3 3/3] arm64/mm: migrate swapper_pg_dir and tramp_pg_dir
-Date: Wed,  6 Jun 2018 12:39:21 +0800
-Message-Id: <20180606043921.19851-4-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180606043921.19851-1-yaojun8558363@gmail.com>
-References: <20180606043921.19851-1-yaojun8558363@gmail.com>
+        id S1753776AbeFFRAs (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 13:00:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46950 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753349AbeFFRAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 13:00:45 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
+        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
+        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [RFC PATCH ghak90 (was ghak32) V3 01/10] audit: add container id
+Date: Wed,  6 Jun 2018 12:58:28 -0400
+Message-Id: <0377c3ced6bdbc44fe17f9a5679cb6eda4304024.1528304203.git.rgb@redhat.com>
+In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
+References: <cover.1528304203.git.rgb@redhat.com>
+In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
+References: <cover.1528304203.git.rgb@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Migrate swapper_pg_dir and tramp_pg_dir. And their virtual addresses
-do not correlate with kernel's address.
+Implement the proc fs write to set the audit container identifier of a
+process, emitting an AUDIT_CONTAINER_ID record to document the event.
 
-Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
+This is a write from the container orchestrator task to a proc entry of
+the form /proc/PID/audit_containerid where PID is the process ID of the
+newly created task that is to become the first task in a container, or
+an additional task added to a container.
+
+The write expects up to a u64 value (unset: 18446744073709551615).
+
+The writer must have capability CAP_AUDIT_CONTROL.
+
+This will produce a record such as this:
+  type=CONTAINER_ID msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 old-contid=18446744073709551615 contid=123456 pid=628 auid=root uid=root tty=ttyS0 ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 comm=bash exe=/usr/bin/bash res=yes
+
+The "op" field indicates an initial set.  The "pid" to "ses" fields are
+the orchestrator while the "opid" field is the object's PID, the process
+being "contained".  Old and new audit container identifier values are
+given in the "contid" fields, while res indicates its success.
+
+It is not permitted to unset or re-set the audit container identifier.
+A child inherits its parent's audit container identifier, but then can
+be set only once after.
+
+See: https://github.com/linux-audit/audit-kernel/issues/90
+See: https://github.com/linux-audit/audit-userspace/issues/51
+See: https://github.com/linux-audit/audit-testsuite/issues/64
+See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 ---
- arch/arm64/include/asm/pgtable.h |  1 +
- arch/arm64/mm/mmu.c              | 79 +++++++++++++++++++++-----------
- 2 files changed, 52 insertions(+), 28 deletions(-)
+ fs/proc/base.c             | 37 ++++++++++++++++++++++++
+ include/linux/audit.h      | 25 ++++++++++++++++
+ include/uapi/linux/audit.h |  2 ++
+ kernel/auditsc.c           | 71 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 135 insertions(+)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 2bda899dcf22..b032d6c2e390 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -722,6 +722,7 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
- extern pgd_t swapper_pg_end[];
- extern pgd_t idmap_pg_dir[PTRS_PER_PGD];
- extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
-+extern pgd_t reserved_ttbr0[PTRS_PER_PGD];
- extern volatile phys_addr_t __pa_swapper_pg_dir;
- extern pgd_t *new_swapper_pg_dir;
- 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 94056e064c6f..ba0b55158971 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -63,6 +63,9 @@ volatile phys_addr_t __section(".mmuoff.data.read")
- __pa_swapper_pg_dir;
- 
- pgd_t *new_swapper_pg_dir = swapper_pg_dir;
-+#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+pgd_t *new_tramp_pg_dir;
-+#endif
- 
- /*
-  * Empty_zero_page is a special page that is used for zero-initialized data
-@@ -86,19 +89,14 @@ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
- }
- EXPORT_SYMBOL(phys_mem_access_prot);
- 
--static phys_addr_t __init early_pgtable_alloc(void)
-+static void __init clear_page_phys(phys_addr_t phys)
- {
--	phys_addr_t phys;
--	void *ptr;
--
--	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
--
- 	/*
- 	 * The FIX_{PGD,PUD,PMD} slots may be in active use, but the FIX_PTE
- 	 * slot will be free, so we can (ab)use the FIX_PTE slot to initialise
- 	 * any level of table.
- 	 */
--	ptr = pte_set_fixmap(phys);
-+	void *ptr = pte_set_fixmap(phys);
- 
- 	memset(ptr, 0, PAGE_SIZE);
- 
-@@ -107,6 +105,14 @@ static phys_addr_t __init early_pgtable_alloc(void)
- 	 * table walker
- 	 */
- 	pte_clear_fixmap();
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index eafa39a..318dff4 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1302,6 +1302,41 @@ static ssize_t proc_sessionid_read(struct file * file, char __user * buf,
+ 	.read		= proc_sessionid_read,
+ 	.llseek		= generic_file_llseek,
+ };
++
++static ssize_t proc_contid_write(struct file *file, const char __user *buf,
++				   size_t count, loff_t *ppos)
++{
++	struct inode *inode = file_inode(file);
++	u64 contid;
++	int rv;
++	struct task_struct *task = get_proc_task(inode);
++
++	if (!task)
++		return -ESRCH;
++	if (*ppos != 0) {
++		/* No partial writes. */
++		put_task_struct(task);
++		return -EINVAL;
++	}
++
++	rv = kstrtou64_from_user(buf, count, 10, &contid);
++	if (rv < 0) {
++		put_task_struct(task);
++		return rv;
++	}
++
++	rv = audit_set_contid(task, contid);
++	put_task_struct(task);
++	if (rv < 0)
++		return rv;
++	return count;
 +}
 +
-+static phys_addr_t __init early_pgtable_alloc(void)
-+{
-+	phys_addr_t phys;
++static const struct file_operations proc_contid_operations = {
++	.write		= proc_contid_write,
++	.llseek		= generic_file_llseek,
++};
 +
-+	phys = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
-+	clear_page_phys(phys);
+ #endif
  
- 	return phys;
- }
-@@ -560,6 +566,10 @@ static int __init map_entry_trampoline(void)
- 	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
- 			     prot, pgd_pgtable_alloc, 0);
+ #ifdef CONFIG_FAULT_INJECTION
+@@ -2995,6 +3030,7 @@ static int proc_pid_patch_state(struct seq_file *m, struct pid_namespace *ns,
+ #ifdef CONFIG_AUDITSYSCALL
+ 	REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
+ 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
++	REG("audit_containerid", S_IWUSR, proc_contid_operations),
+ #endif
+ #ifdef CONFIG_FAULT_INJECTION
+ 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
+@@ -3386,6 +3422,7 @@ static int proc_tid_comm_permission(struct inode *inode, int mask)
+ #ifdef CONFIG_AUDITSYSCALL
+ 	REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
+ 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
++	REG("audit_containerid", S_IWUSR, proc_contid_operations),
+ #endif
+ #ifdef CONFIG_FAULT_INJECTION
+ 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 4f824c4..497cd81 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -219,6 +219,8 @@ static inline void audit_log_task_info(struct audit_buffer *ab,
+ struct audit_task_info {
+ 	kuid_t			loginuid;
+ 	unsigned int		sessionid;
++	u64			contid;
++	bool			inherited; /* containerid inheritance */
+ 	struct audit_context	*ctx;
+ };
+ extern struct audit_task_info init_struct_audit;
+@@ -331,6 +333,7 @@ static inline void audit_ptrace(struct task_struct *t)
+ extern int auditsc_get_stamp(struct audit_context *ctx,
+ 			      struct timespec64 *t, unsigned int *serial);
+ extern int audit_set_loginuid(kuid_t loginuid);
++extern int audit_set_contid(struct task_struct *tsk, u64 contid);
  
-+	memcpy(new_tramp_pg_dir, tramp_pg_dir, PGD_SIZE);
-+	memblock_free(__pa_symbol(tramp_pg_dir),
-+		__pa_symbol(swapper_pg_dir) - __pa_symbol(tramp_pg_dir));
-+
- 	/* Map both the text and data into the kernel page table */
- 	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
- 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
-@@ -637,10 +647,29 @@ static void __init map_kernel(pgd_t *pgdp)
-  */
- void __init paging_init(void)
+ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
  {
--	phys_addr_t pgd_phys = early_pgtable_alloc();
--	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
-+	phys_addr_t pgd_phys;
-+	pgd_t *pgdp;
-+	phys_addr_t mem_size;
- 
--	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
-+	mem_size = __pa_symbol(swapper_pg_dir) + PAGE_SIZE
-+			- (__pa_symbol(idmap_pg_dir) + IDMAP_DIR_SIZE);
-+
-+	if (mem_size == PAGE_SIZE) {
-+		pgd_phys = early_pgtable_alloc();
-+		__pa_swapper_pg_dir = pgd_phys;
-+	} else {
-+		phys_addr_t p;
-+
-+		pgd_phys = memblock_alloc(mem_size, PAGE_SIZE);
-+
-+		for (p = pgd_phys; p < pgd_phys + mem_size; p += PAGE_SIZE)
-+			clear_page_phys(p);
-+
-+		#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-+		new_tramp_pg_dir = __va(pgd_phys);
-+		#endif
-+		__pa_swapper_pg_dir = pgd_phys + mem_size - PAGE_SIZE;
-+	}
- 
- 	/*
- 	 * We need to clean '__pa_swapper_pg_dir' to the PoC, so that
-@@ -649,31 +678,25 @@ void __init paging_init(void)
- 	__flush_dcache_area((void *)&__pa_swapper_pg_dir,
- 			    sizeof(__pa_swapper_pg_dir));
- 
-+	new_swapper_pg_dir = __va(__pa_swapper_pg_dir);
-+
-+	pgdp = pgd_set_fixmap(__pa_swapper_pg_dir);
-+
- 	map_kernel(pgdp);
- 	map_mem(pgdp);
- 
--	/*
--	 * We want to reuse the original swapper_pg_dir so we don't have to
--	 * communicate the new address to non-coherent secondaries in
--	 * secondary_entry, and so cpu_switch_mm can generate the address with
--	 * adrp+add rather than a load from some global variable.
--	 *
--	 * To do this we need to go via a temporary pgd.
--	 */
--	cpu_replace_ttbr1(pgd_phys);
--	memcpy(swapper_pg_dir, pgdp, PGD_SIZE);
- 	cpu_replace_ttbr1(__pa_swapper_pg_dir);
-+	init_mm.pgd = new_swapper_pg_dir;
- 
- 	pgd_clear_fixmap();
--	memblock_free(pgd_phys, PAGE_SIZE);
- 
--	/*
--	 * We only reuse the PGD from the swapper_pg_dir, not the pud + pmd
--	 * allocated with it.
--	 */
--	memblock_free(__pa_symbol(swapper_pg_dir) + PAGE_SIZE,
--		      __pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir)
--		      - PAGE_SIZE);
-+#ifdef CONFIG_ARM64_SW_TTBR0_PAN
-+	memblock_free(__pa_symbol(reserved_ttbr0), RESERVED_TTBR0_SIZE);
-+#endif
-+
-+	memblock_free(__pa_symbol(swapper_pg_dir),
-+		__pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir));
-+
+@@ -348,6 +351,14 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+ 		return AUDIT_SID_UNSET;
  }
  
- /*
++static inline u64 audit_get_contid(struct task_struct *tsk)
++{
++	if (!tsk->audit)
++		return AUDIT_CID_UNSET;
++	else
++		return tsk->audit->contid;
++}
++
+ extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
+ extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, umode_t mode);
+ extern void __audit_bprm(struct linux_binprm *bprm);
+@@ -542,6 +553,10 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+ {
+ 	return AUDIT_SID_UNSET;
+ }
++static inline kuid_t audit_get_contid(struct task_struct *tsk)
++{
++	return AUDIT_CID_UNSET;
++}
+ static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+ { }
+ static inline void audit_ipc_set_perm(unsigned long qbytes, uid_t uid,
+@@ -606,6 +621,16 @@ static inline bool audit_loginuid_set(struct task_struct *tsk)
+ 	return uid_valid(audit_get_loginuid(tsk));
+ }
+ 
++static inline bool cid_valid(u64 contid)
++{
++	return contid != AUDIT_CID_UNSET;
++}
++
++static inline bool audit_contid_set(struct task_struct *tsk)
++{
++	return cid_valid(audit_get_contid(tsk));
++}
++
+ static inline void audit_log_string(struct audit_buffer *ab, const char *buf)
+ {
+ 	audit_log_n_string(ab, buf, strlen(buf));
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 04f9bd2..c3b1aca 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -71,6 +71,7 @@
+ #define AUDIT_TTY_SET		1017	/* Set TTY auditing status */
+ #define AUDIT_SET_FEATURE	1018	/* Turn an audit feature on or off */
+ #define AUDIT_GET_FEATURE	1019	/* Get which features are enabled */
++#define AUDIT_CONTAINER_ID	1020	/* Define the container id and information */
+ 
+ #define AUDIT_FIRST_USER_MSG	1100	/* Userspace messages mostly uninteresting to kernel */
+ #define AUDIT_USER_AVC		1107	/* We filter this differently */
+@@ -466,6 +467,7 @@ struct audit_tty_status {
+ 
+ #define AUDIT_UID_UNSET (unsigned int)-1
+ #define AUDIT_SID_UNSET ((unsigned int)-1)
++#define AUDIT_CID_UNSET ((u64)-1)
+ 
+ /* audit_rule_data supports filter rules with both integer and string
+  * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 59ef7a81..611e926 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -956,6 +956,8 @@ int audit_alloc(struct task_struct *tsk)
+ 		return -ENOMEM;
+ 	info->loginuid = audit_get_loginuid(current);
+ 	info->sessionid = audit_get_sessionid(current);
++	info->contid = audit_get_contid(current);
++	info->inherited = true;
+ 	tsk->audit = info;
+ 
+ 	if (likely(!audit_ever_enabled))
+@@ -985,6 +987,8 @@ int audit_alloc(struct task_struct *tsk)
+ struct audit_task_info init_struct_audit = {
+ 	.loginuid = INVALID_UID,
+ 	.sessionid = AUDIT_SID_UNSET,
++	.contid = AUDIT_CID_UNSET,
++	.inherited = true,
+ 	.ctx = NULL,
+ };
+ 
+@@ -2112,6 +2116,73 @@ int audit_set_loginuid(kuid_t loginuid)
+ }
+ 
+ /**
++ * audit_set_contid - set current task's audit_context contid
++ * @contid: contid value
++ *
++ * Returns 0 on success, -EPERM on permission failure.
++ *
++ * Called (set) from fs/proc/base.c::proc_contid_write().
++ */
++int audit_set_contid(struct task_struct *task, u64 contid)
++{
++	u64 oldcontid;
++	int rc = 0;
++	struct audit_buffer *ab;
++	uid_t uid;
++	struct tty_struct *tty;
++	char comm[sizeof(current->comm)];
++
++	/* Can't set if audit disabled */
++	if (!task->audit)
++		return -ENOPROTOOPT;
++	oldcontid = audit_get_contid(task);
++	/* Don't allow the audit containerid to be unset */
++	if (!cid_valid(contid))
++		rc = -EINVAL;
++	/* if we don't have caps, reject */
++	else if (!capable(CAP_AUDIT_CONTROL))
++		rc = -EPERM;
++	/* if task has children or is not single-threaded, deny */
++	else if (!list_empty(&task->children))
++		rc = -EBUSY;
++	else if (!(thread_group_leader(task) && thread_group_empty(task)))
++		rc = -EALREADY;
++	/* it is already set, and not inherited from the parent, reject */
++	else if (cid_valid(oldcontid) && !task->audit->inherited)
++		rc = -EEXIST;
++	if (!rc) {
++		task_lock(task);
++		task->audit->contid = contid;
++		task->audit->inherited = false;
++		task_unlock(task);
++	}
++
++	if (!audit_enabled)
++		return rc;
++
++	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_ID);
++	if (!ab)
++		return rc;
++
++	uid = from_kuid(&init_user_ns, task_uid(current));
++	tty = audit_get_tty(current);
++	audit_log_format(ab, "op=set opid=%d old-contid=%llu contid=%llu pid=%d uid=%u auid=%u tty=%s ses=%u",
++			 task_tgid_nr(task), oldcontid, contid,
++			 task_tgid_nr(current), uid
++			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
++			 tty ? tty_name(tty) : "(none)",
++			 audit_get_sessionid(current));
++	audit_put_tty(tty);
++	audit_log_task_context(ab);
++	audit_log_format(ab, " comm=");
++	audit_log_untrustedstring(ab, get_task_comm(comm, current));
++	audit_log_d_path_exe(ab, current->mm);
++	audit_log_format(ab, " res=%d", !rc);
++	audit_log_end(ab);
++	return rc;
++}
++
++/**
+  * __audit_mq_open - record audit data for a POSIX MQ open
+  * @oflag: open flag
+  * @mode: mode bits
 -- 
-2.17.0
+1.8.3.1
