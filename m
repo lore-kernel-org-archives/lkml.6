@@ -1,139 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOakwdgY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 360AE606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 432D0607B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752224AbeFFOW1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 10:22:27 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37018 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbeFFOW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 10:22:26 -0400
-X-Google-Smtp-Source: ADUXVKIVOzGJYCMQLB4ysDh2gKldwudXIiuADVKoZSi16J9rXvxIJ2mR67cAy4o+eEO8pDJvKjbFKA==
-Date: Wed, 6 Jun 2018 19:54:44 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: willy@infradead.org, clm@fb.com, jbacik@fb.com, dsterba@suse.com,
-        dsterba@suse.cz
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] fs: btrfs: Change return type to vm_fault_t
-Message-ID: <20180606142444.GA3806@jordon-HP-15-Notebook-PC>
+        id S1752056AbeFFNvU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 09:51:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55936 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751533AbeFFNvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 09:51:18 -0400
+Date: Wed, 6 Jun 2018 15:51:16 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Kohli, Gaurav" <gkohli@codeaurora.org>, tglx@linutronix.de,
+        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
+ wakeup
+Message-ID: <20180606135115.GA4609@redhat.com>
+References: <20180502082011.GB12180@hirez.programming.kicks-ass.net>
+ <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
+ <cdd5d434-9c11-7c19-2895-0f7f3811eb11@codeaurora.org>
+ <55221a5b-dd52-3359-f582-86830dd9f205@codeaurora.org>
+ <ba12bc49-33c0-b4ee-05cf-f84124bd66cc@codeaurora.org>
+ <20180605150841.GA24053@redhat.com>
+ <20180605152212.GY12180@hirez.programming.kicks-ass.net>
+ <20180605154053.GB12235@hirez.programming.kicks-ass.net>
+ <20180605163515.GB24053@redhat.com>
+ <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180605201316.GZ12198@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On 06/05, Peter Zijlstra wrote:
+>
+> Also, I think we still need TASK_PARKED as a special state for that.
 
-Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+I think it would be nice to kill the TASK_PARKED state altogether. But I don't
+know how. I'll try to look at this code later, but I am not sure I will find a
+way to cleanup it...
 
-vmf_error() is the newly introduce inline function
-in 4.17-rc6.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
-v2: ret2 is the new temp variable to handle
-    temporary return value within btrfs_page_mkwrite
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -177,12 +177,24 @@ void *kthread_probe_data(struct task_struct *task)
+>  static void __kthread_parkme(struct kthread *self)
+>  {
+>  	for (;;) {
+> -		set_current_state(TASK_PARKED);
+> +		/*
+> +		 * TASK_PARKED is a special state; we must serialize against
+> +		 * possible pending wakeups to avoid store-store collisions on
+> +		 * task->state.
+> +		 *
+> +		 * Such a collision might possibly result in the task state
+> +		 * changin from TASK_PARKED and us failing the
+> +		 * wait_task_inactive() in kthread_park().
+> +		 */
+> +		set_special_state(TASK_PARKED);
 
- fs/btrfs/ctree.h |  2 +-
- fs/btrfs/inode.c | 26 ++++++++++++--------------
- 2 files changed, 13 insertions(+), 15 deletions(-)
+Agreed,
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 0d422c9..1f52d9fd 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3218,7 +3218,7 @@ int btrfs_merge_bio_hook(struct page *page, unsigned long offset,
- 			 size_t size, struct bio *bio,
- 			 unsigned long bio_flags);
- void btrfs_set_range_writeback(void *private_data, u64 start, u64 end);
--int btrfs_page_mkwrite(struct vm_fault *vmf);
-+vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf);
- int btrfs_readpage(struct file *file, struct page *page);
- void btrfs_evict_inode(struct inode *inode);
- int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 0b86cf1..d9c21e0 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8873,7 +8873,7 @@ static void btrfs_invalidatepage(struct page *page, unsigned int offset,
-  * beyond EOF, then the page is guaranteed safe against truncation until we
-  * unlock the page.
-  */
--int btrfs_page_mkwrite(struct vm_fault *vmf)
-+vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
-@@ -8885,8 +8885,9 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
- 	char *kaddr;
- 	unsigned long zero_start;
- 	loff_t size;
--	int ret;
-+	int ret2;
- 	int reserved = 0;
-+	vm_fault_t ret;
- 	u64 reserved_space;
- 	u64 page_start;
- 	u64 page_end;
-@@ -8907,17 +8908,14 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
- 	 * end up waiting indefinitely to get a lock on the page currently
- 	 * being processed by btrfs_page_mkwrite() function.
- 	 */
--	ret = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
-+	ret2 = btrfs_delalloc_reserve_space(inode, &data_reserved, page_start,
- 					   reserved_space);
--	if (!ret) {
--		ret = file_update_time(vmf->vma->vm_file);
-+	if (!ret2) {
-+		ret2 = file_update_time(vmf->vma->vm_file);
- 		reserved = 1;
- 	}
--	if (ret) {
--		if (ret == -ENOMEM)
--			ret = VM_FAULT_OOM;
--		else /* -ENOSPC, -EIO, etc */
--			ret = VM_FAULT_SIGBUS;
-+	if (ret2) {
-+		ret = vmf_error(ret2);
- 		if (reserved)
- 			goto out;
- 		goto out_noreserve;
-@@ -8976,15 +8974,15 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
- 			  EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
- 			  0, 0, &cached_state);
- 
--	ret = btrfs_set_extent_delalloc(inode, page_start, end, 0,
-+	ret2 = btrfs_set_extent_delalloc(inode, page_start, end, 0,
- 					&cached_state, 0);
--	if (ret) {
-+	if (ret2) {
- 		unlock_extent_cached(io_tree, page_start, page_end,
- 				     &cached_state);
- 		ret = VM_FAULT_SIGBUS;
- 		goto out_unlock;
- 	}
--	ret = 0;
-+	ret2 = 0;
- 
- 	/* page is wholly or partially inside EOF */
- 	if (page_start + PAGE_SIZE > size)
-@@ -9009,7 +9007,7 @@ int btrfs_page_mkwrite(struct vm_fault *vmf)
- 	unlock_extent_cached(io_tree, page_start, page_end, &cached_state);
- 
- out_unlock:
--	if (!ret) {
-+	if (!ret2) {
- 		btrfs_delalloc_release_extents(BTRFS_I(inode), PAGE_SIZE, true);
- 		sb_end_pagefault(inode->i_sb);
- 		extent_changeset_free(data_reserved);
--- 
-1.9.1
+>  		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+>  			break;
+> +
+> +		complete_all(&self->parked);
+>  		schedule();
+>  	}
+>  	__set_current_state(TASK_RUNNING);
+> +	reinit_completion(&self->parked);
+
+But how can we know that all the callers of kthread_park() have already returned
+from wait_for_completion() ?
+
+Oh. The very fact that __kthread_parkme() does complete_all() proves that we need
+some serious cleanups. In particular, I think that kthread_park() on a parked kthread
+must not be possible.
+
+Just look at this code. It looks as if __kthread_parkme() can race with _unpark()
+and thus we need this wait-event-like loop.
+
+But if it can race with _unpark() then kthread_park() can block forever.
+
+
+For the start, can't we change kthread_park()
+
+	-	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+	+ 	if (test_and_set_bit(...))
+	+		return -EAGAIN;
+
+and s/complete_all/complete/ in __kthread_parkme() ?
+
+IIUC, this will only affect smpboot_update_cpumask_percpu_thread() which can hit
+an already parked thread, but it doesn't need to wait.
+
+And it seems that smpboot_update_cpumask_percpu_thread() in turn needs some cleanups.
+Hmm. and its single user: kernel/watchdog.c.
+
+And speaking of watchdog.c, can't we simply kill the "watchdog/%u" threads? This is
+off-topic, but can't watchdog_timer_fn() use stop_one_cpu_nowait(watchdog) ?
+
+And I really think we should unexport kthread_park/unpark(), only smpboot_thread_fn()
+should use them. kthread() should not play with __kthread_parkme(). And even
+KTHREAD_SHOULD_PARK must die, I mean it should live in struct smp_hotplug_thread,
+not in struct kthread.
+
+OK, this is off-topic too.
+
+In short, I think this patch is fine but I didn't read it carefully, will try tomorrow.
+
+And, let me repeat, can't we avoid complete_all() ?
+
+Oleg.
