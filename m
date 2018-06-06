@@ -1,119 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94E1E601D9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A89D605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933628AbeFFRBN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 13:01:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53214 "EHLO mx1.redhat.com"
+        id S932089AbeFFCWP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Tue, 5 Jun 2018 22:22:15 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8698 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752390AbeFFRBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 13:01:09 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org
-Cc: luto@kernel.org, jlayton@redhat.com, carlos@redhat.com,
-        viro@zeniv.linux.org.uk, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak90 (was ghak32) V3 04/10] audit: add support for non-syscall auxiliary records
-Date: Wed,  6 Jun 2018 12:58:31 -0400
-Message-Id: <dcd3d6e27c4beb8aec11805faeb4de7013132bd7.1528304204.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
-In-Reply-To: <cover.1528304203.git.rgb@redhat.com>
-References: <cover.1528304203.git.rgb@redhat.com>
+        id S1752424AbeFFCWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 22:22:14 -0400
+Subject: [PATCH v3 21/21] sparc64: use match_string() helper
+To: <linux-kernel@vger.kernel.org>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-22-git-send-email-xieyisheng1@huawei.com>
+CC: <andy.shevchenko@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        <sparclinux@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <80339b72-902f-a74e-6ad2-28744c7760cb@huawei.com>
+Date: Wed, 6 Jun 2018 10:19:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
+MIME-Version: 1.0
+In-Reply-To: <1527765086-19873-22-git-send-email-xieyisheng1@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Standalone audit records have the timestamp and serial number generated
-on the fly and as such are unique, making them standalone.  This new
-function audit_alloc_local() generates a local audit context that will
-be used only for a standalone record and its auxiliary record(s).  The
-context is discarded immediately after the local associated records are
-produced.
+match_string() returns the index of an array for a matching string,
+which can be used instead of open coded variant.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: sparclinux@vger.kernel.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
 ---
- include/linux/audit.h |  8 ++++++++
- kernel/auditsc.c      | 25 +++++++++++++++++++++++--
- 2 files changed, 31 insertions(+), 2 deletions(-)
+v3:
+ - add string literal instead of NULL for array hwcaps to make it
+   can use match_string() too.  - per Andy
+v2
+ - new add for use match_string() helper patchset.
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index ab50985..f549121 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -232,7 +232,9 @@ struct audit_task_info {
- extern struct audit_task_info init_struct_audit;
- extern void __init audit_task_init(void);
- extern int  audit_alloc(struct task_struct *task);
-+extern struct audit_context *audit_alloc_local(void);
- extern void audit_free(struct task_struct *task);
-+extern void audit_free_context(struct audit_context *context);
- extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
- 				  unsigned long a2, unsigned long a3);
- extern void __audit_syscall_exit(int ret_success, long ret_value);
-@@ -493,6 +495,12 @@ static inline int audit_alloc(struct task_struct *task)
- {
- 	return 0;
- }
-+static inline struct audit_context *audit_alloc_local(void)
-+{
-+	return NULL;
-+}
-+static inline void audit_free_context(struct audit_context *context)
-+{ }
- static inline void audit_free(struct task_struct *task)
- { }
- static inline void audit_syscall_entry(int major, unsigned long a0,
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index cface9d..81c9765 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -916,8 +916,11 @@ static inline void audit_free_aux(struct audit_context *context)
- static inline struct audit_context *audit_alloc_context(enum audit_state state)
- {
- 	struct audit_context *context;
-+	gfp_t gfpflags;
- 
--	context = kzalloc(sizeof(*context), GFP_KERNEL);
-+	/* We can be called in atomic context via audit_tg() */
-+	gfpflags = (in_atomic() || irqs_disabled()) ? GFP_ATOMIC : GFP_KERNEL;
-+	context = kzalloc(sizeof(*context), gfpflags);
- 	if (!context)
- 		return NULL;
- 	context->state = state;
-@@ -993,8 +996,26 @@ struct audit_task_info init_struct_audit = {
- 	.ctx = NULL,
+ arch/sparc/kernel/setup_64.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
+
+diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
+index 7944b3c..4f0ec0c 100644
+--- a/arch/sparc/kernel/setup_64.c
++++ b/arch/sparc/kernel/setup_64.c
+@@ -401,7 +401,7 @@ void __init start_early_boot(void)
+ 	 */
+ 	"mul32", "div32", "fsmuld", "v8plus", "popc", "vis", "vis2",
+ 	"ASIBlkInit", "fmaf", "vis3", "hpc", "random", "trans", "fjfmau",
+-	"ima", "cspare", "pause", "cbcond", NULL /*reserved for crypto */,
++	"ima", "cspare", "pause", "cbcond", "resv" /*reserved for crypto */,
+ 	"adp",
  };
- 
--static inline void audit_free_context(struct audit_context *context)
-+struct audit_context *audit_alloc_local(void)
- {
-+	struct audit_context *context;
-+
-+	if (!audit_ever_enabled)
-+		return NULL; /* Return if not auditing. */
-+
-+	context = audit_alloc_context(AUDIT_RECORD_CONTEXT);
-+	if (!context)
-+		return NULL;
-+	context->serial = audit_serial();
-+	context->ctime = current_kernel_time64();
-+	context->in_syscall = 1;
-+	return context;
-+}
-+
-+void audit_free_context(struct audit_context *context)
-+{
-+	if (!context)
-+		return;
- 	audit_free_names(context);
- 	unroll_tree_refs(context, NULL, 0);
- 	free_tree_refs(context);
+
+@@ -418,7 +418,7 @@ void cpucap_info(struct seq_file *m)
+ 	seq_puts(m, "cpucaps\t\t: ");
+ 	for (i = 0; i < ARRAY_SIZE(hwcaps); i++) {
+ 		unsigned long bit = 1UL << i;
+-		if (hwcaps[i] && (caps & bit)) {
++		if (bit != HWCAP_SPARC_CRYPTO && (caps & bit)) {
+ 			seq_printf(m, "%s%s",
+ 				   printed ? "," : "", hwcaps[i]);
+ 			printed++;
+@@ -472,7 +472,7 @@ static void __init report_hwcaps(unsigned long caps)
+
+ 	for (i = 0; i < ARRAY_SIZE(hwcaps); i++) {
+ 		unsigned long bit = 1UL << i;
+-		if (hwcaps[i] && (caps & bit))
++		if (bit != HWCAP_SPARC_CRYPTO && (caps & bit))
+ 			report_one_hwcap(&printed, hwcaps[i]);
+ 	}
+ 	if (caps & HWCAP_SPARC_CRYPTO)
+@@ -504,18 +504,13 @@ static unsigned long __init mdesc_cpu_hwcap_list(void)
+ 	while (len) {
+ 		int i, plen;
+
+-		for (i = 0; i < ARRAY_SIZE(hwcaps); i++) {
+-			unsigned long bit = 1UL << i;
++		i = match_string(hwcaps, ARRAY_SIZE(hwcaps), prop);
++		if (i >= 0)
++			caps |= (1UL << i);
+
+-			if (hwcaps[i] && !strcmp(prop, hwcaps[i])) {
+-				caps |= bit;
+-				break;
+-			}
+-		}
+-		for (i = 0; i < ARRAY_SIZE(crypto_hwcaps); i++) {
+-			if (!strcmp(prop, crypto_hwcaps[i]))
+-				caps |= HWCAP_SPARC_CRYPTO;
+-		}
++		i = match_string(crypto_hwcaps, ARRAY_SIZE(crypto_hwcaps), prop);
++		if (i >= 0)
++			caps |= HWCAP_SPARC_CRYPTO;
+
+ 		plen = strlen(prop) + 1;
+ 		prop += plen;
 -- 
-1.8.3.1
+1.7.12.4
