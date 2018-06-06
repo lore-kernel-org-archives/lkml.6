@@ -1,202 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F30E606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C88CE601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752215AbeFFSRc (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 14:17:32 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35556 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752000AbeFFSR3 (ORCPT
+        id S1752442AbeFFPJL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 11:09:11 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56802 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752177AbeFFPJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 14:17:29 -0400
-X-Google-Smtp-Source: ADUXVKLEAu1RVgC1QcnscZt6p1I4Mxpkn91ee7B/ZkXUAWzTki0YFZYShsGcoEy1rrmbG+qUwItYRQ==
-Subject: Re: [PATCH v6 0/5] efi/firmware/platform-x86: Add EFI embedded fw
- support
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        dmitry.torokhov@gmail.com, mfuzzey@parkeon.com,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        nbroeking@me.com, bjorn.andersson@linaro.org,
-        Torsten Duwe <duwe@suse.de>, Kees Cook <keescook@chromium.org>,
-        x86@kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180601125330.25054-1-hdegoede@redhat.com>
- <20180605204623.GB4511@wotan.suse.de>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <350930d6-5a0f-11e1-1b04-e5c11961931b@redhat.com>
-Date: Wed, 6 Jun 2018 20:17:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180605204623.GB4511@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 6 Jun 2018 11:09:10 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Olof Johansson <olof@lixom.net>,
+        Benson Leung <bleung@chromium.org>
+Subject: [PATCH v3 01/12] platform/chrome: Make license text and module license match.
+Date: Wed,  6 Jun 2018 17:08:49 +0200
+Message-Id: <20180606150900.8342-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180606150900.8342-1-enric.balletbo@collabora.com>
+References: <20180606150900.8342-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The license text is specifying "GPLv2" but the MODULE_LICENSE is set to
+GPL which means GNU Public License v2 or later. When MODULE_LICENSE and
+boiler plate does not match, go for boiler plate license.
 
-On 05-06-18 22:46, Luis R. Rodriguez wrote:
-> On Fri, Jun 01, 2018 at 02:53:25PM +0200, Hans de Goede wrote:
->> Hi All,
->>
->> Here is v6 of my patch-set to add support for EFI embedded fw to the kernel.
->>
->> This patch-set applies on top of the "[PATCH v7 00/14] firmware_loader
->> changes for v4.18" series from mcgrof.
->>
->> It now also depends on the series from Andy Lutomirski which allow using the
->> sha256 code in a standalone manner. Andy what is the status of those?
->>
->> Changes since v5:
->> -Rework code to remove casts from if (prefix == mem) comparison
->> -Use SHA256 hashes instead of crc32 sums
-> 
-> Nice! I see no updates on this progress, but it would seem this
-> may then mean this cannot be merged until the release after?
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Once the sha256 bits are in place the subsys tree which has them
-merged can create an immutable branch for Greg to merge and
-then these can be applied on top of that merge.
+Changes in v3:
+- Add new patches to match license text with MODULE_LICENSE (Dmitry)
+- If there is a conflict between the license notice and MODULE_LICENSE
+  go by license notice not MODULE_LICENSE. (Dmitry)
+- Reintroduced again the patch for the rtc-cros-ec driver as license
+  should be GPL v2-only.
+- Removed '[PATCH 7/9] pwm: cros-ec: Switch to SPDX identifier.' as
+  maintainer told me that I don't need to resend.
 
-But yes this means that these probably won't go in for another
-cycle or 2, that is fine.
+Changes in v2:
+- Removed '[PATCH 5/9] rtc: cros-ec: Switch to SPDX identifier' from
+  series as it was applied.
+- s/Chrome OS/ChromeOS/
+- [1/9] Fixed wrong copyright year.
+- [6/9] Do not remove last paragraph.
+- [8/9] Fixed wrong copyright year.
 
->> -Add new READING_FIRMWARE_EFI_EMBEDDED read_file_id and use it
->> -Call security_kernel_read_file(NULL, READING_FIRMWARE_EFI_EMBEDDED)
->>   to check if this is allowed before looking at EFI embedded fw
-> 
-> There's a discussion over having security_kernel_read_file(NULL,
-> READING_WHATEVER) become another LSM hook. So your series would conflict with
-> that at the moment.
-> 
-> So yet another piece of code which this series depends on.
+ drivers/platform/chrome/chromeos_pstore.c | 2 +-
+ drivers/platform/chrome/cros_ec_lpc.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Ah well, I'm in no big hurry to get this merged. OTOH if this is
-ready and that discussion is not yet finished it might be better
-to merge this as is and then have the security_kernel_read_file / LSM
-hook series fix this up as necessary when it is merged.
-
-Regards,
-
-Hans
-
-
-
-> 
->> -Document why we are not using the PI Firmware Volume protocol
->>
->> For reference I've included the coverletter from v4 (which includes
->> previous covverletters) below.
->>
->> Regards,
->>
->> Hans
->>
->>
->> Previous coverletter:
->>
->> Here is v5 of my patch-set to add support for EFI embedded fw to the kernel.
->>
->> Changes since v4:
->> -Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
->>
->> So I think this patch-set is getting close to ready for merging, which
->> brings us to the question of how to merge this, I think that patches 1
->> and 2 should probably both be merged through the same tree. Then an
->> unmutable branch should be created on that tree, merged into the
->> platform/x86 tree and then the last 3 patches can be merged through
->> that tree.
->>
->> Ard has already indicated he is fine with the EFI bits going upstream
->> through another tree, so perhaps patches 1-2 can be merged through the
->> firmware-loader-tree and then do an unmutable branch on the
->> firmware-loader-tree for the platform/x86 tree to merge?
->>
->> I don't think taking all 5 through 1 tree is a good idea because of
->> the file rename under platform/x86.
->>
->>
->> For the record here are the cover letters of the previous versions:
->>
->> Changes since v3:
->> -Drop note in docs about EFI_FIRMWARE_VOLUME_PROTOCOL, it is not part of
->>   UEFI proper, so the EFI maintainers don't want us referring people to it
->> -Use new EFI_BOOT_SERVICES flag
->> -Put the new fw_get_efi_embedded_fw() function in its own fallback_efi.c
->>   file which only gets built when EFI_EMBEDDED_FIRMWARE is selected
->> -Define an empty stub for fw_get_efi_embedded_fw() in fallback.h hwen
->>   EFI_EMBEDDED_FIRMWARE is not selected, to avoid the need for #ifdefs
->>   in firmware_loader/main.c
->> -Properly call security_kernel_post_read_file() on the firmware returned
->>   by efi_get_embedded_fw() to make sure that we are allowed to use it
->>
->> The 3 most prominent changes in v2 are:
->>
->> 1) Add documentation describing the EFI embedded firmware mechanism to:
->>     Documentation/driver-api/firmware/request_firmware.rst
->>
->> 2) Instead of having a single dmi_system_id array with its driver_data
->>     members pointing to efi_embedded_fw_desc structs, have the drivers which
->>     need EFI embedded-fw support export a dmi_system_id array and register
->>     that with the EFI embedded-fw code
->>
->>     This series also includes the first driver to use this, in the form of
->>     the touchscreen_dmi code (formerly silead_dmi) from drivers/platfrom/x86
->>
->> 3) As discussed during the review of v1 we want to make the firmware_loader
->>     code fallback to EFI embedded-fw optional.  Rather the adding yet another
->>     firmware_request_foo variant for this, with the risk of later also needing
->>     firmware_request_foo_nowait, etc. variants I've decided to make the code
->>     check if the device has a "efi-embedded-firmware" device-property bool set.
->>
->>     This also seemed better because the same driver may want to use the
->>     fallback on some systems, but not on others since e.g. not all (x86)
->>     systems with a silead touchscreen have their touchscreen firmware embedded
->>     in their EFI.
->>
->>     Note that (as discussed) when the EFI fallback path is requested, the
->>     usermodehelper fallback path is skipped.
->>
->> Here is the full changelog of patch 2/5 which is where most of the changes are:
->>
->> Changes in v2:
->> -Rebased on driver-core/driver-core-next
->> -Add documentation describing the EFI embedded firmware mechanism to:
->>   Documentation/driver-api/firmware/request_firmware.rst
->> -Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
->>   fw support if this is set. This is an invisible option which should be
->>   selected by drivers which need this
->> -Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
->>   from the efi-embedded-fw code, instead drivers using this are expected to
->>   export a dmi_system_id array, with each entries' driver_data pointing to a
->>   efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
->> -Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
->>   this avoids us messing with the EFI memmap and avoids the need to make
->>   changes to efi_mem_desc_lookup()
->> -Make the firmware-loader code only fallback to efi_get_embedded_fw() if the
->>   passed in device has the "efi-embedded-firmware" device-property bool set
->> -Skip usermodehelper fallback when "efi-embedded-firmware" device-property
->>   is set
->>
->> Patches 3-5 are new and implement using the EFI embedded-fw mechanism for
->> Silead gslXXXX and Chipone icn8505 touchscreens on x86 devices.
->>
->>
-> 
+diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
+index b0693fdec8c6..57138ced4ca7 100644
+--- a/drivers/platform/chrome/chromeos_pstore.c
++++ b/drivers/platform/chrome/chromeos_pstore.c
+@@ -139,4 +139,4 @@ module_init(chromeos_pstore_init);
+ module_exit(chromeos_pstore_exit);
+ 
+ MODULE_DESCRIPTION("Chrome OS pstore module");
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 3682e1539251..26f4fe6e9b04 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -479,5 +479,5 @@ static void __exit cros_ec_lpc_exit(void)
+ module_init(cros_ec_lpc_init);
+ module_exit(cros_ec_lpc_exit);
+ 
+-MODULE_LICENSE("GPL");
++MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("ChromeOS EC LPC driver");
+-- 
+2.17.1
