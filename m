@@ -1,96 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeFFBnb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 5 Jun 2018 21:43:31 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57179 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751977AbeFFBna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Jun 2018 21:43:30 -0400
-Subject: Re: [PATCH] irqchip/gic-v3-its: fix ITS queue timeout
-To: Julien Thierry <julien.thierry@arm.com>, <marc.zyngier@arm.com>
-References: <1528180225-16144-1-git-send-email-yangyingliang@huawei.com>
- <834fde1b-5ae0-afc6-283f-2a470757e54a@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-From: Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5B173C27.30401@huawei.com>
-Date: Wed, 6 Jun 2018 09:43:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S932083AbeFFBnq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 5 Jun 2018 21:43:46 -0400
+Received: from mga02.intel.com ([134.134.136.20]:43491 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752520AbeFFBno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Jun 2018 21:43:44 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,481,1520924400";
+   d="scan'208";a="56867206"
+Date: Wed, 6 Jun 2018 09:40:28 +0800
+From: Ye Xiaolong <xiaolong.ye@intel.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Dave Chinner <dchinner@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cmaiolino@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        lkp@01.org
+Subject: Re: [lkp-robot] [xfs]  b027d4c97b:  fio.latency_2ms% +7.1% regression
+Message-ID: <20180606014028.GQ16472@yexl-desktop>
+References: <20180605071657.GP16472@yexl-desktop>
+ <20180605223813.GI10363@dastard>
 MIME-Version: 1.0
-In-Reply-To: <834fde1b-5ae0-afc6-283f-2a470757e54a@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180605223813.GI10363@dastard>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Julien
+On 06/06, Dave Chinner wrote:
+>On Tue, Jun 05, 2018 at 03:16:57PM +0800, kernel test robot wrote:
+>> 
+>> Greeting,
+>> 
+>> FYI, we noticed a +7.1%% regression of fio.latency_2ms% due to commit:
+>> 
+>> 
+>> commit: b027d4c97b9675c2ad75dec94be4e46dceb3ec74 ("xfs: don't retry xfs_buf_find on XBF_TRYLOCK failure")
+>> https://git.kernel.org/cgit/fs/xfs/xfs-linux.git xfs-4.18-merge
+>....
+>> 8925a3dc4771004b b027d4c97b9675c2ad75dec94b 
+>> ---------------- -------------------------- 
+>>          %stddev     %change         %stddev
+>>              \          |                \  
+>>      46.56 ±  3%      +7.1       53.61        fio.latency_2ms%
+>>       8.19            +0.2        8.40        fio.latency_100ms%
+>>       0.74 ±  3%      -0.1        0.68 ±  6%  fio.latency_250ms%
+>>      25.20 ±  6%      -7.3       17.86 ±  6%  fio.latency_4ms%
+>>       0.46 ±  9%      +0.2        0.69 ± 13%  fio.latency_750us%
+>
+>This is not a regression. The number of IOs in the 4ms IO latency
+>bin has reduced by 7%, and inumber in the 2ms IO latency bin has
+>increased by 7%. IOWs, there's a measurable improvement in IO
+>latency as a result of those patches, not a regression.
 
-On 2018/6/5 18:16, Julien Thierry wrote:
-> Hi Yang,
->
-> On 05/06/18 07:30, Yang Yingliang wrote:
->> When the kernel booted with maxcpus=x, 'x' is smaller
->> than actual cpu numbers, the TAs of offline cpus won't
->> be set to its->collection.
->>
->> If LPI is bind to offline cpu, sync cmd will use zero TA,
->> it leads to ITS queue timeout.  Fix this by choosing a
->> online cpu, if there is no online cpu in cpu_mask.
->>
->> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
->> ---
->>   drivers/irqchip/irq-gic-v3-its.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index 5416f2b..edd92a9 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -2309,7 +2309,9 @@ static int its_irq_domain_activate(struct 
->> irq_domain *domain,
->>           cpu_mask = cpumask_of_node(its_dev->its->numa_node);
->>         /* Bind the LPI to the first possible CPU */
->> -    cpu = cpumask_first(cpu_mask);
->> +    cpu = cpumask_first_and(cpu_mask, cpu_online_mask);
->> +    if (!cpu_online(cpu))
->
-> Testing for cpu being online here feels a bit redundant.
->
-> Since cpu is online if the cpumask_first_and returns a valid cpu, I 
-> think you could replace this test with:
->
->     if (cpu >= nr_cpu_ids)
-Yes, I used wrong check here, according to comment of cpumask_first_and, 
-this func will returns >= nr_cpu_ids if no cpus set in both.
-
-I'll send v2 later.
->
->> +        cpu = cpumask_first(cpu_online_mask);
->>       its_dev->event_map.col_map[event] = cpu;
->>       irq_data_update_effective_affinity(d, cpumask_of(cpu));
->>   @@ -2466,7 +2468,10 @@ static int its_vpe_set_affinity(struct 
->> irq_data *d,
->>                   bool force)
->>   {
->>       struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
->> -    int cpu = cpumask_first(mask_val);
->> +    int cpu = cpumask_first_and(mask_val, cpu_online_mask);
->> +
->> +    if (!cpu_online(cpu))
->
-> Same thing here.
->
->> +        cpu = cpumask_first(cpu_online_mask);
->>         /*
->>        * Changing affinity is mega expensive, so let's be as lazy as
->>
->
-> Cheers,
->
+Thanks for clarification.
 
 Thanks,
-Yang
+Xiaolong
+
+>
+>Cheers,
+>
+>Dave.
+>-- 
+>Dave Chinner
+>david@fromorbit.com
