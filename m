@@ -1,91 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3cEpGt88GVt+OAAAmS7hNA
-	; Thu, 07 Jun 2018 14:11:23 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mVPGEdfkGFtUJwAAmS7hNA
+	; Thu, 07 Jun 2018 07:55:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9EC12608C1; Thu,  7 Jun 2018 14:11:22 +0000 (UTC)
+	id 3ADB2608BA; Thu,  7 Jun 2018 07:55:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 89772608BF;
-	Thu,  7 Jun 2018 14:11:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89772608BF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 89394607E7;
+	Thu,  7 Jun 2018 07:55:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89394607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933205AbeFGOJs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:09:48 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39449 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932734AbeFGOJg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:36 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbM-0005Zv-SG; Thu, 07 Jun 2018 15:09:21 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbD-0003HW-VY; Thu, 07 Jun 2018 15:09:11 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Leon Romanovsky" <leonro@mellanox.com>,
-        "Jason Gunthorpe" <jgg@mellanox.com>,
-        "" <syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com>,
-        "Sean Hefty" <sean.hefty@intel.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.934208940@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 382/410] RDMA/ucma: Fix use-after-free access in
- ucma_close
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        id S932346AbeFGHzw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:55:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753557AbeFGHzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 03:55:12 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58E2140711D2;
+        Thu,  7 Jun 2018 07:55:11 +0000 (UTC)
+Received: from plouf.banquise.eu.com (ovpn-116-40.ams2.redhat.com [10.36.116.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 192682026DEF;
+        Thu,  7 Jun 2018 07:55:09 +0000 (UTC)
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mario.Limonciello@dell.com,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 11/13] HID: multitouch: report MT_TOOL_PALM for non-confident touches
+Date: Thu,  7 Jun 2018 09:54:46 +0200
+Message-Id: <20180607075448.5706-12-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+References: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 07:55:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 07:55:11 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-------------------
+According to Microsoft specification [1] for Precision Touchpads (and
+Touchscreens) the devices use "confidence" reports to signal accidental
+touches, or contacts that are "too large to be a finger". Instead of
+simply marking contact inactive in this case (which causes issues if
+contact was originally proper and we lost confidence in it later, as
+this results in accidental clicks, drags, etc), let's report such
+contacts as MT_TOOL_PALM and let userspace decide what to do.
+Additionally, let's report contact size for such touches as maximum
+allowed for major/minor, which should help userspace that is not yet
+aware of MT_TOOL_PALM to still perform palm rejection.
 
-From: Leon Romanovsky <leonro@mellanox.com>
+[1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-windows-precision-touchpad-collection
 
-commit ed65a4dc22083e73bac599ded6a262318cad7baf upstream.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[splitted and rebased]
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-The error in ucma_create_id() left ctx in the list of contexts belong
-to ucma file descriptor. The attempt to close this file descriptor causes
-to use-after-free accesses while iterating over such list.
-
-Fixes: 75216638572f ("RDMA/cma: Export rdma cm interface to userspace")
-Reported-by: <syzbot+dcfd344365a56fbebd0f@syzkaller.appspotmail.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Sean Hefty <sean.hefty@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/core/ucma.c | 3 +++
- 1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -411,6 +411,9 @@ err1:
- 	mutex_lock(&mut);
- 	idr_remove(&ctx_idr, ctx->id);
- 	mutex_unlock(&mut);
-+	mutex_lock(&file->mut);
-+	list_del(&ctx->list);
-+	mutex_unlock(&file->mut);
- 	kfree(ctx);
- 	return ret;
- }
+changes in v2:
+- dropped the delayed release in case of palm detection. This is
+  a FW bug for PTP devices, and should only happen with touchscreens
+- move input_set_abs_params(hi->input, ABS_MT_TOOL_TYPE,...) into
+  its own test so other devices can add MT_QUIRK_CONFIDENCE to their
+  quirks.
+---
+ drivers/hid/hid-multitouch.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index a4a274ebfbef..36c8b67bb032 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -736,6 +736,13 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 				cls->name == MT_CLS_WIN_8_DUAL) &&
+ 				field->application == HID_DG_TOUCHPAD)
+ 				app->quirks |= MT_QUIRK_CONFIDENCE;
++
++			if (app->quirks & MT_QUIRK_CONFIDENCE)
++				input_set_abs_params(hi->input,
++						     ABS_MT_TOOL_TYPE,
++						     MT_TOOL_FINGER,
++						     MT_TOOL_PALM, 0, 0);
++
+ 			MT_STORE_FIELD(confidence_state);
+ 			return 1;
+ 		case HID_DG_TIPSWITCH:
+@@ -958,10 +965,12 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
+ 	if (quirks & MT_QUIRK_HOVERING)
+ 		inrange_state = *slot->inrange_state;
+ 
+-	active = (*slot->tip_state || inrange_state) && confidence_state;
++	active = *slot->tip_state || inrange_state;
+ 
+ 	if (app->application == HID_GD_SYSTEM_MULTIAXIS)
+ 		tool = MT_TOOL_DIAL;
++	else if (unlikely(!confidence_state))
++		tool = MT_TOOL_PALM;
+ 
+ 	input_mt_slot(input, slotnum);
+ 	input_mt_report_slot_state(input, tool, active);
+@@ -993,11 +1002,20 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
+ 			orientation = -azimuth;
+ 		}
+ 
+-		/*
+-		 * divided by two to match visual scale of touch
+-		 * for devices with this quirk
+-		 */
+-		if (quirks & MT_QUIRK_TOUCH_SIZE_SCALING) {
++		if (unlikely(!confidence_state)) {
++			/*
++			 * When reporting palm, set contact to maximum
++			 * size to help userspace that does not
++			 * recognize MT_TOOL_PALM to reject contacts
++			 * that are too large.
++			 */
++			major = input_abs_get_max(input, ABS_MT_TOUCH_MAJOR);
++			minor = input_abs_get_max(input, ABS_MT_TOUCH_MINOR);
++		} else if (quirks & MT_QUIRK_TOUCH_SIZE_SCALING) {
++			/*
++			 * divided by two to match visual scale of touch
++			 * for devices with this quirk
++			 */
+ 			major = major >> 1;
+ 			minor = minor >> 1;
+ 		}
+-- 
+2.14.3
