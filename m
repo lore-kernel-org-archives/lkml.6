@@ -1,126 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6kOxBv98GVupWQAAmS7hNA
-	; Thu, 07 Jun 2018 18:44:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0FJeLA/TGFtkLQAAmS7hNA
+	; Thu, 07 Jun 2018 06:39:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 024906074D; Thu,  7 Jun 2018 18:44:15 +0000 (UTC)
+	id 96D646089E; Thu,  7 Jun 2018 06:39:11 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLbZXZ19"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8039B601C3;
-	Thu,  7 Jun 2018 18:44:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8039B601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C6F5C605A2;
+	Thu,  7 Jun 2018 06:39:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6F5C605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935161AbeFGSoK (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:44:10 -0400
-Received: from smtprelay0119.hostedemail.com ([216.40.44.119]:55350 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933108AbeFGSoI (ORCPT
+        id S1752602AbeFGGjI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 02:39:08 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:43334 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeFGGjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:44:08 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id B7F54100E806B;
-        Thu,  7 Jun 2018 18:44:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: badge66_5d81958f3f2f
-X-Filterd-Recvd-Size: 4608
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  7 Jun 2018 18:44:00 +0000 (UTC)
-Message-ID: <c58f58de39332a27f48dd485eab19a32c289a682.camel@perches.com>
-Subject: Re: [PATCH v3 1/3] compiler-gcc.h: add gnu_inline to all inline
- declarations
-From: Joe Perches <joe@perches.com>
-To: Nick Desaulniers <ndesaulniers@google.com>,
-        akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
-        tglx@linutronix.de
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
-        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        ard.biesheuvel@linaro.org, akataria@vmware.com,
-        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
-        thomas.lendacky@amd.com, tweek@google.com, mjg59@google.com
-Date: Thu, 07 Jun 2018 11:43:58 -0700
-In-Reply-To: <20180607183219.192973-2-ndesaulniers@google.com>
-References: <20180607183219.192973-1-ndesaulniers@google.com>
-         <20180607183219.192973-2-ndesaulniers@google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 7 Jun 2018 02:39:07 -0400
+Received: by mail-lf0-f67.google.com with SMTP id n15-v6so12833022lfn.10;
+        Wed, 06 Jun 2018 23:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=nXAL4w9H6UhQcrZPO66VGXXAB5GJvdtFhSK1Lx6koJ4=;
+        b=FLbZXZ19OSTwZr5X/CNIi+f8JhaigWq0TDc4LDwoNmmfuQPdKfsBsannHaIbUXSo/c
+         gOpkDneCrBKXnMhdhu30TLozMJagB19+WtK+gALSuW5JnUtg/FhWCLuS1r/rZV4fkuWq
+         8gjS9R9VqENBTT/fsJ2l/WzTfUij9dv1MihdeLntY7FxWSzoIr6Sn+k3nRlFdpFJzupf
+         xZgV++4NQDYluO34ps1YwhPmrZ+l3hah7lHZUFkarCTTdlIDyQAxfwRYhjUVXjNoP61e
+         xXiS9emQDXnJW9NKKD67q0lLJ63qldPUYfhc9CpW/qepbmqfaVHPVoHxN8VKC2NUUnAH
+         F/RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=nXAL4w9H6UhQcrZPO66VGXXAB5GJvdtFhSK1Lx6koJ4=;
+        b=gxMHPt2jyKpydFL7zoEes35QRgJAdveHFq6liBd7uvRsXe8PFopLiFmTVsjyw3q+6I
+         ajJB+nubMrHa4u8NQ7aXbRtvb9lI3L56tdLvJ7YSeLxmqAkJ9AdFJbk1qxW6faYwsIdr
+         +n5OSbbet8arCKfsBHQjvAtNvuGvHBver9BbjdwwdFq9YW3vhYJFDHufVRHnJtHthnD7
+         xcloiGKUNLsckncwcG22z+3pW2JkmXHrFsAxhWZvVeQFvMlO2nkFEVfgKnHMNyNM/eVc
+         MdUjk3jO5hM4ieJuQxvRph1bCuKXe875B3+hLJXDEeq0FHywVbCkJ0Mw+yAQ6d6OozBo
+         A54g==
+X-Gm-Message-State: APt69E0xlNP2epM+4HYhI/LJiRh63S7D2jyBXZgSR9vL1MrRFXlf78yt
+        F3wPJJwBtS8uK/s4Ga/yz4o=
+X-Google-Smtp-Source: ADUXVKKmQxvd5QYWpEUQ3ARXzYsg1MVc0bSchP4w84GmC6afuVc+Ugv8RaHuhg/Mw5jX7vL96/PnhA==
+X-Received: by 2002:a2e:1710:: with SMTP id l16-v6mr509966lje.74.1528353545403;
+        Wed, 06 Jun 2018 23:39:05 -0700 (PDT)
+Received: from [10.17.182.9] (ll-55.209.223.85.sovam.net.ua. [85.223.209.55])
+        by smtp.gmail.com with ESMTPSA id q2-v6sm4832226ljg.90.2018.06.06.23.39.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Jun 2018 23:39:04 -0700 (PDT)
+Subject: Re: [Xen-devel] [PATCH v2 5/9] xen/gntdev: Allow mappings for DMA
+ buffers
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, matthew.d.roper@intel.com,
+        dongwon.kim@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-6-andr2000@gmail.com>
+ <64facf05-0a51-c3d9-9d3b-780893248628@oracle.com>
+ <84217eac-b83b-710f-39ab-c93cad65bf9a@gmail.com>
+ <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <30fa03c0-1b75-c0b1-b14f-8b52ea584e20@gmail.com>
+Date: Thu, 7 Jun 2018 09:39:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <a172746d-7a97-159f-71a7-511b2d239089@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-07 at 11:32 -0700, Nick Desaulniers wrote:
-> Functions marked extern inline do not emit an externally visible
-> function when the gnu89 C standard is used. Some KBUILD Makefiles
-> overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
-> an explicit C standard specified, the default is gnu11. Since c99, the
-> semantics of extern inline have changed such that an externally visible
-> function is always emitted. This can lead to multiple definition errors
-> of extern inline functions at link time of compilation units whose build
-> files have removed an explicit C standard compiler flag for users of GCC
-> 5.1+ or Clang.
-[]
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-[]
-> @@ -72,17 +72,22 @@
->   * -Wunused-function.  This turns out to avoid the need for complex #ifdef
->   * directives.  Suppress the warning in clang as well by using "unused"
->   * function attribute, which is redundant but not harmful for gcc.
-> + * Prefer gnu_inline, so that extern inline functions do not emit an
-> + * externally visible function. This makes extern inline behave as per gnu89
-> + * semantics rather than c99. This prevents multiple symbol definition errors
-> + * of extern inline functions at link time.
->   */
->  #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
->      !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
-> -#define inline inline		__attribute__((always_inline,unused)) notrace
-> -#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
-> -#define __inline __inline	__attribute__((always_inline,unused)) notrace
-> +#define inline \
-> +	inline __attribute__((always_inline, unused, gnu_inline)) notrace
-> +#define __inline__ inline
-> +#define __inline inline
->  #else
->  /* A lot of inline functions can cause havoc with function tracing */
-> -#define inline inline		__attribute__((unused)) notrace
-> -#define __inline__ __inline__	__attribute__((unused)) notrace
-> -#define __inline __inline	__attribute__((unused)) notrace
-> +#define inline inline		__attribute__((unused, gnu_inline)) notrace
-> +#define __inline__ inline
-> +#define __inline inline
->  #endif
+On 06/07/2018 12:19 AM, Boris Ostrovsky wrote:
+> On 06/06/2018 04:14 AM, Oleksandr Andrushchenko wrote:
+>> On 06/04/2018 11:12 PM, Boris Ostrovsky wrote:
+>>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>>> @@ -121,8 +146,27 @@ static void gntdev_free_map(struct grant_map *map)
+>>>        if (map == NULL)
+>>>            return;
+>>>    +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+*Option 1: kfree(map->frames);*
+>>> +    if (map->dma_vaddr) {
+>>> +        struct gnttab_dma_alloc_args args;
+>>> +
+>>> +        args.dev = map->dma_dev;
+>>> +        args.coherent = map->dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+>>> +        args.nr_pages = map->count;
+>>> +        args.pages = map->pages;
+>>> +        args.frames = map->frames;
+>>> +        args.vaddr = map->dma_vaddr;
+>>> +        args.dev_bus_addr = map->dma_bus_addr;
+>>> +
+>>> +        gnttab_dma_free_pages(&args);
+*Option 2: kfree(map->frames);*
+>>> +    } else
+>>> +#endif
+>>>        if (map->pages)
+>>>            gnttab_free_pages(map->count, map->pages);
+>>> +
+>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>> +    kfree(map->frames);
+>>> +#endif
+>>>
+>>> Can this be done under if (map->dma_vaddr) ?
+>>>    In other words, is it
+>>> possible for dma_vaddr to be NULL and still have unallocated frames
+>>> pointer?
+>> It is possible to have vaddr == NULL and frames != NULL as we
+>> allocate frames outside of gnttab_dma_alloc_pages which
+>> may fail. Calling kfree on NULL pointer is safe,
+>
+> I am not questioning safety of the code, I would like avoid another ifdef.
+Ah, I now understand, so you are asking if we can have
+that kfree(map->frames); in the place *Option 2* I marked above.
+Unfortunately no: map->frames is allocated before we try to
+allocate DMA memory, e.g. before dma_vaddr is set:
+[...]
+         add->frames = kcalloc(count, sizeof(add->frames[0]),
+                       GFP_KERNEL);
+         if (!add->frames)
+             goto err;
 
-Perhaps move these last 2 defines below the #endif
-as they are common to both cases
+[...]
+         if (gnttab_dma_alloc_pages(&args))
+             goto err;
 
-#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||               \
-    !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
-#define inline inline __attribute__((always_inline, unused, gnu_inline)) notrace
+         add->dma_vaddr = args.vaddr;
+[...]
+err:
+     gntdev_free_map(add);
+
+So, it is possible to enter gntdev_free_map with
+frames != NULL and dma_vaddr == NULL. Option 1 above cannot be used
+as map->frames is needed for gnttab_dma_free_pages(&args);
+and Option 2 cannot be used as frames != NULL and dma_vaddr == NULL.
+Thus, I think that unfortunately we need that #ifdef.
+Option 3 below can also be considered, but that seems to be not good
+as we free resources in different places which looks inconsistent.
+
+Sorry if I'm still missing your point.
+>
+>> so
+>> I see no reason to change this code.
+>>>>        kfree(map->pages);
+>>>>        kfree(map->grants);
+>>>>        kfree(map->map_ops);
+>>>> @@ -132,7 +176,8 @@ static void gntdev_free_map(struct grant_map *map)
+>>>>        kfree(map);
+>>>>    }
+>>>>    -static struct grant_map *gntdev_alloc_map(struct gntdev_priv
+>>>> *priv, int count)
+>>>> +static struct grant_map *gntdev_alloc_map(struct gntdev_priv *priv,
+>>>> int count,
+>>>> +                      int dma_flags)
+>>>>    {
+>>>>        struct grant_map *add;
+>>>>        int i;
+>>>> @@ -155,6 +200,37 @@ static struct grant_map
+>>>> *gntdev_alloc_map(struct gntdev_priv *priv, int count)
+>>>>            NULL == add->pages)
+>>>>            goto err;
+>>>>    +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>>> +    add->dma_flags = dma_flags;
+>>>> +
+>>>> +    /*
+>>>> +     * Check if this mapping is requested to be backed
+>>>> +     * by a DMA buffer.
+>>>> +     */
+>>>> +    if (dma_flags & (GNTDEV_DMA_FLAG_WC | GNTDEV_DMA_FLAG_COHERENT)) {
+>>>> +        struct gnttab_dma_alloc_args args;
+>>>> +
+>>>> +        add->frames = kcalloc(count, sizeof(add->frames[0]),
+>>>> +                      GFP_KERNEL);
+>>>> +        if (!add->frames)
+>>>> +            goto err;
+>>>> +
+>>>> +        /* Remember the device, so we can free DMA memory. */
+>>>> +        add->dma_dev = priv->dma_dev;
+>>>> +
+>>>> +        args.dev = priv->dma_dev;
+>>>> +        args.coherent = dma_flags & GNTDEV_DMA_FLAG_COHERENT;
+>>>> +        args.nr_pages = count;
+>>>> +        args.pages = add->pages;
+>>>> +        args.frames = add->frames;
+>>>> +
+>>>> +        if (gnttab_dma_alloc_pages(&args))
+*Option 3: kfree(map->frames);*
+>>>> +            goto err;
+>>>> +
+>>>> +        add->dma_vaddr = args.vaddr;
+>>>> +        add->dma_bus_addr = args.dev_bus_addr;
+>>>> +    } else
+>>>> +#endif
+>>>>        if (gnttab_alloc_pages(count, add->pages))
+>>>>            goto err;
+>>>>    @@ -325,6 +401,14 @@ static int map_grant_pages(struct grant_map
+>>>> *map)
+>>>>            map->unmap_ops[i].handle = map->map_ops[i].handle;
+>>>>            if (use_ptemod)
+>>>>                map->kunmap_ops[i].handle = map->kmap_ops[i].handle;
+>>>> +#ifdef CONFIG_XEN_GRANT_DMA_ALLOC
+>>>> +        else if (map->dma_vaddr) {
+>>>> +            unsigned long mfn;
+>>>> +
+>>>> +            mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>> Not pfn_to_mfn()?
+>> I'd love to, but pfn_to_mfn is only defined for x86, not ARM: [1] and [2]
+>> Thus,
+>>
+>> drivers/xen/gntdev.c:408:10: error: implicit declaration of function
+>> ‘pfn_to_mfn’ [-Werror=implicit-function-declaration]
+>>      mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
+>>
+>> So, I'll keep __pfn_to_mfn
+>
+> How will this work on non-PV x86?
+So, you mean I need:
+#ifdef CONFIG_X86
+mfn = pfn_to_mfn(page_to_pfn(map->pages[i]));
 #else
-/* A lot of inline functions can cause havoc with function tracing */
-#define inline inline __attribute__((unused, gnu_inline)) notrace
+mfn = __pfn_to_mfn(page_to_pfn(map->pages[i]));
 #endif
-
-#define __inline__	inline
-#define __inline	inline
-#define __always_inline	inline __attribute__((always_inline))
+> -boris
+>
+>
+Thank you,
+Oleksandr
