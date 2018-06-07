@@ -1,134 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Gcg3Iz9DGVvWBgAAmS7hNA
-	; Thu, 07 Jun 2018 14:38:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 83sqHxF6GVvvNwAAmS7hNA
+	; Thu, 07 Jun 2018 18:32:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D2026608BA; Thu,  7 Jun 2018 14:38:05 +0000 (UTC)
+	id 7A0EC6089E; Thu,  7 Jun 2018 18:32:31 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hy84fegm"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4415B601C3;
-	Thu,  7 Jun 2018 14:38:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4415B601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id E19E8606DD;
+	Thu,  7 Jun 2018 18:32:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E19E8606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934213AbeFGOiD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:38:03 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40458 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934152AbeFGOhw (ORCPT
+        id S936299AbeFGSc2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:32:28 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36183 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934029AbeFGSc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:37:52 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbm-0005Zp-17; Thu, 07 Jun 2018 15:09:46 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb4-0002xH-IG; Thu, 07 Jun 2018 15:09:02 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-        "Alexandru Ardelean" <alexandru.ardelean@analog.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.453007035@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 173/410] staging: iio: adc: ad7192: fix external
- frequency setting
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Thu, 7 Jun 2018 14:32:26 -0400
+Received: by mail-pg0-f66.google.com with SMTP id m5-v6so5154233pgd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:32:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FcfgBErQhhqUdwC7MmxzqpQdpQ49HzcC5H0Q4cAOYV4=;
+        b=hy84fegmspnEyTkhv9UqP2o7jqyEuLYywYsVJVFv7sj8ZD7xx8d5bjiRGwg4aXyI3w
+         h4Ic0if2Wf/dYg7EDzQIBli+rr0HZFDSBA7KP6MeXcQCcXEIqqPB60trHRrQigKjPLU2
+         bOKlWtkdzPLSVt009d/DksPDXyS2XZax0beyorF2SFNL8/e8JZr35/RFwj/CiYE6v+vV
+         hKu8Y6g0Q1CyC/7N+hI89JFh9SO4CXBu3kBzKTfAdaNPssS74opYC09jtu5dR4+h5BDJ
+         dDBLDvhTONVOTfioChXt5c1wPttOafHxrV9P8CQsSJIrnQxQ99+aXst8WwEfQ87w2Oya
+         vR1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FcfgBErQhhqUdwC7MmxzqpQdpQ49HzcC5H0Q4cAOYV4=;
+        b=BkUSJlRxTP9RbLYxI5agKo15J1tksqOkchrd8obayWKECzv8N2u/1zROf5VnYJMW6h
+         e29A0i5Cd0nIRKSDboSBJuYNy3D4zFxcYwhAkEQ1dRRZ6Jvq76q9aXJHoQFHji7RBVnM
+         gr+BC05BKzC6LvbfJoGgTbY3Xh2Cr1ZexZwXXFLzAKPlAV+h65iEYL8surGcgZvVdl+Z
+         6ZIKO+XdpLPP6cKuRn1m+STU1bjiwkQrb1esgFiW1tTc5bEtip8McKdg2gpLCR7qdeNi
+         9g2Eace9qrhe5s/U85fusw8KE9t4nJBw1LoLdIFRABcPnKO644CD79QnU5J2ln672f57
+         da+A==
+X-Gm-Message-State: APt69E0FK/3K60OLy8wPFBmCrh1+1clrSvY6wZDxYbp/ugYzEQaZ2fxF
+        ownAtMvrKNAq8VTRJNIqHNmgMA==
+X-Google-Smtp-Source: ADUXVKITjeKTGQhVhAokHyvKUHBy8uXhD6S7X59yUw3oAdlM/3RkY1cn4Nx/w7HoiJ6F9oz1A5ZAwQ==
+X-Received: by 2002:a62:d2c3:: with SMTP id c186-v6mr2768276pfg.44.1528396345695;
+        Thu, 07 Jun 2018 11:32:25 -0700 (PDT)
+Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
+        by smtp.gmail.com with ESMTPSA id n76-v6sm6932739pfg.98.2018.06.07.11.32.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 11:32:24 -0700 (PDT)
+From: Nick Desaulniers <ndesaulniers@google.com>
+To: akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
+        tglx@linutronix.de
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
+        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
+        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
+        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
+        ard.biesheuvel@linaro.org, akataria@vmware.com,
+        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
+        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
+        mjg59@google.com, joe@perches.com
+Subject: [PATCH v3 0/3] extern inline native_save_fl for paravirt
+Date: Thu,  7 Jun 2018 11:32:16 -0700
+Message-Id: <20180607183219.192973-1-ndesaulniers@google.com>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+paravirt depends on a custom calling convention (callee saved), but
+expects this from a static inline function that it then forces to be
+outlined. This is problematic because different compilers or flags can
+then add a stack guard that violates the calling conventions.
 
-------------------
+Uses extern inline with the out-of-line definition in assembly to
+prevent compilers from adding stack guards to the outlined version.
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Other parts of the codebase overwrite KBUILD_CFLAGS, which is *extremely
+problematic* for extern inline, as the sematics are completely the
+opposite depending on what C standard is used.
+http://blahg.josefsipek.net/?p=529
 
-commit e31b617d0a63c6558485aaa730fd162faa95a766 upstream.
+Changes since v2:
+  Take hpa's _ASM_ARG patch into the set in order to simplify cross
+  32b/64b x86 assembly.  Apply Sedat's typo fix to commit message and
+  sign off on it. Take Joe's sugguestion to simplify __inline__ and
+  __inline. Add Arnd to list of folks who made helpful suggestions.
 
-The external clock frequency was set only when selecting
-the internal clock, which is fixed at 4.9152 Mhz.
+Changes since v1:
+  Prefer gnu_inline function attribute instead of explicitly setting C
+  standard compiler flag in problematic Makefiles. We should instead
+  carefully evaluate if those Makefiles should be overwriting
+  KBUILD_CFLAGS at all. Dropped the previous first two patches and added
+  a new first patch.
 
-This is incorrect, since it should be set when any of
-the external clock or crystal settings is selected.
+H. Peter Anvin (1):
+  x86/asm: add _ASM_ARG* constants for argument registers to <asm/asm.h>
 
-Added range validation for the external (crystal/clock)
-frequency setting.
-Valid values are between 2.4576 and 5.12 Mhz.
+Nick Desaulniers (2):
+  compiler-gcc.h: add gnu_inline to all inline declarations
+  x86: paravirt: make native_save_fl extern inline
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/staging/iio/adc/ad7192.c | 27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/asm.h      | 59 +++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/irqflags.h |  2 +-
+ arch/x86/kernel/Makefile        |  1 +
+ arch/x86/kernel/irqflags.S      | 26 +++++++++++++++
+ include/linux/compiler-gcc.h    | 17 ++++++----
+ 5 files changed, 98 insertions(+), 7 deletions(-)
+ create mode 100644 arch/x86/kernel/irqflags.S
 
---- a/drivers/staging/iio/adc/ad7192.c
-+++ b/drivers/staging/iio/adc/ad7192.c
-@@ -125,6 +125,8 @@
- #define AD7192_GPOCON_P1DAT	(1 << 1) /* P1 state */
- #define AD7192_GPOCON_P0DAT	(1 << 0) /* P0 state */
- 
-+#define AD7192_EXT_FREQ_MHZ_MIN	2457600
-+#define AD7192_EXT_FREQ_MHZ_MAX	5120000
- #define AD7192_INT_FREQ_MHZ	4915200
- 
- /* NOTE:
-@@ -200,6 +202,12 @@ static int ad7192_calibrate_all(struct a
- 				ARRAY_SIZE(ad7192_calib_arr));
- }
- 
-+static inline bool ad7192_valid_external_frequency(u32 freq)
-+{
-+	return (freq >= AD7192_EXT_FREQ_MHZ_MIN &&
-+		freq <= AD7192_EXT_FREQ_MHZ_MAX);
-+}
-+
- static int ad7192_setup(struct ad7192_state *st,
- 	const struct ad7192_platform_data *pdata)
- {
-@@ -224,17 +232,20 @@ static int ad7192_setup(struct ad7192_st
- 		dev_warn(&st->sd.spi->dev, "device ID query failed (0x%X)\n", id);
- 
- 	switch (pdata->clock_source_sel) {
--	case AD7192_CLK_EXT_MCLK1_2:
--	case AD7192_CLK_EXT_MCLK2:
--		st->mclk = AD7192_INT_FREQ_MHZ;
--		break;
- 	case AD7192_CLK_INT:
- 	case AD7192_CLK_INT_CO:
--		if (pdata->ext_clk_hz)
--			st->mclk = pdata->ext_clk_hz;
--		else
--			st->mclk = AD7192_INT_FREQ_MHZ;
-+		st->mclk = AD7192_INT_FREQ_MHZ;
- 		break;
-+	case AD7192_CLK_EXT_MCLK1_2:
-+	case AD7192_CLK_EXT_MCLK2:
-+		if (ad7192_valid_external_frequency(pdata->ext_clk_hz)) {
-+			st->mclk = pdata->ext_clk_hz;
-+			break;
-+		}
-+		dev_err(&st->sd.spi->dev, "Invalid frequency setting %u\n",
-+			pdata->ext_clk_hz);
-+		ret = -EINVAL;
-+		goto out;
- 	default:
- 		ret = -EINVAL;
- 		goto out;
+-- 
+2.17.1.1185.g55be947832-goog
