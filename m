@@ -1,91 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TieXCOmIGVuXTwAAmS7hNA
-	; Thu, 07 Jun 2018 19:35:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id s0bgABVOGVtKdQAAmS7hNA
+	; Thu, 07 Jun 2018 15:26:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1331D6089E; Thu,  7 Jun 2018 19:35:05 +0000 (UTC)
+	id 508E0608B8; Thu,  7 Jun 2018 15:26:55 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LH8PnK+E"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=2.0 tests=BAYES_00,
-	BUG6152_INVALID_DATE_TZ_ABSURD,INVALID_DATE_TZ_ABSURD,L_SPAM_TOOL_13,
-	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1F709601C3;
-	Thu,  7 Jun 2018 19:35:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F709601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mageia.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DF3F1601B4;
+	Thu,  7 Jun 2018 15:26:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DF3F1601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753325AbeFGTfC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:35:02 -0400
-Received: from mx2.yrkesakademin.fi ([85.134.45.195]:54400 "EHLO
-        mx2.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753014AbeFGTfA (ORCPT
+        id S934874AbeFGO5a (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:57:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60210 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933205AbeFGO51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:35:00 -0400
-Subject: Re: building in 32bit chroot on x86_64 host broken
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC: Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CA+55aFxhx_tKGm02UySguvbyfB_7oTF31QfgOHCK0YkBvmfV0g@mail.gmail.com>
- <8f46ed9a-85c0-8df4-2d1e-d268cbc9d0e9@mageia.org>
- <CA+55aFwJAbr8_Xs0ZX9K2iAr8bf=ZgNnKTLopQe6jPCgEBemrA@mail.gmail.com>
- <7a5458da-4222-7480-00ed-a51bed2c1e39@mageia.org>
- <CA+55aFyD0OMV1eoc9wh_hLcnRhHq2FwJf4EZcORmHPNxTRSX9Q@mail.gmail.com>
- <daf0fbba-6357-1748-d583-bcb5edf067ec@mageia.org>
- <CA+55aFwiyuA4fKztofM-fdDSc+ZH9aAR1xksL8ZWRDE-pdXruw@mail.gmail.com>
- <CAK7LNAS=PvYVrLczeJT0utq3UHNL5YtSE_w=RjJYJ3SD9ALrYA@mail.gmail.com>
- <CA+55aFzNCQZHEz9P2a4ZSyWB0RxZcTkh5TVfwTmup-Y-6b8qjw@mail.gmail.com>
- <CA+55aFwAwoDdZRP6n9xXDPkeCUm35mmGH3fXv=r1HOZq1bpiGw@mail.gmail.com>
- <CAK7LNAS4Xb_CQ31t_cqt3q0zRFZ-O2n3+qkxXfxZB_jmqvFmWQ@mail.gmail.com>
-From: Thomas Backlund <tmb@mageia.org>
-Message-ID: <f1f35cdf-bd03-54bb-7196-c13131f7d0fc@mageia.org>
-Date: Thu, 7 Jun 2018 22:35:17 +0259
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNAS4Xb_CQ31t_cqt3q0zRFZ-O2n3+qkxXfxZB_jmqvFmWQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-WatchGuard-Spam-ID: str=0001.0A0C0202.5B1988E4.0168,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
-X-WatchGuard-Mail-Client-IP: 85.134.45.195
-X-WatchGuard-Mail-From: tmb@mageia.org
+        Thu, 7 Jun 2018 10:57:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QKH8PoXeHU53llWIDaCCGPfS6h6juRwuJA6oGiO9+VA=; b=LH8PnK+EydDfWdvK5in24KG2F
+        SuUT1u1HDEFK8ymlHYbPANavlfMfWjU2VWlPXmRY6Bk7/Ke64RPgBlcClGsiGosLcIMMl1FakL0ZG
+        Ki7LMNPmy2J32O99iDB1QYjIeW2Q0XTv3cWJiFtRixwSKH8bsRwHvVBySDtDcMLO2SttcZQoPzsD7
+        AZ3NGwxxdt54q+GCkhLyJfuyo5h31P2yMLYY4ZWHrwfoWTbUGbmb68OOc08sSAXn+u3qr/akdwf5g
+        KY5m6rfbYdWqaPGvTJy5MLk2qNcSwdZKkCo5T+WPSWFpgkSCGB4xxABSGdTPc1qjt8naECXcBwNsj
+        7hGc+uXeg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fQwLs-0005ti-Cw; Thu, 07 Jun 2018 14:57:24 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: [PATCH 1/6] Convert virtio_console to struct_size
+Date: Thu,  7 Jun 2018 07:57:15 -0700
+Message-Id: <20180607145720.22590-2-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180607145720.22590-1-willy@infradead.org>
+References: <20180607145720.22590-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Den 2018-06-06 kl. 06:30, skrev Masahiro Yamada:
-> Hi Linus,
->
-> 2018-06-06 11:19 GMT+09:00 Linus Torvalds <torvalds@linux-foundation.org>:
->> On Tue, Jun 5, 2018 at 6:54 PM Linus Torvalds
->> <torvalds@linux-foundation.org> wrote:
->>> But once you *have* that particular Kconfig, I do think that "make
->>> oldconfig" should just work. And it apparently used to.
->>>
->>> So I think this is a behavioral regression.
->> That doesn't necessarily mean that he fix should be to revert.
->
-> If this is a regression, I am OK with the revert,
-> and it is the only quick solution.
->
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ drivers/char/virtio_console.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-It is a regression as the same "make oldconfig routine" has been working 
-iirc since atleast 2.4 series kernels :)
-
-But I dont see it as needing a "quick solution" revert if the "kconfig: 
-only write '# CONFIG_FOO is not set' for visible symbols" is considered 
-a "useful thing we want to keep"... I'd rather think waiting/working a 
-bit for a proper fix is the better way then...
-
-I can work around it for now (or keep the revert in our kernel builds 
-for now) until it gets properly fixed...
-
-Feel free to cc me on suggested fixes to test
-
---
-Thomas
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 21085515814f..4bf7c06c2343 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -433,8 +433,7 @@ static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size
+ 	 * Allocate buffer and the sg list. The sg list array is allocated
+ 	 * directly after the port_buffer struct.
+ 	 */
+-	buf = kmalloc(sizeof(*buf) + sizeof(struct scatterlist) * pages,
+-		      GFP_KERNEL);
++	buf = kmalloc(struct_size(buf, sg, pages), GFP_KERNEL);
+ 	if (!buf)
+ 		goto fail;
+ 
+-- 
+2.17.0
