@@ -1,52 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 10nQF+I9GVsARgAAmS7hNA
-	; Thu, 07 Jun 2018 14:17:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BZyFMghaGVswDQAAmS7hNA
+	; Thu, 07 Jun 2018 16:15:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D645D608BA; Thu,  7 Jun 2018 14:17:53 +0000 (UTC)
+	id B6715608C8; Thu,  7 Jun 2018 16:15:04 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4F68B602FC;
-	Thu,  7 Jun 2018 14:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F68B602FC
+	by smtp.codeaurora.org (Postfix) with ESMTP id 23BC660115;
+	Thu,  7 Jun 2018 16:15:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 23BC660115
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933364AbeFGORv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:17:51 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39549 "EHLO
+        id S935238AbeFGQOr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:14:47 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39120 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933098AbeFGOJN (ORCPT
+        by vger.kernel.org with ESMTP id S932925AbeFGOI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:13 -0400
+        Thu, 7 Jun 2018 10:08:58 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbD-0005Zw-9q; Thu, 07 Jun 2018 15:09:11 +0100
+        id 1fQvay-0005a0-Kc; Thu, 07 Jun 2018 15:08:56 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbA-00039R-8u; Thu, 07 Jun 2018 15:09:08 +0100
+        id 1fQvax-0002hS-Kg; Thu, 07 Jun 2018 15:08:55 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "James Morris" <james.morris@microsoft.com>,
-        "James Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Jeremy Boone" <jeremy.boone@nccgroup.trust>,
-        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
+        "Wen Xu" <wen.xu@gatech.edu>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.379136185@decadent.org.uk>
+Message-ID: <lsq.1528380321.743043835@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 297/410] tpm_i2c_infineon: fix potential buffer
- overruns caused by bit glitches on the bus
+Subject: [PATCH 3.16 018/410] ext4: fail ext4_iget for root directory if
+ unallocated
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,46 +57,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 9b8cb28d7c62568a5916bdd7ea1c9176d7f8f2ed upstream.
+commit 8e4b5eae5decd9dfe5a4ee369c22028f90ab4c44 upstream.
 
-Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  In all the
-driver _recv() functions, we need to use a u32 to unmarshal the
-response size, otherwise a bit flip of the 31st bit would cause the
-expected variable to go negative, which would then try to read a huge
-amount of data.  Also sanity check that the expected amount of data is
-large enough for the TPM header.
+If the root directory has an i_links_count of zero, then when the file
+system is mounted, then when ext4_fill_super() notices the problem and
+tries to call iput() the root directory in the error return path,
+ext4_evict_inode() will try to free the inode on disk, before all of
+the file system structures are set up, and this will result in an OOPS
+caused by a NULL pointer dereference.
 
-Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+This issue has been assigned CVE-2018-1092.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199179
+https://bugzilla.redhat.com/show_bug.cgi?id=1560777
+
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[bwh: Backported to 3.16: use EIO instead of EFSCORRUPTED]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/char/tpm/tpm_i2c_infineon.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/ext4/inode.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -436,7 +436,8 @@ static int recv_data(struct tpm_chip *ch
- static int tpm_tis_i2c_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	int size = 0;
--	int expected, status;
-+	int status;
-+	u32 expected;
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4198,6 +4198,12 @@ struct inode *ext4_iget(struct super_blo
+ 		goto bad_inode;
+ 	raw_inode = ext4_raw_inode(&iloc);
  
- 	if (count < TPM_HEADER_SIZE) {
- 		size = -EIO;
-@@ -451,7 +452,7 @@ static int tpm_tis_i2c_recv(struct tpm_c
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *)(buf + 2));
--	if ((size_t) expected > count) {
-+	if (((size_t) expected > count) || (expected < TPM_HEADER_SIZE)) {
- 		size = -EIO;
- 		goto out;
- 	}
++	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
++		EXT4_ERROR_INODE(inode, "root inode unallocated");
++		ret = -EIO;
++		goto bad_inode;
++	}
++
+ 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
+ 		ei->i_extra_isize = le16_to_cpu(raw_inode->i_extra_isize);
+ 		if (EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize >
