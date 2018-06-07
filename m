@@ -1,153 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1/TnDAmhHls0PgAAmS7hNA
-	; Mon, 11 Jun 2018 16:24:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i05CCto9GVvtRQAAmS7hNA
+	; Thu, 07 Jun 2018 14:17:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CC7C460791; Mon, 11 Jun 2018 16:24:18 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="gaLubl+R"
+	id 87005608C1; Thu,  7 Jun 2018 14:17:36 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 52F7460351;
-	Mon, 11 Jun 2018 16:24:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52F7460351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B3C016089E;
+	Thu,  7 Jun 2018 14:17:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3C016089E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933459AbeFKQYQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 12:24:16 -0400
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:54648 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933136AbeFKQYO (ORCPT
+        id S933128AbeFGOQP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:16:15 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39589 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933102AbeFGOJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 12:24:14 -0400
-Received: from pps.filterd (m0050102.ppops.net [127.0.0.1])
-        by m0050102.ppops.net-00190b01. (8.16.0.22/8.16.0.22) with SMTP id w5BGGqHZ030820;
-        Mon, 11 Jun 2018 17:24:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=AmJHJ1ujGBOT2mGYqN2O2LNXDRTTfyilRK8kKBzwvG8=;
- b=gaLubl+RxtfAQqPYsBloULcFFm6RZKqTqQ8VplKJhiKIeudcw033Bu5o2Idf9a9d4cH6
- LXhvFTrE70731tbj694cJOcidgUXMl6uQKZW+y1p1FBDR1AOfqeJ9WYHshJSjgk3OLYb
- mPiRROQHqgVqEKpn4HtZBUKSv81Cqfs+VfcR25PQuVt6cNhB6wcBN05jh1VBSFHvITiZ
- +IiyVEn40IwXM/996DyI9ulaAuJkkYbJQo3Ctd9TYMyzB/X5mCN+RiEZQlNX+GizKrBF
- /VKtUyaczREs4wfZXmhvQxTPG629dWjKQJ/H96E6WbPUK0mAwqN0YS14csLtZ83A2hiN +w==
-Received: from prod-mail-ppoint4 (a96-6-114-87.deploy.static.akamaitechnologies.com [96.6.114.87] (may be forged))
-        by m0050102.ppops.net-00190b01. with ESMTP id 2jg3ycy7hf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Jun 2018 17:24:00 +0100
-Received: from pps.filterd (prod-mail-ppoint4.akamai.com [127.0.0.1])
-        by prod-mail-ppoint4.akamai.com (8.16.0.21/8.16.0.21) with SMTP id w5BGGX88005934;
-        Mon, 11 Jun 2018 12:23:59 -0400
-Received: from prod-mail-relay14.akamai.com ([172.27.17.39])
-        by prod-mail-ppoint4.akamai.com with ESMTP id 2jga7ve721-1;
-        Mon, 11 Jun 2018 12:23:59 -0400
-Received: from [172.28.13.175] (bos-lpjec.kendall.corp.akamai.com [172.28.13.175])
-        by prod-mail-relay14.akamai.com (Postfix) with ESMTP id D53EB811D9;
-        Mon, 11 Jun 2018 16:23:58 +0000 (GMT)
-Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
- MLOCK_ONFAULT
-To: Michal Hocko <mhocko@kernel.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-api@vger.kernel.org, emunson@mgebm.net
-References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
- <20180611072005.GC13364@dhcp22.suse.cz>
- <4c4de46d-c55a-99a8-469f-e1e634fb8525@akamai.com>
- <20180611150330.GQ13364@dhcp22.suse.cz>
-From: Jason Baron <jbaron@akamai.com>
-Message-ID: <775adf2d-140c-1460-857f-2de7b24bafe7@akamai.com>
-Date: Mon, 11 Jun 2018 12:23:58 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 7 Jun 2018 10:09:15 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbF-0005hJ-TC; Thu, 07 Jun 2018 15:09:13 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbC-0003Fe-Se; Thu, 07 Jun 2018 15:09:10 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20180611150330.GQ13364@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806110187
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
- definitions=main-1806110187
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Sean Hefty" <sean.hefty@intel.com>,
+        "Doug Ledford" <dledford@redhat.com>,
+        "" <syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com>,
+        "Leon Romanovsky" <leonro@mellanox.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.778826198@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 359/410] RDMA/ucma: Fix access to non-initialized
+ CM_ID object
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-On 06/11/2018 11:03 AM, Michal Hocko wrote:
-> On Mon 11-06-18 10:51:44, Jason Baron wrote:
->> On 06/11/2018 03:20 AM, Michal Hocko wrote:
->>> [CCing linux-api - please make sure to CC this mailing list anytime you
->>>  are touching user visible apis]
->>>
->>> On Fri 08-06-18 14:56:52, Jason Baron wrote:
->>>> In order to free memory that is marked MLOCK_ONFAULT, the memory region
->>>> needs to be first unlocked, before calling MADV_DONTNEED. And if the region
->>>> is to be reused as MLOCK_ONFAULT, we require another call to mlock2() with
->>>> the MLOCK_ONFAULT flag.
->>>>
->>>> Let's simplify freeing memory that is set MLOCK_ONFAULT, by allowing
->>>> MADV_DONTNEED to work directly for memory that is set MLOCK_ONFAULT.
->>>
->>> I do not understand the point here. How is MLOCK_ONFAULT any different
->>> from the regular mlock here? If you want to free mlocked memory then
->>> fine but the behavior should be consistent. MLOCK_ONFAULT is just a way
->>> to say that we do not want to pre-populate the mlocked area and do that
->>> lazily on the page fault time. madvise should make any difference here.
->>>
->>
->> The difference for me is after the page has been freed, MLOCK_ONFAULT
->> will re-populate the range if its accessed again. Whereas with regular
->> mlock I don't think it will because its normally done at mlock() or
->> mmap() time.
-> 
-> The vma would still be locked so we would effectively turn it into
-> ONFAULT IIRC.
->
+From: Leon Romanovsky <leonro@mellanox.com>
 
-Indeed. I just tried allowing MADV_DONTNEED against regular mlock() and
-in my brief testing it seemed to work as expected against both anonymous
-and file back pages. I am certainly not against allowing it for regular
-mlock() as well, if you think that makes it more consistent.
+commit 7688f2c3bbf55e52388e37ac5d63ca471a7712e1 upstream.
 
+The attempt to join multicast group without ensuring that CMA device
+exists will lead to the following crash reported by syzkaller.
 
->> In any case, the state of a region being locked with
->> regular mlock and pages not present does not currently exist, whereas it
->> does for MLOCK_ONFAULT, so it seems more natural to do it only for
->> MLOCK_ONFAULT. Finally, the use-case we had for this, didn't need
->> regular mlock().
-> 
-> So can we start discussing whether we want to allow MADV_DONTNEED on
-> mlocked areas and what downsides it might have? Sure it would turn the
-> strong mlock guarantee to have the whole vma resident but is this
-> acceptable for something that is an explicit request from the owner of
-> the memory?
-> 
+[   64.076794] BUG: KASAN: null-ptr-deref in rdma_join_multicast+0x26e/0x12c0
+[   64.076797] Read of size 8 at addr 00000000000000b0 by task join/691
+[   64.076797]
+[   64.076800] CPU: 1 PID: 691 Comm: join Not tainted 4.16.0-rc1-00219-gb97853b65b93 #23
+[   64.076802] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
+[   64.076803] Call Trace:
+[   64.076809]  dump_stack+0x5c/0x77
+[   64.076817]  kasan_report+0x163/0x380
+[   64.085859]  ? rdma_join_multicast+0x26e/0x12c0
+[   64.086634]  rdma_join_multicast+0x26e/0x12c0
+[   64.087370]  ? rdma_disconnect+0xf0/0xf0
+[   64.088579]  ? __radix_tree_replace+0xc3/0x110
+[   64.089132]  ? node_tag_clear+0x81/0xb0
+[   64.089606]  ? idr_alloc_u32+0x12e/0x1a0
+[   64.090517]  ? __fprop_inc_percpu_max+0x150/0x150
+[   64.091768]  ? tracing_record_taskinfo+0x10/0xc0
+[   64.092340]  ? idr_alloc+0x76/0xc0
+[   64.092951]  ? idr_alloc_u32+0x1a0/0x1a0
+[   64.093632]  ? ucma_process_join+0x23d/0x460
+[   64.094510]  ucma_process_join+0x23d/0x460
+[   64.095199]  ? ucma_migrate_id+0x440/0x440
+[   64.095696]  ? futex_wake+0x10b/0x2a0
+[   64.096159]  ucma_join_multicast+0x88/0xe0
+[   64.096660]  ? ucma_process_join+0x460/0x460
+[   64.097540]  ? _copy_from_user+0x5e/0x90
+[   64.098017]  ucma_write+0x174/0x1f0
+[   64.098640]  ? ucma_resolve_route+0xf0/0xf0
+[   64.099343]  ? rb_erase_cached+0x6c7/0x7f0
+[   64.099839]  __vfs_write+0xc4/0x350
+[   64.100622]  ? perf_syscall_enter+0xe4/0x5f0
+[   64.101335]  ? kernel_read+0xa0/0xa0
+[   64.103525]  ? perf_sched_cb_inc+0xc0/0xc0
+[   64.105510]  ? syscall_exit_register+0x2a0/0x2a0
+[   64.107359]  ? __switch_to+0x351/0x640
+[   64.109285]  ? fsnotify+0x899/0x8f0
+[   64.111610]  ? fsnotify_unmount_inodes+0x170/0x170
+[   64.113876]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
+[   64.115813]  ? ring_buffer_record_is_on+0xd/0x20
+[   64.117824]  ? __fget+0xa8/0xf0
+[   64.119869]  vfs_write+0xf7/0x280
+[   64.122001]  SyS_write+0xa1/0x120
+[   64.124213]  ? SyS_read+0x120/0x120
+[   64.126644]  ? SyS_read+0x120/0x120
+[   64.128563]  do_syscall_64+0xeb/0x250
+[   64.130732]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   64.132984] RIP: 0033:0x7f5c994ade99
+[   64.135699] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   64.138740] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
+[   64.141056] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
+[   64.143536] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
+[   64.146017] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
+[   64.148608] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
+[   64.151060]
+[   64.153703] Disabling lock debugging due to kernel taint
+[   64.156032] BUG: unable to handle kernel NULL pointer dereference at 00000000000000b0
+[   64.159066] IP: rdma_join_multicast+0x26e/0x12c0
+[   64.161451] PGD 80000001d0298067 P4D 80000001d0298067 PUD 1dea39067 PMD 0
+[   64.164442] Oops: 0000 [#1] SMP KASAN PTI
+[   64.166817] CPU: 1 PID: 691 Comm: join Tainted: G    B 4.16.0-rc1-00219-gb97853b65b93 #23
+[   64.170004] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
+[   64.174985] RIP: 0010:rdma_join_multicast+0x26e/0x12c0
+[   64.177246] RSP: 0018:ffff8801c8207860 EFLAGS: 00010282
+[   64.179901] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff94789522
+[   64.183344] RDX: 1ffffffff2d50fa5 RSI: 0000000000000297 RDI: 0000000000000297
+[   64.186237] RBP: ffff8801c8207a50 R08: 0000000000000000 R09: ffffed0039040ea7
+[   64.189328] R10: 0000000000000001 R11: ffffed0039040ea6 R12: 0000000000000000
+[   64.192634] R13: 0000000000000000 R14: ffff8801e2022800 R15: ffff8801d4ac2400
+[   64.196105] FS:  00007f5c99b98700(0000) GS:ffff8801e5d00000(0000) knlGS:0000000000000000
+[   64.199211] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   64.202046] CR2: 00000000000000b0 CR3: 00000001d1c48004 CR4: 00000000003606a0
+[   64.205032] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   64.208221] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   64.211554] Call Trace:
+[   64.213464]  ? rdma_disconnect+0xf0/0xf0
+[   64.216124]  ? __radix_tree_replace+0xc3/0x110
+[   64.219337]  ? node_tag_clear+0x81/0xb0
+[   64.222140]  ? idr_alloc_u32+0x12e/0x1a0
+[   64.224422]  ? __fprop_inc_percpu_max+0x150/0x150
+[   64.226588]  ? tracing_record_taskinfo+0x10/0xc0
+[   64.229763]  ? idr_alloc+0x76/0xc0
+[   64.232186]  ? idr_alloc_u32+0x1a0/0x1a0
+[   64.234505]  ? ucma_process_join+0x23d/0x460
+[   64.237024]  ucma_process_join+0x23d/0x460
+[   64.240076]  ? ucma_migrate_id+0x440/0x440
+[   64.243284]  ? futex_wake+0x10b/0x2a0
+[   64.245302]  ucma_join_multicast+0x88/0xe0
+[   64.247783]  ? ucma_process_join+0x460/0x460
+[   64.250841]  ? _copy_from_user+0x5e/0x90
+[   64.253878]  ucma_write+0x174/0x1f0
+[   64.257008]  ? ucma_resolve_route+0xf0/0xf0
+[   64.259877]  ? rb_erase_cached+0x6c7/0x7f0
+[   64.262746]  __vfs_write+0xc4/0x350
+[   64.265537]  ? perf_syscall_enter+0xe4/0x5f0
+[   64.267792]  ? kernel_read+0xa0/0xa0
+[   64.270358]  ? perf_sched_cb_inc+0xc0/0xc0
+[   64.272575]  ? syscall_exit_register+0x2a0/0x2a0
+[   64.275367]  ? __switch_to+0x351/0x640
+[   64.277700]  ? fsnotify+0x899/0x8f0
+[   64.280530]  ? fsnotify_unmount_inodes+0x170/0x170
+[   64.283156]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
+[   64.286182]  ? ring_buffer_record_is_on+0xd/0x20
+[   64.288749]  ? __fget+0xa8/0xf0
+[   64.291136]  vfs_write+0xf7/0x280
+[   64.292972]  SyS_write+0xa1/0x120
+[   64.294965]  ? SyS_read+0x120/0x120
+[   64.297474]  ? SyS_read+0x120/0x120
+[   64.299751]  do_syscall_64+0xeb/0x250
+[   64.301826]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   64.304352] RIP: 0033:0x7f5c994ade99
+[   64.306711] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   64.309577] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
+[   64.312334] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
+[   64.315783] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
+[   64.318365] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
+[   64.320980] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
+[   64.323515] Code: e8 e8 79 08 ff 4c 89 ff 45 0f b6 a7 b8 01 00 00 e8 68 7c 08 ff 49 8b 1f 4d 89 e5 49 c1 e4 04 48 8
+[   64.330753] RIP: rdma_join_multicast+0x26e/0x12c0 RSP: ffff8801c8207860
+[   64.332979] CR2: 00000000000000b0
+[   64.335550] ---[ end trace 0c00c17a408849c1 ]---
 
-If its being explicity requested by the owner it makes sense to me. I
-guess there could be a concern about this breaking some userspace that
-relied on MADV_DONTNEED not freeing locked memory?
+Reported-by: <syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com>
+Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Sean Hefty <sean.hefty@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/infiniband/core/cma.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks,
-
--Jason
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -3355,6 +3355,9 @@ int rdma_join_multicast(struct rdma_cm_i
+ 	struct cma_multicast *mc;
+ 	int ret;
+ 
++	if (!id->device)
++		return -EINVAL;
++
+ 	id_priv = container_of(id, struct rdma_id_private, id);
+ 	if (!cma_comp(id_priv, RDMA_CM_ADDR_BOUND) &&
+ 	    !cma_comp(id_priv, RDMA_CM_ADDR_RESOLVED))
