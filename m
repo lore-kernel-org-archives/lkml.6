@@ -1,205 +1,412 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jbZXB/OCHltOEAAAmS7hNA
-	; Mon, 11 Jun 2018 14:11:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SdLfG/KcGVvBRwAAmS7hNA
+	; Thu, 07 Jun 2018 21:00:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 54B136074D; Mon, 11 Jun 2018 14:11:50 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WCmPm52N"
+	id 5DE746089E; Thu,  7 Jun 2018 21:00:34 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9A9EA607BB;
-	Mon, 11 Jun 2018 14:11:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A9EA607BB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4D192605A2;
+	Thu,  7 Jun 2018 21:00:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4D192605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933992AbeFKOLr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:11:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46174 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933600AbeFKOHE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dIxHgBOv6pgPfuiAK0rYpNrQbLlk2aplXo3SctHWK5E=; b=WCmPm52No5vlvtBIbzSjg2eot
-        eHVrbEufiqmR7C3VkDQMlywV+aYD9dwGUz4ikWGDU2AccjuCvKZodENhqAmxLpm1SWfTce5HzjWG5
-        4TdgyyFRWWJoe7bhq9xagGsrSR7WU2ocuJB3Mh52whXD2Kr1kqvNqrzPMngq1sPtRDtX0YSJ3S3Rq
-        Eycbt3S8gsTD/+FlYSORbl32uKVFDAZSY5/50VespkFept0iMcEi9J9GYJkLHYonaEwM+AI9rZ20C
-        xMNTY4CTwYsqs+NvqAWRMHhunvA70sAdIEZWjS/D1irL19tAk+soAZlBdO3mwMd5Lsf1DC9Jv3DhF
-        XJRQE4tdw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTM-0004tp-0G; Mon, 11 Jun 2018 14:07:04 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 50/72] shmem: Convert shmem_alloc_hugepage to XArray
-Date: Mon, 11 Jun 2018 07:06:17 -0700
-Message-Id: <20180611140639.17215-51-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S933241AbeFGVAa (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:00:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43044 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933188AbeFGVA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:00:27 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A0608401EF3D;
+        Thu,  7 Jun 2018 21:00:26 +0000 (UTC)
+Received: from shalem.localdomain.com (unknown [10.36.118.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B2F822166BC7;
+        Thu,  7 Jun 2018 21:00:25 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: Rename silead_dmi to touchscreen_dmi
+Date: Thu,  7 Jun 2018 23:00:23 +0200
+Message-Id: <20180607210023.11789-2-hdegoede@redhat.com>
+In-Reply-To: <20180607210023.11789-1-hdegoede@redhat.com>
+References: <20180607210023.11789-1-hdegoede@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 21:00:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 21:00:26 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Not only silead touchscreens need some extra info not available in the
+ACPI tables to work properly. X86 devices with a Chipone ICN8505 chip also
+need some DMI based extra configuration.
 
-xa_find() is a slightly easier API to use than
-radix_tree_gang_lookup_slot() because it contains its own RCU locking.
-This commit removes the last user of radix_tree_gang_lookup_slot()
-so remove the function too.
+There is no reason to have separate dmi config code per touchscreen
+controller vendor. This commit renames silead_dmi to a more generic
+touchscreen_dmi name (and Kconfig option) in preparation of adding
+info for tablets with an ICN8505 based touchscreen.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Note there are no functional changes all code changes are limited to
+removing references to silead where these are no longer applicable.
+
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- include/linux/radix-tree.h |  6 +-----
- lib/radix-tree.c           | 44 +-------------------------------------
- mm/shmem.c                 | 14 ++++--------
- 3 files changed, 6 insertions(+), 58 deletions(-)
+ MAINTAINERS                                   |  2 +-
+ drivers/platform/x86/Kconfig                  | 16 ++---
+ drivers/platform/x86/Makefile                 |  2 +-
+ .../x86/{silead_dmi.c => touchscreen_dmi.c}   | 72 +++++++++----------
+ 4 files changed, 46 insertions(+), 46 deletions(-)
+ rename drivers/platform/x86/{silead_dmi.c => touchscreen_dmi.c} (89%)
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index eefa0b099dd5..081e68b4376b 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -147,12 +147,11 @@ static inline unsigned int iter_shift(const struct radix_tree_iter *iter)
-  * radix_tree_lookup_slot
-  * radix_tree_tag_get
-  * radix_tree_gang_lookup
-- * radix_tree_gang_lookup_slot
-  * radix_tree_gang_lookup_tag
-  * radix_tree_gang_lookup_tag_slot
-  * radix_tree_tagged
-  *
-- * The first 8 functions are able to be called locklessly, using RCU. The
-+ * The first 7 functions are able to be called locklessly, using RCU. The
-  * caller must ensure calls to these functions are made within rcu_read_lock()
-  * regions. Other readers (lock-free or otherwise) and modifications may be
-  * running concurrently.
-@@ -263,9 +262,6 @@ void radix_tree_clear_tags(struct radix_tree_root *, struct radix_tree_node *,
- unsigned int radix_tree_gang_lookup(const struct radix_tree_root *,
- 			void **results, unsigned long first_index,
- 			unsigned int max_items);
--unsigned int radix_tree_gang_lookup_slot(const struct radix_tree_root *,
--			void __rcu ***results, unsigned long *indices,
--			unsigned long first_index, unsigned int max_items);
- int radix_tree_preload(gfp_t gfp_mask);
- int radix_tree_maybe_preload(gfp_t gfp_mask);
- int radix_tree_maybe_preload_order(gfp_t gfp_mask, int order);
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index 5c8a262f506c..d0f44ea96945 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -1138,7 +1138,7 @@ void __radix_tree_replace(struct radix_tree_root *root,
-  * @slot:	pointer to slot
-  * @item:	new item to store in the slot.
-  *
-- * For use with radix_tree_lookup_slot(), radix_tree_gang_lookup_slot(),
-+ * For use with radix_tree_lookup_slot() and
-  * radix_tree_gang_lookup_tag_slot().  Caller must hold tree write locked
-  * across slot lookup and replacement.
-  *
-@@ -1772,48 +1772,6 @@ radix_tree_gang_lookup(const struct radix_tree_root *root, void **results,
- }
- EXPORT_SYMBOL(radix_tree_gang_lookup);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4543d74484d2..6be5134cab54 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12814,7 +12814,7 @@ L:	linux-input@vger.kernel.org
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/input/touchscreen/silead.c
+-F:	drivers/platform/x86/silead_dmi.c
++F:	drivers/platform/x86/touchscreen_dmi.c
  
--/**
-- *	radix_tree_gang_lookup_slot - perform multiple slot lookup on radix tree
-- *	@root:		radix tree root
-- *	@results:	where the results of the lookup are placed
-- *	@indices:	where their indices should be placed (but usually NULL)
-- *	@first_index:	start the lookup from this key
-- *	@max_items:	place up to this many items at *results
-- *
-- *	Performs an index-ascending scan of the tree for present items.  Places
-- *	their slots at *@results and returns the number of items which were
-- *	placed at *@results.
-- *
-- *	The implementation is naive.
-- *
-- *	Like radix_tree_gang_lookup as far as RCU and locking goes. Slots must
-- *	be dereferenced with radix_tree_deref_slot, and if using only RCU
-- *	protection, radix_tree_deref_slot may fail requiring a retry.
-- */
--unsigned int
--radix_tree_gang_lookup_slot(const struct radix_tree_root *root,
--			void __rcu ***results, unsigned long *indices,
--			unsigned long first_index, unsigned int max_items)
--{
--	struct radix_tree_iter iter;
--	void __rcu **slot;
--	unsigned int ret = 0;
--
--	if (unlikely(!max_items))
--		return 0;
--
--	radix_tree_for_each_slot(slot, root, &iter, first_index) {
--		results[ret] = slot;
--		if (indices)
--			indices[ret] = iter.index;
--		if (++ret == max_items)
--			break;
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL(radix_tree_gang_lookup_slot);
--
- /**
-  *	radix_tree_gang_lookup_tag - perform multiple lookup on a radix tree
-  *	                             based on a tag
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 8e702b6d84a5..09452ca79220 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1434,23 +1434,17 @@ static struct page *shmem_alloc_hugepage(gfp_t gfp,
- 		struct shmem_inode_info *info, pgoff_t index)
+ SILICON MOTION SM712 FRAME BUFFER DRIVER
+ M:	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index f27cb186437d..c59f71265a35 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1196,16 +1196,16 @@ config INTEL_TURBO_MAX_3
+ 	  This driver is only required when the system is not using Hardware
+ 	  P-States (HWP). In HWP mode, priority can be read from ACPI tables.
+ 
+-config SILEAD_DMI
+-	bool "Tablets with Silead touchscreens"
++config TOUCHSCREEN_DMI
++	bool "DMI based touchscreen configuration info"
+ 	depends on ACPI && DMI && I2C=y && TOUCHSCREEN_SILEAD
+ 	---help---
+-	  Certain ACPI based tablets with Silead touchscreens do not have
+-	  enough data in ACPI tables for the touchscreen driver to handle
+-	  the touchscreen properly, as OEMs expected the data to be baked
+-	  into the tablet model specific version of the driver shipped
+-	  with the OS-image for the device. This option supplies the missing
+-	  information. Enable this for x86 tablets with Silead touchscreens.
++	  Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
++	  do not have enough data in ACPI tables for the touchscreen driver to
++	  handle the touchscreen properly, as OEMs expect the data to be baked
++	  into the tablet model specific version of the driver shipped with the
++	  the OS-image for the device. This option supplies the missing info.
++	  Enable this for x86 tablets with Silead or Chipone touchscreens.
+ 
+ config INTEL_CHTDC_TI_PWRBTN
+ 	tristate "Intel Cherry Trail Dollar Cove TI power button driver"
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 2ba6cb795338..8d9477114fb5 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -78,7 +78,7 @@ obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
+ obj-$(CONFIG_PVPANIC)           += pvpanic.o
+ obj-$(CONFIG_ALIENWARE_WMI)	+= alienware-wmi.o
+ obj-$(CONFIG_INTEL_PMC_IPC)	+= intel_pmc_ipc.o
+-obj-$(CONFIG_SILEAD_DMI)	+= silead_dmi.o
++obj-$(CONFIG_TOUCHSCREEN_DMI)	+= touchscreen_dmi.o
+ obj-$(CONFIG_SURFACE_PRO3_BUTTON)	+= surfacepro3_button.o
+ obj-$(CONFIG_SURFACE_3_BUTTON)	+= surface3_button.o
+ obj-$(CONFIG_INTEL_PUNIT_IPC)  += intel_punit_ipc.o
+diff --git a/drivers/platform/x86/silead_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+similarity index 89%
+rename from drivers/platform/x86/silead_dmi.c
+rename to drivers/platform/x86/touchscreen_dmi.c
+index 2fea649653cc..6284946cb0d1 100644
+--- a/drivers/platform/x86/silead_dmi.c
++++ b/drivers/platform/x86/touchscreen_dmi.c
+@@ -1,5 +1,5 @@
+ /*
+- * Silead touchscreen driver DMI based configuration code
++ * Touchscreen driver DMI based configuration code
+  *
+  * Copyright (c) 2017 Red Hat Inc.
+  *
+@@ -20,7 +20,7 @@
+ #include <linux/property.h>
+ #include <linux/string.h>
+ 
+-struct silead_ts_dmi_data {
++struct ts_dmi_data {
+ 	const char *acpi_name;
+ 	const struct property_entry *properties;
+ };
+@@ -36,7 +36,7 @@ static const struct property_entry chuwi_hi8_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_hi8_data = {
++static const struct ts_dmi_data chuwi_hi8_data = {
+ 	.acpi_name      = "MSSL0001:00",
+ 	.properties     = chuwi_hi8_props,
+ };
+@@ -50,7 +50,7 @@ static const struct property_entry chuwi_hi8_pro_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_hi8_pro_data = {
++static const struct ts_dmi_data chuwi_hi8_pro_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= chuwi_hi8_pro_props,
+ };
+@@ -65,7 +65,7 @@ static const struct property_entry chuwi_vi8_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_vi8_data = {
++static const struct ts_dmi_data chuwi_vi8_data = {
+ 	.acpi_name      = "MSSL1680:00",
+ 	.properties     = chuwi_vi8_props,
+ };
+@@ -95,7 +95,7 @@ static const struct property_entry cube_iwork8_air_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data cube_iwork8_air_data = {
++static const struct ts_dmi_data cube_iwork8_air_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= cube_iwork8_air_props,
+ };
+@@ -109,7 +109,7 @@ static const struct property_entry dexp_ursus_7w_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data dexp_ursus_7w_data = {
++static const struct ts_dmi_data dexp_ursus_7w_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= dexp_ursus_7w_props,
+ };
+@@ -125,7 +125,7 @@ static const struct property_entry digma_citi_e200_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data digma_citi_e200_data = {
++static const struct ts_dmi_data digma_citi_e200_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= digma_citi_e200_props,
+ };
+@@ -140,7 +140,7 @@ static const struct property_entry gp_electronic_t701_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data gp_electronic_t701_data = {
++static const struct ts_dmi_data gp_electronic_t701_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= gp_electronic_t701_props,
+ };
+@@ -154,7 +154,7 @@ static const struct property_entry itworks_tw891_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data itworks_tw891_data = {
++static const struct ts_dmi_data itworks_tw891_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= itworks_tw891_props,
+ };
+@@ -168,7 +168,7 @@ static const struct property_entry jumper_ezpad_6_pro_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data jumper_ezpad_6_pro_data = {
++static const struct ts_dmi_data jumper_ezpad_6_pro_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= jumper_ezpad_6_pro_props,
+ };
+@@ -182,7 +182,7 @@ static const struct property_entry jumper_ezpad_mini3_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data jumper_ezpad_mini3_data = {
++static const struct ts_dmi_data jumper_ezpad_mini3_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= jumper_ezpad_mini3_props,
+ };
+@@ -199,7 +199,7 @@ static const struct property_entry onda_obook_20_plus_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data onda_obook_20_plus_data = {
++static const struct ts_dmi_data onda_obook_20_plus_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= onda_obook_20_plus_props,
+ };
+@@ -216,7 +216,7 @@ static const struct property_entry onda_v891w_v1_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data onda_v891w_v1_data = {
++static const struct ts_dmi_data onda_v891w_v1_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= onda_v891w_v1_props,
+ };
+@@ -231,7 +231,7 @@ static const struct property_entry pipo_w2s_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data pipo_w2s_data = {
++static const struct ts_dmi_data pipo_w2s_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= pipo_w2s_props,
+ };
+@@ -249,7 +249,7 @@ static const struct property_entry pov_mobii_wintab_p800w_v20_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data pov_mobii_wintab_p800w_v20_data = {
++static const struct ts_dmi_data pov_mobii_wintab_p800w_v20_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= pov_mobii_wintab_p800w_v20_props,
+ };
+@@ -264,7 +264,7 @@ static const struct property_entry pov_mobii_wintab_p800w_v21_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data pov_mobii_wintab_p800w_v21_data = {
++static const struct ts_dmi_data pov_mobii_wintab_p800w_v21_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= pov_mobii_wintab_p800w_v21_props,
+ };
+@@ -278,7 +278,7 @@ static const struct property_entry teclast_x3_plus_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data teclast_x3_plus_data = {
++static const struct ts_dmi_data teclast_x3_plus_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= teclast_x3_plus_props,
+ };
+@@ -294,7 +294,7 @@ static const struct property_entry teclast_x98plus2_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data teclast_x98plus2_data = {
++static const struct ts_dmi_data teclast_x98plus2_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= teclast_x98plus2_props,
+ };
+@@ -309,7 +309,7 @@ static const struct property_entry trekstor_primebook_c13_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data trekstor_primebook_c13_data = {
++static const struct ts_dmi_data trekstor_primebook_c13_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= trekstor_primebook_c13_props,
+ };
+@@ -324,7 +324,7 @@ static const struct property_entry trekstor_surftab_twin_10_1_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data trekstor_surftab_twin_10_1_data = {
++static const struct ts_dmi_data trekstor_surftab_twin_10_1_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= trekstor_surftab_twin_10_1_props,
+ };
+@@ -339,13 +339,13 @@ static const struct property_entry trekstor_surftab_wintron70_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data trekstor_surftab_wintron70_data = {
++static const struct ts_dmi_data trekstor_surftab_wintron70_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= trekstor_surftab_wintron70_props,
+ };
+ 
+ /* NOTE: Please keep this table sorted alphabetically */
+-static const struct dmi_system_id silead_ts_dmi_table[] = {
++static const struct dmi_system_id touchscreen_dmi_table[] = {
+ 	{
+ 		/* Chuwi Hi8 */
+ 		.driver_data = (void *)&chuwi_hi8_data,
+@@ -586,22 +586,22 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 	{ },
+ };
+ 
+-static const struct silead_ts_dmi_data *silead_ts_data;
++static const struct ts_dmi_data *ts_data;
+ 
+-static void silead_ts_dmi_add_props(struct i2c_client *client)
++static void ts_dmi_add_props(struct i2c_client *client)
  {
- 	struct vm_area_struct pvma;
--	struct inode *inode = &info->vfs_inode;
--	struct address_space *mapping = inode->i_mapping;
--	pgoff_t idx, hindex;
--	void __rcu **results;
-+	struct address_space *mapping = info->vfs_inode.i_mapping;
-+	pgoff_t hindex;
- 	struct page *page;
+ 	struct device *dev = &client->dev;
+ 	int error;
  
- 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE))
- 		return NULL;
+ 	if (has_acpi_companion(dev) &&
+-	    !strncmp(silead_ts_data->acpi_name, client->name, I2C_NAME_SIZE)) {
+-		error = device_add_properties(dev, silead_ts_data->properties);
++	    !strncmp(ts_data->acpi_name, client->name, I2C_NAME_SIZE)) {
++		error = device_add_properties(dev, ts_data->properties);
+ 		if (error)
+ 			dev_err(dev, "failed to add properties: %d\n", error);
+ 	}
+ }
  
- 	hindex = round_down(index, HPAGE_PMD_NR);
--	rcu_read_lock();
--	if (radix_tree_gang_lookup_slot(&mapping->i_pages, &results, &idx,
--				hindex, 1) && idx < hindex + HPAGE_PMD_NR) {
--		rcu_read_unlock();
-+	if (xa_find(&mapping->i_pages, &hindex, hindex + HPAGE_PMD_NR - 1,
-+								XA_PRESENT))
- 		return NULL;
--	}
--	rcu_read_unlock();
+-static int silead_ts_dmi_notifier_call(struct notifier_block *nb,
++static int ts_dmi_notifier_call(struct notifier_block *nb,
+ 				       unsigned long action, void *data)
+ {
+ 	struct device *dev = data;
+@@ -611,7 +611,7 @@ static int silead_ts_dmi_notifier_call(struct notifier_block *nb,
+ 	case BUS_NOTIFY_ADD_DEVICE:
+ 		client = i2c_verify_client(dev);
+ 		if (client)
+-			silead_ts_dmi_add_props(client);
++			ts_dmi_add_props(client);
+ 		break;
  
- 	shmem_pseudo_vma_init(&pvma, info, hindex);
- 	page = alloc_pages_vma(gfp | __GFP_COMP | __GFP_NORETRY | __GFP_NOWARN,
+ 	default:
+@@ -621,22 +621,22 @@ static int silead_ts_dmi_notifier_call(struct notifier_block *nb,
+ 	return 0;
+ }
+ 
+-static struct notifier_block silead_ts_dmi_notifier = {
+-	.notifier_call = silead_ts_dmi_notifier_call,
++static struct notifier_block ts_dmi_notifier = {
++	.notifier_call = ts_dmi_notifier_call,
+ };
+ 
+-static int __init silead_ts_dmi_init(void)
++static int __init ts_dmi_init(void)
+ {
+ 	const struct dmi_system_id *dmi_id;
+ 	int error;
+ 
+-	dmi_id = dmi_first_match(silead_ts_dmi_table);
++	dmi_id = dmi_first_match(touchscreen_dmi_table);
+ 	if (!dmi_id)
+ 		return 0; /* Not an error */
+ 
+-	silead_ts_data = dmi_id->driver_data;
++	ts_data = dmi_id->driver_data;
+ 
+-	error = bus_register_notifier(&i2c_bus_type, &silead_ts_dmi_notifier);
++	error = bus_register_notifier(&i2c_bus_type, &ts_dmi_notifier);
+ 	if (error)
+ 		pr_err("%s: failed to register i2c bus notifier: %d\n",
+ 			__func__, error);
+@@ -649,4 +649,4 @@ static int __init silead_ts_dmi_init(void)
+  * itself is ready (which happens at postcore initcall level), but before
+  * ACPI starts enumerating devices (at subsys initcall level).
+  */
+-arch_initcall(silead_ts_dmi_init);
++arch_initcall(ts_dmi_init);
 -- 
 2.17.1
