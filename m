@@ -1,198 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jMhtD+ATGVtrNwAAmS7hNA
-	; Thu, 07 Jun 2018 11:15:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GhjFNiveGFvgdwAAmS7hNA
+	; Thu, 07 Jun 2018 07:27:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2296D608BA; Thu,  7 Jun 2018 11:15:44 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L8n/hkJH"
+	id 68706607E7; Thu,  7 Jun 2018 07:27:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7DD07607DC;
-	Thu,  7 Jun 2018 11:15:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7DD07607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C5F2A602FC;
+	Thu,  7 Jun 2018 07:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C5F2A602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932251AbeFGLPk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 07:15:40 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50772 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753004AbeFGLPh (ORCPT
+        id S1753389AbeFGH1Y (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:27:24 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:43159 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753017AbeFGH1X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:15:37 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57BBiPq164357;
-        Thu, 7 Jun 2018 11:15:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=FoJdPP4hYaRyzVJNDR1Gu3aOnDLTIFrZO3sIViiJqB0=;
- b=L8n/hkJH2qg1F/mGlQZmViLTCjSv3S/AcqndSeJ48xpZ8CAz1tumWxb0k1hpD0k0K1Gh
- Lwtg+x/11MjeVAcwRL00W3qvP3NtMUdAyf+Ma17HCC2+T1KH3z/T0UW8tsx10mD4PKnt
- yuW0oLhm0Rdn01jmLAyhrOK79t1uCKZkZMpD7T3Wcnf/0WMym3WTw79HFFU+datr7ux3
- XKRh4I+PomHddYAu+g4pxR1YAEBd7iT1oBki4UKVPCYwx76RImkaIkRL03eKAn4NJ57d
- lESJCrXdfXi2Vg/9OK0u1ZP+0O+Ja58ExDtW9D17iKjIcw4Bcl1sXEe4XLv7Y6qp+Pur dQ==
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jbvypgh6n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Jun 2018 11:15:10 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57BFAsx002683
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jun 2018 11:15:10 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57BF8MS014932;
-        Thu, 7 Jun 2018 11:15:08 GMT
-Received: from lab02.no.oracle.com (/10.172.144.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 07 Jun 2018 04:15:08 -0700
-From: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Hakon Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Chris Mi <chrism@mellanox.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] idr: Add ida_simple_get_cyclic
-Date: Thu,  7 Jun 2018 13:14:34 +0200
-Message-Id: <20180607111435.17538-2-hans.westgaard.ry@oracle.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180607111435.17538-1-hans.westgaard.ry@oracle.com>
-References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
- <20180607111435.17538-1-hans.westgaard.ry@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=966
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806070132
+        Thu, 7 Jun 2018 03:27:23 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id QpKHfDJ3RdJgZQpKKfSxVn; Thu, 07 Jun 2018 09:27:21 +0200
+Subject: Re: [RFC PATCH 2/2] media: docs-rst: Add encoder UAPI specification
+ to Codec Interfaces
+To: Tomasz Figa <tfiga@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Pawel Osciak <posciak@chromium.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?=
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        todor.tomov@linaro.org, nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20180605103328.176255-1-tfiga@chromium.org>
+ <20180605103328.176255-3-tfiga@chromium.org>
+ <1528199628.4074.15.camel@pengutronix.de>
+ <CAAFQd5DYu+Oehr1UUvvdmWk7toO0i_=NFgvZcAKQ8ZURKy51fA@mail.gmail.com>
+ <1528208578.4074.19.camel@pengutronix.de>
+ <CAAFQd5DqHj65AdzfYmvHWkqHnZntiiA2AhAfgHbLA3AuWvsOTQ@mail.gmail.com>
+ <1528278003.3438.3.camel@pengutronix.de>
+ <CAAFQd5A2hsgrmwJ3bgv6EDKqqy5Y86CnMcktrWa+YihWGjxtHg@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <41fd04f2-fc44-1792-81e6-a3d4d384adc5@xs4all.nl>
+Date: Thu, 7 Jun 2018 09:27:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAAFQd5A2hsgrmwJ3bgv6EDKqqy5Y86CnMcktrWa+YihWGjxtHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNAGxU0ox+dWJtAPoSGGnHWb1bu/ucVQJ8py+wbYS2G7WuFOZUECJqg56yxMeox1hYrroxTLDzMgBJr1TP/nzHxnW9rUuexamUbVU0FEMtHHqMcqXLZb
+ y9kRYjjM/qyWFXw4aXs03FgrThGUiXzAhLWD0tkaChG9qHkTDlxZUBTR/VRlnXH/jC2AVQWlti8wuTuEilN0UgqMSHnhkFmJ3sTcE4D3whSfekmZGJuRzuVG
+ aq4rgsaNWz9MhlYBwfQ0e+yPwAe0vj+Kddr77rse7ygVlHwHJ1z3f/9/EsH4JNOXdqgCxzN1ZfZb5rLigHBJUcUIG08cRFqihAVqvB1MI+9GC9a9vR0U0y1h
+ l+raYlxjQaBlD07xuHi3gubDMokIVrRJi1lK0cGZ5oL2Ykng+/R3Eghgpuu68+mUGxFBZY3GlH03d9qycXWNoie1vAPrikT1u9vKYhncJrI8G/zEgh6gqxa/
+ ON1onyrNhloBiWDaafkdusfaPanPEFuxIT22a9BaL+ISSeOsGb9KQBErWTTykZJhd6ERQ/QTMoK8sCQz5sFGW9xtFuJmIZgj/2JVjz0CDx6DsHwslY/uXDsw
+ CT5pwUdLce/J7D7rzp5WDQzSXi30/RcyBSSIotFY5MsFe8ysWsuL31cuxd0sBQe6EkveUXKJCoFf0uvNvmiHzXqQ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
----
- include/linux/idr.h |  8 +++++--
- lib/idr.c           | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+), 2 deletions(-)
+On 06/06/2018 12:37 PM, Tomasz Figa wrote:
+> On Wed, Jun 6, 2018 at 6:40 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>>
+>> On Wed, 2018-06-06 at 18:17 +0900, Tomasz Figa wrote:
+>>> On Tue, Jun 5, 2018 at 11:23 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>>>>
+>>>> On Tue, 2018-06-05 at 21:31 +0900, Tomasz Figa wrote:
+>>>> [...]
+>>>>> +Initialization
+>>>>>>> +--------------
+>>>>>>> +
+>>>>>>> +1. (optional) Enumerate supported formats and resolutions. See
+>>>>>>> +   capability enumeration.
+>>>>>>> +
+>>>>>>> +2. Set a coded format on the CAPTURE queue via :c:func:`VIDIOC_S_FMT`
+>>>>>>> +
+>>>>>>> +   a. Required fields:
+>>>>>>> +
+>>>>>>> +      i.  type = CAPTURE
+>>>>>>> +
+>>>>>>> +      ii. fmt.pix_mp.pixelformat set to a coded format to be produced
+>>>>>>> +
+>>>>>>> +   b. Return values:
+>>>>>>> +
+>>>>>>> +      i.  EINVAL: unsupported format.
+>>>>>>> +
+>>>>>>> +      ii. Others: per spec
+>>>>>>> +
+>>>>>>> +   c. Return fields:
+>>>>>>> +
+>>>>>>> +      i. fmt.pix_mp.width, fmt.pix_mp.height should be 0.
+>>>>>>> +
+>>>>>>> +   .. note::
+>>>>>>> +
+>>>>>>> +      After a coded format is set, the set of raw formats
+>>>>>>> +      supported as source on the OUTPUT queue may change.
+>>>>>>
+>>>>>> So setting CAPTURE potentially also changes OUTPUT format?
+>>>>>
+>>>>> Yes, but at this point userspace hasn't yet set the desired format.
+>>>>>
+>>>>>> If the encoded stream supports colorimetry information, should that
+>>>>>> information be taken from the CAPTURE queue?
+>>>>>
+>>>>> What's colorimetry? Is it something that is included in
+>>>>> v4l2_pix_format(_mplane)? Is it something that can vary between raw
+>>>>> input and encoded output?
+>>>>
+>>>> FTR, yes, I meant the colorspace, ycbcr_enc, quantization, and xfer_func
+>>>> fields of the v4l2_pix_format(_mplane) structs. GStreamer uses the term
+>>>> "colorimetry" to pull these fields together into a single parameter.
+>>>>
+>>>> The codecs usually don't care at all about this information, except some
+>>>> streams (such as h.264 in the VUI parameters section of the SPS header)
+>>>> may optionally contain a representation of these fields, so it may be
+>>>> desirable to let encoders write the configured colorimetry or to let
+>>>> decoders return the detected colorimetry via G_FMT(CAP) after a source
+>>>> change event.
+>>>>
+>>>> I think it could be useful to enforce the same colorimetry on CAPTURE
+>>>> and OUTPUT queue if the hardware doesn't do any colorspace conversion.
+>>>
+>>> After thinking a bit more on this, I guess it wouldn't overly
+>>> complicate things if we require that the values from OUTPUT queue are
+>>> copied to CAPTURE queue, if the stream doesn't include such
+>>> information or the hardware just can't parse them.
+>>
+>> And for encoders it would be copied from CAPTURE queue to OUTPUT queue?
+>>
+> 
+> I guess iy would be from OUTPUT to CAPTURE for encoders as well, since
+> the colorimetry of OUTPUT is ultimately defined by the raw frames that
+> userspace is going to be feeding to the encoder.
 
-diff --git a/include/linux/idr.h b/include/linux/idr.h
-index e856f4e0ab35..f151ce89124a 100644
---- a/include/linux/idr.h
-+++ b/include/linux/idr.h
-@@ -218,10 +218,12 @@ DECLARE_PER_CPU(struct ida_bitmap *, ida_bitmap);
- 
- struct ida {
- 	struct radix_tree_root	ida_rt;
-+	unsigned int		ida_next;
- };
- 
--#define IDA_INIT(name)	{						\
--	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
-+#define IDA_INIT(name)	{						     \
-+		.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT), \
-+		.ida_next = 0,						     \
- }
- #define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
- 
-@@ -232,6 +234,8 @@ void ida_destroy(struct ida *ida);
- 
- int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
- 		   gfp_t gfp_mask);
-+int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
-+			  gfp_t gfp_mask);
- void ida_simple_remove(struct ida *ida, unsigned int id);
- 
- static inline void ida_init(struct ida *ida)
-diff --git a/lib/idr.c b/lib/idr.c
-index 823b813f08f8..3374c3fa4027 100644
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -599,6 +599,72 @@ int ida_simple_get(struct ida *ida, unsigned int start, unsigned int end,
- 	return ret;
- }
- EXPORT_SYMBOL(ida_simple_get);
-+/**
-+ * ida_simple_get_cyclic - get a new id.
-+ * @ida: the (initialized) ida.
-+ * @start: the minimum id (inclusive, < 0x8000000)
-+ * @end: the maximum id (exclusive, < 0x8000000 or 0)
-+ * @gfp_mask: memory allocation flags
-+ *
-+ * Allocates an id in the range start <= id < end, or returns -ENOSPC.
-+ * On memory allocation failure, returns -ENOMEM.
-+ * The search for an unused id will start at the last id allocated and will
-+ * wrap around to @start if no free ids are found before reaching @end.
-+ *
-+ * Compared to ida_get_new_above() this function does its own locking, and
-+ * should be used unless there are special requirements.
-+ *
-+ * Use ida_simple_remove() to get rid of an id.
-+ */
-+int ida_simple_get_cyclic(struct ida *ida, unsigned int start, unsigned int end,
-+		   gfp_t gfp_mask)
-+{
-+	int ret, id, next;
-+	unsigned int max;
-+	unsigned long flags;
-+
-+	WARN_ON((int)start < 0);
-+	WARN_ON((int)end < 0);
-+
-+	if (end == 0) {
-+		max = 0x80000000;
-+	} else {
-+		WARN_ON(end < start);
-+		max = end - 1;
-+	}
-+
-+again:
-+	if (!ida_pre_get(ida, gfp_mask))
-+		return -ENOMEM;
-+
-+	spin_lock_irqsave(&simple_ida_lock, flags);
-+	next = ida->ida_next;
-+	if (next < start || next >= end)
-+		next = start;
-+
-+	ret = ida_get_new_above(ida, next, &id);
-+	if (likely(!ret)) {
-+		if (unlikely(id >= max)) {
-+			ida_remove(ida, id);
-+			if (next == start) {
-+				ret = -ENOSPC;
-+			} else {
-+				ida->ida_next = start;
-+				spin_unlock_irqrestore(&simple_ida_lock, flags);
-+				goto again;
-+			}
-+		} else {
-+			ida->ida_next = id + 1;
-+			ret = id;
-+		}
-+	}
-+	spin_unlock_irqrestore(&simple_ida_lock, flags);
-+
-+	if (unlikely(ret == -EAGAIN))
-+		goto again;
-+	return ret;
-+}
-+EXPORT_SYMBOL(ida_simple_get_cyclic);
- 
- /**
-  * ida_simple_remove - remove an allocated id.
--- 
-2.14.3
+Correct. All mem2mem drivers should just copy the colorimetry from the
+output buffers to the capture buffers, unless the decoder hardware is able to
+extract that data from the stream, in which case it can overwrite it for
+the capture buffer.
+
+Currently colorspace converters are not supported since the V4L2 API does
+not provide a way to let userspace define colorimetry for the capture queue.
+I have a patch to add a new v4l2_format flag for that since forever, but
+since we do not have any drivers that can do this in the kernel it has never
+been upstreamed.
+
+What is supported is basic RGB <-> YUV conversions since that's selected through
+the provided pixelformat.
+
+Regards,
+
+	Hans
