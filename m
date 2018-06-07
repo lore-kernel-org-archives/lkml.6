@@ -1,109 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id k70PACzQGlsaEgAAmS7hNA
-	; Fri, 08 Jun 2018 18:53:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id N1x/ODCdGVuMSwAAmS7hNA
+	; Thu, 07 Jun 2018 21:01:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7A1D2607DC; Fri,  8 Jun 2018 18:53:17 +0000 (UTC)
+	id 74431606FA; Thu,  7 Jun 2018 21:01:39 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vgV9IYMp"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 095686074D;
-	Fri,  8 Jun 2018 18:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 095686074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id DBE28601C3;
+	Thu,  7 Jun 2018 21:01:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DBE28601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753265AbeFHSxQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:53:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53798 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752691AbeFHSuV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:50:21 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fRMSp-0006Nh-Td; Fri, 08 Jun 2018 18:50:19 +0000
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/13] pull fput() on late failures into path_openat()
-Date: Fri,  8 Jun 2018 19:50:11 +0100
-Message-Id: <20180608185019.24472-5-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
-References: <20180608184842.GD30522@ZenIV.linux.org.uk>
- <20180608185019.24472-1-viro@ZenIV.linux.org.uk>
+        id S933252AbeFGVBg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:01:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933084AbeFGVBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:01:33 -0400
+Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 762FF208B3
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 21:01:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528405292;
+        bh=LAzhCQsI78n3I2e+pOOBfSDxsZVMaMCiyQ5I3MvYQ6I=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vgV9IYMp6wcnT1tkx3OXD61hL/5KDSBptIyqEcQr2DGoPso18cqgslJQQ1OT9GanJ
+         ShLlvX/8QTb3eYUFxUeVmS95j3WrkBwqAFB+duvfXK8oRKUEDquAnsiQ+mVwIT1gEK
+         +LJjvNInO1RNnuqWtGm2TUNdwDaXZImu5rovUrJg=
+Received: by mail-wm0-f46.google.com with SMTP id o13-v6so20320283wmf.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 14:01:32 -0700 (PDT)
+X-Gm-Message-State: APt69E1UivAqp+VUFBSE1Rhxu88aKudFMp8gExzmxfWzfDnnQHVhDKrA
+        blzhC9RVLhqHpQkrGd3op7CPb88czHWBpxY2apGYBg==
+X-Google-Smtp-Source: ADUXVKIJVSCdppq+z5FV1VL3xsAZRNYX58D9Pc+Y/0Rj2RC2peYf4aqit+7V3f4brjouQR57jpDlxYGrh5ZrtgNvTi4=
+X-Received: by 2002:a1c:4a9d:: with SMTP id n29-v6mr2454409wmi.46.1528405290631;
+ Thu, 07 Jun 2018 14:01:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
+ <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com> <1528403417.5265.35.camel@2b52.sc.intel.com>
+In-Reply-To: <1528403417.5265.35.camel@2b52.sc.intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 14:01:18 -0700
+X-Gmail-Original-Message-ID: <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+Message-ID: <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On Thu, Jun 7, 2018 at 1:33 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> On Thu, 2018-06-07 at 11:48 -0700, Andy Lutomirski wrote:
+> > On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > >
+> > > The following operations are provided.
+> > >
+> > > ARCH_CET_STATUS:
+> > >         return the current CET status
+> > >
+> > > ARCH_CET_DISABLE:
+> > >         disable CET features
+> > >
+> > > ARCH_CET_LOCK:
+> > >         lock out CET features
+> > >
+> > > ARCH_CET_EXEC:
+> > >         set CET features for exec()
+> > >
+> > > ARCH_CET_ALLOC_SHSTK:
+> > >         allocate a new shadow stack
+> > >
+> > > ARCH_CET_PUSH_SHSTK:
+> > >         put a return address on shadow stack
+> > >
+> > > ARCH_CET_ALLOC_SHSTK and ARCH_CET_PUSH_SHSTK are intended only for
+> > > the implementation of GLIBC ucontext related APIs.
+> >
+> > Please document exactly what these all do and why.  I don't understand
+> > what purpose ARCH_CET_LOCK and ARCH_CET_EXEC serve.  CET is opt in for
+> > each ELF program, so I think there should be no need for a magic
+> > override.
+>
+> CET is initially enabled if the loader has CET capability.  Then the
+> loader decides if the application can run with CET.  If the application
+> cannot run with CET (e.g. a dependent library does not have CET), then
+> the loader turns off CET before passing to the application.  When the
+> loader is done, it locks out CET and the feature cannot be turned off
+> anymore until the next exec() call.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+Why is the lockout necessary?  If user code enables CET and tries to
+run code that doesn't support CET, it will crash.  I don't see why we
+need special code in the kernel to prevent a user program from calling
+arch_prctl() and crashing itself.  There are already plenty of ways to
+do that :)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index b34ead1b8790..2abd00079b26 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3375,8 +3375,6 @@ static int do_last(struct nameidata *nd,
- 	if (!error && will_truncate)
- 		error = handle_truncate(file);
- out:
--	if (unlikely(error) && (*opened & FILE_OPENED))
--		fput(file);
- 	if (unlikely(error > 0)) {
- 		WARN_ON(1);
- 		error = -EINVAL;
-@@ -3454,8 +3452,6 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
- 	if (file->f_mode & FMODE_OPENED)
- 		*opened |= FILE_OPENED;
- 	error = open_check_o_direct(file);
--	if (error)
--		fput(file);
- out2:
- 	mnt_drop_write(path.mnt);
- out:
-@@ -3517,20 +3513,23 @@ static struct file *path_openat(struct nameidata *nd,
- 	}
- 	terminate_walk(nd);
- out2:
--	if (!(opened & FILE_OPENED)) {
--		BUG_ON(!error);
--		put_filp(file);
-+	if (likely(!error)) {
-+		if (likely(opened & FILE_OPENED))
-+			return file;
-+		WARN_ON(1);
-+		error = -EINVAL;
- 	}
--	if (unlikely(error)) {
--		if (error == -EOPENSTALE) {
--			if (flags & LOOKUP_RCU)
--				error = -ECHILD;
--			else
--				error = -ESTALE;
--		}
--		file = ERR_PTR(error);
-+	if (opened & FILE_OPENED)
-+		fput(file);
-+	else
-+		put_filp(file);
-+	if (error == -EOPENSTALE) {
-+		if (flags & LOOKUP_RCU)
-+			error = -ECHILD;
-+		else
-+			error = -ESTALE;
- 	}
--	return file;
-+	return ERR_PTR(error);
- }
- 
- struct file *do_filp_open(int dfd, struct filename *pathname,
--- 
-2.11.0
+> When the next exec() is called, CET
+> feature is turned on/off based on the values set by ARCH_CET_EXEC.
+
+And why do we need ARCH_CET_EXEC?
+
+For background, I really really dislike adding new state that persists
+across exec().  It's nice to get as close to a clean slate as possible
+after exec() so that programs can run in a predictable environment.
+exec() is also a security boundary, and anything a task can do to
+affect itself after exec() needs to have its security implications
+considered very carefully.  (As a trivial example, you should not be
+able to use cetcmd ... sudo [malicious options here] to cause sudo to
+run with CET off and then try to exploit it via the malicious options.
+
+If a shutoff is needed for testing, how about teaching ld.so to parse
+LD_CET=no or similar and protect it the same way as LD_PRELOAD is
+protected.  Or just do LD_PRELOAD=/lib/libdoesntsupportcet.so.
+
+--Andy
