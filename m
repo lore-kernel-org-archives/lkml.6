@@ -1,147 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lfeJHKrhGVvKIQAAmS7hNA
-	; Fri, 08 Jun 2018 01:54:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yqyXMOG1GVt7cwAAmS7hNA
+	; Thu, 07 Jun 2018 22:47:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 15BBE6074D; Fri,  8 Jun 2018 01:54:41 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qrWw1t0Q"
+	id A9F666074D; Thu,  7 Jun 2018 22:47:29 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7804B601D2;
-	Fri,  8 Jun 2018 01:54:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7804B601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3AFBE601C3;
+	Thu,  7 Jun 2018 22:47:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AFBE601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeFHByi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 21:54:38 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40592 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752312AbeFHByh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 21:54:37 -0400
-Received: by mail-pl0-f67.google.com with SMTP id t12-v6so7264822plo.7
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 18:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nzCBQlRS35zoCxyTantuxIw/cel5xVtYMq9WSOLRAvs=;
-        b=qrWw1t0Qg6nB8IrxGN3Wod85wVMpn9MTg4R2gYtZ7w6m1Zdpcj7W+q9hfZLZwfrGHA
-         jHUzWQQ7dYMIPs4YjcXuZkEqgYdsZ2ccMNmAmRc0OP3IKnWxeYiNPntsAj834isaF14P
-         l0UGGYG11tDeJtt/D51b7CLKPEEsEqnPZUloDYVmZd6WcJ6t4g97iunKtpgGAOlO2OQL
-         +ub0pU+6tdvLY+M9mf3JiLIni03IZZJySDLx5m3PpyAR/pKXUODawb2x+nVziuOf34p+
-         dVPBljhHLz0r1/Tlt/KY40yRrwdEkIpAViDV35zh6pWTmmdjurDZu+Z0sRVJ/lWVqNl8
-         ifTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nzCBQlRS35zoCxyTantuxIw/cel5xVtYMq9WSOLRAvs=;
-        b=CWgzF/w5E7QpqmZuSqkFG51xk6rS+zf9yXqFLP+qLdYobBwG2u82OkcndLvq98CsNi
-         4N8Mtk4wFulzPikvhVEuVSSVaEgVfhLTO9di3GsKBbXlTmlma9QasUuhBHTfU9+/YC0R
-         zOOccyasHiIkGo0QAbcTAowcvQSiVpGmQCwpO+I53MAUEeXkfJBhRDkFjFECjHei5F7r
-         T4rKbtwrTWG91+AnoWUhHlg6j0eOerNJRIWz3Xu+NbnJM50oGvrcr2oGzc/mGFTBiG5a
-         32aXU5tFoKXzRa29ZfUN5GWhqrE7Y8CPirAvsV5n5S840kSxzyEZpOzXD0ZR7RhfoagA
-         +4PQ==
-X-Gm-Message-State: APt69E3IwGsfiVihsaxxlCDtVVyM2ur8IQmwzx7cQqnIyb0oTIYU/Hx2
-        SE5m025DQM0RAjiFvHwPwPo=
-X-Google-Smtp-Source: ADUXVKLnTZl8az232HYTeIJ2mPDDq1OtRav8WIka/tkWfyGct8lp5uoyrdAmIWRtnJfNWkGvFH781g==
-X-Received: by 2002:a17:902:7105:: with SMTP id a5-v6mr4468085pll.171.1528422876669;
-        Thu, 07 Jun 2018 18:54:36 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (59-102-70-78.tpgi.com.au. [59.102.70.78])
-        by smtp.gmail.com with ESMTPSA id s14-v6sm17972676pfh.116.2018.06.07.18.54.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 18:54:36 -0700 (PDT)
-Date: Fri, 8 Jun 2018 11:54:29 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 1/3] powerpc: make CPU selection logic generic in
- Makefile
-Message-ID: <20180608115429.50c8d578@roar.ozlabs.ibm.com>
-In-Reply-To: <273f8ed3e980b9385c6e1b31e17f890ea08ce33c.1528365638.git.christophe.leroy@c-s.fr>
-References: <273f8ed3e980b9385c6e1b31e17f890ea08ce33c.1528365638.git.christophe.leroy@c-s.fr>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752152AbeFGWr1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:47:27 -0400
+Received: from mga02.intel.com ([134.134.136.20]:25665 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751521AbeFGWrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 18:47:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 15:47:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
+   d="scan'208";a="62750857"
+Received: from ray.jf.intel.com (HELO [10.7.201.24]) ([10.7.201.24])
+  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 15:47:25 -0700
+Subject: Re: [PATCH v4 4/4] mm/sparse: Optimize memmap allocation during
+ sparse_init()
+To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, pagupta@redhat.com
+References: <20180521101555.25610-1-bhe@redhat.com>
+ <20180521101555.25610-5-bhe@redhat.com>
+Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <766d4f69-befe-5219-9ede-6c9927f12f0a@intel.com>
+Date: Thu, 7 Jun 2018 15:46:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180521101555.25610-5-bhe@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  7 Jun 2018 10:10:18 +0000 (UTC)
-Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-
-> At the time being, when adding a new CPU for selection, both
-> Kconfig.cputype and Makefile have to be modified.
-> 
-> This patch moves into Kconfig.cputype the name of the CPU to me
-> passed to the -mcpu= argument.
-
-Seems like a good cleanup.
-
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  arch/powerpc/Makefile                  |  8 +-------
->  arch/powerpc/platforms/Kconfig.cputype | 15 +++++++++++++++
->  2 files changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-> index 9704ab360d39..9a5642552abc 100644
-> --- a/arch/powerpc/Makefile
-> +++ b/arch/powerpc/Makefile
-> @@ -175,13 +175,7 @@ ifdef CONFIG_MPROFILE_KERNEL
->      endif
->  endif
+> @@ -297,8 +298,8 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
+>  		if (!present_section_nr(pnum))
+>  			continue;
 >  
-> -CFLAGS-$(CONFIG_CELL_CPU) += $(call cc-option,-mcpu=cell)
-> -CFLAGS-$(CONFIG_POWER5_CPU) += $(call cc-option,-mcpu=power5)
-> -CFLAGS-$(CONFIG_POWER6_CPU) += $(call cc-option,-mcpu=power6)
-> -CFLAGS-$(CONFIG_POWER7_CPU) += $(call cc-option,-mcpu=power7)
-> -CFLAGS-$(CONFIG_POWER8_CPU) += $(call cc-option,-mcpu=power8)
-> -CFLAGS-$(CONFIG_POWER9_CPU) += $(call cc-option,-mcpu=power9)
-> -CFLAGS-$(CONFIG_PPC_8xx) += $(call cc-option,-mcpu=860)
-> +CFLAGS-$(CONFIG_SPECIAL_CPU_BOOL) += $(call cc-option,-mcpu=$(CONFIG_SPECIAL_CPU))
+> -		map_map[pnum] = sparse_mem_map_populate(pnum, nodeid, NULL);
+> -		if (map_map[pnum])
+> +		map_map[nr_consumed_maps] = sparse_mem_map_populate(pnum, nodeid, NULL);
+> +		if (map_map[nr_consumed_maps++])
+>  			continue;
+...
+
+This looks wonky.
+
+This seems to say that even if we fail to sparse_mem_map_populate() (it
+returns NULL), we still consume a map.  Is that right?
+
+>  	/* fallback */
+> +	nr_consumed_maps = 0;
+>  	for (pnum = pnum_begin; pnum < pnum_end; pnum++) {
+>  		struct mem_section *ms;
 >  
->  # Altivec option not allowed with e500mc64 in GCC.
->  ifeq ($(CONFIG_ALTIVEC),y)
-> diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
-> index cc892dcfa114..71ef559cc474 100644
-> --- a/arch/powerpc/platforms/Kconfig.cputype
-> +++ b/arch/powerpc/platforms/Kconfig.cputype
-> @@ -140,6 +140,21 @@ config E6500_CPU
+>  		if (!present_section_nr(pnum))
+>  			continue;
+> -		map_map[pnum] = sparse_mem_map_populate(pnum, nodeid, NULL);
+> -		if (map_map[pnum])
+> +		map_map[nr_consumed_maps] = sparse_mem_map_populate(pnum, nodeid, NULL);
+> +		if (map_map[nr_consumed_maps++])
+>  			continue;
+
+Same questionable pattern as above...
+
+>  #ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+> -	size2 = sizeof(struct page *) * NR_MEM_SECTIONS;
+> +	size2 = sizeof(struct page *) * nr_present_sections;
+>  	map_map = memblock_virt_alloc(size2, 0);
+>  	if (!map_map)
+>  		panic("can not allocate map_map\n");
+> @@ -586,27 +594,44 @@ void __init sparse_init(void)
+>  				sizeof(map_map[0]));
+>  #endif
 >  
->  endchoice
->  
-> +config SPECIAL_CPU_BOOL
-> +	bool
-> +	default !GENERIC_CPU
-> +
-> +config SPECIAL_CPU
-> +	string
-> +	depends on SPECIAL_CPU_BOOL
-> +	default "cell" if CELL_CPU
-> +	default "power5" if POWER5_CPU
-> +	default "power6" if POWER6_CPU
-> +	default "power7" if POWER7_CPU
-> +	default "power8" if POWER8_CPU
-> +	default "power9" if POWER9_CPU
-> +	default "860" if PPC_8xx
-> +
->  config PPC_BOOK3S
->  	def_bool y
->  	depends on PPC_BOOK3S_32 || PPC_BOOK3S_64
+> +	/* The numner of present sections stored in nr_present_sections
+
+"number"?
+
+Also, this is not correct comment CodingStyle.
+
+> +	 * are kept the same since mem sections are marked as present in
+> +	 * memory_present().
+
+Are you just trying to say that we are not making sections present here?
+
+>                         In this for loop, we need check which sections
+> +	 * failed to allocate memmap or usemap, then clear its
+> +	 * ->section_mem_map accordingly. During this process, we need
+> +	 * increase 'alloc_usemap_and_memmap' whether its allocation of
+> +	 * memmap or usemap failed or not, so that after we handle the i-th
+> +	 * memory section, can get memmap and usemap of (i+1)-th section
+> +	 * correctly. */
+
+I'm really scratching my head over this comment.  For instance "increase
+'alloc_usemap_and_memmap'" doesn't make any sense to me.  How do you
+increase a function?
+
+I wonder if you could give that comment another shot.
