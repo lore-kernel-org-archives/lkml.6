@@ -1,548 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gNmsMzYFHlsTbwAAmS7hNA
-	; Mon, 11 Jun 2018 05:14:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7aZfIuw5GVsCEAAAmS7hNA
+	; Thu, 07 Jun 2018 14:01:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5A778607BB; Mon, 11 Jun 2018 05:14:39 +0000 (UTC)
+	id 4F8B5608C8; Thu,  7 Jun 2018 14:01:11 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lea7jc1h"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fF8fLSrN"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 53D6560791;
-	Mon, 11 Jun 2018 05:14:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53D6560791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id C3C74607E7;
+	Thu,  7 Jun 2018 14:01:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3C74607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753960AbeFKFOg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 01:14:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753871AbeFKFOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 01:14:33 -0400
-Received: from dragon (unknown [104.237.91.91])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEA60208AF;
-        Mon, 11 Jun 2018 05:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528694073;
-        bh=ardqF8mGYX8SNbNSRhgReN4zKzzueoQQBftiZ4HI7J0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lea7jc1hQzwzEJaf9KahxpeDJEB3zAtyZwAP0PT6RUpZ79uKtrjUR9NdP/3YOe8z2
-         nDUUNsqXqSM1aHIy6rui3i3yzwBkt+n0j4818DJbrlbpmKuNtPOCk5v0JwUJsbQLbU
-         ko7o6uzx+QhaewLL4+HNxWd5eehgf3QoC+xrd6o0=
-Date: Mon, 11 Jun 2018 13:13:58 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ARM: DTS: imx53: Add support for imx53 HSC/DDC boards
- from K+P
-Message-ID: <20180611051357.GA16091@dragon>
-References: <20180509153428.1440-1-lukma@denx.de>
- <20180519121506.32344-1-lukma@denx.de>
+        id S932578AbeFGOBI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:01:08 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40896 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753535AbeFGOBE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:01:04 -0400
+Received: by mail-pl0-f66.google.com with SMTP id t12-v6so6197268plo.7;
+        Thu, 07 Jun 2018 07:01:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KaSxbIg7nSJxUIomksIh5MGb4G5+ctVsD2J47N1gSGI=;
+        b=fF8fLSrNCA8M6OZPoSg+YVSdqySh6Xbq3tyzsDv4AO1UTzLuZg51PdS1E6FCiCgWRq
+         w7IuVXFt/osLc4dF0BbKhtZ1nxGbEIJLq9IUczoIhpdq3QlbHgEWVZeWvceBze/ilmsp
+         Y7tuMOSE5f1LAVv6uNXLN+KcNx9xw1VTGMNWzf8InCgzRbKEEvA/5X6SURP8pM4hgs9I
+         DVUXy7PoNkeuQVyJw/bvSfXtJsz4oF1v9ZhHtvj5Ymz0waDfvkGPtrlTREONlBkno93Q
+         LFjBDRjwUNIlFgzZOoNVrX5ecRnHTmxb0tcGsxUM0faVmGh+es1ldoqfk+XRMxbynVoE
+         Z49g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KaSxbIg7nSJxUIomksIh5MGb4G5+ctVsD2J47N1gSGI=;
+        b=jSSqvNjev9qXMIUTHS2fIK4pZMMiIXsfcv3HpJbT6/Y1uEWXUCfklY8Do4GYZrRE2M
+         HeJqaERJrF7rhHoMr4VYgCkwXnjvQSSjwtgWVxBorXfDlmNVS6CqxGdRtp0KLbc1xXFh
+         +vS+Ee8Jk7qN+OXaezenZOclrOWIHfdfcXL1MsIuXFStfDL+ZeoEq2/ySkIwyWXbxc0Z
+         h3BqwcKWn/flpSYhfHxjHHhONOb4CIFXkzqyWlYiJQGGynEyfyGCADjTj7UU5rNvu0J0
+         c1aPt5aelO9dh9rp1K7XF/HgcqA2bxWeOZOKMCEbx12AibfGrfftcXEuXet9B/dti9QO
+         5EXw==
+X-Gm-Message-State: APt69E1sv9nEEMUBVowLXRyA2dGmX99t+IO7WEwKC+ZrYGbM/U3xsdpN
+        MeG2dhoDH+JDGLOhIzKDOqi36UxR
+X-Google-Smtp-Source: ADUXVKIxugGty+P8ozREmZUjrv1zdAd//+45WuVogeVW4gUx5b3ER6ZOBMkHAMIzcMpA7vyrMNj4/g==
+X-Received: by 2002:a17:902:6b0c:: with SMTP id o12-v6mr2147338plk.159.1528380064346;
+        Thu, 07 Jun 2018 07:01:04 -0700 (PDT)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id b84-v6sm66460944pfm.123.2018.06.07.07.01.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 07:01:03 -0700 (PDT)
+Date: Thu, 7 Jun 2018 23:01:00 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        sergey.senozhatsky@gmail.com, syzkaller-bugs@googlegroups.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: possible deadlock in console_unlock
+Message-ID: <20180607140100.GA398@tigerII.localdomain>
+References: <00000000000087008b056df8fbb3@google.com>
+ <20180607051019.GA10406@jagdpanzerIV>
+ <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180519121506.32344-1-lukma@denx.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 19, 2018 at 02:15:06PM +0200, Lukasz Majewski wrote:
-> This commit provides support for HSC and DDC boards from
-> Kieback&Peter GmbH vendor.
+On (06/07/18 13:00), Petr Mladek wrote:
+> > IOW
+> > 
+> >     tty ioctl
+> >     tty_port->lock		IRQ
+> >     printk			uart_port->lock
+> >     console_owner
+> >     uart_port->lock		tty_port->rlock
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> ---
-> Changes for v2:
+> Great analyze!
+
+Thanks!
+
+> I am just afraid that there are many other locations like this.
+
+Yep, agree. That's why I suggested the printk_safe context for
+most critically important locks.
+
+> > Another way could be - switch to printk_safe mode around that
+> > kmalloc():
+> > 
+> > 	__printk_safe_enter();
+> > 	kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
+> > 	__printk_safe_exit();
+> > 
+> > Or, may be, we even can switch to printk_safe mode every time we grab
+> > tty_port lock.
+>  
+> > Perhaps something like this should be done for uart_port->lock
+> > as well. Because, technically, we can have the following
 > 
-> - Remove not needed #address-cells and #size-cells in
->   the gpio_buttons node to pass make W=1
-> - Rename button@{12} to button_{kalt|pwr} nodes to pass make W=1
-> - Include #include <dt-bindings/input/input.h> to use KEY_F6|F7 directly
-> 
-> ---
->  arch/arm/boot/dts/Makefile         |   2 +
->  arch/arm/boot/dts/imx53-kp-ddc.dts | 146 ++++++++++++++++++++++++++++
->  arch/arm/boot/dts/imx53-kp-hsc.dts |  51 ++++++++++
->  arch/arm/boot/dts/imx53-kp.dtsi    | 190 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 389 insertions(+)
->  create mode 100644 arch/arm/boot/dts/imx53-kp-ddc.dts
->  create mode 100644 arch/arm/boot/dts/imx53-kp-hsc.dts
->  create mode 100644 arch/arm/boot/dts/imx53-kp.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index fbc04b0db781..00854a5b6ac4 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -360,6 +360,8 @@ dtb-$(CONFIG_SOC_IMX51) += \
->  dtb-$(CONFIG_SOC_IMX53) += \
->  	imx53-ard.dtb \
->  	imx53-cx9020.dtb \
-> +	imx53-kp-ddc.dtb \
-> +	imx53-kp-hsc.dtb \
->  	imx53-m53evk.dtb \
->  	imx53-mba53.dtb \
->  	imx53-ppd.dtb \
-> diff --git a/arch/arm/boot/dts/imx53-kp-ddc.dts b/arch/arm/boot/dts/imx53-kp-ddc.dts
-> new file mode 100644
-> index 000000000000..acaf477a52c5
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx53-kp-ddc.dts
-> @@ -0,0 +1,146 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2018
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx53-kp.dtsi"
-> +
-> +/ {
-> +	model = "K+P imx53 DDC";
-> +	compatible = "kiebackpeter,imx53-ddc", "fsl,imx53";
-> +
-> +	backlight_lcd: backlight {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&pwm2 0 50000>;
-> +		power-supply = <&reg_backlight>;
-> +		brightness-levels = <0 24 28 32 36
-> +				     40 44 48 52 56
-> +				     60 64 68 72 76
-> +				     80 84 88 92 96 100>;
-> +		default-brightness-level = <20>;
-> +	};
-> +
-> +	lcd_display: disp1 {
+> Yeah, we would need this basically around any lock that can be taken
+> from console write() callbacks. Well, this would be needed even
+> around locks that might be in a chain with a lock used in these
+> callbacks (as shown by this report).
 
-display for node node.
+Yep. So the plan for now is to wrap the tty_port->lock. Pretty much
+an automatic conversion.
 
-> +		compatible = "fsl,imx-parallel-display";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		interface-pix-fmt = "rgb24";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_disp>;
-> +
-> +		port@0 {
-> +			reg = <0>;
-> +
-> +			display1_in: endpoint {
-> +				remote-endpoint = <&ipu_di1_disp1>;
-> +			};
-> +		};
-> +
-> +		port@1 {
-> +			reg = <1>;
-> +
-> +			lcd_display_out: endpoint {
-> +				remote-endpoint = <&lcd_panel_in>;
-> +			};
-> +		};
-> +	};
-> +
-> +	lcd_panel: lcd-panel {
-> +		compatible = "koe,tx14d24vm1bpa";
+Then to convert [may be some for now on] uart_port->lock. Once again,
+pretty much can be done a script.
 
-Undefined compatible?
+Afterwards just sit down and be humbl^W^W wait for new reports. Then
+move those newly discovered unsafe locks under printk_safe context.
 
-> +		backlight = <&backlight_lcd>;
-> +		power-supply = <&reg_3v3>;
-> +
-> +		port {
-> +			lcd_panel_in: endpoint {
-> +				remote-endpoint = <&lcd_display_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	reg_backlight: regulator-backlight {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "backlight-supply";
-> +		regulator-min-microvolt = <15000000>;
-> +		regulator-max-microvolt = <15000000>;
-> +		regulator-always-on;
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	adc@48 {
-> +		compatible = "ti,ads1015";
-> +		reg = <0x48>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		channel@4 {
-> +			reg = <4>;
-> +			ti,gain = <2>;
-> +			ti,datarate = <4>;
-> +		};
-> +
-> +		channel@6 {
-> +			reg = <6>;
-> +			ti,gain = <2>;
-> +			ti,datarate = <4>;
-> +		};
-> +	};
-> +
-> +	gpio_expander2@21 {
+Basically, the same macros as we use for logbuf lock in printk.c
 
-Use hyphen instead of underscore in node name.
+A bit of a lazy approach. Can't think of anything better.
 
-> +		compatible = "nxp,pcf8574";
-> +		reg = <0x21>;
-> +		interrupts = <109>;
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	imx53-kp-ddc {
-> +		pinctrl_disp: dispgrp {
-> +			fsl,pins = <
-> +				MX53_PAD_EIM_A16__IPU_DI1_DISP_CLK      0x4
-> +				MX53_PAD_EIM_DA10__IPU_DI1_PIN15        0x4
-> +				MX53_PAD_EIM_DA9__IPU_DISP1_DAT_0       0x4
-> +				MX53_PAD_EIM_DA8__IPU_DISP1_DAT_1       0x4
-> +				MX53_PAD_EIM_DA7__IPU_DISP1_DAT_2       0x4
-> +				MX53_PAD_EIM_DA6__IPU_DISP1_DAT_3       0x4
-> +				MX53_PAD_EIM_DA5__IPU_DISP1_DAT_4       0x4
-> +				MX53_PAD_EIM_DA4__IPU_DISP1_DAT_5       0x4
-> +				MX53_PAD_EIM_DA3__IPU_DISP1_DAT_6       0x4
-> +				MX53_PAD_EIM_DA2__IPU_DISP1_DAT_7       0x4
-> +				MX53_PAD_EIM_DA1__IPU_DISP1_DAT_8       0x4
-> +				MX53_PAD_EIM_DA0__IPU_DISP1_DAT_9       0x4
-> +				MX53_PAD_EIM_EB1__IPU_DISP1_DAT_10      0x4
-> +				MX53_PAD_EIM_EB0__IPU_DISP1_DAT_11      0x4
-> +				MX53_PAD_EIM_A17__IPU_DISP1_DAT_12      0x4
-> +				MX53_PAD_EIM_A18__IPU_DISP1_DAT_13      0x4
-> +				MX53_PAD_EIM_A19__IPU_DISP1_DAT_14      0x4
-> +				MX53_PAD_EIM_A20__IPU_DISP1_DAT_15      0x4
-> +				MX53_PAD_EIM_A21__IPU_DISP1_DAT_16      0x4
-> +				MX53_PAD_EIM_A22__IPU_DISP1_DAT_17      0x4
-> +				MX53_PAD_EIM_A23__IPU_DISP1_DAT_18      0x4
-> +				MX53_PAD_EIM_A24__IPU_DISP1_DAT_19      0x4
-> +				MX53_PAD_EIM_D31__IPU_DISP1_DAT_20      0x4
-> +				MX53_PAD_EIM_D30__IPU_DISP1_DAT_21      0x4
-> +				MX53_PAD_EIM_D26__IPU_DISP1_DAT_22      0x4
-> +				MX53_PAD_EIM_D27__IPU_DISP1_DAT_23      0x4
-> +				MX53_PAD_GPIO_1__PWM2_PWMO 0x4
-> +			>;
-> +		};
-> +	};
-> +};
-> +
-> +&ipu_di1_disp1 {
-> +	remote-endpoint = <&display1_in>;
-> +};
-> +
-> +&fec {
-> +	status = "okay";
-> +};
+I think it's finally the time to start dealing with these
+"external" locks, it's been a while.
 
-Sort the labeled nodes alphabetically in label name.
+> BTW: printk_safe context might be too strict. In fact,
+> printk_deferred() would be enough. We might think about
+> introducing also printk_deferred context.
 
-> +
-> +&pmic {
-> +	fsl,mc13xxx-uses-touch;
-> +};
-> diff --git a/arch/arm/boot/dts/imx53-kp-hsc.dts b/arch/arm/boot/dts/imx53-kp-hsc.dts
-> new file mode 100644
-> index 000000000000..d68cdd5da819
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx53-kp-hsc.dts
-> @@ -0,0 +1,51 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2018
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx53-kp.dtsi"
-> +
-> +/ {
-> +	model = "K+P imx53 HSC";
-> +	compatible = "kiebackpeter,imx53-hsc", "fsl,imx53";
-> +};
-> +
-> +&fec {
-> +	status = "okay";
+Could be.
+The good thing about printk_safe is that printk_safe sections can nest.
+I suspect there might be locks/printk_safe sections nesting at some
+point. In any case, switching to a new flavor of printk_safe will be
+pretty easy - just replace printk_safe_enter() with printk_foo_enter()
+and the same for printk_save_exit().
 
-Have a newline between property list and child node.
+I'll wait for some time, to see what people will say.
+I guess we also need to check if Linus is OK with the proposed solution.
 
-> +	fixed-link { /* RMII fixed link to LAN9303 */
-> +		speed = <100>;
-> +		full-duplex;
-> +	};
-> +};
-> +
-> +&i2c3 {
-> +	switch: switch@a {
-> +		compatible = "smsc,lan9303-i2c";
-> +		reg = <0xa>;
-> +		reset-gpios = <&gpio7 6 GPIO_ACTIVE_LOW>;
-> +		reset-duration = <400>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 { /* RMII fixed link to master */
-> +				reg = <0>;
-> +				label = "cpu";
-> +				ethernet = <&fec>;
-> +			};
-> +
-> +			port@1 { /* external port 1 */
-> +				reg = <1>;
-> +				label = "lan1";
-> +			};
-> +
-> +			port@2 { /* external port 2 */
-> +				reg = <2>;
-> +				label = "lan2";
-> +			};
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/imx53-kp.dtsi b/arch/arm/boot/dts/imx53-kp.dtsi
-> new file mode 100644
-> index 000000000000..f87266843842
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx53-kp.dtsi
-> @@ -0,0 +1,190 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2018
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx53-tqma53.dtsi"
-> +#include <dt-bindings/input/input.h>
-> +
-> +/ {
-> +	buzzer {
-> +		compatible = "pwm-beeper";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_buzzer>;
-> +
-
-Drop this newline.
-
-> +		pwms = <&pwm1 0 500000>;
-> +	};
-> +
-> +	gpio_buttons {
-
-Use hyphen.
-
-> +		compatible = "gpio-keys";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_gpiobuttons>;
-> +
-> +		button_kalt {
-
-Ditto
-
-> +			label = "Kaltstart";
-> +			linux,code = <KEY_F6>;
-> +			gpios = <&gpio2 26 GPIO_ACTIVE_HIGH>;
-> +		};
-> +
-> +		button_pwr {
-
-Ditto
-
-> +			label = "PowerFailInterrupt";
-> +			linux,code = <KEY_F7>;
-> +			gpios = <&gpio3 22 GPIO_ACTIVE_HIGH>;
-> +		};
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_leds>;
-> +
-> +		led_bus {
-
-Ditto
-
-> +			label = "bus";
-> +			gpios = <&gpio2 30 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "gpio";
-> +			default-state = "off";
-> +		};
-> +
-> +		led_error {
-
-Ditto
-
-> +			label = "error";
-> +			gpios = <&gpio3 28 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "gpio";
-> +			default-state = "off";
-> +		};
-> +
-> +		led_flash {
-
-Ditto
-
-> +			label = "flash";
-> +			gpios = <&gpio5 0 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +
-> +	reg_3v3: regulator-3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "3V3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +	};
-> +};
-> +
-> +&can1 {
-> +	status = "okay";
-> +};
-> +
-> +&can2 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c3 {
-> +	status = "okay";
-> +
-> +	gpio_expander1@22 {
-
-Ditto
-
-Shawn
-
-> +		compatible = "nxp,pcf8574";
-> +		reg = <0x22>;
-> +		interrupts = <109>;
-> +		#gpio-cells = <2>;
-> +		gpio-controller;
-> +	};
-> +
-> +	rtc@51 {
-> +		compatible = "nxp,pcf8563";
-> +		reg = <0x51>;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_kp_common>;
-> +
-> +	imx53-kp-common {
-> +		pinctrl_buzzer: buzzergrp {
-> +			fsl,pins = <
-> +				MX53_PAD_SD1_DATA3__PWM1_PWMO 0x1e4
-> +			>;
-> +		};
-> +
-> +		pinctrl_gpiobuttons: gpiobuttonsgrp {
-> +			fsl,pins = <
-> +				MX53_PAD_EIM_RW__GPIO2_26 0x1e4
-> +				MX53_PAD_EIM_D22__GPIO3_22 0x1e4
-> +			>;
-> +		};
-> +
-> +		pinctrl_kp_common: kpcommongrp {
-> +			fsl,pins = <
-> +				MX53_PAD_EIM_CS0__GPIO2_23 0x1e4
-> +				MX53_PAD_GPIO_19__GPIO4_5  0x1e4
-> +				MX53_PAD_PATA_DATA6__GPIO2_6 0x1e4
-> +				MX53_PAD_PATA_DATA7__GPIO2_7 0xe0
-> +				MX53_PAD_CSI0_DAT14__GPIO6_0 0x1e4
-> +				MX53_PAD_CSI0_DAT16__GPIO6_2 0x1e4
-> +				MX53_PAD_CSI0_DAT18__GPIO6_4 0x1e4
-> +				MX53_PAD_EIM_D17__GPIO3_17 0x1e4
-> +				MX53_PAD_EIM_D18__GPIO3_18 0x1e4
-> +				MX53_PAD_EIM_D21__GPIO3_21 0x1e4
-> +				MX53_PAD_EIM_D29__GPIO3_29 0x1e4
-> +				MX53_PAD_EIM_DA11__GPIO3_11 0x1e4
-> +				MX53_PAD_EIM_DA13__GPIO3_13 0x1e4
-> +				MX53_PAD_EIM_DA14__GPIO3_14 0x1e4
-> +				MX53_PAD_SD1_DATA0__GPIO1_16 0x1e4
-> +				MX53_PAD_SD1_CMD__GPIO1_18 0x1e4
-> +				MX53_PAD_SD1_CLK__GPIO1_20 0x1e4
-> +			>;
-> +		};
-> +
-> +		pinctrl_leds: ledgrp {
-> +			fsl,pins = <
-> +				MX53_PAD_EIM_EB2__GPIO2_30 0x1d4
-> +				MX53_PAD_EIM_D28__GPIO3_28 0x1d4
-> +				MX53_PAD_EIM_WAIT__GPIO5_0 0x1d4
-> +			>;
-> +		};
-> +
-> +		pinctrl_uart4: uart4grp {
-> +			fsl,pins = <
-> +				MX53_PAD_CSI0_DAT12__UART4_TXD_MUX 0x1e4
-> +				MX53_PAD_CSI0_DAT13__UART4_RXD_MUX 0x1e4
-> +			>;
-> +		};
-> +	};
-> +};
-> +
-> +&pinctrl_uart1 {
-> +	fsl,pins = <
-> +		MX53_PAD_EIM_D23__GPIO3_23 0x1e4
-> +		MX53_PAD_EIM_EB3__GPIO2_31 0x1e4
-> +		MX53_PAD_EIM_D24__GPIO3_24 0x1e4
-> +		MX53_PAD_EIM_D25__GPIO3_25 0x1e4
-> +		MX53_PAD_EIM_D19__GPIO3_19 0x1e4
-> +		MX53_PAD_EIM_D20__GPIO3_20 0x1e4
-> +	>;
-> +};
-> +
-> +&uart1 {
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	status = "okay";
-> +};
-> +
-> +&uart3 {
-> +	status = "okay";
-> +};
-> +
-> +&uart4 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart4>;
-> +	status = "okay";
-> +};
-> +
-> +&usbh1 {
-> +	status = "okay";
-> +};
-> +
-> +&usbphy0 {
-> +	status = "disabled";
-> +};
-> -- 
-> 2.11.0
-> 
+	-ss
