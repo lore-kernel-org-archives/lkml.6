@@ -1,122 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OpLxNJvOG1vvYgAAmS7hNA
-	; Sat, 09 Jun 2018 13:04:30 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RnRyLM6qGFv/FwAAmS7hNA
+	; Thu, 07 Jun 2018 03:47:26 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 15E4A608BA; Sat,  9 Jun 2018 13:04:30 +0000 (UTC)
+	id 97D45607F7; Thu,  7 Jun 2018 03:47:26 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="af5BJJ16"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A16CE607BB;
-	Sat,  9 Jun 2018 13:04:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A16CE607BB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=jonmasters.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1438D60290;
+	Thu,  7 Jun 2018 03:47:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1438D60290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753243AbeFINE1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 09:04:27 -0400
-Received: from edison.jonmasters.org ([173.255.233.168]:36522 "EHLO
-        edison.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753175AbeFINEY (ORCPT
+        id S1753569AbeFGDrX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 23:47:23 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39583 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752960AbeFGDrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 09:04:24 -0400
-X-Greylist: delayed 640 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Jun 2018 09:04:24 EDT
-Received: from [104.153.224.165] (helo=washington.bos.jonmasters.org)
-        by edison.jonmasters.org with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.71)
-        (envelope-from <jcm@jonmasters.org>)
-        id 1fRdXR-0001in-Mb; Sat, 09 Jun 2018 13:04:14 +0000
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc: Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Julien Grall <julien.grall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180529121121.24927-1-marc.zyngier@arm.com>
- <20180529121121.24927-8-marc.zyngier@arm.com>
-From: Jon Masters <jcm@jonmasters.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jcm@jonmasters.org; prefer-encrypt=mutual; keydata=
- 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
- yrXvw9qg2waGcnb8WuoS+g==
-Organization: World Organi{s,z}ation Of Broken Dreams
-Message-ID: <9bd005f5-60e3-510d-24f6-235e98487ced@jonmasters.org>
-Date: Sat, 9 Jun 2018 09:03:51 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180529121121.24927-8-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.153.224.165
-X-SA-Exim-Mail-From: jcm@jonmasters.org
-Subject: Re: [PATCH v2 07/17] arm64: ssbd: Skip apply_ssbd if not using
- dynamic mitigation
-X-SA-Exim-Version: 4.2.1 (built Sun, 08 Nov 2009 07:31:22 +0000)
-X-SA-Exim-Scanned: Yes (on edison.jonmasters.org)
+        Wed, 6 Jun 2018 23:47:22 -0400
+Received: by mail-pf0-f195.google.com with SMTP id r11-v6so4176355pfl.6;
+        Wed, 06 Jun 2018 20:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=zkGy7N/l31tFPjFPGr2uEBCIrkJWG0gg3dIMvb5zlk8=;
+        b=af5BJJ16lBo/rJfnEEbCtAeR3ndwi1/TJEVbCI4nxWw3pKtXtUAnaxT74F+L55CNsR
+         gPyoUasu9llLNuOnSG7XBFYgSYHCO8Ra+580IX3dIYsxFiAUq1qIRwKO2CW0OHMGwnEv
+         UZHk5i7DEv7qRI7XZ2aXRe+/z/h5zUMYX7GkyI/GFQc8bWbXRN3xSPjK1V3gZ98EvKPa
+         vEDzHLRAFfkU1ExRzdmffFAZHZs1D5L9g99vGwE1UOSoDYnTnjkfzjQQDkBTe9qjEbB0
+         zBe246qCANH4Cjo/gCFdJozqQw2j9CeutGweQf/vxcTsU7Odg8/gmZ0lfpLJ/gAXEgrC
+         tJDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zkGy7N/l31tFPjFPGr2uEBCIrkJWG0gg3dIMvb5zlk8=;
+        b=b5YIztV+ZSOqTkAXFPRd2ns6CECJvTbMFH1JZd5ylWwcs7i9jxHiQzLk/cjZhhc5Vz
+         QytSKcez/XSusf1vtadhH/k58CSDzTrPPBsbyqpm8Rv7wOMq8JO+ov1WQfHiF89kwlI4
+         wWo2FJoO+2vwNc4ysKiRTnxmYjGj8S7bsfwRsxlz2kV7NKAv1Wk90YuAPevtUcP3DqV6
+         NeiYKGgqOcwbhXAzVHh2V+sMYY81EEzw4yEazDiiP9P4ww1KltG+JUIYBhvaraTQk3uJ
+         GkqOJN7DsV87dSpzfiYZwJepqKNI3BvLXo0U66fwATmoQjgZ2l1SKnYtIDQ61pEFuZov
+         7N6w==
+X-Gm-Message-State: APt69E0v0faOab4ehxQfu+m+zWJOmXdBspw69H1XzJDF1yULqQga9E0D
+        fkTZt+7tZUtvYO2PUTO1QJWHkQ==
+X-Google-Smtp-Source: ADUXVKKr1dS0FF9zW/oWdWzpdCh3bmJKUtlSd/8pkDH3pYWVYtblTuxA/VAIF1KZ6sOtiBOm6+Eosg==
+X-Received: by 2002:a63:bc0a:: with SMTP id q10-v6mr206061pge.70.1528343241312;
+        Wed, 06 Jun 2018 20:47:21 -0700 (PDT)
+Received: from localhost.localdomain ([103.62.68.119])
+        by smtp.googlemail.com with ESMTPSA id i11-v6sm8097055pgq.23.2018.06.06.20.47.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Jun 2018 20:47:20 -0700 (PDT)
+From: Varsha Rao <rvarsha016@gmail.com>
+To: Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <der.herr@hofr.at>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Varsha Rao <rvarsha016@gmail.com>
+Subject: [PATCH v2 0/2] message: fusion: Fix clang and checkpatch warnings
+Date: Thu,  7 Jun 2018 09:17:07 +0530
+Message-Id: <cover.1528342739.git.rvarsha016@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2018 08:11 AM, Marc Zyngier wrote:
+This patchset fixes extraneous parentheses clang warning and few
+checkpatch issues.
 
-> +void __init arm64_enable_wa2_handling(struct alt_instr *alt,
-> +				      __le32 *origptr, __le32 *updptr,
-> +				      int nr_inst)
+Varsha Rao (2):
+  message: fusion: Remove extra parentheses
+  message: fusion: Replace NULL comparison
 
-Where does the name "wa2" come from here?
+ drivers/message/fusion/mptbase.c | 50 ++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
-Jon.
+-- 
+2.17.0
