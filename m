@@ -1,157 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JN8aOvlgHludPwAAmS7hNA
-	; Mon, 11 Jun 2018 11:46:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EIylIvo/GVu7XgAAmS7hNA
+	; Thu, 07 Jun 2018 14:24:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D160B607BB; Mon, 11 Jun 2018 11:46:01 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iS9sR7BB"
+	id 53381608BA; Thu,  7 Jun 2018 14:24:40 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3A89C60541;
-	Mon, 11 Jun 2018 11:46:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A89C60541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B9CFE602FC;
+	Thu,  7 Jun 2018 14:24:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9CFE602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932953AbeFKLp7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:45:59 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54116 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932841AbeFKLp5 (ORCPT
+        id S933514AbeFGOYi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:24:38 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40129 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933335AbeFGOYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:45:57 -0400
-Received: by mail-wm0-f68.google.com with SMTP id x6-v6so14080691wmc.3;
-        Mon, 11 Jun 2018 04:45:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pJiiJaJ0fMzIMU5MQmU54+o3CsbHItHwbBoztdNortE=;
-        b=iS9sR7BBFfjrhY3DdG15UK3IejpZ6s6lxmBDZHEpmcU6ruztu9ho5MnWHLxsF9zFK1
-         4EgyUJrB23136PGzIQ8BYzHb46vKs2vWn89M77oqIEreogaw93Lpf7TElrBLaEYM10C2
-         vbpgOXV85E5UO1Z+jKOr9yHE4uGwBUiO5dDxRijz4crNqhEQeYDKoyQddH93IwmBwH5z
-         azx0hsXxH/EEdIiweSuZdW6ZIlQe6VNO+2jJyXwhIQeIquK6caI3pNZFIqX88uGmn+95
-         6OsckJesIPv/hQqWsIfWzHE+FHD2hF6RqWhzL06N4fdyid1N9twdjNjbXu+ufFpP4BT+
-         VmPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pJiiJaJ0fMzIMU5MQmU54+o3CsbHItHwbBoztdNortE=;
-        b=mTp38QxgobUUoBwFhwZvf2A+rXdYGExWwwr8qiBTVE9z293ClOek5RmbR/B7A3P8DO
-         YCuVT6P4o+MvRz/jeqPP0M5Szqlahp5qBzSDEDXH4WDuBO/RCDQ9WtFWQrZWM2lo97oD
-         GWUjjp3EMOsPBfAmN7tOBbLgBkCobVak2RCIAHaCyjzkHAQojkDivdGvFD+bL7+2wEUo
-         Qvk8n1VZkhDzZtD0QskxsRv17pJ6upblSPGJKHw4toYVyPamU84kV78VoEhMJVGQJ96Y
-         X1fQ23OWFWHfZ0qdKTM4aM928jo3PHyGIeUhRsvKGORzcuhFuOahka9UnIEsswXvP9MD
-         KNcg==
-X-Gm-Message-State: APt69E3VWIBZZb/tIljwLjSg5orNlSOrMGoPAh2iwN7k0L/9dGf7XeQb
-        geWRI8vETqxlIiB7wZZejfA=
-X-Google-Smtp-Source: ADUXVKK9DYrE5KUagQdo9ySsjQDYt7Q6HmcXoFY9Q0cHvf4zfzU1yxZP+rgbo+7iLv5y/HzwmgRNeA==
-X-Received: by 2002:a1c:150:: with SMTP id 77-v6mr8571966wmb.3.1528717555527;
-        Mon, 11 Jun 2018 04:45:55 -0700 (PDT)
-Received: from dimapc.localnet ([109.252.55.168])
-        by smtp.gmail.com with ESMTPSA id h11-v6sm15296544wrs.85.2018.06.11.04.45.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:45:54 -0700 (PDT)
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-Date: Mon, 11 Jun 2018 14:45:45 +0300
-Message-ID: <1862022.905gDpZtpO@dimapc>
-In-Reply-To: <20180610173202.680d2ee8@bbrezillon>
-References: <20180531221637.6017-1-stefan@agner.ch> <1868760.y7shk6NfjH@dimapc> <20180610173202.680d2ee8@bbrezillon>
+        Thu, 7 Jun 2018 10:24:34 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbp-0005Zj-7b; Thu, 07 Jun 2018 15:09:49 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb2-0002rw-Ka; Thu, 07 Jun 2018 15:09:00 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Leon Romanovsky" <leon@kernel.org>,
+        "Jack Morgenstein" <jackm@dev.mellanox.co.il>,
+        "Jason Gunthorpe" <jgg@mellanox.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.580576455@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 132/410] IB/mlx4: Fix incorrectly releasing steerable
+ UD QPs when have only ETH ports
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, 10 June 2018 18:32:02 MSK Boris Brezillon wrote:
-> On Sun, 10 Jun 2018 18:00:06 +0300
-> 
-> Dmitry Osipenko <digetx@gmail.com> wrote:
-> > > >> That seems a lot of work for a code path I do not intend to ever use
-> > > >> :-)
-> > > > 
-> > > > Are you sure that resetting HW resets the timing and other registers
-> > > > configuration? Reset implementation is HW-specific, like for example
-> > > > in a
-> > > > case of a video decoder the registers state is re-intialized on HW
-> > > > reset,
-> > > > but registers configuration is untouched in a case of resetting GPU.
-> > > > I'd
-> > > > suggest to check whether NAND controller resetting affects the HW
-> > > > configuration.
-> > > 
-> > > It seems all registers are set back to their documented reset value:
-> > > 
-> > > [boot loader/ROM initialized values]
-> > > [    1.270253] tegra-nand 70008000.nand: Tegra NAND controller register
-> > > dump
-> > > [    1.277051] tegra-nand 70008000.nand: COMMAND: 0x66880104
-> > > [    1.282457] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > > [    1.287763] tegra-nand 70008000.nand: ISR: 0x01000120
-> > > [    1.292818] tegra-nand 70008000.nand: IER: 0x00000000
-> > > [    1.297863] tegra-nand 70008000.nand: CONFIG: 0x00840000
-> > > [    1.303181] tegra-nand 70008000.nand: TIMING: 0x05040000
-> > > [    1.308486] tegra-nand 70008000.nand: TIMING2: 0x00000003
-> > > [    1.313897] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > > [    1.319377] tegra-nand 70008000.nand: CMD_REG2: 0x00000030
-> > > [    1.324868] tegra-nand 70008000.nand: ADDR_REG1: 0x03000000
-> > > [    1.330435] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > > [    1.336011] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x04100004
-> > > [    1.341838] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000fff
-> > > [    1.347415] tegra-nand 70008000.nand: DMA_CFG_B: 0x0000001b
-> > > [    1.352991] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
-> > > [reset]
-> > > [    1.358559] tegra-nand 70008000.nand: Tegra NAND controller register
-> > > dump
-> > > [    1.365352] tegra-nand 70008000.nand: COMMAND: 0x00800004
-> > > [    1.370744] tegra-nand 70008000.nand: STATUS: 0x00000101
-> > > [    1.376060] tegra-nand 70008000.nand: ISR: 0x00000100
-> > > [    1.381105] tegra-nand 70008000.nand: IER: 0x00000000
-> > > [    1.386161] tegra-nand 70008000.nand: CONFIG: 0x10030000
-> > > [    1.391466] tegra-nand 70008000.nand: TIMING: 0x00000000
-> > > [    1.396782] tegra-nand 70008000.nand: TIMING2: 0x00000000
-> > > [    1.402174] tegra-nand 70008000.nand: CMD_REG1: 0x00000000
-> > > [    1.407664] tegra-nand 70008000.nand: CMD_REG2: 0x00000000
-> > > [    1.413156] tegra-nand 70008000.nand: ADDR_REG1: 0x00000000
-> > > [    1.418722] tegra-nand 70008000.nand: ADDR_REG2: 0x00000000
-> > > [    1.424297] tegra-nand 70008000.nand: DMA_MST_CTRL: 0x24000000
-> > > [    1.430123] tegra-nand 70008000.nand: DMA_CFG_A: 0x00000000
-> > > [    1.435698] tegra-nand 70008000.nand: DMA_CFG_B: 0x00000000
-> > > [    1.441264] tegra-nand 70008000.nand: FIFO_CTRL: 0x0000aa00
-> > 
-> > Alright, then indeed it's not really worth to bother with HW resetting
-> > here. Probably only a kernel module reload or a reboot will help if HW is
-> > hung. Maybe NAND controller / chip recovering is something that NAND core
-> > should be handling in a such case by providing a nand_controller_reset()
-> > hook?
-> I don't see what the core could do to help with that. We'd end up with
-> a new hook implemented by the controller that would be called by the
-> controller driver when it knows it's safe to reset the controller. So,
-> why bother exposing that in the core?
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Giving a driver more flexibility is always a good thing. I'm not really 
-familiar with mtd/ and maybe indeed it doesn't make much sense to move HW 
-resetting to NAND core, though it looked to me that it should be always safe 
-for NAND core to initiate HW resetting after IO failure and hence would be 
-cleaner and nicer to have a unified HW reset management rather than to have 
-each driver to do its own thing.
+------------------
+
+From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+
+commit 852f6927594d0d3e8632c889b2ab38cbc46476ad upstream.
+
+Allocating steerable UD QPs depends on having at least one IB port,
+while releasing those QPs does not.
+
+As a result, when there are only ETH ports, the IB (RoCE) driver
+requests releasing a qp range whose base qp is zero, with
+qp count zero.
+
+When SR-IOV is enabled, and the VF driver is running on a VM over
+a hypervisor which treats such qp release calls as errors
+(rather than NOPs), we see lines in the VM message log like:
+
+ mlx4_core 0002:00:02.0: Failed to release qp range base:0 cnt:0
+
+Fix this by adding a check for a zero count in mlx4_release_qp_range()
+(which thus treats releasing 0 qps as a nop), and eliminating the
+check for device managed flow steering when releasing steerable UD QPs.
+(Freeing ib_uc_qpns_bitmap unconditionally is also OK, since it
+remains NULL when steerable UD QPs are not allocated).
+
+Fixes: 4196670be786 ("IB/mlx4: Don't allocate range of steerable UD QPs for Ethernet-only device")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/infiniband/hw/mlx4/main.c       | 13 +++++--------
+ drivers/net/ethernet/mellanox/mlx4/qp.c |  3 +++
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -2272,9 +2272,8 @@ err_steer_free_bitmap:
+ 	kfree(ibdev->ib_uc_qpns_bitmap);
+ 
+ err_steer_qp_release:
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED)
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
+ err_counter:
+ 	for (; i; --i)
+ 		if (ibdev->counters[i - 1] != -1)
+@@ -2373,11 +2372,9 @@ static void mlx4_ib_remove(struct mlx4_d
+ 		ibdev->iboe.nb.notifier_call = NULL;
+ 	}
+ 
+-	if (ibdev->steering_support == MLX4_STEERING_MODE_DEVICE_MANAGED) {
+-		mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
+-				      ibdev->steer_qpn_count);
+-		kfree(ibdev->ib_uc_qpns_bitmap);
+-	}
++	mlx4_qp_release_range(dev, ibdev->steer_qpn_base,
++			      ibdev->steer_qpn_count);
++	kfree(ibdev->ib_uc_qpns_bitmap);
+ 
+ 	if (ibdev->iboe.nb_inet.notifier_call) {
+ 		if (unregister_inetaddr_notifier(&ibdev->iboe.nb_inet))
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -257,6 +257,9 @@ void mlx4_qp_release_range(struct mlx4_d
+ 	u64 in_param = 0;
+ 	int err;
+ 
++	if (!cnt)
++		return;
++
+ 	if (mlx4_is_mfunc(dev)) {
+ 		set_param_l(&in_param, base_qpn);
+ 		set_param_h(&in_param, cnt);
