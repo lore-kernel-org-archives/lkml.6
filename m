@@ -1,113 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id p4+5FcqGHluQNgAAmS7hNA
-	; Mon, 11 Jun 2018 14:27:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id DSxuNnBIGVt+SAAAmS7hNA
+	; Thu, 07 Jun 2018 15:00:41 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 40007607A4; Mon, 11 Jun 2018 14:27:22 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFwp1g+A"
+	id B9907607E7; Thu,  7 Jun 2018 15:00:41 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B466160791;
-	Mon, 11 Jun 2018 14:27:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B466160791
+	by smtp.codeaurora.org (Postfix) with ESMTP id 488EF601C3;
+	Thu,  7 Jun 2018 15:00:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 488EF601C3
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934443AbeFKO1U (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:27:20 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35789 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933209AbeFKO1Q (ORCPT
+        id S935793AbeFGPAg (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:00:36 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:33487 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932536AbeFGPAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:27:16 -0400
-Received: by mail-wm0-f67.google.com with SMTP id j15-v6so16999402wme.0;
-        Mon, 11 Jun 2018 07:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=IvkqSysyFqt2EdmJr2l36YgrF3ue78Jl3q9X5FhPBbo=;
-        b=PFwp1g+AHpplIq2tKG2yI/HCgTBa3HwbXz/6YrB8IVcvHh1AO9QkVD2J4mXBtDMi3N
-         mkFH0gurE/vGy0VVgh0TweLjzG2133Rlh2yXs3DF+RynRCM883OqOO6aH2nAywAKzoDI
-         4xSuDVF+8pnHxSn4S6LufH62k/rsPEKt+47FjRtySHihFkdht1yOIlQkA1w+qCu1PTzF
-         wkl1R7QFGuyeZSBlqufZCm1QqWLVKaKqGecICbbIGU5zdS6d8HtjziTz9PWcQN7iNFc5
-         y2ga9DNBm01+JLtHMc/KeT9RO5nvzSjqPks2N4zIL7hvBCkf6CMnQm8mp0UDhQUvYcwA
-         AFZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IvkqSysyFqt2EdmJr2l36YgrF3ue78Jl3q9X5FhPBbo=;
-        b=pOrQpXOhxO6wYjTQyCm6FazOEbLoEzmjy7KvBa1P2OBIMTSrxBTZGEtRbK2DQnNNQw
-         t8iF88eUraz7w7217TyVRDbpmdAAYFkA3nb8FECdrN112E3aJaH8SOQzRJRnrvzaWbR4
-         TAmvn31ck7nr/y7tfGabrNP/rocAJ1UzB2ZOmLMJP3fgfUUb5WeKBpwcjJtsZ0hCbZEz
-         7ttebAo3rwncFssByJ6CidZCa9m9h5jUFQHXDn0+hp6KoMDx/Scnp+MSD950rhqPz7PA
-         GpgyxAhG++a3AJn7E1h+uSWTfG8iFbzmiO4G66HfxYbJHVvRY1/yhAhqyRhgPngSLSBb
-         m+zw==
-X-Gm-Message-State: APt69E1KzzFnkH9Vu8ia4Qoh/8c6dXRrReRjKegbx0jQGenB7m2bgkJo
-        v1UIUU9uig5yTtX+84KQsbs=
-X-Google-Smtp-Source: ADUXVKIu37cfIiS4AibS82vcurCJJ3IPE9/YaHbXykBP63BHDbKfQvCnfVTv8ve0ObQ5s/qmaxKNcw==
-X-Received: by 2002:a1c:540c:: with SMTP id i12-v6mr8674748wmb.131.1528727235439;
-        Mon, 11 Jun 2018 07:27:15 -0700 (PDT)
-Received: from localhost.localdomain (83-103-103-194.ip.fastwebnet.it. [83.103.103.194])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm42689387wrn.75.2018.06.11.07.27.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Jun 2018 07:27:14 -0700 (PDT)
-From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
-To: davem@davemloft.net
-Cc: tobin@apporbit.com, Andrea Greco <a.greco@4sigma.it>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] arcnet: com20020: bindings for smsc com20020
-Date: Mon, 11 Jun 2018 16:27:01 +0200
-Message-Id: <20180611142705.20849-1-andrea.greco.gapmilano@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        Thu, 7 Jun 2018 11:00:33 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w57EwN84019459;
+        Thu, 7 Jun 2018 17:58:24 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
+        id A892562FF2; Thu,  7 Jun 2018 17:58:23 +0300 (IDT)
+From: avifishman70@gmail.com
+To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
+        yuenn@google.com, brendanhiggins@google.com,
+        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
+        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
+        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
+        digetx@gmail.com, kstewart@linuxfoundation.org,
+        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, Avi Fishman <AviFishman70@gmail.com>
+Subject: [PATCH v4 2/3] dt-bindings: usb: new ehci-npcm7xx dt
+Date: Thu,  7 Jun 2018 17:58:20 +0300
+Message-Id: <20180607145821.322979-3-avifishman70@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180607145821.322979-1-avifishman70@gmail.com>
+References: <20180607145821.322979-1-avifishman70@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Greco <a.greco@4sigma.it>
+From: Avi Fishman <AviFishman70@gmail.com>
 
-Add devicetree bindings for smsc com20020
+Device Tree documentation for Nuvoton npcm7xx EHCI.
 
-Signed-off-by: Andrea Greco <a.greco@4sigma.it>
+Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
 ---
- .../devicetree/bindings/net/smsc-com20020.txt       | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/smsc-com20020.txt
+ Documentation/devicetree/bindings/usb/npcm7xx-usb.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
 
-diff --git a/Documentation/devicetree/bindings/net/smsc-com20020.txt b/Documentation/devicetree/bindings/net/smsc-com20020.txt
+diff --git a/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt b/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
 new file mode 100644
-index 000000000000..660a4a751f29
+index 000000000000..b682bec103f9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/net/smsc-com20020.txt
-@@ -0,0 +1,21 @@
-+SMSC com20020 Arcnet network controller
++++ b/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+@@ -0,0 +1,17 @@
++Nuvoton NPCM7XX SoC USB controllers:
++-----------------------------
 +
-+Required property:
-+- timeout-ns: Arcnet bus timeout, Idle Time (328000 - 20500)
-+- bus-speed-bps: Arcnet bus speed (10000000 - 156250)
-+- smsc,xtal-mhz: External oscillator frequency
-+- smsc,backplane-enabled: Controller use backplane mode
-+- reset-gpios: Chip reset pin
-+- interrupts: Should contain controller interrupt
++EHCI:
++-----
 +
-+arcnet@28000000 {
-+	compatible = "smsc,com20020";
++Required properties:
++- compatible: "nuvoton,npcm750-ehci"
++- interrupts: Should contain the EHCI interrupt
 +
-+	timeout-ns = <20500>;
-+	bus-speed-hz = <10000000>;
-+	smsc,xtal-mhz = <20>;
-+	smsc,backplane-enabled;
++Example:
 +
-+	reset-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
-+	interrupts = <&gpio2 10 GPIO_ACTIVE_LOW>;
-+};
++	ehci1: usb@f0806000 {
++		compatible = "nuvoton,npcm750-ehci";
++		reg = <0xf0806000 0x1000>;
++		interrupts = <0 61 4>;
++	};
 -- 
-2.14.4
+2.14.1
