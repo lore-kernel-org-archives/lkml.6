@@ -1,135 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D4LmOhddGFsRJQAAmS7hNA
-	; Wed, 06 Jun 2018 22:17:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id z2P1FjE6GVuFFQAAmS7hNA
+	; Thu, 07 Jun 2018 14:06:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 674D360861; Wed,  6 Jun 2018 22:17:14 +0000 (UTC)
+	id 42C01608C1; Thu,  7 Jun 2018 14:06:17 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3dYiJ+T"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DCE74607E4;
-	Wed,  6 Jun 2018 22:17:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCE74607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A3773602FC;
+	Thu,  7 Jun 2018 14:06:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A3773602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753013AbeFFWRM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 18:17:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46260 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752404AbeFFWP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 18:15:28 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BCE8D8A3CE;
-        Wed,  6 Jun 2018 22:15:27 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-89.brq.redhat.com [10.40.204.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 723172026DEF;
-        Wed,  6 Jun 2018 22:15:25 +0000 (UTC)
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 03/10] perf stat: Add --interval-clear option
-Date: Thu,  7 Jun 2018 00:15:06 +0200
-Message-Id: <20180606221513.11302-4-jolsa@kernel.org>
-In-Reply-To: <20180606221513.11302-1-jolsa@kernel.org>
-References: <20180606221513.11302-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 06 Jun 2018 22:15:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 06 Jun 2018 22:15:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        id S932906AbeFGOGO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:06:14 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38226 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932578AbeFGOGJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:06:09 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so6424265wmf.3;
+        Thu, 07 Jun 2018 07:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4xQu35NKdZryjxoFd0n+XVKmVWi5YIPE1muIXvtypkE=;
+        b=P3dYiJ+TQytf2wsZ1ekaS5nO6GNvVWvEJmEj5bvzjVhWqfa72SQu6nbU+P0J3/9Pjv
+         BRfVW6U8RHQcbuepqCdU7/ur/wXejeNQ3EuQ9PXVK1MahdhnCnfDyRVVhgYfHC1FaUgM
+         OYFe7fQEnS9xTmtjrphPpEP6gBsg2PPJFCfhZWjZQyKzBk1zP763HNv5yP5uY+BBfIoD
+         8r59MLbWl1CEwn4il2Pt+737h5nqOejjeT6QSF49w3Sqnw3d1o5BNFfRbnqcNfl22Imz
+         5wZ6KW6gA7s8t+MGoGy+ltOZIYOFhTv2YGhirfBXRhVqL2B9jAxyMlxkYEQrk8IgX/At
+         F6yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4xQu35NKdZryjxoFd0n+XVKmVWi5YIPE1muIXvtypkE=;
+        b=l4CdD7ai43xl5pXySCNQCsXlqL3Tpl0VIipdSWOhoKDGw6Fzr2EW+i1oZoTkp6Y8pO
+         ZbDgVw+6troc59WK24r5aIgVAHsNYMAK0nKHhhEzvwYfCnl7C1Cdaj9RnAkP0qNgEn19
+         OVz/m1nuF3iNH02/oyRwJY4742Li2ZMlTHZZ8yQy6HuTFxdiLsxEr89dTeoauayPHygk
+         Emqs1l8eY1bJjHqFL6t+fFzQc6sl+IGno/YYKg1nP4s7Yo/X0IA0vQDqiWU0+sDOK8ld
+         IO6dsfsLxPeNJnxYy7JQk7R/OVefL5c5Utk0AqKHpQrLXKze4SQHUgeo3lOb+1abEJDi
+         LH1w==
+X-Gm-Message-State: APt69E0QwNfkSTzxep6CGaAgQVH7zmhSpLXMJxhYkFU6G9ea+TiYcfm4
+        yDLOKWS4M779R8oWKSWXt9U=
+X-Google-Smtp-Source: ADUXVKKVGYfDO49JVhQoMcxyVs5THdPkempDaleawu5XIUvGKlvzWVgReifJxFtIWRMSbG7HpAEBAA==
+X-Received: by 2002:a1c:7e87:: with SMTP id z129-v6mr1787675wmc.131.1528380367724;
+        Thu, 07 Jun 2018 07:06:07 -0700 (PDT)
+Received: from cperon-Latitude-7490.lan (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
+        by smtp.gmail.com with ESMTPSA id 135-v6sm2032331wmx.21.2018.06.07.07.06.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 07:06:07 -0700 (PDT)
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v6 3/5] dt-bindings: timer: add i.MX EPIT timer binding
+Date: Thu,  7 Jun 2018 16:05:42 +0200
+Message-Id: <20180607140544.22268-4-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180607140544.22268-1-peron.clem@gmail.com>
+References: <20180607140544.22268-1-peron.clem@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding --interval-clear option to clear the screen
-before next interval.
+From: Clément Peron <clement.peron@devialet.com>
 
-Link: http://lkml.kernel.org/n/tip-8zobiwghr6t9f9a4o886cmau@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Add devicetree binding document for NXP's i.MX SoC specific
+EPIT timer driver.
+
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- tools/perf/Documentation/perf-stat.txt |  3 +++
- tools/perf/builtin-stat.c              | 11 +++++++++--
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/timer/fsl,imxepit.txt | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/fsl,imxepit.txt
 
-diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-index 5dfe102fb5b5..b10a90b6a718 100644
---- a/tools/perf/Documentation/perf-stat.txt
-+++ b/tools/perf/Documentation/perf-stat.txt
-@@ -178,6 +178,9 @@ Print count deltas for fixed number of times.
- This option should be used together with "-I" option.
- 	example: 'perf stat -I 1000 --interval-count 2 -e cycles -a'
- 
-+--interval-clear::
-+Clear the screen before next interval.
+diff --git a/Documentation/devicetree/bindings/timer/fsl,imxepit.txt b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+new file mode 100644
+index 000000000000..819d6458a860
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/fsl,imxepit.txt
+@@ -0,0 +1,21 @@
++Binding for the i.MX Enhanced Periodic Interrupt Timer (EPIT)
 +
- --timeout msecs::
- Stop the 'perf stat' session and print count deltas after N milliseconds (minimum: 10 ms).
- This option is not supported with the "-I" option.
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index fce46252f89c..067d8b5b2c83 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -65,6 +65,7 @@
- #include "util/tool.h"
- #include "util/string2.h"
- #include "util/metricgroup.h"
-+#include "util/top.h"
- #include "asm/bug.h"
- 
- #include <linux/time64.h>
-@@ -173,6 +174,7 @@ static struct cpu_map		*aggr_map;
- static aggr_get_id_t		aggr_get_id;
- static bool			append_file;
- static bool			interval_count;
-+static bool			interval_clear;
- static const char		*output_name;
- static int			output_fd;
- static int			print_free_counters_hint;
-@@ -1713,9 +1715,12 @@ static void print_interval(char *prefix, struct timespec *ts)
- 	FILE *output = stat_config.output;
- 	static int num_print_interval;
- 
-+	if (interval_clear)
-+		puts(CONSOLE_CLEAR);
++The Enhanced Periodic Interrupt Timer (EPIT) is a 32-bit set-and-forget timer
++that is capable of providing precise interrupts at regular intervals with
++minimal processor intervention.
 +
- 	sprintf(prefix, "%6lu.%09lu%s", ts->tv_sec, ts->tv_nsec, csv_sep);
- 
--	if (num_print_interval == 0 && !csv_output) {
-+	if ((num_print_interval == 0 && !csv_output) || interval_clear) {
- 		switch (stat_config.aggr_mode) {
- 		case AGGR_SOCKET:
- 			fprintf(output, "#           time socket cpus");
-@@ -1747,7 +1752,7 @@ static void print_interval(char *prefix, struct timespec *ts)
- 		}
- 	}
- 
--	if (num_print_interval == 0 && metric_only)
-+	if ((num_print_interval == 0 && metric_only) || interval_clear)
- 		print_metric_headers(" ", true);
- 	if (++num_print_interval == 25)
- 		num_print_interval = 0;
-@@ -2066,6 +2071,8 @@ static const struct option stat_options[] = {
- 		    "(overhead is possible for values <= 100ms)"),
- 	OPT_INTEGER(0, "interval-count", &stat_config.times,
- 		    "print counts for fixed number of times"),
-+	OPT_BOOLEAN(0, "interval-clear", &interval_clear,
-+		    "clear screen in between new interval"),
- 	OPT_UINTEGER(0, "timeout", &stat_config.timeout,
- 		    "stop workload and print counts after a timeout period in ms (>= 10ms)"),
- 	OPT_SET_UINT(0, "per-socket", &stat_config.aggr_mode,
++Required properties:
++- compatible: should be "fsl,<chip>-epit", "fsl,imx31-epit" where <chip> is
++  imx25, imx6qdl, imx6sl, imx6sul or imx6sx.
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- interrupts: Should contain EPIT controller interrupt
++- clocks : The clock provided by the SoC to drive the timer.
++
++Example for i.MX6QDL:
++	epit1: timer@20d0000 {
++		compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
++		reg = <0x020d0000 0x4000>;
++		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6QDL_CLK_EPIT1>;
++	};
 -- 
-2.13.6
+2.17.1
