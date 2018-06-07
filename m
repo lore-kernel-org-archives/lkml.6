@@ -1,312 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lRwWCCXjGluEPAAAmS7hNA
-	; Fri, 08 Jun 2018 20:13:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 26QEOHNHGVu0PQAAmS7hNA
+	; Thu, 07 Jun 2018 14:56:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C6DBA607DC; Fri,  8 Jun 2018 20:13:37 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vsBaa9ef"
+	id 11593607E7; Thu,  7 Jun 2018 14:56:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F3D91605A5;
-	Fri,  8 Jun 2018 20:13:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3D91605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id ED04D601C3;
+	Thu,  7 Jun 2018 14:55:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED04D601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753214AbeFHUNe (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:13:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753158AbeFHUMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:12:39 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9E49206B7;
-        Fri,  8 Jun 2018 20:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528488759;
-        bh=FU76aCB8NThfMkDgnH7FynfH5m2DHp4yzvI59Ets6zI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=vsBaa9ef/gHoc2emZnL2ZemMaQOeOQtqAbzeSo+vW7E+owlQ7ScvTabp/XU01ZfOF
-         gfCaKIsgjYaYd2ag+5z1vxxRHal4GOo0KL+VkZ1yYxk1ugMWHDSzf5LOva5E7WxRhR
-         k97B1idr1jjAErgVlNCjgwrEwMGu/WBxI7JwH8f4=
-Subject: [PATCH v1 6/9] PCI/portdrv: Squash service driver registration into
- portdrv_pci.c
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Oza Pawandeep <poza@codeaurora.org>, linux-kernel@vger.kernel.org
-Date: Fri, 08 Jun 2018 15:12:38 -0500
-Message-ID: <152848875803.14051.11862886995562549992.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152848853199.14051.12670957565366345798.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S935511AbeFGOzx (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:55:53 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41077 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935481AbeFGOzr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:55:47 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0005hK-7c; Thu, 07 Jun 2018 15:09:08 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb9-000362-0b; Thu, 07 Jun 2018 15:09:07 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
+        linux-edac@vger.kernel.org, "Petr Mladek" <pmladek@suse.com>,
+        linux-sh@vger.kernel.org, "Will Deacon" <will.deacon@arm.com>,
+        linux-snps-arc@lists.infradead.org,
+        "Sergey Senozhatsky" <sergey.senozhatsky.work@gmail.com>,
+        linux-c6x-dev@linux-c6x.org, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Steven Rostedt" <rostedt@goodmis.org>, linux-am33-list@redhat.com
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.214381661@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 267/410] arm64: do not use print_symbol()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Squash service driver registration into portdrv_pci.c.  No functional
-change intended.
+------------------
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+
+commit 4ef7963843d3243260aa335dfb9cb2fede06aacf upstream.
+
+print_symbol() is a very old API that has been obsoleted by %pS format
+specifier in a normal printk() call.
+
+Replace print_symbol() with a direct printk("%pS") call.
+
+Link: http://lkml.kernel.org/r/20171211125025.2270-3-sergey.senozhatsky@gmail.com
+To: Andrew Morton <akpm@linux-foundation.org>
+To: Russell King <linux@armlinux.org.uk>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Salter <msalter@redhat.com>
+To: Tony Luck <tony.luck@intel.com>
+To: David Howells <dhowells@redhat.com>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+To: Guan Xuetao <gxt@mprc.pku.edu.cn>
+To: Borislav Petkov <bp@alien8.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Vineet Gupta <vgupta@synopsys.com>
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-c6x-dev@linux-c6x.org
+Cc: linux-ia64@vger.kernel.org
+Cc: linux-am33-list@redhat.com
+Cc: linux-sh@vger.kernel.org
+Cc: linux-edac@vger.kernel.org
+Cc: x86@kernel.org
+Cc: linux-snps-arc@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+[pmladek@suse.com: updated commit message]
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/pcie/Makefile       |    2 -
- drivers/pci/pcie/portdrv_core.c |  116 ---------------------------------------
- drivers/pci/pcie/portdrv_pci.c  |   96 ++++++++++++++++++++++++++++++++
- 3 files changed, 97 insertions(+), 117 deletions(-)
- delete mode 100644 drivers/pci/pcie/portdrv_core.c
+ arch/arm64/kernel/process.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-index 03f4e0b3a140..aad431790b1d 100644
---- a/drivers/pci/pcie/Makefile
-+++ b/drivers/pci/pcie/Makefile
-@@ -2,7 +2,7 @@
- #
- # Makefile for PCI Express features and port driver
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -31,7 +31,6 @@
+ #include <linux/delay.h>
+ #include <linux/reboot.h>
+ #include <linux/interrupt.h>
+-#include <linux/kallsyms.h>
+ #include <linux/init.h>
+ #include <linux/cpu.h>
+ #include <linux/elfcore.h>
+@@ -198,8 +197,8 @@ void __show_regs(struct pt_regs *regs)
+ 	}
  
--pcieportdrv-y			:= portdrv_core.o portdrv_pci.o err.o
-+pcieportdrv-y			:= portdrv_pci.o err.o
- 
- obj-$(CONFIG_PCIEPORTBUS)	+= pcieportdrv.o
- 
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-deleted file mode 100644
-index 77b1c1ea8885..000000000000
---- a/drivers/pci/pcie/portdrv_core.c
-+++ /dev/null
-@@ -1,116 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Purpose:	PCI Express Port Bus Driver's Core Functions
-- *
-- * Copyright (C) 2004 Intel
-- * Copyright (C) Tom Long Nguyen (tom.l.nguyen@intel.com)
-- */
--
--#include <linux/module.h>
--#include <linux/pci.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/pm.h>
--#include <linux/pm_runtime.h>
--#include <linux/string.h>
--#include <linux/slab.h>
--#include <linux/aer.h>
--
--#include "../pci.h"
--#include "portdrv.h"
--
--/**
-- * pcie_port_probe_service - probe driver for given PCI Express port service
-- * @dev: PCI Express port service device to probe against
-- *
-- * If PCI Express port service driver is registered with
-- * pcie_port_service_register(), this function will be called by the driver core
-- * whenever match is found between the driver and a port service device.
-- */
--static int pcie_port_probe_service(struct device *dev)
--{
--	struct pcie_device *pciedev;
--	struct pcie_port_service_driver *driver;
--	int status;
--
--	if (!dev || !dev->driver)
--		return -ENODEV;
--
--	driver = to_service_driver(dev->driver);
--	if (!driver || !driver->probe)
--		return -ENODEV;
--
--	pciedev = to_pcie_device(dev);
--	status = driver->probe(pciedev);
--	if (status)
--		return status;
--
--	get_device(dev);
--	return 0;
--}
--
--/**
-- * pcie_port_remove_service - detach driver from given PCI Express port service
-- * @dev: PCI Express port service device to handle
-- *
-- * If PCI Express port service driver is registered with
-- * pcie_port_service_register(), this function will be called by the driver core
-- * when device_unregister() is called for the port service device associated
-- * with the driver.
-- */
--static int pcie_port_remove_service(struct device *dev)
--{
--	struct pcie_device *pciedev;
--	struct pcie_port_service_driver *driver;
--
--	if (!dev || !dev->driver)
--		return 0;
--
--	pciedev = to_pcie_device(dev);
--	driver = to_service_driver(dev->driver);
--	if (driver && driver->remove) {
--		driver->remove(pciedev);
--		put_device(dev);
--	}
--	return 0;
--}
--
--/**
-- * pcie_port_shutdown_service - shut down given PCI Express port service
-- * @dev: PCI Express port service device to handle
-- *
-- * If PCI Express port service driver is registered with
-- * pcie_port_service_register(), this function will be called by the driver core
-- * when device_shutdown() is called for the port service device associated
-- * with the driver.
-- */
--static void pcie_port_shutdown_service(struct device *dev) {}
--
--/**
-- * pcie_port_service_register - register PCI Express port service driver
-- * @new: PCI Express port service driver to register
-- */
--int pcie_port_service_register(struct pcie_port_service_driver *new)
--{
--	if (pcie_ports_disabled)
--		return -ENODEV;
--
--	new->driver.name = new->name;
--	new->driver.bus = &pcie_port_bus_type;
--	new->driver.probe = pcie_port_probe_service;
--	new->driver.remove = pcie_port_remove_service;
--	new->driver.shutdown = pcie_port_shutdown_service;
--
--	return driver_register(&new->driver);
--}
--EXPORT_SYMBOL(pcie_port_service_register);
--
--/**
-- * pcie_port_service_unregister - unregister PCI Express port service driver
-- * @drv: PCI Express port service driver to unregister
-- */
--void pcie_port_service_unregister(struct pcie_port_service_driver *drv)
--{
--	driver_unregister(&drv->driver);
--}
--EXPORT_SYMBOL(pcie_port_service_unregister);
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index b019af97f14e..1375e91c268f 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -110,6 +110,102 @@ struct device *pcie_port_find_device(struct pci_dev *dev, u32 service)
- 	return device;
- }
- 
-+/**
-+ * pcie_port_probe_service - probe driver for given PCI Express port service
-+ * @dev: PCI Express port service device to probe against
-+ *
-+ * If PCI Express port service driver is registered with
-+ * pcie_port_service_register(), this function will be called by the driver core
-+ * whenever match is found between the driver and a port service device.
-+ */
-+static int pcie_port_probe_service(struct device *dev)
-+{
-+	struct pcie_device *pciedev;
-+	struct pcie_port_service_driver *driver;
-+	int status;
-+
-+	if (!dev || !dev->driver)
-+		return -ENODEV;
-+
-+	driver = to_service_driver(dev->driver);
-+	if (!driver || !driver->probe)
-+		return -ENODEV;
-+
-+	pciedev = to_pcie_device(dev);
-+	status = driver->probe(pciedev);
-+	if (status)
-+		return status;
-+
-+	get_device(dev);
-+	return 0;
-+}
-+
-+/**
-+ * pcie_port_remove_service - detach driver from given PCI Express port service
-+ * @dev: PCI Express port service device to handle
-+ *
-+ * If PCI Express port service driver is registered with
-+ * pcie_port_service_register(), this function will be called by the driver core
-+ * when device_unregister() is called for the port service device associated
-+ * with the driver.
-+ */
-+static int pcie_port_remove_service(struct device *dev)
-+{
-+	struct pcie_device *pciedev;
-+	struct pcie_port_service_driver *driver;
-+
-+	if (!dev || !dev->driver)
-+		return 0;
-+
-+	pciedev = to_pcie_device(dev);
-+	driver = to_service_driver(dev->driver);
-+	if (driver && driver->remove) {
-+		driver->remove(pciedev);
-+		put_device(dev);
-+	}
-+	return 0;
-+}
-+
-+/**
-+ * pcie_port_shutdown_service - shut down given PCI Express port service
-+ * @dev: PCI Express port service device to handle
-+ *
-+ * If PCI Express port service driver is registered with
-+ * pcie_port_service_register(), this function will be called by the driver core
-+ * when device_shutdown() is called for the port service device associated
-+ * with the driver.
-+ */
-+static void pcie_port_shutdown_service(struct device *dev) {}
-+
-+/**
-+ * pcie_port_service_register - register PCI Express port service driver
-+ * @new: PCI Express port service driver to register
-+ */
-+int pcie_port_service_register(struct pcie_port_service_driver *new)
-+{
-+	if (pcie_ports_disabled)
-+		return -ENODEV;
-+
-+	new->driver.name = new->name;
-+	new->driver.bus = &pcie_port_bus_type;
-+	new->driver.probe = pcie_port_probe_service;
-+	new->driver.remove = pcie_port_remove_service;
-+	new->driver.shutdown = pcie_port_shutdown_service;
-+
-+	return driver_register(&new->driver);
-+}
-+EXPORT_SYMBOL(pcie_port_service_register);
-+
-+/**
-+ * pcie_port_service_unregister - unregister PCI Express port service driver
-+ * @drv: PCI Express port service driver to unregister
-+ */
-+void pcie_port_service_unregister(struct pcie_port_service_driver *drv)
-+{
-+	driver_unregister(&drv->driver);
-+}
-+EXPORT_SYMBOL(pcie_port_service_unregister);
-+
- static int pcie_portdrv_restore_config(struct pci_dev *dev)
- {
- 	int retval;
+ 	show_regs_print_info(KERN_DEFAULT);
+-	print_symbol("pc : %s\n", regs->pc);
+-	print_symbol("lr : %s\n", lr);
++	printk("pc : %pS\n", (void *)regs->pc);
++	printk("lr : %pS\n", (void *)lr);
+ 	printk("sp : %016llx pstate : %08llx\n", sp, regs->pstate);
+ 	for (i = top_reg; i >= 0; i--) {
+ 		printk("x%-2d: %016llx ", i, regs->regs[i]);
