@@ -1,112 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bwiAD4VxGludNQAAmS7hNA
-	; Fri, 08 Jun 2018 12:07:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YodmIeU9GVs4RgAAmS7hNA
+	; Thu, 07 Jun 2018 14:17:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8795D608B8; Fri,  8 Jun 2018 12:07:59 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tGzd4d/Y"
+	id E72D4608B8; Thu,  7 Jun 2018 14:17:23 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1C5A1605A5;
-	Fri,  8 Jun 2018 12:07:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1C5A1605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2FDB56063F;
+	Thu,  7 Jun 2018 14:17:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FDB56063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752754AbeFHMH4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 08:07:56 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36390 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751604AbeFHMHy (ORCPT
+        id S933245AbeFGOQR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:16:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39597 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753535AbeFGOJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 08:07:54 -0400
-Received: by mail-lf0-f67.google.com with SMTP id u4-v6so19732108lff.3;
-        Fri, 08 Jun 2018 05:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1tnaKvjh8k1b0CZs+mpV6H2ERiDZglxlgKGfZM67iks=;
-        b=tGzd4d/YMVvaSLnphrnWlAtXYtOXzxjViYxIVSFshVg51X7jc5JMjc+FQCS2eM7AjB
-         biMadR44uPO2X8jDuyBdZKjhGOyTOiB/ZJTiMKu1cOE7pRZVAOUDGiPYJbX26xdwDLZn
-         cgItXiVxgt3N3EEW5AfWCchyrMg1VpARvPP6A84HwKxMqjO3qLrwHoMN3vdk0Ijk/dIL
-         vCMAymJJi0TqkC9PhavysmPOwPwVTbEjuHHG5aJK/VWUdp0x2qkNmFA8QepT6ILQJ9uE
-         3F8IJXRmWaAkmgw73tkCJA46IF9QksomFLe/f0zlzi3fQPVr2tQgV0KXZOUhwxMLSHx3
-         t2Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1tnaKvjh8k1b0CZs+mpV6H2ERiDZglxlgKGfZM67iks=;
-        b=l1Ve1D6fC9YMM5PNBMWjoWc4zIE5VvKY7wrxY4h9eWbm12eDHazKSSLAVEWigwazun
-         XsxncuOGIXWJdcFySjbkBxCkWsrnHKuEf7GVZzE8pHBpFWq5jt/xBdhsbZMECEfQ2Jwq
-         bWCmPJs4tJHryaljfuw7nk4Lj3v9cizB8mp4jK3W7Yn7wSIWqADPl3Io7RwwWb7GfMKt
-         YTeWFbXL/5kXRdNLYttD5E0NANDbfXI/bTlQXBuh9UlpDiPEAjE7B4EadDY/d/MRxXAw
-         orCdy23J3ssPaJIe9DGafqXQ4RSwr+AGG3nOLZYoTT8hexfYIIZP4hsy1zXokPg5B5XV
-         cucg==
-X-Gm-Message-State: APt69E2Qo/4wtNX3RqX6QJ0DNye8jK8ORzBcg38Vxdtqufks4IBJ8SAe
-        sxoS9eGXfUydx3R2g9VL4DBxAILp
-X-Google-Smtp-Source: ADUXVKJkmRmWk3+39u2FngCtJWEjeY7gwXnY65o4alSu9muuxLfwP+LFor6VV/4O2YsgkS72n3VNlA==
-X-Received: by 2002:a19:b587:: with SMTP id g7-v6mr4019082lfk.144.1528459672277;
-        Fri, 08 Jun 2018 05:07:52 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id j64-v6sm2245121lfe.64.2018.06.08.05.07.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 05:07:51 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id D8A3C460756; Fri,  8 Jun 2018 15:07:50 +0300 (MSK)
-Date: Fri, 8 Jun 2018 15:07:50 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Subject: Re: [PATCH 03/10] x86/cet: Signal handling for shadow stack
-Message-ID: <20180608120750.GB2525@uranus>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
- <20180607143807.3611-4-yu-cheng.yu@intel.com>
- <CALCETrWo77RS_wOzskw5OG-LdC1S-b_NY=uPWUmPbQEnNwANgQ@mail.gmail.com>
- <20180607200714.GA2525@uranus>
- <CALCETrXAoPsHK49c1Dpa8N0ccsxjwnVOTktKVaY++xjHxdmUzg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 7 Jun 2018 10:09:15 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbF-0005Zm-Q6; Thu, 07 Jun 2018 15:09:13 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbC-0003F7-Nj; Thu, 07 Jun 2018 15:09:10 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <CALCETrXAoPsHK49c1Dpa8N0ccsxjwnVOTktKVaY++xjHxdmUzg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Sabrina Dubroca" <sd@queasysnail.net>,
+        "Stefano Brivio" <sbrivio@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.381024515@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 353/410] ipv4: lock mtu in fnhe when received PMTU <
+ net.ipv4.route.min_pmtu
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 01:57:03PM -0700, Andy Lutomirski wrote:
-...
-> >
-> > I didn't read the whole series of patches in details
-> > yet, hopefully will be able tomorrow. Thanks Andy for
-> > CC'ing!
-> 
-> We have uc_flags.  It might be useful to carve out some of the flag
-> space (24 bits?) to indicate something like the *size* of sigcontext
-> and teach the kernel that new sigcontext fields should only be parsed
-> on sigreturn() if the size is large enough.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Yes, this should do the trick.
+------------------
+
+From: Sabrina Dubroca <sd@queasysnail.net>
+
+commit d52e5a7e7ca49457dd31fc8b42fb7c0d58a31221 upstream.
+
+Prior to the rework of PMTU information storage in commit
+2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer."),
+when a PMTU event advertising a PMTU smaller than
+net.ipv4.route.min_pmtu was received, we would disable setting the DF
+flag on packets by locking the MTU metric, and set the PMTU to
+net.ipv4.route.min_pmtu.
+
+Since then, we don't disable DF, and set PMTU to
+net.ipv4.route.min_pmtu, so the intermediate router that has this link
+with a small MTU will have to drop the packets.
+
+This patch reestablishes pre-2.6.39 behavior by splitting
+rtable->rt_pmtu into a bitfield with rt_mtu_locked and rt_pmtu.
+rt_mtu_locked indicates that we shouldn't set the DF bit on that path,
+and is checked in ip_dont_fragment().
+
+One possible workaround is to set net.ipv4.route.min_pmtu to a value low
+enough to accommodate the lowest MTU encountered.
+
+Fixes: 2c8cec5c10bc ("ipv4: Cache learned PMTU information in inetpeer.")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ include/net/ip.h        | 11 +++++++++--
+ include/net/ip_fib.h    |  1 +
+ include/net/route.h     |  3 ++-
+ net/ipv4/route.c        | 26 +++++++++++++++++++-------
+ net/ipv4/xfrm4_policy.c |  1 +
+ 5 files changed, 32 insertions(+), 10 deletions(-)
+
+--- a/include/net/ip.h
++++ b/include/net/ip.h
+@@ -263,12 +263,19 @@ int ip_decrease_ttl(struct iphdr *iph)
+ 	return --iph->ttl;
+ }
+ 
++static inline int ip_mtu_locked(const struct dst_entry *dst)
++{
++	const struct rtable *rt = (const struct rtable *)dst;
++
++	return rt->rt_mtu_locked || dst_metric_locked(dst, RTAX_MTU);
++}
++
+ static inline
+ int ip_dont_fragment(struct sock *sk, struct dst_entry *dst)
+ {
+ 	return  inet_sk(sk)->pmtudisc == IP_PMTUDISC_DO ||
+ 		(inet_sk(sk)->pmtudisc == IP_PMTUDISC_WANT &&
+-		 !(dst_metric_locked(dst, RTAX_MTU)));
++		 !ip_mtu_locked(dst));
+ }
+ 
+ static inline bool ip_sk_accept_pmtu(const struct sock *sk)
+@@ -294,7 +301,7 @@ static inline unsigned int ip_dst_mtu_ma
+ 	struct net *net = dev_net(dst->dev);
+ 
+ 	if (net->ipv4.sysctl_ip_fwd_use_pmtu ||
+-	    dst_metric_locked(dst, RTAX_MTU) ||
++	    ip_mtu_locked(dst) ||
+ 	    !forwarding)
+ 		return dst_mtu(dst);
+ 
+--- a/include/net/ip_fib.h
++++ b/include/net/ip_fib.h
+@@ -54,6 +54,7 @@ struct fib_nh_exception {
+ 	int				fnhe_genid;
+ 	__be32				fnhe_daddr;
+ 	u32				fnhe_pmtu;
++	bool				fnhe_mtu_locked;
+ 	__be32				fnhe_gw;
+ 	unsigned long			fnhe_expires;
+ 	struct rtable __rcu		*fnhe_rth_input;
+--- a/include/net/route.h
++++ b/include/net/route.h
+@@ -61,7 +61,8 @@ struct rtable {
+ 	__be32			rt_gateway;
+ 
+ 	/* Miscellaneous cached information */
+-	u32			rt_pmtu;
++	u32			rt_mtu_locked:1,
++				rt_pmtu:31;
+ 
+ 	struct list_head	rt_uncached;
+ };
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -608,6 +608,7 @@ static inline u32 fnhe_hashfun(__be32 da
+ static void fill_route_from_fnhe(struct rtable *rt, struct fib_nh_exception *fnhe)
+ {
+ 	rt->rt_pmtu = fnhe->fnhe_pmtu;
++	rt->rt_mtu_locked = fnhe->fnhe_mtu_locked;
+ 	rt->dst.expires = fnhe->fnhe_expires;
+ 
+ 	if (fnhe->fnhe_gw) {
+@@ -618,7 +619,7 @@ static void fill_route_from_fnhe(struct
+ }
+ 
+ static void update_or_create_fnhe(struct fib_nh *nh, __be32 daddr, __be32 gw,
+-				  u32 pmtu, unsigned long expires)
++				  u32 pmtu, bool lock, unsigned long expires)
+ {
+ 	struct fnhe_hash_bucket *hash;
+ 	struct fib_nh_exception *fnhe;
+@@ -655,8 +656,10 @@ static void update_or_create_fnhe(struct
+ 			fnhe->fnhe_genid = genid;
+ 		if (gw)
+ 			fnhe->fnhe_gw = gw;
+-		if (pmtu)
++		if (pmtu) {
+ 			fnhe->fnhe_pmtu = pmtu;
++			fnhe->fnhe_mtu_locked = lock;
++		}
+ 		fnhe->fnhe_expires = max(1UL, expires);
+ 		/* Update all cached dsts too */
+ 		rt = rcu_dereference(fnhe->fnhe_rth_input);
+@@ -680,6 +683,7 @@ static void update_or_create_fnhe(struct
+ 		fnhe->fnhe_daddr = daddr;
+ 		fnhe->fnhe_gw = gw;
+ 		fnhe->fnhe_pmtu = pmtu;
++		fnhe->fnhe_mtu_locked = lock;
+ 		fnhe->fnhe_expires = expires;
+ 
+ 		/* Exception created; mark the cached routes for the nexthop
+@@ -761,7 +765,8 @@ static void __ip_do_redirect(struct rtab
+ 				struct fib_nh *nh = &FIB_RES_NH(res);
+ 
+ 				update_or_create_fnhe(nh, fl4->daddr, new_gw,
+-						0, jiffies + ip_rt_gc_timeout);
++						0, false,
++						jiffies + ip_rt_gc_timeout);
+ 			}
+ 			if (kill_route)
+ 				rt->dst.obsolete = DST_OBSOLETE_KILL;
+@@ -970,15 +975,18 @@ static void __ip_rt_update_pmtu(struct r
+ {
+ 	struct dst_entry *dst = &rt->dst;
+ 	struct fib_result res;
++	bool lock = false;
+ 
+-	if (dst_metric_locked(dst, RTAX_MTU))
++	if (ip_mtu_locked(dst))
+ 		return;
+ 
+ 	if (dst->dev->mtu < mtu)
+ 		return;
+ 
+-	if (mtu < ip_rt_min_pmtu)
++	if (mtu < ip_rt_min_pmtu) {
++		lock = true;
+ 		mtu = ip_rt_min_pmtu;
++	}
+ 
+ 	if (rt->rt_pmtu == mtu &&
+ 	    time_before(jiffies, dst->expires - ip_rt_mtu_expires / 2))
+@@ -988,7 +996,7 @@ static void __ip_rt_update_pmtu(struct r
+ 	if (fib_lookup(dev_net(dst->dev), fl4, &res) == 0) {
+ 		struct fib_nh *nh = &FIB_RES_NH(res);
+ 
+-		update_or_create_fnhe(nh, fl4->daddr, 0, mtu,
++		update_or_create_fnhe(nh, fl4->daddr, 0, mtu, lock,
+ 				      jiffies + ip_rt_mtu_expires);
+ 	}
+ 	rcu_read_unlock();
+@@ -1243,7 +1251,7 @@ static unsigned int ipv4_mtu(const struc
+ 
+ 	mtu = dst->dev->mtu;
+ 
+-	if (unlikely(dst_metric_locked(dst, RTAX_MTU))) {
++	if (unlikely(ip_mtu_locked(dst))) {
+ 		if (rt->rt_uses_gateway && mtu > 576)
+ 			mtu = 576;
+ 	}
+@@ -1452,6 +1460,7 @@ static struct rtable *rt_dst_alloc(struc
+ 		rt->rt_is_input = 0;
+ 		rt->rt_iif = 0;
+ 		rt->rt_pmtu = 0;
++		rt->rt_mtu_locked = 0;
+ 		rt->rt_gateway = 0;
+ 		rt->rt_uses_gateway = 0;
+ 		INIT_LIST_HEAD(&rt->rt_uncached);
+@@ -2308,6 +2317,7 @@ struct dst_entry *ipv4_blackhole_route(s
+ 		rt->rt_is_input = ort->rt_is_input;
+ 		rt->rt_iif = ort->rt_iif;
+ 		rt->rt_pmtu = ort->rt_pmtu;
++		rt->rt_mtu_locked = ort->rt_mtu_locked;
+ 
+ 		rt->rt_genid = rt_genid_ipv4(net);
+ 		rt->rt_flags = ort->rt_flags;
+@@ -2411,6 +2421,8 @@ static int rt_fill_info(struct net *net,
+ 	memcpy(metrics, dst_metrics_ptr(&rt->dst), sizeof(metrics));
+ 	if (rt->rt_pmtu && expires)
+ 		metrics[RTAX_MTU - 1] = rt->rt_pmtu;
++	if (rt->rt_mtu_locked && expires)
++		metrics[RTAX_LOCK - 1] |= BIT(RTAX_MTU);
+ 	if (rtnetlink_put_metrics(skb, metrics) < 0)
+ 		goto nla_put_failure;
+ 
+--- a/net/ipv4/xfrm4_policy.c
++++ b/net/ipv4/xfrm4_policy.c
+@@ -93,6 +93,7 @@ static int xfrm4_fill_dst(struct xfrm_ds
+ 	xdst->u.rt.rt_gateway = rt->rt_gateway;
+ 	xdst->u.rt.rt_uses_gateway = rt->rt_uses_gateway;
+ 	xdst->u.rt.rt_pmtu = rt->rt_pmtu;
++	xdst->u.rt.rt_mtu_locked = rt->rt_mtu_locked;
+ 	INIT_LIST_HEAD(&xdst->u.rt.rt_uncached);
+ 
+ 	return 0;
