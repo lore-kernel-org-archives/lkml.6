@@ -1,48 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9Xm2B3dJGVu/TwAAmS7hNA
-	; Thu, 07 Jun 2018 15:05:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id a/GdBItGGVtTOAAAmS7hNA
+	; Thu, 07 Jun 2018 14:58:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EF193608B8; Thu,  7 Jun 2018 15:05:00 +0000 (UTC)
+	id A83C8608B8; Thu,  7 Jun 2018 14:58:09 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 779A76063F;
-	Thu,  7 Jun 2018 15:05:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 779A76063F
+	by smtp.codeaurora.org (Postfix) with ESMTP id 295836074D;
+	Thu,  7 Jun 2018 14:58:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 295836074D
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965115AbeFGPE7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:04:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41576 "EHLO
+        id S935462AbeFGO6H (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:58:07 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41153 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934962AbeFGPEK (ORCPT
+        by vger.kernel.org with ESMTP id S935342AbeFGO6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:04:10 -0400
+        Thu, 7 Jun 2018 10:58:04 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbu-0005Zp-5O; Thu, 07 Jun 2018 15:09:54 +0100
+        id 1fQvbo-0005a0-DI; Thu, 07 Jun 2018 15:09:48 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002nX-GV; Thu, 07 Jun 2018 15:08:58 +0100
+        id 1fQvb2-0002sL-UF; Thu, 07 Jun 2018 15:09:00 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+CC: akpm@linux-foundation.org, "J. Bruce Fields" <bfields@redhat.com>,
+        "Trond Myklebust" <trond.myklebust@primarydata.com>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.422478306@decadent.org.uk>
+Message-ID: <lsq.1528380321.525524252@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 079/410] ASoC: nuc900: Fix a loop timeout test
+Subject: [PATCH 3.16 137/410] NFS: commit direct writes even if they fail
+ partially
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,38 +57,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: "J. Bruce Fields" <bfields@redhat.com>
 
-commit 65a12b3aafed5fc59f4ce41b22b752b1729e6701 upstream.
+commit 1b8d97b0a837beaf48a8449955b52c650a7114b4 upstream.
 
-We should be finishing the loop with timeout set to zero but because
-this is a post-op we finish with timeout == -1.
+If some of the WRITE calls making up an O_DIRECT write syscall fail,
+we neglect to commit, even if some of the WRITEs succeed.
 
-Fixes: 1082e2703a2d ("ASoC: NUC900/audio: add nuc900 audio driver support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+We also depend on the commit code to free the reference count on the
+nfs_page taken in the "if (request_commit)" case at the end of
+nfs_direct_write_completion().  The problem was originally noticed
+because ENOSPC's encountered partway through a write would result in a
+closed file being sillyrenamed when it should have been unlinked.
+
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/soc/nuc900/nuc900-ac97.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/direct.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/sound/soc/nuc900/nuc900-ac97.c
-+++ b/sound/soc/nuc900/nuc900-ac97.c
-@@ -67,7 +67,7 @@ static unsigned short nuc900_ac97_read(s
+--- a/fs/nfs/direct.c
++++ b/fs/nfs/direct.c
+@@ -732,10 +732,8 @@ static void nfs_direct_write_completion(
  
- 	/* polling the AC_R_FINISH */
- 	while (!(AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_R_FINISH)
--								&& timeout--)
-+								&& --timeout)
- 		mdelay(1);
+ 	spin_lock(&dreq->lock);
  
- 	if (!timeout) {
-@@ -121,7 +121,7 @@ static void nuc900_ac97_write(struct snd
- 
- 	/* polling the AC_W_FINISH */
- 	while ((AUDIO_READ(nuc900_audio->mmio + ACTL_ACCON) & AC_W_FINISH)
--								&& timeout--)
-+								&& --timeout)
- 		mdelay(1);
- 
- 	if (!timeout)
+-	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags)) {
+-		dreq->flags = 0;
++	if (test_bit(NFS_IOHDR_ERROR, &hdr->flags))
+ 		dreq->error = hdr->error;
+-	}
+ 	if (dreq->error != 0)
+ 		bit = NFS_IOHDR_ERROR;
+ 	else {
