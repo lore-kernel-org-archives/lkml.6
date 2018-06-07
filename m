@@ -1,117 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id o/ENOiimG1vUYQAAmS7hNA
-	; Sat, 09 Jun 2018 10:04:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 5wj6OP1XGVvzfQAAmS7hNA
+	; Thu, 07 Jun 2018 16:06:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DC4E7607A4; Sat,  9 Jun 2018 10:04:24 +0000 (UTC)
+	id D519C6089E; Thu,  7 Jun 2018 16:06:21 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3CBD16032D;
-	Sat,  9 Jun 2018 10:04:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3CBD16032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4294360590;
+	Thu,  7 Jun 2018 16:06:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4294360590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rockwellcollins.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753119AbeFIKEV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 06:04:21 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32792 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751344AbeFIKEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 06:04:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jun 2018 03:04:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,494,1520924400";
-   d="scan'208";a="48536708"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga006.jf.intel.com with ESMTP; 09 Jun 2018 03:04:17 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fRajI-000CZs-Hr; Sat, 09 Jun 2018 18:04:16 +0800
-Date: Sat, 9 Jun 2018 18:03:45 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: kbuild-all@01.org, bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: Re: [PATCH v3 03/10] PCI: Update xxx_pcie_ep_raise_irq() and
- pci_epc_raise_irq() signatures
-Message-ID: <201806091725.uRBp8LOU%fengguang.wu@intel.com>
-References: <b4eba65e4ae7b8d15a5770a31d6a339de518cea7.1527862777.git.gustavo.pimentel@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4eba65e4ae7b8d15a5770a31d6a339de518cea7.1527862777.git.gustavo.pimentel@synopsys.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S935168AbeFGQGS (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:06:18 -0400
+Received: from ch3vs01.rockwellcollins.com ([205.175.226.27]:22530 "EHLO
+        ch3vs01.rockwellcollins.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933058AbeFGQGQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:06:16 -0400
+X-Greylist: delayed 567 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Jun 2018 12:06:15 EDT
+Received: from ofwch3n02.rockwellcollins.com (HELO ciulimr02.rockwellcollins.com) ([205.175.226.14])
+  by ch3vs01.rockwellcollins.com with ESMTP; 07 Jun 2018 10:56:48 -0500
+X-Received: from righttwix.rockwellcollins.com (righttwix.rockwellcollins.com [192.168.141.218])
+        by ciulimr02.rockwellcollins.com (Postfix) with ESMTP id 242EE20094;
+        Thu,  7 Jun 2018 10:56:48 -0500 (CDT)
+From: Brandon Maier <brandon.maier@rockwellcollins.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net,
+        michal.simek@xilinx.com, clayton.shotwell@rockwellcollins.com,
+        kristopher.cory@rockwellcollins.com, linux-kernel@vger.kernel.org,
+        Brandon Maier <brandon.maier@rockwellcollins.com>
+Subject: [PATCH 3/3] net: phy: xgmiitorgmii: Check read_status results
+Date: Thu,  7 Jun 2018 10:53:48 -0500
+Message-Id: <20180607155348.149665-3-brandon.maier@rockwellcollins.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180607155348.149665-1-brandon.maier@rockwellcollins.com>
+References: <20180607155348.149665-1-brandon.maier@rockwellcollins.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+We're ignoring the result of the attached phy device's read_status().
+Return it so we can detect errors.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on pci/next]
-[also build test WARNING on next-20180608]
-[cannot apply to v4.17]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Gustavo-Pimentel/Add-MSI-X-support-on-pcitest-tool/20180609-143316
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
-   drivers/pci/host/pcie-rockchip-ep.c:173:14: sparse: expression using sizeof(void)
->> drivers/pci/host/pcie-rockchip-ep.c:516:27: sparse: incorrect type in initializer (incompatible argument 4 (different type sizes)) @@    expected int ( *raise_irq )( ... ) @@    got int ( *raise_irq )( ... ) @@
-   drivers/pci/host/pcie-rockchip-ep.c:516:27:    expected int ( *raise_irq )( ... )
-   drivers/pci/host/pcie-rockchip-ep.c:516:27:    got int ( *<noident> )( ... )
-   drivers/pci/host/pcie-rockchip-ep.c:516:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-     .raise_irq = rockchip_pcie_ep_raise_irq,
-                  ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/host/pcie-rockchip-ep.c:516:15: note: (near initialization for 'rockchip_pcie_epc_ops.raise_irq')
-   cc1: some warnings being treated as errors
-
-vim +516 drivers/pci/host/pcie-rockchip-ep.c
-
-cf590b07 Shawn Lin 2018-05-09  507  
-cf590b07 Shawn Lin 2018-05-09  508  static const struct pci_epc_ops rockchip_pcie_epc_ops = {
-cf590b07 Shawn Lin 2018-05-09  509  	.write_header	= rockchip_pcie_ep_write_header,
-cf590b07 Shawn Lin 2018-05-09  510  	.set_bar	= rockchip_pcie_ep_set_bar,
-cf590b07 Shawn Lin 2018-05-09  511  	.clear_bar	= rockchip_pcie_ep_clear_bar,
-cf590b07 Shawn Lin 2018-05-09  512  	.map_addr	= rockchip_pcie_ep_map_addr,
-cf590b07 Shawn Lin 2018-05-09  513  	.unmap_addr	= rockchip_pcie_ep_unmap_addr,
-cf590b07 Shawn Lin 2018-05-09  514  	.set_msi	= rockchip_pcie_ep_set_msi,
-cf590b07 Shawn Lin 2018-05-09  515  	.get_msi	= rockchip_pcie_ep_get_msi,
-cf590b07 Shawn Lin 2018-05-09 @516  	.raise_irq	= rockchip_pcie_ep_raise_irq,
-cf590b07 Shawn Lin 2018-05-09  517  	.start		= rockchip_pcie_ep_start,
-cf590b07 Shawn Lin 2018-05-09  518  };
-cf590b07 Shawn Lin 2018-05-09  519  
-
-:::::: The code at line 516 was first introduced by commit
-:::::: cf590b07839133146842d2d3d9a68f804c2edc4b PCI: rockchip: Add EP driver for Rockchip PCIe controller
-
-:::::: TO: Shawn Lin <shawn.lin@rock-chips.com>
-:::::: CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-
+Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/net/phy/xilinx_gmii2rgmii.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
+index d6f8b64cddbe..74a8782313cf 100644
+--- a/drivers/net/phy/xilinx_gmii2rgmii.c
++++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+@@ -42,8 +42,11 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
+ 	struct mii_bus *bus = priv->mdio->bus;
+ 	int addr = priv->mdio->addr;
+ 	u16 val = 0;
++	int err;
+ 
+-	priv->phy_drv->read_status(phydev);
++	err = priv->phy_drv->read_status(phydev);
++	if (err < 0)
++		return err;
+ 
+ 	val = mdiobus_read(bus, addr, XILINX_GMII2RGMII_REG);
+ 	val &= ~XILINX_GMII2RGMII_SPEED_MASK;
+-- 
+2.14.3
