@@ -1,129 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eaUmFmRrGVu3QwAAmS7hNA
-	; Thu, 07 Jun 2018 17:29:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FE/8AGl7GVtMQwAAmS7hNA
+	; Thu, 07 Jun 2018 18:40:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4ABB0608B8; Thu,  7 Jun 2018 17:29:08 +0000 (UTC)
+	id 31E30606FA; Thu,  7 Jun 2018 18:40:08 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DjgKWD32"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	MAILING_LIST_MULTI,SORTED_RECIPS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AD2D5601B4;
-	Thu,  7 Jun 2018 17:29:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD2D5601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 25CAB601C3;
+	Thu,  7 Jun 2018 18:40:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25CAB601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753785AbeFGR3F (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:29:05 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:55831 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753420AbeFGR3D (ORCPT
+        id S935073AbeFGSkC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:40:02 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33494 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933112AbeFGSj7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:29:03 -0400
-Received: by mail-io0-f197.google.com with SMTP id a10-v6so7907607iod.22
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 10:29:03 -0700 (PDT)
+        Thu, 7 Jun 2018 14:39:59 -0400
+Received: by mail-pl0-f65.google.com with SMTP id n10-v6so6677347plp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4IKf4MrhqXAFQVORf3toCHGJxzJnztKzdcNNf/oJJ/s=;
+        b=DjgKWD32tG4cjnCWCvw/QvuYzQB2grrxodq3OorDcZfZfLrGVyWKjSCrTPir3WNG8R
+         BCh+SNO2EiPmk021B4IHOoQsDaMBVijpZs3T/kw07sXGdIlJI8wFpCFuFG8EvvbAPixk
+         cwNHTMlkpl4gmyWf2bkc6PwO7MNUnXo/IQ0WblteP5PNKwOK6etQ8Igei6jA1EiYMZF8
+         ZEXaAcpwr9vcZ2LBYn6pjS/bX5Jxm164YAHKk0fL6+hgglBfscL/V7tC2NRmdQGNqlzn
+         kWx78FtyoFwBWivIr7Tjvm8IYOV9tBOri5xBb3vGUPErCs4Bh0ComMPC0LAf1hLw8Pdf
+         NvRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=SnpyGzOAjsUmFoYKV7YOFiVjxVy1qE9EEnle3AuBVKM=;
-        b=Rk+bE44/57HdWKiQrvCC/MfOXElJOA5gI2Qar0c6qOP/TVvNZDQYmCNZ4zr5f3enBa
-         WTLeXEG+ViBYW12B2lvj6mebJVqbO+SVsJkxeFvvvggAB21+nnNS0Fxvl49YxgwISS40
-         q/QB2pBvp9+suBribOD1JOpUAERLf4kjJnDuowXvED1DxEX229+tJyDdxN8Y6Ml0pBXa
-         K17S6iH82jmoyc8p5YyzryeulA1luPR8RAkAOB1CNBpUZfFuCQBWiyG2uTv31u+SveHh
-         gywZ+iuhIrXfb/jMb8h/OJzukQ3O76jmehFHfT9/HLwvLz0v01Q0vGI+H8jH5v6dleoC
-         7n7g==
-X-Gm-Message-State: APt69E19R7Qiq9M9fu626eG7h+L0BMFZHff/4xsQBR+4+vi37/u0fw5F
-        xOZ6qKotsLK+2IFr1pn7oG5Uc4NjvUwW4VfSzB+bCf3zCVln
-X-Google-Smtp-Source: ADUXVKIjFcHDcIugqNS627Zn6WmG7r8PO/BE3spgV0490vdhI/KpkeXdXQTAf5CJEc3rFzG/XkAlbaYl4VROZ2IuIkRBJezIH0xf
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4IKf4MrhqXAFQVORf3toCHGJxzJnztKzdcNNf/oJJ/s=;
+        b=O6XLb5eewdjuCQKiHcR88apeqQNcM11s+i3YG6bBvuyoYeOVRGvJYxx6C/r5VF1Ssq
+         60ocLeY7U25TuXVCuN+dmhUo/PsvqDXjO5WHcbqdtRgSaQJkvlVXrypcLF1HoW7cqt1t
+         umLAwGE3TX8iPwxEPF9RY+wpUakEi3vHJNLw7b+sqOm3UqgBiVLsLFOjaIHhUFDoFLu0
+         0+HuTQd0ggb8GmgplpWXtpKeOOARq9UnfoStTPb6ILU8T9cc+kwLx2qmxiS3T2G5dVC4
+         hEJr4PhUA8zxi8TrtsU/fAKEBy/Pa59P9N2GnzLdXsFWxPavEpk+iAppQF/zWw0XOHfT
+         Dbvg==
+X-Gm-Message-State: APt69E2WDP3Hc/2zdWCIu6eMQknReScSPz+KykEx8BisAsFE46ECY+0s
+        1T1j2htkqr1AhauuIKz6M5OrOUqy9PM5ThH7i+M3PA==
+X-Google-Smtp-Source: ADUXVKJbHc2yWt2IqAwV2qYt8FKiwaRRNv4G4L+njQ+RDxnNevTMvqgtDl/r4qBQDuvlwHI1il3KzR7yXpCjYPfrd9A=
+X-Received: by 2002:a17:902:5409:: with SMTP id d9-v6mr3247678pli.0.1528396798522;
+ Thu, 07 Jun 2018 11:39:58 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:dc01:: with SMTP id s1-v6mr1215073ioc.111.1528392542988;
- Thu, 07 Jun 2018 10:29:02 -0700 (PDT)
-Date: Thu, 07 Jun 2018 10:29:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009a3b5b056e109e42@google.com>
-Subject: KMSAN: uninit-value in ebt_stp_mt_check (2)
-From: syzbot <syzbot+da4494182233c23a5fcf@syzkaller.appspotmail.com>
-To: bridge@lists.linux-foundation.org, coreteam@netfilter.org,
-        davem@davemloft.net, fw@strlen.de, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        stephen@networkplumber.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20180607183219.192973-1-ndesaulniers@google.com> <20180607183219.192973-4-ndesaulniers@google.com>
+In-Reply-To: <20180607183219.192973-4-ndesaulniers@google.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 7 Jun 2018 11:39:46 -0700
+Message-ID: <CAKwvOdkoAwT2RiGzJ=dSfx9+SJ27gJimdtKQg2Aoi5+-SbA79g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] x86: paravirt: make native_save_fl extern inline
+To: Andrew Morton <akpm@linux-foundation.org>, hpa@zytor.com,
+        mingo@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
+        tstellar@redhat.com, Kees Cook <keescook@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
+        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
+        David Rientjes <rientjes@google.com>, acme@redhat.com,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        boris.ostrovsky@oracle.com, "J. Kiszka" <jan.kiszka@siemens.com>,
+        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        akataria@vmware.com, brijesh.singh@amd.com,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        jarkko.sakkinen@linux.intel.com, jgross@suse.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Matthias Kaehlcke <mka@chromium.org>, thomas.lendacky@amd.com,
+        Thiebaud Weksteen <tweek@google.com>, mjg59@google.com,
+        joe@perches.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Jun 7, 2018 at 11:32 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> native_save_fl() is marked static inline, but by using it as
+> a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
+>
+> paravirt's use of native_save_fl() also requires that no GPRs other than
+> %rax are clobbered.
+>
+> Compilers have different heuristics which they use to emit stack guard
+> code, the emittance of which can break paravirt's callee saved assumption
+> by clobbering %rcx.
+>
+> Marking a function definition extern inline means that if this version
+> cannot be inlined, then the out-of-line version will be preferred. By
+> having the out-of-line version be implemented in assembly, it cannot be
+> instrumented with a stack protector, which might violate custom calling
+> conventions that code like paravirt rely on.
+>
+> The semantics of extern inline has changed since gnu89. This means that
+> folks using GCC versions >= 5.1 may see symbol redefinition errors at
+> link time for subdirs that override KBUILD_CFLAGS (making the C standard
+> used implicit) regardless of this patch. This has been cleaned up
+> earlier in the patch set, but is left as a note in the commit message
+> for future travelers.
+>
+> Reports:
+> https://lkml.org/lkml/2018/5/7/534
+> https://github.com/ClangBuiltLinux/linux/issues/16
+>
+> Discussion:
+> https://bugs.llvm.org/show_bug.cgi?id=37512
+> https://lkml.org/lkml/2018/5/24/1371
+>
+> Thanks to the many folks that participated in the discussion.
+>
+> Debugged-by: Alistair Strachan <astrachan@google.com>
+> Debugged-by: Matthias Kaehlcke <mka@chromium.org>
+> Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Suggested-by: H. Peter Anvin <hpa@zytor.com>
+> Suggested-by: Tom Stellar <tstellar@redhat.com>
+> Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> ---
+>  arch/x86/include/asm/irqflags.h |  2 +-
+>  arch/x86/kernel/Makefile        |  1 +
+>  arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
+>  3 files changed, 28 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/x86/kernel/irqflags.S
+>
+> diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+> index 89f08955fff7..c4fc17220df9 100644
+> --- a/arch/x86/include/asm/irqflags.h
+> +++ b/arch/x86/include/asm/irqflags.h
+> @@ -13,7 +13,7 @@
+>   * Interrupt control:
+>   */
+>
+> -static inline unsigned long native_save_fl(void)
+> +extern inline unsigned long native_save_fl(void)
+>  {
+>         unsigned long flags;
+>
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index 02d6f5cf4e70..8824d01c0c35 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -61,6 +61,7 @@ obj-y                 += alternative.o i8253.o hw_breakpoint.o
+>  obj-y                  += tsc.o tsc_msr.o io_delay.o rtc.o
+>  obj-y                  += pci-iommu_table.o
+>  obj-y                  += resource.o
+> +obj-y                  += irqflags.o
+>
+>  obj-y                          += process.o
+>  obj-y                          += fpu/
+> diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
+> new file mode 100644
+> index 000000000000..ddeeaac8adda
+> --- /dev/null
+> +++ b/arch/x86/kernel/irqflags.S
+> @@ -0,0 +1,26 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#include <asm/asm.h>
+> +#include <asm/export.h>
+> +#include <linux/linkage.h>
+> +
+> +/*
+> + * unsigned long native_save_fl(void)
+> + */
+> +ENTRY(native_save_fl)
+> +       pushf
+> +       pop %_ASM_AX
+> +       ret
+> +ENDPROC(native_save_fl)
+> +EXPORT_SYMBOL(native_save_fl)
+> +
+> +/*
+> + * void native_restore_fl(unsigned long flags)
+> + * %eax/%rdi: flags
+> + */
+> +ENTRY(native_restore_fl)
+> +       push %_ASM_ARG1
+> +       popf
+> +       ret
+> +ENDPROC(native_restore_fl)
+> +EXPORT_SYMBOL(native_restore_fl)
+> --
+> 2.17.1.1185.g55be947832-goog
+>
 
-syzbot found the following crash on:
+Probably should have mentioned in the notes/cover letter that this was
+rebased on hpa's patch (2/3) in this series. As a change from v2.
 
-HEAD commit:    c6a6aed994b6 kmsan: remove dead code to trigger syzbot build
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bde74f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=848e40757852af3e
-dashboard link: https://syzkaller.appspot.com/bug?extid=da4494182233c23a5fcf
-compiler:       clang version 7.0.0 (trunk 334104)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+da4494182233c23a5fcf@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KMSAN: uninit-value in ebt_stp_mt_check+0x24b/0x450  
-net/bridge/netfilter/ebt_stp.c:162
-CPU: 0 PID: 12006 Comm: syz-executor7 Not tainted 4.17.0+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
-  __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:620
-  ebt_stp_mt_check+0x24b/0x450 net/bridge/netfilter/ebt_stp.c:162
-  xt_check_match+0x1438/0x1650 net/netfilter/x_tables.c:506
-  ebt_check_match net/bridge/netfilter/ebtables.c:372 [inline]
-  ebt_check_entry net/bridge/netfilter/ebtables.c:702 [inline]
-  translate_table+0x4e88/0x6120 net/bridge/netfilter/ebtables.c:943
-  do_replace_finish+0x1258/0x2ea0 net/bridge/netfilter/ebtables.c:999
-  do_replace+0x719/0x780 net/bridge/netfilter/ebtables.c:1138
-  do_ebt_set_ctl+0x2ab/0x3c0 net/bridge/netfilter/ebtables.c:1517
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x47c/0x4e0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0x24b/0x2b0 net/ipv4/ip_sockglue.c:1251
-  udp_setsockopt+0x108/0x1b0 net/ipv4/udp.c:2416
-  sock_common_setsockopt+0x13b/0x170 net/core/sock.c:3039
-  __sys_setsockopt+0x496/0x540 net/socket.c:1903
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0x15c/0x1c0 net/socket.c:1911
-  do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4559f9
-RSP: 002b:00007f45b9246c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f45b92476d4 RCX: 00000000004559f9
-RDX: 0000000000000080 RSI: 0000000000000000 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000300 R09: 0000000000000000
-R10: 0000000020000480 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c0d6d R14: 00000000004d07c8 R15: 0000000000000000
-
-Local variable description: ----mtpar.i@translate_table
-Variable was created at:
-  translate_table+0xbb/0x6120 net/bridge/netfilter/ebtables.c:831
-  do_replace_finish+0x1258/0x2ea0 net/bridge/netfilter/ebtables.c:999
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+Thanks,
+~Nick Desaulniers
