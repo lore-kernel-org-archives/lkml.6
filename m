@@ -1,252 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ykpIKw73HVtRIQAAmS7hNA
-	; Mon, 11 Jun 2018 04:14:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yLp0NJxTGVszHwAAmS7hNA
+	; Thu, 07 Jun 2018 15:48:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 89B1F607A4; Mon, 11 Jun 2018 04:14:06 +0000 (UTC)
+	id 450056089E; Thu,  7 Jun 2018 15:48:46 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="I8dE+aB2"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B570C60541;
-	Mon, 11 Jun 2018 04:14:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B570C60541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 589F860590;
+	Thu,  7 Jun 2018 15:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 589F860590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753889AbeFKEOC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 00:14:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46400 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751358AbeFKEOB (ORCPT
+        id S934672AbeFGPsm (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:48:42 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:15701 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934435AbeFGPsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 00:14:01 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5B48vLt048508
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:14:00 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jhhp8rdnu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 00:14:00 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 11 Jun 2018 05:13:55 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Jun 2018 05:13:50 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5B4Dnqs27394180
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Jun 2018 04:13:49 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E29CA404D;
-        Mon, 11 Jun 2018 05:04:44 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50AEEA4040;
-        Mon, 11 Jun 2018 05:04:41 +0100 (BST)
-Received: from [9.124.31.215] (unknown [9.124.31.215])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Jun 2018 05:04:41 +0100 (BST)
-Subject: Re: [PATCH 0/7] Uprobes: Support SDT markers having reference count
- (semaphore)
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180606083344.31320-1-ravi.bangoria@linux.ibm.com>
- <20180608163600.GA9030@redhat.com>
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date: Mon, 11 Jun 2018 09:43:45 +0530
+        Thu, 7 Jun 2018 11:48:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1528386517; x=1559922517;
+  h=subject:from:to:cc:references:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=CRI6DSEE/FZ1u7uWp8cs/x1oKSjX4lX9Vrc7vuEelIk=;
+  b=I8dE+aB2PrV93t2vretdDx0Ne7lf8mREJQC2gqaJfzvfHZMatpzy0k9z
+   pn8qyJTOwKVmQkrH4sR0RKL5HB+i/vcYBUGuD7CAEiqwRUIeGkx3HYlLv
+   HecTfNJnOGwz8pT1fZW0rkFdjhHrdfvZBmxPUXIl9xjhBEjBiir7hiP7l
+   4=;
+X-IronPort-AV: E=Sophos;i="5.49,486,1520899200";
+   d="scan'208";a="682097804"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Jun 2018 15:48:36 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w57FmV4w105089
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 7 Jun 2018 15:48:33 GMT
+Received: from EX13D02EUB001.ant.amazon.com (10.43.166.150) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 7 Jun 2018 15:48:32 +0000
+Received: from uc1a35a69ae4659.ant.amazon.com (10.43.160.8) by
+ EX13D02EUB001.ant.amazon.com (10.43.166.150) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 7 Jun 2018 15:48:28 +0000
+Subject: Re: [less-CONFIG_NET 7/7] kvm: drop CONFIG_NET
+From: Norbert Manthey <nmanthey@amazon.de>
+To: Paolo Bonzini <pbonzini@redhat.com>
+CC: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
+ <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
+ <1528293206-24298-7-git-send-email-nmanthey@amazon.de>
+ <a7344c4f-a1d9-597d-b18d-059a2752becf@redhat.com>
+ <ef0fe0ef-3620-3628-2a7e-c8b73e466a21@amazon.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nmanthey@amazon.de; prefer-encrypt=mutual; keydata=
+ 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
+ pEddsOqYwOs=
+Message-ID: <3f98f2be-47e1-ecf1-ff3c-0b35ae93437a@amazon.de>
+Date: Thu, 7 Jun 2018 17:48:23 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180608163600.GA9030@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <ef0fe0ef-3620-3628-2a7e-c8b73e466a21@amazon.de>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18061104-0028-0000-0000-000002CF5AA2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061104-0029-0000-0000-000023866E59
-Message-Id: <456ae8b8-8c5b-022c-0d53-c59627bda753@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806110050
+X-Originating-IP: [10.43.160.8]
+X-ClientProxiedBy: EX13D10UWA001.ant.amazon.com (10.43.160.216) To
+ EX13D02EUB001.ant.amazon.com (10.43.166.150)
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleg,
-
-On 06/08/2018 10:06 PM, Oleg Nesterov wrote:
-> Hello,
-> 
-> I am travelling till the end of the next week, can't read this version
-> until I return. Just one question,
-> 
-> On 06/06, Ravi Bangoria wrote:
->>
->>  1. One of the major reason was the deadlock between uprobe_lock and
->>  mm->mmap inside trace_uprobe_mmap(). That deadlock was not easy to fix
-> 
-> Could you remind what exactly was wrong?
-> 
-> I can't find your previous email about this problem, but iirc you didn't
-> explain the deadlock in details, just copied some traces from lockdep...
-
-The deadlock is between mm->mmap_sem and uprobe_lock.
-
-Some existing code path is taking these locks in following order:
-	uprobe_lock
-	  event_mutex
-	    uprobe->register_rwsem
-	      dup_mmap_sem
-		mm->mmap_sem
-
-I've introduced new function trace_uprobe_mmap() which gets called
-from mmap_region() / vma_adjust() with mm->mmap_sem already acquired.
-And it has to take uprobe_lock to loop over all trace_uprobes. i.e.
-the sequence is:
-	mm->mmap_sem
-	  uprobe_lock
-
-Why it's difficult to resolve is because trace_uprobe_mmap() does
-not have control over mm->mmap_sem.
-
-Detailed trace from lockdep:
-
-[  499.258006] ======================================================
-[  499.258205] WARNING: possible circular locking dependency detected
-[  499.258409] 4.17.0-rc3+ #76 Not tainted
-[  499.258528] ------------------------------------------------------
-[  499.258731] perf/6744 is trying to acquire lock:
-[  499.258895] 00000000e4895f49 (uprobe_lock){+.+.}, at: trace_uprobe_mmap+0x78/0x130
-[  499.259147]
-[  499.259147] but task is already holding lock:
-[  499.259349] 000000009ec93a76 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0xe0/0x160
-[  499.259597]
-[  499.259597] which lock already depends on the new lock.
-[  499.259597]
-[  499.259848]
-[  499.259848] the existing dependency chain (in reverse order) is:
-[  499.260086]
-[  499.260086] -> #4 (&mm->mmap_sem){++++}:
-[  499.260277]        __lock_acquire+0x53c/0x910
-[  499.260442]        lock_acquire+0xf4/0x2f0
-[  499.260595]        down_write_killable+0x6c/0x150
-[  499.260764]        copy_process.isra.34.part.35+0x1594/0x1be0
-[  499.260967]        _do_fork+0xf8/0x910
-[  499.261090]        ppc_clone+0x8/0xc
-[  499.261209]
-[  499.261209] -> #3 (&dup_mmap_sem){++++}:
-[  499.261378]        __lock_acquire+0x53c/0x910
-[  499.261540]        lock_acquire+0xf4/0x2f0
-[  499.261669]        down_write+0x6c/0x110
-[  499.261793]        percpu_down_write+0x48/0x140
-[  499.261954]        register_for_each_vma+0x6c/0x2a0
-[  499.262116]        uprobe_register+0x230/0x320
-[  499.262277]        probe_event_enable+0x1cc/0x540
-[  499.262435]        perf_trace_event_init+0x1e0/0x350
-[  499.262587]        perf_trace_init+0xb0/0x110
-[  499.262750]        perf_tp_event_init+0x38/0x90
-[  499.262910]        perf_try_init_event+0x10c/0x150
-[  499.263075]        perf_event_alloc+0xbb0/0xf10
-[  499.263235]        sys_perf_event_open+0x2a8/0xdd0
-[  499.263396]        system_call+0x58/0x6c
-[  499.263516]
-[  499.263516] -> #2 (&uprobe->register_rwsem){++++}:
-[  499.263723]        __lock_acquire+0x53c/0x910
-[  499.263884]        lock_acquire+0xf4/0x2f0
-[  499.264002]        down_write+0x6c/0x110
-[  499.264118]        uprobe_register+0x1ec/0x320
-[  499.264283]        probe_event_enable+0x1cc/0x540
-[  499.264442]        perf_trace_event_init+0x1e0/0x350
-[  499.264603]        perf_trace_init+0xb0/0x110
-[  499.264766]        perf_tp_event_init+0x38/0x90
-[  499.264930]        perf_try_init_event+0x10c/0x150
-[  499.265092]        perf_event_alloc+0xbb0/0xf10
-[  499.265261]        sys_perf_event_open+0x2a8/0xdd0
-[  499.265424]        system_call+0x58/0x6c
-[  499.265542]
-[  499.265542] -> #1 (event_mutex){+.+.}:
-[  499.265738]        __lock_acquire+0x53c/0x910
-[  499.265896]        lock_acquire+0xf4/0x2f0
-[  499.266019]        __mutex_lock+0xa0/0xab0
-[  499.266142]        trace_add_event_call+0x44/0x100
-[  499.266310]        create_trace_uprobe+0x4a0/0x8b0
-[  499.266474]        trace_run_command+0xa4/0xc0
-[  499.266631]        trace_parse_run_command+0xe4/0x200
-[  499.266799]        probes_write+0x20/0x40
-[  499.266922]        __vfs_write+0x6c/0x240
-[  499.267041]        vfs_write+0xd0/0x240
-[  499.267166]        ksys_write+0x6c/0x110
-[  499.267295]        system_call+0x58/0x6c
-[  499.267413]
-[  499.267413] -> #0 (uprobe_lock){+.+.}:
-[  499.267591]        validate_chain.isra.34+0xbd0/0x1000
-[  499.267747]        __lock_acquire+0x53c/0x910
-[  499.267917]        lock_acquire+0xf4/0x2f0
-[  499.268048]        __mutex_lock+0xa0/0xab0
-[  499.268170]        trace_uprobe_mmap+0x78/0x130
-[  499.268335]        uprobe_mmap+0x80/0x3b0
-[  499.268464]        mmap_region+0x290/0x660
-[  499.268590]        do_mmap+0x40c/0x500
-[  499.268718]        vm_mmap_pgoff+0x114/0x160
-[  499.268870]        ksys_mmap_pgoff+0xe8/0x2e0
-[  499.269034]        sys_mmap+0x84/0xf0
-[  499.269161]        system_call+0x58/0x6c
-[  499.269279]
-[  499.269279] other info that might help us debug this:
-[  499.269279]
-[  499.269524] Chain exists of:
-[  499.269524]   uprobe_lock --> &dup_mmap_sem --> &mm->mmap_sem
-[  499.269524]
-[  499.269856]  Possible unsafe locking scenario:
-[  499.269856]
-[  499.270058]        CPU0                    CPU1
-[  499.270223]        ----                    ----
-[  499.270384]   lock(&mm->mmap_sem);
-[  499.270514]                                lock(&dup_mmap_sem);
-[  499.270711]                                lock(&mm->mmap_sem);
-[  499.270923]   lock(uprobe_lock);
-[  499.271046]
-[  499.271046]  *** DEADLOCK ***
-[  499.271046]
-[  499.271256] 1 lock held by perf/6744:
-[  499.271377]  #0: 000000009ec93a76 (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0xe0/0x160
-[  499.271628]
-[  499.271628] stack backtrace:
-[  499.271797] CPU: 25 PID: 6744 Comm: perf Not tainted 4.17.0-rc3+ #76
-[  499.272003] Call Trace:
-[  499.272094] [c0000000e32d74a0] [c000000000b00174] dump_stack+0xe8/0x164 (unreliable)
-[  499.272349] [c0000000e32d74f0] [c0000000001a905c] print_circular_bug.isra.30+0x354/0x388
-[  499.272590] [c0000000e32d7590] [c0000000001a3050] check_prev_add.constprop.38+0x8f0/0x910
-[  499.272828] [c0000000e32d7690] [c0000000001a3c40] validate_chain.isra.34+0xbd0/0x1000
-[  499.273070] [c0000000e32d7780] [c0000000001a57cc] __lock_acquire+0x53c/0x910
-[  499.273311] [c0000000e32d7860] [c0000000001a65b4] lock_acquire+0xf4/0x2f0
-[  499.273510] [c0000000e32d7930] [c000000000b1d1f0] __mutex_lock+0xa0/0xab0
-[  499.273717] [c0000000e32d7a40] [c0000000002b01b8] trace_uprobe_mmap+0x78/0x130
-[  499.273952] [c0000000e32d7a90] [c0000000002d7070] uprobe_mmap+0x80/0x3b0
-[  499.274153] [c0000000e32d7b20] [c0000000003550a0] mmap_region+0x290/0x660
-[  499.274353] [c0000000e32d7c00] [c00000000035587c] do_mmap+0x40c/0x500
-[  499.274560] [c0000000e32d7c80] [c00000000031ebc4] vm_mmap_pgoff+0x114/0x160
-[  499.274763] [c0000000e32d7d60] [c000000000352818] ksys_mmap_pgoff+0xe8/0x2e0
-[  499.275013] [c0000000e32d7de0] [c000000000016864] sys_mmap+0x84/0xf0
-[  499.275207] [c0000000e32d7e30] [c00000000000b404] system_call+0x58/0x6c
-
-
-( Reference: https://lkml.org/lkml/2018/5/25/111 )
+RGVhciBQYW9sbywKCmFmdGVyIHlvdSBhc2tlZCwgSSBydW4gYSBmZXcgbW9yZSAibWFrZSByYW5k
+Y29uZmlnOyBtYWtlIiByb3VuZHMsIGFuZApmb3VuZCBhIHByb2JsZW0gd2l0aCBvbmUgb2YgdGhl
+IGNvbW1pdHMgKHdoZW4gdXNpbmcgQlBGX1NZU0NBTEwsIE5FVCBhbmQKU0VDQ09NUF9GSUxURVIp
+LiBJJ2xsIGZpeCB0aGUgaXNzdWVzIGFuZCBhbGwgb3RoZXIgdGhhdCBtaWdodCBwb3AgdXAsCmFu
+ZCByZXJ1biB0aGUgcmFuZGNvbmZpZyBsb29wIG1hbnkgbW9yZSB0aW1lcyB0byBnZXQgYSBiZXR0
+ZXIgY292ZXJhZ2UKYW5kIGhpZ2hlciBjb25maWRlbmNlLiBJJ2xsIHVwZGF0ZSB0aGUgc2VyaWVz
+IGFmdGVyd2FyZHMuCgpCZXN0LApOb3JiZXJ0CgoKT24gMDYvMDcvMjAxOCAwMTo0NiBQTSwgTm9y
+YmVydCBNYW50aGV5IHdyb3RlOgo+IE9uIDA2LzA3LzIwMTggMDE6MjAgUE0sIFBhb2xvIEJvbnpp
+bmkgd3JvdGU6Cj4+IE9uIDA2LzA2LzIwMTggMTU6NTMsIE5vcmJlcnQgTWFudGhleSB3cm90ZToK
+Pj4+IEluIHNvbWUgc2NlbmFyaW9zLCB3ZSBkbyBub3Qgd2FudCB0byB1c2UgQ09ORklHX05FVCBl
+dmVuIHRob3VnaCB3ZSB3YW50Cj4+PiB0byB1c2UgQ09ORklHX0tWTS4gVG8gZ2V0IHRoaXMgd29y
+a2luZywgYW5kIHRvIG5vdCBwdWxsIGluIG1vcmUKPj4+IGRlcGVuZGVuY2llcywgd2UgbmVlZCB0
+byBkaXNhYmxlIENPTkZJR19UQVNLU1RBVFMgYXMgd2VsbC4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5
+OiBOb3JiZXJ0IE1hbnRoZXkgPG5tYW50aGV5QGFtYXpvbi5kZT4KPj4+IC0tLQo+Pj4gIGFyY2gv
+eDg2L2t2bS9LY29uZmlnIHwgNSArKy0tLQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlv
+bnMoKyksIDMgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS9L
+Y29uZmlnIGIvYXJjaC94ODYva3ZtL0tjb25maWcKPj4+IGluZGV4IDkyZmQ0MzMuLmYyMDk4MTcg
+MTAwNjQ0Cj4+PiAtLS0gYS9hcmNoL3g4Ni9rdm0vS2NvbmZpZwo+Pj4gKysrIGIvYXJjaC94ODYv
+a3ZtL0tjb25maWcKPj4+IEBAIC0yMiw4ICsyMiw4IEBAIGNvbmZpZyBLVk0KPj4+ICAJdHJpc3Rh
+dGUgIktlcm5lbC1iYXNlZCBWaXJ0dWFsIE1hY2hpbmUgKEtWTSkgc3VwcG9ydCIKPj4+ICAJZGVw
+ZW5kcyBvbiBIQVZFX0tWTQo+Pj4gIAlkZXBlbmRzIG9uIEhJR0hfUkVTX1RJTUVSUwo+Pj4gLQkj
+IGZvciBUQVNLU1RBVFMvVEFTS19ERUxBWV9BQ0NUOgo+Pj4gLQlkZXBlbmRzIG9uIE5FVCAmJiBN
+VUxUSVVTRVIKPj4+ICsJIyBUQVNLX0RFTEFZX0FDQ1Q6Cj4+PiArCWRlcGVuZHMgb24gTVVMVElV
+U0VSCj4+PiAgCWRlcGVuZHMgb24gWDg2X0xPQ0FMX0FQSUMKPj4+ICAJc2VsZWN0IFBSRUVNUFRf
+Tk9USUZJRVJTCj4+PiAgCXNlbGVjdCBNTVVfTk9USUZJRVIKPj4+IEBAIC0zNyw3ICszNyw2IEBA
+IGNvbmZpZyBLVk0KPj4+ICAJc2VsZWN0IEtWTV9BU1lOQ19QRgo+Pj4gIAlzZWxlY3QgVVNFUl9S
+RVRVUk5fTk9USUZJRVIKPj4+ICAJc2VsZWN0IEtWTV9NTUlPCj4+PiAtCXNlbGVjdCBUQVNLU1RB
+VFMKPj4+ICAJc2VsZWN0IFRBU0tfREVMQVlfQUNDVAo+Pj4gIAlzZWxlY3QgUEVSRl9FVkVOVFMK
+Pj4+ICAJc2VsZWN0IEhBVkVfS1ZNX01TSQo+Pj4KPj4gQXNzdW1pbmcgaXQgY29tcGlsZXMsIGl0
+IGxvb2tzIGdvb2QuIDopCj4+Cj4+IFBhb2xvCj4+Cj4gSXQgY29tcGlsZXMsIHdpdGggdGhlIGRl
+ZmF1bHQgY29uZmlndXJhdGlvbiwgYXMgd2VsbCBhcyB3aXRoIHRoZSBzdWJzZXQKPiB0aGF0IEkg
+Y3VycmVudGx5IHVzZS4gU2luY2UgSSBoYXZlIGFuIGFjdHVhbGx5IHNtYWxsIHNlbGVjdGlvbiBv
+ZiBjb25maWcKPiBvcHRpb25zLCBJIHdvbmRlciB3aGV0aGVyIHRoZXJlIGlzIHNvbWUgYmVzdCBw
+cmFjdGljZXMgdG8gbWFrZSBzdXJlIHRoaXMKPiBjaGFuZ2UgZG9lcyBub3QgY29ycnVwdCBvdGhl
+ciBjb25maWd1cmF0aW9ucyB0aGF0IHJlbHkgb24gS1ZNIHNlbGVjdGluZwo+IFRBU0tTVEFUUy4K
+Pgo+IE5vcmJlcnQKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBHbWJICkJlcmxp
+biAtIERyZXNkZW4gLSBBYWNoZW4KbWFpbiBvZmZpY2U6IEtyYXVzZW5zdHIuIDM4LCAxMDExNyBC
+ZXJsaW4KR2VzY2hhZWZ0c2Z1ZWhyZXI6IERyLiBSYWxmIEhlcmJyaWNoLCBDaHJpc3RpYW4gU2No
+bGFlZ2VyClVzdC1JRDogREUyODkyMzc4NzkKRWluZ2V0cmFnZW4gYW0gQW10c2dlcmljaHQgQ2hh
+cmxvdHRlbmJ1cmcgSFJCIDE0OTE3MyBCCg==
