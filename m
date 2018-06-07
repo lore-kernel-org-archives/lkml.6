@@ -1,106 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PP5/KqOAHlsncgAAmS7hNA
-	; Mon, 11 Jun 2018 14:10:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JMwDETxvGVvrWgAAmS7hNA
+	; Thu, 07 Jun 2018 17:46:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 260B1607A4; Mon, 11 Jun 2018 14:10:21 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LozaAukS"
+	id EDDC26074D; Thu,  7 Jun 2018 17:46:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AD78060351;
-	Mon, 11 Jun 2018 14:10:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD78060351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DBE256063F;
+	Thu,  7 Jun 2018 17:46:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DBE256063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933846AbeFKOJs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:09:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46756 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933636AbeFKOHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:07:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rkKDu3vTH95GYyX6Q7oTKTgCqcU3ZiAjGwWtWlGisVY=; b=LozaAukSqaOLKf9BKzR5XnhLn
-        TQ1Q/54HKr3xYSppi9uWakcDM6HeUF7aRKv251JJbg6AAROh9sFKY/HqovaOVtc5LKErsre/Sb3Ky
-        ezTrA+BtIGgfQpWjagzIblxOVGen1Da25+KPCT8dFgZb2fVeucNxtmpeNRu7Wz//FZeG7Nq3T5VEV
-        L6xsDUFYOTY4zFU+mYi+wYuYGMVjpcr8SEy+sB2ZEjrm7gSvDD/d9O7UoyABk8olkN5v6IPgJ95RF
-        rkH3Fh1LBpkrde4lqkrNAzQMnaxswBp5z/2k6nugiVV+9D8IdJugN0Wq9f+RD8xN5Zx41XzCvI/4L
-        QVZHXyBkw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNTW-000544-6F; Mon, 11 Jun 2018 14:07:14 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 68/72] page cache: Finish XArray conversion
-Date: Mon, 11 Jun 2018 07:06:35 -0700
-Message-Id: <20180611140639.17215-69-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        id S933785AbeFGRqJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:46:09 -0400
+Received: from namei.org ([65.99.196.166]:58470 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933071AbeFGRqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 13:46:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w57Hk5AM030781;
+        Thu, 7 Jun 2018 17:46:05 GMT
+Date: Fri, 8 Jun 2018 03:46:05 +1000 (AEST)
+From: James Morris <jmorris@namei.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Security subsystem: Integrity updates for v4.18
+Message-ID: <alpine.LRH.2.21.1806080340420.27121@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Please pull these updates for the Integrity subsystem.
 
-With no more radix tree API users left, we can drop the GFP flags
-and use xa_init() instead of INIT_RADIX_TREE().
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+>From Mimi:
+
+- adds run time support for specifying additional security xattrs
+  included in the security.evm HMAC/signature
+
+- some code clean up and bug fixes.
+
+
 ---
- fs/inode.c      | 2 +-
- mm/swap_state.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index bdc5e952ebbb..4ea629d7d32c 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -349,7 +349,7 @@ EXPORT_SYMBOL(inc_nlink);
- 
- static void __address_space_init_once(struct address_space *mapping)
- {
--	INIT_RADIX_TREE(&mapping->i_pages, GFP_ATOMIC | __GFP_ACCOUNT);
-+	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ);
- 	init_rwsem(&mapping->i_mmap_rwsem);
- 	INIT_LIST_HEAD(&mapping->private_list);
- 	spin_lock_init(&mapping->private_lock);
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 84595e1a4cd7..eee052936b66 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -596,7 +596,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
- 		return -ENOMEM;
- 	for (i = 0; i < nr; i++) {
- 		space = spaces + i;
--		INIT_RADIX_TREE(&space->i_pages, GFP_ATOMIC|__GFP_NOWARN);
-+		xa_init_flags(&space->i_pages, XA_FLAGS_LOCK_IRQ);
- 		atomic_set(&space->i_mmap_writable, 0);
- 		space->a_ops = &swap_aops;
- 		/* swap cache doesn't use writeback related tags */
--- 
-2.17.1
+The following changes since commit 890e2abe1028c39e5399101a2c277219cd637aaa:
+
+  dh key: get rid of stack allocated array for zeroes (2018-05-11 13:07:49 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
+
+for you to fetch changes up to b5c90a7526fe39164c2204f0404ce8f8ff21e522:
+
+  EVM: unlock on error path in evm_read_xattrs() (2018-06-01 06:03:08 -0400)
+
+----------------------------------------------------------------
+Colin Ian King (2):
+      EVM: fix memory leak of temporary buffer 'temp'
+      EVM: Fix null dereference on xattr when xattr fails to allocate
+
+Dan Carpenter (2):
+      EVM: prevent array underflow in evm_write_xattrs()
+      EVM: unlock on error path in evm_read_xattrs()
+
+Matthew Garrett (3):
+      integrity: Add an integrity directory in securityfs
+      EVM: turn evm_config_xattrnames into a list
+      EVM: Allow runtime modification of the set of verified xattrs
+
+Mimi Zohar (3):
+      ima: define a new policy condition based on the filesystem name
+      ima: based on policy verify firmware signatures (pre-allocated buffer)
+      ima: fix updating the ima_appraise flag
+
+Petko Manolov (1):
+      IMA: use list_splice_tail_init_rcu() instead of its open coded variant
+
+Petr Vorel (3):
+      ima: Reflect correct permissions for policy
+      ima: Unify logging
+      ima: Remove unused variable ima_initialized
+
+Yisheng Xie (1):
+      ima: use match_string() helper
+
+ Documentation/ABI/testing/evm             |  13 ++
+ Documentation/ABI/testing/ima_policy      |   2 +-
+ include/uapi/linux/audit.h                |   1 +
+ security/integrity/evm/Kconfig            |  11 ++
+ security/integrity/evm/evm.h              |   7 +-
+ security/integrity/evm/evm_crypto.c       |  10 +-
+ security/integrity/evm/evm_main.c         |  79 +++++++-----
+ security/integrity/evm/evm_secfs.c        | 206 +++++++++++++++++++++++++++++-
+ security/integrity/iint.c                 |  18 +++
+ security/integrity/ima/ima.h              |   1 -
+ security/integrity/ima/ima_fs.c           |  18 ++-
+ security/integrity/ima/ima_kexec.c        |   2 +
+ security/integrity/ima/ima_main.c         |  19 +--
+ security/integrity/ima/ima_policy.c       |  70 ++++++----
+ security/integrity/ima/ima_template_lib.c |   2 +
+ security/integrity/integrity.h            |   2 +
+ 16 files changed, 377 insertions(+), 84 deletions(-)
