@@ -1,105 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id y5hHFgDsHVvEIwAAmS7hNA
-	; Mon, 11 Jun 2018 03:27:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cS3YFUfMGFuMdwAAmS7hNA
+	; Thu, 07 Jun 2018 06:22:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CA1A1608B8; Mon, 11 Jun 2018 03:27:08 +0000 (UTC)
+	id 9882E6089E; Thu,  7 Jun 2018 06:22:47 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0BF0F604D4;
-	Mon, 11 Jun 2018 03:27:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0BF0F604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3D8EA6063F;
+	Thu,  7 Jun 2018 06:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D8EA6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932434AbeFKD1G (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:27:06 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:18955 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932395AbeFKD1C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:27:02 -0400
-X-UUID: 768d16ae31194e2bb582db154a8e924c-20180611
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1071383607; Mon, 11 Jun 2018 11:26:58 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:26:56 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:26:55 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 13/28] drm/mediatek: add connection from RDMA0 to DSI3
-Date: Mon, 11 Jun 2018 11:26:05 +0800
-Message-ID: <1528687580-549-14-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+        id S1752616AbeFGGWp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 02:22:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52976 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751372AbeFGGWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 02:22:43 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2F8A340BC05B;
+        Thu,  7 Jun 2018 06:22:43 +0000 (UTC)
+Received: from krava (unknown [10.43.17.157])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C6BF01002957;
+        Thu,  7 Jun 2018 06:22:40 +0000 (UTC)
+Date: Thu, 7 Jun 2018 08:22:39 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Agustin Vega-Frias <agustinv@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH 01/10] perf tools: Uniquify the event name if there's no
+ other matched event
+Message-ID: <20180607062239.GA18436@krava>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+ <20180606221513.11302-2-jolsa@kernel.org>
+ <20180606231902.GE7220@tassilo.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606231902.GE7220@tassilo.jf.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 06:22:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 06:22:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the connection from RDMA0 to DSI3
+On Wed, Jun 06, 2018 at 04:19:02PM -0700, Andi Kleen wrote:
+> On Thu, Jun 07, 2018 at 12:15:04AM +0200, Jiri Olsa wrote:
+> > Currently by default we try to match the user specified PMU
+> > name to all PMU units available and use them to aggregate
+> > all matched PMUs event counts into one 'pattern' event.
+> > 
+> > While this is useful for uncore events, it screws up names
+> > for other events, where this is not desirable, like:
+> > 
+> > Before:
+> >   # perf stat -e cp/cpu-cycles/ kill
+> 
+> I assume you mean cpU/cpu-cycles/
+> > 
+> >    Performance counter stats for 'kill':
+> > 
+> >            1,573,757      cp/cpu-cycles/
+> > 
+> > Keeping the pattern matching logic, but making the name unique
+> > in case there's no other match found. That fixes the example
+> > above and hopefully does not screw up anything else.
+> > 
+> > After:
+> >   # perf stat -e cp/cpu-cycles/ kill
+> > 
+> >    Performance counter stats for 'kill':
+> > 
+> >            1,573,757      cpu/cpu-cycles/
+> 
+> 
+> The output is 100% identical?
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 4 ++++
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+nope, the U is actualy missing.. that's the thing, the patern
+matching allows you to put 'cp' instead of 'cpu' and the final
+output is screwed.. also the metrics won't match the proper event
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index c08aed8dae44..fed1b5704355 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -83,6 +83,7 @@
- #define GAMMA_MOUT_EN_RDMA1		0x1
- #define RDMA0_MOUT_DPI0			0x2
- #define RDMA0_MOUT_DSI2			0x4
-+#define RDMA0_MOUT_DSI3			0x5
- #define RDMA1_MOUT_DPI0			0x2
- #define DPI0_SEL_IN_RDMA1		0x1
- #define COLOR1_SEL_IN_OVL1		0x1
-@@ -164,6 +165,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI2) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
- 		value = RDMA0_MOUT_DSI2;
-+	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI3) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
-+		value = RDMA0_MOUT_DSI3;
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
- 		value = RDMA1_MOUT_DPI0;
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index fe6fdc021fc7..22f4c72fa785 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -228,7 +228,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
- 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
- 	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
- 	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		2, NULL },
--	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		3, NULL },
-+	[DDP_COMPONENT_DSI3]	= { MTK_DSI,		3, NULL },
- 	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
- 	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
- 	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
--- 
-2.12.5
+jirka
