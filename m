@@ -1,141 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KpQzB36zGlthFgAAmS7hNA
-	; Fri, 08 Jun 2018 16:49:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CE4tGebmGFsQRwAAmS7hNA
+	; Thu, 07 Jun 2018 08:04:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DFA6B605A5; Fri,  8 Jun 2018 16:49:54 +0000 (UTC)
+	id 739F6607F7; Thu,  7 Jun 2018 08:04:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4C57D602FC;
-	Fri,  8 Jun 2018 16:49:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4C57D602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D3486607DC;
+	Thu,  7 Jun 2018 08:04:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D3486607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeFHQtv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 12:49:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42322 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751643AbeFHQtu (ORCPT
+        id S1753369AbeFGIE1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:04:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48563 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752973AbeFGIEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 12:49:50 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w58GnIS1120578
-        for <linux-kernel@vger.kernel.org>; Fri, 8 Jun 2018 12:49:50 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jfuqf61dd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 12:49:49 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 8 Jun 2018 12:49:49 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Jun 2018 12:49:44 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w58Gni8A11469214
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 8 Jun 2018 16:49:44 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3EF0AB206B;
-        Fri,  8 Jun 2018 13:51:13 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0ACB4B2066;
-        Fri,  8 Jun 2018 13:51:13 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.149.181])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Jun 2018 13:51:13 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 5893B16C997A; Fri,  8 Jun 2018 09:51:34 -0700 (PDT)
-Date: Fri, 8 Jun 2018 09:51:34 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tejun Heo <tj@kernel.org>, Jann Horn <jannh@google.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Simplifying our RCU models
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180305030949.GP3918@linux.vnet.ibm.com>
- <20180305082441.4hao2z4dqn2n5on6@gmail.com>
- <87po4izj67.fsf_-_@xmission.com>
- <20180305161446.GQ3918@linux.vnet.ibm.com>
- <20180306084738.tcs4ggbby77phlbh@gmail.com>
- <20180306203906.GA3918@linux.vnet.ibm.com>
- <20180307155444.GA10367@linux.vnet.ibm.com>
- <CA+55aFzyycJWD2xuo7wSptJ=D045yiZnmO+7iY6CapDvge_uCw@mail.gmail.com>
- <20180308204524.GW3918@linux.vnet.ibm.com>
- <20180410234425.GA30784@linux.vnet.ibm.com>
+        Thu, 7 Jun 2018 04:04:21 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w57846HN2123832
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:04:06 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w57845Sb2123829;
+        Thu, 7 Jun 2018 01:04:05 -0700
+Date: Thu, 7 Jun 2018 01:04:05 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-tsx7dhxzpi0criyx0sio3pz3@git.kernel.org>
+Cc: dsahern@gmail.com, acme@redhat.com, adrian.hunter@intel.com,
+        wangnan0@huawei.com, namhyung@kernel.org, hpa@zytor.com,
+        mingo@kernel.org, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
+Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
+          dsahern@gmail.com, namhyung@kernel.org, adrian.hunter@intel.com,
+          wangnan0@huawei.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf annotate: Split allocation of
+ annotated_source struct
+Git-Commit-ID: 116c626b9aca10ee7619b06185c22a5b2da19e30
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180410234425.GA30784@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18060816-0040-0000-0000-0000043D727B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009153; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01044051; UDB=6.00534574; IPR=6.00823089;
- MB=3.00021535; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-08 16:49:47
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060816-0041-0000-0000-000008437764
-Message-Id: <20180608165134.GA28693@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-08_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=966 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806080187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 04:44:25PM -0700, Paul E. McKenney wrote:
-> On Thu, Mar 08, 2018 at 12:45:24PM -0800, Paul E. McKenney wrote:
-> > On Wed, Mar 07, 2018 at 10:48:50AM -0800, Linus Torvalds wrote:
-> > > On Wed, Mar 7, 2018 at 7:54 AM, Paul E. McKenney
-> > > <paulmck@linux.vnet.ibm.com> wrote:
-> > > >
-> > > > Ah, and any thoughts on how best to get feedback from the various people
-> > > > who would need to reprogram their fingers?  Or is everyone already on
-> > > > board with changing these various names?
-> > > 
-> > > I really would prefer to not see massive re-naming unless there is a
-> > > really good reason for it.
-> > > 
-> > > I'm all for simplifying RCU from a million different versions down to
-> > > just a few thousand, but I'm definitely not convinced we want to do
-> > > any search-and-replace.
-> > 
-> > I am currently in the design (more accurately, reredesign phase) for
-> > the simplification.  It is quite possible that there is a good reason
-> > for at least some renaming, but in that case, I would come back later
-> > with that as a separate proposal.
-> 
-> And I really am still working on this.  It is a bit tricky, but still
-> looks doable.  More likely to be ready for 4.19 than 4.18, though.
+Commit-ID:  116c626b9aca10ee7619b06185c22a5b2da19e30
+Gitweb:     https://git.kernel.org/tip/116c626b9aca10ee7619b06185c22a5b2da19e30
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 24 May 2018 15:31:40 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 4 Jun 2018 10:28:51 -0300
 
-I suppose it is well past time for an update...
+perf annotate: Split allocation of annotated_source struct
 
-I believe I have the preparation work done (famous last words!), and I am
-now working on making rcutorture properly test the resulting compound RCU
-read-side critical sections.  User-level testing might be necessary (and
-has been for some of the preparatory work).  The ink-on-paper prototype
-is starting to look promising, and I expect to get the corresponding
-prototype patch posted by the end of this month.
+So that we can allocate just the notes->src->cyc_hist, that, unlike
+notes->src->histograms, is not per event, and in paths where we
+need to lazily allocate notes->src->cyc_hist we don't have the
+number of events handy to also allocate ->histograms.
 
-A bit trickier than I expected (as usual), but still looking doable.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-tsx7dhxzpi0criyx0sio3pz3@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/annotate.c | 10 +++++++---
+ tools/perf/util/annotate.h |  6 +++---
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-							Thanx, Paul
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a7221f9fa504..f0c6941bca6c 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -701,13 +701,17 @@ int symbol__alloc_hist(struct symbol *sym)
+ 	sizeof_sym_hist = (sizeof(struct sym_hist) + size * sizeof(struct sym_hist_entry));
+ 
+ 	/* Check for overflow in zalloc argument */
+-	if (sizeof_sym_hist > (SIZE_MAX - sizeof(*notes->src))
+-				/ symbol_conf.nr_events)
++	if (sizeof_sym_hist > SIZE_MAX / symbol_conf.nr_events)
+ 		return -1;
+ 
+-	notes->src = zalloc(sizeof(*notes->src) + symbol_conf.nr_events * sizeof_sym_hist);
++	notes->src = zalloc(sizeof(*notes->src));
+ 	if (notes->src == NULL)
+ 		return -1;
++	notes->src->histograms = calloc(symbol_conf.nr_events, sizeof_sym_hist);
++	if (notes->src->histograms == NULL) {
++		zfree(&notes->src);
++		return -1;
++	}
+ 	notes->src->sizeof_sym_hist = sizeof_sym_hist;
+ 	notes->src->nr_histograms   = symbol_conf.nr_events;
+ 	INIT_LIST_HEAD(&notes->src->source);
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index aef9eae4f125..94b60e34c3a7 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -201,7 +201,7 @@ struct cyc_hist {
+ 
+ /** struct annotated_source - symbols with hits have this attached as in sannotation
+  *
+- * @histogram: Array of addr hit histograms per event being monitored
++ * @histograms: Array of addr hit histograms per event being monitored
+  * @lines: If 'print_lines' is specified, per source code line percentages
+  * @source: source parsed from a disassembler like objdump -dS
+  * @cyc_hist: Average cycles per basic block
+@@ -217,7 +217,7 @@ struct annotated_source {
+ 	int    		   nr_histograms;
+ 	size_t		   sizeof_sym_hist;
+ 	struct cyc_hist	   *cycles_hist;
+-	struct sym_hist	   histograms[0];
++	struct sym_hist	   *histograms;
+ };
+ 
+ struct annotation {
+@@ -269,7 +269,7 @@ void annotation__init_column_widths(struct annotation *notes, struct symbol *sym
+ 
+ static inline struct sym_hist *annotation__histogram(struct annotation *notes, int idx)
+ {
+-	return (((void *)&notes->src->histograms) +
++	return (((void *)notes->src->histograms) +
+ 	 	(notes->src->sizeof_sym_hist * idx));
+ }
+ 
