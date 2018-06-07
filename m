@@ -1,119 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7xpgE4CDGVt6GwAAmS7hNA
-	; Thu, 07 Jun 2018 19:25:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id c4dKMF0aGVuQYwAAmS7hNA
+	; Thu, 07 Jun 2018 11:44:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5C4E56089E; Thu,  7 Jun 2018 19:25:16 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="MRc1Z02U"
+	id AB791607E7; Thu,  7 Jun 2018 11:44:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AEED46063F;
-	Thu,  7 Jun 2018 19:25:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AEED46063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0043260115;
+	Thu,  7 Jun 2018 11:44:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0043260115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753174AbeFGTZN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:25:13 -0400
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:51113 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752520AbeFGTZM (ORCPT
+        id S932648AbeFGLoJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 07:44:09 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40034 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753229AbeFGLnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:25:12 -0400
-Received: by mail-wm0-f42.google.com with SMTP id e16-v6so19938458wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AvR1kqhfs22TZmd8HUK/0h1P3g4Q4p3Bkf2ew2AhBbw=;
-        b=MRc1Z02UfdeAd1aPqiTHWb0L4gScFciekJ8ytDxUVqrgTpnaEtkR+WcrvZQIZASjQg
-         Bk3Tk57kSh+MlnbVwFnGkjCkAgGOrogGVFQS2KIp7ywPVC6qdmW86gdC2KMHRA0Rkg9h
-         QKgmzY0/QugYO4gGI+ranqwENzJnynJfGctOs=
+        Thu, 7 Jun 2018 07:43:55 -0400
+Received: by mail-wm0-f65.google.com with SMTP id n5-v6so18271523wmc.5;
+        Thu, 07 Jun 2018 04:43:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AvR1kqhfs22TZmd8HUK/0h1P3g4Q4p3Bkf2ew2AhBbw=;
-        b=go0dBK2+etqPAdC7tcIdrJ8QiAFqudyRk5kDPIzI+IjtQhb8P9H4i9IFzCJvT0IeY+
-         gm7EBW56RWZKysllwnl0HPP+B0AqVluIOapjaNNXf3xTFB7DU/5EHVAirt8wTs70CSGN
-         iC1KYagiANNpXqkGl3fVZ/t8VxujTLZJ08EY1Cf1U5KM7GsdhdFhptDuJg7SbQQVNnQL
-         6IEjirNdsT8YiAXfh/gsjPDaMVMbGzOy+I/3VPWj81mjbtKbfs5haHLt1hXLj9DNYWl+
-         3poC99n0mc4owg91U2g0jICCV9erABH7QMlyhSGBJHeHJevAsICcyMjP5xC5QrfyjrJo
-         ypLw==
-X-Gm-Message-State: APt69E2Ec48xnogObKnfHz13kQslmzmDuqYFKfxdPtnb3EkbDVvfDgzX
-        mm0bIuIHVVoUP+3bxSoGYpcfzqyEOko=
-X-Google-Smtp-Source: ADUXVKKWBjr59BsBl/V/7hxlUqkmYqRKaJ8ogOPmr49XeRVV15cPnz+kIXIUJfcRyzWjvDiUdsy3VQ==
-X-Received: by 2002:a50:b0c3:: with SMTP id j61-v6mr3784921edd.249.1528399510941;
-        Thu, 07 Jun 2018 12:25:10 -0700 (PDT)
-Received: from [192.168.0.189] (dhcp-5-186-126-104.cgn.ip.fibianet.dk. [5.186.126.104])
-        by smtp.gmail.com with ESMTPSA id s38-v6sm6262383edd.2.2018.06.07.12.25.09
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=QVtqgS8QVtf7+6CaWKYzxCQ5D2hbtjTqVjARzM4/Fk4=;
+        b=tr6hpiEJtMm/mpZqQoyX2VHYKtUrkRQPiLeVwSedwcV0UmF1sIX/aVpuJ3ydnfQpow
+         8pD5FKcdhHJoUXrKDeNklgsEM97ksawIcO+d2PuscM2D6PcMzzZjS8uWTMTgE9WiM2Hm
+         QV2A7MyYXBDzepPA6202OG9dalaKi166VVbbDhPYhgtQ3hYxLKn3lLz1vp4WkE2D0txo
+         zm44IKl+BqEnYn9i0v2NnKxF43Jv9mPf2t1jhVAWx9wemjYO+1PcLCU4dOPIvqYvwuSW
+         ArdM52MetoFXav/fzfQh98k6L9/y/Iu0f55CPpgFUEolqjVw4lxH82rwWhQpr5oz/+ZO
+         GKHw==
+X-Gm-Message-State: APt69E3X8Kkko4TIYf4Gf2RUcdlW3Gcl7udMd9dscFrRAxIt6ERh9ugW
+        KKxTy9xHWZr3iK7AH4HuWicFEOQT
+X-Google-Smtp-Source: ADUXVKKFbFUOSNJCNMSwFFcMAQmD3svhBC1j8Lm2KjM63bN+AFlnZfUgQ/e0Trtsuq+yA0CbX/kFxw==
+X-Received: by 2002:a1c:b2d0:: with SMTP id b199-v6mr1343422wmf.108.1528371833667;
+        Thu, 07 Jun 2018 04:43:53 -0700 (PDT)
+Received: from localhost.localdomain (u-086-c129.eap.uni-tuebingen.de. [134.2.86.129])
+        by smtp.gmail.com with ESMTPSA id v13-v6sm15269280wrq.43.2018.06.07.04.43.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 12:25:10 -0700 (PDT)
-Subject: Re: sparse warnings in overflow.h
-To: Kees Cook <keescook@chromium.org>, Miroslav Benes <mbenes@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <alpine.LSU.2.21.1806071258310.7958@pobox.suse.cz>
- <CAGXu5j+XFR7BtYPU6G4CeLFREWevN+GC1FPX1hPAYA1LRBM9Bg@mail.gmail.com>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <4d2aaa98-1655-3ab8-8ce8-bf4b9c7d2dbc@rasmusvillemoes.dk>
-Date: Thu, 7 Jun 2018 21:25:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+XFR7BtYPU6G4CeLFREWevN+GC1FPX1hPAYA1LRBM9Bg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 07 Jun 2018 04:43:53 -0700 (PDT)
+From: Christian Brauner <christian@brauner.io>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: cjwatson@ubuntu.com, ebiederm@xmission.com,
+        viro@zeniv.linux.org.uk, serge@hallyn.com,
+        Christian Brauner <christian@brauner.io>
+Subject: [PATCH 1/1] getxattr: use correct xattr length
+Date: Thu,  7 Jun 2018 13:43:48 +0200
+Message-Id: <20180607114348.23667-2-christian@brauner.io>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180607114348.23667-1-christian@brauner.io>
+References: <20180607114348.23667-1-christian@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-07 20:35, Kees Cook wrote:
-> On Thu, Jun 7, 2018 at 4:01 AM, Miroslav Benes <mbenes@suse.cz> wrote:
->>
->> Hi Kees,
->>
->> sparse (make C=1) gives me this warnings today...
->>
->> ./include/linux/overflow.h:254:13: error: undefined identifier '__builtin_mul_overflow'
->> ./include/linux/overflow.h:254:13: error: incorrect type in conditional
->> ./include/linux/overflow.h:254:13:    got void
->> ./include/linux/overflow.h:256:13: error: undefined identifier '__builtin_add_overflow'
->> ./include/linux/overflow.h:256:13: error: incorrect type in conditional
->> ./include/linux/overflow.h:256:13:    got void
->>
->> This hunk obviously fixes it, but I'm really not sure if it is a proper
->> fix.
->>
->> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
->> index f1a7492a5cc8..15e55b89e952 100644
->> --- a/include/linux/compiler-gcc.h
->> +++ b/include/linux/compiler-gcc.h
->> @@ -344,6 +344,6 @@
->>   */
->>  #define uninitialized_var(x) x = x
->>
->> -#if GCC_VERSION >= 50100
->> +#if GCC_VERSION >= 50100 && !defined(__CHECKER__)
->>  #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
->>  #endif
->>
->> Any idea?
-> 
-> Hi! Yeah, that's probably the correct approach. If the checker doesn't
-> have it, the builtins need to be disabled. :)
+When running in a container with a user namespace, if you call getxattr
+with name = "system.posix_acl_access" and size % 8 != 4, then getxattr
+silently skips the user namespace fixup that it normally does resulting in
+un-fixed-up data being returned.
+This is caused by posix_acl_fix_xattr_to_user() being passed the total
+buffer size and not the actual size of the xattr as returned by
+vfs_getxattr().
+This commit passes the actual length of the xattr as returned by
+vfs_getxattr() down.
 
-IIRC, the problem is that sparse pretends to be the gcc sparse itself
-was built with, which is obviously entirely unrelated to the C dialect
-that that particular sparse version groks. Sigh. Ack to the fix above.
+A reproducer for the issue is:
 
-Rasmus
+  touch acl_posix
+
+  setfacl -m user:0:rwx acl_posix
+
+and the compile:
+
+  #define _GNU_SOURCE
+  #include <errno.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <sys/types.h>
+  #include <unistd.h>
+  #include <attr/xattr.h>
+
+  /* Run in user namespace with nsuid 0 mapped to uid != 0 on the host. */
+  int main(int argc, void **argv)
+  {
+          ssize_t ret1, ret2;
+          char buf1[128], buf2[132];
+          int fret = EXIT_SUCCESS;
+          char *file;
+
+          if (argc < 2) {
+                  fprintf(stderr,
+                          "Please specify a file with "
+                          "\"system.posix_acl_access\" permissions set\n");
+                  _exit(EXIT_FAILURE);
+          }
+          file = argv[1];
+
+          ret1 = getxattr(file, "system.posix_acl_access",
+                          buf1, sizeof(buf1));
+          if (ret1 < 0) {
+                  fprintf(stderr, "%s - Failed to retrieve "
+                                  "\"system.posix_acl_access\" "
+                                  "from \"%s\"\n", strerror(errno), file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          ret2 = getxattr(file, "system.posix_acl_access",
+                          buf2, sizeof(buf2));
+          if (ret2 < 0) {
+                  fprintf(stderr, "%s - Failed to retrieve "
+                                  "\"system.posix_acl_access\" "
+                                  "from \"%s\"\n", strerror(errno), file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          if (ret1 != ret2) {
+                  fprintf(stderr, "The value of \"system.posix_acl_"
+                                  "access\" for file \"%s\" changed "
+                                  "between two successive calls\n", file);
+                  _exit(EXIT_FAILURE);
+          }
+
+          for (ssize_t i = 0; i < ret2; i++) {
+                  if (buf1[i] == buf2[i])
+                          continue;
+
+                  fprintf(stderr,
+                          "Unexpected different in byte %zd: "
+                          "%02x != %02x\n", i, buf1[i], buf2[i]);
+                  fret = EXIT_FAILURE;
+          }
+
+          if (fret == EXIT_SUCCESS)
+                  fprintf(stderr, "Test passed\n");
+          else
+                  fprintf(stderr, "Test failed\n");
+
+          _exit(fret);
+  }
+and run:
+
+  ./tester acl_posix
+
+On a non-fixed up kernel this should return something like:
+
+  root@c1:/# ./t
+  Unexpected different in byte 16: ffffffa0 != 00
+  Unexpected different in byte 17: ffffff86 != 00
+  Unexpected different in byte 18: 01 != 00
+
+and on a fixed kernel:
+
+  root@c1:~# ./t
+  Test passed
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199945
+Reported-by: Colin Watson <cjwatson@ubuntu.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+ fs/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index f9cb1db187b7..1bee74682513 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -539,7 +539,7 @@ getxattr(struct dentry *d, const char __user *name, void __user *value,
+ 	if (error > 0) {
+ 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+ 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+-			posix_acl_fix_xattr_to_user(kvalue, size);
++			posix_acl_fix_xattr_to_user(kvalue, error);
+ 		if (size && copy_to_user(value, kvalue, error))
+ 			error = -EFAULT;
+ 	} else if (error == -ERANGE && size >= XATTR_SIZE_MAX) {
+-- 
+2.17.0
