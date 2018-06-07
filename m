@@ -1,150 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AIKaGmzuG1tJQQAAmS7hNA
-	; Sat, 09 Jun 2018 15:14:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2Ht7DMs7GVvILwAAmS7hNA
+	; Thu, 07 Jun 2018 14:06:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F0492608BA; Sat,  9 Jun 2018 15:14:46 +0000 (UTC)
+	id 0C250608B8; Thu,  7 Jun 2018 14:06:34 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="I+m+bv9R"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q863Xl3c"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4184D602FC;
-	Sat,  9 Jun 2018 15:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4184D602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 410156063F;
+	Thu,  7 Jun 2018 14:06:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 410156063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753343AbeFIPOn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:14:43 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:36294 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753062AbeFIPOl (ORCPT
+        id S932936AbeFGOGb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:06:31 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42168 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753103AbeFGOGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:14:41 -0400
-Received: from mail-ua0-f182.google.com (mail-ua0-f182.google.com [209.85.217.182]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w59FEPE0004434;
-        Sun, 10 Jun 2018 00:14:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w59FEPE0004434
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528557266;
-        bh=JtqmXgZmGQLWc20JtKxl1L4gRS/HUDsWmU986FQ4TNA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=I+m+bv9RSDayd8rtLzURZjwEoO/3vUorv/CskKYP+cbCgy1M5U6+sXUngd84xNn3b
-         2m/M6hedHMIaeg8bpsJRzvJ+iPwJXoQ5JWrSItbTO8G/P2rFUWBHnt6X1g5DZ0CxXc
-         Ah7plgbNSQBWYjYsKbaVS/grO0sd6OvcysaeUHY534mtLkyeISCsZXS750Kk47RDQh
-         fgFedLisvoYn0pzjwEgiYdr7kj9NiL1M33Po0CmB2/J4bK4vVbN+66D3dzFJ6lIjay
-         Hc/jZ/OQcxTIybwudnAOWSTmf/CKrG5I7vonGB/BTvoJsoOSO7q3KchMttMXLj+et3
-         qvYXYusW8CXuQ==
-X-Nifty-SrcIP: [209.85.217.182]
-Received: by mail-ua0-f182.google.com with SMTP id e8-v6so10805129uam.13;
-        Sat, 09 Jun 2018 08:14:25 -0700 (PDT)
-X-Gm-Message-State: APt69E126atr34nhgt/Uewucvs9st1v5+TUmgPnvZIRRjaaBhX6R5Utu
-        X6+EgZjc5bSAPyq/pLT4erivWOtm/VoAaLO9qXU=
-X-Google-Smtp-Source: ADUXVKJ+LK+hTxfPOp/CyKLzvWmwHPTZU5fVu0gZ8/QsSll6xUNFiw6pmvH8VT2dmdqytNnTosSnMJfMsfsC73GHDLA=
-X-Received: by 2002:ab0:13c8:: with SMTP id n8-v6mr1152708uae.140.1528557264453;
- Sat, 09 Jun 2018 08:14:24 -0700 (PDT)
+        Thu, 7 Jun 2018 10:06:11 -0400
+Received: by mail-wr0-f194.google.com with SMTP id w10-v6so9992970wrk.9;
+        Thu, 07 Jun 2018 07:06:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OO/LsHhN1xE7K9dxbNgxucrz+2wUNhM5O8uYhzYm++g=;
+        b=q863Xl3cYEUhoBTcB2JPc2YysPWqf7ToWZYngTrENgtOqHOmVTu0YHYIM7szkRugOh
+         NEHD2rcjtToWfeDu+aWEs03LSIqPAEUA3SmByBs1obyt+wN8/W0HxSOEVwuIXHEuukbh
+         xx7eEmQdnrrLprvXPL/sXZ+NrVn3gNCVYQoQ2aVrNYtamhRZv2Pz9JkC8BcVT4VEGi/t
+         e5zLlIART7Dn9BF1sMwUGYApJwD37QKyCKB3nv43cTnWCW4QKV4YfINe4hJ41h64sRcn
+         VJvS/QfXafn2kv52a/i1/jZPj77a4wltWM1Lyqox/3pcWCMYA18lz5TjYx4O7M5ASL7n
+         ltRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OO/LsHhN1xE7K9dxbNgxucrz+2wUNhM5O8uYhzYm++g=;
+        b=KPxvH12uGxwLCA4RGvcfxu0yxuX9ujjuXQGkLT07sgeX0nU2DlbCtclcPrkU266uLs
+         KmQKJYvjV13E4YS7UJguZCEsQktiqNF1n9+ANPwiOrCVl1vUsfVkEFDzjyCKfIvSusNw
+         ffM8NoEt55u/TxAGCjyLptwtOzkw3xacPW6fHv79ipH3hC8v+o587INmQzUFab7BycRv
+         6p1lsvBlfXMpk9nqa1WODfZFJLASASICYP+8cRzVCTsBc6mpN29BUEmyLyTJAIs3WDgO
+         uDYrNBCFxTRrPPZQ/ZG/P/+7CycwRDB/WelXXx5/NGYu+/4t7T09BbRDsR5nHkwaGT/w
+         rVxQ==
+X-Gm-Message-State: APt69E1aCjlaNXHGEhRWD/rJDJ7YE19Sm3vPwEN4v2GlVewnUDfPS3ok
+        imtBqNFrBNR9GShNRYYJl9Y=
+X-Google-Smtp-Source: ADUXVKJIl2StPnY6m6ms7CfwDipimrztRmSrIJO9gStms/mxvf3pnfas3EHLPD6lh+y4zNf+wTMxng==
+X-Received: by 2002:adf:b92d:: with SMTP id k42-v6mr1887922wrf.116.1528380370024;
+        Thu, 07 Jun 2018 07:06:10 -0700 (PDT)
+Received: from cperon-Latitude-7490.lan (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
+        by smtp.gmail.com with ESMTPSA id 135-v6sm2032331wmx.21.2018.06.07.07.06.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 07:06:09 -0700 (PDT)
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v6 5/5] ARM: dts: imx: add missing compatible and clock properties for EPIT
+Date: Thu,  7 Jun 2018 16:05:44 +0200
+Message-Id: <20180607140544.22268-6-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180607140544.22268-1-peron.clem@gmail.com>
+References: <20180607140544.22268-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Sat, 9 Jun 2018 08:13:43 -0700 (PDT)
-In-Reply-To: <20180608205256.cpniquglftmie5vl@ast-mbp.dhcp.thefacebook.com>
-References: <1528477930-7342-1-git-send-email-yamada.masahiro@socionext.com>
- <1528477930-7342-4-git-send-email-yamada.masahiro@socionext.com> <20180608205256.cpniquglftmie5vl@ast-mbp.dhcp.thefacebook.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 10 Jun 2018 00:13:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATjAKbVW4-STxTOmrfDzJLaJz9Yu_T_1C=T-0x3p4fmoA@mail.gmail.com>
-Message-ID: <CAK7LNATjAKbVW4-STxTOmrfDzJLaJz9Yu_T_1C=T-0x3p4fmoA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] bpfilter: do not (ab)use host-program build rule
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-09 5:52 GMT+09:00 Alexei Starovoitov <alexei.starovoitov@gmail.com>:
-> On Sat, Jun 09, 2018 at 02:12:10AM +0900, Masahiro Yamada wrote:
->> It is an ugly hack to overwrite $(HOSTCC) with $(CC) to reuse the
->> build rules from scripts/Makefile.host.  It should not be tedious
->> to write a build rule for its own.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->>  net/bpfilter/Makefile                   | 17 +++++++++++------
->>  net/bpfilter/{main.c => bpfilter_umh.c} |  0
->>  2 files changed, 11 insertions(+), 6 deletions(-)
->>  rename net/bpfilter/{main.c => bpfilter_umh.c} (100%)
->>
->> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
->> index 39c6980..6571b30 100644
->> --- a/net/bpfilter/Makefile
->> +++ b/net/bpfilter/Makefile
->> @@ -3,18 +3,23 @@
->>  # Makefile for the Linux BPFILTER layer.
->>  #
->>
->> -hostprogs-y := bpfilter_umh
->> -bpfilter_umh-objs := main.o
->> -HOSTCFLAGS += -I. -Itools/include/ -Itools/include/uapi
->> -HOSTCC := $(CC)
->
-> that is a hack indeed. I don't like it either, but see below.
->
->> -
->>  ifeq ($(CONFIG_BPFILTER_UMH), y)
->>  # builtin bpfilter_umh should be compiled with -static
->>  # since rootfs isn't mounted at the time of __init
->>  # function is called and do_execv won't find elf interpreter
->> -HOSTLDFLAGS += -static
->> +STATIC := -static
->>  endif
->>
->> +quiet_cmd_cc_user = CC      $@
->> +      cmd_cc_user = $(CC) -Wall -Wmissing-prototypes -O2 -std=gnu89 \
->> +                 -I$(srctree) -I$(srctree)/tools/include/ \
->> +                 -I$(srctree)/tools/include/uapi $(STATIC) -o $@ $<
->> +
->> +$(obj)/bpfilter_umh: $(src)/bpfilter_umh.c FORCE
->> +     $(call if_changed,cc_user)
->
-> Does this scale?
-> Please see two top patches here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ast/bpf.git/log/?h=ipt_bpf
-> that add more meat to bpfilter and a lot more files.
+From: Colin Didier <colin.didier@devialet.com>
 
-Oh, I just thought main.c was the only user-program file.
+Add missing compatible and clock properties for EPIT node.
 
-> Recompiling all of them at once isn't nice either.
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ arch/arm/boot/dts/imx25.dtsi   |  8 ++++++--
+ arch/arm/boot/dts/imx6qdl.dtsi | 10 ++++++++--
+ arch/arm/boot/dts/imx6sl.dtsi  | 10 ++++++++--
+ arch/arm/boot/dts/imx6sx.dtsi  | 10 ++++++++--
+ arch/arm/boot/dts/imx6ul.dtsi  | 10 ++++++++--
+ 5 files changed, 38 insertions(+), 10 deletions(-)
 
-Indeed.
-
-It should be able to compile .c -> .o separately.
-
-> This Makefile needs different .c -> .o rules for bpfilter_kern.c files
-> that get compiled into kernel module and for the rest of umh files:
-> main.c ctor.c init.c gen.c etc
-> that need to be compiled .c -> .o differently.
-> I don't see how to do it without ugly hacks in Makefile.
-> In that sense HOSTCC = CC hack looked the least ugly to me that's
-> why I went with it.
-> Better ideas?
-
-
-I will think about it after your patches land.
-
-I will drop this for now.
-
-
+diff --git a/arch/arm/boot/dts/imx25.dtsi b/arch/arm/boot/dts/imx25.dtsi
+index cf70df20b19c..15fd4308dad8 100644
+--- a/arch/arm/boot/dts/imx25.dtsi
++++ b/arch/arm/boot/dts/imx25.dtsi
+@@ -396,15 +396,19 @@
+ 			};
+ 
+ 			epit1: timer@53f94000 {
+-				compatible = "fsl,imx25-epit";
++				compatible = "fsl,imx25-epit", "fsl,imx31-epit";
+ 				reg = <0x53f94000 0x4000>;
+ 				interrupts = <28>;
++				clocks = <&clks 83>;
++				status = "disabled";
+ 			};
+ 
+ 			epit2: timer@53f98000 {
+-				compatible = "fsl,imx25-epit";
++				compatible = "fsl,imx25-epit", "fsl,imx31-epit";
+ 				reg = <0x53f98000 0x4000>;
+ 				interrupts = <27>;
++				clocks = <&clks 84>;
++				status = "disabled";
+ 			};
+ 
+ 			gpio4: gpio@53f9c000 {
+diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+index c003e62bf290..65c4ee07454c 100644
+--- a/arch/arm/boot/dts/imx6qdl.dtsi
++++ b/arch/arm/boot/dts/imx6qdl.dtsi
+@@ -843,14 +843,20 @@
+ 				};
+ 			};
+ 
+-			epit1: epit@20d0000 { /* EPIT1 */
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6QDL_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 { /* EPIT2 */
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6qdl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6QDL_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
+diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
+index ab6a7e2e7e8f..d63f8ebbc8a1 100644
+--- a/arch/arm/boot/dts/imx6sl.dtsi
++++ b/arch/arm/boot/dts/imx6sl.dtsi
+@@ -671,14 +671,20 @@
+ 				};
+ 			};
+ 
+-			epit1: epit@20d0000 {
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6sl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SL_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 {
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6sl-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SL_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index 49c7205b8db8..2b30559d3270 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -736,14 +736,20 @@
+ 				};
+ 			};
+ 
+-			epit1: epit@20d0000 {
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6sx-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SX_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 {
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6sx-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SX_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 1241972b16ba..d5f765da1ee2 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -658,14 +658,20 @@
+ 				};
+ 			};
+ 
+-			epit1: epit@20d0000 {
++			epit1: timer@20d0000 {
++				compatible = "fsl,imx6ul-epit", "fsl,imx31-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_EPIT1>;
++				status = "disabled";
+ 			};
+ 
+-			epit2: epit@20d4000 {
++			epit2: timer@20d4000 {
++				compatible = "fsl,imx6ul-epit", "fsl,imx31-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_EPIT2>;
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
