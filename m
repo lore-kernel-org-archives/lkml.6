@@ -1,99 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PcS+GjxLGVvTWgAAmS7hNA
-	; Thu, 07 Jun 2018 15:11:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Wu0hNebmGFslRwAAmS7hNA
+	; Thu, 07 Jun 2018 08:06:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5A86D6089E; Thu,  7 Jun 2018 15:11:56 +0000 (UTC)
+	id D746B607F7; Thu,  7 Jun 2018 08:06:29 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D6629601C3;
-	Thu,  7 Jun 2018 15:11:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6629601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 54F07605A2;
+	Thu,  7 Jun 2018 08:06:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54F07605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935961AbeFGPLy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:11:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41465 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935181AbeFGPC5 (ORCPT
+        id S1753399AbeFGIGY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:06:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60627 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751681AbeFGIGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:02:57 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbo-0005Zq-VT; Thu, 07 Jun 2018 15:09:49 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb2-0002rr-IX; Thu, 07 Jun 2018 15:09:00 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 04:06:22 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w57867fE2124153
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:06:08 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w57867Ni2124150;
+        Thu, 7 Jun 2018 01:06:07 -0700
+Date: Thu, 7 Jun 2018 01:06:07 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-4iatualjskia7sojmdb65cmm@git.kernel.org>
+Cc: tglx@linutronix.de, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        wangnan0@huawei.com, acme@redhat.com, jolsa@kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com, dsahern@gmail.com
+Reply-To: mingo@kernel.org, wangnan0@huawei.com,
+          linux-kernel@vger.kernel.org, namhyung@kernel.org,
+          tglx@linutronix.de, adrian.hunter@intel.com, hpa@zytor.com,
+          jolsa@kernel.org, dsahern@gmail.com, acme@redhat.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf annotate: Introduce symbol__hists()
+Git-Commit-ID: e8ea922a7e077b491c6363755e3ac94d350ea253
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Mark Brown" <broonie@kernel.org>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.178171645@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 131/410] ASoC: au1x: Fix timeout tests in
- au1xac97c_ac97_read()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Commit-ID:  e8ea922a7e077b491c6363755e3ac94d350ea253
+Gitweb:     https://git.kernel.org/tip/e8ea922a7e077b491c6363755e3ac94d350ea253
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 24 May 2018 16:37:53 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 4 Jun 2018 10:28:51 -0300
 
-------------------
+perf annotate: Introduce symbol__hists()
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+In this case we're wanting just notes->src->histograms, allocating it if needed.
 
-commit 123af9043e93cb6f235207d260d50f832cdb5439 upstream.
-
-The loop timeout doesn't work because it's a post op and ends with "tmo"
-set to -1.  I changed it from a post-op to a pre-op and I changed the
-initial the starting value from 5 to 6 so we still iterate 5 times.  I
-left the other as it was because it's a large number.
-
-Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-4iatualjskia7sojmdb65cmm@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- sound/soc/au1x/ac97c.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/annotate.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
---- a/sound/soc/au1x/ac97c.c
-+++ b/sound/soc/au1x/ac97c.c
-@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
- 	do {
- 		mutex_lock(&ctx->lock);
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index a5a6d686004e..467bae0279ce 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -863,18 +863,38 @@ static struct annotation *symbol__get_annotation(struct symbol *sym, bool cycles
+ 	return notes;
+ }
  
--		tmo = 5;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		tmo = 6;
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			udelay(21);	/* wait an ac97 frame time */
- 		if (!tmo) {
- 			pr_debug("ac97rd timeout #1\n");
-@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
- 		 * poll, Forrest, poll...
- 		 */
- 		tmo = 0x10000;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			asm volatile ("nop");
- 		data = RD(ctx, AC97_CMDRESP);
++static struct annotated_source *symbol__hists(struct symbol *sym)
++{
++	struct annotation *notes = symbol__annotation(sym);
++
++	if (notes->src == NULL) {
++		notes->src = annotated_source__new();
++		if (notes->src == NULL)
++			return NULL;
++		goto alloc_histograms;
++	}
++
++	if (notes->src->histograms == NULL) {
++alloc_histograms:
++		annotated_source__alloc_histograms(notes->src, symbol__size(sym),
++						   symbol_conf.nr_events);
++	}
++
++	return notes->src;
++}
++
+ static int symbol__inc_addr_samples(struct symbol *sym, struct map *map,
+ 				    struct perf_evsel *evsel, u64 addr,
+ 				    struct perf_sample *sample)
+ {
+-	struct annotation *notes;
++	struct annotated_source *src;
  
+ 	if (sym == NULL)
+ 		return 0;
+-	notes = symbol__get_annotation(sym, false);
+-	if (notes == NULL)
++	src = symbol__hists(sym);
++	if (src == NULL)
+ 		return -ENOMEM;
+-	return __symbol__inc_addr_samples(sym, map, notes->src, evsel->idx, addr, sample);
++	return __symbol__inc_addr_samples(sym, map, src, evsel->idx, addr, sample);
+ }
+ 
+ static int symbol__account_cycles(u64 addr, u64 start,
