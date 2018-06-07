@@ -1,135 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7EBdM6JUGVuaLwAAmS7hNA
-	; Thu, 07 Jun 2018 15:53:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Xv7DF/CnGVtREQAAmS7hNA
+	; Thu, 07 Jun 2018 21:47:47 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D3AAA607E7; Thu,  7 Jun 2018 15:53:42 +0000 (UTC)
+	id E65F66089E; Thu,  7 Jun 2018 21:47:46 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BhgTjRqT"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4BE99601D2;
-	Thu,  7 Jun 2018 15:53:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BE99601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 69D7A605A2;
+	Thu,  7 Jun 2018 21:47:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69D7A605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934305AbeFGPxk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:53:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40361 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932649AbeFGOer (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:34:47 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbu-0005Zk-6y; Thu, 07 Jun 2018 15:09:54 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb0-0002m5-5p; Thu, 07 Jun 2018 15:08:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1752733AbeFGVro (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:47:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:58929 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751773AbeFGVrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:47:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 411zfg2BNWz9s3q;
+        Fri,  8 Jun 2018 07:47:39 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1528408060;
+        bh=r0RJVMRo6m/dJ0PDzpaVcKBAA7atCLAcSo9LQEvK0bo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=BhgTjRqTYwsiDo/vbcaSFPeegHMltdnlemLY10aK6fCvOPk+3o3wlRaw04eTksuZu
+         RsNCAW7qo77HyuEVt46qTvcjGnO6f0imGMgQfniTIIEPWv/bLRNmdQHwdmY2AnfD9T
+         MWI63M9s8tB3jKs+uBUIfKlIOLCTmoRdRl7/aapwHyYyJd9idW2QQ64lZtjvxcDPBX
+         A9/Ml9YGMOhB6ePxMlIPXucqZHLAiB6F7xvBS5ogoYw9IjNwVAE6De+ZF7d4l3QOed
+         0ceEfj0l7Mdbrl7yPxgi4T/Ta1LY3Qq4haIsnWry5VlS8kk/GkxCtrSXWqYyZl/JoB
+         h0HgwrVncQb5A==
+Date: Fri, 8 Jun 2018 07:47:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-netdev <netdev@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: linux-next: Please add mlx5-next tree
+Message-ID: <20180608074726.5b3883e2@canb.auug.org.au>
+In-Reply-To: <20180606192500.GZ2958@mtr-leonro.mtl.com>
+References: <20180606192500.GZ2958@mtr-leonro.mtl.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Thomas Richter" <tmricht@linux.vnet.ibm.com>,
-        "Hendrik Brueckner" <brueckner@linux.vnet.ibm.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Ravi Bangoria" <ravi.bangoria@linux.vnet.ibm.com>,
-        "Heiko Carstens" <heiko.carstens@de.ibm.com>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.73630898@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 073/410] perf annotate: Fix objdump comment parsing
- for Intel mov dissassembly
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/UN3x1Q=Yj6cpBanhrYXGxtn"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+--Sig_/UN3x1Q=Yj6cpBanhrYXGxtn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-------------------
+Hi Leon,
 
-From: Thomas Richter <tmricht@linux.vnet.ibm.com>
+On Wed, 6 Jun 2018 22:25:00 +0300 Leon Romanovsky <leon@kernel.org> wrote:
+>
+> Can you please add the branch "mlx5-next" from the following tree to the
+> linux-next integration tree?
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/
+>=20
+> The mlx5-next branch is used to send shared pull requests to both netdev
+> and RDMA subsystems and it is worth to have linux-next coverage on it
+> before.
 
-commit 35a8a148d8c1ee9e5ae18f9565a880490f816f89 upstream.
+I try hard not to add new trees during the merge window, sorry.  If I
+forget to add it after -rc1 has been released, please remind me.
 
-The command 'perf annotate' parses the output of objdump and also
-investigates the comments produced by objdump. For example the
-output of objdump produces (on x86):
+--=20
+Cheers,
+Stephen Rothwell
 
-23eee:  4c 8b 3d 13 01 21 00 mov 0x210113(%rip),%r15
-                                # 234008 <stderr@@GLIBC_2.2.5+0x9a8>
+--Sig_/UN3x1Q=Yj6cpBanhrYXGxtn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-and the function mov__parse() is called to investigate the complete
-line. Mov__parse() breaks this line into several parts and finally
-calls function comment__symbol() to parse the data after the comment
-character '#'. Comment__symbol() expects a hexadecimal address followed
-by a symbol in '<' and '>' brackets.
+-----BEGIN PGP SIGNATURE-----
 
-However the 2nd parameter given to function comment__symbol()
-always points to the comment character '#'. The address parsing
-always returns 0 because the character '#' is not a digit and
-strtoull() fails without being noticed.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsZp+4ACgkQAVBC80lX
+0GwegAgAgZxkXXOi0xwk4FojHb+ikjjx8be8DI0H5eGoem9Y09r3Y2W8IgY569QI
+FYLuaW8BCo7+tSlNSXYjUG1yv32qrKadsFd+JytDtfIkqYDxIxXvy4cKKPaU2zL/
+YN898P+unVkRBA9vYgJl7g0ueGSZloV5g6c7ljVGRsOCgvgSI9hLj4D5hOJs5T2s
+zH1r9QFt2CRLVYtdS3SkcGO1e016Hmx1Zn9yzRArYOofqcwN+hfj9cVu9aZrucY3
+0R1RXjf7XH4iPJpaiTbdw9aBEaeQdd28X8vk7p9McnWTdM3q3npKPUf+OoEURJ7C
+WguSLs6vLbrj+vJs/cfk+PXT1LUU7g==
+=urIq
+-----END PGP SIGNATURE-----
 
-Fix this by advancing the second parameter to function comment__symbol()
-by one byte before invocation and add an error check after strtoull()
-has been called.
-
-Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Fixes: 6de783b6f50f ("perf annotate: Resolve symbols using objdump comment")
-Link: http://lkml.kernel.org/r/20171128075632.72182-1-tmricht@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- tools/perf/util/annotate.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -146,6 +146,8 @@ static int comment__symbol(char *raw, ch
- 		return 0;
- 
- 	*addrp = strtoull(comment, &endptr, 16);
-+	if (endptr == comment)
-+		return 0;
- 	name = strchr(endptr, '<');
- 	if (name == NULL)
- 		return -1;
-@@ -251,8 +253,8 @@ static int mov__parse(struct ins_operand
- 	while (comment[0] != '\0' && isspace(comment[0]))
- 		++comment;
- 
--	comment__symbol(ops->source.raw, comment, &ops->source.addr, &ops->source.name);
--	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
-+	comment__symbol(ops->source.raw, comment + 1, &ops->source.addr, &ops->source.name);
-+	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
- 
- 	return 0;
- 
-@@ -298,7 +300,7 @@ static int dec__parse(struct ins_operand
- 	while (comment[0] != '\0' && isspace(comment[0]))
- 		++comment;
- 
--	comment__symbol(ops->target.raw, comment, &ops->target.addr, &ops->target.name);
-+	comment__symbol(ops->target.raw, comment + 1, &ops->target.addr, &ops->target.name);
- 
- 	return 0;
- }
+--Sig_/UN3x1Q=Yj6cpBanhrYXGxtn--
