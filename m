@@ -1,203 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fGC9Bx9TGVt9HAAAmS7hNA
-	; Thu, 07 Jun 2018 15:46:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +vBZO/bpGFsWWAAAmS7hNA
+	; Thu, 07 Jun 2018 08:18:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 16808607E7; Thu,  7 Jun 2018 15:46:00 +0000 (UTC)
+	id 5C877608BA; Thu,  7 Jun 2018 08:18:34 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUIQwu9/"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 74D6060590;
-	Thu,  7 Jun 2018 15:45:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74D6060590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id D50D36063F;
+	Thu,  7 Jun 2018 08:18:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D50D36063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934730AbeFGPp5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:45:57 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36280 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934496AbeFGOkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:40:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:40:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="47542295"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2018 07:40:32 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 4/9] x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
-Date: Thu,  7 Jun 2018 07:37:00 -0700
-Message-Id: <20180607143705.3531-5-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143705.3531-1-yu-cheng.yu@intel.com>
-References: <20180607143705.3531-1-yu-cheng.yu@intel.com>
+        id S1753510AbeFGISc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:18:32 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38854 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932066AbeFGIS3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 04:18:29 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 69-v6so3957458wmf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 01:18:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fb/HVRQHmXD11lSoBJhK5C7bBDDUNmldlFd2pgh3POU=;
+        b=iUIQwu9/YA15+20+9bI0Ow3YM4ip+JGo8Vy1+ytwJfp8RsXM2PB6USZ0IBWeTmMANG
+         YvAns7fLAOuKVLf5aSmZ18M2f9zZ/liVu8fz/VupucgKMuCsgMyulzp6xekmYdv1UTt4
+         fw3+n0JxluKePy/IXianoFygxOg78h4wE0yyU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fb/HVRQHmXD11lSoBJhK5C7bBDDUNmldlFd2pgh3POU=;
+        b=T+wmG+aKl28T1P7hSCYJelIn2SyRqgCDCSSK3FrnviNAOQY+K/T2H2Q9oMaml1BxvS
+         I1Lk8t+v4KjAz4ynrx4AYRhz25t4Hwfrf57s5Hq4H027cRz9vui809OtYEZo0C3hGIku
+         FZdWZ9RrjtWZlFHqoW/2e2DBoWelOnXqEuC1fZCoTFJ5awNSkd2gw2sWzcZ58xmR8i9K
+         +gV1UtnUJHWszN3u1LPKazgw7aJbkXSG4bGyX+JysKY45tz6t3pi4kEs3lwFc4dckCu1
+         Oy3KoB1X0zkk4gBZV/Yghutz1LShrvYy0s4KaFZVJSHqSIU71ExcDU9Lc8Gq5sFpYhYt
+         oiyg==
+X-Gm-Message-State: APt69E3LkIIYw77ak1gY935l4rP08WEkCAwqYFzV/K+uHBaFME9DNbe9
+        mA8ZkXIr7tGQ8+C1sIKGa61V0Q==
+X-Google-Smtp-Source: ADUXVKIXNag+GgeUYu0Rmo63gjsStjYYAlcld5JiRXtvak+9uGtSVusOZU3xqf7npXxlgnjyACuWDw==
+X-Received: by 2002:a1c:d509:: with SMTP id m9-v6mr900642wmg.69.1528359508225;
+        Thu, 07 Jun 2018 01:18:28 -0700 (PDT)
+Received: from [192.168.1.75] (lft31-1-88-121-166-205.fbx.proxad.net. [88.121.166.205])
+        by smtp.googlemail.com with ESMTPSA id q194-v6sm1326439wmd.26.2018.06.07.01.18.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 01:18:27 -0700 (PDT)
+Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle injection
+ framework
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180606122357.GN12258@hirez.programming.kicks-ass.net>
+ <22f5cf0b-049e-7938-55f6-4b4b154f8389@linaro.org>
+ <20180606150203.GE12180@hirez.programming.kicks-ass.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <ea347237-7cef-095a-5ddb-19c181d10c23@linaro.org>
+Date: Thu, 7 Jun 2018 10:18:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180606150203.GE12180@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are going to create _PAGE_DIRTY_SW for non-hardware, memory
-management purposes.  Rename _PAGE_DIRTY to _PAGE_DIRTY_HW and
-_PAGE_BIT_DIRTY to _PAGE_BIT_DIRTY_HW to make these PTE dirty
-bits more clear.  There are no functional changes in this
-patch.
+On 06/06/2018 17:02, Peter Zijlstra wrote:
+> On Wed, Jun 06, 2018 at 03:42:08PM +0200, Daniel Lezcano wrote:
+>> On 06/06/2018 14:23, Peter Zijlstra wrote:
+>>> On Tue, Jun 05, 2018 at 11:16:40AM +0200, Daniel Lezcano wrote:
+>>>> +	atomic_t idle_duration_ms;
+>>>> +	atomic_t run_duration_ms;
+>>>
+>>>> +	idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+>>>
+>>>> +	run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+>>>
+>>>> +	atomic_set(&ii_dev->run_duration_ms, run_duration_ms);
+>>>> +	atomic_set(&ii_dev->idle_duration_ms, idle_duration_ms);
+>>>
+>>>> +	*run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+>>>> +	*idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+>>>
+>>>> +	if (!atomic_read(&ii_dev->idle_duration_ms))
+>>>
+>>>> +	if (!atomic_read(&ii_dev->run_duration_ms))
+>>>
+>>> What is the point of atomic_t here ?!
+>>
+>> idle_duration and run_duration can be changed from different places at
+>> the same time. The atomic is here to ensure the read/write are consistent.
+>>
+>> Do you think it is pointless ?
+> 
+> Yes, atomic_read() / atomic_set() are no more atomic than READ_ONCE() /
+> WRITE_ONCE().
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- arch/x86/include/asm/pgtable.h       |  6 +++---
- arch/x86/include/asm/pgtable_types.h | 17 +++++++++--------
- arch/x86/kernel/relocate_kernel_64.S |  2 +-
- arch/x86/kvm/vmx.c                   |  2 +-
- 4 files changed, 14 insertions(+), 13 deletions(-)
+So IIUC, neither atomic or WRITE|READ_ONCE are necessary in this code
+because of the wake_up_process() barrier is enough, right ?
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index f1633de5a675..00b5e79c09a6 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -303,7 +303,7 @@ static inline pte_t pte_mkexec(pte_t pte)
- 
- static inline pte_t pte_mkdirty(pte_t pte)
- {
--	return pte_set_flags(pte, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
-+	return pte_set_flags(pte, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
- }
- 
- static inline pte_t pte_mkyoung(pte_t pte)
-@@ -377,7 +377,7 @@ static inline pmd_t pmd_wrprotect(pmd_t pmd)
- 
- static inline pmd_t pmd_mkdirty(pmd_t pmd)
- {
--	return pmd_set_flags(pmd, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
-+	return pmd_set_flags(pmd, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
- }
- 
- static inline pmd_t pmd_mkdevmap(pmd_t pmd)
-@@ -436,7 +436,7 @@ static inline pud_t pud_wrprotect(pud_t pud)
- 
- static inline pud_t pud_mkdirty(pud_t pud)
- {
--	return pud_set_flags(pud, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
-+	return pud_set_flags(pud, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
- }
- 
- static inline pud_t pud_mkdevmap(pud_t pud)
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 1e5a40673953..2ac5d46d7c49 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -15,7 +15,7 @@
- #define _PAGE_BIT_PWT		3	/* page write through */
- #define _PAGE_BIT_PCD		4	/* page cache disabled */
- #define _PAGE_BIT_ACCESSED	5	/* was accessed (raised by CPU) */
--#define _PAGE_BIT_DIRTY		6	/* was written to (raised by CPU) */
-+#define _PAGE_BIT_DIRTY_HW	6	/* was written to (raised by CPU) */
- #define _PAGE_BIT_PSE		7	/* 4 MB (or 2MB) page */
- #define _PAGE_BIT_PAT		7	/* on 4KB pages */
- #define _PAGE_BIT_GLOBAL	8	/* Global TLB entry PPro+ */
-@@ -45,7 +45,7 @@
- #define _PAGE_PWT	(_AT(pteval_t, 1) << _PAGE_BIT_PWT)
- #define _PAGE_PCD	(_AT(pteval_t, 1) << _PAGE_BIT_PCD)
- #define _PAGE_ACCESSED	(_AT(pteval_t, 1) << _PAGE_BIT_ACCESSED)
--#define _PAGE_DIRTY	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY)
-+#define _PAGE_DIRTY_HW	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY_HW)
- #define _PAGE_PSE	(_AT(pteval_t, 1) << _PAGE_BIT_PSE)
- #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
- #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
-@@ -73,7 +73,7 @@
- 			 _PAGE_PKEY_BIT3)
- 
- #if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)
--#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY | _PAGE_ACCESSED)
-+#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY_HW | _PAGE_ACCESSED)
- #else
- #define _PAGE_KNL_ERRATUM_MASK 0
- #endif
-@@ -112,9 +112,9 @@
- #define _PAGE_PROTNONE	(_AT(pteval_t, 1) << _PAGE_BIT_PROTNONE)
- 
- #define _PAGE_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |\
--				 _PAGE_ACCESSED | _PAGE_DIRTY)
-+				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
- #define _KERNPG_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW |		\
--				 _PAGE_ACCESSED | _PAGE_DIRTY)
-+				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
- 
- /*
-  * Set of bits not changed in pte_modify.  The pte's
-@@ -123,7 +123,7 @@
-  * pte_modify() does modify it.
-  */
- #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
--			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
-+			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY_HW |	\
- 			 _PAGE_SOFT_DIRTY)
- #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
- 
-@@ -168,7 +168,8 @@ enum page_cache_mode {
- 					 _PAGE_ACCESSED)
- 
- #define __PAGE_KERNEL_EXEC						\
--	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)
-+	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY_HW | _PAGE_ACCESSED | \
-+	 _PAGE_GLOBAL)
- #define __PAGE_KERNEL		(__PAGE_KERNEL_EXEC | _PAGE_NX)
- 
- #define __PAGE_KERNEL_RO		(__PAGE_KERNEL & ~_PAGE_RW)
-@@ -187,7 +188,7 @@ enum page_cache_mode {
- #define _PAGE_ENC	(_AT(pteval_t, sme_me_mask))
- 
- #define _KERNPG_TABLE	(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED |	\
--			 _PAGE_DIRTY | _PAGE_ENC)
-+			 _PAGE_DIRTY_HW | _PAGE_ENC)
- #define _PAGE_TABLE	(_KERNPG_TABLE | _PAGE_USER)
- 
- #define __PAGE_KERNEL_ENC	(__PAGE_KERNEL | _PAGE_ENC)
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 11eda21eb697..e7665a4767b3 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -17,7 +17,7 @@
-  */
- 
- #define PTR(x) (x << 3)
--#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY)
-+#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY_HW)
- 
- /*
-  * control_page + KEXEC_CONTROL_CODE_MAX_SIZE
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 40aa29204baf..52bd01f23316 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -5235,7 +5235,7 @@ static int init_rmode_identity_map(struct kvm *kvm)
- 	/* Set up identity-mapping pagetable for EPT in real mode */
- 	for (i = 0; i < PT32_ENT_PER_PAGE; i++) {
- 		tmp = (i << 22) + (_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |
--			_PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_PSE);
-+			_PAGE_ACCESSED | _PAGE_DIRTY_HW | _PAGE_PSE);
- 		r = kvm_write_guest_page(kvm, identity_map_pfn,
- 				&tmp, i * sizeof(tmp), sizeof(tmp));
- 		if (r < 0)
+
 -- 
-2.15.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
