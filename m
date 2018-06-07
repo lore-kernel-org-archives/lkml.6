@@ -1,129 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CW3dKE/0G1vAagAAmS7hNA
-	; Sat, 09 Jun 2018 15:39:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vNWeLRlDGVvVBAAAmS7hNA
+	; Thu, 07 Jun 2018 14:40:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AAB3C608BF; Sat,  9 Jun 2018 15:39:14 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UlWUoy4v"
+	id 37A40608C9; Thu,  7 Jun 2018 14:40:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1CB9B606FA;
-	Sat,  9 Jun 2018 15:39:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CB9B606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A846A607DC;
+	Thu,  7 Jun 2018 14:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A846A607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933219AbeFIPjN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:39:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932696AbeFIPfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:35:52 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41EFF208A3;
-        Sat,  9 Jun 2018 15:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558551;
-        bh=IknwiBbdL/mAD/Wl5C7dk23x+Xo235NIHWw/OuSxD6s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UlWUoy4v3hzQZ0PWPztDMwJJrjBEQAOlTTsiMt8MPvuFjWYfQBvsjhww826MYyR1j
-         3/MCtHsBQ/FDRnJf90m9Nwdcq2qV9a+LQ+KPA5HuTmyJPuixYGSBfvgCY774WF4TFe
-         Atg5XOxvxE++ka3u5DFU1KBoXdzwZnqsnEzhMzFA=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 12/41] ip6_tunnel: remove magic mtu value 0xFFF8
-Date: Sat,  9 Jun 2018 17:29:44 +0200
-Message-Id: <20180609152927.110772621@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
-References: <20180609152926.389750182@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S934578AbeFGOk4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:40:56 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40570 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934559AbeFGOkx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:40:53 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbg-0005Zv-DK; Thu, 07 Jun 2018 15:09:40 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-00031f-GX; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Michael Kerrisk" <mtk.manpages@gmail.com>,
+        "Kees Cook" <keescook@chromium.org>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "Mikulas Patocka" <mpatocka@redhat.com>,
+        "Willy Tarreau" <w@1wt.eu>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Joe Lawrence" <joe.lawrence@redhat.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.310937469@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 213/410] pipe: fix off-by-one error when checking
+ buffer limits
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit f7ff1fde9441b4fcc8ffb6e66e6e5a00d008937e ]
+commit 9903a91c763ecdae333a04a9d89d79d2b8966503 upstream.
 
-I don't know where this value comes from (probably a copy and paste and
-paste and paste ...).
-Let's use standard values which are a bit greater.
+With pipe-user-pages-hard set to 'N', users were actually only allowed up
+to 'N - 1' buffers; and likewise for pipe-user-pages-soft.
 
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/davem/netdev-vger-cvs.git/commit/?id=e5afd356a411a
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this to allow up to 'N' buffers, as would be expected.
+
+Link: http://lkml.kernel.org/r/20180111052902.14409-5-ebiggers3@gmail.com
+Fixes: b0b91d18e2e9 ("pipe: fix limit checking in pipe_set_size()")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Willy Tarreau <w@1wt.eu>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv6/ip6_tunnel.c |   11 ++++++++---
- net/ipv6/sit.c        |    5 +++--
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ fs/pipe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1693,8 +1693,13 @@ int ip6_tnl_change_mtu(struct net_device
- 		if (new_mtu < ETH_MIN_MTU)
- 			return -EINVAL;
- 	}
--	if (new_mtu > 0xFFF8 - dev->hard_header_len)
--		return -EINVAL;
-+	if (tnl->parms.proto == IPPROTO_IPV6 || tnl->parms.proto == 0) {
-+		if (new_mtu > IP6_MAX_MTU - dev->hard_header_len)
-+			return -EINVAL;
-+	} else {
-+		if (new_mtu > IP_MAX_MTU - dev->hard_header_len)
-+			return -EINVAL;
-+	}
- 	dev->mtu = new_mtu;
- 	return 0;
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -593,12 +593,12 @@ static unsigned long account_pipe_buffer
+ 
+ static bool too_many_pipe_buffers_soft(unsigned long user_bufs)
+ {
+-	return pipe_user_pages_soft && user_bufs >= pipe_user_pages_soft;
++	return pipe_user_pages_soft && user_bufs > pipe_user_pages_soft;
  }
-@@ -1842,7 +1847,7 @@ ip6_tnl_dev_init_gen(struct net_device *
- 	if (!(t->parms.flags & IP6_TNL_F_IGN_ENCAP_LIMIT))
- 		dev->mtu -= 8;
- 	dev->min_mtu = ETH_MIN_MTU;
--	dev->max_mtu = 0xFFF8 - dev->hard_header_len;
-+	dev->max_mtu = IP6_MAX_MTU - dev->hard_header_len;
  
- 	return 0;
+ static bool too_many_pipe_buffers_hard(unsigned long user_bufs)
+ {
+-	return pipe_user_pages_hard && user_bufs >= pipe_user_pages_hard;
++	return pipe_user_pages_hard && user_bufs > pipe_user_pages_hard;
+ }
  
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -1360,7 +1360,7 @@ static void ipip6_tunnel_setup(struct ne
- 	dev->hard_header_len	= LL_MAX_HEADER + t_hlen;
- 	dev->mtu		= ETH_DATA_LEN - t_hlen;
- 	dev->min_mtu		= IPV6_MIN_MTU;
--	dev->max_mtu		= 0xFFF8 - t_hlen;
-+	dev->max_mtu		= IP6_MAX_MTU - t_hlen;
- 	dev->flags		= IFF_NOARP;
- 	netif_keep_dst(dev);
- 	dev->addr_len		= 4;
-@@ -1572,7 +1572,8 @@ static int ipip6_newlink(struct net *src
- 	if (tb[IFLA_MTU]) {
- 		u32 mtu = nla_get_u32(tb[IFLA_MTU]);
- 
--		if (mtu >= IPV6_MIN_MTU && mtu <= 0xFFF8 - dev->hard_header_len)
-+		if (mtu >= IPV6_MIN_MTU &&
-+		    mtu <= IP6_MAX_MTU - dev->hard_header_len)
- 			dev->mtu = mtu;
- 	}
- 
+ static bool is_unprivileged_user(void)
