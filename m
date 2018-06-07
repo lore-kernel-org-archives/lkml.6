@@ -1,98 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eGxBIxE6GlulIAAAmS7hNA
-	; Fri, 08 Jun 2018 08:12:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uO+4C/A1GVuRVwAAmS7hNA
+	; Thu, 07 Jun 2018 13:41:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 53CDA607DC; Fri,  8 Jun 2018 08:12:15 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Caq2QyAc"
+	id 0BC356089E; Thu,  7 Jun 2018 13:41:04 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C9AB5602FC;
-	Fri,  8 Jun 2018 08:12:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9AB5602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7E163606DD;
+	Thu,  7 Jun 2018 13:41:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7E163606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752753AbeFHIMM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:12:12 -0400
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:39676 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751117AbeFHIMI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:12:08 -0400
-Received: by mail-wr0-f178.google.com with SMTP id w7-v6so12406297wrn.6;
-        Fri, 08 Jun 2018 01:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=2pmn0eYFTCeBxpLpsTQrvjpzL5UgG4jcpWzEJ4KcP1M=;
-        b=Caq2QyAc8JOWsg12Rqt23BX3ch+KzdNWd4aR72TK7rNrhhzyaHUlfHug+ZYojr/nGE
-         tt/bgMq7ttItUZ9dnPt+DjDDeC6gmtGi/QH6GzWyfaINpmkC0AnDUkn6feOu4vbTFDQH
-         wFe8rdd1nYh9qpz3mrTqOhhO9T0vUUCS9rEjNbL3M0fKEfOjU5FG8kBMD0PXosO2H7ub
-         yVporC4YT2pmkNfpzpw5NKzkcCul1Q+p2t6lZHbd6xi+OvYixQRslqaCUaMb+CqG9RG0
-         Tg8/btfWrQVtHJ1UUsOm9KNI9f2C29jDh0oAQQwNauMHrbYaIc6J6IQDZk0cywJrsZ5U
-         +lYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=2pmn0eYFTCeBxpLpsTQrvjpzL5UgG4jcpWzEJ4KcP1M=;
-        b=D+s34S0UgZaMLuyqsnlJoPA49aRxfAUXTr8J+grsE52El6MGjTqL9u6nqVD+4BDPge
-         T5QeYPbGRzvv87o8g+Ttma5guFHGXE9pYl9OyNoqBRBysf0lyD9AUs8uY54UskJH2MJg
-         nPFV9UmAt/nF5mZrzj3uHbmZjobF8JSSq+iCMfhC56qDbTL9+z8YQWqVVKLiCgCoqcAI
-         J+JNvVOVoOhgSAiAKbBXB21Ghnyd11Fkcb/EMm+Pe6nV6/znSP2dp6tewzvCVECtxQU6
-         iELQc70mz+XftBVe3v98AZ9LsUlAzkkl6npJh/IKzXPxdboAXGfDjYf1G01iUMre/f9O
-         ZPWA==
-X-Gm-Message-State: APt69E2wyRuwrTfB8MkdayYkNJkA+M7K2XIYenOshKxvd+zGTupI9iRq
-        fmwQjnM8ea2gHRFaZ7+ASt4=
-X-Google-Smtp-Source: ADUXVKKnIhYQFj0pABlCpKOTg8tw2VnIuGElRtdiVFM5uejw6er4z/yuHToNvtxbUcwThemS1p9Fiw==
-X-Received: by 2002:adf:d204:: with SMTP id g4-v6mr4165271wri.229.1528445526787;
-        Fri, 08 Jun 2018 01:12:06 -0700 (PDT)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id q17-v6sm23907981wrs.5.2018.06.08.01.12.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 01:12:05 -0700 (PDT)
-Date: Fri, 8 Jun 2018 10:12:04 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: ThinkPad T480s & thinkpad_acpi.ko
-Message-ID: <20180608081204.ztv4yb62szuyfsz6@pali>
+        id S1753445AbeFGNlB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:41:01 -0400
+Received: from mga12.intel.com ([192.55.52.136]:20613 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753047AbeFGNlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:41:00 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 06:40:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="47193419"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
+  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2018 06:40:54 -0700
+Received: from ash by um with local (Exim 4.91)
+        (envelope-from <alexander.shishkin@linux.intel.com>)
+        id 1fQv9n-0004U3-Ko; Thu, 07 Jun 2018 16:40:51 +0300
+Date: Thu, 7 Jun 2018 16:40:51 +0300
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Luwei Kang <luwei.kang@intel.com>
+Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, chao.p.peng@linux.intel.com,
+        thomas.lendacky@amd.com, bp@suse.de, Kan.liang@intel.com,
+        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        peterz@infradead.org, mathieu.poirier@linaro.org,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, david@redhat.com,
+        bsd@redhat.com, yu.c.zhang@linux.intel.com, joro@8bytes.org
+Subject: Re: [PATCH v9 04/12] perf/x86/intel/pt: add new capability for Intel
+ PT
+Message-ID: <20180607134051.rwu5pqtz45cgq7ve@um.fi.intel.com>
+References: <1526964735-16566-1-git-send-email-luwei.kang@intel.com>
+ <1526964735-16566-5-git-send-email-luwei.kang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1526964735-16566-5-git-send-email-luwei.kang@intel.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi! I just found out that thinkpad_acpi.ko is not automatically loaded
-on new ThinkPad T480s. Is there any reason for it? Manually calling
-modprobe thinkpad_acpi is working fine, but I would expect that it
-should be loaded automatically.
+On Tue, May 22, 2018 at 12:52:07PM +0800, Luwei Kang wrote:
+> CPUID(EAX=14H,ECX=0):EBX[bit 3] = 1 indicates support of
+> output to Trace Transport subsystem.
+> MSR IA32_RTIT_CTL.FabricEn[bit 6] is reserved if
+> CPUID.(EAX=14H, ECX=0):ECX[bit 3] = 0.
 
-Here is dmesg output after loading it manually:
+This should instead say:
 
-thinkpad_acpi: ThinkPad ACPI Extras v0.25
-thinkpad_acpi: http://ibm-acpi.sf.net/
-thinkpad_acpi: ThinkPad BIOS N22ET34W (1.11 ), EC unknown
-thinkpad_acpi: Lenovo ThinkPad T480s, model 20L7S03000
-thinkpad_acpi: radio switch found; radios are enabled
-thinkpad_acpi: This ThinkPad has standard ACPI backlight brightness control, supported by the ACPI video driver
-thinkpad_acpi: Disabling thinkpad-acpi brightness events by default...
-thinkpad_acpi: rfkill switch tpacpi_bluetooth_sw: radio is unblocked
-thinkpad_acpi: Standard ACPI backlight interface available, not loading native one
+This adds support for "output to Trace Transport subsystem" capability
+of Intel PT, as documented in IA SDM Chapter 36.x.y.z. It means that
+PT can output its trace to an MMIO address range rather than system
+memory buffer.
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> This is use for emulate IA32_RTIT_CTL MSR read/write
+> in KVM. KVM guest write IA32_RTIT_CTL will trap to
+> root mode and a #GP would be injected to guest if set
+> IA32_RTIT_CTL.FabricEn with
+> CPUID.(EAX=14H, ECX=0):ECX[bit 3] = 0.
+
+I'm not sure what this means, this patch has nothing to do with KVM
+as far as I can tell.
+
+Aside from the commit message, this is a valid patch.
+
+Thanks,
+--
+Alex
