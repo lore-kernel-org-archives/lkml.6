@@ -1,110 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3BSCCV7ZGFtiVgAAmS7hNA
-	; Thu, 07 Jun 2018 07:06:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 121wLh1JGVsTTgAAmS7hNA
+	; Thu, 07 Jun 2018 15:05:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 84AF2607F7; Thu,  7 Jun 2018 07:06:51 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f2apqN+F"
+	id 0C990608BA; Thu,  7 Jun 2018 15:05:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F2C8C60452;
-	Thu,  7 Jun 2018 07:06:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2C8C60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7EF806063F;
+	Thu,  7 Jun 2018 15:05:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EF806063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753179AbeFGHGs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:06:48 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51711 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752991AbeFGHGr (ORCPT
+        id S965126AbeFGPFQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:05:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41573 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S964995AbeFGPEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:06:47 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r15-v6so15788934wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=/otPUZ82UeDndZwAX2QgrwyhF/EKR2YiPodbsP8G5W4=;
-        b=f2apqN+FeaAydDH/aH2N4rSQBH5j5clE3m+NE9ldEmpvo9naWtZDF/UgB9u38UQhyd
-         fGQrEpN9b47eA/ouDxg+8vJxC/Xi+28erFYJ7lc3C7SlV7l2RQF0t1cqbFld4MiZPwH2
-         uMvm8bGE7eih7P0oTiQO/mGgswvHdXF2L4BeQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=/otPUZ82UeDndZwAX2QgrwyhF/EKR2YiPodbsP8G5W4=;
-        b=W3J8mVFQN6370wrQgX5oq9zEEObIbGew5Tgn7w3HPTvQF2ltznAqLw0bh7zSEHootz
-         YcG13sY2YI8pnCPCu+Uj5fJKLlksy9Ju8J75t8KgCPA/30xQ1J2c1cP1WDYfQ5hlpb2z
-         0WucRlif9yiTtJVzrm+iCck0/wKmVuRiYeB5hw02HDIfTnRnPUJANDIoURpvHAsBOjwB
-         rmdcFqaey+4wY1H0vuibJcsWpDVpQHuzx/DX8zV8z7Ttgo1s9AtMFxEsHQm2SBa3C1n+
-         jmY0ms5x/gZzbfb0KHbAWgp4xQImxkURjJ4EcDC/ZXAbnTxCPA7ibLpyRHL48+tMQC2R
-         neXQ==
-X-Gm-Message-State: APt69E1waW6Ns+6sQvKB31paa406vvqqw//Gwydi8sPj+8zNFN1rXVZX
-        YHZR2R4p1RM7bG1BXe+kM1J0XQ==
-X-Google-Smtp-Source: ADUXVKIqqgaxI4CN+W38Yu1nYQe8tFpFFmYCh3FU0bcZzwRzkoZNSRJBmzKrUaSR+pE85cVZRCdZ5Q==
-X-Received: by 2002:a1c:800e:: with SMTP id b14-v6mr666422wmd.83.1528355205850;
-        Thu, 07 Jun 2018 00:06:45 -0700 (PDT)
-Received: from dell ([2.31.163.53])
-        by smtp.gmail.com with ESMTPSA id v12-v6sm748088wmc.35.2018.06.07.00.06.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 00:06:44 -0700 (PDT)
-Date: Thu, 7 Jun 2018 08:06:42 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5 03/14] mfd: da9063: Use regmap_reg_range
-Message-ID: <20180607070642.GB22841@dell>
-References: <20180606100003.17067-1-marek.vasut+renesas@gmail.com>
- <20180606100003.17067-3-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        Thu, 7 Jun 2018 11:04:09 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbr-0005Zn-Vf; Thu, 07 Jun 2018 15:09:52 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb1-0002pq-MS; Thu, 07 Jun 2018 15:08:59 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180606100003.17067-3-marek.vasut+renesas@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Tejun Heo" <tj@kernel.org>,
+        "James Ralston" <james.d.ralston@intel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.191046993@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 107/410] ahci: Remove Device ID for Intel Sunrise
+ Point PCH
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 06 Jun 2018, Marek Vasut wrote:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-> Convert the regmap_range tables to use regmap_reg_range() macro.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V5: New patch
-> ---
->  drivers/mfd/da9063-i2c.c | 174 ++++++++++++-----------------------------------
->  1 file changed, 42 insertions(+), 132 deletions(-)
+------------------
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+From: James Ralston <james.d.ralston@intel.com>
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+commit 46319e13581a6c442b0a0e5a3bd5d9af4496f252 upstream.
+
+This patch removes a duplicate AHCI-mode SATA Device ID for the Intel Sunrise Point PCH.
+
+Signed-off-by: James Ralston <james.d.ralston@intel.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/ata/ahci.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -359,7 +359,6 @@ static const struct pci_device_id ahci_p
+ 	{ PCI_VDEVICE(INTEL, 0x9d05), board_ahci }, /* Sunrise Point-LP RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x9d07), board_ahci }, /* Sunrise Point-LP RAID */
+ 	{ PCI_VDEVICE(INTEL, 0xa103), board_ahci }, /* Sunrise Point-H AHCI */
+-	{ PCI_VDEVICE(INTEL, 0xa103), board_ahci }, /* Sunrise Point-H RAID */
+ 	{ PCI_VDEVICE(INTEL, 0xa105), board_ahci }, /* Sunrise Point-H RAID */
+ 	{ PCI_VDEVICE(INTEL, 0xa107), board_ahci }, /* Sunrise Point-H RAID */
+ 	{ PCI_VDEVICE(INTEL, 0xa10f), board_ahci }, /* Sunrise Point-H RAID */
