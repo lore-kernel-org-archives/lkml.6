@@ -1,154 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IQvNL1uZHVscEAAAmS7hNA
-	; Sun, 10 Jun 2018 21:35:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rHuGD5RlGVvrCQAAmS7hNA
+	; Thu, 07 Jun 2018 17:07:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9155360791; Sun, 10 Jun 2018 21:35:33 +0000 (UTC)
+	id B67F4606DD; Thu,  7 Jun 2018 17:07:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0E01F604D4;
-	Sun, 10 Jun 2018 21:35:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E01F604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8013C60115;
+	Thu,  7 Jun 2018 17:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8013C60115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753762AbeFJVfb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 17:35:31 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753531AbeFJVeI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 17:34:08 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Sun, 10 Jun 2018 14:33:44 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 0F4CA406D6;
-        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
-From: Nadav Amit <namit@vmware.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: Nadav Amit <namit@vmware.com>,
+        id S934853AbeFGRGa (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:06:30 -0400
+Received: from mga12.intel.com ([192.55.52.136]:32205 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934578AbeFGRGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 13:06:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 10:06:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,487,1520924400";
+   d="scan'208";a="206183228"
+Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
+  by orsmga004.jf.intel.com with ESMTP; 07 Jun 2018 10:06:23 -0700
+From: "Chang S. Bae" <chang.seok.bae@intel.com>
+To: Andy Lutomirski <luto@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v3 4/9] x86: alternatives: macrofy locks for better inlining
-Date: Sun, 10 Jun 2018 07:19:06 -0700
-Message-ID: <20180610141911.52948-5-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
-References: <20180610141911.52948-1-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+        Ingo Molnar <mingo@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        "Ravi V . Shankar" <ravi.v.shankar@intel.com>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 6/7] x86/vdso: Introduce CPU number helper functions
+Date: Thu,  7 Jun 2018 10:06:07 -0700
+Message-Id: <1528391168-22224-7-git-send-email-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
+References: <1528391168-22224-1-git-send-email-chang.seok.bae@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+CPU number initialization in vDSO is now a bit cleaned up by
+the new helper functions. The helper functions will take
+care of combing CPU and node number and reading each from
+the combined value.
 
-The solution is to set an assembly macro and call it from the inlined
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
-
-This patch handles the LOCK prefix, allowing more aggresive inlining.
-
-   text	   data	    bss	    dec	    hex	filename
-18140140 10225284 2957312 31322736 1ddf270 ./vmlinux before
-18146889 10225380 2957312 31329581 1de0d2d ./vmlinux after (+6845)
-
-Static text symbols:
-Before:	40286
-After:	40218	(-68)
-
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Cc: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/alternative-asm.h | 20 ++++++++++++++------
- arch/x86/include/asm/alternative.h     | 11 ++---------
- arch/x86/kernel/macros.S               |  1 +
- 3 files changed, 17 insertions(+), 15 deletions(-)
+ arch/x86/entry/vdso/vgetcpu.c  |  4 ++--
+ arch/x86/entry/vdso/vma.c      | 16 ++++++++--------
+ arch/x86/include/asm/segment.h | 28 ++++++++++++++++++++++++++++
+ arch/x86/include/asm/vgtod.h   |  2 --
+ 4 files changed, 38 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/include/asm/alternative-asm.h b/arch/x86/include/asm/alternative-asm.h
-index 31b627b43a8e..8e4ea39e55d0 100644
---- a/arch/x86/include/asm/alternative-asm.h
-+++ b/arch/x86/include/asm/alternative-asm.h
-@@ -7,16 +7,24 @@
- #include <asm/asm.h>
+diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
+index 8ec3d1f..3284069 100644
+--- a/arch/x86/entry/vdso/vgetcpu.c
++++ b/arch/x86/entry/vdso/vgetcpu.c
+@@ -18,9 +18,9 @@ __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
+ 	p = __getcpu();
  
- #ifdef CONFIG_SMP
--	.macro LOCK_PREFIX
--672:	lock
-+.macro LOCK_PREFIX_HERE
- 	.pushsection .smp_locks,"a"
- 	.balign 4
--	.long 672b - .
-+	.long 671f - .		# offset
- 	.popsection
--	.endm
-+671:
-+.endm
-+
-+.macro LOCK_PREFIX insn:vararg
-+	LOCK_PREFIX_HERE
-+	lock \insn
-+.endm
- #else
--	.macro LOCK_PREFIX
--	.endm
-+.macro LOCK_PREFIX_HERE
-+.endm
-+
-+.macro LOCK_PREFIX insn:vararg
-+.endm
+ 	if (cpu)
+-		*cpu = p & VGETCPU_CPU_MASK;
++		*cpu = lsl_tscp_to_cpu(p);
+ 	if (node)
+-		*node = p >> 12;
++		*node = lsl_tscp_to_node(p);
+ 	return 0;
+ }
+ 
+diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+index 833e229..1fc93da 100644
+--- a/arch/x86/entry/vdso/vma.c
++++ b/arch/x86/entry/vdso/vma.c
+@@ -340,19 +340,19 @@ static void vgetcpu_cpu_init(void *arg)
+ 	int cpu = smp_processor_id();
+ 	struct desc_struct d = { };
+ 	unsigned long node = 0;
++	unsigned long cpu_number = 0;
+ #ifdef CONFIG_NUMA
+ 	node = cpu_to_node(cpu);
  #endif
++	cpu_number = make_lsl_tscp(cpu, node);
++
+ 	if (static_cpu_has(X86_FEATURE_RDTSCP))
+-		write_rdtscp_aux((node << 12) | cpu);
++		write_rdtscp_aux(cpu_number);
++
++	/* Store cpu number in limit */
++	d.limit0 = cpu_number;
++	d.limit1 = cpu_number >> 16;
+ 
+-	/*
+-	 * Store cpu number in limit so that it can be loaded
+-	 * quickly in user space in vgetcpu. (12 bits for the CPU
+-	 * and 8 bits for the node)
+-	 */
+-	d.limit0 = cpu | ((node & 0xf) << 12);
+-	d.limit1 = node >> 4;
+ 	d.type = 5;		/* RO data, expand down, accessed */
+ 	d.dpl = 3;		/* Visible to user code */
+ 	d.s = 1;		/* Not a system segment */
+diff --git a/arch/x86/include/asm/segment.h b/arch/x86/include/asm/segment.h
+index 492e3d1..2169a24 100644
+--- a/arch/x86/include/asm/segment.h
++++ b/arch/x86/include/asm/segment.h
+@@ -224,6 +224,34 @@
+ #define GDT_ENTRY_TLS_ENTRIES		3
+ #define TLS_SIZE			(GDT_ENTRY_TLS_ENTRIES* 8)
+ 
++#ifdef CONFIG_X86_64
++
++/* Bit size and mask of CPU number stored in the per CPU data (and TSC_AUX) */
++#define LSL_TSCP_CPU_SIZE		12
++#define LSL_TSCP_CPU_MASK		0xfff
++
++#ifndef __ASSEMBLY__
++
++/* Helper functions to store/load CPU and node numbers */
++
++static inline unsigned long make_lsl_tscp(int cpu, unsigned long node)
++{
++	return ((node << LSL_TSCP_CPU_SIZE) | cpu);
++}
++
++static inline unsigned int lsl_tscp_to_cpu(unsigned long x)
++{
++	return (x & LSL_TSCP_CPU_MASK);
++}
++
++static inline unsigned int lsl_tscp_to_node(unsigned long x)
++{
++	return (x >> LSL_TSCP_CPU_SIZE);
++}
++
++#endif /* !__ASSEMBLY__ */
++#endif /* CONFIG_X86_64 */
++
+ #ifdef __KERNEL__
  
  /*
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 4cd6a3b71824..d7faa16622d8 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -31,15 +31,8 @@
-  */
+diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
+index 9cd9036..24e69b3 100644
+--- a/arch/x86/include/asm/vgtod.h
++++ b/arch/x86/include/asm/vgtod.h
+@@ -79,8 +79,6 @@ static inline void gtod_write_end(struct vsyscall_gtod_data *s)
  
- #ifdef CONFIG_SMP
--#define LOCK_PREFIX_HERE \
--		".pushsection .smp_locks,\"a\"\n"	\
--		".balign 4\n"				\
--		".long 671f - .\n" /* offset */		\
--		".popsection\n"				\
--		"671:"
--
--#define LOCK_PREFIX LOCK_PREFIX_HERE "\n\tlock; "
--
-+#define LOCK_PREFIX_HERE "LOCK_PREFIX_HERE\n\t"
-+#define LOCK_PREFIX "LOCK_PREFIX "
- #else /* ! CONFIG_SMP */
- #define LOCK_PREFIX_HERE ""
- #define LOCK_PREFIX ""
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index f1fe1d570365..852487a9fc56 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -8,3 +8,4 @@
+ #ifdef CONFIG_X86_64
  
- #include <linux/compiler.h>
- #include <asm/refcount.h>
-+#include <asm/alternative-asm.h>
+-#define VGETCPU_CPU_MASK 0xfff
+-
+ static inline unsigned int __getcpu(void)
+ {
+ 	unsigned int p;
 -- 
-2.17.0
+2.7.4
