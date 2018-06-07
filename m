@@ -1,95 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kNQxI3p2GVveFwAAmS7hNA
-	; Thu, 07 Jun 2018 18:39:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /k/PFb9ZGVueCgAAmS7hNA
+	; Thu, 07 Jun 2018 16:14:51 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 04E456074D; Thu,  7 Jun 2018 18:39:50 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="mflQk3Mp"
+	id 996F76074D; Thu,  7 Jun 2018 16:14:51 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 92A62601C3;
-	Thu,  7 Jun 2018 18:39:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92A62601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id F371360115;
+	Thu,  7 Jun 2018 16:14:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F371360115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935018AbeFGSjr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:39:47 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37925 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932935AbeFGSjp (ORCPT
+        id S936083AbeFGQOt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:14:49 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39118 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932916AbeFGOI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:39:45 -0400
-Received: by mail-ot0-f196.google.com with SMTP id n3-v6so12720628ota.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=E9pLxOe+TDsNJHMPfp8ohCQ56TYz4uhxDek+2sIsCq8=;
-        b=mflQk3Mpelj7NYfJO1m7nJCM/FxsCrRi1LRv4uoFSjoFr8bnAN1/0v7x9WwLHeHj8j
-         5amKB3ybDVTtZLPkJHlCCY9uO7kpSJ64KA/HoEPNK8qncTFCXdj/eiaNkCIKcVmwULlA
-         gAQ7yKL4id/t0+/p9YdfJ950aoZ3hwxM4991Km3BY0PUbVkxZy/qesZvS4+g1utjCJ57
-         s1TSSDGjigfdNp6Bms7qthz2YvNaYRKp6mUAAcxA8ngiKV1gn6NHj1k8qaWJ9rajMsN7
-         gVjX6mUKTN1vtd8DjhwIvFpdQSprylPYeLnmtKq1F5+ZcpaCFHiEAEt4cm7cuZkubgU2
-         XWiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=E9pLxOe+TDsNJHMPfp8ohCQ56TYz4uhxDek+2sIsCq8=;
-        b=tdKsQiCtfErGdvOJjJHJrc7F9wKQHlQLID1025P6UMwLTixpygMRSnBfvTR1CgEEGy
-         A9ez7gCE7yDpvvDQkaiduYSlWb+NsY4rBDX+wSFdix39mM1121hgi/i7ruw6/EQU17VS
-         kiCa41o6qH25e21PFMOTKWpWaGykTi5W1+OroU5cC3ooBiIRuVFTLgizZi14e48vNACg
-         qhOQlCxfwyAYDuJfK084HZ30KtxbJ+AD5rqLzDlDMRRtwy25xS97tGcBJ25pooQMPoro
-         QLRPdJg4jE6dTLOlfNzJ6vBSfaWTFWZgJF0KBGDS7RgdlMBTbJ73XWMT7Yg9Kc9UKYnj
-         hGng==
-X-Gm-Message-State: APt69E3XSZBBOAdEL8CvCxZIE6DyBfqnHM8c8GVdJLHPTcP2IXOnhEYd
-        8IKqq418pHvLGtOxVZF7+EESbqY3zb1siMt+OlWCxA==
-X-Google-Smtp-Source: ADUXVKJfAUQLZlDGRu9WIeT6FnvNLqvUK6lHZgIFBjXIsWl2PtO8Aj8EVqfpdK2VnOmlg+ldsRDPh+fLfxBczFr6WS0=
-X-Received: by 2002:a9d:36c3:: with SMTP id s3-v6mr1619962otd.292.1528396785148;
- Thu, 07 Jun 2018 11:39:45 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 11:39:44 -0700 (PDT)
-In-Reply-To: <20180607141640.GA4518@redhat.com>
-References: <CAPcyv4hVERZoqWrCxwOkmM075OP_ada7FiYsQgokijuWyC1MbA@mail.gmail.com>
- <CAPM=9tzMJq=KC+ijoj-JGmc1R3wbshdwtfR3Zpmyaw3jYJ9+gw@mail.gmail.com>
- <CAPcyv4g2XQtuYGPu8HMbPj6wXqGwxiL5jDRznf5fmW4WgC2DTw@mail.gmail.com>
- <CAPM=9twm=17t=2=M27ELB=vZWzpqM7GuwCUsC891jJ0t3JM4vg@mail.gmail.com>
- <CAPcyv4jTty4k1xXCOWbeRjzv-KjxNH1L4oOkWW1EbJt66jF4_w@mail.gmail.com>
- <20180605184811.GC4423@redhat.com> <CAPM=9twgL_tzkPO=V2mmecSzLjKJkEsJ8A4426fO2Nuus0N_UQ@mail.gmail.com>
- <CAPcyv4gSEYdnJKd=D-_yc3M=sY0HWjYzYhh5ha-v7KA4-40dsg@mail.gmail.com>
- <20180606000822.GE4423@redhat.com> <CAPcyv4gsS4xDXahZdOggURBHS2y-oJ5tPG9vXPDdY2p6jPufxA@mail.gmail.com>
- <20180607141640.GA4518@redhat.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 7 Jun 2018 11:39:44 -0700
-Message-ID: <CAPcyv4gSn6O+rWYxAfqjkY6pkGAjvTNRUeMY1Ynde3_Vw6gTUA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] mm: rework hmm to use devm_memremap_pages
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: Dave Airlie <airlied@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 7 Jun 2018 10:08:58 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvay-0005Zm-5O; Thu, 07 Jun 2018 15:08:56 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvax-0002gN-2u; Thu, 07 Jun 2018 15:08:55 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Jason Gunthorpe" <jgunthorpe@obsidianresearch.com>,
+        "Daniel Borkmann" <daniel@iogearbox.net>,
+        "Neil Horman" <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.565701811@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 005/410] sctp: Fix mangled IPv4 addresses on a IPv6
+ listening socket
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 7:16 AM, Jerome Glisse <jglisse@redhat.com> wrote:
-[..]
-> HMM is self contain interface but i doubt i can convince you of that.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-I agree that HMM is self contained... after it completely subverts the
-core-mm. It's that deep understanding and working around of core
-memory management infrastructure that makes devm_memremap_pages() and
-derivatives EXPORT_SYMBOL_GPL ("considered an
-internal implementation issue, and not really an interface").
+------------------
+
+From: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+
+commit 9302d7bb0c5cd46be5706859301f18c137b2439f upstream.
+
+sctp_v4_map_v6 was subtly writing and reading from members
+of a union in a way the clobbered data it needed to read before
+it read it.
+
+Zeroing the v6 flowinfo overwrites the v4 sin_addr with 0, meaning
+that every place that calls sctp_v4_map_v6 gets ::ffff:0.0.0.0 as the
+result.
+
+Reorder things to guarantee correct behaviour no matter what the
+union layout is.
+
+This impacts user space clients that open an IPv6 SCTP socket and
+receive IPv4 connections. Prior to 299ee user space would see a
+sockaddr with AF_INET and a correct address, after 299ee the sockaddr
+is AF_INET6, but the address is wrong.
+
+Fixes: 299ee123e198 (sctp: Fixup v4mapped behaviour to comply with Sock API)
+Signed-off-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ include/net/sctp/sctp.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/include/net/sctp/sctp.h
++++ b/include/net/sctp/sctp.h
+@@ -582,11 +582,14 @@ static inline void sctp_v6_map_v4(union
+ /* Map v4 address to v4-mapped v6 address */
+ static inline void sctp_v4_map_v6(union sctp_addr *addr)
+ {
++	__be16 port;
++
++	port = addr->v4.sin_port;
++	addr->v6.sin6_addr.s6_addr32[3] = addr->v4.sin_addr.s_addr;
++	addr->v6.sin6_port = port;
+ 	addr->v6.sin6_family = AF_INET6;
+ 	addr->v6.sin6_flowinfo = 0;
+ 	addr->v6.sin6_scope_id = 0;
+-	addr->v6.sin6_port = addr->v4.sin_port;
+-	addr->v6.sin6_addr.s6_addr32[3] = addr->v4.sin_addr.s_addr;
+ 	addr->v6.sin6_addr.s6_addr32[0] = 0;
+ 	addr->v6.sin6_addr.s6_addr32[1] = 0;
+ 	addr->v6.sin6_addr.s6_addr32[2] = htonl(0x0000ffff);
