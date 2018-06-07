@@ -1,99 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3h9rLdR3GVslLQAAmS7hNA
-	; Thu, 07 Jun 2018 18:22:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2+z7EvF+GVvBcAAAmS7hNA
+	; Thu, 07 Jun 2018 18:53:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 9BDB26074D; Thu,  7 Jun 2018 18:22:12 +0000 (UTC)
+	id 2ED0C608B8; Thu,  7 Jun 2018 18:53:19 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgYT53Bo"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBB1jT7m"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2973C605A2;
-	Thu,  7 Jun 2018 18:22:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2973C605A2
+	by smtp.codeaurora.org (Postfix) with ESMTP id A8A9960590;
+	Thu,  7 Jun 2018 18:53:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8A9960590
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935723AbeFGSWJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:22:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60242 "EHLO mail.kernel.org"
+        id S932774AbeFGSxR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:53:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933152AbeFGSWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:22:06 -0400
-Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com [74.125.82.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S932264AbeFGSxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 14:53:12 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53182208B0
-        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 18:22:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC6FB20895;
+        Thu,  7 Jun 2018 18:53:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528395725;
-        bh=87KrFrL2yob3soM7BqH5pKZFRV5AMt3+eqpsu7DlzDQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BgYT53BoDnbqFh64eh3IkOS2jor5WmSJe2V+MRYuPccpvEs4yvb8e2aUodAq5ru1/
-         kh7MAIAF+e+jcw6/MUzu5zmjqbWjVx9HtdqM3vRRcV33sQsNrK5S3gBtVrlLZPgCBX
-         REc83hyVBOE5kU2byaJ8Eb7ANw2mmbBRMCRiG/6c=
-Received: by mail-wm0-f44.google.com with SMTP id x6-v6so19628123wmc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:22:05 -0700 (PDT)
-X-Gm-Message-State: APt69E0kFjAz5fkUOqP59c+/zmFSE1/hcEuBxQ7qWLJj3/mObevFuSEa
-        XBJfLlFjeA0R0J1hn8A4Y4GIhM0ohVIiyX0AKdDrfQ==
-X-Google-Smtp-Source: ADUXVKKuvnewK/zoGK5MPBYH3F/Cluw/zCNI1KVCAHM7HXIJtm1Mxs272C3IbRYRjaoFZwUWyQzAlmU8AVnJEKqaZH8=
-X-Received: by 2002:a1c:34c9:: with SMTP id b192-v6mr2478788wma.21.1528395723668;
- Thu, 07 Jun 2018 11:22:03 -0700 (PDT)
+        s=default; t=1528397592;
+        bh=THYrxVjExmuaQ+tQAoFKeee0aco41+apFLqM2PFWWok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hBB1jT7mWpTbWFoGp/Caj2Hp0L6KPxSRWSBsXawbVLDYO/Cdr7ldsk1rJrxv6mMrJ
+         lSQ3VJPUuJRbg/fxAmUhh0bIB8mjbKByXX9Xi2kdn6r4KLXRBrfTRwH/5ec28J3Gz2
+         Rc+/sjARy7okDM3FEbjtx0PtFm4B7Y9sK2ccurMU=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 8FAEF1468B9; Thu,  7 Jun 2018 15:53:09 -0300 (-03)
+Date: Thu, 7 Jun 2018 15:53:09 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH 02/10] perf tools: Fix error index for pmu event parser
+Message-ID: <20180607185309.GA17292@kernel.org>
+References: <20180606221513.11302-1-jolsa@kernel.org>
+ <20180606221513.11302-3-jolsa@kernel.org>
 MIME-Version: 1.0
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-5-yu-cheng.yu@intel.com>
-In-Reply-To: <20180607143807.3611-5-yu-cheng.yu@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 7 Jun 2018 11:21:51 -0700
-X-Gmail-Original-Message-ID: <CALCETrUqXvh2FDXe6bveP10TFpzptEyQe2=mdfZFGKU0T+NXsA@mail.gmail.com>
-Message-ID: <CALCETrUqXvh2FDXe6bveP10TFpzptEyQe2=mdfZFGKU0T+NXsA@mail.gmail.com>
-Subject: Re: [PATCH 04/10] x86/cet: Handle thread shadow stack
-To: Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Florian Weimer <fweimer@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606221513.11302-3-jolsa@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> When fork() specifies CLONE_VM but not CLONE_VFORK, the child
-> needs a separate program stack and a separate shadow stack.
-> This patch handles allocation and freeing of the thread shadow
-> stack.
+Em Thu, Jun 07, 2018 at 12:15:05AM +0200, Jiri Olsa escreveu:
+> For events we provide specific error message we need to set
+> error column index, PMU parser is missing that, adding it.
+> 
+> Before:
+>   $ perf stat -e cycles,krava/cycles/ kill
+>   event syntax error: 'cycles,krava/cycles/'
+>                        \___ Cannot find PMU `krava'. Missing kernel support?
+> 
+> After:
+>   $ perf stat -e cycles,krava/cycles/ kill
+>   event syntax error: 'cycles,krava/cycles/'
+>                               \___ Cannot find PMU `krava'. Missing kernel support?
 
-Aha -- you're trying to make this automatic.  I'm not convinced this
-is a good idea.  The Linux kernel has a long and storied history of
-enabling new hardware features in ways that are almost entirely
-useless for userspace.
+Thanks, tested and applied.
 
-Florian, do you have any thoughts on how the user/kernel interaction
-for the shadow stack should work?  My intuition would be that all
-shadow stack management should be entirely controlled by userspace --
-newly cloned threads (with CLONE_VM) should have no shadow stack
-initially, and newly started processes should have no shadow stack
-until they ask for one.  If it would be needed for optimization, there
-could some indication in an ELF binary that it is requesting an
-initial shadow stack.
-
-But maybe some kind of automation like this patch does is actually reasonable.
-
---Andy
+- Arnaldo
