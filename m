@@ -1,220 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NSnfLghKGVtgUwAAmS7hNA
-	; Thu, 07 Jun 2018 15:07:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7zpCKQ4PGVsCCwAAmS7hNA
+	; Thu, 07 Jun 2018 10:55:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0313D608B8; Thu,  7 Jun 2018 15:07:01 +0000 (UTC)
+	id 6490B6089E; Thu,  7 Jun 2018 10:55:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 643406074D;
-	Thu,  7 Jun 2018 15:07:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 643406074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id A725F6063F;
+	Thu,  7 Jun 2018 10:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A725F6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935937AbeFGPG6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:06:58 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41552 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935993AbeFGPD5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:03:57 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbJ-0005Zx-6R; Thu, 07 Jun 2018 15:09:17 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0003JU-CA; Thu, 07 Jun 2018 15:09:13 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753529AbeFGKzT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:55:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35733 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753394AbeFGKzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 06:55:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C372AAC3A;
+        Thu,  7 Jun 2018 10:55:15 +0000 (UTC)
+Date: Thu, 7 Jun 2018 12:55:14 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Will Deacon <will.deacon@arm.com>, xiexiuqi@huawei.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <guohanjun@huawei.com>, wanghuiqiang@huawei.com,
+        tnowicki@caviumnetworks.com, linux-pci@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
+Message-ID: <20180607105514.GA13139@dhcp22.suse.cz>
+References: <1527768879-88161-1-git-send-email-xiexiuqi@huawei.com>
+ <1527768879-88161-2-git-send-email-xiexiuqi@huawei.com>
+ <20180606154516.GL6631@arm.com>
+ <CAErSpo6S0qtR42tjGZrFu4aMFFyThx1hkHTSowTt6t3XerpHnA@mail.gmail.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Andy Gospodarek" <andy@greyhouse.net>,
-        "Xin Long" <lucien.xin@gmail.com>,
-        "Beniamino Galvani" <bgalvani@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.532757702@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 401/410] bonding: move dev_mc_sync after
- master_upper_dev_link in bond_enslave
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAErSpo6S0qtR42tjGZrFu4aMFFyThx1hkHTSowTt6t3XerpHnA@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed 06-06-18 15:39:34, Bjorn Helgaas wrote:
+> [+cc akpm, linux-mm, linux-pci]
+> 
+> On Wed, Jun 6, 2018 at 10:44 AM Will Deacon <will.deacon@arm.com> wrote:
+> >
+> > On Thu, May 31, 2018 at 08:14:38PM +0800, Xie XiuQi wrote:
+> > > A numa system may return node which is not online.
+> > > For example, a numa node:
+> > > 1) without memory
+> > > 2) NR_CPUS is very small, and the cpus on the node are not brought up
+> > >
+> > > In this situation, we use NUMA_NO_NODE to avoid oops.
+> > >
+> > > [   25.732905] Unable to handle kernel NULL pointer dereference at virtual address 00001988
+> > > [   25.740982] Mem abort info:
+> > > [   25.743762]   ESR = 0x96000005
+> > > [   25.746803]   Exception class = DABT (current EL), IL = 32 bits
+> > > [   25.752711]   SET = 0, FnV = 0
+> > > [   25.755751]   EA = 0, S1PTW = 0
+> > > [   25.758878] Data abort info:
+> > > [   25.761745]   ISV = 0, ISS = 0x00000005
+> > > [   25.765568]   CM = 0, WnR = 0
+> > > [   25.768521] [0000000000001988] user address but active_mm is swapper
+> > > [   25.774861] Internal error: Oops: 96000005 [#1] SMP
+> > > [   25.779724] Modules linked in:
+> > > [   25.782768] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc6-mpam+ #115
+> > > [   25.789714] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 EC UEFI Nemo 2.0 RC0 - B305 05/28/2018
+> > > [   25.798831] pstate: 80c00009 (Nzcv daif +PAN +UAO)
+> > > [   25.803612] pc : __alloc_pages_nodemask+0xf0/0xe70
+> > > [   25.808389] lr : __alloc_pages_nodemask+0x184/0xe70
+> > > [   25.813252] sp : ffff00000996f660
+> > > [   25.816553] x29: ffff00000996f660 x28: 0000000000000000
+> > > [   25.821852] x27: 00000000014012c0 x26: 0000000000000000
+> > > [   25.827150] x25: 0000000000000003 x24: ffff000008099eac
+> > > [   25.832449] x23: 0000000000400000 x22: 0000000000000000
+> > > [   25.837747] x21: 0000000000000001 x20: 0000000000000000
+> > > [   25.843045] x19: 0000000000400000 x18: 0000000000010e00
+> > > [   25.848343] x17: 000000000437f790 x16: 0000000000000020
+> > > [   25.853641] x15: 0000000000000000 x14: 6549435020524541
+> > > [   25.858939] x13: 20454d502067756c x12: 0000000000000000
+> > > [   25.864237] x11: ffff00000996f6f0 x10: 0000000000000006
+> > > [   25.869536] x9 : 00000000000012a4 x8 : ffff8023c000ff90
+> > > [   25.874834] x7 : 0000000000000000 x6 : ffff000008d73c08
+> > > [   25.880132] x5 : 0000000000000000 x4 : 0000000000000081
+> > > [   25.885430] x3 : 0000000000000000 x2 : 0000000000000000
+> > > [   25.890728] x1 : 0000000000000001 x0 : 0000000000001980
+> > > [   25.896027] Process swapper/0 (pid: 1, stack limit = 0x        (ptrval))
+> > > [   25.902712] Call trace:
+> > > [   25.905146]  __alloc_pages_nodemask+0xf0/0xe70
+> > > [   25.909577]  allocate_slab+0x94/0x590
+> > > [   25.913225]  new_slab+0x68/0xc8
+> > > [   25.916353]  ___slab_alloc+0x444/0x4f8
+> > > [   25.920088]  __slab_alloc+0x50/0x68
+> > > [   25.923562]  kmem_cache_alloc_node_trace+0xe8/0x230
+> > > [   25.928426]  pci_acpi_scan_root+0x94/0x278
+> > > [   25.932510]  acpi_pci_root_add+0x228/0x4b0
+> > > [   25.936593]  acpi_bus_attach+0x10c/0x218
+> > > [   25.940501]  acpi_bus_attach+0xac/0x218
+> > > [   25.944323]  acpi_bus_attach+0xac/0x218
+> > > [   25.948144]  acpi_bus_scan+0x5c/0xc0
+> > > [   25.951708]  acpi_scan_init+0xf8/0x254
+> > > [   25.955443]  acpi_init+0x310/0x37c
+> > > [   25.958831]  do_one_initcall+0x54/0x208
+> > > [   25.962653]  kernel_init_freeable+0x244/0x340
+> > > [   25.966999]  kernel_init+0x18/0x118
+> > > [   25.970474]  ret_from_fork+0x10/0x1c
+> > > [   25.974036] Code: 7100047f 321902a4 1a950095 b5000602 (b9400803)
+> > > [   25.980162] ---[ end trace 64f0893eb21ec283 ]---
+> > > [   25.984765] Kernel panic - not syncing: Fatal exception
+> > >
+> > > Signed-off-by: Xie XiuQi <xiexiuqi@huawei.com>
+> > > Tested-by: Huiqiang Wang <wanghuiqiang@huawei.com>
+> > > Cc: Hanjun Guo <hanjun.guo@linaro.org>
+> > > Cc: Tomasz Nowicki <Tomasz.Nowicki@caviumnetworks.com>
+> > > Cc: Xishi Qiu <qiuxishi@huawei.com>
+> > > ---
+> > >  arch/arm64/kernel/pci.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/kernel/pci.c b/arch/arm64/kernel/pci.c
+> > > index 0e2ea1c..e17cc45 100644
+> > > --- a/arch/arm64/kernel/pci.c
+> > > +++ b/arch/arm64/kernel/pci.c
+> > > @@ -170,6 +170,9 @@ struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root)
+> > >       struct pci_bus *bus, *child;
+> > >       struct acpi_pci_root_ops *root_ops;
+> > >
+> > > +     if (node != NUMA_NO_NODE && !node_online(node))
+> > > +             node = NUMA_NO_NODE;
+> > > +
+> >
+> > This really feels like a bodge, but it does appear to be what other
+> > architectures do, so:
+> >
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> 
+> I agree, this doesn't feel like something we should be avoiding in the
+> caller of kzalloc_node().
+> 
+> I would not expect kzalloc_node() to return memory that's offline, no
+> matter what node we told it to allocate from.  I could imagine it
+> returning failure, or returning memory from a node that *is* online,
+> but returning a pointer to offline memory seems broken.
+> 
+> Are we putting memory that's offline in the free list?  I don't know
+> where to look to figure this out.
 
-------------------
+I am not sure I have the full context but pci_acpi_scan_root calls
+kzalloc_node(sizeof(*info), GFP_KERNEL, node)
+and that should fall back to whatever node that is online. Offline node
+shouldn't keep any pages behind. So there must be something else going
+on here and the patch is not the right way to handle it. What does
+faddr2line __alloc_pages_nodemask+0xf0 tells on this kernel?
 
-From: Xin Long <lucien.xin@gmail.com>
-
-commit ae42cc62a9f07f1f6979054ed92606b9c30f4a2e upstream.
-
-Beniamino found a crash when adding vlan as slave of bond which is also
-the parent link:
-
-  ip link add bond1 type bond
-  ip link set bond1 up
-  ip link add link bond1 vlan1 type vlan id 80
-  ip link set vlan1 master bond1
-
-The call trace is as below:
-
-  [<ffffffffa850842a>] queued_spin_lock_slowpath+0xb/0xf
-  [<ffffffffa8515680>] _raw_spin_lock+0x20/0x30
-  [<ffffffffa83f6f07>] dev_mc_sync+0x37/0x80
-  [<ffffffffc08687dc>] vlan_dev_set_rx_mode+0x1c/0x30 [8021q]
-  [<ffffffffa83efd2a>] __dev_set_rx_mode+0x5a/0xa0
-  [<ffffffffa83f7138>] dev_mc_sync_multiple+0x78/0x80
-  [<ffffffffc084127c>] bond_enslave+0x67c/0x1190 [bonding]
-  [<ffffffffa8401909>] do_setlink+0x9c9/0xe50
-  [<ffffffffa8403bf2>] rtnl_newlink+0x522/0x880
-  [<ffffffffa8403ff7>] rtnetlink_rcv_msg+0xa7/0x260
-  [<ffffffffa8424ecb>] netlink_rcv_skb+0xab/0xc0
-  [<ffffffffa83fe498>] rtnetlink_rcv+0x28/0x30
-  [<ffffffffa8424850>] netlink_unicast+0x170/0x210
-  [<ffffffffa8424bf8>] netlink_sendmsg+0x308/0x420
-  [<ffffffffa83cc396>] sock_sendmsg+0xb6/0xf0
-
-This is actually a dead lock caused by sync slave hwaddr from master when
-the master is the slave's 'slave'. This dead loop check is actually done
-by netdev_master_upper_dev_link. However, Commit 1f718f0f4f97 ("bonding:
-populate neighbour's private on enslave") moved it after dev_mc_sync.
-
-This patch is to fix it by moving dev_mc_sync after master_upper_dev_link,
-so that this loop check would be earlier than dev_mc_sync. It also moves
-if (mode == BOND_MODE_8023AD) into if (!bond_uses_primary) clause as an
-improvement.
-
-Note team driver also has this issue, I will fix it in another patch.
-
-Fixes: 1f718f0f4f97 ("bonding: populate neighbour's private on enslave")
-Reported-by: Beniamino Galvani <bgalvani@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Andy Gospodarek <andy@greyhouse.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/net/bonding/bond_main.c | 73 ++++++++++++++++-----------------
- 1 file changed, 35 insertions(+), 38 deletions(-)
-
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1414,44 +1414,11 @@ int bond_enslave(struct net_device *bond
- 			goto err_close;
- 	}
- 
--	/* If the mode uses primary, then the following is handled by
--	 * bond_change_active_slave().
--	 */
--	if (!bond_uses_primary(bond)) {
--		/* set promiscuity level to new slave */
--		if (bond_dev->flags & IFF_PROMISC) {
--			res = dev_set_promiscuity(slave_dev, 1);
--			if (res)
--				goto err_close;
--		}
--
--		/* set allmulti level to new slave */
--		if (bond_dev->flags & IFF_ALLMULTI) {
--			res = dev_set_allmulti(slave_dev, 1);
--			if (res)
--				goto err_close;
--		}
--
--		netif_addr_lock_bh(bond_dev);
--
--		dev_mc_sync_multiple(slave_dev, bond_dev);
--		dev_uc_sync_multiple(slave_dev, bond_dev);
--
--		netif_addr_unlock_bh(bond_dev);
--	}
--
--	if (BOND_MODE(bond) == BOND_MODE_8023AD) {
--		/* add lacpdu mc addr to mc list */
--		u8 lacpdu_multicast[ETH_ALEN] = MULTICAST_LACPDU_ADDR;
--
--		dev_mc_add(slave_dev, lacpdu_multicast);
--	}
--
- 	res = vlan_vids_add_by_dev(slave_dev, bond_dev);
- 	if (res) {
- 		pr_err("%s: Error: Couldn't add bond vlan ids to %s\n",
- 		       bond_dev->name, slave_dev->name);
--		goto err_hwaddr_unsync;
-+		goto err_close;
- 	}
- 
- 	prev_slave = bond_last_slave(bond);
-@@ -1598,6 +1565,37 @@ int bond_enslave(struct net_device *bond
- 		goto err_upper_unlink;
- 	}
- 
-+	/* If the mode uses primary, then the following is handled by
-+	 * bond_change_active_slave().
-+	 */
-+	if (!bond_uses_primary(bond)) {
-+		/* set promiscuity level to new slave */
-+		if (bond_dev->flags & IFF_PROMISC) {
-+			res = dev_set_promiscuity(slave_dev, 1);
-+			if (res)
-+				goto err_sysfs_del;
-+		}
-+
-+		/* set allmulti level to new slave */
-+		if (bond_dev->flags & IFF_ALLMULTI) {
-+			res = dev_set_allmulti(slave_dev, 1);
-+			if (res)
-+				goto err_sysfs_del;
-+		}
-+
-+		netif_addr_lock_bh(bond_dev);
-+		dev_mc_sync_multiple(slave_dev, bond_dev);
-+		dev_uc_sync_multiple(slave_dev, bond_dev);
-+		netif_addr_unlock_bh(bond_dev);
-+
-+		if (BOND_MODE(bond) == BOND_MODE_8023AD) {
-+			/* add lacpdu mc addr to mc list */
-+			u8 lacpdu_multicast[ETH_ALEN] = MULTICAST_LACPDU_ADDR;
-+
-+			dev_mc_add(slave_dev, lacpdu_multicast);
-+		}
-+	}
-+
- 	bond->slave_cnt++;
- 	bond_compute_features(bond);
- 	bond_set_carrier(bond);
-@@ -1619,6 +1617,9 @@ int bond_enslave(struct net_device *bond
- 	return 0;
- 
- /* Undo stages on error */
-+err_sysfs_del:
-+	bond_sysfs_slave_del(new_slave);
-+
- err_upper_unlink:
- 	bond_upper_dev_unlink(bond_dev, slave_dev);
- 
-@@ -1639,10 +1640,6 @@ err_detach:
- 	}
- 	slave_disable_netpoll(new_slave);
- 
--err_hwaddr_unsync:
--	if (!bond_uses_primary(bond))
--		bond_hw_addr_flush(bond_dev, slave_dev);
--
- err_close:
- 	slave_dev->priv_flags &= ~IFF_BONDING;
- 	dev_close(slave_dev);
+-- 
+Michal Hocko
+SUSE Labs
