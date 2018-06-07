@@ -1,153 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yghAKmtMGlujXwAAmS7hNA
-	; Fri, 08 Jun 2018 09:29:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id CYXCEGZCGVulfAAAmS7hNA
+	; Thu, 07 Jun 2018 14:34:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D4486607E4; Fri,  8 Jun 2018 09:29:36 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aekt5PnE"
+	id E0997607DC; Thu,  7 Jun 2018 14:34:26 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4782A60275;
-	Fri,  8 Jun 2018 09:29:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4782A60275
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 07AA9601D2;
+	Thu,  7 Jun 2018 14:34:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 07AA9601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeFHJ3d (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 05:29:33 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:45615 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751056AbeFHJ3a (ORCPT
+        id S933990AbeFGOeU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:34:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40347 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933629AbeFGOeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 05:29:30 -0400
-Received: by mail-vk0-f65.google.com with SMTP id l64-v6so250874vkl.12;
-        Fri, 08 Jun 2018 02:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=xgQ0eoSrGw9rUA7o3+AnSS2W0bhCaBt43cOOWFcM3fo=;
-        b=aekt5PnE73XpDajkNBZUhb/fyFDyD+ILGHa8dT5U/4G9fC4F/EbgQqFRgC5MiSbgCW
-         timfzFJ4kMU0wAxRsfGLhuEi/UOQH9gPo/g+aGy8UqKv/k6GcxfhdErU8APvSCnnAwJy
-         6/qu+25Nzi3aOPqvFTAyMvms0sQ6GNwkucPF50Hb+R8OhyRRhfyeAWlkCJ6YY7zANxnz
-         1y2s6UwHOulybVcfFl1fBHcFK44Dw8qx+1RVdQS+i3pfDdKIyAk1KbzpMvbyqErGC8q1
-         2Q38GzsWoC1memaa0mt50lK/cwixY/yWk3+fe/UL4W6Wdk6UF+wDlowyeF/XGDa4mSS8
-         7GYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=xgQ0eoSrGw9rUA7o3+AnSS2W0bhCaBt43cOOWFcM3fo=;
-        b=K2/hLD+0AyPFW8zqobM2enAizd70iZHK+RJKLZ6pmwEgiXo5yo0ovGYDonZNAAILg/
-         oNrR8ws7wxw0aij/5DnAOqAVrYxLhTe86NCcjwdRPjyEKWiBbaR/Cexiu5drInyQyXTw
-         6+dwYNBCN+2xva7kXaUA8Wu9lzCseZ136yOJirjBlzYMH2qjBSGjFBg29x5LK/NKgsoX
-         tb6IgPeQvCE1cLKuN0Oi5jzhmTQx2ux2i28zU6z3dOMdT6WwdwWKMgpwPTZ5NdSwq7/w
-         ZT3zQ64Frn8TEIG4UO9bZX3L/uSuItKBw3rTVjZnGNlo8hflwo1JQmZykMSa4dzeV1yW
-         oZPQ==
-X-Gm-Message-State: APt69E2d2NTeUsA0lo1RihrVG+N1ThIfb3TpaorMfbwgpkq9aorlTysY
-        vjuCeBziBeuO3uwzUcrxCB0ASvYqwuWgVW9QBMY=
-X-Google-Smtp-Source: ADUXVKLVo9hCwTsdwWzuZzTIJgBHFsS/hly6rVIztuJOE7YyidmHZPpcARV7IKdSxGeSBhs9/4pAfCRVZzmYueRef0E=
-X-Received: by 2002:a1f:2cc6:: with SMTP id s189-v6mr3345092vks.106.1528450169675;
- Fri, 08 Jun 2018 02:29:29 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 02:29:29 -0700 (PDT)
-In-Reply-To: <1787243.JuNJAuBqMb@avalon>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
- <20180426165346.494-12-kieran.bingham+renesas@ideasonboard.com> <1787243.JuNJAuBqMb@avalon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 Jun 2018 11:29:29 +0200
-X-Google-Sender-Auth: LYp1hNzyawo6IN5bwvsyHJ4d2H8
-Message-ID: <CAMuHMdU7OyUvgNqbkjtHyb0LPjgTdPp_BBcGNbjiqfQUgCdMuw@mail.gmail.com>
-Subject: Re: [PATCH 11/17] arm64: dts: r8a77965: Add VSP instances
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Will Deacon <will.deacon@arm.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+        Thu, 7 Jun 2018 10:34:18 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbw-0005Zv-TE; Thu, 07 Jun 2018 15:09:57 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvaz-0002kr-Eu; Thu, 07 Jun 2018 15:08:57 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Jim Mattson" <jmattson@google.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        kvm@vger.kernel.org, "KarimAllah Ahmed" <karahmed@amazon.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.141806436@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 059/410] KVM/x86: Remove indirect MSR op calls from
+ SPEC_CTRL
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-CC Sergei (for V3H/V3M)
+------------------
 
-On Thu, Apr 26, 2018 at 11:11 PM, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Thursday, 26 April 2018 19:53:40 EEST Kieran Bingham wrote:
->> The r8a77965 has 4 VSP instances.
->>
->> Based on a similar patch of the R8A7796 device tree
->> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
->>
->> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->> [Kieran: Rebased to top of tree, fixed sort orders]
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 44 +++++++++++++++++++++++
->>  1 file changed, 44 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
->> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
->> 1f44ed7c1b1c..e92e6b03333a 100644
->> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+From: Paolo Bonzini <pbonzini@redhat.com>
 
->> @@ -1025,6 +1047,17 @@
->>                       resets = <&cpg 611>;
->>               };
->>
->> +             vspd0: vsp@fea20000 {
->> +                     compatible = "renesas,vsp2";
->> +                     reg = <0 0xfea20000 0 0x4000>;
->
-> RFP2 has a CLUT so the register range needs to be extended. I'd recommend
-> covering the entire space (0x8000) even if no LUT or CLU module is present.
+commit ecb586bd29c99fb4de599dec388658e74388daad upstream.
 
-Even on V3H/V3M, which have some part of the CLUT, and could do
-with 0x5000?
+Having a paravirt indirect call in the IBRS restore path is not a
+good idea, since we are trying to protect from speculative execution
+of bogus indirect branch targets.  It is also slower, so use
+native_wrmsrl() on the vmentry path too.
 
-Note that this makes it overlap with fcpvd0 on all R-Car Gen3 SoCs,
-as mentioned by Simon on IRC.
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm@vger.kernel.org
+Fixes: d28b387fb74da95d69d2615732f50cceb38e9a4d
+Link: http://lkml.kernel.org/r/20180222154318.20361-2-pbonzini@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/kvm/svm.c | 7 ++++---
+ arch/x86/kvm/vmx.c | 7 ++++---
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
->> +                     interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
->> +                     clocks = <&cpg CPG_MOD 623>;
->> +                     power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
->> +                     resets = <&cpg 623>;
->> +
->> +                     renesas,fcp = <&fcpvd0>;
->> +             };
->> +
->>               fcpvd0: fcp@fea27000 {
->>                       compatible = "renesas,fcpv";
->>                       reg = <0 0xfea27000 0 0x200>;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -36,6 +36,7 @@
+ #include <asm/desc.h>
+ #include <asm/debugreg.h>
+ #include <asm/kvm_para.h>
++#include <asm/microcode.h>
+ #include <asm/nospec-branch.h>
+ 
+ #include <asm/virtext.h>
+@@ -3967,7 +3968,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * being speculatively taken.
+ 	 */
+ 	if (svm->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
+ 
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+@@ -4077,10 +4078,10 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * save it.
+ 	 */
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+-		rdmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+ 	if (svm->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -46,6 +46,7 @@
+ #include <asm/perf_event.h>
+ #include <asm/debugreg.h>
+ #include <asm/kexec.h>
++#include <asm/microcode.h>
+ #include <asm/nospec-branch.h>
+ 
+ #include "trace.h"
+@@ -7542,7 +7543,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * being speculatively taken.
+ 	 */
+ 	if (vmx->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
+ 
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+ 	asm(
+@@ -7673,10 +7674,10 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * save it.
+ 	 */
+ 	if (!msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL))
+-		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+ 
+ 	if (vmx->spec_ctrl)
+-		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+ 
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
