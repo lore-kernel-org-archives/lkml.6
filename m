@@ -1,110 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m/iHG11tHlucUgAAmS7hNA
-	; Mon, 11 Jun 2018 12:39:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xXeQAbLtGFvDeAAAmS7hNA
+	; Thu, 07 Jun 2018 08:32:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 195CE60792; Mon, 11 Jun 2018 12:39:20 +0000 (UTC)
+	id DBEA36089E; Thu,  7 Jun 2018 08:32:49 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czMbtDVM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pw1ZbqSK"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9233A600D0;
-	Mon, 11 Jun 2018 12:39:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9233A600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 59DF360115;
+	Thu,  7 Jun 2018 08:32:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 59DF360115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933170AbeFKMjR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 08:39:17 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:35012 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932910AbeFKMjP (ORCPT
+        id S932639AbeFGIcp (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:32:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43366 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752568AbeFGIcn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:39:15 -0400
-Received: by mail-vk0-f66.google.com with SMTP id o17-v6so12162712vka.2;
-        Mon, 11 Jun 2018 05:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=J+5U/CLI+ddGe5QQzpNF+yE310Cyxp/5p9xgshqYOmw=;
-        b=czMbtDVM8yd2cTjTsTtT8Zn9rzMern66VVhfu9D9OIZRj4CI8r9FM30yYg+6NNBVfT
-         TSp9b+BbFR8n7P3dFCltTnF+35RHHpubBHHdqcACM9ZHib1i1xR4CJncVplaXX3DKDCL
-         ORCt8A2WOAMykL97X0Fwn59xB60sFBaEy9PkV1R/nkvVpiInWJmlKR75qhIO2kOlxae5
-         AiTvXVuVk9AxHhVtArHk6RTmY85r1E8WRMAZWRsucJx4jf8Awf81FOUdvNoifrYvf8BJ
-         fyZebOP+lSMTOniE0guLyVrFSBQxARWE21CQEskAmIu3goiXPdYF/88jAPmjY/sWb6VR
-         FvaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=J+5U/CLI+ddGe5QQzpNF+yE310Cyxp/5p9xgshqYOmw=;
-        b=fINqGnNpdUFJL+kNLFbNtGajyk+IyqgukklJYB+BcuvBwKXnTo2/ECvBdOYzjK+hrW
-         x+Rfn7ElWeLvejEm+9AZrT0NNzyjnJ6RZZu6tQ5imOk6e+ggvhKQ1ub4ixtp6NcREW5c
-         NgFGi4WKNUrI24watOJVYFz9biM+QWi9Kb9n7kjvH+aWWTcaRYsd7R6TDFly80fNt6SA
-         mXnR6F8sjsWRSAD1PBFH7/l+BOqZmstppXuqd8Ca9pgMOv6JGL6L7tVOb3DgdIO5NfcS
-         D9o1rDlHzwYV28+svwUu/EXGADXgb5BcRVvFF88ZPojcaKon8YqcnV8zdwY1Sfw8puBb
-         VNEg==
-X-Gm-Message-State: APt69E1hzGoGbkxf2jsrUuh3mtqWEJQgrmfInowf3Gmzyddl4eq77qf9
-        ULa1Lo0K0dmKV8XdGE5UTSD7OqfEJMGIiDGRpsKbmQ==
-X-Google-Smtp-Source: ADUXVKKu4iocev1mk9v4ku5r/emxIewrIjFozypZjeD5PscR1DI4CzSJ15rZNlbr6JUTHRFikd7yUJpl24uWVR7+gSc=
-X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr10107891vkd.15.1528720754612;
- Mon, 11 Jun 2018 05:39:14 -0700 (PDT)
+        Thu, 7 Jun 2018 04:32:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gG199qVn++i15hkbvtxiIIvowAu89gWF5LkzdmriZ9Y=; b=Pw1ZbqSKGPpva4D+8IN3VaS4z
+        AoEBLab9yLwciz66DL7Spfd17uV2a2w25T1uSsu1+9D/sdyAotp1pQMY36Gvx8IiEOHF9ENHY7gxl
+        rxoV3djEIbD++TFxVqG+HcER7I3wNj0ls9nYQNm331aU2Qr7h1/WVUvxns2ISfX/FN87xgHyOkUb/
+        71Ccx/qJ7xAlIKgTCxi9argWuSPiLOTt+YWlinh+T4dfJgIrw24QtQocCPDP/6nz3PLvUmzklG86J
+        rJBNg+epFwJxtTCSbpSGBUrMONyutKSkfiz8aQtR2wOYu47feqPS7lX6uDINeBf63kBJcw119oiiD
+        vANrUHeEQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fQqLQ-0003iC-5M; Thu, 07 Jun 2018 08:32:32 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2C29F201EA7A6; Thu,  7 Jun 2018 10:32:29 +0200 (CEST)
+Date: Thu, 7 Jun 2018 10:32:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH V5] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180607083229.GJ12198@hirez.programming.kicks-ass.net>
+References: <1528190208-22915-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180606122357.GN12258@hirez.programming.kicks-ass.net>
+ <22f5cf0b-049e-7938-55f6-4b4b154f8389@linaro.org>
+ <20180606150203.GE12180@hirez.programming.kicks-ass.net>
+ <ea347237-7cef-095a-5ddb-19c181d10c23@linaro.org>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 05:39:13
- -0700 (PDT)
-In-Reply-To: <20180611115240.32606-8-ricardo.ribalda@gmail.com>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com> <20180611115240.32606-8-ricardo.ribalda@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 11 Jun 2018 15:39:13 +0300
-Message-ID: <CAHp75Vf-V7BVU_SiyBp18D0cM_nOO=EAxfgzUaa4-hngh9PeMw@mail.gmail.com>
-Subject: Re: [PATCH v2 07/24] serdev: Allows dynamic creation of devices via sysfs
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea347237-7cef-095a-5ddb-19c181d10c23@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 2:52 PM, Ricardo Ribalda Delgado
-<ricardo.ribalda@gmail.com> wrote:
-> Allow creating and deleting devices via sysfs. Devices created will be
-> matched to serdev drivers via modalias (the string provided by the user)
-> and deleted via their name. Eg:
+On Thu, Jun 07, 2018 at 10:18:27AM +0200, Daniel Lezcano wrote:
+> So IIUC, neither atomic or WRITE|READ_ONCE are necessary in this code
+> because of the wake_up_process() barrier is enough, right ?
 
-> +       nline = strchr(buf, '\n');
+I didn't look hard enough; if there ever is a time where the loads and
+stores happen concurrently, you need READ/WRITE_ONCE(). If there is no
+concurrency on the variables, you don't need anything.
 
-...
-
-> +       if (nline)
-> +               len = nline - buf;
-> +       else
-
-> +               len = strlen(buf);
-> +       len = min(SERDEV_NAME_SIZE - 1, len);
-
-If buf is guaranteed to have '\0', the strlen() is not needed.
-
-I'm not sure about this entire dances with first line and so on.
-When it's possible to get more, than two lines on input?
-
-Would it be just as simple as strstrip() call followed by strscpy()?
-
-> +       strncpy(serdev->modalias, buf, len);
-> +       serdev->modalias[len] = '\0';
-
-strspcy() ?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Neither atomic_read/set() nor REAd/WRITE_ONCE() will help with ordering,
+which is what the wake_up_process() would provide here, different things
+entirely.
