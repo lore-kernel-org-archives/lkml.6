@@ -1,91 +1,267 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yyN2LxkQGVunFQAAmS7hNA
-	; Thu, 07 Jun 2018 10:59:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NxjIC7mlGFuWbwAAmS7hNA
+	; Thu, 07 Jun 2018 03:26:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 335CE608BF; Thu,  7 Jun 2018 10:59:54 +0000 (UTC)
+	id 4BCD76089E; Thu,  7 Jun 2018 03:26:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id B4C0B6063F;
-	Thu,  7 Jun 2018 10:59:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4C0B6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8F1D6605BD;
+	Thu,  7 Jun 2018 03:26:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F1D6605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932594AbeFGK7v (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:59:51 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:31666 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932502AbeFGK7r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:59:47 -0400
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="12270502"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 07 Jun 2018 03:59:43 -0700
-Received: from m19893.microchip.com (10.10.76.4) by
- CHN-SV-EXCH01.mchp-main.com (10.10.76.37) with Microsoft SMTP Server id
- 14.3.352.0; Thu, 7 Jun 2018 03:59:42 -0700
-From: Radu Pirea <radu.pirea@microchip.com>
-To: <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC: <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v6 1/6] MAINTAINERS: add at91 usart mfd driver
-Date: Thu, 7 Jun 2018 14:00:15 +0300
-Message-ID: <20180607110020.20565-2-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180607110020.20565-1-radu.pirea@microchip.com>
-References: <20180607110020.20565-1-radu.pirea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1753667AbeFGD0T (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 23:26:19 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:34000 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932694AbeFGDZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 23:25:01 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D5AE1200192;
+        Thu,  7 Jun 2018 05:24:59 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 762BE2001DD;
+        Thu,  7 Jun 2018 05:24:59 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 2FE1040C72;
+        Wed,  6 Jun 2018 20:24:59 -0700 (MST)
+Received: from titan.ap.freescale.net ([10.192.208.233])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w573OSwW023286;
+        Wed, 6 Jun 2018 20:24:56 -0700
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v2, 09/10] dpaa_eth: add support for hardware timestamping
+Date: Thu,  7 Jun 2018 11:22:55 +0800
+Message-Id: <20180607032256.39802-10-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180607032256.39802-1-yangbo.lu@nxp.com>
+References: <20180607032256.39802-1-yangbo.lu@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added entry for at91 usart mfd driver.
+This patch is to add hardware timestamping support
+for dpaa_eth. On Rx, timestamping is enabled for
+all frames. On Tx, we only instruct the hardware
+to timestamp the frames marked accordingly by the
+stack.
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changes for v2:
+	- Removed ifdef for timestamp code.
+	- Minor fixes for code style.
+---
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |  101 ++++++++++++++++++++++-
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.h |    3 +
+ 2 files changed, 99 insertions(+), 5 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e2a2fddbd19..12203d07c6af 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9160,6 +9160,7 @@ M:	Richard Genoud <richard.genoud@gmail.com>
- S:	Maintained
- F:	drivers/tty/serial/atmel_serial.c
- F:	drivers/tty/serial/atmel_serial.h
-+F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+index fd43f98..bd589ac 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -1168,7 +1168,7 @@ static int dpaa_eth_init_tx_port(struct fman_port *port, struct dpaa_fq *errq,
+ 	buf_prefix_content.priv_data_size = buf_layout->priv_data_size;
+ 	buf_prefix_content.pass_prs_result = true;
+ 	buf_prefix_content.pass_hash_result = true;
+-	buf_prefix_content.pass_time_stamp = false;
++	buf_prefix_content.pass_time_stamp = true;
+ 	buf_prefix_content.data_align = DPAA_FD_DATA_ALIGNMENT;
  
- MICROCHIP / ATMEL DMA DRIVER
- M:	Ludovic Desroches <ludovic.desroches@microchip.com>
-@@ -9192,6 +9193,14 @@ S:	Supported
- F:	drivers/mtd/nand/raw/atmel/*
- F:	Documentation/devicetree/bindings/mtd/atmel-nand.txt
+ 	params.specific_params.non_rx_params.err_fqid = errq->fqid;
+@@ -1210,7 +1210,7 @@ static int dpaa_eth_init_rx_port(struct fman_port *port, struct dpaa_bp **bps,
+ 	buf_prefix_content.priv_data_size = buf_layout->priv_data_size;
+ 	buf_prefix_content.pass_prs_result = true;
+ 	buf_prefix_content.pass_hash_result = true;
+-	buf_prefix_content.pass_time_stamp = false;
++	buf_prefix_content.pass_time_stamp = true;
+ 	buf_prefix_content.data_align = DPAA_FD_DATA_ALIGNMENT;
  
-+MICROCHIP AT91 USART MFD DRIVER
-+M:	Radu Pirea <radu.pirea@microchip.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Supported
-+F:	drivers/mfd/at91-usart.c
-+F:	include/dt-bindings/mfd/at91-usart.h
-+F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
+ 	rx_p = &params.specific_params.rx_params;
+@@ -1592,6 +1592,16 @@ static int dpaa_eth_refill_bpools(struct dpaa_priv *priv)
+ 	return 0;
+ }
+ 
++static int dpaa_get_tstamp_ns(struct net_device *net_dev, u64 *ns,
++			      struct fman_port *port, const void *data)
++{
++	if (!fman_port_get_tstamp_field(port, data, ns)) {
++		be64_to_cpus(ns);
++		return 0;
++	}
++	return -EINVAL;
++}
 +
- MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER
- M:	Woojung Huh <Woojung.Huh@microchip.com>
- M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+ /* Cleanup function for outgoing frame descriptors that were built on Tx path,
+  * either contiguous frames or scatter/gather ones.
+  * Skb freeing is not handled here.
+@@ -1607,14 +1617,29 @@ static int dpaa_eth_refill_bpools(struct dpaa_priv *priv)
+ {
+ 	const enum dma_data_direction dma_dir = DMA_TO_DEVICE;
+ 	struct device *dev = priv->net_dev->dev.parent;
++	struct skb_shared_hwtstamps shhwtstamps;
+ 	dma_addr_t addr = qm_fd_addr(fd);
+ 	const struct qm_sg_entry *sgt;
+ 	struct sk_buff **skbh, *skb;
+ 	int nr_frags, i;
++	u64 ns;
+ 
+ 	skbh = (struct sk_buff **)phys_to_virt(addr);
+ 	skb = *skbh;
+ 
++	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
++		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
++
++		if (!dpaa_get_tstamp_ns(priv->net_dev, &ns,
++					priv->mac_dev->port[TX],
++					(void *)skbh)) {
++			shhwtstamps.hwtstamp = ns_to_ktime(ns);
++			skb_tstamp_tx(skb, &shhwtstamps);
++		} else {
++			dev_warn(dev, "dpaa_get_tstamp_ns failed!\n");
++		}
++	}
++
+ 	if (unlikely(qm_fd_get_format(fd) == qm_fd_sg)) {
+ 		nr_frags = skb_shinfo(skb)->nr_frags;
+ 		dma_unmap_single(dev, addr, qm_fd_get_offset(fd) +
+@@ -2086,6 +2111,11 @@ static int dpaa_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ 	if (unlikely(err < 0))
+ 		goto skb_to_fd_failed;
+ 
++	if (priv->tx_tstamp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
++		fd.cmd |= FM_FD_CMD_UPD;
++		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
++	}
++
+ 	if (likely(dpaa_xmit(priv, percpu_stats, queue_mapping, &fd) == 0))
+ 		return NETDEV_TX_OK;
+ 
+@@ -2227,6 +2257,7 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
+ 						struct qman_fq *fq,
+ 						const struct qm_dqrr_entry *dq)
+ {
++	struct skb_shared_hwtstamps *shhwtstamps;
+ 	struct rtnl_link_stats64 *percpu_stats;
+ 	struct dpaa_percpu_priv *percpu_priv;
+ 	const struct qm_fd *fd = &dq->fd;
+@@ -2240,6 +2271,7 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
+ 	struct sk_buff *skb;
+ 	int *count_ptr;
+ 	void *vaddr;
++	u64 ns;
+ 
+ 	fd_status = be32_to_cpu(fd->status);
+ 	fd_format = qm_fd_get_format(fd);
+@@ -2304,6 +2336,18 @@ static enum qman_cb_dqrr_result rx_default_dqrr(struct qman_portal *portal,
+ 	if (!skb)
+ 		return qman_cb_dqrr_consume;
+ 
++	if (priv->rx_tstamp) {
++		shhwtstamps = skb_hwtstamps(skb);
++		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
++
++		if (!dpaa_get_tstamp_ns(priv->net_dev, &ns,
++					priv->mac_dev->port[RX],
++					vaddr))
++			shhwtstamps->hwtstamp = ns_to_ktime(ns);
++		else
++			dev_warn(net_dev->dev.parent, "dpaa_get_tstamp_ns failed!\n");
++	}
++
+ 	skb->protocol = eth_type_trans(skb, net_dev);
+ 
+ 	if (net_dev->features & NETIF_F_RXHASH && priv->keygen_in_use &&
+@@ -2523,11 +2567,58 @@ static int dpaa_eth_stop(struct net_device *net_dev)
+ 	return err;
+ }
+ 
++static int dpaa_ts_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
++{
++	struct dpaa_priv *priv = netdev_priv(dev);
++	struct hwtstamp_config config;
++
++	if (copy_from_user(&config, rq->ifr_data, sizeof(config)))
++		return -EFAULT;
++
++	switch (config.tx_type) {
++	case HWTSTAMP_TX_OFF:
++		/* Couldn't disable rx/tx timestamping separately.
++		 * Do nothing here.
++		 */
++		priv->tx_tstamp = false;
++		break;
++	case HWTSTAMP_TX_ON:
++		priv->mac_dev->set_tstamp(priv->mac_dev->fman_mac, true);
++		priv->tx_tstamp = true;
++		break;
++	default:
++		return -ERANGE;
++	}
++
++	if (config.rx_filter == HWTSTAMP_FILTER_NONE) {
++		/* Couldn't disable rx/tx timestamping separately.
++		 * Do nothing here.
++		 */
++		priv->rx_tstamp = false;
++	} else {
++		priv->mac_dev->set_tstamp(priv->mac_dev->fman_mac, true);
++		priv->rx_tstamp = true;
++		/* TS is set for all frame types, not only those requested */
++		config.rx_filter = HWTSTAMP_FILTER_ALL;
++	}
++
++	return copy_to_user(rq->ifr_data, &config, sizeof(config)) ?
++			-EFAULT : 0;
++}
++
+ static int dpaa_ioctl(struct net_device *net_dev, struct ifreq *rq, int cmd)
+ {
+-	if (!net_dev->phydev)
+-		return -EINVAL;
+-	return phy_mii_ioctl(net_dev->phydev, rq, cmd);
++	int ret = -EINVAL;
++
++	if (cmd == SIOCGMIIREG) {
++		if (net_dev->phydev)
++			return phy_mii_ioctl(net_dev->phydev, rq, cmd);
++	}
++
++	if (cmd == SIOCSHWTSTAMP)
++		return dpaa_ts_ioctl(net_dev, rq, cmd);
++
++	return ret;
+ }
+ 
+ static const struct net_device_ops dpaa_ops = {
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
+index bd94220..af320f8 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.h
+@@ -182,6 +182,9 @@ struct dpaa_priv {
+ 
+ 	struct dpaa_buffer_layout buf_layout[2];
+ 	u16 rx_headroom;
++
++	bool tx_tstamp; /* Tx timestamping enabled */
++	bool rx_tstamp; /* Rx timestamping enabled */
+ };
+ 
+ /* from dpaa_ethtool.c */
 -- 
-2.17.1
+1.7.1
