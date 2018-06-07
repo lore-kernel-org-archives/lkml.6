@@ -1,119 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1o70Er5jHlucYAAAmS7hNA
-	; Mon, 11 Jun 2018 11:59:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y43gJlzoGFu8TwAAmS7hNA
+	; Thu, 07 Jun 2018 08:10:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D688C607BB; Mon, 11 Jun 2018 11:59:20 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qWnnAJs4"
+	id 81C0E6089E; Thu,  7 Jun 2018 08:10:04 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3AC0360351;
-	Mon, 11 Jun 2018 11:59:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AC0360351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BF3B2607E7;
+	Thu,  7 Jun 2018 08:10:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF3B2607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933396AbeFKL7S (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:59:18 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39637 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933310AbeFKL7L (ORCPT
+        id S932279AbeFGIKA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:10:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46533 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753028AbeFGIJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:59:11 -0400
-Received: by mail-wm0-f68.google.com with SMTP id p11-v6so15956257wmc.4;
-        Mon, 11 Jun 2018 04:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5t4OXh3YN7fJm225qMAwN0eYWpLsXjfBmJlsr43UDiQ=;
-        b=qWnnAJs4snlwE77KEf8pulZJYgU4Bx3FYGDm3IcJ6Lf209awCG7g4A5/tfsLOFSmXI
-         p2GV1qmNQQrPW0ajF5wDFLQtICXLU2SqIvzBqxtoB/rKG7lQt7GSk+/Im4bJHuZ+zXFm
-         EQ8iD5gci/6ka0yKattvaQvuNXYpOiTy6Dh19xPvwVO5mMDRMrr4fh+dEoInNTcYgOvl
-         DHefEA7UAXFFGv57FwuxqT18PDO5q6K/5ufqOdVNstpjB86r9MGdZv4yZpFN2TA8oFQ1
-         Zlcpet92YDYOl8s5jANX8RFsA1vywPyfypOHAcnf3NOhGxl16kL2SP8hxUJ/0xOcjGIv
-         iRkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5t4OXh3YN7fJm225qMAwN0eYWpLsXjfBmJlsr43UDiQ=;
-        b=Gc5rtjv5ynxdDiCTum05NzfAjW0wVt/zHrNY55UrR0q9gvPO+P6dF0psRbE/KyagvL
-         4GY8NZsgUKR3mpz+MhtS2XUzMw6mon8rymnmHXG0ngElHnAAApfW0QZ7YlxWE31jRjpT
-         pZS8B0SLReBRtAEq/v5Z3/qCWHYlyLiRvM6NDg+/TAnPzjNHgNMmeu9w36v5zkrKcNLO
-         61ptTUnIwUWbXIumHzQppyfiZiqdW0/r999ByldCQras3Q4XAS6hjo7qRad8E8OEZL9V
-         Vg0tR59luIx2TxZ5iougS5ycYNSW0RRLFRdvxgv1NDVWgFrWTW2MwUjS+4VGCw1JtZgM
-         AuAQ==
-X-Gm-Message-State: APt69E3fZJiQiKGifz7vV1vEZQezGDIGHszLOB3KxLHEKnfVdLou37my
-        QYn7kqt9cFsfnXefZw5I3mroRNhJ
-X-Google-Smtp-Source: ADUXVKI3WET6H7bvHUNArbE5GuYh0DZbQHdU4wecN5ZZ3A8jPRov3dk+PIIjKyEkMOoKOsL3+V1Mug==
-X-Received: by 2002:a1c:47cf:: with SMTP id m76-v6mr2913032wmi.80.1528718349603;
-        Mon, 11 Jun 2018 04:59:09 -0700 (PDT)
-Received: from kurokawa.lan (ip-86-49-107-50.net.upcbroadband.cz. [86.49.107.50])
-        by smtp.gmail.com with ESMTPSA id t124-v6sm7974796wmt.29.2018.06.11.04.59.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:59:07 -0700 (PDT)
-From: Marek Vasut <marek.vasut@gmail.com>
-X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 05/14] mfd: da9063: Use PLATFORM_DEVID_NONE
-Date: Mon, 11 Jun 2018 13:58:42 +0200
-Message-Id: <20180611115851.1987-5-marek.vasut+renesas@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
-References: <20180611115851.1987-1-marek.vasut+renesas@gmail.com>
+        Thu, 7 Jun 2018 04:09:58 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5789nBk2124650
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:09:49 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5789nbC2124647;
+        Thu, 7 Jun 2018 01:09:49 -0700
+Date: Thu, 7 Jun 2018 01:09:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-2d7d1nzd3ksqornloqeer99r@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        mingo@kernel.org, adrian.hunter@intel.com, tglx@linutronix.de,
+        acme@redhat.com, namhyung@kernel.org, dsahern@gmail.com,
+        wangnan0@huawei.com
+Reply-To: wangnan0@huawei.com, dsahern@gmail.com, acme@redhat.com,
+          namhyung@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+          mingo@kernel.org, jolsa@kernel.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf srcline: Introduce map__srcline() to make
+ code more compact
+Git-Commit-ID: e2d88aaa649e65851463426b133d87b61d3accbd
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use PLATFORM_DEVID_NONE instead of -1 in mfd_add_devices.
+Commit-ID:  e2d88aaa649e65851463426b133d87b61d3accbd
+Gitweb:     https://git.kernel.org/tip/e2d88aaa649e65851463426b133d87b61d3accbd
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 28 May 2018 11:05:20 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 4 Jun 2018 10:28:52 -0300
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Steve Twiss <stwiss.opensource@diasemi.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
-V4: New patch
-V5: Rebase on top of new 01 and 02 patches
-V6: No change
----
- drivers/mfd/da9063-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+perf srcline: Introduce map__srcline() to make code more compact
 
-diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
-index 76258e5709f8..f57558590283 100644
---- a/drivers/mfd/da9063-core.c
-+++ b/drivers/mfd/da9063-core.c
-@@ -226,9 +226,9 @@ int da9063_device_init(struct da9063 *da9063, unsigned int irq)
+Replacing a common open coded sequence.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-2d7d1nzd3ksqornloqeer99r@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/map.c  | 12 ++++++----
+ tools/perf/util/map.h  |  1 +
+ tools/perf/util/sort.c | 60 +++++++++++---------------------------------------
+ 3 files changed, 22 insertions(+), 51 deletions(-)
+
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 6ae97eda370b..92abc8e248c5 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -415,16 +415,20 @@ size_t map__fprintf_dsoname(struct map *map, FILE *fp)
+ 	return fprintf(fp, "%s", dsoname);
+ }
  
- 	da9063->irq_base = regmap_irq_chip_get_base(da9063->regmap_irq);
++char *map__srcline(struct map *map, u64 addr, struct symbol *sym)
++{
++	if (map == NULL)
++		return SRCLINE_UNKNOWN;
++	return get_srcline(map->dso, map__rip_2objdump(map, addr), sym, true, true, addr);
++}
++
+ int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
+ 			 FILE *fp)
+ {
+-	char *srcline;
+ 	int ret = 0;
  
--	ret = devm_mfd_add_devices(da9063->dev, -1, da9063_devs,
--				   ARRAY_SIZE(da9063_devs), NULL,
--				   da9063->irq_base, NULL);
-+	ret = devm_mfd_add_devices(da9063->dev, PLATFORM_DEVID_NONE,
-+				   da9063_devs, ARRAY_SIZE(da9063_devs),
-+				   NULL, da9063->irq_base, NULL);
- 	if (ret)
- 		dev_err(da9063->dev, "Cannot add MFD cells\n");
+ 	if (map && map->dso) {
+-		srcline = get_srcline(map->dso,
+-				      map__rip_2objdump(map, addr), NULL,
+-				      true, true, addr);
++		char *srcline = map__srcline(map, addr, NULL);
+ 		if (srcline != SRCLINE_UNKNOWN)
+ 			ret = fprintf(fp, "%s%s", prefix, srcline);
+ 		free_srcline(srcline);
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 97e2a063bd65..4cb90f242bed 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -169,6 +169,7 @@ static inline void __map__zput(struct map **map)
+ int map__overlap(struct map *l, struct map *r);
+ size_t map__fprintf(struct map *map, FILE *fp);
+ size_t map__fprintf_dsoname(struct map *map, FILE *fp);
++char *map__srcline(struct map *map, u64 addr, struct symbol *sym);
+ int map__fprintf_srcline(struct map *map, u64 addr, const char *prefix,
+ 			 FILE *fp);
  
--- 
-2.16.2
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 4058ade352a5..71096dbfeb88 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -333,13 +333,7 @@ struct sort_entry sort_sym = {
+ 
+ char *hist_entry__get_srcline(struct hist_entry *he)
+ {
+-	struct map *map = he->ms.map;
+-
+-	if (!map)
+-		return SRCLINE_UNKNOWN;
+-
+-	return get_srcline(map->dso, map__rip_2objdump(map, he->ip),
+-			   he->ms.sym, true, true, he->ip);
++	return map__srcline(he->ms.map, he->ip, he->ms.sym);
+ }
+ 
+ static int64_t
+@@ -375,28 +369,14 @@ static int64_t
+ sort__srcline_from_cmp(struct hist_entry *left, struct hist_entry *right)
+ {
+ 	if (!left->branch_info->srcline_from) {
+-		struct map *map = left->branch_info->from.map;
+-		if (!map)
+-			left->branch_info->srcline_from = SRCLINE_UNKNOWN;
+-		else
+-			left->branch_info->srcline_from = get_srcline(map->dso,
+-					   map__rip_2objdump(map,
+-							     left->branch_info->from.al_addr),
+-							 left->branch_info->from.sym,
+-							 true, true,
+-							 left->branch_info->from.al_addr);
++		left->branch_info->srcline_from = map__srcline(left->branch_info->from.map,
++							       left->branch_info->from.al_addr,
++							       left->branch_info->from.sym);
+ 	}
+ 	if (!right->branch_info->srcline_from) {
+-		struct map *map = right->branch_info->from.map;
+-		if (!map)
+-			right->branch_info->srcline_from = SRCLINE_UNKNOWN;
+-		else
+-			right->branch_info->srcline_from = get_srcline(map->dso,
+-					     map__rip_2objdump(map,
+-							       right->branch_info->from.al_addr),
+-						     right->branch_info->from.sym,
+-						     true, true,
+-						     right->branch_info->from.al_addr);
++		right->branch_info->srcline_from = map__srcline(right->branch_info->from.map,
++								right->branch_info->from.al_addr,
++								right->branch_info->from.sym);
+ 	}
+ 	return strcmp(right->branch_info->srcline_from, left->branch_info->srcline_from);
+ }
+@@ -420,28 +400,14 @@ static int64_t
+ sort__srcline_to_cmp(struct hist_entry *left, struct hist_entry *right)
+ {
+ 	if (!left->branch_info->srcline_to) {
+-		struct map *map = left->branch_info->to.map;
+-		if (!map)
+-			left->branch_info->srcline_to = SRCLINE_UNKNOWN;
+-		else
+-			left->branch_info->srcline_to = get_srcline(map->dso,
+-					   map__rip_2objdump(map,
+-							     left->branch_info->to.al_addr),
+-							 left->branch_info->from.sym,
+-							 true, true,
+-							 left->branch_info->to.al_addr);
++		left->branch_info->srcline_to = map__srcline(left->branch_info->to.map,
++							     left->branch_info->to.al_addr,
++							     left->branch_info->to.sym);
+ 	}
+ 	if (!right->branch_info->srcline_to) {
+-		struct map *map = right->branch_info->to.map;
+-		if (!map)
+-			right->branch_info->srcline_to = SRCLINE_UNKNOWN;
+-		else
+-			right->branch_info->srcline_to = get_srcline(map->dso,
+-					     map__rip_2objdump(map,
+-							       right->branch_info->to.al_addr),
+-						     right->branch_info->to.sym,
+-						     true, true,
+-						     right->branch_info->to.al_addr);
++		right->branch_info->srcline_to = map__srcline(right->branch_info->to.map,
++							      right->branch_info->to.al_addr,
++							      right->branch_info->to.sym);
+ 	}
+ 	return strcmp(right->branch_info->srcline_to, left->branch_info->srcline_to);
+ }
