@@ -1,133 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 49u3N4ZaGVsVEAAAmS7hNA
-	; Thu, 07 Jun 2018 16:17:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BYU6M89BGVuddAAAmS7hNA
+	; Thu, 07 Jun 2018 14:31:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E044F607E7; Thu,  7 Jun 2018 16:17:13 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQOKWitG"
+	id 18AF6607E7; Thu,  7 Jun 2018 14:31:46 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 453DD60590;
-	Thu,  7 Jun 2018 16:17:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 453DD60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 82AA76063F;
+	Thu,  7 Jun 2018 14:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 82AA76063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935321AbeFGQRL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:17:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56884 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932902AbeFGQRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:17:08 -0400
-Received: from localhost (mobile-166-170-56-202.mycingular.net [166.170.56.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCFA9206B7;
-        Thu,  7 Jun 2018 16:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528388228;
-        bh=NqFThFgYS6FmyIWaa6j9DB9+936MyUdL+kxxr1H7hpM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fQOKWitGD1rjKro0v0WHTg0tf2ehs862ueDRNXhywdgD19xZWLWZDFt9+HPLghGV5
-         LDjKRHXZha+Ab129D7rI1DAJ7FiYcoazlG53xkLSF6xx/eogTQpyxSjZESVIpCgWxw
-         P0mQfg3tx8PTGbZjci86gK2g7hFhzapCFXyUaBls=
-Date: Thu, 7 Jun 2018 18:16:40 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc: Sriram R <srirrama@codeaurora.org>, stable@vger.kernel.org,
-        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in
- QCA4019 with eth decap mode
-Message-ID: <20180607161640.GB15950@kroah.com>
-References: <20180514064754.853201981@linuxfoundation.org>
- <20180514064755.718467503@linuxfoundation.org>
- <1528134761.2289.45.camel@codethink.co.uk>
- <133624c2c44831fd70edb18c01508f64@codeaurora.org>
- <1528386597.2289.75.camel@codethink.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+        id S933804AbeFGObn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:31:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40253 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932913AbeFGObk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:31:40 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbN-0005a0-3K; Thu, 07 Jun 2018 15:09:21 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0003Gs-IN; Thu, 07 Jun 2018 15:09:11 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1528386597.2289.75.camel@codethink.co.uk>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Steffen Klassert" <steffen.klassert@secunet.com>,
+        "Stefano Brivio" <sbrivio@redhat.com>,
+        "Sabrina Dubroca" <sd@queasysnail.net>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.951852808@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 374/410] vti4: Don't count header length twice on
+ tunnel setup
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 04:49:57PM +0100, Ben Hutchings wrote:
-> On Thu, 2018-06-07 at 17:22 +0530, Sriram R wrote:
-> > Hi Ben,
-> > 
-> > On 2018-06-04 23:22, Ben Hutchings wrote:
-> > > On Mon, 2018-05-14 at 08:48 +0200, Greg Kroah-Hartman wrote:
-> > > > 4.4-stable review patch.  If anyone has any objections, please let me 
-> > > > know.
-> > > > 
-> > > > ------------------
-> > > > 
-> > > > From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> > > > 
-> > > > commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
-> > > > 
-> > > > Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
-> > > > rx_hdr_status is not padded to align in 4-byte boundary. Define a
-> > > > new hw_params field to handle different alignment behaviour between
-> > > > different hw. This patch fixes improper retrieval of rfc1042 header
-> > > > with QCA4019. This patch along with "ath10k: Properly remove padding
-> > > > from the start of rx payload" will fix traffic failure in ethernet
-> > > > decap mode for QCA4019.
-> > > > 
-> > > > Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-> > > > Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
-> > > > Signed-off-by: Sriram R <srirrama@codeaurora.org>
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > 
-> > > [...]
-> > > 
-> > > I'm curious as to why this backport doesn't include the change to
-> > > ath10k_htt_rx_h_find_rfc1042().  I understand that the addition of the
-> > > new field is a dependency for the following patch, but shouldn't the
-> > > fix included in the upstream commit also be applied to 4.4?
-> > > 
-> > 
-> >    Our main intention with this patchset [1] was to provide fix for 
-> > replay detection security issue seen in ath10k driver which needed to be 
-> > in the stable releases.
-> > 
-> > And, as per stable tree guidelines we wanted the patchset to have only 
-> > one and this important fix .
-> 
-> OK, I think the problem here is that the rules say "must" when what's
-> really meant is "should".  So the rule "It must fix only one thing."
-> really means that commits that each make a single logical change are
-> strongly preferred.
-> 
-> It does not mean that upstream commits should be trimmed down to
-> conform to this.  Greg generally considers it more important to avoid
-> changes to the upstream commit, where possible.  Right, Greg?
-> 
-> And speaking only for myself, I particularly dislike stable backports
-> that are significantly different from the original upstream commit but
-> don't mention this difference in the commit message.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-I _STRONGLY_ dislike backports that are different than what is in
-Linus's tree and normally I catch it when someone tries to do that.  I
-missed this one here, and that's not ok on my part for missing that, and
-for the authors part in doing that :(
+------------------
 
-So, what to do here, should I revert this series and take a fixed-up
-one?  What exactly is the stable tree now missing because of this
-mistake?
+From: Stefano Brivio <sbrivio@redhat.com>
 
-thanks,
+commit dd1df24737727e119c263acf1be2a92763938297 upstream.
 
-greg k-h
+This re-introduces the effect of commit a32452366b72 ("vti4:
+Don't count header length twice.") which was accidentally
+reverted by merge commit f895f0cfbb77 ("Merge branch 'master' of
+git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec").
+
+The commit message from Steffen Klassert said:
+
+    We currently count the size of LL_MAX_HEADER and struct iphdr
+    twice for vti4 devices, this leads to a wrong device mtu.
+    The size of LL_MAX_HEADER and struct iphdr is already counted in
+    ip_tunnel_bind_dev(), so don't do it again in vti_tunnel_init().
+
+And this is still the case now: ip_tunnel_bind_dev() already
+accounts for the header length of the link layer (not
+necessarily LL_MAX_HEADER, if the output device is found), plus
+one IP header.
+
+For example, with a vti device on top of veth, with MTU of 1500,
+the existing implementation would set the initial vti MTU to
+1332, accounting once for LL_MAX_HEADER (128, included in
+hard_header_len by vti) and twice for the same IP header (once
+from hard_header_len, once from ip_tunnel_bind_dev()).
+
+It should instead be 1480, because ip_tunnel_bind_dev() is able
+to figure out that the output device is veth, so no additional
+link layer header is attached, and will properly count one
+single IP header.
+
+The existing issue had the side effect of avoiding PMTUD for
+most xfrm policies, by arbitrarily lowering the initial MTU.
+However, the only way to get a consistent PMTU value is to let
+the xfrm PMTU discovery do its course, and commit d6af1a31cc72
+("vti: Add pmtu handling to vti_xmit.") now takes care of local
+delivery cases where the application ignores local socket
+notifications.
+
+Fixes: b9959fd3b0fa ("vti: switch to new ip tunnel code")
+Fixes: f895f0cfbb77 ("Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Acked-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/ipv4/ip_vti.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -359,7 +359,6 @@ static int vti_tunnel_init(struct net_de
+ 	memcpy(dev->dev_addr, &iph->saddr, 4);
+ 	memcpy(dev->broadcast, &iph->daddr, 4);
+ 
+-	dev->hard_header_len	= LL_MAX_HEADER + sizeof(struct iphdr);
+ 	dev->mtu		= ETH_DATA_LEN;
+ 	dev->flags		= IFF_NOARP;
+ 	dev->iflink		= 0;
