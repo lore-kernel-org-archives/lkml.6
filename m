@@ -1,99 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 26NXBVM9GVsKPwAAmS7hNA
-	; Thu, 07 Jun 2018 14:13:27 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Y2FsITe/GFsUIAAAmS7hNA
+	; Thu, 07 Jun 2018 05:15:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0DCFD608B8; Thu,  7 Jun 2018 14:13:27 +0000 (UTC)
+	id F24716089E; Thu,  7 Jun 2018 05:15:10 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="O35DTM2R";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bEXNBlGA"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F1FB96089E;
-	Thu,  7 Jun 2018 14:13:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F1FB96089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2BB9260115;
+	Thu,  7 Jun 2018 05:15:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2BB9260115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932981AbeFGOLv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:11:51 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39555 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933168AbeFGOJk (ORCPT
+        id S1752800AbeFGFPI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 01:15:08 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:35694 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752519AbeFGFPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:40 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbG-0005Zp-0P; Thu, 07 Jun 2018 15:09:14 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbC-0003Fp-W8; Thu, 07 Jun 2018 15:09:10 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 01:15:06 -0400
+Received: by mail-ua0-f196.google.com with SMTP id s13-v6so2191013uad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 22:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to:cc;
+        bh=MzMzcczTKjT2/kZVVWUx/XHpA6Y/zy5aKbprw7xiKb0=;
+        b=O35DTM2Rh7k4Wp5Vuni1all9Bdfbr1fszbDyi5Q85bwkWvF86wJi2cvIn2jLo6d0ZB
+         ZhOLth1+5mLpsnyvzuKjR97F4CJRP/CSCHQfGBEqjHUH7elbLMluuXmDvam0oJsQttn5
+         lqJ3wmM/IWLsFXddtBA1In7fyBSJbUbaBYIqIc6XGrFb1ak5cwGTeu46XB+7mZC7AiSF
+         gywpeJyU4rgIWrS6fFbD72094P5NzKvmx79ewScSWbAR7zj9fQBd6Et9B1TNt9iIIVPu
+         c7FgqIbmdewXkoIwO5ITHqhr1KO6YayvR0xaRs+JiGlXZlCXlRRZrYwywipgkTDDdxq8
+         Ak1Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:from:date:message-id:subject:to:cc;
+        bh=MzMzcczTKjT2/kZVVWUx/XHpA6Y/zy5aKbprw7xiKb0=;
+        b=bEXNBlGA3o+4InWOt5+ZsqmOtQPUG3xTlF1sw+aJHCfkgclKaTAm+I45yuUVd38Ep4
+         VuJu5LjnzRhFicM32TIC+8ahZ4NJssjAXshiv4V+PvtoES4HyvfwB6XpirdiLf1O3L9f
+         a26Ugd38MUawsvdvJ9MvS7Ut5pfnUU046Hsw0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:cc;
+        bh=MzMzcczTKjT2/kZVVWUx/XHpA6Y/zy5aKbprw7xiKb0=;
+        b=Xn6foFQYhOGTfJmDeD3GaEQgo8bRDOWBgbOW5ynb5kgWPlJuGe9qSDDrG4GkTMFt2y
+         Awyehs4C/y5BOcUGWISRhjiDQH8glvxIgv9bOrNM2FReYVNTZgUMdeci8r1j71lUD+mD
+         T6Pf6I4qeORT0k1e6C/iwjambCA0phC3Z1R9UpaC96lg5+/DuglaumQgmANqoSjHwYyX
+         PcZXHlnx4FY2ovqQc0OPHDVa8t4mJ3TE12ip3Y5N+Fr514J20WQjvWyOWAUSwk9Zr6Rp
+         k8VoCOxpdTiLT+ZsC7Bc6MBuw9iBZAxvu+F0hPhgSDHiRDkMRFA5HmxZRqSxxbDll381
+         7sIg==
+X-Gm-Message-State: APt69E1oZI5wdru9Lv8DXaxOwxXphV51e171UUu2FutUqJP4sEwzhGgD
+        dJbkFKgiYd9t/o3dIWXEwQBfzaeDQQh7oVDY1zv9dw==
+X-Google-Smtp-Source: ADUXVKJCHoDir/wVauaUuaqDqMZyi9H90ubWfxumqI/0Ej8L4Oi8TDUSETW3ogsqKr6HEKtjbYx649eDf0zig97gNpg=
+X-Received: by 2002:a9f:2823:: with SMTP id c32-v6mr236786uac.193.1528348505262;
+ Wed, 06 Jun 2018 22:15:05 -0700 (PDT)
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Michel =?UTF-8?Q?D=C3=A4nzer?=" <michel.daenzer@amd.com>,
-        "Alex Deucher" <alexander.deucher@amd.com>,
-        "=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.710052669@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 361/410] drm/radeon: fix prime teardown order
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Received: by 2002:a1f:a085:0:0:0:0:0 with HTTP; Wed, 6 Jun 2018 22:15:04 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 6 Jun 2018 22:15:04 -0700
+X-Google-Sender-Auth: EBeFnWxRLfqYDYKbVE4inOSFZeU
+Message-ID: <CAGXu5jJq774LZY1xUCKxG3Z4MkJ_JBJP7veB5gUCy4meb_PtSA@mail.gmail.com>
+Subject: Re: nfp: bpf: perf event output helpers support
+To: Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+>     nfp: bpf: perf event output helpers support
+>
+>     Add support for the perf_event_output family of helpers.
+>
+>     The implementation on the NFP will not match the host code exactly.
+>     The state of the host map and rings is unknown to the device, hence
+>     device can't return errors when rings are not installed.  The device
+>     simply packs the data into a firmware notification message and sends
+>     it over to the host, returning success to the program.
+>
+>     There is no notion of a host CPU on the device when packets are being
+>     processed.  Device will only offload programs which set BPF_F_CURRENT_CPU.
+>     Still, if map index doesn't match CPU no error will be returned (see
+>     above).
+>
+>     Dropped/lost firmware notification messages will not cause "lost
+>     events" event on the perf ring, they are only visible via device
+>     error counters.
+>
+>     Firmware notification messages may also get reordered in respect
+>     to the packets which caused their generation.
+>
+>     Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+>     Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
+>     Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+>
+> diff --git a/drivers/net/ethernet/netronome/nfp/bpf/offload.c b/drivers/net/ethernet/netronome/nfp/bpf/offload.c
+> index e3ead906cc60..4db0ac1e42a8 100644
+> --- a/drivers/net/ethernet/netronome/nfp/bpf/offload.c
+> +++ b/drivers/net/ethernet/netronome/nfp/bpf/offload.c
+> @@ -441,6 +441,53 @@ int nfp_ndo_bpf(struct nfp_app *app, struct nfp_net *nn, struct netdev_bpf *bpf)
+>         }
+>  }
+>
+> +static unsigned long
+> +nfp_bpf_perf_event_copy(void *dst, const void *src,
+> +                       unsigned long off, unsigned long len)
+> +{
+> +       memcpy(dst, src + off, len);
+> +       return 0;
+> +}
+> +
+> +int nfp_bpf_event_output(struct nfp_app_bpf *bpf, struct sk_buff *skb)
+> +{
+> +       struct cmsg_bpf_event *cbe = (void *)skb->data;
+> +       u32 pkt_size, data_size;
+> +       struct bpf_map *map;
+> +
+> +       if (skb->len < sizeof(struct cmsg_bpf_event))
+> +               goto err_drop;
+> +
+> +       pkt_size = be32_to_cpu(cbe->pkt_size);
+> +       data_size = be32_to_cpu(cbe->data_size);
+> +       map = (void *)(unsigned long)be64_to_cpu(cbe->map_ptr);
+> +
+> +       if (skb->len < sizeof(struct cmsg_bpf_event) + pkt_size + data_size)
+> +               goto err_drop;
+> +       if (cbe->hdr.ver != CMSG_MAP_ABI_VERSION)
+> +               goto err_drop;
+> +
+> +       rcu_read_lock();
+> +       if (!rhashtable_lookup_fast(&bpf->maps_neutral, &map,
+> +                                   nfp_bpf_maps_neutral_params)) {
+> +               rcu_read_unlock();
+> +               pr_warn("perf event: dest map pointer %px not recognized, dropping event\n",
+> +                       map);
 
-------------------
+Please don't use %px on kernel pointers unless you absolutely have
+to[1]. It seems like this value wouldn't be actionable here, so likely
+it's best to just remove its use entirely.
 
-From: Christian König <christian.koenig@amd.com>
+-Kees
 
-commit 0f4f715bc6bed3bf14c5cd7d5fe88d443e756b14 upstream.
+[1] https://www.spinics.net/lists/kernel/msg2671068.html
 
-We unmapped imported DMA-bufs when the GEM handle was dropped, not when the
-hardware was done with the buffere.
-
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/gpu/drm/radeon/radeon_gem.c    | 2 --
- drivers/gpu/drm/radeon/radeon_object.c | 2 ++
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/gpu/drm/radeon/radeon_gem.c
-+++ b/drivers/gpu/drm/radeon/radeon_gem.c
-@@ -34,8 +34,6 @@ void radeon_gem_object_free(struct drm_g
- 	struct radeon_bo *robj = gem_to_radeon_bo(gobj);
- 
- 	if (robj) {
--		if (robj->gem_base.import_attach)
--			drm_prime_gem_destroy(&robj->gem_base, robj->tbo.sg);
- 		radeon_bo_unref(&robj);
- 	}
- }
---- a/drivers/gpu/drm/radeon/radeon_object.c
-+++ b/drivers/gpu/drm/radeon/radeon_object.c
-@@ -91,6 +91,8 @@ static void radeon_ttm_bo_destroy(struct
- 	mutex_unlock(&bo->rdev->gem.mutex);
- 	radeon_bo_clear_surface_reg(bo);
- 	radeon_bo_clear_va(bo);
-+	if (bo->gem_base.import_attach)
-+		drm_prime_gem_destroy(&bo->gem_base, bo->tbo.sg);
- 	drm_gem_object_release(&bo->gem_base);
- 	kfree(bo);
- }
+-- 
+Kees Cook
+Pixel Security
