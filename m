@@ -1,108 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mqPQHSy2GVvEdAAAmS7hNA
-	; Thu, 07 Jun 2018 22:48:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dcsQEswqGVv4FgAAmS7hNA
+	; Thu, 07 Jun 2018 12:53:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6669D6074D; Thu,  7 Jun 2018 22:48:12 +0000 (UTC)
+	id A13766089E; Thu,  7 Jun 2018 12:53:46 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 08647601C3;
-	Thu,  7 Jun 2018 22:48:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 08647601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id E4E2760115;
+	Thu,  7 Jun 2018 12:53:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4E2760115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeFGWsJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 18:48:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:42953 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752156AbeFGWsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 18:48:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 15:48:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
-   d="scan'208";a="62750970"
-Received: from ray.jf.intel.com (HELO [10.7.201.24]) ([10.7.201.24])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 15:48:08 -0700
-Subject: Re: [PATCH v4 1/4] mm/sparse: Add a static variable
- nr_present_sections
-To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, pagupta@redhat.com
-References: <20180521101555.25610-1-bhe@redhat.com>
- <20180521101555.25610-2-bhe@redhat.com>
-Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <cd3e1821-5e89-97a5-f108-d67e819cc209@intel.com>
-Date: Thu, 7 Jun 2018 15:46:46 -0700
+        id S932589AbeFGMxb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 08:53:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46764 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932418AbeFGMx3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 08:53:29 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57Chohx069875
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 08:53:28 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jf334dykm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:53:28 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.vnet.ibm.com>;
+        Thu, 7 Jun 2018 08:53:27 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Jun 2018 08:53:24 -0400
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57CrM1s15794516
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Jun 2018 12:53:22 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2F436124054;
+        Thu,  7 Jun 2018 09:54:47 -0400 (EDT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 292D5124055;
+        Thu,  7 Jun 2018 09:54:46 -0400 (EDT)
+Received: from oc8043147753.ibm.com (unknown [9.85.135.133])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Jun 2018 09:54:45 -0400 (EDT)
+Subject: Re: [PATCH v5 10/13] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+To: pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-11-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <a6bba129-8a3c-a848-65aa-b67816bf2d25@linux.ibm.com>
+ <53275110-45fb-d50f-c97e-93141378f094@linux.vnet.ibm.com>
+ <89bda651-d465-af50-a737-1900a54b01c8@linux.ibm.com>
+ <6f67a282-773d-3fca-5b36-cc23ad49ba5b@linux.vnet.ibm.com>
+ <32340d2a-bea6-bdb1-38a6-76afe3d54672@linux.ibm.com>
+ <624dcbbf-5f40-6f27-b173-a4c533dd7781@linux.vnet.ibm.com>
+ <4f42fa11-e9cc-20a9-3068-b103a8ead644@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 7 Jun 2018 08:53:20 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180521101555.25610-2-bhe@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <4f42fa11-e9cc-20a9-3068-b103a8ead644@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18060712-0068-0000-0000-00000304C9F1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009145; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01043495; UDB=6.00534321; IPR=6.00822601;
+ MB=3.00021511; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-07 12:53:27
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060712-0069-0000-0000-00004499D4A8
+Message-Id: <525163cf-d656-b146-05b6-2efbbd2f5a9d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806070147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/21/2018 03:15 AM, Baoquan He wrote:
-> It's used to record how many memory sections are marked as present
-> during system boot up, and will be used in the later patch.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
+On 06/06/2018 11:10 AM, Pierre Morel wrote:
+> On 06/06/2018 16:24, Tony Krowiak wrote:
+>> On 06/05/2018 08:40 AM, Pierre Morel wrote:
+>>> On 30/05/2018 16:28, Tony Krowiak wrote:
+>>>> On 05/24/2018 05:10 AM, Pierre Morel wrote:
+>>>>> On 23/05/2018 16:38, Tony Krowiak wrote:
+>>>>>> On 05/16/2018 03:55 AM, Pierre Morel wrote:
+>>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>>>>>> Provides a sysfs interface to view the AP matrix configured for 
+>>>>>>>> the
+>>>>>>>> mediated matrix device.
+>>>>>>>>
+>>>>>>>> The relevant sysfs structures are:
+>>>>>>>>
+>>>>>>>> /sys/devices/vfio_ap
+>>>>>>>> ... [matrix]
+>>>>>>>> ...... [mdev_supported_types]
+>>>>>>>> ......... [vfio_ap-passthrough]
+>>>>>>>> ............ [devices]
+>>>>>>>> ...............[$uuid]
+>>>>>>>> .................. matrix
+>>>>>>>>
+>>>>>>>> To view the matrix configured for the mediated matrix device,
+>>>>>>>> print the matrix file:
+>>>>>>>
+>>>>>>> This is the configured matrix, not the one used by the guest.
+>>>>>>> Nothing in the patches protect against binding a queue and 
+>>>>>>> assigning
+>>>>>>> a new AP when the guest runs.
+>>>>>>> The card and queue will be showed by this entry.
+>>>>>>
+>>>>>> Of course, as stated above, this is the matrix configured for the
+>>>>>> mediated matrix device. Are you suggesting here that the driver
+>>>>>> should prevent assigning a new adapter or domain while a guest is
+>>>>>> running? Couldn't this be a step in the process for hot (un)plugging
+>>>>>> AP queues?
+>>>>>
+>>>>> No, I mean what is the point to show this?
+>>>>> It is not what the guest sees.
+>>>>> Has it any use case?
+>>>>
+>>>> The point is to display the matrix so one can view the AP queues that
+>>>> have been assigned to the mediated matrix device. This is the only way
+>>>> to view the matrix. Do you not find value in being able to see what
+>>>> has been assigned to the mediated matrix device?
+>>>
+>>> Two things:
+>>> 1) I think it is better to retrieve the individual masks
+>>
+>> I am not certain what you mean by this. Are you suggesting we display 
+>> the
+>> actual mask? For example, the APM:
+>>
+>> 08000000000000001000000000000c0000000030000000000800000000000001
+>>
+>> If that is the case, I completely disagree as that would be worthless 
+>> from
+>> a user perspective. Trying to figure out which APs are configured 
+>> would be
+>> ridiculously complicated.
+>
+> - It is compatible with what the AP BUS shows
+> - a cut and past is easy
+> - you can use a userland script to translate to another format
+>
+>>
+>> Or, are you suggesting something like this:
+>>
+>> 4,67,116,117,154,155,255
+>
+> - this is not compatible with what the AP BUS shows
+> - as in the first case this is easy to parse
+>
+> Both propositions look better to me.
+>
+>>
+>> Personally, I found viewing the queues to be much more valuable when
+>> configuring the mediated device's matrix. I originally displayed the
+>> individual adapter and domain attributes and found it cumbersome to
+>> mentally configure what the matrix looked like. If you think of the
+>> lszcrypt command, it outputs the adapters and queues which is the model
+>> I used for this.
+>
+> what is the point of seeing what the matrix looks like ?
+> It is interesting for the developer not for the administrator.
+> What the administrator needs is:
+> - To assign AP and to see what has been assigned
+> - To assign domains and to see what has been assigned
+>
+>>
+>>> 2) As I said above, what you show is not the effective mask used by 
+>>> the guest
+>>
+>> Why would a sysfs attribute for the mediated matrix device show the 
+>> effective
+>> mask used by the guest?
+>
+> OK, bad word, "effective", replace with "really".
+>
+> We do not implement any kind of provisioning nor do we implement update
+> of the CRYCB at any point after the first mediated device open.
 
-I think this is fine:
+I think this is a way we might be able to hot plug/unplug devices.
 
-Acked-By: Dave Hansen <dave.hansen@intel.com>
+>
+>
+> Binding a queue and updating the mask can be done at any time (may be 
+> we should change this ?)
+
+As I said above, I think we can utilize this as a means of hot 
+plugging/unplugging AP
+adapters and domains. If the guest is running when an adapter or domain 
+is assigned,
+we can update the guest's CRYCB at that time.
+
+>
+>
+> What is the point of showing a matrix which will never be used by the 
+> guest?
+
+That is simply not true. The matrix WILL be used by a guest the next time a
+guest is configured with a vfio-ap device referencing the path to the
+mediated matrix device - i.e., -device vfio-ap,sysfsdev=$PATH. The point
+is to show the matrix assigned to the mediated matrix device. In my 
+mind, the
+mediated matrix device is a separate object from the guest. Sure it is used
+to configure a guest's matrix when the guest is started, but it could be 
+used
+to configure the matrix for any guest; it has no direct connection to a
+particular guest until a guest using the device is started. IMHO the sysfs
+attributes for the mediated matrix device reflect only the attributes of
+the device, not the attributes of a guest.
+
+>
+>
+>
+>
+>>
+>>>
+>>>
+>>>
+>>>
+>>>
+>>
+>
