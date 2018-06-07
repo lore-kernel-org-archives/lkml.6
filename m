@@ -1,106 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id py0yMo4oHlsVEAAAmS7hNA
-	; Mon, 11 Jun 2018 07:45:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3t9EOeNBGVsfdwAAmS7hNA
+	; Thu, 07 Jun 2018 14:33:09 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 68DDE606FA; Mon, 11 Jun 2018 07:45:55 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9oeeHIl"
+	id 1B45E608BF; Thu,  7 Jun 2018 14:33:09 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 00725607A4;
-	Mon, 11 Jun 2018 07:45:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00725607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 85FED607DC;
+	Thu,  7 Jun 2018 14:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85FED607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932386AbeFKHpw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 03:45:52 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35814 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754105AbeFKHpu (ORCPT
+        id S933887AbeFGOdF (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:33:05 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40293 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932911AbeFGOcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 03:45:50 -0400
-Received: by mail-pg0-f67.google.com with SMTP id 15-v6so9341201pge.2;
-        Mon, 11 Jun 2018 00:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Pxo8K9YKGGcGEXwNw0iA013qkB/ESS9u++hAkgBSw1w=;
-        b=g9oeeHIl5ITQyk33nU3nWaZmC1fYoaeqy/anDSsK4IH9RSHgvaH3tVDJzRDNtZUNHx
-         cIpHkFQO9J9UEXJHEMuzD4MFWxfrpuyfPZAX4ti/muRjaRogrOHWd8VDz4BA0B+6QRqG
-         ysEKCUGVuDix98oFfacrhVVskUc2sddvAqwZHWRVP/PMRkILqjv2wAy5POhmYg7cHEkK
-         /oT8WXpizlSK2UI4FJVwU71VdDUe1TAHGXc4IqtBRzw237xf+Nta76YDHyOeVKYQBWzq
-         zocrjr1XOLJn6T+kUjTdeG1iYC1Y7KmcCa02+5IRPOIPvuJ5cdYHB4Febc5uMDKqzcO6
-         AbcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Pxo8K9YKGGcGEXwNw0iA013qkB/ESS9u++hAkgBSw1w=;
-        b=fT7giCQfUBW/7GRCUehp6kHLgmZIEJV9+jwNlwwGWUs1KzKtz7VSWduZp6oCV2aIKr
-         ZULXOxK/A1x49aR7MOvjnUcHIBSPvB38MPoyhsuZQsBL9Jnlb+RuU+YlqmcearTtElVw
-         GbVoQRhG+y3HbD2rTR935k1fjK+oRIKcGjENuCjLfp4w6dZJ6iqXIOTTjQVY2juPDYHq
-         mtMp+BvbA2MKl/eKyzQu2Pv6jz8Mt4jsvOiq1dqNZAijpVNcMfGUWcuhL01LpV4MXf1l
-         KCjuHSot7g1tJlC7NxDHpteahJ0yMWKBZ8su2V0hTLh32FUzLyyR/9TKbjmc3c/JQp9r
-         TiHw==
-X-Gm-Message-State: APt69E33dwaV5gBQ44xKbyKqyJYf0o8VrwOlhSAnIOzRUHXXcVCqDkGq
-        MBniJM41bkSCJkGBXI9qeF8=
-X-Google-Smtp-Source: ADUXVKKrtwSlJjLafPZ8TTSAEMI3GvG4juErDFesonclQqFEGmluHCGj3THhzbLvKAHTiNY3Fd94sQ==
-X-Received: by 2002:a63:a702:: with SMTP id d2-v6mr14153888pgf.246.1528703150256;
-        Mon, 11 Jun 2018 00:45:50 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id v85-v6sm34835711pgb.50.2018.06.11.00.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 00:45:49 -0700 (PDT)
-From: Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc: Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Brian Warner <brian.warner@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media: cx88: add error handling for snd_ctl_add
-Date: Mon, 11 Jun 2018 15:41:58 +0800
-Message-Id: <1528702920-33410-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To: unlisted-recipients:; (no To-header on input)
+        Thu, 7 Jun 2018 10:32:52 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbG-0005Zj-4T; Thu, 07 Jun 2018 15:09:14 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbC-0003Eo-Kg; Thu, 07 Jun 2018 15:09:10 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Tejun Heo" <tj@kernel.org>,
+        "Ju Hyung Park" <qkrwngud825@gmail.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.973129927@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 350/410] libata: Enable queued TRIM for Samsung SSD 860
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When snd_ctl_add fails, the lack of error-handling code may
-cause unexpected results.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-This patch adds error-handling code after calling snd_ctl_add.
+------------------
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+From: Ju Hyung Park <qkrwngud825@gmail.com>
+
+commit ca6bfcb2f6d9deab3924bf901e73622a94900473 upstream.
+
+Samsung explicitly states that queued TRIM is supported for Linux with
+860 PRO and 860 EVO.
+
+Make the previous blacklist to cover only 840 and 850 series.
+
+Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+[bwh: Backported to 3.16: There's no ATA_HORKAGE_ZERO_AFTER_TRIM flag]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/pci/cx88/cx88-alsa.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/ata/libata-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/cx88/cx88-alsa.c b/drivers/media/pci/cx88/cx88-alsa.c
-index 8a28fda..d366793 100644
---- a/drivers/media/pci/cx88/cx88-alsa.c
-+++ b/drivers/media/pci/cx88/cx88-alsa.c
-@@ -962,8 +962,11 @@ static int cx88_audio_initdev(struct pci_dev *pci,
- 		goto error;
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4237,7 +4237,8 @@ static const struct ata_blacklist_entry
+ 	{ "Micron_M5[15]0_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM, },
+ 	{ "Crucial_CT*M550*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM, },
+ 	{ "Crucial_CT*MX100*",		"MU01", ATA_HORKAGE_NO_NCQ_TRIM, },
+-	{ "Samsung SSD 8*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM, },
++	{ "Samsung SSD 840*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM, },
++	{ "Samsung SSD 850*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM, },
+ 	{ "FCCT*M500*",			NULL,	ATA_HORKAGE_NO_NCQ_TRIM, },
  
- 	/* If there's a wm8775 then add a Line-In ALC switch */
--	if (core->sd_wm8775)
--		snd_ctl_add(card, snd_ctl_new1(&snd_cx88_alc_switch, chip));
-+	if (core->sd_wm8775) {
-+		err = snd_ctl_add(card, snd_ctl_new1(&snd_cx88_alc_switch, chip));
-+		if (err < 0)
-+			goto error;
-+	}
- 
- 	strcpy(card->driver, "CX88x");
- 	sprintf(card->shortname, "Conexant CX%x", pci->device);
--- 
-2.7.4
+ 	/* devices that don't properly handle TRIM commands */
