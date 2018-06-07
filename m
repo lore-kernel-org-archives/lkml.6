@@ -1,121 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id T/JzMjcFHltMcwAAmS7hNA
-	; Mon, 11 Jun 2018 05:16:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id GYU6M89BGVuddAAAmS7hNA
+	; Thu, 07 Jun 2018 14:33:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C04E9607A4; Mon, 11 Jun 2018 05:16:18 +0000 (UTC)
+	id EDA07608C1; Thu,  7 Jun 2018 14:33:42 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4EC83605A5;
-	Mon, 11 Jun 2018 05:16:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EC83605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 42540602FC;
+	Thu,  7 Jun 2018 14:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42540602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753972AbeFKFQE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 01:16:04 -0400
-Received: from mx.socionext.com ([202.248.49.38]:19719 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753902AbeFKFQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 01:16:03 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 11 Jun 2018 14:16:01 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 2FEE4180B83;
-        Mon, 11 Jun 2018 14:16:02 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 11 Jun 2018 14:16:02 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id F147640389;
-        Mon, 11 Jun 2018 14:16:01 +0900 (JST)
-Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id C6354120139;
-        Mon, 11 Jun 2018 14:16:01 +0900 (JST)
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH v2 3/3] ASoC: audio-graph-card: add hp and mic detect gpios same as simple-card
-Date: Mon, 11 Jun 2018 14:15:59 +0900
-Message-Id: <20180611051559.18082-3-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611051559.18082-1-suzuki.katsuhiro@socionext.com>
-References: <20180611051559.18082-1-suzuki.katsuhiro@socionext.com>
+        id S933931AbeFGOdk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:33:40 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40321 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933910AbeFGOdf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:33:35 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbh-0005hL-79; Thu, 07 Jun 2018 15:09:41 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb5-0002zT-TJ; Thu, 07 Jun 2018 15:09:03 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Vegard Nossum" <vegard.nossum@oracle.com>,
+        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        "" <socketpair@gmail.com>, "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Willy Tarreau" <w@1wt.eu>, "Jens Axboe" <axboe@fb.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.162590349@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 200/410] pipe: move limit checking logic into
+ pipe_set_size()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds headphone and microphone jack detection gpios as same
-as simple-card driver.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+------------------
 
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+
+commit d37d41666408102bf0ac8e48d8efdce7b809e5f6 upstream.
+
+This is a preparatory patch for following work. Move the F_SETPIPE_SZ
+limit-checking logic from pipe_fcntl() into pipe_set_size().  This
+simplifies the code a little, and allows for reworking required in
+a later patch that fixes the limit checking in pipe_set_size()
+
+Link: http://lkml.kernel.org/r/3701b2c5-2c52-2c3e-226d-29b9deb29b50@gmail.com
+Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
+Reviewed-by: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: <socketpair@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
+ fs/pipe.c | 41 ++++++++++++++++++-----------------------
+ 1 file changed, 18 insertions(+), 23 deletions(-)
 
-Changes from v1:
-  - Move changes of audio-graph-card to other patch
----
- sound/soc/generic/audio-graph-card.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 1b6164249341..2baa60d3b3cc 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -21,7 +21,6 @@
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
- #include <linux/string.h>
--#include <sound/jack.h>
- #include <sound/simple_card_utils.h>
- 
- struct graph_card_data {
-@@ -32,6 +31,8 @@ struct graph_card_data {
- 		unsigned int mclk_fs;
- 	} *dai_props;
- 	unsigned int mclk_fs;
-+	struct asoc_simple_jack hp_jack;
-+	struct asoc_simple_jack mic_jack;
- 	struct snd_soc_dai_link *dai_link;
- 	struct gpio_desc *pa_gpio;
- };
-@@ -278,6 +279,22 @@ static int asoc_graph_get_dais_count(struct device *dev)
- 	return count;
- }
- 
-+static int asoc_graph_soc_card_probe(struct snd_soc_card *card)
-+{
-+	struct graph_card_data *priv = snd_soc_card_get_drvdata(card);
-+	int ret;
-+
-+	ret = asoc_simple_card_init_hp(card, &priv->hp_jack, NULL);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = asoc_simple_card_init_mic(card, &priv->mic_jack, NULL);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int asoc_graph_card_probe(struct platform_device *pdev)
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -1009,9 +1009,24 @@ static inline unsigned int round_pipe_si
+  * Allocate a new array of pipe buffers and copy the info over. Returns the
+  * pipe size if successful, or return -ERROR on error.
+  */
+-static long pipe_set_size(struct pipe_inode_info *pipe, unsigned long nr_pages)
++static long pipe_set_size(struct pipe_inode_info *pipe, unsigned long arg)
  {
- 	struct graph_card_data *priv;
-@@ -319,6 +336,7 @@ static int asoc_graph_card_probe(struct platform_device *pdev)
- 	card->num_links	= num;
- 	card->dapm_widgets = asoc_graph_card_dapm_widgets;
- 	card->num_dapm_widgets = ARRAY_SIZE(asoc_graph_card_dapm_widgets);
-+	card->probe	= asoc_graph_soc_card_probe;
+ 	struct pipe_buffer *bufs;
++	unsigned int size, nr_pages;
++
++	size = round_pipe_size(arg);
++	nr_pages = size >> PAGE_SHIFT;
++
++	if (!nr_pages)
++		return -EINVAL;
++
++	if (!capable(CAP_SYS_RESOURCE) && size > pipe_max_size)
++		return -EPERM;
++
++	if ((too_many_pipe_buffers_hard(pipe->user) ||
++			too_many_pipe_buffers_soft(pipe->user)) &&
++			!capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
  
- 	ret = asoc_graph_card_parse_of(priv);
- 	if (ret < 0) {
--- 
-2.17.1
+ 	/*
+ 	 * We can shrink the pipe, if arg >= pipe->nrbufs. Since we don't
+@@ -1094,28 +1109,9 @@ long pipe_fcntl(struct file *file, unsig
+ 	__pipe_lock(pipe);
+ 
+ 	switch (cmd) {
+-	case F_SETPIPE_SZ: {
+-		unsigned int size, nr_pages;
+-
+-		size = round_pipe_size(arg);
+-		nr_pages = size >> PAGE_SHIFT;
+-
+-		ret = -EINVAL;
+-		if (!nr_pages)
+-			goto out;
+-
+-		if (!capable(CAP_SYS_RESOURCE) && size > pipe_max_size) {
+-			ret = -EPERM;
+-			goto out;
+-		} else if ((too_many_pipe_buffers_hard(pipe->user) ||
+-			    too_many_pipe_buffers_soft(pipe->user)) &&
+-		           !capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN)) {
+-			ret = -EPERM;
+-			goto out;
+-		}
+-		ret = pipe_set_size(pipe, nr_pages);
++	case F_SETPIPE_SZ:
++		ret = pipe_set_size(pipe, arg);
+ 		break;
+-		}
+ 	case F_GETPIPE_SZ:
+ 		ret = pipe->buffers * PAGE_SIZE;
+ 		break;
+@@ -1124,7 +1120,6 @@ long pipe_fcntl(struct file *file, unsig
+ 		break;
+ 	}
+ 
+-out:
+ 	__pipe_unlock(pipe);
+ 	return ret;
+ }
