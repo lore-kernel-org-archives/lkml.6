@@ -1,71 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id X1/kCuqBHltWAgAAmS7hNA
-	; Mon, 11 Jun 2018 14:06:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kMizGd+XGVvPfAAAmS7hNA
+	; Thu, 07 Jun 2018 20:39:10 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B30BE607BB; Mon, 11 Jun 2018 14:06:42 +0000 (UTC)
+	id 271526074D; Thu,  7 Jun 2018 20:39:10 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="yXVuDHnu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WHAJiPOk"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 512D460791;
-	Mon, 11 Jun 2018 14:06:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 512D460791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 61CCD60452;
+	Thu,  7 Jun 2018 20:39:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 61CCD60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933451AbeFKOGl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:06:41 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:54120 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933223AbeFKOGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
-        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=waK/pft7dHI/2nWgZj88ujOh6mLBgufYhj2a61nLOAc=; b=yXVuDHnu/P3yn1dlGgfa046/wQ
-        I1MsTk1KrVpzy+KwAjJxPJfW0XH+LtudOlyZfLVHblPTUP3x/QwNZglm/ceYqWHrXus3gXWxS9nfy
-        jNxiNc5t49oyeH13JTo29LRFASpoj5CBUSBVSlpjBh+uOSliNi1i2+nGwTogCoTDTShk=;
-Date: Mon, 11 Jun 2018 10:08:58 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: axboe@kernel.dk, kernel-team@fb.com, linux-block@vger.kernel.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tj@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 07/13] memcontrol: schedule throttling if we are congested
-Message-ID: <20180611140858.GB1507@cmpxchg.org>
-References: <20180605132948.1664-1-josef@toxicpanda.com>
- <20180605132948.1664-8-josef@toxicpanda.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180605132948.1664-8-josef@toxicpanda.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S932673AbeFGUjH (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:39:07 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35371 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932609AbeFGUjA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:39:00 -0400
+Received: by mail-pl0-f68.google.com with SMTP id i5-v6so6860337plt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=441C7lwFc1IlCq9sxMR+Pf6T5lduVGISOUsJh5XbCc4=;
+        b=WHAJiPOkTvFkFRKr+Ww6OnubbGHxnmgYilTbBomKCI/Jh0pHyA5mPnF8YSLwsyypAw
+         JYWhXQulkwTREmqYImG0+OLzZMUlONAIqBKpv7snM6K89M4cZarGviHumV4l+AJGnZWe
+         lqd7iJF8XJ/Lcgv3l7TDHz4pOtXMxLxLEF5Iqu2za8SCWMrAbmo8ocsAeMJxGF+0H5IH
+         m/GfX58RHHsgCBhl0qYrM2RijjUe3Fahm9hsQeANZeLxbOQdZ12hXsxLlVh7b3i5Qr3H
+         1v7Jo4sFh6w8teZ7x8O7lqrldH3UoXVpEOuNMykB62lf3mnc8OHu/6r5axCMEVNDkGdT
+         nEQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=441C7lwFc1IlCq9sxMR+Pf6T5lduVGISOUsJh5XbCc4=;
+        b=Z7ORjegZdMi+dp/a7cw7ynGy4W83qu0HeMKBMl/UwfKbyr7DZ2ZHLLZEN4UT/n8Jjn
+         cAHKG1RqtHmPAthcZiCPeueXAWb90qhWrc2BpYsVbHsxc4L0TYnZOstkAJdcvVu3jZBO
+         q/A2aZ6ResCdGmepcBNsJG3t9+bL0a4g9bK6hM/FdKQEHxEU1ppzSICJDYhoeyrS4LD3
+         X6OtYBD+bLVoIx6048kv3Li7/OuJcUe+7gSETY8vwkBK+obFAWPjwfqWy8xP2/36EPbh
+         MGbolGOzA1X6qdpg8uShygEBKm0XslCpbDFPPicnZV5fOKVBtxrObmCfsaB9djYV/5Jg
+         OQ/Q==
+X-Gm-Message-State: APt69E2rMEzbCUbPNznI9WVRt1LqSQ0QlNjrIPSJdFN+HjfaPT0QjlDI
+        Oq3FWHuu1zFJ1SYM+LPNFsopdbxG6jw=
+X-Google-Smtp-Source: ADUXVKLwt1oz9Go8sOFkH39wGl+4A3C6DppxaZFVhv0xT+ov1DO7tED7ZcLVO4dnHTDEe+3NvFycUw==
+X-Received: by 2002:a17:902:d697:: with SMTP id v23-v6mr3501608ply.193.1528403939191;
+        Thu, 07 Jun 2018 13:38:59 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id v27-v6sm10324174pfi.23.2018.06.07.13.38.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 13:38:58 -0700 (PDT)
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [PATCH v9 7/7] kselftests: Add tests for the preemptoff and irqsoff tracers
+Date: Thu,  7 Jun 2018 13:38:15 -0700
+Message-Id: <20180607203815.255845-8-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+In-Reply-To: <20180607203815.255845-1-joel@joelfernandes.org>
+References: <20180607203815.255845-1-joel@joelfernandes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 09:29:42AM -0400, Josef Bacik wrote:
-> From: Tejun Heo <tj@kernel.org>
-> 
-> Memory allocations can induce swapping via kswapd or direct reclaim.  If
-> we are having IO done for us by kswapd and don't actually go into direct
-> reclaim we may never get scheduled for throttling.  So instead check to
-> see if our cgroup is congested, and if so schedule the throttling.
-> Before we return to user space the throttling stuff will only throttle
-> if we actually required it.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-Looks good to me now, thanks.
+Here we add unit tests for the preemptoff and irqsoff tracer by using a
+kernel module introduced previously to trigger atomic sections in the
+kernel.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ tools/testing/selftests/ftrace/config         |  3 +
+ .../test.d/preemptirq/irqsoff_tracer.tc       | 74 +++++++++++++++++++
+ 2 files changed, 77 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+
+diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
+index b01924c71c09..29588b328345 100644
+--- a/tools/testing/selftests/ftrace/config
++++ b/tools/testing/selftests/ftrace/config
+@@ -4,3 +4,6 @@ CONFIG_FUNCTION_PROFILER=y
+ CONFIG_TRACER_SNAPSHOT=y
+ CONFIG_STACK_TRACER=y
+ CONFIG_HIST_TRIGGERS=y
++CONFIG_PREEMPT_TRACER=y
++CONFIG_IRQSOFF_TRACER=y
++CONFIG_TEST_ATOMIC_SECTIONS=m
+diff --git a/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+new file mode 100644
+index 000000000000..1764ff22c02b
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
+@@ -0,0 +1,74 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: test for the preemptirqsoff tracer
++
++MOD=test_atomic_sections
++
++fail() {
++    reset_tracer
++    rmmod $MOD || true
++    exit_fail
++}
++
++unsup() { #msg
++    reset_tracer
++    rmmod $MOD || true
++    echo $1
++    exit_unsupported
++}
++
++modprobe $MOD || unsup "$MOD module not available"
++rmmod $MOD
++
++grep -q "preemptoff" available_tracers || unsup "preemptoff tracer not enabled"
++grep -q "irqsoff" available_tracers || unsup "irqsoff tracer not enabled"
++
++reset_tracer
++
++# Simulate preemptoff section for half a second couple of times
++echo preemptoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=preempt atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++
++cat trace
++
++# Confirm which tracer
++grep -q "tracer: preemptoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++
++# Simulate irqsoff section for half a second couple of times
++echo irqsoff > current_tracer
++sleep 1
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++modprobe test_atomic_sections atomic_mode=irq atomic_time=500000 || fail
++rmmod test_atomic_sections || fail
++
++cat trace
++
++# Confirm which tracer
++grep -q "tracer: irqsoff" trace || fail
++
++# Check the end of the section
++egrep -q "5.....us : <stack trace>" trace || fail
++
++# Check for 500ms of latency
++egrep -q "latency: 5..... us" trace || fail
++
++reset_tracer
++exit 0
++
+-- 
+2.17.1.1185.g55be947832-goog
