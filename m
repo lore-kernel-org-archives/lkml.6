@@ -1,111 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ngTwBibSGVvhPwAAmS7hNA
-	; Fri, 08 Jun 2018 00:47:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ctIKBfxVGVt0OwAAmS7hNA
+	; Thu, 07 Jun 2018 15:58:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F41AB6089E; Fri,  8 Jun 2018 00:47:33 +0000 (UTC)
+	id 7EBDA608BA; Thu,  7 Jun 2018 15:58:56 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zRDyYmqC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j34OkdqR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6CAB8605A2;
-	Fri,  8 Jun 2018 00:47:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CAB8605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0429D6063F;
+	Thu,  7 Jun 2018 15:58:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0429D6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752411AbeFHAra (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 20:47:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752385AbeFHAr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 20:47:28 -0400
-Received: from mail-wr0-f176.google.com (mail-wr0-f176.google.com [209.85.128.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE06B208AD
-        for <linux-kernel@vger.kernel.org>; Fri,  8 Jun 2018 00:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528418848;
-        bh=BFYsEP3KIs/UJ/g3xa53oBl8SbvI8q5sY2hMyWdX8vI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zRDyYmqCFzoNu6H7TySb+PdmEKBktdpN96vW4VmOJcJtP/r2qt6Y6XSfHXM+vg+R0
-         Y6GhZNTXeEoxjGfvUg710d4Iw7tW8EWCIudM02/KmJ8uQo0C6vdj542DFqCqHWkxJg
-         Vj7a8mebaTHttNeUQkYlVrk9jCuMj6Fb28KEJDPw=
-Received: by mail-wr0-f176.google.com with SMTP id d8-v6so11628356wro.4
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 17:47:27 -0700 (PDT)
-X-Gm-Message-State: APt69E0aoOzBx8L2fS4rNaozlEiLej8Q2qQyo2lIpnjaZ63g+XMCMp3c
-        I7fmSwnyfd8nYiL5Wb9bfIGFdhS8HiKP8w/BqDWvTQ==
-X-Google-Smtp-Source: ADUXVKJJN3IXZo3A86Qpw/Nn7z3qMfNzseImDVz+ZokOLUy5hmeJg3zAn5Ykq9qAPQgzbEP8Be83tAJeGkYrP8TEiQs=
-X-Received: by 2002:adf:b1ca:: with SMTP id r10-v6mr3085508wra.221.1528418846307;
- Thu, 07 Jun 2018 17:47:26 -0700 (PDT)
+        id S934773AbeFGP6y (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:58:54 -0400
+Received: from mail-pg0-f48.google.com ([74.125.83.48]:36708 "EHLO
+        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933050AbeFGP6u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:58:50 -0400
+Received: by mail-pg0-f48.google.com with SMTP id m5-v6so4966825pgd.3;
+        Thu, 07 Jun 2018 08:58:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZJTFB1JqQb2JKVoh8eKpMYd2j40ASf99GVQUsgDOUZo=;
+        b=j34OkdqR9Xv0P9R0XJppkBv7MWMdBZbLB6VaFUogeYITo+wocZYi+imc9H7XeEso8u
+         ogAPyYChQisR5kB2NeMPFT/ENUnZ/U2MXSbvjGty0EtNWiyDm9WDLsoP9/tpsm6AY2Qn
+         eXskenJYhz3W+PW9h8VZEy8HAGbTVgQQKEIigBrrUp0I3MEXrnRV13CIWqcDQqnzGGc4
+         qbK3Vre2R8cWudy8lPkxnAhqQ3DBOtPbOkRN7tkkeuAl2w4ST0/7FaELalH0/lYpSDAO
+         GrnX8y35jSIkX86m/AJO1VhUgqY24Mer/oR6W8K2v9Eykr3IaPLuS/qTsqvrFKk+o3Gr
+         sisg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZJTFB1JqQb2JKVoh8eKpMYd2j40ASf99GVQUsgDOUZo=;
+        b=aXndMD95nuv1n/htPRryy84L2sVj1M0w5DzFxz6r10/WyvDtS0dCv/J8OVFM0MtqvJ
+         IcfFuDAwhsfTU55ldwUy4EnrpuGXeq7cdAyY0HKABTfsQtP3Uyi/RUrxej/cV3WFVi47
+         MjruxqqWgh5P4lML9cL4N48saDwObRXmvy8pJ5DDw8DcjoquNpqAMFpUI6xwCTrtcMy5
+         gKPzPXYp9t82p0aAJXMgVUR/YSKDoEU/KR0PaP0HngT8Llf5GU/zhNLmlaK+ZqOglvYo
+         PvXpR1jkKnnKmffTRu/uEv3m4673sJf732m82Cm0U7vdT03PQtrC+qiyFc4wTCLuG2uu
+         Wppw==
+X-Gm-Message-State: APt69E3VSus5homONMZr/uOhI8QPtuY+sGMPYF+nQIuFar251/7jb/pW
+        FbunwHsmRXmLCla7cMUXyDftwbWB
+X-Google-Smtp-Source: ADUXVKICB43z2Oib2eBLAp/2HNNpNwGwxBA778XDIJxu9ZblpFfDSIHsLR6KNvMLky0mS8nmCkIHKQ==
+X-Received: by 2002:a62:4715:: with SMTP id u21-v6mr2308461pfa.89.1528387130072;
+        Thu, 07 Jun 2018 08:58:50 -0700 (PDT)
+Received: from dsa-mb.dana.cumulusnetworks.com (fw.cumulusnetworks.com. [216.129.126.126])
+        by smtp.googlemail.com with ESMTPSA id r79-v6sm61145066pfe.115.2018.06.07.08.58.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 08:58:48 -0700 (PDT)
+Subject: Re: kmemleak reports unreferenced object 0xf2bee080 (size 96)
+To: Paul Menzel <pmenzel+linux-netdev@molgen.mpg.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <5d7376e2-d936-38ed-3419-262fc64f6a40@molgen.mpg.de>
+From: David Ahern <dsahern@gmail.com>
+Message-ID: <bdd72f43-c28d-4bfa-69f1-b0693732f9f6@gmail.com>
+Date: Thu, 7 Jun 2018 08:58:47 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180607143855.3681-1-yu-cheng.yu@intel.com> <20180607143855.3681-6-yu-cheng.yu@intel.com>
- <CALCETrVRH8LeYoo7V1VBPqg4WS0Enxtizt=T7dPvgoeWfJrdzA@mail.gmail.com>
- <CAMe9rOp9YtNnTzsDPFXukK6ps7VNa2MU6o0GwnoES5Ma_AC65A@mail.gmail.com>
- <CALCETrXOc3-2QLks3iaTTvEE=4+2Oi3PORa8HPbYiDTtKV6CLQ@mail.gmail.com> <CAMe9rOphRmP4aEGGwmM=d+D7GyZWrC_hMTWaiy1tEtBd0PLdxA@mail.gmail.com>
-In-Reply-To: <CAMe9rOphRmP4aEGGwmM=d+D7GyZWrC_hMTWaiy1tEtBd0PLdxA@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 7 Jun 2018 17:47:14 -0700
-X-Gmail-Original-Message-ID: <CALCETrXZjcTs6y8u5SvdUw_9itpb6EhLbMWpVJTAXVNkkvas_Q@mail.gmail.com>
-Message-ID: <CALCETrXZjcTs6y8u5SvdUw_9itpb6EhLbMWpVJTAXVNkkvas_Q@mail.gmail.com>
-Subject: Re: [PATCH 5/7] x86: Insert endbr32/endbr64 to vDSO
-To: "H. J. Lu" <hjl.tools@gmail.com>
-Cc: Andrew Lutomirski <luto@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5d7376e2-d936-38ed-3419-262fc64f6a40@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 5:31 PM H.J. Lu <hjl.tools@gmail.com> wrote:
->
-> On Thu, Jun 7, 2018 at 4:00 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Thu, Jun 7, 2018 at 3:03 PM H.J. Lu <hjl.tools@gmail.com> wrote:
-> >>
-> >> On Thu, Jun 7, 2018 at 1:50 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> >> > On Thu, Jun 7, 2018 at 7:42 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> >> >>
-> >> >> From: "H.J. Lu" <hjl.tools@gmail.com>
-> >> >>
-> >> >> When Intel indirect branch tracking is enabled, functions in vDSO which
-> >> >> may be called indirectly should have endbr32 or endbr64 as the first
-> >> >> instruction.  We try to compile vDSO with -fcf-protection=branch -mibt
-> >> >> if possible.  Otherwise, we insert endbr32 or endbr64 by hand to assembly
-> >> >> codes generated by the compiler.
-> >> >
-> >> > Wow, that's... a genuine abomination.  Do we really need to support
-> >> > CET on kernels built with old toolchains?
-> >> >
-> >>
-> >> Yes.  GCC 7 should be able to build CET kernel.
-> >>
-> >
-> > Why?  Presumably people running distros that use CET are going to have
-> > kernels build with a CET-supporting compiler.
-> >
->
-> Good point.  It was needed before GCC 8 was released.   We can drop
-> arch/x86/entry/vdso/endbr.sh now.
->
+On 6/7/18 8:54 AM, Paul Menzel wrote:
+> $ dmesg
+> […]
+> [  677.139874] PM: suspend exit
+> [  678.490993] kmemleak: 1 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+> [  679.517022] r8169 0000:03:00.0 enp3s0: link up
+> […]
+> $ sudo more /sys/kernel/debug/kmemleak
+> unreferenced object 0xf2bee080 (size 96):
+>   comm "systemd-network", pid 209, jiffies 4294894477 (age 851.812s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 dc 05 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<fb9b1020>] kmem_cache_alloc_trace+0x195/0x3a0
+>     [<bbe5d9f4>] ip6_convert_metrics+0x4a/0xe0
+>     [<4d869f67>] ip6_route_info_create+0x294/0xd10
+>     [<2f08c8d0>] ip6_route_add+0x1d/0x90
+>     [<304de076>] inet6_rtm_newroute+0x72/0x80
+>     [<f9e280dd>] rtnetlink_rcv_msg+0x2df/0x4f0
+>     [<9287c3cf>] netlink_rcv_skb+0x8f/0x130
+>     [<fbddd35b>] rtnetlink_rcv+0x12/0x20
+>     [<60ffd06b>] netlink_unicast+0x1ab/0x2b0
+>     [<4260e680>] netlink_sendmsg+0x2b5/0x5c0
+>     [<ec0cda7b>] sock_sendmsg+0x5a/0xa0
+>     [<08adf1a5>] __sys_sendto+0xea/0x170
+>     [<93e4f4e1>] sys_socketcall+0x1f4/0x380
+>     [<dcd25cae>] do_fast_syscall_32+0xd3/0x360
+>     [<0ce0c28f>] entry_SYSENTER_32+0x4e/0x7c
+>     [<2324e043>] 0xffffffff
+> ```
+> 
 
-Phew!  We'll still need a patch to prevent configuring CET on a
-compiler that can't support it.
+
+I'll take a look. Thanks for the report.
