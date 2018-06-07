@@ -1,98 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lRnQFbO8Glv3ZgAAmS7hNA
-	; Fri, 08 Jun 2018 17:29:03 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HmSMCHvyGFvtJAAAmS7hNA
+	; Thu, 07 Jun 2018 08:53:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B67876089E; Fri,  8 Jun 2018 17:29:03 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rT/w+ah1"
+	id 135BE607E7; Thu,  7 Jun 2018 08:53:15 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4431A601D2;
-	Fri,  8 Jun 2018 17:29:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4431A601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8EA946063F;
+	Thu,  7 Jun 2018 08:53:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8EA946063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932101AbeFHR3B (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:29:01 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:36700 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751574AbeFHR27 (ORCPT
+        id S932558AbeFGIxL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:53:11 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:33010 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753269AbeFGIxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:28:59 -0400
-Received: by mail-ot0-f194.google.com with SMTP id c15-v6so6733205otl.3;
-        Fri, 08 Jun 2018 10:28:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1onH9GSWoh4lumzrHhHWWw6BfdbKzHvdON7zZ0K6wbg=;
-        b=rT/w+ah1ITaqI89av1hxfytWqOCJke755PvQ6L/Iwbv222jxzLkpRdmX/jWu/c4XVK
-         lGXnS6XDtH1NPOMcTLQI7qVHPRxm2/W5DxXy+RSG+7YWDkuBY213N+LLHZzluObOZ59c
-         Up2C0WPWfOG64rUrXiuWO2EV2BgAAJAI4I4326ndCjR0ptvMlkc7H1WgyclRRqboqPih
-         CLsN+222dMXW/tDOiiYwjiKTkICsFKiSCN08EJzorvTJMaKKuv/+O1CoUII+JsLLymCr
-         tZPqsm6aE9TH+WdYyhQwQckT8cZeTRsqXgU9pCVmCWXblrnBX8cDCl16Hcu31u0qUUew
-         c7SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=1onH9GSWoh4lumzrHhHWWw6BfdbKzHvdON7zZ0K6wbg=;
-        b=t2H3cwhx6zOeZpeCx/NYIIYJ0h0Wpt/o40rczYRHTzsSWu2HNSDxX8fw4kVtMZHVTD
-         pYkn5cC5r/XwC9uLVE3i3RA15q9X7Pf7cCUM8P8m49li5NTNfwUFHE9rPZavWAuXmhsy
-         GBTKmwnjGXx5+pnt1fhTUkbmRooTOpmMQx4SS4ZCyGxTXqYHTtnZYnOL0Zx1ArOKz73F
-         dGllguX6IO1SJ18frEs2sxBQC9lOOBIFPG6o4W3EVIWqweqJXgfZkXC06pTSWG3Ljj4x
-         QnAEhSt077FuzhrsY8CvdHSVMsmz+XzZKnA4CTnio72B2Da0JRD5fD431Tlf7sO83njX
-         gZBQ==
-X-Gm-Message-State: APt69E1TPLqjF8KAPVPLgL5JSCT5K77g98R2UwavfUSJJDoXf8fnLQJ1
-        dz+9m3M8xKXc/Exxv8rdc8/BjAbEC/NejuC4QL0=
-X-Google-Smtp-Source: ADUXVKK08Ed9++QoubHYM9VI6ls5hJfNORsUULUMbTfbXL3ufGXfvAguYXQI/1TxH5BTHYDbx4LBJSebFyHlZim2Mko=
-X-Received: by 2002:a9d:2bcd:: with SMTP id u71-v6mr3872907ota.51.1528478937869;
- Fri, 08 Jun 2018 10:28:57 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 10:28:57 -0700 (PDT)
-In-Reply-To: <70b90919f98a6941425b39065dc8d37c95f0fd9f.1528390418.git.leonard.crestez@nxp.com>
-References: <b31ca3ff50566c193003614d0bbf5e0a0e95901c.1528390418.git.leonard.crestez@nxp.com>
- <70b90919f98a6941425b39065dc8d37c95f0fd9f.1528390418.git.leonard.crestez@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 8 Jun 2018 14:28:57 -0300
-Message-ID: <CAOMZO5Anr6BQ=7XWB8hQSaV6m5b1fwji1RBwSj7vZU2zdAVnTw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] imx_v6_v7_defconfig: Enable imx6qdl-sabreauto sensors
-To: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
+        Thu, 7 Jun 2018 04:53:09 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 411fSx0yPPz1qymG;
+        Thu,  7 Jun 2018 10:53:05 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 411fSw70fbz1qsLM;
+        Thu,  7 Jun 2018 10:53:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id Y1LHNO4SKiVX; Thu,  7 Jun 2018 10:53:03 +0200 (CEST)
+X-Auth-Info: L4notD97Ueine1IDI1CgJF3D17NrJ6sC58dJWEiDHpI=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Thu,  7 Jun 2018 10:53:03 +0200 (CEST)
+Date: Thu, 7 Jun 2018 10:51:32 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <kernel@pengutronix.de>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
         <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2] ARM: DTS: imx53: Add support for imx53 HSC/DDC
+ boards from K+P
+Message-ID: <20180607105132.16f28635@jawa>
+In-Reply-To: <CAOMZO5BiKjoiyh0dxycRhPkRzS2Uk9h8fPTA+sXMZBDJpbcyWQ@mail.gmail.com>
+References: <20180509153428.1440-1-lukma@denx.de>
+        <20180519121506.32344-1-lukma@denx.de>
+        <CAOMZO5BiKjoiyh0dxycRhPkRzS2Uk9h8fPTA+sXMZBDJpbcyWQ@mail.gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/esdQhX_4xzCN10eHNJjxJVV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 2:00 PM, Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> CONFIG_SENSORS_ISL29018 supports isil,il29023 light sensor
-> CONFIG_MMA8452 supports fsl,mma8451 accelerometer
->
-> CONFIG_MAG3110 for fsl,mag3110 is already enabled
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+--Sig_/esdQhX_4xzCN10eHNJjxJVV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Just a minor nit in the Subject. The "ARM" prefix is missing.
+Hi Shawn,
 
-Maybe Shawn can adjust it when applying the patch.
+> On Sat, May 19, 2018 at 9:15 AM, Lukasz Majewski <lukma@denx.de>
+> wrote:
+> > This commit provides support for HSC and DDC boards from
+> > Kieback&Peter GmbH vendor.
+> >
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de> =20
+>=20
+> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Gentle ping on this patch.
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/esdQhX_4xzCN10eHNJjxJVV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlsY8hQACgkQAR8vZIA0
+zr0XBQgAsgImf0VM/M8wO9K9WQv7RA+ok/6DrrxrKpO7RpME65YYG7MLWHL0R60S
+RDnM/sBHypEGLBl2JqF9GHJsJQxdfncgrOmBodeRKgIbTP99/2U7IiNoGEjC2jc+
+dE6Mv5PHLJKe+UuErjvvQMn7K/FDJnqIdC3McpCQV+bOHc7RSggckIL52REukuNT
+8EWLCsQpqlkcpRTGktMXUpcCJDTjnUgzYmymDCTcvjtiOdLa++arvlezcZOY0Toe
+2Vyw2QJYLhcvIQUQbPMaGy06xufB8bJdxMRqwN5IJM5I5S2LG6fE4c2v933VZ2TG
+sqZh3NSHu0R7+hiBKR6HiuMcuWOvQA==
+=rxn9
+-----END PGP SIGNATURE-----
+
+--Sig_/esdQhX_4xzCN10eHNJjxJVV--
