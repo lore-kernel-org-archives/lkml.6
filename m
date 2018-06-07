@@ -1,121 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ynsFILGQHlucBgAAmS7hNA
-	; Mon, 11 Jun 2018 15:09:37 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +kNYK+6fGFvfQAAAmS7hNA
+	; Thu, 07 Jun 2018 03:01:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6AC24607BB; Mon, 11 Jun 2018 15:09:37 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4caaoKG"
+	id 89394608B8; Thu,  7 Jun 2018 03:01:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D439360541;
-	Mon, 11 Jun 2018 15:09:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D439360541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0364960452;
+	Thu,  7 Jun 2018 03:01:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0364960452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932636AbeFKPJf (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:09:35 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34507 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932463AbeFKPJd (ORCPT
+        id S932539AbeFGDA6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 23:00:58 -0400
+Received: from regular1.263xmail.com ([211.150.99.138]:43430 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753493AbeFGDA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:09:33 -0400
-Received: by mail-lf0-f68.google.com with SMTP id o9-v6so31101494lfk.1;
-        Mon, 11 Jun 2018 08:09:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9n+a6xTvvEIZABtWTS6vuxUxqPoIVPx/5Wc4t2mllf8=;
-        b=D4caaoKGro5SPI+549bZb6Y0uWcFpdtfmK/jdhDgLXKsrLH24dHraUcg+x8+EOFTr+
-         blUJqx38FIW0+N+S3LJrHXTrsgTdD2QAi5h2nCiDngclWvCO3SdvafPvAjhawC8nU9id
-         QGGCtNogQVh6RyQ6pbTGRmshUgMTcoQnUtr1ReOJrF8rzaNlQSg9kMfr/arGSaEkm9lo
-         RDYCm7GUpUAu9f7vzI5bx5g2zelYgNZfTZwWWV5o15Ct5L4yTLwSzZNTiSd5LSpW5tsl
-         CoBmNNjV43U8fo5Xf4jXtIE7G7/6VrAUYijvTQxDSgWjxbUMmjDUIpDVgTLi4lhAXOqI
-         5tzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9n+a6xTvvEIZABtWTS6vuxUxqPoIVPx/5Wc4t2mllf8=;
-        b=ag0khNLCWa9LFuoTubyamyIgXczFYLePiIOk2niAg1keGNWXnkn3pRwNCVI52jbQ3x
-         LOulaO2NWyxC9AVmCajbSRg4rkF8gy3E9eP/jUed7DMZ6vKWBaYceDXTtfi+sY7OQO8M
-         V0kFQLuiwlvjQVBFX3InAQYCNLil6sIa4SVjZGUQ7DohvbPbqVGCOz9OVGwJtxNM+Tmw
-         54047fhrKtGiRG4RMazbkP5orTEpT4sbNkunmykorVeiU0ia5ztYI10sfSppotUCSeHX
-         L2HNFAhp93xcqkxKmjJpvp6MpSGKp1++lo8KEm+J4U2I9Co3VrEmfkpJqljHZi98WugZ
-         x7hg==
-X-Gm-Message-State: APt69E0jvEc/WgGByPe6XJZACVgWTQ9xwpTiHqYBPWwE+izvk+0/sBqV
-        X2E/VXcVOvDBuH2PcaXjIds9rvVQh3lgk/G51Rc=
-X-Google-Smtp-Source: ADUXVKJuoFuHWkCDwYPsGccHLvskI1Aa2MExJCrxcD+Fr0rpmN4ohUdLZtOIxjC1FIFreGWiS918vNw6p3PTuOnVpb0=
-X-Received: by 2002:a19:7:: with SMTP id 7-v6mr11103880lfa.62.1528729771374;
- Mon, 11 Jun 2018 08:09:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
- <20180611115240.32606-16-ricardo.ribalda@gmail.com> <CCB7FF79-F89A-4421-A6C0-E0663BEE6065@holtmann.org>
-In-Reply-To: <CCB7FF79-F89A-4421-A6C0-E0663BEE6065@holtmann.org>
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date: Mon, 11 Jun 2018 17:09:14 +0200
-Message-ID: <CAPybu_0=ykAcCx=nZyrv90YRfihDxi3s2+Nz+6UP8Fwd5eH2-A@mail.gmail.com>
-Subject: Re: [PATCH v2 15/24] net: qualcomm: MODULE_DEVICE_TABLE(serdev)
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        David Miller <davem@davemloft.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 6 Jun 2018 23:00:57 -0400
+Received: from zhangqing?rock-chips.com (unknown [192.168.167.105])
+        by regular1.263xmail.com (Postfix) with ESMTP id EAE907A5A;
+        Thu,  7 Jun 2018 11:00:46 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 0CDE43ED;
+        Thu,  7 Jun 2018 11:00:34 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <13927ddad1ddbf32b6e6e2245e9d01ad>
+X-ATTACHMENT-NUM: 0
+X-SENDER: zhangqing@rock-chips.com
+X-DNS-TYPE: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 30356G93BF;
+        Thu, 07 Jun 2018 11:00:44 +0800 (CST)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 0/4] clk: rockchip: support clock controller for px30 SoC
+Date: Thu,  7 Jun 2018 11:06:22 +0800
+Message-Id: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
-On Mon, Jun 11, 2018 at 3:01 PM Marcel Holtmann <marcel@holtmann.org> wrote=
-:
->
->
-> the commit message is misleading me. If I build something with ACPI or DT=
- support, then modinfo will show all modalias information for ACPI and DT c=
-ompatible strings. What else does udev/modprobe actually need? Is something=
- broken with the modalias export?
+Elaine Zhang (4):
+  dt-bindings: add bindings for px30 clock controller
+  clk: rockchip: add dt-binding header for px30
+  clk: rockchip: add support for half divider
+  clk: rockchip: add clock controller for px30
 
-The main purpose is to autoload drivers for devices that have been
-created via sysfs or another module.
+ .../bindings/clock/rockchip,px30-cru.txt           |   67 ++
+ drivers/clk/rockchip/Makefile                      |    2 +
+ drivers/clk/rockchip/clk-half-divider.c            |  235 +++++
+ drivers/clk/rockchip/clk-px30.c                    | 1080 ++++++++++++++++++++
+ drivers/clk/rockchip/clk.c                         |   10 +
+ drivers/clk/rockchip/clk.h                         |   86 +-
+ include/dt-bindings/clock/px30-cru.h               |  402 ++++++++
+ 7 files changed, 1881 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+ create mode 100644 drivers/clk/rockchip/clk-half-divider.c
+ create mode 100644 drivers/clk/rockchip/clk-px30.c
+ create mode 100644 include/dt-bindings/clock/px30-cru.h
 
-Eg1: We have a serial port on a standard computer that has connected a
-GPS module. Since it is something that is not in the ACPI nor the DT
-table the user will run
-
-echo serdev_gps > /sys/bus/serial/devices/serial0/new_device
-
-Eg2 module: https://github.com/ribalda/linux/blob/415bb3f0076c2b846ebe54095=
-89b8e1e3004f55a/drivers/tty/serdev/test_platform.c
-
-Modprobe does not know what module to load for that device unless
-there is a matching MODULE_DEVICE_TABLE
-Today, we have the same functionality for i2c devices
-https://www.kernel.org/doc/Documentation/i2c/instantiating-devices
-
-I guess the commit message is really bad :), sorry about that. Any
-suggestions to improve it?
-
-Thanks!
-
->
-> Regards
->
-> Marcel
->
-
-
---=20
-Ricardo Ribalda
+-- 
+1.9.1
