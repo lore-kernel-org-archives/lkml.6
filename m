@@ -1,283 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id euA9CBVGHluVewAAmS7hNA
-	; Mon, 11 Jun 2018 09:51:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uuO9JElHGVvFPAAAmS7hNA
+	; Thu, 07 Jun 2018 14:55:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 024EA607A4; Mon, 11 Jun 2018 09:51:17 +0000 (UTC)
+	id 829EB607E7; Thu,  7 Jun 2018 14:55:05 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4171D60385;
-	Mon, 11 Jun 2018 09:51:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4171D60385
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id BCD7C606DD;
+	Thu,  7 Jun 2018 14:55:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCD7C606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932816AbeFKJvP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 05:51:15 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:37227 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932641AbeFKJvN (ORCPT
+        id S935433AbeFGOzB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:55:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41026 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935394AbeFGOy5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 05:51:13 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5B9nZ3t008471;
-        Mon, 11 Jun 2018 11:50:42 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2jg4bwga7e-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 11 Jun 2018 11:50:42 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B174543;
-        Mon, 11 Jun 2018 09:50:41 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8BBA724DF;
-        Mon, 11 Jun 2018 09:50:41 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
- 2018 11:50:41 +0200
-Received: from localhost (10.201.23.73) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 11:50:40
- +0200
-From: Hugues Fruchet <hugues.fruchet@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
-CC: <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>
-Subject: [PATCH 4/4] media: stm32-dcmi: revisit buffer list management
-Date: Mon, 11 Jun 2018 11:50:27 +0200
-Message-ID: <1528710627-8566-5-git-send-email-hugues.fruchet@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528710627-8566-1-git-send-email-hugues.fruchet@st.com>
-References: <1528710627-8566-1-git-send-email-hugues.fruchet@st.com>
+        Thu, 7 Jun 2018 10:54:57 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbv-0005hL-BA; Thu, 07 Jun 2018 15:09:55 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvaz-0002lf-VP; Thu, 07 Jun 2018 15:08:57 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.73]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_04:,,
- signatures=0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Adrian Hunter" <adrian.hunter@intel.com>,
+        "Wang Nan" <wangnan0@huawei.com>, "Jiri Olsa" <jolsa@kernel.org>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        "David Ahern" <dsahern@gmail.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Andi Kleen" <ak@linux.intel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.944360372@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 069/410] perf report: Fix -D output for user metadata
+ events
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup "active" field usage and enhance list management
-to avoid exceptions when releasing buffers on error or
-stopping streaming.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+------------------
+
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+commit f250b09c779550e4a7a412dae6d3ad34d5201019 upstream.
+
+The PERF_RECORD_USER_ events are synthesized by the tool to assist in
+processing the PERF_RECORD_ ones generated by the kernel, the printing
+of that information doesn't come with a perf_sample structure, so, when
+dumping the event fields using 'perf report -D' there were columns that
+end up not being printed.
+
+To tidy up a bit this, fake a perf_sample structure with zeroes to have
+the missing columns printed and avoid the occasional surprise with that.
+
+Before:
+
+0 0x45b8 [0x68]: PERF_RECORD_MMAP -1/0: [0xffffffffc12ec000(0x4000) @ 0]: x /lib/modules/4.14.0+/kernel/fs/nls/nls_utf8.ko
+0x4620 [0x28]: PERF_RECORD_THREAD_MAP nr: 1 thread: 27820
+0x4648 [0x18]: PERF_RECORD_CPU_MAP: 0-3
+0 0x4660 [0x28]: PERF_RECORD_COMM: perf:27820/27820
+0x4a58 [0x8]: PERF_RECORD_FINISHED_ROUND
+447723433020976 0x4688 [0x28]: PERF_RECORD_SAMPLE(IP, 0x4001): 27820/27820: 0xffffffff8f1b6d7a period: 1 addr: 0
+
+After:
+
+  $ perf report -D | grep PERF_RECORD_ | head
+  0 0xe8 [0x20]: PERF_RECORD_TIME_CONV: unhandled!
+  0 0x108 [0x28]: PERF_RECORD_THREAD_MAP nr: 1 thread: 32555
+  0 0x130 [0x18]: PERF_RECORD_CPU_MAP: 0-3
+  0 0x148 [0x28]: PERF_RECORD_COMM: perf:32555/32555
+  0 0x4e8 [0x8]: PERF_RECORD_FINISHED_ROUND
+  448743409421205 0x170 [0x28]: PERF_RECORD_COMM exec: sleep:32555/32555
+  448743409431883 0x198 [0x68]: PERF_RECORD_MMAP2 32555/32555: [0x55e11d75a000(0x208000) @ 0 fd:00 3147174 2566255743]: r-xp /usr/bin/sleep
+  448743409443873 0x200 [0x70]: PERF_RECORD_MMAP2 32555/32555: [0x7f0ced316000(0x229000) @ 0 fd:00 3151761 2566238119]: r-xp /usr/lib64/ld-2.25.so
+  448743409454790 0x270 [0x60]: PERF_RECORD_MMAP2 32555/32555: [0x7ffe84f6d000(0x2000) @ 0 00:00 0 0]: r-xp [vdso]
+  448743409479500 0x2d0 [0x28]: PERF_RECORD_SAMPLE(IP, 0x4002): 32555/32555: 0xffffffff8f84c7e7 period: 1 addr: 0
+  $
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 9aefcab0de47 ("perf session: Consolidate the dump code")
+Link: https://lkml.kernel.org/n/tip-todcu15x0cwgppkh1gi6uhru@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 65 +++++++++++++++----------------
- 1 file changed, 31 insertions(+), 34 deletions(-)
+ tools/perf/util/session.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 93bb03a..581ded0 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -191,7 +191,7 @@ static inline void reg_clear(void __iomem *base, u32 reg, u32 mask)
- 	reg_write(base, reg, reg_read(base, reg) & ~mask);
- }
- 
--static int dcmi_start_capture(struct stm32_dcmi *dcmi);
-+static int dcmi_start_capture(struct stm32_dcmi *dcmi, struct dcmi_buf *buf);
- 
- static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
- 			     struct dcmi_buf *buf,
-@@ -203,6 +203,8 @@ static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
- 	if (!buf)
- 		return;
- 
-+	list_del_init(&buf->list);
-+
- 	vbuf = &buf->vb;
- 
- 	vbuf->sequence = dcmi->sequence++;
-@@ -220,6 +222,8 @@ static void dcmi_buffer_done(struct stm32_dcmi *dcmi,
- 
- static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -996,10 +996,11 @@ static int perf_session_deliver_event(st
+ static int perf_session__process_user_event(struct perf_session *session, union perf_event *event,
+ 					    struct perf_tool *tool, u64 file_offset)
  {
-+	struct dcmi_buf *buf;
-+
- 	spin_lock_irq(&dcmi->irqlock);
++	struct perf_sample sample = { .time = 0, };
+ 	int fd = perf_data_file__fd(session->file);
+ 	int err;
  
- 	if (dcmi->state != RUNNING) {
-@@ -230,19 +234,16 @@ static int dcmi_restart_capture(struct stm32_dcmi *dcmi)
- 	/* Restart a new DMA transfer with next buffer */
- 	if (list_empty(&dcmi->buffers)) {
- 		dev_dbg(dcmi->dev, "Capture restart is deferred to next buffer queueing\n");
--		dcmi->active = NULL;
- 		dcmi->state = WAIT_FOR_BUFFER;
- 		spin_unlock_irq(&dcmi->irqlock);
- 		return 0;
- 	}
--
--	dcmi->active = list_entry(dcmi->buffers.next,
--				  struct dcmi_buf, list);
--	list_del_init(&dcmi->active->list);
-+	buf = list_entry(dcmi->buffers.next, struct dcmi_buf, list);
-+	dcmi->active = buf;
+-	dump_event(session, event, file_offset, NULL);
++	dump_event(session, event, file_offset, &sample);
  
- 	spin_unlock_irq(&dcmi->irqlock);
- 
--	return dcmi_start_capture(dcmi);
-+	return dcmi_start_capture(dcmi, buf);
- }
- 
- static void dcmi_dma_callback(void *param)
-@@ -252,6 +253,8 @@ static void dcmi_dma_callback(void *param)
- 	enum dma_status status;
- 	struct dcmi_buf *buf = dcmi->active;
- 
-+	spin_lock_irq(&dcmi->irqlock);
-+
- 	/* Check DMA status */
- 	status = dmaengine_tx_status(dcmi->dma_chan, dcmi->dma_cookie, &state);
- 
-@@ -274,15 +277,19 @@ static void dcmi_dma_callback(void *param)
- 		/* Return buffer to V4L2 */
- 		dcmi_buffer_done(dcmi, buf, buf->size, 0);
- 
-+		spin_unlock_irq(&dcmi->irqlock);
-+
- 		/* Restart capture */
- 		if (dcmi_restart_capture(dcmi))
- 			dev_err(dcmi->dev, "%s: Cannot restart capture on DMA complete\n",
- 				__func__);
--		break;
-+		return;
- 	default:
- 		dev_err(dcmi->dev, "%s: Received unknown status\n", __func__);
- 		break;
- 	}
-+
-+	spin_unlock_irq(&dcmi->irqlock);
- }
- 
- static int dcmi_start_dma(struct stm32_dcmi *dcmi,
-@@ -334,10 +341,9 @@ static int dcmi_start_dma(struct stm32_dcmi *dcmi,
- 	return 0;
- }
- 
--static int dcmi_start_capture(struct stm32_dcmi *dcmi)
-+static int dcmi_start_capture(struct stm32_dcmi *dcmi, struct dcmi_buf *buf)
- {
- 	int ret;
--	struct dcmi_buf *buf = dcmi->active;
- 
- 	if (!buf)
- 		return -EINVAL;
-@@ -491,8 +497,6 @@ static int dcmi_queue_setup(struct vb2_queue *vq,
- 	*nplanes = 1;
- 	sizes[0] = size;
- 
--	dcmi->active = NULL;
--
- 	dev_dbg(dcmi->dev, "Setup queue, count=%d, size=%d\n",
- 		*nbuffers, size);
- 
-@@ -550,23 +554,24 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
- 
- 	spin_lock_irq(&dcmi->irqlock);
- 
--		dcmi->active = buf;
-+	/* Enqueue to video buffers list */
-+	list_add_tail(&buf->list, &dcmi->buffers);
- 
- 	if (dcmi->state == WAIT_FOR_BUFFER) {
- 		dcmi->state = RUNNING;
-+		dcmi->active = buf;
- 
- 		dev_dbg(dcmi->dev, "Starting capture on buffer[%d] queued\n",
- 			buf->vb.vb2_buf.index);
- 
- 		spin_unlock_irq(&dcmi->irqlock);
--		if (dcmi_start_capture(dcmi))
-+		if (dcmi_start_capture(dcmi, buf))
- 			dev_err(dcmi->dev, "%s: Cannot restart capture on overflow or error\n",
- 				__func__);
--	} else {
--		/* Enqueue to video buffers list */
--		list_add_tail(&buf->list, &dcmi->buffers);
--		spin_unlock_irq(&dcmi->irqlock);
-+		return;
- 	}
-+
-+	spin_unlock_irq(&dcmi->irqlock);
- }
- 
- static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
-@@ -638,7 +643,6 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	dcmi->errors_count = 0;
- 	dcmi->overrun_count = 0;
- 	dcmi->buffers_count = 0;
--	dcmi->active = NULL;
- 
- 	/*
- 	 * Start transfer if at least one buffer has been queued,
-@@ -651,15 +655,15 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 		return 0;
- 	}
- 
--	dcmi->active = list_entry(dcmi->buffers.next, struct dcmi_buf, list);
--	list_del_init(&dcmi->active->list);
--
--	dev_dbg(dcmi->dev, "Start streaming, starting capture\n");
-+	buf = list_entry(dcmi->buffers.next, struct dcmi_buf, list);
-+	dcmi->active = buf;
- 
- 	dcmi->state = RUNNING;
- 
-+	dev_dbg(dcmi->dev, "Start streaming, starting capture\n");
-+
- 	spin_unlock_irq(&dcmi->irqlock);
--	ret = dcmi_start_capture(dcmi);
-+	ret = dcmi_start_capture(dcmi, buf);
- 	if (ret) {
- 		dev_err(dcmi->dev, "%s: Start streaming failed, cannot start capture\n",
- 			__func__);
-@@ -683,15 +687,11 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	 * Return all buffers to vb2 in QUEUED state.
- 	 * This will give ownership back to userspace
- 	 */
--	if (dcmi->active) {
--		buf = dcmi->active;
--		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
--		dcmi->active = NULL;
--	}
- 	list_for_each_entry_safe(buf, node, &dcmi->buffers, list) {
- 		list_del_init(&buf->list);
- 		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
- 	}
-+	dcmi->active = NULL;
- 	spin_unlock_irq(&dcmi->irqlock);
- 
- 	return ret;
-@@ -733,16 +733,13 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
- 	}
- 
- 	/* Return all queued buffers to vb2 in ERROR state */
--	if (dcmi->active) {
--		buf = dcmi->active;
--		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
--		dcmi->active = NULL;
--	}
- 	list_for_each_entry_safe(buf, node, &dcmi->buffers, list) {
- 		list_del_init(&buf->list);
- 		vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
- 	}
- 
-+	dcmi->active = NULL;
-+
- 	spin_unlock_irq(&dcmi->irqlock);
- 
- 	/* Stop all pending DMA operations */
--- 
-1.9.1
+ 	/* These events are processed right away */
+ 	switch (event->header.type) {
