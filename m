@@ -1,100 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ptl4O+byG1vpXwAAmS7hNA
-	; Sat, 09 Jun 2018 15:34:57 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id z21wLh1JGVsTTgAAmS7hNA
+	; Thu, 07 Jun 2018 15:03:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F0887608C1; Sat,  9 Jun 2018 15:34:56 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDcL7eiz"
+	id F1E09608B8; Thu,  7 Jun 2018 15:03:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 697A8606FA;
-	Sat,  9 Jun 2018 15:34:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 697A8606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5BB6C601C3;
+	Thu,  7 Jun 2018 15:03:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BB6C601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932951AbeFIPex (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:34:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932930AbeFIPet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:34:49 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7F70208A4;
-        Sat,  9 Jun 2018 15:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558489;
-        bh=dVo4NvyCkTg7ZAxs9a1VF9JrkVoxX34QKKpzFw39OYk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FDcL7eizRT2+wdM0PmlSSwxjFb3gq7TkDq7qjWDNuYj2nsoAB/uA7185pccai3s1H
-         Cre6lgfbj6aVvr5yZh8hxdtS/KKLRYV/Oquq/HvrA2I/6JCaTXl+jr5qUSviJpfDxq
-         B9Vwakwk4tXSNrMSR6MBa96kQB+tL4w0JGH9XnKE=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 08/41] bnx2x: use the right constant
-Date: Sat,  9 Jun 2018 17:29:40 +0200
-Message-Id: <20180609152926.907536975@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
-References: <20180609152926.389750182@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S935983AbeFGPDv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:03:51 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41534 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935962AbeFGPDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:03:47 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbm-0005hK-ON; Thu, 07 Jun 2018 15:09:46 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb3-0002sV-1T; Thu, 07 Jun 2018 15:09:01 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Clay McClure" <clay@daemons.net>,
+        "Richard Weinberger" <richard@nod.at>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.88242262@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 139/410] ubi: Fix race condition between ubi volume
+ creation and udev
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+From: Clay McClure <clay@daemons.net>
 
-[ Upstream commit dd612f18a49b63af8b3a5f572d999bdb197385bc ]
+commit a51a0c8d213594bc094cb8e54aad0cb6d7f7b9a6 upstream.
 
-Nearby code that also tests port suggests that the P0 constant should be
-used when port is zero.
+Similar to commit 714fb87e8bc0 ("ubi: Fix race condition between ubi
+device creation and udev"), we should make the volume active before
+registering it.
 
-The semantic match that finds this problem is as follows:
-(http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression e,e1;
-@@
-
-* e ? e1 : e1
-// </smpl>
-
-Fixes: 6c3218c6f7e5 ("bnx2x: Adjust ETS to 578xx")
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Clay McClure <clay@daemons.net>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/ubi/vmt.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -588,7 +588,7 @@ static void bnx2x_ets_e3b0_nig_disabled(
- 	 * slots for the highest priority.
- 	 */
- 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
--		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
-+		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
- 	/* Mapping between the CREDIT_WEIGHT registers and actual client
- 	 * numbers
- 	 */
+--- a/drivers/mtd/ubi/vmt.c
++++ b/drivers/mtd/ubi/vmt.c
+@@ -308,6 +308,12 @@ int ubi_create_volume(struct ubi_device
+ 			vol->last_eb_bytes = vol->usable_leb_size;
+ 	}
+ 
++	/* Make volume "available" before it becomes accessible via sysfs */
++	spin_lock(&ubi->volumes_lock);
++	ubi->volumes[vol_id] = vol;
++	ubi->vol_count += 1;
++	spin_unlock(&ubi->volumes_lock);
++
+ 	/* Register character device for the volume */
+ 	cdev_init(&vol->cdev, &ubi_vol_cdev_operations);
+ 	vol->cdev.owner = THIS_MODULE;
+@@ -350,11 +356,6 @@ int ubi_create_volume(struct ubi_device
+ 	if (err)
+ 		goto out_sysfs;
+ 
+-	spin_lock(&ubi->volumes_lock);
+-	ubi->volumes[vol_id] = vol;
+-	ubi->vol_count += 1;
+-	spin_unlock(&ubi->volumes_lock);
+-
+ 	ubi_volume_notify(ubi, vol, UBI_VOLUME_ADDED);
+ 	self_check_volumes(ubi);
+ 	return err;
+@@ -374,6 +375,10 @@ out_sysfs:
+ out_cdev:
+ 	cdev_del(&vol->cdev);
+ out_mapping:
++	spin_lock(&ubi->volumes_lock);
++	ubi->volumes[vol_id] = NULL;
++	ubi->vol_count -= 1;
++	spin_unlock(&ubi->volumes_lock);
+ 	if (do_free)
+ 		kfree(vol->eba_tbl);
+ out_acc:
