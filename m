@@ -1,215 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PSsLMBV2GVskEwAAmS7hNA
-	; Thu, 07 Jun 2018 18:16:40 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Mnx+MlJIGVtPRwAAmS7hNA
+	; Thu, 07 Jun 2018 14:59:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A0FFF608B8; Thu,  7 Jun 2018 18:16:40 +0000 (UTC)
+	id B3680608C1; Thu,  7 Jun 2018 14:59:30 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F031D606FA;
-	Thu,  7 Jun 2018 18:16:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F031D606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id DCCCC607E7;
+	Thu,  7 Jun 2018 14:59:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DCCCC607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936202AbeFGSQg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:16:36 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37938 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935991AbeFGSM5 (ORCPT
+        id S935673AbeFGO7Z (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:59:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41263 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935647AbeFGO7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:12:57 -0400
-Received: by mail-pg0-f68.google.com with SMTP id c9-v6so5129714pgf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:12:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7EoVwEbtmRQe9tZHxZ/fIrP5hkySzViL8ASC3ahAM3w=;
-        b=ActblH1V1nlyaha80bK/kY5TX+jzjJQPxvc0oS8Zyd3utghmu9x7uJyexN53Otp32a
-         Ir6hkzwvIiiN9A9UN5ULLpqqXSL4KRTx9ecPKMoXEs7IqKWgXt4/oiBCDUNVKaA2hUk9
-         VdMDcgRDJRuA+8UexkqJkECmSkTBjD7jgOSK7DDPiqQJbyoUzzSkRFKz2AfSEc+ZXGaw
-         4uEGTb19/RBZLFSeV0qpnDrL0GsLi3tPJ+AvFKjwMd2B4Jz+grFZlySMaN2WWM+nihpI
-         FkrlYVkiVKzKoNCbIi0O3Dbeaa34VzP3iT9XHkyeJ8BJbc3g1muEA8FR7xj5v7HI7UjY
-         kVoA==
-X-Gm-Message-State: APt69E1v1GDw4uQyGxpqLsNbhvlXnkarqIgMs6FEz2qrUKiRbHqI+8Kf
-        8tEBOprmTmnKmw1+VCIklsdbFA==
-X-Google-Smtp-Source: ADUXVKJ3Q4YyhDuyHyoyttEkqMXF7r9STQn27V7E2a9bYLikswwo3qWPDTkohH9uRAZtSHO+rnS9CA==
-X-Received: by 2002:a65:644a:: with SMTP id s10-v6mr2431843pgv.360.1528395176115;
-        Thu, 07 Jun 2018 11:12:56 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm5029002pfn.36.2018.06.07.11.12.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 11:12:55 -0700 (PDT)
-From: Matthias Kaehlcke <mka@chromium.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2 03/11] PM / devfreq: Don't adjust to user limits in governors
-Date: Thu,  7 Jun 2018 11:12:06 -0700
-Message-Id: <20180607181214.30338-4-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
-In-Reply-To: <20180607181214.30338-1-mka@chromium.org>
-References: <20180607181214.30338-1-mka@chromium.org>
+        Thu, 7 Jun 2018 10:59:18 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbd-0005a0-HL; Thu, 07 Jun 2018 15:09:37 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb7-00033w-Ou; Thu, 07 Jun 2018 15:09:05 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Shuah Khan" <shuahkh@osg.samsung.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.332455465@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 241/410] usbip: keep usbip_device sockfd state in
+ sync with tcp_socket
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several governors use the user space limits df->min/max_freq to adjust
-the target frequency. This is not necessary, since update_devfreq()
-already takes care of this. Instead the governor can request the available
-min/max frequency by setting the target frequency to DEVFREQ_MIN/MAX_FREQ
-and let update_devfreq() take care of any adjustments.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+------------------
+
+From: Shuah Khan <shuahkh@osg.samsung.com>
+
+commit 009f41aed4b3e11e6dc1e3c07377a10c20f1a5ed upstream.
+
+Keep usbip_device sockfd state in sync with tcp_socket. When tcp_socket
+is reset to null, reset sockfd to -1 to keep it in sync.
+
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust filenames]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
-Changes in v2:
-- squashed "PM / devfreq: Remove redundant frequency adjustment from governors"
-  and "PM / devfreq: governors: Return device frequency limits instead of user
-  limits"
-- updated subject and commit message
-- use DEVFREQ_MIN/MAX_FREQ instead of df->scaling_min/max_freq
+ drivers/staging/usbip/stub_dev.c | 3 +++
+ drivers/staging/usbip/vhci_hcd.c | 2 ++
+ 2 files changed, 5 insertions(+)
 
- drivers/devfreq/governor.h                |  3 +++
- drivers/devfreq/governor_performance.c    |  5 +----
- drivers/devfreq/governor_powersave.c      |  2 +-
- drivers/devfreq/governor_simpleondemand.c | 12 +++---------
- drivers/devfreq/governor_userspace.c      | 16 ++++------------
- 5 files changed, 12 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-index cfc50a61a90d..b81700244ce3 100644
---- a/drivers/devfreq/governor.h
-+++ b/drivers/devfreq/governor.h
-@@ -25,6 +25,9 @@
- #define DEVFREQ_GOV_SUSPEND			0x4
- #define DEVFREQ_GOV_RESUME			0x5
+--- a/drivers/staging/usbip/stub_dev.c
++++ b/drivers/staging/usbip/stub_dev.c
+@@ -114,6 +114,7 @@ static ssize_t store_sockfd(struct devic
+ 			goto err;
  
-+#define DEVFREQ_MIN_FREQ			0
-+#define DEVFREQ_MAX_FREQ			ULONG_MAX
-+
- /**
-  * struct devfreq_governor - Devfreq policy governor
-  * @node:		list node - contains registered devfreq governors
-diff --git a/drivers/devfreq/governor_performance.c b/drivers/devfreq/governor_performance.c
-index 4d23ecfbd948..ded429fd51be 100644
---- a/drivers/devfreq/governor_performance.c
-+++ b/drivers/devfreq/governor_performance.c
-@@ -20,10 +20,7 @@ static int devfreq_performance_func(struct devfreq *df,
- 	 * target callback should be able to get floor value as
- 	 * said in devfreq.h
- 	 */
--	if (!df->max_freq)
--		*freq = UINT_MAX;
--	else
--		*freq = df->max_freq;
-+	*freq = DEVFREQ_MAX_FREQ;
- 	return 0;
- }
+ 		sdev->ud.tcp_socket = socket;
++		sdev->ud.sockfd = sockfd;
  
-diff --git a/drivers/devfreq/governor_powersave.c b/drivers/devfreq/governor_powersave.c
-index 0c42f23249ef..9e8897f5ac42 100644
---- a/drivers/devfreq/governor_powersave.c
-+++ b/drivers/devfreq/governor_powersave.c
-@@ -20,7 +20,7 @@ static int devfreq_powersave_func(struct devfreq *df,
- 	 * target callback should be able to get ceiling value as
- 	 * said in devfreq.h
- 	 */
--	*freq = df->min_freq;
-+	*freq = DEVFREQ_MIN_FREQ;
- 	return 0;
- }
+ 		spin_unlock_irq(&sdev->ud.lock);
  
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index 28e0f2de7100..c0417f0e081e 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -27,7 +27,6 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 	unsigned int dfso_upthreshold = DFSO_UPTHRESHOLD;
- 	unsigned int dfso_downdifferential = DFSO_DOWNDIFFERENCTIAL;
- 	struct devfreq_simple_ondemand_data *data = df->data;
--	unsigned long max = (df->max_freq) ? df->max_freq : UINT_MAX;
- 
- 	err = devfreq_update_stats(df);
- 	if (err)
-@@ -47,7 +46,7 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 
- 	/* Assume MAX if it is going to be divided by zero */
- 	if (stat->total_time == 0) {
--		*freq = max;
-+		*freq = DEVFREQ_MAX_FREQ;
- 		return 0;
+@@ -213,6 +214,7 @@ static void stub_shutdown_connection(str
+ 	if (ud->tcp_socket) {
+ 		sockfd_put(ud->tcp_socket);
+ 		ud->tcp_socket = NULL;
++		ud->sockfd = -1;
  	}
  
-@@ -60,13 +59,13 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 	/* Set MAX if it's busy enough */
- 	if (stat->busy_time * 100 >
- 	    stat->total_time * dfso_upthreshold) {
--		*freq = max;
-+		*freq = DEVFREQ_MAX_FREQ;
- 		return 0;
+ 	/* 3. free used data */
+@@ -307,6 +309,7 @@ static struct stub_device *stub_device_a
+ 	sdev->ud.status		= SDEV_ST_AVAILABLE;
+ 	spin_lock_init(&sdev->ud.lock);
+ 	sdev->ud.tcp_socket	= NULL;
++	sdev->ud.sockfd		= -1;
+ 
+ 	INIT_LIST_HEAD(&sdev->priv_init);
+ 	INIT_LIST_HEAD(&sdev->priv_tx);
+--- a/drivers/staging/usbip/vhci_hcd.c
++++ b/drivers/staging/usbip/vhci_hcd.c
+@@ -786,6 +786,7 @@ static void vhci_shutdown_connection(str
+ 	if (vdev->ud.tcp_socket) {
+ 		sockfd_put(vdev->ud.tcp_socket);
+ 		vdev->ud.tcp_socket = NULL;
++		vdev->ud.sockfd = -1;
  	}
+ 	pr_info("release socket\n");
  
- 	/* Set MAX if we do not know the initial frequency */
- 	if (stat->current_frequency == 0) {
--		*freq = max;
-+		*freq = DEVFREQ_MAX_FREQ;
- 		return 0;
+@@ -833,6 +834,7 @@ static void vhci_device_reset(struct usb
+ 	if (ud->tcp_socket) {
+ 		sockfd_put(ud->tcp_socket);
+ 		ud->tcp_socket = NULL;
++		ud->sockfd = -1;
  	}
+ 	ud->status = VDEV_ST_NULL;
  
-@@ -85,11 +84,6 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
- 	b = div_u64(b, (dfso_upthreshold - dfso_downdifferential / 2));
- 	*freq = (unsigned long) b;
- 
--	if (df->min_freq && *freq < df->min_freq)
--		*freq = df->min_freq;
--	if (df->max_freq && *freq > df->max_freq)
--		*freq = df->max_freq;
--
- 	return 0;
- }
- 
-diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-index 080607c3f34d..378d84c011df 100644
---- a/drivers/devfreq/governor_userspace.c
-+++ b/drivers/devfreq/governor_userspace.c
-@@ -26,19 +26,11 @@ static int devfreq_userspace_func(struct devfreq *df, unsigned long *freq)
- {
- 	struct userspace_data *data = df->data;
- 
--	if (data->valid) {
--		unsigned long adjusted_freq = data->user_frequency;
--
--		if (df->max_freq && adjusted_freq > df->max_freq)
--			adjusted_freq = df->max_freq;
--
--		if (df->min_freq && adjusted_freq < df->min_freq)
--			adjusted_freq = df->min_freq;
--
--		*freq = adjusted_freq;
--	} else {
-+	if (data->valid)
-+		*freq = data->user_frequency;
-+	else
- 		*freq = df->previous_freq; /* No user freq specified yet */
--	}
-+
- 	return 0;
- }
- 
--- 
-2.18.0.rc1.242.g61856ae69a-goog
