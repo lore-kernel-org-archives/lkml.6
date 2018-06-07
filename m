@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KY9/N9NZGVs3CwAAmS7hNA
-	; Thu, 07 Jun 2018 16:16:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RN0wMRb2GFvUQAAAmS7hNA
+	; Thu, 07 Jun 2018 09:10:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 012C1608BA; Thu,  7 Jun 2018 16:16:49 +0000 (UTC)
+	id 44BD3607F7; Thu,  7 Jun 2018 09:10:36 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MGES3tCm"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EohAtlUN"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,165 +13,103 @@ X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7B4E76089E;
-	Thu,  7 Jun 2018 16:16:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B4E76089E
+	by smtp.codeaurora.org (Postfix) with ESMTP id CEA11607DC;
+	Thu,  7 Jun 2018 09:10:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CEA11607DC
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934651AbeFGQQr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:16:47 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:41406 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933320AbeFGQQm (ORCPT
+        id S932795AbeFGJKd (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 05:10:33 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45593 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753432AbeFGJK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:16:42 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a11-v6so5144328pff.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:16:42 -0700 (PDT)
+        Thu, 7 Jun 2018 05:10:28 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a22-v6so4596345pfo.12
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 02:10:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=jvsNRDy7GwCi4B3W0Qz0Xptd9eM87EAdMLoW6eVLTvM=;
-        b=MGES3tCmogM/cAkXP0eedsuNt6Dehg6/YBsK8qPypV3gI8wABJ1+/UWPMJl0kCQzfv
-         cmgydhWUCp5UZ3TxdevnOGhG59FomZbchu0QqROBEVyKIJrG5GUhBv/ITJ6NKcRgC1VD
-         OzcC5mrxU+dmUwi74fNe7ZBwKKSY6MUMSMNC8=
+        bh=80t2qFEMJWN1kjVU3JfVGtwzmPfZZXuweGSdWWXLnG0=;
+        b=EohAtlUNgeEzWFj/PUe5o+BmDxXGoIX0WZQ5gIEwWFQUBbKeZUDHm3Kzj9YSmjh8Y7
+         yhoFnCBwVWxjbAdeVLIgFNyUZZzC8Y9Cq1rYKeCH38X1FvKXHulsyHqnk2Yk/OAya6sh
+         MPF1XQsgp9jtLWawABRu8UOT22zeo7GRQoj0E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jvsNRDy7GwCi4B3W0Qz0Xptd9eM87EAdMLoW6eVLTvM=;
-        b=DXMSLGE6DmWjDsm/E2UsYy6c2T1krofO6o0Eb7/a3V3l+ShkSuUpzeNaXRvGQcux38
-         ZhbKn9Clb+ODcm+r6EY9j4T2oxCSlIE1zuDr3aGS/ybdVfQXFuOk+MhEbTyi/fARpWvT
-         5Xzf0zzNZ/adJDnsulVJzo3BUWjf5XWu7StrJcNX3rYTE7X0eCCV67EhzCM4ox9Wu8V2
-         B7l4TOhCueXa6no1GPJeNveH//LE7TvgYrqWaGwOQiPfZ22iZL6ZEVYT2amkb8FdXLl0
-         7V80HJgl+meGy5gCydAtpddvZPRsvkX6e6KgeLCRLzs1xOuFEiErRuxULEIdvg4s9xjd
-         jIeA==
-X-Gm-Message-State: APt69E3wDxAheDaFzqCazqbEZ3iSKoSSaPeLQN0fblvho3/IEUDJH28P
-        hQ2sMvXL1ulIeOVI3DrWcrgRSg==
-X-Google-Smtp-Source: ADUXVKI+KfgJH91YnshlR9I+y1FF+x/BmhkhygvWAsgrNrnAyq0KxjdGbJHJdc/QXPHE6KASOvAn/A==
-X-Received: by 2002:a63:7f4f:: with SMTP id p15-v6mr2119076pgn.312.1528388201747;
-        Thu, 07 Jun 2018 09:16:41 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j15-v6sm25384570pgv.17.2018.06.07.09.16.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Jun 2018 09:16:40 -0700 (PDT)
-Date: Thu, 7 Jun 2018 09:18:47 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Martijn Coenen <maco@android.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Vikram Mulukutla <markivx@codeaurora.org>,
-        Arve Hj?nnev?g <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        linux-security-module@vger.kernel.org,
-        Chris Wright <chrisw@sous-sol.org>,
-        David Howells <dhowells@redhat.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        platform-driver-x86@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Jones <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Josh Triplett <josh@joshtriplett.org>,
-        dmitry.torokhov@gmail.com, Jonathan Corbet <corbet@lwn.net>,
-        mfuzzey@parkeon.com, Kalle Valo <kvalo@codeaurora.org>,
-        Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        nbroeking@me.com, Torsten Duwe <duwe@suse.de>, x86@kernel.org,
-        linux-efi <linux-efi@vger.kernel.org>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: Do Qualcomm drivers use DMA buffers for
- request_firmware_into_buf()?
-Message-ID: <20180607161847.GN510@tuxbook-pro>
-References: <20180423211143.GZ14440@wotan.suse.de>
- <71e6a45a-398d-b7a4-dab0-8b9936683226@redhat.com>
- <1524586021.3364.20.camel@linux.vnet.ibm.com>
- <20180424234219.GX14440@wotan.suse.de>
- <1524632409.3371.48.camel@linux.vnet.ibm.com>
- <20180425175557.GY14440@wotan.suse.de>
- <CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
- <20180508153805.GC27853@wotan.suse.de>
- <20180601192346.GQ4511@wotan.suse.de>
- <20180606203257.GH4511@wotan.suse.de>
+        bh=80t2qFEMJWN1kjVU3JfVGtwzmPfZZXuweGSdWWXLnG0=;
+        b=gaCIx5Q2mOSV3hGeaMtEYxtPFl4jtPe5Z0/K3/p1kH3wTTAIqG+c82s5HRAoz75xnC
+         Eqh8osiUjABQ5MMU8yJdXlQjwrC4eKgdimlXQq9//rSukBBvzUFgMOxZhkmmawZzap4g
+         Paze8bt3Gz9RaPcOtiM3jkdAO2QVmFiJcSzL8pPRVM5UczWB5/zCTxbjrDLJL2zWAnB+
+         5OeEhOtkyMKd0dUMpshotCHa0TNm/E/0AcuXEbgzvtAOR5hYnUwLL6x+WlsGUFSLs7b7
+         AYjB8NPd3LZoEV6UU4DWFAtxXtOPuO/l2ltQMch+UKa776U7Etom5q/PQBLfK5tMxMRz
+         fxaQ==
+X-Gm-Message-State: APt69E3h5rIZmFxIG3yGHcDJgYZ1wf8VrS7uex7bg0Wia4w5+htN1mX0
+        +XqT8R8UFbxLI2NxAGvWwydq7kVO5sk=
+X-Google-Smtp-Source: ADUXVKIZA5CiSzmb9F0Ghe/JCGR6KbKMG+Zx+UmeybJEKCYJGV8JcosaiugB++gYXQuks96gDazejA==
+X-Received: by 2002:a63:7f4e:: with SMTP id p14-v6mr885570pgn.27.1528362627987;
+        Thu, 07 Jun 2018 02:10:27 -0700 (PDT)
+Received: from localhost ([122.172.167.207])
+        by smtp.gmail.com with ESMTPSA id t23-v6sm35207873pfa.86.2018.06.07.02.10.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 02:10:27 -0700 (PDT)
+Date: Thu, 7 Jun 2018 14:40:25 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Cc: "Du, Changbin" <changbin.du@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        gregkh@linuxfoundation.org, alex.elder@linaro.org,
+        Johan Hovold <johan@kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        linux-arch@vger.kernel.org, michal.lkml@markovi.net,
+        linux-kernel@vger.kernel.org, arnd@arndb.de,
+        yamada.masahiro@socionext.com, lgirdwood@gmail.com,
+        broonie@kernel.org, rdunlap@infradead.org, x86@kernel.org,
+        linux@armlinux.org.uk, linux-sparse@vger.kernel.org,
+        mingo@redhat.com, kbuild-all@01.org, akpm@linux-foundation.org,
+        changbin.du@gmail.com, tglx@linutronix.de,
+        linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/4] kernel hacking: new config NO_AUTO_INLINE to
+ disable compiler auto-inline optimizations
+Message-ID: <20180607091025.m7dfix3e2xbwx4cs@vireshk-i7>
+References: <1528186420-6615-3-git-send-email-changbin.du@intel.com>
+ <201806060501.btF3aJMZ%fengguang.wu@intel.com>
+ <20180606095714.1d3c2def@vmware.local.home>
+ <20180606142600.GN13775@localhost>
+ <20180606142622.2338abf6@vmware.local.home>
+ <20180607041718.qpqucjzlvcm5h3gn@vireshk-i7>
+ <20180607074628.kd3iyxevwj3ypzbr@intel.com>
+ <20180607083856.ealw62v3wx43zeqz@vireshk-i7>
+ <1303b1abf9f9229a8d3ccbb68a3e413266b360d7.camel@petrovitsch.priv.at>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180606203257.GH4511@wotan.suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1303b1abf9f9229a8d3ccbb68a3e413266b360d7.camel@petrovitsch.priv.at>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 06 Jun 13:32 PDT 2018, Luis R. Rodriguez wrote:
-
-> On Fri, Jun 01, 2018 at 09:23:46PM +0200, Luis R. Rodriguez wrote:
-> > On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
-> > > On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
-> > > > 
-> > > > I think the Qualcomm folks owning this (Andy, David, Bjorn, already
-> > > > cc'd here) are better suited to answer that question.
-> > > 
-> > > Andy, David, Bjorn?
+On 07-06-18, 11:03, Bernd Petrovitsch wrote:
+> On Thu, 2018-06-07 at 14:08 +0530, Viresh Kumar wrote:
+> > On 07-06-18, 15:46, Du, Changbin wrote:
+> > > I think if the destination is not a null terminated string (If I understand your
+> > > description below), memcpy can be used to get rid of such warning. The warning
+> > > makes sense in general as explained in mannual. Thanks!
 > > 
-> > Andy, David, Bjorn?
+> > The destination should be a null terminated string eventually, but we first need
+> > to make sure src is a null terminated string.
 > 
-> A month now with no answer...
-> 
+> Is there strnlen() or memchr() in the kernel?
+> Then check the source before copying it.
 
-The patch at the top of this thread doesn't interest me and you didn't
-bother sending your question To me.
+It would be extra work, but memchr can be used to work around this I believe.
 
-As a matter of fact I'm confused to what the actual question is.
+@Johan ??
 
-> Perhaps someone who has this hardware can find out empirically for us, as
-> follows (mm folks is this right?):
-> 
-> page = virt_to_page(address);
-> if (!page)
->    fail closed...
-> if (page_zone(page) == ZONE_DMA || page_zone(page) == ZONE_DMA32)
-> 	this is a DMA buffer
-> else
-> 	not DMA!
-> 
-
-Where do you want to put this?
-
-> Note that when request_firmware_into_buf() was being reviewed Mimi had asked back
-> in 2016 [0] that if a DMA buffer was going to be used READING_FIRMWARE_DMA should be
-> used otherwise READING_FIRMWARE_PREALLOC_BUFFER was fine.
-> 
-> If it is a DMA buffer *now*, why / how did this change?
-> 
-
->From what I can see [0] says is to use READING_FIRMWARE_PREALLOC_BUFFER
-regardless of where the memory comes from.
-
-Regards,
-Bjorn
-
-> [0] https://patchwork.kernel.org/patch/9074611/
-> 
->   Luis
+-- 
+viresh
