@@ -1,93 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id y3CAIdRCGVuOAgAAmS7hNA
-	; Thu, 07 Jun 2018 14:36:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 98soIDXgGFuSBgAAmS7hNA
+	; Thu, 07 Jun 2018 07:36:05 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C2F6D6089E; Thu,  7 Jun 2018 14:36:18 +0000 (UTC)
+	id 1FA246089E; Thu,  7 Jun 2018 07:36:05 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DfpQE/Z0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 69097601D2;
-	Thu,  7 Jun 2018 14:36:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69097601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7CB06607E7;
+	Thu,  7 Jun 2018 07:36:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7CB06607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934086AbeFGOgN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:36:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40403 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933072AbeFGOgM (ORCPT
+        id S1753441AbeFGHgC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:36:02 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40522 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753083AbeFGHf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:36:12 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbe-0005hO-DG; Thu, 07 Jun 2018 15:09:38 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb6-00031z-Nt; Thu, 07 Jun 2018 15:09:04 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 03:35:59 -0400
+Received: by mail-lf0-f65.google.com with SMTP id q11-v6so13076139lfc.7;
+        Thu, 07 Jun 2018 00:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sGlBywfzfPHWozo7tv5PPQUyDSWm6NbWeIZiH22uauo=;
+        b=DfpQE/Z0rozKKuJJtZHjNbDJDpDIukdglVKCwJp+Ap6J+r3BlU+wf3EN2Mu7IknTdT
+         ktcGF7xymQbZ9Ycc2DHloiX/cWUgJUJyeLyFkOcY+hK9MSQFaiWEYR/gkLGK/gDC9piQ
+         KDnDVE0V4OpZQOOtQuj+HTxKeJNs2lzeduz7+oZ9RNKG2+k3QkdM38fGIJIZM0zvucTZ
+         xoBcTLkrJHDhipPqmsW+rOEUtUc0UnuYnidJIxF0lHLOASe7Wa0AtTWraAHRbYl0NgnT
+         Lw8WggHqBv7OMVL4LoNq9QcUoUgU7xjQYwsJX1vTbcND/3IfXVpdIiqy4h2fGNT52YyW
+         jtIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sGlBywfzfPHWozo7tv5PPQUyDSWm6NbWeIZiH22uauo=;
+        b=qpNmndfJgWmRmbjkMeGh+aI/XJTw1Oh+9QrZ14qeXAuk6rHu1cE0rtX1cwGJvzAv8f
+         eXtZHCV9xu2ub0q7BIGiF6X/rUYm2s5DGpOki1OiUy6OkA2LCJhmLkk7LSwYqR2dc39D
+         ORav5+1I+hLT9vZXyNJS26Ym2qj8+7PRSJiHtJZZoH1K1l/OBtKFXPtdqUP8wdQ6RG5w
+         3+0nL296wzKP6+mpchwQwtNZMv68RqrjqmvfgKBwANrefgPtIkvzbaFFxS4XwAoxS0B6
+         FmaxBPNWFhEGfUKDLeH8Hc9jGKp7bNL4ASwe1L+lm+yC58b24CZ8VrJ1OS9HQdu5GTxh
+         M4MQ==
+X-Gm-Message-State: APt69E23ex0ok8+uYxOwlCLxKBINff85+02LnOPwCGIgThd38WFzrxIG
+        O4vSJ5LGFyn0493mqa3qm1Q=
+X-Google-Smtp-Source: ADUXVKLZHuMnQETCaBmL4SzmOj+mr8yIRerR4KeKjYHJBaSpNnrAf5WRewMqp+374LJ6DFLy8veJoQ==
+X-Received: by 2002:a19:5943:: with SMTP id n64-v6mr527154lfb.107.1528356957629;
+        Thu, 07 Jun 2018 00:35:57 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id a125-v6sm4288881lfb.61.2018.06.07.00.35.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 00:35:57 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.90_1)
+        (envelope-from <johan@kernel.org>)
+        id 1fQpSR-0008LC-9E; Thu, 07 Jun 2018 09:35:43 +0200
+Date: Thu, 7 Jun 2018 09:35:43 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Colin King <colin.king@canonical.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH][next] pinctrl: pinctrl-single: add allocation failure
+ checking of saved_vals
+Message-ID: <20180607073543.GP13775@localhost>
+References: <20180606134338.4645-1-colin.king@canonical.com>
+ <CAHp75Vd0Djw+nDN7u=-CLEfdDGA5QTsMueOb9EZLNnCDgso5fA@mail.gmail.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
-        "Steve French" <smfrench@gmail.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.240447552@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 217/410] cifs: silence compiler warnings showing up
- with gcc-8.0.0
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75Vd0Djw+nDN7u=-CLEfdDGA5QTsMueOb9EZLNnCDgso5fA@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Wed, Jun 06, 2018 at 07:02:03PM +0300, Andy Shevchenko wrote:
+> On Wed, Jun 6, 2018 at 4:43 PM, Colin King <colin.king@canonical.com> wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > Currently saved_vals is being allocated and there is no check for
+> > failed allocation (which is more likely than normal when using
+> > GFP_ATOMIC).  Fix this by checking for a failed allocation and
+> > propagating this error return down the the caller chain.
+> >
+> > Detected by CoverityScan, CID#1469841 ("Dereference null return value")
+> >
+> > Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/pinctrl/pinctrl-single.c | 14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+> > index 9c3c00515aa0..0905ee002041 100644
+> > --- a/drivers/pinctrl/pinctrl-single.c
+> > +++ b/drivers/pinctrl/pinctrl-single.c
+> > @@ -1588,8 +1588,11 @@ static int pcs_save_context(struct pcs_device *pcs)
+> >
+> >         mux_bytes = pcs->width / BITS_PER_BYTE;
+> >
+> > -       if (!pcs->saved_vals)
+> > +       if (!pcs->saved_vals) {
+> >                 pcs->saved_vals = devm_kzalloc(pcs->dev, pcs->size, GFP_ATOMIC);
+> 
+> > +               if (!pcs->saved_vals)
+> > +                       return -ENOMEM;
+> 
+> Wouldn't make sense to move it out of the first condition?
+> 
+> Something like
+> 
+> if (!foo)
+>  foo = ...malloc(...);
+> if (!foo)
+>  return ...
 
-------------------
+No, checking for NULL immediately after the allocation is more obvious
+and easier to parse.
 
-From: Arnd Bergmann <arnd@arndb.de>
-
-commit ade7db991b47ab3016a414468164f4966bd08202 upstream.
-
-This bug was fixed before, but came up again with the latest
-compiler in another function:
-
-fs/cifs/cifssmb.c: In function 'CIFSSMBSetEA':
-fs/cifs/cifssmb.c:6362:3: error: 'strncpy' offset 8 is out of the bounds [0, 4] [-Werror=array-bounds]
-   strncpy(parm_data->list[0].name, ea_name, name_len);
-
-Let's apply the same fix that was used for the other instances.
-
-Fixes: b2a3ad9ca502 ("cifs: silence compiler warnings showing up with gcc-4.7.0")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/cifs/cifssmb.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -6366,9 +6366,7 @@ SetEARetry:
- 	pSMB->InformationLevel =
- 		cpu_to_le16(SMB_SET_FILE_EA);
- 
--	parm_data =
--		(struct fealist *) (((char *) &pSMB->hdr.Protocol) +
--				       offset);
-+	parm_data = (void *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
- 	pSMB->ParameterOffset = cpu_to_le16(param_offset);
- 	pSMB->DataOffset = cpu_to_le16(offset);
- 	pSMB->SetupCount = 1;
+Johan
