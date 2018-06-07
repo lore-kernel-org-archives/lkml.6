@@ -1,148 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WsHEGBrzG1t5YgAAmS7hNA
-	; Sat, 09 Jun 2018 15:33:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yk4hHJfpGFsQVgAAmS7hNA
+	; Thu, 07 Jun 2018 08:16:15 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 197A4608C8; Sat,  9 Jun 2018 15:33:36 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPi3z4N4"
+	id 1D526608BF; Thu,  7 Jun 2018 08:16:15 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8431A608B8;
-	Sat,  9 Jun 2018 15:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8431A608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7D86A607F7;
+	Thu,  7 Jun 2018 08:16:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D86A607F7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753614AbeFIPdd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:33:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932668AbeFIPd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:33:28 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4EBC204EC;
-        Sat,  9 Jun 2018 15:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558408;
-        bh=8vLXlutL0WuEimOYpNWbi8HS2OJQJduAlmoAUhIKGQo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CPi3z4N4kMSksO137WMJN8tmfwaSUPXmQ4AiQMSoLwyStP4UHMjTflWH6Yn8Xu++A
-         ojr0mk0hsQpNcOvDEcaSKOp+/2v89IDFeS0QI1OsxR2Z8Dj6nUGWwL6y+UJ9dEU5Ww
-         TEjj8J/aBX+tsRuyGsHZGaECs4rfT3dJEAt+GMYo=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 24/48] net: phy: broadcom: Fix bcm_write_exp()
-Date: Sat,  9 Jun 2018 17:29:36 +0200
-Message-Id: <20180609145949.246570343@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1753484AbeFGIQL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:16:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54939 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752669AbeFGIQJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 04:16:09 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578FxlW2125498
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:15:59 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578FwlP2125495;
+        Thu, 7 Jun 2018 01:15:58 -0700
+Date: Thu, 7 Jun 2018 01:15:58 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-edgwb1b2mpbrdeg0w64wp7ms@git.kernel.org>
+Cc: jolsa@kernel.org, hpa@zytor.com, namhyung@kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, acme@redhat.com,
+        dsahern@gmail.com, wangnan0@huawei.com, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+          adrian.hunter@intel.com, dsahern@gmail.com, acme@redhat.com,
+          mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          namhyung@kernel.org, jolsa@kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf sched: Use sched->show_callchain where
+ appropriate
+Git-Commit-ID: 4c50563d818622bb0f99b378b4e6683f189b39fb
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Commit-ID:  4c50563d818622bb0f99b378b4e6683f189b39fb
+Gitweb:     https://git.kernel.org/tip/4c50563d818622bb0f99b378b4e6683f189b39fb
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 28 May 2018 16:07:56 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 5 Jun 2018 10:09:54 -0300
 
-------------------
+perf sched: Use sched->show_callchain where appropriate
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+Instead of using symbol_conf.use_callchain, reducing its usage a bit
+more.
 
-[ Upstream commit 79fb218d97980d4fee9a64f4c8ff05289364ba25 ]
-
-On newer PHYs, we need to select the expansion register to write with
-setting bits [11:8] to 0xf. This was done correctly by bcm7xxx.c prior
-to being migrated to generic code under bcm-phy-lib.c which
-unfortunately used the older implementation from the BCM54xx days.
-
-Fix this by creating an inline stub: bcm_write_exp_sel() which adds the
-correct value (MII_BCM54XX_EXP_SEL_ER) and update both the Cygnus PHY
-and BCM7xxx PHY drivers which require setting these bits.
-
-broadcom.c is unchanged because some PHYs even use a different selector
-method, so let them specify it directly (e.g: SerDes secondary selector).
-
-Fixes: a1cba5613edf ("net: phy: Add Broadcom phy library for common interfaces")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-edgwb1b2mpbrdeg0w64wp7ms@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/net/phy/bcm-cygnus.c  |    6 +++---
- drivers/net/phy/bcm-phy-lib.h |    7 +++++++
- drivers/net/phy/bcm7xxx.c     |    4 ++--
- 3 files changed, 12 insertions(+), 5 deletions(-)
+ tools/perf/builtin-sched.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/net/phy/bcm-cygnus.c
-+++ b/drivers/net/phy/bcm-cygnus.c
-@@ -61,17 +61,17 @@ static int bcm_cygnus_afe_config(struct
- 		return rc;
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 97f9e755e8e6..cbf39dab19c1 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -2143,7 +2143,7 @@ static void save_task_callchain(struct perf_sched *sched,
+ 		return;
+ 	}
  
- 	/* make rcal=100, since rdb default is 000 */
--	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB1, 0x10);
-+	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB1, 0x10);
- 	if (rc < 0)
- 		return rc;
+-	if (!symbol_conf.use_callchain || sample->callchain == NULL)
++	if (!sched->show_callchain || sample->callchain == NULL)
+ 		return;
  
- 	/* CORE_EXPB0, Reset R_CAL/RC_CAL Engine */
--	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x10);
-+	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x10);
- 	if (rc < 0)
- 		return rc;
- 
- 	/* CORE_EXPB0, Disable Reset R_CAL/RC_CAL Engine */
--	rc = bcm_phy_write_exp(phydev, MII_BRCM_CORE_EXPB0, 0x00);
-+	rc = bcm_phy_write_exp_sel(phydev, MII_BRCM_CORE_EXPB0, 0x00);
- 
- 	return 0;
+ 	if (thread__resolve_callchain(thread, cursor, evsel, sample,
+@@ -2271,10 +2271,11 @@ static struct thread *get_idle_thread(int cpu)
+ 	return idle_threads[cpu];
  }
---- a/drivers/net/phy/bcm-phy-lib.h
-+++ b/drivers/net/phy/bcm-phy-lib.h
-@@ -14,11 +14,18 @@
- #ifndef _LINUX_BCM_PHY_LIB_H
- #define _LINUX_BCM_PHY_LIB_H
  
-+#include <linux/brcmphy.h>
- #include <linux/phy.h>
- 
- int bcm_phy_write_exp(struct phy_device *phydev, u16 reg, u16 val);
- int bcm_phy_read_exp(struct phy_device *phydev, u16 reg);
- 
-+static inline int bcm_phy_write_exp_sel(struct phy_device *phydev,
-+					u16 reg, u16 val)
-+{
-+	return bcm_phy_write_exp(phydev, reg | MII_BCM54XX_EXP_SEL_ER, val);
-+}
-+
- int bcm54xx_auxctl_write(struct phy_device *phydev, u16 regnum, u16 val);
- int bcm54xx_auxctl_read(struct phy_device *phydev, u16 regnum);
- 
---- a/drivers/net/phy/bcm7xxx.c
-+++ b/drivers/net/phy/bcm7xxx.c
-@@ -65,10 +65,10 @@ struct bcm7xxx_phy_priv {
- static void r_rc_cal_reset(struct phy_device *phydev)
+-static void save_idle_callchain(struct idle_thread_runtime *itr,
++static void save_idle_callchain(struct perf_sched *sched,
++				struct idle_thread_runtime *itr,
+ 				struct perf_sample *sample)
  {
- 	/* Reset R_CAL/RC_CAL Engine */
--	bcm_phy_write_exp(phydev, 0x00b0, 0x0010);
-+	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0010);
+-	if (!symbol_conf.use_callchain || sample->callchain == NULL)
++	if (!sched->show_callchain || sample->callchain == NULL)
+ 		return;
  
- 	/* Disable Reset R_AL/RC_CAL Engine */
--	bcm_phy_write_exp(phydev, 0x00b0, 0x0000);
-+	bcm_phy_write_exp_sel(phydev, 0x00b0, 0x0000);
- }
+ 	callchain_cursor__copy(&itr->cursor, &callchain_cursor);
+@@ -2320,7 +2321,7 @@ static struct thread *timehist_get_thread(struct perf_sched *sched,
  
- static int bcm7xxx_28nm_b0_afe_config_init(struct phy_device *phydev)
+ 			/* copy task callchain when entering to idle */
+ 			if (perf_evsel__intval(evsel, sample, "next_pid") == 0)
+-				save_idle_callchain(itr, sample);
++				save_idle_callchain(sched, itr, sample);
+ 		}
+ 	}
+ 
+@@ -2849,7 +2850,7 @@ static void timehist_print_summary(struct perf_sched *sched,
+ 			printf("    CPU %2d idle entire time window\n", i);
+ 	}
+ 
+-	if (sched->idle_hist && symbol_conf.use_callchain) {
++	if (sched->idle_hist && sched->show_callchain) {
+ 		callchain_param.mode  = CHAIN_FOLDED;
+ 		callchain_param.value = CCVAL_PERIOD;
+ 
