@@ -1,151 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hy+oFUoPGVtnDwAAmS7hNA
-	; Thu, 07 Jun 2018 10:57:17 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fdNiMNRPGVt9AwAAmS7hNA
+	; Thu, 07 Jun 2018 15:32:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 62D1A608BA; Thu,  7 Jun 2018 10:57:17 +0000 (UTC)
+	id E34A76074D; Thu,  7 Jun 2018 15:32:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A267760115;
-	Thu,  7 Jun 2018 10:57:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A267760115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id B0723601B4;
+	Thu,  7 Jun 2018 15:32:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B0723601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753556AbeFGK5O (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 06:57:14 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:39152 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753094AbeFGK5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 06:57:12 -0400
-Received: from ip9234ae78.dynamic.kabel-deutschland.de ([146.52.174.120] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.1:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <heiko@sntech.de>)
-        id 1fQsbJ-0004YL-DM; Thu, 07 Jun 2018 12:57:05 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>, sboyd@kernel.org,
-        mturquette@baylibre.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v1 3/4] clk: rockchip: add support for half divider
-Date: Thu, 07 Jun 2018 12:57:04 +0200
-Message-ID: <2360735.SLDx3PN3Y9@diego>
-In-Reply-To: <1528340786-462-4-git-send-email-zhangqing@rock-chips.com>
-References: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com> <1528340786-462-4-git-send-email-zhangqing@rock-chips.com>
+        id S935234AbeFGOwz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:52:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40924 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934776AbeFGOwv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:52:51 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbN-0005dI-5X; Thu, 07 Jun 2018 15:09:21 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0003Gn-Gw; Thu, 07 Jun 2018 15:09:11 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Sven Eckelmann" <sven@narfation.org>,
+        "Simon Wunderlich" <sw@simonwunderlich.de>,
+        "Matthias Schiffer" <mschiffer@universe-factory.net>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.604239230@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 373/410] batman-adv: Fix skbuff rcsum on packet reroute
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Elaine,
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-looks good to me overall, some minor things below.
+------------------
 
-Am Donnerstag, 7. Juni 2018, 05:06:25 CEST schrieb Elaine Zhang:
-> The new Rockchip socs have optional half divider,
-> so we use "branch_half_divider" + "COMPOSITE_NOMUX_HALFDIV \ DIV_HALF"
-> to hook that special divider clock-type into our clock-tree.
-> 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-Please provide a bit more explanation on how this clock type, so
-people reading the git log later can understand how the divider works.
+commit fc04fdb2c8a894283259f5621d31d75610701091 upstream.
 
+batadv_check_unicast_ttvn may redirect a packet to itself or another
+originator. This involves rewriting the ttvn and the destination address in
+the batadv unicast header. These field were not yet pulled (with skb rcsum
+update) and thus any change to them also requires a change in the receive
+checksum.
 
-> ---
->  drivers/clk/rockchip/Makefile           |   1 +
->  drivers/clk/rockchip/clk-half-divider.c | 235
-> ++++++++++++++++++++++++++++++++ drivers/clk/rockchip/clk.c              | 
-> 10 ++
->  drivers/clk/rockchip/clk.h              |  45 ++++++
->  4 files changed, 291 insertions(+)
->  create mode 100644 drivers/clk/rockchip/clk-half-divider.c
-> 
-> diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-> index 59b8d320960a..023f83ad3429 100644
-> --- a/drivers/clk/rockchip/Makefile
-> +++ b/drivers/clk/rockchip/Makefile
-> @@ -7,6 +7,7 @@ obj-y	+= clk-rockchip.o
->  obj-y	+= clk.o
->  obj-y	+= clk-pll.o
->  obj-y	+= clk-cpu.o
-> +obj-y   += clk-half-divider.o
+Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Fixes: a73105b8d4c7 ("batman-adv: improved client announcement mechanism")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/batman-adv/routing.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-all other entries use tabs as spacers between obj-y and the +=
-
->  obj-y	+= clk-inverter.o
->  obj-y	+= clk-mmc-phase.o
->  obj-y	+= clk-muxgrf.o
-> diff --git a/drivers/clk/rockchip/clk-half-divider.c
-> b/drivers/clk/rockchip/clk-half-divider.c new file mode 100644
-> index 000000000000..23830de254ec
-> --- /dev/null
-> +++ b/drivers/clk/rockchip/clk-half-divider.c
-> @@ -0,0 +1,235 @@
-> +/*
-
-copyright line missing?
-
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/slab.h>
-> +#include <linux/bitops.h>
-> +#include <linux/regmap.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include "clk.h"
-> +
-> +#define div_mask(width)	((1 << (width)) - 1)
-> +
-> +static bool _is_best_half_div(unsigned long rate, unsigned long now,
-> +			      unsigned long best, unsigned long flags)
-> +{
-> +	if (flags & CLK_DIVIDER_ROUND_CLOSEST)
-> +		return abs(rate - now) < abs(rate - best);
-> +
-> +	return now <= rate && now > best;
-> +}
-> +
-> +static unsigned long clk_half_divider_recalc_rate(struct clk_hw *hw,
-> +						  unsigned long parent_rate)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-
-While I find it very cool that we can reuse the clk_divider struct
-and see no issue doing it, I'm hoping for either Mike or Stephen
-to indicate if we're allowed to do that ;-)
-
-
-> +const struct clk_ops clk_half_divider_ops = {
-> +	.recalc_rate = clk_half_divider_recalc_rate,
-> +	.round_rate = clk_half_divider_round_rate,
-> +	.set_rate = clk_half_divider_set_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_half_divider_ops);
-
-this is only used locally in rockchip_clk_register_halfdiv, so doesn't
-need to be exported.
-
-
-Heiko
+--- a/net/batman-adv/routing.c
++++ b/net/batman-adv/routing.c
+@@ -687,6 +687,7 @@ out:
+ /**
+  * batadv_reroute_unicast_packet - update the unicast header for re-routing
+  * @bat_priv: the bat priv with all the soft interface information
++ * @skb: unicast packet to process
+  * @unicast_packet: the unicast header to be updated
+  * @dst_addr: the payload destination
+  * @vid: VLAN identifier
+@@ -698,7 +699,7 @@ out:
+  * Returns true if the packet header has been updated, false otherwise
+  */
+ static bool
+-batadv_reroute_unicast_packet(struct batadv_priv *bat_priv,
++batadv_reroute_unicast_packet(struct batadv_priv *bat_priv, struct sk_buff *skb,
+ 			      struct batadv_unicast_packet *unicast_packet,
+ 			      uint8_t *dst_addr, unsigned short vid)
+ {
+@@ -727,8 +728,10 @@ batadv_reroute_unicast_packet(struct bat
+ 	}
+ 
+ 	/* update the packet header */
++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 	ether_addr_copy(unicast_packet->dest, orig_addr);
+ 	unicast_packet->ttvn = orig_ttvn;
++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 
+ 	ret = true;
+ out:
+@@ -768,7 +771,7 @@ static int batadv_check_unicast_ttvn(str
+ 	 * the packet to
+ 	 */
+ 	if (batadv_tt_local_client_is_roaming(bat_priv, ethhdr->h_dest, vid)) {
+-		if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
++		if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
+ 						  ethhdr->h_dest, vid))
+ 			net_ratelimited_function(batadv_dbg, BATADV_DBG_TT,
+ 						 bat_priv,
+@@ -814,7 +817,7 @@ static int batadv_check_unicast_ttvn(str
+ 	 * destination can possibly be updated and forwarded towards the new
+ 	 * target host
+ 	 */
+-	if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
++	if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
+ 					  ethhdr->h_dest, vid)) {
+ 		net_ratelimited_function(batadv_dbg, BATADV_DBG_TT, bat_priv,
+ 					 "Rerouting unicast packet to %pM (dst=%pM): TTVN mismatch old_ttvn=%u new_ttvn=%u\n",
+@@ -837,12 +840,14 @@ static int batadv_check_unicast_ttvn(str
+ 	if (!primary_if)
+ 		return 0;
+ 
++	/* update the packet header */
++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 	ether_addr_copy(unicast_packet->dest, primary_if->net_dev->dev_addr);
++	unicast_packet->ttvn = curr_ttvn;
++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
+ 
+ 	batadv_hardif_free_ref(primary_if);
+ 
+-	unicast_packet->ttvn = curr_ttvn;
+-
+ 	return 1;
+ }
+ 
