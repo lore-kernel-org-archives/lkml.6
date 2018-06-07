@@ -1,111 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id E0lkMyDsHVt+JgAAmS7hNA
-	; Mon, 11 Jun 2018 03:28:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wso0BzNcGVsWIwAAmS7hNA
+	; Thu, 07 Jun 2018 16:26:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A8C8E607A4; Mon, 11 Jun 2018 03:28:22 +0000 (UTC)
+	id 060E4608B8; Thu,  7 Jun 2018 16:26:11 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1Ooun3FR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2C5C1606DD;
-	Mon, 11 Jun 2018 03:28:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2C5C1606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5B3F8605A2;
+	Thu,  7 Jun 2018 16:26:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B3F8605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932600AbeFKD2U (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:28:20 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:38127 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932487AbeFKD1R (ORCPT
+        id S1753829AbeFGQ0H (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:26:07 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56128 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752857AbeFGQ0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:27:17 -0400
-X-UUID: 2548927404c64c1a92a2fd35f57fab8a-20180611
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 165180462; Mon, 11 Jun 2018 11:27:11 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:27:01 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:27:01 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 18/28] drm/mediatek: add connection from RDMA2 to DPI0
-Date: Mon, 11 Jun 2018 11:26:10 +0800
-Message-ID: <1528687580-549-19-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+        Thu, 7 Jun 2018 12:26:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dz1g0yN6Vrw1QqhKc51eeRhIxjNgIfWOk7o5Mf3X1p4=; b=1Ooun3FRC3mhfHt08Xv8Bx43XN
+        TyEN60A7ddz110llFRMfpV62uVKvZtjea7aU67WOqalEaLZcgVX5Kc4S98TDCwHFvtI0r6u+rYT8m
+        akfqS9kZyYZS7tlHnzWaYEF1mHsecHvEkKedp08+PxLbZSn4JffTiU+gOrGccOTzvQS8wH/UWZDJs
+        7JLwfZQT9ezuRdeLBXTSjbrFI8LcA8riDFITeQY6ocoUJeHWOrYFS7lgzHKhtcn0XYpylqC0AZaGv
+        syv5QjDc9+zMcRLoCBkyhYtcoY2ZiBzIRMABqEg8RrJO3g8U7qSVyjN7WD5UlztI5wuoonDxPp5BD
+        bZU87YNA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fQxjd-0001cI-W0; Thu, 07 Jun 2018 16:26:02 +0000
+To: LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Garrett <matthew.garrett@nebula.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] lib/ucs2_string: add MODULE_LICENSE()
+Message-ID: <b2505bb4-dcf5-fc46-443d-e47db1cb2f59@infradead.org>
+Date: Thu, 7 Jun 2018 09:25:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the connection from RDMA2 to DPI0
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+Fix missing MODULE_LICENSE() warning in lib/ucs2_string.c:
+
+WARNING: modpost: missing MODULE_LICENSE() in lib/ucs2_string.o
+see include/linux/module.h for more information
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matthew Garrett <matthew.garrett@nebula.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Found in linux-next but applies to current mainline.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index a5cee4b7f908..31a0832ef9ec 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -31,6 +31,7 @@
- #define DISP_REG_CONFIG_DSIE_SEL_IN		0x0a4
- #define DISP_REG_CONFIG_DSIO_SEL_IN		0x0a8
- #define DISP_REG_CONFIG_DPI_SEL_IN		0x0ac
-+#define DISP_REG_CONFIG_DISP_RDMA2_SOUT		0x0b8
- #define DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN	0x0c4
- #define DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN	0x0c8
- #define DISP_REG_CONFIG_MMSYS_CG_CON0		0x100
-@@ -91,7 +92,9 @@
- #define RDMA1_MOUT_DSI3			0x5
- #define RDMA1_MOUT_DPI0			0x2
- #define RDMA1_MOUT_DPI1			0x3
-+#define RDMA2_MOUT_DPI0			0x2
- #define DPI0_SEL_IN_RDMA1		0x1
-+#define DPI0_SEL_IN_RDMA2		0x3
- #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
- #define DSI1_SEL_IN_RDMA1		0x1
- #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
-@@ -193,6 +196,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
- 		value = RDMA1_MOUT_DPI1;
-+	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
-+		value = RDMA2_MOUT_DPI0;
- 	} else {
- 		value = 0;
- 	}
-@@ -224,6 +230,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI3) {
- 		*addr = DISP_REG_CONFIG_DSIO_SEL_IN;
- 		value = DSI3_SEL_IN_RDMA1;
-+	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
-+		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
-+		value = DPI0_SEL_IN_RDMA2;
- 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
- 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
- 		value = COLOR1_SEL_IN_OVL1;
--- 
-2.12.5
+ lib/ucs2_string.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- linux-next-20180607.orig/lib/ucs2_string.c
++++ linux-next-20180607/lib/ucs2_string.c
+@@ -112,3 +112,5 @@ ucs2_as_utf8(u8 *dest, const ucs2_char_t
+ 	return j;
+ }
+ EXPORT_SYMBOL(ucs2_as_utf8);
++
++MODULE_LICENSE("GPL v2");
