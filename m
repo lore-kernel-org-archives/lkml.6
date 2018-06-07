@@ -1,142 +1,1156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nKDQCrFEGlu3BQAAmS7hNA
-	; Fri, 08 Jun 2018 08:57:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nPL8LeSZGVvnEQAAmS7hNA
+	; Thu, 07 Jun 2018 20:49:55 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 53A18608C8; Fri,  8 Jun 2018 08:57:16 +0000 (UTC)
+	id 541AF6074D; Thu,  7 Jun 2018 20:49:55 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTAdupVf"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AzLOs/qQ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8FEFC607A4;
-	Fri,  8 Jun 2018 08:57:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8FEFC607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id A3423605A2;
+	Thu,  7 Jun 2018 20:49:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A3423605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751110AbeFHI5N (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:57:13 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:35289 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeFHI5J (ORCPT
+        id S932591AbeFGUtw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:49:52 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:44372 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932479AbeFGUtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:57:09 -0400
-Received: by mail-ua0-f196.google.com with SMTP id s13-v6so4949606uad.2;
-        Fri, 08 Jun 2018 01:57:08 -0700 (PDT)
+        Thu, 7 Jun 2018 16:49:46 -0400
+Received: by mail-pg0-f67.google.com with SMTP id p21-v6so5311411pgd.11
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=dNwv5UCTFoHmjNaGlxWj7DZXWL5saowvS0MX539AhAE=;
-        b=aTAdupVfMcyDbT2u2IpMG6spoqoadP22l8a2+cJqmtHbG4PIed5TvWofjiCsFM6luY
-         2rUwRGv63QYov1GSFVgT8Vv9dBmWkGO21dxTi9znEvM4PaC30NVaJi2vCnB7tJXMMQYR
-         eRp+0ivaMZfdsavLRZjioOGOBL2jqC4/oB1VTvkZnKxlCmvtX9NRjIAa5CJ7TQUSn0mS
-         +HNqMK7tsyELAN2Wsx4yF41h9GCPPeHOKN5uFZpLMcP46GVOV4s2SRAPS+j14RB4bWmc
-         Kd4r2Hqf4kwOPXxojLzm2PpHL+cLIvQxEntPmYPuoYczY4rV++/Q5cnpP+de5FKKNHW1
-         NbSw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=dZrwl6UUY3fnVwD+ybNVPg8aekIgIFnjrtUW4y4iIyU=;
+        b=AzLOs/qQNZVAErFB6Pra1Ahl/5gkgcuLkAN69rWWypo/CJZdtspLKcrKubQutpbl/N
+         b0Uds0BkwOIW23HK1EqzXc/xLQm4SBucCEQhzPWlzDc5H8rlSXads/uBaC5QwCrWaqHY
+         qOpIlBR7qatD4N2ObdRUaSWC2lyzsj5LVm4cA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=dNwv5UCTFoHmjNaGlxWj7DZXWL5saowvS0MX539AhAE=;
-        b=BEepdTJ0xSnPKtPxyuVmXo2pae/f9UNJ9cx/seqND5euwG6I9G0eB4P+cIdXLhrHbj
-         /y4KB1xR2MWiUgmcHQZ0Nuyywjgac0VxkjDZbKGsP11mEPxX00n8PhjaZBPmn+/g5QUc
-         g3Zxb7X8eLiKMvN6yDTf7Aly0GH/vJLrU87Q5sciUYEAlPmjIzw6Fgy8exufz7fha1Ha
-         Qgp3CJwU2vf9VJVJp/0vR/HLRkAHX5KAKDOfguXnJUHPtu2FECPrnztu2QWcAIhu0VjJ
-         NaffdaocnfOyJ1shsUcAgHb7tvD1Q85l/0gEYDkddEiJnz/pxgrfJB7cpeK49MkajA4T
-         JjBw==
-X-Gm-Message-State: APt69E2aOcEsBhTus5ROeFJQjkhxcikILD3UXyEXM9KYrAgiOB0YTq0j
-        JGYxhiBtS8sJdmaH5xGZdVKVQ9mHjVHrp3xFHtM=
-X-Google-Smtp-Source: ADUXVKKDbuwugyx+3wj/rCcsh6Sx37iiuo3CcmZ9fqqKIXJehwBd0rXuiNJJAHiCKlUVV7Twjdwjr6F5UDCMfv8L+7k=
-X-Received: by 2002:ab0:48e1:: with SMTP id y30-v6mr3583535uac.180.1528448228281;
- Fri, 08 Jun 2018 01:57:08 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8596:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 01:57:07 -0700 (PDT)
-In-Reply-To: <20180528153222.2037158-1-arnd@arndb.de>
-References: <20180528153222.2037158-1-arnd@arndb.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 Jun 2018 10:57:07 +0200
-X-Google-Sender-Auth: BWnB_qLUXXQWdPb_PxrjJmRAhtU
-Message-ID: <CAMuHMdXy0uHXaGkFBh9_tr2VzmJF+8KtraTuFHJwcmqhcHs4Dg@mail.gmail.com>
-Subject: Re: [PATCH] [net-next, wrong] make BPFILTER_UMH depend on X86
-To: Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dZrwl6UUY3fnVwD+ybNVPg8aekIgIFnjrtUW4y4iIyU=;
+        b=ENI0MGHQErZegAlfGK2WOQRE0im6htNBYpt+FHzZjapOdmWe58LW1fvVQHCx2Q63G4
+         AwHvPOj6PmYMD66DxbOM1XJD9sFpMnnrCk6fmcDQ+k2mpQs/Fbu0VVpukpgTn99QGk4f
+         Dwb6wtj9Q29Z10+G+W+0u/ARWtze/1U77jHSZwOO5sbP0XtmQ6Hub45rD03C6+AuULbG
+         0cz6kgIBsVmek5tmJhn60lHPzu7Ze5M5DPo2mHiTKCV7KGzWDfCyAFzIpidqNmgDM6ia
+         JNQIcjykAZhWwcbii9Kv6Q9mBLcRlXDoqlsPFvZj3pbQAfKfbc6qrXJDup8SqcoOc56Z
+         Oeqg==
+X-Gm-Message-State: APt69E0ZhUwS5yt6+goJK+vlWZJFdG0KsQcjX51eNuX15riW58791jI7
+        o4cvVUpvDpcCWGj0ikoDjW4EFA==
+X-Google-Smtp-Source: ADUXVKKi2u+0TyMRJugrWZR5XeVF9e1MD6Z19KAe7xTCOZkxZVudMZ/mob/uSy3SJDOjyLptg3gv4g==
+X-Received: by 2002:a63:9041:: with SMTP id a62-v6mr2776649pge.191.1528404584775;
+        Thu, 07 Jun 2018 13:49:44 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:0:1000:1501:38e4:86fe:ec0c:4007])
+        by smtp.gmail.com with ESMTPSA id g80-v6sm35758452pfd.21.2018.06.07.13.49.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 13:49:43 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: andy.gross@linaro.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        kramasub@codeaurora.org, sdharia@codeaurora.org,
+        swboyd@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] arm64: dts: qcom: sdm845: Add I2C, SPI, and UART9 nodes
+Date: Thu,  7 Jun 2018 13:46:07 -0700
+Message-Id: <20180607204608.27688-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Alexei,
+This adds nodes to SDM845-dtsi for all the I2C ports, all the SPI
+ports, and UART9.  Note that I2C / SPI / UART are a bit strange on
+sdm845 because each "serial engine" has 4 pins associated with it and
+depending on which firmware has been loaded into the serial engine
+(loaded by the BIOS) the serial engine can behave like an I2C port, a
+SPI port, or a UART.  As per the landed bindings that means that we
+need to create one node for each possible mode that the port could be
+in.  With 16 serial engines that means 16 x 3 = 48 nodes.
 
-On Mon, May 28, 2018 at 5:31 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> When build testing across architectures, I run into a build error on
-> all targets other than X86:
->
-> gcc-8.1.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-objdump: net/bpfilter/bpfilter_umh: File format not recognized
-> gcc-8.1.0-nolibc/arm-linux-gnueabi/bin/arm-linux-gnueabi-objcopy:net/bpfilter/bpfilter_umh.o: Invalid bfd target
->
-> The problem is that 'hostprogs' get built with 'gcc' rather than
-> '$(CROSS_COMPILE)gcc', and my default gcc (as most people's) targets x86.
->
-> To work around it, adding an X86 dependency gets randconfigs building
-> again on my box.
->
-> Clearly, this is not a good solution, since it should actually work fine
-> when building native kernels on other architectures but that is now
-> disabled, while cross building an x86 kernel on another host is still
-> broken after my patch.
->
-> What we probably want here is to try out if the compiler is able to build
-> executables for the target architecture and not build the helper otherwise,
-> at least when compile-testing. No idea how to do that though.
+We get away with only creating 33 nodes for now because it seems very
+likely that SDM845-based boards will actually all use the same UART
+(UART 9) for debug purposes.  While another UART could be used for
+something like Bluetooth communication we can cross that path when we
+come to it.  Some documentation that I saw implied that using a UART
+for "high speed" communications actually needs yet another different
+serial engine firmware anyway.
 
-So that was done in commit 819dd92b9c0bc7bc ("bpfilter: switch to CC
-from HOSTCC"), but it is not sufficient:
+Note that quick measurements adding all these nodes adds ~10k of extra
+space per dtb that they're included with.  If this becomes a problem
+we may need to think of a different way to structure this so that
+boards only get the nodes they need (or figure out how to get dtc to
+strip 'disabled' nodes).  For now it seems OK.
 
-      GEN net/bpfilter/bpfilter_umh.o
-    Usage: m68k-linux-gnu-objcopy [option(s)] in-file [out-file]
-     Copies a binary file, possibly transforming it in the process
-     The options are:
-    [...]
+These nodes were programmatically generated with a fairly dumb python
+script.  See http://crosreview.com/1091631 for the source.
 
-net/bpfilter/Makefile:29: recipe for target 'net/bpfilter/bpfilter_umh.o' failed
-make[5]: *** [net/bpfilter/bpfilter_umh.o] Error 1
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-> --- a/net/bpfilter/Kconfig
-> +++ b/net/bpfilter/Kconfig
-> @@ -9,6 +9,7 @@ menuconfig BPFILTER
->  if BPFILTER
->  config BPFILTER_UMH
->         tristate "bpfilter kernel module with user mode helper"
-> +       depends on X86 # actually depends on native builds
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 1013 ++++++++++++++++++++++++++
+ 1 file changed, 1013 insertions(+)
 
-No, (currently) it does depend on X86, due to its use of:
-
-    $(OBJCOPY) -I binary -O $(CONFIG_OUTPUT_FORMAT)
-
-with CONFIG_OUTPUT_FORMAT being defined on X86 only...
-
->         default m
->         help
->           This builds bpfilter kernel module with embedded user mode helper
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index cdaabeb3c995..2dc5c7dcc9aa 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -5,6 +5,7 @@
+  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+  */
+ 
++#include <dt-bindings/clock/qcom,gcc-sdm845.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ / {
+@@ -13,6 +14,41 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	aliases {
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		i2c3 = &i2c3;
++		i2c4 = &i2c4;
++		i2c5 = &i2c5;
++		i2c6 = &i2c6;
++		i2c7 = &i2c7;
++		i2c8 = &i2c8;
++		i2c9 = &i2c9;
++		i2c10 = &i2c10;
++		i2c11 = &i2c11;
++		i2c12 = &i2c12;
++		i2c13 = &i2c13;
++		i2c14 = &i2c14;
++		i2c15 = &i2c15;
++		spi0 = &spi0;
++		spi1 = &spi1;
++		spi2 = &spi2;
++		spi3 = &spi3;
++		spi4 = &spi4;
++		spi5 = &spi5;
++		spi6 = &spi6;
++		spi7 = &spi7;
++		spi8 = &spi8;
++		spi9 = &spi9;
++		spi10 = &spi10;
++		spi11 = &spi11;
++		spi12 = &spi12;
++		spi13 = &spi13;
++		spi14 = &spi14;
++		spi15 = &spi15;
++	};
++
+ 	chosen { };
+ 
+ 	memory@80000000 {
+@@ -206,6 +242,489 @@
+ 			#power-domain-cells = <1>;
+ 		};
+ 
++		qupv3_id_0: geniqup@8c0000 {
++			compatible = "qcom,geni-se-qup";
++			reg = <0x8c0000 0x6000>;
++			clock-names = "m-ahb", "s-ahb";
++			clocks = <&gcc GCC_QUPV3_WRAP_0_M_AHB_CLK>,
++				 <&gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			i2c0: i2c@880000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x880000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c0_default>;
++				pinctrl-1 = <&qup_i2c0_sleep>;
++				interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi0: spi@880000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x880000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi0_default>;
++				pinctrl-1 = <&qup_spi0_sleep>;
++				interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c1: i2c@884000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x884000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c1_default>;
++				pinctrl-1 = <&qup_i2c1_sleep>;
++				interrupts = <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi1: spi@884000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x884000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi1_default>;
++				pinctrl-1 = <&qup_spi1_sleep>;
++				interrupts = <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c2: i2c@888000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x888000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c2_default>;
++				pinctrl-1 = <&qup_i2c2_sleep>;
++				interrupts = <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi2: spi@888000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x888000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi2_default>;
++				pinctrl-1 = <&qup_spi2_sleep>;
++				interrupts = <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c3: i2c@88c000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x88c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c3_default>;
++				pinctrl-1 = <&qup_i2c3_sleep>;
++				interrupts = <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi3: spi@88c000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x88c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi3_default>;
++				pinctrl-1 = <&qup_spi3_sleep>;
++				interrupts = <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c4: i2c@890000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x890000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c4_default>;
++				pinctrl-1 = <&qup_i2c4_sleep>;
++				interrupts = <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi4: spi@890000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x890000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi4_default>;
++				pinctrl-1 = <&qup_spi4_sleep>;
++				interrupts = <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c5: i2c@894000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x894000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c5_default>;
++				pinctrl-1 = <&qup_i2c5_sleep>;
++				interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi5: spi@894000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x894000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi5_default>;
++				pinctrl-1 = <&qup_spi5_sleep>;
++				interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c6: i2c@898000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x898000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c6_default>;
++				pinctrl-1 = <&qup_i2c6_sleep>;
++				interrupts = <GIC_SPI 607 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi6: spi@898000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x898000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi6_default>;
++				pinctrl-1 = <&qup_spi6_sleep>;
++				interrupts = <GIC_SPI 607 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c7: i2c@89c000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0x89c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c7_default>;
++				pinctrl-1 = <&qup_i2c7_sleep>;
++				interrupts = <GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi7: spi@89c000 {
++				compatible = "qcom,geni-spi";
++				reg = <0x89c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi7_default>;
++				pinctrl-1 = <&qup_spi7_sleep>;
++				interrupts = <GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++		};
++
++		qupv3_id_1: geniqup@ac0000 {
++			compatible = "qcom,geni-se-qup";
++			reg = <0xac0000 0x6000>;
++			clock-names = "m-ahb", "s-ahb";
++			clocks = <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
++				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			status = "disabled";
++
++			i2c8: i2c@a80000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa80000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c8_default>;
++				pinctrl-1 = <&qup_i2c8_sleep>;
++				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi8: spi@a80000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa80000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi8_default>;
++				pinctrl-1 = <&qup_spi8_sleep>;
++				interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c9: i2c@a84000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa84000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c9_default>;
++				pinctrl-1 = <&qup_i2c9_sleep>;
++				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi9: spi@a84000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa84000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi9_default>;
++				pinctrl-1 = <&qup_spi9_sleep>;
++				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			uart9: serial@a84000 {
++				compatible = "qcom,geni-debug-uart";
++				reg = <0xa84000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_uart9_default>;
++				pinctrl-1 = <&qup_uart9_sleep>;
++				interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++				status = "disabled";
++			};
++
++			i2c10: i2c@a88000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa88000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c10_default>;
++				pinctrl-1 = <&qup_i2c10_sleep>;
++				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi10: spi@a88000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa88000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi10_default>;
++				pinctrl-1 = <&qup_spi10_sleep>;
++				interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c11: i2c@a8c000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa8c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c11_default>;
++				pinctrl-1 = <&qup_i2c11_sleep>;
++				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi11: spi@a8c000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa8c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi11_default>;
++				pinctrl-1 = <&qup_spi11_sleep>;
++				interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c12: i2c@a90000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa90000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c12_default>;
++				pinctrl-1 = <&qup_i2c12_sleep>;
++				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi12: spi@a90000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa90000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi12_default>;
++				pinctrl-1 = <&qup_spi12_sleep>;
++				interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c13: i2c@a94000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa94000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c13_default>;
++				pinctrl-1 = <&qup_i2c13_sleep>;
++				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi13: spi@a94000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa94000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi13_default>;
++				pinctrl-1 = <&qup_spi13_sleep>;
++				interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c14: i2c@a98000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa98000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c14_default>;
++				pinctrl-1 = <&qup_i2c14_sleep>;
++				interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi14: spi@a98000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa98000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi14_default>;
++				pinctrl-1 = <&qup_spi14_sleep>;
++				interrupts = <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			i2c15: i2c@a9c000 {
++				compatible = "qcom,geni-i2c";
++				reg = <0xa9c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S7_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_i2c15_default>;
++				pinctrl-1 = <&qup_i2c15_sleep>;
++				interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++
++			spi15: spi@a9c000 {
++				compatible = "qcom,geni-spi";
++				reg = <0xa9c000 0x4000>;
++				clock-names = "se";
++				clocks = <&gcc GCC_QUPV3_WRAP1_S7_CLK>;
++				pinctrl-names = "default", "sleep";
++				pinctrl-0 = <&qup_spi15_default>;
++				pinctrl-1 = <&qup_spi15_sleep>;
++				interrupts = <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				status = "disabled";
++			};
++		};
++
+ 		tcsr_mutex_regs: syscon@1f40000 {
+ 			compatible = "syscon";
+ 			reg = <0x1f40000 0x40000>;
+@@ -219,6 +738,500 @@
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++
++			qup_i2c0_default: qup-i2c0-default {
++				pinmux {
++					pins = "gpio0", "gpio1";
++					function = "qup0";
++				};
++			};
++
++			qup_i2c0_sleep: qup-i2c0-sleep {
++				pinmux {
++					pins = "gpio0", "gpio1";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c1_default: qup-i2c1-default {
++				pinmux {
++					pins = "gpio17", "gpio18";
++					function = "qup1";
++				};
++			};
++
++			qup_i2c1_sleep: qup-i2c1-sleep {
++				pinmux {
++					pins = "gpio17", "gpio18";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c2_default: qup-i2c2-default {
++				pinmux {
++					pins = "gpio27", "gpio28";
++					function = "qup2";
++				};
++			};
++
++			qup_i2c2_sleep: qup-i2c2-sleep {
++				pinmux {
++					pins = "gpio27", "gpio28";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c3_default: qup-i2c3-default {
++				pinmux {
++					pins = "gpio41", "gpio42";
++					function = "qup3";
++				};
++			};
++
++			qup_i2c3_sleep: qup-i2c3-sleep {
++				pinmux {
++					pins = "gpio41", "gpio42";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c4_default: qup-i2c4-default {
++				pinmux {
++					pins = "gpio89", "gpio90";
++					function = "qup4";
++				};
++			};
++
++			qup_i2c4_sleep: qup-i2c4-sleep {
++				pinmux {
++					pins = "gpio89", "gpio90";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c5_default: qup-i2c5-default {
++				pinmux {
++					pins = "gpio85", "gpio86";
++					function = "qup5";
++				};
++			};
++
++			qup_i2c5_sleep: qup-i2c5-sleep {
++				pinmux {
++					pins = "gpio85", "gpio86";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c6_default: qup-i2c6-default {
++				pinmux {
++					pins = "gpio45", "gpio46";
++					function = "qup6";
++				};
++			};
++
++			qup_i2c6_sleep: qup-i2c6-sleep {
++				pinmux {
++					pins = "gpio45", "gpio46";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c7_default: qup-i2c7-default {
++				pinmux {
++					pins = "gpio93", "gpio94";
++					function = "qup7";
++				};
++			};
++
++			qup_i2c7_sleep: qup-i2c7-sleep {
++				pinmux {
++					pins = "gpio93", "gpio94";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c8_default: qup-i2c8-default {
++				pinmux {
++					pins = "gpio65", "gpio66";
++					function = "qup8";
++				};
++			};
++
++			qup_i2c8_sleep: qup-i2c8-sleep {
++				pinmux {
++					pins = "gpio65", "gpio66";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c9_default: qup-i2c9-default {
++				pinmux {
++					pins = "gpio6", "gpio7";
++					function = "qup9";
++				};
++			};
++
++			qup_i2c9_sleep: qup-i2c9-sleep {
++				pinmux {
++					pins = "gpio6", "gpio7";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c10_default: qup-i2c10-default {
++				pinmux {
++					pins = "gpio55", "gpio56";
++					function = "qup10";
++				};
++			};
++
++			qup_i2c10_sleep: qup-i2c10-sleep {
++				pinmux {
++					pins = "gpio55", "gpio56";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c11_default: qup-i2c11-default {
++				pinmux {
++					pins = "gpio31", "gpio32";
++					function = "qup11";
++				};
++			};
++
++			qup_i2c11_sleep: qup-i2c11-sleep {
++				pinmux {
++					pins = "gpio31", "gpio32";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c12_default: qup-i2c12-default {
++				pinmux {
++					pins = "gpio49", "gpio50";
++					function = "qup12";
++				};
++			};
++
++			qup_i2c12_sleep: qup-i2c12-sleep {
++				pinmux {
++					pins = "gpio49", "gpio50";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c13_default: qup-i2c13-default {
++				pinmux {
++					pins = "gpio105", "gpio106";
++					function = "qup13";
++				};
++			};
++
++			qup_i2c13_sleep: qup-i2c13-sleep {
++				pinmux {
++					pins = "gpio105", "gpio106";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c14_default: qup-i2c14-default {
++				pinmux {
++					pins = "gpio33", "gpio34";
++					function = "qup14";
++				};
++			};
++
++			qup_i2c14_sleep: qup-i2c14-sleep {
++				pinmux {
++					pins = "gpio33", "gpio34";
++					function = "gpio";
++				};
++			};
++
++			qup_i2c15_default: qup-i2c15-default {
++				pinmux {
++					pins = "gpio81", "gpio82";
++					function = "qup15";
++				};
++			};
++
++			qup_i2c15_sleep: qup-i2c15-sleep {
++				pinmux {
++					pins = "gpio81", "gpio82";
++					function = "gpio";
++				};
++			};
++
++			qup_spi0_default: qup-spi0-default {
++				pinmux {
++					pins = "gpio0", "gpio1",
++					       "gpio2", "gpio3";
++					function = "qup0";
++				};
++			};
++
++			qup_spi0_sleep: qup-spi0-sleep {
++				pinmux {
++					pins = "gpio0", "gpio1",
++					       "gpio2", "gpio3";
++					function = "gpio";
++				};
++			};
++
++			qup_spi1_default: qup-spi1-default {
++				pinmux {
++					pins = "gpio17", "gpio18",
++					       "gpio19", "gpio20";
++					function = "qup1";
++				};
++			};
++
++			qup_spi1_sleep: qup-spi1-sleep {
++				pinmux {
++					pins = "gpio17", "gpio18",
++					       "gpio19", "gpio20";
++					function = "gpio";
++				};
++			};
++
++			qup_spi2_default: qup-spi2-default {
++				pinmux {
++					pins = "gpio27", "gpio28",
++					       "gpio29", "gpio30";
++					function = "qup2";
++				};
++			};
++
++			qup_spi2_sleep: qup-spi2-sleep {
++				pinmux {
++					pins = "gpio27", "gpio28",
++					       "gpio29", "gpio30";
++					function = "gpio";
++				};
++			};
++
++			qup_spi3_default: qup-spi3-default {
++				pinmux {
++					pins = "gpio41", "gpio42",
++					       "gpio43", "gpio44";
++					function = "qup3";
++				};
++			};
++
++			qup_spi3_sleep: qup-spi3-sleep {
++				pinmux {
++					pins = "gpio41", "gpio42",
++					       "gpio43", "gpio44";
++					function = "gpio";
++				};
++			};
++
++			qup_spi4_default: qup-spi4-default {
++				pinmux {
++					pins = "gpio89", "gpio90",
++					       "gpio91", "gpio92";
++					function = "qup4";
++				};
++			};
++
++			qup_spi4_sleep: qup-spi4-sleep {
++				pinmux {
++					pins = "gpio89", "gpio90",
++					       "gpio91", "gpio92";
++					function = "gpio";
++				};
++			};
++
++			qup_spi5_default: qup-spi5-default {
++				pinmux {
++					pins = "gpio85", "gpio86",
++					       "gpio87", "gpio88";
++					function = "qup5";
++				};
++			};
++
++			qup_spi5_sleep: qup-spi5-sleep {
++				pinmux {
++					pins = "gpio85", "gpio86",
++					       "gpio87", "gpio88";
++					function = "gpio";
++				};
++			};
++
++			qup_spi6_default: qup-spi6-default {
++				pinmux {
++					pins = "gpio45", "gpio46",
++					       "gpio47", "gpio48";
++					function = "qup6";
++				};
++			};
++
++			qup_spi6_sleep: qup-spi6-sleep {
++				pinmux {
++					pins = "gpio45", "gpio46",
++					       "gpio47", "gpio48";
++					function = "gpio";
++				};
++			};
++
++			qup_spi7_default: qup-spi7-default {
++				pinmux {
++					pins = "gpio93", "gpio94",
++					       "gpio95", "gpio96";
++					function = "qup7";
++				};
++			};
++
++			qup_spi7_sleep: qup-spi7-sleep {
++				pinmux {
++					pins = "gpio93", "gpio94",
++					       "gpio95", "gpio96";
++					function = "gpio";
++				};
++			};
++
++			qup_spi8_default: qup-spi8-default {
++				pinmux {
++					pins = "gpio65", "gpio66",
++					       "gpio67", "gpio68";
++					function = "qup8";
++				};
++			};
++
++			qup_spi8_sleep: qup-spi8-sleep {
++				pinmux {
++					pins = "gpio65", "gpio66",
++					       "gpio67", "gpio68";
++					function = "gpio";
++				};
++			};
++
++			qup_spi9_default: qup-spi9-default {
++				pinmux {
++					pins = "gpio6", "gpio7",
++					       "gpio4", "gpio5";
++					function = "qup9";
++				};
++			};
++
++			qup_spi9_sleep: qup-spi9-sleep {
++				pinmux {
++					pins = "gpio6", "gpio7",
++					       "gpio4", "gpio5";
++					function = "gpio";
++				};
++			};
++
++			qup_spi10_default: qup-spi10-default {
++				pinmux {
++					pins = "gpio55", "gpio56",
++					       "gpio53", "gpio54";
++					function = "qup10";
++				};
++			};
++
++			qup_spi10_sleep: qup-spi10-sleep {
++				pinmux {
++					pins = "gpio55", "gpio56",
++					       "gpio53", "gpio54";
++					function = "gpio";
++				};
++			};
++
++			qup_spi11_default: qup-spi11-default {
++				pinmux {
++					pins = "gpio31", "gpio32",
++					       "gpio33", "gpio34";
++					function = "qup11";
++				};
++			};
++
++			qup_spi11_sleep: qup-spi11-sleep {
++				pinmux {
++					pins = "gpio31", "gpio32",
++					       "gpio33", "gpio34";
++					function = "gpio";
++				};
++			};
++
++			qup_spi12_default: qup-spi12-default {
++				pinmux {
++					pins = "gpio49", "gpio50",
++					       "gpio51", "gpio52";
++					function = "qup12";
++				};
++			};
++
++			qup_spi12_sleep: qup-spi12-sleep {
++				pinmux {
++					pins = "gpio49", "gpio50",
++					       "gpio51", "gpio52";
++					function = "gpio";
++				};
++			};
++
++			qup_spi13_default: qup-spi13-default {
++				pinmux {
++					pins = "gpio105", "gpio106",
++					       "gpio107", "gpio108";
++					function = "qup13";
++				};
++			};
++
++			qup_spi13_sleep: qup-spi13-sleep {
++				pinmux {
++					pins = "gpio105", "gpio106",
++					       "gpio107", "gpio108";
++					function = "gpio";
++				};
++			};
++
++			qup_spi14_default: qup-spi14-default {
++				pinmux {
++					pins = "gpio33", "gpio34",
++					       "gpio31", "gpio32";
++					function = "qup14";
++				};
++			};
++
++			qup_spi14_sleep: qup-spi14-sleep {
++				pinmux {
++					pins = "gpio33", "gpio34",
++					       "gpio31", "gpio32";
++					function = "gpio";
++				};
++			};
++
++			qup_spi15_default: qup-spi15-default {
++				pinmux {
++					pins = "gpio81", "gpio82",
++					       "gpio83", "gpio84";
++					function = "qup15";
++				};
++			};
++
++			qup_spi15_sleep: qup-spi15-sleep {
++				pinmux {
++					pins = "gpio81", "gpio82",
++					       "gpio83", "gpio84";
++					function = "gpio";
++				};
++			};
++
++			qup_uart9_default: qup-uart9-default {
++				pinmux {
++					pins = "gpio4", "gpio5";
++					function = "qup9";
++				};
++			};
++
++			qup_uart9_sleep: qup-uart9-sleep {
++				pinmux {
++					pins = "gpio4", "gpio5";
++					function = "gpio";
++				};
++			};
+ 		};
+ 
+ 		spmi_bus: spmi@c440000 {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.1.1185.g55be947832-goog
