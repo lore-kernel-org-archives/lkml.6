@@ -1,410 +1,408 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id rti/N4tSGVu1GAAAmS7hNA
-	; Thu, 07 Jun 2018 15:43:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4QPZNPE7GVspMQAAmS7hNA
+	; Thu, 07 Jun 2018 14:06:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6E7AB607E7; Thu,  7 Jun 2018 15:43:26 +0000 (UTC)
+	id 3E2C46089E; Thu,  7 Jun 2018 14:06:58 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJ6580GV"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6C25260590;
-	Thu,  7 Jun 2018 15:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6C25260590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3C3606063F;
+	Thu,  7 Jun 2018 14:06:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C3606063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934732AbeFGPnY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:43:24 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36346 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934298AbeFGOla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:41:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="62632617"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 07:41:28 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        id S932938AbeFGOGy (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:06:54 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:46246 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932921AbeFGOGK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:06:10 -0400
+Received: by mail-wr0-f193.google.com with SMTP id v13-v6so9999363wrp.13;
+        Thu, 07 Jun 2018 07:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=u/EbyOdY/m1QY8x0o+jUH7g/6wWqBmQRwmc4wsRYWqc=;
+        b=HJ6580GVX+lwoR6JhvXwEd5t9elsEfZmNb1Va2IOL5KM7psyYR7C+nn6/Yr8T/0/Be
+         kZoQNgAxmtGwB6yYHQzUEN8IQBpxZtWdMzvXvOBRi/kh5SSCtU0hZuKyQ4iOGHfw3lMb
+         4khu4QtPP1n8JlQ2mHpfGLIQPSKcdGRansKHRkJaf6pRfe9WF1AVDTEm1H5UUAupNMO3
+         XREy/8WD2h522ecYMt8QPqR6oPnIfgIeJqbNXyJ2IsXlSeghJXBYm5hEJeqj7uewTmpM
+         96SfZ9wL0oHVrtAy8ksofER8RrDMMdghiTmYpmNyV+XNS7xJA5zUHL1juV9am9l2BdXb
+         tiiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=u/EbyOdY/m1QY8x0o+jUH7g/6wWqBmQRwmc4wsRYWqc=;
+        b=k2RiJmHqzhix1VOxLujXI5s/xADetUxj2BMWFcK9AYD2vnlRjo+Vf5eqBx6wlvoNgx
+         /lsCO4dQ7pCDkZJBtXGjjqEQO06hx5nL0jY3CgDRWnyi+02QwOrieti/jAn5jJk8Wi0p
+         HRrjvdr627HONUwmQyf0QEvP6AJN5lWoeFiYRVNvHDMRvzbIgD+fFMPwS1HlA6tS7aHo
+         qN4iWhhBvEGsjCcEwBt/fmDLLId/NY95OhSqM07qQFjgxdV0b0F1VysyUym4cL4e3GXq
+         eojNGsEyBJS3HOtYPmimH9hguRbyrgTstsqb7DxSXnXngQTfGQSh3FvWikVzkIa+2nC3
+         XQTQ==
+X-Gm-Message-State: APt69E29rYAtl3D7IYwM4aoKp0XH/jylf5qaUKb2UT9+Sw5QKepa+Thy
+        EvVd97Z9hy7d1X1JuQS0lTI=
+X-Google-Smtp-Source: ADUXVKKUNeGLOmdct9g4n2TJ+w4fe37yOBvkWy3lUuEauHVkPnQpbKAZMlBGfGmpoZlX8WguHarapA==
+X-Received: by 2002:adf:fd05:: with SMTP id e5-v6mr1786972wrr.280.1528380368872;
+        Thu, 07 Jun 2018 07:06:08 -0700 (PDT)
+Received: from cperon-Latitude-7490.lan (static-css-csd-151233.business.bouyguestelecom.com. [176.162.151.233])
+        by smtp.gmail.com with ESMTPSA id 135-v6sm2032331wmx.21.2018.06.07.07.06.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 07:06:08 -0700 (PDT)
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 01/10] x86/cet: User-mode shadow stack support
-Date: Thu,  7 Jun 2018 07:37:58 -0700
-Message-Id: <20180607143807.3611-2-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v6 4/5] clocksource: add driver for i.MX EPIT timer
+Date: Thu,  7 Jun 2018 16:05:43 +0200
+Message-Id: <20180607140544.22268-5-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180607140544.22268-1-peron.clem@gmail.com>
+References: <20180607140544.22268-1-peron.clem@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds basic shadow stack enabling/disabling routines.
-A task's shadow stack is allocated from memory with VM_SHSTK
-flag set and read-only protection.  The shadow stack is
-allocated to a fixed size and that can be changed by the system
-admin.
+From: Colin Didier <colin.didier@devialet.com>
 
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Add driver for NXP's EPIT timer used in i.MX SoC.
+
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- arch/x86/include/asm/cet.h               |  32 ++++++++
- arch/x86/include/asm/disabled-features.h |   8 +-
- arch/x86/include/asm/msr-index.h         |  14 ++++
- arch/x86/include/asm/processor.h         |   5 ++
- arch/x86/kernel/Makefile                 |   2 +
- arch/x86/kernel/cet.c                    | 123 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/common.c             |  24 ++++++
- arch/x86/kernel/process.c                |   2 +
- fs/proc/task_mmu.c                       |   3 +
- 9 files changed, 212 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/include/asm/cet.h
- create mode 100644 arch/x86/kernel/cet.c
+ drivers/clocksource/Kconfig          |  11 ++
+ drivers/clocksource/Makefile         |   1 +
+ drivers/clocksource/timer-imx-epit.c | 265 +++++++++++++++++++++++++++
+ 3 files changed, 277 insertions(+)
+ create mode 100644 drivers/clocksource/timer-imx-epit.c
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 8e8a09755d10..790478afd02c 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -576,6 +576,17 @@ config H8300_TPU
+ 	  This enables the clocksource for the H8300 platform with the
+ 	  H8S2678 cpu.
+ 
++config CLKSRC_IMX_EPIT
++	bool "Clocksource using i.MX EPIT"
++	depends on CLKDEV_LOOKUP && (ARCH_MXC || COMPILE_TEST)
++	select CLKSRC_MMIO
++	help
++	  This enables EPIT support available on some i.MX platforms.
++	  Normally you don't have a reason to do so as the EPIT has
++	  the same features and uses the same clocks as the GPT.
++	  Anyway, on some systems the GPT may be in use for other
++	  purposes.
++
+ config CLKSRC_IMX_GPT
+ 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
+ 	depends on ARM && CLKDEV_LOOKUP
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 00caf37e52f9..d9426f69ec69 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -69,6 +69,7 @@ obj-$(CONFIG_INTEGRATOR_AP_TIMER)	+= timer-integrator-ap.o
+ obj-$(CONFIG_CLKSRC_VERSATILE)		+= versatile.o
+ obj-$(CONFIG_CLKSRC_MIPS_GIC)		+= mips-gic-timer.o
+ obj-$(CONFIG_CLKSRC_TANGO_XTAL)		+= tango_xtal.o
++obj-$(CONFIG_CLKSRC_IMX_EPIT)		+= timer-imx-epit.o
+ obj-$(CONFIG_CLKSRC_IMX_GPT)		+= timer-imx-gpt.o
+ obj-$(CONFIG_CLKSRC_IMX_TPM)		+= timer-imx-tpm.o
+ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
+diff --git a/drivers/clocksource/timer-imx-epit.c b/drivers/clocksource/timer-imx-epit.c
 new file mode 100644
-index 000000000000..9d5bc1efc9b7
+index 000000000000..15f70e210fad
 --- /dev/null
-+++ b/arch/x86/include/asm/cet.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_CET_H
-+#define _ASM_X86_CET_H
-+
-+#ifndef __ASSEMBLY__
-+#include <linux/types.h>
-+
-+struct task_struct;
++++ b/drivers/clocksource/timer-imx-epit.c
+@@ -0,0 +1,265 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Per-thread CET status
++ * i.MX EPIT Timer
++ *
++ * Copyright (C) 2010 Sascha Hauer <s.hauer@pengutronix.de>
++ * Copyright (C) 2018 Colin Didier <colin.didier@devialet.com>
++ * Copyright (C) 2018 Clément Péron <clement.peron@devialet.com>
 + */
-+struct cet_stat {
-+	unsigned long	shstk_base;
-+	unsigned long	shstk_size;
-+	unsigned int	shstk_enabled:1;
++
++#include <linux/clk.h>
++#include <linux/clockchips.h>
++#include <linux/interrupt.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/sched_clock.h>
++#include <linux/slab.h>
++
++#define EPITCR				0x00
++#define EPITSR				0x04
++#define EPITLR				0x08
++#define EPITCMPR			0x0c
++#define EPITCNR				0x10
++
++#define EPITCR_EN			BIT(0)
++#define EPITCR_ENMOD			BIT(1)
++#define EPITCR_OCIEN			BIT(2)
++#define EPITCR_RLD			BIT(3)
++#define EPITCR_PRESC(x)			(((x) & 0xfff) << 4)
++#define EPITCR_SWR			BIT(16)
++#define EPITCR_IOVW			BIT(17)
++#define EPITCR_DBGEN			BIT(18)
++#define EPITCR_WAITEN			BIT(19)
++#define EPITCR_RES			BIT(20)
++#define EPITCR_STOPEN			BIT(21)
++#define EPITCR_OM_DISCON		(0 << 22)
++#define EPITCR_OM_TOGGLE		(1 << 22)
++#define EPITCR_OM_CLEAR			(2 << 22)
++#define EPITCR_OM_SET			(3 << 22)
++#define EPITCR_CLKSRC_OFF		(0 << 24)
++#define EPITCR_CLKSRC_PERIPHERAL	(1 << 24)
++#define EPITCR_CLKSRC_REF_HIGH		(2 << 24)
++#define EPITCR_CLKSRC_REF_LOW		(3 << 24)
++
++#define EPITSR_OCIF			BIT(0)
++
++struct epit_timer {
++	void __iomem *base;
++	int irq;
++	struct clk *clk;
++	struct clock_event_device ced;
++	struct irqaction act;
 +};
 +
-+#ifdef CONFIG_X86_INTEL_CET
-+unsigned long cet_get_shstk_ptr(void);
-+int cet_setup_shstk(void);
-+void cet_disable_shstk(void);
-+void cet_disable_free_shstk(struct task_struct *p);
-+#else
-+static inline unsigned long cet_get_shstk_ptr(void) { return 0; }
-+static inline int cet_setup_shstk(void) { return 0; }
-+static inline void cet_disable_shstk(void) {}
-+static inline void cet_disable_free_shstk(struct task_struct *p) {}
-+#endif
++static void __iomem *sched_clock_reg;
 +
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* _ASM_X86_CET_H */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 33833d1909af..3624a11e5ba6 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -56,6 +56,12 @@
- # define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
- #endif
- 
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+#define DISABLE_SHSTK	0
-+#else
-+#define DISABLE_SHSTK	(1<<(X86_FEATURE_SHSTK & 31))
-+#endif
-+
- /*
-  * Make sure to add features to the correct mask
-  */
-@@ -75,7 +81,7 @@
- #define DISABLED_MASK13	0
- #define DISABLED_MASK14	0
- #define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
-+#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP|DISABLE_SHSTK)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	0
- #define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index fda2114197b3..428d13828ba9 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -770,4 +770,18 @@
- #define MSR_VM_IGNNE                    0xc0010115
- #define MSR_VM_HSAVE_PA                 0xc0010117
- 
-+/* Control-flow Enforcement Technology MSRs */
-+#define MSR_IA32_U_CET		0x6a0
-+#define MSR_IA32_S_CET		0x6a2
-+#define MSR_IA32_PL0_SSP	0x6a4
-+#define MSR_IA32_PL3_SSP	0x6a7
-+#define MSR_IA32_INT_SSP_TAB	0x6a8
-+
-+/* MSR_IA32_U_CET and MSR_IA32_S_CET bits */
-+#define MSR_IA32_CET_SHSTK_EN		0x0000000000000001
-+#define MSR_IA32_CET_WRSS_EN		0x0000000000000002
-+#define MSR_IA32_CET_ENDBR_EN		0x0000000000000004
-+#define MSR_IA32_CET_LEG_IW_EN		0x0000000000000008
-+#define MSR_IA32_CET_NO_TRACK_EN	0x0000000000000010
-+
- #endif /* _ASM_X86_MSR_INDEX_H */
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 21a114914ba4..e632dd7adaac 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -24,6 +24,7 @@ struct vm86;
- #include <asm/special_insns.h>
- #include <asm/fpu/types.h>
- #include <asm/unwind_hints.h>
-+#include <asm/cet.h>
- 
- #include <linux/personality.h>
- #include <linux/cache.h>
-@@ -507,6 +508,10 @@ struct thread_struct {
- 	unsigned int		sig_on_uaccess_err:1;
- 	unsigned int		uaccess_err:1;	/* uaccess failed */
- 
-+#ifdef CONFIG_X86_INTEL_CET
-+	struct cet_stat		cet;
-+#endif
-+
- 	/* Floating point and extended processor state */
- 	struct fpu		fpu;
- 	/*
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..7ea5e099d558 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -138,6 +138,8 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
- obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
- obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
- 
-+obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
-+
- ###
- # 64 bit specific files
- ifeq ($(CONFIG_X86_64),y)
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-new file mode 100644
-index 000000000000..8abbfd44322a
---- /dev/null
-+++ b/arch/x86/kernel/cet.c
-@@ -0,0 +1,123 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * cet.c - Control Flow Enforcement (CET)
-+ *
-+ * Copyright (c) 2018, Intel Corporation.
-+ * Yu-cheng Yu <yu-cheng.yu@intel.com>
-+ */
-+
-+#include <linux/types.h>
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include <linux/sched/signal.h>
-+#include <asm/msr.h>
-+#include <asm/user.h>
-+#include <asm/fpu/xstate.h>
-+#include <asm/fpu/types.h>
-+#include <asm/cet.h>
-+
-+#define SHSTK_SIZE (0x8000 * (test_thread_flag(TIF_IA32) ? 4 : 8))
-+
-+static inline int cet_set_shstk_ptr(unsigned long addr)
++static inline struct epit_timer *to_epit_timer(struct clock_event_device *ced)
 +{
-+	u64 r;
++	return container_of(ced, struct epit_timer, ced);
++}
 +
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		return -1;
++static inline void epit_irq_disable(struct epit_timer *epittm)
++{
++	u32 val;
 +
-+	if ((addr >= TASK_SIZE) || (!IS_ALIGNED(addr, 4)))
-+		return -1;
++	val = readl_relaxed(epittm->base + EPITCR);
++	writel_relaxed(val & ~EPITCR_OCIEN, epittm->base + EPITCR);
++}
 +
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	wrmsrl(MSR_IA32_U_CET, r | MSR_IA32_CET_SHSTK_EN);
-+	wrmsrl(MSR_IA32_PL3_SSP, addr);
++static inline void epit_irq_enable(struct epit_timer *epittm)
++{
++	u32 val;
++
++	val = readl_relaxed(epittm->base + EPITCR);
++	writel_relaxed(val | EPITCR_OCIEN, epittm->base + EPITCR);
++}
++
++static void epit_irq_acknowledge(struct epit_timer *epittm)
++{
++	writel_relaxed(EPITSR_OCIF, epittm->base + EPITSR);
++}
++
++static u64 notrace epit_read_sched_clock(void)
++{
++	return ~readl_relaxed(sched_clock_reg);
++}
++
++static int epit_set_next_event(unsigned long cycles,
++			       struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long tcmp;
++
++	tcmp = readl_relaxed(epittm->base + EPITCNR) - cycles;
++	writel_relaxed(tcmp, epittm->base + EPITCMPR);
++
 +	return 0;
 +}
 +
-+unsigned long cet_get_shstk_ptr(void)
++/* Left event sources disabled, no more interrupts appear */
++static int epit_shutdown(struct clock_event_device *ced)
 +{
-+	unsigned long ptr;
-+
-+	if (!current->thread.cet.shstk_enabled)
-+		return 0;
-+
-+	rdmsrl(MSR_IA32_PL3_SSP, ptr);
-+	return ptr;
-+}
-+
-+static unsigned long shstk_mmap(unsigned long addr, unsigned long len)
-+{
-+	struct mm_struct *mm = current->mm;
-+	unsigned long populate;
-+
-+	down_write(&mm->mmap_sem);
-+	addr = do_mmap(NULL, addr, len, PROT_READ,
-+		       MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK,
-+		       0, &populate, NULL);
-+	up_write(&mm->mmap_sem);
-+
-+	if (populate)
-+		mm_populate(addr, populate);
-+
-+	return addr;
-+}
-+
-+int cet_setup_shstk(void)
-+{
-+	unsigned long addr, size;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		return -EOPNOTSUPP;
-+
-+	size = SHSTK_SIZE;
-+	addr = shstk_mmap(0, size);
-+
-+	if (addr >= TASK_SIZE)
-+		return -ENOMEM;
-+
-+	cet_set_shstk_ptr(addr + size - sizeof(void *));
-+	current->thread.cet.shstk_base = addr;
-+	current->thread.cet.shstk_size = size;
-+	current->thread.cet.shstk_enabled = 1;
-+	return 0;
-+}
-+
-+void cet_disable_shstk(void)
-+{
-+	u64 r;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		return;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r &= ~(MSR_IA32_CET_SHSTK_EN);
-+	wrmsrl(MSR_IA32_U_CET, r);
-+	wrmsrl(MSR_IA32_PL3_SSP, 0);
-+	current->thread.cet.shstk_enabled = 0;
-+}
-+
-+void cet_disable_free_shstk(struct task_struct *tsk)
-+{
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) ||
-+	    !tsk->thread.cet.shstk_enabled)
-+		return;
-+
-+	if (tsk == current)
-+		cet_disable_shstk();
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long flags;
 +
 +	/*
-+	 * Free only when tsk is current or shares mm
-+	 * with current but has its own shstk.
++	 * The timer interrupt generation is disabled at least
++	 * for enough time to call epit_set_next_event()
 +	 */
-+	if (tsk->mm && (tsk->mm == current->mm) &&
-+	    (tsk->thread.cet.shstk_base)) {
-+		vm_munmap(tsk->thread.cet.shstk_base,
-+			  tsk->thread.cet.shstk_size);
-+		tsk->thread.cet.shstk_base = 0;
-+		tsk->thread.cet.shstk_size = 0;
++	local_irq_save(flags);
++
++	/* Disable interrupt in EPIT module */
++	epit_irq_disable(epittm);
++
++	/* Clear pending interrupt */
++	epit_irq_acknowledge(epittm);
++
++	local_irq_restore(flags);
++
++	return 0;
++}
++
++static int epit_set_oneshot(struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long flags;
++
++	/*
++	 * The timer interrupt generation is disabled at least
++	 * for enough time to call epit_set_next_event()
++	 */
++	local_irq_save(flags);
++
++	/* Disable interrupt in EPIT module */
++	epit_irq_disable(epittm);
++
++	/* Clear pending interrupt, only while switching mode */
++	if (!clockevent_state_oneshot(ced))
++		epit_irq_acknowledge(epittm);
++
++	/*
++	 * Do not put overhead of interrupt enable/disable into
++	 * epit_set_next_event(), the core has about 4 minutes
++	 * to call epit_set_next_event() or shutdown clock after
++	 * mode switching
++	 */
++	epit_irq_enable(epittm);
++	local_irq_restore(flags);
++
++	return 0;
++}
++
++static irqreturn_t epit_timer_interrupt(int irq, void *dev_id)
++{
++	struct clock_event_device *ced = dev_id;
++	struct epit_timer *epittm = to_epit_timer(ced);
++
++	epit_irq_acknowledge(epittm);
++
++	ced->event_handler(ced);
++
++	return IRQ_HANDLED;
++}
++
++static int __init epit_clocksource_init(struct epit_timer *epittm)
++{
++	unsigned int c = clk_get_rate(epittm->clk);
++
++	sched_clock_reg = epittm->base + EPITCNR;
++	sched_clock_register(epit_read_sched_clock, 32, c);
++
++	return clocksource_mmio_init(epittm->base + EPITCNR, "epit", c, 200, 32,
++				     clocksource_mmio_readl_down);
++}
++
++static int __init epit_clockevent_init(struct epit_timer *epittm)
++{
++	struct clock_event_device *ced = &epittm->ced;
++	struct irqaction *act = &epittm->act;
++
++	ced->name = "epit";
++	ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
++	ced->set_state_shutdown = epit_shutdown;
++	ced->tick_resume = epit_shutdown;
++	ced->set_state_oneshot = epit_set_oneshot;
++	ced->set_next_event = epit_set_next_event;
++	ced->rating = 200;
++	ced->cpumask = cpumask_of(0);
++	ced->irq = epittm->irq;
++	clockevents_config_and_register(ced, clk_get_rate(epittm->clk),
++					0xff, 0xfffffffe);
++
++	act->name = "i.MX EPIT Timer Tick",
++	act->flags = IRQF_TIMER | IRQF_IRQPOLL;
++	act->handler = epit_timer_interrupt;
++	act->dev_id = ced;
++
++	/* Make irqs happen */
++	return setup_irq(epittm->irq, act);
++}
++
++static int __init epit_timer_init(struct device_node *np)
++{
++	struct epit_timer *epittm;
++	int ret;
++
++	epittm = kzalloc(sizeof(*epittm), GFP_KERNEL);
++	if (!epittm)
++		return -ENOMEM;
++
++	epittm->base = of_iomap(np, 0);
++	if (!epittm->base) {
++		ret = -ENXIO;
++		goto out_kfree;
 +	}
 +
-+	tsk->thread.cet.shstk_enabled = 0;
++	epittm->irq = irq_of_parse_and_map(np, 0);
++	if (!epittm->irq) {
++		ret = -EINVAL;
++		goto out_iounmap;
++	}
++
++        /* Get EPIT clock */
++        epittm->clk = of_clk_get(np, 0);
++        if (IS_ERR(epittm->clk)) {
++		pr_err("i.MX EPIT: unable to get clk\n");
++		ret = PTR_ERR(epittm->clk);
++		goto out_iounmap;
++        }
++
++	ret = clk_prepare_enable(epittm->clk);
++	if (ret) {
++		pr_err("i.MX EPIT: unable to prepare+enable clk\n");
++		goto out_iounmap;
++	}
++
++	/* Initialise to a known state (all timers off, and timing reset) */
++	writel_relaxed(0x0, epittm->base + EPITCR);
++	writel_relaxed(0xffffffff, epittm->base + EPITLR);
++	writel_relaxed(EPITCR_EN | EPITCR_CLKSRC_REF_HIGH | EPITCR_WAITEN,
++		       epittm->base + EPITCR);
++
++	ret = epit_clocksource_init(epittm);
++	if (ret) {
++		pr_err("i.MX EPIT: failed to init clocksource\n");
++		goto out_clk_disable;
++	}
++
++	ret = epit_clockevent_init(epittm);
++	if (ret) {
++		pr_err("i.MX EPIT: failed to init clockevent\n");
++		goto out_clk_disable;
++	}
++
++	return 0;
++
++out_clk_disable:
++	clk_disable_unprepare(epittm->clk);
++out_iounmap:
++	iounmap(epittm->base);
++out_kfree:
++	kfree(epittm);
++
++	return ret;
 +}
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 38276f58d3bf..f54fabdaef60 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -401,6 +401,29 @@ static __init int setup_disable_pku(char *arg)
- __setup("nopku", setup_disable_pku);
- #endif /* CONFIG_X86_64 */
- 
-+static __always_inline void setup_cet(struct cpuinfo_x86 *c)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		cr4_set_bits(X86_CR4_CET);
-+}
-+
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+static __init int setup_disable_shstk(char *s)
-+{
-+	/* require an exact match without trailing characters */
-+	if (strlen(s))
-+		return 0;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return 1;
-+
-+	setup_clear_cpu_cap(X86_FEATURE_SHSTK);
-+	pr_info("x86: 'noshstk' specified, disabling Shadow Stack\n");
-+	return 1;
-+}
-+__setup("noshstk", setup_disable_shstk);
-+#endif
-+
- /*
-  * Some CPU features depend on higher CPUID levels, which may not always
-  * be available due to CPUID level capping or broken virtualization
-@@ -1313,6 +1336,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	x86_init_rdrand(c);
- 	x86_init_cache_qos(c);
- 	setup_pku(c);
-+	setup_cet(c);
- 
- 	/*
- 	 * Clear/Set all flags overridden by options, need do it
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 30ca2d1a9231..b3b0b482983a 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -39,6 +39,7 @@
- #include <asm/desc.h>
- #include <asm/prctl.h>
- #include <asm/spec-ctrl.h>
-+#include <asm/cet.h>
- 
- /*
-  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
-@@ -136,6 +137,7 @@ void flush_thread(void)
- 	flush_ptrace_hw_breakpoint(tsk);
- 	memset(tsk->thread.tls_array, 0, sizeof(tsk->thread.tls_array));
- 
-+	cet_disable_shstk();
- 	fpu__clear(&tsk->thread.fpu);
- }
- 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index c486ad4b43f0..6aca93ecec0e 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -679,6 +679,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- 		[ilog2(VM_PKEY_BIT1)]	= "",
- 		[ilog2(VM_PKEY_BIT2)]	= "",
- 		[ilog2(VM_PKEY_BIT3)]	= "",
-+#endif
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+		[ilog2(VM_SHSTK)]	= "ss"
- #endif
- 	};
- 	size_t i;
++TIMER_OF_DECLARE(epit_timer, "fsl,imx31-epit", epit_timer_init);
 -- 
-2.15.1
+2.17.1
