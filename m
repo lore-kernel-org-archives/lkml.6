@@ -1,296 +1,341 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jHvqKtH9GVuCSQAAmS7hNA
-	; Fri, 08 Jun 2018 03:53:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id D0V3Bke+GFs0HAAAmS7hNA
+	; Thu, 07 Jun 2018 05:10:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 976F6608BA; Fri,  8 Jun 2018 03:53:53 +0000 (UTC)
+	id EDEEE6089E; Thu,  7 Jun 2018 05:10:30 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guQzY6w5"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D2E11605A2;
-	Fri,  8 Jun 2018 03:53:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D2E11605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1133260115;
+	Thu,  7 Jun 2018 05:10:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1133260115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752825AbeFHDxv (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 23:53:51 -0400
-Received: from mga17.intel.com ([192.55.52.151]:15702 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752621AbeFHDxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 23:53:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 20:53:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,489,1520924400";
-   d="gz'50?scan'50,208,50";a="46173510"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Jun 2018 20:53:45 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fR8TA-000CdK-Q9; Fri, 08 Jun 2018 11:53:44 +0800
-Date: Fri, 8 Jun 2018 11:53:36 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: Re: [PATCH 4/9] x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
-Message-ID: <201806081114.7XHL4Gop%fengguang.wu@intel.com>
-References: <20180607143705.3531-5-yu-cheng.yu@intel.com>
+        id S1752881AbeFGFK2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 01:10:28 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40124 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750897AbeFGFKZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 01:10:25 -0400
+Received: by mail-pf0-f196.google.com with SMTP id z24-v6so4276787pfe.7;
+        Wed, 06 Jun 2018 22:10:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hs/im8Pln2+ChTWItiDXhNE0KEGk6PLNN7wHGwZZLe0=;
+        b=guQzY6w5bZ44mhOcSCbf/9ZM7C8XDw/xup9RFnHdzph3vvCYdbPMRPmvfzddGP9Tlq
+         7t81doBibD39pFEuefzs1in24chOlGbJ6zj9OxrffEwz+VOfdQbRGztKJn9tPevLk10N
+         lEM+vMM2BrYlU7h2lX6JilF8S+jdWAcODo4JjmW/g30S2Jn3cJpLmHeBI/34GvDl94KN
+         TFHQWCOl/Z7yzuqIwUhc5lf2iLt6vALn1uAwfmjrr36B9hBG5bzn2U/ZMb/3RM8FKoYz
+         yevhD9FsClwOnNP17ZRHhbFqi3XfIR2ksVvtflmFkIS+o05ejVXOeFPinbsrH1sdWyY4
+         3Q1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hs/im8Pln2+ChTWItiDXhNE0KEGk6PLNN7wHGwZZLe0=;
+        b=WJ+mSv0F0yz4UFGrPivyIzq/pRyEqLycQ7LXJMAW+d2lc2G+2d6L4gWOUV60rBoK5f
+         0bSu56MXzxoY8yjcET27DRPDcn4I7ZiXTuOKFPu+YLm95Ppg3Utfb6vgSy9ZKzvv5nT5
+         HGDCpPULdkAN0WAFGl/8mwtGaVP76X7VaZqEoxgsGW7JmQNnjQ9dJehfSiZnWkHinZn0
+         EZq9tzPzh8KOBiC0HiMteW592v5VUS9HTHQMeohZMMfYxeEPhw5Q21ZjvrhCm1oOlRGd
+         MCYRsPyjAvsC8b/EUOQwdePv1SJDN1MS4bfu2CK+YKRwTY+eA8tepoUkE8bL4+jIbze1
+         nj2A==
+X-Gm-Message-State: APt69E0i2J7wmU9105CGHjd9j4ldXlBQLFka/P4Ljix3zd8YWuHVrk58
+        WnVjWj8zybFGHfaTQBf6sqhW0HTN
+X-Google-Smtp-Source: ADUXVKJdI161wxYFwaPwke+SxC+ObebbffOmTR3W2g2EPs7sM9VPMB0s+s06ppKQKQ8Mk1trVd3YFA==
+X-Received: by 2002:a65:578c:: with SMTP id b12-v6mr336977pgr.315.1528348224458;
+        Wed, 06 Jun 2018 22:10:24 -0700 (PDT)
+Received: from localhost ([39.7.47.166])
+        by smtp.gmail.com with ESMTPSA id f11-v6sm10788661pgo.62.2018.06.06.22.10.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Jun 2018 22:10:23 -0700 (PDT)
+Date: Thu, 7 Jun 2018 14:10:19 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, pmladek@suse.com,
+        rostedt@goodmis.org, sergey.senozhatsky@gmail.com,
+        syzkaller-bugs@googlegroups.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: possible deadlock in console_unlock
+Message-ID: <20180607051019.GA10406@jagdpanzerIV>
+References: <00000000000087008b056df8fbb3@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="XsQoSWH+UP9D9v3l"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180607143705.3531-5-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <00000000000087008b056df8fbb3@google.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Cc-ing more people
+Link: lkml.kernel.org/r/00000000000087008b056df8fbb3@google.com
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On (06/06/18 06:17), syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=173d93ef800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
+> dashboard link: https://syzkaller.appspot.com/bug?extid=43e93968b964e369db0b
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> userspace arch: i386
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16e00bb7800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com
 
-Hi Yu-cheng,
+Thanks a ton!
 
-Thank you for the patch! Yet something to improve:
+So tty ioctl is known to be printk-deadlock prone and we don't know
+how to handle this in printk, as of now.
 
-[auto build test ERROR on asm-generic/master]
-[also build test ERROR on v4.17 next-20180607]
-[cannot apply to tip/x86/core mmotm/master]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+ioctl
+ tty_ioctl
+  tty_port->lock
+   printk
+    call_console_driver
+     console_driver
+      uart_port->lock
 
-url:    https://github.com/0day-ci/linux/commits/Yu-cheng-Yu/Control-Flow-Enforcement-Part-2/20180608-111152
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+The problem is that call_console_driver->console_driver also can do
+this thing
 
-Note: the linux-review/Yu-cheng-Yu/Control-Flow-Enforcement-Part-2/20180608-111152 HEAD 71d9d315a5e241d9b500540a452d0bec292e1dbb builds fine.
-      It only hurts bisectibility.
+   uart_port->lock
+    tty_wakeup
+     tty_port->lock
 
-All errors (new ones prefixed by >>):
+So we can have the following:
 
-   In file included from include/linux/memremap.h:8:0,
-                    from include/linux/mm.h:27,
-                    from include/linux/memcontrol.h:29,
-                    from include/linux/swap.h:9,
-                    from include/linux/suspend.h:5,
-                    from arch/x86/kernel/asm-offsets.c:13:
-   arch/x86/include/asm/pgtable.h: In function 'pte_dirty':
->> arch/x86/include/asm/pgtable.h:121:26: error: '_PAGE_DIRTY' undeclared (first use in this function); did you mean '_PAGE_DIRTY_HW'?
-     return pte_flags(pte) & _PAGE_DIRTY;
-                             ^~~~~~~~~~~
-                             _PAGE_DIRTY_HW
-   arch/x86/include/asm/pgtable.h:121:26: note: each undeclared identifier is reported only once for each function it appears in
-   arch/x86/include/asm/pgtable.h: In function 'pmd_dirty':
-   arch/x86/include/asm/pgtable.h:145:26: error: '_PAGE_DIRTY' undeclared (first use in this function); did you mean '_PAGE_DIRTY_HW'?
-     return pmd_flags(pmd) & _PAGE_DIRTY;
-                             ^~~~~~~~~~~
-                             _PAGE_DIRTY_HW
-   arch/x86/include/asm/pgtable.h: In function 'pud_dirty':
-   arch/x86/include/asm/pgtable.h:155:26: error: '_PAGE_DIRTY' undeclared (first use in this function); did you mean '_PAGE_DIRTY_HW'?
-     return pud_flags(pud) & _PAGE_DIRTY;
-                             ^~~~~~~~~~~
-                             _PAGE_DIRTY_HW
-   arch/x86/include/asm/pgtable.h: In function 'pte_mkclean':
-   arch/x86/include/asm/pgtable.h:286:30: error: '_PAGE_DIRTY' undeclared (first use in this function); did you mean '_PAGE_DIRTY_HW'?
-     return pte_clear_flags(pte, _PAGE_DIRTY);
-                                 ^~~~~~~~~~~
-                                 _PAGE_DIRTY_HW
-   arch/x86/include/asm/pgtable.h: In function 'pmd_mkclean':
-   arch/x86/include/asm/pgtable.h:370:30: error: '_PAGE_DIRTY' undeclared (first use in this function); did you mean '_PAGE_DIRTY_HW'?
-     return pmd_clear_flags(pmd, _PAGE_DIRTY);
-                                 ^~~~~~~~~~~
-                                 _PAGE_DIRTY_HW
-   arch/x86/include/asm/pgtable.h: In function 'pud_mkclean':
-   arch/x86/include/asm/pgtable.h:429:30: error: '_PAGE_DIRTY' undeclared (first use in this function); did you mean '_PAGE_DIRTY_HW'?
-     return pud_clear_flags(pud, _PAGE_DIRTY);
-                                 ^~~~~~~~~~~
-                                 _PAGE_DIRTY_HW
-   make[2]: *** [arch/x86/kernel/asm-offsets.s] Error 1
-   make[2]: Target '__build' not remade because of errors.
-   make[1]: *** [prepare0] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [sub-make] Error 2
+ioctl
+ tty_ioctl
+  tty_port->lock
+   printk
+    call_console_driver
+     console_driver
+      uart_port->lock
+       tty_wakeup
+        tty_port->lock      << deadlock
 
-vim +121 arch/x86/include/asm/pgtable.h
 
-54321d947 arch/x86/include/asm/pgtable.h Jeremy Fitzhardinge 2009-02-11  114  
-8405b122a include/asm-x86/pgtable.h      Jeremy Fitzhardinge 2008-01-30  115  /*
-4614139c6 include/asm-x86/pgtable.h      Jeremy Fitzhardinge 2008-01-30  116   * The following only work if pte_present() is true.
-4614139c6 include/asm-x86/pgtable.h      Jeremy Fitzhardinge 2008-01-30  117   * Undefined behaviour if not..
-4614139c6 include/asm-x86/pgtable.h      Jeremy Fitzhardinge 2008-01-30  118   */
-3cbaeafeb include/asm-x86/pgtable.h      Joe Perches         2008-03-23  119  static inline int pte_dirty(pte_t pte)
-3cbaeafeb include/asm-x86/pgtable.h      Joe Perches         2008-03-23  120  {
-a15af1c9e include/asm-x86/pgtable.h      Jeremy Fitzhardinge 2008-05-26 @121  	return pte_flags(pte) & _PAGE_DIRTY;
-3cbaeafeb include/asm-x86/pgtable.h      Joe Perches         2008-03-23  122  }
-3cbaeafeb include/asm-x86/pgtable.h      Joe Perches         2008-03-23  123  
+But lockdep is complaining about another scenario:
 
-:::::: The code at line 121 was first introduced by commit
-:::::: a15af1c9ea2750a9ff01e51615c45950bad8221b x86/paravirt: add pte_flags to just get pte flags
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 (&(&port->lock)->rlock){-.-.}:
+>        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>        tty_port_tty_get+0x20/0x80 drivers/tty/tty_port.c:288
+>        tty_port_default_wakeup+0x15/0x40 drivers/tty/tty_port.c:47
+>        tty_port_tty_wakeup+0x5d/0x70 drivers/tty/tty_port.c:390
+>        uart_write_wakeup+0x44/0x60 drivers/tty/serial/serial_core.c:103
+>        serial8250_tx_chars+0x4be/0xb60
+> drivers/tty/serial/8250/8250_port.c:1808
+>        serial8250_handle_irq.part.25+0x1ee/0x280
+> drivers/tty/serial/8250/8250_port.c:1881
+>        serial8250_handle_irq drivers/tty/serial/8250/8250_port.c:1867
+> [inline]
+>        serial8250_default_handle_irq+0xc8/0x150
+> drivers/tty/serial/8250/8250_port.c:1897
+>        serial8250_interrupt+0xfa/0x1d0
+> drivers/tty/serial/8250/8250_core.c:125
+>        __handle_irq_event_percpu+0x1c0/0xad0 kernel/irq/handle.c:149
+>        handle_irq_event_percpu+0x98/0x1c0 kernel/irq/handle.c:189
+>        handle_irq_event+0xa7/0x135 kernel/irq/handle.c:206
+>        handle_edge_irq+0x20f/0x870 kernel/irq/chip.c:791
+>        generic_handle_irq_desc include/linux/irqdesc.h:159 [inline]
+>        handle_irq+0x18c/0x2e7 arch/x86/kernel/irq_64.c:77
+>        do_IRQ+0x78/0x190 arch/x86/kernel/irq.c:245
+>        ret_from_intr+0x0/0x1e
+>        native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
+>        arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
+>        default_idle+0xc2/0x440 arch/x86/kernel/process.c:500
+>        arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:491
+>        default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+>        cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+>        do_idle+0x395/0x560 kernel/sched/idle.c:262
+>        cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
+>        start_secondary+0x42b/0x5c0 arch/x86/kernel/smpboot.c:265
+>        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
 
-:::::: TO: Jeremy Fitzhardinge <jeremy@goop.org>
-:::::: CC: Thomas Gleixner <tglx@linutronix.de>
+So this one is  IRQ ==> uart_port->lock ==>  tty_port->lock
+
+> -> #1 (&port_lock_key){-.-.}:
+>        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+>        serial8250_console_write+0x8d5/0xb00
+> drivers/tty/serial/8250/8250_port.c:3230
+>        univ8250_console_write+0x5f/0x70
+> drivers/tty/serial/8250/8250_core.c:590
+>        call_console_drivers kernel/printk/printk.c:1718 [inline]
+>        console_unlock+0xac2/0x1100 kernel/printk/printk.c:2395
+>        vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
+>        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+>        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
+>        printk+0x9e/0xba kernel/printk/printk.c:1980
+>        register_console+0x7e7/0xc00 kernel/printk/printk.c:2714
+>        univ8250_console_init+0x3f/0x4b
+> drivers/tty/serial/8250/8250_core.c:685
+>        console_init+0x6d9/0xa38 kernel/printk/printk.c:2798
+>        start_kernel+0x608/0x92d init/main.c:661
+>        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+>        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+>        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+
+This one is console_owner/console_sem ==> uart_port->lock
+
+
+> -> #0 (console_owner){-...}:
+>        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3924
+>        console_lock_spinning_enable kernel/printk/printk.c:1581 [inline]
+>        console_unlock+0x5ef/0x1100 kernel/printk/printk.c:2392
+>        vprintk_emit+0x6ad/0xdd0 kernel/printk/printk.c:1907
+>        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+>        vprintk_func+0x7a/0xe7 kernel/printk/printk_safe.c:379
+>        printk+0x9e/0xba kernel/printk/printk.c:1980
+>        fail_dump lib/fault-inject.c:44 [inline]
+>        should_fail+0x97a/0xbcd lib/fault-inject.c:149
+>        __should_failslab+0x124/0x180 mm/failslab.c:32
+>        should_failslab+0x9/0x14 mm/slab_common.c:1522
+>        slab_pre_alloc_hook mm/slab.h:423 [inline]
+>        slab_alloc mm/slab.c:3378 [inline]
+>        __do_kmalloc mm/slab.c:3716 [inline]
+>        __kmalloc+0x63/0x760 mm/slab.c:3727
+>        kmalloc include/linux/slab.h:517 [inline]
+>        tty_buffer_alloc drivers/tty/tty_buffer.c:170 [inline]
+>        __tty_buffer_request_room+0x2d2/0x7f0 drivers/tty/tty_buffer.c:268
+>        tty_insert_flip_string_fixed_flag+0x8d/0x1f0
+> drivers/tty/tty_buffer.c:313
+>        tty_insert_flip_string include/linux/tty_flip.h:37 [inline]
+>        pty_write+0x12c/0x1f0 drivers/tty/pty.c:121
+>        tty_put_char+0x129/0x150 drivers/tty/tty_io.c:2865
+>        __process_echoes+0x4d9/0x8d0 drivers/tty/n_tty.c:703
+>        process_echoes+0xfc/0x170 drivers/tty/n_tty.c:781
+>        n_tty_set_termios+0xb56/0xe80 drivers/tty/n_tty.c:1837
+>        tty_set_termios+0x7a0/0xac0 drivers/tty/tty_ioctl.c:341
+>        set_termios+0x41e/0x7d0 drivers/tty/tty_ioctl.c:414
+>        tty_mode_ioctl+0x871/0xb50 drivers/tty/tty_ioctl.c:781
+>        n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
+>        n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
+>        tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
+>        vfs_ioctl fs/ioctl.c:46 [inline]
+>        file_ioctl fs/ioctl.c:500 [inline]
+>        do_vfs_ioctl+0x1cf/0x16f0 fs/ioctl.c:684
+>        __do_compat_sys_ioctl fs/compat_ioctl.c:1483 [inline]
+>        __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
+>        __ia32_compat_sys_ioctl+0x43e/0x640 fs/compat_ioctl.c:1407
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+>        do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+>        entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+This one is tty IOCTL ==> tty_port->lock ==> console_owner/console_sem ==> uart_port->lock
+
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&(&port->lock)->rlock);
+>                                lock(&port_lock_key);
+>                                lock(&(&port->lock)->rlock);
+>   lock(console_owner);
+
+
+IOW
+
+    tty ioctl
+    tty_port->lock		IRQ
+    printk			uart_port->lock
+    console_owner
+    uart_port->lock		tty_port->rlock
+
+
+The simplest thing to do [not necessarily the right one, tho]
+would be to break the IOCTL ==> tty_port->lock ==> printk ==> uart_port->lock
+chain.
+
+E.g. by adding __GFP_NOWARN
 
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---XsQoSWH+UP9D9v3l
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+ drivers/tty/tty_buffer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-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
+diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+index c996b6859c5e..71958ef6a831 100644
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -167,7 +167,8 @@ static struct tty_buffer *tty_buffer_alloc(struct tty_port *port, size_t size)
+ 	   have queued and recycle that ? */
+ 	if (atomic_read(&port->buf.mem_used) > port->buf.mem_limit)
+ 		return NULL;
+-	p = kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
++	p = kmalloc(sizeof(struct tty_buffer) + 2 * size,
++			GFP_ATOMIC | __GFP_NOWARN);
+ 	if (p == NULL)
+ 		return NULL;
 
---XsQoSWH+UP9D9v3l--
+---
+
+
+Another way could be - switch to printk_safe mode around that
+kmalloc():
+
+	__printk_safe_enter();
+	kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
+	__printk_safe_exit();
+
+This will redirect all printk()-s from kmalloc() to a special per-CPU
+buffer, which will be flushed later from a safe context (irq work).
+
+
+Or, may be, we even can switch to printk_safe mode every time we grab
+tty_port lock.
+
+#define tty_port_lock_irqsave(l,f)				\
+	do {							\
+		spin_lock_irqsave((l), f);			\
+		__printk_safe_enter();				\
+	} while (0)
+
+#define tty_port_unlock_irqrestore(l,f)				\
+	do {							\
+		__printk_safe_exit();				\
+		spin_lock_irqrestore((l),f);			\
+	} while (0)
+
+This will require some "automatic" replacement of all port->lock
+operation in drivers/tty/*.
+
+Perhaps something like this should be done for uart_port->lock
+as well. Because, technically, we can have the following
+
+	IRQ
+	uart_port->lock
+	tty_wakeup
+	printk
+	 call_console_drivers
+	  console_driver
+	   uart_port->lock               << deadlock
+
+Which is totally possible.
+E.g. tty_port_default_wakeup()->tty_port_tty_get()->refcount_inc()->WARN_ONCE()
+
+Any opinions?
+
+	-ss
