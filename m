@@ -1,89 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HeE/OQwoGVsKewAAmS7hNA
-	; Thu, 07 Jun 2018 12:45:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id KhSvLy35GFsLZQAAmS7hNA
+	; Thu, 07 Jun 2018 09:25:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C15A3608B8; Thu,  7 Jun 2018 12:45:12 +0000 (UTC)
+	id A355B608B8; Thu,  7 Jun 2018 09:25:17 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 47BFE607E7;
-	Thu,  7 Jun 2018 12:45:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 47BFE607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=owl.eu.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1A9AF601C3;
+	Thu,  7 Jun 2018 09:25:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A9AF601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753573AbeFGMpJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 08:45:09 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52021 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753365AbeFGMpI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 08:45:08 -0400
-X-Originating-IP: 96.22.60.141
-Received: from localhost (modemcable141.60-22-96.mc.videotron.ca [96.22.60.141])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 4E32D60014;
-        Thu,  7 Jun 2018 14:45:04 +0200 (CEST)
-Date: Thu, 7 Jun 2018 08:45:03 -0400
-From: Hugo Lefeuvre <hle@owl.eu.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernelnewbies@kernelnewbies.org
-Subject: Re: [PATCH v2] staging: pi433: add mutex fixing concurrency issues.
-Message-ID: <20180607124216.GA2329@hle-laptop.local>
-References: <20180602175649.GA2816@hle-laptop.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180602175649.GA2816@hle-laptop.local>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1753751AbeFGJYk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 05:24:40 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:54746 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932377AbeFGJWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 05:22:41 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C80D20021E;
+        Thu,  7 Jun 2018 11:22:39 +0200 (CEST)
+Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 26F74200037;
+        Thu,  7 Jun 2018 11:22:39 +0200 (CEST)
+Received: from az84smr01.freescale.net (az84smr01.freescale.net [10.64.34.197])
+        by inv1260.na-rdc02.nxp.com (Postfix) with ESMTP id 8FFC540A70;
+        Thu,  7 Jun 2018 02:22:38 -0700 (MST)
+Received: from titan.ap.freescale.net ([10.192.208.233])
+        by az84smr01.freescale.net (8.14.3/8.14.0) with ESMTP id w579MJ4l020959;
+        Thu, 7 Jun 2018 02:22:36 -0700
+From: Yangbo Lu <yangbo.lu@nxp.com>
+To: netdev@vger.kernel.org, madalin.bucur@nxp.com,
+        Richard Cochran <richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [v3, 05/10] arm64: dts: fsl: move ptp timer out of fman
+Date: Thu,  7 Jun 2018 17:20:45 +0800
+Message-Id: <20180607092050.46128-6-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180607092050.46128-1-yangbo.lu@nxp.com>
+References: <20180607092050.46128-1-yangbo.lu@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Add a mutex fixing a potential NULL pointer dereference in the pi433
-> driver.
-> 
-> If pi433_release and pi433_ioctl are concurrently called,
-> pi433_release might set filp->private_data to NULL while pi433_ioctl
-> is still accessing it, leading to NULL pointer dereference. This issue
-> might also affect pi433_write and pi433_read.
-> 
-> The newly introduced mutex makes sure that instance data
-> will not be modified simultaneously by pi433_release, pi433_write,
-> pi433_read or pi433_ioctl.
-> 
-> The mutex is stored in a newly introduced struct pi433_data, which
-> wraps struct pi433_instance and its mutex.
-> 
-> Make filp->private_data point to a struct pi433_data, allowing to
-> acquire the lock before accessing the struct pi433_instance.
-> 
-> Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
-> ---
-> Changes in v2:
->  	- Use mutex instead of rw semaphore. 
->  	- Introduce struct pi433_data in order to allow functions to lock
->  	  before dereferencing instance pointer.
->  	- Make filp->private_data point to a struct pi433_data.
->  	- Add missing braces.
+This patch is to move ptp timer node out of fman.
+Because ptp timer will be probed by ptp_qoriq driver,
+it should be an independent device in case of conflict
+memory mapping.
 
-After discussing this issue on the kernel newbies mailing list[0] we
-came to the conclusion that it is very unlikely that pi433_release and
-pi433_ioctl would ever run concurrently in this case. This is also
-true for read/write. Unless one can find a situation where this might
-happen, I think we should not add this potentially unnecessary lock.
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+Changes for v2:
+	- Fixed address-cells for ptp-timer.
+Changes for v3:
+	- None.
+---
+ arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi |   14 ++++++++------
+ 1 files changed, 8 insertions(+), 6 deletions(-)
 
-Regards,
- Hugo
-
-[0] http://lists.kernelnewbies.org/pipermail/kernelnewbies/2018-June/019131.html 
-
+diff --git a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
+index 4dd0676..a56a408 100644
+--- a/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
++++ b/arch/arm64/boot/dts/freescale/qoriq-fman3-0.dtsi
+@@ -11,13 +11,14 @@ fman0: fman@1a00000 {
+ 	#size-cells = <1>;
+ 	cell-index = <0>;
+ 	compatible = "fsl,fman";
+-	ranges = <0x0 0x0 0x1a00000 0x100000>;
+-	reg = <0x0 0x1a00000 0x0 0x100000>;
++	ranges = <0x0 0x0 0x1a00000 0xfe000>;
++	reg = <0x0 0x1a00000 0x0 0xfe000>;
+ 	interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
+ 		     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+ 	clocks = <&clockgen 3 0>;
+ 	clock-names = "fmanclk";
+ 	fsl,qman-channel-range = <0x800 0x10>;
++	ptimer-handle = <&ptp_timer0>;
+ 
+ 	muram@0 {
+ 		compatible = "fsl,fman-muram";
+@@ -73,9 +74,10 @@ fman0: fman@1a00000 {
+ 		compatible = "fsl,fman-memac-mdio", "fsl,fman-xmdio";
+ 		reg = <0xfd000 0x1000>;
+ 	};
++};
+ 
+-	ptp_timer0: ptp-timer@fe000 {
+-		compatible = "fsl,fman-ptp-timer";
+-		reg = <0xfe000 0x1000>;
+-	};
++ptp_timer0: ptp-timer@1afe000 {
++	compatible = "fsl,fman-ptp-timer";
++	reg = <0x0 0x1afe000 0x0 0x1000>;
++	interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+ };
 -- 
-             Hugo Lefeuvre (hle)    |    www.owl.eu.com
-4096/ 9C4F C8BF A4B0 8FC5 48EB 56B8 1962 765B B9A8 BACA
+1.7.1
