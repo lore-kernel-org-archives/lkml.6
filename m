@@ -1,196 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IBQxHpx1GVtDDgAAmS7hNA
-	; Thu, 07 Jun 2018 18:13:58 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id K87FAIpQGVssCAAAmS7hNA
+	; Thu, 07 Jun 2018 15:35:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 73F21608C1; Thu,  7 Jun 2018 18:13:58 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0gPbaPW"
+	id 12336607E7; Thu,  7 Jun 2018 15:35:08 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FROM,MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 36BB6608BA;
-	Thu,  7 Jun 2018 18:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36BB6608BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5269D601B4;
+	Thu,  7 Jun 2018 15:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5269D601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936180AbeFGSNz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:13:55 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:37443 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933757AbeFGSNw (ORCPT
+        id S935352AbeFGPfG (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:35:06 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:39741 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934030AbeFGPfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:13:52 -0400
-Received: by mail-lf0-f66.google.com with SMTP id g21-v6so14126996lfb.4;
-        Thu, 07 Jun 2018 11:13:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+ns6/WQr67VW0BMC9I8YRPRECvJ1vebAN1ij8bJUxcI=;
-        b=m0gPbaPWScoH4udTTtyMi3LKcOv/2Wl3lFG0hYYwK8BCAHS08dXnxB1T5RzaaY4/cN
-         mnpbyq07fA2VnpO/vGVA/FdS3lPzn3IDit6Tm0F60ZEe/6DIaPlvjuYCEFE7DiTTBbap
-         Ct7+oo3gb3Xoddf3f3kFwIbZ6sXqHHcSEN2OHVz/QT8NYNCA2zG8Bg/Ev8eFMybxxW1U
-         9EaE1p8yAD/cYDMc97P/zJ3iZ119IGQCyhNuiupOl0NCHm4XewKJfdOIu43k1C8HSFDb
-         zM8TGBPcClQGpspxtRQDc2uaHSTaDrsG4I44mY/BHM+IVs/HW7Tt+RKyHjiGlGxVkb0A
-         YxVQ==
+        Thu, 7 Jun 2018 11:35:03 -0400
+Received: by mail-io0-f198.google.com with SMTP id k9-v6so7696800ioa.6
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:35:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=+ns6/WQr67VW0BMC9I8YRPRECvJ1vebAN1ij8bJUxcI=;
-        b=jZ00a6b3Lza88Gngd5KPnFuCpN2BK3WXcBqV74GpC0UJpLs6HeW/13XDVSHsNZF5Wm
-         RsAd07RR2iXdEWzOOP1lhqZXf0fgC7Jf4cl22HHPTvo2uxMUxyJkR1lo0aIXkQURdPB9
-         DM1U/+as0CokeSE2M26vTxRC6YOttYjyOO6/H+y/l73Mk0+7zkXvkwOuciBk4HZ/guDf
-         k/MmzG4h5mc+fr+JprSbyBoQa8Zo0skdJwxHZItFW0BCittNN4A5aIK2PkarQmX2dlSj
-         Xeq0xYx/tW8tsHEBvLa5wNXwUS2MzwlRjmXrU7b1gBuZcbmDwkFbz7/szUtz39/6wgrA
-         Kx5w==
-X-Gm-Message-State: APt69E14yyf4rTA1j6kAmY8NVB+OGh40l6zba/lmBl8GM+nSVr2iC83u
-        mYHIBL2kNanz5t1ciEwp+w==
-X-Google-Smtp-Source: ADUXVKLBSYba0ew9qBTGRPCGwax5jZr6TJlvYq9h0JIW3JU+x5A434jcodeko1gFw5kpV7jvFWfrHA==
-X-Received: by 2002:a19:ea1b:: with SMTP id i27-v6mr1906174lfh.98.1528395230232;
-        Thu, 07 Jun 2018 11:13:50 -0700 (PDT)
-Received: from localhost.localdomain (host81-131-105-100.range81-131.btcentralplus.com. [81.131.105.100])
-        by smtp.googlemail.com with ESMTPSA id w4-v6sm3329722ljh.88.2018.06.07.11.13.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 11:13:49 -0700 (PDT)
-From: Craig Tatlor <ctatlor97@gmail.com>
-Cc: ctatlor97@gmail.com, linux-arm-msm@vger.kernel.org,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/4] dt-bindings: power: supply: qcom_bms: Add bindings
-Date: Thu,  7 Jun 2018 19:12:51 +0100
-Message-Id: <20180607181306.9766-3-ctatlor97@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180607181306.9766-1-ctatlor97@gmail.com>
-References: <20180407135934.26122-1-ctatlor97@gmail.com>
- <20180607181306.9766-1-ctatlor97@gmail.com>
-To: unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=t1YBaW4eUvVLpLzvCW9FZGli27b/0XqQyu9R98XgalU=;
+        b=ifw+x/r2l7NXTNQdNkyQwhcmzVRpHgLDHWdFL1NwuMFfgM1PCuXgnSa7t7souGboDf
+         q3EV13j3b99+bxIaYo2Wsz6SZDZ0EtHgaP2vl+PhtMXmIKkhjuXVnqEVbZh9JKJRvEyx
+         XgVlsl7SgS0T8dviGnrqMmnWUrc8FHd/9KpT0nzzXxzjQ/lDkMstZXytGoUQdXfamJCW
+         qGxLQZ2OY6w1dz7VpOhkrle5bom5hyXxoHgNuf/ZwRq0RAU2KP6fPyvyQUGlXP5rc2RX
+         zpL7e993PBGTiD7OR7eTbmWbEH3YnSHdgB7QBJbbYhFSVZ4eeLYNrzLljjefpzUiymVb
+         f7Rg==
+X-Gm-Message-State: APt69E1yFNX+pE9V3y3aWqQe0Gy/kexpqnpkcajMRJOFK92534CDg578
+        +3Z4ctk9uiorFpc7IwOkKCrMF7uiK9Kc6DbPc6ueB6fqWN7t
+X-Google-Smtp-Source: ADUXVKJ7d0xmKLyF5WCR2PYRD4FyiBHKKHHNmYvXEI/x65lVOqKjhw7F6VKpcoMd9dFckJnpynUXMhASf2y0bKKQP96Vp0ggDMhQ
+MIME-Version: 1.0
+X-Received: by 2002:a6b:264d:: with SMTP id m74-v6mr985491iom.73.1528385702608;
+ Thu, 07 Jun 2018 08:35:02 -0700 (PDT)
+Date: Thu, 07 Jun 2018 08:35:02 -0700
+In-Reply-To: <00000000000075cc63056e0d0707@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e24ad8056e0f063e@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Write in rmd160_final
+From: syzbot <syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bindings for the Qualcomm Battery Monitoring system.
+syzbot has found a reproducer for the following crash on:
 
-Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
----
-* Changes from v4:
-  Uses proper units and expands some definitions,
-  along with changing vadc@ to adc@.
+HEAD commit:    1c8c5a9d38f6 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1189a3d7800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4f1acdf888c9d4e9
+dashboard link: https://syzkaller.appspot.com/bug?extid=d04e58bd384f1fe0b112
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=14dde79f800000
 
- .../bindings/power/supply/qcom_bms.txt        | 91 +++++++++++++++++++
- 1 file changed, 91 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/qcom_bms.txt
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com
 
-diff --git a/Documentation/devicetree/bindings/power/supply/qcom_bms.txt b/Documentation/devicetree/bindings/power/supply/qcom_bms.txt
-new file mode 100644
-index 000000000000..a1a32d6ab460
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/qcom_bms.txt
-@@ -0,0 +1,91 @@
-+Qualcomm Battery Monitoring System
-+
-+The Qualcomm Battery Monitoring System is found inside of Qualcomm PM8941
-+PMICs. It provides open circuit voltage (OCV) and coulomb counter registers
-+that allow the OS to infer a capacity level.
-+
-+Required properties:
-+- compatible:                   Should contain "qcom,pm8941-bms".
-+- reg:                          Specifies the SPMI address and length of the
-+				controller's registers.
-+- interrupts:                   OCV threshold interrupt.
-+- io-channels:                  Should contain IIO channel specifier for the
-+				ADC channel that reports battery temperature.
-+- io-channel-names:             Should contain "temp".
-+- qcom,fcc-temp-legend-celcius: An array containing the temperature, in degC,
-+				for each column of the full charge capacity
-+				lookup table.
-+- qcom,fcc-lut-microamp-hours:  An array of full charge capacity values in uah,
-+				one entry for each temperature defined in in
-+				qcom,fcc-temp-legend-celcius.
-+- qcom,ocv-temp-legend-celcius: An array containing the temperature, in degC,
-+				for each column of the OCV lookup table.
-+- qcom,ocv-capacity-legend:     An array containing the capacity for each
-+				row of the OCV lookup table.
-+- qcom,ocv-lut-microvolt:       An array of OCV values in uV, one entry for each
-+				capacity defined in qcom,ocv-capacity-legend.
-+
-+Example:
-+		pm8941_vadc: adc@3100 {
-+			compatible = "qcom,spmi-vadc";
-+			reg = <0x3100>;
-+			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#io-channel-cells = <1>;
-+
-+			bat_temp {
-+				reg = <VADC_LR_MUX1_BAT_THERM>;
-+			};
-+		};
-+
-+		bms@4000 {
-+			compatible = "qcom,pm8941-bms";
-+			reg = <0x4000>;
-+			interrupts = <0x0 0x40 0x4 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "ocv_thr";
-+
-+			io-channels = <&pm8941_vadc VADC_LR_MUX1_BAT_THERM>;
-+			io-channel-names = "temp";
-+
-+			qcom,fcc-temp-legend-celsius = /bits/ 8 <(-10) 0 25 50 65>;
-+			qcom,fcc-lut-microamp-hours = <3230000 3260000 3380000 3410000 3360000>;
-+
-+			qcom,ocv-capacity-legend = /bits/ 8 <100 95 90 85 80 75
-+							     70 65 60 55 50 45
-+							     40 35 30 25 20 15
-+							     10 9 8 7 6 5 4 3 2
-+							     1 0>;
-+			qcom,ocv-temp-legend-celsius = /bits/ 8 <(-10) 0 25 50 65>;
-+			qcom,ocv-lut-microvolt = <43050000 43050000 43030000 42990000 42950000
-+						  42770000 42570000 42550000 42510000 42310000
-+						  42180000 41980000 41970000 41920000 41720000
-+						  41590000 41390000 41450000 41400000 41200000
-+						  41010000 40810000 40920000 40890000 40690000
-+						  40480000 40280000 40440000 40420000 40220000
-+						  40040000 39840000 40010000 39980000 39780000
-+						  39620000 39420000 39550000 39560000 39360000
-+						  39210000 39010000 39090000 39160000 38960000
-+						  38830000 38630000 38740000 38790000 38590000
-+						  38550000 38350000 38440000 38430000 38230000
-+						  38310000 38110000 38230000 38180000 37980000
-+						  38190000 37990000 38040000 38000000 37800000
-+						  38060000 37860000 37900000 37840000 37640000
-+						  37890000 37690000 37770000 37660000 37460000
-+						  37720000 37520000 37560000 37450000 37250000
-+						  37480000 37280000 37290000 37250000 37050000
-+						  37240000 37040000 37020000 36990000 36790000
-+						  37030000 36830000 36730000 36700000 36500000
-+						  36940000 36740000 36670000 36640000 36440000
-+						  36850000 36650000 36600000 36590000 36390000
-+						  36750000 36550000 36520000 36550000 36350000
-+						  36690000 36490000 36380000 36400000 36200000
-+						  36460000 36260000 36180000 36120000 35920000
-+						  36080000 35880000 35680000 35640000 35440000
-+						  35510000 35310000 35050000 35020000 34820000
-+						  34730000 34530000 34300000 34250000 34050000
-+						  33870000 33670000 33040000 32820000 32620000
-+						  30000000 30000000 30000000 30000000 30000000>;
-+		};
-+	};
-+};
--- 
-2.17.0
+IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KASAN: slab-out-of-bounds in rmd160_final+0x201/0x240  
+crypto/rmd160.c:334
+Write of size 4 at addr ffff8801d0fae518 by task syz-executor0/4822
+
+CPU: 0 PID: 4822 Comm: syz-executor0 Not tainted 4.17.0+ #114
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
+  rmd160_final+0x201/0x240 crypto/rmd160.c:334
+  crypto_shash_final+0x104/0x260 crypto/shash.c:152
+  kdf_ctr security/keys/dh.c:186 [inline]
+  keyctl_dh_compute_kdf security/keys/dh.c:217 [inline]
+  __keyctl_dh_compute+0x1184/0x1bc0 security/keys/dh.c:389
+  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
+  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
+  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
+  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7faacb9
+Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
+5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffab4bcc EFLAGS: 00000282 ORIG_RAX: 0000000000000120
+RAX: ffffffffffffffda RBX: 0000000000000017 RCX: 0000000020000100
+RDX: 0000000020a53ffb RSI: 0000000000000005 RDI: 0000000020c61fc8
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 4822:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:518 [inline]
+  keyctl_dh_compute_kdf security/keys/dh.c:211 [inline]
+  __keyctl_dh_compute+0xfe9/0x1bc0 security/keys/dh.c:389
+  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
+  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
+  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
+  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+Freed by task 3199:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  load_elf_binary+0x463e/0x5610 fs/binfmt_elf.c:1108
+  search_binary_handler+0x17d/0x570 fs/exec.c:1653
+  exec_binprm fs/exec.c:1695 [inline]
+  __do_execve_file.isra.34+0x16fe/0x2610 fs/exec.c:1819
+  do_execveat_common fs/exec.c:1865 [inline]
+  do_execve fs/exec.c:1882 [inline]
+  __do_sys_execve fs/exec.c:1963 [inline]
+  __se_sys_execve fs/exec.c:1958 [inline]
+  __x64_sys_execve+0x8f/0xc0 fs/exec.c:1958
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801d0fae500
+  which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 24 bytes inside of
+  32-byte region [ffff8801d0fae500, ffff8801d0fae520)
+The buggy address belongs to the page:
+page:ffffea000743eb80 count:1 mapcount:0 mapping:ffff8801d0fae000  
+index:0xffff8801d0faefc1
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801d0fae000 ffff8801d0faefc1 0000000100000023
+raw: ffffea00074171a0 ffffea000749e220 ffff8801da8001c0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d0fae400: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+  ffff8801d0fae480: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> ffff8801d0fae500: 00 00 00 fc fc fc fc fc fb fb fb fb fc fc fc fc
+                             ^
+  ffff8801d0fae580: 00 fc fc fc fc fc fc fc fb fb fb fb fc fc fc fc
+  ffff8801d0fae600: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+==================================================================
