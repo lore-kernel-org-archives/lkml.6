@@ -1,190 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZMFZJyfdGFswcgAAmS7hNA
-	; Thu, 07 Jun 2018 07:22:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Og43Chk9GVtmPAAAmS7hNA
+	; Thu, 07 Jun 2018 14:12:03 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EF1D66089E; Thu,  7 Jun 2018 07:22:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="l4x+7Vyb"
+	id BC1C2608B8; Thu,  7 Jun 2018 14:12:03 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 593D1607DC;
-	Thu,  7 Jun 2018 07:22:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 593D1607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=hartkopp.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4BA466063F;
+	Thu,  7 Jun 2018 14:12:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BA466063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753314AbeFGHWt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:22:49 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:17538 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752620AbeFGHWr (ORCPT
+        id S933346AbeFGOMA (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:12:00 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39531 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932875AbeFGOJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:22:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1528356162;
-        s=strato-dkim-0002; d=hartkopp.net;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Zjsr9iM5NRJN32C3bN3+dJkd6WuNgwbA2/gzfYnlOKE=;
-        b=l4x+7Vybs48rMJhlIzKH5MSwTPXyQIZk/+r3nJIgG6Gckhmq5vYRcI2bm8kZWzljCp
-        xbkF8cQRcN7qKj/VPYExIlWVg936D8WjqWockqsxrwsXfHdBxAxPmG5LkY8PC1nJzGiu
-        Q4ZsSA8W+TIkGkOMK1BMnGl9zlQUVc6m8KpZIBycfgU5Jgxg6AbsCiRKXHug7SqyCQ8O
-        tDgRYQ0qoXzcW09oYEYKS1n6284SdQwnjIUgOeyrocm4jtweA/IvPCcvN2daFPb8fHcP
-        7JwQRhrIHwITsZnCueYGZNASlmT4r053E313542DqHN8CY4nH7Jh/8ftIANSdve4ofe5
-        G7Xg==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1rHLMalyLi1fNpX87/zI="
-X-RZG-CLASS-ID: mo00
-Received: from [10.180.29.82]
-        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
-        with ESMTPSA id j0912bu577MfD33
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 7 Jun 2018 09:22:41 +0200 (CEST)
-Subject: Re: [PATCH 0/5] can: enable multi-queue for SocketCAN devices
-To: Mark Jonas <mark.jonas@de.bosch.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hs@denx.de, yi.zhu5@cn.bosch.com
-References: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Message-ID: <e27cbd23-f922-218b-b314-ff99e1401609@hartkopp.net>
-Date: Thu, 7 Jun 2018 09:22:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 7 Jun 2018 10:09:40 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbJ-0005Zi-7V; Thu, 07 Jun 2018 15:09:17 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbF-0003Ir-6b; Thu, 07 Jun 2018 15:09:13 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Alexander Potapenko" <glider@google.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.992306057@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 397/410] netlink: make sure nladdr has correct size
+ in netlink_connect()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
+------------------
 
-On 06/05/2018 08:43 PM, Mark Jonas wrote:
-> Upon request by Marc Kleine-Budde this patch series does not only
-> contain our patch to enable enable multi-queue for SocketCAN devices
-> but also a driver (Companion driver suite) which makes active use of
-> this feature.
-> 
-> The driver suite implements
->    - two CAN interfaces
->    - one generic command interfaces
-> and offers a SocketCAN as well as a char device interface. The
-> SocketCAN interface supports multi-queue.
-> 
-> The functionality bases on an external peripheral chip named Companion.
-> It offers two CAN interfaces, each has 8 prioritized transmit FIFOs as
-> well as one receive FIFO. Besides CAN, undisclosed additional functions
-> can be accessed through the char device.
-> 
-> A standard SPI interface with two additional lines for flow control is
-> used. The Companion chip is the SPI slave.
-> 
-> The driver suite consists of three separate drivers. The following
-> diagram illustrates the dependencies in layers.
-> 
->             /dev/companion       SocketCAN                User Space
-> -------------------------------------------------------------------
->           +----------------+ +---------------+
->           | companion-char | | companion-can |
->           +----------------+ +---------------+
->           +----------------------------------+
->           |          companion-spi           |
->           +----------------------------------+
->           +----------------------------------+
->           |     standard SPI subsystem       |
->           +----------------------------------+          Linux Kernel
-> -------------------------------------------------------------------
->                 | | | |      | |                            Hardware
->              CS-+ | | |      | +-BUSY
->              CLK--+ | |      +---REQUEST
->              MOSI---+ |
->              MISO-----+
-> 
-> companion-spi
->     core.c: handles SPI, sysfs entry and interface to upper layer
->     protocol-manager.c: handles protocol with the SPI HW
->     queue-manager.c: handles buffering and packets scheduling
-> 
-> companion-can
->     makes use of multi-queue support and allows to use tc to configure
->     the queuing discipline (e.g. mqprio). Together with the SO_PRIORITY
->     socket option this allows to specify the FIFO a CAN frame shall be
->     sent to.
-> 
-> companion-char
->     handles messages to other undisclosed functionality beyond CAN.
-> 
-> Zhu Yi (5):
->    can: enable multi-queue for SocketCAN devices
->    spi: implement companion-spi driver
->    char: implement companion-char driver
->    can: implement companion-can driver
->    spi,can,char: add companion DT binding documentation
-> 
->   .../devicetree/bindings/spi/bosch,companion.txt    |   82 ++
->   drivers/char/Kconfig                               |    7 +
->   drivers/char/Makefile                              |    2 +
->   drivers/char/companion-char.c                      |  367 ++++++
->   drivers/net/can/Kconfig                            |    8 +
->   drivers/net/can/Makefile                           |    1 +
->   drivers/net/can/companion-can.c                    |  694 ++++++++++++
+From: Alexander Potapenko <glider@google.com>
 
-Please place the companion driver in
+commit 7880287981b60a6808f39f297bb66936e8bdf57a upstream.
 
-drivers/net/can/spi/companion.c
+KMSAN reports use of uninitialized memory in the case when |alen| is
+smaller than sizeof(struct sockaddr_nl), and therefore |nladdr| isn't
+fully copied from the userspace.
 
-It also makes more sense in the Kconfig structure.
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Fixes: 1da177e4c3f41524 ("Linux-2.6.12-rc2")
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/netlink/af_netlink.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Probably this naming scheme also makes sense for
-
-linux/drivers/char/spi/companion.c
-
-then ...
-
-If not it should be named at least
-
-drivers/char/companion-spi.c
-
-or
-
-drivers/char/spi-companion.c
-
-BR Oliver
-
->   drivers/net/can/dev.c                              |    8 +-
->   drivers/spi/Kconfig                                |    2 +
->   drivers/spi/Makefile                               |    2 +
->   drivers/spi/companion/Kconfig                      |    5 +
->   drivers/spi/companion/Makefile                     |    2 +
->   drivers/spi/companion/core.c                       | 1189 ++++++++++++++++++++
->   drivers/spi/companion/protocol-manager.c           | 1035 +++++++++++++++++
->   drivers/spi/companion/protocol-manager.h           |  348 ++++++
->   drivers/spi/companion/protocol.h                   |  273 +++++
->   drivers/spi/companion/queue-manager.c              |  146 +++
->   drivers/spi/companion/queue-manager.h              |  245 ++++
->   include/linux/can/dev.h                            |    7 +-
->   include/linux/companion.h                          |  258 +++++
->   20 files changed, 4677 insertions(+), 4 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/spi/bosch,companion.txt
->   create mode 100644 drivers/char/companion-char.c
->   create mode 100644 drivers/net/can/companion-can.c
->   create mode 100644 drivers/spi/companion/Kconfig
->   create mode 100644 drivers/spi/companion/Makefile
->   create mode 100644 drivers/spi/companion/core.c
->   create mode 100644 drivers/spi/companion/protocol-manager.c
->   create mode 100644 drivers/spi/companion/protocol-manager.h
->   create mode 100644 drivers/spi/companion/protocol.h
->   create mode 100644 drivers/spi/companion/queue-manager.c
->   create mode 100644 drivers/spi/companion/queue-manager.h
->   create mode 100644 include/linux/companion.h
-> 
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -990,6 +990,9 @@ static int netlink_connect(struct socket
+ 	if (addr->sa_family != AF_NETLINK)
+ 		return -EINVAL;
+ 
++	if (alen < sizeof(struct sockaddr_nl))
++		return -EINVAL;
++
+ 	if ((nladdr->nl_groups || nladdr->nl_pid) &&
+ 	    !netlink_allowed(sock, NL_CFG_F_NONROOT_SEND))
+ 		return -EPERM;
