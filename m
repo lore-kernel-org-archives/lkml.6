@@ -1,125 +1,244 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id QCUfAV2OHlsifgAAmS7hNA
-	; Mon, 11 Jun 2018 15:01:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EVWeAwpfGVvLNQAAmS7hNA
+	; Thu, 07 Jun 2018 16:37:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8F33360791; Mon, 11 Jun 2018 15:01:02 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ieUCo33z"
+	id 84F2E607E7; Thu,  7 Jun 2018 16:37:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1AEB060351;
-	Mon, 11 Jun 2018 15:01:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1AEB060351
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id CC0F7601B4;
+	Thu,  7 Jun 2018 16:37:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC0F7601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932595AbeFKPBA (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:01:00 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34182 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932313AbeFKPA7 (ORCPT
+        id S933115AbeFGQh1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:37:27 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48348 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932822AbeFGQhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:00:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5R4zTjNRc7+z+jD1K6zBwdZBNZZoD6GafNoVhHGOx80=; b=ieUCo33zA3xq11I6CdlMoc14f
-        7LFFcupsSJCJh16lg/qAnWHDTFZcrFwT/hk3AXsE9p91UDC24a8xjgmSUhgSAX7J2r0THj5NaY1qt
-        cw6HKcupYWkAqljPuNTOgy2TRRubpbUL+xK0I6NsY20GikuUihd7UkWnA7JxyI/OrXQAQ=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fSOJT-0000wn-Sv; Mon, 11 Jun 2018 15:00:55 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fSOJS-0002p2-Ji; Mon, 11 Jun 2018 16:00:54 +0100
-Date: Mon, 11 Jun 2018 16:00:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO
- descriptor only
-Message-ID: <20180611150054.GC11580@sirena.org.uk>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
- <20180514080640.12515-2-linus.walleij@linaro.org>
- <20180601093511.GA11734@ulmo>
- <CACRpkdZEMPfxHc8dZOvyYN+S4o_zwKuYCTBbMiXMLsCZRz_f6A@mail.gmail.com>
+        Thu, 7 Jun 2018 12:37:25 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57GYWEX120011
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 12:37:24 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jf6vhd4pb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:37:24 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 7 Jun 2018 17:37:22 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Jun 2018 17:37:19 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57GbHqK22937642
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Jun 2018 16:37:17 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2A77F52043;
+        Thu,  7 Jun 2018 16:26:54 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id D3A2752041;
+        Thu,  7 Jun 2018 16:26:53 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH RFC 2/2] vfio-ccw: support for halt/clear subchannel
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qemu-s390x@nongnu.org, qemu-devel@nongnu.org
+References: <20180509154822.23510-1-cohuck@redhat.com>
+ <20180509154822.23510-3-cohuck@redhat.com>
+ <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
+ <20180515181006.0cb1dfc2.cohuck@redhat.com>
+ <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
+ <20180522145208.310143ea.cohuck@redhat.com>
+ <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
+ <20180605151449.22aafbfc.cohuck@redhat.com>
+ <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
+ <20180606142131.74ea2eb7.cohuck@redhat.com>
+ <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
+ <20180607115442.6a779ed9.cohuck@redhat.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Thu, 7 Jun 2018 18:37:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vEao7xgI/oilGqZ+"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZEMPfxHc8dZOvyYN+S4o_zwKuYCTBbMiXMLsCZRz_f6A@mail.gmail.com>
-X-Cookie: Sell by date stamped on bottom.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180607115442.6a779ed9.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18060716-0028-0000-0000-000002CE5A3B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18060716-0029-0000-0000-000023855F62
+Message-Id: <86d57698-3ea7-a390-2217-07c6d41ca9ed@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=840 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806070183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/06/2018 11:54, Cornelia Huck wrote:
+> On Wed, 6 Jun 2018 16:15:31 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>
+>> On 06/06/2018 14:21, Cornelia Huck wrote:
+>>> On Tue, 5 Jun 2018 17:23:02 +0200
+>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>>   
+>>>> On 05/06/2018 15:14, Cornelia Huck wrote:
+>>>>> On Tue, 22 May 2018 17:10:44 +0200
+>>>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>>>>      
+>>>>>> On 22/05/2018 14:52, Cornelia Huck wrote:
+>>>>>>> On Wed, 16 May 2018 15:32:48 +0200
+>>>>>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>>>>>>         
+>>>>>>>> On 15/05/2018 18:10, Cornelia Huck wrote:
+>>>>>>>>> On Fri, 11 May 2018 11:33:35 +0200
+>>>>>>>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>>>>>>>>            
+>>>>>>>>>> On 09/05/2018 17:48, Cornelia Huck wrote:
+>>
 
---vEao7xgI/oilGqZ+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+snip
 
-On Mon, Jun 11, 2018 at 03:11:14PM +0200, Linus Walleij wrote:
+>> sub-channel at the same time?
+>>
+>> If QEMU, once asynchronous, can do this, it could just
+>> halt the start before asking this to the backend. Don't it?
+>>
+>> Another point is that the start must have been accepted by the
+>> sub-channel for the start bit in the fc field of the SCSW to be set.
+> Hm, I think we need to be more precise as to what scsw we're talking
+> about. Bad ascii art time:
+>
+> --------------
+> |   scsw(g)  |  ssch
+> --------------   |
+>                   |                                       guest
+> --------------------------------------------------------------
+>                   |                                        qemu
+> --------------   v
+> |   scsw(q)  | emulate
+> --------------   |
+>                   |
+> --------------   v
+> |   scsw(r)  | pwrite()
+> --------------   |
+>                   |
+> --------------------------------------------------------------
+>                   |                                        vfio
+>                   v
+>                  ssch
+>                   |
+> --------------------------------------------------------------
+>                   |                                    hardware
+> --------------   v
+> |   scsw(h)  | actually do something
+> --------------
+>
+> The guest issues a ssch (which gets intercepted; it won't get control
+> back until ssch finishes with a cc set.) scsw(g) won't change, unless
+> the guest does a stsch for the subchannel on another vcpu, in which
+> case it will get whatever information qemu holds in scsw(q) at that
+> point in time.
+>
+> When qemu starts to emulate the guest's ssch, it will set the start
+> function bit in the fctl field of scsw(q). It then copies scsw(q) to
+> scsw(r) in the vfio region.
+>
+> The vfio code will then proceed to call ssch on the real subchannel.
+> This is the first time we get really asynchronous, as the ssch will
+> return with cc set and the start function will be performed at some
+> point in time. If we would do a stsch on the real subchannel, we would
+> see that scsw(h) now has the start function bit set.
+>
+> Currently, we won't return back up the chain until we get an interrupt
+> from the hardware, at which time we update the scsw(r) from the irb.
 
-> The DT binding for "regulator-fixed" specifies that enable-active-high
-> should be set for polarity inversion. For historical reasons, I guess,
-> we screwed up. The example in the binding uses that.
+I do not find where the thread waits for interrupt inside the
+write->fsm_io_request->fsm_io_helper->ssch chain.
 
-No, it just says that if the enable is active high then we should
-specify it using that boolean property.  It explicitly says that enables
-might be active low:
+I must have miss it ten times. Can you point it to me?
 
-| - enable-active-high: Polarity of GPIO is Active high
-| If this property is missing, the default assumed is Active low.
+> This will propagate into the scsw(q). At the time we finish handling
+> the guest's ssch and return control to it, we're all done and if the
+> guest does a stsch to update its scsw(g), it will get the current
+> scsw(q) which will already contain the scsw from the interrupt's irb
+> (indicating that the start function is already finished).
+>
+> Now let's imagine we have a future implementation that handles actually
+> performing the start on the hardware asynchronously, i.e. it returns
+> control to the guest without the interrupt having been posted (let's
+> say that it is a longer-running I/O request). If the guest now did a
+> stsch to update scsw(g), it would get the current state of scsw(q),
+> which would be "start function set, but not done yet".
+>
+> If the guest now does a hsch, it would trap in the same way as the ssch
+> before. When qemu gets control, it adds the halt bit in scsw(q) (which
+> is in accordance with the architecture).
 
-This binding predates the GPIO binding having any gpiolib level polarity
-inversion.
+This I agree.
+The scsw(q) is part of the QEMU device.
 
-> Sadly this only handled the undocumented fixed
-> regulator binding "reg-fixed-voltage". So I need to fix it
-> for "regulator-fixed" as well, and then it "should work".
+>   My proposal is to do the same
+> copying to scsw(r) again, which would mean we get a request with both
+> the halt and the start bit set. The vfio code now needs to do a hsch
+> (instead of a ssch). The real channel subsystem should figure this out,
+> as we can't reliably check whether the start function has concluded
+> already (there's always a race window).
 
-The normal fixed voltage regulator parses enable-active-high?
+This I do not agree scsw(r) is part of the driver.
+The interface here is not a device interface anymore but a driver 
+interface.
+SCSW is a status, it is at its place in QEMU device interface with the 
+guest
+but here pwrite() sends a command.
 
---vEao7xgI/oilGqZ+
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Since we do not do a STSCH on each command, scsw(q), should be
+updated by QEMU depending on syscall return value.
+This is not done currently, only the success path is right
+because it is set before the call.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsejqUACgkQJNaLcl1U
-h9BKUgf8DEQo+BbR0pBDJQHeVyBccqLeTfpwWukOEZYTwwmcXICJ++al8kL2Pey7
-5l2X6iE6Jk78Ixoh2wqij14NmHIGNwlP6D1EO6aKP8IzHQKEE28nO5HjM/YbAhHI
-8cdtPkQCDqG2BcGe16xDyLkeONyd1SCjZMCNAZh0ivG2Ba5mWAQZ4G66g/+yDiVY
-4GQMb183Zo3JNdwv+exopSfRd3E5rR5fKsQ3B9poI7V1eC7nu78ItV5gSyQuMzLY
-7lot8yb9fSKv6F6geKD3FCTmmobuPAGb8KfYagMJv3HFwLw6tO0DusQWNFpII6Qs
-X4pfKcDTvFA4t8JPj2ly8PGlJcN1Sw==
-=lMaH
------END PGP SIGNATURE-----
+If I read right and the IRQ is asynchronous, the scsw(q) is not right,
+because not updated, after the interrupt is received from the guest.
 
---vEao7xgI/oilGqZ+--
+>
+> For csch, things are a bit different (which the code posted here did
+> not take into account). The qemu emulation of csch needs to clear any
+> start/halt bits in scsw(q) when setting the clear bit there, and
+> therefore scsw(r) will only have the clear bit set in that case. We
+> still should do an unconditional csch for the same reasons as above;
+> the hardware will do the same things (clearing start/halt, setting
+> clear) in the scsw(h).
+>
+> Congratulations, you've reached the end :) I hope that was helpful and
+> not too confusing.
+>
+Yes it was, thank you, and it is clear, but still... questions ... ;)
+
+Best regards,
+
+Pierre
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
