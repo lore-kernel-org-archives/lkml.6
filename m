@@ -1,116 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RCWLAKkaG1sUXgAAmS7hNA
-	; Sat, 09 Jun 2018 00:09:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WodmIeU9GVs4RgAAmS7hNA
+	; Thu, 07 Jun 2018 14:16:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E53C06089E; Sat,  9 Jun 2018 00:09:12 +0000 (UTC)
+	id 47033608BF; Thu,  7 Jun 2018 14:16:30 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6AB76607A4;
-	Sat,  9 Jun 2018 00:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AB76607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3304F602FC;
+	Thu,  7 Jun 2018 14:16:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3304F602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932195AbeFIAJJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 20:09:09 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:60600 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753180AbeFIAI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 20:08:28 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fRRQd-00043p-2R; Fri, 08 Jun 2018 18:08:27 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fRRQb-0003ct-QM; Fri, 08 Jun 2018 18:08:21 -0600
-From: Logan Gunthorpe <logang@deltatee.com>
-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
-Cc: Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date: Fri,  8 Jun 2018 18:08:13 -0600
-Message-Id: <20180609000819.13883-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180609000819.13883-1-logang@deltatee.com>
-References: <20180609000819.13883-1-logang@deltatee.com>
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, Shyam-sundar.S-k@amd.com, shuah@kernel.org, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 3/8] NTB: Fix the default port and peer numbers for legacy drivers
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S933390AbeFGOQY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:16:24 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39555 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933100AbeFGOJN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:13 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0005Zn-6k; Thu, 07 Jun 2018 15:09:11 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-00039H-6B; Thu, 07 Jun 2018 15:09:08 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>,
+        "Jeremy Boone" <jeremy.boone@nccgroup.trust>,
+        "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "James Morris" <james.morris@microsoft.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.524981428@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 295/410] tpm_tis: fix potential buffer overruns
+ caused by bit glitches on the bus
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the commit adding ntb_default_port_number() and
-ntb_default_peer_port_number()  entered the kernel there was no
-users of it so it was impossible to tell what the API needed.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-When a user finally landed a year later (ntb_pingpong) there were
-more NTB topologies were created and no consideration was considered
-to how other drivers had changed.
+------------------
 
-Now that there is a user it can be fixed to provide a sensible default
-for the legacy drivers that do not implement ntb_{peer_}port_number().
-Seeing ntb_pingpong doesn't check error codes returning EINVAL was also
-not sensible.
+From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
-Patches for ntb_pingpong and ntb_perf follow (which are broken
-otherwise) to support hardware that doesn't have port numbers. This is
-important not only to not break support with existing drivers but for
-the cross link topology which, due to its perfect symmetry, cannot
-assign unique port numbers to each side.
+commit 6bb320ca4a4a7b5b3db8c8d7250cc40002046878 upstream.
 
-Fixes: 1e5301196a88 ("NTB: Add indexed ports NTB API")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Discrete TPMs are often connected over slow serial buses which, on
+some platforms, can have glitches causing bit flips.  In all the
+driver _recv() functions, we need to use a u32 to unmarshal the
+response size, otherwise a bit flip of the 31st bit would cause the
+expected variable to go negative, which would then try to read a huge
+amount of data.  Also sanity check that the expected amount of data is
+large enough for the TPM header.
+
+Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
+[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/ntb/ntb.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/char/tpm/tpm_tis.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ntb/ntb.c b/drivers/ntb/ntb.c
-index 93f24440d11d..d955a92a095a 100644
---- a/drivers/ntb/ntb.c
-+++ b/drivers/ntb/ntb.c
-@@ -225,10 +225,8 @@ int ntb_default_port_number(struct ntb_dev *ntb)
- 	case NTB_TOPO_B2B_DSD:
- 		return NTB_PORT_SEC_DSD;
- 	default:
--		break;
-+		return 0;
- 	}
--
--	return -EINVAL;
- }
- EXPORT_SYMBOL(ntb_default_port_number);
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -234,7 +234,8 @@ static int recv_data(struct tpm_chip *ch
+ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ {
+ 	int size = 0;
+-	int expected, status;
++	int status;
++	u32 expected;
  
-@@ -251,10 +249,8 @@ int ntb_default_peer_port_number(struct ntb_dev *ntb, int pidx)
- 	case NTB_TOPO_B2B_DSD:
- 		return NTB_PORT_PRI_USD;
- 	default:
--		break;
-+		return 0;
+ 	if (count < TPM_HEADER_SIZE) {
+ 		size = -EIO;
+@@ -249,7 +250,7 @@ static int tpm_tis_recv(struct tpm_chip
  	}
--
--	return -EINVAL;
- }
- EXPORT_SYMBOL(ntb_default_peer_port_number);
  
-@@ -326,4 +322,3 @@ static void __exit ntb_driver_exit(void)
- 	bus_unregister(&ntb_bus);
- }
- module_exit(ntb_driver_exit);
--
--- 
-2.11.0
+ 	expected = be32_to_cpu(*(__be32 *) (buf + 2));
+-	if (expected > count) {
++	if (expected > count || expected < TPM_HEADER_SIZE) {
+ 		size = -EIO;
+ 		goto out;
+ 	}
