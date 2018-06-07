@@ -1,103 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ajLhDfpaGlsfZwAAmS7hNA
-	; Fri, 08 Jun 2018 10:31:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JZxVF3BTGVtUHgAAmS7hNA
+	; Thu, 07 Jun 2018 15:47:34 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E7E39607A4; Fri,  8 Jun 2018 10:31:24 +0000 (UTC)
+	id CFD25607E7; Thu,  7 Jun 2018 15:47:33 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 58C6A601C3;
-	Fri,  8 Jun 2018 10:31:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 58C6A601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 16BAE60590;
+	Thu,  7 Jun 2018 15:47:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16BAE60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeFHKbV (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:31:21 -0400
-Received: from foss.arm.com ([217.140.101.70]:60570 "EHLO foss.arm.com"
+        id S934544AbeFGPrb (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:47:31 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50331 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751079AbeFHKbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:31:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A21CE1596;
-        Fri,  8 Jun 2018 03:31:19 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC5BA3F59D;
-        Fri,  8 Jun 2018 03:31:15 -0700 (PDT)
-Date: Fri, 8 Jun 2018 11:31:14 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, peterz@infradead.org,
-        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
- framework
-Message-ID: <20180608103113.GB418@e108498-lin.cambridge.arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-4-quentin.perret@arm.com>
- <20180607144409.GB3311@localhost.localdomain>
- <20180607151954.GA3597@e108498-lin.cambridge.arm.com>
- <52b9575b-4c2a-01df-fadd-10ccf3146112@arm.com>
- <20180608082511.GE3597@e108498-lin.cambridge.arm.com>
- <20180608093613.GD658@localhost.localdomain>
+        id S932578AbeFGPra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:47:30 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3DA8520799; Thu,  7 Jun 2018 17:47:28 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C646920012;
+        Thu,  7 Jun 2018 17:47:27 +0200 (CEST)
+Date: Thu, 7 Jun 2018 17:47:27 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc: <boris.brezillon@bootlin.com>, <richard@nod.at>,
+        <wmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <f.fainelli@gmail.com>,
+        <mmayer@broadcom.com>, <rogerq@ti.com>, <ladis@linux-mips.org>,
+        <ada@thorsis.com>, <honghui.zhang@mediatek.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <nagasureshkumarrelli@gmail.com>
+Subject: Re: [LINUX PATCH v9 1/4] Devicetree: Add pl353 smc controller
+ devicetree binding information
+Message-ID: <20180607174727.6fcebde2@xps13>
+In-Reply-To: <20180607174203.035f187d@xps13>
+References: <1528271382-21690-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1528271382-21690-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20180607174203.035f187d@xps13>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180608093613.GD658@localhost.localdomain>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 08 Jun 2018 at 11:36:13 (+0200), Juri Lelli wrote:
-> On 08/06/18 09:25, Quentin Perret wrote:
-> > Hi Dietmar,
-> > 
-> > On Thursday 07 Jun 2018 at 17:55:32 (+0200), Dietmar Eggemann wrote:
-> 
-> [...]
-> 
-> > > IMHO, part of the problem why this might be harder to understand is the fact
-> > > that the patches show the use of the 2. init call
-> > > 'em_rescale_cpu_capacity()' but not the 1. one 'em_register_freq_domain()'.
-> > > I guess that Quentin wanted to keep the set as small as possible.
-> > 
-> > Yes, this is confusing. I'm now starting to think that patch 10/10 should
-> > probably not be part of this patch-set, especially if I don't provide
-> > the patches registering the freq domains from the CPUFreq drivers. And
-> > it's the only "Arm-specific" patch in this arch-independent patch-set.
-> > 
-> > So I think I'll drop patch 10/10 for v4 ... That part should be
-> > discussed separately, with the rest of the Arm-specific changes.
-> 
-> Mmm, I would actually vote to at least have one example showing how and
-> where the em_register_freq_domain() is going to be used. I had to look
-> at the repo you referenced since I think it's quite fundamental piece to
-> understand the design, IMHO.
+Hi Miquel,
 
-Hmmm I see your point. OK, having an example will help. I'll keep patch
-10/10 and add an other one tweaking cpufreq-dt to give an example. But
-I'll mark the two as OPTIONAL. I really hope we can reach an agreement
-on the core design ideas before discussing too much the details on the
-driver side.
+On Thu, 7 Jun 2018 17:42:03 +0200, Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
 
-There are several valid places where em_register_freq_domain() can be
-called. But the exact way of doing so will be platform-dependent, and
-driver-dependent, so let's agree on what we want to know from the
-drivers first :-)
+> Hi Naga,
+> 
+> On Wed, 6 Jun 2018 13:19:39 +0530, Naga Sureshkumar Relli
+> <naga.sureshkumar.relli@xilinx.com> wrote:
+> 
+> > Add pl353 static memory controller devicetree binding information.
+> > 
+> > Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+> > ---
+> > Changes in v9:
+> >  - Addressed commens given by Randy Dunlap and Miquel Raynal  
+> 
+> Can you please be more specific in your next changelog? I don't
+> remember what I suggested a few months ago :)
+> 
+> > Changes in v8:
+> >  - None
+> > Changes in v7:
+> > - Corrected clocks description
+> > - prefixed '#' for address and size cells 
+> > Changes in v6:
+> >  - None
+> > Changes in v5:
+> >  - Removed timing properties
+> > Changes in v4:
+> >  - none
+> > Changes in v3:
+> >  - none
+> > Changes in v2:
+> >  - modified timing binding info as per onfi timing parameters
+> >  - add suffix nano second as timing unit
+> >  - modified the clock names as per the IP spec
+> > ---
+> >  .../bindings/memory-controllers/pl353-smc.txt      | 53 ++++++++++++++++++++++
+> >  1 file changed, 53 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> > new file mode 100644
+> > index 0000000..551e66b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt
+> > @@ -0,0 +1,53 @@
+> > +Device tree bindings for ARM PL353 static memory controller
+> > +
+> > +PL353 static memory controller supports two kinds of memory
+> > +interfaces.i.e NAND and SRAM/NOR interfaces.
+> > +The actual devices are instantiated from the child nodes of pl353 smc node.
+> > +
+> > +Required properties:
+> > +- compatible		: Should be "arm,pl353-smc-r2p1"  
+> 
+> I thing Rob prefers:
+> 
+> - compatible: Must be one of:
+>   * arm, pl353-smc-r2p1
+> 
+> > +- reg			: Controller registers map and length.
+> > +- clock-names		: List of input clock names - "ref_clk", "aper_clk"
+> > +			  (See clock bindings for details).
+> > +- clocks		: Clock phandles (see clock bindings for details).
+> > +- address-cells		: Address cells, must be 1.
+> > +- size-cells		: Size cells. Must be 1.  
+> 
+> Please avoid padding, just this is enough:
+> 
+> - something: And another thing.
+> 
+> > +
+> > +Child nodes:
+> > + For NAND the "arm,pl353-nand-r2p1" and for NOR the "cfi-flash" drivers are
+> > +supported as child nodes.
+> > +
+> > +Mandatory timing properties for child nodes:
+> > +- arm,nand-cycle-t0	: Read cycle time(t_rc).
+> > +- arm,nand-cycle-t1	: Write cycle time(t_wc).
+> > +- arm,nand-cycle-t2	: re_n assertion delay(t_rea).
+> > +- arm,nand-cycle-t3	: we_n de-assertion delay(t_wp).
+> > +- arm,nand-cycle-t4	: Status read time(t_clr)
+> > +- arm,nand-cycle-t5	: ID read time(t_ar)
+> > +- arm,nand-cycle-t6	: busy to re_n(t_rr)  
+> 
+> I think this has nothing to do in the DT, you should handle timings
+> from the ->setup_data_interface() hook. If you need, you may use
+> different compatibles to distinguish different platform data.
 
-Thanks,
-Quentin
+Actually these are NAND-chip dependant and should be derived from the
+timings given by the core in the SDR interface structure by
+->setup_data_interface().
