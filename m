@@ -1,99 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Oi0eOJ2hHVtnNwAAmS7hNA
-	; Sun, 10 Jun 2018 22:09:36 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0cOsDMlVGVtLOgAAmS7hNA
+	; Thu, 07 Jun 2018 15:57:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 53A6860791; Sun, 10 Jun 2018 22:09:36 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MMbx12dD"
+	id E63676074D; Thu,  7 Jun 2018 15:57:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DB49E6032D;
-	Sun, 10 Jun 2018 22:09:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB49E6032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6809C60590;
+	Thu,  7 Jun 2018 15:57:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6809C60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932153AbeFJWJd (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 18:09:33 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54908 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753692AbeFJWJb (ORCPT
+        id S933391AbeFGOb1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:31:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39404 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933060AbeFGOJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 18:09:31 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o13-v6so11434559wmf.4;
-        Sun, 10 Jun 2018 15:09:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+Ryou1q5Q3g/roVK0v7fUP83I81z53Iy7orrPMdRuUM=;
-        b=MMbx12dD4auWrfcO0iyvCPGZXwwYEpzCWRIkG9CNx5r9Lkyt+wKrI+z7nmB5/iBymN
-         lOAV2MPgaNTSkKvEdaxhE+Pv9FGTQcW9Z6sm/6vhRGU9EER4xo7BEDX+I7Th4PSTAewj
-         nkqCKXOjSxGniHAZ8vYHhBlj87b5S6J+LbbvR/8DNk2pOc4Gh6m5YVLhZDBpX08r4+Yy
-         KQjk+YrhicjQJ86+NL4rJJrsreNaOosbVb6CfYywadXcTraRZP4KL61uCfl0zF7fFrjr
-         Bh5sv0ex2i6wmwVTjHT0kdpMhzVMwMhcDZ5T4LStJzGgy60TMJpjkAYO4UimDxQ0z4Rd
-         ErrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+Ryou1q5Q3g/roVK0v7fUP83I81z53Iy7orrPMdRuUM=;
-        b=P+ZBcQTwXbgcvnf/UrIAFUNeP4/IUAdL5l5KSsh9mDLEFtzVvCJGhlzTqHRXUlz82y
-         4ad65YwBvyZtO05qNvAtGUYPpQ1iqY13uiyymImtq5juPjUWTlz2FVIKym09n9Cy7epK
-         TB1rym/CS7WBSrv0YuZCYVA1dH4p3rSywNaX6F0eAPGflAVtpqkbIKZsU+WMtggfagZZ
-         YJxGNU15Lx3RuYC+RhxaaPrzNFbGzxsNm4JfvQ+gVHW1Lb5PvoIlr/OOrC1MfxYdcMsf
-         Tearv6kLcC1sGNAWe5UWNm271HnQJSasPqBPuaoCoDqwAgAUA+8MT7k+Qr1E5WFms7yV
-         B/iQ==
-X-Gm-Message-State: APt69E3SUXW4wCp9bMGbTjsaLQUM6ICDcLQViyfYwV3sPWjVeeASaxgG
-        I1h9drDpoqlS+Lh9uN8Ikbo=
-X-Google-Smtp-Source: ADUXVKKXJ0zv7PzPTpFWGDNrLAg4uNRKzO93BHHpkhAK/qkySt0QSVIw0ltoLIuZwt884jMxBY/INQ==
-X-Received: by 2002:a1c:c342:: with SMTP id t63-v6mr7066365wmf.123.1528668570445;
-        Sun, 10 Jun 2018 15:09:30 -0700 (PDT)
-Received: from localhost.localdomain ([156.219.244.88])
-        by smtp.gmail.com with ESMTPSA id v138-v6sm11049162wmd.47.2018.06.10.15.09.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Jun 2018 15:09:29 -0700 (PDT)
-From: Karim Eshapa <karim.eshapa@gmail.com>
-To: lars@metafoo.de
-Cc: Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Karim Eshapa <karim.eshapa@gmail.com>
-Subject: [PATCH] staging:iio:accel: use sign extend function avoiding code duplication
-Date: Mon, 11 Jun 2018 00:09:20 +0200
-Message-Id: <20180610220920.12244-1-karim.eshapa@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 7 Jun 2018 10:09:09 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0005Zs-2Y; Thu, 07 Jun 2018 15:09:08 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-00032E-RJ; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Johannes Berg" <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Nicolas Dichtel" <nicolas.dichtel@6wind.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.761317939@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 220/410] netlink: ensure to loop over all netns in
+ genlmsg_multicast_allns()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use sign_extend32 kernel function instead of code duplication.
-This function is also safe for 16 bits.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Karim Eshapa <karim.eshapa@gmail.com>
+------------------
+
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+
+commit cb9f7a9a5c96a773bbc9c70660dc600cfff82f82 upstream.
+
+Nowadays, nlmsg_multicast() returns only 0 or -ESRCH but this was not the
+case when commit 134e63756d5f was pushed.
+However, there was no reason to stop the loop if a netns does not have
+listeners.
+Returns -ESRCH only if there was no listeners in all netns.
+
+To avoid having the same problem in the future, I didn't take the
+assumption that nlmsg_multicast() returns only 0 or -ESRCH.
+
+Fixes: 134e63756d5f ("genetlink: make netns aware")
+CC: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/iio/accel/adis16201.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/netlink/genetlink.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
-index 0fae8aaf1cf4..fe4494e65395 100644
---- a/drivers/staging/iio/accel/adis16201.c
-+++ b/drivers/staging/iio/accel/adis16201.c
-@@ -227,9 +227,7 @@ static int adis16201_read_raw(struct iio_dev *indio_dev,
- 		ret = adis_read_reg_16(st, addr, &val16);
- 		if (ret)
- 			return ret;
--		val16 &= (1 << bits) - 1;
--		val16 = (s16)(val16 << (16 - bits)) >> (16 - bits);
--		*val = val16;
-+		*val = sign_extend32(val16, bits);
- 		return IIO_VAL_INT;
+--- a/net/netlink/genetlink.c
++++ b/net/netlink/genetlink.c
+@@ -1042,6 +1042,7 @@ static int genlmsg_mcast(struct sk_buff
+ {
+ 	struct sk_buff *tmp;
+ 	struct net *net, *prev = NULL;
++	bool delivered = false;
+ 	int err;
+ 
+ 	for_each_net_rcu(net) {
+@@ -1053,14 +1054,21 @@ static int genlmsg_mcast(struct sk_buff
+ 			}
+ 			err = nlmsg_multicast(prev->genl_sock, tmp,
+ 					      portid, group, flags);
+-			if (err)
++			if (!err)
++				delivered = true;
++			else if (err != -ESRCH)
+ 				goto error;
+ 		}
+ 
+ 		prev = net;
  	}
  
--- 
-2.17.1
+-	return nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
++	err = nlmsg_multicast(prev->genl_sock, skb, portid, group, flags);
++	if (!err)
++		delivered = true;
++	else if (err != -ESRCH)
++		goto error;
++	return delivered ? 0 : -ESRCH;
+  error:
+ 	kfree_skb(skb);
+ 	return err;
