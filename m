@@ -1,98 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BZyFMghaGVswDQAAmS7hNA
-	; Thu, 07 Jun 2018 16:15:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jAkGKKXDGVvgSgAAmS7hNA
+	; Thu, 07 Jun 2018 23:45:41 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B6715608C8; Thu,  7 Jun 2018 16:15:04 +0000 (UTC)
+	id 7AF27606FA; Thu,  7 Jun 2018 23:45:41 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gj663Cye"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 23BC660115;
-	Thu,  7 Jun 2018 16:15:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 23BC660115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id ECB44601D2;
+	Thu,  7 Jun 2018 23:45:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ECB44601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935238AbeFGQOr (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:14:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39120 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932925AbeFGOI6 (ORCPT
+        id S1752276AbeFGXpi (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 19:45:38 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:33627 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbeFGXpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:08:58 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvay-0005a0-Kc; Thu, 07 Jun 2018 15:08:56 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvax-0002hS-Kg; Thu, 07 Jun 2018 15:08:55 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 19:45:36 -0400
+Received: by mail-wm0-f52.google.com with SMTP id z6-v6so5028975wma.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 16:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GNGp007zxEZhp+oAKiY/7RKjPqYwce/vV7W94kAW8mk=;
+        b=gj663Cyefw3SYI2u+GdMWeZ4PS/A/LQfrng2ArPvR6TefD1g4SVMTz/M4DM2fOdkcR
+         sYHmYKUthwaxjJ21v7k/AccvWCfUnCXCJfSRlgreN95WDLW8/mz9meT+HskTyQMfPfPK
+         i7KTaPngTA9Z9JzUPOErGE7mOcwRJE/0O+TiopTOTV/rCcXMzXxrQnGUG2TK7Lkm5LbR
+         nrlxuyeOvRyuCFDd0HkEGpGPchNgStPmZsi/2GI48loJedyyajKVWGSoOoL5ZeJnoDGc
+         0+WH4y8Y/QFR6iw4jAMKNFKf1xzVEuz+bOovK3tlGJhf7xoaztNRN7DeKctCtO9fZ2Zm
+         mhcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GNGp007zxEZhp+oAKiY/7RKjPqYwce/vV7W94kAW8mk=;
+        b=p5E8ePMYWSGqJo0vCVeZAXGq39XqZn5fAYUtyPq9kSFbW+UQP06IrfRZ1bmy3nQbsO
+         vvY/rgmqbNNvg9ne/sMEIiwZsqNdtm8NTrgg7MJFHJ4dwCpgSm6cMYEqyq1akyb6UXul
+         l3y1DtiMRckrp3vtuStbcNLeB3kED+f9HH4vleZOibD4q6dTgvSuf8iPh+B0UoRgoMB2
+         MB4AKDpdUBjrl9XG8YO1vbYhN1i+kkH+kczOS5lw2KM3WgWH2DsvOk3aGiqMvyjIApJc
+         V/evI0XQtgpGbm9U9j38xsdskjfQ+574MkFZ4tPQgWjmByH7rB1YrC3o9L5C+InlFHSi
+         mZGg==
+X-Gm-Message-State: APt69E0xzfSnkTf0WY5evOWlI/dAKC3llPbzYC4K42iwJZKFvnA41lkP
+        VtOHC+a/JWvjKP5pSBdebzMlDQUx
+X-Google-Smtp-Source: ADUXVKJFqRljn7/2wYGGISBM6hc8qhEeqoA5/IrSrI3URLZIzL9U32SPrPoLGP7B0ljrpUNWHNmReQ==
+X-Received: by 2002:a50:f190:: with SMTP id x16-v6mr4497493edl.59.1528415135827;
+        Thu, 07 Jun 2018 16:45:35 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:4108:7200:48ec:50ae:df82:46f4])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm9507160edr.24.2018.06.07.16.45.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 16:45:35 -0700 (PDT)
+Date: Fri, 8 Jun 2018 01:45:34 +0200
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Kees Cook <keescook@chromium.org>, Miroslav Benes <mbenes@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: sparse warnings in overflow.h
+Message-ID: <20180607234533.nfdxd4cqiygahfms@ltop.local>
+References: <alpine.LSU.2.21.1806071258310.7958@pobox.suse.cz>
+ <CAGXu5j+XFR7BtYPU6G4CeLFREWevN+GC1FPX1hPAYA1LRBM9Bg@mail.gmail.com>
+ <4d2aaa98-1655-3ab8-8ce8-bf4b9c7d2dbc@rasmusvillemoes.dk>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>,
-        "Wen Xu" <wen.xu@gatech.edu>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.743043835@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 018/410] ext4: fail ext4_iget for root directory if
- unallocated
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d2aaa98-1655-3ab8-8ce8-bf4b9c7d2dbc@rasmusvillemoes.dk>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 07, 2018 at 09:25:09PM +0200, Rasmus Villemoes wrote:
+> 
+> IIRC, the problem is that sparse pretends to be the gcc sparse itself
+> was built with, which is obviously entirely unrelated to the C dialect
+> that that particular sparse version groks. Sigh. Ack to the fix above.
 
-------------------
+Yes, indeed, and it is sometimes a problem.
+Ideal would be that sparse would pretend to be same GCC as the one used
+to compile the code being checked *and* to have exactly the same features.
 
-From: Theodore Ts'o <tytso@mit.edu>
+Pretending to be an older version of GCC would maybe solve the present
+problem it's not really a general solution.
 
-commit 8e4b5eae5decd9dfe5a4ee369c22028f90ab4c44 upstream.
+One good thing would be to not depend on GCC versions to enable some
+features (but GCC offers few facilities helping here).
 
-If the root directory has an i_links_count of zero, then when the file
-system is mounted, then when ext4_fill_super() notices the problem and
-tries to call iput() the root directory in the error return path,
-ext4_evict_inode() will try to free the inode on disk, before all of
-the file system structures are set up, and this will result in an OOPS
-caused by a NULL pointer dereference.
 
-This issue has been assigned CVE-2018-1092.
-
-https://bugzilla.kernel.org/show_bug.cgi?id=199179
-https://bugzilla.redhat.com/show_bug.cgi?id=1560777
-
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[bwh: Backported to 3.16: use EIO instead of EFSCORRUPTED]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/ext4/inode.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4198,6 +4198,12 @@ struct inode *ext4_iget(struct super_blo
- 		goto bad_inode;
- 	raw_inode = ext4_raw_inode(&iloc);
- 
-+	if ((ino == EXT4_ROOT_INO) && (raw_inode->i_links_count == 0)) {
-+		EXT4_ERROR_INODE(inode, "root inode unallocated");
-+		ret = -EIO;
-+		goto bad_inode;
-+	}
-+
- 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
- 		ei->i_extra_isize = le16_to_cpu(raw_inode->i_extra_isize);
- 		if (EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize >
+Best regards,
+-- Luc Van Oostenryck
