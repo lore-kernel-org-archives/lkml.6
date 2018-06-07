@@ -1,103 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id guA9KAtFGVvjGgAAmS7hNA
-	; Thu, 07 Jun 2018 14:46:31 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kTT2IzKRGVvAMwAAmS7hNA
+	; Thu, 07 Jun 2018 20:11:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 09C0F6089E; Thu,  7 Jun 2018 14:46:31 +0000 (UTC)
+	id E3BA86074D; Thu,  7 Jun 2018 20:11:30 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1WrFgII"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 84C02602FC;
-	Thu,  7 Jun 2018 14:46:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 84C02602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 0C74A6063F;
+	Thu,  7 Jun 2018 20:11:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0C74A6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934986AbeFGOq2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:46:28 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40766 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934083AbeFGOqZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:46:25 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbU-0005Zw-2y; Thu, 07 Jun 2018 15:09:28 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbB-0003BN-Ez; Thu, 07 Jun 2018 15:09:09 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753185AbeFGUL2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:11:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751037AbeFGUL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:11:27 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FA3E20895;
+        Thu,  7 Jun 2018 20:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528402286;
+        bh=5Hk6JyFDrdi19F+nO0Op9LqB8jmXdMne9xrVHreSEmg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G1WrFgIIl0Druhy32ZKNXVdNO4+6Uden2SOopvY5FavtF834Gpqni5+q5MdbwTi9Q
+         oMnme18p5f2xBM5BQy8RouPi879R3yUk5s8ELOnd+VpfWwkH+wPNL3J8BrT73yT72n
+         Ga2YK2MlVYr8pOA0I09kfW6I7DPUPUiJWxB02FHY=
+Date: Thu, 7 Jun 2018 22:11:02 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        James Y Knight <jyknight@google.com>,
+        Chandler Carruth <chandlerc@google.com>,
+        Stephen Hines <srhines@google.com>,
+        Kees Cook <keescook@google.com>, groeck@chromium.org,
+        Greg Hackmann <ghackmann@google.com>
+Subject: Re: [GIT PULL] x86/build changes for v4.17
+Message-ID: <20180607201102.GA6844@kroah.com>
+References: <20180402095033.nfzcrmxvpm46dhbl@gmail.com>
+ <CA+55aFzV8L-uv9706ryJ2mP9VGBuzqFVPu1cgYY+sZAtDAroqg@mail.gmail.com>
+ <20180403085904.GY4082@hirez.programming.kicks-ass.net>
+ <20180403095118.rpf7tj577dppvx7d@gmail.com>
+ <20180403180658.GE87376@google.com>
+ <CAKwvOdkaBNTyNjackJcWYkdfwyR2wjAruMFqN8LuYqC8V0ii_A@mail.gmail.com>
+ <20180404093823.GC25996@kroah.com>
+ <CAKwvOdmk-e5NCkyMT_LX2i5F1X+xGP+ZxAjaJasjgE6FaXKi6w@mail.gmail.com>
+ <20180404193247.lsoxe3xjcidwtlgv@treble>
+ <CAKwvOdmFVO=SUxazTR+WGgrTtKyfqgEup-aY_P3LrQBZqrL84Q@mail.gmail.com>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Aaron Brown" <aaron.f.brown@intel.com>,
-        "Benjamin Poirier" <bpoirier@suse.com>,
-        "Jeff Kirsher" <jeffrey.t.kirsher@intel.com>,
-        "Sasha Neftin" <sasha.neftin@intel.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.143459743@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 321/410] e1000e: Fix check_for_link return value with
- autoneg off
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdmFVO=SUxazTR+WGgrTtKyfqgEup-aY_P3LrQBZqrL84Q@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 07, 2018 at 12:23:31PM -0700, Nick Desaulniers wrote:
+> On Wed, Apr 4, 2018 at 12:32 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > On Wed, Apr 04, 2018 at 04:53:52PM +0000, Nick Desaulniers wrote:
+> > > (re-sending as plain text)
+> > >
+> > > On Wed, Apr 4, 2018 at 2:38 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > There are known-bugs with building a kernel with clang right now (I
+> > > > pointed one out a few days ago about NULL checks being deleted from the
+> > > > clang output for no good reason, which really is scary for obvious
+> > > > reasons).
+> > >
+> > > Is this the thread you are referring to?
+> > > https://lkml.org/lkml/2018/3/27/1286
+> > >
+> > > It's definitely something curious that I'll need to sit down and
+> > > investigate more.  If there are other known instances, it would be good to
+> > > let me know.
+> >
+> > As Matthias mentioned elsewhere, it sounds like they're planning to
+> > implement -fno-delete-null-pointer-checks, which would presumably fix
+> > the above issue.
+> 
+> Just to follow this up, -fno-delete-null-pointer-checks is being added
+> to clang in:
+> https://reviews.llvm.org/D47894
+> https://reviews.llvm.org/D47895
 
-------------------
+That's great news, thanks for letting us know.
 
-From: Benjamin Poirier <bpoirier@suse.com>
-
-commit 4e7dc08e57c95673d2edaba8983c3de4dd1f65f5 upstream.
-
-When autoneg is off, the .check_for_link callback functions clear the
-get_link_status flag and systematically return a "pseudo-error". This means
-that the link is not detected as up until the next execution of the
-e1000_watchdog_task() 2 seconds later.
-
-Fixes: 19110cfbb34d ("e1000e: Separate signaling for link check/link up")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/net/ethernet/intel/e1000e/ich8lan.c | 2 +-
- drivers/net/ethernet/intel/e1000e/mac.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/net/ethernet/intel/e1000e/ich8lan.c
-+++ b/drivers/net/ethernet/intel/e1000e/ich8lan.c
-@@ -1442,7 +1442,7 @@ static s32 e1000_check_for_copper_link_i
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -450,7 +450,7 @@ s32 e1000e_check_for_copper_link(struct
- 	 * we have already determined whether we have link or not.
- 	 */
- 	if (!mac->autoneg)
--		return -E1000_ERR_CONFIG;
-+		return 1;
- 
- 	/* Auto-Neg is enabled.  Auto Speed Detection takes care
- 	 * of MAC speed/duplex configuration.  So we only need to
+greg k-h
