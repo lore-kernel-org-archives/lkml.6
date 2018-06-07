@@ -1,109 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id zbhjAPBzHlvzDwAAmS7hNA
-	; Mon, 11 Jun 2018 13:11:42 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ZU+6Le6cGVvbJQAAmS7hNA
+	; Thu, 07 Jun 2018 21:00:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B9CEB60792; Mon, 11 Jun 2018 13:11:42 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VKm0/zhr"
+	id A8356608BA; Thu,  7 Jun 2018 21:00:30 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 2FDA0601C3;
-	Mon, 11 Jun 2018 13:11:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FDA0601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3F193605A2;
+	Thu,  7 Jun 2018 21:00:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3F193605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933256AbeFKNLk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 09:11:40 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39361 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933202AbeFKNLi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 09:11:38 -0400
-Received: by mail-pf0-f194.google.com with SMTP id r11-v6so10220318pfl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 06:11:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=W0bKoZMi58uP4zuHeTiqUFCNiNHeKT7m1sKnUo8qEBg=;
-        b=VKm0/zhr6dJHyvanFDJeFFXwVN62uMXqUpPoIy9c3HvJ91UVbq92CiIPYqKW2QIU51
-         vuhryvj9ROMsm4wrPRNWKjDvE0L92n45E+T74gweo+6iKlPTHJT70IxpiT8gMNF55A+A
-         zkG9i9xXqyof/TyTCvqqUICpLgmdvhOrnzmjKdHPJ6uUq33yP+xd4J4sKDJzX2688a0I
-         TTNAZM7KgzdjIjN7cNhZpJ7TjP/2RmZ+uGyc6S4wDnkCbJah3HjhDueV/dltze7U+23b
-         KfA6r5NYUEBc6A5rZCPGkVG9NUnLdveSxAirDQ41socpYHTkNbBrqDtWZuWxxhMXDbIi
-         8ggA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=W0bKoZMi58uP4zuHeTiqUFCNiNHeKT7m1sKnUo8qEBg=;
-        b=mKxUeZxqb070zBQkGqtpg6EioczohW6O41PDtbDu4ym++TYdeV+2LHlTU+lF3kXFrc
-         BNcPaYN5dZ3SvauUzDjiugCo4xjB2kx9HmMO0K+eHQt8l53WJTkv+SYZCr5lRtrj2SAO
-         HzsFCXAelDdNNDaaCRaSg2uCa7iDqGbMTBdR01cP7pMrkYONid0J/rL+uBj08woUYArJ
-         yfnpTHfkSLz0BLsHHGNrbdYb5WcuRiTLHlttW4MpamjEBLXQBvbIW0HDsDc2C1mlY4er
-         Z+CHo4hhMw5TbOGRexNXNcBHdgGLLvtadLF3IxZfF3GO6B7CF+/kAVdLh09ecfR/K9+v
-         BXjA==
-X-Gm-Message-State: APt69E1NBhoTZOjrvU+Ne0DeraYdN1yHxb64zDBcNBpznbmEMUYmRpw3
-        UwsPsVdsisXNG6guw5r6P57I4ZMNr3sJDSlbb3o3ng==
-X-Google-Smtp-Source: ADUXVKK6e3Y+py+6qKHtiK3ZgS4yI5ftl2sqh0kW3h4MOvo6FDjXSkrvd6VkRPXXfw8WZMnuocWhYiIeoJ+2ut12Z0g=
-X-Received: by 2002:a63:721c:: with SMTP id n28-v6mr14673781pgc.96.1528722697855;
- Mon, 11 Jun 2018 06:11:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Mon, 11 Jun 2018 06:11:17
- -0700 (PDT)
-In-Reply-To: <CACdnJutbRW4wV7QAwS9s-=p1dd7mYkHqEX1NBkEXiD+oBV3-xw@mail.gmail.com>
-References: <000000000000457b2d056cbb0044@google.com> <20180522123107.GC3751@bfoster.bfoster>
- <20180522222620.GW23861@dastard> <20180522225208.GB658@sol.localdomain>
- <20180523074425.GM14384@magnolia> <20180523162015.GA3684@sol.localdomain>
- <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net> <20180523234114.GA3434@thunk.org>
- <20180524004931.GB23861@dastard> <CACdnJutbRW4wV7QAwS9s-=p1dd7mYkHqEX1NBkEXiD+oBV3-xw@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 11 Jun 2018 15:11:17 +0200
-Message-ID: <CACT4Y+bnOt5pCv5BvQ_AQHdvLSNKZSrw+w4Aa5YJRFNy4o0jww@mail.gmail.com>
-Subject: Re: Bugs involving maliciously crafted file system
-To: Matthew Garrett <mjg59@google.com>
-Cc: Dave Chinner <david@fromorbit.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S933226AbeFGVA1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:00:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43040 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932351AbeFGVA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:00:26 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 83AD6401EF36;
+        Thu,  7 Jun 2018 21:00:25 +0000 (UTC)
+Received: from shalem.localdomain.com (unknown [10.36.118.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AEB642166BC7;
+        Thu,  7 Jun 2018 21:00:24 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] platform/x86: Rename silead_dmi to touchscreen_dmi
+Date: Thu,  7 Jun 2018 23:00:22 +0200
+Message-Id: <20180607210023.11789-1-hdegoede@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 21:00:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 21:00:25 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 10:51 PM, 'Matthew Garrett' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
-> On Wed, May 30, 2018 at 1:42 PM Dave Chinner <david@fromorbit.com> wrote:
->> We've learnt this lesson the hard way over and over again: don't
->> parse untrusted input in privileged contexts. How many times do we
->> have to make the same mistakes before people start to learn from
->> them?
->
-> You're not wrong, but we haven't considered root to be fundamentally
-> trustworthy for years - there are multiple kernel features that can be
-> configured such that root is no longer able to do certain things (the
-> one-way trap for requiring module signatures is the most obvious, but
-> IMA in appraisal mode will also restrict root), and as a result it's
-> not reasonable to be worried only about users - it's also necessary to
-> prevent root form being able to deliberately mount a filesystem that
-> results in arbitrary code execution in the kernel.
+Hi,
 
-FWIW, Android also does not consider root as trusted entity. It's
-limited by SELinux and maybe something else. Kernel becomes the main
-attack target on Android. Even if attackers get root, they still go
-for kernel execution or kernel data corruption to do anything harmful.
-And kernel is exploited with use-after-frees, out-of-bounds,
-double-frees, etc.
+This patch is part of / preparation for the EFI embedded firmware
+stuff. But it can be merged by itself without the test of that series
+and since silead_dmi.c sees quite a bit of churn I would like to get
+this one of my queue and merged.
+
+I guess it is to late for 4.18, but please consider queuing this
+up for next when the merge window closes.
+
+Note this applies on top of the alphabetically sort series which
+I sent out earlier.
+
+Regards,
+
+Hans
