@@ -1,124 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id IIkMLgZdGFudIwAAmS7hNA
-	; Wed, 06 Jun 2018 22:15:34 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id v6FSJaRTGVt6HwAAmS7hNA
+	; Thu, 07 Jun 2018 15:50:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 98E6B607F7; Wed,  6 Jun 2018 22:15:34 +0000 (UTC)
+	id B8B556089E; Thu,  7 Jun 2018 15:50:04 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 21EBE607F7;
-	Wed,  6 Jun 2018 22:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21EBE607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2DBF360590;
+	Thu,  7 Jun 2018 15:50:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DBF360590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752399AbeFFWP0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 18:15:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46234 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752228AbeFFWPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 18:15:22 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C5A2859C8;
-        Wed,  6 Jun 2018 22:15:22 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-89.brq.redhat.com [10.40.204.89])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AB24A2026DEF;
-        Wed,  6 Jun 2018 22:15:18 +0000 (UTC)
-From: Jiri Olsa <jolsa@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 01/10] perf tools: Uniquify the event name if there's no other matched event
-Date: Thu,  7 Jun 2018 00:15:04 +0200
-Message-Id: <20180606221513.11302-2-jolsa@kernel.org>
-In-Reply-To: <20180606221513.11302-1-jolsa@kernel.org>
-References: <20180606221513.11302-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 06 Jun 2018 22:15:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 06 Jun 2018 22:15:22 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        id S934508AbeFGPuC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:50:02 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:36520 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933302AbeFGPuA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:50:00 -0400
+Received: from [148.252.241.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fQxAj-0006oX-MA; Thu, 07 Jun 2018 16:49:57 +0100
+Message-ID: <1528386597.2289.75.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in
+ QCA4019 with eth decap mode
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Sriram R <srirrama@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org,
+        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        linux-kernel@vger.kernel.org
+Date: Thu, 07 Jun 2018 16:49:57 +0100
+In-Reply-To: <133624c2c44831fd70edb18c01508f64@codeaurora.org>
+References: <20180514064754.853201981@linuxfoundation.org>
+         <20180514064755.718467503@linuxfoundation.org>
+         <1528134761.2289.45.camel@codethink.co.uk>
+         <133624c2c44831fd70edb18c01508f64@codeaurora.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently by default we try to match the user specified PMU
-name to all PMU units available and use them to aggregate
-all matched PMUs event counts into one 'pattern' event.
+On Thu, 2018-06-07 at 17:22 +0530, Sriram R wrote:
+> Hi Ben,
+> 
+> On 2018-06-04 23:22, Ben Hutchings wrote:
+> > On Mon, 2018-05-14 at 08:48 +0200, Greg Kroah-Hartman wrote:
+> > > 4.4-stable review patch.  If anyone has any objections, please let me 
+> > > know.
+> > > 
+> > > ------------------
+> > > 
+> > > From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+> > > 
+> > > commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
+> > > 
+> > > Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
+> > > rx_hdr_status is not padded to align in 4-byte boundary. Define a
+> > > new hw_params field to handle different alignment behaviour between
+> > > different hw. This patch fixes improper retrieval of rfc1042 header
+> > > with QCA4019. This patch along with "ath10k: Properly remove padding
+> > > from the start of rx payload" will fix traffic failure in ethernet
+> > > decap mode for QCA4019.
+> > > 
+> > > Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+> > > Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+> > > Signed-off-by: Sriram R <srirrama@codeaurora.org>
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
+> > [...]
+> > 
+> > I'm curious as to why this backport doesn't include the change to
+> > ath10k_htt_rx_h_find_rfc1042().  I understand that the addition of the
+> > new field is a dependency for the following patch, but shouldn't the
+> > fix included in the upstream commit also be applied to 4.4?
+> > 
+> 
+>    Our main intention with this patchset [1] was to provide fix for 
+> replay detection security issue seen in ath10k driver which needed to be 
+> in the stable releases.
+> 
+> And, as per stable tree guidelines we wanted the patchset to have only 
+> one and this important fix .
 
-While this is useful for uncore events, it screws up names
-for other events, where this is not desirable, like:
+OK, I think the problem here is that the rules say "must" when what's
+really meant is "should".  So the rule "It must fix only one thing."
+really means that commits that each make a single logical change are
+strongly preferred.
 
-Before:
-  # perf stat -e cp/cpu-cycles/ kill
+It does not mean that upstream commits should be trimmed down to
+conform to this.  Greg generally considers it more important to avoid
+changes to the upstream commit, where possible.  Right, Greg?
 
-   Performance counter stats for 'kill':
+And speaking only for myself, I particularly dislike stable backports
+that are significantly different from the original upstream commit but
+don't mention this difference in the commit message.
 
-           1,573,757      cp/cpu-cycles/
+Ben.
 
-Keeping the pattern matching logic, but making the name unique
-in case there's no other match found. That fixes the example
-above and hopefully does not screw up anything else.
-
-After:
-  # perf stat -e cp/cpu-cycles/ kill
-
-   Performance counter stats for 'kill':
-
-           1,573,757      cpu/cpu-cycles/
-
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Agustin Vega-Frias <agustinv@codeaurora.org>
-Link: http://lkml.kernel.org/n/tip-lpb7bmaj3szgmemf53yg4nke@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/builtin-stat.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 096ccb25c11f..fce46252f89c 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1323,6 +1323,7 @@ static void collect_all_aliases(struct perf_evsel *counter,
- 			    void *data)
- {
- 	struct perf_evsel *alias;
-+	int cnt = 0;
- 
- 	alias = list_prepare_entry(counter, &(evsel_list->entries), node);
- 	list_for_each_entry_continue (alias, &evsel_list->entries, node) {
-@@ -1334,7 +1335,15 @@ static void collect_all_aliases(struct perf_evsel *counter,
- 			break;
- 		alias->merged_stat = true;
- 		cb(alias, data, false);
-+		cnt++;
- 	}
-+
-+	/*
-+	 * There's no matching event to aggregate
-+	 * counts with, fix the event name
-+	 */
-+	if (!cnt)
-+		uniquify_event_name(counter);
- }
- 
- static bool collect_data(struct perf_evsel *counter,
+> Also we felt the change in ath10k_htt_rx_h_find_rfc1042() is currently 
+> not  a must-have fix in 4.4 stable tree .
+> 
+> [1]
+> https://patchwork.kernel.org/patch/10370863/
+> https://patchwork.kernel.org/patch/10370865/
+> 
+> Thanks and Regards,
+> Sriram.R
+> 
+> > Ben.
+> 
+> 
 -- 
-2.13.6
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
