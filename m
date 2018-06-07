@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pmERMUcEG1soLgAAmS7hNA
-	; Fri, 08 Jun 2018 22:34:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7SIoCRzfGFtZfQAAmS7hNA
+	; Thu, 07 Jun 2018 07:30:36 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EF5D96089E; Fri,  8 Jun 2018 22:33:59 +0000 (UTC)
+	id 07F656089E; Thu,  7 Jun 2018 07:30:36 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="QvN2/Fwk"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X/m3Gh5i"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
@@ -13,116 +13,162 @@ X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 380E7601B4;
-	Fri,  8 Jun 2018 22:33:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 380E7601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3C8CE605A2;
+	Thu,  7 Jun 2018 07:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C8CE605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753172AbeFHWd4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 18:33:56 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41440 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753123AbeFHWdw (ORCPT
+        id S932102AbeFGHad (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:30:33 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:35048 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750897AbeFGHab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 18:33:52 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a11-v6so7300674pff.8
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 15:33:52 -0700 (PDT)
+        Thu, 7 Jun 2018 03:30:31 -0400
+Received: by mail-vk0-f67.google.com with SMTP id o17-v6so5433950vka.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:30:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VpGdfL/yVNmPGPalESPmJER/HpMk9feRIIX49+mVX68=;
-        b=QvN2/Fwk0Vj44AAFiOordN8yMJkvc9sSN04j0aR2is1K7Oo3NICVNo0sunhP9OD5iC
-         /9scNaSqkLX0zES3zw5ds4DdNj+z7rV5jELJfoWzjzfjtN5+1Z4WvAbMiFjsTzKu4bXD
-         7Bo5/s0TGkRepGsSgU9xFkERfJzEqOJMWu3bjzN69goJRkt2jrKxIJmmQnP08b84Yp+H
-         M0dhK/GbaDBAlhkJa4eW75vypDD42YmCXpvoiFZroi+hKuZsgegLa1b6ikVx4KyiYQs2
-         0L3SO7XOleS9EGFcrhJbsccEVFC4SKkCanXZyh32S3MbMJr0ZW1055TBrcThBzm8cfr8
-         touw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vPL9vQW3X0tl5VfmRFVdk+rwFnk6aclThxxoX9HW76o=;
+        b=X/m3Gh5ipOHsw8ClCyUFWMMDMb+NYqJTgN13sQj+9JxFLTvNNZgpbDknP9PjosrsEH
+         yc9s0icnK01eHjVV3wc3XjMw/hzXj1u27XKnSiB6JPWNfNDAAGOA6A6hHSGYUv/MCMEg
+         WhEHG2/yDIuypJui9u1oCKYkn+uLKFPnQA3bs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=VpGdfL/yVNmPGPalESPmJER/HpMk9feRIIX49+mVX68=;
-        b=qrq+d+tRXulfEi2fojshoLFZZ6gz44dzc6cck2ErxeYiP/yjGPGgBd5Jiz7OfKp/Y7
-         sZQGOp5CrKJCX8onDYa1rBpRueIDhlMNmH74GqAP/PKapahSm4xVEGnLBcXXAfYXoUqF
-         37iMpKbbnOyQH3TuBP//ZNiPWYX5r6NabKXN4vO869pzn1WfUvkWLj8SB9G5njOt/0ro
-         tjLAUOZ6CYQkqPtzKkt/TqFEqWf/FBMfvyWtZ8VX9IRfWdJqDYwgsnKmELd5WnQV2pRD
-         6xHAkQ2z3jHUY3Vqy8jZhdgVvkfjwEdpLKIyEk3QYSZSS18kU+/ZSoprm57YRR5gFTW8
-         tGSQ==
-X-Gm-Message-State: APt69E0Lgm22P+6co2CU19sRzByW3VN5Knyiz8vWi3LbnGUrQqNDHIOk
-        L3RgUujX6Ft+fi5k5sZnE40rLw==
-X-Google-Smtp-Source: ADUXVKIWSGMDlZ1/KpO4nw8tXxcBmR1BZMDHgavhutySZ0oKPDTFHCYaUs9B9O7ts4KpaAXLGzN6bw==
-X-Received: by 2002:a62:d388:: with SMTP id z8-v6mr7849437pfk.8.1528497232329;
-        Fri, 08 Jun 2018 15:33:52 -0700 (PDT)
-Received: from localhost ([73.93.152.77])
-        by smtp.gmail.com with ESMTPSA id z82-v6sm40348662pfk.30.2018.06.08.15.33.51
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vPL9vQW3X0tl5VfmRFVdk+rwFnk6aclThxxoX9HW76o=;
+        b=QZm05NX2cEGmGDbPLbUVF1jJGl5sphYiJY/kGlVFAUHI5YU89Vx9wmNAgRJYg5efz3
+         A71ysJVZgAIMaYQAHm2WCIu9SFu7KG3+7ev9lcRb5h7v+0kt28sqwzIWq3TzxgkvpKjt
+         0TLQ9EDg8VRNuseCTvaSF6S6r1tZK2/FBSGHMoQj/uIDnFG+FHG9znEob1Ij/ots3Z0z
+         GGB26uVlKPKpC/cCoz3uZYf+SkSSAaJc5TzG/v6x4AcoD46W/xj9+Ofm2BK1q6p828DG
+         0npsdrUPmESYuDfsatmC31WCp36qT5x7+xn4mpH/jDZd2IHOpp+863FY6zA18RjhK/gH
+         HSDg==
+X-Gm-Message-State: APt69E2ajxYn2ES1xWwKLBLqW8IDAUivwTYGjcLW3RTDzN/7tECLLNxJ
+        9SvyxMIltt6XSzMHmjQkKFSj9b88Pik=
+X-Google-Smtp-Source: ADUXVKLVn7ghDlWPu7OP6HamUjOLxwJva7AmBo3e9c1XdXWdynj6YUBYk3TeALhjaDr5fD439+hA6Q==
+X-Received: by 2002:a1f:4603:: with SMTP id t3-v6mr430014vka.56.1528356630528;
+        Thu, 07 Jun 2018 00:30:30 -0700 (PDT)
+Received: from mail-vk0-f48.google.com (mail-vk0-f48.google.com. [209.85.213.48])
+        by smtp.gmail.com with ESMTPSA id o85-v6sm14942712vkd.45.2018.06.07.00.30.29
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 15:33:51 -0700 (PDT)
-Date: Fri, 08 Jun 2018 15:33:51 -0700 (PDT)
-X-Google-Original-Date: Fri, 08 Jun 2018 13:22:15 PDT (-0700)
-Subject: Re: [PATCH 04/24] 32-bit userspace ABI: introduce ARCH_32BIT_OFF_T config option
-In-Reply-To: <20180608173207.nwoi25jee52gpdwy@armageddon.cambridge.arm.com>
-CC: ynorov@caviumnetworks.com, Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, szabolcs.nagy@arm.com,
-        heiko.carstens@de.ibm.com, philipp.tomsich@theobroma-systems.com,
-        joseph@codesourcery.com, sellcey@caviumnetworks.com,
-        Prasun.Kapoor@caviumnetworks.com, schwab@suse.de, agraf@suse.de,
-        bamv2005@gmail.com, geert@linux-m68k.org, Dave.Martin@arm.com,
-        kilobyte@angband.pl, manuel.montezelo@gmail.com,
-        james.hogan@imgtec.com, cmetcalf@mellanox.com, pinskia@gmail.com,
-        linyongting@huawei.com, klimov.linux@gmail.com, broonie@kernel.org,
-        maxim.kuvyrkov@linaro.org, fweimer@redhat.com,
-        Nathan_Lynch@mentor.com, james.morse@arm.com,
-        ramana.gcc@googlemail.com, schwidefsky@de.ibm.com,
-        davem@davemloft.net, christoph.muellner@theobroma-systems.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: catalin.marinas@arm.com
-Message-ID: <mhng-e1922456-a05b-46f9-8644-d45ad70a55e5@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 07 Jun 2018 00:30:29 -0700 (PDT)
+Received: by mail-vk0-f48.google.com with SMTP id q135-v6so5435270vkh.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 00:30:29 -0700 (PDT)
+X-Received: by 2002:a1f:e686:: with SMTP id d128-v6mr427105vkh.176.1528356628694;
+ Thu, 07 Jun 2018 00:30:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180605103328.176255-1-tfiga@chromium.org> <20180605103328.176255-2-tfiga@chromium.org>
+ <CAAoAYcOJ5Q2rHqGEmcStxxXj423a3ddKOSzvwRV6R5-UxhM+Hg@mail.gmail.com> <b767d9d7-5a26-f6f8-3978-81e8d60769c2@xs4all.nl>
+In-Reply-To: <b767d9d7-5a26-f6f8-3978-81e8d60769c2@xs4all.nl>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 7 Jun 2018 16:30:16 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BSq+kz0xxrFVFKhA4XFJE1hF8NHomQSGqYzNo+Swdyyw@mail.gmail.com>
+Message-ID: <CAAFQd5BSq+kz0xxrFVFKhA4XFJE1hF8NHomQSGqYzNo+Swdyyw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] media: docs-rst: Add decoder UAPI specification
+ to Codec Interfaces
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: dave.stevenson@raspberrypi.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?=
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?=
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        todor.tomov@linaro.org, nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 08 Jun 2018 10:32:07 PDT (-0700), catalin.marinas@arm.com wrote:
-> On Wed, May 16, 2018 at 11:18:49AM +0300, Yury Norov wrote:
->> diff --git a/arch/Kconfig b/arch/Kconfig
->> index 76c0b54443b1..ee079244dc3c 100644
->> --- a/arch/Kconfig
->> +++ b/arch/Kconfig
->> @@ -264,6 +264,21 @@ config ARCH_THREAD_STACK_ALLOCATOR
->>  config ARCH_WANTS_DYNAMIC_TASK_STRUCT
->>  	bool
->>
->> +config ARCH_32BIT_OFF_T
->> +	bool
->> +	depends on !64BIT
->> +	help
->> +	  All new 32-bit architectures should have 64-bit off_t type on
->> +	  userspace side which corresponds to the loff_t kernel type. This
->> +	  is the requirement for modern ABIs. Some existing architectures
->> +	  already have 32-bit off_t. This option is enabled for all such
->> +	  architectures explicitly. Namely: arc, arm, blackfin, cris, frv,
->> +	  h8300, hexagon, m32r, m68k, metag, microblaze, mips32, mn10300,
->> +	  nios2, openrisc, parisc32, powerpc32, score, sh, sparc, tile32,
->> +	  unicore32, x86_32 and xtensa. This is the complete list. Any
->> +	  new 32-bit architecture should declare 64-bit off_t type on user
->> +	  side and so should not enable this option.
+On Thu, Jun 7, 2018 at 4:22 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
 >
-> Do you know if this is the case for riscv and nds32, merged in the
-> meantime? If not, I suggest you drop this patch altogether and just
-> define force_o_largefile() for arm64/ilp32 as we don't seem to stick to
-> "all new 32-bit architectures should have 64-bit off_t".
+> On 06/05/2018 03:10 PM, Dave Stevenson wrote:
+> > Hi Tomasz.
+> >
+> > Thanks for formalising this.
+> > I'm working on a stateful V4L2 codec driver on the Raspberry Pi and
+> > was having to deduce various implementation details from other
+> > drivers. I know how much we all tend to hate having to write
+> > documentation, but it is useful to have.
+> >
+> > On 5 June 2018 at 11:33, Tomasz Figa <tfiga@chromium.org> wrote:
+> >> Due to complexity of the video decoding process, the V4L2 drivers of
+> >> stateful decoder hardware require specific sequencies of V4L2 API call=
+s
+> >> to be followed. These include capability enumeration, initialization,
+> >> decoding, seek, pause, dynamic resolution change, flush and end of
+> >> stream.
+> >>
+> >> Specifics of the above have been discussed during Media Workshops at
+> >> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+> >> Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API that
+> >> originated at those events was later implemented by the drivers we alr=
+eady
+> >> have merged in mainline, such as s5p-mfc or mtk-vcodec.
+> >>
+> >> The only thing missing was the real specification included as a part o=
+f
+> >> Linux Media documentation. Fix it now and document the decoder part of
+> >> the Codec API.
+> >>
+> >> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> >> ---
+> >>  Documentation/media/uapi/v4l/dev-codec.rst | 771 ++++++++++++++++++++=
++
+> >>  Documentation/media/uapi/v4l/v4l2.rst      |  14 +-
+> >>  2 files changed, 784 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentatio=
+n/media/uapi/v4l/dev-codec.rst
+> >> index c61e938bd8dc..0483b10c205e 100644
+> >> --- a/Documentation/media/uapi/v4l/dev-codec.rst
+> >> +++ b/Documentation/media/uapi/v4l/dev-codec.rst
+> >> @@ -34,3 +34,774 @@ the codec and reprogram it whenever another file h=
+andler gets access.
+> >>  This is different from the usual video node behavior where the video
+> >>  properties are global to the device (i.e. changing something through =
+one
+> >>  file handle is visible through another file handle).
+> >
+> > I know this isn't part of the changes, but raises a question in
+> > v4l2-compliance (so probably one for Hans).
+> > testUnlimitedOpens tries opening the device 100 times. On a normal
+> > device this isn't a significant overhead, but when you're allocating
+> > resources on a per instance basis it quickly adds up.
+> > Internally I have state that has a limit of 64 codec instances (either
+> > encode or decode), so either I allocate at start_streaming and fail on
+> > the 65th one, or I fail on open. I generally take the view that
+> > failing early is a good thing.
+> > Opinions? Is 100 instances of an M2M device really sensible?
+>
+> Resources should not be allocated by the driver until needed (i.e. the
+> queue_setup op is a good place for that).
+>
+> It is perfectly legal to open a video node just to call QUERYCAP to
+> see what it is, and I don't expect that to allocate any hardware resource=
+s.
+> And if I want to open it 100 times, then that should just work.
+>
+> It is *always* wrong to limit the number of open arbitrarily.
 
-We (RISC-V) don't have support for rv32i in glibc yet, so there really isn't a 
-fixed ABI there yet.  From my understanding the rv32i port as it currently 
-stands has a 32-bit off_t (via __kernel_off_t being defined as long), so this 
-change would technically be a kernel ABI break.
+That's a valid point indeed. Besides the querying use case, userspace
+might just want to pre-open a bigger number of instances, but it
+doesn't mean that they would be streaming all at the same time indeed.
 
-Since we don't have rv32i glibc yet I'm not fundamentally opposed to an ABI 
-break.  Is there a concrete advantage to this?
+Best regards,
+Tomasz
