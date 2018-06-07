@@ -1,151 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4qfBNXfJGFvhZQAAmS7hNA
-	; Thu, 07 Jun 2018 05:59:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id gJV4IRS0GVtqbAAAmS7hNA
+	; Thu, 07 Jun 2018 22:40:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7219D602FC; Thu,  7 Jun 2018 05:59:07 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="UBa72C/Q"
+	id A10266089E; Thu,  7 Jun 2018 22:40:18 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5BF3F602FC;
-	Thu,  7 Jun 2018 05:59:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BF3F602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 390F360290;
+	Thu,  7 Jun 2018 22:40:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 390F360290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeFGF7D (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 01:59:03 -0400
-Received: from services.gouders.net ([141.101.32.176]:42395 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751122AbeFGF7C (ORCPT
+        id S1752350AbeFGWkP (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:40:15 -0400
+Received: from www62.your-server.de ([213.133.104.62]:46632 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752156AbeFGWkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 01:59:02 -0400
-Received: from localhost (ltea-047-066-004-082.pools.arcor-ip.net [47.66.4.82])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w575uZrl008943
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jun 2018 07:56:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1528350996; bh=+gt+oUMnRWXu3BZrUPkh69qnzCO4g36b/UQHwblPYJg=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date;
-        b=UBa72C/QKATvCBqK98JNX+ebdhm2UDEXI9k+p8nrtLz0cWk+Otf4Jiiudb70agD+A
-         mAQnSn6SgxUyC4slxcXfa84yqLlyBnKyKW7xPxt9EcrtoulQadooWefyEWgJylWYMe
-         6f2o9NtMGek668Gr2nKo5Is1hQlK1Dl8nXaH5WfQ=
-From: Dirk Gouders <dirk@gouders.net>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Subject: Re: [RFC 0/1] mconf: Emacs-like isearch
-In-Reply-To: <CAK7LNARWC3J4V=Nx9rypwaWK8Lsv9A6J3LDW7s6E1xjc0JDE4A@mail.gmail.com>
-        (Masahiro Yamada's message of "Thu, 7 Jun 2018 11:02:37 +0900")
-References: <20180606215616.12817-1-dirk@gouders.net>
-        <a594b5a7-d5c8-e938-df4e-dbba93ff3837@infradead.org>
-        <ghzi07v944.fsf@lena.gouders.net>
-        <f833ff8b-75ed-3ca4-ec24-a129a05902d1@infradead.org>
-        <ghr2ljv5c9.fsf@lena.gouders.net>
-        <CAK7LNARWC3J4V=Nx9rypwaWK8Lsv9A6J3LDW7s6E1xjc0JDE4A@mail.gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-Date: Thu, 07 Jun 2018 07:56:33 +0200
-Message-ID: <ghmuw7uoku.fsf@lena.gouders.net>
+        Thu, 7 Jun 2018 18:40:13 -0400
+Received: from [178.197.248.12] (helo=linux.home)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fR3Zi-0002Do-No; Fri, 08 Jun 2018 00:40:10 +0200
+Subject: Re: [PATCH] bpf: attach type BPF_LIRC_MODE2 should not depend on
+ CONFIG_BPF_CGROUP
+To: Y Song <ys114321@gmail.com>, Sean Young <sean@mess.org>
+Cc: Matthias Reichl <hias@horus.com>, linux-media@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Devin Heitmueller <dheitmueller@kernellabs.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>
+References: <cover.1527419762.git.sean@mess.org>
+ <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
+ <20180604174730.sctfoklq7klswebp@camel2.lan>
+ <20180605101629.yffyp64o7adg6hu5@gofer.mess.org>
+ <04cc36e7-4597-dc57-4ad7-71afcc17244a@iogearbox.net>
+ <20180606210939.q3vviyc4b2h6gu3c@gofer.mess.org>
+ <CAH3MdRXE8=dE25Sj3TPDzVh7ytnvCkUDvCDzZkEZe0N84dy-Zw@mail.gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <34406f72-722d-9c23-327f-b7c5d7a3090c@iogearbox.net>
+Date: Fri, 8 Jun 2018 00:40:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAH3MdRXE8=dE25Sj3TPDzVh7ytnvCkUDvCDzZkEZe0N84dy-Zw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.99.3/24642/Thu Jun  7 22:39:10 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+On 06/07/2018 08:14 PM, Y Song wrote:
+> On Wed, Jun 6, 2018 at 2:09 PM, Sean Young <sean@mess.org> wrote:
+>> Compile bpf_prog_{attach,detach,query} even if CONFIG_BPF_CGROUP is not
+>> set.
+> 
+> It should be CONFIG_CGROUP_BPF here. The same for subject line.
+> Today, if CONFIG_CGROUP_BPF is not defined. Users will get an -EINVAL
+> if they try to attach/detach/query.
+> 
+> I am not sure what is the motivation behind this change. Could you explain more?
 
-> 2018-06-07 8:54 GMT+09:00 Dirk Gouders <dirk@gouders.net>:
->> Randy Dunlap <rdunlap@infradead.org> writes:
->>
->>> On 06/06/2018 03:32 PM, Dirk Gouders wrote:
->>>> Randy Dunlap <rdunlap@infradead.org> writes:
->>>>
->>>>> On 06/06/2018 02:56 PM, Dirk Gouders wrote:
->>>>>> Hello,
->>>>>>
->>>>>> being an Emacs user, I frequently find myself pressing CTRL-s in mconf
->>>>>> to search for some menu entry, especially in large menus.
->
->
-> I use Emacs, but I have never typed Ctrl-s in menuconfig.
->
-> Is it important to use the same key pattern as in Emacs?
->
-> You intercepted Ctrl-*
->
-> Currently, Ctrl-C terminates the program,
-> but this patch makes it no-op.
+Motivation was that lirc2 progs are not related to cgroups at all and there
+are users that have compiled it out, yet it uses BPF_PROG_ATTACH/DETACH for
+managing them. This definitely needs to be more clearly explained in the
+changelog, agree.
 
-Yes, Segher also pointed out that I at least should have mentioned this
-in the cover letter.  I simply forgot that, but I was aware that
-forced raw-mode probably is not acceptable.
-
-I'd say it's not important to start isearch with CTRL-s, I am just so
-used to it.  So, I am open for suggestions.  Meanwhile, in a V2 I will
-try to stay with CTRL-s (and probably another unused simpler key) but
-also create a possibility to toggle raw-mode with default off.
-
->>>>>> I decided to implement a basic isearch in mconf and would like to hear
->>>>>> if others find this functionality useful, as well.
->>>>>>
->>>>>> The new functionality is started with pressing CTRL-s followed by
->>>>>> characters that form the search string.  To search for further
->>>>>> occurences of an entered string, press CTRL-s instead of further
->>>>>> characters.
->>>>>>
->>>>>> For example: to navigate to the USB device drivers, press CTRL-s de ENTER ENTER usb ENTER ENTER
->>>>>
->>>>> Not being an emacs user, what is the "de" for above?
->>>>
->>>> "de" (with my .config) causes a match for "Device Drivers" --
->>>> no other menu entry matching the string "de" is befor that entry.
->>>>
->>>
->>> Device Drivers is the first match for me also.
->>>
->>> To get to the USB drivers, I have to enter:
->>>       CTRL-s de ENTER ENTER CTRL-s usb ENTER ENTER
->>
->> Yes, I left out the second CTRL-s, thank you!
->>
->> Oh well, I shouldn't have sent this late at night, then I would probably
->> have explained the needed input as:
->>
->>      1) CTRL-s  // start isearch
->>      2) de      // substring that matches "Device Drivers"
->>      3) ENTER   // quit isearch
->>      4) ENTER   // enter Device Drivers menu
->>      5) CTRL-s  // start isearch
->>      6) usb     // navigate to USB support
->>      7) ENTER   // quit isearch
->>      8) ENTER   // enter USB support menu
->
->
-> Hmm.
->
-> I tried this, but I was a bit annoyed.
->
->
-> I wonder if this could be more user-friendly.
->
-> For example, I want KEY_UP/DOWN/LEFT/RIGHT
-> to quit the search mode without pressing ENTER.
-
-Thank you for testing it.  Concerning annoyance, did you mean the isearch
-functionality itself or the incomplete implementation, i.e. the missing
-possibility to use above keys?
-
-I will handle the above keys in V2, additionally to fixing a problem
-with mismatches.
-
-Dirk
+>> Signed-off-by: Sean Young <sean@mess.org>
+>> ---
+>>  include/linux/bpf-cgroup.h |  31 +++++++++++
+>>  kernel/bpf/cgroup.c        | 110 +++++++++++++++++++++++++++++++++++++
+>>  kernel/bpf/syscall.c       | 105 ++---------------------------------
+>>  3 files changed, 145 insertions(+), 101 deletions(-)
+>>[...]
