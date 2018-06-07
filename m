@@ -1,313 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m57bLYtIGFusdgAAmS7hNA
-	; Wed, 06 Jun 2018 20:50:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AJTgFYqaGVt8JgAAmS7hNA
+	; Thu, 07 Jun 2018 20:50:41 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8C24460861; Wed,  6 Jun 2018 20:50:11 +0000 (UTC)
+	id AAAB960908; Thu,  7 Jun 2018 20:50:40 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nRU7REFF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rw7e11NO"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9864C605BD;
-	Wed,  6 Jun 2018 20:50:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9864C605BD
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4345B605A2;
+	Thu,  7 Jun 2018 20:50:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4345B605A2
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752976AbeFFUuI (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 16:50:08 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36322 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752265AbeFFUuG (ORCPT
+        id S932744AbeFGUug (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:50:36 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45566 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932634AbeFGUua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 16:50:06 -0400
-Received: by mail-wm0-f66.google.com with SMTP id v131-v6so14538203wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 13:50:05 -0700 (PDT)
+        Thu, 7 Jun 2018 16:50:30 -0400
+Received: by mail-pg0-f65.google.com with SMTP id z1-v6so5308780pgv.12
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:50:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4ffmpEUh6Z/c4OcaBFw1QbfqKOUGPKoLDo9CqFtoKYg=;
-        b=nRU7REFFZwrSgwxwnucfUzB+IZdLedcrEV8KFRCtoyaZmgCAJdngF9kMF0GUZHpzM4
-         7RNNS8vsjZOt870soVXSeVno89oLM79wIs17tEHEGgCc8MvoYO9HPH0I2lYpE875M5L2
-         E47vTIjrq304eMzEheYUo7F87FK2mzsfZDwQhGoZjEnuOuu6gcqoHB25D0nfhf6EsFPO
-         PhSdIMpOmPbjN11xWS2bpKoUQPpnEWD7xzQnKBdlkxzORqUrEphO190IRv5H3FN+vJlq
-         dA3uJVh2u3p7nD+uNDVCMWgn9HpfdJ1zMtuwIeegcZnj6UmLYLWquKgZi7+loKaYhweD
-         tU1w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=MPtvFM9RmOmX1Ahr0Fa+Dw3BDhmehCY5YEyrPuKZw+s=;
+        b=rw7e11NOPEN2fHvjHq8Uq5Jmk/xggXoyj9mloiRQX+ipQUAxnZGrfsP9h3t/CzEAAG
+         4r+M2D/VFN4ee60iXOxm6hJ6OgEsqcsLyu+nf9BoVE8QzXyZ6i5jwZ2FE4J7WIrWYHgc
+         i8X6mvzL1ZcY+NPI5AdRxidHZGvoCNQqDqn0oEnZerQCAi9XiJVqNcdjmjmp9i+UoZdp
+         Mx1iqU66mIUhM6RY6a7r/5Y+5/bsXKV+le2eI2doDAzhxSWt56G/tnP+Of6uYlrIJEsk
+         VwAi2H27McjUFzyRex2eC1ne93a+kp7MGgWHD7Fyg9PlipVB7bsQh1NBUHdIJ50xuE4e
+         eanQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4ffmpEUh6Z/c4OcaBFw1QbfqKOUGPKoLDo9CqFtoKYg=;
-        b=tDH++GMXTorK+B0HjI0JW7hS31b4y4hG2JikSOqmvPh8KWNQ7GeV3hq+DFdaxsgU4c
-         afqZMAq4g73unPPy6tjMmWXUUJXotvxd6KNniUZN0ixJtUoBWL7QPTBBCATHvgN1HUYw
-         bJgXNrm+tdCTmgvP1ovcIfrpb8Y3cpzcDqIawA2sl7/bMXoVYev1vATurw/g1qinU4Oc
-         qA81i35ZIwjnXV5NI/2UIRI5JRMX4L84/Q6L+3+gI8PorGlrZ31o6BZvfDzORvky5rhE
-         VNFMVCQtj8Ou0FbBtGXd2AvND+XFvPQlIpm5rN1MDEHeI899WyHr4dEWlnC3payHWSL8
-         5yvw==
-X-Gm-Message-State: APt69E2a5DnP/EwTnN791byohiqvs17vSa4n/L7Jf42OCqXUv1xAq0e7
-        HQ04mi/CA1NktCwjwY0bJH84IoGWufQFtiVD6Tre1Q==
-X-Google-Smtp-Source: ADUXVKJb3TGrY6+vTMVN6TJwFpk79T/Atu7JqR/v30znNcv4SWUYdpL4J+t24opZ66qRfzHi2iDXtYfc7+Rrcup8Auo=
-X-Received: by 2002:a1c:20c7:: with SMTP id g190-v6mr2954240wmg.2.1528318204100;
- Wed, 06 Jun 2018 13:50:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
-In-Reply-To: <152698356466.3393.5351712806709424140.stgit@localhost.localdomain>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Wed, 6 Jun 2018 13:49:52 -0700
-Message-ID: <CALvZod5==RV=emZ_gqC1UhGsx7W=YkMtSXJ-Uzc04HQH29zERA@mail.gmail.com>
-Subject: Re: [PATCH v7 00/17] Improve shrink_slab() scalability (old
- complexity was O(n^2), new is O(n))
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        stummala@codeaurora.org, gregkh@linuxfoundation.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Roman Gushchin <guro@fb.com>, mka@chromium.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Chris Wilson <chris@chris-wilson.co.uk>, longman@redhat.com,
-        Minchan Kim <minchan@kernel.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>, jbacik@fb.com,
-        Guenter Roeck <linux@roeck-us.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>, lirongqing@baidu.com,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=MPtvFM9RmOmX1Ahr0Fa+Dw3BDhmehCY5YEyrPuKZw+s=;
+        b=XGVAfMT4KMy/SSKax99M4qeWwwNYcxtVNm/USWzDWtrAsyW1HCosJ2sbT+kEPGaXdU
+         IMOtGGhHOhon11nB2QFpsGkrcqFf8/shBpiqObmay4uHYOhFmwuiIYU2MCM/atVm6vD1
+         N2tDUIe7digECEn14uPOia00h70tK2KiJ/U5Hn+9EcKVaJLzNoRBdWkyITN5eD08q1F9
+         K3lk9z/wAGXTpqoz/1N/nP8Nmqf1Wfc8rBRMSfktx3/f84DhnaYTKvCeUiXR3ZEGzoRd
+         9/s2ZUc7srAb1xv9r4KLw2EsyzPmKjqhgCIcud/k77F7VWar9JFISlrOkwWexk3T2anm
+         hUKQ==
+X-Gm-Message-State: APt69E25Jb1rrJpYOYwIiUu7PpE1BrikJpgDgoi+SJC+9NmCkaQp5gRt
+        If8sOlDa5DBy4s51GvvRM5lLkA==
+X-Google-Smtp-Source: ADUXVKJzpqGhOJG50C6Qk9TkTBZRosfdu9mPfPvtlT3vJrxkH8kwDOLJtOmOZsK3BHfzUuTrXTQoYg==
+X-Received: by 2002:a62:6cc4:: with SMTP id h187-v6mr3104708pfc.145.1528404629816;
+        Thu, 07 Jun 2018 13:50:29 -0700 (PDT)
+Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
+        by smtp.gmail.com with ESMTPSA id w18-v6sm3780460pgq.1.2018.06.07.13.50.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 13:50:28 -0700 (PDT)
+From: Nick Desaulniers <ndesaulniers@google.com>
+To: akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
+        tglx@linutronix.de
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
+        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
+        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
+        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
+        ard.biesheuvel@linaro.org, akataria@vmware.com,
+        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
+        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
+        mjg59@google.com, joe@perches.com
+Subject: [PATCH v4 3/3] x86: paravirt: make native_save_fl extern inline
+Date: Thu,  7 Jun 2018 13:49:27 -0700
+Message-Id: <20180607204927.219329-4-ndesaulniers@google.com>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+In-Reply-To: <20180607204927.219329-1-ndesaulniers@google.com>
+References: <20180607204927.219329-1-ndesaulniers@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 22, 2018 at 3:07 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> Hi,
->
-> this patches solves the problem with slow shrink_slab() occuring
-> on the machines having many shrinkers and memory cgroups (i.e.,
-> with many containers). The problem is complexity of shrink_slab()
-> is O(n^2) and it grows too fast with the growth of containers
-> numbers.
->
-> Let we have 200 containers, and every container has 10 mounts
-> and 10 cgroups. All container tasks are isolated, and they don't
-> touch foreign containers mounts.
->
-> In case of global reclaim, a task has to iterate all over the memcgs
-> and to call all the memcg-aware shrinkers for all of them. This means,
-> the task has to visit 200 * 10 = 2000 shrinkers for every memcg,
-> and since there are 2000 memcgs, the total calls of do_shrink_slab()
-> are 2000 * 2000 = 4000000.
->
-> 4 million calls are not a number operations, which can takes 1 cpu cycle.
-> E.g., super_cache_count() accesses at least two lists, and makes arifmetical
-> calculations. Even, if there are no charged objects, we do these calculations,
-> and replaces cpu caches by read memory. I observed nodes spending almost 100%
-> time in kernel, in case of intensive writing and global reclaim. The writer
-> consumes pages fast, but it's need to shrink_slab() before the reclaimer
-> reached shrink pages function (and frees SWAP_CLUSTER_MAX pages). Even if
-> there is no writing, the iterations just waste the time, and slows reclaim down.
->
-> Let's see the small test below:
->
-> $echo 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
-> $mkdir /sys/fs/cgroup/memory/ct
-> $echo 4000M > /sys/fs/cgroup/memory/ct/memory.kmem.limit_in_bytes
-> $for i in `seq 0 4000`;
->         do mkdir /sys/fs/cgroup/memory/ct/$i;
->         echo $$ > /sys/fs/cgroup/memory/ct/$i/cgroup.procs;
->         mkdir -p s/$i; mount -t tmpfs $i s/$i; touch s/$i/file;
-> done
->
-> Then, let's see drop caches time (5 sequential calls):
-> $time echo 3 > /proc/sys/vm/drop_caches
->
-> 0.00user 13.78system 0:13.78elapsed 99%CPU
-> 0.00user 5.59system 0:05.60elapsed 99%CPU
-> 0.00user 5.48system 0:05.48elapsed 99%CPU
-> 0.00user 8.35system 0:08.35elapsed 99%CPU
-> 0.00user 8.34system 0:08.35elapsed 99%CPU
->
->
-> Last four calls don't actually shrink something. So, the iterations
-> over slab shrinkers take 5.48 seconds. Not so good for scalability.
->
-> The patchset solves the problem by making shrink_slab() of O(n)
-> complexity. There are following functional actions:
->
-> 1)Assign id to every registered memcg-aware shrinker.
-> 2)Maintain per-memcgroup bitmap of memcg-aware shrinkers,
->   and set a shrinker-related bit after the first element
->   is added to lru list (also, when removed child memcg
->   elements are reparanted).
-> 3)Split memcg-aware shrinkers and !memcg-aware shrinkers,
->   and call a shrinker if its bit is set in memcg's shrinker
->   bitmap.
->   (Also, there is a functionality to clear the bit, after
->   last element is shrinked).
->
-> This gives signify performance increase. The result after patchset is applied:
->
-> $time echo 3 > /proc/sys/vm/drop_caches
->
-> 0.00user 1.10system 0:01.10elapsed 99%CPU
-> 0.00user 0.00system 0:00.01elapsed 64%CPU
-> 0.00user 0.01system 0:00.01elapsed 82%CPU
-> 0.00user 0.00system 0:00.01elapsed 64%CPU
-> 0.00user 0.01system 0:00.01elapsed 82%CPU
->
-> The results show the performance increases at least in 548 times.
->
-> So, the patchset makes shrink_slab() of less complexity and improves
-> the performance in such types of load I pointed. This will give a profit
-> in case of !global reclaim case, since there also will be less
-> do_shrink_slab() calls.
->
-> This patchset is made against linux-next.git tree.
->
-> v7: Refactorings and readability improvements.
->
-> v6: Added missed rcu_dereference() to memcg_set_shrinker_bit().
->     Use different functions for allocation and expanding map.
->     Use new memcg_shrinker_map_size variable in memcontrol.c.
->     Refactorings.
->
-> v5: Make the optimizing logic under CONFIG_MEMCG_SHRINKER instead of MEMCG && !SLOB
->
-> v4: Do not use memcg mem_cgroup_idr for iteration over mem cgroups
->
-> v3: Many changes requested in commentaries to v2:
->
-> 1)rebase on prealloc_shrinker() code base
-> 2)root_mem_cgroup is made out of memcg maps
-> 3)rwsem replaced with shrinkers_nr_max_mutex
-> 4)changes around assignment of shrinker id to list lru
-> 5)everything renamed
->
-> v2: Many changes requested in commentaries to v1:
->
-> 1)the code mostly moved to mm/memcontrol.c;
-> 2)using IDR instead of array of shrinkers;
-> 3)added a possibility to assign list_lru shrinker id
->   at the time of shrinker registering;
-> 4)reorginized locking and renamed functions and variables.
->
-> ---
->
-> Kirill Tkhai (16):
->       list_lru: Combine code under the same define
->       mm: Introduce CONFIG_MEMCG_KMEM as combination of CONFIG_MEMCG && !CONFIG_SLOB
->       mm: Assign id to every memcg-aware shrinker
->       memcg: Move up for_each_mem_cgroup{,_tree} defines
->       mm: Assign memcg-aware shrinkers bitmap to memcg
->       mm: Refactoring in workingset_init()
->       fs: Refactoring in alloc_super()
->       fs: Propagate shrinker::id to list_lru
->       list_lru: Add memcg argument to list_lru_from_kmem()
->       list_lru: Pass dst_memcg argument to memcg_drain_list_lru_node()
->       list_lru: Pass lru argument to memcg_drain_list_lru_node()
->       mm: Export mem_cgroup_is_root()
->       mm: Set bit in memcg shrinker bitmap on first list_lru item apearance
->       mm: Iterate only over charged shrinkers during memcg shrink_slab()
->       mm: Add SHRINK_EMPTY shrinker methods return value
->       mm: Clear shrinker bit if there are no objects related to memcg
->
-> Vladimir Davydov (1):
->       mm: Generalize shrink_slab() calls in shrink_node()
->
->
->  fs/super.c                 |   11 ++
->  include/linux/list_lru.h   |   18 ++--
->  include/linux/memcontrol.h |   46 +++++++++-
->  include/linux/sched.h      |    2
->  include/linux/shrinker.h   |   11 ++
->  include/linux/slab.h       |    2
->  init/Kconfig               |    5 +
->  mm/list_lru.c              |   90 ++++++++++++++-----
->  mm/memcontrol.c            |  173 +++++++++++++++++++++++++++++++------
->  mm/slab.h                  |    6 +
->  mm/slab_common.c           |    8 +-
->  mm/vmscan.c                |  204 +++++++++++++++++++++++++++++++++++++++-----
->  mm/workingset.c            |   11 ++
->  13 files changed, 478 insertions(+), 109 deletions(-)
->
-> --
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+native_save_fl() is marked static inline, but by using it as
+a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
 
-Hi Kirill,
+paravirt's use of native_save_fl() also requires that no GPRs other than
+%rax are clobbered.
 
-I tested this patch series on mmotm tree's
-v4.17-rc6-mmotm-2018-05-25-14-52 tag. I did experiment similar to the
-one I did for your lockless lru_list patch but on an actual machine.
+Compilers have different heuristics which they use to emit stack guard
+code, the emittance of which can break paravirt's callee saved assumption
+by clobbering %rcx.
 
-I created 255 memcgs, 255 ext4 mounts and made each memcg create a
-file containing few KiBs on corresponding mount. Then in a separate
-memcg of 200 MiB limit ran a fork-bomb.
+Marking a function definition extern inline means that if this version
+cannot be inlined, then the out-of-line version will be preferred. By
+having the out-of-line version be implemented in assembly, it cannot be
+instrumented with a stack protector, which might violate custom calling
+conventions that code like paravirt rely on.
 
-I ran the "perf record -ag -- sleep 60" and below are the results:
+The semantics of extern inline has changed since gnu89. This means that
+folks using GCC versions >= 5.1 may see symbol redefinition errors at
+link time for subdirs that override KBUILD_CFLAGS (making the C standard
+used implicit) regardless of this patch. This has been cleaned up
+earlier in the patch set, but is left as a note in the commit message
+for future travelers.
 
-Without the patch series:
-Samples: 4M of event 'cycles', Event count (approx.): 3279403076005
-+  36.40%            fb.sh  [kernel.kallsyms]    [k] shrink_slab
-+  18.97%            fb.sh  [kernel.kallsyms]    [k] list_lru_count_one
-+   6.75%            fb.sh  [kernel.kallsyms]    [k] super_cache_count
-+   0.49%            fb.sh  [kernel.kallsyms]    [k] down_read_trylock
-+   0.44%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_iter
-+   0.27%            fb.sh  [kernel.kallsyms]    [k] up_read
-+   0.21%            fb.sh  [kernel.kallsyms]    [k] osq_lock
-+   0.13%            fb.sh  [kernel.kallsyms]    [k] shmem_unused_huge_count
-+   0.08%            fb.sh  [kernel.kallsyms]    [k] shrink_node_memcg
-+   0.08%            fb.sh  [kernel.kallsyms]    [k] shrink_node
+Reports:
+https://lkml.org/lkml/2018/5/7/534
+https://github.com/ClangBuiltLinux/linux/issues/16
 
-With the patch series:
-Samples: 4M of event 'cycles', Event count (approx.): 2756866824946
-+  47.49%            fb.sh  [kernel.kallsyms]    [k] down_read_trylock
-+  30.72%            fb.sh  [kernel.kallsyms]    [k] up_read
-+   9.51%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_iter
-+   1.69%            fb.sh  [kernel.kallsyms]    [k] shrink_node_memcg
-+   1.35%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_protected
-+   1.05%            fb.sh  [kernel.kallsyms]    [k] queued_spin_lock_slowpath
-+   0.85%            fb.sh  [kernel.kallsyms]    [k] _raw_spin_lock
-+   0.78%            fb.sh  [kernel.kallsyms]    [k] lruvec_lru_size
-+   0.57%            fb.sh  [kernel.kallsyms]    [k] shrink_node
-+   0.54%            fb.sh  [kernel.kallsyms]    [k] queue_work_on
-+   0.46%            fb.sh  [kernel.kallsyms]    [k] shrink_slab_memcg
+Discussion:
+https://bugs.llvm.org/show_bug.cgi?id=37512
+https://lkml.org/lkml/2018/5/24/1371
 
+Thanks to the many folks that participated in the discussion.
 
-Next I did a simple hack by removing shrinker_rwsem lock/unlock from
-shrink_slab_memcg (which is functionally not correct but I made sure
-there aren't any parallel mounts). I got the following result:
+Debugged-by: Alistair Strachan <astrachan@google.com>
+Debugged-by: Matthias Kaehlcke <mka@chromium.org>
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Suggested-by: Tom Stellar <tstellar@redhat.com>
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+---
+ arch/x86/include/asm/irqflags.h |  2 +-
+ arch/x86/kernel/Makefile        |  1 +
+ arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/kernel/irqflags.S
 
-Samples: 5M of event 'cycles', Event count (approx.): 3473394237366
-+  40.13%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_protected
-+  17.66%            fb.sh  [kernel.kallsyms]    [k] shrink_node_memcg
-+  14.78%            fb.sh  [kernel.kallsyms]    [k] mem_cgroup_iter
-+   7.07%            fb.sh  [kernel.kallsyms]    [k] lruvec_lru_size
-+   3.19%            fb.sh  [kernel.kallsyms]    [k] shrink_slab_memcg
-+   2.82%            fb.sh  [kernel.kallsyms]    [k] queued_spin_lock_slowpath
-+   1.96%            fb.sh  [kernel.kallsyms]    [k] try_charge
-+   1.81%            fb.sh  [kernel.kallsyms]    [k] shrink_node
-+   0.91%            fb.sh  [kernel.kallsyms]    [k] page_counter_try_charge
-+   0.65%            fb.sh  [kernel.kallsyms]    [k] css_next_descendant_pre
-+   0.62%            fb.sh  [kernel.kallsyms]    [k] cgroup_file_notify
-
->From the result it seems like, in the workload where one job is
-thrashing and affecting the whole system, this patch series moves the
-load from shrinker list traversal to the shrinker_rwsem lock as there
-isn't much to traverse. Since shrink_slab_memcg only takes read lock
-on shrinker_rwsem, this seems like cache misses/thrashing for rwsem.
-Maybe next direction is to go lockless.
-
-thanks,
-Shakeel
+diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+index 89f08955fff7..c4fc17220df9 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -13,7 +13,7 @@
+  * Interrupt control:
+  */
+ 
+-static inline unsigned long native_save_fl(void)
++extern inline unsigned long native_save_fl(void)
+ {
+ 	unsigned long flags;
+ 
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 02d6f5cf4e70..8824d01c0c35 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -61,6 +61,7 @@ obj-y			+= alternative.o i8253.o hw_breakpoint.o
+ obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
+ obj-y			+= pci-iommu_table.o
+ obj-y			+= resource.o
++obj-y			+= irqflags.o
+ 
+ obj-y				+= process.o
+ obj-y				+= fpu/
+diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
+new file mode 100644
+index 000000000000..ddeeaac8adda
+--- /dev/null
++++ b/arch/x86/kernel/irqflags.S
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <asm/asm.h>
++#include <asm/export.h>
++#include <linux/linkage.h>
++
++/*
++ * unsigned long native_save_fl(void)
++ */
++ENTRY(native_save_fl)
++	pushf
++	pop %_ASM_AX
++	ret
++ENDPROC(native_save_fl)
++EXPORT_SYMBOL(native_save_fl)
++
++/*
++ * void native_restore_fl(unsigned long flags)
++ * %eax/%rdi: flags
++ */
++ENTRY(native_restore_fl)
++	push %_ASM_ARG1
++	popf
++	ret
++ENDPROC(native_restore_fl)
++EXPORT_SYMBOL(native_restore_fl)
+-- 
+2.17.1.1185.g55be947832-goog
