@@ -1,130 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9VpOIwlmGVuNDAAAmS7hNA
-	; Thu, 07 Jun 2018 17:06:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id TCBCDmVHGVtfPQAAmS7hNA
+	; Thu, 07 Jun 2018 14:55:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 34170606DD; Thu,  7 Jun 2018 17:06:48 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a+luCEay"
+	id 43B8D608B8; Thu,  7 Jun 2018 14:55:40 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A5B2260290;
-	Thu,  7 Jun 2018 17:06:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A5B2260290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 81B4F601C3;
+	Thu,  7 Jun 2018 14:55:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 81B4F601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934985AbeFGRGp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 13:06:45 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46057 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934919AbeFGRGn (ORCPT
+        id S964809AbeFGOzc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:55:32 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41057 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934394AbeFGOz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 13:06:43 -0400
-Received: by mail-io0-f196.google.com with SMTP id l25-v6so12627091ioh.12;
-        Thu, 07 Jun 2018 10:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=twx02lUPIhvylaveOv8VYkaG1r2AoNAxI+osMUTMksc=;
-        b=a+luCEayH0Wlcm8rEv7HTEoUxZ847J0ndGJbbbQd/R4avLctFdoBjv0LRhyeAVN74m
-         vaql0dbd9lO8bDH3z+obp3YhHYHnzBCVagONfojuegRP0w0ub9aAgv0XOX0zFSnYEd4Q
-         PuTEzouKzL+qKKx46+UmLzjeXRD7yGVrtuAvw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=twx02lUPIhvylaveOv8VYkaG1r2AoNAxI+osMUTMksc=;
-        b=OP0XtoK7E86gIOtzNid75fwYwxYw2YPON6D17kh7zaFc353FlqzLbSq0RS80A6l1cK
-         /bYc8zRPIpVzOCeCxKYp91z4PaObFg4bhspu+RUCV93EFTeVYNh6ihHb6zVSNJUM0Mbi
-         6G4XbXb9ZcEzxsICBmLYuT+O1CxoBMLnRHdxQB9zEOGOJH38NqK7mxGmQ6naggH92PMl
-         Im2XrdA/3V5Qeit9U5nNP+rHg1ilEQhbUWqdGG9nzFoDxy9KE7bR0NpguWNndiEBlavc
-         QybbN7C6o3gbUDYbnMBn4td+8rik2MtVjmzRERBT1eBtHNPq91fnr/x/FSc5FtQL761R
-         1znA==
-X-Gm-Message-State: APt69E21pzgDbP1eHUm6aFQZs55gAyjh//pMR803P3YId9a+SZFWV1Ax
-        +btDEXFPku3RV6WN2XFt/CUZlbGACgKfQIkYHTQ=
-X-Google-Smtp-Source: ADUXVKKVfRGThhRHAZgEgNuo1+CVGhDtlChv1X4pyXMa2MrPXPUZJQDMCe7bTssTN2dMkciwPRGDXH9GnR8TEKVfspo=
-X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr2471596ion.259.1528391202381;
- Thu, 07 Jun 2018 10:06:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <alpine.DEB.2.21.1806061223560.1579@nanos.tec.linutronix.de> <152838798950.14521.4893346294059739135.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152838798950.14521.4893346294059739135.stgit@dwillia2-desk3.amr.corp.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 7 Jun 2018 10:06:31 -0700
-Message-ID: <CA+55aFyp1xYWomHUHhSv0habEVDXLMOKB_uJnRUSmoVt6SitRQ@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/spectre_v1: Disable compiler optimizations over array_index_mask_nospec()
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 7 Jun 2018 10:55:29 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvby-0005hK-3d; Thu, 07 Jun 2018 15:09:58 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvay-0002jj-Qy; Thu, 07 Jun 2018 15:08:56 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Andy Lutomirski" <luto@kernel.org>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Thomas Garnier" <thgarnie@google.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Ricardo Neri" <ricardo.neri-calderon@linux.intel.com>,
+        "Borislav Petkov" <bp@suse.de>,
+        "David Woodhouse" <dwmw@amazon.co.uk>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.290793390@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 045/410] x86/pti: Mark constant arrays as __initconst
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 9:23 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> Mark notes that gcc optimization passes have the potential to elide
-> necessary invocations of this instruction sequence, so mark the asm
-> volatile.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Ack. I'm not entirely sure this matters much, but it certainly isn't
-wrong either.
+------------------
 
-The reason I'm not 100% convinced this matters is that gcc can *still*
-mess things up for us by simply adding conditionals elsewhere.
+From: Arnd Bergmann <arnd@arndb.de>
 
-For example, let's say we write this:
+commit 4bf5d56d429cbc96c23d809a08f63cd29e1a702e upstream.
 
-    if (idx < foo) {
-        idx = array_idx_nospec(idx, foo);
-        do_something(idx);
-    } else {
-        do_something_else();
-    }
+I'm seeing build failures from the two newly introduced arrays that
+are marked 'const' and '__initdata', which are mutually exclusive:
 
-then everything is obviously fine, right? With the volatile on the
-array_idx_nospec(), we're guaranteed to use the right reduced idx, and
-there's only one user, so we're all good.
+arch/x86/kernel/cpu/common.c:882:43: error: 'cpu_no_speculation' causes a section type conflict with 'e820_table_firmware_init'
+arch/x86/kernel/cpu/common.c:895:43: error: 'cpu_no_meltdown' causes a section type conflict with 'e820_table_firmware_init'
 
-Except maybe do_something(idx) looks something like this:
+The correct annotation is __initconst.
 
-    do_something(int idx)
-    {
-        do_something_else()
-        access(idx);
-    }
+Fixes: fec9434a12f3 ("x86/pti: Do not enable PTI on CPUs which are not vulnerable to Meltdown")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Thomas Garnier <thgarnie@google.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/20180202213959.611210-1-arnd@arndb.de
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/kernel/cpu/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-and gcc decides that "hey, I can combine the two do_something_else()
-cases", and then generates code that is basically
-
-    if (idx < foo)
-        idx = array_idx_nospec(idx, foo);
-    do_something_else();
-    if (idx < foo)
-        access(idx);
-
-instead. And now we're back to the "first branch can be predicted
-correctly, second branch can be mis-predicted".
-
-Honestly, I don't really care, and I don't think the kernel _should_
-care. I don't think this is a problem in practice. I'm just saying
-that adding a "volatile" on array_idx_nospec() doesn't really
-guarantee anything, since it's not a volatile over the whole relevant
-sequence, only over that small part.
-
-So I think the volatile is fine, but I really think it doesn't matter
-either. We're not going to plug every theoretical hole, and I think
-the hole that the volatile plugs is theoretical, not practical.
-
-                      Linus
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -763,7 +763,7 @@ static void identify_cpu_without_cpuid(s
+ #endif
+ }
+ 
+-static const __initdata struct x86_cpu_id cpu_no_speculation[] = {
++static const __initconst struct x86_cpu_id cpu_no_speculation[] = {
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CEDARVIEW,	X86_FEATURE_ANY },
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_CLOVERVIEW,	X86_FEATURE_ANY },
+ 	{ X86_VENDOR_INTEL,	6, INTEL_FAM6_ATOM_LINCROFT,	X86_FEATURE_ANY },
+@@ -776,7 +776,7 @@ static const __initdata struct x86_cpu_i
+ 	{}
+ };
+ 
+-static const __initdata struct x86_cpu_id cpu_no_meltdown[] = {
++static const __initconst struct x86_cpu_id cpu_no_meltdown[] = {
+ 	{ X86_VENDOR_AMD },
+ 	{}
+ };
