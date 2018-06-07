@@ -1,109 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oDfOGizKGFuUbgAAmS7hNA
-	; Thu, 07 Jun 2018 06:01:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ugUFBbFQGVtwCQAAmS7hNA
+	; Thu, 07 Jun 2018 15:36:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 50C8C608B8; Thu,  7 Jun 2018 06:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-	s=default; t=1528351276;
-	bh=pRUAw7VHiKX9BWzDacLGocxsXsJ0O9pJ5mtcpFI0XTI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oh/KBlJEvF2e7jlW3+qiUFR49cr3jtOm2fddnmDeo9/bLopSHh6efyuO0cnQuFBFk
-	 6+7yU74wKhNw9QwFw2mAyorC5HG1iOBHC71ZB1OiC2DfI3lzSX3w8iGkfjW0OGDHCv
-	 dja8pfRpzwDAWtfkrMeD8NGeNDF/DlB9mgmfIgD0=
+	id 10A146074D; Thu,  7 Jun 2018 15:36:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DB33A607F7;
-	Thu,  7 Jun 2018 06:01:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB33A607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id AD05A60590;
+	Thu,  7 Jun 2018 15:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD05A60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753082AbeFGGBO (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 02:01:14 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:20156 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752583AbeFGGAk (ORCPT
+        id S935139AbeFGPgY (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:36:24 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40640 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934245AbeFGOmd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 02:00:40 -0400
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="4326802"
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 06 Jun 2018 23:00:38 -0700
-Received: from westreach.qualcomm.com ([10.228.196.125])
-  by ironmsg01-sd.qualcomm.com with ESMTP; 06 Jun 2018 23:00:37 -0700
-Received: by westreach.qualcomm.com (Postfix, from userid 467151)
-        id 143681F32; Thu,  7 Jun 2018 02:00:36 -0400 (EDT)
-From: Oza Pawandeep <poza@codeaurora.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Timur Tabi <timur@codeaurora.org>
-Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH NEXT 6/6] PCI/PORTDRV: Remove ERR_FATAL handling from pcie_portdrv_slot_reset()
-Date: Thu,  7 Jun 2018 02:00:34 -0400
-Message-Id: <1528351234-26914-6-git-send-email-poza@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
-References: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
+        Thu, 7 Jun 2018 10:42:33 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbd-0005Zk-Ki; Thu, 07 Jun 2018 15:09:37 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb7-00033m-MO; Thu, 07 Jun 2018 15:09:05 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Peter Zijlstra" <peterz@infradead.org>,
+        bp@alien8.de, dwmw@amazon.co.uk, dave.hansen@linux.intel.com,
+        "Joe Konno" <joe.konno@linux.intel.com>,
+        gregkh@linuxfoundation.org, "Ingo Molnar" <mingo@kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>, hpa@zytor.com,
+        jpoimboe@redhat.com, arjan@linux.intel.com, luto@kernel.org,
+        dwmw2@infradead.org, dan.j.williams@intel.com,
+        linux-tip-commits@vger.kernel.org
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.127544642@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 239/410] x86/speculation: Add <asm/msr-index.h>
+ dependency
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are handling ERR_FATAL by resetting the Link in software,skipping the
-driver pci_error_handlers callbacks, removing the devices from the PCI
-subsystem, and re-enumerating, as a result of that, no more calling
-pcie_portdrv_slot_reset in ERR_FATAL case.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+------------------
 
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index 973f1b8..92f5d330 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -42,17 +42,6 @@ __setup("pcie_ports=", pcie_port_setup);
+From: Peter Zijlstra <peterz@infradead.org>
+
+commit ea00f301285ea2f07393678cd2b6057878320c9d upstream.
+
+Joe Konno reported a compile failure resulting from using an MSR
+without inclusion of <asm/msr-index.h>, and while the current code builds
+fine (by accident) this needs fixing for future patches.
+
+Reported-by: Joe Konno <joe.konno@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: arjan@linux.intel.com
+Cc: bp@alien8.de
+Cc: dan.j.williams@intel.com
+Cc: dave.hansen@linux.intel.com
+Cc: dwmw2@infradead.org
+Cc: dwmw@amazon.co.uk
+Cc: gregkh@linuxfoundation.org
+Cc: hpa@zytor.com
+Cc: jpoimboe@redhat.com
+Cc: linux-tip-commits@vger.kernel.org
+Cc: luto@kernel.org
+Fixes: 20ffa1caecca ("x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support")
+Link: http://lkml.kernel.org/r/20180213132819.GJ25201@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/include/asm/nospec-branch.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -6,6 +6,7 @@
+ #include <asm/alternative.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/cpufeature.h>
++#include <asm/msr-index.h>
  
- /* global data */
- 
--static int pcie_portdrv_restore_config(struct pci_dev *dev)
--{
--	int retval;
--
--	retval = pci_enable_device(dev);
--	if (retval)
--		return retval;
--	pci_set_master(dev);
--	return 0;
--}
--
- #ifdef CONFIG_PM
- static int pcie_port_runtime_suspend(struct device *dev)
- {
-@@ -162,14 +151,6 @@ static pci_ers_result_t pcie_portdrv_mmio_enabled(struct pci_dev *dev)
- 
- static pci_ers_result_t pcie_portdrv_slot_reset(struct pci_dev *dev)
- {
--	/* If fatal, restore cfg space for possible link reset at upstream */
--	if (dev->error_state == pci_channel_io_frozen) {
--		dev->state_saved = true;
--		pci_restore_state(dev);
--		pcie_portdrv_restore_config(dev);
--		pci_enable_pcie_error_reporting(dev);
--	}
--
- 	return PCI_ERS_RESULT_RECOVERED;
- }
- 
--- 
-2.7.4
+ /*
+  * Fill the CPU return stack buffer.
