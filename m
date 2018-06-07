@@ -1,277 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eshkOcecHlvcawAAmS7hNA
-	; Mon, 11 Jun 2018 16:01:11 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ucSzFi6YGVu+fAAAmS7hNA
+	; Thu, 07 Jun 2018 20:54:35 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D8D2B607A4; Mon, 11 Jun 2018 16:01:11 +0000 (UTC)
+	id 1A5BC6074D; Thu,  7 Jun 2018 20:54:35 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0FKEzr9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CBE546074D;
-	Mon, 11 Jun 2018 16:01:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CBE546074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9A345601C3;
+	Thu,  7 Jun 2018 20:54:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A345601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932467AbeFKQBJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 12:01:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35202 "EHLO mail.kernel.org"
+        id S932612AbeFGUyc (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:54:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932081AbeFKQBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 12:01:06 -0400
-Received: from vmware.local.home (ppp-93-104-177-77.dynamic.mnet-online.de [93.104.177.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S932516AbeFGUya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 16:54:30 -0400
+Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A42320853;
-        Mon, 11 Jun 2018 16:01:01 +0000 (UTC)
-Date: Mon, 11 Jun 2018 12:00:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: changbin.du@intel.com, kbuild-all@01.org, mingo@redhat.com,
-        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, rdunlap@infradead.org,
-        x86@kernel.org, linux@armlinux.org.uk, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sparse@vger.kernel.org,
-        changbin.du@gmail.com
-Subject: Re: [PATCH v5 4/4] kernel hacking: new config
- CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og optimization
-Message-ID: <20180611120057.5391dfc6@vmware.local.home>
-In-Reply-To: <201806101929.E2oiistg%fengguang.wu@intel.com>
-References: <1528186420-6615-5-git-send-email-changbin.du@intel.com>
-        <201806101929.E2oiistg%fengguang.wu@intel.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C0D7208A0
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 20:54:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528404869;
+        bh=gZqvDyTiIXVTFOWHjmKSy3cvdqggFCpFqWhSS5zfKGk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=g0FKEzr9SXgKkm8aOaTmcEU8w+QVKODvIIS6eQx9qVbmyd6jq84GTBiK+Po+gtiMh
+         Qa05Tnd2vJ6t4H3Hp9bst1lhcvPS0uUODZEduFRw1OAoKGq83Vsak/FIHtnueddpkK
+         FF9/A2aFMVysHqh5+u2IM5vISOF/iiWNOUFfm+ZE=
+Received: by mail-wm0-f51.google.com with SMTP id n5-v6so21745013wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:54:29 -0700 (PDT)
+X-Gm-Message-State: APt69E2GdCrAALWbxp+/q5qSolhz8F08nkAsrYJZJXx5l/NhcOKSxG3L
+        R7CGgEMDZIKq/t8dKxjVPUm5vw0bt+hQmYHcpDfO7A==
+X-Google-Smtp-Source: ADUXVKK29Zb7ztvSpMtp1mxhqVazOzUoVdE9DJQD1mXwtjA6pVLzfnCniIup3+uxsR2OIeITDX7rcbLt9NJQOMbjWCI=
+X-Received: by 2002:a1c:b947:: with SMTP id j68-v6mr2479649wmf.144.1528404868084;
+ Thu, 07 Jun 2018 13:54:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-10-yu-cheng.yu@intel.com>
+In-Reply-To: <20180607143807.3611-10-yu-cheng.yu@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 13:54:16 -0700
+X-Gmail-Original-Message-ID: <CALCETrU8fK1j=H_9xpJrrCSUTcadb8dfjJX-YZwiWDZZFmLxRQ@mail.gmail.com>
+Message-ID: <CALCETrU8fK1j=H_9xpJrrCSUTcadb8dfjJX-YZwiWDZZFmLxRQ@mail.gmail.com>
+Subject: Re: [PATCH 09/10] mm: Prevent madvise from changing shadow stack
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 10 Jun 2018 23:49:55 +0800
-kbuild test robot <lkp@intel.com> wrote:
+On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 
-> Hi Changbin,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v4.17 next-20180608]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/changbin-du-intel-com/kernel-hacking-GCC-optimization-for-better-debug-experience-Og/20180606-001415
-> config: i386-randconfig-x076-06101602 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
-> http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers//usb/typec/fusb302/fusb302.c: In function 'fusb302_handle_togdone_src':
-> >> drivers//usb/typec/fusb302/fusb302.c:1413:10: warning: 'ra_comp' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->      else if (ra_comp)
->              ^
-
-This is a false warning. I'm surprised gcc couldn't catch it. Although
-that code looks like it could have been  done a bit nicer.
-
-
-> --
->    drivers/infiniband/ulp/ipoib/ipoib_main.c: In function 'ipoib_get_netdev':
-> >> drivers/infiniband/ulp/ipoib/ipoib_main.c:2021:30: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->      if (!hca->alloc_rdma_netdev || PTR_ERR(dev) == -EOPNOTSUPP)
-> --
-
-Strange, this is also false, with the same construct.
-
-	if (a) {
-		b = init;
-	}
-	if (!a) {
-		use b;
-
-It warns that b may be unused. I'm guessing the extra option we add in
-gcc by the patch causes gcc to break in this regard.
-
-
-
->    kernel//cgroup/cgroup-v1.c: In function 'cgroup1_mount':
-> >> kernel//cgroup/cgroup-v1.c:1268:3: warning: 'root' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->       percpu_ref_reinit(&root->cgrp.self.refcnt);
->       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> --
-
-Slightly different construct, but similar:
-
-	ret = func();
-	if (ret)
-		goto out_unlock;
-
-	root = init;
-
- out_unlock:
-
-	if (ret)
-		return;
-
-	use root;
-
-
-
->    kernel//trace/bpf_trace.c: In function 'bpf_trace_printk':
-> >> kernel//trace/bpf_trace.c:226:20: warning: 'unsafe_addr' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->               (void *) (long) unsafe_addr,
->                        ^~~~~~~~~~~~~~~~~~
-
-Again similar:
-
-	if (fmt_cnt >= 3)
-		return;
-
-	switch (fmt_cnt) {
-	case 1:
-		unsafe_addr = init;
-		break;
-	case 2:
-		unsafe_addr = init2;
-		break;
-	case 3:
-		unsafe_addr = init3;
-		break;
-	}
-
-	use init;
-
-
->    kernel//trace/bpf_trace.c:170:6: note: 'unsafe_addr' was declared here
->      u64 unsafe_addr;
->          ^~~~~~~~~~~
-> --
->    net//6lowpan/iphc.c: In function 'lowpan_header_decompress':
->    net//6lowpan/iphc.c:617:12: warning: 'iphc1' may be used uninitialized in this function [-Wmaybe-uninitialized]
->      u8 iphc0, iphc1, cid = 0;
->                ^~~~~
-> >> net//6lowpan/iphc.c:617:5: warning: 'iphc0' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->      u8 iphc0, iphc1, cid = 0;
->         ^~~~~
-
-Similar but crazier:
-
-	if (lowpan_fetch_skb(&iphc0) ||
-	    lowpan_fetch_skb(&iphc1))
-		return;
-
-	use iphc0 and ipch1;
-
-where lowpan_fetch_skb() is:
-
-	if (test())
-		return true;
-
-	init data (iphc0 or iphc1);
-	return false;
-
-
-> --
->    net//netfilter/nf_tables_api.c: In function 'nf_tables_dump_set':
-> >> net//netfilter/nf_tables_api.c:3625:2: warning: 'set' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->      set->ops->walk(&dump_ctx->ctx, set, &args.iter);
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-I don't have the same kernel, as this doesn't match. But I'm sure it's
-a false positive like the others.
-
-
-> --
->    drivers/media/dvb-frontends/mn88472.c: In function 'mn88472_set_frontend':
-> >> drivers/media/dvb-frontends/mn88472.c:339:27: warning: 'bandwidth_vals_ptr' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->             bandwidth_vals_ptr[i]);
->                               ^
-> >> drivers/media/dvb-frontends/mn88472.c:320:8: warning: 'bandwidth_val' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->      ret = regmap_write(dev->regmap[2], 0x04, bandwidth_val);
->            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This one may not be a false positive. It really looks like there's a
-path to that being used uninitialized. But I haven't torn that function
-apart enough to really tell, but I don't fault gcc for not warning
-about it. But I like to know if gcc doesn't warn without this patch?
-
-
-> --
->    drivers/media/dvb-frontends/mn88473.c: In function 'mn88473_set_frontend':
-> >> drivers/media/dvb-frontends/mn88473.c:162:7: warning: 'conf_val_ptr' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->       ret = regmap_bulk_write(dev->regmap[1], 0x10, conf_val_ptr, 6);
->       ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Same as the one before it. Need to see if this isn't really a real
-issue.
-
-> --
->    net//netfilter/ipvs/ip_vs_sync.c: In function 'ip_vs_sync_conn':
-> >> net//netfilter/ipvs/ip_vs_sync.c:731:13: warning: 'm' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->      m->nr_conns++;
->      ~~~~~~~~~~~^~
-
-gcc is really stupid on this one.
-
-	if (buff)
-		init m;
-	if (!buff)
-		init m;
-
-	use m;
-
-Really?
-
-> --
->    drivers//hwspinlock/hwspinlock_core.c: In function 'of_hwspin_lock_get_id':
-> >> drivers//hwspinlock/hwspinlock_core.c:339:19: warning: 'id' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->      return ret ? ret : id;
->             ~~~~~~~~~~^~~~
-
-
-Again, we jump here without initializing 'id' when ret is set.
-
-
-> --
->    drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c: In function 'mlxsw_sp_nexthop_group_update':
-> >> drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c:3078:7: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]  
->        if (err)
->           ^
-> 
-> vim +/ra_comp +1413 drivers//usb/typec/fusb302/fusb302.c
-> 
-
-
-Another switch statement false positive:
-
-	nh->type can only be set to two different values, and then we
-	have:
-
-	switch (nh->type) {
-	case value1:
-		err = func();
-		break;
-	case value2:
-		err = func2();
-		break;
-	}
-	if (err)
-
-
-Of all the warnings, only one looks like it could be a possible issue.
-Thus, this patch causes gcc to fail more on it analysis. The one
-possible issue should have been caught by gcc without this patch, so
-I'm skeptical that it is indeed an issue, but it's complex and I am
-impressed if gcc really did figure it out.
-
--- Steve
+Seems reasonable to me.
