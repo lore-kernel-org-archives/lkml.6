@@ -1,50 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LfNoD3hMGVu8YQAAmS7hNA
-	; Thu, 07 Jun 2018 15:26:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hyvjNFtWGVu0PQAAmS7hNA
+	; Thu, 07 Jun 2018 16:00:46 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 1DCF86089E; Thu,  7 Jun 2018 15:26:38 +0000 (UTC)
+	id 6D40D6089E; Thu,  7 Jun 2018 16:00:46 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 69C65601B4;
-	Thu,  7 Jun 2018 15:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69C65601B4
+	by smtp.codeaurora.org (Postfix) with ESMTP id BECD360590;
+	Thu,  7 Jun 2018 16:00:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BECD360590
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964862AbeFGP0g (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:26:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41135 "EHLO
+        id S935665AbeFGQAo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:00:44 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39300 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932919AbeFGO5t (ORCPT
+        by vger.kernel.org with ESMTP id S933029AbeFGOJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:57:49 -0400
+        Thu, 7 Jun 2018 10:09:05 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvba-0005Zi-J3; Thu, 07 Jun 2018 15:09:34 +0100
+        id 1fQvb1-0005Zq-R3; Thu, 07 Jun 2018 15:08:59 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb8-000359-FR; Thu, 07 Jun 2018 15:09:06 +0100
+        id 1fQvay-0002iQ-0P; Thu, 07 Jun 2018 15:08:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Lukas Wunner" <lukas@wunner.de>,
-        "Lyude Paul" <lyude@redhat.com>,
-        "Dave Airlie" <airlied@redhat.com>,
-        "Ben Skeggs" <bskeggs@redhat.com>
+CC: akpm@linux-foundation.org, "Tony Luck" <tony.luck@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "linux-edac" <linux-edac@vger.kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Seunghun Han" <kkamagui@gmail.com>, "Borislav Petkov" <bp@suse.de>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.289900009@decadent.org.uk>
+Message-ID: <lsq.1528380321.448638886@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 256/410] drm/nouveau: Fix deadlock on runtime suspend
+Subject: [PATCH 3.16 030/410] x86/MCE: Serialize sysfs changes
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,110 +59,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Seunghun Han <kkamagui@gmail.com>
 
-commit d61a5c1063515e855bedb1b81e20e50b0ac3541e upstream.
+commit b3b7c4795ccab5be71f080774c45bbbcc75c2aaf upstream.
 
-nouveau's ->runtime_suspend hook calls drm_kms_helper_poll_disable(),
-which waits for the output poll worker to finish if it's running.
+The check_interval file in
 
-The output poll worker meanwhile calls pm_runtime_get_sync() in
-nouveau_connector_detect() which waits for the ongoing suspend to finish,
-causing a deadlock.
+  /sys/devices/system/machinecheck/machinecheck<cpu number>
 
-Fix by not acquiring a runtime PM ref if nouveau_connector_detect() is
-called in the output poll worker's context.  This is safe because
-the poll worker is only enabled while runtime active and we know that
-->runtime_suspend waits for it to finish.
+directory is a global timer value for MCE polling. If it is changed by one
+CPU, mce_restart() broadcasts the event to other CPUs to delete and restart
+the MCE polling timer and __mcheck_cpu_init_timer() reinitializes the
+mce_timer variable.
 
-Other contexts calling nouveau_connector_detect() do require a runtime
-PM ref, these comprise:
+If more than one CPU writes a specific value to the check_interval file
+concurrently, mce_timer is not protected from such concurrent accesses and
+all kinds of explosions happen. Since only root can write to those sysfs
+variables, the issue is not a big deal security-wise.
 
-  status_store() drm sysfs interface
-  ->fill_modes drm callback
-  drm_fb_helper_probe_connector_modes()
-  drm_mode_getconnector()
-  nouveau_connector_hotplug()
-  nouveau_display_hpd_work()
-  nv17_tv_set_property()
+However, concurrent writes to these configuration variables is void of
+reason so the proper thing to do is to serialize the access with a mutex.
 
-Stack trace for posterity:
+Boris:
 
-  INFO: task kworker/0:1:58 blocked for more than 120 seconds.
-  Workqueue: events output_poll_execute [drm_kms_helper]
-  Call Trace:
-   schedule+0x28/0x80
-   rpm_resume+0x107/0x6e0
-   __pm_runtime_resume+0x47/0x70
-   nouveau_connector_detect+0x7e/0x4a0 [nouveau]
-   nouveau_connector_detect_lvds+0x132/0x180 [nouveau]
-   drm_helper_probe_detect_ctx+0x85/0xd0 [drm_kms_helper]
-   output_poll_execute+0x11e/0x1c0 [drm_kms_helper]
-   process_one_work+0x184/0x380
-   worker_thread+0x2e/0x390
+ - Make store_int_with_restart() use device_store_ulong() to filter out
+   negative intervals
+ - Limit min interval to 1 second
+ - Correct locking
+ - Massage commit message
 
-  INFO: task kworker/0:2:252 blocked for more than 120 seconds.
-  Workqueue: pm pm_runtime_work
-  Call Trace:
-   schedule+0x28/0x80
-   schedule_timeout+0x1e3/0x370
-   wait_for_completion+0x123/0x190
-   flush_work+0x142/0x1c0
-   nouveau_pmops_runtime_suspend+0x7e/0xd0 [nouveau]
-   pci_pm_runtime_suspend+0x5c/0x180
-   vga_switcheroo_runtime_suspend+0x1e/0xa0
-   __rpm_callback+0xc1/0x200
-   rpm_callback+0x1f/0x70
-   rpm_suspend+0x13c/0x640
-   pm_runtime_work+0x6e/0x90
-   process_one_work+0x184/0x380
-   worker_thread+0x2e/0x390
-
-Bugzilla: https://bugs.archlinux.org/task/53497
-Bugzilla: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=870523
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=70388#c33
-Fixes: 5addcf0a5f0f ("nouveau: add runtime PM support (v0.9)")
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: Dave Airlie <airlied@redhat.com>
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/b7d2cbb609a80f59ccabfdf479b9d5907c603ea1.1518338789.git.lukas@wunner.de
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180302202706.9434-1-kkamagui@gmail.com
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -256,9 +256,15 @@ nouveau_connector_detect(struct drm_conn
- 		nv_connector->edid = NULL;
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -57,6 +57,9 @@ static DEFINE_MUTEX(mce_chrdev_read_mute
+ 			      rcu_read_lock_sched_held() || \
+ 			      lockdep_is_held(&mce_chrdev_read_mutex))
+ 
++/* sysfs synchronization */
++static DEFINE_MUTEX(mce_sysfs_mutex);
++
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/mce.h>
+ 
+@@ -2199,6 +2202,7 @@ static ssize_t set_ignore_ce(struct devi
+ 	if (strict_strtoull(buf, 0, &new) < 0)
+ 		return -EINVAL;
+ 
++	mutex_lock(&mce_sysfs_mutex);
+ 	if (mca_cfg.ignore_ce ^ !!new) {
+ 		if (new) {
+ 			/* disable ce features */
+@@ -2211,6 +2215,8 @@ static ssize_t set_ignore_ce(struct devi
+ 			on_each_cpu(mce_enable_ce, (void *)1, 1);
+ 		}
  	}
- 
--	ret = pm_runtime_get_sync(connector->dev->dev);
--	if (ret < 0 && ret != -EACCES)
--		return conn_status;
-+	/* Outputs are only polled while runtime active, so acquiring a
-+	 * runtime PM ref here is unnecessary (and would deadlock upon
-+	 * runtime suspend because it waits for polling to finish).
-+	 */
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		ret = pm_runtime_get_sync(connector->dev->dev);
-+		if (ret < 0 && ret != -EACCES)
-+			return conn_status;
-+	}
- 
- 	nv_encoder = nouveau_connector_ddc_detect(connector);
- 	if (nv_encoder && (i2c = nv_encoder->i2c) != NULL) {
-@@ -326,8 +332,10 @@ detect_analog:
- 
-  out:
- 
--	pm_runtime_mark_last_busy(connector->dev->dev);
--	pm_runtime_put_autosuspend(connector->dev->dev);
-+	if (!drm_kms_helper_is_poll_worker()) {
-+		pm_runtime_mark_last_busy(connector->dev->dev);
-+		pm_runtime_put_autosuspend(connector->dev->dev);
-+	}
- 
- 	return conn_status;
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return size;
  }
+ 
+@@ -2223,6 +2229,7 @@ static ssize_t set_cmci_disabled(struct
+ 	if (strict_strtoull(buf, 0, &new) < 0)
+ 		return -EINVAL;
+ 
++	mutex_lock(&mce_sysfs_mutex);
+ 	if (mca_cfg.cmci_disabled ^ !!new) {
+ 		if (new) {
+ 			/* disable cmci */
+@@ -2234,6 +2241,8 @@ static ssize_t set_cmci_disabled(struct
+ 			on_each_cpu(mce_enable_ce, NULL, 1);
+ 		}
+ 	}
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return size;
+ }
+ 
+@@ -2241,8 +2250,19 @@ static ssize_t store_int_with_restart(st
+ 				      struct device_attribute *attr,
+ 				      const char *buf, size_t size)
+ {
+-	ssize_t ret = device_store_int(s, attr, buf, size);
++	unsigned long old_check_interval = check_interval;
++	ssize_t ret = device_store_ulong(s, attr, buf, size);
++
++	if (check_interval == old_check_interval)
++		return ret;
++
++	if (check_interval < 1)
++		check_interval = 1;
++
++	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
++	mutex_unlock(&mce_sysfs_mutex);
++
+ 	return ret;
+ }
+ 
