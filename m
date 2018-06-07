@@ -1,172 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9PDfHKKBGVviCAAAmS7hNA
-	; Thu, 07 Jun 2018 19:04:02 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pVmREoWwGFsHSgAAmS7hNA
+	; Thu, 07 Jun 2018 04:11:49 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 592776074D; Thu,  7 Jun 2018 19:04:02 +0000 (UTC)
+	id 2ADE06089E; Thu,  7 Jun 2018 04:11:49 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D4oSOXMu"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ga5UPEns"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 5F0E3601D2;
-	Thu,  7 Jun 2018 19:04:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F0E3601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9E7C760115;
+	Thu,  7 Jun 2018 04:11:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E7C760115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753551AbeFGTD5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:03:57 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41380 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751037AbeFGTDz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:03:55 -0400
-Received: by mail-pf0-f196.google.com with SMTP id a11-v6so5356964pff.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=hFMWShpEFlI3ORQcrICPvV818pjtu8VjeHt1IJr8xlE=;
-        b=D4oSOXMuYDrE6nuUQ2Ut/RwJcItsyUzLgGi5mMyxDOmIvTd+uZF88x+bPnov+4IUkD
-         VnXfpaLdDGt7jjtiEY+nAjdIn/xlVKc6dTpGt9VRJArOv5NeOyqm0QFQ+bBW3nY8zWSx
-         xMUstdoDJrCkFZD9L6Di74nRcoUSis6HtjDAq4fpy6qvm926MgOxMYAiFp2LURPNl05L
-         D+YXmQLkTScgZudMKmRSEJqDr4nROCSGUv3JE9KOvcJUP80HyahJi/Jp0c0H5OgOYMTg
-         vj0/Fm5fbQ6A90uWRu3d0nykBqO6gmrpyiG+aXhB4lPWVwk2MZU8Kk5MsOZrNPXQ8vMC
-         DDhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hFMWShpEFlI3ORQcrICPvV818pjtu8VjeHt1IJr8xlE=;
-        b=qMOQqNsVjC1k1Fvj1tmmPH+8DQFJs/cxVJ2qHLMFNfTHLBMpj9Vx7pxr+pPJQpWUdq
-         ZvQgUdiWogDbzQdqTEmNTP2b2g68mQyKps77gK+6UOX8ItXiHFomygWcP+ZGI6fMmxaS
-         Z9EeQt8HvzRCJCvDdoWcT7dEa+Jm3pFEc0cN4esqz7pIlrJuNXSVIMvlJVvX1JYWiHQK
-         SaHpNgHFA4zH6sGtH70CeOeJRiBFs04yvFPWDRUXIeFSQbxZhGdiMGl7ddaNnuMTVhOq
-         VL0TKfoejcbcOA1JxhfA48BpgT7xQA03CdsW7AHwadlDTqnzzP7DO+tCIn4ABlwE1/PO
-         cmhg==
-X-Gm-Message-State: APt69E0cQSlDpklD4GBMoET+1GSmdaXyAOGjoLJGLoGn+DiFzheOC8lv
-        zA0KHvV5ejpeNDbW8p9hRJSblsyXZFCUas1yOOZYFQ==
-X-Google-Smtp-Source: ADUXVKL5x3nvxa2m2rW2zaLIcW0oK44obScho1K/bfEzDXVFaE122S9svwhdIpg5mxF72CIF+MjJq04sA56X2S9KNeY=
-X-Received: by 2002:a63:70a:: with SMTP id 10-v6mr2643128pgh.216.1528398234649;
- Thu, 07 Jun 2018 12:03:54 -0700 (PDT)
+        id S1751331AbeFGELq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 00:11:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750836AbeFGELn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 00:11:43 -0400
+Received: from localhost (unknown [106.200.248.73])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 603DD205F4;
+        Thu,  7 Jun 2018 04:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528344703;
+        bh=E+xSOpO67yIH/8LYX8s3xL0jdE3Mn7TDHNHIMrREp7o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ga5UPEnszGyMrgXxRWthxaKrdt5MPSSAuoyE/+uUlIVdAuG+GCwQRLpci4SmPGDJ8
+         5tgrYOv8TxloNuJJMMSgdrI1Gp3GH+NOQU1CW5xP/DMpKiHugZGxVYrx92erw1/cx8
+         zJBDXuN5RDEOX2gf8xn+VwOMXfp6wXeXsWpi92wo=
+Date: Thu, 7 Jun 2018 09:41:34 +0530
+From: Vinod <vkoul@kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Sricharan R <sricharan@codeaurora.org>, ohad@wizery.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        sibis@codeaurora.org
+Subject: Re: [PATCH] remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
+Message-ID: <20180607041134.GF16230@vkoul-mobl>
+References: <1528177361-8883-1-git-send-email-sricharan@codeaurora.org>
+ <20180605061919.GQ16230@vkoul-mobl>
+ <3a4c102b-7228-153a-c588-b1bf00291fa8@codeaurora.org>
+ <20180606161733.GE510@tuxbook-pro>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:d42:0:0:0:0 with HTTP; Thu, 7 Jun 2018 12:03:34
- -0700 (PDT)
-In-Reply-To: <04b6ee08-7919-bf2d-5b77-bd346a0bff48@virtuozzo.com>
-References: <0000000000006e4595056dd23c16@google.com> <CACT4Y+ZmxgKvgD2RWD1=KEZQqY=vwdhrAZfqMT-gGuj8k8eKKg@mail.gmail.com>
- <cf729ce5-7948-d475-1b20-f31fb313df88@virtuozzo.com> <CACT4Y+bPrdK7xSeUk=pgVVyaseDZUAvArBA4bEWPsUi7CE3EVw@mail.gmail.com>
- <e71c0df1-d83c-030c-7c97-13a923aca1b3@virtuozzo.com> <CACT4Y+YBY2yGJBHgqGhAcOguag9JUkGkeOz1acgKd=KR3q+noQ@mail.gmail.com>
- <04b6ee08-7919-bf2d-5b77-bd346a0bff48@virtuozzo.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 7 Jun 2018 21:03:34 +0200
-Message-ID: <CACT4Y+b8FkwFe1PCEVDZcTufB4HKVy+ekk=1_YcFH6-RoBGY-w@mail.gmail.com>
-Subject: Re: INFO: task hung in ip6gre_exit_batch_net
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: syzbot <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        David Miller <davem@davemloft.net>,
-        David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Xin Long <lucien.xin@gmail.com>,
-        mschiffer@universe-factory.net, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180606161733.GE510@tuxbook-pro>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 7, 2018 at 8:54 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>>> Hi, Dmirty!
->>>>>
->>>>> On 04.06.2018 18:22, Dmitry Vyukov wrote:
->>>>>> On Mon, Jun 4, 2018 at 5:03 PM, syzbot
->>>>>> <syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com> wrote:
->>>>>>> Hello,
->>>>>>>
->>>>>>> syzbot found the following crash on:
->>>>>>>
->>>>>>> HEAD commit:    bc2dbc5420e8 Merge branch 'akpm' (patches from Andrew)
->>>>>>> git tree:       upstream
->>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=164e42b7800000
->>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=982e2df1b9e60b02
->>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=bf78a74f82c1cf19069e
->>>>>>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->>>>>>>
->>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
->>>>>>>
->>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>>>>> Reported-by: syzbot+bf78a74f82c1cf19069e@syzkaller.appspotmail.com
->>>>>>
->>>>>> Another hang on rtnl lock:
->>>>>>
->>>>>> #syz dup: INFO: task hung in netdev_run_todo
->>>>>>
->>>>>> May be related to "unregister_netdevice: waiting for DEV to become free":
->>>>>> https://syzkaller.appspot.com/bug?id=1a97a5bd119fd97995f752819fd87840ab9479a9
->>>>
->>>> netdev_wait_allrefs does not hold rtnl lock during waiting, so it must
->>>> be something different.
->>>>
->>>>
->>>>>> Any other explanations for massive hangs on rtnl lock for minutes?
->>>>>
->>>>> To exclude the situation, when a task exists with rtnl_mutex held:
->>>>>
->>>>> would the pr_warn() from print_held_locks_bug() be included in the console output
->>>>> if they appear?
->>>>
->>>> Yes, everything containing "WARNING:" is detected as bug.
->>>
->>> OK, then dead task not releasing the lock is excluded.
->>>
->>> One more assumption: someone corrupted memory around rtnl_mutex and it looks like locked.
->>> (I track lockdep "(rtnl_mutex){+.+.}" prints in initial message as "nobody owns rtnl_mutex").
->>> There may help a crash dump of the VM.
->>
->> I can't find any legend for these +'s and .'s, but {+.+.} is present
->> in large amounts in just any task hung report for different mutexes,
->> so I would not expect that it means corruption.
->>
->> Are dozens of known corruptions that syzkaller can trigger. But
->> usually they are reliably caught by KASAN. If any of them would lead
->> to silent memory corruption, we would got dozens of assorted crashes
->> throughout the kernel. We've seen that at some points, but not
->> recently. So I would assume that memory is not corrupted in all these
->> cases:
->> https://syzkaller.appspot.com/bug?id=2503c576cabb08d41812e732b390141f01a59545
->
-> This BUG clarifies the {+.+.}:
->
-> 4 locks held by kworker/0:145/381:
->  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] work_static include/linux/workqueue.h:198 [inline]
->  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_data kernel/workqueue.c:619 [inline]
->  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] set_work_pool_and_clear_pending kernel/workqueue.c:646 [inline]
->  #0:  ((wq_completion)"hwsim_wq"){+.+.}, at: [<000000003f9487f0>] process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
->  #1:  ((work_completion)(&data->destroy_work)){+.+.}, at: [<00000000bbdd2115>] process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
->  #2:  (rtnl_mutex){+.+.}, at: [<000000009c9d14f8>] rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
->  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] exp_funnel_lock kernel/rcu/tree_exp.h:272 [inline]
->  #3:  (rcu_sched_state.exp_mutex){+.+.}, at: [<000000001ba1a807>] _synchronize_rcu_expedited.constprop.72+0x9fa/0xac0 kernel/rcu/tree_exp.h:596
->
-> There we have rtnl_mutex locked and the {..} is like above. It's definitely locked
-> since there is one more lock after it.
->
-> This BUG happen because of there are many rtnl_mutex waiters while owner
-> is synchronizing RCU. Rather clear for me in comparison to the topic's hung.
+On 06-06-18, 09:17, Bjorn Andersson wrote:
+> On Tue 05 Jun 05:56 PDT 2018, Sricharan R wrote:
+> 
+> > Hi Vinod,
+> > 
+> > On 6/5/2018 11:49 AM, Vinod wrote:
+> > > On 05-06-18, 11:12, Sricharan R wrote:
+> > > 
+> > >> +config QCOM_Q6V5_WCSS
+> > >> +	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+> > >> +	depends on OF && ARCH_QCOM
+> > >> +	depends on QCOM_SMEM
+> > >> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+> > >> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+> > > 
+> > > Is there a reason why it depends on RPMSG_QCOM_GLINK_SMEM=n? What would
+> > > happen if distro wants both this and RPMSG_QCOM_GLINK_SMEM
+> > > 
+> 
+> It says that QCOM_Q6V5_WCSS either must have a compatible state (i.e.
+> builtin vs builtin, module vs builtin, but not builtin vs module) or
+> that it's disabled, in which case we will hit the stub functions in
+> qcom_glink.h.
+> 
+> I.e. this prevents QCOM_Q6V5_WCSS to be compiled builtin when
+> RPMSG_QCOM_GLINK_SMEM is module, as this would give us both stubs and
+> the module.
 
+IIUC, you want to have QCOM_Q6V5_WCSS and RPMSG_QCOM_GLINK_SMEM as
+modules or builtin
 
-You mean that it's not hanged, but rather needs more than 2 minutes to
-complete, right?
+So, wouldn't Kconfig syntax something like where we say:
+        M if RPMSG_QCOM_GLINK_SMEM=m
+        bool if RPMSG_QCOM_GLINK_SMEM=y
 
+Which makes it clear that both these have to be same type?
 
->> I wonder if it can be just that slow, but not actually hanged... net
->> namespace destruction is super slow, so perhaps under heavy load it
->> all stalls for minutes...
+-- 
+~Vinod
