@@ -1,143 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mVPGEdfkGFtUJwAAmS7hNA
-	; Thu, 07 Jun 2018 07:55:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LhoBCQdIGVudQAAAmS7hNA
+	; Thu, 07 Jun 2018 15:08:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3ADB2608BA; Thu,  7 Jun 2018 07:55:55 +0000 (UTC)
+	id 2F256601B4; Thu,  7 Jun 2018 15:08:54 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 89394607E7;
-	Thu,  7 Jun 2018 07:55:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89394607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 476B8601B4;
+	Thu,  7 Jun 2018 15:08:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 476B8601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932346AbeFGHzw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 03:55:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55470 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753557AbeFGHzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 03:55:12 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 58E2140711D2;
-        Thu,  7 Jun 2018 07:55:11 +0000 (UTC)
-Received: from plouf.banquise.eu.com (ovpn-116-40.ams2.redhat.com [10.36.116.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 192682026DEF;
-        Thu,  7 Jun 2018 07:55:09 +0000 (UTC)
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To: Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Mario.Limonciello@dell.com,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v2 11/13] HID: multitouch: report MT_TOOL_PALM for non-confident touches
-Date: Thu,  7 Jun 2018 09:54:46 +0200
-Message-Id: <20180607075448.5706-12-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
-References: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 07:55:11 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 07:55:11 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+        id S936081AbeFGPIh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:08:37 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41522 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935927AbeFGPDk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 11:03:40 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbS-0005hO-9s; Thu, 07 Jun 2018 15:09:26 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbB-0003C6-TZ; Thu, 07 Jun 2018 15:09:09 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Guillaume Nault" <g.nault@alphalink.fr>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "syzbot" <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "James Chapman" <jchapman@katalix.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.168359152@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 330/410] l2tp: do not accept arbitrary sockets
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-According to Microsoft specification [1] for Precision Touchpads (and
-Touchscreens) the devices use "confidence" reports to signal accidental
-touches, or contacts that are "too large to be a finger". Instead of
-simply marking contact inactive in this case (which causes issues if
-contact was originally proper and we lost confidence in it later, as
-this results in accidental clicks, drags, etc), let's report such
-contacts as MT_TOOL_PALM and let userspace decide what to do.
-Additionally, let's report contact size for such touches as maximum
-allowed for major/minor, which should help userspace that is not yet
-aware of MT_TOOL_PALM to still perform palm rejection.
+------------------
 
-[1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-windows-precision-touchpad-collection
+From: Eric Dumazet <edumazet@google.com>
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-[splitted and rebased]
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+commit 17cfe79a65f98abe535261856c5aef14f306dff7 upstream.
 
+syzkaller found an issue caused by lack of sufficient checks
+in l2tp_tunnel_create()
+
+RAW sockets can not be considered as UDP ones for instance.
+
+In another patch, we shall replace all pr_err() by less intrusive
+pr_debug() so that syzkaller can find other bugs faster.
+Acked-by: Guillaume Nault <g.nault@alphalink.fr>
+Acked-by: James Chapman <jchapman@katalix.com>
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
+dst_release: dst:00000000d53d0d0f refcnt:-1
+Write of size 1 at addr ffff8801d013b798 by task syz-executor3/6242
+
+CPU: 1 PID: 6242 Comm: syz-executor3 Not tainted 4.16.0-rc2+ #253
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x194/0x24d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23b/0x360 mm/kasan/report.c:412
+ __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
+ setup_udp_tunnel_sock+0x3ee/0x5f0 net/ipv4/udp_tunnel.c:69
+ l2tp_tunnel_create+0x1354/0x17f0 net/l2tp/l2tp_core.c:1596
+ pppol2tp_connect+0x14b1/0x1dd0 net/l2tp/l2tp_ppp.c:707
+ SYSC_connect+0x213/0x4a0 net/socket.c:1640
+ SyS_connect+0x24/0x30 net/socket.c:1621
+ do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
+ net/l2tp/l2tp_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-changes in v2:
-- dropped the delayed release in case of palm detection. This is
-  a FW bug for PTP devices, and should only happen with touchscreens
-- move input_set_abs_params(hi->input, ABS_MT_TOOL_TYPE,...) into
-  its own test so other devices can add MT_QUIRK_CONFIDENCE to their
-  quirks.
----
- drivers/hid/hid-multitouch.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index a4a274ebfbef..36c8b67bb032 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -736,6 +736,13 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 				cls->name == MT_CLS_WIN_8_DUAL) &&
- 				field->application == HID_DG_TOUCHPAD)
- 				app->quirks |= MT_QUIRK_CONFIDENCE;
-+
-+			if (app->quirks & MT_QUIRK_CONFIDENCE)
-+				input_set_abs_params(hi->input,
-+						     ABS_MT_TOOL_TYPE,
-+						     MT_TOOL_FINGER,
-+						     MT_TOOL_PALM, 0, 0);
-+
- 			MT_STORE_FIELD(confidence_state);
- 			return 1;
- 		case HID_DG_TIPSWITCH:
-@@ -958,10 +965,12 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
- 	if (quirks & MT_QUIRK_HOVERING)
- 		inrange_state = *slot->inrange_state;
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1581,9 +1581,14 @@ int l2tp_tunnel_create(struct net *net,
+ 		encap = cfg->encap;
  
--	active = (*slot->tip_state || inrange_state) && confidence_state;
-+	active = *slot->tip_state || inrange_state;
- 
- 	if (app->application == HID_GD_SYSTEM_MULTIAXIS)
- 		tool = MT_TOOL_DIAL;
-+	else if (unlikely(!confidence_state))
-+		tool = MT_TOOL_PALM;
- 
- 	input_mt_slot(input, slotnum);
- 	input_mt_report_slot_state(input, tool, active);
-@@ -993,11 +1002,20 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
- 			orientation = -azimuth;
+ 	/* Quick sanity checks */
++	err = -EPROTONOSUPPORT;
++	if (sk->sk_type != SOCK_DGRAM) {
++		pr_debug("tunl %hu: fd %d wrong socket type\n",
++			 tunnel_id, fd);
++		goto err;
++	}
+ 	switch (encap) {
+ 	case L2TP_ENCAPTYPE_UDP:
+-		err = -EPROTONOSUPPORT;
+ 		if (sk->sk_protocol != IPPROTO_UDP) {
+ 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
+ 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_UDP);
+@@ -1591,7 +1596,6 @@ int l2tp_tunnel_create(struct net *net,
  		}
- 
--		/*
--		 * divided by two to match visual scale of touch
--		 * for devices with this quirk
--		 */
--		if (quirks & MT_QUIRK_TOUCH_SIZE_SCALING) {
-+		if (unlikely(!confidence_state)) {
-+			/*
-+			 * When reporting palm, set contact to maximum
-+			 * size to help userspace that does not
-+			 * recognize MT_TOOL_PALM to reject contacts
-+			 * that are too large.
-+			 */
-+			major = input_abs_get_max(input, ABS_MT_TOUCH_MAJOR);
-+			minor = input_abs_get_max(input, ABS_MT_TOUCH_MINOR);
-+		} else if (quirks & MT_QUIRK_TOUCH_SIZE_SCALING) {
-+			/*
-+			 * divided by two to match visual scale of touch
-+			 * for devices with this quirk
-+			 */
- 			major = major >> 1;
- 			minor = minor >> 1;
- 		}
--- 
-2.14.3
+ 		break;
+ 	case L2TP_ENCAPTYPE_IP:
+-		err = -EPROTONOSUPPORT;
+ 		if (sk->sk_protocol != IPPROTO_L2TP) {
+ 			pr_err("tunl %hu: fd %d wrong protocol, got %d, expected %d\n",
+ 			       tunnel_id, fd, sk->sk_protocol, IPPROTO_L2TP);
