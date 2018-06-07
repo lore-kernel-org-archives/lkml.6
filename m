@@ -1,204 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 0aq9FmThGlvCLgAAmS7hNA
-	; Fri, 08 Jun 2018 20:05:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HCTcCSx+GVvSXAAAmS7hNA
+	; Thu, 07 Jun 2018 18:49:18 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id EB6DA607A4; Fri,  8 Jun 2018 20:05:04 +0000 (UTC)
+	id 3B3B56089E; Thu,  7 Jun 2018 18:49:18 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+qtlHPw"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtrF+tr9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 4E68F6074D;
-	Fri,  8 Jun 2018 20:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E68F6074D
+	by smtp.codeaurora.org (Postfix) with ESMTP id B3DC8606DD;
+	Thu,  7 Jun 2018 18:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3DC8606DD
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752957AbeFHUFC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 16:05:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48778 "EHLO mail.kernel.org"
+        id S932416AbeFGStQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:49:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752910AbeFHUE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 16:04:59 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S932373AbeFGStN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 14:49:13 -0400
+Received: from mail-wr0-f181.google.com (mail-wr0-f181.google.com [209.85.128.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C00DE20874;
-        Fri,  8 Jun 2018 20:04:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37AF3208B1
+        for <linux-kernel@vger.kernel.org>; Thu,  7 Jun 2018 18:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528488299;
-        bh=Ziul8qsl6lk1Qi5XCu1Ew27xtDs+019j5RoIQPU84bg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=N+qtlHPw4dAY7MLayPg01SwslpMc1bXb5ArPi1sAaI8JXQ6WHwvNyQ/M9dVW++Ewm
-         bP/FKFisiEIM6eLZ0fr38x2ywAlEDiTUe2jl0ptox8xEt7BHKpdeuLYwVXMZSh+7i4
-         wMDmAmJ5XBQERFN4omNrG0NTpAm27skVBYw5pPh4=
-Subject: [PATCH v1 02/13] PCI/AER: Reorder code to group probe/remove stuff
- together
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Keith Busch <keith.busch@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Date: Fri, 08 Jun 2018 15:04:58 -0500
-Message-ID: <152848829801.11888.15206194993821178939.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152848785553.11888.12243539903985770441.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        s=default; t=1528397353;
+        bh=crbJkwTStLUzTuNVU01tdjm1kf88uyd/+FByIXqhZu0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gtrF+tr9mtgO+zr88VaZ6BT8kt3AaVa7gphT4iuEFeJp00TBxtk6D44BsMuImftsc
+         d1soH5MA1tI1EaR5/mg8HyeTT9TS0d4lHoXhc9Y3QBw4sF4Zk5LFARZ1wJe3/FAf6S
+         EcixHyvokfTTSW5PfaN7I14raG8S12jVMfs3418M=
+Received: by mail-wr0-f181.google.com with SMTP id w10-v6so10869592wrk.9
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:49:13 -0700 (PDT)
+X-Gm-Message-State: APt69E2g84mT/K8fbVHAI76W8J2ntx9I65fW57IzjyfhRtWgguT5hzIb
+        I9vSFtxB4PeuwqyOE52DVCas9stBl6i0aCC/gdhSLA==
+X-Google-Smtp-Source: ADUXVKKcssBNw43uWQR7fRpxR81LkXSciyBwdGCavGt63/lG6zvaBnoj20T0EOMxRFF51K3ukLayBjPH27QnF7fYMx4=
+X-Received: by 2002:adf:e084:: with SMTP id c4-v6mr2563276wri.199.1528397351735;
+ Thu, 07 Jun 2018 11:49:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-9-yu-cheng.yu@intel.com>
+In-Reply-To: <20180607143807.3611-9-yu-cheng.yu@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 7 Jun 2018 11:48:59 -0700
+X-Gmail-Original-Message-ID: <CALCETrVX8nE6oFnJH7yZCydxtnC-VAhhnYs=ekJELc07a2UKiQ@mail.gmail.com>
+Message-ID: <CALCETrVX8nE6oFnJH7yZCydxtnC-VAhhnYs=ekJELc07a2UKiQ@mail.gmail.com>
+Subject: Re: [PATCH 08/10] mm: Prevent mremap of shadow stack
+To: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>
+> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 
-Reorder code to group probe/remove stuff together.  No functional change
-intended.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pcie/aer/aerdrv.c |  116 +++++++++++++++++++++--------------------
- 1 file changed, 58 insertions(+), 58 deletions(-)
-
-diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
-index c6d1b664a6ea..8d3bc28821ba 100644
---- a/drivers/pci/pcie/aer/aerdrv.c
-+++ b/drivers/pci/pcie/aer/aerdrv.c
-@@ -35,6 +35,64 @@ bool pci_aer_available(void)
- 	return !pcie_aer_disable && pci_msi_enabled();
- }
- 
-+/**
-+ * aer_irq - Root Port's ISR
-+ * @irq: IRQ assigned to Root Port
-+ * @context: pointer to Root Port data structure
-+ *
-+ * Invoked when Root Port detects AER messages.
-+ */
-+irqreturn_t aer_irq(int irq, void *context)
-+{
-+	unsigned int status, id;
-+	struct pcie_device *pdev = (struct pcie_device *)context;
-+	struct aer_rpc *rpc = get_service_data(pdev);
-+	int next_prod_idx;
-+	unsigned long flags;
-+	int pos;
-+
-+	pos = pdev->port->aer_cap;
-+	/*
-+	 * Must lock access to Root Error Status Reg, Root Error ID Reg,
-+	 * and Root error producer/consumer index
-+	 */
-+	spin_lock_irqsave(&rpc->e_lock, flags);
-+
-+	/* Read error status */
-+	pci_read_config_dword(pdev->port, pos + PCI_ERR_ROOT_STATUS, &status);
-+	if (!(status & (PCI_ERR_ROOT_UNCOR_RCV|PCI_ERR_ROOT_COR_RCV))) {
-+		spin_unlock_irqrestore(&rpc->e_lock, flags);
-+		return IRQ_NONE;
-+	}
-+
-+	/* Read error source and clear error status */
-+	pci_read_config_dword(pdev->port, pos + PCI_ERR_ROOT_ERR_SRC, &id);
-+	pci_write_config_dword(pdev->port, pos + PCI_ERR_ROOT_STATUS, status);
-+
-+	/* Store error source for later DPC handler */
-+	next_prod_idx = rpc->prod_idx + 1;
-+	if (next_prod_idx == AER_ERROR_SOURCES_MAX)
-+		next_prod_idx = 0;
-+	if (next_prod_idx == rpc->cons_idx) {
-+		/*
-+		 * Error Storm Condition - possibly the same error occurred.
-+		 * Drop the error.
-+		 */
-+		spin_unlock_irqrestore(&rpc->e_lock, flags);
-+		return IRQ_HANDLED;
-+	}
-+	rpc->e_sources[rpc->prod_idx].status =  status;
-+	rpc->e_sources[rpc->prod_idx].id = id;
-+	rpc->prod_idx = next_prod_idx;
-+	spin_unlock_irqrestore(&rpc->e_lock, flags);
-+
-+	/*  Invoke DPC handler */
-+	schedule_work(&rpc->dpc_handler);
-+
-+	return IRQ_HANDLED;
-+}
-+EXPORT_SYMBOL_GPL(aer_irq);
-+
- static int set_device_error_reporting(struct pci_dev *dev, void *data)
- {
- 	bool enable = *((bool *)data);
-@@ -141,64 +199,6 @@ static void aer_disable_rootport(struct aer_rpc *rpc)
- 	pci_write_config_dword(pdev, pos + PCI_ERR_ROOT_STATUS, reg32);
- }
- 
--/**
-- * aer_irq - Root Port's ISR
-- * @irq: IRQ assigned to Root Port
-- * @context: pointer to Root Port data structure
-- *
-- * Invoked when Root Port detects AER messages.
-- */
--irqreturn_t aer_irq(int irq, void *context)
--{
--	unsigned int status, id;
--	struct pcie_device *pdev = (struct pcie_device *)context;
--	struct aer_rpc *rpc = get_service_data(pdev);
--	int next_prod_idx;
--	unsigned long flags;
--	int pos;
--
--	pos = pdev->port->aer_cap;
--	/*
--	 * Must lock access to Root Error Status Reg, Root Error ID Reg,
--	 * and Root error producer/consumer index
--	 */
--	spin_lock_irqsave(&rpc->e_lock, flags);
--
--	/* Read error status */
--	pci_read_config_dword(pdev->port, pos + PCI_ERR_ROOT_STATUS, &status);
--	if (!(status & (PCI_ERR_ROOT_UNCOR_RCV|PCI_ERR_ROOT_COR_RCV))) {
--		spin_unlock_irqrestore(&rpc->e_lock, flags);
--		return IRQ_NONE;
--	}
--
--	/* Read error source and clear error status */
--	pci_read_config_dword(pdev->port, pos + PCI_ERR_ROOT_ERR_SRC, &id);
--	pci_write_config_dword(pdev->port, pos + PCI_ERR_ROOT_STATUS, status);
--
--	/* Store error source for later DPC handler */
--	next_prod_idx = rpc->prod_idx + 1;
--	if (next_prod_idx == AER_ERROR_SOURCES_MAX)
--		next_prod_idx = 0;
--	if (next_prod_idx == rpc->cons_idx) {
--		/*
--		 * Error Storm Condition - possibly the same error occurred.
--		 * Drop the error.
--		 */
--		spin_unlock_irqrestore(&rpc->e_lock, flags);
--		return IRQ_HANDLED;
--	}
--	rpc->e_sources[rpc->prod_idx].status =  status;
--	rpc->e_sources[rpc->prod_idx].id = id;
--	rpc->prod_idx = next_prod_idx;
--	spin_unlock_irqrestore(&rpc->e_lock, flags);
--
--	/*  Invoke DPC handler */
--	schedule_work(&rpc->dpc_handler);
--
--	return IRQ_HANDLED;
--}
--EXPORT_SYMBOL_GPL(aer_irq);
--
- /**
-  * aer_alloc_rpc - allocate Root Port data structure
-  * @dev: pointer to the pcie_dev data structure
+Please justify.  This seems actively harmful to me.
