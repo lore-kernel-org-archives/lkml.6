@@ -1,112 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id iwfqI6pwG1veWAAAmS7hNA
-	; Sat, 09 Jun 2018 06:16:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BsQwE7KTGVtaTgAAmS7hNA
+	; Thu, 07 Jun 2018 20:22:11 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7EA77608B8; Sat,  9 Jun 2018 06:16:10 +0000 (UTC)
+	id AFEAC60452; Thu,  7 Jun 2018 20:22:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BE06A607E7;
-	Sat,  9 Jun 2018 06:16:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BE06A607E7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id F2840608B8;
+	Thu,  7 Jun 2018 20:22:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2840608B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753125AbeFIGP7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 02:15:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59560 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752756AbeFIGP6 (ORCPT
+        id S1753614AbeFGUWI (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:22:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43105 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753028AbeFGUWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 02:15:58 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w596E7bV036870
-        for <linux-kernel@vger.kernel.org>; Sat, 9 Jun 2018 02:15:58 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jg4j87b50-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 02:15:58 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sat, 9 Jun 2018 02:15:56 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 9 Jun 2018 02:15:54 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w596FrWo9044380
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 9 Jun 2018 06:15:53 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ADAE3B2064;
-        Sat,  9 Jun 2018 03:17:21 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D890B205F;
-        Sat,  9 Jun 2018 03:17:21 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.216.44])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sat,  9 Jun 2018 03:17:21 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0A6CC16C998C; Fri,  8 Jun 2018 23:17:44 -0700 (PDT)
-Date: Fri, 8 Jun 2018 23:17:44 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Re: [rcu:rcu/dev 114/116] drivers/iommu/amd_iommu.c:3566:21: sparse:
- symbol 'stupid_workaround' was not declared. Should it be static?
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <201806090402.ONNRpjQE%fengguang.wu@intel.com>
+        Thu, 7 Jun 2018 16:22:07 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w57KLwqn2320798
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 13:21:58 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w57KLvcN2320795;
+        Thu, 7 Jun 2018 13:21:57 -0700
+Date: Thu, 7 Jun 2018 13:21:57 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
+Message-ID: <tip-e79e0f38083e607da5d7b493e7a0f78ba38d788e@git.kernel.org>
+Cc: mingo@kernel.org, ebiederm@xmission.com, bigeasy@linutronix.de,
+        paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, anna-maria@linutronix.de, hpa@zytor.com
+Reply-To: anna-maria@linutronix.de, hpa@zytor.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
+          ebiederm@xmission.com, bigeasy@linutronix.de, mingo@kernel.org
+In-Reply-To: <20180504144014.5378-1-bigeasy@linutronix.de>
+References: <20180504144014.5378-1-bigeasy@linutronix.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] signal: Remove no longer required irqsave/restore
+Git-Commit-ID: e79e0f38083e607da5d7b493e7a0f78ba38d788e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <201806090402.ONNRpjQE%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18060906-2213-0000-0000-000002B61269
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009156; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01044319; UDB=6.00534726; IPR=6.00823355;
- MB=3.00021546; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-09 06:15:55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060906-2214-0000-0000-00005A6AAF56
-Message-Id: <20180609061743.GE3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-09_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=730 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806090048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 09, 2018 at 04:11:26AM +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git rcu/dev
-> head:   f20dfe840ba05efdc4071106cffa31cb67cf6bc8
-> commit: 814ee31d1f906ad00daccb58944ab16fa279690c [114/116] fixup! EXP iommu: Placeholder for fix in mainline
-> reproduce:
->         # apt-get install sparse
->         git checkout 814ee31d1f906ad00daccb58944ab16fa279690c
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF=-D__CHECK_ENDIAN__
-> 
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
->    drivers/iommu/amd_iommu.c:3539:30: sparse: expression using sizeof(void)
->    drivers/iommu/amd_iommu.c:3542:36: sparse: expression using sizeof(void)
->    drivers/iommu/amd_iommu.c:3542:36: sparse: expression using sizeof(void)
-> >> drivers/iommu/amd_iommu.c:3566:21: sparse: symbol 'stupid_workaround' was not declared. Should it be static?
-> 
-> Please review and possibly fold the followup patch.
+Commit-ID:  e79e0f38083e607da5d7b493e7a0f78ba38d788e
+Gitweb:     https://git.kernel.org/tip/e79e0f38083e607da5d7b493e7a0f78ba38d788e
+Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
+AuthorDate: Fri, 4 May 2018 16:40:14 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 7 Jun 2018 22:18:55 +0200
 
-This whole thing disappears when I rebase to v4.18-rc1.  ;-)
+signal: Remove no longer required irqsave/restore
 
-							Thanx, Paul
+Commit a841796f11c9 ("signal: align __lock_task_sighand() irq disabling and
+RCU") introduced a rcu read side critical section with interrupts
+disabled. The changelog suggested that a better long-term fix would be "to
+make rt_mutex_unlock() disable irqs when acquiring the rt_mutex structure's
+->wait_lock".
+
+This long-term fix has been made in commit 4abf91047cf ("rtmutex: Make >
+wait_lock irq safe") for different reason.
+
+Therefore revert commit a841796f11c9 ("signal: align >
+__lock_task_sighand() irq disabling and RCU") as the interrupt disable
+dance is not longer required.
+
+Testing was done over an extensive period with RCU torture, especially with
+TREE03 as requested by Paul.
+
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Link: https://lkml.kernel.org/r/20180504144014.5378-1-bigeasy@linutronix.de
+---
+ kernel/signal.c | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 0f865d67415d..8d8a940422a8 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1244,19 +1244,12 @@ struct sighand_struct *__lock_task_sighand(struct task_struct *tsk,
+ {
+ 	struct sighand_struct *sighand;
+ 
++	rcu_read_lock();
+ 	for (;;) {
+-		/*
+-		 * Disable interrupts early to avoid deadlocks.
+-		 * See rcu_read_unlock() comment header for details.
+-		 */
+-		local_irq_save(*flags);
+-		rcu_read_lock();
+ 		sighand = rcu_dereference(tsk->sighand);
+-		if (unlikely(sighand == NULL)) {
+-			rcu_read_unlock();
+-			local_irq_restore(*flags);
++		if (unlikely(sighand == NULL))
+ 			break;
+-		}
++
+ 		/*
+ 		 * This sighand can be already freed and even reused, but
+ 		 * we rely on SLAB_TYPESAFE_BY_RCU and sighand_ctor() which
+@@ -1268,15 +1261,12 @@ struct sighand_struct *__lock_task_sighand(struct task_struct *tsk,
+ 		 * __exit_signal(). In the latter case the next iteration
+ 		 * must see ->sighand == NULL.
+ 		 */
+-		spin_lock(&sighand->siglock);
+-		if (likely(sighand == tsk->sighand)) {
+-			rcu_read_unlock();
++		spin_lock_irqsave(&sighand->siglock, *flags);
++		if (likely(sighand == tsk->sighand))
+ 			break;
+-		}
+-		spin_unlock(&sighand->siglock);
+-		rcu_read_unlock();
+-		local_irq_restore(*flags);
++		spin_unlock_irqrestore(&sighand->siglock, *flags);
+ 	}
++	rcu_read_unlock();
+ 
+ 	return sighand;
+ }
