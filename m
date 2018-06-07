@@ -1,126 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jizKN1GIHlvVRAAAmS7hNA
-	; Mon, 11 Jun 2018 14:35:13 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6h23BwqhGVsyXwAAmS7hNA
+	; Thu, 07 Jun 2018 21:18:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C5AC8607BB; Mon, 11 Jun 2018 14:35:13 +0000 (UTC)
+	id 021EA6074D; Thu,  7 Jun 2018 21:18:02 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtVCr8Gy"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 01A2B60541;
-	Mon, 11 Jun 2018 14:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01A2B60541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sandeen.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5F06A60452;
+	Thu,  7 Jun 2018 21:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F06A60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932654AbeFKOfL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:35:11 -0400
-Received: from sandeen.net ([63.231.237.45]:37634 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932109AbeFKOfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:35:09 -0400
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id E4ABAF89;
-        Mon, 11 Jun 2018 09:34:47 -0500 (CDT)
-Subject: Re: INFO: task hung in xlog_grant_head_check
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        syzbot <syzbot+568245b88fbaedcb1959@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-References: <000000000000457b2d056cbb0044@google.com>
- <20180522123107.GC3751@bfoster.bfoster> <20180522222620.GW23861@dastard>
- <20180522225208.GB658@sol.localdomain> <20180523074425.GM14384@magnolia>
- <20180523162015.GA3684@sol.localdomain>
- <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
- <CACT4Y+b4+o86Aud9K3m1HWhqsbNoyvEfW+53R2WV=Redi6Cwew@mail.gmail.com>
-From: Eric Sandeen <sandeen@sandeen.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <46be4dcc-15e5-1482-042b-a0bcdb0fa56b@sandeen.net>
-Date: Mon, 11 Jun 2018 09:35:08 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S1752600AbeFGVR7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:17:59 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:45265 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751973AbeFGVR5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:17:57 -0400
+Received: by mail-ua0-f194.google.com with SMTP id k14-v6so7464578uao.12;
+        Thu, 07 Jun 2018 14:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=A4DMgyyzKc+oC1zcKxYlyWdtTZBCToBO7GELQdZvUzw=;
+        b=mtVCr8GyzDlngPcjYDzPlOddID2JFN38tPzIF7UFKGf1DjK1oroKL7K0pdkPw0wgbE
+         xW91ZtIUADAVeI/46Ib/7BYFY2trGxhwKZ0YOIKZT707mgg2Pzv4qatbGvRpTeKS6Vu5
+         mooampY80ty1iO/WD+ZQz/gOcKz3a2INT/vI1qWeOpwRvUDoI/d7qqWmvhJw0G/QEr9w
+         clNZysIXvi5AmYea0DOb/5UHh7+DxXFVUlEJ1mnAB/UD14E0I7ROgtJ0Zer3qYbY2sPE
+         V5RQTk7zDwShH8AI8r8soSukxXQev3fRz6EUYBDuQTvzNM10pW+//pAbLZTygJIvTQQB
+         ZUQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=A4DMgyyzKc+oC1zcKxYlyWdtTZBCToBO7GELQdZvUzw=;
+        b=jQJy4X5gjblF3N87vMYZEixhddennXKOGamWkfetEpRRJcQnAA2yixonRHM1nFOvjz
+         Szc3PbBMB2gJ9XMrGEdu7neEZQmWUFfjIs9IcrNL5g4YaGm0toPRrVRYAvn4WsU50M+5
+         yeCowm8EFmJXsSJBmnZM+4A2wgku+Uft/LesojYKXzL0EYiU5VyNAbMQBzErfj7omJyW
+         sUxZgM63l+byDhaZh3iHQu2bdYMJZ6yeAAEqHSGymD30Yh9Pr9rKdyacCPHUgWM6JiHB
+         1ORiIUcx3Y8x25SZeD6XFz4HittTQw3U3mS2bKF5Hls1KMiVbvwDldzP3QxQScjaC9v3
+         akIg==
+X-Gm-Message-State: APt69E2KTYJkBxSo45MBf+e1UYv1dsDxtJnB6HtMM8u5YXhNdhOYoPPs
+        QsyEh78sspme2XuufijKxa/lGIY0YpFtpo+j86c=
+X-Google-Smtp-Source: ADUXVKLQYCyH4PLUeqoGYUDYmQFfxg7gxWl2F5t+DsnhPTMJBWAJLgZZa1f3vMTwrhQ/QslOglzp54UHOgI1cZ11dM0=
+X-Received: by 2002:a9f:2266:: with SMTP id 93-v6mr2405400uad.142.1528406276577;
+ Thu, 07 Jun 2018 14:17:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+b4+o86Aud9K3m1HWhqsbNoyvEfW+53R2WV=Redi6Cwew@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:5494:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 14:17:16 -0700 (PDT)
+In-Reply-To: <CADYN=9J3wY1f6q4NvH1mHJXnu6GnErOqz75CfzfG1q5-WzcyCg@mail.gmail.com>
+References: <20180607105712.553-1-anders.roxell@linaro.org>
+ <CAH3MdRWo0kUYngyAwXP1sOT_XqbxyfTvDd6sNz+qd7LL1T8LUA@mail.gmail.com> <CADYN=9J3wY1f6q4NvH1mHJXnu6GnErOqz75CfzfG1q5-WzcyCg@mail.gmail.com>
+From: Y Song <ys114321@gmail.com>
+Date: Thu, 7 Jun 2018 14:17:16 -0700
+Message-ID: <CAH3MdRXMHRtK9FJ4UP8Gy-bahCS2oipOY7yLTEqu-x6uOMKLvw@mail.gmail.com>
+Subject: Re: [PATCH] selftests: bpf: fix urandom_read build issue
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Shuah Khan <shuah@kernel.org>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/11/18 8:20 AM, Dmitry Vyukov wrote:
-> On Wed, May 23, 2018 at 8:01 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
+On Thu, Jun 7, 2018 at 12:07 PM, Anders Roxell <anders.roxell@linaro.org> w=
+rote:
+> On 7 June 2018 at 19:52, Y Song <ys114321@gmail.com> wrote:
+>> On Thu, Jun 7, 2018 at 3:57 AM, Anders Roxell <anders.roxell@linaro.org>=
+ wrote:
+>>> gcc complains that urandom_read gets built twice.
+>>>
+>>> gcc -o tools/testing/selftests/bpf/urandom_read
+>>> -static urandom_read.c -Wl,--build-id
+>>> gcc -Wall -O2 -I../../../include/uapi -I../../../lib -I../../../lib/bpf
+>>> -I../../../../include/generated  -I../../../include    urandom_read.c
+>>> urandom_read -lcap -lelf -lrt -lpthread -o
+>>> tools/testing/selftests/bpf/urandom_read
+>>> gcc: fatal error: input file
+>>> =E2=80=98tools/testing/selftests/bpf/urandom_read=E2=80=99 is the
+>>> same as output file
+>>> compilation terminated.
+>>> ../lib.mk:110: recipe for target
+>>> 'tools/testing/selftests/bpf/urandom_read' failed
+>>
+>> What is the build/make command to reproduce the above failure?
+>
+> make -C tools/testing/selftests
 
-...
+Thanks. The patch will break
+   make -C tools/testing/selftests/bpf
 
->> As an aside, I wonder how much coverage of the V5 format code syzkaller
->> /has/
->> achieved; that would be another useful datapoint google could provide - if
->> syzkaller is in fact traversing the V5 codepaths and isn't turning anything
->> up, that'd be pretty useful to know.
-> 
-> Hi Eric,
-> 
-> The current syzbot kernel code coverage is available here:
-> https://storage.googleapis.com/syzkaller/cover/upstream.html#9c73bb525fc1def86e67f5039ab97d8f48062621
+[yhs@localhost bpf-next]$ make -C tools/testing/selftests/bpf
+make: Entering directory '/home/yhs/work/bpf-next/tools/testing/selftests/b=
+pf'
+gcc -o /urandom_read -static urandom_read.c -Wl,--build-id
+/usr/bin/ld: cannot open output file /urandom_read: Permission denied
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:20: /urandom_read] Error 1
+make: Leaving directory '/home/yhs/work/bpf-next/tools/testing/selftests/bp=
+f'
+[yhs@localhost bpf-next]$
 
-Here is an example of an informative, useful, and efficient presentation of
-code coverage:
+Could you still make the above command work?
 
-http://ltp.sourceforge.net/coverage/lcov/output/index.html
-
-Thanks,
--Eric
+>
+> Cheers,
+> Anders
+>
+>>
+>>> To fix this issue remove the urandom_read target and so target
+>>> TEST_CUSTOM_PROGS gets used.
+>>>
+>>> Fixes: 81f77fd0deeb ("bpf: add selftest for stackmap with BPF_F_STACK_B=
+UILD_ID")
+>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>>> ---
+>>>  tools/testing/selftests/bpf/Makefile | 6 ++----
+>>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selft=
+ests/bpf/Makefile
+>>> index 607ed8729c06..67285591ffd7 100644
+>>> --- a/tools/testing/selftests/bpf/Makefile
+>>> +++ b/tools/testing/selftests/bpf/Makefile
+>>> @@ -16,10 +16,8 @@ LDLIBS +=3D -lcap -lelf -lrt -lpthread
+>>>  TEST_CUSTOM_PROGS =3D $(OUTPUT)/urandom_read
+>>>  all: $(TEST_CUSTOM_PROGS)
+>>>
+>>> -$(TEST_CUSTOM_PROGS): urandom_read
+>>> -
+>>> -urandom_read: urandom_read.c
+>>> -       $(CC) -o $(TEST_CUSTOM_PROGS) -static $< -Wl,--build-id
+>>> +$(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
+>>> +       $(CC) -o $@ -static $< -Wl,--build-id
+>>>
+>>>  # Order correspond to 'make run_tests' order
+>>>  TEST_GEN_PROGS =3D test_verifier test_tag test_maps test_lru_map test_=
+lpm_map test_progs \
+>>> --
+>>> 2.17.1
+>>>
