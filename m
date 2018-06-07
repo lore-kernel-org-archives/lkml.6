@@ -1,86 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YCwXGQxEGVv5DgAAmS7hNA
-	; Thu, 07 Jun 2018 14:41:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mvxtA2jmGFs/QgAAmS7hNA
+	; Thu, 07 Jun 2018 08:01:44 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2F4B9608BA; Thu,  7 Jun 2018 14:41:59 +0000 (UTC)
+	id F0DBE607E7; Thu,  7 Jun 2018 08:01:43 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AB3AA601C3;
-	Thu,  7 Jun 2018 14:41:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AB3AA601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9D02260452;
+	Thu,  7 Jun 2018 08:01:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D02260452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934700AbeFGOl4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:41:56 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40607 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934604AbeFGOly (ORCPT
+        id S1753102AbeFGIBk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:01:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34245 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752336AbeFGIBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:41:54 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvba-0005Zj-GT; Thu, 07 Jun 2018 15:09:34 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb8-00035d-PG; Thu, 07 Jun 2018 15:09:06 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 04:01:38 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5781RQV2122099
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:01:27 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5781R6u2122096;
+        Thu, 7 Jun 2018 01:01:27 -0700
+Date: Thu, 7 Jun 2018 01:01:27 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-ds6vdm7clh070512rpydidsc@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
+        namhyung@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
+        hpa@zytor.com, mhiramat@kernel.org, tglx@linutronix.de,
+        adrian.hunter@intel.com, dsahern@gmail.com
+Reply-To: acme@redhat.com, namhyung@kernel.org, mingo@kernel.org,
+          wangnan0@huawei.com, hpa@zytor.com, mhiramat@kernel.org,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org, adrian.hunter@intel.com, dsahern@gmail.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf probe: Use return of map__get() to make code
+ more compact
+Git-Commit-ID: f622df5ed768ce7c049af99196c1b7b0a2c0d385
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Mark Brown" <broonie@kernel.org>,
-        "Hans de Goede" <hdegoede@redhat.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.899647431@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 262/410] ASoC: rt5651: Fix regcache sync errors on resume
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+Commit-ID:  f622df5ed768ce7c049af99196c1b7b0a2c0d385
+Gitweb:     https://git.kernel.org/tip/f622df5ed768ce7c049af99196c1b7b0a2c0d385
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 24 May 2018 11:17:34 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 4 Jun 2018 10:28:50 -0300
 
-------------------
+perf probe: Use return of map__get() to make code more compact
 
-From: Hans de Goede <hdegoede@redhat.com>
+The __get() idiom returns a reference count for the object passed, i.e.
+all functions of this type return the object passed, so take advantage
+of that to make the code more compact.
 
-commit 2d30e9494f1ea320aaaad0cff9ddd92c87eac355 upstream.
-
-The ALC5651 does not like multi-write accesses, avoid them. This fixes:
-
-rt5651 i2c-10EC5651:00: Unable to sync registers 0x27-0x28. -121
-
-Errors on resume (and all registers after the registers in the error not
-being synced).
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-ds6vdm7clh070512rpydidsc@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- sound/soc/codecs/rt5651.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/probe-event.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/sound/soc/codecs/rt5651.c
-+++ b/sound/soc/codecs/rt5651.c
-@@ -1732,6 +1732,7 @@ static const struct regmap_config rt5651
- 	.num_reg_defaults = ARRAY_SIZE(rt5651_reg),
- 	.ranges = rt5651_ranges,
- 	.num_ranges = ARRAY_SIZE(rt5651_ranges),
-+	.use_single_rw = true,
- };
- 
- static const struct i2c_device_id rt5651_i2c_id[] = {
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 3094f11e7d81..f119eb628dbb 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -165,8 +165,7 @@ static struct map *kernel_get_module_map(const char *module)
+ 		if (strncmp(pos->dso->short_name + 1, module,
+ 			    pos->dso->short_name_len - 2) == 0 &&
+ 		    module[pos->dso->short_name_len - 2] == '\0') {
+-			map__get(pos);
+-			return pos;
++			return map__get(pos);
+ 		}
+ 	}
+ 	return NULL;
