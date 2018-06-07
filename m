@@ -1,124 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BkzxLZL0G1sYbAAAmS7hNA
-	; Sat, 09 Jun 2018 15:40:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eZOBD1tjGVv3awAAmS7hNA
+	; Thu, 07 Jun 2018 16:55:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 162E3608BF; Sat,  9 Jun 2018 15:40:26 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UN4nEjOs"
+	id 60C506089E; Thu,  7 Jun 2018 16:55:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 7118A606FA;
-	Sat,  9 Jun 2018 15:40:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7118A606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id D9CF8605A2;
+	Thu,  7 Jun 2018 16:54:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9CF8605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933161AbeFIPkX (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:40:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37786 "EHLO mail.kernel.org"
+        id S934214AbeFGQy6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:54:58 -0400
+Received: from mga03.intel.com ([134.134.136.65]:60223 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932791AbeFIPfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:35:30 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5602E208A4;
-        Sat,  9 Jun 2018 15:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558529;
-        bh=tc7t6EgezKfGISWd2TNXVMgerqa129Pa+JWbhFy/Tg8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UN4nEjOsNtBaBCtxkyzxoyQpVYM3d+M+Q+l8Xe36JyumKE5QRImhY17jp5V85H7Fb
-         hKUzujHLyK2vHe4TTyk6DIwltLfLaYQzP+Xk0SsM+OSMZIHLZblAbuHU5wlt6k86yx
-         s95qfuoX3NSM8CZ+IJnU70c2vsAl2waQfLeB2PU0=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 15/41] ipv6: omit traffic class when calculating flow hash
-Date: Sat,  9 Jun 2018 17:29:47 +0200
-Message-Id: <20180609152927.250552790@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609152926.389750182@linuxfoundation.org>
-References: <20180609152926.389750182@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S932987AbeFGQyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:54:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 09:54:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,487,1520924400";
+   d="scan'208";a="57388144"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga003.jf.intel.com with ESMTP; 07 Jun 2018 09:54:01 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>, stable@vger.kernel.org,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 1/2] iommu/vt-d: add definitions for PFSID
+Date: Thu,  7 Jun 2018 09:56:59 -0700
+Message-Id: <1528390620-31565-2-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528390620-31565-1-git-send-email-jacob.jun.pan@linux.intel.com>
+References: <1528390620-31565-1-git-send-email-jacob.jun.pan@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+When SRIOV VF device IOTLB is invalidated, we need to provide
+the PF source ID such that IOMMU hardware can gauge the depth
+of invalidation queue which is shared among VFs. This is needed
+when device invalidation throttle (DIT) capability is supported.
 
-------------------
+This patch adds bit definitions for checking and tracking PFSID.
 
-From: Michal Kubecek <mkubecek@suse.cz>
-
-[ Upstream commit fa1be7e01ea863e911349e30456706749518eeab ]
-
-Some of the code paths calculating flow hash for IPv6 use flowlabel member
-of struct flowi6 which, despite its name, encodes both flow label and
-traffic class. If traffic class changes within a TCP connection (as e.g.
-ssh does), ECMP route can switch between path. It's also inconsistent with
-other code paths where ip6_flowlabel() (returning only flow label) is used
-to feed the key.
-
-Use only flow label everywhere, including one place where hash key is set
-using ip6_flowinfo().
-
-Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: stable@vger.kernel.org
+Cc: "Ashok Raj" <ashok.raj@intel.com>
+Cc: "Lu Baolu" <baolu.lu@linux.intel.com>
 ---
- include/net/ipv6.h        |    5 +++++
- net/core/flow_dissector.c |    2 +-
- net/ipv6/route.c          |    2 +-
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/iommu/intel-iommu.c | 1 +
+ include/linux/intel-iommu.h | 3 +++
+ 2 files changed, 4 insertions(+)
 
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -861,6 +861,11 @@ static inline __be32 ip6_make_flowinfo(u
- 	return htonl(tclass << IPV6_TCLASS_SHIFT) | flowlabel;
- }
- 
-+static inline __be32 flowi6_get_flowlabel(const struct flowi6 *fl6)
-+{
-+	return fl6->flowlabel & IPV6_FLOWLABEL_MASK;
-+}
-+
- /*
-  *	Prototypes exported by ipv6
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 749d8f2..3d77d61 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -422,6 +422,7 @@ struct device_domain_info {
+ 	struct list_head global; /* link to global list */
+ 	u8 bus;			/* PCI bus number */
+ 	u8 devfn;		/* PCI devfn number */
++	u16 pfsid;		/* SRIOV physical function source ID */
+ 	u8 pasid_supported:3;
+ 	u8 pasid_enabled:1;
+ 	u8 pri_supported:1;
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index ef169d6..af1c05f 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -114,6 +114,7 @@
+  * Extended Capability Register
   */
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -1179,7 +1179,7 @@ __u32 __get_hash_from_flowi6(const struc
- 	keys->ports.src = fl6->fl6_sport;
- 	keys->ports.dst = fl6->fl6_dport;
- 	keys->keyid.keyid = fl6->fl6_gre_key;
--	keys->tags.flow_label = (__force u32)fl6->flowlabel;
-+	keys->tags.flow_label = (__force u32)flowi6_get_flowlabel(fl6);
- 	keys->basic.ip_proto = fl6->flowi6_proto;
  
- 	return flow_hash_from_keys(keys);
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1250,7 +1250,7 @@ out:
- 	keys->control.addr_type = FLOW_DISSECTOR_KEY_IPV6_ADDRS;
- 	keys->addrs.v6addrs.src = key_iph->saddr;
- 	keys->addrs.v6addrs.dst = key_iph->daddr;
--	keys->tags.flow_label = ip6_flowinfo(key_iph);
-+	keys->tags.flow_label = ip6_flowlabel(key_iph);
- 	keys->basic.ip_proto = key_iph->nexthdr;
- }
++#define ecap_dit(e)		((e >> 41) & 0x1)
+ #define ecap_pasid(e)		((e >> 40) & 0x1)
+ #define ecap_pss(e)		((e >> 35) & 0x1f)
+ #define ecap_eafs(e)		((e >> 34) & 0x1)
+@@ -284,6 +285,7 @@ enum {
+ #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
+ #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
+ #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
++#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
+ #define QI_DEV_IOTLB_SIZE	1
+ #define QI_DEV_IOTLB_MAX_INVS	32
  
+@@ -308,6 +310,7 @@ enum {
+ #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
+ #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
+ #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
++#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xfff) << 52))
+ #define QI_DEV_EIOTLB_MAX_INVS	32
+ 
+ #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
+-- 
+2.7.4
