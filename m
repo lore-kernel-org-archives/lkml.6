@@ -1,85 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cWjfF01OGVtGdwAAmS7hNA
-	; Thu, 07 Jun 2018 15:35:51 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id BNEGEk9dGVslKgAAmS7hNA
+	; Thu, 07 Jun 2018 16:30:28 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 27879608BF; Thu,  7 Jun 2018 15:35:51 +0000 (UTC)
+	id 973586089E; Thu,  7 Jun 2018 16:30:28 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="AgUhX7lR"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 95C4C6074D;
-	Thu,  7 Jun 2018 15:35:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95C4C6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id C36F9605A2;
+	Thu,  7 Jun 2018 16:30:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C36F9605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935130AbeFGPfs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:35:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:14092 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934108AbeFGPfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:35:45 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 08:35:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="55529755"
-Received: from sandybridge-desktop.sh.intel.com (HELO sandybridge-desktop) ([10.239.160.116])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Jun 2018 08:35:39 -0700
-Date: Thu, 7 Jun 2018 23:40:52 +0800
-From: Yu Chen <yu.c.chen@intel.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org,
-        Artem S Tashkinov <t.artem@mailcity.com>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH][RFC] sched: cpufreq: Fix long idle judgement logic in
- load calculation
-Message-ID: <20180607154051.GA19168@sandybridge-desktop>
-References: <1528341454-16991-1-git-send-email-yu.c.chen@intel.com>
- <20180607044543.d7pswad5tshw26lc@vireshk-i7>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607044543.d7pswad5tshw26lc@vireshk-i7>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S932778AbeFGQa0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:30:26 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38993 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753879AbeFGQaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:30:21 -0400
+Received: by mail-pl0-f67.google.com with SMTP id f1-v6so6465980plt.6
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:30:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:message-id:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=Xn02O5djQDNFxsk7RsRBFdSObjD98lZpBFuszQMeurk=;
+        b=AgUhX7lR0sYdhNvb/lEKO+I0Vlf1pdaPyP4XuK4iiJTvdhdkfPIh4Atjve27nc7gcu
+         ZcQpNcidSe6sEfFguyrr0zfDhTRFVfko8gkaxVFP6uX9Svj8wzzmJG84N7OqK8GX/nlg
+         bkwP0j9PpErNdqhNR1jKElaC/LiaA5BC4xi0BxJX53KIeogjhqAfWGIeuIs0fYBhkQ7q
+         uJj1lzzr29n7tHBFEckoTWurNFNyTzqG4vDygw3VyH7FiYXWp/HLoS4WgNA9wtFMWeH4
+         u+Cyuh0bhUCO7SvbtQDS3vrxuYSVIqeTuXvYTE05d5tu6dypuKhJQOWnSOa/zungLNUF
+         /8mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:message-id:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=Xn02O5djQDNFxsk7RsRBFdSObjD98lZpBFuszQMeurk=;
+        b=dwGxv25qfRegKbKW9inF1n5+PclnpOQkfoSLiGKu2g9k1H6rE1CpKWB14Z6DTM3p/R
+         ClekJSofuFnucOvJWVb7aEnk7jdPb5y6DKefcgEI2SfUVJ/Y4Mhxr1RV9KIxLC2hSy2n
+         U7VFmt3vWwaIlUYi7xc4DRzJ+4wXvIfO1Q/cUy95l4dFfz5drj2nmYfuidAKKkQxpWdA
+         V5k35BtP6itKqQe2c01Ec2zKkYG7v6p/OrPc5uI55pmbkUF56ijddZWSZ3C9SbuUmMgk
+         obdEBo2EGi9xKSeo8GBa3USDz9vuhXHXGGA7b51h9tAw6Qr3AY/tceZ2pxd2U7K0JAJ0
+         FsWw==
+X-Gm-Message-State: APt69E3pWYDLaaRYaqmYMkqeB2UjgbiDp65W+BTub/yYdfD6o8vcYZNv
+        BEwYXthEMirmD3N6zoIkqbvJyA==
+X-Google-Smtp-Source: ADUXVKKsTMBnI25/30a1X4AVpWdvcqLa+1eNw00/Gqyr4vhIAbW6r8WXIntGdPd8TDvWP2QslC879A==
+X-Received: by 2002:a17:902:380c:: with SMTP id l12-v6mr2768314plc.19.1528389021013;
+        Thu, 07 Jun 2018 09:30:21 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id e189-v6sm14927902pfc.134.2018.06.07.09.30.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 09:30:19 -0700 (PDT)
+Date: Thu, 07 Jun 2018 09:30:19 -0700 (PDT)
+X-Google-Original-Date: Thu, 07 Jun 2018 09:29:48 PDT (-0700)
+Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
+In-Reply-To: <6a0ab99d-6e4d-eb80-bc4d-854d154ae827@wdc.com>
+Message-ID: <mhng-497a442f-c0da-4f88-9b48-827c4f164ed1@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+CC: luc.vanoostenryck@gmail.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, albert@sifive.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: atish.patra@wdc.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
-thanks for the comment,
-On Thu, Jun 07, 2018 at 10:15:43AM +0530, Viresh Kumar wrote:
-> On 07-06-18, 11:17, Chen Yu wrote:
-> > diff --git a/drivers/cpufreq/cpufreq_governor.c b/drivers/cpufreq/cpufreq_governor.c
-> > index 871bf9c..9792c80 100644
-> > --- a/drivers/cpufreq/cpufreq_governor.c
-> > +++ b/drivers/cpufreq/cpufreq_governor.c
-> > @@ -165,7 +165,7 @@ unsigned int dbs_update(struct cpufreq_policy *policy)
-> >  			 * calls, so the previous load value can be used then.
-> >  			 */
-> >  			load = j_cdbs->prev_load;
-> > -		} else if (unlikely(time_elapsed > 2 * sampling_rate &&
-> > +		} else if (((int)idle_time > 0) && unlikely(idle_time > 2 * sampling_rate &&
-> 
-> Yes the figures are insane, but if the idle time is around 36 minutes, the
-> conversion to int will make a positive value look negative and we will exit the
-> conditional block. And if we don't think that we will ever get such insane idle
-> times or we don't want to care about them, then what about doing this instead:
-> 
-> 		} else if ((unlikely((int)idle_time > 2 * sampling_rate &&
-> 
-> same below.
-> 
-Yes, this would be more straightforward.
+On Mon, 04 Jun 2018 12:28:47 PDT (-0700), atish.patra@wdc.com wrote:
+> On 6/4/18 12:09 PM, Luc Van Oostenryck wrote:
+>> On Mon, Jun 04, 2018 at 11:46:50AM -0700, Atish Patra wrote:
+>>> On 6/1/18 8:22 AM, Luc Van Oostenryck wrote:
+>>>> __copy_user() is a function, written in assembly, used to copy
+>>>> memory between kernel & user space. As such its to & from args
+>>>> may both take a user pointer or a kernel pointer.
+>>>>
+>>>> However the prototype for this function declare these two args
+>>>> as 'void __user *', which is no more & no less correct than
+>>>> declaring them as 'void *'. In fact theer is no possible correct
+>>>
+>>> /s/theer/there
+>>>
+>>>> annotation for such a function.
+>>>>
+>>>> The problem is worked around here by declaring these args as
+>>>> unsigned long and casting them to the right type in each of
+>>>> two callers raw_copy_{to,from}_user() as some kind of cast would
+>>>> be needed anyway.
+>>>>
+>>>> Note: another solution, maybe cleaner but slightly more complex,
+>>>>         would be to declare two version of __copy_user,
+>>>>         either in the asm file or via an alias, each having already
+>>>>         the correct typing for raw_copy_{to,from}_user().
+>>>>
+>>>
+>>> I feel that would be a better solution as it is implemented similarly
+>>> in ARM as well.
+>>>
+>>> I am unable to understand how "unsigned long" is better than "void*".
+>>> x86 implementation has both arguments as void*. Can you please clarify ?
+>>
+>> "better" is quite relative and it must be understood that sparse
+>> allow to cast pointers o fany kinds to and from unsigned long
+>> without any warnings (while doing a cast between different address
+>> space will emit a warning unless you use '__force').
+>>
+>
+> Got it.
+>> As I tried to explain here above, the fact that this function is
+>> declared as taking 2 __user pointers requires to use of casts
+>> (ugly casts with __force) to get over the __user. By declaring
+>> them as taking unsigned long, you still have to use casts but, IMO,
+>> it's cleaner
+>>
+>
+> Thanks for the detailed explanation.
+>
+>> Note: they're generic pointers/addresses anyway, they can't be
+>>        dereferenced anyway so unsigned is as good as a plain void*
+>>        or a void __user*
+>> Note: using unsigned long here, fundamentally to bypass the __user,
+>>        is the same as casting a const pointer back to a plain pointer
+>>        via an intermediate cast to unsigned long. People can argue
+>>        that's kinda cheating, and they would be right of course, but
+>>        using __force or declaring twice the function with two different
+>>        names and prototype is also a form of cheating.
+>> Note: if this would be my code, I would choose the solution with
+>>        two declarations.
+>
+> I prefer that as well.
 
-Best,
-Yu
-> -- 
-> viresh
+I haven't compiled this, but I think it should work.  It's on the fix-sparse 
+branch of kernel.org/palmer/linux.git .
+
+commit 88ffc46f92c16db0fa37edb79038d37ced0a8b41
+gpg: Signature made Thu 07 Jun 2018 09:29:02 AM PDT
+gpg:                using RSA key 00CE76D1834960DFCE886DF8EF4CA1502CCBAB41
+gpg:                issuer "palmer@dabbelt.com"
+gpg: Good signature from "Palmer Dabbelt <palmer@dabbelt.com>" [ultimate]
+gpg:                 aka "Palmer Dabbelt <palmer@sifive.com>" [ultimate]
+Author: Palmer Dabbelt <palmer@sifive.com>
+Date:   Thu Jun 7 09:20:57 2018 -0700
+
+    RISC-V: Split the definition of __copy_user
+    
+    We use a single __copy_user assembly function to copy memory both from
+    and to userspace.  While this works, it triggers sparse errors because
+    we're implicitly casting between the kernel and user address spaces by
+    calling __copy_user.
+    
+    This patch splits the C declaration into a pair of functions,
+    __asm_copy_{to,from}_user, that have sane semantics WRT __user.  This
+    split tricks sparse into treating these function calls as safe.  The
+    assembly implementation then just aliases these two symbols to
+    __copy_user, which I renamed to __asm_copy_tofrom_user.  The result is
+    an spare-safe implementation that pays to performance or code size
+    penalty.
+    
+    Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+
+diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+index 14b0b22fb578..0dbbbab05dac 100644
+--- a/arch/riscv/include/asm/uaccess.h
++++ b/arch/riscv/include/asm/uaccess.h
+@@ -392,19 +392,21 @@ do {								\
+ })
+ 
+ 
+-extern unsigned long __must_check __copy_user(void __user *to,
++extern unsigned long __must_check __asm_copy_from_user_user(void *to,
+ 	const void __user *from, unsigned long n);
++extern unsigned long __must_check __asm_copy_to_user_user(void __user *to,
++	const void *from, unsigned long n);
+ 
+ static inline unsigned long
+ raw_copy_from_user(void *to, const void __user *from, unsigned long n)
+ {
+-	return __copy_user(to, from, n);
++	return __asm_copy_from_user(to, from, n);
+ }
+ 
+ static inline unsigned long
+ raw_copy_to_user(void __user *to, const void *from, unsigned long n)
+ {
+-	return __copy_user(to, from, n);
++	return __asm_copy_to_user(to, from, n);
+ }
+ 
+ extern long strncpy_from_user(char *dest, const char __user *src, long count);
+diff --git a/arch/riscv/lib/uaccess.S b/arch/riscv/lib/uaccess.S
+index 58fb2877c865..bd51e47ebd44 100644
+--- a/arch/riscv/lib/uaccess.S
++++ b/arch/riscv/lib/uaccess.S
+@@ -13,7 +13,15 @@ _epc:
+ 	.previous
+ 	.endm
+ 
+-ENTRY(__copy_user)
++/* __asm_copy_to_user and __asm_copy_from_user are actually the same function,
++ * they're just provided as two different symbols to C code so sparse doesn't
++ * yell about casting between two different address spaces. */
++.global __asm_copy_to_user
++.set __asm_copy_to_user,__asm_copy_tofrom_user
++.global __asm_copy_from_user
++.set __asm_copy_from_user,__asm_copy_tofrom_user
++
++ENTRY(__asm_copy_tofrom_user)
+ 
+ 	/* Enable access to user memory */
+ 	li t6, SR_SUM
