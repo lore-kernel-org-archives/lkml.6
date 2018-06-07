@@ -1,115 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FAPAEyAwHlvTZAAAmS7hNA
-	; Mon, 11 Jun 2018 08:17:45 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4ibCCoeEGVtlMAAAmS7hNA
+	; Thu, 07 Jun 2018 19:16:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 57328607BB; Mon, 11 Jun 2018 08:17:45 +0000 (UTC)
+	id 114576074D; Thu,  7 Jun 2018 19:16:23 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mkut4LyW"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="sRV7AJln";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VxD7FxMz"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DD86360791;
-	Mon, 11 Jun 2018 08:17:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD86360791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 706FD60590;
+	Thu,  7 Jun 2018 19:16:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 706FD60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754162AbeFKIRn (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 04:17:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56734 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754146AbeFKIRk (ORCPT
+        id S1753042AbeFGTQU (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 15:16:20 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:36896 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751793AbeFGTQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:17:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6BMWYUn12JKyHvd/D7ydLx4ChhZ9FP/umOV3TpOFp2w=; b=mkut4LyWjRaeNFd2N7nVTvosS
-        3QYp0Kqcgl922ouu9CycSjXn6yult5uQWQSV8AVBQuHNGa+ShUmcnuGz9Ccyrkh9/loteI4YaCD7k
-        DSd0HVUfF251aUJx8H0MnEvctmlPn7npf6aG4VwxvlCAAv0rbC9GtnIOPJ+GGklMqBMk+ikxZB4MD
-        pxNvQYKEMhPfdif1uymAfpP906YoCEPTUYR0AgJoAbcvwUifVsmzlfbVbNWfIFL2YXC76N1oP86Mj
-        5vctuOaMfo+oi31iLoVzsm9K6GXHbe7lZx3LFjIiD7vL1Q3fq7SZ/uu3vxm+SujkYWpDGsgxlq+7b
-        ynA9/easQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSI0g-0004s9-40; Mon, 11 Jun 2018 08:17:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D149F201EA7B1; Mon, 11 Jun 2018 10:17:04 +0200 (CEST)
-Date: Mon, 11 Jun 2018 10:17:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Subject: Re: [PATCH 02/10] x86/cet: Introduce WRUSS instruction
-Message-ID: <20180611081704.GI12180@hirez.programming.kicks-ass.net>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
- <20180607143807.3611-3-yu-cheng.yu@intel.com>
- <CALCETrU45Cuzvfz3c1+-+7=9KS2N33Bpp1JqBtaGxhPo8U+Fqg@mail.gmail.com>
+        Thu, 7 Jun 2018 15:16:18 -0400
+Received: by mail-vk0-f67.google.com with SMTP id w8-v6so6763337vkh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=KmvToFAAxJrFTi6ZJWeZiyjDXgBVVY6MPj7XMEujz3w=;
+        b=sRV7AJlnQOtFpnGh2iYhIXqHUnP7BLC867aeY0/Kgu/yYYGTNxyahe8lVHVk/vbf/m
+         4PP2ryHRKDgYQF/Hksy8Cipj6Wr0FM1Cjmdj7gw0Rd9cLe8gt+zOQO8cynQZQ7jny2ux
+         AOv3Uk6ePpvOGJ9RVoSrmDQEUdOmFP0h3TRsPPt3dj7ruGB08HjclNFj8NLqRDAKa2ZS
+         5RN3x7hVe/xjTMNW1D/bcgkDPW03ZTA67Ez6pv7BbgEbkrGBM/32LbFSS8CvJds6h7kl
+         VL6PGw/kFexflwZnkpmjmp6/oVeh3jg0LDnNGY4VAqzWlDtTUeyd15JlG0f+i/LsghTi
+         338g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=KmvToFAAxJrFTi6ZJWeZiyjDXgBVVY6MPj7XMEujz3w=;
+        b=VxD7FxMzEq+UqQ4+4+0niypR6GcCbZzn7zNtd0hDEjACeoAhkiDehNSi5y617SenXM
+         TYhtl9GGBtCD0GZXNqyjo5Y8sI7GasTt01C5tefLMNsdbRi3JoRIh59LP/1kesOmC+oA
+         AnXXyjeJM6ovEH5ced5w8apHJIM/lN5stSYNo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=KmvToFAAxJrFTi6ZJWeZiyjDXgBVVY6MPj7XMEujz3w=;
+        b=OOVmYTgp8sHW3Se2ZJ96u7FHNKlA+FWHboS2ju3vnIZaXXxnoLiPpMMmfSN5+Xnt/s
+         6ViRKPA2hLO5YkpJZ4OW+KfgVkYGVkFTvfPB0t9aQAK4Ok6U2Qqadlc1U5J7kNxY2hmj
+         rlxP9yj8/mqUkBs8jB+R7ju9u9k53zTmQxK1BH9HrNVQFpKZIvM13Ah/CSW3rQBapW3n
+         Xx/lzvlRwGOOm7/ROeAf6EpPy0fYRlNbnyiHcOYUrREaW5xcsGVFDUmsCKhV5RmwRhSK
+         XvmlquHd//9NHKtcNMTGidsVH8aApa4GPcADqcRUoF0EjKb9yochhSthrwx2pC5ehJai
+         LmFQ==
+X-Gm-Message-State: APt69E07Q55dB+iC59V2cuo0ySRFioI2uVp/B0wnWwqeslFgxdOzFqns
+        YNv8wVAW24tO/OWASu2jGQEU+vSNQRuZCIvu4PXNCQ==
+X-Google-Smtp-Source: ADUXVKKlAtvhAfeGuAarnbINbwvEZhOPWFKBG2qb9M0k5W2FFEKBkubhuwPEBa5uRhuLMZ+6jni7r53M+B/jVkZoHxs=
+X-Received: by 2002:a1f:e483:: with SMTP id b125-v6mr1973069vkh.149.1528398977297;
+ Thu, 07 Jun 2018 12:16:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrU45Cuzvfz3c1+-+7=9KS2N33Bpp1JqBtaGxhPo8U+Fqg@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:a1f:a085:0:0:0:0:0 with HTTP; Thu, 7 Jun 2018 12:16:16 -0700 (PDT)
+In-Reply-To: <20180607191201.97080-1-ebiggers3@gmail.com>
+References: <0000000000009c221d056e0cf53a@google.com> <20180607191201.97080-1-ebiggers3@gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 7 Jun 2018 12:16:16 -0700
+X-Google-Sender-Auth: WjiM3Ld1K5i00AN1SZUDV17bzhs
+Message-ID: <CAGXu5jJf-cW8WkwMoPZT8zM2aUoO6P-EQs7MK6_uUTneZr0ehA@mail.gmail.com>
+Subject: Re: [PATCH] dh key: fix rounding up KDF output length
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Tycho Andersen <tycho@tycho.ws>,
+        Stephan Mueller <smueller@chronox.de>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 09:40:02AM -0700, Andy Lutomirski wrote:
-> On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+On Thu, Jun 7, 2018 at 12:12 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Commit 383203eff718 ("dh key: get rid of stack allocated array") changed
+> kdf_ctr() to assume that the length of key material to derive is a
+> multiple of the digest size.  The length was supposed to be rounded up
+> accordingly.  However, the round_up() macro was used which only gives
+> the correct result on power-of-2 arguments, whereas not all hash
+> algorithms have power-of-2 digest sizes.  In some cases this resulted in
+> a write past the end of the 'outbuf' buffer.
+>
+> Fix it by switching to roundup(), which works for non-power-of-2 inputs.
 
-> Peterz, isn't there some fancy better way we're supposed to handle the
-> error return these days?
+round_up() vs roundup(). Wow, that's not confusing. :( I wonder if we
+should rename the former to roundup_pow2() or something?
 
-> > +       asm volatile("1:.byte 0x66, 0x0f, 0x38, 0xf5, 0x37\n"
-> > +                    "xor %[err],%[err]\n"
-> > +                    "2:\n"
-> > +                    ".section .fixup,\"ax\"\n"
-> > +                    "3: mov $-1,%[err]; jmp 2b\n"
-> > +                    ".previous\n"
-> > +                    _ASM_EXTABLE(1b, 3b)
-> > +               : [err] "=a" (err)
-> > +               : [val] "S" (val), [addr] "D" (addr)
-> > +               : "memory");
+> Reported-by: syzbot+486f97f892efeb2075a3@syzkaller.appspotmail.com
+> Reported-by: syzbot+29d17b7898b41ee120a5@syzkaller.appspotmail.com
+> Reported-by: syzbot+8a608baf8751184ec727@syzkaller.appspotmail.com
+> Reported-by: syzbot+d04e58bd384f1fe0b112@syzkaller.appspotmail.com
+> Fixes: 383203eff718 ("dh key: get rid of stack allocated array")
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-So the alternative is something like:
+Regardless:
 
-__visible bool ex_handler_wuss(const struct exception_table_entry *fixup,
-			       struct pt_regs *regs, int trapnr)
-{
-	regs->ip = ex_fixup_addr(fixup);
-	regs->ax = -1L;
+Acked-by: Kees Cook <keescook@chromium.org>
 
-	return true;
-}
+-Kees
+
+> ---
+>  security/keys/dh.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/keys/dh.c b/security/keys/dh.c
+> index f7403821db7f0..b203f7758f976 100644
+> --- a/security/keys/dh.c
+> +++ b/security/keys/dh.c
+> @@ -142,6 +142,8 @@ static void kdf_dealloc(struct kdf_sdesc *sdesc)
+>   * The src pointer is defined as Z || other info where Z is the shared secret
+>   * from DH and other info is an arbitrary string (see SP800-56A section
+>   * 5.8.1.2).
+> + *
+> + * 'dlen' must be a multiple of the digest size.
+>   */
+>  static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
+>                    u8 *dst, unsigned int dlen, unsigned int zlen)
+> @@ -205,8 +207,8 @@ static int keyctl_dh_compute_kdf(struct kdf_sdesc *sdesc,
+>  {
+>         uint8_t *outbuf = NULL;
+>         int ret;
+> -       size_t outbuf_len = round_up(buflen,
+> -                                    crypto_shash_digestsize(sdesc->shash.tfm));
+> +       size_t outbuf_len = roundup(buflen,
+> +                                   crypto_shash_digestsize(sdesc->shash.tfm));
+>
+>         outbuf = kmalloc(outbuf_len, GFP_KERNEL);
+>         if (!outbuf) {
+> --
+> 2.17.1.1185.g55be947832-goog
+>
 
 
-	int err = 0;
 
-	asm volatile("1: INSN_WUSS\n"
-		     "2:\n"
-		     _ASM_EXTABLE_HANDLE(1b, 2b, ex_handler_wuss)
-		     : "=a" (err)
-		     : "S" (val), "D" (addr));
-
-But I'm not at all sure that's actually better.
+-- 
+Kees Cook
+Pixel Security
