@@ -1,134 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NucpBSxDHFt7YAAAmS7hNA
-	; Sat, 09 Jun 2018 21:14:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 49u3N4ZaGVsVEAAAmS7hNA
+	; Thu, 07 Jun 2018 16:17:14 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F2E15608BF; Sat,  9 Jun 2018 21:14:19 +0000 (UTC)
+	id E044F607E7; Thu,  7 Jun 2018 16:17:13 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQOKWitG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6E4EF601D3;
-	Sat,  9 Jun 2018 21:14:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E4EF601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by smtp.codeaurora.org (Postfix) with ESMTP id 453DD60590;
+	Thu,  7 Jun 2018 16:17:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 453DD60590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753440AbeFIVOQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 17:14:16 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:55826 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753381AbeFIVOO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 17:14:14 -0400
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1fRlBH-0002Sy-26; Sat, 09 Jun 2018 23:13:51 +0200
-Date: Sat, 9 Jun 2018 23:13:50 +0200
-From: Adam Borowski <kilobyte@angband.pl>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: catalin.marinas@arm.com, ynorov@caviumnetworks.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, szabolcs.nagy@arm.com,
-        heiko.carstens@de.ibm.com, philipp.tomsich@theobroma-systems.com,
-        joseph@codesourcery.com, sellcey@caviumnetworks.com,
-        Prasun.Kapoor@caviumnetworks.com, schwab@suse.de, agraf@suse.de,
-        bamv2005@gmail.com, geert@linux-m68k.org, Dave.Martin@arm.com,
-        manuel.montezelo@gmail.com, james.hogan@imgtec.com,
-        cmetcalf@mellanox.com, pinskia@gmail.com, linyongting@huawei.com,
-        klimov.linux@gmail.com, broonie@kernel.org,
-        maxim.kuvyrkov@linaro.org, fweimer@redhat.com,
-        Nathan_Lynch@mentor.com, james.morse@arm.com,
-        ramana.gcc@googlemail.com, schwidefsky@de.ibm.com,
-        davem@davemloft.net, christoph.muellner@theobroma-systems.com
-Subject: Re: [PATCH 04/24] 32-bit userspace ABI: introduce ARCH_32BIT_OFF_T
- config option
-Message-ID: <20180609211350.ilv43jl4k3byxscs@angband.pl>
-References: <20180608173207.nwoi25jee52gpdwy@armageddon.cambridge.arm.com>
- <mhng-e1922456-a05b-46f9-8644-d45ad70a55e5@palmer-si-x1c4>
+        id S935321AbeFGQRL (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:17:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932902AbeFGQRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 12:17:08 -0400
+Received: from localhost (mobile-166-170-56-202.mycingular.net [166.170.56.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCFA9206B7;
+        Thu,  7 Jun 2018 16:17:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528388228;
+        bh=NqFThFgYS6FmyIWaa6j9DB9+936MyUdL+kxxr1H7hpM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fQOKWitGD1rjKro0v0WHTg0tf2ehs862ueDRNXhywdgD19xZWLWZDFt9+HPLghGV5
+         LDjKRHXZha+Ab129D7rI1DAJ7FiYcoazlG53xkLSF6xx/eogTQpyxSjZESVIpCgWxw
+         P0mQfg3tx8PTGbZjci86gK2g7hFhzapCFXyUaBls=
+Date: Thu, 7 Jun 2018 18:16:40 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Sriram R <srirrama@codeaurora.org>, stable@vger.kernel.org,
+        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in
+ QCA4019 with eth decap mode
+Message-ID: <20180607161640.GB15950@kroah.com>
+References: <20180514064754.853201981@linuxfoundation.org>
+ <20180514064755.718467503@linuxfoundation.org>
+ <1528134761.2289.45.camel@codethink.co.uk>
+ <133624c2c44831fd70edb18c01508f64@codeaurora.org>
+ <1528386597.2289.75.camel@codethink.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <mhng-e1922456-a05b-46f9-8644-d45ad70a55e5@palmer-si-x1c4>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+In-Reply-To: <1528386597.2289.75.camel@codethink.co.uk>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 03:33:51PM -0700, Palmer Dabbelt wrote:
-> On Fri, 08 Jun 2018 10:32:07 PDT (-0700), catalin.marinas@arm.com wrote:
-> > On Wed, May 16, 2018 at 11:18:49AM +0300, Yury Norov wrote:
-> > > +config ARCH_32BIT_OFF_T
-> > > +	bool
-> > > +	depends on !64BIT
-> > > +	help
-> > > +	  All new 32-bit architectures should have 64-bit off_t type on
-> > > +	  userspace side which corresponds to the loff_t kernel type. This
-> > > +	  is the requirement for modern ABIs. Some existing architectures
-> > > +	  already have 32-bit off_t. This option is enabled for all such
-> > > +	  architectures explicitly. Namely: arc, arm, blackfin, cris, frv,
-> > > +	  h8300, hexagon, m32r, m68k, metag, microblaze, mips32, mn10300,
-> > > +	  nios2, openrisc, parisc32, powerpc32, score, sh, sparc, tile32,
-> > > +	  unicore32, x86_32 and xtensa. This is the complete list. Any
-> > > +	  new 32-bit architecture should declare 64-bit off_t type on user
-> > > +	  side and so should not enable this option.
+On Thu, Jun 07, 2018 at 04:49:57PM +0100, Ben Hutchings wrote:
+> On Thu, 2018-06-07 at 17:22 +0530, Sriram R wrote:
+> > Hi Ben,
 > > 
-> > Do you know if this is the case for riscv and nds32, merged in the
-> > meantime? If not, I suggest you drop this patch altogether and just
-> > define force_o_largefile() for arm64/ilp32 as we don't seem to stick to
-> > "all new 32-bit architectures should have 64-bit off_t".
-
-nds32 was obsolete even at the time of merging (it's just that Andes have
-a novel idea of actually supporting their old product lines!), thus it'll
-be a short lived port.  It doesn't matter much if it carries legacy baggage
--- especially that it has existing out-of-mainline users.
-
-Not so much for riscv32, which is designed and planned to be very long
-lived.  And has no existing _Linux_ users.
-
-> We (RISC-V) don't have support for rv32i in glibc yet, so there really isn't
-> a fixed ABI there yet.  From my understanding the rv32i port as it currently
-> stands has a 32-bit off_t (via __kernel_off_t being defined as long), so
-> this change would technically be a kernel ABI break.
+> > On 2018-06-04 23:22, Ben Hutchings wrote:
+> > > On Mon, 2018-05-14 at 08:48 +0200, Greg Kroah-Hartman wrote:
+> > > > 4.4-stable review patch.��If anyone has any objections, please let me�
+> > > > know.
+> > > > 
+> > > > ------------------
+> > > > 
+> > > > From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+> > > > 
+> > > > commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
+> > > > 
+> > > > Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
+> > > > rx_hdr_status is not padded to align in 4-byte boundary. Define a
+> > > > new hw_params field to handle different alignment behaviour between
+> > > > different hw. This patch fixes improper retrieval of rfc1042 header
+> > > > with QCA4019. This patch along with "ath10k: Properly remove padding
+> > > > from the start of rx payload" will fix traffic failure in ethernet
+> > > > decap mode for QCA4019.
+> > > > 
+> > > > Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+> > > > Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+> > > > Signed-off-by: Sriram R <srirrama@codeaurora.org>
+> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > 
+> > > [...]
+> > > 
+> > > I'm curious as to why this backport doesn't include the change to
+> > > ath10k_htt_rx_h_find_rfc1042().��I understand that the addition of the
+> > > new field is a dependency for the following patch, but shouldn't the
+> > > fix included in the upstream commit also be applied to 4.4?
+> > > 
+> > 
+> > ���Our main intention with this patchset [1] was to provide fix for�
+> > replay detection security issue seen in ath10k driver which needed to be�
+> > in the stable releases.
+> > 
+> > And, as per stable tree guidelines we wanted the patchset to have only�
+> > one and this important fix .
 > 
-> Since we don't have rv32i glibc yet I'm not fundamentally opposed to an ABI
-> break.  Is there a concrete advantage to this?
+> OK, I think the problem here is that the rules say "must" when what's
+> really meant is "should".  So the rule "It must fix only one thing."
+> really means that commits that each make a single logical change are
+> strongly preferred.
+> 
+> It does not mean that upstream commits should be trimmed down to
+> conform to this.  Greg generally considers it more important to avoid
+> changes to the upstream commit, where possible.  Right, Greg?
+> 
+> And speaking only for myself, I particularly dislike stable backports
+> that are significantly different from the original upstream commit but
+> don't mention this difference in the commit message.
 
-While modern userland tends to implement LFS support, it's still opt in for
-individual binaries at compile time.  With my (userland) porter hat on, I
-can tell you that no matter how you preach about using sane build systems, a
-terrifying portion of packages manage to fail to pass such flags.
-Especially for lesser-known or new architectures -- you need to specifically
-add the flag for every new arch for every such piece of software.
+I _STRONGLY_ dislike backports that are different than what is in
+Linus's tree and normally I catch it when someone tries to do that.  I
+missed this one here, and that's not ok on my part for missing that, and
+for the authors part in doing that :(
 
-Its lack is also not so easy to spot in an automated way; an experimental
-and hacky attempt to detect them (IIRC by checking whether the program in
-question imports an open/lseek/etc symbol instead of open64) is here:
-  https://lintian.debian.org/tags/binary-file-built-without-LFS-support.html
-20511 ELFs in 5953 packages!
+So, what to do here, should I revert this series and take a fixed-up
+one?  What exactly is the stable tree now missing because of this
+mistake?
 
-If there's no 32-bit open() (ie, it's an alias to open64()), all these bugs
-are immediately fixed.  Well, a program can still store file size in an int,
-but at least there's no interface problem.
+thanks,
 
-
-On the kernel side, you avoid the need to carry syscalls and structs for
-32-bit variants.  This gets you less complexity and a smaller kernel.
-
-
-Meow!
--- 
-⢀⣴⠾⠻⢶⣦⠀ I've read an article about how lively happy music boosts
-⣾⠁⢰⠒⠀⣿⡁ productivity.  You can read it, too, you just need the
-⢿⡄⠘⠷⠚⠋⠀ right music while doing so.  I recommend Skepticism
-⠈⠳⣄⠀⠀⠀⠀ (funeral doom metal).
+greg k-h
