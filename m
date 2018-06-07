@@ -1,112 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id RodmIeU9GVs4RgAAmS7hNA
-	; Thu, 07 Jun 2018 14:15:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fsxqBwN2GVsiEwAAmS7hNA
+	; Thu, 07 Jun 2018 18:15:13 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6C392608C1; Thu,  7 Jun 2018 14:15:01 +0000 (UTC)
+	id EF8746074D; Thu,  7 Jun 2018 18:15:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id D72DB6089E;
-	Thu,  7 Jun 2018 14:15:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D72DB6089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7A91C605A2;
+	Thu,  7 Jun 2018 18:15:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A91C605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933207AbeFGONx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:13:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39509 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933161AbeFGOJj (ORCPT
+        id S936192AbeFGSPJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:15:09 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40094 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936085AbeFGSNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:39 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbJ-0005Zv-5L; Thu, 07 Jun 2018 15:09:17 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0003JQ-BM; Thu, 07 Jun 2018 15:09:13 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Nikolay Aleksandrov" <nikolay@cumulusnetworks.com>,
-        "Xin Long" <lucien.xin@gmail.com>,
-        "Andy Gospodarek" <andy@greyhouse.net>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.678495451@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 400/410] bonding: fix the err path for dev hwaddr
- sync in bond_enslave
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Thu, 7 Jun 2018 14:13:05 -0400
+Received: by mail-pl0-f68.google.com with SMTP id t12-v6so6618937plo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:13:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=l87pru/hJq7KIqhgAMsjgim7+sLmP1e4GWRknoRnGys=;
+        b=c1yl98Z+xOLB+fiTFQnqxizffN9i3+ZpF43NjydX8yctuTR6zRqPqUIkmZk4B6nfSd
+         Q+4GbgjmA0xmS6sQuYW4LunE4Yc1gQiH67fvqWdyVSlHRaiRZFfo3TlCnhyw0U6Keqh0
+         mGBNDm1T6YkryXMRDmFFtKTQQIIpfRrtrZt+WgvgHISctaIA6m59kZVE5V3WR0CldFN5
+         xT4oGXdE2Dk72SawHrUM4rCIKM/ERYH/thc2zT+WE2JAE46jN88i5icT/tnB13IkF2CF
+         LSXlxlJmqQ8ggKHXrk4e5QCxBTBbR9in+e3vekjRw5C1JIMKdTMqsyYS3ZyhFoy2MzRj
+         JLyA==
+X-Gm-Message-State: APt69E3B8/dEvUl86JlQpaxC0Jfi5WN3JUzYTLb7AoSxuamvAw/MVrVj
+        s51GGkbYnVjQn60Z1VlynNfZUw==
+X-Google-Smtp-Source: ADUXVKLQkUlumqXlZKeEJcYipFyQf5lnMTj6FZW8IDYeUK659ZY+e80ik9LsmyNyb3Sow2aT4VM9CA==
+X-Received: by 2002:a17:902:2702:: with SMTP id c2-v6mr3009239plb.297.1528395184186;
+        Thu, 07 Jun 2018 11:13:04 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id z3-v6sm5029002pfn.36.2018.06.07.11.13.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 11:13:03 -0700 (PDT)
+From: Matthias Kaehlcke <mka@chromium.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v2 08/11] dt-bindings: PM / OPP: add opp-throttlers property
+Date: Thu,  7 Jun 2018 11:12:11 -0700
+Message-Id: <20180607181214.30338-9-mka@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+In-Reply-To: <20180607181214.30338-1-mka@chromium.org>
+References: <20180607181214.30338-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+The optional opp-throttlers property is used to configure the throttlers
+(see drivers/misc/throttler/*) that use a given OPP to throttle the
+corresponding device(s).
 
-------------------
-
-From: Xin Long <lucien.xin@gmail.com>
-
-commit 5c78f6bfae2b10ff70e21d343e64584ea6280c26 upstream.
-
-vlan_vids_add_by_dev is called right after dev hwaddr sync, so on
-the err path it should unsync dev hwaddr. Otherwise, the slave
-dev's hwaddr will never be unsync when this err happens.
-
-Fixes: 1ff412ad7714 ("bonding: change the bond's vlan syncing functions with the standard ones")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reviewed-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Acked-by: Andy Gospodarek <andy@greyhouse.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/net/bonding/bond_main.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Changes in v2:
+- patch added to series
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1451,7 +1451,7 @@ int bond_enslave(struct net_device *bond
- 	if (res) {
- 		pr_err("%s: Error: Couldn't add bond vlan ids to %s\n",
- 		       bond_dev->name, slave_dev->name);
--		goto err_close;
-+		goto err_hwaddr_unsync;
- 	}
+ Documentation/devicetree/bindings/opp/opp.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentation/devicetree/bindings/opp/opp.txt
+index 4e4f30288c8b..b10240f07d30 100644
+--- a/Documentation/devicetree/bindings/opp/opp.txt
++++ b/Documentation/devicetree/bindings/opp/opp.txt
+@@ -167,6 +167,9 @@ Optional properties:
+   functioning of the current device at the current OPP (where this property is
+   present).
  
- 	prev_slave = bond_last_slave(bond);
-@@ -1626,9 +1626,6 @@ err_unregister:
- 	netdev_rx_handler_unregister(slave_dev);
- 
- err_detach:
--	if (!bond_uses_primary(bond))
--		bond_hw_addr_flush(bond_dev, slave_dev);
--
- 	vlan_vids_del_by_dev(slave_dev, bond_dev);
- 	if (bond->primary_slave == new_slave)
- 		bond->primary_slave = NULL;
-@@ -1642,6 +1639,10 @@ err_detach:
- 	}
- 	slave_disable_netpoll(new_slave);
- 
-+err_hwaddr_unsync:
-+	if (!bond_uses_primary(bond))
-+		bond_hw_addr_flush(bond_dev, slave_dev);
++- opp-throttlers: Array with phandles of throttlers that use this OPP to
++  throttle the corresponding device(s).
 +
- err_close:
- 	slave_dev->priv_flags &= ~IFF_BONDING;
- 	dev_close(slave_dev);
+ Example 1: Single cluster Dual-core ARM cortex A9, switch DVFS states together.
+ 
+ / {
+-- 
+2.18.0.rc1.242.g61856ae69a-goog
