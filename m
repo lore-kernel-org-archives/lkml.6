@@ -1,121 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 7gOrONMZHVv1JQAAmS7hNA
-	; Sun, 10 Jun 2018 12:30:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id x96UAZ1BGVsOcgAAmS7hNA
+	; Thu, 07 Jun 2018 14:31:03 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C9C2D607E7; Sun, 10 Jun 2018 12:30:11 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhU1puW6"
+	id D57496089E; Thu,  7 Jun 2018 14:31:03 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 41CE6604D4;
-	Sun, 10 Jun 2018 12:30:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41CE6604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3A1556063F;
+	Thu,  7 Jun 2018 14:31:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A1556063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753937AbeFJMZL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 08:25:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753899AbeFJMZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 08:25:09 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 621A320858;
-        Sun, 10 Jun 2018 12:25:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528633509;
-        bh=xJq0wIlGVkcvIwc8xZOFLUreEwnzLuyg/umrNdSnZ9Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nhU1puW66AHfD5TPMjuQWdkyCIltFJxuZWVHQd3tZgY0iqNkrUVPfiHlyfK0PL3AN
-         g68PTqNML3r4G74+ss6DivdxrQCCfEHl+iuy8wRsLCvyhowRg6LsmD1jKocM1gOonX
-         QWjqmzyi409DZ9D8hlcF1A1JWQsNhZ0YYU5Nugo0=
-Date: Sun, 10 Jun 2018 15:25:05 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-rdma@vger.kernel.org,
-        =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] IB/mad: Use IDR for agent IDs
-Message-ID: <20180610122505.GM12407@mtr-leonro.mtl.com>
-References: <20180608174218.32455-1-willy@infradead.org>
- <20180608174218.32455-3-willy@infradead.org>
- <20180610063028.GH12407@mtr-leonro.mtl.com>
- <20180610104305.GA9284@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="L2Brqb15TUChFOBK"
+        id S933760AbeFGOaW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:30:22 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39416 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933063AbeFGOJK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:10 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0005Zp-K2; Thu, 07 Jun 2018 15:09:08 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb7-00032o-5s; Thu, 07 Jun 2018 15:09:05 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180610104305.GA9284@bombadil.infradead.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Xin Long" <lucien.xin@gmail.com>,
+        "Xiong Zhou" <xzhou@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.594086610@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 227/410] bridge: check brport attr show in brport_show
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
---L2Brqb15TUChFOBK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------------------
 
-On Sun, Jun 10, 2018 at 03:43:05AM -0700, Matthew Wilcox wrote:
-> On Sun, Jun 10, 2018 at 09:30:28AM +0300, Leon Romanovsky wrote:
-> > 1. IBTA spec doesn't talk at all about the size of TransactionID, more
-> > on that in section "13.4.6.4 TRANSACTION ID USAGE", the specification
-> > says: "The contents of the TransactionID (TID) field are implementation-
-> > dependent. So let's don't call it mlx4 bug.
->
-> I was loosely paraphrasing the original bug report; suggested rewording
-> of the comments gratefully accepted.
+From: Xin Long <lucien.xin@gmail.com>
 
-Just replace "mlx4 bug" with something like "to comply with mlx4
-implementation".
+commit 1b12580af1d0677c3c3a19e35bfe5d59b03f737f upstream.
 
->
-> > 2. The current implementation means that in mlx5-only network we will
-> > still have upto (1 << 24) TIDs. I don't know if it is really important,
-> > but worth to mention.
->
-> Actually, the TIDs will be up to 2^56.  We're limited to 2^24 clients,
-> each of which can send up to 2^32 messages.
+Now br_sysfs_if file flush doesn't have attr show. To read it will
+cause kernel panic after users chmod u+r this file.
 
-It sounds like more than enough.
+Xiong found this issue when running the commands:
 
-Thanks
+  ip link add br0 type bridge
+  ip link add type veth
+  ip link set veth0 master br0
+  chmod u+r /sys/devices/virtual/net/veth0/brport/flush
+  timeout 3 cat /sys/devices/virtual/net/veth0/brport/flush
 
->
+kernel crashed with NULL a pointer dereference call trace.
 
---L2Brqb15TUChFOBK
-Content-Type: application/pgp-signature; name="signature.asc"
+This patch is to fix it by return -EINVAL when brport_attr->show
+is null, just the same as the check for brport_attr->store in
+brport_store().
 
------BEGIN PGP SIGNATURE-----
+Fixes: 9cf637473c85 ("bridge: add sysfs hook to flush forwarding table")
+Reported-by: Xiong Zhou <xzhou@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/bridge/br_sysfs_if.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-iQIcBAEBAgAGBQJbHRihAAoJEORje4g2clinYlkP/0vfiftoDnbAo2tWAQm2FfxV
-y0PPkTiSeI0o+uFp0R37d0iQnaUoiAqTnfEE48rDY7OEzIvp39+CE5KDuTKH3H0T
-jIEuTKSEZoVyWkNIg+ukL1ihgQdBVFB4v9N+LWyj3ZqxP0DCtOA/QegNel99DPFR
-nLFPWJNeGAVMCQTSxuhZrmY5ms3pC83N7PjdddHT2BSXDAFFRjRRa+Q9gG7QcrGV
-vH+YFs3QOvipR2dCOOIcS797FxSYbtTHQTceooNjp+IoC5Vf/Uu3vYSshsQALvZT
-piCo+RUBbQbBdKIqh/OQBw+bIxSiUWNbUVMFNw74aehXhLJld9BBw+Y8ldNDlUkN
-scGeuT3ODU/fqcLtOurpbJ4Kt2m8C3itGRDhKFwJzLqBwpMJwGCcBwN1SPUf5Fti
-eJLpWkP9e74Uypx981f41GooC9SApsEGG80t7QZ1pa7Xief5yRbAI9PcrvNV5xxz
-9w1/5LiFwL0jF7mYzzqytorKun/lfxIkP2FI2AQoDkedQTaa+q3/Kll10rYvLo9m
-OeSHsPtpyKhGbiHXQLHpgm0Rsl1ss77xlNKEhsSVFO62rwoeJQCobHfUfwPGkzOp
-tlyrH3c1O+yQqH21U25YrZz1qWJ66gUTJYER7oAD2XpgLj/+xwj+ZNGl5STv5qgP
-eNr1RB5Ci9qra1cpHlgO
-=x3xM
------END PGP SIGNATURE-----
-
---L2Brqb15TUChFOBK--
+--- a/net/bridge/br_sysfs_if.c
++++ b/net/bridge/br_sysfs_if.c
+@@ -225,6 +225,9 @@ static ssize_t brport_show(struct kobjec
+ 	struct brport_attribute *brport_attr = to_brport_attr(attr);
+ 	struct net_bridge_port *p = to_brport(kobj);
+ 
++	if (!brport_attr->show)
++		return -EINVAL;
++
+ 	return brport_attr->show(p, buf);
+ }
+ 
