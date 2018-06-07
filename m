@@ -1,347 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3izAEUcbGltdIwAAmS7hNA
-	; Fri, 08 Jun 2018 06:03:57 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yTPsOsSvGVtAUQAAmS7hNA
+	; Thu, 07 Jun 2018 22:26:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5CC996089E; Fri,  8 Jun 2018 06:03:57 +0000 (UTC)
+	id CA456606FA; Thu,  7 Jun 2018 22:26:30 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="s2d+Z/l9"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9BCF9606FA;
-	Fri,  8 Jun 2018 06:03:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9BCF9606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3C3EA602FC;
+	Thu,  7 Jun 2018 22:26:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C3EA602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751185AbeFHGDx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 02:03:53 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57573 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeFHGDu (ORCPT
+        id S1752230AbeFGW02 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:26:28 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52382 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751990AbeFGW00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 02:03:50 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1fRAUz-0007oz-O6; Fri, 08 Jun 2018 08:03:45 +0200
-Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1fRAUy-0001S4-DF; Fri, 08 Jun 2018 08:03:44 +0200
-Date: Fri, 8 Jun 2018 08:03:44 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heiko Schocher <hs@denx.de>,
-        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>
-Subject: Re: [PATCH 2/5] spi: implement companion-spi driver
-Message-ID: <20180608060344.crzezckorbtacc7g@pengutronix.de>
-References: <1528224240-30786-1-git-send-email-mark.jonas@de.bosch.com>
- <1528224240-30786-3-git-send-email-mark.jonas@de.bosch.com>
- <CAHp75Vd0xqKwJCYqOWvFTpMy8iH4PPf_HXX4dkx=KER4UD13fA@mail.gmail.com>
- <be0d6a5f98e840d29f673d976416a4b2@de.bosch.com>
+        Thu, 7 Jun 2018 18:26:26 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57MPjPA114689;
+        Thu, 7 Jun 2018 22:26:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=bB3GuhlvEdNP+v+Vxad6KlJ8muyqP3xzUMEM3zLYFEQ=;
+ b=s2d+Z/l9xhVMD87QIf58vGwtlRIHcLYa5+Y0vTJp3iQuFVfvi0LZc0EGPZcooAaZlPww
+ 1VVOnz7YTLSTKLY8qWgRXlJ2hCg5B0LI1aGu4bhxaqivTuWA5OUVcCT7iFy42KtuqgEp
+ 0rtPqZLS3KSKth2gXVHsa4QP+1EIxYxxAuz1e0zpuSqMPEbn64yT5m+0Q2qbL0I8SzGR
+ FuESOLUBVJ8ojsrx6R7OnS06bilA27GIyDBJAV8BmblO3v/0qO0+Gp51XeJpTuPDN1H8
+ OxLa7UoJXuiBzVfnZS5/lx8XxIdb1EQL6/hlaEFNQED52wZ4g0YDoN2KNSA0qoLtue1L Zg==
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jbvyptrxx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Jun 2018 22:26:17 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57MQGma000654
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Jun 2018 22:26:16 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w57MQEQF014066;
+        Thu, 7 Jun 2018 22:26:14 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 15:26:14 -0700
+Subject: Re: [PATCH v2 7/9] xen/gntdev: Implement dma-buf export functionality
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc: daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-8-andr2000@gmail.com>
+ <96dd30f5-6ac6-498f-06e7-352e46994576@oracle.com>
+ <117e05b3-69f6-b879-50d9-0cddd8e4c313@gmail.com>
+ <4b37bbe1-6c5c-1941-bac0-2c7ba88af3e3@oracle.com>
+ <d83a356c-f7a5-bce1-cafd-a52e736570fb@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <b7f27688-f627-3fd9-9298-e02e6f35ca1e@oracle.com>
+Date: Thu, 7 Jun 2018 18:30:06 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kkcqdhjtmfe5tbyp"
-Content-Disposition: inline
-In-Reply-To: <be0d6a5f98e840d29f673d976416a4b2@de.bosch.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-IRC: #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 07:37:12 up 168 days, 18:15, 93 users,  load average: 0.06, 0.05,
- 0.03
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <d83a356c-f7a5-bce1-cafd-a52e736570fb@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8917 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806070239
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/07/2018 04:44 AM, Oleksandr Andrushchenko wrote:
+> On 06/07/2018 12:48 AM, Boris Ostrovsky wrote:
+>> On 06/06/2018 08:10 AM, Oleksandr Andrushchenko wrote:
+>>> On 06/05/2018 01:07 AM, Boris Ostrovsky wrote:
+>>>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>>
+>>>> +
+>>>> +static struct sg_table *
+>>>> +dmabuf_exp_ops_map_dma_buf(struct dma_buf_attachment *attach,
+>>>> +               enum dma_data_direction dir)
+>>>> +{
+>>>> +    struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach =
+>>>> attach->priv;
+>>>> +    struct gntdev_dmabuf *gntdev_dmabuf = attach->dmabuf->priv;
+>>>> +    struct sg_table *sgt;
+>>>> +
+>>>> +    pr_debug("Mapping %d pages for dev %p\n",
+>>>> gntdev_dmabuf->nr_pages,
+>>>> +         attach->dev);
+>>>> +
+>>>> +    if (WARN_ON(dir == DMA_NONE || !gntdev_dmabuf_attach))
+>>>>
+>>>> WARN_ON_ONCE. Here and elsewhere.
+>>> Why? The UAPI may be used by different applications, thus we might
+>>> lose warnings for some of them. Having WARN_ON will show problems
+>>> for multiple users, not for the first one.
+>>> Does this make sense to still use WARN_ON?
+>>
+>> Just as with pr_err call somewhere else the concern here is that
+>> userland (which I think is where this is eventually called from?) may
+>> intentionally trigger the error, flooding the log.
+>>
+>> And even this is not directly called from userland there is still a
+>> possibility of triggering this error multiple times.
+> Ok, will use WARN_ON_ONCE
 
---kkcqdhjtmfe5tbyp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+In fact, is there a reason to use WARN at all? Does this condition
+indicate some sort of internal inconsistency/error?
 
-On Thu, Jun 07, 2018 at 02:58:24PM +0000, Jonas Mark (BT-FIR/ENG1) wrote:
-> Hello Andy,
->=20
-> Thank you very much for your feedback.
->=20
-> > > +       /*TODO: support mutiple packets in one write in future*/
-> >=20
-> > Hmm... Either fix this, or remove comment?
->=20
-> Agreed, we will manage ideas for future changes at a different place.
->=20
-> > > +       if (copy_from_user(p.data, buf, sizeof(p)) =3D=3D 0) {
-> > > +               if (is_can_type(&p))
-> > > +                       return -EINVAL;
-> > > +       } else {
-> > > +               dev_info(parent, "copy from user not succeed in one c=
-all\n");
-> >=20
-> > Shouldn't it return immediately?
->=20
-> Yes, it should. Will be changed.
->=20
-> >=20
-> > > +       }
-> >=20
-> > > +
-> > > +       error =3D qm_io_txq_in(&priv->pm.qm, buf, count, &copied);
-> >=20
-> > ...what the point to call if we got garbage from user space?
->=20
-> Will be changed with the code above.
->=20
-> > > +       if (!error) {
-> >=20
-> > The usual pattern is to check for errors first.
->=20
-> Understood, will be changed.
->=20
-> > > +               wake_up_interruptible(&priv->wait);
-> > > +               priv->pm.stats.io_tx++;
-> > > +               return copied;
-> > > +       } else {
-> > > +               priv->pm.stats.io_tx_overflows++;
-> > > +       }
-> > > +       return error;
-> > > +}
-> >=20
-> > > +       ... qm_io_rxq_out(&priv->pm.qm, buf, count, &copied);
-> >=20
-> > > +       ... pm_can_data_tx(&priv->pm, port, prio, cf);
-> >=20
-> > Oh, oh, oh.
-> >=20
-> > These namespaces are too generic, moreover pm is kinda occupied by
-> > power management. You bring a lot of confusion here, I think.
->=20
-> We agree and we started thinking about better names. We will send a propo=
-sal.
->=20
-> > > +       err =3D pm_can_get_txq_status(pm, port);
-> > > +       if (!err) {
-> >=20
-> > if (err)
-> >  return err;
->=20
-> Yes, will be changed.
->=20
-> > > +       }
-> > > +       return err;
-> >=20
-> >=20
-> > > +       int                        ret, value;
-> > > +
-> > > +       ret =3D sscanf(buf, "%d", &value);
-> > > +       if (ret !=3D 1) {
-> >=20
-> > > +       }
-> >=20
-> > You have to be consistent in your code.
-> >=20
-> > I've already noticed
-> >=20
-> > err
-> > error
-> >=20
-> > and now
-> >=20
-> > ret
-> >=20
-> > Choose one and stick with it.
->=20
-> Yes, will be changed.
->=20
-> > Also check your entire patch series' code for consistency.
->=20
-> We will have a look.
->=20
-> > > +static DEVICE_ATTR(dump_packets, S_IRUGO | S_IWUSR,
-> > > +                   show_dump_packets, store_dump_packets);
-> >=20
-> > We have helpers, like DEVICE_ATTR_RW().
->=20
-> Will be changed.
->=20
-> > > +               ret  =3D snprintf(buf + pos, PAGE_SIZE - pos,
-> > > +                               "\ntx: %u, rx: %u, err: %u\n\n",
-> > > +                               total,
-> > > +                               priv->pm.stats.can_rx_overflows[i],
-> > > +                               priv->pm.stats.can_err_overflows[i]);
-> >=20
-> > Please, avoid leading '\n'.
->=20
-> We think we will stick to the existing. Otherweise we would have to
-> insert another pair of sprint() and pos +=3D ret. Is it worth that?
->=20
-> >=20
-> > > +       gpio_set_value(priv->cs_gpios, priv->cs_gpios_assert);
-> >=20
-> > > +       gpio_set_value(priv->cs_gpios, !priv->cs_gpios_assert);
-> >=20
-> > Can you switch to GPIO descriptor API?
->=20
-> Yes, we are working on it.
->=20
-> > > +       unsigned int count =3D READY_POLL_US / READY_POLL_US_GRAN;
-> > > +       while (count--) {
-> >=20
-> > For counting like this better to have
-> > do {
-> > } while (--count);
-> >=20
-> > The rationale, reader at first glance will know that the loop will
-> > iterate at least once.
->=20
-> Agreed, will be changed.
->=20
-> > > +               if (slave_is_not_busy(priv))
-> > > +                       return 0;
-> > > +
-> >=20
-> > > +               udelay(READY_POLL_US_GRAN);
-> >=20
-> > Should it be atomic?
-> > Can it use read_poll_* type of helpers instead?
->=20
-> Yes, it shall be atomic because we need to reduce the latency at
-> detecting the de-assertion of the busy signal. We accept that this will
-> cost CPU time.
->=20
-> In case the Companion itself is very busy and does not reply quickly we
-> are have second polling loop below which sleeps longer and is non-atomic.
-
-I can confirm, this make huge impact on protocol performance. And this
-protocol is not really the speed runner.=20
-
-> > Above comments applicable to entire code you have.
->=20
-> We will look at it.
->=20
-> > > +static void companion_spi_cpu_to_be32(char *buf)
-> > > +{
-> > > +       u32 *buf32 =3D (u32*)buf;
-> > > +       int  i;
-> > > +
-> > > +       for (i =3D 0; i < (BCP_PACKET_SIZE / sizeof(u32)); i++, buf32=
-++)
-> > > +               *buf32 =3D cpu_to_be32(*buf32);
-> > > +}
-> >=20
-> > This entire function should be replaced by one of the helpers from
-> > include/linux/byteorder/generic.h
-> >=20
-> > I guess cpu_to_be32_array() is a right one.
->=20
-> Correct. We are testing the driver against 4.14 and that function is not
-> available there. It will be changed later.
->=20
-> > > +static void companion_spi_be32_to_cpu(char *buf)
-> > > +{
-> > > +       u32 *buf32 =3D (u32*)buf;
-> > > +       int  i;
-> > > +
-> > > +       for (i =3D 0; i < (BCP_PACKET_SIZE / sizeof(u32)); i++, buf32=
-++)
-> > > +               *buf32 =3D be32_to_cpu(*buf32);
-> > > +}
-> >=20
-> > Ditto.
-> >=20
-> > Recommendation: check your code against existing helpers.
->=20
-> Yes, every kernel release brings new helpers. We will have to learn how
-> to keep track of the additions.
->=20
-> > > +               p =3D (const struct companion_packet*)transfer->tx_bu=
-f;
-> >=20
-> > > +       companion_spi_cpu_to_be32((char*)transfer->tx_buf);
-> >=20
-> > If tx_buf is type of void * all these castings are redundant.
->=20
-> The type is const void*. So the first cast is superfluous, the second
-> is not.
->=20
-> > Also looking at the function, did you consider to use whatever SPI
-> > core provides, like CS handling, messages handling and so on?
->=20
-> SPI CS has to be done manually in our case because we need to wait
-> until the Companion signals that it is ready for the transfer.
->=20
-> Do you have concrete proposals regarding messages handling?
-
-you can send dummy message to set CS.
-+	struct spi_transfer t =3D {
-+		.len =3D 0,
-+		.cs_change =3D 1,
-+	};
-
-+	/* send dummy to trigger CS */
-+	reinit_completion(&priv->fc_complete);
-+	spi_sync_locked(spi, &m);
-
-see my ancient unfinished code:
-https://patchwork.kernel.org/patch/9418511/
-
-In general, this part of the code, can be provided as separate driver
-which should be called as "SPI 5wire protocol". 3 wires for data, 1 -
-chip select, 1 - busy state. Since, the slave cant fit to normal SPI
-requirements, and can't be ready within predictable time, busy signal is
-needed. Providing this as separate driver or part of SPI framework
-should reduce the code for many different drivers.
-
-The actual datagram on top of your spi companion should go to
-separate driver. There are similar (almost identical designs)
-
-can :+
-char:+
-dw:  +
-gpio:+--->some_multi_end_mux_protocol--->spi_5wire_protocol->spi--->
-
-In my knowledge, only data format on top of spi_5wire_protocol is
-different. See my notes for similar topics:
-https://github.com/olerem/icc
-https://github.com/olerem/spi-5wire
-
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---kkcqdhjtmfe5tbyp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlsaHDkACgkQdQOiSHVI
-77S/5gf/Wst/IYrAs7e7q+45QzUHZwB0Q3IDiKxqeIbsXbLgNKFo9pZcUiD6wD/9
-Kw98IzgGRkXydCpwCgawv/vjIW1hYvcHGqIrqqpNq3sDFS9aNgF3YtUlqTKmiTJ2
-9afK7JSvprcOoOVC9Cv01SgY+Md55OdSgpTr6GAaDFjcEOFpfaG6LMrum5zMVf3/
-ilJw3Vx9sktK2OIg7tWBbLlOSwq1nkKP2Ignvc5ICwvxBMUZQdNvtK8Lb6QmEnqr
-+LM1NJ41dlNZa2XGSjbaKION5Y7VtsoOVtXCM3irdzzW6MtxIUu6LlOylYPgH2+M
-UKkyhbu0vjNbAp1UZ134dKZQbe19gQ==
-=o1Cx
------END PGP SIGNATURE-----
-
---kkcqdhjtmfe5tbyp--
+-boris
