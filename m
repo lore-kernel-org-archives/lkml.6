@@ -1,108 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 2aQEOHNHGVu0PQAAmS7hNA
-	; Thu, 07 Jun 2018 14:55:47 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id C4THJ02YGVshAwAAmS7hNA
+	; Thu, 07 Jun 2018 20:40:45 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D5DED608BA; Thu,  7 Jun 2018 14:55:47 +0000 (UTC)
+	id 8432A6074D; Thu,  7 Jun 2018 20:40:45 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sxdZUW+g"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 0418F601C3;
-	Thu,  7 Jun 2018 14:55:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0418F601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id C4F2B6063F;
+	Thu,  7 Jun 2018 20:40:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4F2B6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935480AbeFGOzp (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:55:45 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41073 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934853AbeFGOzm (ORCPT
+        id S1753630AbeFGUkl (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:40:41 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45661 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932402AbeFGUiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:55:42 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbp-0005hL-Ni; Thu, 07 Jun 2018 15:09:49 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb2-0002r0-9n; Thu, 07 Jun 2018 15:09:00 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "Eric Biggers" <ebiggers@google.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.507664031@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 121/410] crypto: hash - introduce crypto_hash_alg_has_setkey()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Thu, 7 Jun 2018 16:38:51 -0400
+Received: by mail-pl0-f68.google.com with SMTP id c23-v6so6850365plz.12
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:38:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=AWoBYQ8bMrAiiXbUJHYe7Jit5HOxGoUa1mPhDkxbGUg=;
+        b=sxdZUW+gWhu5r9nI3nLuF6/h6853wnkAaZcrtt/l0mpkm4BO4WKaaleSr/UryJPYKM
+         wQRaC/+/03rpyJsbs3wBZ6yLdEQlgvOVBjb1x/tt1nPD8Ia4qLBHNN+0T9OcC72o+gG5
+         ZW5pPI0OBvKUmtWaAJHFERJ9WpgJrpf+IA0pZ8txpSv9c6L/9Ww4rMjmVT/Wkj6YFkJG
+         TVmWPzxR/191XCG+tn1p0KKQuQOuaohI4eHP17+q46X2GHAtfjHa8kQriAKKwUeJiCMS
+         RocXft4GrRVDBLQBPE1r8Be1G1HZDFYmZXwDNwkd4KH/51BWhUK+QL+S2fNGWWF7RADK
+         kjqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=AWoBYQ8bMrAiiXbUJHYe7Jit5HOxGoUa1mPhDkxbGUg=;
+        b=e8VVRuuLedST/huy27okHFmcnzUMA38Z2+5zWZj0yyae7VUzYBibBKxadD6CyjU4Wa
+         9OAuGgk/awlFioTryJGy8zKB2NQPcCGVGe/NGbM0sSQHIfSpuzibDtPPH5LCkuQrFZLr
+         sjNxkoxz+ZT3PV0ypPeDKZKIAr88X0TtyQvBMzDxYgw2BGBFLw8y+hnXA8+lPE7Ddm3Y
+         zqFVWvW9dNC0NOcszEBCJx+833Z9qvMQQuSLZiupK6zzQbwL59PmEURfvAINZXidEt2y
+         BlKA/qIaAuHLHUFq4VA0KzOFH1V0ZRphlJUWUQ82q+Fh2dbzQmfznvUxk5lAzq/o7f8E
+         SGuA==
+X-Gm-Message-State: APt69E31q/H2fCJ11MKHCXPHVJ1niTJAUboLxD7BtoMiZz2+eCCHqwE+
+        uFN+ilKQVh36YvnlH15dMVXT2i6SREE=
+X-Google-Smtp-Source: ADUXVKKGpfTlmGQBiR81/aLVTWxNO7kcsbYyTapLTETvnfOcGeWbPMvt643h/AHePAgtnm+rsKUX/w==
+X-Received: by 2002:a17:902:6b8b:: with SMTP id p11-v6mr3463423plk.212.1528403930567;
+        Thu, 07 Jun 2018 13:38:50 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id v27-v6sm10324174pfi.23.2018.06.07.13.38.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 13:38:49 -0700 (PDT)
+From: Joel Fernandes <joelaf@google.com>
+X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
+To: linux-kernel@vger.kernel.org
+Cc: kernel-team@android.com,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Erick Reyes <erickreyes@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [PATCH v9 1/7] srcu: Add notrace variants of srcu_read_{lock,unlock}
+Date: Thu,  7 Jun 2018 13:38:09 -0700
+Message-Id: <20180607203815.255845-2-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+In-Reply-To: <20180607203815.255845-1-joel@joelfernandes.org>
+References: <20180607203815.255845-1-joel@joelfernandes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+From: Paul McKenney <paulmck@linux.vnet.ibm.com>
 
-------------------
+This is needed for a future tracepoint patch that uses srcu, and to make
+sure it doesn't call into lockdep.
 
-From: Eric Biggers <ebiggers@google.com>
+tracepoint code already calls notrace variants for rcu_read_lock_sched
+so this patch does the same for srcu which will be used in a later
+patch. Keeps it consistent with rcu-sched.
 
-commit cd6ed77ad5d223dc6299fb58f62e0f5267f7e2ba upstream.
-
-Templates that use an shash spawn can use crypto_shash_alg_has_setkey()
-to determine whether the underlying algorithm requires a key or not.
-But there was no corresponding function for ahash spawns.  Add it.
-
-Note that the new function actually has to support both shash and ahash
-algorithms, since the ahash API can be used with either.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+[Joel: Added commit message]
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- crypto/ahash.c                 | 11 +++++++++++
- include/crypto/internal/hash.h |  2 ++
- 2 files changed, 13 insertions(+)
+ include/linux/srcu.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -630,5 +630,16 @@ struct hash_alg_common *ahash_attr_alg(s
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 33c1c698df09..2ec618979b20 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -161,6 +161,16 @@ static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
+ 	return retval;
  }
- EXPORT_SYMBOL_GPL(ahash_attr_alg);
  
-+bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg)
++/* Used by tracing, cannot be traced and cannot invoke lockdep. */
++static inline notrace int
++srcu_read_lock_notrace(struct srcu_struct *sp) __acquires(sp)
 +{
-+	struct crypto_alg *alg = &halg->base;
++	int retval;
 +
-+	if (alg->cra_type != &crypto_ahash_type)
-+		return crypto_shash_alg_has_setkey(__crypto_shash_alg(alg));
-+
-+	return __crypto_ahash_alg(alg)->setkey != NULL;
++	retval = __srcu_read_lock(sp);
++	return retval;
 +}
-+EXPORT_SYMBOL_GPL(crypto_hash_alg_has_setkey);
 +
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Asynchronous cryptographic hash type");
---- a/include/crypto/internal/hash.h
-+++ b/include/crypto/internal/hash.h
-@@ -91,6 +91,8 @@ static inline bool crypto_shash_alg_has_
- 	return alg->setkey != shash_no_setkey;
+ /**
+  * srcu_read_unlock - unregister a old reader from an SRCU-protected structure.
+  * @sp: srcu_struct in which to unregister the old reader.
+@@ -175,6 +185,13 @@ static inline void srcu_read_unlock(struct srcu_struct *sp, int idx)
+ 	__srcu_read_unlock(sp, idx);
  }
  
-+bool crypto_hash_alg_has_setkey(struct hash_alg_common *halg);
++/* Used by tracing, cannot be traced and cannot call lockdep. */
++static inline notrace void
++srcu_read_unlock_notrace(struct srcu_struct *sp, int idx) __releases(sp)
++{
++	__srcu_read_unlock(sp, idx);
++}
 +
- int crypto_init_ahash_spawn(struct crypto_ahash_spawn *spawn,
- 			    struct hash_alg_common *alg,
- 			    struct crypto_instance *inst);
+ /**
+  * smp_mb__after_srcu_read_unlock - ensure full ordering after srcu_read_unlock
+  *
+-- 
+2.17.1.1185.g55be947832-goog
