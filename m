@@ -1,215 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HOdCFfq3GltTPQAAmS7hNA
-	; Fri, 08 Jun 2018 17:08:10 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id +U/VNK6gGFtUTQAAmS7hNA
+	; Thu, 07 Jun 2018 03:10:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2B3D2608B8; Fri,  8 Jun 2018 17:08:10 +0000 (UTC)
+	id 86BB0608B8; Thu,  7 Jun 2018 03:10:30 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FREEMAIL_FROM,
-	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 65D006089E;
-	Fri,  8 Jun 2018 17:08:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65D006089E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by smtp.codeaurora.org (Postfix) with ESMTP id DF75D605BD;
+	Thu,  7 Jun 2018 03:10:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DF75D605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752810AbeFHRIE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:08:04 -0400
-Received: from smtp4-g21.free.fr ([212.27.42.4]:38258 "EHLO smtp4-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752328AbeFHRIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:08:02 -0400
-Received: from tock (unknown [37.48.92.129])
-        (Authenticated sender: albeu)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 2422119F5BD;
-        Fri,  8 Jun 2018 19:07:26 +0200 (CEST)
-Date: Fri, 8 Jun 2018 19:07:17 +0200
-From: Alban <albeu@free.fr>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Aban Bedel <albeu@free.fr>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode
- for the cells list
-Message-ID: <20180608190717.55cb185c@tock>
-In-Reply-To: <cd7a0085-66cd-308e-a950-cd0eb96db945@linaro.org>
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
-        <1521933899-362-2-git-send-email-albeu@free.fr>
-        <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
-        <20180417165420.423a691b@avionic-0020>
-        <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
-        <20180417180040.04f53495@avionic-0020>
-        <20180418134119.2e587621@avionic-0020>
-        <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
-        <20180418143243.3c23493c@avionic-0020>
-        <e34619a4-e9b6-9945-a1cc-a3680aac6819@linaro.org>
-        <20180418153440.187ed16e@avionic-0020>
-        <d30656d6-f17e-6ed0-251f-2b59d02cd202@linaro.org>
-        <20180607184155.6da38a01@tock>
-        <0fb0e8e9-e7b8-10c3-fcdd-399c73a33878@linaro.org>
-        <20180608125938.4fd457a0@tock>
-        <cd7a0085-66cd-308e-a950-cd0eb96db945@linaro.org>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1753520AbeFGDK1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 23:10:27 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60407 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752800AbeFGDK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Jun 2018 23:10:26 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 447A42B42A6F4;
+        Thu,  7 Jun 2018 11:10:23 +0800 (CST)
+Received: from [127.0.0.1] (10.177.23.164) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.382.0; Thu, 7 Jun 2018
+ 11:10:16 +0800
+Subject: Re: Is this a kernel BUG? ///Re: [Question] Can we use SIGRTMIN when
+ vdso disabled on X86?
+To: Andy Lutomirski <luto@amacapital.net>
+References: <5B1672FE.4050705@huawei.com> <5B1792C9.8010203@huawei.com>
+ <5B17A6B6.70300@huawei.com>
+ <CALCETrXiaqyAKzcT17P35Gf6fNBchPYF_JsQ+3ezNeETs_UTbA@mail.gmail.com>
+ <5B1892F5.9000206@huawei.com>
+ <A95BD803-E0E2-4E49-B3EF-D056F1D69883@amacapital.net>
+CC: Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        LKML <linux-kernel@vger.kernel.org>, <yaomin2@huawei.com>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <5B18A20C.3060509@huawei.com>
+Date: Thu, 7 Jun 2018 11:10:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1vWlee8hPcRrge=jA.imybo"; protocol="application/pgp-signature"
+In-Reply-To: <A95BD803-E0E2-4E49-B3EF-D056F1D69883@amacapital.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.23.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1vWlee8hPcRrge=jA.imybo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 8 Jun 2018 12:34:12 +0100
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
 
-> >> Can you try this with your original subnode proposal:
-> >> just pass the subnode node pointer in np of nvmem_config:
-> >> =20
-> >> ------------------------->cut<------------------------------------ =20
-> >> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> >> index b05aa8e81303..c9621632bbfb 100644
-> >> --- a/drivers/nvmem/core.c
-> >> +++ b/drivers/nvmem/core.c
-> >> @@ -472,7 +472,11 @@ struct nvmem_device *nvmem_register(const struct
-> >> nvmem_config *config)
-> >>           nvmem->priv =3D config->priv;
-> >>           nvmem->reg_read =3D config->reg_read;
-> >>           nvmem->reg_write =3D config->reg_write;
-> >> -       nvmem->dev.of_node =3D config->dev->of_node;
-> >> +
-> >> +       if (config->np)
-> >> +               nvmem->dev.of_node =3D config->np;
-> >> +       else
-> >> +               nvmem->dev.of_node =3D config->dev->of_node;
-> >>
-> >>           if (config->id =3D=3D -1 && config->name) {
-> >>                   dev_set_name(&nvmem->dev, "%s", config->name);
-> >> diff --git a/include/linux/nvmem-provider.h
-> >> b/include/linux/nvmem-provider.h index f89598bc4e1c..743345ffe2c8
-> >> 100644 --- a/include/linux/nvmem-provider.h
-> >> +++ b/include/linux/nvmem-provider.h
-> >> @@ -49,6 +49,7 @@ typedef int (*nvmem_reg_write_t)(void *priv,
-> >> unsigned int offset,nvmem_device_get(
-> >>     */
-> >>    struct nvmem_config {
-> >>           struct device           *dev;
-> >> +       struct device_node      *np;
-> >>           const char              *name;
-> >>           int                     id;
-> >>           struct module           *owner;
-> >> =20
-> >> ------------------------->cut<------------------------------------ =20
-> >=20
-> > That should work just fine to allow next to any kind of binding.
-> > I'll do a new patch using this approach for the code side and leaving
-> > the generic binding as it is. =20
-> Sure!!
-> This will give more flexibility to other provider drivers!
+On 2018/6/7 10:39, Andy Lutomirski wrote:
+> 
+> 
+>> On Jun 6, 2018, at 7:05 PM, Leizhen (ThunderTown) <thunder.leizhen@huawei.com> wrote:
+>>
+>>
+>>
+>>> On 2018/6/7 1:01, Andy Lutomirski wrote:
+>>> On Wed, Jun 6, 2018 at 2:18 AM Leizhen (ThunderTown)
+>>> <thunder.leizhen@huawei.com> wrote:
+>>>>
+>>>> I found that glibc has already dealt with this case. So this issue must have been met before, should it be maintained by libc/user?
+>>>>
+>>>>        if (GLRO(dl_sysinfo_dso) == NULL)
+>>>>        {
+>>>>                kact.sa_flags |= SA_RESTORER;
+>>>>
+>>>>                kact.sa_restorer = ((act->sa_flags & SA_SIGINFO)
+>>>>                        ? &restore_rt : &restore);
+>>>>        }
+>>>>
+>>>>
+>>>>> On 2018/6/6 15:52, Leizhen (ThunderTown) wrote:
+>>>>>
+>>>>>
+>>>>>> On 2018/6/5 19:24, Leizhen (ThunderTown) wrote:
+>>>>>> After I executed "echo 0 > /proc/sys/abi/vsyscall32" to disable vdso, the rt_sigaction01 test case from ltp_2015 failed.
+>>>>>> The test case source code please refer to the attachment, and the output as blow:
+>>>>>>
+>>>>>> -----------------
+>>>>>> ./rt_sigaction01
+>>>>>> rt_sigaction01    0  TINFO  :  signal: 34
+>>>>>> rt_sigaction01    1  TPASS  :  rt_sigaction call succeeded: result = 0
+>>>>>> rt_sigaction01    0  TINFO  :  sa.sa_flags = SA_RESETHAND|SA_SIGINFO
+>>>>>> rt_sigaction01    0  TINFO  :  Signal Handler Called with signal number 34
+>>>>>>
+>>>>>> Segmentation fault
+>>>>>> ------------------
+>>>>>>
+>>>>>>
+>>>>>> Is this the desired result? In function ia32_setup_rt_frame, I found below code:
+>>>>>>
+>>>>>>     if (ksig->ka.sa.sa_flags & SA_RESTORER)
+>>>>>>             restorer = ksig->ka.sa.sa_restorer;
+>>>>>>     else
+>>>>>>             restorer = current->mm->context.vdso +
+>>>>>>                     vdso_image_32.sym___kernel_rt_sigreturn;
+>>>>>>     put_user_ex(ptr_to_compat(restorer), &frame->pretcode);
+>>>>>>
+>>>>>> Because the vdso is disabled, so current->mm->context.vdso is NULL, which cause the result of frame->pretcode invalid.
+>>>>>>
+>>>>>> I'm not sure whether this is a kernel bug or just an error of test case itself. Can anyone help me?
+>>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>> I can't tell from your email what you're testing, what behavior you
+>>> expect, and what you saw.  A program that sets up a signal handler
+>>> without supplying a restorer will not work if the vDSO is off, and
+>>> this is by design.
+>> OK, so that the user should take care whether the vDSO is disabled by itself or not, and use different strategies to process it appropriately, like glibc.
+>>
+>>>
+>>> (FWIW, there is a very longstanding libc bug that causes this case to
+>>> get severely screwed up if the user's SS is not the expected value,
+>>> and that bug was just fixed very recently.  But I doubt this is what
+>>> you're seeing.)
+>>>
+>>> I suppose we could improve the kernel to at least push NULL instead of
+>>> some random address a bit above 0, but it'll still crash.
+>> Should we add a warning? Which may help the user to aware this error in time.
+>>
+> 
+> It’s entirely valid to have a non working restorer if you never plan to return from a signal handler. And anyone who writes their own libc should be able to figure this out on their own, I think.
 
-I looked into this. It would work fine for the cells but not so nicely
-for the nvmem device API. The phandle for the nvmem device would have
-to reference the node passed here and not the real device. We would end
-up with a DT like this:
+OK. Thanks a lot.
 
-flash@0 {
-	compatible =3D "mtd";
-	...
-	nvmem_dev: nvmem-cells {
-		compatible =3D "nvmem-cells";
-		...
-        };
-};
+> 
+>>>
+>>> .
+>>>
+>>
+>> -- 
+>> Thanks!
+>> BestRegards
+>>
+> 
+> .
+> 
 
-other-device@10 {
-	...
-	nvmem =3D <&nvmem_dev>;
-};
-
-Now if there is no cell defined we have this empty child node that make
-very little sense, it is just there to accommodate the nvmem API.
-
-What I would suggest now is to just change the wording. We don't
-deprecate the current binding, but we extend it to allow grouping the
-cells in a child node if required. The code to support this is trivial,
-(4 lines including error handling) so even if we expect very few
-bindings to make use of it it is not going to be maintenance drag.
-That would look like this:
-
-diff --git a/Documentation/devicetree/bindings/nvmem/nvmem.txt b/Documentat=
-ion/devicetree/bindings/nvmem/nvmem.txt
-index fd06c09..085d042 100644
---- a/Documentation/devicetree/bindings/nvmem/nvmem.txt
-+++ b/Documentation/devicetree/bindings/nvmem/nvmem.txt
-@@ -19,7 +19,10 @@ Optional properties:
-=20
- =3D Data cells =3D
- These are the child nodes of the provider which contain data cell
--information like offset and size in nvmem provider.
-+information like offset and size in nvmem provider. Alternatively the data
-+cells can be grouped in a node that has a compatible property set to
-+"nvmem-cells".
-+
-=20
- Required properties:
- reg:   specifies the offset in byte within the storage device.
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 4e94a78..3e1369c 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -859,6 +859,14 @@ struct nvmem_cell *of_nvmem_cell_get(struct device_nod=
-e *np,
-        if (!nvmem_np)
-                return ERR_PTR(-EINVAL);
-=20
-+       /* bindings that already have anonymous child nodes can instead put
-+        * their cells in a child node with an nvmem-cells compatible. */
-+       if (of_device_is_compatible(nvmem_np, "nvmem-cells")) {
-+               nvmem_np =3D of_get_next_parent(nvmem_np);
-+               if (!nvmem_np)
-+                       return ERR_PTR(-EINVAL);
-+       }
-+
-        nvmem =3D __nvmem_device_get(nvmem_np, NULL, NULL);
-        of_node_put(nvmem_np);
-        if (IS_ERR(nvmem))
-
-What about it?
-
-Alban
-
---Sig_/1vWlee8hPcRrge=jA.imybo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJbGrfFAAoJEHSUmkuduC2858QQALNCfJfDeDgJ4UflIREPgTjM
-tOAZb2U4VRG2yYPimmsg3K9TLvIoI/xk4as0wTalJyKlT1zQBwGOZ4Wwvije9d1Q
-OHxatgrDPhA5tcvD7SadXasxkYJD8MVLjhIZCGIZ90sdikZibzWr78uFEaRYJ601
-B41dCr13rkgHlrNYdVS9zfxNrZ6liE/+Tr+q2L7q6YDC73Oz5S2lAm85AkUBbEEi
-HmwowmBPA2HPNJOhG7e6l4M+dxHGJydOWY3SDJE98OnEXvNKqgt3NGiMyhfMunm1
-nkrUSclBN/HrZh7a6tQ2TaDFUJ9drMWRwdvqnspNW5l8KpwJhWHxeXajAZkGoe/W
-MNorpVMlD8rmjTLx+73VwOby43YwAcDyG60g4E4p3hmb2Wi1sHM0ABp8hItk5lYg
-q0ioG1fO3g2GCJc5QxtCPJS1I7HP+AhPiKwz7cmRyLcxr1TRJOKW6z45gjMs++rQ
-huEQb8AD2HPBOW0VvrgBJl9OXoGxHpouV2P+sWoL/cEUj/TcljRImUcryTzxJdab
-ga6R9MXAYyDYq0hfbBfEAzACWMGez65qG5zMolMR/VcoSAX01S7xeAOisdXqdQbR
-JHVs3OGEduv8r8MgG0ISasoeAth3+MCcFu4/hD/92iI7r6kjMZdzlRe8b3X4x4wq
-I76qSh15tQeDkIaM23S8
-=xWJ5
------END PGP SIGNATURE-----
-
---Sig_/1vWlee8hPcRrge=jA.imybo--
+-- 
+Thanks!
+BestRegards
