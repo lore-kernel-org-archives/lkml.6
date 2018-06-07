@@ -1,520 +1,329 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id cIfMMaKGHluINgAAmS7hNA
-	; Mon, 11 Jun 2018 14:27:12 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id VBZ9IhISGVs0LAAAmS7hNA
+	; Thu, 07 Jun 2018 11:12:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 334AF607BB; Mon, 11 Jun 2018 14:27:12 +0000 (UTC)
+	id D6769607DC; Thu,  7 Jun 2018 11:12:30 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JC7LbPlP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amQv5SzG"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DAA006074D;
-	Mon, 11 Jun 2018 14:27:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DAA006074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 236076090E;
+	Thu,  7 Jun 2018 11:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 236076090E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934580AbeFKOZo (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 10:25:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44896 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933461AbeFKOGn (ORCPT
+        id S932323AbeFGLM1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 07:12:27 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36300 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752577AbeFGLMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:06:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7qbr5nWog0hqeHn5/x9BVjhbA4ee3GgTT6eyITyyMl8=; b=JC7LbPlP5yuHK4O0d1iWINqFb
-        8tCmlHl7ZSmR3cdEWmYK+QCC40s8Dc5GGhhIoK/jzoZC3FmHYDsDp83MB3gjvdJsp0Fnx/ugmuwfN
-        06ueDoWIWRAheIYhUxy4eFkMPFp6B2adKj8FV7KVtu/HAohqO/X2/dRqbeTe46dZDYByRWnXHVvxO
-        dpWh+jaKLTK4TL+RuCqaQIKNT4FT68DECWl/7oR08pmWaJ0NpyQZEmRonR5ZwNr36zYqz0U3jbTlt
-        cXFdDkovT05et97K6mahYNzrvn/v1EnNCl5Ilyz0T9t5wLbqlIgewO3AUtyYZXZk45qUw1amdUg+I
-        w12f72XlQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fSNT0-0004Y4-98; Mon, 11 Jun 2018 14:06:42 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v13 06/72] xarray: Define struct xa_node
-Date: Mon, 11 Jun 2018 07:05:33 -0700
-Message-Id: <20180611140639.17215-7-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180611140639.17215-1-willy@infradead.org>
-References: <20180611140639.17215-1-willy@infradead.org>
+        Thu, 7 Jun 2018 07:12:24 -0400
+Received: by mail-lf0-f65.google.com with SMTP id u4-v6so14063882lff.3;
+        Thu, 07 Jun 2018 04:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pmRrr7DlSrvh6Afoiu8azY8hCl3ZXESYqSNteWAYVnA=;
+        b=amQv5SzGZmnqwUUVLZ6jbHmy3oWOULvyE3grl2f99T7ueqrZUKbkKpVLUIDeK23riQ
+         gibpaa4IdEsEgJGGp/8HY2Gh6ro57VpdaleI+s8ypAy3hz3I7SJbDodLZgXnj9ZAWQ06
+         WtogUpLDoxdZbI68nIrIjtcjLksQpXppPlmn29CWlyfAWvckjR0ojWZ/J4sHmFZlGrOJ
+         GOqFn5sT8n4YELqj0a576vXD7WnqWXelA5hYFFZCpvb/LkagY9yy8BkZpGAG2yPzGMEU
+         Yyind1oKvUjbDKLDIvKvTQaUHzFDEKFws0fD2A76vUIDDvyZKajegTwSLB0qCuGTsQS3
+         gzBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pmRrr7DlSrvh6Afoiu8azY8hCl3ZXESYqSNteWAYVnA=;
+        b=HB7TyVfteUFwo7cRns4qXbpANMG+RLp/dtUHwoHYjVwwn2l8RfvDKjtFdoY2HmruLb
+         /8iyXJU8JtgwalI/50RCgX5OBqkGG3C74P2PYEpgLB90j1Au6g3TRQn2IqNyPyebcp2I
+         fFbA6OG5WqND45GNpXoZSXQPeNYW8kkMCmEP4nLVWcIwYApibocds6bfCKBW2TCUmA46
+         +VtV9Kq+QRVG2A1uMmo1YqjAfQQBYa+0xsoUqnLvRknL+6xFioYnSTCHUFowmvSbXOIA
+         /zYMS4tSsSr+gZ7ru2R0mH2wt1kIF33fDNB2wIlL6zpepL997AM1KfIQecmI0LFLfRDN
+         U/3w==
+X-Gm-Message-State: APt69E3H0KUsBfk2kWoh0xARuMipsvDo06DGvSMq1mC6ek5yp5813lPD
+        bMtoo1En4aT1zg2Vs7jqDbW/Asih
+X-Google-Smtp-Source: ADUXVKLbvBClVE7gDD3/zqzGI5v1Ah6WZhFBScjU5oZF8Gdet7okE1RL3+M3X7Nrm5uUGkOQ1sjadA==
+X-Received: by 2002:a2e:cf:: with SMTP id e76-v6mr1196479lji.82.1528369942292;
+        Thu, 07 Jun 2018 04:12:22 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.34])
+        by smtp.gmail.com with ESMTPSA id h28-v6sm6776915lfb.43.2018.06.07.04.12.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 04:12:21 -0700 (PDT)
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+X-Google-Original-From: Matti Vaittinen <mvaittin@localhost.localdomain>
+Date: Thu, 7 Jun 2018 14:12:18 +0300
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180607111218.GF20078@localhost.localdomain>
+References: <20180531030129.GA16122@rob-hp-laptop>
+ <20180531071717.GG13528@localhost.localdomain>
+ <20180531102315.GA5150@localhost.localdomain>
+ <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+ <20180601062540.GB5150@localhost.localdomain>
+ <CAL_JsqJNMxR=zdwR41iLfWU=u3J_=_VkxVL+g3a12_4vvNwBtw@mail.gmail.com>
+ <20180604113225.GE5150@localhost.localdomain>
+ <CAL_JsqL3Z_o2CFeYDvb3PqgiskTSHuOVqwdUP+gFymLDTKhn2g@mail.gmail.com>
+ <20180606073449.GD20078@localhost.localdomain>
+ <CAL_JsqKjwtq+7CSDKiaWGa011oqdsrc-XjOyfuBPOQ9UB=EtWQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqKjwtq+7CSDKiaWGa011oqdsrc-XjOyfuBPOQ9UB=EtWQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Wed, Jun 06, 2018 at 10:16:37AM -0500, Rob Herring wrote:
+> On Wed, Jun 6, 2018 at 2:34 AM, Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+> > On Tue, Jun 05, 2018 at 10:46:14AM -0500, Rob Herring wrote:
+> >> On Mon, Jun 4, 2018 at 6:32 AM, Matti Vaittinen
+> >> <mazziesaccount@gmail.com> wrote:
+> >> > On Fri, Jun 01, 2018 at 12:32:16PM -0500, Rob Herring wrote:
+> >> >> On Fri, Jun 1, 2018 at 1:25 AM, Matti Vaittinen
+> >> >> <mazziesaccount@gmail.com> wrote:
+> >> >> > On Thu, May 31, 2018 at 09:07:24AM -0500, Rob Herring wrote:
+> >> >> >> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
+> >> >> >> <mazziesaccount@gmail.com> wrote:
+> >> >> >> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
+> >> >> >> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
+> >> >> >> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
+> > Datasheet:
+> > https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+> > (Would it be good idea to add this link to comments in MFD driver or to
+> > binding document(s)?)
+> 
+> Yes, it would.
 
-This is a direct replacement for struct radix_tree_node.  A couple of
-struct members have changed name, so convert those.  Use a #define so
-that radix tree users continue to work without change.
+I will add this then. I don't really like adding links like this as urls
+tend to change and links become dead - but I guess this is something we
+just must live with.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reviewed-by: Josef Bacik <jbacik@fb.com>
----
- include/linux/radix-tree.h            | 29 ++--------------
- include/linux/xarray.h                | 24 ++++++++++++++
- lib/radix-tree.c                      | 48 +++++++++++++--------------
- mm/workingset.c                       | 16 ++++-----
- tools/testing/radix-tree/multiorder.c | 30 ++++++++---------
- 5 files changed, 74 insertions(+), 73 deletions(-)
+> >                     +--------------------------------------------------+
+> >                     |                                                  |
+> > VSYS           +-----------------+                    +-----------+    |
+> >                     |            |                    |           |    |
+> >                     |  +-------+ |                    | BUCKS 1-4 +-------->
+> >                     |  |       | |                    |           |    |
+> > I2C IF         +------->   H   | +--------------------+  DVS      +-------->
+> >                     |  |   O   | |                    |  Support  |    |
+> > PWRON_B        +------->   S   | |                    |           +-------->
+> >                     |  |   T   | |                    |           |    |
+> > PMIC_STBY_REQ  +------->       | |                    |           +-------->
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index c8a33e9e9a3c..f64beb9ba175 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -32,6 +32,7 @@
- 
- /* Keep unconverted code working */
- #define radix_tree_root		xarray
-+#define radix_tree_node		xa_node
- 
- /*
-  * The bottom two bits of the slot determine how the remaining bits in the
-@@ -60,41 +61,17 @@ static inline bool radix_tree_is_internal_node(void *ptr)
- 
- /*** radix-tree API starts here ***/
- 
--#define RADIX_TREE_MAX_TAGS 3
--
- #define RADIX_TREE_MAP_SHIFT	XA_CHUNK_SHIFT
- #define RADIX_TREE_MAP_SIZE	(1UL << RADIX_TREE_MAP_SHIFT)
- #define RADIX_TREE_MAP_MASK	(RADIX_TREE_MAP_SIZE-1)
- 
--#define RADIX_TREE_TAG_LONGS	\
--	((RADIX_TREE_MAP_SIZE + BITS_PER_LONG - 1) / BITS_PER_LONG)
-+#define RADIX_TREE_MAX_TAGS	XA_MAX_TAGS
-+#define RADIX_TREE_TAG_LONGS	XA_TAG_LONGS
- 
- #define RADIX_TREE_INDEX_BITS  (8 /* CHAR_BIT */ * sizeof(unsigned long))
- #define RADIX_TREE_MAX_PATH (DIV_ROUND_UP(RADIX_TREE_INDEX_BITS, \
- 					  RADIX_TREE_MAP_SHIFT))
- 
--/*
-- * @count is the count of every non-NULL element in the ->slots array
-- * whether that is a data entry, a retry entry, a user pointer,
-- * a sibling entry or a pointer to the next level of the tree.
-- * @exceptional is the count of every element in ->slots which is
-- * either a data entry or a sibling entry for data.
-- */
--struct radix_tree_node {
--	unsigned char	shift;		/* Bits remaining in each slot */
--	unsigned char	offset;		/* Slot offset in parent */
--	unsigned char	count;		/* Total entry count */
--	unsigned char	exceptional;	/* Exceptional entry count */
--	struct radix_tree_node *parent;		/* Used when ascending tree */
--	struct radix_tree_root *root;		/* The tree we belong to */
--	union {
--		struct list_head private_list;	/* For tree user */
--		struct rcu_head	rcu_head;	/* Used when freeing node */
--	};
--	void __rcu	*slots[RADIX_TREE_MAP_SIZE];
--	unsigned long	tags[RADIX_TREE_MAX_TAGS][RADIX_TREE_TAG_LONGS];
--};
--
- /* The IDR tag is stored in the low bits of xa_flags */
- #define ROOT_IS_IDR	((__force gfp_t)4)
- /* The top bits of xa_flags are used to store the root tags */
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 9b05b907062b..b51f354dfbf0 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -195,6 +195,30 @@ static inline void xa_init(struct xarray *xa)
- #endif
- #define XA_CHUNK_SIZE		(1UL << XA_CHUNK_SHIFT)
- #define XA_CHUNK_MASK		(XA_CHUNK_SIZE - 1)
-+#define XA_MAX_TAGS		3
-+#define XA_TAG_LONGS		DIV_ROUND_UP(XA_CHUNK_SIZE, BITS_PER_LONG)
-+
-+/*
-+ * @count is the count of every non-NULL element in the ->slots array
-+ * whether that is a value entry, a retry entry, a user pointer,
-+ * a sibling entry or a pointer to the next level of the tree.
-+ * @nr_values is the count of every element in ->slots which is
-+ * either a value entry or a sibling entry to a value entry.
-+ */
-+struct xa_node {
-+	unsigned char	shift;		/* Bits remaining in each slot */
-+	unsigned char	offset;		/* Slot offset in parent */
-+	unsigned char	count;		/* Total entry count */
-+	unsigned char	nr_values;	/* Value entry count */
-+	struct xa_node __rcu *parent;	/* NULL at top of tree */
-+	struct xarray	*array;		/* The array we belong to */
-+	union {
-+		struct list_head private_list;	/* For tree user */
-+		struct rcu_head	rcu_head;	/* Used when freeing node */
-+	};
-+	void __rcu	*slots[XA_CHUNK_SIZE];
-+	unsigned long	tags[XA_MAX_TAGS][XA_TAG_LONGS];
-+};
- 
- /* Private */
- static inline bool xa_is_node(const void *entry)
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index 2f57c98c4da6..3764c97a2147 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -260,11 +260,11 @@ static void dump_node(struct radix_tree_node *node, unsigned long index)
- {
- 	unsigned long i;
- 
--	pr_debug("radix node: %p offset %d indices %lu-%lu parent %p tags %lx %lx %lx shift %d count %d exceptional %d\n",
-+	pr_debug("radix node: %p offset %d indices %lu-%lu parent %p tags %lx %lx %lx shift %d count %d nr_values %d\n",
- 		node, node->offset, index, index | node_maxindex(node),
- 		node->parent,
- 		node->tags[0][0], node->tags[1][0], node->tags[2][0],
--		node->shift, node->count, node->exceptional);
-+		node->shift, node->count, node->nr_values);
- 
- 	for (i = 0; i < RADIX_TREE_MAP_SIZE; i++) {
- 		unsigned long first = index | (i << node->shift);
-@@ -354,7 +354,7 @@ static struct radix_tree_node *
- radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
- 			struct radix_tree_root *root,
- 			unsigned int shift, unsigned int offset,
--			unsigned int count, unsigned int exceptional)
-+			unsigned int count, unsigned int nr_values)
- {
- 	struct radix_tree_node *ret = NULL;
- 
-@@ -401,9 +401,9 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
- 		ret->shift = shift;
- 		ret->offset = offset;
- 		ret->count = count;
--		ret->exceptional = exceptional;
-+		ret->nr_values = nr_values;
- 		ret->parent = parent;
--		ret->root = root;
-+		ret->array = root;
- 	}
- 	return ret;
- }
-@@ -633,8 +633,8 @@ static int radix_tree_extend(struct radix_tree_root *root, gfp_t gfp,
- 		if (radix_tree_is_internal_node(entry)) {
- 			entry_to_node(entry)->parent = node;
- 		} else if (xa_is_value(entry)) {
--			/* Moving an exceptional root->xa_head to a node */
--			node->exceptional = 1;
-+			/* Moving a value entry root->xa_head to a node */
-+			node->nr_values = 1;
- 		}
- 		/*
- 		 * entry was already in the radix tree, so we do not need
-@@ -920,12 +920,12 @@ static inline int insert_entries(struct radix_tree_node *node,
- 		if (xa_is_node(old))
- 			radix_tree_free_nodes(old);
- 		if (xa_is_value(old))
--			node->exceptional--;
-+			node->nr_values--;
- 	}
- 	if (node) {
- 		node->count += n;
- 		if (xa_is_value(item))
--			node->exceptional += n;
-+			node->nr_values += n;
- 	}
- 	return n;
- }
-@@ -939,7 +939,7 @@ static inline int insert_entries(struct radix_tree_node *node,
- 	if (node) {
- 		node->count++;
- 		if (xa_is_value(item))
--			node->exceptional++;
-+			node->nr_values++;
- 	}
- 	return 1;
- }
-@@ -1073,7 +1073,7 @@ void *radix_tree_lookup(const struct radix_tree_root *root, unsigned long index)
- EXPORT_SYMBOL(radix_tree_lookup);
- 
- static inline void replace_sibling_entries(struct radix_tree_node *node,
--				void __rcu **slot, int count, int exceptional)
-+				void __rcu **slot, int count, int values)
- {
- #ifdef CONFIG_RADIX_TREE_MULTIORDER
- 	unsigned offset = get_slot_offset(node, slot);
-@@ -1086,21 +1086,21 @@ static inline void replace_sibling_entries(struct radix_tree_node *node,
- 			node->slots[offset] = NULL;
- 			node->count--;
- 		}
--		node->exceptional += exceptional;
-+		node->nr_values += values;
- 	}
- #endif
- }
- 
- static void replace_slot(void __rcu **slot, void *item,
--		struct radix_tree_node *node, int count, int exceptional)
-+		struct radix_tree_node *node, int count, int values)
- {
- 	if (WARN_ON_ONCE(radix_tree_is_internal_node(item)))
- 		return;
- 
--	if (node && (count || exceptional)) {
-+	if (node && (count || values)) {
- 		node->count += count;
--		node->exceptional += exceptional;
--		replace_sibling_entries(node, slot, count, exceptional);
-+		node->nr_values += values;
-+		replace_sibling_entries(node, slot, count, values);
- 	}
- 
- 	rcu_assign_pointer(*slot, item);
-@@ -1154,17 +1154,17 @@ void __radix_tree_replace(struct radix_tree_root *root,
- 			  radix_tree_update_node_t update_node)
- {
- 	void *old = rcu_dereference_raw(*slot);
--	int exceptional = !!xa_is_value(item) - !!xa_is_value(old);
-+	int values = !!xa_is_value(item) - !!xa_is_value(old);
- 	int count = calculate_count(root, node, slot, item, old);
- 
- 	/*
--	 * This function supports replacing exceptional entries and
-+	 * This function supports replacing value entries and
- 	 * deleting entries, but that needs accounting against the
- 	 * node unless the slot is root->xa_head.
- 	 */
- 	WARN_ON_ONCE(!node && (slot != (void __rcu **)&root->xa_head) &&
--			(count || exceptional));
--	replace_slot(slot, item, node, count, exceptional);
-+			(count || values));
-+	replace_slot(slot, item, node, count, values);
- 
- 	if (!node)
- 		return;
-@@ -1186,7 +1186,7 @@ void __radix_tree_replace(struct radix_tree_root *root,
-  * across slot lookup and replacement.
-  *
-  * NOTE: This cannot be used to switch between non-entries (empty slots),
-- * regular entries, and exceptional entries, as that requires accounting
-+ * regular entries, and value entries, as that requires accounting
-  * inside the radix tree node. When switching from one type of entry or
-  * deleting, use __radix_tree_lookup() and __radix_tree_replace() or
-  * radix_tree_iter_replace().
-@@ -1294,7 +1294,7 @@ int radix_tree_split(struct radix_tree_root *root, unsigned long index,
- 		rcu_assign_pointer(parent->slots[end], RADIX_TREE_RETRY);
- 	}
- 	rcu_assign_pointer(parent->slots[offset], RADIX_TREE_RETRY);
--	parent->exceptional -= (end - offset);
-+	parent->nr_values -= (end - offset);
- 
- 	if (order == parent->shift)
- 		return 0;
-@@ -1954,7 +1954,7 @@ static bool __radix_tree_delete(struct radix_tree_root *root,
- 				struct radix_tree_node *node, void __rcu **slot)
- {
- 	void *old = rcu_dereference_raw(*slot);
--	int exceptional = xa_is_value(old) ? -1 : 0;
-+	int values = xa_is_value(old) ? -1 : 0;
- 	unsigned offset = get_slot_offset(node, slot);
- 	int tag;
- 
-@@ -1964,7 +1964,7 @@ static bool __radix_tree_delete(struct radix_tree_root *root,
- 		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
- 			node_tag_clear(root, node, tag, offset);
- 
--	replace_slot(slot, NULL, node, -1, exceptional);
-+	replace_slot(slot, NULL, node, -1, values);
- 	return node && delete_node(root, node, NULL);
- }
- 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index b5dd3936e697..bad4e58881cd 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -348,7 +348,7 @@ void workingset_update_node(struct radix_tree_node *node)
- 	 * already where they should be. The list_empty() test is safe
- 	 * as node->private_list is protected by the i_pages lock.
- 	 */
--	if (node->count && node->count == node->exceptional) {
-+	if (node->count && node->count == node->nr_values) {
- 		if (list_empty(&node->private_list))
- 			list_lru_add(&shadow_nodes, &node->private_list);
- 	} else {
-@@ -427,8 +427,8 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 	 * to reclaim, take the node off-LRU, and drop the lru_lock.
- 	 */
- 
--	node = container_of(item, struct radix_tree_node, private_list);
--	mapping = container_of(node->root, struct address_space, i_pages);
-+	node = container_of(item, struct xa_node, private_list);
-+	mapping = container_of(node->array, struct address_space, i_pages);
- 
- 	/* Coming from the list, invert the lock order */
- 	if (!xa_trylock(&mapping->i_pages)) {
-@@ -445,25 +445,25 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
- 	 * no pages, so we expect to be able to remove them all and
- 	 * delete and free the empty node afterwards.
- 	 */
--	if (WARN_ON_ONCE(!node->exceptional))
-+	if (WARN_ON_ONCE(!node->nr_values))
- 		goto out_invalid;
--	if (WARN_ON_ONCE(node->count != node->exceptional))
-+	if (WARN_ON_ONCE(node->count != node->nr_values))
- 		goto out_invalid;
- 	for (i = 0; i < RADIX_TREE_MAP_SIZE; i++) {
- 		if (node->slots[i]) {
- 			if (WARN_ON_ONCE(!xa_is_value(node->slots[i])))
- 				goto out_invalid;
--			if (WARN_ON_ONCE(!node->exceptional))
-+			if (WARN_ON_ONCE(!node->nr_values))
- 				goto out_invalid;
- 			if (WARN_ON_ONCE(!mapping->nrexceptional))
- 				goto out_invalid;
- 			node->slots[i] = NULL;
--			node->exceptional--;
-+			node->nr_values--;
- 			node->count--;
- 			mapping->nrexceptional--;
- 		}
- 	}
--	if (WARN_ON_ONCE(node->exceptional))
-+	if (WARN_ON_ONCE(node->nr_values))
- 		goto out_invalid;
- 	inc_lruvec_page_state(virt_to_page(node), WORKINGSET_NODERECLAIM);
- 	__radix_tree_delete_node(&mapping->i_pages, node,
-diff --git a/tools/testing/radix-tree/multiorder.c b/tools/testing/radix-tree/multiorder.c
-index 3bba18e1ba65..c659056340df 100644
---- a/tools/testing/radix-tree/multiorder.c
-+++ b/tools/testing/radix-tree/multiorder.c
-@@ -393,7 +393,7 @@ static void multiorder_join2(unsigned order1, unsigned order2)
- 	radix_tree_insert(&tree, 1 << order2, xa_mk_value(5));
- 	item2 = __radix_tree_lookup(&tree, 1 << order2, &node, NULL);
- 	assert(item2 == xa_mk_value(5));
--	assert(node->exceptional == 1);
-+	assert(node->nr_values == 1);
- 
- 	item2 = radix_tree_lookup(&tree, 0);
- 	free(item2);
-@@ -401,7 +401,7 @@ static void multiorder_join2(unsigned order1, unsigned order2)
- 	radix_tree_join(&tree, 0, order1, item1);
- 	item2 = __radix_tree_lookup(&tree, 1 << order2, &node, NULL);
- 	assert(item2 == item1);
--	assert(node->exceptional == 0);
-+	assert(node->nr_values == 0);
- 	item_kill_tree(&tree);
- }
- 
-@@ -409,7 +409,7 @@ static void multiorder_join2(unsigned order1, unsigned order2)
-  * This test revealed an accounting bug for inline data entries at one point.
-  * Nodes were being freed back into the pool with an elevated exception count
-  * by radix_tree_join() and then radix_tree_split() was failing to zero the
-- * count of exceptional entries.
-+ * count of value entries.
-  */
- static void multiorder_join3(unsigned int order)
- {
-@@ -433,7 +433,7 @@ static void multiorder_join3(unsigned int order)
- 	}
- 
- 	__radix_tree_lookup(&tree, 0, &node, NULL);
--	assert(node->exceptional == node->count);
-+	assert(node->nr_values == node->count);
- 
- 	item_kill_tree(&tree);
- }
-@@ -520,7 +520,7 @@ static void __multiorder_split2(int old_order, int new_order)
- 
- 	item = __radix_tree_lookup(&tree, 0, &node, NULL);
- 	assert(item == xa_mk_value(5));
--	assert(node->exceptional > 0);
-+	assert(node->nr_values > 0);
- 
- 	radix_tree_split(&tree, 0, new_order);
- 	radix_tree_for_each_slot(slot, &tree, &iter, 0) {
-@@ -530,7 +530,7 @@ static void __multiorder_split2(int old_order, int new_order)
- 
- 	item = __radix_tree_lookup(&tree, 0, &node, NULL);
- 	assert(item != xa_mk_value(5));
--	assert(node->exceptional == 0);
-+	assert(node->nr_values == 0);
- 
- 	item_kill_tree(&tree);
- }
-@@ -547,7 +547,7 @@ static void __multiorder_split3(int old_order, int new_order)
- 
- 	item = __radix_tree_lookup(&tree, 0, &node, NULL);
- 	assert(item == xa_mk_value(5));
--	assert(node->exceptional > 0);
-+	assert(node->nr_values > 0);
- 
- 	radix_tree_split(&tree, 0, new_order);
- 	radix_tree_for_each_slot(slot, &tree, &iter, 0) {
-@@ -556,7 +556,7 @@ static void __multiorder_split3(int old_order, int new_order)
- 
- 	item = __radix_tree_lookup(&tree, 0, &node, NULL);
- 	assert(item == xa_mk_value(7));
--	assert(node->exceptional > 0);
-+	assert(node->nr_values > 0);
- 
- 	item_kill_tree(&tree);
- 
-@@ -564,7 +564,7 @@ static void __multiorder_split3(int old_order, int new_order)
- 
- 	item = __radix_tree_lookup(&tree, 0, &node, NULL);
- 	assert(item == xa_mk_value(5));
--	assert(node->exceptional > 0);
-+	assert(node->nr_values > 0);
- 
- 	radix_tree_split(&tree, 0, new_order);
- 	radix_tree_for_each_slot(slot, &tree, &iter, 0) {
-@@ -577,13 +577,13 @@ static void __multiorder_split3(int old_order, int new_order)
- 
- 	item = __radix_tree_lookup(&tree, 1 << new_order, &node, NULL);
- 	assert(item == xa_mk_value(7));
--	assert(node->count == node->exceptional);
-+	assert(node->count == node->nr_values);
- 	do {
- 		node = node->parent;
- 		if (!node)
- 			break;
- 		assert(node->count == 1);
--		assert(node->exceptional == 0);
-+		assert(node->nr_values == 0);
- 	} while (1);
- 
- 	item_kill_tree(&tree);
-@@ -611,15 +611,15 @@ static void multiorder_account(void)
- 
- 	__radix_tree_insert(&tree, 1 << 5, 5, xa_mk_value(5));
- 	__radix_tree_lookup(&tree, 0, &node, NULL);
--	assert(node->count == node->exceptional * 2);
-+	assert(node->count == node->nr_values * 2);
- 	radix_tree_delete(&tree, 1 << 5);
--	assert(node->exceptional == 0);
-+	assert(node->nr_values == 0);
- 
- 	__radix_tree_insert(&tree, 1 << 5, 5, xa_mk_value(5));
- 	__radix_tree_lookup(&tree, 1 << 5, &node, &slot);
--	assert(node->count == node->exceptional * 2);
-+	assert(node->count == node->nr_values * 2);
- 	__radix_tree_replace(&tree, node, slot, NULL, NULL);
--	assert(node->exceptional == 0);
-+	assert(node->nr_values == 0);
- 
- 	item_kill_tree(&tree);
- }
--- 
-2.17.1
+Do you think this ASCII art picture in MFD or regulator driver comments would
+be an overkill?
+
+> > On the left we see input lines to PMIC. PWRON_B intended to be connected
+> > to power button. PMIC_STBY_REQ and PMIC_ON_REQ lines for controlling HW
+> > state machine PMIC has. And WDOG_B from watch dog.
+> >
+> > PMIC has control register for controlling what happens to BUCK/LDO
+> > outputs when input line states change. PMIC reports change in input
+> > lines via the IRQ_OUT line and IRQ status register.
+> 
+> So it looks like this is just regulators with a few other signals to handle.
+
+Yes. Regulators and the HW state machine which is currently mostly
+bypassed by drivers. And while we are at it - is there some standard
+device-tree properties for describing the voltages for different PMIC states
+(idle, run, standby) so that the driver could configure voltages the
+bucks should use when PMIC state is changed. Or do you think I should
+use custom ones like:
+
+bd71837,pmic-buck1-dvs-voltage = <900000>, <850000>, <800000>; /* VDD_SOC: Run-Idle-Suspend */
+bd71837,pmic-buck2-dvs-voltage = <1000000>, <900000>, <0>; /* VDD_ARM: Run-Idle */
+bd71837,pmic-buck3-dvs-voltage = <1000000>, <0>, <0>; /* VDD_GPU: Run */
+bd71837,pmic-buck4-dvs-voltage = <1000000>, <0>, <0>; /* VDD_VPU: Run */
+
+I think this is not the only PMIC with configurable voltages for
+different states so someone has probably already invented a way to
+provide this information - is the DT correct place to search for this?
+
+> 
+> > So HW mapping for interrup(s) from PMIC would be:
+> >
+> > (HW) event => BD71837 domain IRQ
+> >
+> > PMIC_STBY_REQ line level change         => 0
+> > PMIC_ON_REQ line level change           => 1
+> 
+> I'm not really clear how these would have s/w handling. They look like
+> handshake signals for the processor to enter and exit standby/suspend.
+> H/w designers don't always know what to do with things and may have
+> just said lets have an interrupt for every input signal.
+
+The PMIC_ON_REQ can be used to switch the PMIC from 'READY' to 'SNVS'
+and from 'SNVS' to 'RUN' states. But same transitions can be configured
+to be done by power button presses too.
+
+I think I in some earlier mail said that I can't think how to handle
+other but power button interrupts - when PMIC is used to power the
+processor controlling PMIC. But I also mentioned another use case
+which I can think of - but I am not sure if it is relevant or not. In
+this other use case we have a 'slave processor' powered by PMIC doing
+some specific tasks - and a 'control processor' which is not powered by
+this PMIC - but which may be controlling it (and thus also controls power
+for the slave). In such setup all these interrupts mmight become
+meaningfull - but handling should be platform specific then. (The
+control processor could for example detect slave processor resets or
+wake-ups via these interrupts and initiate any platform specific
+activities based on this). I have no system design experience so I don't
+know if this sounds reasonable or not - but thats why I liked the idea
+of providing access to all interrupts via this interrupt-controller.
+
+> I'd think you
+> would just want DT properties to configure what action to take (and
+> perhaps polarity?).
+
+Currently the driver is not configuring what happens when state of these
+signals change. But it could as you say. And it would be nice to get the
+configuration from DT. I think the polarity is fixed.
+
+
+> > PMIC_WDOG_B line level change           => 2
+> 
+> Ah, this is an input signal, not a watchdog block within the PMIC. I
+> think this should just be handled by the core driver. If you need to
+> configure what this does, then we can add a property to handle that.
+
+Action taken when WDOG_B is asserted is indeed configurable. PMIC can do
+cold reset, warm reset of take no action. But here I again fail to think
+how this should be handled - especially because HW default for action is
+cold reset. But as I said abowe - it may be there is use case for this
+interrupt even though I can't provide generic one. ...and this is why I
+liked the idea of having it available via DT... :)
+
+> 
+> > PMIC_PWRON_B line level change          => 3
+> > PMIC_PWRON_B line/long push detected    => 4
+> > PMIC_PWRON_B line/short push detected   => 5
+> 
+> So you need a power button driver (or maybe not even a separate
+> driver) for this, but I don't think that warrants a child node. I
+> think some PMIC drivers just generate a power key press (which just
+> gets punted to userspace), but some will do an actual power down. Or
+> maybe a combination of those based on short/long press.
+
+I agree with you on this. A power button driver could consume these
+IRQs. And yes, (input?) event to user-space sounds reasonable. Maybe
+also a power-off handler if "system-power-controller" property is given.
+
+Whether this is something crying for own DT node is not my decision. I
+just know that having own sub nodes and relying on irq-controller xlate
+callbacks eould make driver side really simple.
+
+> 
+> I think there's already some DT properties defined to control the
+> behavior as well.
+> 
+> > SWRESET register on PMIC written        => 6
+> 
+> Probably this can be handled within the core driver. Seems like you'd
+> only use this if you have separate entities that write and read this.
+> If you don't know, then just ignore it for now.
+
+Yep. My plan was not to implement handling for any of these interrupts
+for now. I just wanted to make them easily available for any future use.
+
+> > Hence I liked the idea of hiding the irq register
+> > details in MFD driver by declaring it as interrupt controller - and
+> > leaving the interrupts to be used by what ever drivers need the change
+> > information is system the PMIC is used.
+> 
+> This can still be done but doesn't have to be in DT.
+
+I think this is my weak spot. I don't know how to do this easily without
+DT. How do I bring the irq to power-button driver or to WDOG
+irq handler (or XXX-driver invented by one who needs these IRQs) without
+DT. Options I can think of are:
+
+1. getting the GPIO irq (from MFD parent) and making the IRQ registers
+   visible to power button/XXX drivers. Possibly ending up with shared
+   IRQ hanlder.
+2. Keeping the IRQ register accesses in MFD driver and providing some
+   handler callback registration interface from MFD driver to power
+   button/XXX drivers
+3. Using this interrupt-controller approach.
+
+I dislike option 1 because all drivers using IRQs need to be aware of
+IRQ registers.
+
+I dislike option 2 because inventing such IRQ callbacks just feel wrong.
+There must be better way - I just don't know it =)
+
+I would like to use option 3 - but I don't know how to do it without DT?
+Specifically I don't know how to provide the irq number and interrupt
+parent to power-button/XXX drivers if they are not brought from DT. And
+why to invent some parallel mechanism for this when DT usage already
+provides this. I would be really gratefull for any tips how to do this
+correctly if DT is not used.
+
+> > So what do you think of this:
+> >
+> > +Optional properties:
+> > + - interrupt-controller        : Marks the device node as an interrupt controller.
+> > +                         BD71837MWV can report input line state change and SW
+> > +                         reset events via interrupts. Different events can be seen
+> > +                         as separate BD71837 domain interrupts.
+> > + - #interrupt-cells    : The number of cells to describe an IRQ should be 1.
+> > +                         The value in cell is the IRQ number.
+> > +                           Meaningfull numbers are:
+> > +                             0 => PMIC_STBY_REQ level change
+> > +                             1 => PMIC_ON_REQ level change
+> > +                             2 => WDOG_B level change
+> > +                             3 => Power Button level change
+> > +                             4 => Power Button Long Push
+> > +                             5 => Power Button Short Push
+> > +                             6 => SWRESET register is written 1
+> >
+> > Would this be getting closer to what is needed from binding document?
+> 
+> I don't think any of this needs to live in DT. All you really need a
+> separate driver (and hence irq) for is really just the power button.
+> You can just define the interrupts within the kernel.
+
+So I tried to argue that all of the IRQs should be usable and we should
+not limit the HW capabilities by design (I like the idea of exposing all
+HW functionality because I only rarely know what should be usable better
+than the user). Are you sure my dual processor use-case is not
+convincing you we should provide these interrupts via DT?
+
+If so - as I already said, I would be gratefull for any suggestions on
+how to provide access to irqs without DT. I just can't help feeling that
+DT would have been the best way for cleanest and most
+understandable/usable end result.
+
+Meanwhile I will prepare a patch where the interrupt handling is
+completely ripped from MFD and binding documents as I don't have power
+button driver tested (I drafted something though). Maybe such a patch
+could be acceptable in order to enable regulator usage (and
+compilation). Is that Ok?
+
+Best Regards
+    Matti Vaittinen
