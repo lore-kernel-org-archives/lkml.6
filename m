@@ -1,133 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id uuO9JElHGVvFPAAAmS7hNA
-	; Thu, 07 Jun 2018 14:55:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AGKFN4CAGVuQBAAAmS7hNA
+	; Thu, 07 Jun 2018 18:59:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 829EB607E7; Thu,  7 Jun 2018 14:55:05 +0000 (UTC)
+	id CCFE36089E; Thu,  7 Jun 2018 18:59:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BCD7C606DD;
-	Thu,  7 Jun 2018 14:55:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCD7C606DD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 45B8E601D2;
+	Thu,  7 Jun 2018 18:59:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 45B8E601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935433AbeFGOzB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:55:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41026 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935394AbeFGOy5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:54:57 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbv-0005hL-BA; Thu, 07 Jun 2018 15:09:55 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvaz-0002lf-VP; Thu, 07 Jun 2018 15:08:57 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1753612AbeFGS7J (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 14:59:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39032 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751231AbeFGS7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 14:59:07 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4386B40122A1;
+        Thu,  7 Jun 2018 18:59:06 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-116-135.ams2.redhat.com [10.36.116.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C11081C65D;
+        Thu,  7 Jun 2018 18:58:57 +0000 (UTC)
+Subject: Re: [PATCH 03/10] x86/cet: Signal handling for shadow stack
+To: Andy Lutomirski <luto@amacapital.net>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+ <20180607143807.3611-4-yu-cheng.yu@intel.com>
+ <CALCETrWo77RS_wOzskw5OG-LdC1S-b_NY=uPWUmPbQEnNwANgQ@mail.gmail.com>
+From: Florian Weimer <fweimer@redhat.com>
+Message-ID: <2b920019-cf03-334c-3b6a-b2c6b7f4dfa3@redhat.com>
+Date: Thu, 7 Jun 2018 20:58:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Adrian Hunter" <adrian.hunter@intel.com>,
-        "Wang Nan" <wangnan0@huawei.com>, "Jiri Olsa" <jolsa@kernel.org>,
-        "Namhyung Kim" <namhyung@kernel.org>,
-        "David Ahern" <dsahern@gmail.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Andi Kleen" <ak@linux.intel.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.944360372@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 069/410] perf report: Fix -D output for user metadata
- events
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <CALCETrWo77RS_wOzskw5OG-LdC1S-b_NY=uPWUmPbQEnNwANgQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 18:59:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 18:59:06 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On 06/07/2018 08:30 PM, Andy Lutomirski wrote:
+> On Thu, Jun 7, 2018 at 7:41 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>>
+>> Set and restore shadow stack pointer for signals.
+> 
+> How does this interact with siglongjmp()?
 
-------------------
+We plan to use some unused signal mask bits in the jump buffer (we have 
+a lot of those in glibc for some reason) to store the shadow stack pointer.
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> This patch makes me extremely nervous due to the possibility of ABI
+> issues and CRIU breakage.
+> 
+>> diff --git a/arch/x86/include/uapi/asm/sigcontext.h b/arch/x86/include/uapi/asm/sigcontext.h
+>> index 844d60eb1882..6c8997a0156a 100644
+>> --- a/arch/x86/include/uapi/asm/sigcontext.h
+>> +++ b/arch/x86/include/uapi/asm/sigcontext.h
+>> @@ -230,6 +230,7 @@ struct sigcontext_32 {
+>>          __u32                           fpstate; /* Zero when no FPU/extended context */
+>>          __u32                           oldmask;
+>>          __u32                           cr2;
+>> +       __u32                           ssp;
+>>   };
+>>
+>>   /*
+>> @@ -262,6 +263,7 @@ struct sigcontext_64 {
+>>          __u64                           trapno;
+>>          __u64                           oldmask;
+>>          __u64                           cr2;
+>> +       __u64                           ssp;
+>>
+>>          /*
+>>           * fpstate is really (struct _fpstate *) or (struct _xstate *)
+>> @@ -320,6 +322,7 @@ struct sigcontext {
+>>          struct _fpstate __user          *fpstate;
+>>          __u32                           oldmask;
+>>          __u32                           cr2;
+>> +       __u32                           ssp;
+> 
+> Is it actually okay to modify these structures like this?  They're
+> part of the user ABI, and I don't know whether any user code relies on
+> the size being constant.
 
-commit f250b09c779550e4a7a412dae6d3ad34d5201019 upstream.
+Probably not.  Historically, these things have been tacked at the end of 
+the floating point state, see struct _xstate:
 
-The PERF_RECORD_USER_ events are synthesized by the tool to assist in
-processing the PERF_RECORD_ ones generated by the kernel, the printing
-of that information doesn't come with a perf_sample structure, so, when
-dumping the event fields using 'perf report -D' there were columns that
-end up not being printed.
+         /* New processor state extensions go here: */
 
-To tidy up a bit this, fake a perf_sample structure with zeroes to have
-the missing columns printed and avoid the occasional surprise with that.
+However, I'm not sure if this is really ideal because I doubt that 
+everyone who needs the shadow stack pointer also wants to sacrifice 
+space for the AVX-512 save area (which is already a backwards 
+compatibility hazard).  Other architectures have variable offsets and 
+some TLV-style setup here.
 
-Before:
-
-0 0x45b8 [0x68]: PERF_RECORD_MMAP -1/0: [0xffffffffc12ec000(0x4000) @ 0]: x /lib/modules/4.14.0+/kernel/fs/nls/nls_utf8.ko
-0x4620 [0x28]: PERF_RECORD_THREAD_MAP nr: 1 thread: 27820
-0x4648 [0x18]: PERF_RECORD_CPU_MAP: 0-3
-0 0x4660 [0x28]: PERF_RECORD_COMM: perf:27820/27820
-0x4a58 [0x8]: PERF_RECORD_FINISHED_ROUND
-447723433020976 0x4688 [0x28]: PERF_RECORD_SAMPLE(IP, 0x4001): 27820/27820: 0xffffffff8f1b6d7a period: 1 addr: 0
-
-After:
-
-  $ perf report -D | grep PERF_RECORD_ | head
-  0 0xe8 [0x20]: PERF_RECORD_TIME_CONV: unhandled!
-  0 0x108 [0x28]: PERF_RECORD_THREAD_MAP nr: 1 thread: 32555
-  0 0x130 [0x18]: PERF_RECORD_CPU_MAP: 0-3
-  0 0x148 [0x28]: PERF_RECORD_COMM: perf:32555/32555
-  0 0x4e8 [0x8]: PERF_RECORD_FINISHED_ROUND
-  448743409421205 0x170 [0x28]: PERF_RECORD_COMM exec: sleep:32555/32555
-  448743409431883 0x198 [0x68]: PERF_RECORD_MMAP2 32555/32555: [0x55e11d75a000(0x208000) @ 0 fd:00 3147174 2566255743]: r-xp /usr/bin/sleep
-  448743409443873 0x200 [0x70]: PERF_RECORD_MMAP2 32555/32555: [0x7f0ced316000(0x229000) @ 0 fd:00 3151761 2566238119]: r-xp /usr/lib64/ld-2.25.so
-  448743409454790 0x270 [0x60]: PERF_RECORD_MMAP2 32555/32555: [0x7ffe84f6d000(0x2000) @ 0 00:00 0 0]: r-xp [vdso]
-  448743409479500 0x2d0 [0x28]: PERF_RECORD_SAMPLE(IP, 0x4002): 32555/32555: 0xffffffff8f84c7e7 period: 1 addr: 0
-  $
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 9aefcab0de47 ("perf session: Consolidate the dump code")
-Link: https://lkml.kernel.org/n/tip-todcu15x0cwgppkh1gi6uhru@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- tools/perf/util/session.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -996,10 +996,11 @@ static int perf_session_deliver_event(st
- static int perf_session__process_user_event(struct perf_session *session, union perf_event *event,
- 					    struct perf_tool *tool, u64 file_offset)
- {
-+	struct perf_sample sample = { .time = 0, };
- 	int fd = perf_data_file__fd(session->file);
- 	int err;
- 
--	dump_event(session, event, file_offset, NULL);
-+	dump_event(session, event, file_offset, &sample);
- 
- 	/* These events are processed right away */
- 	switch (event->header.type) {
+Thanks,
+Florian
