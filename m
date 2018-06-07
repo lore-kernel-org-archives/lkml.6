@@ -1,138 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vkAYKaViHlvWVgAAmS7hNA
-	; Mon, 11 Jun 2018 11:53:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /5mhJK8tGVtwJAAAmS7hNA
+	; Thu, 07 Jun 2018 13:07:24 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id A5472607A4; Mon, 11 Jun 2018 11:53:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kixDYZHG"
+	id 568906089E; Thu,  7 Jun 2018 13:07:24 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEXHASH_WORD,MAILING_LIST_MULTI,SORTED_RECIPS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 092DC601C3;
-	Mon, 11 Jun 2018 11:53:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 092DC601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8800E601C3;
+	Thu,  7 Jun 2018 13:07:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8800E601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933250AbeFKLxi (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 07:53:38 -0400
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:42396 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933004AbeFKLxf (ORCPT
+        id S1753664AbeFGNHW (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:07:22 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:35194 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753327AbeFGNHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:53:35 -0400
-Received: by mail-lf0-f52.google.com with SMTP id v135-v6so30073563lfa.9;
-        Mon, 11 Jun 2018 04:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Suyinsj+2DMcJEI8FsGWk1SnNxmOdY2jzBHLWvXZJ0g=;
-        b=kixDYZHGRg4sczrgAUfqqfQhh+KlON4rmOrbmoIIKV80qRPKTQXjoz6TvYI5tnFqsG
-         BlpShuv5TyvH9jKA4FJNCa/ZdlJiydYF8nDoKo65d1A7/PcDxr0CKIc4+I5WX3tAtweH
-         yWGMR9cYSesKqLnLqZi7Quo2LLfCpfdbAwPR6+F9K5bxJK9FgZqK10eaeK/SuJ6VDSPV
-         DlqL16o8X8Ttw1QGWFqFIXypvzOu4bDpHFAoZKX1IZ/wBMzB8DbMONTZbXQcbE70Z/O2
-         he2eHZ6TvwRiDoY4xIVoJmFoHM5nUXIWC32CAs+Bm6PPjj+veerffPU3nL3TERz0GaAL
-         lIHw==
+        Thu, 7 Jun 2018 09:07:03 -0400
+Received: by mail-it0-f72.google.com with SMTP id k18-v6so3506333itb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 06:07:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Suyinsj+2DMcJEI8FsGWk1SnNxmOdY2jzBHLWvXZJ0g=;
-        b=hVaQO1GYJpX82iBdtK7lsyj+QUVgNV2a8d8TAoTJNf16rjbE1fvFur/8mIRmvD4vvK
-         qju/yl3uOFRHaCRA98GU7+6ZZYW04QSuReS4K6cO1K5/Y2knKrWnDPCNrjaffq4/iSFk
-         pdqRzKI5IvOdb/rkTdzjOApxOTHiernjD0dV4X2UB15j6quLGEX6ejgXBwvLsIDSG4vr
-         yKJljvVhd7BbIgMlfIRbr57CRB3rAtFwlUNCAYfyyqf88nqf+0q6zPF1GTZeo+4ICR7l
-         XYXA4m6mq1hhTo++1Gmlr6W8ZdUOg9L17mNvflhyTf67M5VAkWoITwe636pMJQi/+4Pr
-         Cjyg==
-X-Gm-Message-State: APt69E3SimrAgythCkarGt3d0pMCKUczxHyoQ2ToMhmu25uY17747tAe
-        GdsBFGIp3+36sX50VXO3hurJtqcH
-X-Google-Smtp-Source: ADUXVKIlQ+UVLibl4aCdlTg7mzUa3RzcWb0YM4rQHpesuKMcaffe65GsI+wweP8RgV0g8w4Kii0dYA==
-X-Received: by 2002:a2e:8257:: with SMTP id j23-v6mr11109487ljh.1.1528718013720;
-        Mon, 11 Jun 2018 04:53:33 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id h90-v6sm8332849ljf.65.2018.06.11.04.53.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 04:53:32 -0700 (PDT)
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 23/24] serdev: get/put controller
-Date: Mon, 11 Jun 2018 13:52:39 +0200
-Message-Id: <20180611115240.32606-24-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=B6AbsOZF5fKnooCsCC3p7ea1kEZvuvVF1bQvVqAF5ik=;
+        b=sAjvoXlkTl7EXhGx4rsrRqgNgtDquQz3HT09yL0GeH+GEqYLSh+wHe+218k8CZpvlm
+         Tf9eq4GjHx+jMYSs2nHCV84Rbxh4xhT57tmn95YaLb4amTT969bTZM+1MUoBxLaLGQtV
+         bpyJW6O5D/iQqdLwlRZsmdNvnKOjLtqFeNtLciQ4ofY32pxQvQX9Ji6ic8SAgBmeoJxN
+         iT5TGEPeFUcKZEK1qGlwFPHDRkthrXvUIlIqUcDEGOGvbSMvJJ5NUGN0TO6NSft5lQaa
+         PjLuH/1maGok5zbRoytc7tesMTqcvDlrPboxOqqjKEohWGGgAmobKQ8+r2I0GMcqRdGl
+         g6Pg==
+X-Gm-Message-State: APt69E2tW+Q63FTgkIRQtAXC+a02Yt+uL75pxUEu1026lA0/NIzNmlM+
+        veW4/x17YtXfzKcpqN2PMevc8Pq4ShzjvJMRFZkBNJ+n2myY
+X-Google-Smtp-Source: ADUXVKKx7rxFKFLE2/n1iOROTmz7ZjNQmyhd64mtxxRc0MK2VnyZ8zoxglAlAOzpqdyPsB8VMDoG2LgngcY37pH63hscFQKVfWY6
+MIME-Version: 1.0
+X-Received: by 2002:a24:190b:: with SMTP id b11-v6mr1038523itb.36.1528376822863;
+ Thu, 07 Jun 2018 06:07:02 -0700 (PDT)
+Date: Thu, 07 Jun 2018 06:07:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009c221d056e0cf53a@google.com>
+Subject: KASAN: slab-out-of-bounds Write in sha1_finup
+From: syzbot <syzbot+486f97f892efeb2075a3@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, hpa@zytor.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow access serdev controllers by other drivers in a safe way.
+Hello,
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+syzbot found the following crash on:
+
+HEAD commit:    1c8c5a9d38f6 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16289b9f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2e1a31e8576e013a
+dashboard link: https://syzkaller.appspot.com/bug?extid=486f97f892efeb2075a3
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=122bb5df800000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+486f97f892efeb2075a3@syzkaller.appspotmail.com
+
+IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KASAN: slab-out-of-bounds in put_unaligned_be32  
+include/linux/unaligned/access_ok.h:60 [inline]
+BUG: KASAN: slab-out-of-bounds in sha1_base_finish  
+include/crypto/sha1_base.h:102 [inline]
+BUG: KASAN: slab-out-of-bounds in sha1_finup+0x44e/0x4b0  
+arch/x86/crypto/sha1_ssse3_glue.c:70
+Write of size 4 at addr ffff8801d7130ed8 by task syz-executor0/4761
+
+CPU: 0 PID: 4761 Comm: syz-executor0 Not tainted 4.17.0+ #113
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
+  put_unaligned_be32 include/linux/unaligned/access_ok.h:60 [inline]
+  sha1_base_finish include/crypto/sha1_base.h:102 [inline]
+  sha1_finup+0x44e/0x4b0 arch/x86/crypto/sha1_ssse3_glue.c:70
+  sha1_avx2_finup arch/x86/crypto/sha1_ssse3_glue.c:232 [inline]
+  sha1_avx2_final+0x28/0x30 arch/x86/crypto/sha1_ssse3_glue.c:238
+  crypto_shash_final+0x104/0x260 crypto/shash.c:152
+  kdf_ctr security/keys/dh.c:186 [inline]
+  keyctl_dh_compute_kdf security/keys/dh.c:217 [inline]
+  __keyctl_dh_compute+0x1184/0x1bc0 security/keys/dh.c:389
+  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
+  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
+  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
+  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7fbdcb9
+Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
+5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffdb494c EFLAGS: 00000286 ORIG_RAX: 0000000000000120
+RAX: ffffffffffffffda RBX: 0000000000000017 RCX: 0000000020000100
+RDX: 0000000020a53ffb RSI: 0000000000000005 RDI: 0000000020c61fc8
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 4761:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:518 [inline]
+  keyctl_dh_compute_kdf security/keys/dh.c:211 [inline]
+  __keyctl_dh_compute+0xfe9/0x1bc0 security/keys/dh.c:389
+  compat_keyctl_dh_compute+0x2c8/0x3e0 security/keys/compat_dh.c:39
+  __do_compat_sys_keyctl security/keys/compat.c:136 [inline]
+  __se_compat_sys_keyctl security/keys/compat.c:59 [inline]
+  __ia32_compat_sys_keyctl+0x137/0x3b0 security/keys/compat.c:59
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+
+Freed by task 1:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  acpi_os_free include/acpi/platform/aclinuxex.h:62 [inline]
+  acpi_ns_get_node_unlocked+0x2b1/0x2ee drivers/acpi/acpica/nsutils.c:698
+  acpi_ns_get_node+0x4d/0x6b drivers/acpi/acpica/nsutils.c:738
+  acpi_get_handle+0x153/0x24b drivers/acpi/acpica/nsxfname.c:98
+  acpi_has_method+0x68/0xa0 drivers/acpi/utils.c:555
+  acpi_device_setup_files+0x393/0x820 drivers/acpi/device_sysfs.c:565
+  acpi_device_add+0x8af/0x1240 drivers/acpi/scan.c:700
+  acpi_add_single_object+0xaa5/0x1e70 drivers/acpi/scan.c:1620
+  acpi_bus_check_add+0x5fa/0xb40 drivers/acpi/scan.c:1860
+  acpi_ns_walk_namespace+0x224/0x400 drivers/acpi/acpica/nswalk.c:237
+  acpi_walk_namespace+0xf2/0x12c drivers/acpi/acpica/nsxfeval.c:606
+  acpi_bus_scan+0x138/0x160 drivers/acpi/scan.c:2041
+  acpi_scan_init+0x404/0x8df drivers/acpi/scan.c:2198
+  acpi_init+0x936/0x9fa drivers/acpi/bus.c:1284
+  do_one_initcall+0x127/0x913 init/main.c:884
+  do_initcall_level init/main.c:952 [inline]
+  do_initcalls init/main.c:960 [inline]
+  do_basic_setup init/main.c:978 [inline]
+  kernel_init_freeable+0x49b/0x58e init/main.c:1135
+  kernel_init+0x11/0x1b3 init/main.c:1061
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+The buggy address belongs to the object at ffff8801d7130ec0
+  which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 24 bytes inside of
+  32-byte region [ffff8801d7130ec0, ffff8801d7130ee0)
+The buggy address belongs to the page:
+page:ffffea00075c4c00 count:1 mapcount:0 mapping:ffff8801d7130000  
+index:0xffff8801d7130fc1
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801d7130000 ffff8801d7130fc1 0000000100000036
+raw: ffffea00076061e0 ffffea0007633a60 ffff8801da8001c0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d7130d80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+  ffff8801d7130e00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> ffff8801d7130e80: fb fb fb fb fc fc fc fc 00 00 00 fc fc fc fc fc
+                                                     ^
+  ffff8801d7130f00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+  ffff8801d7130f80: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- drivers/tty/serdev/core.c | 23 +++++++++++++++++++++++
- include/linux/serdev.h    |  2 ++
- 2 files changed, 25 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-index 6b24b0a74fbf..06310110104a 100644
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -724,6 +724,29 @@ void serdev_controller_remove(struct serdev_controller *ctrl)
- }
- EXPORT_SYMBOL_GPL(serdev_controller_remove);
- 
-+struct serdev_controller *serdev_get_controller(int nr)
-+{
-+	struct serdev_controller *ctrl;
-+
-+	ctrl = idr_find(&ctrl_idr, nr);
-+	if (!ctrl)
-+		return NULL;
-+
-+	get_device(&ctrl->dev);
-+
-+	return ctrl;
-+}
-+EXPORT_SYMBOL_GPL(serdev_get_controller);
-+
-+void serdev_put_controller(struct serdev_controller *ctrl)
-+{
-+	if (!ctrl)
-+		return;
-+
-+	put_device(&ctrl->dev);
-+}
-+EXPORT_SYMBOL_GPL(serdev_put_controller);
-+
- /**
-  * serdev_driver_register() - Register client driver with serdev core
-  * @sdrv:	client driver to be associated with client-device.
-diff --git a/include/linux/serdev.h b/include/linux/serdev.h
-index bf282b3781b9..1ef6e6503650 100644
---- a/include/linux/serdev.h
-+++ b/include/linux/serdev.h
-@@ -182,6 +182,8 @@ void serdev_device_remove(struct serdev_device *);
- struct serdev_controller *serdev_controller_alloc(struct device *, size_t);
- int serdev_controller_add(struct serdev_controller *);
- void serdev_controller_remove(struct serdev_controller *);
-+void serdev_put_controller(struct serdev_controller *ctrl);
-+struct serdev_controller *serdev_get_controller(int nr);
- 
- static inline void serdev_controller_write_wakeup(struct serdev_controller *ctrl)
- {
--- 
-2.17.1
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
