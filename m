@@ -1,120 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 3EIMJSZEGVt+EAAAmS7hNA
-	; Thu, 07 Jun 2018 14:42:46 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id O77JFBpVGVtGcQAAmS7hNA
+	; Thu, 07 Jun 2018 15:54:02 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DCDFE608C1; Thu,  7 Jun 2018 14:42:45 +0000 (UTC)
+	id 44E5E607E7; Thu,  7 Jun 2018 15:54:02 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6976F601C3;
-	Thu,  7 Jun 2018 14:42:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6976F601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 9CD54601D2;
+	Thu,  7 Jun 2018 15:54:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9CD54601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934779AbeFGOmm (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:42:42 -0400
-Received: from mga17.intel.com ([192.55.52.151]:61234 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933109AbeFGOma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:42:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:42:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
-   d="scan'208";a="235505935"
-Received: from 2b52.sc.intel.com ([143.183.136.51])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Jun 2018 07:42:29 -0700
-From: Yu-cheng Yu <yu-cheng.yu@intel.com>
-To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 0/7] Control Flow Enforcement - Part (4)
-Date: Thu,  7 Jun 2018 07:38:48 -0700
-Message-Id: <20180607143855.3681-1-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.15.1
+        id S934351AbeFGPx7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:53:59 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40356 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753549AbeFGOel (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:34:41 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbx-0005dI-20; Thu, 07 Jun 2018 15:09:57 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvaz-0002kN-5D; Thu, 07 Jun 2018 15:08:57 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.320516216@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 053/410] KVM: VMX: introduce alloc_loaded_vmcs
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series introduces CET - indirect branch tracking
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-The major task of indirect branch tracking is for the compiler to
-insert the ENDBR instructions at all valid branch targets.
+------------------
 
-The kernel provides:
-	CPUID enumeration and feature setup;
-	Legacy bitmap allocation;
-	Some basic supporting routines.
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-In this patch, there are also a CET command-line utility and
-PTRACE support.
+commit f21f165ef922c2146cc5bdc620f542953c41714b upstream.
 
-H.J. Lu (2):
-  x86: Insert endbr32/endbr64 to vDSO
-  tools: Add cetcmd
+Group together the calls to alloc_vmcs and loaded_vmcs_init.  Soon we'll also
+allocate an MSR bitmap there.
 
-Yu-cheng Yu (5):
-  x86/cet: Add Kconfig option for user-mode Indirect Branch Tracking
-  x86/cet: User-mode indirect branch tracking support
-  mm/mmap: Add IBT bitmap size to address space limit check
-  x86/cet: add arcp_prctl functions for indirect branch tracking
-  x86/cet: Add PTRACE interface for CET
-
- arch/x86/Kconfig                               |  12 +++
- arch/x86/entry/vdso/.gitignore                 |   4 +
- arch/x86/entry/vdso/Makefile                   |  34 +++++++
- arch/x86/entry/vdso/endbr.sh                   |  32 ++++++
- arch/x86/include/asm/cet.h                     |   9 ++
- arch/x86/include/asm/disabled-features.h       |   8 +-
- arch/x86/include/asm/fpu/regset.h              |   7 +-
- arch/x86/include/uapi/asm/prctl.h              |   1 +
- arch/x86/include/uapi/asm/resource.h           |   5 +
- arch/x86/kernel/cet.c                          |  73 ++++++++++++++
- arch/x86/kernel/cet_prctl.c                    |  54 +++++++++-
- arch/x86/kernel/cpu/common.c                   |  20 +++-
- arch/x86/kernel/elf.c                          |  19 +++-
- arch/x86/kernel/fpu/regset.c                   |  41 ++++++++
- arch/x86/kernel/process.c                      |   2 +
- arch/x86/kernel/ptrace.c                       |  16 +++
- include/uapi/asm-generic/resource.h            |   3 +
- include/uapi/linux/elf.h                       |   1 +
- mm/mmap.c                                      |   8 +-
- tools/Makefile                                 |  13 +--
- tools/arch/x86/include/uapi/asm/elf_property.h |  16 +++
- tools/arch/x86/include/uapi/asm/prctl.h        |  33 ++++++
- tools/cet/.gitignore                           |   1 +
- tools/cet/Makefile                             |  11 ++
- tools/cet/cetcmd.c                             | 134 +++++++++++++++++++++++++
- tools/include/uapi/asm/elf_property.h          |   4 +
- tools/include/uapi/asm/prctl.h                 |   4 +
- 27 files changed, 549 insertions(+), 16 deletions(-)
- create mode 100644 arch/x86/entry/vdso/endbr.sh
- create mode 100644 tools/arch/x86/include/uapi/asm/elf_property.h
- create mode 100644 tools/arch/x86/include/uapi/asm/prctl.h
- create mode 100644 tools/cet/.gitignore
- create mode 100644 tools/cet/Makefile
- create mode 100644 tools/cet/cetcmd.c
- create mode 100644 tools/include/uapi/asm/elf_property.h
- create mode 100644 tools/include/uapi/asm/prctl.h
-
--- 
-2.15.1
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16:
+ - No loaded_vmcs::shadow_vmcs field to initialise
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -2999,11 +2999,6 @@ static struct vmcs *alloc_vmcs_cpu(int c
+ 	return vmcs;
+ }
+ 
+-static struct vmcs *alloc_vmcs(void)
+-{
+-	return alloc_vmcs_cpu(raw_smp_processor_id());
+-}
+-
+ static void free_vmcs(struct vmcs *vmcs)
+ {
+ 	free_pages((unsigned long)vmcs, vmcs_config.order);
+@@ -3021,6 +3016,21 @@ static void free_loaded_vmcs(struct load
+ 	loaded_vmcs->vmcs = NULL;
+ }
+ 
++static struct vmcs *alloc_vmcs(void)
++{
++	return alloc_vmcs_cpu(raw_smp_processor_id());
++}
++
++static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
++{
++	loaded_vmcs->vmcs = alloc_vmcs();
++	if (!loaded_vmcs->vmcs)
++		return -ENOMEM;
++
++	loaded_vmcs_init(loaded_vmcs);
++	return 0;
++}
++
+ static void free_kvm_area(void)
+ {
+ 	int cpu;
+@@ -5965,6 +5975,7 @@ static int handle_vmon(struct kvm_vcpu *
+ 	struct vmcs *shadow_vmcs;
+ 	const u64 VMXON_NEEDED_FEATURES = FEATURE_CONTROL_LOCKED
+ 		| FEATURE_CONTROL_VMXON_ENABLED_OUTSIDE_SMX;
++	int r;
+ 
+ 	/* The Intel VMX Instruction Reference lists a bunch of bits that
+ 	 * are prerequisite to running VMXON, most notably cr4.VMXE must be
+@@ -6004,10 +6015,9 @@ static int handle_vmon(struct kvm_vcpu *
+ 		return 1;
+ 	}
+ 
+-	vmx->nested.vmcs02.vmcs = alloc_vmcs();
+-	if (!vmx->nested.vmcs02.vmcs)
++	r = alloc_loaded_vmcs(&vmx->nested.vmcs02);
++	if (r < 0)
+ 		return -ENOMEM;
+-	loaded_vmcs_init(&vmx->nested.vmcs02);
+ 
+ 	if (enable_shadow_vmcs) {
+ 		shadow_vmcs = alloc_vmcs();
+@@ -7612,16 +7622,15 @@ static struct kvm_vcpu *vmx_create_vcpu(
+ 		goto uninit_vcpu;
+ 	}
+ 
+-	vmx->loaded_vmcs = &vmx->vmcs01;
+-	vmx->loaded_vmcs->vmcs = alloc_vmcs();
+-	if (!vmx->loaded_vmcs->vmcs)
+-		goto free_msrs;
+ 	if (!vmm_exclusive)
+ 		kvm_cpu_vmxon(__pa(per_cpu(vmxarea, raw_smp_processor_id())));
+-	loaded_vmcs_init(vmx->loaded_vmcs);
++	err = alloc_loaded_vmcs(&vmx->vmcs01);
+ 	if (!vmm_exclusive)
+ 		kvm_cpu_vmxoff();
++	if (err < 0)
++		goto free_msrs;
+ 
++	vmx->loaded_vmcs = &vmx->vmcs01;
+ 	cpu = get_cpu();
+ 	vmx_vcpu_load(&vmx->vcpu, cpu);
+ 	vmx->vcpu.cpu = cpu;
