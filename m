@@ -1,296 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id nffuF9hPGFtXOQAAmS7hNA
-	; Wed, 06 Jun 2018 21:19:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Mxb2J84aGVtvZgAAmS7hNA
+	; Thu, 07 Jun 2018 11:46:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4DEBD607F7; Wed,  6 Jun 2018 21:19:20 +0000 (UTC)
+	id E8CD3608BA; Thu,  7 Jun 2018 11:46:28 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Hw/YWCs0"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 725D0605BD;
-	Wed,  6 Jun 2018 21:19:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 725D0605BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 38D9760115;
+	Thu,  7 Jun 2018 11:46:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38D9760115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932066AbeFFVTR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 17:19:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36510 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752579AbeFFVTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 17:19:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 72D80AED9;
-        Wed,  6 Jun 2018 21:19:11 +0000 (UTC)
-Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than one
- root
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>, Mark Fasheh <mfasheh@suse.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux Btrfs <linux-btrfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>
-References: <20180508180436.716-1-mfasheh@suse.de>
- <20180508233840.GM10363@dastard>
- <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com>
- <20180509064103.GP10363@dastard>
- <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
- <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
-From: Jeff Mahoney <jeffm@suse.com>
+        id S932668AbeFGLqZ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 07:46:25 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:33420 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932334AbeFGLqX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 07:46:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1528371983; x=1559907983;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=Y5BDPJdeyOB8FqS1OGdrZ0rSWkEM3aBT5EZcgf2xUko=;
+  b=Hw/YWCs0UnJaUtAizaIcGKzzMpTRLNMFPIeula7oOnYhbTmxuW7YFaXq
+   PiH5We4G7ouHdYx0pPpVSJQJdh62tYcJCQvuOPyP59Q/3VDQ/sXNqHOIf
+   6v/+xCKF3cSzoUAZmmfBvrxjHJ+0HjrwzsdEcvpAJg0kD9EFEUO14M8W5
+   M=;
+X-IronPort-AV: E=Sophos;i="5.49,486,1520899200";
+   d="scan'208";a="723191421"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-53356bf6.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Jun 2018 11:46:21 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
+        by email-inbound-relay-2a-53356bf6.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w57BkIHQ106247
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 7 Jun 2018 11:46:20 GMT
+Received: from EX13D02EUB001.ant.amazon.com (10.43.166.150) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 7 Jun 2018 11:46:19 +0000
+Received: from uc1a35a69ae4659.ant.amazon.com (10.43.161.93) by
+ EX13D02EUB001.ant.amazon.com (10.43.166.150) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Thu, 7 Jun 2018 11:46:15 +0000
+Subject: Re: [less-CONFIG_NET 7/7] kvm: drop CONFIG_NET
+To: Paolo Bonzini <pbonzini@redhat.com>
+CC: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1528293127-23825-1-git-send-email-nmanthey@amazon.de>
+ <1528293206-24298-1-git-send-email-nmanthey@amazon.de>
+ <1528293206-24298-7-git-send-email-nmanthey@amazon.de>
+ <a7344c4f-a1d9-597d-b18d-059a2752becf@redhat.com>
+From: Norbert Manthey <nmanthey@amazon.de>
 Openpgp: preference=signencrypt
-Message-ID: <7e983476-df86-2624-ee6d-7c5415ea349a@suse.com>
-Date: Wed, 6 Jun 2018 17:19:05 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+Autocrypt: addr=nmanthey@amazon.de; prefer-encrypt=mutual; keydata=
+ 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
+ pEddsOqYwOs=
+Message-ID: <ef0fe0ef-3620-3628-2a7e-c8b73e466a21@amazon.de>
+Date: Thu, 7 Jun 2018 13:46:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE"
+In-Reply-To: <a7344c4f-a1d9-597d-b18d-059a2752becf@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+X-Originating-IP: [10.43.161.93]
+X-ClientProxiedBy: EX13D05UWC004.ant.amazon.com (10.43.162.223) To
+ EX13D02EUB001.ant.amazon.com (10.43.166.150)
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE
-Content-Type: multipart/mixed; boundary="3rlAACrR3TWVLZFtt4tO4jUviWoeoDI9Z";
- protected-headers="v1"
-From: Jeff Mahoney <jeffm@suse.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>, Mark Fasheh <mfasheh@suse.de>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Linux Btrfs <linux-btrfs@vger.kernel.org>, Miklos Szeredi
- <miklos@szeredi.hu>, David Howells <dhowells@redhat.com>,
- Jan Kara <jack@suse.cz>
-Message-ID: <7e983476-df86-2624-ee6d-7c5415ea349a@suse.com>
-Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than one
- root
-References: <20180508180436.716-1-mfasheh@suse.de>
- <20180508233840.GM10363@dastard>
- <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com>
- <20180509064103.GP10363@dastard>
- <5b2ae799-1595-c262-7b65-41b10c11906d@suse.com>
- <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjUwi7dhTbNk1mK6_=rb_+L0JB1GG_mkGSDrudtocXScg@mail.gmail.com>
-
---3rlAACrR3TWVLZFtt4tO4jUviWoeoDI9Z
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Hi Amir -
-
-Mark's answered some of your questions already, so I'll skip those.
-
-On 6/6/18 5:49 AM, Amir Goldstein wrote:
-> On Tue, Jun 5, 2018 at 11:17 PM, Jeff Mahoney <jeffm@suse.com> wrote:
->> Sorry, just getting back to this.
->>
->> On 5/9/18 2:41 AM, Dave Chinner wrote:
->>> On Tue, May 08, 2018 at 10:06:44PM -0400, Jeff Mahoney wrote:
->>>> On 5/8/18 7:38 PM, Dave Chinner wrote:
->>>>> On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
->>>>>> Hi,
->>>>>>
->>>>>> The VFS's super_block covers a variety of filesystem functionality=
-=2E In
->>>>>> particular we have a single structure representing both I/O and
->>>>>> namespace domains.
->>>>>>
->>>>>> There are requirements to de-couple this functionality. For exampl=
-e,
->>>>>> filesystems with more than one root (such as btrfs subvolumes) can=
-
->>>>>> have multiple inode namespaces. This starts to confuse userspace w=
-hen
->>>>>> it notices multiple inodes with the same inode/device tuple on a
->>>>>> filesystem.
->>>>>
->=20
-> Speaking as someone who joined this discussion late, maybe years after
-> it started, it would help to get an overview of existing problems and h=
-ow
-> fs_view aims to solve them.
->=20
-> I do believe that both Overlayfs and Btrfs can benefit from a layer of
-> abstraction
-> in the VFS, but I think it is best if we start with laying all the
-> common problems
-> and then see how a solution would look like.
->=20
-> Even the name of the abstraction (fs_view) doesn't make it clear to me =
-what
-> it is we are abstracting (security context? st_dev? what else?). probab=
-ly best
-> to try to describe the abstraction from user POV rather then give spora=
-dic
-> examples of what MAY go into fs_view.
->=20
-> While at it, need to see if this discussion has any intersections with =
-David
-> Howell's fs_context work, because if we consider adding sub volume supp=
-ort
-> to VFS, we may want to leave some reserved bits in the API for it.
->=20
-> [...]
->=20
->> One thing is clear: If we want to solve the btrfs and overlayfs proble=
-ms
->> in the same way, the view approach with a simple static mapping doesn'=
-t
->> work.  Sticking something between the inode and superblock doesn't get=
-
->> the job done when the belongs to a different file system.  Overlayfs
->> needs a per-object remapper, which means a callback that takes a path.=
-
->> Suddenly the way we do things in the SUSE kernel doesn't seem so hacky=
-
->> anymore.
->>
->=20
-> And what is the SUSE way?
->=20
->> I'm not sure we need the same solution for btrfs and overlayfs.  It's
->> not the same problem.  Every object in overlayfs as a unique mapping
->> already.  If we report s_dev and i_ino from the inode, it still maps t=
-o
->> a unique user-visible object.  It may not map back to the overlayfs
->> name, but that's a separate issue that's more difficult to solve.  The=
-
->> btrfs issue isn't one of presenting an alternative namespace to the
->> user.  Btrfs has multiple internal namespaces and no way to publish th=
-em
->> to the rest of the kernel.
->>
->=20
-> FYI, the Overlayfs file/inode mapping is about to change with many
-> VFS hacks queued for removal, so stay tuned.
->=20
-> [...]
-
-I have to admit I'm curious how this will work.  I've heard rumor of
-using overlayfs inodes and calling the underlying file system's
-inode_operations.  If part of that work removes the danger of overlayfs
-inode numbers colliding with xino mode, I'm definitely interested.
-
->>> My point is that if we are talking about infrastructure to remap
->>> what userspace sees from different mountpoint views into a
->>> filesystem, then it should be done above the filesystem layers in
->>> the VFS so all filesystems behave the same way. And in this case,
->>> the vfsmount maps exactly to the "fs_view" that Mark has proposed we
->>> add to the superblock.....
->>
->> It's proposed to be above the superblock with a default view in the
->> superblock.  It would sit between the inode and the superblock so we
->> have access to it anywhere we already have an inode.  That's the main
->> difference.  We already have the inode everywhere it's needed.  Plumbi=
-ng
->> a vfsmount everywhere needed means changing code that only requires an=
-
->> inode and doesn't need a vfsmount.
->>
->> The two biggest problem areas:
->> - Writeback tracepoints print a dev/inode pair.  Do we want to plumb a=
-
->> vfsmount into __mark_inode_dirty, super_operations->write_inode,
->> __writeback_single_inode, writeback_sb_inodes, etc?
->> - Audit.  As it happens, most of audit has a path or file that can be
->> used.  We do run into problems with fsnotify.  fsnotify_move is called=
-
->> from vfs_rename which turns into a can of worms pretty quickly.
->>
->=20
-> Can you please elaborate on that problem.
-> Do you mean when watching a directory for changes, you need to
-> be able to tell in which fs_view the directory inode that is being watc=
-hed?
-
-I was investigating whether Dave's suggestion of using a vfsmount was
-feasible.  When following the audit call graph up, I found
-fsnotify_move, called by vfs_rename.  Piping a vfsmount into the vfs_*
-operations has historically been rejected by Al (see Apparmor
-discussions, among others), and with good reason.  The file system
-implementation shouldn't care about where it's mounted.  While piping it
-into vfs_rename doesn't seem too invasive, it's called by various file
-systems' ->rename callback, so then we're stuck piping vfsmounts into
-inode_operations, which is what Al's been wanting to avoid for years.
-
->>>> It makes sense for that to be above the
->>>> superblock because the file system doesn't care about them.  We're
->>>> interested in the inode namespace, which for every other file system=
- can
->>>> be described using an inode and a superblock pair, but btrfs has ano=
-ther
->>>> layer in the middle: inode -> btrfs_root -> superblock.
->>>
->>> Which seems to me to be irrelevant if there's a vfsmount per
->>> subvolume that can hold per-subvolume information.
->>
->> I disagree.  There are a ton of places where we only have access to an=
-
->> inode and only need access to an inode.  It also doesn't solve the
->> overlayfs issue.
->>
->=20
-> I have an interest of solving another problem.
-> In VFS operations where only inode is available, I would like to be abl=
-e to
-> report fsnotify events (e.g. fsnotify_move()) only in directories under=
- a
-> certain subtree root. That could be achieved either by bind mount the s=
-ubtree
-> root and passing vfsmount into vfs_rename() or by defining an fs_view o=
-n the
-> subtree and mounting that fs_view.
-
-I'm not sure there's a lot of overlap, but I expect that this will end
-up running into the same review feedback that Al gave during the
-AppArmor merge: vfsmounts have no business at the lower level and you
-can get the same behavior by hooking in at a higher level.  See
-security_path_* vs security_inode_* for how that was resolved.
-
-What you're talking about isn't really what we had in mind for the
-fs_view.  In our case, it sits between the inode and superblock, which
-would be at too low a level for determining whether an inode is under a
-certain subtree.  In any event, wouldn't you need a path instead of an
-inode to do what you're proposing?
-
--Jeff
-
---=20
-Jeff Mahoney
-SUSE Labs
-
-
---3rlAACrR3TWVLZFtt4tO4jUviWoeoDI9Z--
-
---q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE8wzgbmZ74SnKPwtDHntLYyF55bIFAlsYT8kACgkQHntLYyF5
-5bL05Q//SBuwroylj9DIyWLPNYBxoF7VwEE20tjeQsB2sY//xcpzN24XXfBH4Fdf
-nT8MkLLAS5FPidaTBhKKvn/jwOW0qufX8ZCTa8jATZDfqMliiEEGuGKEWTvm6qEK
-RRiaswJuvE25Sp8imaX1BNtBaXA61AAxNJI47Ez66uLiRQ7OZxHb4c8I1ojjnU6o
-YODOeW6NMDw9nozERocFK+pUEkH/wCbFU18nIeqp3AhtIaaIwT3b6Cic5Tinu1t4
-QUuiZ0yKpHT3p9NteSvvR8cVoUcErDkGiQ8/9/umpdi4nh07wYAMZmBYZ4liuRuG
-vbbMee7pCCrO4zccMpBNNJ7zQqao4QcXhQjlx6hpPnyHNLBWj6H3sP237BgmnL5r
-iJvkS6/jj3dI8kt1GFbUR91yOsqwvBzG8pdV53cHuQ0GJxKZBjJIDkOkOyP0pdb3
-I2SCjb+W/wPNFbW1BXCTaeG+Ys3h2Ywxrg3qJKFG8cfXq9Y2gt/QfV0cXMFNWUtE
-azAeEZsbHsb5O796+giCu55HvkWCl3hxInt0e3V7qzYH/Nsw2MMnv16c/iuugC8V
-NgAARk0v7+VEfP8Ddq/9N6MlIh25GI7YqQnqtgKE32ssQHU/TKavln6rPmm4OTTQ
-zHGVBzmp8Y1w6/yljmyPOOVorvq1koM+ISjC5orVjo8I4KQF6SQ=
-=INwO
------END PGP SIGNATURE-----
-
---q1Ej8VbHEAiJJRdoTwqH5SNlYqt4AgiJE--
+T24gMDYvMDcvMjAxOCAwMToyMCBQTSwgUGFvbG8gQm9uemluaSB3cm90ZToKPiBPbiAwNi8wNi8y
+MDE4IDE1OjUzLCBOb3JiZXJ0IE1hbnRoZXkgd3JvdGU6Cj4+IEluIHNvbWUgc2NlbmFyaW9zLCB3
+ZSBkbyBub3Qgd2FudCB0byB1c2UgQ09ORklHX05FVCBldmVuIHRob3VnaCB3ZSB3YW50Cj4+IHRv
+IHVzZSBDT05GSUdfS1ZNLiBUbyBnZXQgdGhpcyB3b3JraW5nLCBhbmQgdG8gbm90IHB1bGwgaW4g
+bW9yZQo+PiBkZXBlbmRlbmNpZXMsIHdlIG5lZWQgdG8gZGlzYWJsZSBDT05GSUdfVEFTS1NUQVRT
+IGFzIHdlbGwuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IE5vcmJlcnQgTWFudGhleSA8bm1hbnRoZXlA
+YW1hem9uLmRlPgo+PiAtLS0KPj4gIGFyY2gveDg2L2t2bS9LY29uZmlnIHwgNSArKy0tLQo+PiAg
+MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKPj4KPj4gZGlm
+ZiAtLWdpdCBhL2FyY2gveDg2L2t2bS9LY29uZmlnIGIvYXJjaC94ODYva3ZtL0tjb25maWcKPj4g
+aW5kZXggOTJmZDQzMy4uZjIwOTgxNyAxMDA2NDQKPj4gLS0tIGEvYXJjaC94ODYva3ZtL0tjb25m
+aWcKPj4gKysrIGIvYXJjaC94ODYva3ZtL0tjb25maWcKPj4gQEAgLTIyLDggKzIyLDggQEAgY29u
+ZmlnIEtWTQo+PiAgCXRyaXN0YXRlICJLZXJuZWwtYmFzZWQgVmlydHVhbCBNYWNoaW5lIChLVk0p
+IHN1cHBvcnQiCj4+ICAJZGVwZW5kcyBvbiBIQVZFX0tWTQo+PiAgCWRlcGVuZHMgb24gSElHSF9S
+RVNfVElNRVJTCj4+IC0JIyBmb3IgVEFTS1NUQVRTL1RBU0tfREVMQVlfQUNDVDoKPj4gLQlkZXBl
+bmRzIG9uIE5FVCAmJiBNVUxUSVVTRVIKPj4gKwkjIFRBU0tfREVMQVlfQUNDVDoKPj4gKwlkZXBl
+bmRzIG9uIE1VTFRJVVNFUgo+PiAgCWRlcGVuZHMgb24gWDg2X0xPQ0FMX0FQSUMKPj4gIAlzZWxl
+Y3QgUFJFRU1QVF9OT1RJRklFUlMKPj4gIAlzZWxlY3QgTU1VX05PVElGSUVSCj4+IEBAIC0zNyw3
+ICszNyw2IEBAIGNvbmZpZyBLVk0KPj4gIAlzZWxlY3QgS1ZNX0FTWU5DX1BGCj4+ICAJc2VsZWN0
+IFVTRVJfUkVUVVJOX05PVElGSUVSCj4+ICAJc2VsZWN0IEtWTV9NTUlPCj4+IC0Jc2VsZWN0IFRB
+U0tTVEFUUwo+PiAgCXNlbGVjdCBUQVNLX0RFTEFZX0FDQ1QKPj4gIAlzZWxlY3QgUEVSRl9FVkVO
+VFMKPj4gIAlzZWxlY3QgSEFWRV9LVk1fTVNJCj4+Cj4gQXNzdW1pbmcgaXQgY29tcGlsZXMsIGl0
+IGxvb2tzIGdvb2QuIDopCj4KPiBQYW9sbwo+Ckl0IGNvbXBpbGVzLCB3aXRoIHRoZSBkZWZhdWx0
+IGNvbmZpZ3VyYXRpb24sIGFzIHdlbGwgYXMgd2l0aCB0aGUgc3Vic2V0CnRoYXQgSSBjdXJyZW50
+bHkgdXNlLiBTaW5jZSBJIGhhdmUgYW4gYWN0dWFsbHkgc21hbGwgc2VsZWN0aW9uIG9mIGNvbmZp
+ZwpvcHRpb25zLCBJIHdvbmRlciB3aGV0aGVyIHRoZXJlIGlzIHNvbWUgYmVzdCBwcmFjdGljZXMg
+dG8gbWFrZSBzdXJlIHRoaXMKY2hhbmdlIGRvZXMgbm90IGNvcnJ1cHQgb3RoZXIgY29uZmlndXJh
+dGlvbnMgdGhhdCByZWx5IG9uIEtWTSBzZWxlY3RpbmcKVEFTS1NUQVRTLgoKTm9yYmVydApBbWF6
+b24gRGV2ZWxvcG1lbnQgQ2VudGVyIEdlcm1hbnkgR21iSApCZXJsaW4gLSBEcmVzZGVuIC0gQWFj
+aGVuCm1haW4gb2ZmaWNlOiBLcmF1c2Vuc3RyLiAzOCwgMTAxMTcgQmVybGluCkdlc2NoYWVmdHNm
+dWVocmVyOiBEci4gUmFsZiBIZXJicmljaCwgQ2hyaXN0aWFuIFNjaGxhZWdlcgpVc3QtSUQ6IERF
+Mjg5MjM3ODc5CkVpbmdldHJhZ2VuIGFtIEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIEhSQiAx
+NDkxNzMgQgo=
