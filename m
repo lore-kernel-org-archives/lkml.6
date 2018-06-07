@@ -1,134 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id e42PFYyCGVv7FgAAmS7hNA
-	; Thu, 07 Jun 2018 19:07:56 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id HoTpDI29GVukJAAAmS7hNA
+	; Thu, 07 Jun 2018 23:19:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 393766074D; Thu,  7 Jun 2018 19:07:56 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gZZ+cg1a"
+	id C31EC60452; Thu,  7 Jun 2018 23:19:59 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 98AF16063F;
-	Thu,  7 Jun 2018 19:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 98AF16063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5B6DA60452;
+	Thu,  7 Jun 2018 23:19:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B6DA60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753683AbeFGTHx (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 15:07:53 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:44397 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753028AbeFGTHu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 15:07:50 -0400
-Received: by mail-pg0-f65.google.com with SMTP id p21-v6so5192850pgd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 12:07:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=g/9nCp4TpcX4Thh9XSLbPkzRRvyxCOsX5VnH1nqwMGM=;
-        b=gZZ+cg1aoCt94UfXUrstx4gTTR3QvUsL90tnRyz5ulj3EHX5MIr2mKV+/2wQ17Yz5D
-         Zllu5k1dXXkQFu0i3XmeJzkB9O/TPCO48L14cYqY/BUfSHii+9UIzmrPhJswfiJbsAZ0
-         2UkplxcuYUSvxhSW0S1Gm3cg4ksfPeyLIQDGk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=g/9nCp4TpcX4Thh9XSLbPkzRRvyxCOsX5VnH1nqwMGM=;
-        b=ShZ2Mz90ZkI12BjpgDF+kbd8Z0tbBxRuLEDg/oUanroaUehquUh9uA1WZYSPTzg0kf
-         ZckvVGsQgnC+ov24lNjCXhpzaxsyVtUZ2o2bO9X0txL2mAXoGY5NAPX2QbVoDDWYJ7QK
-         19fnONX5o3F1G2jsBIIi9FB3dnHhJT680ky2+1ZqqGkg0QFJp5EYSZVQPSn7P62cqFVW
-         J69Lr67+fXjApxv/qxCEiCZ8O3EsFwloSPyB2jDEefl8TDEKwR+YhxroUNstACV9m5XH
-         bX/zJPUt9K39sFBZrhIqpCt7ehSktU3UgonEvx2MuVpKZiY/ZNkZnzwks1p80Z1fyAR1
-         DGNg==
-X-Gm-Message-State: APt69E1c41QXyFLh4aK8/7KnMhtxejvXQq3qCVkmyvyoiQbAKCOAgPI7
-        aBSxjUMtqvVyw+IMAgFkD9IDHLR4MQYUAzuTolvT1w==
-X-Google-Smtp-Source: ADUXVKKwW8Yghu/g81VUwRcpZ7gwm2/AhYo9rTKkw6Y77b7f0vhuBpLcdG8kwURSpe0Owxf5POfVqZ/HcfTezsrHxgg=
-X-Received: by 2002:a62:e005:: with SMTP id f5-v6mr2903637pfh.88.1528398469962;
- Thu, 07 Jun 2018 12:07:49 -0700 (PDT)
+        id S1752276AbeFGXT4 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 19:19:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54300 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751752AbeFGXTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 19:19:54 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 26ED140BC068;
+        Thu,  7 Jun 2018 23:19:54 +0000 (UTC)
+Received: from redhat.com (ovpn-120-126.rdu2.redhat.com [10.10.120.126])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 431241C710;
+        Thu,  7 Jun 2018 23:19:53 +0000 (UTC)
+Date: Fri, 8 Jun 2018 02:19:53 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org
+Subject: [PATCH] kvm: fix typo in flag name
+Message-ID: <20180607231944.248594-1-mst@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:178d:0:0:0:0 with HTTP; Thu, 7 Jun 2018 12:07:49
- -0700 (PDT)
-In-Reply-To: <CAH3MdRWo0kUYngyAwXP1sOT_XqbxyfTvDd6sNz+qd7LL1T8LUA@mail.gmail.com>
-References: <20180607105712.553-1-anders.roxell@linaro.org> <CAH3MdRWo0kUYngyAwXP1sOT_XqbxyfTvDd6sNz+qd7LL1T8LUA@mail.gmail.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Thu, 7 Jun 2018 21:07:49 +0200
-Message-ID: <CADYN=9J3wY1f6q4NvH1mHJXnu6GnErOqz75CfzfG1q5-WzcyCg@mail.gmail.com>
-Subject: Re: [PATCH] selftests: bpf: fix urandom_read build issue
-To: Y Song <ys114321@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Shuah Khan <shuah@kernel.org>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mutt-Fcc: =sent
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 23:19:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 07 Jun 2018 23:19:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7 June 2018 at 19:52, Y Song <ys114321@gmail.com> wrote:
-> On Thu, Jun 7, 2018 at 3:57 AM, Anders Roxell <anders.roxell@linaro.org> =
-wrote:
->> gcc complains that urandom_read gets built twice.
->>
->> gcc -o tools/testing/selftests/bpf/urandom_read
->> -static urandom_read.c -Wl,--build-id
->> gcc -Wall -O2 -I../../../include/uapi -I../../../lib -I../../../lib/bpf
->> -I../../../../include/generated  -I../../../include    urandom_read.c
->> urandom_read -lcap -lelf -lrt -lpthread -o
->> tools/testing/selftests/bpf/urandom_read
->> gcc: fatal error: input file
->> =E2=80=98tools/testing/selftests/bpf/urandom_read=E2=80=99 is the
->> same as output file
->> compilation terminated.
->> ../lib.mk:110: recipe for target
->> 'tools/testing/selftests/bpf/urandom_read' failed
->
-> What is the build/make command to reproduce the above failure?
+KVM_X86_DISABLE_EXITS_HTL really refers to exit on halt.
+Obviously a typo: should be named KVM_X86_DISABLE_EXITS_HLT.
 
-make -C tools/testing/selftests
+Fixes: caa057a2cad ("KVM: X86: Provide a capability to disable HLT intercepts")
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ arch/x86/kvm/x86.c             | 4 ++--
+ include/uapi/linux/kvm.h       | 4 ++--
+ tools/include/uapi/linux/kvm.h | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-Cheers,
-Anders
-
->
->> To fix this issue remove the urandom_read target and so target
->> TEST_CUSTOM_PROGS gets used.
->>
->> Fixes: 81f77fd0deeb ("bpf: add selftest for stackmap with BPF_F_STACK_BU=
-ILD_ID")
->> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
->> ---
->>  tools/testing/selftests/bpf/Makefile | 6 ++----
->>  1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selfte=
-sts/bpf/Makefile
->> index 607ed8729c06..67285591ffd7 100644
->> --- a/tools/testing/selftests/bpf/Makefile
->> +++ b/tools/testing/selftests/bpf/Makefile
->> @@ -16,10 +16,8 @@ LDLIBS +=3D -lcap -lelf -lrt -lpthread
->>  TEST_CUSTOM_PROGS =3D $(OUTPUT)/urandom_read
->>  all: $(TEST_CUSTOM_PROGS)
->>
->> -$(TEST_CUSTOM_PROGS): urandom_read
->> -
->> -urandom_read: urandom_read.c
->> -       $(CC) -o $(TEST_CUSTOM_PROGS) -static $< -Wl,--build-id
->> +$(TEST_CUSTOM_PROGS): $(OUTPUT)/%: %.c
->> +       $(CC) -o $@ -static $< -Wl,--build-id
->>
->>  # Order correspond to 'make run_tests' order
->>  TEST_GEN_PROGS =3D test_verifier test_tag test_maps test_lru_map test_l=
-pm_map test_progs \
->> --
->> 2.17.1
->>
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 71e7cda6d014..dcc64e7d946d 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2894,7 +2894,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		r = KVM_CLOCK_TSC_STABLE;
+ 		break;
+ 	case KVM_CAP_X86_DISABLE_EXITS:
+-		r |=  KVM_X86_DISABLE_EXITS_HTL | KVM_X86_DISABLE_EXITS_PAUSE;
++		r |=  KVM_X86_DISABLE_EXITS_HLT | KVM_X86_DISABLE_EXITS_PAUSE;
+ 		if(kvm_can_mwait_in_guest())
+ 			r |= KVM_X86_DISABLE_EXITS_MWAIT;
+ 		break;
+@@ -4248,7 +4248,7 @@ static int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 		if ((cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT) &&
+ 			kvm_can_mwait_in_guest())
+ 			kvm->arch.mwait_in_guest = true;
+-		if (cap->args[0] & KVM_X86_DISABLE_EXITS_HTL)
++		if (cap->args[0] & KVM_X86_DISABLE_EXITS_HLT)
+ 			kvm->arch.hlt_in_guest = true;
+ 		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+ 			kvm->arch.pause_in_guest = true;
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index b02c41e53d56..39e364c70caf 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -677,10 +677,10 @@ struct kvm_ioeventfd {
+ };
+ 
+ #define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
+-#define KVM_X86_DISABLE_EXITS_HTL            (1 << 1)
++#define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
+ #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
+ #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
+-                                              KVM_X86_DISABLE_EXITS_HTL | \
++                                              KVM_X86_DISABLE_EXITS_HLT | \
+                                               KVM_X86_DISABLE_EXITS_PAUSE)
+ 
+ /* for KVM_ENABLE_CAP */
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index b02c41e53d56..39e364c70caf 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -677,10 +677,10 @@ struct kvm_ioeventfd {
+ };
+ 
+ #define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
+-#define KVM_X86_DISABLE_EXITS_HTL            (1 << 1)
++#define KVM_X86_DISABLE_EXITS_HLT            (1 << 1)
+ #define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
+ #define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
+-                                              KVM_X86_DISABLE_EXITS_HTL | \
++                                              KVM_X86_DISABLE_EXITS_HLT | \
+                                               KVM_X86_DISABLE_EXITS_PAUSE)
+ 
+ /* for KVM_ENABLE_CAP */
+-- 
+MST
