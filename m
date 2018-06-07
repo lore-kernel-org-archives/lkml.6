@@ -1,144 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OhrBGLxUGlvNLAAAmS7hNA
-	; Fri, 08 Jun 2018 10:04:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id AbjIF0fBGFtNOQAAmS7hNA
+	; Thu, 07 Jun 2018 05:23:19 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 3F16F608B8; Fri,  8 Jun 2018 10:04:44 +0000 (UTC)
+	id 418266089E; Thu,  7 Jun 2018 05:23:19 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZeVFd1c"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lUOUn2Ti"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 95B38606FA;
-	Fri,  8 Jun 2018 10:04:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95B38606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id B4BC3607DC;
+	Thu,  7 Jun 2018 05:23:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4BC3607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751682AbeFHKEl (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 06:04:41 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34985 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751171AbeFHKEi (ORCPT
+        id S1752950AbeFGFXQ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 01:23:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43166 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751318AbeFGFXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 06:04:38 -0400
-Received: by mail-lf0-f67.google.com with SMTP id i15-v6so8882515lfc.2;
-        Fri, 08 Jun 2018 03:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=jSVFmCIstgxTvIHeeh5jFL/irn6oLR3YhxJmL2f5rug=;
-        b=ZZeVFd1c+NWMvMya6uyvfCYAe9B6kMrTslF0AU8F34F4uDS7UM2cIx1Bt+L/b6V9QQ
-         YitlC/e2P783278kOP0NnOp0zSwdGQFUzYZxitPuSjaZc9k2SM5Lgirj2Rp7pmwMJECc
-         oTZyD7PPriKOJGoi4lH1Ymch7BybZcCBTX1g2/6P3lPhvbBBcfAf2e351YQE+ad56ORx
-         b94aqKHG8yVcCLZU7cRkhsJEV9PYQKnV2NA/evXeuVF1TwTAbc435bgmHYu5kzEKpJra
-         0hS7baYtS0aszS01anR/hK+EpTzgZqJUtJKwmo+bm1Y4zFD/vx8NW7oL1qHPy9M1Yxpg
-         j1UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:cc;
-        bh=jSVFmCIstgxTvIHeeh5jFL/irn6oLR3YhxJmL2f5rug=;
-        b=SH+/AbFKep37xd4toeZgBAaT7MI2XnugW/ZPvG3zATaXGEyt06xJIgtyjkYc9IPqOf
-         RjNTGsWsIkV0KmIwTKtv79UQe6JXgAjKUBzrUFrwR+lKdh0+SQQr+QwjZYRnlG7Duoxy
-         pxLJi6fNfgDMA4KdApKSmBSHvzStAwlrzRCtuMvpl95bEoa7gS9FSiyEUR9cDzadOj74
-         jw8ZgbuzlVPoS51EEb7HlTpIAW2StsFB9HqV7uacHBKDdm113QdgqJ0RCs9gs4npK2V9
-         wJ4GDuSZYvw6HEjoktFRJvXl4JqC7YHMv1rYS0Qt1eWYrLdEG6X9OWUxU9b/mJSAAaOW
-         1E6A==
-X-Gm-Message-State: APt69E3/p15hsGTfYY7vtk9FRPegJ42q4dk9tnDLT9tFvCqMAgsIaDl+
-        kpuD+nWjfmB7gTKBoTZc2GRuMvxnsx0PgshdNJM=
-X-Google-Smtp-Source: ADUXVKKluCZkr8IrhOczBOPz95Lrwlmr4IsHfF+IEaJm7yI9tT4EPYPPn3Qo3x8EymI0XP/7eQ5MNuQOj7RYqU6wb3Y=
-X-Received: by 2002:a2e:994f:: with SMTP id r15-v6mr3947319ljj.53.1528452276678;
- Fri, 08 Jun 2018 03:04:36 -0700 (PDT)
+        Thu, 7 Jun 2018 01:23:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RZXZY+4rj4BEEYNsmnXTpAWyjOzgQ+7CB2K7br57A9Y=; b=lUOUn2TiDAlcI5m/z+VieR/O8
+        oxj6wR0ARwC/MDj/QQm1FFelDLQwF6Lg4cP4KHQIW0COdcGQgho+A0l5ZAhljsIdb+7tZKxbvOGg9
+        5ivSkoyWSzxH/NcAJI8T/b2rT/S3qgCbio0oxNFRmGJ+B9+4nXlJoBB8mw/iC79kldHUCJQu+o24l
+        YwYBL0v+rIkAzxp9Cvq+k5Xiaz1HwaFvIRegRKfRxa0zgd4NFXilotQSv1A9nOZAZnMJHOANzxOjG
+        VfaKLAJvQbtyEhr2pFpkjHNQ4xWQp1pyLr61alrToFCXv8cNtL1UGB/O+ZW2hPgLpT3QGN+hsrrOi
+        GrHcB3tDg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fQnO7-0000Qw-3V; Thu, 07 Jun 2018 05:23:07 +0000
+Date: Wed, 6 Jun 2018 22:23:06 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>, robh@kernel.org, aik@ozlabs.ru,
+        jasowang@redhat.com, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, hch@infradead.org,
+        joe@perches.com, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net, david@gibson.dropbear.id.au,
+        cohuck@redhat.com, pawel.moll@arm.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180607052306.GA1532@infradead.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <20180524072104.GD6139@ram.oc3035372033.ibm.com>
+ <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
+ <20180531204320-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a19:b87:0:0:0:0:0 with HTTP; Fri, 8 Jun 2018 03:04:36 -0700 (PDT)
-Reply-To: sedat.dilek@gmail.com
-In-Reply-To: <CAK8P3a0yi+MrOS=+pjCeUu==YBE_AppB8vfqdsQS-1NpSO2c4A@mail.gmail.com>
-References: <20180607204927.219329-1-ndesaulniers@google.com>
- <20180607204927.219329-2-ndesaulniers@google.com> <CAK8P3a0yi+MrOS=+pjCeUu==YBE_AppB8vfqdsQS-1NpSO2c4A@mail.gmail.com>
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Fri, 8 Jun 2018 12:04:36 +0200
-Message-ID: <CA+icZUXDoeo5ktZZPFcFyLzk3xthM-98N88QJFzesg6t+Vr5cQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] compiler-gcc.h: add gnu_inline to all inline declarations
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        virtualization@lists.linux-foundation.org, astrachan@google.com,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, tstellar@redhat.com,
-        Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Will Deacon <will.deacon@arm.com>, mawilcox@microsoft.com,
-        David Rientjes <rientjes@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        akataria@vmware.com, Brijesh Singh <brijesh.singh@amd.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Lendacky, Thomas" <thomas.lendacky@amd.com>,
-        Thiebaud Weksteen <tweek@google.com>, mjg59@google.com,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531204320-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 9:59 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Jun 7, 2018 at 10:49 PM, Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
->> Functions marked extern inline do not emit an externally visible
->> function when the gnu89 C standard is used. Some KBUILD Makefiles
->> overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
->> an explicit C standard specified, the default is gnu11. Since c99, the
->> semantics of extern inline have changed such that an externally visible
->> function is always emitted. This can lead to multiple definition errors
->> of extern inline functions at link time of compilation units whose build
->> files have removed an explicit C standard compiler flag for users of GCC
->> 5.1+ or Clang.
->>
->> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
->> Suggested-by: H. Peter Anvin <hpa@zytor.com>
->> Suggested-by: Joe Perches <joe@perches.com>
->
-> I suspect this will break Geert's gcc-4.1.2, which I think doesn't have that
-> attribute yet (4.1.3 or higher have it according to the documentation.
->
-> It wouldn't be hard to work around that if we want to keep that version
-> working, or we could decide that it's time to officially stop supporting
-> that version, but we should probably decide on one or the other.
->
+On Thu, May 31, 2018 at 08:43:58PM +0300, Michael S. Tsirkin wrote:
+> Pls work on a long term solution. Short term needs can be served by
+> enabling the iommu platform in qemu.
 
-Good point.
-What is the minimum requirement of GCC version currently?
-AFAICS x86/asm-goto support requires GCC >= 4.5?
+So, I spent some time looking at converting virtio to dma ops overrides,
+and the current virtio spec, and the sad through I have to tell is that
+both the spec and the Linux implementation are complete and utterly fucked
+up.
 
-Just FYI...
-...saw the last days in upstream commits that kbuild/kconfig for
-4.18-rc1 offers possibilities to check for cc-version dependencies.
+Both in the flag naming and the implementation there is an implication
+of DMA API == IOMMU, which is fundamentally wrong.
 
-- sed@ -
+The DMA API does a few different things:
+
+ a) address translation
+
+	This does include IOMMUs.  But it also includes random offsets
+	between PCI bars and system memory that we see on various
+	platforms.  Worse so some of these offsets might be based on
+	banks, e.g. on the broadcom bmips platform.  It also deals
+	with bitmask in physical addresses related to memory encryption
+	like AMD SEV.  I'd be really curious how for example the
+	Intel virtio based NIC is going to work on any of those
+	plaforms.
+
+  b) coherency
+
+	On many architectures DMA is not cache coherent, and we need
+	to invalidate and/or write back cache lines before doing
+	DMA.  Again, I wonder how this is every going to work with
+	hardware based virtio implementations.  Even worse I think this
+	is actually broken at least for VIVT event for virtualized
+	implementations.  E.g. a KVM guest is going to access memory
+	using different virtual addresses than qemu, vhost might throw
+	in another different address space.
+
+  c) bounce buffering
+
+	Many DMA implementations can not address all physical memory
+	due to addressing limitations.  In such cases we copy the
+	DMA memory into a known addressable bounc buffer and DMA
+	from there.
+
+  d) flushing write combining buffers or similar
+
+	On some hardware platforms we need workarounds to e.g. read
+	from a certain mmio address to make sure DMA can actually
+	see memory written by the host.
+
+All of this is bypassed by virtio by default despite generally being
+platform issues, not particular to a given device.
