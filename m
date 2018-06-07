@@ -1,210 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8Va3Ccp/GltBLAAAmS7hNA
-	; Fri, 08 Jun 2018 13:08:26 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id z1EnMiq2GVvddAAAmS7hNA
+	; Thu, 07 Jun 2018 22:48:31 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0BBFF608BA; Fri,  8 Jun 2018 13:08:26 +0000 (UTC)
+	id C5CB16074D; Thu,  7 Jun 2018 22:48:31 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 65E18607E4;
-	Fri,  8 Jun 2018 13:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65E18607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5F836601C3;
+	Thu,  7 Jun 2018 22:48:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F836601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeFHNIW convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Fri, 8 Jun 2018 09:08:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40730 "EHLO mail.bootlin.com"
+        id S1752309AbeFGWs2 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:48:28 -0400
+Received: from mga09.intel.com ([134.134.136.24]:61659 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751043AbeFHNIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:08:21 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4CE272069C; Fri,  8 Jun 2018 15:08:19 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-128-7.w90-88.abo.wanadoo.fr [90.88.9.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CE0B8203EB;
-        Fri,  8 Jun 2018 15:08:08 +0200 (CEST)
-Date: Fri, 8 Jun 2018 15:08:08 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Haim Boot <hayim@marvell.com>, Hanna Hawa <hannah@marvell.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/16] irqchip/irq-mvebu-icu: add support for System
- Error Interrupts (SEI)
-Message-ID: <20180608150808.7af98f18@xps13>
-In-Reply-To: <cd000f57-e01f-e5b9-77f6-baf4e8f45551@arm.com>
-References: <20180522094042.24770-1-miquel.raynal@bootlin.com>
-        <20180522094042.24770-12-miquel.raynal@bootlin.com>
-        <cd000f57-e01f-e5b9-77f6-baf4e8f45551@arm.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752252AbeFGWs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 18:48:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 15:48:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
+   d="scan'208";a="62751044"
+Received: from ray.jf.intel.com (HELO [10.7.201.24]) ([10.7.201.24])
+  by orsmga001.jf.intel.com with ESMTP; 07 Jun 2018 15:48:27 -0700
+Subject: Re: [PATCH v4 2/4] mm/sparsemem: Defer the ms->section_mem_map
+ clearing
+To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, pagupta@redhat.com
+References: <20180521101555.25610-1-bhe@redhat.com>
+ <20180521101555.25610-3-bhe@redhat.com>
+Cc: linux-mm@kvack.org, kirill.shutemov@linux.intel.com
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <39ec4f7c-2ef8-aaef-7034-e1f895eeb283@intel.com>
+Date: Thu, 7 Jun 2018 15:47:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180521101555.25610-3-bhe@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-Thank you for the review.
-
-On Wed, 23 May 2018 15:23:48 +0100, Marc Zyngier <marc.zyngier@arm.com>
-wrote:
-
-> On 22/05/18 10:40, Miquel Raynal wrote:
-> > An SEI driver provides an MSI domain through which it is possible to
-> > raise SEIs.
-> > 
-> > Handle the NSR probe function in a more generic way to support other
-> > type of interrupts (ie. the SEIs).
-> > 
-> > For clarity we do not use tree IRQ domains for now but linear ones
-> > instead, allocating the 207 ICU lines for each interrupt group.  
+On 05/21/2018 03:15 AM, Baoquan He wrote:
+> In sparse_init(), if CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER=y, system
+> will allocate one continuous memory chunk for mem maps on one node and
+> populate the relevant page tables to map memory section one by one. If
+> fail to populate for a certain mem section, print warning and its
+> ->section_mem_map will be cleared to cancel the marking of being present.
+> Like this, the number of mem sections marked as present could become
+> less during sparse_init() execution.
 > 
-> What's the rational for not using trees? Because that's effectively a
-> 100% overhead...
-
-There is none.
-
-I had a look at how to do it.
-
-In the ICU driver I would like to just drop the nvec parameter (number
-of interrupts in the domain) when calling
-platform_msi_create_device_domain().
-
-The above function would call irq_domain_create_hierarchy() which would
-create a tree domain instead of a linear one because of nvec being 0.
-
-However, there is a check in platform_msi_alloc_priv_data() (also
-called by platform_msi_create_device_domain()) that will error out if
-nvec is null.
-
-I'm not 100% sure this is safe but I don't see the point of
-prohibiting nvec to be null here. So would you accept this
-change?
-
---- a/drivers/base/platform-msi.c
-+++ b/drivers/base/platform-msi.c
-@@ -203,7 +203,7 @@ platform_msi_alloc_priv_data(struct device *dev,
-unsigned int nvec,
-         * accordingly (which would impact the max number of MSI
-         * capable devices).
-         */
--       if (!dev->msi_domain || !write_msi_msg || !nvec || nvec > MAX_DEV_MSIS)
-+       if (!dev->msi_domain || !write_msi_msg || nvec > MAX_DEV_MSIS)
-                return ERR_PTR(-EINVAL);
- 
-        if (dev->msi_domain->bus_token != DOMAIN_BUS_PLATFORM_MSI) {
-
+> Here just defer the ms->section_mem_map clearing if failed to populate
+> its page tables until the last for_each_present_section_nr() loop. This
+> is in preparation for later optimizing the mem map allocation.
 > 
-> > Reallocating an ICU slot is prevented by the use of an ICU-wide bitmap.
-> > 
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > ---
+> Signed-off-by: Baoquan He <bhe@redhat.com>
 
-[...]
-
-> > @@ -131,7 +160,8 @@ static int
-> >  mvebu_icu_irq_domain_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
-> >  			       unsigned long *hwirq, unsigned int *type)
-> >  {
-> > -	struct mvebu_icu *icu = platform_msi_get_host_data(d);
-> > +	struct mvebu_icu_msi_data *msi_data = platform_msi_get_host_data(d);
-> > +	struct mvebu_icu *icu = msi_data->icu;
-> >  	unsigned int param_count = icu->legacy_bindings ? 3 : 2;
-> >  
-> >  	/* Check the count of the parameters in dt */
-> > @@ -172,7 +202,9 @@ mvebu_icu_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-> >  	int err;
-> >  	unsigned long hwirq;
-> >  	struct irq_fwspec *fwspec = args;
-> > -	struct mvebu_icu *icu = platform_msi_get_host_data(domain);
-> > +	struct mvebu_icu_msi_data *msi_data =
-> > +		platform_msi_get_host_data(domain);
-> > +	struct mvebu_icu *icu = msi_data->icu;
-> >  	struct mvebu_icu_irq_data *icu_irqd;
-> >  
-> >  	icu_irqd = kmalloc(sizeof(*icu_irqd), GFP_KERNEL);
-> > @@ -186,16 +218,22 @@ mvebu_icu_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-> >  		goto free_irqd;
-> >  	}
-> >  
-> > +	spin_lock(&icu->msi_lock);
-> > +	err = bitmap_allocate_region(icu->msi_bitmap, hwirq, 0);
-> > +	spin_unlock(&icu->msi_lock);  
-> 
-> This (and the freeing counterpart) could deserve a couple of helpers.
-
-Sure.
-
-> 
-> > +	if (err < 0)
-> > +		goto free_irqd;
-> > +
-> >  	if (icu->legacy_bindings)
-> >  		icu_irqd->icu_group = fwspec->param[0];
-> >  	else
-> > -		icu_irqd->icu_group = ICU_GRP_NSR;
-> > +		icu_irqd->icu_group = msi_data->subset_data->icu_group;
-> >  	icu_irqd->icu = icu;
-> >  
-> >  	err = platform_msi_domain_alloc(domain, virq, nr_irqs);
-> >  	if (err) {
-> >  		dev_err(icu->dev, "failed to allocate ICU interrupt in parent domain\n");
-> > -		goto free_irqd;
-> > +		goto free_bitmap;
-> >  	}
-> >  
-> >  	/* Make sure there is no interrupt left pending by the firmware */
-
-[...]
-
-> > @@ -268,9 +332,30 @@ static int mvebu_icu_subset_probe(struct platform_device *pdev)
-> >  	return 0;
-> >  }
-> >  
-> > +static const struct mvebu_icu_subset_data mvebu_icu_nsr_subset_data = {
-> > +	.icu_group = ICU_GRP_NSR,
-> > +	.offset_set_ah = ICU_SETSPI_NSR_AH,
-> > +	.offset_set_al = ICU_SETSPI_NSR_AL,
-> > +	.offset_clr_ah = ICU_CLRSPI_NSR_AH,
-> > +	.offset_clr_al = ICU_CLRSPI_NSR_AL,
-> > +};
-> > +
-> > +static const struct mvebu_icu_subset_data mvebu_icu_sei_subset_data = {
-> > +	.icu_group = ICU_GRP_SEI,
-> > +	.offset_set_ah = ICU_SET_SEI_AH,
-> > +	.offset_set_al = ICU_SET_SEI_AL,
-> > +	.offset_clr_ah = ICU_CLR_SEI_AH,
-> > +	.offset_clr_al = ICU_CLR_SEI_AL,  
-> 
-> I thought SEI was edge only, given what you do in mvebu_icu_init.
-> Confused...
-
-AFAIK, the ICU can produce both level and edge MSI. Currently,
-when it comes to SEI, we don't use the .offset_clr_a[hl] entries
-because the SEI block expects edge-MSIs, but I thought useful to fill
-them anyway. I will remove them both to avoid the confusion.
-
-Thanks,
-Miquèl
+Acked-By: Dave Hansen <dave.hansen@intel.com>
