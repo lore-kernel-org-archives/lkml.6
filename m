@@ -1,183 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id r5CoEDpdGVv1KAAAmS7hNA
-	; Thu, 07 Jun 2018 16:28:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id icUoAesIGVulVwAAmS7hNA
+	; Thu, 07 Jun 2018 10:30:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 574CA608B8; Thu,  7 Jun 2018 16:28:44 +0000 (UTC)
+	id 0280B608B8; Thu,  7 Jun 2018 10:30:43 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BDE4D6074D;
-	Thu,  7 Jun 2018 16:28:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDE4D6074D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6E49660452;
+	Thu,  7 Jun 2018 10:30:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6E49660452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932601AbeFGQ2m (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:28:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34556 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932160AbeFGQ2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:28:39 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D6938401EF1B;
-        Thu,  7 Jun 2018 16:28:38 +0000 (UTC)
-Received: from redhat.com (ovpn-120-226.rdu2.redhat.com [10.10.120.226])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DE301213AF01;
-        Thu,  7 Jun 2018 16:28:35 +0000 (UTC)
-Date: Thu, 7 Jun 2018 19:28:35 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, robh@kernel.org, aik@ozlabs.ru,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, joe@perches.com,
-        linuxppc-dev@lists.ozlabs.org, elfring@users.sourceforge.net,
-        david@gibson.dropbear.id.au, cohuck@redhat.com, pawel.moll@arm.com,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-Message-ID: <20180607185234-mutt-send-email-mst@kernel.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
- <20180523213703-mutt-send-email-mst@kernel.org>
- <20180524072104.GD6139@ram.oc3035372033.ibm.com>
- <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
- <20180531204320-mutt-send-email-mst@kernel.org>
- <20180607052306.GA1532@infradead.org>
+        id S1753561AbeFGKak (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:30:40 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:23818 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750905AbeFGKai (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 06:30:38 -0400
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="14946588"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Jun 2018 03:30:31 -0700
+Received: from [10.145.4.77] (10.10.76.4) by chn-sv-exch04.mchp-main.com
+ (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Thu, 7 Jun 2018
+ 03:30:30 -0700
+Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
+To: Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>
+CC: <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        <Cristian.Birsan@microchip.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+ <20180531005827.GA17203@rob-hp-laptop>
+ <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
+ <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
+ <152778070837.144038.4555982304713569160@swboyd.mtv.corp.google.com>
+ <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Message-ID: <18f6871e-794d-3ea2-487e-32399a8b89b4@microchip.com>
+Date: Thu, 7 Jun 2018 13:30:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607052306.GA1532@infradead.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 16:28:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 16:28:38 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 06, 2018 at 10:23:06PM -0700, Christoph Hellwig wrote:
-> On Thu, May 31, 2018 at 08:43:58PM +0300, Michael S. Tsirkin wrote:
-> > Pls work on a long term solution. Short term needs can be served by
-> > enabling the iommu platform in qemu.
+On 31.05.2018 18:56, Rob Herring wrote:
+> On Thu, May 31, 2018 at 10:31 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+>> Quoting Rob Herring (2018-05-31 07:20:57)
+>>> On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
+>>> <codrin.ciubotariu@microchip.com> wrote:
+>>>> On 31.05.2018 03:58, Rob Herring wrote:
+>>>>>
+>>>>> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
+>>>>>>
+>>>>>> The I2S mux clock can be used to select the I2S input clock. The
+>>>>>> available parents are the peripheral and the generated clocks.
+>>>>>>
+>>>>>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>>>>>> ---
+>>>>>>    .../devicetree/bindings/clock/at91-clock.txt       | 34
+>>>>>> ++++++++++++++++++++++
+>>>>>>    1 file changed, 34 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>>>>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>>>>> index 51c259a..1c46b3c 100644
+>>>>>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>>>>>> @@ -90,6 +90,8 @@ Required properties:
+>>>>>>          "atmel,sama5d2-clk-audio-pll-pmc"
+>>>>>>                  at91 audio pll output on AUDIOPLLCLK that feeds the PMC
+>>>>>>                  and can be used by peripheral clock or generic clock
+>>>>>> +       "atmel,sama5d2-clk-i2s-mux":
+>>>>>> +               at91 I2S clock source selection
+>>>>>
+>>>>>
+>>>>> Is this boolean or takes some values. If latter, what are valid values?
+>>>>
+>>>>
+>>>> This is the compatible string of the clock driver.
+>>>
+>>> Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
+>>> still a plan to fix this?
+>>
+>> I'm also interested in a plan.
+>>
+>>>>>
+>>>>>> +               compatible = "atmel,sama5d2-clk-i2s-mux";
+>>>>>> +               #address-cells = <1>;
+>>>>>> +               #size-cells = <0>;
+>>>>>
+>>>>>
+>>>>> How do you address this block? My guess is you don't because it is just
+>>>>> part of some other block and you are just creating this node to
+>>>>> instantiate a driver. Just make the node for the actual h/w block a
+>>>>> clock provider and define the clock ids (0 and 1).
+>>>>
+>>>>
+>>>> This block is not addressed, but its children are. The register we access in
+>>>> this driver is not part of other block. It's a SFR register, accessed
+>>>> through syscon and it has nothing to do with the I2S IP (see SAMA5D2 DS,
+>>>> page 1256, fig. 44-1: I2SC Block Diagram) that is the consumer of this
+>>>> clock. Adding a clock-id property in the I2S node would be just like v3 of
+>>>> this series, with the difference that we use clock-id instead of alias id to
+>>>> set the clock parent, which is not how you suggested back then.
+>>>
+>>> I wasn't suggesting a clock-id property, but a clock specifier (i.e.
+>>> make #clock-cells 1).
+>>>
+>>> But AT91 clocks are all a mess, so I don't know what to tell you.
+>>>
+>>
+>> If #clock-cells of 1 works then we should go with that. It's still weird
+>> that we need random nodes to add more clks, but I guess that's how it's
+>> going to be for each at91 clk driver until it changes to be one big
+>> provider node.
 > 
-> So, I spent some time looking at converting virtio to dma ops overrides,
-> and the current virtio spec, and the sad through I have to tell is that
-> both the spec and the Linux implementation are complete and utterly fucked
-> up.
+> Seems to me that clock additions could use a new binding and we start
+> with a new driver that handles these few clocks initially. But I
+> haven't looked whether both can coexist.
 
-Let me restate it: DMA API has support for a wide range of hardware, and
-hardware based virtio implementations likely won't benefit from all of
-it.
+Mark already applied to broonie/sound.git the I2S bindings that have a 
+phandle to this clock. If I am to change #clock-cells to 1, I will have 
+to change the bindings to include the clock-id.
+Which approach should I take now?
 
-And given virtio right now is optimized for specific workloads, improving
-portability without regressing performance isn't easy.
-
-I think it's unsurprising since it started a strictly a guest/host
-mechanism.  People did implement offloads on specific platforms though,
-and they are known to work. To improve portability even further,
-we might need to make spec and code changes.
-
-I'm not really sympathetic to people complaining that they can't even
-set a flag in qemu though. If that's the case the stack in question is
-way too inflexible.
-
-
-
-> Both in the flag naming and the implementation there is an implication
-> of DMA API == IOMMU, which is fundamentally wrong.
-
-Maybe we need to extend the meaning of PLATFORM_IOMMU or rename it.
-
-It's possible that some setups will benefit from a more
-fine-grained approach where some aspects of the DMA
-API are bypassed, others aren't.
-
-This seems to be what was being asked for in this thread,
-with comments claiming IOMMU flag adds too much overhead.
-
-
-> The DMA API does a few different things:
-> 
->  a) address translation
-> 
-> 	This does include IOMMUs.  But it also includes random offsets
-> 	between PCI bars and system memory that we see on various
-> 	platforms.
-
-I don't think you mean bars. That's unrelated to DMA.
-
->  Worse so some of these offsets might be based on
-> 	banks, e.g. on the broadcom bmips platform.  It also deals
-> 	with bitmask in physical addresses related to memory encryption
-> 	like AMD SEV.  I'd be really curious how for example the
-> 	Intel virtio based NIC is going to work on any of those
-> 	plaforms.
-
-SEV guys report that they just set the iommu flag and then it all works.
-I guess if there's translation we can think of this as a kind of iommu.
-Maybe we should rename PLATFORM_IOMMU to PLARTFORM_TRANSLATION?
-
-And apparently some people complain that just setting that flag makes
-qemu check translation on each access with an unacceptable performance
-overhead.  Forcing same behaviour for everyone on general principles
-even without the flag is unlikely to make them happy.
-
->   b) coherency
-> 
-> 	On many architectures DMA is not cache coherent, and we need
-> 	to invalidate and/or write back cache lines before doing
-> 	DMA.  Again, I wonder how this is every going to work with
-> 	hardware based virtio implementations.
-
-
-You mean dma_Xmb and friends?
-There's a new feature VIRTIO_F_IO_BARRIER that's being proposed
-for that.
-
-
->  Even worse I think this
-> 	is actually broken at least for VIVT event for virtualized
-> 	implementations.  E.g. a KVM guest is going to access memory
-> 	using different virtual addresses than qemu, vhost might throw
-> 	in another different address space.
-
-I don't really know what VIVT is. Could you help me please?
-
->   c) bounce buffering
-> 
-> 	Many DMA implementations can not address all physical memory
-> 	due to addressing limitations.  In such cases we copy the
-> 	DMA memory into a known addressable bounc buffer and DMA
-> 	from there.
-
-Don't do it then?
-
-
->   d) flushing write combining buffers or similar
-> 
-> 	On some hardware platforms we need workarounds to e.g. read
-> 	from a certain mmio address to make sure DMA can actually
-> 	see memory written by the host.
-
-I guess it isn't an issue as long as WC isn't actually used.
-It will become an issue when virtio spec adds some WC capability -
-I suspect we can ignore this for now.
-
-> 
-> All of this is bypassed by virtio by default despite generally being
-> platform issues, not particular to a given device.
-
-It's both a device and a platform issue. A PV device is often more like
-another CPU than like a PCI device.
-
-
-
--- 
-MST
+Thanks and best regards,
+Codrin
