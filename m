@@ -1,109 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id H1C5Nr7mHVu4AQAAmS7hNA
-	; Mon, 11 Jun 2018 03:27:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id SW9TGoFDGVvtCAAAmS7hNA
+	; Thu, 07 Jun 2018 14:39:16 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 678BC607E7; Mon, 11 Jun 2018 03:27:20 +0000 (UTC)
+	id 11D7B607E7; Thu,  7 Jun 2018 14:39:16 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A36D76070A;
-	Mon, 11 Jun 2018 03:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A36D76070A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5AC25601C3;
+	Thu,  7 Jun 2018 14:39:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AC25601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753978AbeFKD1S (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 23:27:18 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:47096 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932407AbeFKD1N (ORCPT
+        id S934283AbeFGOjN (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:39:13 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40484 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934244AbeFGOin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 23:27:13 -0400
-X-UUID: f2ce0a8e57ca46709221205c9a955233-20180611
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 742045067; Mon, 11 Jun 2018 11:27:09 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 11 Jun 2018 11:27:07 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 11 Jun 2018 11:27:07 +0800
-From: Stu Hsieh <stu.hsieh@mediatek.com>
-To: CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC: David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH 22/28] drm/mediatek: add connection from RDMA2 to DSI3
-Date: Mon, 11 Jun 2018 11:26:14 +0800
-Message-ID: <1528687580-549-23-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+        Thu, 7 Jun 2018 10:38:43 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbY-0005hK-Rt; Thu, 07 Jun 2018 15:09:33 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb9-00036o-Ck; Thu, 07 Jun 2018 15:09:07 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
+        "Jessica Yu" <jeyu@kernel.org>, "Robert Richter" <rric@kernel.org>,
+        "Kees Cook" <keescook@chromium.org>, oprofile-list@lists.sf.net,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Martin Sebor" <msebor@gcc.gnu.org>, stable@decadent.org.uk,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.49749620@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 275/410] x86/oprofile: Fix bogus GCC-8 warning in
+ nmi_setup()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the connection from RDMA2 to DSI3
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+------------------
+
+From: Arnd Bergmann <arnd@arndb.de>
+
+commit 85c615eb52222bc5fab6c7190d146bc59fac289e upstream.
+
+GCC-8 shows a warning for the x86 oprofile code that copies per-CPU
+data from CPU 0 to all other CPUs, which when building a non-SMP
+kernel turns into a memcpy() with identical source and destination
+pointers:
+
+ arch/x86/oprofile/nmi_int.c: In function 'mux_clone':
+ arch/x86/oprofile/nmi_int.c:285:2: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+   memcpy(per_cpu(cpu_msrs, cpu).multiplex,
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          per_cpu(cpu_msrs, 0).multiplex,
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          sizeof(struct op_msr) * model->num_virt_counters);
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ arch/x86/oprofile/nmi_int.c: In function 'nmi_setup':
+ arch/x86/oprofile/nmi_int.c:466:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+ arch/x86/oprofile/nmi_int.c:470:3: error: 'memcpy' source argument is the same as destination [-Werror=restrict]
+
+I have analyzed a number of such warnings now: some are valid and the
+GCC warning is welcome. Others turned out to be false-positives, and
+GCC was changed to not warn about those any more. This is a corner case
+that is a false-positive but the GCC developers feel it's better to keep
+warning about it.
+
+In this case, it seems best to work around it by telling GCC
+a little more clearly that this code path is never hit with
+an IS_ENABLED() configuration check.
+
+Cc:stable as we also want old kernels to build cleanly with GCC-8.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Martin Sebor <msebor@gcc.gnu.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Robert Richter <rric@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: oprofile-list@lists.sf.net
+Link: http://lkml.kernel.org/r/20180220205826.2008875-1-arnd@arndb.de
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84095
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/oprofile/nmi_int.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index ce89a1d86b93..5a8569fa6505 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -96,6 +96,7 @@
- #define RDMA2_MOUT_DPI1			0x3
- #define RDMA2_MOUT_DSI1			0x1
- #define RDMA2_MOUT_DSI2			0x4
-+#define RDMA2_MOUT_DSI3			0x5
- #define DPI0_SEL_IN_RDMA1		0x1
- #define DPI0_SEL_IN_RDMA2		0x3
- #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
-@@ -105,6 +106,7 @@
- #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
- #define DSI2_SEL_IN_RDMA2		(0x4 << 16)
- #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
-+#define DSI3_SEL_IN_RDMA2		(0x4 << 16)
- #define COLOR1_SEL_IN_OVL1		0x1
+--- a/arch/x86/oprofile/nmi_int.c
++++ b/arch/x86/oprofile/nmi_int.c
+@@ -471,7 +471,7 @@ static int nmi_setup(void)
+ 		goto fail;
  
- #define OVL_MOUT_EN_RDMA		0x1
-@@ -214,6 +216,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
- 		value = RDMA2_MOUT_DSI2;
-+	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI3) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
-+		value = RDMA2_MOUT_DSI3;
- 	} else {
- 		value = 0;
- 	}
-@@ -257,6 +262,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
- 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
- 		value = DSI2_SEL_IN_RDMA2;
-+	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI3) {
-+		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
-+		value = DSI3_SEL_IN_RDMA2;
- 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
- 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
- 		value = COLOR1_SEL_IN_OVL1;
--- 
-2.12.5
+ 	for_each_possible_cpu(cpu) {
+-		if (!cpu)
++		if (!IS_ENABLED(CONFIG_SMP) || !cpu)
+ 			continue;
+ 
+ 		memcpy(per_cpu(cpu_msrs, cpu).counters,
