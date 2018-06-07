@@ -1,131 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id sKkQM8GXGVubdwAAmS7hNA
-	; Thu, 07 Jun 2018 20:39:01 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id NSnfLghKGVtgUwAAmS7hNA
+	; Thu, 07 Jun 2018 15:07:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D2B2C606FA; Thu,  7 Jun 2018 20:39:00 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Muzo4xVg"
+	id 0313D608B8; Thu,  7 Jun 2018 15:07:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3D99060452;
-	Thu,  7 Jun 2018 20:39:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D99060452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 643406074D;
+	Thu,  7 Jun 2018 15:07:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 643406074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932601AbeFGUi6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:38:58 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45663 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932516AbeFGUix (ORCPT
+        id S935937AbeFGPG6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:06:58 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41552 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935993AbeFGPD5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:38:53 -0400
-Received: by mail-pl0-f68.google.com with SMTP id c23-v6so6850391plz.12
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6iRhcuxv7LYs9+eTV7AewL3TxlzUcdpZCae2r7yiQpU=;
-        b=Muzo4xVgkpEDMqlgP/+gaZ2Wx2mmaTc4hREd0JFwyP8hl+nvSlAwBNTKijooaZoEqr
-         Ttp4c4AkbQcCAwFV/sCcvjnEY/NDJUHXKJZWWesGvZmk0x6gyuAhfytSCi1J5ntxUgBw
-         imqfEDJu7i0wVM0M2uquWSFNUb3PrfpHaGau+wshZXN1HP4wWfngCsHyTBzpYaqIFxgs
-         2Xw+hbcdeq3WdylLIL8yMjRlRUiqGa76kuyJRktYsLkBgfSTvQ4Bnk2cDoImkIN2ubdV
-         Meb/1ZKQdIIGKC3YZCjaP9QwdWpey6tG2/D01OUu7RojlxawDQE+mPwyT1wZ6dC1Pqnt
-         Cxyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=6iRhcuxv7LYs9+eTV7AewL3TxlzUcdpZCae2r7yiQpU=;
-        b=N86WthxhOApk6jhznUUyRREn1Y50fbtXPEfCrO65KQpZtgN6YOaBwJeaX/GLiu9uye
-         IPxlAS4m7o6HQ91zE1f4HTus03iptATbjv/WlE/6ehKlnkK/O+vl+vAc1i7Eqc6sOG4O
-         zN+D7vtlAAmqXNcKVrDufX+Yhc7fFq7HkYdBBmNx6rpTRRKJRLVCEXYq1fTzr1dOUn6G
-         xQQDd+h3EFsOOnyAR4I+TAIgvNFE+1OIh+KsreYW3i0ZZQxNVmKKnLtIWa9WFaxIQmEu
-         guVZPBSOApbanPq6oO+zqVX5xB+R8s5p2No2m2pgW9v9GrgrvgwaEGPYs11sXZBEji/G
-         Equw==
-X-Gm-Message-State: APt69E06Jy8wXuH/naqY3V51zhce0fhxL3hQJ3DI9qk5+GsN/Gwz9TCZ
-        D9AhLsZWo+NfwTqZ66CJXRJiEFmcfPw=
-X-Google-Smtp-Source: ADUXVKIdru7e6eZf+yycv5YQ/k/CNUIUwSUq51+HNwLSeS8N7NhrWGcbBbQ8sG9cF97H/pKYe5TJJg==
-X-Received: by 2002:a17:902:2f43:: with SMTP id s61-v6mr3507704plb.274.1528403931995;
-        Thu, 07 Jun 2018 13:38:51 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id v27-v6sm10324174pfi.23.2018.06.07.13.38.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 13:38:51 -0700 (PDT)
-From: Joel Fernandes <joelaf@google.com>
-X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v9 2/7] srcu: Add notrace variant of srcu_dereference
-Date: Thu,  7 Jun 2018 13:38:10 -0700
-Message-Id: <20180607203815.255845-3-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
-In-Reply-To: <20180607203815.255845-1-joel@joelfernandes.org>
-References: <20180607203815.255845-1-joel@joelfernandes.org>
+        Thu, 7 Jun 2018 11:03:57 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbJ-0005Zx-6R; Thu, 07 Jun 2018 15:09:17 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbF-0003JU-CA; Thu, 07 Jun 2018 15:09:13 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Andy Gospodarek" <andy@greyhouse.net>,
+        "Xin Long" <lucien.xin@gmail.com>,
+        "Beniamino Galvani" <bgalvani@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.532757702@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 401/410] bonding: move dev_mc_sync after
+ master_upper_dev_link in bond_enslave
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-In the last patch in this series, we are making lockdep register hooks
-onto the irq_{disable,enable} tracepoints. These tracepoints use the
-_rcuidle tracepoint variant. In this series we switch the _rcuidle
-tracepoint callers to use SRCU instead of sched-RCU. Inorder to
-dereference the pointer to the probe functions, we could call
-srcu_dereference, however this API will call back into lockdep to check
-if the lock is held *before* the lockdep probe hooks have a chance to
-run and annotate the IRQ enabled/disabled state.
+------------------
 
-For this reason we need a notrace variant of srcu_dereference since
-otherwise we get lockdep splats. This patch adds the needed
-srcu_dereference_notrace variant.
+From: Xin Long <lucien.xin@gmail.com>
 
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+commit ae42cc62a9f07f1f6979054ed92606b9c30f4a2e upstream.
+
+Beniamino found a crash when adding vlan as slave of bond which is also
+the parent link:
+
+  ip link add bond1 type bond
+  ip link set bond1 up
+  ip link add link bond1 vlan1 type vlan id 80
+  ip link set vlan1 master bond1
+
+The call trace is as below:
+
+  [<ffffffffa850842a>] queued_spin_lock_slowpath+0xb/0xf
+  [<ffffffffa8515680>] _raw_spin_lock+0x20/0x30
+  [<ffffffffa83f6f07>] dev_mc_sync+0x37/0x80
+  [<ffffffffc08687dc>] vlan_dev_set_rx_mode+0x1c/0x30 [8021q]
+  [<ffffffffa83efd2a>] __dev_set_rx_mode+0x5a/0xa0
+  [<ffffffffa83f7138>] dev_mc_sync_multiple+0x78/0x80
+  [<ffffffffc084127c>] bond_enslave+0x67c/0x1190 [bonding]
+  [<ffffffffa8401909>] do_setlink+0x9c9/0xe50
+  [<ffffffffa8403bf2>] rtnl_newlink+0x522/0x880
+  [<ffffffffa8403ff7>] rtnetlink_rcv_msg+0xa7/0x260
+  [<ffffffffa8424ecb>] netlink_rcv_skb+0xab/0xc0
+  [<ffffffffa83fe498>] rtnetlink_rcv+0x28/0x30
+  [<ffffffffa8424850>] netlink_unicast+0x170/0x210
+  [<ffffffffa8424bf8>] netlink_sendmsg+0x308/0x420
+  [<ffffffffa83cc396>] sock_sendmsg+0xb6/0xf0
+
+This is actually a dead lock caused by sync slave hwaddr from master when
+the master is the slave's 'slave'. This dead loop check is actually done
+by netdev_master_upper_dev_link. However, Commit 1f718f0f4f97 ("bonding:
+populate neighbour's private on enslave") moved it after dev_mc_sync.
+
+This patch is to fix it by moving dev_mc_sync after master_upper_dev_link,
+so that this loop check would be earlier than dev_mc_sync. It also moves
+if (mode == BOND_MODE_8023AD) into if (!bond_uses_primary) clause as an
+improvement.
+
+Note team driver also has this issue, I will fix it in another patch.
+
+Fixes: 1f718f0f4f97 ("bonding: populate neighbour's private on enslave")
+Reported-by: Beniamino Galvani <bgalvani@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Andy Gospodarek <andy@greyhouse.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/srcu.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/bonding/bond_main.c | 73 ++++++++++++++++-----------------
+ 1 file changed, 35 insertions(+), 38 deletions(-)
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 2ec618979b20..a1c4947be877 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -135,6 +135,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
-  */
- #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1414,44 +1414,11 @@ int bond_enslave(struct net_device *bond
+ 			goto err_close;
+ 	}
  
-+/**
-+ * srcu_dereference_notrace - no tracing and no lockdep calls from here
-+ */
-+#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
+-	/* If the mode uses primary, then the following is handled by
+-	 * bond_change_active_slave().
+-	 */
+-	if (!bond_uses_primary(bond)) {
+-		/* set promiscuity level to new slave */
+-		if (bond_dev->flags & IFF_PROMISC) {
+-			res = dev_set_promiscuity(slave_dev, 1);
+-			if (res)
+-				goto err_close;
+-		}
+-
+-		/* set allmulti level to new slave */
+-		if (bond_dev->flags & IFF_ALLMULTI) {
+-			res = dev_set_allmulti(slave_dev, 1);
+-			if (res)
+-				goto err_close;
+-		}
+-
+-		netif_addr_lock_bh(bond_dev);
+-
+-		dev_mc_sync_multiple(slave_dev, bond_dev);
+-		dev_uc_sync_multiple(slave_dev, bond_dev);
+-
+-		netif_addr_unlock_bh(bond_dev);
+-	}
+-
+-	if (BOND_MODE(bond) == BOND_MODE_8023AD) {
+-		/* add lacpdu mc addr to mc list */
+-		u8 lacpdu_multicast[ETH_ALEN] = MULTICAST_LACPDU_ADDR;
+-
+-		dev_mc_add(slave_dev, lacpdu_multicast);
+-	}
+-
+ 	res = vlan_vids_add_by_dev(slave_dev, bond_dev);
+ 	if (res) {
+ 		pr_err("%s: Error: Couldn't add bond vlan ids to %s\n",
+ 		       bond_dev->name, slave_dev->name);
+-		goto err_hwaddr_unsync;
++		goto err_close;
+ 	}
+ 
+ 	prev_slave = bond_last_slave(bond);
+@@ -1598,6 +1565,37 @@ int bond_enslave(struct net_device *bond
+ 		goto err_upper_unlink;
+ 	}
+ 
++	/* If the mode uses primary, then the following is handled by
++	 * bond_change_active_slave().
++	 */
++	if (!bond_uses_primary(bond)) {
++		/* set promiscuity level to new slave */
++		if (bond_dev->flags & IFF_PROMISC) {
++			res = dev_set_promiscuity(slave_dev, 1);
++			if (res)
++				goto err_sysfs_del;
++		}
 +
- /**
-  * srcu_read_lock - register a new reader for an SRCU-protected structure.
-  * @sp: srcu_struct in which to register the new reader.
--- 
-2.17.1.1185.g55be947832-goog
++		/* set allmulti level to new slave */
++		if (bond_dev->flags & IFF_ALLMULTI) {
++			res = dev_set_allmulti(slave_dev, 1);
++			if (res)
++				goto err_sysfs_del;
++		}
++
++		netif_addr_lock_bh(bond_dev);
++		dev_mc_sync_multiple(slave_dev, bond_dev);
++		dev_uc_sync_multiple(slave_dev, bond_dev);
++		netif_addr_unlock_bh(bond_dev);
++
++		if (BOND_MODE(bond) == BOND_MODE_8023AD) {
++			/* add lacpdu mc addr to mc list */
++			u8 lacpdu_multicast[ETH_ALEN] = MULTICAST_LACPDU_ADDR;
++
++			dev_mc_add(slave_dev, lacpdu_multicast);
++		}
++	}
++
+ 	bond->slave_cnt++;
+ 	bond_compute_features(bond);
+ 	bond_set_carrier(bond);
+@@ -1619,6 +1617,9 @@ int bond_enslave(struct net_device *bond
+ 	return 0;
+ 
+ /* Undo stages on error */
++err_sysfs_del:
++	bond_sysfs_slave_del(new_slave);
++
+ err_upper_unlink:
+ 	bond_upper_dev_unlink(bond_dev, slave_dev);
+ 
+@@ -1639,10 +1640,6 @@ err_detach:
+ 	}
+ 	slave_disable_netpoll(new_slave);
+ 
+-err_hwaddr_unsync:
+-	if (!bond_uses_primary(bond))
+-		bond_hw_addr_flush(bond_dev, slave_dev);
+-
+ err_close:
+ 	slave_dev->priv_flags &= ~IFF_BONDING;
+ 	dev_close(slave_dev);
