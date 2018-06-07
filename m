@@ -1,119 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id FNlnACGEHFuSRwAAmS7hNA
-	; Sun, 10 Jun 2018 01:51:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YNHTLCrNGFtoewAAmS7hNA
+	; Thu, 07 Jun 2018 06:24:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D5E05608BA; Sun, 10 Jun 2018 01:51:28 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="DIwkJhP3"
+	id 77664608B8; Thu,  7 Jun 2018 06:24:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 20640605A2;
-	Sun, 10 Jun 2018 01:51:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 20640605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by smtp.codeaurora.org (Postfix) with ESMTP id E3A10607E7;
+	Thu,  7 Jun 2018 06:24:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3A10607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753591AbeFJBvY (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 21:51:24 -0400
-Received: from imap.thunk.org ([74.207.234.97]:53406 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753555AbeFJBvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 21:51:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=wdxLkN0gVRdrEWsrzryhWI3REiFOulFMro7XdrCMGew=; b=DIwkJhP3NEqb7figeUOytV2Z52
-        JLVBWc0U+Aw2FCyUm8ifP3A4T7mCHyyLaNSWqJ0ZOg0TPTzDjTIsbRIOyNshk6uJg9Gca9Ys94LVs
-        dWvYbSFVWlP7mwPxAJsjTGK516Qjq0G+9g2gzjDyw63vFVWg8ZWjGHjfYSQeygWVCW0U=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fRpVc-0004SH-I3; Sun, 10 Jun 2018 01:51:08 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id C3C787A4474; Sat,  9 Jun 2018 21:51:07 -0400 (EDT)
-Date: Sat, 9 Jun 2018 21:51:07 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Guenter Roeck <groeck@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Wu Fengguang <fengguang.wu@intel.com>
-Subject: Re: what trees/branches to test on syzbot
-Message-ID: <20180610015107.GC5020@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Guenter Roeck <groeck@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Wu Fengguang <fengguang.wu@intel.com>
-References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
- <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
- <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
- <873735n3dy.fsf@xmission.com>
- <20180116173440.GA15893@kroah.com>
- <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
- <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
- <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
+        id S1752969AbeFGGYE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 02:24:04 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:43837 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752880AbeFGGYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 02:24:01 -0400
+Received: by mail-oi0-f65.google.com with SMTP id t133-v6so7547524oif.10
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 23:24:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=783nSWGh9m9PLif2Bx2byVwYnFxfXgJhIM02FCZye2k=;
+        b=fdB2J5L4208quO8545rpFnfy4fY/2qnmaGLL38DJjEXO3Bi9fkTJS36gJm7sVo1ksa
+         8PYeeR8SPBbyHK+0vnfiCv7r5Dlb7G+UMo6dAmJYYhqVKOC17aHYhI2cNVs6sDmWH9H+
+         h4Gj3vHzvrb+qb6x0Lcb5Cx6ef41Gw9t3McOLT+JyuJlv5NzfhrpAMBGvllN8g/RiJxb
+         E8rgPOOAZWoQ6wD7yf4M6gkPftoZUl0S1Si4j7Qgy/+ERAmpsQtibjgT+7OOZ54yvWaX
+         lchXs5kiqwjCdhO98VGhJkIhvfybuW3h37BmvioB8BramuguJHyb6XUCk2+jzcNwtg6s
+         wUYg==
+X-Gm-Message-State: APt69E3uigi5kZVRFfPWYEb5O3NlUdqe+eEgWHCzg3f5ZY1HS4yqcSGI
+        KreMkFZJoxHHMKH4WN2r9O0uD9Ts2Kiw8jpBrj1Reg==
+X-Google-Smtp-Source: ADUXVKJi4eumRXXU8Lquc2zyUbreW3RnZef8CKcN8rnGwb2p7DsoNYZj5BpQXnpfG6XEcEsGxyVrTIxMllUpvFNeido=
+X-Received: by 2002:aca:b184:: with SMTP id a126-v6mr260214oif.67.1528352640353;
+ Wed, 06 Jun 2018 23:24:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+References: <20180606193940.16126-1-malat@debian.org> <20180606195655.GO1351649@devbig577.frc2.facebook.com>
+In-Reply-To: <20180606195655.GO1351649@devbig577.frc2.facebook.com>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Thu, 7 Jun 2018 08:23:44 +0200
+Message-ID: <CA+7wUsw6DsKWzPKZxi0xA4YRiBASBDFF203RCuHSdWYWLyRPfQ@mail.gmail.com>
+Subject: Re: [PATCH] percpu_counter: `percpu_counter_read_positive' should not
+ return negative number
+To: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>,
+        Dennis Zhou <dennisszhou@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 09, 2018 at 03:17:21PM -0700, Linus Torvalds wrote:
-> I think it would be lovely to get linux-next back eventually, but it
-> sounds like it's just too noisy right now, and yes, we should have a
-> baseline for the standard tree first.
-> 
-> But once there's a "this is known for the baseline", I think adding
-> linux-next back in and then maybe even have linux-next simply just
-> kick out trees that cause problems would be a good idea.
-> 
-> Right now linux-next only kicks things out based on build issues (or
-> extreme merge issues), afaik. But it *would* be good to also have
-> things like syzbot do quality control on linux-next.
+On Wed, Jun 6, 2018 at 9:57 PM Tejun Heo <tj@kernel.org> wrote:
+>
+> On Wed, Jun 06, 2018 at 09:39:40PM +0200, Mathieu Malaterre wrote:
+> > Since function `percpu_counter_add' may result in a signed integer overflow
+> > the result stored in `fbc->count' could be negative. Make sure that
+> > function `percpu_counter_read_positive' does not return a negative number
+> > in this case. This will match behavior when CONFIG_SMP=y.
+> >
+> > Detected wth CONFIG_UBSAN=y
+> >
+> > [76404.888450] ================================================================================
+> > [76404.888477] UBSAN: Undefined behaviour in ../include/linux/percpu_counter.h:136:13
+> > [76404.888485] signed integer overflow:
+> > [76404.888490] 9223308017647617321 + 76624449492175 cannot be represented in type 'long long int'
+> > [76404.888501] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #50
+> > [76404.888506] Call Trace:
+> > [76404.888523] [dffedd30] [c0478b90] ubsan_epilogue+0x18/0x4c (unreliable)
+> > [76404.888533] [dffedd40] [c0479530] handle_overflow+0xbc/0xdc
+> > [76404.888548] [dffeddc0] [c0439044] cfq_completed_request+0x560/0x1234
+> > [76404.888557] [dffede40] [c03f3fc4] __blk_put_request+0xb0/0x2dc
+> > [76404.888570] [dffede80] [c05a81d0] scsi_end_request+0x19c/0x344
+> > [76404.888579] [dffedeb0] [c05a9954] scsi_io_completion+0x4b4/0x854
+> > [76404.888592] [dffedf10] [c04046b4] blk_done_softirq+0xe4/0x1e0
+> > [76404.888605] [dffedf60] [c07ec1d4] __do_softirq+0x16c/0x5f0
+> > [76404.888617] [dffedfd0] [c0065160] irq_exit+0x110/0x1a8
+> > [76404.888629] [dffedff0] [c001646c] call_do_irq+0x24/0x3c
+> > [76404.888641] [c0cdbe80] [c0009a2c] do_IRQ+0x98/0x1a0
+> > [76404.888649] [c0cdbeb0] [c001b93c] ret_from_except+0x0/0x14
+> > [76404.888659] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
+> >                    LR = arch_cpu_idle+0x30/0x78
+> > [76404.888667] [c0cdbf70] [c0cda000] 0xc0cda000 (unreliable)
+> > [76404.888679] [c0cdbf80] [c00a3844] do_idle+0xc4/0x158
+> > [76404.888687] [c0cdbfb0] [c00a3a90] cpu_startup_entry+0x24/0x28
+> > [76404.888696] [c0cdbfc0] [c097f820] start_kernel+0x47c/0x490
+> > [76404.888703] [c0cdbff0] [00003444] 0x3444
+>
+> So, the _positive versions are there to deal with small negative reads
+> coming from percpu propagation delays.  It's not there to protect
+> against actual counter overflow although it can't detect that on SMP.
+> It's just outright wrong to report 0 when the counter actually
+> overflowed and applying the suggested patch masks a real problem
+> undetectable.
 
-Syzbot is always getting improved to find new classes of problems.  So
-the only way to get a baseline would be to use an older version of
-syzbot for linux-next, and to have it suppress sending e-mails about
-failures that are duplicates that were already found via the mainline
-tree.
+I see, thanks for the explanation.
 
-Then periodically, once version N has run for M weeks, and has spewed
-some large number of new failures to LKML, then you could promote
-version N to be run against linux-next, and so hopefully the only
-thing it would report against linux-next are regressions, and not
-duplicates of new bugs also being found via the latest and greatest
-version of syzbot being run against the mainline kernel.
-
-						- Ted
+> I think the right thing to do is actually undersatnding what's going
+> on (why is a 64bit counter overflowing?) and fix the underlying issue.
+>
+> Thanks.
+>
+> --
+> tejun
