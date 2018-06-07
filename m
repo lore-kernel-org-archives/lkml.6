@@ -1,284 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 6xpGMZX3GluyUAAAmS7hNA
-	; Fri, 08 Jun 2018 21:39:33 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vHGQDJANGVt9dgAAmS7hNA
+	; Thu, 07 Jun 2018 10:49:22 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id ABE6B607E4; Fri,  8 Jun 2018 21:39:33 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jABqcRCF"
+	id 2A1A2608B8; Thu,  7 Jun 2018 10:49:22 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CD890601B4;
-	Fri,  8 Jun 2018 21:39:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD890601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8D6A3601B4;
+	Thu,  7 Jun 2018 10:49:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D6A3601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753216AbeFHVjb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 17:39:31 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45904 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753126AbeFHVj3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 17:39:29 -0400
-Received: by mail-pg0-f68.google.com with SMTP id z1-v6so6954385pgv.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 14:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lGwYTJMjY8Gjsfz6JsbcM/PNxWOqwj2si0vSx11O54w=;
-        b=jABqcRCF33uxZSK6GKLx3wsOkjjfbUBBwPdpi43Jv/hJJ5awfXVTcEsnuL1W1v9x2T
-         HyI2vgzL2PaPMQIutCyNvOtN81flfQA73/DW0in+DuxLn29RfIYqAQC981zSh2bEK/hp
-         amj8CICe3d8KRUTAtg39htM2kOZmJhYl08QDU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lGwYTJMjY8Gjsfz6JsbcM/PNxWOqwj2si0vSx11O54w=;
-        b=spI7rLgelruPx8AlOQazBeFWtezJi+3B1spOqQUpN8BVL0hDxLOz1yDhEhACFoJ+oh
-         NXDxlLiojIr3BRg5sDwJBKCyNPBTaOnEzwfgcEYFjBu+MSWBLnIM4u7R6dTvRk6J19EB
-         cxikpcda0NCDfXMcX2nRZ5Pha2h7f7GUDIBMGz/yk0uCFAmZm1DfSQ0Zkd3e5ufppnWt
-         S5D79vva/TopJxuSzq9C2xy1nrWdRRDJBC81BXYerQ0ipRL+wblJ3X9YeS7elxSR2kQI
-         JwRhMLDJBjETGweE1E2N7RgoKlNEvprs5xck95tzw9MXEnj2goj1UrPugEsQS5pAMpS8
-         5/0Q==
-X-Gm-Message-State: APt69E3+74zdnBsoz57xuZvqTj8l+hahO8J3z83zpo4ofCrEzhad9J2a
-        NTM9VYyrYxKnulJyqLg13E/Fww==
-X-Google-Smtp-Source: ADUXVKJKpsoJCXmGck/sTLAA09JOeKfmGkqqmGlJ3xCxIBKXNvwZhPYzKFf3ttiBezK6O0QOtaCVLQ==
-X-Received: by 2002:a62:9d82:: with SMTP id a2-v6mr7667661pfk.223.1528493968852;
-        Fri, 08 Jun 2018 14:39:28 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id a18-v6sm87087804pfn.117.2018.06.08.14.39.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 14:39:27 -0700 (PDT)
-Date: Fri, 8 Jun 2018 15:39:25 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
-        frowand.list@gmail.com, mark.rutland@arm.com, sudeep.holla@arm.com,
-        arm@kernel.org, linux-kernel@vger.kernel.org, matt.sealey@arm.com,
-        john.horley@arm.com, charles.garcia-tobin@arm.com,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        mike.leach@linaro.org
-Subject: Re: [PATCH 09/20] coresight: dts: Define new bindings for direction
- of data flow
-Message-ID: <20180608213925.GH30587@xps15>
-References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
- <1528235011-30691-10-git-send-email-suzuki.poulose@arm.com>
+        id S1753149AbeFGKtT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:49:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8702 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752336AbeFGKtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 06:49:17 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1B2F0AEF1633A;
+        Thu,  7 Jun 2018 18:49:05 +0800 (CST)
+Received: from localhost (10.206.48.115) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Thu, 7 Jun 2018
+ 18:49:01 +0800
+Date: Thu, 7 Jun 2018 11:48:51 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <osalvador@techadventures.net>
+CC: <akpm@linux-foundation.org>, <mhocko@suse.com>, <vbabka@suse.cz>,
+        <pasha.tatashin@oracle.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 1/4] mm/memory_hotplug: Make add_memory_resource use
+ __try_online_node
+Message-ID: <20180607114851.00005bd8@huawei.com>
+In-Reply-To: <20180601125321.30652-2-osalvador@techadventures.net>
+References: <20180601125321.30652-1-osalvador@techadventures.net>
+        <20180601125321.30652-2-osalvador@techadventures.net>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528235011-30691-10-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.206.48.115]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 05, 2018 at 10:43:20PM +0100, Suzuki K Poulose wrote:
-> So far we have relied on an undocumented property "slave-mode",
-> to indicate if the given port is input or not. Since we are
-> redefining the coresight bindings, define new property for the
-> "direction" of data flow for a given connection endpoint in the
-> device.
+On Fri, 1 Jun 2018 14:53:18 +0200
+<osalvador@techadventures.net> wrote:
+
+> From: Oscar Salvador <osalvador@suse.de>
 > 
-> Each endpoint must define the following property.
+> add_memory_resource() contains code to allocate a new node in case
+> it is necessary.
+> Since try_online_node() also hast some code for this purpose,
+> let us make use of that and remove duplicate code.
 > 
->  - "direction" : 0 => Port is input
-> 		 1 => Port is output
+> This introduces __try_online_node(), which is called by add_memory_resource()
+> and try_online_node().
+> __try_online_node() has two new parameters, start_addr of the node,
+> and if the node should be onlined and registered right away.
+> This is always wanted if we are calling from do_cpu_up(), but not
+> when we are calling from memhotplug code.
+> Nothing changes from the point of view of the users of try_online_node(),
+> since try_online_node passes start_addr=0 and online_node=true to
+> __try_online_node().
 > 
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
+Trivial whitespace issue inline...
+
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 > ---
->  .../devicetree/bindings/arm/coresight.txt          | 24 ++++++++++++++--------
->  drivers/hwtracing/coresight/of_coresight.c         | 22 ++++++++++++++++----
->  2 files changed, 34 insertions(+), 12 deletions(-)
+>  mm/memory_hotplug.c | 61 +++++++++++++++++++++++++++++------------------------
+>  1 file changed, 34 insertions(+), 27 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
-> index bf75ab3..ff382bc 100644
-> --- a/Documentation/devicetree/bindings/arm/coresight.txt
-> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
-> @@ -103,9 +103,11 @@ with a specific direction of data flow, each connection must define the
->  following properties to uniquely identify the connection details.
->  
->   * Direction of the data flow w.r.t the component :
-> -   Each input port must have the following property defined at the "endpoint"
-> +   Each hardware port must have the following property defined at the "endpoint"
->     for the port.
-> -	"slave-mode"
-> +	"direction" - 32bit integer, whose values are defined as follows :
-> +		0 => the endpoint is an Input port
-> +		1 => the endpoint is an Output port.
->  
->   * Hardware Port number at the component:
->       - Each "endpoint" must define the hardware port of the local end of the
-> @@ -129,7 +131,7 @@ Example:
->  		clock-names = "apb_pclk";
->  		port {
->  			etb_in_port: endpoint@0 {
-> -				slave-mode;
-> +				direction = <0>;
->  				remote-endpoint = <&replicator_out_port0>;
->  				coresight,hwid = <0>;
->  			};
-> @@ -144,7 +146,7 @@ Example:
->  		clock-names = "apb_pclk";
->  		port {
->  			tpiu_in_port: endpoint@0 {
-> -				slave-mode;
-> +				direction = <0>;
->  				remote-endpoint = <&replicator_out_port1>;
->  				coresight,hwid = <0>;
->  			};
-> @@ -166,6 +168,7 @@ Example:
->  			port@0 {
->  				reg = <0>;
->  				replicator_out_port0: endpoint {
-> +					direction = <1>;
->  					remote-endpoint = <&etb_in_port>;
->  					coresight,hwid = <0>;
->  				};
-> @@ -174,6 +177,7 @@ Example:
->  			port@1 {
->  				reg = <1>;
->  				replicator_out_port1: endpoint {
-> +					direction = <1>;
->  					remote-endpoint = <&tpiu_in_port>;
->  					coresight,hwid = <1>;
->  				};
-> @@ -183,7 +187,7 @@ Example:
->  			port@2 {
->  				reg = <1>;
->  				replicator_in_port0: endpoint {
-> -					slave-mode;
-> +					direction = <0>;
->  					remote-endpoint = <&funnel_out_port0>;
->  					coresight,hwid = <0>;
->  				};
-> @@ -205,6 +209,7 @@ Example:
->  			port@0 {
->  				reg = <0>;
->  				funnel_out_port0: endpoint {
-> +					direction = <1>;
->  					remote-endpoint =
->  							<&replicator_in_port0>;
->  					coresight,hwid = <0>;
-> @@ -215,7 +220,7 @@ Example:
->  			port@1 {
->  				reg = <1>;
->  				funnel_in_port0: endpoint {
-> -					slave-mode;
-> +					direction = <0>;
->  					remote-endpoint = <&ptm0_out_port>;
->  					coresight,hwid = <0>;
->  				};
-> @@ -224,7 +229,7 @@ Example:
->  			port@2 {
->  				reg = <2>;
->  				funnel_in_port1: endpoint {
-> -					slave-mode;
-> +					direction = <0>;
->  					remote-endpoint = <&ptm1_out_port>;
->  					coresight,hwid = <1>;
->  				};
-> @@ -233,7 +238,7 @@ Example:
->  			port@3 {
->  				reg = <3>;
->  				funnel_in_port2: endpoint {
-> -					slave-mode;
-> +					direction = <0>;
->  					remote-endpoint = <&etm0_out_port>;
->  					coresight,hwid = <2>;
->  				};
-> @@ -252,6 +257,7 @@ Example:
->  		clock-names = "apb_pclk";
->  		port {
->  			ptm0_out_port: endpoint {
-> +				direction = <1>;
->  				remote-endpoint = <&funnel_in_port0>;
->  				coresight,hwid = <0>;
->  			};
-> @@ -267,6 +273,7 @@ Example:
->  		clock-names = "apb_pclk";
->  		port {
->  			ptm1_out_port: endpoint {
-> +				direction = <1>;
->  				remote-endpoint = <&funnel_in_port1>;
->  				coresight,hwid = <0>;
->  			};
-> @@ -284,6 +291,7 @@ Example:
->  		clock-names = "apb_pclk";
->  		port {
->  			stm_out_port: endpoint {
-> +				direction = <1>;
->  				remote-endpoint = <&main_funnel_in_port2>;
->  				coresight,hwid = <0>;
->  			};
-> diff --git a/drivers/hwtracing/coresight/of_coresight.c b/drivers/hwtracing/coresight/of_coresight.c
-> index d23d7dd..0d6e6a9 100644
-> --- a/drivers/hwtracing/coresight/of_coresight.c
-> +++ b/drivers/hwtracing/coresight/of_coresight.c
-> @@ -45,7 +45,20 @@ of_coresight_get_endpoint_device(struct device_node *endpoint)
->  			       endpoint, of_dev_node_match);
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 7deb49f69e27..29a5fc89bdb1 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1034,8 +1034,10 @@ static pg_data_t __ref *hotadd_new_pgdat(int nid, u64 start)
+>  	return pgdat;
 >  }
 >  
-> -static void of_coresight_get_ports(const struct device_node *node,
-> +static bool of_coresight_endpoint_is_input(struct device *dev,
-> +					   struct device_node *ep_node)
-> +{
-> +	u32 dir;
+> -static void rollback_node_hotadd(int nid, pg_data_t *pgdat)
+> +static void rollback_node_hotadd(int nid)
+>  {
+> +	pg_data_t *pgdat = NODE_DATA(nid);
 > +
-> +	if (!of_property_read_u32(ep_node, "direction", &dir))
-> +		return dir == 0;
+>  	arch_refresh_nodedata(nid, NULL);
+>  	free_percpu(pgdat->per_cpu_nodestats);
+>  	arch_free_nodedata(pgdat);
+> @@ -1046,28 +1048,43 @@ static void rollback_node_hotadd(int nid, pg_data_t *pgdat)
+>  /**
+>   * try_online_node - online a node if offlined
+>   * @nid: the node ID
+> - *
+> + * @start: start addr of the node
+> + * @set_node_online: Whether we want to online the node
+>   * called by cpu_up() to online a node without onlined memory.
+>   */
+> -int try_online_node(int nid)
+> +static int __try_online_node(int nid, u64 start, bool set_node_online)
+>  {
+> -	pg_data_t	*pgdat;
+> -	int	ret;
+> +	pg_data_t *pgdat;
+> +	int ret = 1;
+>  
+>  	if (node_online(nid))
+>  		return 0;
+>  
+> -	mem_hotplug_begin();
+> -	pgdat = hotadd_new_pgdat(nid, 0);
+> +	pgdat = hotadd_new_pgdat(nid, start);
+>  	if (!pgdat) {
+>  		pr_err("Cannot online node %d due to NULL pgdat\n", nid);
+>  		ret = -ENOMEM;
+>  		goto out;
+>  	}
+> -	node_set_online(nid);
+> -	ret = register_one_node(nid);
+> -	BUG_ON(ret);
 > +
-> +	dev_warn_once(dev, "Missing mandatory \"direction\" property!\n");
-> +	return of_property_read_bool(ep_node, "slave-mode");
+> +	if (set_node_online) {
+> +		node_set_online(nid);
+> +		ret = register_one_node(nid);
+> +		BUG_ON(ret);
+> +	}
+>  out:
+> +	return ret;
 > +}
 > +
-> +static void of_coresight_get_ports(struct device *dev,
-> +				   const struct device_node *node,
->  				   int *nr_inport, int *nr_outport)
+> +/*
+> + * Users of this function always want to online/register the node
+> + */
+> +int try_online_node(int nid)
+> +{
+> +	int ret;
+> +
+> +	mem_hotplug_begin();
+> +	ret =  __try_online_node (nid, 0, true);
+>  	mem_hotplug_done();
+>  	return ret;
+>  }
+> @@ -1099,8 +1116,6 @@ static int online_memory_block(struct memory_block *mem, void *arg)
+>  int __ref add_memory_resource(int nid, struct resource *res, bool online)
 >  {
->  	struct device_node *ep = NULL;
-> @@ -56,7 +69,7 @@ static void of_coresight_get_ports(const struct device_node *node,
->  		if (!ep)
->  			break;
+>  	u64 start, size;
+> -	pg_data_t *pgdat = NULL;
+> -	bool new_pgdat;
+>  	bool new_node;
+>  	int ret;
 >  
-> -		if (of_property_read_bool(ep, "slave-mode"))
-> +		if (of_coresight_endpoint_is_input(dev, ep))
->  			in++;
->  		else
->  			out++;
-> @@ -149,7 +162,7 @@ static int of_coresight_parse_endpoint(struct device *dev,
->  		 * No need to deal with input ports, processing for as
->  		 * processing for output ports will deal with them.
->  		 */
-> -		if (of_find_property(ep, "slave-mode", NULL))
-> +		if (of_coresight_endpoint_is_input(dev, ep))
->  			break;
+> @@ -1111,11 +1126,6 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+>  	if (ret)
+>  		return ret;
 >  
->  		/* Parse the local port details */
-> @@ -212,7 +225,8 @@ of_get_coresight_platform_data(struct device *dev,
->  	pdata->cpu = of_coresight_get_cpu(node);
+> -	{	/* Stupid hack to suppress address-never-null warning */
+> -		void *p = NODE_DATA(nid);
+> -		new_pgdat = !p;
+> -	}
+> -
+>  	mem_hotplug_begin();
 >  
->  	/* Get the number of input and output port for this component */
-> -	of_coresight_get_ports(node, &pdata->nr_inport, &pdata->nr_outport);
-> +	of_coresight_get_ports(dev, node,
-> +			       &pdata->nr_inport, &pdata->nr_outport);
+>  	/*
+> @@ -1126,17 +1136,14 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+>  	 */
+>  	memblock_add_node(start, size, nid);
 >  
->  	/* If there are not output connections, we are done */
->  	if (!pdata->nr_outport)
+> -	new_node = !node_online(nid);
+> -	if (new_node) {
+> -		pgdat = hotadd_new_pgdat(nid, start);
+> -		ret = -ENOMEM;
+> -		if (!pgdat)
+> -			goto error;
+> -	}
+> +	ret = __try_online_node (nid, start, false);
 
-For both the binding and the code:
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+space before (
 
-> -- 
-> 2.7.4
-> 
+
+> +	new_node = !!(ret > 0);
+> +	if (ret < 0)
+> +		goto error;
+> +
+>  
+>  	/* call arch's memory hotadd */
+>  	ret = arch_add_memory(nid, start, size, NULL, true);
+> -
+>  	if (ret < 0)
+>  		goto error;
+>  
+> @@ -1180,8 +1187,8 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online)
+>  
+>  error:
+>  	/* rollback pgdat allocation and others */
+> -	if (new_pgdat && pgdat)
+> -		rollback_node_hotadd(nid, pgdat);
+> +	if (new_node)
+> +		rollback_node_hotadd(nid);
+>  	memblock_remove(start, size);
+>  
+>  out:
