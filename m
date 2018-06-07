@@ -1,129 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lxiJCplCGVs9ewAAmS7hNA
-	; Thu, 07 Jun 2018 14:35:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id e44eHq3fGFuDAQAAmS7hNA
+	; Thu, 07 Jun 2018 07:33:51 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D643D607DC; Thu,  7 Jun 2018 14:35:07 +0000 (UTC)
+	id 38A48608BF; Thu,  7 Jun 2018 07:33:51 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JY04TCj8"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id AC5EF601D2;
-	Thu,  7 Jun 2018 14:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC5EF601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 876906063F;
+	Thu,  7 Jun 2018 07:33:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 876906063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934021AbeFGOfE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:35:04 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40369 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934005AbeFGOe4 (ORCPT
+        id S1753365AbeFGHdr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:33:47 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43486 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751974AbeFGHdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:34:56 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbj-0005Zi-8L; Thu, 07 Jun 2018 15:09:43 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002yf-Cq; Thu, 07 Jun 2018 15:09:03 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Thu, 7 Jun 2018 03:33:45 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n15-v6so13052630lfn.10;
+        Thu, 07 Jun 2018 00:33:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=gOoACZ2sAm9uwNy+f1mS0du5riIfAdEeO6ti0Oy+jg4=;
+        b=JY04TCj8ik/T9DlbPXruEMa8YOk+hAXLrlBlQfeAKhEBAZYbiAiebpaax1DI+KBtZy
+         WRG4GSu6c7pKLMZqDVDHq0jjTvAQDSKksjbFqdpBaYC2ur3qGsRIPtJTECJ3RY/U9rXe
+         wQ4/rR8UfVzZ27caciGvpctNnh0UhYXorb1YLVaHLgOwx6TQ5WrMVQguEtxr/7eZ0xGL
+         0+R8cL54vCtwc6PsAb/HRY9WzYxoPz5QeEDOWL7ypqZSW/xNr4HwlFKCB3xyPIvap5bT
+         yCbMa8F2EJgGKkafILie+IX9U8WuTqPe3dz32bSFb8/CPWYWl4oZcOvx5JW6uIaisyQH
+         wq9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=gOoACZ2sAm9uwNy+f1mS0du5riIfAdEeO6ti0Oy+jg4=;
+        b=VD9EVtmEIWV706qpXRlHgGTAwVjsq/lOZdq39t2jR/WClcsDF+NTvywZ3x5hNW4X3K
+         kKZQ0Hr5pYJ3Uq0vxjGCOSmoDJ/WU65ZyevjZnVicbEvprAuNPCOzty0ClKbAMYdsZ95
+         O85inCSGWxYYNrI9/EGBXlZkaZP/lqOVTv1lzWMKhr7L0y3t4Bstgy5L4e9o5E8loGLc
+         0VClureRpJR0VUfJ1qqsoidM5fYzu96TU6RRn9MM/CN8sIPk+KPKca53efINHyftI0jq
+         3cKXCH79x9+KjTHTfYvlx3nhXboMm+e9ZQFjqkY/DquZSMBXv/vngAEWVbI+HdzDKJ39
+         9INA==
+X-Gm-Message-State: APt69E10Y0co05SyWCgFUsF0up7YM8kq5LDGdqIVRwWI2On4JeS7y/8C
+        sm+i/aFSjsuDyLev8HRrHfgeBzs5
+X-Google-Smtp-Source: ADUXVKJQnklbCQZfIIjZIrg2NQPrxf1XySjQ54ocQdA9dTLh94CoNqwIjhli0FDM38ldtGZfNrfmBA==
+X-Received: by 2002:a19:8e01:: with SMTP id q1-v6mr480689lfd.35.1528356823486;
+        Thu, 07 Jun 2018 00:33:43 -0700 (PDT)
+Received: from [10.17.182.9] (ll-55.209.223.85.sovam.net.ua. [85.223.209.55])
+        by smtp.gmail.com with ESMTPSA id w1-v6sm718291lfk.59.2018.06.07.00.33.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 00:33:42 -0700 (PDT)
+Subject: Re: [Xen-devel] [PATCH v2 9/9] xen/gntdev: Expose gntdev's dma-buf
+ API for in-kernel use
+To: Dongwon Kim <dongwon.kim@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: matthew.d.roper@intel.com, jgross@suse.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        daniel.vetter@intel.com, xen-devel@lists.xenproject.org,
+        linux-media@vger.kernel.org
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-10-andr2000@gmail.com>
+ <86f5b340-856c-204f-4ba7-dd51f1e92639@oracle.com>
+ <984bcf75-9bea-aceb-3d3a-62e3c65709c7@gmail.com>
+ <398d53c9-9c47-d86a-89bd-b9941e638434@oracle.com>
+ <20180606220521.GA7054@downor-Z87X-UD5H>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <87d02b3a-3dd0-d3c5-3b2b-29fa1a27ba75@gmail.com>
+Date: Thu, 7 Jun 2018 10:33:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "Zygo Blaxell" <ce3g8jdj@umail.furryterror.org>,
-        "David Sterba" <dsterba@suse.com>,
-        "Lu Fengqi" <lufq.fnst@cn.fujitsu.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.571859639@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 190/410] btrfs: remove spurious WARN_ON(ref->count <
- 0) in find_parent_nodes
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <20180606220521.GA7054@downor-Z87X-UD5H>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
-
-commit c8195a7b1ad5648857ce20ba24f384faed8512bc upstream.
-
-Until v4.14, this warning was very infrequent:
-
-	WARNING: CPU: 3 PID: 18172 at fs/btrfs/backref.c:1391 find_parent_nodes+0xc41/0x14e0
-	Modules linked in: [...]
-	CPU: 3 PID: 18172 Comm: bees Tainted: G      D W    L  4.11.9-zb64+ #1
-	Hardware name: System manufacturer System Product Name/M5A78L-M/USB3, BIOS 2101    12/02/2014
-	Call Trace:
-	 dump_stack+0x85/0xc2
-	 __warn+0xd1/0xf0
-	 warn_slowpath_null+0x1d/0x20
-	 find_parent_nodes+0xc41/0x14e0
-	 __btrfs_find_all_roots+0xad/0x120
-	 ? extent_same_check_offsets+0x70/0x70
-	 iterate_extent_inodes+0x168/0x300
-	 iterate_inodes_from_logical+0x87/0xb0
-	 ? iterate_inodes_from_logical+0x87/0xb0
-	 ? extent_same_check_offsets+0x70/0x70
-	 btrfs_ioctl+0x8ac/0x2820
-	 ? lock_acquire+0xc2/0x200
-	 do_vfs_ioctl+0x91/0x700
-	 ? __fget+0x112/0x200
-	 SyS_ioctl+0x79/0x90
-	 entry_SYSCALL_64_fastpath+0x23/0xc6
-	 ? trace_hardirqs_off_caller+0x1f/0x140
-
-Starting with v4.14 (specifically 86d5f9944252 ("btrfs: convert prelimary
-reference tracking to use rbtrees")) the WARN_ON occurs three orders of
-magnitude more frequently--almost once per second while running workloads
-like bees.
-
-Replace the WARN_ON() with a comment rationale for its removal.
-The rationale is paraphrased from an explanation by Edmund Nadolski
-<enadolski@suse.de> on the linux-btrfs mailing list.
-
-Fixes: 8da6d5815c59 ("Btrfs: added btrfs_find_all_roots()")
-Signed-off-by: Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
-Reviewed-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/btrfs/backref.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
---- a/fs/btrfs/backref.c
-+++ b/fs/btrfs/backref.c
-@@ -979,7 +979,16 @@ again:
- 
- 	while (!list_empty(&prefs)) {
- 		ref = list_first_entry(&prefs, struct __prelim_ref, list);
--		WARN_ON(ref->count < 0);
-+		/*
-+		 * ref->count < 0 can happen here if there are delayed
-+		 * refs with a node->action of BTRFS_DROP_DELAYED_REF.
-+		 * prelim_ref_insert() relies on this when merging
-+		 * identical refs to keep the overall count correct.
-+		 * prelim_ref_insert() will merge only those refs
-+		 * which compare identically.  Any refs having
-+		 * e.g. different offsets would not be merged,
-+		 * and would retain their original ref->count < 0.
-+		 */
- 		if (roots && ref->count && ref->root_id && ref->parent == 0) {
- 			/* no parent == root of tree */
- 			ret = ulist_add(roots, ref->root_id, 0, GFP_NOFS);
+On 06/07/2018 01:05 AM, Dongwon Kim wrote:
+> On Wed, Jun 06, 2018 at 05:51:38PM -0400, Boris Ostrovsky wrote:
+>> On 06/06/2018 08:46 AM, Oleksandr Andrushchenko wrote:
+>>> On 06/05/2018 01:36 AM, Boris Ostrovsky wrote:
+>>>> On 06/01/2018 07:41 AM, Oleksandr Andrushchenko wrote:
+>>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>>>
+>>>>> Allow creating grant device context for use by kernel modules which
+>>>>> require functionality, provided by gntdev. Export symbols for dma-buf
+>>>>> API provided by the module.
+>>>> Can you give an example of who'd be using these interfaces?
+>>> There is no use-case at the moment I can think of, but hyper dma-buf
+>>> [1], [2]
+>>> I let Intel folks (CCed) to defend this patch as it was done primarily
+>>> for them
+>>> and I don't use it in any of my use-cases. So, from this POV it can be
+>>> dropped,
+>>> at least from this series.
+>>
+>> Yes, let's drop this until someone actually needs it.
+>>
+>> -boris
+> I agree. We are working on re-architecturing hyper_dmabuf. We would use zcopy
+> apis however, not sure if we are going to do it from kernel or from userspace.
+> So please do not expose those for now.
+Ok, as we are all on the same page for that then I'll drop this patch 
+for now
+>>
+>>>> -boris
+>>>>
+>>> [1] https://patchwork.freedesktop.org/series/38207/
+>>> [2] https://patchwork.freedesktop.org/patch/204447/
+>>>
+>>> _______________________________________________
+>>> Xen-devel mailing list
+>>> Xen-devel@lists.xenproject.org
+>>> https://lists.xenproject.org/mailman/listinfo/xen-devel
