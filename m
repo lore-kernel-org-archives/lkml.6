@@ -1,113 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id N2MxLPI7GluNKwAAmS7hNA
-	; Fri, 08 Jun 2018 08:19:09 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id PqOzGaRwGVvcaAAAmS7hNA
+	; Thu, 07 Jun 2018 17:51:32 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8CF87608BA; Fri,  8 Jun 2018 08:19:09 +0000 (UTC)
+	id 5A0396074D; Thu,  7 Jun 2018 17:51:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BA00A60590;
-	Fri,  8 Jun 2018 08:19:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA00A60590
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 913E0601C3;
+	Thu,  7 Jun 2018 17:51:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 913E0601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeFHITF (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 04:19:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42678 "EHLO mx2.suse.de"
+        id S935036AbeFGRv3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 13:51:29 -0400
+Received: from namei.org ([65.99.196.166]:58478 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751224AbeFHIS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 04:18:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DFCD8AED1;
-        Fri,  8 Jun 2018 08:18:56 +0000 (UTC)
-Date: Fri, 8 Jun 2018 10:18:55 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: possible deadlock in console_unlock
-Message-ID: <20180608081855.ctqakvwmg27aydby@pathway.suse.cz>
-References: <00000000000087008b056df8fbb3@google.com>
- <20180607051019.GA10406@jagdpanzerIV>
- <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
- <20180607140100.GA398@tigerII.localdomain>
+        id S933071AbeFGRv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 13:51:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w57HpQhU031388;
+        Thu, 7 Jun 2018 17:51:26 GMT
+Date: Fri, 8 Jun 2018 03:51:26 +1000 (AEST)
+From: James Morris <jmorris@namei.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Security subsystem: TPM updates for v4.18
+Message-ID: <alpine.LRH.2.21.1806080346090.27121@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180607140100.GA398@tigerII.localdomain>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-06-07 23:01:00, Sergey Senozhatsky wrote:
-> On (06/07/18 13:00), Petr Mladek wrote:
-> > > Another way could be - switch to printk_safe mode around that
-> > > kmalloc():
-> > > 
-> > > 	__printk_safe_enter();
-> > > 	kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
-> > > 	__printk_safe_exit();
-> > > 
-> > > Or, may be, we even can switch to printk_safe mode every time we grab
-> > > tty_port lock.
-> >  
-> > > Perhaps something like this should be done for uart_port->lock
-> > > as well. Because, technically, we can have the following
-> > 
-> > Yeah, we would need this basically around any lock that can be taken
-> > from console write() callbacks. Well, this would be needed even
-> > around locks that might be in a chain with a lock used in these
-> > callbacks (as shown by this report).
-> 
-> Yep. So the plan for now is to wrap the tty_port->lock. Pretty much
-> an automatic conversion.
-> 
-> Then to convert [may be some for now on] uart_port->lock. Once again,
-> pretty much can be done a script.
-> 
-> Afterwards just sit down and be humbl^W^W wait for new reports. Then
-> move those newly discovered unsafe locks under printk_safe context.
-> 
-> Basically, the same macros as we use for logbuf lock in printk.c
-> 
-> A bit of a lazy approach. Can't think of anything better.
+Please pull these updates for the TPM subsystem.
 
-Same here.
+>From Jarkko: "this purely a bug fix release. The only major change is to 
+move the event log code to its own subdirectory because there starts to be 
+so much of it."
 
-> I think it's finally the time to start dealing with these
-> "external" locks, it's been a while.
-> 
-> > BTW: printk_safe context might be too strict. In fact,
-> > printk_deferred() would be enough. We might think about
-> > introducing also printk_deferred context.
-> 
-> Could be.
-> The good thing about printk_safe is that printk_safe sections can nest.
-> I suspect there might be locks/printk_safe sections nesting at some
-> point. In any case, switching to a new flavor of printk_safe will be
-> pretty easy - just replace printk_safe_enter() with printk_foo_enter()
-> and the same for printk_save_exit().
+---
 
-We could allow nesting. It is just a matter of how many bits we
-reserve for it in printk_context variable.
+The following changes since commit 890e2abe1028c39e5399101a2c277219cd637aaa:
 
-In each case, I would like to keep the printk_safe context usage
-at minimum. It has its own problems caused by limited per-cpu buffers
-and the need to flush them. It is basically needed only to prevent
-deadlocks related to logbuf_lock.
+  dh key: get rid of stack allocated array for zeroes (2018-05-11 13:07:49 -0700)
 
-Best Regards,
-Petr
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+
+for you to fetch changes up to 2d06236ab3276000665ef55eccc111c3bbf90589:
+
+  Merge tag 'tpmdd-next-20180602' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm (2018-06-04 09:08:21 -0700)
+
+----------------------------------------------------------------
+Colin Ian King (2):
+      tpm: st33zp24: remove redundant null check on chip
+      tpm/st33zp24: Fix spelling mistake in macro ST33ZP24_TISREGISTER_UKNOWN
+
+James Morris (2):
+      Merge tag 'tpmdd-next-20180518' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm
+      Merge tag 'tpmdd-next-20180602' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm
+
+Jerry Snitselaar (1):
+      tpm_tis: verify locality released before returning from release_locality
+
+Ji-Hun Kim (2):
+      tpm: replace kmalloc() + memcpy() with kmemdup()
+      tpm: replace kmalloc() + memcpy() with kmemdup()
+
+Nayna Jain (3):
+      tpm: move the delay_msec increment after sleep in tpm_transmit()
+      tpm: reduce poll sleep time in tpm_transmit()
+      tpm: reduce polling time to usecs for even finer granularity
+
+Tadeusz Struk (2):
+      tpm: fix use after free in tpm2_load_context()
+      tpm: fix race condition in tpm_common_write()
+
+Thiebaud Weksteen (4):
+      tpm: Add explicit endianness cast
+      tpm: Move eventlog files to a subdirectory
+      tpm: Move shared eventlog functions to common.c
+      tpm: Move eventlog declarations to its own header
+
+Winkler, Tomas (1):
+      tpm: tpm_crb: relinquish locality on error path.
+
+ drivers/char/tpm/Makefile                          |  10 +-
+ .../tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c}   |   3 +-
+ drivers/char/tpm/eventlog/common.c                 | 195 ++++++++++++++++++++
+ drivers/char/tpm/eventlog/common.h                 |  35 ++++
+ .../tpm/{tpm_eventlog_efi.c => eventlog/efi.c}     |   6 +-
+ .../char/tpm/{tpm_eventlog_of.c => eventlog/of.c}  |  11 +-
+ .../char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c}  | 200 ++-------------------
+ .../char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c}  |   3 +-
+ drivers/char/tpm/st33zp24/spi.c                    |   4 +-
+ drivers/char/tpm/st33zp24/st33zp24.c               |   2 -
+ drivers/char/tpm/tpm-dev-common.c                  |  40 ++---
+ drivers/char/tpm/tpm-dev.h                         |   2 +-
+ drivers/char/tpm/tpm-interface.c                   |   5 +-
+ drivers/char/tpm/tpm.h                             |  32 +---
+ drivers/char/tpm/tpm2-space.c                      |   3 +-
+ drivers/char/tpm/tpm_crb.c                         |  10 +-
+ drivers/char/tpm/tpm_tis_core.c                    |  58 +++++-
+ 17 files changed, 350 insertions(+), 269 deletions(-)
+ rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (98%)
+ create mode 100644 drivers/char/tpm/eventlog/common.c
+ create mode 100644 drivers/char/tpm/eventlog/common.h
+ rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (91%)
+ rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (91%)
+ rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (58%)
+ rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
