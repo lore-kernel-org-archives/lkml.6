@@ -1,101 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id OPo1AJM2HlvXIAAAmS7hNA
-	; Mon, 11 Jun 2018 08:47:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id dc2qESdRGVujDQAAmS7hNA
+	; Thu, 07 Jun 2018 15:37:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C4ADC60792; Mon, 11 Jun 2018 08:47:05 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMmVXlds"
+	id 8C5966074D; Thu,  7 Jun 2018 15:37:23 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 48FA4602FC;
-	Mon, 11 Jun 2018 08:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48FA4602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 64EA460590;
+	Thu,  7 Jun 2018 15:37:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 64EA460590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932576AbeFKIrD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 04:47:03 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39077 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932277AbeFKIrB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 04:47:01 -0400
-Received: by mail-it0-f65.google.com with SMTP id p185-v6so9942134itp.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 01:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AkI2wunLcbdl4vTNmZxdLodmrkYxkoL1UrCHhq3SLAU=;
-        b=YMmVXldstAfC7pSqAz2P3/3Fg7HGTDOnvZN39ZiAYmR6QlWmQKuxYqFnbOZlE9eBAe
-         V/FsTlbKf+ogha1MNMN85OrEqgSM3F55vVCizwmEM/Qa4TvwBSQRmV8kVwkuwK7wuvMq
-         Prtf6tXvo3Cv1u3EzDNNO43gBPRD83ggAK8fI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AkI2wunLcbdl4vTNmZxdLodmrkYxkoL1UrCHhq3SLAU=;
-        b=hoYxde3LsXV2ANFBlL/3yx4BewRJX+KTFDolZ4fnsK2RmjcOLrhs8dpG7PukC5d1fA
-         zwbF1+DBI7CI2uja9G4MPMwoYeFJTaks1ArWyYzWncfKtYwcslsMIGFUkKvibjprr76F
-         AYpFxa0IsTX//2FOGlhtyJE6Ou0g4AE2O9VKpaRQgQ3x3HFnV5OvRFFa2v16bW+ebhTk
-         1xJArgeInPBvz9H1J0Ku2n9YwTtL887BGIt6zax28zUb2EWc5JOesGh3FpfQjaPSs+Kj
-         KgibOGibFRC+p+In6HzHIX0uqQuMB435x2fJ+hy5GHOfv4w6d5nMzkpxCWPPXa5C0MH3
-         lJjg==
-X-Gm-Message-State: APt69E2hhQ1NMXOjDU5s6S6cOsb8fVDkMoWsg8iul3optk8dAQOyVAsa
-        NnYgOfWZDy8qw/Lq9BL/yUq4Y11a/M7UJhfDuRg9Wg==
-X-Google-Smtp-Source: ADUXVKJw0sFTVB8Xv1oySSnJ3wIFK5dKx1sbQjPW/gYC0187Tuhvscoy+Eep6lwqlUtaaY4D8zn/EgedlOAgHW0OfLs=
-X-Received: by 2002:a24:f444:: with SMTP id u4-v6mr9980301iti.132.1528706821127;
- Mon, 11 Jun 2018 01:47:01 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Mon, 11 Jun 2018 01:46:59
- -0700 (PDT)
-In-Reply-To: <84075652e978661247d71f84de46efd827869948.1528697370.git.michal.simek@xilinx.com>
-References: <84075652e978661247d71f84de46efd827869948.1528697370.git.michal.simek@xilinx.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 11 Jun 2018 10:46:59 +0200
-Message-ID: <CACRpkdb=Vfs6R+576+Wjh1cOh8ti-8jkGhj7Pw8zXdOxvHKOCg@mail.gmail.com>
-Subject: Re: [PATCH] microblaze: Remove architecture heart beat code
-To: Michal Simek <michal.simek@xilinx.com>, linux-m68k@vger.kernel.org
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>, Rob Herring <robh@kernel.org>,
+        id S935284AbeFGPhT (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:37:19 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61234 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933818AbeFGOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:42:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:42:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="235505951"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Jun 2018 07:42:30 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        U-Boot Mailing List <u-boot@lists.denx.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH 5/7] x86: Insert endbr32/endbr64 to vDSO
+Date: Thu,  7 Jun 2018 07:38:53 -0700
+Message-Id: <20180607143855.3681-6-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143855.3681-1-yu-cheng.yu@intel.com>
+References: <20180607143855.3681-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 8:09 AM, Michal Simek <michal.simek@xilinx.com> wrote:
+From: "H.J. Lu" <hjl.tools@gmail.com>
 
-> There is no reason to keep this gpio based code in architecture. Use
-> ledtrig-heartbeat.c instead which is much more flexible then this
-> ancient code.
->
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+When Intel indirect branch tracking is enabled, functions in vDSO which
+may be called indirectly should have endbr32 or endbr64 as the first
+instruction.  We try to compile vDSO with -fcf-protection=branch -mibt
+if possible.  Otherwise, we insert endbr32 or endbr64 by hand to assembly
+codes generated by the compiler.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+---
+ arch/x86/entry/vdso/.gitignore |  4 ++++
+ arch/x86/entry/vdso/Makefile   | 34 ++++++++++++++++++++++++++++++++++
+ arch/x86/entry/vdso/endbr.sh   | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 70 insertions(+)
+ create mode 100644 arch/x86/entry/vdso/endbr.sh
 
-Maybe the arch maintainers will complain that the corresponding
-new heartbeat code is not put in place in the same patch, but I
-think the change is so much overdue that I don't see why they
-can't do that themselves if they have interest in it.
-
-BTW: m68k has the same kind of luggage, in the middle of it
-timekeeping code:
-arch/m68k/kernel/time.c
-
-Yours,
-Linus Walleij
+diff --git a/arch/x86/entry/vdso/.gitignore b/arch/x86/entry/vdso/.gitignore
+index aae8ffdd5880..552941fdfae0 100644
+--- a/arch/x86/entry/vdso/.gitignore
++++ b/arch/x86/entry/vdso/.gitignore
+@@ -5,3 +5,7 @@ vdso32-sysenter-syms.lds
+ vdso32-int80-syms.lds
+ vdso-image-*.c
+ vdso2c
++vclock_gettime.S
++vgetcpu.S
++vclock_gettime.asm
++vgetcpu.asm
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index d998a487c9b1..cccafc36a831 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -118,6 +118,40 @@ $(obj)/%-x32.o: $(obj)/%.o FORCE
+ 
+ targets += vdsox32.lds $(vobjx32s-y)
+ 
++ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++  ifeq ($(call cc-option-yn, -fcf-protection=branch -mibt), y)
++    $(obj)/vclock_gettime.o $(obj)/vgetcpu.o $(obj)/vdso32/vclock_gettime.o: KBUILD_CFLAGS += -fcf-protection=branch -mibt
++  else
++    endbr := $(srctree)/$(src)/endbr.sh
++    quiet_cmd_endbr = ENDBR $@
++	  cmd_endbr = $(CONFIG_SHELL) '$(endbr)' $< $@
++
++    quiet_cmd_cc_asm_c = CC $(quiet_modtag) $@
++	  cmd_cc_asm_c = $(CC) $(c_flags) $(DISABLE_LTO) -S -o $@ $<
++
++$(obj)/%.asm: $(src)/%.c
++	$(call if_changed_dep,cc_asm_c)
++
++$(obj)/vclock_gettime.S: $(obj)/vclock_gettime.asm
++	$(call if_changed,endbr)
++
++$(obj)/vgetcpu.S: $(obj)/vgetcpu.asm
++	$(call if_changed,endbr)
++
++$(obj)/vclock_gettime.o: $(obj)/vclock_gettime.S
++	 $(call if_changed_rule,as_o_S)
++
++$(obj)/vgetcpu.o: $(obj)/vgetcpu.S
++	 $(call if_changed_rule,as_o_S)
++
++$(obj)/vdso32/vclock_gettime.S: $(obj)/vdso32/vclock_gettime.asm
++	$(call if_changed,endbr)
++
++$(obj)/vdso32/vclock_gettime.o: $(obj)/vdso32/vclock_gettime.S
++	 $(call if_changed_rule,as_o_S)
++  endif
++endif
++
+ $(obj)/%.so: OBJCOPYFLAGS := -S
+ $(obj)/%.so: $(obj)/%.so.dbg
+ 	$(call if_changed,objcopy)
+diff --git a/arch/x86/entry/vdso/endbr.sh b/arch/x86/entry/vdso/endbr.sh
+new file mode 100644
+index 000000000000..983dbec182f2
+--- /dev/null
++++ b/arch/x86/entry/vdso/endbr.sh
+@@ -0,0 +1,32 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++
++in="$1"
++out="$2"
++
++case "$in" in
++*/vdso32/*)
++    endbr=".byte 0xf3,0x0f,0x1e,0xfb"
++    ;;
++*)
++    endbr=".byte 0xf3,0x0f,0x1e,0xfa"
++    ;;
++esac
++
++need_endbr=no
++while IFS= read line ; do
++   case "$line" in
++   __vdso_clock_gettime:|__vdso_getcpu:|__vdso_gettimeofday:|__vdso_time:)
++	need_endbr=yes
++	;;
++   "	."*)
++	;;
++   "	"*)
++	if [ "$need_endbr" = "yes" ]; then
++	    need_endbr=no
++	    echo "	$endbr"
++	fi
++	;;
++   esac
++   echo "$line"
++done < "$in" > "$out"
+-- 
+2.15.1
