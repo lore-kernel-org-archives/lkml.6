@@ -1,81 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vwZlLfEQHluSTAAAmS7hNA
-	; Mon, 11 Jun 2018 06:09:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id db/CATHkGFvQJgAAmS7hNA
+	; Thu, 07 Jun 2018 07:55:01 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8B4C260791; Mon, 11 Jun 2018 06:09:15 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sxI55MDF"
+	id 49F78608BA; Thu,  7 Jun 2018 07:55:01 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 183DB601D2;
-	Mon, 11 Jun 2018 06:09:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 183DB601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id CE61E60452;
+	Thu,  7 Jun 2018 07:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CE61E60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754040AbeFKGJM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 02:09:12 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:33019 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753899AbeFKGJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 02:09:10 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5B6999O023880;
-        Mon, 11 Jun 2018 01:09:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1528697349;
-        bh=VWHxY67Q+yAq9WKiSQzYxFqvxr1PSh+Xx4Ur6nd2rh0=;
-        h=From:To:CC:Subject:Date;
-        b=sxI55MDFy+bUPcwBCsCgSGs7qgZp9aqelhHGuAmjsQxNW7askepMRz8WzgF7sBwH0
-         CGu+HB8onvIHxn79Aj91R4N6r/Oj7ntTPIyZck5QBwAdgi0B7gyV1gbn1RuhWwaTTW
-         pcbbPuB2OFIKloy3QSHMGbbonqtjcjlV+CQTO7Qk=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B699eA028738;
-        Mon, 11 Jun 2018 01:09:09 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 11
- Jun 2018 01:09:09 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 11 Jun 2018 01:09:09 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5B697IF016033;
-        Mon, 11 Jun 2018 01:09:08 -0500
-From: Vignesh R <vigneshr@ti.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: <linux-pwm@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
-Subject: [PATCH 0/2] pwm-tiehrpwm: fixes for disabling PWMs
-Date: Mon, 11 Jun 2018 11:39:54 +0530
-Message-ID: <20180611060956.27999-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1753432AbeFGHy6 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:54:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753273AbeFGHyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 03:54:55 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B24A401EF23;
+        Thu,  7 Jun 2018 07:54:54 +0000 (UTC)
+Received: from plouf.banquise.eu.com (ovpn-116-40.ams2.redhat.com [10.36.116.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C7392026DEF;
+        Thu,  7 Jun 2018 07:54:53 +0000 (UTC)
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mario.Limonciello@dell.com,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 01/13] input: move MT_TOOL_* to input-event-codes.h
+Date: Thu,  7 Jun 2018 09:54:36 +0200
+Message-Id: <20180607075448.5706-2-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+References: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 07:54:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 07:54:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EHRPWM has two PWM outputs. Currently with pwm-tiehrpwm driver, if PWMA
-is enabled and then disabled, and then PWMB is enabled, it is seen that
-PWMA turns on automatically. This series fixes the bug.
+This is evdev API and should be in this file.
 
-Vignesh R (2):
-  pwm: pwm-tiehrpwm: Don't use emulation mode bits to control PWM output
-  pwm: pwm-tiehrpwm: Fix disabling of output of PWMs
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
- drivers/pwm/pwm-tiehrpwm.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+---
 
+new in v2
+---
+ include/uapi/linux/input-event-codes.h | 8 ++++++++
+ include/uapi/linux/input.h             | 8 --------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+index 6cba8a21ea19..e8841cdb1ebd 100644
+--- a/include/uapi/linux/input-event-codes.h
++++ b/include/uapi/linux/input-event-codes.h
+@@ -848,4 +848,12 @@
+ #define SND_MAX			0x07
+ #define SND_CNT			(SND_MAX+1)
+ 
++/*
++ * MT_TOOL types
++ */
++#define MT_TOOL_FINGER		0
++#define MT_TOOL_PEN		1
++#define MT_TOOL_PALM		2
++#define MT_TOOL_MAX		2
++
+ #endif
+diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+index 7288a7c573cc..cc55c140dfef 100644
+--- a/include/uapi/linux/input.h
++++ b/include/uapi/linux/input.h
+@@ -267,14 +267,6 @@ struct input_mask {
+ #define BUS_CEC			0x1E
+ #define BUS_INTEL_ISHTP		0x1F
+ 
+-/*
+- * MT_TOOL types
+- */
+-#define MT_TOOL_FINGER		0
+-#define MT_TOOL_PEN		1
+-#define MT_TOOL_PALM		2
+-#define MT_TOOL_MAX		2
+-
+ /*
+  * Values describing the status of a force-feedback effect
+  */
 -- 
-2.17.1
+2.14.3
