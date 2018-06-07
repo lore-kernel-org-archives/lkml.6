@@ -1,49 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m5CEJKlYGVsgAwAAmS7hNA
-	; Thu, 07 Jun 2018 16:09:16 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id xLp0NJxTGVszHwAAmS7hNA
+	; Thu, 07 Jun 2018 15:48:29 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id AECB16074D; Thu,  7 Jun 2018 16:09:16 +0000 (UTC)
+	id 0FE946089E; Thu,  7 Jun 2018 15:48:29 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1AE8D605A2;
-	Thu,  7 Jun 2018 16:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1AE8D605A2
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8D14B60590;
+	Thu,  7 Jun 2018 15:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D14B60590
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936008AbeFGQJN (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:09:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39206 "EHLO
+        id S934403AbeFGOkM (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:40:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40534 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932990AbeFGOJC (ORCPT
+        by vger.kernel.org with ESMTP id S934205AbeFGOkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:02 -0400
+        Thu, 7 Jun 2018 10:40:07 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb1-0005Zj-HI; Thu, 07 Jun 2018 15:08:59 +0100
+        id 1fQvbN-0005Zw-22; Thu, 07 Jun 2018 15:09:21 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvax-0002i1-RI; Thu, 07 Jun 2018 15:08:55 +0100
+        id 1fQvbD-0003Gx-Jw; Thu, 07 Jun 2018 15:09:11 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org,
-        "=?UTF-8?Q?=E8=8C=83=E9=BE=99=E9=A3=9E?=" <long7573@126.com>,
-        "Takashi Iwai" <tiwai@suse.de>, "Nicolai Stange" <nstange@suse.de>
+CC: akpm@linux-foundation.org, "Sabrina Dubroca" <sd@queasysnail.net>,
+        "Steffen Klassert" <steffen.klassert@secunet.com>,
+        "Stefano Brivio" <sbrivio@redhat.com>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.842960641@decadent.org.uk>
+Message-ID: <lsq.1528380321.517083217@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 025/410] ALSA: seq: Don't allow resizing pool in use
+Subject: [PATCH 3.16 375/410] ip_tunnel: Clamp MTU to bounds on new link
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,38 +57,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-commit d85739367c6d56e475c281945c68fdb05ca74b4c upstream.
+commit 24fc79798b8ddfd46f2dd363a8d29072c083b977 upstream.
 
-This is a fix for a (sort of) fallout in the recent commit
-d15d662e89fc ("ALSA: seq: Fix racy pool initializations") for
-CVE-2018-1000004.
-As the pool resize deletes the existing cells, it may lead to a race
-when another thread is writing concurrently, eventually resulting a
-UAF.
+Otherwise, it's possible to specify invalid MTU values directly
+on creation of a link (via 'ip link add'). This is already
+prevented on subsequent MTU changes by commit b96f9afee4eb
+("ipv4/6: use core net MTU range checking").
 
-A simple workaround is not to allow the pool resizing when the pool is
-in use.  It's an invalid behavior in anyway.
-
-Fixes: d15d662e89fc ("ALSA: seq: Fix racy pool initializations")
-Reported-by: 范龙飞 <long7573@126.com>
-Reported-by: Nicolai Stange <nstange@suse.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Acked-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+[bwh: Backported to 3.16: Add definition of ETH_MIN_MTU]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/seq/seq_clientmgr.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/ip_tunnel.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/sound/core/seq/seq_clientmgr.c
-+++ b/sound/core/seq/seq_clientmgr.c
-@@ -1929,6 +1929,9 @@ static int snd_seq_ioctl_set_client_pool
- 	    (! snd_seq_write_pool_allocated(client) ||
- 	     info.output_pool != client->pool->size)) {
- 		if (snd_seq_write_pool_allocated(client)) {
-+			/* is the pool in use? */
-+			if (atomic_read(&client->pool->counter))
-+				return -EBUSY;
- 			/* remove all existing cells */
- 			snd_seq_pool_mark_closing(client->pool);
- 			snd_seq_queue_client_leave_cells(client->number);
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -968,8 +968,14 @@ int ip_tunnel_newlink(struct net_device
+ 		eth_hw_addr_random(dev);
+ 
+ 	mtu = ip_tunnel_bind_dev(dev);
+-	if (!tb[IFLA_MTU])
++	if (tb[IFLA_MTU]) {
++		unsigned int max = 0xfff8 - dev->hard_header_len - nt->hlen;
++
++		dev->mtu = clamp(dev->mtu, (unsigned int)ETH_MIN_MTU,
++				 (unsigned int)(max - sizeof(struct iphdr)));
++	} else {
+ 		dev->mtu = mtu;
++	}
+ 
+ 	ip_tunnel_add(itn, nt);
+ 
+--- a/include/uapi/linux/if_ether.h
++++ b/include/uapi/linux/if_ether.h
+@@ -36,6 +36,8 @@
+ #define ETH_FRAME_LEN	1514		/* Max. octets in frame sans FCS */
+ #define ETH_FCS_LEN	4		/* Octets in the FCS		 */
+ 
++#define ETH_MIN_MTU	68		/* Min IPv4 MTU per RFC791	*/
++
+ /*
+  *	These are the defined Ethernet Protocol ID's.
+  */
