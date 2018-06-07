@@ -1,161 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vGVfO5aSGFtVKAAAmS7hNA
-	; Thu, 07 Jun 2018 02:04:07 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YjZWCpMOGVuCCgAAmS7hNA
+	; Thu, 07 Jun 2018 10:53:23 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CBC036089E; Thu,  7 Jun 2018 02:04:06 +0000 (UTC)
+	id 9BD87608BA; Thu,  7 Jun 2018 10:53:23 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="pDVSTU6g"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iEINi2zQ"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BB197601C3;
-	Thu,  7 Jun 2018 02:04:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB197601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id EA3AE60115;
+	Thu,  7 Jun 2018 10:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA3AE60115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932886AbeFGCDb (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 22:03:31 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:17111 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933567AbeFGCDY (ORCPT
+        id S932338AbeFGKxV (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 06:53:21 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46832 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753100AbeFGKwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 22:03:24 -0400
-Received: from mail-ua0-f173.google.com (mail-ua0-f173.google.com [209.85.217.173]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w5723IjN019354;
-        Thu, 7 Jun 2018 11:03:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w5723IjN019354
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528336999;
-        bh=pHaLTQcxRXY6lY44zxRe9h1HGHhdA6InhKaCw8a2dpQ=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=pDVSTU6gdVdp+SVMpXMdcLQgvuqyzU8FCYSNjkGSUUphUA95CfR1770rDvIPryVWU
-         gJyy9U2YZ1CYmj7XXgX96petEYa1Qk6gDQkbN03Rvy+EDuFeuK3aMcr4odXPf36HcZ
-         /WKbXkl/cMJRKStcXl/kVp0Ij73/M6mPu0tGCXDPL2OoQZ1hSVKct1Zs4uGWwdN+8+
-         JTxZxz/dm1WQqPlUL9MzPJdiZUdOBTU4TYHUedEVR9uhs+si+7EKvAzQceK4pmcSgy
-         U9Ta4jr4jxQbnMVZuCt9H/CJppVimjVCYrWiC2uP3m/DXm9B3YyUE5KbmdrKilqjNR
-         F0ZFX4drXqnuw==
-X-Nifty-SrcIP: [209.85.217.173]
-Received: by mail-ua0-f173.google.com with SMTP id c23-v6so5419714uan.3;
-        Wed, 06 Jun 2018 19:03:18 -0700 (PDT)
-X-Gm-Message-State: APt69E2xMW5KqUpajrT6/YB1GKincwRQhcdFAPLOliL+P0y/P0yAkfyp
-        bpFHWDaH9kJ+ktoYWkI1Aom/E3Cc096dzj8w7cE=
-X-Google-Smtp-Source: ADUXVKJwLQUkAeLI5Zj+Dioj+AAlYZE4fjOuaUW9l1gGX3o9v+n1t+rkNKN+67NuWhGzfFY5IZquvPZ08iZzn+D8S/Y=
-X-Received: by 2002:a9f:3d6b:: with SMTP id m43-v6mr3761528uai.17.1528336997765;
- Wed, 06 Jun 2018 19:03:17 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Wed, 6 Jun 2018 19:02:37 -0700 (PDT)
-In-Reply-To: <ghr2ljv5c9.fsf@lena.gouders.net>
-References: <20180606215616.12817-1-dirk@gouders.net> <a594b5a7-d5c8-e938-df4e-dbba93ff3837@infradead.org>
- <ghzi07v944.fsf@lena.gouders.net> <f833ff8b-75ed-3ca4-ec24-a129a05902d1@infradead.org>
- <ghr2ljv5c9.fsf@lena.gouders.net>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 7 Jun 2018 11:02:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARWC3J4V=Nx9rypwaWK8Lsv9A6J3LDW7s6E1xjc0JDE4A@mail.gmail.com>
-Message-ID: <CAK7LNARWC3J4V=Nx9rypwaWK8Lsv9A6J3LDW7s6E1xjc0JDE4A@mail.gmail.com>
-Subject: Re: [RFC 0/1] mconf: Emacs-like isearch
-To: Dirk Gouders <dirk@gouders.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 7 Jun 2018 06:52:51 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w57AokIc025601;
+        Thu, 7 Jun 2018 10:52:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=Npb16z/ZFW/XbyVTjJ0mw2WfoNm3IBf3ZGOh0+43Bd0=;
+ b=iEINi2zQRkwiQrMxL15DEsgD1wo2yA3P2LEDa+bvfgXb+uL+77ZZbJ0yHLbmZIcEi6g8
+ rfHOVsPCv3AYkdP8FAZxcvKRv0IBAsjFOoNZxYQSBDN6bCIC+8q1P9asLjiP7ZXyC5jb
+ 8XucSEoaHa3U2vEd+1BFqv4ioB6pATj0cNpDCJPECAmwO5q65maPLN8CH5BXjwX8M7w1
+ S7+hzayObvKB43Uz82LvjcvoyocPPKh074Vh+DKbMv2ecq5eERPYKLmWNi1m3i+/wkUP
+ sE05UEph5Rt2b6UXB103G+I7JUEGeJyV2y6zV+xn9d723QFfLlZGmfoslDa5lqRnwSTM sQ==
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jbvyprdpr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 07 Jun 2018 10:52:27 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w57AqR6w012399
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Jun 2018 10:52:27 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w57AqQlS003853;
+        Thu, 7 Jun 2018 10:52:26 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 07 Jun 2018 03:52:25 -0700
+From: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Hakon Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Chris Mi <chrism@mellanox.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] IB/mad: Use ID allocator routines to allocate agent number
+Date: Thu,  7 Jun 2018 12:52:08 +0200
+Message-Id: <20180607105208.16332-3-hans.westgaard.ry@oracle.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180607105208.16332-1-hans.westgaard.ry@oracle.com>
+References: <20180529073808.27735-1-hans.westgaard.ry@oracle.com>
+ <20180607105208.16332-1-hans.westgaard.ry@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8916 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806070128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-07 8:54 GMT+09:00 Dirk Gouders <dirk@gouders.net>:
-> Randy Dunlap <rdunlap@infradead.org> writes:
->
->> On 06/06/2018 03:32 PM, Dirk Gouders wrote:
->>> Randy Dunlap <rdunlap@infradead.org> writes:
->>>
->>>> On 06/06/2018 02:56 PM, Dirk Gouders wrote:
->>>>> Hello,
->>>>>
->>>>> being an Emacs user, I frequently find myself pressing CTRL-s in mconf
->>>>> to search for some menu entry, especially in large menus.
+The agent TID is a 64 bit value split in two dwords.  The least
+significant dword is the TID running counter. The most significant
+dword is the agent number. In the CX-3 shared port model, the mlx4
+driver uses the most significant byte of the agent number to store the
+slave number, making agent numbers greater and equal to 2^24 (3 bytes)
+unusable.  The current codebase uses a variable which is incremented
+atomically for each new agent number giving too large agent numbers
+over time.  The IDA set of functions are used instead of the simple
+counter approach. This allows re-use of agent numbers.
 
+The signature of the bug is a MAD layer that stops working and the
+console is flooded with messages like:
+ mlx4_ib: egress mad has non-null tid msb:1 class:4 slave:0
 
-I use Emacs, but I have never typed Ctrl-s in menuconfig.
+Orabug: 25571450
 
-Is it important to use the same key pattern as in Emacs?
+Signed-off-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+---
+ drivers/infiniband/core/mad.c | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
-You intercepted Ctrl-*
-
-Currently, Ctrl-C terminates the program,
-but this patch makes it no-op.
-
-
-
->>>>> I decided to implement a basic isearch in mconf and would like to hear
->>>>> if others find this functionality useful, as well.
->>>>>
->>>>> The new functionality is started with pressing CTRL-s followed by
->>>>> characters that form the search string.  To search for further
->>>>> occurences of an entered string, press CTRL-s instead of further
->>>>> characters.
->>>>>
->>>>> For example: to navigate to the USB device drivers, press CTRL-s de ENTER ENTER usb ENTER ENTER
->>>>
->>>> Not being an emacs user, what is the "de" for above?
->>>
->>> "de" (with my .config) causes a match for "Device Drivers" --
->>> no other menu entry matching the string "de" is befor that entry.
->>>
->>
->> Device Drivers is the first match for me also.
->>
->> To get to the USB drivers, I have to enter:
->>       CTRL-s de ENTER ENTER CTRL-s usb ENTER ENTER
->
-> Yes, I left out the second CTRL-s, thank you!
->
-> Oh well, I shouldn't have sent this late at night, then I would probably
-> have explained the needed input as:
->
->      1) CTRL-s  // start isearch
->      2) de      // substring that matches "Device Drivers"
->      3) ENTER   // quit isearch
->      4) ENTER   // enter Device Drivers menu
->      5) CTRL-s  // start isearch
->      6) usb     // navigate to USB support
->      7) ENTER   // quit isearch
->      8) ENTER   // enter USB support menu
-
-
-Hmm.
-
-I tried this, but I was a bit annoyed.
-
-
-I wonder if this could be more user-friendly.
-
-For example, I want KEY_UP/DOWN/LEFT/RIGHT
-to quit the search mode without pressing ENTER.
-
-
-
-
-> Again, I'm really sorry for the confusion.
->
-> Dirk
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
-
-You in
-
-
-
+diff --git a/drivers/infiniband/core/mad.c b/drivers/infiniband/core/mad.c
+index b28452a55a08..c01a2d63ffa2 100644
+--- a/drivers/infiniband/core/mad.c
++++ b/drivers/infiniband/core/mad.c
+@@ -41,6 +41,7 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/security.h>
++#include <linux/idr.h>
+ #include <rdma/ib_cache.h>
+ 
+ #include "mad_priv.h"
+@@ -59,8 +60,7 @@ module_param_named(recv_queue_size, mad_recvq_size, int, 0444);
+ MODULE_PARM_DESC(recv_queue_size, "Size of receive queue in number of work requests");
+ 
+ static struct list_head ib_mad_port_list;
+-static atomic_t ib_mad_client_id = ATOMIC_INIT(0);
+-
++static DEFINE_IDA(ib_mad_client_ids);
+ /* Port list lock */
+ static DEFINE_SPINLOCK(ib_mad_port_list_lock);
+ 
+@@ -212,7 +212,7 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+ 	int ret2, qpn;
+ 	unsigned long flags;
+ 	u8 mgmt_class, vclass;
+-
++	u32 ib_mad_client_id;
+ 	/* Validate parameters */
+ 	qpn = get_spl_qp_index(qp_type);
+ 	if (qpn == -1) {
+@@ -375,9 +375,19 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+ 		ret = ERR_PTR(ret2);
+ 		goto error4;
+ 	}
++	ib_mad_client_id = ida_simple_get_cyclic(&ib_mad_client_ids,
++						1,
++						BIT(24) - 1,
++						GFP_KERNEL);
++	if (ib_mad_client_id < 0) {
++		pr_err("Couldn't allocate agent tid; errcode: %#x\n",
++			ib_mad_client_id);
++		ret = ERR_PTR(ib_mad_client_id);
++		goto error4;
++	}
++	mad_agent_priv->agent.hi_tid = ib_mad_client_id;
+ 
+ 	spin_lock_irqsave(&port_priv->reg_lock, flags);
+-	mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id);
+ 
+ 	/*
+ 	 * Make sure MAD registration (if supplied)
+@@ -428,6 +438,8 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+ error5:
+ 	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
+ 	ib_mad_agent_security_cleanup(&mad_agent_priv->agent);
++	ida_simple_remove(&ib_mad_client_ids, ib_mad_client_id);
++
+ error4:
+ 	kfree(reg_req);
+ error3:
+@@ -576,6 +588,7 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
+ {
+ 	struct ib_mad_port_private *port_priv;
+ 	unsigned long flags;
++	u32 ib_mad_client_id;
+ 
+ 	/* Note that we could still be handling received MADs */
+ 
+@@ -587,6 +600,8 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
+ 	port_priv = mad_agent_priv->qp_info->port_priv;
+ 	cancel_delayed_work(&mad_agent_priv->timed_work);
+ 
++	ib_mad_client_id = mad_agent_priv->agent.hi_tid;
++
+ 	spin_lock_irqsave(&port_priv->reg_lock, flags);
+ 	remove_mad_reg_req(mad_agent_priv);
+ 	list_del(&mad_agent_priv->agent_list);
+@@ -602,6 +617,7 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
+ 
+ 	kfree(mad_agent_priv->reg_req);
+ 	kfree(mad_agent_priv);
++	ida_simple_remove(&ib_mad_client_ids, ib_mad_client_id);
+ }
+ 
+ static void unregister_mad_snoop(struct ib_mad_snoop_private *mad_snoop_priv)
+@@ -3347,4 +3363,5 @@ int ib_mad_init(void)
+ void ib_mad_cleanup(void)
+ {
+ 	ib_unregister_client(&mad_client);
++	ida_destroy(&ib_mad_client_ids);
+ }
 -- 
-Best Regards
-Masahiro Yamada
+2.14.3
