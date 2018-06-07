@@ -1,100 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id G+tpDMx1HlsPGAAAmS7hNA
-	; Mon, 11 Jun 2018 13:14:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MSSIEH5iGVuZXgAAmS7hNA
+	; Thu, 07 Jun 2018 16:51:39 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2096C607BB; Mon, 11 Jun 2018 13:14:52 +0000 (UTC)
+	id B86A8607E7; Thu,  7 Jun 2018 16:51:39 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmbMqGRX"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A6246601C3;
-	Mon, 11 Jun 2018 13:14:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6246601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1BE1A60115;
+	Thu,  7 Jun 2018 16:51:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BE1A60115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933221AbeFKNOu convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 20 others);
-        Mon, 11 Jun 2018 09:14:50 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:40242 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932516AbeFKNOs (ORCPT
+        id S932799AbeFGQvh (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:51:37 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52233 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932400AbeFGQvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 09:14:48 -0400
-Received: from marcel-macpro.fritz.box (p5B3D24B5.dip0.t-ipconnect.de [91.61.36.181])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 6AF05CF185;
-        Mon, 11 Jun 2018 15:21:29 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH v2 14/24] mfd: rave-sp: MODULE_DEVICE_TABLE(serdev)
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180611115240.32606-15-ricardo.ribalda@gmail.com>
-Date: Mon, 11 Jun 2018 15:14:46 +0200
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh@kernel.org>, Johan Hovold <johan@kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <EBCCCD1F-0F23-4599-8A78-32BBF2DAF746@holtmann.org>
-References: <20180611115240.32606-1-ricardo.ribalda@gmail.com>
- <20180611115240.32606-15-ricardo.ribalda@gmail.com>
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Thu, 7 Jun 2018 12:51:35 -0400
+Received: by mail-wm0-f67.google.com with SMTP id p126-v6so19321265wmb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FD97m8AK1AVb5+u+DQXLPQT7pMrOXEAToLOLo79seT4=;
+        b=QmbMqGRXbUxIEx/rTzFG7wbuwGYVZtiWWkHVS0ZMZ7vYTBQ88W2gvPp78pHvdMBxJf
+         3BrAibpjZtdgiv0kFFgEhrnCzxg9+tzVabsRtu4qsCIs333pvPotBmyWMns6i49ZbZBC
+         /yzkRY7/RYgXy7pLhAza3vt8UuK3oC+ZmIGgcg4GYeer9TY6qyJqxWLGMmsOEIJF0n4K
+         Eic3fHnfYlnU93RSzoIvj++fvlBh09+8w4CLUCVybqT3eVUQFr3JWLwqao98ovDZPxw+
+         TjU7V3/PSvdwyCBurvYYHQyTfxjVLPsE4VL0dBit1DqsSLABc3YyZLNBw6bje4qViDci
+         Z7Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FD97m8AK1AVb5+u+DQXLPQT7pMrOXEAToLOLo79seT4=;
+        b=XHvD5KRGfEJTFSO32Y0zvREfCDwdN0GBFjqzhALwSaB6m7eItDXGk/RgLTt50nEPwk
+         LxfFrEmPCSbLxCRC6qqCzHnQHbSnYk87LIp5socErGiVYcFnc3vWesX8QMNr2SLnLDiu
+         bsNP9iwfPlM3pgqKEurFb6S1ZPMr13IfXxTQQ76fplIUJrLBu8C8MX3cxWQdtJtFhk15
+         WGHkVYSVqBkt9ctR+65Hr/VmoVHeLJ5twZUeaOdKlBe46tMdwkq219HLlO5UQuz8B1xl
+         GnH84OICDMmmXVxOluDhtssm8pG6tJwZTPD07/fQHZYimzrVynmK+B3dhxRSXCSRnW+h
+         K2LA==
+X-Gm-Message-State: APt69E2T3twrjTVSRXIdBM3BeyvzigRAbBLqIOHUsPUD/S8pPAPx0voX
+        wTftVk/5AeeOAEiVVNbqs84=
+X-Google-Smtp-Source: ADUXVKJ/52y55qvJEoKG5QwoAJgXyRtFLTTgibtmnMmGXK11plHR2nb+SNCmn17GxYcFXrE+eRf5Ew==
+X-Received: by 2002:a50:d55e:: with SMTP id f30-v6mr3359645edj.73.1528390294583;
+        Thu, 07 Jun 2018 09:51:34 -0700 (PDT)
+Received: from ltop.local ([2a02:a03f:4108:7200:4cda:2d35:e86f:d034])
+        by smtp.gmail.com with ESMTPSA id a4-v6sm14244826eda.52.2018.06.07.09.51.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 Jun 2018 09:51:34 -0700 (PDT)
+Date: Thu, 7 Jun 2018 18:51:33 +0200
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: Palmer Dabbelt <palmer@sifive.com>
+Cc: atish.patra@wdc.com, linux-riscv@lists.infradead.org,
+        albert@sifive.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
+Message-ID: <20180607165131.5qx43o6f2siwyivj@ltop.local>
+References: <6a0ab99d-6e4d-eb80-bc4d-854d154ae827@wdc.com>
+ <mhng-497a442f-c0da-4f88-9b48-827c4f164ed1@palmer-si-x1c4>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mhng-497a442f-c0da-4f88-9b48-827c4f164ed1@palmer-si-x1c4>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
+On Thu, Jun 07, 2018 at 09:30:19AM -0700, Palmer Dabbelt wrote:
+> 
+> I haven't compiled this, but I think it should work.  It's on the
+> fix-sparse branch of kernel.org/palmer/linux.git .
 
-> Export serdev table to the module header, allowing module autoload via
-> udev/modprobe.
+It's essentially what I was thinking but I have some small remarks.
+ 
+> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+> index 14b0b22fb578..0dbbbab05dac 100644
+> --- a/arch/riscv/include/asm/uaccess.h
+> +++ b/arch/riscv/include/asm/uaccess.h
+> @@ -392,19 +392,21 @@ do {								\
+> })
 > 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-> ---
-> drivers/mfd/rave-sp.c | 7 +++++++
-> 1 file changed, 7 insertions(+)
 > 
-> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
-> index 5c858e784a89..c0ecfbc16dca 100644
-> --- a/drivers/mfd/rave-sp.c
-> +++ b/drivers/mfd/rave-sp.c
-> @@ -694,12 +694,19 @@ static int rave_sp_probe(struct serdev_device *serdev)
+> -extern unsigned long __must_check __copy_user(void __user *to,
+> +extern unsigned long __must_check __asm_copy_from_user_user(void *to,
+> 	const void __user *from, unsigned long n);
+> +extern unsigned long __must_check __asm_copy_to_user_user(void __user *to,
+> +	const void *from, unsigned long n);
 > 
-> MODULE_DEVICE_TABLE(of, rave_sp_dt_ids);
+> static inline unsigned long
+> raw_copy_from_user(void *to, const void __user *from, unsigned long n)
+> {
+> -	return __copy_user(to, from, n);
+> +	return __asm_copy_from_user(to, from, n);
+> }
 > 
-> +static struct serdev_device_id rave_sp_serdev_id[] = {
-> +	{ "rave-sp", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(serdev, rave_sp_serdev_id);
+> static inline unsigned long
+> raw_copy_to_user(void __user *to, const void *from, unsigned long n)
+> {
+> -	return __copy_user(to, from, n);
+> +	return __asm_copy_to_user(to, from, n);
+> }
+
+The asm function could have directly be named raw_copy_{to,from}_user()
+because the inline functions are just no-ops but it's very clear like so.
+
+> extern long strncpy_from_user(char *dest, const char __user *src, long count);
+> diff --git a/arch/riscv/lib/uaccess.S b/arch/riscv/lib/uaccess.S
+> index 58fb2877c865..bd51e47ebd44 100644
+> --- a/arch/riscv/lib/uaccess.S
+> +++ b/arch/riscv/lib/uaccess.S
+> @@ -13,7 +13,15 @@ _epc:
+> 	.previous
+> 	.endm
+> 
+> -ENTRY(__copy_user)
+> +/* __asm_copy_to_user and __asm_copy_from_user are actually the same function,
+> + * they're just provided as two different symbols to C code so sparse doesn't
+> + * yell about casting between two different address spaces. */
+> +.global __asm_copy_to_user
+> +.set __asm_copy_to_user,__asm_copy_tofrom_user
+> +.global __asm_copy_from_user
+> +.set __asm_copy_from_user,__asm_copy_tofrom_user
 > +
-> static struct serdev_device_driver rave_sp_drv = {
-> 	.probe			= rave_sp_probe,
-> 	.driver = {
-> 		.name		= "rave-sp",
-> 		.of_match_table	= rave_sp_dt_ids,
-> 	},
-> +	.id_table = rave_sp_serdev_id,
-> };
-> module_serdev_device_driver(rave_sp_drv);
+> +ENTRY(__asm_copy_tofrom_user)
 
-so I would actually prefer that we not duplicate the .driver.name in the .id_table. This one for example is non-functional since all supported hardware needs a specific .data entry. It will fail here:
+I don't think that the size (as reported by objdump, for example) will
+be correct or even present for __asm_copy_to_user & __asm_copy_to_user.
 
-        sp->variant = of_device_get_match_data(dev);                             
-        if (!sp->variant)                                                        
-                return -ENODEV;
+What can be done is:
+	ENTRY(__asm_copy_to_user)
+	ENTRY(__asm_copy_from_user)
 
-Maybe we focus first on getting the base support for new_device etc. merged and use the Edison Bluetooth platform driver support in hci_bcm.c so we can do a real cleanup there. And then later add broad new_device support. Some of these instances should be just fine with never getting it since they require to many per device quirks to make things functional. A blind search+replace is not going to work.
+	<function definition>
 
-And things like device_get_match_data() should work as well even if the hardware is listed via serdev_device_id. Drivers that are solely DT centric will need a lot more work before dynamic adding of serdev devices can happen.
+	ENDPROC(__asm_copy_to_user)
+	ENDPROC(__asm_copy_from_user)
 
-Regards
 
-Marcel
+Finally, the symbol table need also something like:
+diff --git a/arch/riscv/kernel/riscv_ksyms.c b/arch/riscv/kernel/riscv_ksyms.c
+index 551734248..1e8f8fa54 100644
+--- a/arch/riscv/kernel/riscv_ksyms.c
++++ b/arch/riscv/kernel/riscv_ksyms.c
+@@ -13,6 +13,7 @@
+  * Assembly functions that may be used (directly or indirectly) by modules
+  */
+ EXPORT_SYMBOL(__clear_user);
+-EXPORT_SYMBOL(__copy_user);
++EXPORT_SYMBOL(__asm_copy_to_user);
++EXPORT_SYMBOL(__asm_copy_from_user);
+ EXPORT_SYMBOL(memset);
+ EXPORT_SYMBOL(memcpy);
+
+
+Best regards,
+-- Luc
