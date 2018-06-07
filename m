@@ -1,150 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /+0iDyyeGFuEOAAAmS7hNA
-	; Thu, 07 Jun 2018 03:01:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Hi9jCVlEGVvBEwAAmS7hNA
+	; Thu, 07 Jun 2018 14:46:20 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C3D62607DC; Thu,  7 Jun 2018 03:01:03 +0000 (UTC)
+	id 19092608BF; Thu,  7 Jun 2018 14:46:20 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 25045601A8;
-	Thu,  7 Jun 2018 03:01:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25045601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 89524607DC;
+	Thu,  7 Jun 2018 14:46:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89524607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932599AbeFGDBB (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 23:01:01 -0400
-Received: from regular1.263xmail.com ([211.150.99.135]:39427 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753497AbeFGDA7 (ORCPT
+        id S934815AbeFGOqR (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:46:17 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40756 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934982AbeFGOqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 23:00:59 -0400
-Received: from zhangqing?rock-chips.com (unknown [192.168.167.105])
-        by regular1.263xmail.com (Postfix) with ESMTP id 9C0D41E3CE;
-        Thu,  7 Jun 2018 11:00:53 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id D36E03B4;
-        Thu,  7 Jun 2018 11:00:45 +0800 (CST)
-X-RL-SENDER: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <aab71999453187028229f86fa5884e8b>
-X-ATTACHMENT-NUM: 0
-X-SENDER: zhangqing@rock-chips.com
-X-DNS-TYPE: 0
-Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 3035U6A8LT;
-        Thu, 07 Jun 2018 11:00:49 +0800 (CST)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 1/4] dt-bindings: add bindings for px30 clock controller
-Date: Thu,  7 Jun 2018 11:06:23 +0800
-Message-Id: <1528340786-462-2-git-send-email-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com>
-References: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com>
+        Thu, 7 Jun 2018 10:46:11 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbm-0005Zl-66; Thu, 07 Jun 2018 15:09:46 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb4-0002ws-9y; Thu, 07 Jun 2018 15:09:02 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Ganesh Mahendran" <opensource.ganesh@gmail.com>,
+        "Todd Kjos" <tkjos@google.com>, "Martijn Coenen" <maco@android.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.932827222@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 168/410] android: binder: use VM_ALLOC to get vm area
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree bindings for Rockchip cru which found on
-Rockchip SoCs.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+------------------
+
+From: Ganesh Mahendran <opensource.ganesh@gmail.com>
+
+commit aac6830ec1cb681544212838911cdc57f2638216 upstream.
+
+VM_IOREMAP is used to access hardware through a mechanism called
+I/O mapped memory. Android binder is a IPC machanism which will
+not access I/O memory.
+
+And VM_IOREMAP has alignment requiement which may not needed in
+binder.
+    __get_vm_area_node()
+    {
+    ...
+        if (flags & VM_IOREMAP)
+            align = 1ul << clamp_t(int, fls_long(size),
+               PAGE_SHIFT, IOREMAP_MAX_ORDER);
+    ...
+    }
+
+This patch will save some kernel vm area, especially for 32bit os.
+
+In 32bit OS, kernel vm area is only 240MB. We may got below
+error when launching a app:
+
+<3>[ 4482.440053] binder_alloc: binder_alloc_mmap_handler: 15728 8ce67000-8cf65000 get_vm_area failed -12
+<3>[ 4483.218817] binder_alloc: binder_alloc_mmap_handler: 15745 8ce67000-8cf65000 get_vm_area failed -12
+
+Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
+Acked-by: Martijn Coenen <maco@android.com>
+Acked-by: Todd Kjos <tkjos@google.com>
+
+----
+V3: update comments
+V2: update comments
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- .../bindings/clock/rockchip,px30-cru.txt           | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+ drivers/staging/android/binder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
-new file mode 100644
-index 000000000000..af5a45b680d0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
-@@ -0,0 +1,67 @@
-+* Rockchip PX30 Clock and Reset Unit
-+
-+The PX30 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
-+
-+Required Properties:
-+
-+- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
-+- compatible: CRU should be "rockchip,px30-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
-+
-+Optional Properties:
-+
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing, pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "xin32k" - rtc clock - optional,
-+ - "i2sx_clkin" - external I2S clock - optional,
-+ - "gmac_clkin" - external GMAC clock - optional
-+
-+Example: Clock controller node:
-+
-+	pmucru: pmu-clock-controller@ff2bc000 {
-+		compatible = "rockchip,px30-pmucru";
-+		reg = <0x0 0xff2bc000 0x0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	cru: clock-controller@ff2b0000 {
-+		compatible = "rockchip,px30-cru";
-+		reg = <0x0 0xff2b0000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart0: serial@ff030000 {
-+		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
-+		reg = <0x0 0xff030000 0x0 0x100>;
-+		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
-+		clock-names = "baudclk", "apb_pclk";
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		status = "disabled";
-+	};
-+
--- 
-1.9.1
+--- a/drivers/staging/android/binder.c
++++ b/drivers/staging/android/binder.c
+@@ -2808,7 +2808,7 @@ static int binder_mmap(struct file *filp
+ 		goto err_already_mapped;
+ 	}
+ 
+-	area = get_vm_area(vma->vm_end - vma->vm_start, VM_IOREMAP);
++	area = get_vm_area(vma->vm_end - vma->vm_start, VM_ALLOC);
+ 	if (area == NULL) {
+ 		ret = -ENOMEM;
+ 		failure_string = "get_vm_area";
