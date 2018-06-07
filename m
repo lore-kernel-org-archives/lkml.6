@@ -1,350 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 4pRAKC1uHlsAWAAAmS7hNA
-	; Mon, 11 Jun 2018 12:42:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id g3LnEpnRGFsUJgAAmS7hNA
+	; Thu, 07 Jun 2018 06:33:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 87D6760792; Mon, 11 Jun 2018 12:42:21 +0000 (UTC)
+	id D4E57607E7; Thu,  7 Jun 2018 06:33:49 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d33Futan"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIFaNts8"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C33AD601C3;
-	Mon, 11 Jun 2018 12:42:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C33AD601C3
+	by smtp.codeaurora.org (Postfix) with ESMTP id E3133605A2;
+	Thu,  7 Jun 2018 06:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3133605A2
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933004AbeFKMmS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Mon, 11 Jun 2018 08:42:18 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:33010 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932904AbeFKMmQ (ORCPT
+        id S1752950AbeFGGdq (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 02:33:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44902 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751353AbeFGGdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:42:16 -0400
-Received: by mail-yb0-f193.google.com with SMTP id x36-v6so6637817ybi.0;
-        Mon, 11 Jun 2018 05:42:16 -0700 (PDT)
+        Thu, 7 Jun 2018 02:33:44 -0400
+Received: by mail-lf0-f68.google.com with SMTP id 36-v6so12808778lfr.11;
+        Wed, 06 Jun 2018 23:33:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=P4D5AKckcwrpev6J127RZhRBgCt+tTUDrWFHkz4AtVc=;
-        b=d33FutanAV174S/SQevU2VjcyQeI2BigqOvkQTMjCevxLvDHy9Sp8emk/pUkYL2s2Y
-         UDtH37GGGEmkWtpUkaenvNkus+d+lPataVPbxLIDokILEz1sQO6QyZia1VrddgCRMnJs
-         iFgY0VkQicC1WX8QFMk1278rGn/qVmRM1qsyeZNHicrWw5S8YwJyWt5no6kxPzAFDkT/
-         aV99FdRAJnITWeSKYQx+M71426JVwjZkuVF/hy8nym/68w+5TaTfRMqehqazAyRHpIJu
-         uOXkRElgcBplcMdqTGg6Zw98iYZzqkp/pv/xy1jGv64gVf1gjUMoU9mUeTXfio5jHUif
-         o6Yw==
+        bh=X1nDW7J3WGY3plntanJj4j5/AoARcSmnKe+IrnK6q/E=;
+        b=KIFaNts8cn5SBiHnETeNCiSoHDJ83godIZ3x+FDOC8PYiS3t5Hg0K8RzhaEWnGe+v1
+         AmgC1r4zt9amVqy0RGcrBBd4wNUpx3jFYEE5UVnUGRd8h3ZiF94KUlqQWmdvPM+ViKhn
+         RA8itgccTzK2is1wEeSuRbN1eN5JRnWxIWOZT8aw/DUCF8dSx9i0dGBH3L64+jjLBgSK
+         rA7jreF7q8OuNGiZ6mTLsr+WvD3/wdeJfbjSs8S414liukM0CglC2U4Y3CwLSjzdx85O
+         UqzXJLYeDPBt+RJYRBLzchfVla8XDqcruZGV8pZQR4NgSe6gGnP6uIEbLa/NcCqs8o8S
+         ZBWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=P4D5AKckcwrpev6J127RZhRBgCt+tTUDrWFHkz4AtVc=;
-        b=MXO8jK59lJA75ow3efuckgjCC2Gf7SRlJElRb8cEdwS2DxS0gL3eebW+LlssR5nYZI
-         nmXsj6WuZ+85/qEUWcGuPKoRqwtp72xZvwbYMIJcpqj6eykkZ//gaS2i+XEFtf/mBywv
-         O+v/aTq/5oA5p12r2B6D73OonMZPNvqjWjPvZzwCWN44H/+7p+omvUPHkAfXeLR9KC9O
-         eMcztwjOYW6X1pzWmbZm8LWwjZY93De2TPcsVUjooFOnQ1mHCADlROgroG0k2fPRhT7x
-         a9ZO53oSPiNAEe22Sqaon95MfRV6EZ8Ddd/810hYzreHs3DChQjVTROgjpYdsNM04zAm
-         B5jQ==
-X-Gm-Message-State: APt69E2Nz7Ro2EuRBwMtn+1J7u63ifHnMuJ2o2b4Q3Gkrdex5NRM9Ihe
-        TIffAktf2vyv1hdXRkb0kay+uv/hGlAHlG4YRSk=
-X-Google-Smtp-Source: ADUXVKJq7zDYUBEi6viZyted2vClW1pc4U1agTF5Pk9v9NHalbYUieVA7nE75AGOWjQlh8PcyXZFHgVqoC3JmYKq6/U=
-X-Received: by 2002:a25:f442:: with SMTP id p2-v6mr10373243ybe.394.1528720935674;
- Mon, 11 Jun 2018 05:42:15 -0700 (PDT)
+        bh=X1nDW7J3WGY3plntanJj4j5/AoARcSmnKe+IrnK6q/E=;
+        b=FbgE6/sVkznQGBd/UlazVrE5h4ADBtgqrkAsbkTtDVVBKxLWEo6PuEg7LqEl43mlnk
+         ec5uwEBHu80PDhyw3eNMSPSgYe3oJZRU+GtxcruwwctVn4p3tZRfc4v+76gsoPxfxH6J
+         xlupzERpOt/u5fDbL4uZR7EdH0HfcVCw2nRe7/Pc1GMkQMlt/eE7I/oEjY8SEC49NWiZ
+         SvPHwbClVi0BOcVbngWjsv270CoGj9t1AgBYSxAhM++WAIch/Q7yU81wJ93AMqixMaSL
+         6ei+N07CGA9jKj0KR+VW1ZSE2fqqM4fNyufEj00SKF2FlRRDK9IQcruECN3TrClIMUXd
+         KIQw==
+X-Gm-Message-State: APt69E2OVtbrizrbdt0k2Uhp1nNnPQpb4MBj0w8DtRBGgLw5vh/qVwcS
+        fdRlCW875a/KSwrqlf7fXbXdMjY4LdXDRurzHxg=
+X-Google-Smtp-Source: ADUXVKKsx9gPGtZrbU4OH5w/LOXYO+qw50VzNQWmotnZ7lusMg8XyhqXlknLZwMs1xBhuK5kepllZuzSOLIfcH7zq5U=
+X-Received: by 2002:a19:4b52:: with SMTP id y79-v6mr387677lfa.49.1528353222051;
+ Wed, 06 Jun 2018 23:33:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180607140544.22268-1-peron.clem@gmail.com> <20180607140544.22268-5-peron.clem@gmail.com>
- <5df13d8f6422d9099c1692dd2091d9ca@agner.ch>
-In-Reply-To: <5df13d8f6422d9099c1692dd2091d9ca@agner.ch>
-From: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date: Mon, 11 Jun 2018 14:42:04 +0200
-Message-ID: <CAJiuCcdHKpfCkLhV=rZcLHx2k9BAh7bnDQMWDkquXJOYiQoTeA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] clocksource: add driver for i.MX EPIT timer
-To: stefan@agner.ch
-Cc: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Received: by 2002:a2e:9a58:0:0:0:0:0 with HTTP; Wed, 6 Jun 2018 23:33:41 -0700 (PDT)
+In-Reply-To: <015f6160-216a-31ba-e251-11336e7ff5d6@kernel.dk>
+References: <CAEemH2fbPv2wphVBHxSSS+KEK5S-rercXhvgLJ7YMOZnrTpexg@mail.gmail.com>
+ <20180606084105.GA10720@kmo-pixel> <015f6160-216a-31ba-e251-11336e7ff5d6@kernel.dk>
+From: Chunyu Hu <chuhu.ncepu@gmail.com>
+Date: Thu, 7 Jun 2018 14:33:41 +0800
+Message-ID: <CABATaM7FHcXF7rO5kuMVFRFKFqhqnkoJ_t4w-y4=mNx42=b3Cg@mail.gmail.com>
+Subject: Re: Block IO issue in kernel-v4.17
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+        Li Wang <liwang@redhat.com>, Coly Li <colyli@suse.de>,
+        hch@lst.de, darrick.wong@oracle.com, snitzer@redhat.com,
+        linux-block@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+kasan reported a user-after-free. I'm using a kvm machine, it panic
+during boot. I'm using the latest linux tree. which contains below.
+
+commit d377535405686f735b90a8ad4ba269484cd7c96e
+Author: Kent Overstreet <kent.overstreet@gmail.com>
+Date:   Tue Jun 5 05:26:33 2018 -0400
+
+    dm: Use kzalloc for all structs with embedded biosets/mempools
 
 
-> > +
-> > +#define EPITCR                               0x00
-> > +#define EPITSR                               0x04
-> > +#define EPITLR                               0x08
-> > +#define EPITCMPR                     0x0c
-> > +#define EPITCNR                              0x10
-> > +
-> > +#define EPITCR_EN                    BIT(0)
-> > +#define EPITCR_ENMOD                 BIT(1)
-> > +#define EPITCR_OCIEN                 BIT(2)
-> > +#define EPITCR_RLD                   BIT(3)
-> > +#define EPITCR_PRESC(x)                      (((x) & 0xfff) << 4)
-> > +#define EPITCR_SWR                   BIT(16)
-> > +#define EPITCR_IOVW                  BIT(17)
-> > +#define EPITCR_DBGEN                 BIT(18)
-> > +#define EPITCR_WAITEN                        BIT(19)
-> > +#define EPITCR_RES                   BIT(20)
-> > +#define EPITCR_STOPEN                        BIT(21)
-> > +#define EPITCR_OM_DISCON             (0 << 22)
-> > +#define EPITCR_OM_TOGGLE             (1 << 22)
-> > +#define EPITCR_OM_CLEAR                      (2 << 22)
-> > +#define EPITCR_OM_SET                        (3 << 22)
-> > +#define EPITCR_CLKSRC_OFF            (0 << 24)
-> > +#define EPITCR_CLKSRC_PERIPHERAL     (1 << 24)
-> > +#define EPITCR_CLKSRC_REF_HIGH               (2 << 24)
-> > +#define EPITCR_CLKSRC_REF_LOW                (3 << 24)
-> > +
-> > +#define EPITSR_OCIF                  BIT(0)
-> > +
-> > +struct epit_timer {
-> > +     void __iomem *base;
-> > +     int irq;
-> > +     struct clk *clk;
-> > +     struct clock_event_device ced;
-> > +     struct irqaction act;
-> > +};
-> > +
-> > +static void __iomem *sched_clock_reg;
-> > +
-> > +static inline struct epit_timer *to_epit_timer(struct clock_event_device *ced)
-> > +{
-> > +     return container_of(ced, struct epit_timer, ced);
-> > +}
-> > +
-> > +static inline void epit_irq_disable(struct epit_timer *epittm)
-> > +{
-> > +     u32 val;
-> > +
-> > +     val = readl_relaxed(epittm->base + EPITCR);
-> > +     writel_relaxed(val & ~EPITCR_OCIEN, epittm->base + EPITCR);
-> > +}
-> > +
-> > +static inline void epit_irq_enable(struct epit_timer *epittm)
-> > +{
-> > +     u32 val;
-> > +
-> > +     val = readl_relaxed(epittm->base + EPITCR);
-> > +     writel_relaxed(val | EPITCR_OCIEN, epittm->base + EPITCR);
-> > +}
-> > +
-> > +static void epit_irq_acknowledge(struct epit_timer *epittm)
-> > +{
-> > +     writel_relaxed(EPITSR_OCIF, epittm->base + EPITSR);
-> > +}
-> > +
-> > +static u64 notrace epit_read_sched_clock(void)
-> > +{
-> > +     return ~readl_relaxed(sched_clock_reg);
-> > +}
-> > +
-> > +static int epit_set_next_event(unsigned long cycles,
-> > +                            struct clock_event_device *ced)
-> > +{
-> > +     struct epit_timer *epittm = to_epit_timer(ced);
-> > +     unsigned long tcmp;
-> > +
-> > +     tcmp = readl_relaxed(epittm->base + EPITCNR) - cycles;
-> > +     writel_relaxed(tcmp, epittm->base + EPITCMPR);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +/* Left event sources disabled, no more interrupts appear */
-> > +static int epit_shutdown(struct clock_event_device *ced)
-> > +{
-> > +     struct epit_timer *epittm = to_epit_timer(ced);
-> > +     unsigned long flags;
-> > +
-> > +     /*
-> > +      * The timer interrupt generation is disabled at least
-> > +      * for enough time to call epit_set_next_event()
-> > +      */
-> > +     local_irq_save(flags);
-> > +
-> > +     /* Disable interrupt in EPIT module */
-> > +     epit_irq_disable(epittm);
-> > +
-> > +     /* Clear pending interrupt */
-> > +     epit_irq_acknowledge(epittm);
-> > +
-> > +     local_irq_restore(flags);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int epit_set_oneshot(struct clock_event_device *ced)
-> > +{
-> > +     struct epit_timer *epittm = to_epit_timer(ced);
-> > +     unsigned long flags;
-> > +
-> > +     /*
-> > +      * The timer interrupt generation is disabled at least
-> > +      * for enough time to call epit_set_next_event()
-> > +      */
-> > +     local_irq_save(flags);
-> > +
-> > +     /* Disable interrupt in EPIT module */
-> > +     epit_irq_disable(epittm);
-> > +
-> > +     /* Clear pending interrupt, only while switching mode */
-> > +     if (!clockevent_state_oneshot(ced))
-> > +             epit_irq_acknowledge(epittm);
-> > +
-> > +     /*
-> > +      * Do not put overhead of interrupt enable/disable into
-> > +      * epit_set_next_event(), the core has about 4 minutes
-> > +      * to call epit_set_next_event() or shutdown clock after
-> > +      * mode switching
-> > +      */
-> > +     epit_irq_enable(epittm);
-> > +     local_irq_restore(flags);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static irqreturn_t epit_timer_interrupt(int irq, void *dev_id)
-> > +{
-> > +     struct clock_event_device *ced = dev_id;
-> > +     struct epit_timer *epittm = to_epit_timer(ced);
-> > +
-> > +     epit_irq_acknowledge(epittm);
-> > +
-> > +     ced->event_handler(ced);
-> > +
-> > +     return IRQ_HANDLED;
-> > +}
-> > +
-> > +static int __init epit_clocksource_init(struct epit_timer *epittm)
-> > +{
-> > +     unsigned int c = clk_get_rate(epittm->clk);
-> > +
-> > +     sched_clock_reg = epittm->base + EPITCNR;
-> > +     sched_clock_register(epit_read_sched_clock, 32, c);
-> > +
-> > +     return clocksource_mmio_init(epittm->base + EPITCNR, "epit", c, 200, 32,
-> > +                                  clocksource_mmio_readl_down);
-> > +}
-> > +
-> > +static int __init epit_clockevent_init(struct epit_timer *epittm)
-> > +{
-> > +     struct clock_event_device *ced = &epittm->ced;
-> > +     struct irqaction *act = &epittm->act;
-> > +
-> > +     ced->name = "epit";
-> > +     ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
-> > +     ced->set_state_shutdown = epit_shutdown;
-> > +     ced->tick_resume = epit_shutdown;
-> > +     ced->set_state_oneshot = epit_set_oneshot;
-> > +     ced->set_next_event = epit_set_next_event;
-> > +     ced->rating = 200;
-> > +     ced->cpumask = cpumask_of(0);
-> > +     ced->irq = epittm->irq;
-> > +     clockevents_config_and_register(ced, clk_get_rate(epittm->clk),
-> > +                                     0xff, 0xfffffffe);
-> > +
-> > +     act->name = "i.MX EPIT Timer Tick",
-> > +     act->flags = IRQF_TIMER | IRQF_IRQPOLL;
-> > +     act->handler = epit_timer_interrupt;
-> > +     act->dev_id = ced;
-> > +
-> > +     /* Make irqs happen */
-> > +     return setup_irq(epittm->irq, act);
-> > +}
-> > +
-> > +static int __init epit_timer_init(struct device_node *np)
-> > +{
-> > +     struct epit_timer *epittm;
-> > +     int ret;
-> > +
-> > +     epittm = kzalloc(sizeof(*epittm), GFP_KERNEL);
-> > +     if (!epittm)
-> > +             return -ENOMEM;
-> > +
-> > +     epittm->base = of_iomap(np, 0);
-> > +     if (!epittm->base) {
-> > +             ret = -ENXIO;
-> > +             goto out_kfree;
-> > +     }
-> > +
-> > +     epittm->irq = irq_of_parse_and_map(np, 0);
-> > +     if (!epittm->irq) {
-> > +             ret = -EINVAL;
-> > +             goto out_iounmap;
-> > +     }
-> > +
-> > +        /* Get EPIT clock */
-> > +        epittm->clk = of_clk_get(np, 0);
-> > +        if (IS_ERR(epittm->clk)) {
-> > +             pr_err("i.MX EPIT: unable to get clk\n");
-> > +             ret = PTR_ERR(epittm->clk);
-> > +             goto out_iounmap;
-> > +        }
+[   58.836774] ==================================================================
+[   58.839974] BUG: KASAN: use-after-free in __wake_up_common+0x7c7/0x880
+[   58.841988] Read of size 8 at addr ffff88025a47c3e8 by task kswapd0/66
+[   58.843986]
+[   58.845644]
+[   58.846127] Allocated by task 956:
+[   58.847249]
+[   58.847731] Freed by task 956:
+[   58.848856]
+[   58.849336] The buggy address belongs to the object at ffff88025a47c000
+[   58.849336]  which belongs to the cache names_cache of size 4096
+[   58.853276] The buggy address is located 1000 bytes inside of
+[   58.853276]  4096-byte region [ffff88025a47c000, ffff88025a47d000)
+[   58.856924] The buggy address belongs to the page:
+[   58.858411] page:ffffea0009691f00 count:1 mapcount:0
+mapping:0000000000000000 index:0x0 compound_mapcount: 0
+[   58.861443] flags: 0x6fffff80008100(slab|head)
+[   58.862820] raw: 006fffff80008100 0000000000000000 0000000000000000
+0000000100010001
+[   58.865197] raw: dead000000000100 dead000000000200 ffff88012d940a00
+0000000000000000
+[   58.867590] page dumped because: kasan: bad access detected
+[   58.869409]
+[   58.869933] Memory state around the buggy address:
+[   58.871116]  ffff88025a47c280: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   58.872195]  ffff88025a47c300: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   58.873295] >ffff88025a47c380: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   58.874358]                                                           ^
+[   58.875334]  ffff88025a47c400: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   58.876395]  ffff88025a47c480: fb fb fb fb fb fb fb fb fb fb fb fb
+fb fb fb fb
+[   58.877453] ==================================================================
+[   58.878547] BUG: unable to handle kernel NULL pointer dereference
+at 0000000000000000
+[   58.879708] PGD 0 P4D 0
+[   58.880107] Oops: 0010 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN PTI
+[   58.881013] CPU: 0 PID: 66 Comm: kswapd0 Tainted: G    B   W
+ 4.17.0.fi+ #41
+[   58.881944] Hardware name: Red Hat KVM, BIOS 0.0.0 02/06/2015
+[   58.882646] RIP: 0010:          (null)
+[   58.883106] Code: Bad RIP value.
+[   58.883520] RSP: 0018:ffff88012ec07818 EFLAGS: 00010086
+[   58.884158] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[   58.885020] RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffff88025a47c3d0
+[   58.886576] RBP: ffff880257960418 R08: ffff88025a47c3d0 R09: fffffbfff09587a4
+[   58.888370] R10: fffffbfff09587a4 R11: ffffffff84ac3d23 R12: ffffffffffffffe8
+[   58.890257] R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88012ec07910
+[   58.892113] FS:  0000000000000000(0000) GS:ffff88012ec00000(0000)
+knlGS:0000000000000000
+[   58.894194] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   58.895648] CR2: ffffffffffffffd6 CR3: 0000000004214000 CR4: 00000000001406f0
+[   58.897468] Call Trace:
+[   58.898117]  <IRQ>
+[   58.898716]  ? __wake_up_common+0x18e/0x880
+[   58.899843]  ? wait_woken+0x340/0x340
+[   58.900842]  ? do_raw_spin_lock+0xcf/0x220
+[   58.901665]  ? __wake_up_common_lock+0xe3/0x170
+[   58.902439]  ? __wake_up_common+0x880/0x880
+[   58.903077]  ? time_hardirqs_off+0x3e/0x4f0
+[   58.903742]  ? _raw_spin_unlock_irqrestore+0x45/0xa0
+[   58.904486]  ? mempool_free+0x270/0x3a0
+[   58.905185]  ? bio_free+0x104/0x190
+[   58.905722]  ? bio_put+0xb9/0x120
+[   58.906235]  ? dec_pending+0x3cd/0xbe0 [dm_mod]
+[   58.906960]  ? time_hardirqs_off+0x30/0x4f0
+[   58.907602]  ? debug_check_no_locks_freed+0x260/0x260
+[   58.908389]  ? alloc_io+0x820/0x820 [dm_mod]
+[   58.909130]  ? linear_status+0x1b0/0x1b0 [dm_mod]
+[   58.909839]  ? clone_endio+0x1ed/0x890 [dm_mod]
+[   58.910691]  ? bio_disassociate_task+0x16e/0x450
+[   58.911453]  ? dm_get_queue_limits+0x110/0x110 [dm_mod]
+[   58.912288]  ? check_preemption_disabled+0x36/0x2a0
+[   58.913075]  ? dm_get_queue_limits+0x110/0x110 [dm_mod]
+[   58.913919]  ? bio_endio+0x423/0x8b0
+[   58.914513]  ? blk_update_request+0x295/0xe40
+[   58.915215]  ? virtqueue_get_buf_ctx+0x3b0/0xa60 [virtio_ring]
+[   58.916171]  ? blk_mq_end_request+0x56/0x390
+[   58.916877]  ? blk_mq_complete_request+0x36a/0x6e0
+[   58.917857]  ? virtblk_done+0x1bc/0x450 [virtio_blk]
+[   58.918690]  ? 0xffffffffa0158000
+[   58.919260]  ? __lock_is_held+0xb6/0x170
+[   58.919917]  ? check_preemption_disabled+0x36/0x2a0
+[   58.920730]  ? 0xffffffffa0158000
+[   58.921300]  ? vring_interrupt+0x170/0x280 [virtio_ring]
+[   58.922176]  ? vring_alloc_queue+0x400/0x400 [virtio_ring]
+[   58.923080]  ? __handle_irq_event_percpu+0x117/0x9a0
+[   58.923908]  ? handle_irq_event_percpu+0x77/0x180
+[   58.924691]  ? __handle_irq_event_percpu+0x9a0/0x9a0
+[   58.925519]  ? do_raw_spin_unlock+0x156/0x250
+[   58.926257]  ? handle_irq_event+0xc6/0x1a0
+[   58.926943]  ? handle_edge_irq+0x229/0xd40
+[   58.927747]  ? handle_irq+0x2e2/0x5fd
+[   58.928528]  ? check_preemption_disabled+0x36/0x2a0
+[   58.929545]  ? do_IRQ+0xa7/0x240
+[   58.930241]  ? common_interrupt+0xf/0xf
+[   58.931072]  </IRQ>
+[   58.931576]  ? lock_acquire+0x184/0x470
+[   58.932395]  ? list_lru_count_one+0xb8/0x3a0
+[   58.933330]  ? list_lru_count_one+0x86/0x3a0
+[   58.934362]  ? super_cache_count+0x152/0x2f0
+[   58.935268]  ? shrink_slab.part.24+0x1fe/0xc60
+[   58.936205]  ? mem_cgroup_from_task+0x180/0x180
+[   58.937162]  ? prepare_kswapd_sleep+0x160/0x160
+[   58.938101]  ? mem_cgroup_iter+0x165/0xc60
+[   58.938955]  ? shrink_slab+0x9e/0xd0
+[   58.939707]  ? shrink_node+0x3f1/0x17b0
+[   58.940675]  ? shrink_node_memcg+0x1f10/0x1f10
+[   58.941794]  ? mem_cgroup_iter+0x165/0xc60
+[   58.942668]  ? mem_cgroup_nr_lru_pages+0xe0/0xe0
+[   58.943642]  ? inactive_list_is_low+0x1f3/0x6e0
+[   58.944598]  ? balance_pgdat+0x2c9/0x950
+[   58.945436]  ? mem_cgroup_shrink_node+0x7d0/0x7d0
+[   58.946432]  ? preempt_count_sub+0x101/0x190
+[   58.947340]  ? check_preemption_disabled+0x36/0x2a0
+[   58.948373]  ? kswapd+0x5c1/0x1060
+[   58.949109]  ? balance_pgdat+0x950/0x950
+[   58.949948]  ? __kthread_parkme+0x84/0x240
+[   58.950816]  ? __kthread_parkme+0xff/0x240
+[   58.951685]  ? finish_wait+0x3f0/0x3f0
+[   58.952484]  ? schedule+0x92/0x230
+[   58.953202]  ? balance_pgdat+0x950/0x950
+[   58.954030]  ? balance_pgdat+0x950/0x950
+[   58.954861]  ? kthread+0x37d/0x500
+[   58.955592]  ? kthread_create_worker_on_cpu+0xe0/0xe0
+[   58.956654]  ? ret_from_fork+0x3a/0x50
+[   58.957457] Modules linked in: sunrpc snd_hda_codec_generic
+crct10dif_pclmul snd_hda_intel crc32_pclmul ghash_clmulni_intel
+snd_hda_codec snd_hda_core snd_hwdep vfat fat iTCO_wdt
+iTCO_vendor_support snd_seq snd_seq_device snd_pcm pcspkr
+virtio_balloon snd_timer i2c_i801 sg lpc_ich snd soundcore shpchp
+ip_tables xfs libcrc32c sr_mod cdrom virtio_net net_failover
+virtio_scsi failover virtio_blk virtio_console bochs_drm
+drm_kms_helper syscopyarea sysfillrect 8139too sysimgblt fb_sys_fops
+ttm drm crc32c_intel ahci libahci 8139cp libata serio_raw mii i2c_core
+virtio_pci virtio_ring virtio dm_mirror dm_region_hash dm_log dm_mod
+[   58.968856] CR2: 0000000000000000
+[   58.969583] ---[ end trace 70ad259a1fd9713f ]---
+[   58.970624] RIP: 0010:          (null)
+[   58.971417] Code: Bad RIP value.
+[   58.972095] RSP: 0018:ffff88012ec07818 EFLAGS: 00010086
+[   58.973181] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[   58.974635] RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffff88025a47c3d0
+[   58.976060] RBP: ffff880257960418 R08: ffff88025a47c3d0 R09: fffffbfff09587a4
+[   58.977495] R10: fffffbfff09587a4 R11: ffffffff84ac3d23 R12: ffffffffffffffe8
+[   58.978922] R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88012ec07910
+[   58.980365] FS:  0000000000000000(0000) GS:ffff88012ec00000(0000)
+knlGS:0000000000000000
+[   58.981984] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   58.983139] CR2: ffffffffffffffd6 CR3: 0000000004214000 CR4: 00000000001406f0
+[   58.984568] Kernel panic - not syncing: Fatal exception in interrupt
+[   60.070024] Shutting down cpus with NMI
+[   60.070741] Kernel Offset: disabled
+[   60.071317] ---[ end Kernel panic - not syncing: Fatal exception in
+interrupt ]---
+
+On 6 June 2018 at 22:18, Jens Axboe <axboe@kernel.dk> wrote:
+> On 6/6/18 2:41 AM, Kent Overstreet wrote:
+>> On Wed, Jun 06, 2018 at 04:37:25PM +0800, Li Wang wrote:
+>>> Hi BIO experts,
+>>>
+>>> I catch this panic issue on some kind of arches(x86_64, ppc64,
+>>> ppc64le..), it seems the root cause is very probably from BIO changes
+>>> from kernel-4.17-rc7. Plz take a look.
+>>
+>> That's the bioset changes, the fix is out and on its way in
 >
-> There is something off with indent here.
-Thanks for pointing out that, I will fix it.
-
+> It's already in mainline, since about lunch time yesterday.
 >
-> There is a helper library in drivers/clocksource/timer-of.c which might
-> be useful for this driver.
-Indeed, but will require a bit of rewrite.
-
-Clement
-
 >
 > --
-> Stefan
+> Jens Axboe
 >
-> > +
-> > +     ret = clk_prepare_enable(epittm->clk);
-> > +     if (ret) {
-> > +             pr_err("i.MX EPIT: unable to prepare+enable clk\n");
-> > +             goto out_iounmap;
-> > +     }
-> > +
-> > +     /* Initialise to a known state (all timers off, and timing reset) */
-> > +     writel_relaxed(0x0, epittm->base + EPITCR);
-> > +     writel_relaxed(0xffffffff, epittm->base + EPITLR);
-> > +     writel_relaxed(EPITCR_EN | EPITCR_CLKSRC_REF_HIGH | EPITCR_WAITEN,
-> > +                    epittm->base + EPITCR);
-> > +
-> > +     ret = epit_clocksource_init(epittm);
-> > +     if (ret) {
-> > +             pr_err("i.MX EPIT: failed to init clocksource\n");
-> > +             goto out_clk_disable;
-> > +     }
-> > +
-> > +     ret = epit_clockevent_init(epittm);
-> > +     if (ret) {
-> > +             pr_err("i.MX EPIT: failed to init clockevent\n");
-> > +             goto out_clk_disable;
-> > +     }
-> > +
-> > +     return 0;
-> > +
-> > +out_clk_disable:
-> > +     clk_disable_unprepare(epittm->clk);
-> > +out_iounmap:
-> > +     iounmap(epittm->base);
-> > +out_kfree:
-> > +     kfree(epittm);
-> > +
-> > +     return ret;
-> > +}
-> > +TIMER_OF_DECLARE(epit_timer, "fsl,imx31-epit", epit_timer_init);
