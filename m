@@ -1,156 +1,252 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id B2SMLPu3GltfPQAAmS7hNA
-	; Fri, 08 Jun 2018 17:09:32 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id y9KrBTlKGVuWVAAAmS7hNA
+	; Thu, 07 Jun 2018 15:08:43 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 43D6D607E4; Fri,  8 Jun 2018 17:09:32 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4t3Ndbp"
+	id D8555608BF; Thu,  7 Jun 2018 15:08:42 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 99B73601C3;
-	Fri,  8 Jun 2018 17:09:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99B73601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 11ECF6063F;
+	Thu,  7 Jun 2018 15:08:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11ECF6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeFHRJ3 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 13:09:29 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55196 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751286AbeFHRJ2 (ORCPT
+        id S964919AbeFGPIj (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:08:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41520 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935926AbeFGPDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 13:09:28 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o13-v6so4511195wmf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 10:09:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pdcuS6LtC8qdLf8L60bKm6PUeKDjJHtPmEoxcZtVvBE=;
-        b=B4t3NdbpTgL+4Emq5eau/ZF3sUPt0MnkQIKRA7JT0Vy9eo929WgnCdIfeGvyKRMSlw
-         Xt4Wbzq4WfOlXwhuKWtMZLNDFCJm5bNDx1u35dI9GdaUMspRJS3VIANHXNSd0IhjW9x9
-         FMF4e7a1UcBwRK32lLyENOAlkOnqkO+dgrFj4wX26hdPe2JuWhX13IswEK1jqoOd4hYB
-         QFxe1xGMa7fu9qnMBklPHrN/4H50aN4056+r4SfDJzAYHMUUXOk7JgNqv5dVBwD0ETwi
-         ZapiagyhQ3F1Ku3+YWfgOx9ghOD/otiMNtgWRfviqXCJHY4ZkQTW5uDeOFgNZZ4Yy3Dt
-         vGyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pdcuS6LtC8qdLf8L60bKm6PUeKDjJHtPmEoxcZtVvBE=;
-        b=Kf/WhJ7Iah7hauzcETxqe/wWsYi3euk6Baxyf0KikeXTvfeJmZKO/D5eVfECd8rOcL
-         cwQ0zHqzuYorYCQ81Zpvw7eoVAJwLAkyZLNO1iSlrDQvmC8/5z7JRmLib8fub5QD+v9p
-         RBOPf6YraWDB/cxBpT9nwwOEwAOAXupY1XudWnD9ySmE3vCrT3EZtjSgnjJZpdhLidaz
-         TtgGkzy7/ozU8HnCU0+xSHODpoIE23pWvyhCI1Bhhyh0FWDKf2yom0bqRSy5VaJI2zN9
-         C4kVJKxQQ0/Omr5xA6sG941w221EtwX0RZHHVWJH4+diBjHHGheuKQE6lxONdIrwHkvl
-         K8lQ==
-X-Gm-Message-State: APt69E1o5wwlkDb+b8fe0hxAPzPg1j60OVXSaknYMXBtZ8dc34Izz7xh
-        x30Z2uZWAokdoRSohh+cVnQ4gZJDBV3sK1Bublm32A==
-X-Google-Smtp-Source: ADUXVKIFHfuHytO13lIWadsQP6zeXvNnCXN88zjYKLmx8yII+KvTlvV8vYUb4YeqaOVgdgP1pKUHL0SbfG2PDD4wNpI=
-X-Received: by 2002:a1c:1c8f:: with SMTP id c137-v6mr2091516wmc.142.1528477766923;
- Fri, 08 Jun 2018 10:09:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180608170607.29120-1-guro@fb.com>
-In-Reply-To: <20180608170607.29120-1-guro@fb.com>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Fri, 8 Jun 2018 10:09:14 -0700
-Message-ID: <CALvZod5Ci-eNjp0y+tN-GF-B_Nsknjtv_mdm4QZJYh1P9Y7Oqg@mail.gmail.com>
-Subject: Re: [PATCH] mm: fix null pointer dereference in mem_cgroup_protected
-To: Roman Gushchin <guro@fb.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, kernel-team@fb.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>
+        Thu, 7 Jun 2018 11:03:40 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbX-0005Zx-DE; Thu, 07 Jun 2018 15:09:31 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0003A5-KM; Thu, 07 Jun 2018 15:09:08 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Tejun Heo" <tj@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Alan Cox" <alan@llwyncelyn.cymru>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.337382434@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 305/410] tty: make n_tty_read() always abort if
+ hangup is in progress
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 10:06 AM Roman Gushchin <guro@fb.com> wrote:
->
-> Shakeel reported a crash in mem_cgroup_protected(), which
-> can be triggered by memcg reclaim if the legacy cgroup v1
-> use_hierarchy=0 mode is used:
->
-> [  226.060572] BUG: unable to handle kernel NULL pointer dereference
-> at 0000000000000120
-> [  226.068310] PGD 8000001ff55da067 P4D 8000001ff55da067 PUD 1fdc7df067 PMD 0
-> [  226.075191] Oops: 0000 [#4] SMP PTI
-> [  226.078637] CPU: 0 PID: 15581 Comm: bash Tainted: G      D
->  4.17.0-smp-clean #5
-> [  226.086635] Hardware name: ...
-> [  226.094546] RIP: 0010:mem_cgroup_protected+0x54/0x130
-> [  226.099533] Code: 4c 8b 8e 00 01 00 00 4c 8b 86 08 01 00 00 48 8d
-> 8a 08 ff ff ff 48 85 d2 ba 00 00 00 00 48 0f 44 ca 48 39 c8 0f 84 cf
-> 00 00 00 <48> 8b 81 20 01 00 00 4d 89 ca 4c 39 c8 4c 0f 46 d0 4d 85 d2
-> 74 05
-> [  226.118194] RSP: 0000:ffffabe64dfafa58 EFLAGS: 00010286
-> [  226.123358] RAX: ffff9fb6ff03d000 RBX: ffff9fb6f5b1b000 RCX: 0000000000000000
-> [  226.130406] RDX: 0000000000000000 RSI: ffff9fb6f5b1b000 RDI: ffff9fb6f5b1b000
-> [  226.137454] RBP: ffffabe64dfafb08 R08: 0000000000000000 R09: 0000000000000000
-> [  226.144503] R10: 0000000000000000 R11: 000000000000c800 R12: ffffabe64dfafb88
-> [  226.151551] R13: ffff9fb6f5b1b000 R14: ffffabe64dfafb88 R15: ffff9fb77fffe000
-> [  226.158602] FS:  00007fed1f8ac700(0000) GS:ffff9fb6ff400000(0000)
-> knlGS:0000000000000000
-> [  226.166594] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  226.172270] CR2: 0000000000000120 CR3: 0000001fdcf86003 CR4: 00000000001606f0
-> [  226.179317] Call Trace:
-> [  226.181732]  ? shrink_node+0x194/0x510
-> [  226.185435]  do_try_to_free_pages+0xfd/0x390
-> [  226.189653]  try_to_free_mem_cgroup_pages+0x123/0x210
-> [  226.194643]  try_charge+0x19e/0x700
-> [  226.198088]  mem_cgroup_try_charge+0x10b/0x1a0
-> [  226.202478]  wp_page_copy+0x134/0x5b0
-> [  226.206094]  do_wp_page+0x90/0x460
-> [  226.209453]  __handle_mm_fault+0x8e3/0xf30
-> [  226.213498]  handle_mm_fault+0xfe/0x220
-> [  226.217285]  __do_page_fault+0x262/0x500
-> [  226.221158]  do_page_fault+0x28/0xd0
-> [  226.224689]  ? page_fault+0x8/0x30
-> [  226.228048]  page_fault+0x1e/0x30
-> [  226.231323] RIP: 0033:0x485b72
->
-> The problem happens because parent_mem_cgroup() returns a NULL
-> pointer, which is dereferenced later without a check.
->
-> As cgroup v1 has no memory guarantee support, let's make
-> mem_cgroup_protected() immediately return MEMCG_PROT_NONE,
-> if the given cgroup has no parent (non-hierarchical mode is used).
->
-> Reported-by: Shakeel Butt <shakeelb@google.com>
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Tested-by: Shakeel Butt <shakeelb@google.com>
+------------------
 
-> ---
->  mm/memcontrol.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 6c9fb4e47be3..6205ba512928 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5750,6 +5750,9 @@ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
->         elow = memcg->memory.low;
->
->         parent = parent_mem_cgroup(memcg);
-> +       if (!parent)
-> +               return MEMCG_PROT_NONE;
-> +
->         if (parent == root_mem_cgroup)
->                 goto exit;
->
-> --
-> 2.14.3
->
+From: Tejun Heo <tj@kernel.org>
+
+commit 28b0f8a6962a24ed21737578f3b1b07424635c9e upstream.
+
+A tty is hung up by __tty_hangup() setting file->f_op to
+hung_up_tty_fops, which is skipped on ttys whose write operation isn't
+tty_write().  This means that, for example, /dev/console whose write
+op is redirected_tty_write() is never actually marked hung up.
+
+Because n_tty_read() uses the hung up status to decide whether to
+abort the waiting readers, the lack of hung-up marking can lead to the
+following scenario.
+
+ 1. A session contains two processes.  The leader and its child.  The
+    child ignores SIGHUP.
+
+ 2. The leader exits and starts disassociating from the controlling
+    terminal (/dev/console).
+
+ 3. __tty_hangup() skips setting f_op to hung_up_tty_fops.
+
+ 4. SIGHUP is delivered and ignored.
+
+ 5. tty_ldisc_hangup() is invoked.  It wakes up the waits which should
+    clear the read lockers of tty->ldisc_sem.
+
+ 6. The reader wakes up but because tty_hung_up_p() is false, it
+    doesn't abort and goes back to sleep while read-holding
+    tty->ldisc_sem.
+
+ 7. The leader progresses to tty_ldisc_lock() in tty_ldisc_hangup()
+    and is now stuck in D sleep indefinitely waiting for
+    tty->ldisc_sem.
+
+The following is Alan's explanation on why some ttys aren't hung up.
+
+ http://lkml.kernel.org/r/20171101170908.6ad08580@alans-desktop
+
+ 1. It broke the serial consoles because they would hang up and close
+    down the hardware. With tty_port that *should* be fixable properly
+    for any cases remaining.
+
+ 2. The console layer was (and still is) completely broken and doens't
+    refcount properly. So if you turn on console hangups it breaks (as
+    indeed does freeing consoles and half a dozen other things).
+
+As neither can be fixed quickly, this patch works around the problem
+by introducing a new flag, TTY_HUPPING, which is used solely to tell
+n_tty_read() that hang-up is in progress for the console and the
+readers should be aborted regardless of the hung-up status of the
+device.
+
+The following is a sample hung task warning caused by this issue.
+
+  INFO: task agetty:2662 blocked for more than 120 seconds.
+        Not tainted 4.11.3-dbg-tty-lockup-02478-gfd6c7ee-dirty #28
+  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+      0  2662      1 0x00000086
+  Call Trace:
+   __schedule+0x267/0x890
+   schedule+0x36/0x80
+   schedule_timeout+0x23c/0x2e0
+   ldsem_down_write+0xce/0x1f6
+   tty_ldisc_lock+0x16/0x30
+   tty_ldisc_hangup+0xb3/0x1b0
+   __tty_hangup+0x300/0x410
+   disassociate_ctty+0x6c/0x290
+   do_exit+0x7ef/0xb00
+   do_group_exit+0x3f/0xa0
+   get_signal+0x1b3/0x5d0
+   do_signal+0x28/0x660
+   exit_to_usermode_loop+0x46/0x86
+   do_syscall_64+0x9c/0xb0
+   entry_SYSCALL64_slow_path+0x25/0x25
+
+The following is the repro.  Run "$PROG /dev/console".  The parent
+process hangs in D state.
+
+  #include <sys/types.h>
+  #include <sys/stat.h>
+  #include <sys/wait.h>
+  #include <sys/ioctl.h>
+  #include <fcntl.h>
+  #include <unistd.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <errno.h>
+  #include <signal.h>
+  #include <time.h>
+  #include <termios.h>
+
+  int main(int argc, char **argv)
+  {
+	  struct sigaction sact = { .sa_handler = SIG_IGN };
+	  struct timespec ts1s = { .tv_sec = 1 };
+	  pid_t pid;
+	  int fd;
+
+	  if (argc < 2) {
+		  fprintf(stderr, "test-hung-tty /dev/$TTY\n");
+		  return 1;
+	  }
+
+	  /* fork a child to ensure that it isn't already the session leader */
+	  pid = fork();
+	  if (pid < 0) {
+		  perror("fork");
+		  return 1;
+	  }
+
+	  if (pid > 0) {
+		  /* top parent, wait for everyone */
+		  while (waitpid(-1, NULL, 0) >= 0)
+			  ;
+		  if (errno != ECHILD)
+			  perror("waitpid");
+		  return 0;
+	  }
+
+	  /* new session, start a new session and set the controlling tty */
+	  if (setsid() < 0) {
+		  perror("setsid");
+		  return 1;
+	  }
+
+	  fd = open(argv[1], O_RDWR);
+	  if (fd < 0) {
+		  perror("open");
+		  return 1;
+	  }
+
+	  if (ioctl(fd, TIOCSCTTY, 1) < 0) {
+		  perror("ioctl");
+		  return 1;
+	  }
+
+	  /* fork a child, sleep a bit and exit */
+	  pid = fork();
+	  if (pid < 0) {
+		  perror("fork");
+		  return 1;
+	  }
+
+	  if (pid > 0) {
+		  nanosleep(&ts1s, NULL);
+		  printf("Session leader exiting\n");
+		  exit(0);
+	  }
+
+	  /*
+	   * The child ignores SIGHUP and keeps reading from the controlling
+	   * tty.  Because SIGHUP is ignored, the child doesn't get killed on
+	   * parent exit and the bug in n_tty makes the read(2) block the
+	   * parent's control terminal hangup attempt.  The parent ends up in
+	   * D sleep until the child is explicitly killed.
+	   */
+	  sigaction(SIGHUP, &sact, NULL);
+	  printf("Child reading tty\n");
+	  while (1) {
+		  char buf[1024];
+
+		  if (read(fd, buf, sizeof(buf)) < 0) {
+			  perror("read");
+			  return 1;
+		  }
+	  }
+
+	  return 0;
+  }
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Alan Cox <alan@llwyncelyn.cymru>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: TTY_HUPPING is not really a new flag; it's an old flag
+ that was wrongly removed in 3.19.  Just add the test for it in n_tty_read().]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -2261,6 +2261,12 @@ static ssize_t n_tty_read(struct tty_str
+ 				}
+ 				if (tty_hung_up_p(file))
+ 					break;
++				/*
++				 * Abort readers for ttys which never actually
++				 * get hung up.  See __tty_hangup().
++				 */
++				if (test_bit(TTY_HUPPING, &tty->flags))
++					break;
+ 				if (!timeout)
+ 					break;
+ 				if (file->f_flags & O_NONBLOCK) {
