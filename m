@@ -1,142 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EL+RI/H1G1vMcwAAmS7hNA
-	; Sat, 09 Jun 2018 15:45:22 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id klh8N0ZZGVu3BwAAmS7hNA
+	; Thu, 07 Jun 2018 16:11:56 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id D451F608C8; Sat,  9 Jun 2018 15:45:21 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTEt1e7L"
+	id 1D17860115; Thu,  7 Jun 2018 16:11:55 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 36763605A5;
-	Sat,  9 Jun 2018 15:45:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 36763605A5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 7F85C6063F;
+	Thu,  7 Jun 2018 16:11:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F85C6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753707AbeFIPd7 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:33:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753683AbeFIPdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:33:55 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88681208A3;
-        Sat,  9 Jun 2018 15:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558435;
-        bh=Yc3MpjgpYJOpKZg/YWNUzJneAZVVJ3GcUalYI/chsow=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OTEt1e7LCbyL3d61IQ35on2PH426aTYGK0iyLalrX0+y0PBqeXN/K9j/C5XhRGo8j
-         DkOjc4+sen3CDJiImGUMTlAXs6/NpWQSyi4yAuVF0aOhwulJxczx2G5sXRYRvBxNBD
-         uZn9FOFfoelWdnC58CD2Y1HCZb/ddnU8U4q7K8UY=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.16 39/48] net/mlx5e: When RXFCS is set, add FCS data into checksum calculation
-Date: Sat,  9 Jun 2018 17:29:51 +0200
-Message-Id: <20180609145950.504510492@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S935618AbeFGQKo (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 12:10:44 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39195 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932984AbeFGOJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:01 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb1-0005Zt-Dc; Thu, 07 Jun 2018 15:08:59 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvax-0002hr-PL; Thu, 07 Jun 2018 15:08:55 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Peter Malone" <peter.malone@gmail.com>,
+        "Mathieu Malaterre" <malat@debian.org>,
+        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.855726222@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 023/410] fbdev: Fixing arbitrary kernel leak in case
+ FBIOGETCMAP_SPARC in sbusfb_ioctl_helper().
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Peter Malone <peter.malone@gmail.com>
 
-[ Upstream commit 902a545904c71d719ed144234d67df75f31db63b ]
+commit 250c6c49e3b68756b14983c076183568636e2bde upstream.
 
-When RXFCS feature is enabled, the HW do not strip the FCS data,
-however it is not present in the checksum calculated by the HW.
+Fixing arbitrary kernel leak in case FBIOGETCMAP_SPARC in
+sbusfb_ioctl_helper().
 
-Fix that by manually calculating the FCS checksum and adding it to the SKB
-checksum field.
+'index' is defined as an int in sbusfb_ioctl_helper().
+We retrieve this from the user:
+if (get_user(index, &c->index) ||
+    __get_user(count, &c->count) ||
+    __get_user(ured, &c->red) ||
+    __get_user(ugreen, &c->green) ||
+    __get_user(ublue, &c->blue))
+       return -EFAULT;
 
-Add helper function to find the FCS data for all SKB forms (linear,
-one fragment or more).
+and then we use 'index' in the following way:
+red = cmap->red[index + i] >> 8;
+green = cmap->green[index + i] >> 8;
+blue = cmap->blue[index + i] >> 8;
 
-Fixes: 102722fc6832 ("net/mlx5e: Add support for RXFCS feature flag")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This is a classic information leak vulnerability. 'index' should be
+an unsigned int, given its usage above.
+
+This patch is straight-forward; it changes 'index' to unsigned int
+in two switch-cases: FBIOGETCMAP_SPARC && FBIOPUTCMAP_SPARC.
+
+This patch fixes CVE-2018-6412.
+
+Signed-off-by: Peter Malone <peter.malone@gmail.com>
+Acked-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |   42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/video/fbdev/sbuslib.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -635,6 +635,45 @@ static inline bool is_last_ethertype_ip(
- 	return (ethertype == htons(ETH_P_IP) || ethertype == htons(ETH_P_IPV6));
- }
+--- a/drivers/video/fbdev/sbuslib.c
++++ b/drivers/video/fbdev/sbuslib.c
+@@ -121,7 +121,7 @@ int sbusfb_ioctl_helper(unsigned long cm
+ 		unsigned char __user *ured;
+ 		unsigned char __user *ugreen;
+ 		unsigned char __user *ublue;
+-		int index, count, i;
++		unsigned int index, count, i;
  
-+static __be32 mlx5e_get_fcs(struct sk_buff *skb)
-+{
-+	int last_frag_sz, bytes_in_prev, nr_frags;
-+	u8 *fcs_p1, *fcs_p2;
-+	skb_frag_t *last_frag;
-+	__be32 fcs_bytes;
-+
-+	if (!skb_is_nonlinear(skb))
-+		return *(__be32 *)(skb->data + skb->len - ETH_FCS_LEN);
-+
-+	nr_frags = skb_shinfo(skb)->nr_frags;
-+	last_frag = &skb_shinfo(skb)->frags[nr_frags - 1];
-+	last_frag_sz = skb_frag_size(last_frag);
-+
-+	/* If all FCS data is in last frag */
-+	if (last_frag_sz >= ETH_FCS_LEN)
-+		return *(__be32 *)(skb_frag_address(last_frag) +
-+				   last_frag_sz - ETH_FCS_LEN);
-+
-+	fcs_p2 = (u8 *)skb_frag_address(last_frag);
-+	bytes_in_prev = ETH_FCS_LEN - last_frag_sz;
-+
-+	/* Find where the other part of the FCS is - Linear or another frag */
-+	if (nr_frags == 1) {
-+		fcs_p1 = skb_tail_pointer(skb);
-+	} else {
-+		skb_frag_t *prev_frag = &skb_shinfo(skb)->frags[nr_frags - 2];
-+
-+		fcs_p1 = skb_frag_address(prev_frag) +
-+			    skb_frag_size(prev_frag);
-+	}
-+	fcs_p1 -= bytes_in_prev;
-+
-+	memcpy(&fcs_bytes, fcs_p1, bytes_in_prev);
-+	memcpy(((u8 *)&fcs_bytes) + bytes_in_prev, fcs_p2, last_frag_sz);
-+
-+	return fcs_bytes;
-+}
-+
- static inline void mlx5e_handle_csum(struct net_device *netdev,
- 				     struct mlx5_cqe64 *cqe,
- 				     struct mlx5e_rq *rq,
-@@ -663,6 +702,9 @@ static inline void mlx5e_handle_csum(str
- 			skb->csum = csum_partial(skb->data + ETH_HLEN,
- 						 network_depth - ETH_HLEN,
- 						 skb->csum);
-+		if (unlikely(netdev->features & NETIF_F_RXFCS))
-+			skb->csum = csum_add(skb->csum,
-+					     (__force __wsum)mlx5e_get_fcs(skb));
- 		rq->stats.csum_complete++;
- 		return;
- 	}
+ 		if (get_user(index, &c->index) ||
+ 		    __get_user(count, &c->count) ||
+@@ -160,7 +160,7 @@ int sbusfb_ioctl_helper(unsigned long cm
+ 		unsigned char __user *ugreen;
+ 		unsigned char __user *ublue;
+ 		struct fb_cmap *cmap = &info->cmap;
+-		int index, count, i;
++		unsigned int index, count, i;
+ 		u8 red, green, blue;
+ 
+ 		if (get_user(index, &c->index) ||
