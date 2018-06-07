@@ -1,150 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id oNl4O+byG1vpXwAAmS7hNA
-	; Sat, 09 Jun 2018 15:31:54 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vckwHqU8GVupNQAAmS7hNA
+	; Thu, 07 Jun 2018 14:10:33 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B327D608CA; Sat,  9 Jun 2018 15:31:54 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9C9u1pp"
+	id EE9AE608BF; Thu,  7 Jun 2018 14:10:32 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E6765608B8;
-	Sat,  9 Jun 2018 15:31:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E6765608B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 318EC6063F;
+	Thu,  7 Jun 2018 14:10:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 318EC6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932299AbeFIPbw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:31:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932254AbeFIPbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:31:49 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2A68208A4;
-        Sat,  9 Jun 2018 15:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558308;
-        bh=AeRB+jiaMFMpaPMjuddl7KO5CLaJMPDRz76jICA4ECU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j9C9u1ppHZwVgL0ZoHnqqNXT2b00k8RJHaOrkCzoGjw2OZPo0DvNRnz5f3JtiCUYA
-         z2lu7NPHCBzX7nDjIT3JedMdom3pzXAUkW7vfkOI2jLEx4Gg+hCSPR42tIUl/Zdmsq
-         OsPjmX76PsBxMCzPagzWxsU9K+ifUW7bfHxYiRrc=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Yuval Mintz <yuvalm@mellanox.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 12/48] ipmr: properly check rhltable_init() return value
-Date: Sat,  9 Jun 2018 17:29:24 +0200
-Message-Id: <20180609145948.452469272@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S933252AbeFGOJw (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:09:52 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39420 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932914AbeFGOJb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:09:31 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbN-0005Zi-3K; Thu, 07 Jun 2018 15:09:21 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbD-0003H7-My; Thu, 07 Jun 2018 15:09:11 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Marc Kleine-Budde" <mkl@pengutronix.de>,
+        "Andri Yngvason" <andri.yngvason@marel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.196133873@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 377/410] can: cc770: Fix use after free in
+ cc770_tx_interrupt()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Andri Yngvason <andri.yngvason@marel.com>
 
-[ Upstream commit 66fb33254f45df4b049f487aff1cbde1ef919390 ]
+commit 9ffd7503944ec7c0ef41c3245d1306c221aef2be upstream.
 
-commit 8fb472c09b9d ("ipmr: improve hash scalability")
-added a call to rhltable_init() without checking its return value.
+This fixes use after free introduced by the last cc770 patch.
 
-This problem was then later copied to IPv6 and factorized in commit
-0bbbf0e7d0e7 ("ipmr, ip6mr: Unite creation of new mr_table")
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 31552 Comm: syz-executor7 Not tainted 4.17.0-rc5+ #60
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:rht_key_hashfn include/linux/rhashtable.h:277 [inline]
-RIP: 0010:__rhashtable_lookup include/linux/rhashtable.h:630 [inline]
-RIP: 0010:rhltable_lookup include/linux/rhashtable.h:716 [inline]
-RIP: 0010:mr_mfc_find_parent+0x2ad/0xbb0 net/ipv4/ipmr_base.c:63
-RSP: 0018:ffff8801826aef70 EFLAGS: 00010203
-RAX: 0000000000000001 RBX: 0000000000000001 RCX: ffffc90001ea0000
-RDX: 0000000000000079 RSI: ffffffff8661e859 RDI: 000000000000000c
-RBP: ffff8801826af1c0 R08: ffff8801b2212000 R09: ffffed003b5e46c2
-R10: ffffed003b5e46c2 R11: ffff8801daf23613 R12: dffffc0000000000
-R13: ffff8801826af198 R14: ffff8801cf8225c0 R15: ffff8801826af658
-FS:  00007ff7fa732700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000003ffffff9c CR3: 00000001b0210000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- ip6mr_cache_find_parent net/ipv6/ip6mr.c:981 [inline]
- ip6mr_mfc_delete+0x1fe/0x6b0 net/ipv6/ip6mr.c:1221
- ip6_mroute_setsockopt+0x15c6/0x1d70 net/ipv6/ip6mr.c:1698
- do_ipv6_setsockopt.isra.9+0x422/0x4660 net/ipv6/ipv6_sockglue.c:163
- ipv6_setsockopt+0xbd/0x170 net/ipv6/ipv6_sockglue.c:922
- rawv6_setsockopt+0x59/0x140 net/ipv6/raw.c:1060
- sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3039
- __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
- __do_sys_setsockopt net/socket.c:1914 [inline]
- __se_sys_setsockopt net/socket.c:1911 [inline]
- __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 8fb472c09b9d ("ipmr: improve hash scalability")
-Fixes: 0bbbf0e7d0e7 ("ipmr, ip6mr: Unite creation of new mr_table")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc: Yuval Mintz <yuvalm@mellanox.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andri Yngvason <andri.yngvason@marel.com>
+Fixes: 746201235b3f ("can: cc770: Fix queue stall & dropped RTR reply")
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/ipmr.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/can/cc770/cc770.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -356,6 +356,7 @@ static const struct rhashtable_params ip
- static struct mr_table *ipmr_new_table(struct net *net, u32 id)
- {
- 	struct mr_table *mrt;
-+	int err;
+--- a/drivers/net/can/cc770/cc770.c
++++ b/drivers/net/can/cc770/cc770.c
+@@ -705,13 +705,12 @@ static void cc770_tx_interrupt(struct ne
+ 		return;
+ 	}
  
- 	/* "pimreg%u" should not exceed 16 bytes (IFNAMSIZ) */
- 	if (id != RT_TABLE_DEFAULT && id >= 1000000000)
-@@ -371,7 +372,11 @@ static struct mr_table *ipmr_new_table(s
- 	write_pnet(&mrt->net, net);
- 	mrt->id = id;
+-	can_put_echo_skb(priv->tx_skb, dev, 0);
+-	can_get_echo_skb(dev, 0);
+-
+ 	cf = (struct can_frame *)priv->tx_skb->data;
+ 	stats->tx_bytes += cf->can_dlc;
+ 	stats->tx_packets++;
  
--	rhltable_init(&mrt->mfc_hash, &ipmr_rht_params);
-+	err = rhltable_init(&mrt->mfc_hash, &ipmr_rht_params);
-+	if (err) {
-+		kfree(mrt);
-+		return ERR_PTR(err);
-+	}
- 	INIT_LIST_HEAD(&mrt->mfc_cache_list);
- 	INIT_LIST_HEAD(&mrt->mfc_unres_queue);
++	can_put_echo_skb(priv->tx_skb, dev, 0);
++	can_get_echo_skb(dev, 0);
+ 	priv->tx_skb = NULL;
  
+ 	netif_wake_queue(dev);
