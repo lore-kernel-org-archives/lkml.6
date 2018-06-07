@@ -1,180 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id jMizGd+XGVvPfAAAmS7hNA
-	; Thu, 07 Jun 2018 20:38:55 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id kfzJLJufGVt7WgAAmS7hNA
+	; Thu, 07 Jun 2018 21:14:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 4D6D46074D; Thu,  7 Jun 2018 20:38:55 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e5itmGRH"
+	id 63E2E6074D; Thu,  7 Jun 2018 21:14:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 78A3C60452;
-	Thu,  7 Jun 2018 20:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 78A3C60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8345060452;
+	Thu,  7 Jun 2018 21:14:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8345060452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932514AbeFGUiw (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 16:38:52 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:33635 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932296AbeFGUiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 16:38:50 -0400
-Received: by mail-pl0-f65.google.com with SMTP id n10-v6so6862151plp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=XPt5YujdfZsiysYDWGSFfTMiw9NfNNEGK0vlrekDSbQ=;
-        b=e5itmGRHtYjrymYPy1DHhQvxuirJ7a/PqwLSwo88Rv3AlxEnzoKu7c0udDNSqiarT2
-         P7ULyH7AoMHBih2l/Tqj8j81+8MecA7+VQTw416XsnagvS3Oca4gkF6CAK63uAj6jm2R
-         H2n083kcXj0YiQ08jglQ+T+4ka9l03m7FoMGqkbRnW0vyVpg28pDQe7UgWGh/qp2GVvg
-         Lr/whZWZR1jh8Bi+mvwRlSHSI+DcN77vNo4ThiFtSTr0ZJnTGSvMkQFJ82CMUVwNc4sZ
-         gE7NqNnldb/m6u/xO7od4Ap5ULEuaElfLyiYHxWg1qi6kF2WOtD6LwI89nuJDtMtoTB0
-         ZH7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XPt5YujdfZsiysYDWGSFfTMiw9NfNNEGK0vlrekDSbQ=;
-        b=iOxQNP6/tN2QBUTcmYm4/ydw/atxBZ3rSOdmtp3M12RlHKarkUm3X6aDklPA21CjI0
-         IH23W6mJ3YW45Wz+y4cXKSWw5LFDlpZJVCeIvoHdxCMdayYdCXrmJN1FYzsLI8JrE2xT
-         YlErTIL6jWONcOcM60v6JLl4630HMYI2pgJBDr89B/X9AB7ONslLqbrQ3jKvFIR/P3jE
-         WddxQ4m1ghHeFWJu7AnHkM2dW3KEckI3Jgi6yS4tFip1dkC+3ioSmYbxv3tbBBla6Un0
-         tanJ48fcv4o30Rm+j1r591XD+OpUlWukf4ACzoovAKzhO6Q15kFXSrUjkHqLSCEAyXAy
-         /CAw==
-X-Gm-Message-State: APt69E3xc9uK31soC8PO02FrO7Xgt0I5tRsJEcx1KMunfZvuijAeuHIk
-        V7f7RKr/PoZhYSD0q3DSkg+3cB/enXo=
-X-Google-Smtp-Source: ADUXVKIQgerCtzY1Sjhdrah/A0mGx3RBe61V5JemGxp/Y8PiO3TUZL4uyl8yo2hYetD0CoKwqy/kag==
-X-Received: by 2002:a17:902:20c9:: with SMTP id v9-v6mr3524161plg.206.1528403929139;
-        Thu, 07 Jun 2018 13:38:49 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id v27-v6sm10324174pfi.23.2018.06.07.13.38.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 13:38:48 -0700 (PDT)
-From: Joel Fernandes <joelaf@google.com>
-X-Google-Original-From: Joel Fernandes <joel@joelfernandes.org>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-team@android.com,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH v9 0/7] Centralize and unify usage of preempt/irq
-Date: Thu,  7 Jun 2018 13:38:08 -0700
-Message-Id: <20180607203815.255845-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.17.1.1185.g55be947832-goog
+        id S1752428AbeFGVOD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:14:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751066AbeFGVOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:14:02 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F37D7818BAFC;
+        Thu,  7 Jun 2018 21:14:01 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 964462026DFD;
+        Thu,  7 Jun 2018 21:14:01 +0000 (UTC)
+Date: Thu, 7 Jun 2018 17:14:01 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: valdis.kletnieks@vt.edu
+Cc: Alasdair Kergon <agk@redhat.com>, linux-kernel@vger.kernel.org,
+        dm-devel@redhat.com, axboe@kernel.dk
+Subject: Re: next-20180605 - kernel tried to execute NX-protected page -
+ exploit attempt?
+Message-ID: <20180607211401.GD4481@redhat.com>
+References: <21051.1528404057@turing-police.cc.vt.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21051.1528404057@turing-police.cc.vt.edu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 07 Jun 2018 21:14:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 07 Jun 2018 21:14:02 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On Thu, Jun 07 2018 at  4:40pm -0400,
+valdis.kletnieks@vt.edu <valdis.kletnieks@vt.edu> wrote:
 
-This is the next (hopefully close to final) revision of preempt/irq tracepoint
-centralization and unified usage across the kernel. This revision mostly has
-minor style corrections, reviewed-by tag additions and an improvement to the
-test module. All patches now have a Reviewed-by tag except for the kselftest
-script (patch 7/7). I have also now split out the softirq fix which really
-should go into an -rc cycle and is independent of this series (see [1]).
+> I've hit this one twice today with pretty much the same traceback.
+> The disk has 3 partitions - one for EFI, one for /boot, and then the rest of
+> the disk is a cryptluks partition that contains a dozen or so LVM logical
+> volumes.
+> 
+> 'git log -- drivers/md' didn't show any obvious suspects since next-20180529, which worked
+> for me just fine....
 
-The preempt/irq tracepoints exist but not everything in the kernel is using it
-whenever they need to be notified that a preempt disable/enable or an irq
-disable enable has occurred.  This makes things not work simultaneously (for
-example, only either lockdep or irqsoff trace-events can be used at a time).
+I just bounced 2 patches to you that Jens sent out that will hopefully
+fix the issue.
 
-This is particular painful to deal with, since turning on lockdep breaks
-tracers that install probes on IRQ events, such as the BCC atomic critical
-section tracer [2]. This constraint also makes it not possible to use synthetic
-events to trace irqsoff sections with lockdep simulataneously turned on.
+Can you please share what you test is?  We've gotten lots of reports
+with failure following wake_up but I don't have a canned test to trigger
+this.  And my testbed has so much memory that I think I'm never
+exhausting the mempool limits.
 
-This series solves that, and also results in a nice clean up of relevant parts
-of the kernel. Several ifdefs are simpler, and the design is more unified and
-better. Also as a result of this, we also speeded performance all rcuidle
-tracepoints since their handling is simpler.
+Mike
 
-[1] https://lkml.org/lkml/2018/6/7/1135
-[2] https://github.com/iovisor/bcc/pull/1801/
 
-v8->v9:
-- Small style changes to tracepoint code (Mathieu)
-- Minor style fix to use PTR_ERR_OR_ZERO (0-day bot)
-- Minor fix to test_atomic_sections to use unsigned long.
-- Added Namhyung's, Mathieu's Reviewed-by to some patches.
 
-v7->v8:
-- Refactored irqsoff tracer probe defines (Namhyung)
-
-v6->v7:
-- Added a module to simulate an atomic section, a kselftest to load and
-  and trigger it which verifies the preempt-tracer and this series.
-
-- Fixed a new warning after I rebased in early boot, this is because
-early_boot_irqs_disabled was set too early, I moved it after the lockdep
-initialization.
-
-- added back the softirq fix since it appears it wasn't picked up.
-
-- Ran Ingo's locking API selftest suite which are passing with this
-  series.
-
-- Mathieu suggested ifdef'ing the tracepoint_synchronize_unregister
-  function incase tracepoints aren't enabled, did that.
-
-Joel Fernandes (Google) (6):
-  srcu: Add notrace variant of srcu_dereference
-  trace/irqsoff: Split reset into separate functions
-  tracepoint: Make rcuidle tracepoint callers use SRCU
-  tracing: Centralize preemptirq tracepoints and unify their usage
-  lib: Add module to simulate atomic sections for testing preemptoff
-    tracers
-  kselftests: Add tests for the preemptoff and irqsoff tracers
-
-Paul McKenney (1):
-  srcu: Add notrace variants of srcu_read_{lock,unlock}
-
- include/linux/ftrace.h                        |  11 +-
- include/linux/irqflags.h                      |  11 +-
- include/linux/lockdep.h                       |   8 +-
- include/linux/preempt.h                       |   2 +-
- include/linux/srcu.h                          |  22 ++
- include/linux/tracepoint.h                    |  49 +++-
- include/trace/events/preemptirq.h             |  23 +-
- init/main.c                                   |   5 +-
- kernel/locking/lockdep.c                      |  35 +--
- kernel/sched/core.c                           |   2 +-
- kernel/trace/Kconfig                          |  22 +-
- kernel/trace/Makefile                         |   2 +-
- kernel/trace/trace_irqsoff.c                  | 253 ++++++------------
- kernel/trace/trace_preemptirq.c               |  71 +++++
- kernel/tracepoint.c                           |  16 +-
- lib/Kconfig.debug                             |   8 +
- lib/Makefile                                  |   1 +
- lib/test_atomic_sections.c                    |  77 ++++++
- tools/testing/selftests/ftrace/config         |   3 +
- .../test.d/preemptirq/irqsoff_tracer.tc       |  74 +++++
- 20 files changed, 454 insertions(+), 241 deletions(-)
- create mode 100644 kernel/trace/trace_preemptirq.c
- create mode 100644 lib/test_atomic_sections.c
- create mode 100644 tools/testing/selftests/ftrace/test.d/preemptirq/irqsoff_tracer.tc
-
--- 
-2.17.1.1185.g55be947832-goog
+> 
+> [ 6090.781839] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
+> [ 6090.781847] BUG: unable to handle kernel paging request at ffff9d4bc8b766c0
+> [ 6090.781856] PGD 17b7a067 P4D 17b7a067 PUD 17b7e067 PMD 408b9d063 PTE 8000000408b76063
+> [ 6090.781872] Oops: 0011 [#1] PREEMPT SMP PTI
+> 
+> [ 6090.781893] Workqueue: kcryptd kcryptd_crypt
+> [ 6090.781901] RIP: 0010:0xffff9d4bc8b766c0
+> [ 6090.781905] Code: ff ff ff f9 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ff ff ff ff ff ff ff ff ff <ff> ff ff ff ff ff 9f ff ff ff ff f9 ff ff bf ff ff ff ff ff ff 7f
+> [ 6090.782012] RSP: 0018:ffff9d4bdd2039d8 EFLAGS: 00010046
+> [ 6090.782018] RAX: ffff9d4bc8b766c0 RBX: ffff9d4bd53744e8 RCX: 0000000000000000
+> [ 6090.782023] RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffff9d4bd31e5c90
+> [ 6090.782027] RBP: ffff9d4bdd203a40 R08: 0000000000000000 R09: ffff9d4bd31e5c90
+> [ 6090.782030] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> [ 6090.782034] R13: ffff9d4bd7860228 R14: 00000000d31a2b40 R15: ffff9d4bdd203a58
+> [ 6090.782038] FS:  0000000000000000(0000) GS:ffff9d4bdd200000(0000) knlGS:0000000000000000
+> [ 6090.782042] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 6090.782046] CR2: ffff9d4bc8b766c0 CR3: 0000000015e24003 CR4: 00000000001606e0
+> [ 6090.782050] Call Trace:
+> [ 6090.782054]  <IRQ>
+> [ 6090.782061]  ? __wake_up_common+0xb7/0x3d0
+> [ 6090.782071]  __wake_up_common_lock+0x87/0xe0
+> [ 6090.782080]  __wake_up+0x13/0x20
+> [ 6090.782087]  mempool_free+0x122/0x190
+> [ 6090.782095]  bio_free+0x59/0x80
+> [ 6090.782101]  bio_put+0x50/0x90
+> [ 6090.782107]  dec_pending+0x1b0/0x560
+> [ 6090.782117]  clone_endio+0xd5/0x2e0
+> [ 6090.782125]  bio_endio+0x22e/0x4b0
+> [ 6090.782132]  crypt_dec_pending+0x92/0xf0
+> [ 6090.782139]  crypt_endio+0x9b/0xe0
+> [ 6090.782146]  bio_endio+0x22e/0x4b0
+> [ 6090.782153]  blk_update_request+0x145/0x680
+> [ 6090.782162]  scsi_end_request+0x56/0x440
+> [ 6090.782169]  scsi_io_completion+0x462/0x9b0
+> [ 6090.782178]  scsi_finish_command+0x189/0x2a0
+> [ 6090.782185]  scsi_softirq_done+0x17e/0x1f0
+> [ 6090.782193]  blk_done_softirq+0x229/0x410
+> [ 6090.782198]  ? __do_softirq+0xfb/0x914
+> [ 6090.782207]  __do_softirq+0x13a/0x914
+> [ 6090.782219]  irq_exit+0xea/0x140
+> [ 6090.782224]  do_IRQ+0xcc/0x1c0
+> [ 6090.782232]  common_interrupt+0xf/0xf
+> [ 6090.782237]  </IRQ>
+> [ 6090.782241] RIP: 0010:memset_erms+0x9/0x10
+> 
+> The other traceback was about the same, with the following
+> interleaved:
+> 
+> [27847.571250] list_add corruption. next->prev should be prev (ffff9e2c1347a4e8), but was 0000000000000000. (next=ffff9e2c13cde4a8).
+> [27847.571278] kernel BUG at lib/list_debug.c:25!
+> [27847.571685] invalid opcode: 0000 [#2] PREEMPT SMP PTI
+> [27847.571689] CPU: 0 PID: 55 Comm: kswapd0 Tainted: G      D    O    T 4.17.0-next-20180605-dirty #586
+> [27847.573947] Call Trace:
+> [27847.573958]  prepare_to_wait+0x133/0x210
+> [27847.573966]  ? mempool_alloc+0xe9/0x200
+> [27847.573975]  mempool_alloc+0x17e/0x200
+> [27847.573983]  ? remove_wait_queue+0x170/0x170
+> [27847.573994]  bio_alloc_bioset+0x122/0x3f0
+> [27847.574000]  ? bio_advance+0xbf/0x240
+> [27847.574006]  ? bio_clone_blkcg_association+0x5b/0x80
+> [27847.574015]  alloc_io+0x48/0x320
+> [27847.574021]  ? dm_get_live_table+0x3a/0x140
+> [27847.574030]  ? __split_and_process_non_flush+0x420/0x420
+> [27847.574035]  __split_and_process_bio+0x5d/0x2b0
+> [27847.574042]  ? __split_and_process_non_flush+0x420/0x420
+> [27847.574048]  ? dm_get_live_table+0x5d/0x140
+> [27847.574053]  ? dm_get_live_table+0x84/0x140
+> [27847.574061]  __dm_make_request+0xaf/0x1f0
+> [27847.574071]  dm_make_request+0x15/0x20
+> [27847.574078]  generic_make_request+0x3b9/0x7c0
+> [27847.574091]  submit_bio+0xb9/0x240
+> [27847.574097]  ? submit_bio+0xb9/0x240
+> [27847.574104]  ? __test_set_page_writeback+0x402/0xd30
+> [27847.574111]  ? get_swap_bio+0x106/0x180
+> [27847.574121]  __swap_writepage+0x153/0x8d0
+> [27847.574128]  ? page_swapcount+0xbf/0x140
+> [27847.574139]  ? __frontswap_store+0x8d/0x142
+> [27847.574147]  swap_writepage+0x4d/0xc0
+> [27847.574155]  pageout.isra.29+0x304/0x980
+> [27847.574171]  shrink_page_list+0x11e9/0x2020
+> [27847.574189]  shrink_inactive_list+0x291/0xdb0
+> [27847.574204]  shrink_node_memcg+0x38a/0x1530
+> [27847.574211]  ? percpu_ref_get_many+0x200/0x200
+> [27847.574233]  shrink_node+0xdc/0x920
+> [27847.574246]  balance_pgdat+0x288/0x680
+> [27847.574262]  kswapd+0x2ca/0x990
+> [27847.574271]  ? remove_wait_queue+0x170/0x170
+> [27847.574282]  kthread+0x1d3/0x2a0
+> [27847.574288]  ? balance_pgdat+0x680/0x680
+> [27847.574294]  ? kthread_create_worker_on_cpu+0x70/0x70
+> [27847.574304]  ret_from_fork+0x3a/0x50
+> 
