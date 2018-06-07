@@ -1,169 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id MSSIEH5iGVuZXgAAmS7hNA
-	; Thu, 07 Jun 2018 16:51:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YT4KG+zqGFsXZwAAmS7hNA
+	; Thu, 07 Jun 2018 08:21:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id B86A8607E7; Thu,  7 Jun 2018 16:51:39 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmbMqGRX"
+	id A3EF2607F7; Thu,  7 Jun 2018 08:21:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 1BE1A60115;
-	Thu,  7 Jun 2018 16:51:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BE1A60115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 1BC446063F;
+	Thu,  7 Jun 2018 08:21:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BC446063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932799AbeFGQvh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:51:37 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52233 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932400AbeFGQvf (ORCPT
+        id S932558AbeFGIVX (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 04:21:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47633 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753044AbeFGIVV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:51:35 -0400
-Received: by mail-wm0-f67.google.com with SMTP id p126-v6so19321265wmb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 09:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FD97m8AK1AVb5+u+DQXLPQT7pMrOXEAToLOLo79seT4=;
-        b=QmbMqGRXbUxIEx/rTzFG7wbuwGYVZtiWWkHVS0ZMZ7vYTBQ88W2gvPp78pHvdMBxJf
-         3BrAibpjZtdgiv0kFFgEhrnCzxg9+tzVabsRtu4qsCIs333pvPotBmyWMns6i49ZbZBC
-         /yzkRY7/RYgXy7pLhAza3vt8UuK3oC+ZmIGgcg4GYeer9TY6qyJqxWLGMmsOEIJF0n4K
-         Eic3fHnfYlnU93RSzoIvj++fvlBh09+8w4CLUCVybqT3eVUQFr3JWLwqao98ovDZPxw+
-         TjU7V3/PSvdwyCBurvYYHQyTfxjVLPsE4VL0dBit1DqsSLABc3YyZLNBw6bje4qViDci
-         Z7Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FD97m8AK1AVb5+u+DQXLPQT7pMrOXEAToLOLo79seT4=;
-        b=XHvD5KRGfEJTFSO32Y0zvREfCDwdN0GBFjqzhALwSaB6m7eItDXGk/RgLTt50nEPwk
-         LxfFrEmPCSbLxCRC6qqCzHnQHbSnYk87LIp5socErGiVYcFnc3vWesX8QMNr2SLnLDiu
-         bsNP9iwfPlM3pgqKEurFb6S1ZPMr13IfXxTQQ76fplIUJrLBu8C8MX3cxWQdtJtFhk15
-         WGHkVYSVqBkt9ctR+65Hr/VmoVHeLJ5twZUeaOdKlBe46tMdwkq219HLlO5UQuz8B1xl
-         GnH84OICDMmmXVxOluDhtssm8pG6tJwZTPD07/fQHZYimzrVynmK+B3dhxRSXCSRnW+h
-         K2LA==
-X-Gm-Message-State: APt69E2T3twrjTVSRXIdBM3BeyvzigRAbBLqIOHUsPUD/S8pPAPx0voX
-        wTftVk/5AeeOAEiVVNbqs84=
-X-Google-Smtp-Source: ADUXVKJ/52y55qvJEoKG5QwoAJgXyRtFLTTgibtmnMmGXK11plHR2nb+SNCmn17GxYcFXrE+eRf5Ew==
-X-Received: by 2002:a50:d55e:: with SMTP id f30-v6mr3359645edj.73.1528390294583;
-        Thu, 07 Jun 2018 09:51:34 -0700 (PDT)
-Received: from ltop.local ([2a02:a03f:4108:7200:4cda:2d35:e86f:d034])
-        by smtp.gmail.com with ESMTPSA id a4-v6sm14244826eda.52.2018.06.07.09.51.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 09:51:34 -0700 (PDT)
-Date: Thu, 7 Jun 2018 18:51:33 +0200
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: atish.patra@wdc.com, linux-riscv@lists.infradead.org,
-        albert@sifive.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
-Message-ID: <20180607165131.5qx43o6f2siwyivj@ltop.local>
-References: <6a0ab99d-6e4d-eb80-bc4d-854d154ae827@wdc.com>
- <mhng-497a442f-c0da-4f88-9b48-827c4f164ed1@palmer-si-x1c4>
+        Thu, 7 Jun 2018 04:21:21 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w578L7lT2126204
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 7 Jun 2018 01:21:07 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w578L7qr2126201;
+        Thu, 7 Jun 2018 01:21:07 -0700
+Date: Thu, 7 Jun 2018 01:21:07 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-zlfnbauad3ljlmtjgo0v660u@git.kernel.org>
+Cc: naveen.n.rao@linux.vnet.ibm.com, namhyung@kernel.org,
+        tmricht@linux.ibm.com, mingo@kernel.org, heiko.carstens@de.ibm.com,
+        linux-kernel@vger.kernel.org, brueckner@linux.vnet.ibm.com,
+        hpa@zytor.com, adrian.hunter@intel.com, tglx@linutronix.de,
+        acme@redhat.com, schwidefsky@de.ibm.com, wangnan0@huawei.com,
+        jolsa@kernel.org, dsahern@gmail.com, sandipan@linux.vnet.ibm.com
+Reply-To: naveen.n.rao@linux.vnet.ibm.com, tmricht@linux.ibm.com,
+          namhyung@kernel.org, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, heiko.carstens@de.ibm.com, hpa@zytor.com,
+          brueckner@linux.vnet.ibm.com, adrian.hunter@intel.com,
+          tglx@linutronix.de, acme@redhat.com, jolsa@kernel.org,
+          schwidefsky@de.ibm.com, wangnan0@huawei.com,
+          sandipan@linux.vnet.ibm.com, dsahern@gmail.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf test record+probe_libc_inet_pton: Ask 'nm'
+ for dynamic symbols
+Git-Commit-ID: 005cc008bc188f81f0c1ae53dafb50cdb6df19c2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <mhng-497a442f-c0da-4f88-9b48-827c4f164ed1@palmer-si-x1c4>
-User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 09:30:19AM -0700, Palmer Dabbelt wrote:
-> 
-> I haven't compiled this, but I think it should work.  It's on the
-> fix-sparse branch of kernel.org/palmer/linux.git .
+Commit-ID:  005cc008bc188f81f0c1ae53dafb50cdb6df19c2
+Gitweb:     https://git.kernel.org/tip/005cc008bc188f81f0c1ae53dafb50cdb6df19c2
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 4 Jun 2018 11:11:13 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 6 Jun 2018 12:52:06 -0300
 
-It's essentially what I was thinking but I have some small remarks.
+perf test record+probe_libc_inet_pton: Ask 'nm' for dynamic symbols
+
+Adrian reported that this test fails in his system where:
+
+  probe libc's inet_pton & backtrace it with ping: FAILED!
+  root@kbl04:~/git/linux-perf# nm -g /lib/x86_64-linux-gnu/libc-2.19.so | grep inet_pton
+  nm: /lib/x86_64-linux-gnu/libc-2.19.so: no symbols
+
+This fails on ubuntu systems, with Adrian's being kubuntu 14.04, I
+tested with ubuntu 14.04.4 and 18.04, and there we need to use the
+-D/--dynamic 'nm' option to have this test working. And it works as well
+with that on fedora 27, so use it.
+
+Reported-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-zlfnbauad3ljlmtjgo0v660u@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 650b208f700f..263057039693 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -11,7 +11,7 @@
+ . $(dirname $0)/lib/probe.sh
  
-> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-> index 14b0b22fb578..0dbbbab05dac 100644
-> --- a/arch/riscv/include/asm/uaccess.h
-> +++ b/arch/riscv/include/asm/uaccess.h
-> @@ -392,19 +392,21 @@ do {								\
-> })
-> 
-> 
-> -extern unsigned long __must_check __copy_user(void __user *to,
-> +extern unsigned long __must_check __asm_copy_from_user_user(void *to,
-> 	const void __user *from, unsigned long n);
-> +extern unsigned long __must_check __asm_copy_to_user_user(void __user *to,
-> +	const void *from, unsigned long n);
-> 
-> static inline unsigned long
-> raw_copy_from_user(void *to, const void __user *from, unsigned long n)
-> {
-> -	return __copy_user(to, from, n);
-> +	return __asm_copy_from_user(to, from, n);
-> }
-> 
-> static inline unsigned long
-> raw_copy_to_user(void __user *to, const void *from, unsigned long n)
-> {
-> -	return __copy_user(to, from, n);
-> +	return __asm_copy_to_user(to, from, n);
-> }
-
-The asm function could have directly be named raw_copy_{to,from}_user()
-because the inline functions are just no-ops but it's very clear like so.
-
-> extern long strncpy_from_user(char *dest, const char __user *src, long count);
-> diff --git a/arch/riscv/lib/uaccess.S b/arch/riscv/lib/uaccess.S
-> index 58fb2877c865..bd51e47ebd44 100644
-> --- a/arch/riscv/lib/uaccess.S
-> +++ b/arch/riscv/lib/uaccess.S
-> @@ -13,7 +13,15 @@ _epc:
-> 	.previous
-> 	.endm
-> 
-> -ENTRY(__copy_user)
-> +/* __asm_copy_to_user and __asm_copy_from_user are actually the same function,
-> + * they're just provided as two different symbols to C code so sparse doesn't
-> + * yell about casting between two different address spaces. */
-> +.global __asm_copy_to_user
-> +.set __asm_copy_to_user,__asm_copy_tofrom_user
-> +.global __asm_copy_from_user
-> +.set __asm_copy_from_user,__asm_copy_tofrom_user
-> +
-> +ENTRY(__asm_copy_tofrom_user)
-
-I don't think that the size (as reported by objdump, for example) will
-be correct or even present for __asm_copy_to_user & __asm_copy_to_user.
-
-What can be done is:
-	ENTRY(__asm_copy_to_user)
-	ENTRY(__asm_copy_from_user)
-
-	<function definition>
-
-	ENDPROC(__asm_copy_to_user)
-	ENDPROC(__asm_copy_from_user)
-
-
-Finally, the symbol table need also something like:
-diff --git a/arch/riscv/kernel/riscv_ksyms.c b/arch/riscv/kernel/riscv_ksyms.c
-index 551734248..1e8f8fa54 100644
---- a/arch/riscv/kernel/riscv_ksyms.c
-+++ b/arch/riscv/kernel/riscv_ksyms.c
-@@ -13,6 +13,7 @@
-  * Assembly functions that may be used (directly or indirectly) by modules
-  */
- EXPORT_SYMBOL(__clear_user);
--EXPORT_SYMBOL(__copy_user);
-+EXPORT_SYMBOL(__asm_copy_to_user);
-+EXPORT_SYMBOL(__asm_copy_from_user);
- EXPORT_SYMBOL(memset);
- EXPORT_SYMBOL(memcpy);
-
-
-Best regards,
--- Luc
+ libc=$(grep -w libc /proc/self/maps | head -1 | sed -r 's/.*[[:space:]](\/.*)/\1/g')
+-nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
++nm -Dg $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+ 
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
