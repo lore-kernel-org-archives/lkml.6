@@ -1,102 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id u5DNJ1TiG1tUfwAAmS7hNA
-	; Sat, 09 Jun 2018 14:21:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id /+0iDyyeGFuEOAAAmS7hNA
+	; Thu, 07 Jun 2018 03:01:04 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 2A0EA608BA; Sat,  9 Jun 2018 14:21:20 +0000 (UTC)
+	id C3D62607DC; Thu,  7 Jun 2018 03:01:03 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A235D601C3;
-	Sat,  9 Jun 2018 14:21:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A235D601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by smtp.codeaurora.org (Postfix) with ESMTP id 25045601A8;
+	Thu,  7 Jun 2018 03:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 25045601A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753378AbeFIOVR (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 10:21:17 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:56622 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753171AbeFIOVP (ORCPT
+        id S932599AbeFGDBB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 23:01:01 -0400
+Received: from regular1.263xmail.com ([211.150.99.135]:39427 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753497AbeFGDA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 10:21:15 -0400
-Received: from localhost (unknown [209.117.102.182])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 21836136B6558;
-        Sat,  9 Jun 2018 07:21:15 -0700 (PDT)
-Date: Sat, 09 Jun 2018 10:21:14 -0400 (EDT)
-Message-Id: <20180609.102114.1940060150406660652.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-CC: akpm@linux-foundation.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Sparc
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 09 Jun 2018 07:21:15 -0700 (PDT)
+        Wed, 6 Jun 2018 23:00:59 -0400
+Received: from zhangqing?rock-chips.com (unknown [192.168.167.105])
+        by regular1.263xmail.com (Postfix) with ESMTP id 9C0D41E3CE;
+        Thu,  7 Jun 2018 11:00:53 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id D36E03B4;
+        Thu,  7 Jun 2018 11:00:45 +0800 (CST)
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <aab71999453187028229f86fa5884e8b>
+X-ATTACHMENT-NUM: 0
+X-SENDER: zhangqing@rock-chips.com
+X-DNS-TYPE: 0
+Received: from unknown (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith SMTP id 3035U6A8LT;
+        Thu, 07 Jun 2018 11:00:49 +0800 (CST)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v1 1/4] dt-bindings: add bindings for px30 clock controller
+Date: Thu,  7 Jun 2018 11:06:23 +0800
+Message-Id: <1528340786-462-2-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com>
+References: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-There is a merge conflict here, just take the "HEAD" hunks and it
-will all work out.  It's because I applied a signal code fix that
-was already merged and then other cleanups/changes happend on top.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,px30-cru.txt           | 67 ++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
 
-Other than that, this adds the privileged ADI driver from Tom
-Hromatka.
-
-Please pull, thanks a lot!
-
-The following changes since commit fff75eb2a08c2ac96404a2d79685668f3cf5a7a3:
-
-  Merge tag 'errseq-v4.17' of git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux (2018-04-30 16:53:40 -0700)
-
-are available in the Git repository at:
-
-  gitolite@ra.kernel.org:/pub/scm/linux/kernel/git/davem/sparc.git 
-
-for you to fetch changes up to 1c1ff29da6c86864e73b05d4301a2df1d161f2da:
-
-  sparc: fix compat siginfo ABI regression (2018-06-05 11:29:42 -0700)
-
-----------------------------------------------------------------
-David S. Miller (1):
-      Merge branch 'adi-driver'
-
-Dmitry V. Levin (1):
-      sparc: fix compat siginfo ABI regression
-
-Tom Hromatka (2):
-      char: sparc64: Add privileged ADI driver
-      selftests: sparc64: char: Selftest for privileged ADI driver
-
- arch/sparc/include/uapi/asm/siginfo.h                   |   7 -
- arch/sparc/kernel/traps_32.c                            |   2 +-
- arch/sparc/kernel/traps_64.c                            |   2 +-
- drivers/char/Kconfig                                    |  12 ++
- drivers/char/Makefile                                   |   1 +
- drivers/char/adi.c                                      | 239 +++++++++++++++++++++++++++
- tools/testing/selftests/Makefile                        |   1 +
- tools/testing/selftests/sparc64/Makefile                |  46 ++++++
- tools/testing/selftests/sparc64/drivers/.gitignore      |   1 +
- tools/testing/selftests/sparc64/drivers/Makefile        |  15 ++
- tools/testing/selftests/sparc64/drivers/adi-test.c      | 721 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- tools/testing/selftests/sparc64/drivers/drivers_test.sh |  30 ++++
- tools/testing/selftests/sparc64/run.sh                  |   3 +
- 13 files changed, 1071 insertions(+), 9 deletions(-)
- create mode 100644 drivers/char/adi.c
- create mode 100644 tools/testing/selftests/sparc64/Makefile
- create mode 100644 tools/testing/selftests/sparc64/drivers/.gitignore
- create mode 100644 tools/testing/selftests/sparc64/drivers/Makefile
- create mode 100644 tools/testing/selftests/sparc64/drivers/adi-test.c
- create mode 100755 tools/testing/selftests/sparc64/drivers/drivers_test.sh
- create mode 100755 tools/testing/selftests/sparc64/run.sh
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+new file mode 100644
+index 000000000000..af5a45b680d0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+@@ -0,0 +1,67 @@
++* Rockchip PX30 Clock and Reset Unit
++
++The PX30 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
++- compatible: CRU should be "rockchip,px30-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing, pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "xin32k" - rtc clock - optional,
++ - "i2sx_clkin" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++
++Example: Clock controller node:
++
++	pmucru: pmu-clock-controller@ff2bc000 {
++		compatible = "rockchip,px30-pmucru";
++		reg = <0x0 0xff2bc000 0x0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	cru: clock-controller@ff2b0000 {
++		compatible = "rockchip,px30-cru";
++		reg = <0x0 0xff2b0000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@ff030000 {
++		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
++		reg = <0x0 0xff030000 0x0 0x100>;
++		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
++		clock-names = "baudclk", "apb_pclk";
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		status = "disabled";
++	};
++
+-- 
+1.9.1
