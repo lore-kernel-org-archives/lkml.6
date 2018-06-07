@@ -1,147 +1,302 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1L5HO6NeGVuoMQAAmS7hNA
-	; Thu, 07 Jun 2018 16:34:53 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 57NXIklQGVv1BQAAmS7hNA
+	; Thu, 07 Jun 2018 15:33:51 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id BBFA96089E; Thu,  7 Jun 2018 16:34:53 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4/F02d+"
+	id 443A36074D; Thu,  7 Jun 2018 15:33:51 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,FROM_EXCESS_BASE64,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 384C7605A2;
-	Thu,  7 Jun 2018 16:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 384C7605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 4B49060590;
+	Thu,  7 Jun 2018 15:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B49060590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753972AbeFGQev (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 12:34:51 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:43533 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750844AbeFGQet (ORCPT
+        id S935333AbeFGPdn (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:33:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40664 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934096AbeFGOnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 12:34:49 -0400
-Received: by mail-qk0-f196.google.com with SMTP id g126-v6so6943931qke.10;
-        Thu, 07 Jun 2018 09:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0bfsOsY3PU7s9BIBSBhk9zghXzXTYD4pSVLhenYc5Bo=;
-        b=O4/F02d+Wrdhqxx3Fpf7klqzOD0bOIBRJv1b7q0wkpD+QykVFnCUcD3h2i7292zY4h
-         Effqs/g2excx8ozMaO8CJXIZwK+RLKbyKk12MWuiuYA2y9eL4tY/eSDXscYFca2f1ltD
-         ZrH/gJrSYyEMRRh++2sjdQ60/w88YEeDj10inGTnDBnqHOGtSddp2Ayt8WuTJ8FMQXxi
-         D0OF/iiM3g/5ypcWGI7ynrOStRgp/lDvf9JHbjgcU6N///oeiyIRVXWppNEFhbSWbusY
-         HT045ZTT5pQ9ESuNxbOwLWPvwkXb7XSJuBTbGVT+kQXMAYvvQcVTwZT8DPf33UJ8a4HK
-         dWag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0bfsOsY3PU7s9BIBSBhk9zghXzXTYD4pSVLhenYc5Bo=;
-        b=n3AQ2ZN9H0V7oCdFf7b6r+vme7AhNj/dqqbuPTa9KjqUAQORTVCTg9aks2YKpUb1E/
-         rtmwaDSILtQdh2f3xOXZ+Ozz2yAiWmzh/zrytZiuc3Mcdad5oolh5UlXyyGc/87ScClt
-         Jk+Hl1zOMP2lZzmjXYR4Hl5Lrhq9TeaC9v+Purj7ttn1dwL/C/BCz5NmFXWhURqyxe2G
-         fiNdKpAgrCJViP/bYiih3FUyRwh4ZZoL8UwTod8iUbdJ9DwFo+V68ZXfV6IvMFseluJw
-         oNmVmqW89E8PC8MgbvGq0gGb96vb5ADqDFTkW1kQk5j93QUilEFyD8FiNi6uVwXW7/3M
-         En2Q==
-X-Gm-Message-State: APt69E0LsYn9SyTpmeViRKV6SBCT5KsYYEdqV53Gz72071OYCU1oeyBV
-        W8sRStHcIEphas8N4t8lh73FfbNZZGGX1cXUjB0=
-X-Google-Smtp-Source: ADUXVKKHzNStcAgolDopZcCvD51S3qRQjFfGQL9DmzLL2daTliSbdss7HlULBPuvgGT7dVd8KnK8wn7bXnJMi/s9WnY=
-X-Received: by 2002:a37:c20d:: with SMTP id i13-v6mr2189984qkm.255.1528389288745;
- Thu, 07 Jun 2018 09:34:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <1528378654-1484-1-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1528378654-1484-1-git-send-email-geert@linux-m68k.org>
-From: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
-Date: Thu, 7 Jun 2018 18:34:29 +0200
-Message-ID: <CAJ+HfNiciU0+4zd3ppapH12Gg_SFf9oUWTy+yafJSxCX8Mv-Dg@mail.gmail.com>
-Subject: Re: [PATCH] xsk: Fix umem fill/completion queue mmap on 32-bit
-To: geert@linux-m68k.org
-Cc: David Miller <davem@davemloft.net>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        "Karlsson, Magnus" <magnus.karlsson@intel.com>, ast@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, akpm@linux-foundation.org,
-        Netdev <netdev@vger.kernel.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
+        Thu, 7 Jun 2018 10:43:05 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbw-0005Zi-VJ; Thu, 07 Jun 2018 15:09:57 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvaz-0002ki-Bn; Thu, 07 Jun 2018 15:08:57 +0100
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "David Woodhouse" <dwmw@amazon.co.uk>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Jim Mattson" <jmattson@google.com>,
+        "Jun Nakajima" <jun.nakajima@intel.com>,
+        "Tim Chen" <tim.c.chen@linux.intel.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Asit Mallick" <asit.k.mallick@intel.com>,
+        "Greg KH" <gregkh@linuxfoundation.org>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>, kvm@vger.kernel.org,
+        "KarimAllah Ahmed" <karahmed@amazon.de>,
+        "Darren Kenny" <darren.kenny@oracle.com>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Arjan Van De Ven" <arjan.van.de.ven@intel.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Andi Kleen" <ak@linux.intel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.64345300@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 057/410] KVM/VMX: Allow direct access to
+ MSR_IA32_SPEC_CTRL
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Den tors 7 juni 2018 kl 15:37 skrev Geert Uytterhoeven <geert@linux-m68k.or=
-g>:
->
-> With gcc-4.1.2 on 32-bit:
->
->     net/xdp/xsk.c:663: warning: integer constant is too large for =E2=80=
-=98long=E2=80=99 type
->     net/xdp/xsk.c:665: warning: integer constant is too large for =E2=80=
-=98long=E2=80=99 type
->
-> Add the missing "ULL" suffixes to the large XDP_UMEM_PGOFF_*_RING values
-> to fix this.
->
->     net/xdp/xsk.c:663: warning: comparison is always false due to limited=
- range of data type
->     net/xdp/xsk.c:665: warning: comparison is always false due to limited=
- range of data type
->
-> "unsigned long" is 32-bit on 32-bit systems, hence the offset is
-> truncated, and can never be equal to any of the XDP_UMEM_PGOFF_*_RING
-> values.  Use loff_t (and the required cast) to fix this.
->
-> Fixes: 423f38329d267969 ("xsk: add umem fill queue support and mmap")
-> Fixes: fe2308328cd2f26e ("xsk: add umem completion queue support and mmap=
-")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Compile-tested only.
-> ---
->  include/uapi/linux/if_xdp.h | 4 ++--
->  net/xdp/xsk.c               | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/include/uapi/linux/if_xdp.h b/include/uapi/linux/if_xdp.h
-> index 1fa0e977ea8d0224..caed8b1614ffc0aa 100644
-> --- a/include/uapi/linux/if_xdp.h
-> +++ b/include/uapi/linux/if_xdp.h
-> @@ -63,8 +63,8 @@ struct xdp_statistics {
->  /* Pgoff for mmaping the rings */
->  #define XDP_PGOFF_RX_RING                        0
->  #define XDP_PGOFF_TX_RING               0x80000000
-> -#define XDP_UMEM_PGOFF_FILL_RING       0x100000000
-> -#define XDP_UMEM_PGOFF_COMPLETION_RING 0x180000000
-> +#define XDP_UMEM_PGOFF_FILL_RING       0x100000000ULL
-> +#define XDP_UMEM_PGOFF_COMPLETION_RING 0x180000000ULL
->
->  /* Rx/Tx descriptor */
->  struct xdp_desc {
-> diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-> index c6ed2454f7ce55e8..36919a254ba370c3 100644
-> --- a/net/xdp/xsk.c
-> +++ b/net/xdp/xsk.c
-> @@ -643,7 +643,7 @@ static int xsk_getsockopt(struct socket *sock, int le=
-vel, int optname,
->  static int xsk_mmap(struct file *file, struct socket *sock,
->                     struct vm_area_struct *vma)
->  {
-> -       unsigned long offset =3D vma->vm_pgoff << PAGE_SHIFT;
-> +       loff_t offset =3D (loff_t)vma->vm_pgoff << PAGE_SHIFT;
->         unsigned long size =3D vma->vm_end - vma->vm_start;
->         struct xdp_sock *xs =3D xdp_sk(sock->sk);
->         struct xsk_queue *q =3D NULL;
-> --
-> 2.7.4
->
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Thanks Geert!
+------------------
 
-Acked-by: Bj=C3=B6rn T=C3=B6pel <bjorn.topel@intel.com>
+From: KarimAllah Ahmed <karahmed@amazon.de>
+
+commit d28b387fb74da95d69d2615732f50cceb38e9a4d upstream.
+
+[ Based on a patch from Ashok Raj <ashok.raj@intel.com> ]
+
+Add direct access to MSR_IA32_SPEC_CTRL for guests. This is needed for
+guests that will only mitigate Spectre V2 through IBRS+IBPB and will not
+be using a retpoline+IBPB based approach.
+
+To avoid the overhead of saving and restoring the MSR_IA32_SPEC_CTRL for
+guests that do not actually use the MSR, only start saving and restoring
+when a non-zero is written to it.
+
+No attempt is made to handle STIBP here, intentionally. Filtering STIBP
+may be added in a future patch, which may require trapping all writes
+if we don't want to pass it through directly to the guest.
+
+[dwmw2: Clean up CPUID bits, save/restore manually, handle reset]
+
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517522386-18410-5-git-send-email-karahmed@amazon.de
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16:
+ - No support for nested MSR bitmaps
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/kvm/cpuid.c |  8 +++---
+ arch/x86/kvm/cpuid.h | 11 ++++++++
+ arch/x86/kvm/vmx.c   | 64 ++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.c   |  2 +-
+ 4 files changed, 81 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -302,7 +302,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(IBPB);
++		F(IBPB) | F(IBRS);
+ 
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_supported_word5_x86_features =
+@@ -318,7 +318,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		F(ARCH_CAPABILITIES);
++		F(SPEC_CTRL) | F(ARCH_CAPABILITIES);
+ 
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+@@ -524,9 +524,11 @@ static inline int __do_cpuid_ent(struct
+ 			g_phys_as = phys_as;
+ 		entry->eax = g_phys_as | (virt_as << 8);
+ 		entry->edx = 0;
+-		/* IBPB isn't necessarily present in hardware cpuid */
++		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
+ 		if (boot_cpu_has(X86_FEATURE_IBPB))
+ 			entry->ebx |= F(IBPB);
++		if (boot_cpu_has(X86_FEATURE_IBRS))
++			entry->ebx |= F(IBRS);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, 11);
+ 		break;
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -115,6 +115,17 @@ static inline bool guest_cpuid_has_ibpb(
+ 	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
+ }
+ 
++static inline bool guest_cpuid_has_ibrs(struct kvm_vcpu *vcpu)
++{
++	struct kvm_cpuid_entry2 *best;
++
++	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
++	if (best && (best->ebx & bit(X86_FEATURE_IBRS)))
++		return true;
++	best = kvm_find_cpuid_entry(vcpu, 7, 0);
++	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
++}
++
+ static inline bool guest_cpuid_has_arch_capabilities(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_cpuid_entry2 *best;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -433,6 +433,7 @@ struct vcpu_vmx {
+ #endif
+ 
+ 	u64 		      arch_capabilities;
++	u64 		      spec_ctrl;
+ 
+ 	u32 vm_entry_controls_shadow;
+ 	u32 vm_exit_controls_shadow;
+@@ -2524,6 +2525,13 @@ static int vmx_get_msr(struct kvm_vcpu *
+ 	case MSR_IA32_TSC:
+ 		msr_info->data = guest_read_tsc();
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		msr_info->data = to_vmx(vcpu)->spec_ctrl;
++		break;
+ 	case MSR_IA32_ARCH_CAPABILITIES:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has_arch_capabilities(vcpu))
+@@ -2622,6 +2630,36 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 	case MSR_IA32_TSC:
+ 		kvm_write_tsc(vcpu, msr_info);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		/* The STIBP bit doesn't fault even if it's not advertised */
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++			return 1;
++
++		vmx->spec_ctrl = data;
++
++		if (!data)
++			break;
++
++		/*
++		 * For non-nested:
++		 * When it's written (to non-zero) for the first time, pass
++		 * it through.
++		 *
++		 * For nested:
++		 * The handling of the MSR bitmap for L2 guests is done in
++		 * nested_vmx_merge_msr_bitmap. We should not touch the
++		 * vmcs02.msr_bitmap here since it gets completely overwritten
++		 * in the merging. We update the vmcs01 here for L1 as well
++		 * since it will end up touching the MSR anyway now.
++		 */
++		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap,
++					      MSR_IA32_SPEC_CTRL,
++					      MSR_TYPE_RW);
++		break;
+ 	case MSR_IA32_PRED_CMD:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has_ibpb(vcpu))
+@@ -4617,6 +4655,7 @@ static void vmx_vcpu_reset(struct kvm_vc
+ 	struct msr_data apic_base_msr;
+ 
+ 	vmx->rmode.vm86_active = 0;
++	vmx->spec_ctrl = 0;
+ 
+ 	vmx->soft_vnmi_blocked = 0;
+ 
+@@ -7496,6 +7535,15 @@ static void __noclone vmx_vcpu_run(struc
+ 	atomic_switch_perf_msrs(vmx);
+ 	debugctlmsr = get_debugctlmsr();
+ 
++	/*
++	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
++	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
++	 * is no need to worry about the conditional branch over the wrmsr
++	 * being speculatively taken.
++	 */
++	if (vmx->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+ 	asm(
+ 		/* Store host registers */
+@@ -7614,6 +7662,22 @@ static void __noclone vmx_vcpu_run(struc
+ #endif
+ 	      );
+ 
++	/*
++	 * We do not use IBRS in the kernel. If this vCPU has used the
++	 * SPEC_CTRL MSR it may have left it on; save the value and
++	 * turn it off. This is much more efficient than blindly adding
++	 * it to the atomic save/restore list. Especially as the former
++	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 *
++	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 */
++	if (!msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL))
++		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++
++	if (vmx->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -894,7 +894,7 @@ static u32 msrs_to_save[] = {
+ #endif
+ 	MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
+ 	MSR_IA32_FEATURE_CONTROL, MSR_IA32_BNDCFGS,
+-	MSR_IA32_ARCH_CAPABILITIES
++	MSR_IA32_SPEC_CTRL, MSR_IA32_ARCH_CAPABILITIES
+ };
+ 
+ static unsigned num_msrs_to_save;
