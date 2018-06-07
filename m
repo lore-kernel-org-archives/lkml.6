@@ -1,52 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id h/hRKMBIGVufSgAAmS7hNA
-	; Thu, 07 Jun 2018 15:01:59 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id W/GdBItGGVtTOAAAmS7hNA
+	; Thu, 07 Jun 2018 14:52:17 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6793F608B8; Thu,  7 Jun 2018 15:01:59 +0000 (UTC)
+	id F3CFD608B8; Thu,  7 Jun 2018 14:52:16 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id CB756601C3;
-	Thu,  7 Jun 2018 15:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CB756601C3
+	by smtp.codeaurora.org (Postfix) with ESMTP id BC970601C3;
+	Thu,  7 Jun 2018 14:52:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC970601C3
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964865AbeFGPBz (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:01:55 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41416 "EHLO
+        id S935154AbeFGOwO (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:52:14 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40902 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964847AbeFGPBw (ORCPT
+        by vger.kernel.org with ESMTP id S932674AbeFGOwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:01:52 -0400
+        Thu, 7 Jun 2018 10:52:11 -0400
 Received: from [148.252.241.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.84_2)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbh-0005hO-74; Thu, 07 Jun 2018 15:09:41 +0100
+        id 1fQvbP-0005Zm-Es; Thu, 07 Jun 2018 15:09:23 +0100
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1fQvb5-0002zE-OR; Thu, 07 Jun 2018 15:09:03 +0100
+        id 1fQvbD-0003GJ-89; Thu, 07 Jun 2018 15:09:11 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From: Ben Hutchings <ben@decadent.org.uk>
 To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
-        "" <syzbot+5cb189720978275e4c75@syzkaller.appspotmail.com>,
-        "Cong Wang" <xiyou.wangcong@gmail.com>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Florian Westphal" <fw@strlen.de>
+CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Florian Fainelli" <f.fainelli@gmail.com>
 Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.608651585@decadent.org.uk>
+Message-ID: <lsq.1528380321.870449909@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 197/410] netfilter: xt_RATEEST: acquire
- xt_rateest_mutex for hash insert
+Subject: [PATCH 3.16 367/410] net: systemport: Rewrite __bcm_sysport_tx_reclaim()
 In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
 X-SA-Exim-Connect-IP: 148.252.241.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,90 +56,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 7dc68e98757a8eccf8ca7a53a29b896f1eef1f76 upstream.
+commit 484d802d0f2f29c335563fcac2a8facf174a1bbc upstream.
 
-rateest_hash is supposed to be protected by xt_rateest_mutex,
-and, as suggested by Eric, lookup and insert should be atomic,
-so we should acquire the xt_rateest_mutex once for both.
+There is no need for complex checking between the last consumed index
+and current consumed index, a simple subtraction will do.
 
-So introduce a non-locking helper for internal use and keep the
-locking one for external.
+This also eliminates the possibility of a permanent transmit queue stall
+under the following conditions:
 
-Reported-by: <syzbot+5cb189720978275e4c75@syzkaller.appspotmail.com>
-Fixes: 5859034d7eb8 ("[NETFILTER]: x_tables: add RATEEST target")
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Reviewed-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+- one CPU bursts ring->size worth of traffic (up to 256 buffers), to the
+  point where we run out of free descriptors, so we stop the transmit
+  queue at the end of bcm_sysport_xmit()
+
+- because of our locking, we have the transmit process disable
+  interrupts which means we can be blocking the TX reclamation process
+
+- when TX reclamation finally runs, we will be computing the difference
+  between ring->c_index (last consumed index by SW) and what the HW
+  reports through its register
+
+- this register is masked with (ring->size - 1) = 0xff, which will lead
+  to stripping the upper bits of the index (register is 16-bits wide)
+
+- we will be computing last_tx_cn as 0, which means there is no work to
+  be done, and we never wake-up the transmit queue, leaving it
+  permanently disabled
+
+A practical example is e.g: ring->c_index aka last_c_index = 12, we
+pushed 256 entries, HW consumer index = 268, we mask it with 0xff = 12,
+so last_tx_cn == 0, nothing happens.
+
+Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/netfilter/xt_RATEEST.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c | 33 ++++++++++------------
+ drivers/net/ethernet/broadcom/bcmsysport.h |  2 +-
+ 2 files changed, 16 insertions(+), 19 deletions(-)
 
---- a/net/netfilter/xt_RATEEST.c
-+++ b/net/netfilter/xt_RATEEST.c
-@@ -40,23 +40,31 @@ static void xt_rateest_hash_insert(struc
- 	hlist_add_head(&est->list, &rateest_hash[h]);
- }
- 
--struct xt_rateest *xt_rateest_lookup(const char *name)
-+static struct xt_rateest *__xt_rateest_lookup(const char *name)
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -584,37 +584,33 @@ static unsigned int __bcm_sysport_tx_rec
+ 					     struct bcm_sysport_tx_ring *ring)
  {
- 	struct xt_rateest *est;
- 	unsigned int h;
+ 	struct net_device *ndev = priv->netdev;
+-	unsigned int c_index, last_c_index, last_tx_cn, num_tx_cbs;
+ 	unsigned int pkts_compl = 0, bytes_compl = 0;
++	unsigned int txbds_processed = 0;
+ 	struct bcm_sysport_cb *cb;
++	unsigned int txbds_ready;
++	unsigned int c_index;
+ 	u32 hw_ind;
  
- 	h = xt_rateest_hash(name);
--	mutex_lock(&xt_rateest_mutex);
- 	hlist_for_each_entry(est, &rateest_hash[h], list) {
- 		if (strcmp(est->name, name) == 0) {
- 			est->refcnt++;
--			mutex_unlock(&xt_rateest_mutex);
- 			return est;
- 		}
+ 	/* Compute how many descriptors have been processed since last call */
+ 	hw_ind = tdma_readl(priv, TDMA_DESC_RING_PROD_CONS_INDEX(ring->index));
+ 	c_index = (hw_ind >> RING_CONS_INDEX_SHIFT) & RING_CONS_INDEX_MASK;
+-	ring->p_index = (hw_ind & RING_PROD_INDEX_MASK);
+-
+-	last_c_index = ring->c_index;
+-	num_tx_cbs = ring->size;
+-
+-	c_index &= (num_tx_cbs - 1);
+-
+-	if (c_index >= last_c_index)
+-		last_tx_cn = c_index - last_c_index;
+-	else
+-		last_tx_cn = num_tx_cbs - last_c_index + c_index;
++	txbds_ready = (c_index - ring->c_index) & RING_CONS_INDEX_MASK;
+ 
+ 	netif_dbg(priv, tx_done, ndev,
+-			"ring=%d c_index=%d last_tx_cn=%d last_c_index=%d\n",
+-			ring->index, c_index, last_tx_cn, last_c_index);
++		  "ring=%d old_c_index=%u c_index=%u txbds_ready=%u\n",
++		  ring->index, ring->c_index, c_index, txbds_ready);
+ 
+-	while (last_tx_cn-- > 0) {
+-		cb = ring->cbs + last_c_index;
++	while (txbds_processed < txbds_ready) {
++		cb = &ring->cbs[ring->clean_index];
+ 		bcm_sysport_tx_reclaim_one(priv, cb, &bytes_compl, &pkts_compl);
+ 
+ 		ring->desc_count++;
+-		last_c_index++;
+-		last_c_index &= (num_tx_cbs - 1);
++		txbds_processed++;
++
++		if (likely(ring->clean_index < ring->size - 1))
++			ring->clean_index++;
++		else
++			ring->clean_index = 0;
  	}
--	mutex_unlock(&xt_rateest_mutex);
-+
- 	return NULL;
- }
-+
-+struct xt_rateest *xt_rateest_lookup(const char *name)
-+{
-+	struct xt_rateest *est;
-+
-+	mutex_lock(&xt_rateest_mutex);
-+	est = __xt_rateest_lookup(name);
-+	mutex_unlock(&xt_rateest_mutex);
-+	return est;
-+}
- EXPORT_SYMBOL_GPL(xt_rateest_lookup);
  
- void xt_rateest_put(struct xt_rateest *est)
-@@ -104,8 +112,10 @@ static int xt_rateest_tg_checkentry(cons
- 		rnd_inited = true;
- 	}
- 
--	est = xt_rateest_lookup(info->name);
-+	mutex_lock(&xt_rateest_mutex);
-+	est = __xt_rateest_lookup(info->name);
- 	if (est) {
-+		mutex_unlock(&xt_rateest_mutex);
- 		/*
- 		 * If estimator parameters are specified, they must match the
- 		 * existing estimator.
-@@ -143,11 +153,13 @@ static int xt_rateest_tg_checkentry(cons
- 
- 	info->est = est;
- 	xt_rateest_hash_insert(est);
-+	mutex_unlock(&xt_rateest_mutex);
- 	return 0;
- 
- err2:
- 	kfree(est);
- err1:
-+	mutex_unlock(&xt_rateest_mutex);
- 	return ret;
- }
- 
+ 	ring->c_index = c_index;
+@@ -1036,6 +1032,7 @@ static int bcm_sysport_init_tx_ring(stru
+ 	netif_napi_add(priv->netdev, &ring->napi, bcm_sysport_tx_poll, 64);
+ 	ring->index = index;
+ 	ring->size = size;
++	ring->clean_index = 0;
+ 	ring->alloc_size = ring->size;
+ 	ring->desc_cpu = p;
+ 	ring->desc_count = ring->size;
+--- a/drivers/net/ethernet/broadcom/bcmsysport.h
++++ b/drivers/net/ethernet/broadcom/bcmsysport.h
+@@ -624,7 +624,7 @@ struct bcm_sysport_tx_ring {
+ 	unsigned int	desc_count;	/* Number of descriptors */
+ 	unsigned int	curr_desc;	/* Current descriptor */
+ 	unsigned int	c_index;	/* Last consumer index */
+-	unsigned int	p_index;	/* Current producer index */
++	unsigned int	clean_index;	/* Current clean index */
+ 	struct bcm_sysport_cb *cbs;	/* Transmit control blocks */
+ 	struct dma_desc	*desc_cpu;	/* CPU view of the descriptor */
+ 	struct bcm_sysport_priv *priv;	/* private context backpointer */
