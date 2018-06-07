@@ -1,114 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 8ydAL609GVurRAAAmS7hNA
-	; Thu, 07 Jun 2018 14:14:48 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LoDDN/6kGVuLfgAAmS7hNA
+	; Thu, 07 Jun 2018 21:34:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 99ADE602FC; Thu,  7 Jun 2018 14:14:48 +0000 (UTC)
+	id C5D316089E; Thu,  7 Jun 2018 21:34:54 +0000 (UTC)
+Authentication-Results: smtp.codeaurora.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3kWqkog"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id EB8E66063F;
-	Thu,  7 Jun 2018 14:14:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EB8E66063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by smtp.codeaurora.org (Postfix) with ESMTP id 41FC5601C3;
+	Thu,  7 Jun 2018 21:34:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41FC5601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933276AbeFGONy (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 10:13:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39525 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933160AbeFGOJj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 10:09:39 -0400
-Received: from [148.252.241.226] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbJ-0005Zp-1L; Thu, 07 Jun 2018 15:09:17 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fQvbF-0003Jy-HQ; Thu, 07 Jun 2018 15:09:13 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1752589AbeFGVew (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 17:34:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751641AbeFGVeu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 17:34:50 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12C0B2088F;
+        Thu,  7 Jun 2018 21:34:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528407290;
+        bh=tXZ/fSSuXRG51JQpHHmW/7oPaQtBiRD1t+jtkgPsm4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R3kWqkogtCbTRtixdzZOwa8d9nMcQDmVMW6AUKvjv9kSsCSU3e7/A+IpjbWw/P/eG
+         bqmMVaprkvrIvSrjY4V/V+a2LEQlScT5J2T8+39k2Lw/FjWNOy02Xm+x2bz1C5Xh0G
+         Ay7lX/hseQaU8uIn0ye2pk1ZW5wcujYxyx99UalE=
+Date: Thu, 7 Jun 2018 16:34:48 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: poza@codeaurora.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH NEXT 6/6] PCI/PORTDRV: Remove ERR_FATAL handling from
+ pcie_portdrv_slot_reset()
+Message-ID: <20180607213448.GB37077@bhelgaas-glaptop.roam.corp.google.com>
+References: <1528351234-26914-1-git-send-email-poza@codeaurora.org>
+ <1528351234-26914-6-git-send-email-poza@codeaurora.org>
+ <94661add3e71e3694aa22c2a9cabf503@codeaurora.org>
 MIME-Version: 1.0
-From: Ben Hutchings <ben@decadent.org.uk>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC: akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Reported-by: syzbot" <syzkaller@googlegroups.com>,
-        "Pravin B Shelar" <pshelar@ovn.org>,
-        "Eric Dumazet" <edumazet@google.com>
-Date: Thu, 07 Jun 2018 15:05:21 +0100
-Message-ID: <lsq.1528380321.950722939@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 404/410] net: fix possible out-of-bound read in
- skb_network_protocol()
-In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
-X-SA-Exim-Connect-IP: 148.252.241.226
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <94661add3e71e3694aa22c2a9cabf503@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 07, 2018 at 07:18:03PM +0530, poza@codeaurora.org wrote:
+> On 2018-06-07 11:30, Oza Pawandeep wrote:
+> > We are handling ERR_FATAL by resetting the Link in software,skipping the
+> > driver pci_error_handlers callbacks, removing the devices from the PCI
+> > subsystem, and re-enumerating, as a result of that, no more calling
+> > pcie_portdrv_slot_reset in ERR_FATAL case.
+> > 
+> > Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+> > 
+> > diff --git a/drivers/pci/pcie/portdrv_pci.c
+> > b/drivers/pci/pcie/portdrv_pci.c
+> > index 973f1b8..92f5d330 100644
+> > --- a/drivers/pci/pcie/portdrv_pci.c
+> > +++ b/drivers/pci/pcie/portdrv_pci.c
+> > @@ -42,17 +42,6 @@ __setup("pcie_ports=", pcie_port_setup);
+> > 
+> >  /* global data */
+> > 
+> > -static int pcie_portdrv_restore_config(struct pci_dev *dev)
+> > -{
+> > -	int retval;
+> > -
+> > -	retval = pci_enable_device(dev);
+> > -	if (retval)
+> > -		return retval;
+> > -	pci_set_master(dev);
+> > -	return 0;
+> > -}
+> > -
+> >  #ifdef CONFIG_PM
+> >  static int pcie_port_runtime_suspend(struct device *dev)
+> >  {
+> > @@ -162,14 +151,6 @@ static pci_ers_result_t
+> > pcie_portdrv_mmio_enabled(struct pci_dev *dev)
+> > 
+> >  static pci_ers_result_t pcie_portdrv_slot_reset(struct pci_dev *dev)
+> >  {
+> > -	/* If fatal, restore cfg space for possible link reset at upstream */
+> > -	if (dev->error_state == pci_channel_io_frozen) {
+> > -		dev->state_saved = true;
+> > -		pci_restore_state(dev);
+> > -		pcie_portdrv_restore_config(dev);
+> > -		pci_enable_pcie_error_reporting(dev);
+> > -	}
+> > -
+> >  	return PCI_ERS_RESULT_RECOVERED;
+> >  }
+> 
+> 
+> Hi Bjorn,
+> 
+> the above patch removes ERR_FATAL handling from pcie_portdrv_slot_reset()
+> because now we are handling ERR_FATAL differently than before.
+> 
+> I tried to dig into pcie_portdrv_slot_reset() handling for ERR_FATAL case
+> where it
+> restores the config space, enable device, set master and enable error
+> reporting....
+> and as far as I understand this is being done for upstream link (bridges
+> etc..)
+> 
+> why was it done at the first point (I checked the commit description, but
+> could not really get it)
+> and do we need to handle the same thing in ERR_FATAL now ?
 
-------------------
-
-From: Eric Dumazet <edumazet@google.com>
-
-commit 1dfe82ebd7d8fd43dba9948fdfb31f145014baa0 upstream.
-
-skb mac header is not necessarily set at the time skb_network_protocol()
-is called. Use skb->data instead.
-
-BUG: KASAN: slab-out-of-bounds in skb_network_protocol+0x46b/0x4b0 net/core/dev.c:2739
-Read of size 2 at addr ffff8801b3097a0b by task syz-executor5/14242
-
-CPU: 1 PID: 14242 Comm: syz-executor5 Not tainted 4.16.0-rc6+ #280
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x194/0x24d lib/dump_stack.c:53
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23c/0x360 mm/kasan/report.c:412
- __asan_report_load_n_noabort+0xf/0x20 mm/kasan/report.c:443
- skb_network_protocol+0x46b/0x4b0 net/core/dev.c:2739
- harmonize_features net/core/dev.c:2924 [inline]
- netif_skb_features+0x509/0x9b0 net/core/dev.c:3011
- validate_xmit_skb+0x81/0xb00 net/core/dev.c:3084
- validate_xmit_skb_list+0xbf/0x120 net/core/dev.c:3142
- packet_direct_xmit+0x117/0x790 net/packet/af_packet.c:256
- packet_snd net/packet/af_packet.c:2944 [inline]
- packet_sendmsg+0x3aed/0x60b0 net/packet/af_packet.c:2969
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg+0xca/0x110 net/socket.c:639
- ___sys_sendmsg+0x767/0x8b0 net/socket.c:2047
- __sys_sendmsg+0xe5/0x210 net/socket.c:2081
-
-Fixes: 19acc327258a ("gso: Handle Trans-Ether-Bridging protocol in skb_network_protocol()")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Pravin B Shelar <pshelar@ovn.org>
-Reported-by: Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2336,7 +2336,7 @@ __be16 skb_network_protocol(struct sk_bu
- 		if (unlikely(!pskb_may_pull(skb, sizeof(struct ethhdr))))
- 			return 0;
- 
--		eth = (struct ethhdr *)skb_mac_header(skb);
-+		eth = (struct ethhdr *)skb->data;
- 		type = eth->h_proto;
- 	}
- 
+You mean 4bf3392e0bf5 ("PCI-Express AER implemetation: pcie_portdrv
+error handler"), which added pcie_portdrv_slot_reset()?  I agree, that
+commit log has no useful information.  I don't know any of the history
+behind it.
