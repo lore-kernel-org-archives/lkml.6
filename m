@@ -1,236 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id m78aA+qgGVubXwAAmS7hNA
-	; Thu, 07 Jun 2018 21:24:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id wy4AHt9HGVsbQQAAmS7hNA
+	; Thu, 07 Jun 2018 14:59:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 496F66074D; Thu,  7 Jun 2018 21:24:39 +0000 (UTC)
+	id 00BCD607E7; Thu,  7 Jun 2018 14:59:11 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 8C35760115;
-	Thu,  7 Jun 2018 21:24:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8C35760115
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6BA88606DD;
+	Thu,  7 Jun 2018 14:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6BA88606DD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752449AbeFGVYg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 17:24:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:38470 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750903AbeFGVYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 17:24:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 14:24:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
-   d="scan'208";a="47299978"
-Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2018 14:24:34 -0700
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
-        vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com, jithu.joseph@intel.com,
-        dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V6 07/38] x86/intel_rdt: Initialize new resource group with sane defaults
-Date: Thu,  7 Jun 2018 14:24:25 -0700
-Message-Id: <44af4ecef879e88ec1b74c5decbf5dccaf998866.1528405422.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <68030110df15615d95731fd354ff7adfb0476d37.1527593970.git.reinette.chatre@intel.com>
-References: <68030110df15615d95731fd354ff7adfb0476d37.1527593970.git.reinette.chatre@intel.com>
+        id S935626AbeFGO7J (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:59:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41244 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935607AbeFGO7E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:59:04 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvba-0005Zn-IA; Thu, 07 Jun 2018 15:09:34 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb8-000354-E4; Thu, 07 Jun 2018 15:09:06 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Alex Deucher" <alexander.deucher@amd.com>,
+        "Lyude Paul" <lyude@redhat.com>, "Lukas Wunner" <lukas@wunner.de>,
+        "Dave Airlie" <airlied@redhat.com>,
+        "Ben Skeggs" <bskeggs@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.635888548@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 255/410] drm: Allow determining if current task is
+ output poll worker
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently when a new resource group is created its allocations would be
-those that belonged to the resource group to which its closid belonged
-previously.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-That is, we can encounter a case like:
-mkdir newgroup
-cat newgroup/schemata
-L2:0=ff;1=ff
-echo 'L2:0=0xf0;1=0xf0' > newgroup/schemata
-cat newgroup/schemata
-L2:0=0xf0;1=0xf0
-rmdir newgroup
-mkdir newnewgroup
-cat newnewgroup/schemata
-L2:0=0xf0;1=0xf0
+------------------
 
-When the new group is created it would be reasonable to expect its
-allocations to be initialized with all regions that it can possibly use.
-At this time these regions would be all that are shareable by other
-resource groups as well as regions that are not currently used.
-If the available cache region is found to be non-contiguous the
-available region is adjusted to enforce validity.
+From: Lukas Wunner <lukas@wunner.de>
 
-When a new resource group is created the hardware is initialized with
-these new default allocations.
+commit 25c058ccaf2ebbc3e250ec1e199e161f91fe27d4 upstream.
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Introduce a helper to determine if the current task is an output poll
+worker.
+
+This allows us to fix a long-standing deadlock in several DRM drivers
+wherein the ->runtime_suspend callback waits for the output poll worker
+to finish and the worker in turn calls a ->detect callback which waits
+for runtime suspend to finish.  The ->detect callback is invoked from
+multiple call sites and waiting for runtime suspend to finish is the
+correct thing to do except if it's executing in the context of the
+worker.
+
+v2: Expand kerneldoc to specifically mention deadlock between
+    output poll worker and autosuspend worker as use case. (Lyude)
+
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/3549ce32e7f1467102e70d3e9cbf70c46bfe108e.1518593424.git.lukas@wunner.de
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
-V6: The cache region that is available for use by a new resource group may
-    not be contiguous. Enforce the available region to be valid by
-    selecting only the first contiguous portion. The goal is to ensure a
-    sane and valid default on resource group creation, the user still has
-    the ability to modify this default if it does not meet requirements.
+ drivers/gpu/drm/drm_probe_helper.c | 20 ++++++++++++++++++++
+ include/drm/drm_crtc_helper.h      |  1 +
+ 2 files changed, 21 insertions(+)
 
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 107 ++++++++++++++++++++++++++++++-
- 1 file changed, 104 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 35e538eed977..7ae798a8ebf6 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -133,7 +133,7 @@ void closid_free(int closid)
-  * Return: true if @closid is currently associated with a resource group,
-  * false if @closid is free
-  */
--static bool __attribute__ ((unused)) closid_allocated(unsigned int closid)
-+static bool closid_allocated(unsigned int closid)
- {
- 	return (closid_free_map & (1 << closid)) == 0;
- }
-@@ -1799,6 +1799,102 @@ static int mkdir_mondata_all(struct kernfs_node *parent_kn,
- 	return ret;
+--- a/drivers/gpu/drm/drm_probe_helper.c
++++ b/drivers/gpu/drm/drm_probe_helper.c
+@@ -303,6 +303,26 @@ static void output_poll_execute(struct w
  }
  
-+/**
-+ * cbm_ensure_valid - Enforce validity on provided CBM
-+ * @_val:	Candidate CBM
-+ * @r:		RDT resource to which the CBM belongs
+ /**
++ * drm_kms_helper_is_poll_worker - is %current task an output poll worker?
 + *
-+ * The provided CBM represents all cache portions available for use. This
-+ * may be represented by a bitmap that does not consist of contiguous ones
-+ * and thus be an invalid CBM.
-+ * Here the provided CBM is forced to be a valid CBM by only considering
-+ * the first set of contiguous bits as valid and clearing all bits.
-+ * The intention here is to provide a valid default CBM with which a new
-+ * resource group is initialized. The user can follow this with a
-+ * modification to the CBM if the default does not satisfy the
-+ * requirements.
++ * Determine if %current task is an output poll worker.  This can be used
++ * to select distinct code paths for output polling versus other contexts.
++ *
++ * One use case is to avoid a deadlock between the output poll worker and
++ * the autosuspend worker wherein the latter waits for polling to finish
++ * upon calling drm_kms_helper_poll_disable(), while the former waits for
++ * runtime suspend to finish upon calling pm_runtime_get_sync() in a
++ * connector ->detect hook.
 + */
-+static void cbm_ensure_valid(u32 *_val, struct rdt_resource *r)
++bool drm_kms_helper_is_poll_worker(void)
 +{
-+	unsigned long *val = (unsigned long *)_val;
-+	unsigned int cbm_len = r->cache.cbm_len;
-+	unsigned long first_bit, zero_bit;
++	struct work_struct *work = current_work();
 +
-+	if (*val == 0)
-+		return;
-+
-+	first_bit = find_first_bit(val, cbm_len);
-+	zero_bit = find_next_zero_bit(val, cbm_len, first_bit);
-+
-+	/* Clear any remaining bits to ensure contiguous region */
-+	bitmap_clear(val, zero_bit, cbm_len - zero_bit);
++	return work && work->func == output_poll_execute;
 +}
++EXPORT_SYMBOL(drm_kms_helper_is_poll_worker);
 +
 +/**
-+ * rdtgroup_init_alloc - Initialize the new RDT group's allocations
-+ *
-+ * A new RDT group is being created on an allocation capable (CAT)
-+ * supporting system. Set this group up to start off with all usable
-+ * allocations. That is, all shareable and unused bits.
-+ *
-+ * All-zero CBM is invalid. If there are no more shareable bits available
-+ * on any domain then the entire allocation will fail.
-+ */
-+static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
-+{
-+	u32 used_b = 0, unused_b = 0;
-+	u32 closid = rdtgrp->closid;
-+	struct rdt_resource *r;
-+	enum rdtgrp_mode mode;
-+	struct rdt_domain *d;
-+	int i, ret;
-+	u32 *ctrl;
-+
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		list_for_each_entry(d, &r->domains, list) {
-+			d->have_new_ctrl = false;
-+			d->new_ctrl = r->cache.shareable_bits;
-+			used_b = r->cache.shareable_bits;
-+			ctrl = d->ctrl_val;
-+			for (i = 0; i < r->num_closid; i++, ctrl++) {
-+				if (closid_allocated(i) && i != closid) {
-+					mode = rdtgroup_mode_by_closid(i);
-+					used_b |= *ctrl;
-+					if (mode == RDT_MODE_SHAREABLE)
-+						d->new_ctrl |= *ctrl;
-+				}
-+			}
-+			unused_b = used_b ^ (BIT_MASK(r->cache.cbm_len) - 1);
-+			unused_b &= BIT_MASK(r->cache.cbm_len) - 1;
-+			d->new_ctrl |= unused_b;
-+			/*
-+			 * Force the initial CBM to be valid, user can
-+			 * modify the CBM based on system availability.
-+			 */
-+			cbm_ensure_valid(&d->new_ctrl, r);
-+			if (bitmap_weight((unsigned long *) &d->new_ctrl,
-+					  r->cache.cbm_len) <
-+					r->cache.min_cbm_bits) {
-+				rdt_last_cmd_printf("no space on %s:%d\n",
-+						    r->name, d->id);
-+				return -ENOSPC;
-+			}
-+			d->have_new_ctrl = true;
-+		}
-+	}
-+
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		ret = update_domains(r, rdtgrp->closid);
-+		if (ret < 0) {
-+			rdt_last_cmd_puts("failed to initialize allocations\n");
-+			return ret;
-+		}
-+		rdtgrp->mode = RDT_MODE_SHAREABLE;
-+	}
-+
-+	return 0;
-+}
-+
- static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 			     struct kernfs_node *prgrp_kn,
- 			     const char *name, umode_t mode,
-@@ -1957,6 +2053,10 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 	ret = 0;
+  * drm_kms_helper_poll_disable - disable output polling
+  * @dev: drm_device
+  *
+--- a/include/drm/drm_crtc_helper.h
++++ b/include/drm/drm_crtc_helper.h
+@@ -176,5 +176,6 @@ extern void drm_kms_helper_hotplug_event
  
- 	rdtgrp->closid = closid;
-+	ret = rdtgroup_init_alloc(rdtgrp);
-+	if (ret < 0)
-+		goto out_id_free;
-+
- 	list_add(&rdtgrp->rdtgroup_list, &rdt_all_groups);
+ extern void drm_kms_helper_poll_disable(struct drm_device *dev);
+ extern void drm_kms_helper_poll_enable(struct drm_device *dev);
++bool drm_kms_helper_is_poll_worker(void);
  
- 	if (rdt_mon_capable) {
-@@ -1967,15 +2067,16 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 		ret = mongroup_create_dir(kn, NULL, "mon_groups", NULL);
- 		if (ret) {
- 			rdt_last_cmd_puts("kernfs subdir error\n");
--			goto out_id_free;
-+			goto out_del_list;
- 		}
- 	}
- 
- 	goto out_unlock;
- 
-+out_del_list:
-+	list_del(&rdtgrp->rdtgroup_list);
- out_id_free:
- 	closid_free(closid);
--	list_del(&rdtgrp->rdtgroup_list);
- out_common_fail:
- 	mkdir_rdt_prepare_clean(rdtgrp);
- out_unlock:
--- 
-2.13.6
+ #endif
