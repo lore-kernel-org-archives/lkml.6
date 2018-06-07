@@ -1,85 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id tvosHocbG1ucYQAAmS7hNA
-	; Sat, 09 Jun 2018 00:19:21 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id N25wDdJGGVuqOQAAmS7hNA
+	; Thu, 07 Jun 2018 14:53:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 36FF8607DC; Sat,  9 Jun 2018 00:19:21 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KYpHUlHE"
+	id 275A1608BF; Thu,  7 Jun 2018 14:53:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A603E601D2;
-	Sat,  9 Jun 2018 00:19:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A603E601D2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 8B4886074D;
+	Thu,  7 Jun 2018 14:53:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B4886074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeFIATS (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 20:19:18 -0400
-Received: from mail-it0-f42.google.com ([209.85.214.42]:37178 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753094AbeFIATQ (ORCPT
+        id S935252AbeFGOxD (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:53:03 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40932 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935245AbeFGOw7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 20:19:16 -0400
-Received: by mail-it0-f42.google.com with SMTP id l6-v6so4549151iti.2;
-        Fri, 08 Jun 2018 17:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eVxwKgFpsU7Gqc27MhhYVRiyxNT+wzy4IBzCYu6HiNg=;
-        b=KYpHUlHEahseXre7HB4LExQMwqwqYUKx6TdgQxwD5Unrpl6kk1kWw8zJJvdvlCbKLJ
-         VuvRBzW8p/emjQL/2VuBQiGYDTWlAo6rtSVoqbqarFU98TKGADG1S+PLnDco4KoSQbGE
-         hMnAWj73lfqvWFsHz/xDA547xIrURFwT4xch0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eVxwKgFpsU7Gqc27MhhYVRiyxNT+wzy4IBzCYu6HiNg=;
-        b=aIkxA8uqToxScqLNLpm+CrZxnDB9rbmaoR8hr9CWJzAlMeVZfQLiZp2ncFtHDB6qvE
-         sAbHoEw388BS54pdmoNL6Rnq0o+ZL9tGPS/LC0d/y75SkDub2EjYcdkHZnriAxvnZrkH
-         bzpj63dyfAZJloChFYnozXFW4uOl2IM47cQRZki3L8tRUL1vbmsqcsM5eebmy9nnOswK
-         3oGOVBqFqoE1nM9yN/MPlh6k7qD4Bv6bSxoLBpVWgnpHS4hQhOIo11AXUegCA0J1C6fF
-         mrKMgy13YQYmhoHl7UyMv3wH1u/vsw4ZLx9zF1kN6O3bvb96npJn+R1voPUfg9WgEbmf
-         z6cA==
-X-Gm-Message-State: APt69E3xkwgTA9HKGqmDv/+4qKJonxvyc78TR3ZY1V873AZvmH/sQNLo
-        1MAGYlAf/iG0Sj0SArmTZM8w48gLRYoeukY/qk8=
-X-Google-Smtp-Source: ADUXVKJ0AOSVEfzFFPl/q9u9UBcWIOLaku5k9p1kSr7fLDx+FGzdRqiDKBxmxgx92Cxf+mJrYHbBye6OzDP0vEV2NCc=
-X-Received: by 2002:a24:5b81:: with SMTP id g123-v6mr3590885itb.1.1528503555988;
- Fri, 08 Jun 2018 17:19:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <1528502307.25740.14.camel@intel.com>
-In-Reply-To: <1528502307.25740.14.camel@intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 8 Jun 2018 17:19:05 -0700
-Message-ID: <CA+55aFy_fiF2bwW=0gL4g8uL5099hWarL4+Q9djmDEuwRR2KKw@mail.gmail.com>
-Subject: Re: [GIT PULL] libnvdimm for 4.18
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>
+        Thu, 7 Jun 2018 10:52:59 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbX-0005Zv-9d; Thu, 07 Jun 2018 15:09:31 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0003AP-QY; Thu, 07 Jun 2018 15:09:08 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "David Vrabel" <david.vrabel@citrix.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.109599554@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 309/410] xen: Add xen_arch_suspend()
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 8, 2018 at 4:58 PM Williams, Dan J <dan.j.williams@intel.com> wrote:
->
-> Not included in this pull, but still targeting this cycle, is support
-> for handling memory media errors (poison) consumed via userspace dax
-> mappings.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Note that since I'm going to be traveling much of next week, I'm going
-to be even less open to late pull requests than usual.
+------------------
 
-If I get stuff that looks at all complex at the end of the merge
-window, I will just cackle unpleasantly while I press the big 'D' key
-on my keyboard.
+From: Ben Hutchings <ben@decadent.org.uk>
 
-          Linus
+This is based on commit 2b953a5e994ce279904ec70220f7d4f31d380a0a
+upstream, "xen: Suspend ticks on all CPUs during suspend", but
+excluding the bug fix in that commit which is not needed in 3.16.
+We only need the xen_arch_suspend() hook for the following fix.
+
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: David Vrabel <david.vrabel@citrix.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/arch/x86/xen/suspend.c
++++ b/arch/x86/xen/suspend.c
+@@ -91,8 +91,17 @@ static void xen_vcpu_notify_restore(void
+ 	clockevents_notify(reason, NULL);
+ }
+ 
++static void xen_vcpu_notify_suspend(void *data)
++{
++}
++
+ void xen_arch_resume(void)
+ {
+ 	on_each_cpu(xen_vcpu_notify_restore,
+ 		    (void *)CLOCK_EVT_NOTIFY_RESUME, 1);
+ }
++
++void xen_arch_suspend(void)
++{
++	on_each_cpu(xen_vcpu_notify_suspend, NULL, 1);
++}
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -131,6 +131,8 @@ static void do_suspend(void)
+ 		goto out_resume;
+ 	}
+ 
++	xen_arch_suspend();
++
+ 	si.cancelled = 1;
+ 
+ 	err = stop_machine(xen_suspend, &si, cpumask_of(0));
+@@ -148,11 +150,12 @@ static void do_suspend(void)
+ 		si.cancelled = 1;
+ 	}
+ 
++	xen_arch_resume();
++
+ out_resume:
+-	if (!si.cancelled) {
+-		xen_arch_resume();
++	if (!si.cancelled)
+ 		xs_resume();
+-	} else
++	else
+ 		xs_suspend_cancel();
+ 
+ 	dpm_resume_end(si.cancelled ? PMSG_THAW : PMSG_RESTORE);
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -12,6 +12,7 @@ void xen_arch_post_suspend(int suspend_c
+ 
+ void xen_timer_resume(void);
+ void xen_arch_resume(void);
++void xen_arch_suspend(void);
+ 
+ void xen_resume_notifier_register(struct notifier_block *nb);
+ void xen_resume_notifier_unregister(struct notifier_block *nb);
