@@ -1,90 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LD3UE4whGltiUQAAmS7hNA
-	; Fri, 08 Jun 2018 06:26:20 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id eyCgADJMGVuEYAAAmS7hNA
+	; Thu, 07 Jun 2018 15:16:54 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 35D676089E; Fri,  8 Jun 2018 06:26:20 +0000 (UTC)
+	id F31266089E; Thu,  7 Jun 2018 15:16:53 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BF30D606FA;
-	Fri,  8 Jun 2018 06:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF30D606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 6B73160290;
+	Thu,  7 Jun 2018 15:16:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B73160290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751190AbeFHG0S (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 02:26:18 -0400
-Received: from regular1.263xmail.com ([211.150.99.137]:55195 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750909AbeFHG0R (ORCPT
+        id S935907AbeFGPQv (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:16:51 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41358 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935010AbeFGPAs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 02:26:17 -0400
-Received: from zhangqing?rock-chips.com (unknown [192.168.167.157])
-        by regular1.263xmail.com (Postfix) with ESMTP id 63DADDAC4;
-        Fri,  8 Jun 2018 14:26:09 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id E993F41C;
-        Fri,  8 Jun 2018 14:25:59 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <8ee1fac2bc2035f79d91e92d28e54486>
-X-ATTACHMENT-NUM: 0
-X-SENDER: zhangqing@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 19679YAFH17;
-        Fri, 08 Jun 2018 14:26:04 +0800 (CST)
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 0/4] clk: rockchip: support clock controller for px30 SoC
-Date: Fri,  8 Jun 2018 14:31:55 +0800
-Message-Id: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 7 Jun 2018 11:00:48 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbQ-0005dI-HW; Thu, 07 Jun 2018 15:09:25 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbC-0003Cj-6C; Thu, 07 Jun 2018 15:09:10 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Yazen Ghannam" <yazen.ghannam@amd.com>,
+        "Borislav Petkov" <bp@suse.de>,
+        "linux-edac" <linux-edac@vger.kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Tony Luck" <tony.luck@intel.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.275888259@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 335/410] x86/MCE: Save microcode revision in machine
+ check records
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change in V2:
-[PATCH v2 2/4]: modify the Author name
-[PATCH v2 3/4]: provide a bit more explanation for commit message
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Elaine Zhang (4):
-  dt-bindings: add bindings for px30 clock controller
-  clk: rockchip: add dt-binding header for px30
-  clk: rockchip: add support for half divider
-  clk: rockchip: add clock controller for px30
+------------------
 
- .../bindings/clock/rockchip,px30-cru.txt           |   67 ++
- drivers/clk/rockchip/Makefile                      |    2 +
- drivers/clk/rockchip/clk-half-divider.c            |  235 +++++
- drivers/clk/rockchip/clk-px30.c                    | 1080 ++++++++++++++++++++
- drivers/clk/rockchip/clk.c                         |   10 +
- drivers/clk/rockchip/clk.h                         |   86 +-
- include/dt-bindings/clock/px30-cru.h               |  402 ++++++++
- 7 files changed, 1881 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-half-divider.c
- create mode 100644 drivers/clk/rockchip/clk-px30.c
- create mode 100644 include/dt-bindings/clock/px30-cru.h
+From: Tony Luck <tony.luck@intel.com>
 
--- 
-1.9.1
+commit fa94d0c6e0f3431523f5701084d799c77c7d4a4f upstream.
+
+Updating microcode used to be relatively rare. Now that it has become
+more common we should save the microcode version in a machine check
+record to make sure that those people looking at the error have this
+important information bundled with the rest of the logged information.
+
+[ Borislav: Simplify a bit. ]
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180301233449.24311-1-tony.luck@intel.com
+[bwh: Backported to 3.2:
+ - Add other new fields to struct mce, to match upstream UAPI
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/arch/x86/include/uapi/asm/mce.h
++++ b/arch/x86/include/uapi/asm/mce.h
+@@ -25,6 +25,10 @@ struct mce {
+ 	__u32 socketid;	/* CPU socket ID */
+ 	__u32 apicid;	/* CPU initial apic ID */
+ 	__u64 mcgcap;	/* MCGCAP MSR: machine check capabilities of CPU */
++	__u64 synd;	/* MCA_SYND MSR: only valid on SMCA systems */
++	__u64 ipid;	/* MCA_IPID MSR: only valid on SMCA systems */
++	__u64 ppin;	/* Protected Processor Inventory Number */
++	__u32 microcode;/* Microcode revision */
+ };
+ 
+ #define MCE_GET_RECORD_LEN   _IOR('M', 1, int)
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -135,6 +135,8 @@ void mce_setup(struct mce *m)
+ 	m->socketid = cpu_data(m->extcpu).phys_proc_id;
+ 	m->apicid = cpu_data(m->extcpu).initial_apicid;
+ 	rdmsrl(MSR_IA32_MCG_CAP, m->mcgcap);
++
++	m->microcode = boot_cpu_data.microcode;
+ }
+ 
+ DEFINE_PER_CPU(struct mce, injectm);
+@@ -282,7 +284,7 @@ static void print_mce(struct mce *m)
+ 	 */
+ 	pr_emerg(HW_ERR "PROCESSOR %u:%x TIME %llu SOCKET %u APIC %x microcode %x\n",
+ 		m->cpuvendor, m->cpuid, m->time, m->socketid, m->apicid,
+-		cpu_data(m->extcpu).microcode);
++		m->microcode);
+ 
+ 	/*
+ 	 * Print out human-readable details about the MCE error,
