@@ -1,323 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id La3+Cl2SHlsGFwAAmS7hNA
-	; Mon, 11 Jun 2018 15:17:15 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pdEJLN5HGVs9QQAAmS7hNA
+	; Thu, 07 Jun 2018 14:59:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id E089C60791; Mon, 11 Jun 2018 15:17:14 +0000 (UTC)
+	id 246AF608BF; Thu,  7 Jun 2018 14:59:40 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 3025460791;
-	Mon, 11 Jun 2018 15:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3025460791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=st.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 3EE0F601C3;
+	Thu,  7 Jun 2018 14:59:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3EE0F601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754220AbeFKPRM (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 11:17:12 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:7554 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753988AbeFKPRL (ORCPT
+        id S935719AbeFGO7g (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:59:36 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41291 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935702AbeFGO7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 11:17:11 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5BEsReo005141;
-        Mon, 11 Jun 2018 17:14:08 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2jg4nr1k2c-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 11 Jun 2018 17:14:08 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5922D31;
-        Mon, 11 Jun 2018 15:14:07 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3439F2D5F;
-        Mon, 11 Jun 2018 15:14:07 +0000 (GMT)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun
- 2018 17:14:07 +0200
-Received: from localhost (10.201.23.16) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 11 Jun 2018 17:14:06
- +0200
-From: Olivier Moysan <olivier.moysan@st.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@stlinux.com>,
-        <linux-kernel@vger.kernel.org>, <olivier.moysan@st.com>
-CC: <arnaud.pouliquen@st.com>, <benjamin.gaignard@st.com>
-Subject: [PATCH v2 1/1] ASoC: stm32: sai: add iec958 controls support
-Date: Mon, 11 Jun 2018 17:13:59 +0200
-Message-ID: <1528730039-15757-2-git-send-email-olivier.moysan@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528730039-15757-1-git-send-email-olivier.moysan@st.com>
-References: <1528730039-15757-1-git-send-email-olivier.moysan@st.com>
+        Thu, 7 Jun 2018 10:59:34 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbg-0005Zi-Gp; Thu, 07 Jun 2018 15:09:40 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb6-00030b-Ba; Thu, 07 Jun 2018 15:09:04 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.16]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_06:,,
- signatures=0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>,
+        "Michael Kerrisk" <mtk.manpages@gmail.com>,
+        "Randy Dunlap" <rdunlap@infradead.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Joe Lawrence" <joe.lawrence@redhat.com>,
+        "Mikulas Patocka" <mpatocka@redhat.com>,
+        "Jens Axboe" <axboe@kernel.dk>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.972258691@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 208/410] pipe: add proc_dopipe_max_size() to safely
+ assign pipe_max_size
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of iec958 controls for STM32 SAI.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+------------------
+
+From: Joe Lawrence <joe.lawrence@redhat.com>
+
+commit 7a8d181949fb2c16be00f8cdb354794a30e46b39 upstream.
+
+pipe_max_size is assigned directly via procfs sysctl:
+
+  static struct ctl_table fs_table[] = {
+          ...
+          {
+                  .procname       = "pipe-max-size",
+                  .data           = &pipe_max_size,
+                  .maxlen         = sizeof(int),
+                  .mode           = 0644,
+                  .proc_handler   = &pipe_proc_fn,
+                  .extra1         = &pipe_min_size,
+          },
+          ...
+
+  int pipe_proc_fn(struct ctl_table *table, int write, void __user *buf,
+                   size_t *lenp, loff_t *ppos)
+  {
+          ...
+          ret = proc_dointvec_minmax(table, write, buf, lenp, ppos)
+          ...
+
+and then later rounded in-place a few statements later:
+
+          ...
+          pipe_max_size = round_pipe_size(pipe_max_size);
+          ...
+
+This leaves a window of time between initial assignment and rounding
+that may be visible to other threads.  (For example, one thread sets a
+non-rounded value to pipe_max_size while another reads its value.)
+
+Similar reads of pipe_max_size are potentially racy:
+
+  pipe.c :: alloc_pipe_info()
+  pipe.c :: pipe_set_size()
+
+Add a new proc_dopipe_max_size() that consolidates reading the new value
+from the user buffer, verifying bounds, and calling round_pipe_size()
+with a single assignment to pipe_max_size.
+
+Link: http://lkml.kernel.org/r/1507658689-11669-4-git-send-email-joe.lawrence@redhat.com
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16: Continue using int sysctl functions because we don't
+ have proper unsigned int support]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/soc/stm/Kconfig         |   1 +
- sound/soc/stm/stm32_sai_sub.c | 139 ++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 128 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/stm/Kconfig b/sound/soc/stm/Kconfig
-index 48f9ddd94016..9b2681397dba 100644
---- a/sound/soc/stm/Kconfig
-+++ b/sound/soc/stm/Kconfig
-@@ -6,6 +6,7 @@ config SND_SOC_STM32_SAI
- 	depends on SND_SOC
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	select REGMAP_MMIO
-+	select SND_PCM_IEC958
- 	help
- 	  Say Y if you want to enable SAI for STM32
- 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index cfeb219e1d78..c4f15ea14197 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -96,7 +96,8 @@
-  * @slot_mask: rx or tx active slots mask. set at init or at runtime
-  * @data_size: PCM data width. corresponds to PCM substream width.
-  * @spdif_frm_cnt: S/PDIF playback frame counter
-- * @spdif_status_bits: S/PDIF status bits
-+ * @snd_aes_iec958: iec958 data
-+ * @ctrl_lock: control lock
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -1008,7 +1008,7 @@ const struct file_operations pipefifo_fo
+  * Currently we rely on the pipe array holding a power-of-2 number
+  * of pages. Returns 0 on error.
   */
- struct stm32_sai_sub_data {
- 	struct platform_device *pdev;
-@@ -125,7 +126,8 @@ struct stm32_sai_sub_data {
- 	int slot_mask;
- 	int data_size;
- 	unsigned int spdif_frm_cnt;
--	unsigned char spdif_status_bits[SAI_IEC60958_STATUS_BYTES];
-+	struct snd_aes_iec958 iec958;
-+	struct mutex ctrl_lock; /* protect resources accessed by controls */
- };
+-static inline unsigned int round_pipe_size(unsigned int size)
++unsigned int round_pipe_size(unsigned int size)
+ {
+ 	unsigned long nr_pages;
  
- enum stm32_sai_fifo_th {
-@@ -184,10 +186,6 @@ static bool stm32_sai_sub_writeable_reg(struct device *dev, unsigned int reg)
- 	}
+@@ -1112,25 +1112,13 @@ out_revert_acct:
  }
  
--static const unsigned char default_status_bits[SAI_IEC60958_STATUS_BYTES] = {
--	0, 0, 0, IEC958_AES3_CON_FS_48000,
--};
+ /*
+- * This should work even if CONFIG_PROC_FS isn't set, as proc_dointvec_minmax
++ * This should work even if CONFIG_PROC_FS isn't set, as proc_dopipe_max_size
+  * will return an error.
+  */
+ int pipe_proc_fn(struct ctl_table *table, int write, void __user *buf,
+ 		 size_t *lenp, loff_t *ppos)
+ {
+-	unsigned int rounded_pipe_max_size;
+-	int ret;
 -
- static const struct regmap_config stm32_sai_sub_regmap_config_f4 = {
- 	.reg_bits = 32,
- 	.reg_stride = 4,
-@@ -210,6 +208,49 @@ static bool stm32_sai_sub_writeable_reg(struct device *dev, unsigned int reg)
- 	.fast_io = true,
- };
+-	ret = proc_dointvec_minmax(table, write, buf, lenp, ppos);
+-	if (ret < 0 || !write)
+-		return ret;
+-
+-	rounded_pipe_max_size = round_pipe_size(pipe_max_size);
+-	if (rounded_pipe_max_size == 0)
+-		return -EINVAL;
+-
+-	pipe_max_size = rounded_pipe_max_size;
+-	return ret;
++	return proc_dopipe_max_size(table, write, buf, lenp, ppos);
+ }
  
-+static int snd_pcm_iec958_info(struct snd_kcontrol *kcontrol,
-+			       struct snd_ctl_elem_info *uinfo)
-+{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
-+	uinfo->count = 1;
-+
-+	return 0;
-+}
-+
-+static int snd_pcm_iec958_get(struct snd_kcontrol *kcontrol,
-+			      struct snd_ctl_elem_value *uctl)
-+{
-+	struct stm32_sai_sub_data *sai = snd_kcontrol_chip(kcontrol);
-+
-+	mutex_lock(&sai->ctrl_lock);
-+	memcpy(uctl->value.iec958.status, sai->iec958.status, 4);
-+	mutex_unlock(&sai->ctrl_lock);
-+
-+	return 0;
-+}
-+
-+static int snd_pcm_iec958_put(struct snd_kcontrol *kcontrol,
-+			      struct snd_ctl_elem_value *uctl)
-+{
-+	struct stm32_sai_sub_data *sai = snd_kcontrol_chip(kcontrol);
-+
-+	mutex_lock(&sai->ctrl_lock);
-+	memcpy(sai->iec958.status, uctl->value.iec958.status, 4);
-+	mutex_unlock(&sai->ctrl_lock);
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new iec958_ctls = {
-+	.access = (SNDRV_CTL_ELEM_ACCESS_READWRITE |
-+			SNDRV_CTL_ELEM_ACCESS_VOLATILE),
-+	.iface = SNDRV_CTL_ELEM_IFACE_PCM,
-+	.name = SNDRV_CTL_NAME_IEC958("", PLAYBACK, DEFAULT),
-+	.info = snd_pcm_iec958_info,
-+	.get = snd_pcm_iec958_get,
-+	.put = snd_pcm_iec958_put,
+ /*
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -149,5 +149,6 @@ long pipe_fcntl(struct file *, unsigned
+ struct pipe_inode_info *get_pipe_info(struct file *file);
+ 
+ int create_pipe_files(struct file **, int);
++unsigned int round_pipe_size(unsigned int size);
+ 
+ #endif
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -45,6 +45,9 @@ extern int proc_dointvec(struct ctl_tabl
+ 			 void __user *, size_t *, loff_t *);
+ extern int proc_dointvec_minmax(struct ctl_table *, int,
+ 				void __user *, size_t *, loff_t *);
++extern int proc_dopipe_max_size(struct ctl_table *table, int write,
++				void __user *buffer, size_t *lenp,
++				loff_t *ppos);
+ extern int proc_dointvec_jiffies(struct ctl_table *, int,
+ 				 void __user *, size_t *, loff_t *);
+ extern int proc_dointvec_userhz_jiffies(struct ctl_table *, int,
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -64,6 +64,7 @@
+ #include <linux/sched/sysctl.h>
+ #include <linux/kexec.h>
+ #include <linux/mount.h>
++#include <linux/pipe_fs_i.h>
+ 
+ #include <asm/uaccess.h>
+ #include <asm/processor.h>
+@@ -2222,6 +2223,47 @@ int proc_dointvec_minmax(struct ctl_tabl
+ 				do_proc_dointvec_minmax_conv, &param);
+ }
+ 
++struct do_proc_dopipe_max_size_conv_param {
++	unsigned int *min;
 +};
 +
- static irqreturn_t stm32_sai_isr(int irq, void *devid)
- {
- 	struct stm32_sai_sub_data *sai = (struct stm32_sai_sub_data *)devid;
-@@ -619,6 +660,59 @@ static void stm32_sai_set_frame(struct snd_soc_dai *cpu_dai)
- 	}
- }
- 
-+static void stm32_sai_init_iec958_status(struct stm32_sai_sub_data *sai)
++static int do_proc_dopipe_max_size_conv(bool *negp, unsigned long *lvalp,
++					int *valp, int write, void *data)
 +{
-+	unsigned char *cs = sai->iec958.status;
++	struct do_proc_dopipe_max_size_conv_param *param = data;
 +
-+	cs[0] = IEC958_AES0_CON_NOT_COPYRIGHT | IEC958_AES0_CON_EMPHASIS_NONE;
-+	cs[1] = IEC958_AES1_CON_GENERAL;
-+	cs[2] = IEC958_AES2_CON_SOURCE_UNSPEC | IEC958_AES2_CON_CHANNEL_UNSPEC;
-+	cs[3] = IEC958_AES3_CON_CLOCK_1000PPM | IEC958_AES3_CON_FS_NOTID;
-+}
++	if (write) {
++		unsigned int val = round_pipe_size(*lvalp);
 +
-+static void stm32_sai_set_iec958_status(struct stm32_sai_sub_data *sai,
-+					struct snd_pcm_runtime *runtime)
-+{
-+	if (!runtime)
-+		return;
++		if (*negp || val == 0)
++			return -EINVAL;
 +
-+	/* Force the sample rate according to runtime rate */
-+	mutex_lock(&sai->ctrl_lock);
-+	switch (runtime->rate) {
-+	case 22050:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_22050;
-+		break;
-+	case 44100:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_44100;
-+		break;
-+	case 88200:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_88200;
-+		break;
-+	case 176400:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_176400;
-+		break;
-+	case 24000:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_24000;
-+		break;
-+	case 48000:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_48000;
-+		break;
-+	case 96000:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_96000;
-+		break;
-+	case 192000:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_192000;
-+		break;
-+	case 32000:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_32000;
-+		break;
-+	default:
-+		sai->iec958.status[3] = IEC958_AES3_CON_FS_NOTID;
-+		break;
-+	}
-+	mutex_unlock(&sai->ctrl_lock);
-+}
++		if (param->min && *param->min > val)
++			return -ERANGE;
 +
- static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 				     struct snd_pcm_hw_params *params)
- {
-@@ -709,7 +803,11 @@ static int stm32_sai_hw_params(struct snd_pcm_substream *substream,
- 
- 	sai->data_size = params_width(params);
- 
--	if (!STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
-+	if (STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
-+		/* Rate not already set in runtime structure */
-+		substream->runtime->rate = params_rate(params);
-+		stm32_sai_set_iec958_status(sai, substream->runtime);
++		if (*lvalp > UINT_MAX)
++			return -EINVAL;
++
++		*valp = val;
 +	} else {
- 		ret = stm32_sai_set_slots(cpu_dai);
- 		if (ret < 0)
- 			return ret;
-@@ -789,6 +887,20 @@ static void stm32_sai_shutdown(struct snd_pcm_substream *substream,
- 	sai->substream = NULL;
- }
- 
-+static int stm32_sai_pcm_new(struct snd_soc_pcm_runtime *rtd,
-+			     struct snd_soc_dai *cpu_dai)
-+{
-+	struct stm32_sai_sub_data *sai = dev_get_drvdata(cpu_dai->dev);
-+
-+	if (STM_SAI_PROTOCOL_IS_SPDIF(sai)) {
-+		dev_dbg(&sai->pdev->dev, "%s: register iec controls", __func__);
-+		return snd_ctl_add(rtd->pcm->card,
-+				   snd_ctl_new1(&iec958_ctls, sai));
++		unsigned int val = *valp;
++		*negp = false;
++		*lvalp = (unsigned long) val;
 +	}
 +
 +	return 0;
 +}
 +
- static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
- {
- 	struct stm32_sai_sub_data *sai = dev_get_drvdata(cpu_dai->dev);
-@@ -809,6 +921,10 @@ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
- 	else
- 		snd_soc_dai_init_dma_data(cpu_dai, NULL, &sai->dma_params);
- 
-+	/* Next settings are not relevant for spdif mode */
-+	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
-+		return 0;
++int proc_dopipe_max_size(struct ctl_table *table, int write,
++			 void __user *buffer, size_t *lenp, loff_t *ppos)
++{
++	struct do_proc_dopipe_max_size_conv_param param = {
++		.min = (unsigned int *) table->extra1,
++	};
++	return do_proc_dointvec(table, write, buffer, lenp, ppos,
++				do_proc_dopipe_max_size_conv, &param);
++}
 +
- 	cr1_mask = SAI_XCR1_RX_TX;
- 	if (STM_SAI_IS_CAPTURE(sai))
- 		cr1 |= SAI_XCR1_RX_TX;
-@@ -820,10 +936,6 @@ static int stm32_sai_dai_probe(struct snd_soc_dai *cpu_dai)
- 				     sai->synco, sai->synci);
- 	}
- 
--	if (STM_SAI_PROTOCOL_IS_SPDIF(sai))
--		memcpy(sai->spdif_status_bits, default_status_bits,
--		       sizeof(default_status_bits));
--
- 	cr1_mask |= SAI_XCR1_SYNCEN_MASK;
- 	cr1 |= SAI_XCR1_SYNCEN_SET(sai->sync);
- 
-@@ -861,7 +973,7 @@ static int stm32_sai_pcm_process_spdif(struct snd_pcm_substream *substream,
- 		/* Set channel status bit */
- 		byte = frm_cnt >> 3;
- 		mask = 1 << (frm_cnt - (byte << 3));
--		if (sai->spdif_status_bits[byte] & mask)
-+		if (sai->iec958.status[byte] & mask)
- 			*ptr |= 0x04000000;
- 		ptr++;
- 
-@@ -888,6 +1000,7 @@ static int stm32_sai_pcm_process_spdif(struct snd_pcm_substream *substream,
- static struct snd_soc_dai_driver stm32_sai_playback_dai[] = {
+ static void validate_coredump_safety(void)
  {
- 		.probe = stm32_sai_dai_probe,
-+		.pcm_new = stm32_sai_pcm_new,
- 		.id = 1, /* avoid call to fmt_single_name() */
- 		.playback = {
- 			.channels_min = 1,
-@@ -998,6 +1111,7 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
- 			dev_err(&pdev->dev, "S/PDIF IEC60958 not supported\n");
- 			return -EINVAL;
- 		}
-+		stm32_sai_init_iec958_status(sai);
- 		sai->spdif = true;
- 		sai->master = true;
- 	}
-@@ -1114,6 +1228,7 @@ static int stm32_sai_sub_probe(struct platform_device *pdev)
- 	sai->id = (uintptr_t)of_id->data;
+ #ifdef CONFIG_COREDUMP
+@@ -2737,6 +2779,12 @@ int proc_dointvec_minmax(struct ctl_tabl
+ 	return -ENOSYS;
+ }
  
- 	sai->pdev = pdev;
-+	mutex_init(&sai->ctrl_lock);
- 	platform_set_drvdata(pdev, sai);
- 
- 	sai->pdata = dev_get_drvdata(pdev->dev.parent);
--- 
-1.9.1
++int proc_dopipe_max_size(struct ctl_table *table, int write,
++			 void __user *buffer, size_t *lenp, loff_t *ppos)
++{
++	return -ENOSYS;
++}
++
+ int proc_dointvec_jiffies(struct ctl_table *table, int write,
+ 		    void __user *buffer, size_t *lenp, loff_t *ppos)
+ {
+@@ -2778,6 +2826,7 @@ int proc_doulongvec_ms_jiffies_minmax(st
+ EXPORT_SYMBOL(proc_dointvec);
+ EXPORT_SYMBOL(proc_dointvec_jiffies);
+ EXPORT_SYMBOL(proc_dointvec_minmax);
++EXPORT_SYMBOL_GPL(proc_dopipe_max_size);
+ EXPORT_SYMBOL(proc_dointvec_userhz_jiffies);
+ EXPORT_SYMBOL(proc_dointvec_ms_jiffies);
+ EXPORT_SYMBOL(proc_dostring);
