@@ -1,166 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 61LxJM4xHFu+CQAAmS7hNA
-	; Sat, 09 Jun 2018 20:00:14 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id aRiEGJFAGVv2YwAAmS7hNA
+	; Thu, 07 Jun 2018 14:27:27 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7B659608C1; Sat,  9 Jun 2018 20:00:14 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="H42bA/cg"
+	id 47ECB607E7; Thu,  7 Jun 2018 14:27:27 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DB537600D0;
-	Sat,  9 Jun 2018 20:00:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB537600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 950276063F;
+	Thu,  7 Jun 2018 14:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 950276063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932950AbeFIUAL (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 16:00:11 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36465 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932157AbeFIUAJ (ORCPT
+        id S933494AbeFGO1Z (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:27:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40186 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933406AbeFGO0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 16:00:09 -0400
-Received: by mail-pl0-f65.google.com with SMTP id a7-v6so7606975plp.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Jun 2018 13:00:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DiYFxDvpqRVFiFokfbm4aZzqVbaUgwSqjfDGyraqZ3k=;
-        b=H42bA/cgL91pqYueLRb5vTdn9MA2lRbSGjpJ7nhiKmnMwUlE33HF5w1bhlITu4qoSe
-         Y0IabMEZI9rn3h/Vykd1j00b9E1wi6I/5D/UBNJnlIucSZkZwfkbGATor3Qj7pIbPvIF
-         n1M00RqmouCEGgMht74V9DH0Gf62p/Wuccj2/Q0LWgpTlurWkyNYospxAsMfJP37TUc7
-         QUfcoK65mkwja6+ZIGOHLW6wwJMbXeplJjrQL91lFV++TBnC3N7q3x9uNZRBmfaVWw0x
-         nWo5nA6E1Pto2nuTct88y0iIIdjO1ubxUsCQv4NJi/tVNOmqgngOPcsuAvhVs8gJPPBr
-         ZZ5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=DiYFxDvpqRVFiFokfbm4aZzqVbaUgwSqjfDGyraqZ3k=;
-        b=Pp3728k9HXdV1zu8ESbpwM/ZvfgxB+87d8n13jyw2R0JpxYkKhnbCTMpveiOcTraGs
-         BaqM3HE2eeOov46bzn4NoWAB/QtGM+kyJpow7a4P1YtNtC4+gUu1PgYOAErHGpyHgYKh
-         cnIQgzfuV03FL2eS5MCCW6QPJzOmo+6tUvIgUyZnwojHFiSCFNjgVoXyj7QzVU2xNGaS
-         ukWZuvOcEGZs+DZo4rV7EZykVcElAMTefbOGIlP+O9ynfiho0W+WgJ97R1UIJnjhQy8X
-         5hE/MYD50w+B18o5d6VqPuQcXBi6j+iC6WwQjWgg4oHN7PqHnH/BUImVHPyKekbahYx1
-         k48g==
-X-Gm-Message-State: APt69E2LY4eAYSe+EGwelWaGADggl8C4qy3N2ykkZchgqTAz5dk0Fh5l
-        K0KpgATTFcWKDjGw9Ixjn2gcKA==
-X-Google-Smtp-Source: ADUXVKJnEDZJu3R/F7gXtmt8p/rCjehrKTdO+dt2MX9i5nBJXf9bVGBTjcNGa/it/fJdd6AstOvBgw==
-X-Received: by 2002:a17:902:543:: with SMTP id 61-v6mr12004792plf.47.1528574409277;
-        Sat, 09 Jun 2018 13:00:09 -0700 (PDT)
-Received: from localhost (c-67-161-15-180.hsd1.ca.comcast.net. [67.161.15.180])
-        by smtp.gmail.com with ESMTPSA id e17-v6sm34213003pfd.15.2018.06.09.13.00.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 09 Jun 2018 13:00:08 -0700 (PDT)
-Date: Sat, 09 Jun 2018 13:00:08 -0700 (PDT)
-X-Google-Original-Date: Sat, 09 Jun 2018 12:33:18 PDT (-0700)
-Subject: Re: [PATCH 3/3] riscv: fix __user annotation for __copy_user()
-In-Reply-To: <20180609001310.jxzcqtdacu4uiz6b@ltop.local>
-CC: atish.patra@wdc.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, albert@sifive.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: luc.vanoostenryck@gmail.com
-Message-ID: <mhng-34378b5f-fa64-4886-b454-a2cb319d6abb@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 7 Jun 2018 10:26:45 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbT-0005Zx-Kz; Thu, 07 Jun 2018 15:09:28 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbB-0003Bc-Jp; Thu, 07 Jun 2018 15:09:09 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Tony Luck" <tony.luck@intel.com>,
+        "Corentin Labbe" <clabbe@baylibre.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.844521797@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 324/410] ia64: convert unwcheck.py to python3
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 08 Jun 2018 17:13:12 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
-> On Fri, Jun 08, 2018 at 03:33:36PM -0700, Palmer Dabbelt wrote:
->> On Thu, 07 Jun 2018 09:51:33 PDT (-0700), luc.vanoostenryck@gmail.com wrote:
->> > On Thu, Jun 07, 2018 at 09:30:19AM -0700, Palmer Dabbelt wrote:
->> > > diff --git a/arch/riscv/lib/uaccess.S b/arch/riscv/lib/uaccess.S
->> > > index 58fb2877c865..bd51e47ebd44 100644
->> > > --- a/arch/riscv/lib/uaccess.S
->> > > +++ b/arch/riscv/lib/uaccess.S
->> > > @@ -13,7 +13,15 @@ _epc:
->> > > 	.previous
->> > > 	.endm
->> > >
->> > > -ENTRY(__copy_user)
->> > > +/* __asm_copy_to_user and __asm_copy_from_user are actually the same function,
->> > > + * they're just provided as two different symbols to C code so sparse doesn't
->> > > + * yell about casting between two different address spaces. */
->> > > +.global __asm_copy_to_user
->> > > +.set __asm_copy_to_user,__asm_copy_tofrom_user
->> > > +.global __asm_copy_from_user
->> > > +.set __asm_copy_from_user,__asm_copy_tofrom_user
->> > > +
->> > > +ENTRY(__asm_copy_tofrom_user)
->> >
->> > I don't think that the size (as reported by objdump, for example) will
->> > be correct or even present for __asm_copy_to_user & __asm_copy_to_user.
->> >
->> > What can be done is:
->> > 	ENTRY(__asm_copy_to_user)
->> > 	ENTRY(__asm_copy_from_user)
->> >
->> > 	<function definition>
->> >
->> > 	ENDPROC(__asm_copy_to_user)
->> > 	ENDPROC(__asm_copy_from_user)
->> >
->> Thanks.  Do you mind checking to make sure this works and submitting a patch?
->
-> Not at all.
-> I should have done it already when I sent the previous email.
->
-> I tried it and ... the preprocessed asm is as expected:
-> 	.globl __asm_copy_to_user ; .balign 4 ; __asm_copy_to_user:
-> 	.globl __asm_copy_from_user ; .balign 4 ; __asm_copy_from_user:
->
->
-> 	 li t6, 0x00040000
-> 	 csrs sstatus, t6
-> 	 ...
->
-> But the nm -S returns different sizes for them:
-> 	0000000000000004 000000000000006c T __asm_copy_from_user
-> 	0000000000000002 000000000000006e T __asm_copy_to_user
->
-> and the object code is:
-> 	0000000000000000 <__asm_copy_to_user-0x2>:
-> 	   0:   0001                    nop
->
-> 	0000000000000002 <__asm_copy_to_user>:
-> 	   2:   0001                    nop
->
-> 	0000000000000004 <__asm_copy_from_user>:
-> 	   4:   00040fb7                lui     t6,0x40
-> 	   8:   100fa073                csrs    sstatus,t6
-> 	   ...
->
-> Why these unnneded nops?
-> Is this a known problem of my toolchain (I use a plain gcc 7.3 +
-> binutils 2.29, both configured as riscv64-none-elf)?
->
-> If I remove the two ENTRY() and use instead:
-> 	.globl __asm_copy_to_user ; __asm_copy_to_user:
-> 	.globl __asm_copy_from_user ; __asm_copy_from_user:
-> (IOW, I drop the .balign) then I get the expected result.
-> But well, this seems unrelated to the double ENTRY.
->
-> I can't test it more for now because I've some link errors (which,
-> I understand are probably solved in the riscv tree of binutils).
->
-> I'll send you the patch anyway since, as far as I understand the changes
-> specific to this copy_to/from_user is OK.
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-I think it's probably a bug in binutils-2.29 that should be fixed by 2.30 -- 
-IIRC we had some bugs that looked like this and they got fixed, though it might 
-be just in master (so 2.31).
+------------------
 
-Either way it looks innocuous WRT the patch.
+From: Corentin Labbe <clabbe@baylibre.com>
 
-Thanks!
+commit bd5edbe677948d0883f59d9625c444818d5284b1 upstream.
+
+Since my system use python3 as default, arch/ia64/scripts/unwcheck.py no
+longer run.
+
+This patch convert it to the python3 syntax.
+I have ran it with python2/python3 while printing values of
+start/end/rlen_sum which could be impacted by this change and I see no difference.
+
+Fixes: 94a47083522e ("scripts: change scripts to use system python instead of env")
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/ia64/scripts/unwcheck.py | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+--- a/arch/ia64/scripts/unwcheck.py
++++ b/arch/ia64/scripts/unwcheck.py
+@@ -15,7 +15,7 @@ import re
+ import sys
+ 
+ if len(sys.argv) != 2:
+-    print "Usage: %s FILE" % sys.argv[0]
++    print("Usage: %s FILE" % sys.argv[0])
+     sys.exit(2)
+ 
+ readelf = os.getenv("READELF", "readelf")
+@@ -28,7 +28,7 @@ def check_func (func, slots, rlen_sum):
+         global num_errors
+         num_errors += 1
+         if not func: func = "[%#x-%#x]" % (start, end)
+-        print "ERROR: %s: %lu slots, total region length = %lu" % (func, slots, rlen_sum)
++        print("ERROR: %s: %lu slots, total region length = %lu" % (func, slots, rlen_sum))
+     return
+ 
+ num_funcs = 0
+@@ -42,23 +42,23 @@ for line in os.popen("%s -u %s" % (reade
+         check_func(func, slots, rlen_sum)
+ 
+         func  = m.group(1)
+-        start = long(m.group(2), 16)
+-        end   = long(m.group(3), 16)
++        start = int(m.group(2), 16)
++        end   = int(m.group(3), 16)
+         slots = 3 * (end - start) / 16
+-        rlen_sum = 0L
++        rlen_sum = 0
+         num_funcs += 1
+     else:
+         m = rlen_pattern.match(line)
+         if m:
+-            rlen_sum += long(m.group(1))
++            rlen_sum += int(m.group(1))
+ check_func(func, slots, rlen_sum)
+ 
+ if num_errors == 0:
+-    print "No errors detected in %u functions." % num_funcs
++    print("No errors detected in %u functions." % num_funcs)
+ else:
+     if num_errors > 1:
+         err="errors"
+     else:
+         err="error"
+-    print "%u %s detected in %u functions." % (num_errors, err, num_funcs)
++    print("%u %s detected in %u functions." % (num_errors, err, num_funcs))
+     sys.exit(1)
