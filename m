@@ -1,135 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id p0XvN4PhHFtmewAAmS7hNA
-	; Sun, 10 Jun 2018 08:30:08 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id ktfqMYM/GVvjWgAAmS7hNA
+	; Thu, 07 Jun 2018 14:22:03 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CC25260850; Sun, 10 Jun 2018 08:30:08 +0000 (UTC)
+	id BC1BE608D4; Thu,  7 Jun 2018 14:22:03 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id C9DAA600D0;
-	Sun, 10 Jun 2018 08:30:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9DAA600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 13EBA608CE;
+	Thu,  7 Jun 2018 14:22:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13EBA608CE
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932345AbeFJIaC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sun, 10 Jun 2018 04:30:02 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:43534 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932307AbeFJI36 (ORCPT
+        id S933558AbeFGOWB (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:22:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39434 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933072AbeFGOJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 04:29:58 -0400
-Received: by mail-vk0-f66.google.com with SMTP id d74-v6so10333782vke.10
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Jun 2018 01:29:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vbwDoXHa2k6WJ0yqcvM35K2tCxHNTYgqVQK0liLN52Q=;
-        b=FODjUzWbtn6BqCmUFxzm7C0nm8WV1JhFZ3V5N3fCTuyhtpTFJyTGslcqmFxZo9hWY0
-         MDptv8uzUxaJgqpiHrwWVcfVzqtnykqaOJyC23JVAVfS0FKKRUfbA/8g01wXSDgfrcVp
-         kTLvoIZSjyIjt654szM1SYhdzPYb3fJ8cUaLFS/nMEow1FUuuLGaL/Pul5FFd03WczhF
-         aYBdcpXm0WWbvIZFk9yoRyE2ho3h4DGPINX1ILolu4kGRmXxhcGMv/51VUpAO+6LqLVi
-         K0BVTcsPvqicTKKfMoUYkt0jMPtCa+sThGiOa9MsNWX4FuSEsvJHw29OVDTngyTM80nS
-         SOcw==
-X-Gm-Message-State: APt69E0aGFQwSL1sGJhz4g6yPOJ0FV9U4APT5DqztryscajRg2MG4wXS
-        h3ZdZYfJ7ELwiZ9M5/zKScN4SAziXQcyNAImR8k=
-X-Google-Smtp-Source: ADUXVKJ2yUp2Hran9rqrzEyUFNn/rImbxjbhrG7MKvJCIRvqStmWCYA4RmcXlx34OU201/qjN3kN1XlzQUNMq/vShOM=
-X-Received: by 2002:a1f:644:: with SMTP id 65-v6mr4013489vkg.159.1528619397535;
- Sun, 10 Jun 2018 01:29:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1528423341.git.fthain@telegraphics.com.au>
- <d9d626ca4e7ac9c7e81b24a34f5fbcae9d1d5046.1528423341.git.fthain@telegraphics.com.au>
- <9f015684-4d91-70e4-d2a4-89fe167ff8ab@gmail.com> <m2h8mc4ejw.fsf@linux-m68k.org>
- <e1006b0a-a429-4744-7525-203cb91f1d5f@gmail.com> <alpine.LNX.2.21.1806092140410.26@nippy.intranet>
-In-Reply-To: <alpine.LNX.2.21.1806092140410.26@nippy.intranet>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 10 Jun 2018 10:29:45 +0200
-Message-ID: <CAMuHMdUHnFKzhe3x3=bG63HwnM7psu7AA=nba8q+nTDnxBAryw@mail.gmail.com>
-Subject: Re: [PATCH v2 08/12] macintosh/via-pmu68k: Don't load driver on
- unsupported hardware
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 7 Jun 2018 10:09:10 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbA-0005Zx-Lh; Thu, 07 Jun 2018 15:09:08 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb7-00033X-HU; Thu, 07 Jun 2018 15:09:05 +0100
 Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>,
+        syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com,
+        "Paolo Abeni" <pabeni@redhat.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.725643989@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 236/410] netfilter: x_tables: fix missing timer
+ initialization in xt_LED
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-On Sat, Jun 9, 2018 at 2:20 PM Finn Thain <fthain@telegraphics.com.au> wrote:
-> > > > Is this enum used by any user space code? If so, perhaps rather
-> > > > leave the PMU_68K_V1 in there to avoid upsetting that?
-> > >
-> > > It also changes the value of PMU_68K_V2, which is an ABI break.
-> >
-> > Yes, that's what I worry about - but do we know of any users of that
-> > particular interface?
->
-> There is no ABI issue AFAIK. The value of pmu_kind is visible to userland
-> only on powerpc. /dev/pmu and /proc/pmu/* do not exist on m68k. This patch
-> series will make these UAPIs available on m68k, and for that reason I've
-> chosen the value PMU_UNKNOWN for pmu_kind.
+------------------
 
-While /dev/pmu and /proc/pmu/* may not exist on m68k, definitions in
-include/uapi/linux/pmu.h are part of the ABI, and cannot be changed or removed,
-unless we are 100% sure there are no users.
+From: Paolo Abeni <pabeni@redhat.com>
 
-If I would write a program interfacing with /dev/pmu and /proc/pmu/*, and
-needing to check the PMU type, it would have a switch() statement with
-all existing values defined in <linux/pmu.h>. So that would become broken
-by your change.
+commit 10414014bc085aac9f787a5890b33b5605fbcfc4 upstream.
 
-Hence the enum is append-only.
+syzbot reported that xt_LED may try to use the ledinternal->timer
+without previously initializing it:
 
-> New pmu_kind values can be defined as and when the need arises. But that
-> would imply a useful classification scheme for pre-PCI powerbooks, and I
-> don't know what that scheme will look like because at this stage there is
-> neither userland nor kernel code to support backlight, buttons and battery
-> for pre-PCI powerbooks.
->
-> In anycase, the "v1" and "v2" scheme is obviously inadequate when you
-> consider the range of m68k powerbook models. Also, consider the
+------------[ cut here ]------------
+kernel BUG at kernel/time/timer.c:958!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 1826 Comm: kworker/1:2 Not tainted 4.15.0+ #306
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
+RIP: 0010:__mod_timer kernel/time/timer.c:958 [inline]
+RIP: 0010:mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102
+RSP: 0018:ffff8801d24fe9f8 EFLAGS: 00010293
+RAX: ffff8801d25246c0 RBX: ffff8801aec6cb50 RCX: ffffffff816052c6
+RDX: 0000000000000000 RSI: 00000000fffbd14b RDI: ffff8801aec6cb68
+RBP: ffff8801d24fec98 R08: 0000000000000000 R09: 1ffff1003a49fd6c
+R10: ffff8801d24feb28 R11: 0000000000000005 R12: dffffc0000000000
+R13: ffff8801d24fec70 R14: 00000000fffbd14b R15: ffff8801af608f90
+FS:  0000000000000000(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000206d6fd0 CR3: 0000000006a22001 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  led_tg+0x1db/0x2e0 net/netfilter/xt_LED.c:75
+  ip6t_do_table+0xc2a/0x1a30 net/ipv6/netfilter/ip6_tables.c:365
+  ip6table_raw_hook+0x65/0x80 net/ipv6/netfilter/ip6table_raw.c:42
+  nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
+  nf_hook_slow+0xba/0x1a0 net/netfilter/core.c:483
+  nf_hook.constprop.27+0x3f6/0x830 include/linux/netfilter.h:243
+  NF_HOOK include/linux/netfilter.h:286 [inline]
+  ndisc_send_skb+0xa51/0x1370 net/ipv6/ndisc.c:491
+  ndisc_send_ns+0x38a/0x870 net/ipv6/ndisc.c:633
+  addrconf_dad_work+0xb9e/0x1320 net/ipv6/addrconf.c:4008
+  process_one_work+0xbbf/0x1af0 kernel/workqueue.c:2113
+  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:429
+Code: 85 2a 0b 00 00 4d 8b 3c 24 4d 85 ff 75 9f 4c 8b bd 60 fd ff ff e8 bb
+57 10 00 65 ff 0d 94 9a a1 7e e9 d9 fc ff ff e8 aa 57 10 00 <0f> 0b e8 a3
+57 10 00 e9 14 fb ff ff e8 99 57 10 00 4c 89 bd 70
+RIP: __mod_timer kernel/time/timer.c:958 [inline] RSP: ffff8801d24fe9f8
+RIP: mod_timer+0x7d6/0x13c0 kernel/time/timer.c:1102 RSP: ffff8801d24fe9f8
+---[ end trace f661ab06f5dd8b3d ]---
 
-New values can be added at the bottom.
+The ledinternal struct can be shared between several different
+xt_LED targets, but the related timer is currently initialized only
+if the first target requires it. Fix it by unconditionally
+initializing the timer struct.
 
-> out-of-tree adaptation of via-pmu by the Nubus-PMac project, which has
-> this ABI break:
->
-> diff --git a/include/linux/pmu.h b/include/linux/pmu.h
-> index cafe98d9694..9882a185a52 100644
-> --- a/include/linux/pmu.h
-> +++ b/include/linux/pmu.h
-> @@ -90,6 +90,7 @@ enum {
->          PMU_HEATHROW_BASED,     /* PowerBook G3 series */
->          PMU_PADDINGTON_BASED,   /* 1999 PowerBook G3 */
->          PMU_KEYLARGO_BASED,     /* Core99 motherboard (PMU99) */
-> +        PMU_NUBUS_BASED,        /* 1400, 2300, 5300 */
->          PMU_68K_V1,             /* 68K PMU, version 1 */
->          PMU_68K_V2,             /* 68K PMU, version 2 */
->  };
+v1 -> v2: call del_timer_sync() unconditionally, too.
 
-That's bad.  But as long as the NuBus-PMac project is out-of-tree, the
-enum values it uses are not part of the Linux ABI, IMHO.
-During upstreaming, PMU_NUBUS_BASED should be moved to the bottom.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Fixes: 268cb38e1802 ("netfilter: x_tables: add LED trigger target")
+Reported-by: syzbot+10c98dc5725c6c8fc7fb@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+[bwh: Backported to 3.16: Keep using setup_timer()]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+--- a/net/netfilter/xt_LED.c
++++ b/net/netfilter/xt_LED.c
+@@ -139,10 +139,11 @@ static int led_tg_check(const struct xt_
+ 		goto exit_alloc;
+ 	}
+ 
+-	/* See if we need to set up a timer */
+-	if (ledinfo->delay > 0)
+-		setup_timer(&ledinternal->timer, led_timeout_callback,
+-			    (unsigned long)ledinternal);
++	/* Since the letinternal timer can be shared between multiple targets,
++	 * always set it up, even if the current target does not need it
++	 */
++	setup_timer(&ledinternal->timer, led_timeout_callback,
++		    (unsigned long)ledinternal);
+ 
+ 	list_add_tail(&ledinternal->list, &xt_led_triggers);
+ 
+@@ -179,8 +180,7 @@ static void led_tg_destroy(const struct
+ 
+ 	list_del(&ledinternal->list);
+ 
+-	if (ledinfo->delay > 0)
+-		del_timer_sync(&ledinternal->timer);
++	del_timer_sync(&ledinternal->timer);
+ 
+ 	led_trigger_unregister(&ledinternal->netfilter_led_trigger);
+ 
