@@ -1,100 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mvxtA2jmGFs/QgAAmS7hNA
-	; Thu, 07 Jun 2018 08:01:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id a1h7GF7jGFvKFwAAmS7hNA
+	; Thu, 07 Jun 2018 07:55:08 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id F0DBE607E7; Thu,  7 Jun 2018 08:01:43 +0000 (UTC)
+	id 19FFF608C1; Thu,  7 Jun 2018 07:55:08 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 9D02260452;
-	Thu,  7 Jun 2018 08:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D02260452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 96EFD60452;
+	Thu,  7 Jun 2018 07:55:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96EFD60452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753102AbeFGIBk (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 04:01:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34245 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752336AbeFGIBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:01:38 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5781RQV2122099
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 7 Jun 2018 01:01:27 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5781R6u2122096;
-        Thu, 7 Jun 2018 01:01:27 -0700
-Date: Thu, 7 Jun 2018 01:01:27 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-ds6vdm7clh070512rpydidsc@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
-        namhyung@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
-        hpa@zytor.com, mhiramat@kernel.org, tglx@linutronix.de,
-        adrian.hunter@intel.com, dsahern@gmail.com
-Reply-To: acme@redhat.com, namhyung@kernel.org, mingo@kernel.org,
-          wangnan0@huawei.com, hpa@zytor.com, mhiramat@kernel.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, adrian.hunter@intel.com, dsahern@gmail.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf probe: Use return of map__get() to make code
- more compact
-Git-Commit-ID: f622df5ed768ce7c049af99196c1b7b0a2c0d385
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1753484AbeFGHzC (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:55:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35144 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753273AbeFGHy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 03:54:59 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B0268D6B7;
+        Thu,  7 Jun 2018 07:54:58 +0000 (UTC)
+Received: from plouf.banquise.eu.com (ovpn-116-40.ams2.redhat.com [10.36.116.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D9892026DEF;
+        Thu,  7 Jun 2018 07:54:57 +0000 (UTC)
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mario.Limonciello@dell.com,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 03/13] HID: multitouch: make sure the static list of class is not changed
+Date: Thu,  7 Jun 2018 09:54:38 +0200
+Message-Id: <20180607075448.5706-4-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+References: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 07 Jun 2018 07:54:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 07 Jun 2018 07:54:58 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f622df5ed768ce7c049af99196c1b7b0a2c0d385
-Gitweb:     https://git.kernel.org/tip/f622df5ed768ce7c049af99196c1b7b0a2c0d385
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 24 May 2018 11:17:34 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 4 Jun 2018 10:28:50 -0300
+const is a magic keyword here :)
 
-perf probe: Use return of map__get() to make code more compact
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-The __get() idiom returns a reference count for the object passed, i.e.
-all functions of this type return the object passed, so take advantage
-of that to make the code more compact.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ds6vdm7clh070512rpydidsc@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/probe-event.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index 3094f11e7d81..f119eb628dbb 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -165,8 +165,7 @@ static struct map *kernel_get_module_map(const char *module)
- 		if (strncmp(pos->dso->short_name + 1, module,
- 			    pos->dso->short_name_len - 2) == 0 &&
- 		    module[pos->dso->short_name_len - 2] == '\0') {
--			map__get(pos);
--			return pos;
-+			return map__get(pos);
- 		}
- 	}
- 	return NULL;
+no changes in v2
+---
+ drivers/hid/hid-multitouch.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 45968f7970f8..91624a2240ca 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -211,7 +211,7 @@ static int cypress_compute_slot(struct mt_device *td)
+ 		return -1;
+ }
+ 
+-static struct mt_class mt_classes[] = {
++static const struct mt_class mt_classes[] = {
+ 	{ .name = MT_CLS_DEFAULT,
+ 		.quirks = MT_QUIRK_ALWAYS_VALID |
+ 			MT_QUIRK_CONTACT_CNT_ACCURATE },
+@@ -1432,7 +1432,7 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ {
+ 	int ret, i;
+ 	struct mt_device *td;
+-	struct mt_class *mtclass = mt_classes; /* MT_CLS_DEFAULT */
++	const struct mt_class *mtclass = mt_classes; /* MT_CLS_DEFAULT */
+ 
+ 	for (i = 0; mt_classes[i].name ; i++) {
+ 		if (id->driver_data == mt_classes[i].name) {
+-- 
+2.14.3
