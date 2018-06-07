@@ -1,74 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id lrJwI/ZSGFtoZgAAmS7hNA
-	; Wed, 06 Jun 2018 21:32:38 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id j9VlCr0sGVuLIAAAmS7hNA
+	; Thu, 07 Jun 2018 13:04:58 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7F217608BA; Wed,  6 Jun 2018 21:32:38 +0000 (UTC)
+	id E0C4E608B8; Thu,  7 Jun 2018 13:04:57 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 009B1607F7;
-	Wed,  6 Jun 2018 21:32:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 009B1607F7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 63538601C3;
+	Thu,  7 Jun 2018 13:04:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63538601C3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeFFVcg (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 17:32:36 -0400
-Received: from mga17.intel.com ([192.55.52.151]:11662 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752042AbeFFVce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 17:32:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 14:32:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,484,1520924400";
-   d="scan'208";a="47331294"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.43])
-  by orsmga008.jf.intel.com with ESMTP; 06 Jun 2018 14:32:33 -0700
-From: Tomas Winkler <tomas.winkler@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc 1/2] mei: remove unused MEI_IAMTHIF_STALL_TIMER define
-Date: Thu,  7 Jun 2018 00:31:47 +0300
-Message-Id: <20180606213148.9469-2-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180606213148.9469-1-tomas.winkler@intel.com>
-References: <20180606213148.9469-1-tomas.winkler@intel.com>
+        id S1752857AbeFGNEz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 09:04:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56770 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750891AbeFGNEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 09:04:54 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B528FCB9C0;
+        Thu,  7 Jun 2018 13:04:53 +0000 (UTC)
+Received: from localhost (ovpn-117-192.ams2.redhat.com [10.36.117.192])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D9A110EE6C5;
+        Thu,  7 Jun 2018 13:04:49 +0000 (UTC)
+Date: Thu, 7 Jun 2018 14:04:48 +0100
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, jasowang@redhat.com, cohuck@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
+Subject: Re: [PATCH v3] virtio: update the comments for transport features
+Message-ID: <20180607130448.GM19032@stefanha-x1.localdomain>
+References: <20180601112632.12651-1-tiwei.bie@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="VLAOICcq5m4DWEYr"
+Content-Disposition: inline
+In-Reply-To: <20180601112632.12651-1-tiwei.bie@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 07 Jun 2018 13:04:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 07 Jun 2018 13:04:53 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'stefanha@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-MEI_IAMTHIF_STALL_TIMER is unused now and can be safely removed.
+--VLAOICcq5m4DWEYr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/misc/mei/hw.h | 2 --
- 1 file changed, 2 deletions(-)
+On Fri, Jun 01, 2018 at 07:26:32PM +0800, Tiwei Bie wrote:
+> The existing comments for transport features are outdated.
+> So update them to address the latest changes in the spec.
+>=20
+> Suggested-by: Michael S. Tsirkin <mst@redhat.com>
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> ---
+> This patch is generated on top of below patch:
+> https://lists.oasis-open.org/archives/virtio-dev/201805/msg00212.html
+>=20
+> v3:
+> - Fix a typo in the commit message (Cornelia);
+>=20
+> v2:
+> - Improve the comments (Cornelia);
+> - Improve the commit message;
+>=20
+>  include/uapi/linux/virtio_config.h | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/mei/hw.h b/drivers/misc/mei/hw.h
-index 5c8286b40b62..3b325d955fbe 100644
---- a/drivers/misc/mei/hw.h
-+++ b/drivers/misc/mei/hw.h
-@@ -28,8 +28,6 @@
- #define MEI_CL_CONNECT_TIMEOUT     15  /* HPS: Client Connect Timeout */
- #define MEI_CLIENTS_INIT_TIMEOUT   15  /* HPS: Clients Enumeration Timeout */
- 
--#define MEI_IAMTHIF_STALL_TIMER    12  /* HPS */
--
- #define MEI_PGI_TIMEOUT             1  /* PG Isolation time response 1 sec */
- #define MEI_D0I3_TIMEOUT            5  /* D0i3 set/unset max response time */
- #define MEI_HBM_TIMEOUT             1  /* 1 second */
--- 
-2.14.4
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--VLAOICcq5m4DWEYr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJbGS1wAAoJEJykq7OBq3PIsQgH/juE93zamoKrVvX0dLQqbPh7
+cO+fADWB/7gWbUTAivY6zhpmxKN22QaR8OTrbJHctlS2A8NV3Ra7NOjNq9ThZEWQ
+lsVF58S3PHBZVoI11pbd1FYgJvhQbBtI18wdN0VWwu2bXfL18qIEpELnfS/ePkvJ
+WUx6nPt8JcqDwPwQpVyQFfRLudcg5N8RLXxTGPhSOHjyiPzfHkxvrs/Qu51W75C7
+rX9K3AjauK4Rc1nebJG/u4REDJch6zBiTCqGod4cZCR4Zc/oeXQKCz02RLL8/VeR
+zvfilxTYEEelkYa/+5mUDnt1tGpAssOt+Es/h0uERnxnL3haa1D+ofI8DYX+IM4=
+=qMT1
+-----END PGP SIGNATURE-----
+
+--VLAOICcq5m4DWEYr--
