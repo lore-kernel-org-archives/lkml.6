@@ -1,184 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id vQ/fMcUZGVstXwAAmS7hNA
-	; Thu, 07 Jun 2018 11:42:44 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id JvHuKkFKGVucVAAAmS7hNA
+	; Thu, 07 Jun 2018 15:08:12 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 0B3756089E; Thu,  7 Jun 2018 11:42:44 +0000 (UTC)
+	id CDE35608B8; Thu,  7 Jun 2018 15:08:12 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id A02286063F;
-	Thu,  7 Jun 2018 11:42:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A02286063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2F5ED6063F;
+	Thu,  7 Jun 2018 15:08:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F5ED6063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932482AbeFGLmf convert rfc822-to-8bit (ORCPT
-        <rfc822;monsieuricon@codeaurora.org> + 25 others);
-        Thu, 7 Jun 2018 07:42:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41750 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932183AbeFGLmc (ORCPT
+        id S936044AbeFGPIJ (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:08:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:41524 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935943AbeFGPDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:42:32 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w57Bcopk118792
-        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 07:42:32 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jf334atp0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 07:42:32 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Thu, 7 Jun 2018 12:42:30 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Jun 2018 12:42:21 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w57BgKqG21692602
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 7 Jun 2018 11:42:20 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C41642041;
-        Thu,  7 Jun 2018 12:32:40 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3EAB142047;
-        Thu,  7 Jun 2018 12:32:40 +0100 (BST)
-Received: from localhost (unknown [9.124.222.26])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jun 2018 12:32:40 +0100 (BST)
-Date: Thu, 07 Jun 2018 17:12:18 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH -tip v5 24/27] bpf: error-inject: kprobes: Clear
- current_kprobe and enable preempt in kprobe
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Josef Bacik <jbacik@fb.com>,
-        James Hogan <jhogan@kernel.org>, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        linux-ia64@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, Ingo Molnar <mingo@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        sparclinux@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-References: <152812730943.10068.5166429445118734697.stgit@devbox>
-        <152812800822.10068.3306094708706993432.stgit@devbox>
-In-Reply-To: <152812800822.10068.3306094708706993432.stgit@devbox>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        Thu, 7 Jun 2018 11:03:43 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbj-0005Zk-7W; Thu, 07 Jun 2018 15:09:43 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb5-0002yB-3O; Thu, 07 Jun 2018 15:09:03 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18060711-0016-0000-0000-000001D92299
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18060711-0017-0000-0000-0000322C3723
-Message-Id: <1528371714.iz71qgzxv3.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-07_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=676 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806070136
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Simon Guo" <wei.guo.simon@gmail.com>,
+        "Paul Mackerras" <paulus@ozlabs.org>,
+        "Alexander Graf" <agraf@suse.de>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.619635479@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 184/410] KVM: PPC: Book3S PR: Fix svcpu copying with
+ preemption enabled
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu wrote:
-> Clear current_kprobe and enable preemption in kprobe
-> even if pre_handler returns !0.
-> 
-> This simplifies function override using kprobes.
-> 
-> Jprobe used to require to keep the preemption disabled and
-> keep current_kprobe until it returned to original function
-> entry. For this reason kprobe_int3_handler() and similar
-> arch dependent kprobe handers checks pre_handler result
-> and exit without enabling preemption if the result is !0.
-> 
-> After removing the jprobe, Kprobes does not need to
-> keep preempt disabled even if user handler returns !0
-> anymore.
-> 
-> But since the function override handler in error-inject
-> and bpf is also returns !0 if it overrides a function,
-> to balancing the preempt count, it enables preemption
-> and reset current kprobe by itself.
-> 
-> That is a bad design that is very buggy. This fixes
-> such unbalanced preempt-count and current_kprobes setting
-> in kprobes, bpf and error-inject.
-> 
-> Note: for powerpc and x86, this removes all preempt_disable
-> from kprobe_ftrace_handler because ftrace callbacks are
-> called under preempt disabled.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Vineet Gupta <vgupta@synopsys.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: James Hogan <jhogan@kernel.org>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Cc: Rich Felker <dalias@libc.org>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-> Cc: Josef Bacik <jbacik@fb.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: x86@kernel.org
-> Cc: linux-snps-arc@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-ia64@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-sh@vger.kernel.org
-> Cc: sparclinux@vger.kernel.org
-> ---
->  Changes in v5:
->   - Fix kprobe_ftrace_handler in arch/powerpc too.
-> ---
->  arch/arc/kernel/kprobes.c            |    5 +++--
->  arch/arm/probes/kprobes/core.c       |   10 +++++-----
->  arch/arm64/kernel/probes/kprobes.c   |   10 +++++-----
->  arch/ia64/kernel/kprobes.c           |   13 ++++---------
->  arch/mips/kernel/kprobes.c           |    4 ++--
->  arch/powerpc/kernel/kprobes-ftrace.c |   15 ++++++---------
->  arch/powerpc/kernel/kprobes.c        |    7 +++++--
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-For the powerpc bits:
-Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+------------------
 
-Thanks,
-Naveen
+From: Alexander Graf <agraf@suse.de>
+
+commit 07ae5389e98c53bb9e9f308fce9c903bc3ee7720 upstream.
+
+When copying between the vcpu and svcpu, we may get scheduled away onto
+a different host CPU which in turn means our svcpu pointer may change.
+
+That means we need to atomically copy to and from the svcpu with preemption
+disabled, so that all code around it always sees a coherent state.
+
+Reported-by: Simon Guo <wei.guo.simon@gmail.com>
+Fixes: 3d3319b45eea ("KVM: PPC: Book3S: PR: Enable interrupts earlier")
+Signed-off-by: Alexander Graf <agraf@suse.de>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/powerpc/include/asm/kvm_book3s.h |  6 ++----
+ arch/powerpc/kvm/book3s_interrupts.S  |  4 +---
+ arch/powerpc/kvm/book3s_pr.c          | 20 +++++++++-----------
+ 3 files changed, 12 insertions(+), 18 deletions(-)
+
+--- a/arch/powerpc/include/asm/kvm_book3s.h
++++ b/arch/powerpc/include/asm/kvm_book3s.h
+@@ -190,10 +190,8 @@ extern void kvmppc_hv_entry_trampoline(v
+ extern u32 kvmppc_alignment_dsisr(struct kvm_vcpu *vcpu, unsigned int inst);
+ extern ulong kvmppc_alignment_dar(struct kvm_vcpu *vcpu, unsigned int inst);
+ extern int kvmppc_h_pr(struct kvm_vcpu *vcpu, unsigned long cmd);
+-extern void kvmppc_copy_to_svcpu(struct kvmppc_book3s_shadow_vcpu *svcpu,
+-				 struct kvm_vcpu *vcpu);
+-extern void kvmppc_copy_from_svcpu(struct kvm_vcpu *vcpu,
+-				   struct kvmppc_book3s_shadow_vcpu *svcpu);
++extern void kvmppc_copy_to_svcpu(struct kvm_vcpu *vcpu);
++extern void kvmppc_copy_from_svcpu(struct kvm_vcpu *vcpu);
+ 
+ static inline struct kvmppc_vcpu_book3s *to_book3s(struct kvm_vcpu *vcpu)
+ {
+--- a/arch/powerpc/kvm/book3s_interrupts.S
++++ b/arch/powerpc/kvm/book3s_interrupts.S
+@@ -96,7 +96,7 @@ kvm_start_entry:
+ 
+ kvm_start_lightweight:
+ 	/* Copy registers into shadow vcpu so we can access them in real mode */
+-	GET_SHADOW_VCPU(r3)
++	mr	r3, r4
+ 	bl	FUNC(kvmppc_copy_to_svcpu)
+ 	nop
+ 	REST_GPR(4, r1)
+@@ -165,9 +165,7 @@ after_sprg3_load:
+ 	stw	r12, VCPU_TRAP(r3)
+ 
+ 	/* Transfer reg values from shadow vcpu back to vcpu struct */
+-	/* On 64-bit, interrupts are still off at this point */
+ 
+-	GET_SHADOW_VCPU(r4)
+ 	bl	FUNC(kvmppc_copy_from_svcpu)
+ 	nop
+ 
+--- a/arch/powerpc/kvm/book3s_pr.c
++++ b/arch/powerpc/kvm/book3s_pr.c
+@@ -82,7 +82,7 @@ static void kvmppc_core_vcpu_put_pr(stru
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
+ 	if (svcpu->in_use) {
+-		kvmppc_copy_from_svcpu(vcpu, svcpu);
++		kvmppc_copy_from_svcpu(vcpu);
+ 	}
+ 	memcpy(to_book3s(vcpu)->slb_shadow, svcpu->slb, sizeof(svcpu->slb));
+ 	to_book3s(vcpu)->slb_shadow_max = svcpu->slb_max;
+@@ -95,9 +95,10 @@ static void kvmppc_core_vcpu_put_pr(stru
+ }
+ 
+ /* Copy data needed by real-mode code from vcpu to shadow vcpu */
+-void kvmppc_copy_to_svcpu(struct kvmppc_book3s_shadow_vcpu *svcpu,
+-			  struct kvm_vcpu *vcpu)
++void kvmppc_copy_to_svcpu(struct kvm_vcpu *vcpu)
+ {
++	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
++
+ 	svcpu->gpr[0] = vcpu->arch.gpr[0];
+ 	svcpu->gpr[1] = vcpu->arch.gpr[1];
+ 	svcpu->gpr[2] = vcpu->arch.gpr[2];
+@@ -121,17 +122,14 @@ void kvmppc_copy_to_svcpu(struct kvmppc_
+ 	svcpu->shadow_fscr = vcpu->arch.shadow_fscr;
+ #endif
+ 	svcpu->in_use = true;
++
++	svcpu_put(svcpu);
+ }
+ 
+ /* Copy data touched by real-mode code from shadow vcpu back to vcpu */
+-void kvmppc_copy_from_svcpu(struct kvm_vcpu *vcpu,
+-			    struct kvmppc_book3s_shadow_vcpu *svcpu)
++void kvmppc_copy_from_svcpu(struct kvm_vcpu *vcpu)
+ {
+-	/*
+-	 * vcpu_put would just call us again because in_use hasn't
+-	 * been updated yet.
+-	 */
+-	preempt_disable();
++	struct kvmppc_book3s_shadow_vcpu *svcpu = svcpu_get(vcpu);
+ 
+ 	/*
+ 	 * Maybe we were already preempted and synced the svcpu from
+@@ -169,7 +167,7 @@ void kvmppc_copy_from_svcpu(struct kvm_v
+ 	svcpu->in_use = false;
+ 
+ out:
+-	preempt_enable();
++	svcpu_put(svcpu);
+ }
+ 
+ static int kvmppc_core_check_requests_pr(struct kvm_vcpu *vcpu)
