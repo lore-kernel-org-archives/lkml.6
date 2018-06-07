@@ -1,81 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 9AQMCKhYHlt4BgAAmS7hNA
-	; Mon, 11 Jun 2018 11:12:50 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id T4f6MzJSGVvVFQAAmS7hNA
+	; Thu, 07 Jun 2018 15:41:52 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 6DDA060792; Mon, 11 Jun 2018 11:12:50 +0000 (UTC)
+	id 5402A6089E; Thu,  7 Jun 2018 15:41:52 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id E3432601C3;
-	Mon, 11 Jun 2018 11:12:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E3432601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id A05416074D;
+	Thu,  7 Jun 2018 15:41:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A05416074D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932892AbeFKLMs (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 19 others); Mon, 11 Jun 2018 07:12:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40870 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932405AbeFKLMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 07:12:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C6426805A52F;
-        Mon, 11 Jun 2018 11:12:45 +0000 (UTC)
-Received: from gondolin (ovpn-117-32.ams2.redhat.com [10.36.117.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 572D1112D184;
-        Mon, 11 Jun 2018 11:12:44 +0000 (UTC)
-Date: Mon, 11 Jun 2018 13:12:41 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Pierre Morel <pmorel@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, qemu-s390x@nongnu.org,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>
-Subject: Re: [qemu-s390x] [PATCH RFC 2/2] vfio-ccw: support for halt/clear
- subchannel
-Message-ID: <20180611131241.06100c12.cohuck@redhat.com>
-In-Reply-To: <0c1e1b26-0c6a-fdc2-0c1a-2e2d58c2cb73@linux.ibm.com>
-References: <20180509154822.23510-1-cohuck@redhat.com>
-        <20180509154822.23510-3-cohuck@redhat.com>
-        <c18f9b9f-da00-1a0b-8ef0-7ac223c73d1a@linux.ibm.com>
-        <20180515181006.0cb1dfc2.cohuck@redhat.com>
-        <a5d08fb7-d9c1-b230-fe0c-acebbda2ba65@linux.ibm.com>
-        <20180522145208.310143ea.cohuck@redhat.com>
-        <4e4001cc-540e-0f2b-bbd1-1f82ca594bb3@linux.ibm.com>
-        <20180605151449.22aafbfc.cohuck@redhat.com>
-        <e73038ff-fb2d-5865-8b84-e775990f3983@linux.ibm.com>
-        <20180606142131.74ea2eb7.cohuck@redhat.com>
-        <5b77ec9c-41b8-2e32-ce79-d9005b93fdd0@linux.ibm.com>
-        <20180607115442.6a779ed9.cohuck@redhat.com>
-        <10c8a0ac-fe61-d7c7-c7bb-0fffc6909cb3@linux.ibm.com>
-        <20180607183407.1ea5ab89.cohuck@redhat.com>
-        <0c1e1b26-0c6a-fdc2-0c1a-2e2d58c2cb73@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S934982AbeFGPlt (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:41:49 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40599 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934608AbeFGOli (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:41:38 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbz-0005Zn-UZ; Thu, 07 Jun 2018 15:10:00 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvay-0002jF-Gh; Thu, 07 Jun 2018 15:08:56 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 11 Jun 2018 11:12:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 11 Jun 2018 11:12:45 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Ingo Molnar" <mingo@kernel.org>, "Len Brown" <lenb@kernel.org>,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Dave Hansen" <dave@sr71.net>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.386119095@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 039/410] x86/cpu: Rename "WESTMERE2" family to
+ "NEHALEM_G"
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Jun 2018 22:40:39 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-> Your welcome. The discussion is kind of taking place all over the
-> place. I'm actively trying to find the best place to answer, and avoid
-> overtalking topics -- but it does not seem to work. Please bear with me.
+------------------
 
-To help with this discussion (and with vfio-ccw design and development
-in general), I've created
-https://wiki.qemu.org/ToDo/Channel_I/O_Passthrough to collect some
-things. Let me know if any of you folks still needs a wiki account.
+From: Dave Hansen <dave.hansen@linux.intel.com>
+
+commit 4b3b234f434d440fcd749b9636131b76e2ce561e upstream.
+
+Len Brown noticed something was amiss in our INTEL_FAM6_*
+definitions.  It seems like model 0x1F was a Nehalem part,
+marketed as "Intel Core i7 and i5 Processors" (according to the
+SDM).  But, although it was a Nehalem 0x1F had some uncore events
+which were shared with Westmere.
+
+Len also mentioned he thought it was called "Havendale", which
+Wikipedia says was graphics-oriented and canceled:
+
+	https://en.wikipedia.org/wiki/Nehalem_(microarchitecture)
+
+So either way, it's probably not imporant what we call it, but
+call it Nehalem to be accurate, and add a "G" since it seems
+graphics-related.  If it were canceled that would be a good reason
+why it's so sparsely and inconsistently referred to in the code.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Dave Hansen <dave@sr71.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20160629192737.949C41A8@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 3.16: drop changes in intel_idle.c]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ arch/x86/include/asm/intel-family.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -18,10 +18,10 @@
+ #define INTEL_FAM6_CORE2_DUNNINGTON	0x1D
+ 
+ #define INTEL_FAM6_NEHALEM		0x1E
++#define INTEL_FAM6_NEHALEM_G		0x1F /* Auburndale / Havendale */
+ #define INTEL_FAM6_NEHALEM_EP		0x1A
+ #define INTEL_FAM6_NEHALEM_EX		0x2E
+ #define INTEL_FAM6_WESTMERE		0x25
+-#define INTEL_FAM6_WESTMERE2		0x1F
+ #define INTEL_FAM6_WESTMERE_EP		0x2C
+ #define INTEL_FAM6_WESTMERE_EX		0x2F
+ 
