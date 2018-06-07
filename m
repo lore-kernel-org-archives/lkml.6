@@ -1,150 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id izcBKa3MGlveawAAmS7hNA
-	; Fri, 08 Jun 2018 18:36:29 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 1/klOceWGVt6cgAAmS7hNA
+	; Thu, 07 Jun 2018 20:41:06 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 831AC607E7; Fri,  8 Jun 2018 18:36:29 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HWkBfi5M"
+	id 590446089E; Thu,  7 Jun 2018 20:41:06 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id DAEFC605A2;
-	Fri,  8 Jun 2018 18:36:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DAEFC605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 90E7560452;
+	Thu,  7 Jun 2018 20:41:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 90E7560452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753023AbeFHSg0 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 14:36:26 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:45448 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752697AbeFHSgZ (ORCPT
+        id S932647AbeFGUlE (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 16:41:04 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:44046 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932213AbeFGUlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 14:36:25 -0400
-Received: by mail-pf0-f196.google.com with SMTP id a22-v6so7044426pfo.12
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 11:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Dr4lhiBmjjffIm8LJAJh7TUgIqFJ/g+ZOjphROYkJ64=;
-        b=HWkBfi5MI3xaAuh3iMJbQ0O8wGt/ZHYhJ4a9We5eOi1WU1e+GU6mwhbSjY3DcH73qt
-         /ttmgN81O6jjN4xn0RZmO7yW5kk07PzlM/W0cGhlaQgLeYbLXqHd6Fs/1VLHEaz5UtK8
-         jAhfePFmycxvumbMc0wTnCIcDYWSQROqjqQ76ygUKFoZMDqmAO0TOcqNZqiiBulo0zbC
-         jAs81Cccz/HfGOwH+QQZc245UWJ/HIvAs3IBW5fprsS3bLzdNoB9Incm4QzoF77DvhNM
-         fFjkyW8cqgwWgmzqeJm/ww+z46/dOMYQqhyFm4tlMN1r8LbJ145Zlnb2F1feIohI4eSo
-         gSlw==
+        Thu, 7 Jun 2018 16:41:02 -0400
+Received: from mr4.cc.vt.edu (mr4.cc.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w57Kf14i017393
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 16:41:01 -0400
+Received: from mail-qk0-f200.google.com (mail-qk0-f200.google.com [209.85.220.200])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w57KeukY019188
+        for <linux-kernel@vger.kernel.org>; Thu, 7 Jun 2018 16:41:01 -0400
+Received: by mail-qk0-f200.google.com with SMTP id w203-v6so10720328qkb.16
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 13:41:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Dr4lhiBmjjffIm8LJAJh7TUgIqFJ/g+ZOjphROYkJ64=;
-        b=JG0MLXCjE3eMVC2XqkJ99ioDWIJNTJO+Swo8HxgrCL1eynaO4H3KZo2ALFV5bw3Fq+
-         gkoT8Nj/wypYOgVKQBP3n0/t2rs2vtbeAqmCK0Ulqz6DWtmHj8W5pUBG/jLlaJDHv3Dk
-         LBjxoBnmQe/KtGLNGBGS4we1Lab3oDtd56V7GwBuz0Bz3rpMJw6k6Zq/l0M1gUYWPybI
-         QJjnBzttCsJhGL8WG10Puz3VycwrhlWTINdGUQ/wTbkZgPI4hiWlz6LUvXhjdwMdkHNs
-         KsHYfoOo76sBSgxATRhmAXNZq42mcxnqy+qMErvCxdzdR7/pNabUy7+420VRBkeg3M3J
-         yCzQ==
-X-Gm-Message-State: APt69E22OZ9YX7NwW1dm3svyfmo4D9SvPmCCeE4WqysvmwcGh0d49rnJ
-        yQD2kPtLSHS4sj3cZ8HTBT+McRpfBfI=
-X-Google-Smtp-Source: ADUXVKLg5Vfsm0JZCcDuR2qjgcjxWBcSRk/UXZEHGRE89tlpMm3u5ia3vl08vajhoJ0aEoOTBBSJXA==
-X-Received: by 2002:a62:1013:: with SMTP id y19-v6mr7119126pfi.166.1528482984616;
-        Fri, 08 Jun 2018 11:36:24 -0700 (PDT)
-Received: from jchowdhary0.mtv.corp.google.com ([2620:0:1000:1612:de71:f59c:9968:92ba])
-        by smtp.gmail.com with ESMTPSA id o65-v6sm5884219pga.75.2018.06.08.11.36.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Jun 2018 11:36:23 -0700 (PDT)
-Subject: Re: [PATCH] uapi: Make generic uapi headers compile standalone.
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org, kernel-team@android.com,
-        linux-kbuild@vger.kernel.org
-References: <20180606231602.231326-1-jchowdhary@google.com>
- <b6b6dd56-c948-54e8-df95-3d170a3c1e7d@infradead.org>
-From: Jayant Chowdhary <jchowdhary@google.com>
-Message-ID: <fe1d69e1-1a0f-a3ea-e45f-994698d53dbd@google.com>
-Date: Fri, 8 Jun 2018 11:36:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <b6b6dd56-c948-54e8-df95-3d170a3c1e7d@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        h=x-gm-message-state:from:to:cc:subject:mime-version
+         :content-transfer-encoding:date:message-id;
+        bh=0A6b0948d5CYCpmJ3m0UsBn+v6atcGPqdiG6ej5w2lI=;
+        b=SnPvLBxsnkWFmc38wF2oDYOUjcAm0KkzC5vEQ9ck3TSe/3dOcnHh4X8keyfCMakB1c
+         nC0K7+CFlv6aNBg9UgM6sazncqcX+KVVh8nhUg4O3RFtRJ/vgGmwtbqQe7ZuJQ6+e4lE
+         rbbTHi8qoEsjwAYJ8U88QOQ+DPMmgreKcrhVgBeiVvE2jMEBpiuppPJAUVh1NV9wDulN
+         D58R1VivkS5Yzxn8JJg/avkzVOD/Azp2tzo/XIIU7VuKarwziOkmntG0EPd4mno+hIgM
+         eFw4B0WTJz7XGPooo+St5AZIG0DlywU2zPszG3BA/1pRuIFENzWfWWeyLBm9JteEI+nA
+         IBmQ==
+X-Gm-Message-State: APt69E3oaYNUa1Tm4BqKTNUIvg0EpZ+WKlpj652vwQ2g8XL2JnBt01+w
+        1aMCKC6SRlOjCscDWZaB57kNrdmVTaJUP5sGXN9wg+pcvzEVZ3Uoc+u34FR5mghOPVFXlt3v1Sb
+        I2e4/cNVmZiR2eInkB26pMZv6AiQwwQDIB7s=
+X-Received: by 2002:ac8:1842:: with SMTP id n2-v6mr3355651qtk.124.1528404055733;
+        Thu, 07 Jun 2018 13:40:55 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKKcedxF2czAJ+fC288XcXaMpRIGnMB0IkjWgMwHNjsNj94fv/iCR3xm0FU2V/VTjHq/6WJsPQ==
+X-Received: by 2002:ac8:1842:: with SMTP id n2-v6mr3355631qtk.124.1528404055406;
+        Thu, 07 Jun 2018 13:40:55 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2607:b400:24:0:5dba:c103:941e:4ee3])
+        by smtp.gmail.com with ESMTPSA id j1-v6sm12868955qte.13.2018.06.07.13.40.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Jun 2018 13:40:54 -0700 (PDT)
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+From: valdis.kletnieks@vt.edu
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Subject: next-20180605 - kernel tried to execute NX-protected page - exploit attempt? 
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1528404057_2539P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
+Date: Thu, 07 Jun 2018 16:40:57 -0400
+Message-ID: <21051.1528404057@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+--==_Exmh_1528404057_2539P
+Content-Type: text/plain; charset=us-ascii
 
-On 06/07/2018 05:07 PM, Randy Dunlap wrote:
-> On 06/06/2018 04:16 PM, Jayant Chowdhary wrote:
->> In order for static analysis tools to analyze each of the uapi headers,
->> we need to enable them to compile stand-alone. Some uapi headers were
->> missing dependencies which would not make them compile stand-alone in
->> user-land. This patch adds those dependencies.
-> 
-> Hi,
-> 
-> Thanks for getting started on this.  I see that the kbuild robot and I were
-> still not able to do successful builds even after this patch is applied.
-> We were building different targets though.  robot was doing kernel builds
-> and I was doing a large "all-uapi" build.
-> 
-> I started on my all-uapi work about 1 week ago but haven't posted anything yet,
-> but it's posted (attached) below.  It's not yet up to kernel quality yet (for a
-> Makefile), and I have made very little progress toward a successful userspace build.
-> 
-> If anyone is interested, just put these 3 files in <kernel_tree>/tools/build
-> and then run:
-> 
-> make ARCH=$some_arch O=build_dir headers_check
-> so that the headers will be cleaned up and installed in build_dir/usr/.
-> 
-> Then run 'make -f all-uapi.mk'
-> and the userspace program with all header files found in build_dir/usr/include
-> will be built -- i.e., attempted (not successfully).
-> 
-> (note: chmod +x hdr-fix-lines.pl)
-> 
-> 
+I've hit this one twice today with pretty much the same traceback.
+The disk has 3 partitions - one for EFI, one for /boot, and then the rest of
+the disk is a cryptluks partition that contains a dozen or so LVM logical
+volumes.
 
-Thank you for this. This is surely a more formal way of finding out and
-verifying problems w.r.t the uapi headers, being compiled from user-land. I do
-have one concern with this approach though: the make target 'all-uapi.o' depends
-on all-uapi.h, which includes all the uapi headers installed in <build-dir>. So
-this does make sure that when all the uapi headers are included, a user-land
-program will be able to compile fine, without adding any additional
-dependencies. However, this could be masking some cases of dependency exclusion.
-An example can be seen as follows:
+'git log -- drivers/md' didn't show any obvious suspects since next-20180529, which worked
+for me just fine....
 
-Header dependency chain:
-A.h->B.h, however A.h doesn't actually include B.h
-C.h->B.h, C.h does include B.h
+[ 6090.781839] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
+[ 6090.781847] BUG: unable to handle kernel paging request at ffff9d4bc8b766c0
+[ 6090.781856] PGD 17b7a067 P4D 17b7a067 PUD 17b7e067 PMD 408b9d063 PTE 8000000408b76063
+[ 6090.781872] Oops: 0011 [#1] PREEMPT SMP PTI
 
-all-uapi.h
-#include<C.h>
-#include<A.h>
+[ 6090.781893] Workqueue: kcryptd kcryptd_crypt
+[ 6090.781901] RIP: 0010:0xffff9d4bc8b766c0
+[ 6090.781905] Code: ff ff ff f9 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff ff ff <ff> ff ff ff ff ff 9f ff ff ff ff f9 ff ff bf ff ff ff ff ff ff 7f
+[ 6090.782012] RSP: 0018:ffff9d4bdd2039d8 EFLAGS: 00010046
+[ 6090.782018] RAX: ffff9d4bc8b766c0 RBX: ffff9d4bd53744e8 RCX: 0000000000000000
+[ 6090.782023] RDX: 0000000000000000 RSI: 0000000000000003 RDI: ffff9d4bd31e5c90
+[ 6090.782027] RBP: ffff9d4bdd203a40 R08: 0000000000000000 R09: ffff9d4bd31e5c90
+[ 6090.782030] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[ 6090.782034] R13: ffff9d4bd7860228 R14: 00000000d31a2b40 R15: ffff9d4bdd203a58
+[ 6090.782038] FS:  0000000000000000(0000) GS:ffff9d4bdd200000(0000) knlGS:0000000000000000
+[ 6090.782042] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 6090.782046] CR2: ffff9d4bc8b766c0 CR3: 0000000015e24003 CR4: 00000000001606e0
+[ 6090.782050] Call Trace:
+[ 6090.782054]  <IRQ>
+[ 6090.782061]  ? __wake_up_common+0xb7/0x3d0
+[ 6090.782071]  __wake_up_common_lock+0x87/0xe0
+[ 6090.782080]  __wake_up+0x13/0x20
+[ 6090.782087]  mempool_free+0x122/0x190
+[ 6090.782095]  bio_free+0x59/0x80
+[ 6090.782101]  bio_put+0x50/0x90
+[ 6090.782107]  dec_pending+0x1b0/0x560
+[ 6090.782117]  clone_endio+0xd5/0x2e0
+[ 6090.782125]  bio_endio+0x22e/0x4b0
+[ 6090.782132]  crypt_dec_pending+0x92/0xf0
+[ 6090.782139]  crypt_endio+0x9b/0xe0
+[ 6090.782146]  bio_endio+0x22e/0x4b0
+[ 6090.782153]  blk_update_request+0x145/0x680
+[ 6090.782162]  scsi_end_request+0x56/0x440
+[ 6090.782169]  scsi_io_completion+0x462/0x9b0
+[ 6090.782178]  scsi_finish_command+0x189/0x2a0
+[ 6090.782185]  scsi_softirq_done+0x17e/0x1f0
+[ 6090.782193]  blk_done_softirq+0x229/0x410
+[ 6090.782198]  ? __do_softirq+0xfb/0x914
+[ 6090.782207]  __do_softirq+0x13a/0x914
+[ 6090.782219]  irq_exit+0xea/0x140
+[ 6090.782224]  do_IRQ+0xcc/0x1c0
+[ 6090.782232]  common_interrupt+0xf/0xf
+[ 6090.782237]  </IRQ>
+[ 6090.782241] RIP: 0010:memset_erms+0x9/0x10
 
-all-uapi.h will compile fine, since the inclusion of C.h before A.h satisfies
-A.h's dependency on B.h. However, if a user-land program includes just A.h, it
-will not compile without adding B.h. So the target being built successfully
-masked an issue with the uapi header, no?
+The other traceback was about the same, with the following
+interleaved:
 
-I guess it might be better to just have a Makefile which produces a target for
-each header in the set produced by 'make headers_install' and compile those,
-with a -I flag as <build-dir>/usr/include ?
+[27847.571250] list_add corruption. next->prev should be prev (ffff9e2c1347a4e8), but was 0000000000000000. (next=ffff9e2c13cde4a8).
+[27847.571278] kernel BUG at lib/list_debug.c:25!
+[27847.571685] invalid opcode: 0000 [#2] PREEMPT SMP PTI
+[27847.571689] CPU: 0 PID: 55 Comm: kswapd0 Tainted: G      D    O    T 4.17.0-next-20180605-dirty #586
+[27847.573947] Call Trace:
+[27847.573958]  prepare_to_wait+0x133/0x210
+[27847.573966]  ? mempool_alloc+0xe9/0x200
+[27847.573975]  mempool_alloc+0x17e/0x200
+[27847.573983]  ? remove_wait_queue+0x170/0x170
+[27847.573994]  bio_alloc_bioset+0x122/0x3f0
+[27847.574000]  ? bio_advance+0xbf/0x240
+[27847.574006]  ? bio_clone_blkcg_association+0x5b/0x80
+[27847.574015]  alloc_io+0x48/0x320
+[27847.574021]  ? dm_get_live_table+0x3a/0x140
+[27847.574030]  ? __split_and_process_non_flush+0x420/0x420
+[27847.574035]  __split_and_process_bio+0x5d/0x2b0
+[27847.574042]  ? __split_and_process_non_flush+0x420/0x420
+[27847.574048]  ? dm_get_live_table+0x5d/0x140
+[27847.574053]  ? dm_get_live_table+0x84/0x140
+[27847.574061]  __dm_make_request+0xaf/0x1f0
+[27847.574071]  dm_make_request+0x15/0x20
+[27847.574078]  generic_make_request+0x3b9/0x7c0
+[27847.574091]  submit_bio+0xb9/0x240
+[27847.574097]  ? submit_bio+0xb9/0x240
+[27847.574104]  ? __test_set_page_writeback+0x402/0xd30
+[27847.574111]  ? get_swap_bio+0x106/0x180
+[27847.574121]  __swap_writepage+0x153/0x8d0
+[27847.574128]  ? page_swapcount+0xbf/0x140
+[27847.574139]  ? __frontswap_store+0x8d/0x142
+[27847.574147]  swap_writepage+0x4d/0xc0
+[27847.574155]  pageout.isra.29+0x304/0x980
+[27847.574171]  shrink_page_list+0x11e9/0x2020
+[27847.574189]  shrink_inactive_list+0x291/0xdb0
+[27847.574204]  shrink_node_memcg+0x38a/0x1530
+[27847.574211]  ? percpu_ref_get_many+0x200/0x200
+[27847.574233]  shrink_node+0xdc/0x920
+[27847.574246]  balance_pgdat+0x288/0x680
+[27847.574262]  kswapd+0x2ca/0x990
+[27847.574271]  ? remove_wait_queue+0x170/0x170
+[27847.574282]  kthread+0x1d3/0x2a0
+[27847.574288]  ? balance_pgdat+0x680/0x680
+[27847.574294]  ? kthread_create_worker_on_cpu+0x70/0x70
+[27847.574304]  ret_from_fork+0x3a/0x50
 
-Also, do you think it might be better to do this work in phases ? I'm guessing
-we'll be seeing many headers to fix (especially arch specific ones). Fixing
-these separately: first the generic ones, followed by the ones for the arches,
-might be easier ?
 
-Thanks,
-Jayant
+--==_Exmh_1528404057_2539P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWxmYWI0DS38y7CIcAQLIVQgAp1dN26+PyWbqizBsMehR6hjjyBhEhznO
+KiOEkVXxlcMdFTuesO4nKIMUmL6jONdxOFG7UgE4hxsUSRh6AXYFdYg2eBQjGrpV
+8uIlP85IHL92Bz1TgpwS8o1CerQPpr+YW5yE52HMifQb+mACLsn75+7PO8ndM4c1
+ajNH50pNZ/Ljih7tzF+ARg06AsBWSHKRaLqHIPjePJUqK7eSWOvhuUNLpnmvTwsM
+1JX4AAQEvN+tD6orqGxRvsJlN2gifq+xQQB+5cFlOkGAUOKEg9rtOJQ15tWLkbcL
+H3ZVnmsat9FPUoL3QAsBsjstNxMwofVXR47J1QDIpLjW6+mBhccoEA==
+=j1yZ
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1528404057_2539P--
