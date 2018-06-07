@@ -1,140 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id pptaHvERGVt1KwAAmS7hNA
-	; Thu, 07 Jun 2018 11:07:41 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id i8WwMvuPGFunGwAAmS7hNA
+	; Thu, 07 Jun 2018 01:52:59 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 24866608B8; Thu,  7 Jun 2018 11:07:41 +0000 (UTC)
+	id B4C846089E; Thu,  7 Jun 2018 01:52:59 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WSa/dQMR"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="KgZU6b4/"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_MED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 6EFF4607DC;
-	Thu,  7 Jun 2018 11:07:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6EFF4607DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 41EE5601D2;
+	Thu,  7 Jun 2018 01:52:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41EE5601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932483AbeFGLHh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 07:07:37 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38409 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932186AbeFGLHf (ORCPT
+        id S1752963AbeFGBw5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Wed, 6 Jun 2018 21:52:57 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:54722 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752729AbeFGBwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 07:07:35 -0400
-Received: by mail-pl0-f68.google.com with SMTP id b14-v6so5927442pls.5
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 04:07:35 -0700 (PDT)
+        Wed, 6 Jun 2018 21:52:55 -0400
+Received: by mail-it0-f68.google.com with SMTP id 76-v6so10787686itx.4
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Jun 2018 18:52:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=MFl4EP+B8XV5a9PfDXfx8E5EQDotN4PEqm2HDvyX5eg=;
-        b=WSa/dQMR2oriUESGX2pgy5XZ0yry4pn8WxPE8o2bYcHX4XdjpJH7sm3W3FXEYMDOQG
-         XgMutS8XLIGCq9sqMxVFO7bi6YprX1/d6hs8t6G1OIcZnfDXNz3AT7fIKewgEUVbaxf8
-         HfGff77w7J4OoOQCBH1FMrWT02WYVzXZ4PwLo=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=R6dN60/v1VfATXh32y0xGDxE3VZXR4QJnJJGxuLiqQU=;
+        b=KgZU6b4/+7Sajo+RIKtYRWjK5l5t3Uh6jv5tS5/7yy7D2zW0EpVSkoyq9Ytm1eOi/6
+         eFQ3uBR3Ndg5BRAO4ROyVHEmDsQs9HflreX7ZsSroFqSgQYu/2RC+qnCHj4VdCce0XZr
+         Zd/JsaRNfU6n69pfB5Q9RZbSYQp50wMVYO8Y8NThOWS5dqWuHwNvHZwkhE13EWnOqDii
+         /dmSfxU+agOaXVUU48wVviStwmtI57eAvC04zvT8WUrHtR6PWQNokptUwWI0ZG4dbImk
+         EoPqOId08VgGstMnvtwj9wltoAmVztKskxD3+KdO7BgaG0pW1PM8T9NFy2adxJn91P3w
+         ZQdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=MFl4EP+B8XV5a9PfDXfx8E5EQDotN4PEqm2HDvyX5eg=;
-        b=uVZjK1auQj9q0bS3PXQbvmO2rDZVXPHhOzoC1zFeO8kn/fCKJLCB8Xm/GdK4zSSpAu
-         rMXvN5+RFV1s+ZDpU+eTGeanRWQqnLLyLmcR68z37ykPJRL1yXSc7oaGmgtDodQ5mSvj
-         LDu214mnSTyvtxmWXUHgmxF659Gd2bvuIjLYQyQPgDqjpry3KCyFswz9rSiGGKKKXEqX
-         0+5ILd6k0LAHS4mbRlUNNF1es5QHvVJP3BqLAypg6rRmqEXKNaNfGDmdPGUUnK/c4Myz
-         NfDBmnABEg3tJSU99HaKXhVTMeowYhmo2Oi+zZx5FoQAwOOo0tka/g7hZbMuiDXS0Axu
-         6Lpg==
-X-Gm-Message-State: APt69E0ibKXjO65GZTlVySCFgz/YUBZB+KPiBa1Aak5Q5SawoWsjMTxv
-        QCIp79x5dX30Rlk4Jee+YSe4Sh41o5IHm53wcY2GQg==
-X-Google-Smtp-Source: ADUXVKLxJH2I7Wwi7HLmYu2t/d+zdgtvijkpwrcTe6+e9cPhKFlRO60hcaZUPPW9V0cAu5DggHn/iXmu3mqPm43dY6w=
-X-Received: by 2002:a17:902:b18b:: with SMTP id s11-v6mr1594796plr.190.1528369654610;
- Thu, 07 Jun 2018 04:07:34 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=R6dN60/v1VfATXh32y0xGDxE3VZXR4QJnJJGxuLiqQU=;
+        b=sYcKgl+BccmPZaEyH4bSw/k57Xkm5UdvmM1DqZq/xWXcexV0DJyYxZ2tr2AAU4OpDG
+         NA4v6znJz1TqaFSrBX7WJV4+cXx3D0kFzExv8qmMr8tsLRTqXWINwWmfFcOoiWfaYZ5Q
+         zvzpARXXyoAze5zQ0LDVHxLwPFmb8BoQOEqnxyGd35siB0cWLd660RMQqGA2ij5JibUV
+         tvPqRRBWAP8p9cE+OEfxPN6hw1iMYHDI36R5GJR+QBzVJw4R7mlLFmAokIzU2zR+vWU6
+         +weQSTVQM6S4AEycYWKhlvJwWFisEDjh0NEXg9OfzC/6NerHKkUtxKwxJnNvzX6HmbFY
+         M8Kg==
+X-Gm-Message-State: APt69E14gvEWY0QpOHUSQedwuQ0SstJmE2f8mrOUVCKxmcHbxj9nDHVc
+        YhLT1I/DTLpGKPZGMxY0sc8qQg==
+X-Google-Smtp-Source: ADUXVKJa1wM15Wd9ZQVvKSHJVMV+WH+p0ycSDC1OFmWYuO1ZRaDasQZtva3tvz3YR46vlewIskWBfg==
+X-Received: by 2002:a24:cf57:: with SMTP id y84-v6mr255616itf.98.1528336374267;
+        Wed, 06 Jun 2018 18:52:54 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
+        by smtp.gmail.com with ESMTPSA id e18-v6sm239213itc.3.2018.06.06.18.52.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Jun 2018 18:52:53 -0700 (PDT)
+Subject: Re: [PATCH] block: Add block level changes for inline encryption
+To: Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc: Hannes Reinecke <hare@suse.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Manjunath M Bettegowda <manjumb@synopsys.com>,
+        Prabu Thangamuthu <prabut@synopsys.com>,
+        Tejas Joglekar <joglekar@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+References: <d3624fab-e6fc-f14d-c780-db703c809068@synopsys.com>
+ <20180601081330.GA13067@infradead.org>
+ <BD7FB879CC136E419544C8E2AE7B9C3020C566@IN01WEMBXA.internal.synopsys.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <918609fa-8721-0ee1-801e-4c29b64ac9ae@kernel.dk>
+Date: Wed, 6 Jun 2018 19:52:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Received: by 2002:a17:90a:284b:0:0:0:0 with HTTP; Thu, 7 Jun 2018 04:07:33
- -0700 (PDT)
-In-Reply-To: <1a021bf3-cf93-aa12-c5a8-1ea6c7900fbb@iogearbox.net>
-References: <20180413090351.25662-1-anders.roxell@linaro.org>
- <20180514115809.9803-1-anders.roxell@linaro.org> <1a021bf3-cf93-aa12-c5a8-1ea6c7900fbb@iogearbox.net>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Thu, 7 Jun 2018 13:07:33 +0200
-Message-ID: <CADYN=9LR5rqf_2vqW0jKixZpnvtM_XyOwJuvXX4hgMwGkD-QoA@mail.gmail.com>
-Subject: Re: [PATCH v3] selftests: add headers_install to lib.mk
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Bamvor Zhang <bamv2005@gmail.com>, brgl@bgdev.pl,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, aarcange@redhat.com,
-        linux-kbuild@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        Networking <netdev@vger.kernel.org>, alexei.starovoitov@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <BD7FB879CC136E419544C8E2AE7B9C3020C566@IN01WEMBXA.internal.synopsys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 May 2018 at 21:20, Daniel Borkmann <daniel@iogearbox.net> wrote:
-> On 05/14/2018 01:58 PM, Anders Roxell wrote:
->> If the kernel headers aren't installed we can't build all the tests.
->> Add a new make target rule 'khdr' in the file lib.mk to generate the
->> kernel headers and that gets include for every test-dir Makefile that
->> includes lib.mk If the testdir in turn have its own sub-dirs the
->> top_srcdir needs to be set to the linux-rootdir to be able to generate
->> the kernel headers.
+On 6/6/18 1:35 AM, Ladvine D Almeida wrote:
+> On Friday 01 June 2018 09:13 AM, Christoph Hellwig wrote:
+>> On Mon, May 28, 2018 at 02:43:09PM +0100, Ladvine D Almeida wrote:
+>>> This patch introduces new variable under bio structure to
+>>> facilitate inline encryption. This variable is used to
+>>> associate I/O requests to crypto information.
+>> This seems to be missing a whole lot of context.  Where is the whole
+>> series showing what you are trying to do?
 >>
->> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
->> Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
->> ---
->>  Makefile                                          | 14 +-------------
->>  scripts/subarch.include                           | 13 +++++++++++++
->>  tools/testing/selftests/android/Makefile          |  2 +-
->>  tools/testing/selftests/android/ion/Makefile      |  1 +
->>  tools/testing/selftests/bpf/Makefile              |  5 ++---
->>  tools/testing/selftests/futex/functional/Makefile |  1 +
->>  tools/testing/selftests/gpio/Makefile             |  7 ++-----
->>  tools/testing/selftests/kvm/Makefile              |  7 ++-----
->>  tools/testing/selftests/lib.mk                    | 10 ++++++++++
->>  tools/testing/selftests/vm/Makefile               |  4 ----
->>  10 files changed, 33 insertions(+), 31 deletions(-)
->>  create mode 100644 scripts/subarch.include
-> [...]
->> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
->> index 438d4f93875b..9741609a0eb1 100644
->> --- a/tools/testing/selftests/bpf/Makefile
->> +++ b/tools/testing/selftests/bpf/Makefile
->> @@ -16,9 +16,8 @@ LDLIBS += -lcap -lelf -lrt -lpthread
->>  TEST_CUSTOM_PROGS = $(OUTPUT)/urandom_read
->>  all: $(TEST_CUSTOM_PROGS)
->>
->> -$(TEST_CUSTOM_PROGS): urandom_read
->> -
->> -urandom_read: urandom_read.c
->> +$(TEST_CUSTOM_PROGS):| khdr
->> +$(TEST_CUSTOM_PROGS): urandom_read.c
->>       $(CC) -o $(TEST_CUSTOM_PROGS) -static $<
->>
->>  # Order correspond to 'make run_tests' order
->
-> Can you elaborate on the error in BPF you're seeing that would force a
-> headers_install for it?
+> Christoph,
+> 
+> The patches are generated in the below > manner, with a thought of
+> sending separately to the MAINTAINERS responsible for each.
 
-BPF shouldn't be affected, a new revision of the patch does not touch
-the bpf/Makefile.
-I will send out a patch soon.
+What both Christoph and I have said is that it's _impossible_ to review
+changes when you don't know what is being built on top of it. The block
+change, by itself, is utterly useless. The use case needs to be seen.
+But apart from that, my comments on why it's doing it completely
+backwards still apply, and I've outlined how you need to fix it. The
+patch, in its current form, isn't going anywhere.
 
-Cheers,
-Anders
-
-> Some people are running the tools/ infrastructure
-> (incl. BPF kselftests) outside of kernel tree where this dependency would
-> break their setup. Why BPF bits cannot be fixed otherwise?
->
-> Thanks,
-> Daniel
+-- 
+Jens Axboe
