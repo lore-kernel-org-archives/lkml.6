@@ -1,250 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YP3HCAZzGVvdVAAAmS7hNA
-	; Thu, 07 Jun 2018 18:14:52 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id WTRtDF6wGVuLVQAAmS7hNA
+	; Thu, 07 Jun 2018 22:26:40 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id DDEBC6089E; Thu,  7 Jun 2018 18:14:51 +0000 (UTC)
+	id A9CEC6089E; Thu,  7 Jun 2018 22:26:40 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 47A0E605A2;
-	Thu,  7 Jun 2018 18:14:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 47A0E605A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 48628601D2;
+	Thu,  7 Jun 2018 22:26:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48628601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936003AbeFGSOt (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 14:14:49 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42360 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934504AbeFGSNJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 14:13:09 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w17-v6so6629995pll.9
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 11:13:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yNTPVOc9itsgSGXJtTCwKhZik/oC0KXvCOU82jh0Sag=;
-        b=WN1ZM/wxx0K8i4ENn0154Xc9eSKD0qwXFGBsv3ZuMgXzw0qTwmSu94DJpNXsJ4aNfl
-         pFWqqSAkm+UgVmoZ4M3rdjtD4tue9ouetusZND7fkagMk6oQx0MPUTyuHtb5/DQ7cV2G
-         O4738+D9dcudSXLm/XlSYjO54c1BcOZ7bBE9sJMLZ13UzDSCjAbpoMQWeXwchs5G0Plp
-         Ag7goRyK00jX/agmkbOn7CgIl8nkyxT8fYsUh+5jxcsXDzKlAhbPKKWgxvxmGp+HF/dQ
-         R8LTnXicvI3gChNUbuOFXcCcgaQ2c5gthI8iKEljXjpUH27/5j7CcRON3c0AlP7vt7yu
-         rJiA==
-X-Gm-Message-State: APt69E10T0llxI//jfeGVGrx80fl0a3cEEtHueonqnPpEAvT9UPmuLCg
-        lDDM3SFWfmZ1+s5XAMaDANTTgw==
-X-Google-Smtp-Source: ADUXVKJmSi2pmqwPqO9jyFwKIogQQcJZlX/BELdGceJVIiPoVGjjYoI4OopvrSvpanmx4+T8Aj+1Bg==
-X-Received: by 2002:a17:902:6bc1:: with SMTP id m1-v6mr3080106plt.91.1528395188432;
-        Thu, 07 Jun 2018 11:13:08 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm5029002pfn.36.2018.06.07.11.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Jun 2018 11:13:07 -0700 (PDT)
-From: Matthias Kaehlcke <mka@chromium.org>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2 11/11] misc: throttler: Add Chrome OS EC throttler
-Date: Thu,  7 Jun 2018 11:12:14 -0700
-Message-Id: <20180607181214.30338-12-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
-In-Reply-To: <20180607181214.30338-1-mka@chromium.org>
-References: <20180607181214.30338-1-mka@chromium.org>
+        id S1752280AbeFGW0i (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:26:38 -0400
+Received: from mga12.intel.com ([192.55.52.136]:46771 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752237AbeFGW0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 18:26:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 15:26:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,488,1520924400";
+   d="scan'208";a="47312397"
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2018 15:26:36 -0700
+Date: Thu, 7 Jun 2018 15:26:36 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@suse.de>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] x86/mce: Check for alternate indication of machine
+ check recovery on Skylake
+Message-ID: <20180607222636.GA27234@agluck-desk>
+References: <cover.1527283897.git.tony.luck@intel.com>
+ <03cbed6e99ddafb51c2eadf9a3b7c8d7a0cc204e.1527283897.git.tony.luck@intel.com>
+ <20180607174337.GA22594@agluck-desk>
+ <CAPcyv4hNjnm+CawtRzU=ROUo02+XsBxjUmMGMcpjHKnL5M42Jw@mail.gmail.com>
+ <20180607202445.GC20936@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607202445.GC20936@zn.tnic>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver subscribes to throttling events from the Chrome OS
-embedded controller and enables/disables system throttling based
-on these events.
+On Thu, Jun 07, 2018 at 10:24:46PM +0200, Borislav Petkov wrote:
+> On Thu, Jun 07, 2018 at 01:18:31PM -0700, Dan Williams wrote:
+> > I'm making an effort to get all persistent memory error handling holes
+> > covered this cycle, so I think it makes sense for this to go through
+> > the nvdimm tree. This looks sufficiently non-controversial that I
+> > could justify sending it to Linus along with the other pmem updates.
+> 
+> tglx just took 1 and 3, 2/3 had a minor issue but the merge window
+> happened so I'll send it later. It is nice to have anyway.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-Changes in v2:
-- added SPDX line instead of license boiler-plate
-- use macro to avoid splitting line
-- changed variable name for throttler from 'cte' to 'ce_thr'
-- formatting fixes
-- Kconfig: removed odd dashes around 'help'
-- added 'Reviewed-by' tag
+Thanks Boris.
 
-Note: I finally decided to keep 'Chrome OS' instead of changing it
-to 'ChromeOS'. Both are currently used in the kernel, the latter is
-currently more prevalent, however the official name is 'Chrome OS',
-so there is no good reason to keep introducing the 'alternative' name.
-
- drivers/misc/throttler/Kconfig             |  14 +++
- drivers/misc/throttler/Makefile            |   1 +
- drivers/misc/throttler/cros_ec_throttler.c | 116 +++++++++++++++++++++
- 3 files changed, 131 insertions(+)
- create mode 100644 drivers/misc/throttler/cros_ec_throttler.c
-
-diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
-index e561f1df5085..da6fb70b96d9 100644
---- a/drivers/misc/throttler/Kconfig
-+++ b/drivers/misc/throttler/Kconfig
-@@ -12,3 +12,17 @@ menuconfig THROTTLER
- 	  Note that you also need a event monitor module usually called
- 	  *_throttler.
- 
-+if THROTTLER
-+
-+config CROS_EC_THROTTLER
-+	tristate "Throttler event monitor for the Chrome OS Embedded Controller"
-+	depends on MFD_CROS_EC
-+	help
-+	  This driver adds support to throttle the system in reaction to
-+	  Chrome OS EC events.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called cros_ec_throttler.
-+
-+endif # THROTTLER
-+
-diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
-index c8d920cee315..d9b2a77dabc9 100644
---- a/drivers/misc/throttler/Makefile
-+++ b/drivers/misc/throttler/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_THROTTLER)		+= core.o
-+obj-$(CONFIG_CROS_EC_THROTTLER)	+= cros_ec_throttler.o
-diff --git a/drivers/misc/throttler/cros_ec_throttler.c b/drivers/misc/throttler/cros_ec_throttler.c
-new file mode 100644
-index 000000000000..432135c55600
---- /dev/null
-+++ b/drivers/misc/throttler/cros_ec_throttler.c
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for throttling triggered by events from the Chrome OS Embedded
-+ * Controller.
-+ *
-+ * Copyright (C) 2018 Google, Inc.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/mfd/cros_ec.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/throttler.h>
-+
-+#define nb_to_ce_thr(nb) container_of(nb, struct cros_ec_throttler, nb)
-+
-+struct cros_ec_throttler {
-+	struct cros_ec_device *ec;
-+	struct throttler *throttler;
-+	struct notifier_block nb;
-+};
-+
-+static int cros_ec_throttler_event(struct notifier_block *nb,
-+	unsigned long queued_during_suspend, void *_notify)
-+{
-+	struct cros_ec_throttler *ce_thr = nb_to_ce_thr(nb);
-+	u32 host_event;
-+
-+	host_event = cros_ec_get_host_event(ce_thr->ec);
-+	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_START)) {
-+		throttler_set_level(ce_thr->throttler, 1);
-+
-+		return NOTIFY_OK;
-+	} else if (host_event &
-+		   EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_STOP)) {
-+		throttler_set_level(ce_thr->throttler, 0);
-+
-+		return NOTIFY_OK;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int cros_ec_throttler_probe(struct platform_device *pdev)
-+{
-+	struct cros_ec_throttler *ce_thr;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+
-+	if (!np) {
-+		/* should never happen */
-+		return -EINVAL;
-+	}
-+
-+	ce_thr = devm_kzalloc(dev, sizeof(*ce_thr), GFP_KERNEL);
-+	if (!ce_thr)
-+		return -ENOMEM;
-+
-+	ce_thr->ec = dev_get_drvdata(pdev->dev.parent);
-+
-+	ce_thr->throttler = throttler_setup(dev);
-+	if (IS_ERR(ce_thr->throttler))
-+		return PTR_ERR(ce_thr->throttler);
-+
-+	dev_set_drvdata(dev, ce_thr);
-+
-+	ce_thr->nb.notifier_call = cros_ec_throttler_event;
-+	ret = blocking_notifier_chain_register(&ce_thr->ec->event_notifier,
-+					       &ce_thr->nb);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to register notifier\n");
-+		throttler_teardown(ce_thr->throttler);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cros_ec_throttler_remove(struct platform_device *pdev)
-+{
-+	struct cros_ec_throttler *ce_thr = platform_get_drvdata(pdev);
-+
-+	blocking_notifier_chain_unregister(&ce_thr->ec->event_notifier,
-+					   &ce_thr->nb);
-+
-+	throttler_teardown(ce_thr->throttler);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id cros_ec_throttler_of_match[] = {
-+	{ .compatible = "google,cros-ec-throttler" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, cros_ec_throttler_of_match);
-+#endif /* CONFIG_OF */
-+
-+static struct platform_driver cros_ec_throttler_driver = {
-+	.driver = {
-+		.name = "cros-ec-throttler",
-+		.of_match_table = of_match_ptr(cros_ec_throttler_of_match),
-+	},
-+	.probe		= cros_ec_throttler_probe,
-+	.remove		= cros_ec_throttler_remove,
-+};
-+
-+module_platform_driver(cros_ec_throttler_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Matthias Kaehlcke <mka@chromium.org>");
-+MODULE_DESCRIPTION("Chrome OS EC Throttler");
--- 
-2.18.0.rc1.242.g61856ae69a-goog
+-Tony
