@@ -1,124 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id e37qGTH3G1v6AwAAmS7hNA
-	; Sat, 09 Jun 2018 15:51:04 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id mM5nB/4nGVv6egAAmS7hNA
+	; Thu, 07 Jun 2018 12:41:42 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 5C24B608C1; Sat,  9 Jun 2018 15:51:04 +0000 (UTC)
+	id AA6E9608B8; Thu,  7 Jun 2018 12:41:42 +0000 (UTC)
 Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ylPFPQUG"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D009vZ7n"
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=2.0 tests=BAYES_00,DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id BB572606FA;
-	Sat,  9 Jun 2018 15:51:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB572606FA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by smtp.codeaurora.org (Postfix) with ESMTP id 347FA607DC;
+	Thu,  7 Jun 2018 12:41:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 347FA607DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932576AbeFIPvC (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Sat, 9 Jun 2018 11:51:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932304AbeFIPb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 9 Jun 2018 11:31:56 -0400
-Received: from localhost (D57E6652.static.ziggozakelijk.nl [213.126.102.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D018C208A3;
-        Sat,  9 Jun 2018 15:31:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528558315;
-        bh=jUAbeh7KTZk981dfR6NeZlat0Ju8GtK6i9+atF5Pmo8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ylPFPQUGsKEWKhrSuCB1cbYh2St5x9RpWO2zJ3LX/yv9vOOk5OpCAUCfBb2shGD7S
-         THobdE4OLOpldDFk6j1Tn+KUObdAY4t8UKk4Xodhcj2YtUjfqersuBMfvQwlFGNuXW
-         f3yf9Y8EtnVkQAYoiYcLgStrhRzRN5+c1f+uKioA=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 14/48] ipv6: omit traffic class when calculating flow hash
-Date: Sat,  9 Jun 2018 17:29:26 +0200
-Message-Id: <20180609145948.561683312@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180609145947.679103414@linuxfoundation.org>
-References: <20180609145947.679103414@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S932455AbeFGMlk (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 08:41:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58638 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeFGMli (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 08:41:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=HivFva8XmiILUvOpfh8cyPRXxcOTRbiJ43X4emPP++w=; b=D009vZ7nNJBAkhzbS9JUc6yjv2
+        2vgdkyiEFWTS8sUbCDWd/ZK0VmlWlRdRC4NwV+FhoZWmWUbMMvGOhfLeLg7yAO18jdcQNJVfGvXmW
+        Uv1COk9Jj6yQG0lhQsAd8RdjNVAithCRs7IR1ADppSv5K9Y+8uGl8fu55s8sAyFUougLg9Ns/Scqe
+        J6biWP6DcvxlYl+34Hqyr2gnkhv98nDlDfZcqcSDWVwK/3YO6a+dbx2fYVpUbIDx8ZvMqcUv+sm34
+        THz+fyRQGxP0dIfP/DF7LTEBoXIRSVyroSoySP/U9A6XbIYfnqWAuYmhU3rftlPDxX/Gtcvq56L09
+        o3gj0QJw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fQuEI-0001Xb-Rx; Thu, 07 Jun 2018 12:41:29 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id A62E2201EA7AC; Thu,  7 Jun 2018 14:41:18 +0200 (CEST)
+Message-Id: <20180607124006.266038375@infradead.org>
+User-Agent: quilt/0.63-1
+Date: Thu, 07 Jun 2018 14:33:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org, oleg@redhat.com, gkohli@codeaurora.org
+Cc: tglx@linutronix.de, mpe@ellerman.id.au, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: [PATCH 4/4] kthread: Simplify kthread_park() completion
+References: <20180607123310.866085998@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=peterz-kthread-3.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Now that smpboot_update_cpumask_percpu_thread() is gone, we no longer
+have anybody calling kthread_park() on already parked threads. So
+revert commit:
 
-------------------
+  b1f5b378e126 ("kthread: Allow kthread_park() on a parked kthread")
 
-From: Michal Kubecek <mkubecek@suse.cz>
-
-[ Upstream commit fa1be7e01ea863e911349e30456706749518eeab ]
-
-Some of the code paths calculating flow hash for IPv6 use flowlabel member
-of struct flowi6 which, despite its name, encodes both flow label and
-traffic class. If traffic class changes within a TCP connection (as e.g.
-ssh does), ECMP route can switch between path. It's also inconsistent with
-other code paths where ip6_flowlabel() (returning only flow label) is used
-to feed the key.
-
-Use only flow label everywhere, including one place where hash key is set
-using ip6_flowinfo().
-
-Fixes: 51ebd3181572 ("ipv6: add support of equal cost multipath (ECMP)")
-Fixes: f70ea018da06 ("net: Add functions to get skb->hash based on flow structures")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/net/ipv6.h        |    5 +++++
- net/core/flow_dissector.c |    2 +-
- net/ipv6/route.c          |    2 +-
- 3 files changed, 7 insertions(+), 2 deletions(-)
+ kernel/kthread.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -918,6 +918,11 @@ static inline __be32 ip6_make_flowinfo(u
- 	return htonl(tclass << IPV6_TCLASS_SHIFT) | flowlabel;
- }
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -190,7 +190,7 @@ static void __kthread_parkme(struct kthr
+ 		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
+ 			break;
  
-+static inline __be32 flowi6_get_flowlabel(const struct flowi6 *fl6)
-+{
-+	return fl6->flowlabel & IPV6_FLOWLABEL_MASK;
-+}
+-		complete_all(&self->parked);
++		complete(&self->parked);
+ 		schedule();
+ 	}
+ 	__set_current_state(TASK_RUNNING);
+@@ -465,7 +465,6 @@ void kthread_unpark(struct task_struct *
+ 	if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
+ 		__kthread_bind(k, kthread->cpu, TASK_PARKED);
+ 
+-	reinit_completion(&kthread->parked);
+ 	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	/*
+ 	 * __kthread_parkme() will either see !SHOULD_PARK or get the wakeup.
+@@ -493,6 +492,9 @@ int kthread_park(struct task_struct *k)
+ 	if (WARN_ON(k->flags & PF_EXITING))
+ 		return -ENOSYS;
+ 
++	if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
++		return -EBUSY;
 +
- /*
-  *	Prototypes exported by ipv6
-  */
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -1334,7 +1334,7 @@ __u32 __get_hash_from_flowi6(const struc
- 	keys->ports.src = fl6->fl6_sport;
- 	keys->ports.dst = fl6->fl6_dport;
- 	keys->keyid.keyid = fl6->fl6_gre_key;
--	keys->tags.flow_label = (__force u32)fl6->flowlabel;
-+	keys->tags.flow_label = (__force u32)flowi6_get_flowlabel(fl6);
- 	keys->basic.ip_proto = fl6->flowi6_proto;
- 
- 	return flow_hash_from_keys(keys);
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1850,7 +1850,7 @@ out:
- 	keys->control.addr_type = FLOW_DISSECTOR_KEY_IPV6_ADDRS;
- 	keys->addrs.v6addrs.src = key_iph->saddr;
- 	keys->addrs.v6addrs.dst = key_iph->daddr;
--	keys->tags.flow_label = ip6_flowinfo(key_iph);
-+	keys->tags.flow_label = ip6_flowlabel(key_iph);
- 	keys->basic.ip_proto = key_iph->nexthdr;
- }
- 
+ 	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	if (k != current) {
+ 		wake_up_process(k);
