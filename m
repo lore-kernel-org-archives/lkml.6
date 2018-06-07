@@ -1,197 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fuc2AmBwHluXdwAAmS7hNA
-	; Mon, 11 Jun 2018 12:52:05 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id fGC9Bx9TGVt9HAAAmS7hNA
+	; Thu, 07 Jun 2018 15:46:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 8FA1560792; Mon, 11 Jun 2018 12:52:05 +0000 (UTC)
+	id 16808607E7; Thu,  7 Jun 2018 15:46:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id ED2F6601C3;
-	Mon, 11 Jun 2018 12:52:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED2F6601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 74D6060590;
+	Thu,  7 Jun 2018 15:45:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74D6060590
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933027AbeFKMwD (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 20 others); Mon, 11 Jun 2018 08:52:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53882 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932656AbeFKMwB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 08:52:01 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5BCmqGd037833
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 08:52:01 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jhsau0ct0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 08:52:00 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 11 Jun 2018 08:51:58 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Jun 2018 08:51:54 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5BCpqWM16777592
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Jun 2018 12:51:52 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6C9E112061;
-        Mon, 11 Jun 2018 08:51:50 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 014A5112063;
-        Mon, 11 Jun 2018 08:51:49 -0400 (EDT)
-Received: from oc8043147753.ibm.com (unknown [9.85.207.139])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Jun 2018 08:51:48 -0400 (EDT)
-Subject: Re: [PATCH v5 11/13] KVM: s390: implement mediated device open
- callback
-To: Halil Pasic <pasic@linux.ibm.com>, pmorel@linux.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        Janosch Frank <frankja@linux.vnet.ibm.com>
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
- <98ea7ce2-2539-e2ff-4bb4-297e784d87bd@linux.ibm.com>
- <7bb480ac-5723-83ff-c797-53c1ab0458c1@linux.vnet.ibm.com>
- <93cd0f46-a410-51c8-00b9-810c1b3d3ae2@linux.ibm.com>
- <0f37dc39-7355-19e5-40c9-a02a1ea58c2d@linux.vnet.ibm.com>
- <736a1346-f81a-7f71-7d13-38729ff78e4f@linux.ibm.com>
- <8f68183d-8385-8025-1898-23cad604ae94@linux.vnet.ibm.com>
- <9e30c9b0-a04c-0c4e-9d3d-37e7a53a7f72@linux.ibm.com>
- <d6455b0b-804f-b58e-41bc-83731979911a@linux.ibm.com>
- <f74f2d2d-36d3-7910-5511-3691a483b89f@linux.vnet.ibm.com>
- <ea5c2c2f-27fe-b2bf-2aa8-fbe80e77ce81@linux.ibm.com>
- <5f9c3f97-34e2-bf68-b8ca-ac9288ea5efa@linux.vnet.ibm.com>
- <b7215f0e-6ceb-2738-4584-1af7c30bd595@linux.ibm.com>
- <f1cc0d71-d2ff-6461-c450-07cc73a2973c@linux.ibm.com>
- <010679ed-bd80-42f8-3f6f-e4dee10e82f5@linux.ibm.com>
- <a5a72aad-303b-8bc9-f48b-e44aba2af27e@linux.ibm.com>
-From: Tony Krowiak <akrowiak@linux.ibm.com>
-Date: Mon, 11 Jun 2018 08:50:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <a5a72aad-303b-8bc9-f48b-e44aba2af27e@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18061112-0040-0000-0000-0000043E7060
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009170; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01045401; UDB=6.00535309; IPR=6.00824380;
- MB=3.00021579; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-11 12:51:57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061112-0041-0000-0000-0000084477BC
-Message-Id: <4f5f17f1-48ab-6f1e-6ef2-3741fc39e5f4@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-11_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=983 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806110151
+        id S934730AbeFGPp5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:45:57 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36280 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934496AbeFGOkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:40:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:40:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="47542295"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2018 07:40:32 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 4/9] x86/mm: Change _PAGE_DIRTY to _PAGE_DIRTY_HW
+Date: Thu,  7 Jun 2018 07:37:00 -0700
+Message-Id: <20180607143705.3531-5-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143705.3531-1-yu-cheng.yu@intel.com>
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 07:32 AM, Halil Pasic wrote:
->
->
-> On 06/11/2018 11:23 AM, Pierre Morel wrote:
->> On 08/06/2018 23:59, Tony Krowiak wrote:
->>> On 06/07/2018 01:15 PM, Pierre Morel wrote:
->>>>
->>
->> ...snip...
->>
->>>>>>
->>>>>>>
->>>>>>> Why maintain a list of kvm_ap_matrix structures if we don't have 
->>>>>>> to; it is stored
->>>>>>> with the mediated matrix device which is passed in to all of the 
->>>>>>> vfio_ap driver
->>>>>>> callbacks.
->>>>>>
->>>>>> Because using the vm_list which is a static in kvm makes you 
->>>>>> stick inside the kvm code.
->>>
->>> I understand your point here, but even if we did maintain a list of 
->>> kvm_ap_matrix structures,
->>> we still need the kvm code to configure the guest's CRYCB and 
->>> eventually ECA.28. There is
->>> also code in kvm-ap.c that is called from KVM.
->>
->> The only code from kvm-ap which is called from KVM is temporary code
->> waiting for Harald to offer the clean interface to AP instructions.
->>
->>> The idea behind kvm-ap.c is that all code
->>> related to configuration of AP structures in KVM is in this one spot.
->>
->> This I understand, but the code can be in one spot inside VFIO_AP 
->> instead
->> of inside KVM.
->> Putting the code inside KVM induce dependencies between KVM and AP
->> while the kvm/vfio interface allows to avoid this dependency.
->>
->> The purpose of VFIO_AP is to handle the CRYCB, all get/clear/set 
->> crycb masks
->> functions should be in VFIO AP.
->>
->> If we use wrappers in KVM, since the CRYCB is an a SIE extension,
->> it is legitimate, the KVM interface to the CRYCB should only
->> handle bitmaps and be unaware of the vfio_ap internal structures.
->>
->>
->> Another concern, the kvm_ap_validate_queue_sharing() should not be
->> inside KVM because it is a decision of current VFIO_AP driver
->> to not share the queues between guest of level 2.
->>
->> The Z architecture does not allow to share AP queues between
->> guests of level 1 but we could re-engineer the AP bus and the '
->> VFIO AP to offer queue sharing for guest level 2.
->>
->> This would be a new VFIO_AP driver (and an AP bus extension).
->> We should not have to change KVM for this.
->>
->
->
-> Pierre's proposal makes a lot of sense to me. We would not need to take
-> the kvm_lock (which we need to traverse the vm_list safely) for the
-> validation, and we could have immediate validation (which is in my 
-> opinion
-> better).
->
-> Also your refcount (which is not a refcout) could go away. You simply
-> traverse your list and check for duplicates when hooking up the mdev
-> with KVM.
->
-> And my opinion is if we don't have to add code to the kvm module we
-> better not.
->
-> @Janosch: Does core KVM share my opinion?
+We are going to create _PAGE_DIRTY_SW for non-hardware, memory
+management purposes.  Rename _PAGE_DIRTY to _PAGE_DIRTY_HW and
+_PAGE_BIT_DIRTY to _PAGE_BIT_DIRTY_HW to make these PTE dirty
+bits more clear.  There are no functional changes in this
+patch.
 
-Okay, I'll make the change.
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+---
+ arch/x86/include/asm/pgtable.h       |  6 +++---
+ arch/x86/include/asm/pgtable_types.h | 17 +++++++++--------
+ arch/x86/kernel/relocate_kernel_64.S |  2 +-
+ arch/x86/kvm/vmx.c                   |  2 +-
+ 4 files changed, 14 insertions(+), 13 deletions(-)
 
->
->
-> Regards,
-> Halil
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index f1633de5a675..00b5e79c09a6 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -303,7 +303,7 @@ static inline pte_t pte_mkexec(pte_t pte)
+ 
+ static inline pte_t pte_mkdirty(pte_t pte)
+ {
+-	return pte_set_flags(pte, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
++	return pte_set_flags(pte, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+ }
+ 
+ static inline pte_t pte_mkyoung(pte_t pte)
+@@ -377,7 +377,7 @@ static inline pmd_t pmd_wrprotect(pmd_t pmd)
+ 
+ static inline pmd_t pmd_mkdirty(pmd_t pmd)
+ {
+-	return pmd_set_flags(pmd, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
++	return pmd_set_flags(pmd, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+ }
+ 
+ static inline pmd_t pmd_mkdevmap(pmd_t pmd)
+@@ -436,7 +436,7 @@ static inline pud_t pud_wrprotect(pud_t pud)
+ 
+ static inline pud_t pud_mkdirty(pud_t pud)
+ {
+-	return pud_set_flags(pud, _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
++	return pud_set_flags(pud, _PAGE_DIRTY_HW | _PAGE_SOFT_DIRTY);
+ }
+ 
+ static inline pud_t pud_mkdevmap(pud_t pud)
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 1e5a40673953..2ac5d46d7c49 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -15,7 +15,7 @@
+ #define _PAGE_BIT_PWT		3	/* page write through */
+ #define _PAGE_BIT_PCD		4	/* page cache disabled */
+ #define _PAGE_BIT_ACCESSED	5	/* was accessed (raised by CPU) */
+-#define _PAGE_BIT_DIRTY		6	/* was written to (raised by CPU) */
++#define _PAGE_BIT_DIRTY_HW	6	/* was written to (raised by CPU) */
+ #define _PAGE_BIT_PSE		7	/* 4 MB (or 2MB) page */
+ #define _PAGE_BIT_PAT		7	/* on 4KB pages */
+ #define _PAGE_BIT_GLOBAL	8	/* Global TLB entry PPro+ */
+@@ -45,7 +45,7 @@
+ #define _PAGE_PWT	(_AT(pteval_t, 1) << _PAGE_BIT_PWT)
+ #define _PAGE_PCD	(_AT(pteval_t, 1) << _PAGE_BIT_PCD)
+ #define _PAGE_ACCESSED	(_AT(pteval_t, 1) << _PAGE_BIT_ACCESSED)
+-#define _PAGE_DIRTY	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY)
++#define _PAGE_DIRTY_HW	(_AT(pteval_t, 1) << _PAGE_BIT_DIRTY_HW)
+ #define _PAGE_PSE	(_AT(pteval_t, 1) << _PAGE_BIT_PSE)
+ #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
+ #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
+@@ -73,7 +73,7 @@
+ 			 _PAGE_PKEY_BIT3)
+ 
+ #if defined(CONFIG_X86_64) || defined(CONFIG_X86_PAE)
+-#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY | _PAGE_ACCESSED)
++#define _PAGE_KNL_ERRATUM_MASK (_PAGE_DIRTY_HW | _PAGE_ACCESSED)
+ #else
+ #define _PAGE_KNL_ERRATUM_MASK 0
+ #endif
+@@ -112,9 +112,9 @@
+ #define _PAGE_PROTNONE	(_AT(pteval_t, 1) << _PAGE_BIT_PROTNONE)
+ 
+ #define _PAGE_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |\
+-				 _PAGE_ACCESSED | _PAGE_DIRTY)
++				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
+ #define _KERNPG_TABLE_NOENC	(_PAGE_PRESENT | _PAGE_RW |		\
+-				 _PAGE_ACCESSED | _PAGE_DIRTY)
++				 _PAGE_ACCESSED | _PAGE_DIRTY_HW)
+ 
+ /*
+  * Set of bits not changed in pte_modify.  The pte's
+@@ -123,7 +123,7 @@
+  * pte_modify() does modify it.
+  */
+ #define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
+-			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
++			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY_HW |	\
+ 			 _PAGE_SOFT_DIRTY)
+ #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
+ 
+@@ -168,7 +168,8 @@ enum page_cache_mode {
+ 					 _PAGE_ACCESSED)
+ 
+ #define __PAGE_KERNEL_EXEC						\
+-	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_GLOBAL)
++	(_PAGE_PRESENT | _PAGE_RW | _PAGE_DIRTY_HW | _PAGE_ACCESSED | \
++	 _PAGE_GLOBAL)
+ #define __PAGE_KERNEL		(__PAGE_KERNEL_EXEC | _PAGE_NX)
+ 
+ #define __PAGE_KERNEL_RO		(__PAGE_KERNEL & ~_PAGE_RW)
+@@ -187,7 +188,7 @@ enum page_cache_mode {
+ #define _PAGE_ENC	(_AT(pteval_t, sme_me_mask))
+ 
+ #define _KERNPG_TABLE	(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED |	\
+-			 _PAGE_DIRTY | _PAGE_ENC)
++			 _PAGE_DIRTY_HW | _PAGE_ENC)
+ #define _PAGE_TABLE	(_KERNPG_TABLE | _PAGE_USER)
+ 
+ #define __PAGE_KERNEL_ENC	(__PAGE_KERNEL | _PAGE_ENC)
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index 11eda21eb697..e7665a4767b3 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -17,7 +17,7 @@
+  */
+ 
+ #define PTR(x) (x << 3)
+-#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY)
++#define PAGE_ATTR (_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED | _PAGE_DIRTY_HW)
+ 
+ /*
+  * control_page + KEXEC_CONTROL_CODE_MAX_SIZE
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 40aa29204baf..52bd01f23316 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -5235,7 +5235,7 @@ static int init_rmode_identity_map(struct kvm *kvm)
+ 	/* Set up identity-mapping pagetable for EPT in real mode */
+ 	for (i = 0; i < PT32_ENT_PER_PAGE; i++) {
+ 		tmp = (i << 22) + (_PAGE_PRESENT | _PAGE_RW | _PAGE_USER |
+-			_PAGE_ACCESSED | _PAGE_DIRTY | _PAGE_PSE);
++			_PAGE_ACCESSED | _PAGE_DIRTY_HW | _PAGE_PSE);
+ 		r = kvm_write_guest_page(kvm, identity_map_pfn,
+ 				&tmp, i * sizeof(tmp), sizeof(tmp));
+ 		if (r < 0)
+-- 
+2.15.1
