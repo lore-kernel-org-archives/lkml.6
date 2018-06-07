@@ -1,93 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id 71xDGn1RGVv6DwAAmS7hNA
-	; Thu, 07 Jun 2018 15:39:00 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id EK1/OB6uGVuqPQAAmS7hNA
+	; Thu, 07 Jun 2018 22:13:50 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 007AE607E7; Thu,  7 Jun 2018 15:38:59 +0000 (UTC)
+	id CFB876089E; Thu,  7 Jun 2018 22:13:50 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	MAILING_LIST_MULTI autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 75A33601B4;
-	Thu,  7 Jun 2018 15:38:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75A33601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id CBE64606FA;
+	Thu,  7 Jun 2018 22:13:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CBE64606FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935452AbeFGPi5 (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Thu, 7 Jun 2018 11:38:57 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:43765 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933193AbeFGPix (ORCPT
+        id S1752149AbeFGWNr (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 18:13:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36978 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751739AbeFGWNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 7 Jun 2018 11:38:53 -0400
-Received: by mail-it0-f70.google.com with SMTP id i9-v6so8165403itb.8
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Jun 2018 08:38:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=0M/fXvT78lIcsKcjUMbL+7c5TkMF9QMbAsWAjrc249U=;
-        b=eZkAc+VDWCFvyOrdU0u5OOEXZ9azj/5+aasCkairl1wULYhXiU/FRGJIE9pHMUziVg
-         lHMen/AbL2nk/bIGg7xnfbZ837kR6H5eqetJNsTFtrXRDfry1PzE9u4qULYrGOZdFycx
-         WJ/wDtb6HkBGKSdGuS3Coxg8ItWi0+eIbTnC9e8CNiP1w9LaPMl/4jMS26tX5wKkmllG
-         w7Z77pvniOaIc6z6dUqQwIXCzWWLdkllnHBI28ATTGbZ61SlmxN1KZinpwRaBZPetNux
-         vhwPYpN6hYBGTuksaMJQKCOuSxjCmvC8BNSm7xepEUZq7qV9VvKe7SiCBJoiTXizXSYK
-         U9Tg==
-X-Gm-Message-State: APt69E13UDGy/1QLC3WXwzsFvrcudRGydaUu2K0Yj4QCyN8NRIU1qp6Y
-        4KyP4ReejrTZhFIMX0TnIjmdbdNP2qANfiFNdkZouxBpAI7t
-X-Google-Smtp-Source: ADUXVKLXVKUrjv9DxtYSEmxQ8qNpf3Tf6ZnMCDHfzy+1CQBRkfYaXObm6I/zy+tvejuE50PwZ8ikCHSnzARjus2RYzSKRxk2uqJM
-MIME-Version: 1.0
-X-Received: by 2002:a6b:700a:: with SMTP id l10-v6mr999556ioc.60.1528385932836;
- Thu, 07 Jun 2018 08:38:52 -0700 (PDT)
-Date: Thu, 07 Jun 2018 08:38:52 -0700
-In-Reply-To: <20180607183627-mutt-send-email-mst@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009b46ec056e0f1460@google.com>
-Subject: Re: Re: KMSAN: uninit-value in _copy_to_iter (2)
-From: syzbot <syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: avagin@openvz.org, davem@davemloft.net, dingtianhong@huawei.com,
-        edumazet@google.com, elena.reshetova@intel.com,
-        jasowang@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, matthew@mjdsystems.ca,
-        mingo@kernel.org, mst@redhat.com, netdev@vger.kernel.org,
-        pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, virtualization@lists.linux-foundation.org,
-        willemb@google.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Thu, 7 Jun 2018 18:13:46 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 829DA480;
+        Thu,  7 Jun 2018 22:13:45 +0000 (UTC)
+Date: Thu, 7 Jun 2018 15:13:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+        Jia He <hejianet@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+Message-Id: <20180607151344.a22a1e7182a2142e6d24e4de@linux-foundation.org>
+In-Reply-To: <20180524133805.6e9bfd4bf48de065ce1d7611@linux-foundation.org>
+References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+        <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+        <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+        <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
+        <6c417ab1-a808-72ea-9618-3d76ec203684@arm.com>
+        <20180524133805.6e9bfd4bf48de065ce1d7611@linux-foundation.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> #syz test: https://github.com/google/kmsan.git/master  
-> d2d741e5d1898dfde1a75ea3d29a9a3e2edf0617
+On Thu, 24 May 2018 13:38:05 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+> > 
+> > Jia, Andrew,
+> > 
+> > What is the status of this patch ?
+> > 
+> 
+> I have it scheduled for 4.18-rc1, with a cc:stable for backporting.
+> 
+> I'd normally put such a fix into 4.17-rcX but I'd like to give Hugh
+> time to review it and to generally give it a bit more time for review
+> and test.
+> 
+> Have you tested it yourself?
 
-"https://github.com/google/kmsan.git/master" does not look like a valid git  
-repo address.
+I'll take your silence as a no.
+
+This patch is quite urgent and is tagged for -stable backporting, yet
+it remains in an unreviewed state.  Any takers?
 
 
-> Subject: vhost: fix info leak
 
-> Fixes: CVE-2018-1118
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index f0be5f35ab28..9beefa6ed1ce 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -2345,6 +2345,9 @@ struct vhost_msg_node *vhost_new_msg(struct  
-> vhost_virtqueue *vq, int type)
->   	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
->   	if (!node)
->   		return NULL;
-> +
-> +	/* Make sure all padding within the structure is initialized. */
-> +	memset(&node->msg, 0, sizeof node->msg);
->   	node->vq = vq;
->   	node->msg.type = type;
->   	return node;
+From: Jia He <jia.he@hxt-semitech.com>
+Subject: mm/ksm.c: ignore STABLE_FLAG of rmap_item->address in rmap_walk_ksm()
+
+In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by
+PAGE_SIZE unaligned for rmap_item->address under memory pressure
+tests(start 20 guests and run memhog in the host).
+
+--------------------------begin--------------------------------------
+[  410.853828] WARNING: CPU: 4 PID: 4641 at
+arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1826
+kvm_age_hva_handler+0xc0/0xc8
+[  410.864518] Modules linked in: vhost_net vhost tap xt_CHECKSUM
+ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT
+nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink
+ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6
+nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security
+ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4
+nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw
+ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter
+rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi
+ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm
+ib_ucm ib_umad rdma_cm ib_cm iw_cm mlx5_ib vfat fat ib_uverbs dm_mirror
+dm_region_hash ib_core dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
+[  410.935101]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs
+libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform
+libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
+[  410.951369] CPU: 4 PID: 4641 Comm: memhog Tainted: G        W
+4.17.0-rc3+ #8
+[  410.959104] Hardware name: <snip for confidential issues>
+[  410.969791] pstate: 80400005 (Nzcv daif +PAN -UAO)
+[  410.974575] pc : kvm_age_hva_handler+0xc0/0xc8
+[  410.979012] lr : handle_hva_to_gpa+0xa8/0xe0
+[  410.983274] sp : ffff801761553290
+[  410.986581] x29: ffff801761553290 x28: 0000000000000000
+[  410.991888] x27: 0000000000000002 x26: 0000000000000000
+[  410.997195] x25: ffff801765430058 x24: ffff0000080b5608
+[  411.002501] x23: 0000000000000000 x22: ffff8017ccb84000
+[  411.007807] x21: 0000000003ff0000 x20: ffff8017ccb84000
+[  411.013113] x19: 000000000000fe00 x18: ffff000008fb3c08
+[  411.018419] x17: 0000000000000000 x16: 0060001645820bd3
+[  411.023725] x15: ffff80176aacbc08 x14: 0000000000000000
+[  411.029031] x13: 0000000000000040 x12: 0000000000000228
+[  411.034337] x11: 0000000000000000 x10: 0000000000000000
+[  411.039643] x9 : 0000000000000010 x8 : 0000000000000004
+[  411.044949] x7 : 0000000000000000 x6 : 00008017f0770000
+[  411.050255] x5 : 0000fffda59f0200 x4 : 0000000000000000
+[  411.055561] x3 : 0000000000000000 x2 : 000000000000fe00
+[  411.060867] x1 : 0000000003ff0000 x0 : 0000000020000000
+[  411.066173] Call trace:
+[  411.068614]  kvm_age_hva_handler+0xc0/0xc8
+[  411.072703]  handle_hva_to_gpa+0xa8/0xe0
+[  411.076619]  kvm_age_hva+0x4c/0xe8
+[  411.080014]  kvm_mmu_notifier_clear_flush_young+0x54/0x98
+[  411.085408]  __mmu_notifier_clear_flush_young+0x6c/0xa0
+[  411.090627]  page_referenced_one+0x154/0x1d8
+[  411.094890]  rmap_walk_ksm+0x12c/0x1d0
+[  411.098632]  rmap_walk+0x94/0xa0
+[  411.101854]  page_referenced+0x194/0x1b0
+[  411.105770]  shrink_page_list+0x674/0xc28
+[  411.109772]  shrink_inactive_list+0x26c/0x5b8
+[  411.114122]  shrink_node_memcg+0x35c/0x620
+[  411.118211]  shrink_node+0x100/0x430
+[  411.121778]  do_try_to_free_pages+0xe0/0x3a8
+[  411.126041]  try_to_free_pages+0xe4/0x230
+[  411.130045]  __alloc_pages_nodemask+0x564/0xdc0
+[  411.134569]  alloc_pages_vma+0x90/0x228
+[  411.138398]  do_anonymous_page+0xc8/0x4d0
+[  411.142400]  __handle_mm_fault+0x4a0/0x508
+[  411.146489]  handle_mm_fault+0xf8/0x1b0
+[  411.150321]  do_page_fault+0x218/0x4b8
+[  411.154064]  do_translation_fault+0x90/0xa0
+[  411.158239]  do_mem_abort+0x68/0xf0
+[  411.161721]  el0_da+0x24/0x28
+---------------------------end---------------------------------------
+
+In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+then the start and end in handle_hva_to_gpa might not be PAGE_SIZE
+aligned.  Thus it will cause exceptions in handle_hva_to_gpa on arm64.
+
+This patch fixes it by ignoring (not removing) the low bits of address
+when doing rmap_walk_ksm.
+
+IMO, it should be backported to stable tree.  the stom of WARN_ONs is
+very easy for me to reproduce.  More than that, I watched a panic (not
+reproducible) as follows:
+
+[35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375 
+mapping: (null) index:0x0
+[35380.815024] flags: 0x1fffc00000000000()
+[35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000 
+ffffecf981470000
+[35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000 
+0000000000000000
+[35380.834294] page dumped because: nonzero _refcount
+[35380.839069] Modules linked in: vhost_net vhost tap ebtable_filter ebtables 
+ip6table_filter ip6_tables iptable_filter fcoe libfcoe libfc 8021q garp mrp stp 
+llc scsi_transport_fc openvswitch nf_conntrack_ipv6 nf_nat_ipv6 
+nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_defrag_ipv6 nf_nat nf_conntrack 
+vfat fat rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi 
+ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_ucm 
+ib_uverbs ib_umad rdma_cm ib_cm iw_cm mlx5_ib ib_core crc32_ce ipmi_ssif tpm_tis 
+tpm_tis_core sg nfsd auth_rpcgss nfs_acl lockd grace sunrpc dm_multipath 
+ip_tables xfs libcrc32c mlx5_core mlxfw devlink ahci_platform libahci_platform 
+libahci qcom_emac sdhci_acpi sdhci hdma mmc_core hdma_mgmt i2c_qup dm_mirror 
+dm_region_hash dm_log dm_mod
+[35380.908341] CPU: 29 PID: 18323 Comm: qemu-kvm Tainted: G W 
+4.14.15-5.hxt.aarch64 #1
+[35380.917107] Hardware name: <snip for confidential issues>
+[35380.930909] Call trace:
+[35380.933345] [<ffff000008088f00>] dump_backtrace+0x0/0x22c
+[35380.938723] [<ffff000008089150>] show_stack+0x24/0x2c
+[35380.943759] [<ffff00000893c078>] dump_stack+0x8c/0xb0
+[35380.948794] [<ffff00000820ab50>] bad_page+0xf4/0x154
+[35380.953740] [<ffff000008211ce8>] free_pages_check_bad+0x90/0x9c
+[35380.959642] [<ffff00000820c430>] free_pcppages_bulk+0x464/0x518
+[35380.965545] [<ffff00000820db98>] free_hot_cold_page+0x22c/0x300
+[35380.971448] [<ffff0000082176fc>] __put_page+0x54/0x60
+[35380.976484] [<ffff0000080b1164>] unmap_stage2_range+0x170/0x2b4
+[35380.982385] [<ffff0000080b12d8>] kvm_unmap_hva_handler+0x30/0x40
+[35380.988375] [<ffff0000080b0104>] handle_hva_to_gpa+0xb0/0xec
+[35380.994016] [<ffff0000080b2644>] kvm_unmap_hva_range+0x5c/0xd0
+[35380.999833] [<ffff0000080a8054>] 
+
+I even injected a fault on purpose in kvm_unmap_hva_range by seting
+size=size-0x200, the call trace is similar as above.  So I thought the
+panic is similarly caused by the root cause of WARN_ON.
+
+Link: http://lkml.kernel.org/r/1525403506-6750-1-git-send-email-hejianet@gmail.com
+Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Jia He <hejianet@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/ksm.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff -puN mm/ksm.c~mm-ksm-ignore-stable_flag-of-rmap_item-address-in-rmap_walk_ksm mm/ksm.c
+--- a/mm/ksm.c~mm-ksm-ignore-stable_flag-of-rmap_item-address-in-rmap_walk_ksm
++++ a/mm/ksm.c
+@@ -216,6 +216,8 @@ struct rmap_item {
+ #define SEQNR_MASK	0x0ff	/* low bits of unstable tree seqnr */
+ #define UNSTABLE_FLAG	0x100	/* is a node of the unstable tree */
+ #define STABLE_FLAG	0x200	/* is listed from the stable tree */
++#define KSM_FLAG_MASK	(SEQNR_MASK|UNSTABLE_FLAG|STABLE_FLAG)
++				/* to mask all the flags */
+ 
+ /* The stable and unstable tree heads */
+ static struct rb_root one_stable_tree[1] = { RB_ROOT };
+@@ -2598,10 +2600,15 @@ again:
+ 		anon_vma_lock_read(anon_vma);
+ 		anon_vma_interval_tree_foreach(vmac, &anon_vma->rb_root,
+ 					       0, ULONG_MAX) {
++			unsigned long addr;
++
+ 			cond_resched();
+ 			vma = vmac->vma;
+-			if (rmap_item->address < vma->vm_start ||
+-			    rmap_item->address >= vma->vm_end)
++
++			/* Ignore the stable/unstable/sqnr flags */
++			addr = rmap_item->address & ~KSM_FLAG_MASK;
++
++			if (addr < vma->vm_start || addr >= vma->vm_end)
+ 				continue;
+ 			/*
+ 			 * Initially we examine only the vma which covers this
+@@ -2615,8 +2622,7 @@ again:
+ 			if (rwc->invalid_vma && rwc->invalid_vma(vma, rwc->arg))
+ 				continue;
+ 
+-			if (!rwc->rmap_one(page, vma,
+-					rmap_item->address, rwc->arg)) {
++			if (!rwc->rmap_one(page, vma, addr, rwc->arg)) {
+ 				anon_vma_unlock_read(anon_vma);
+ 				return;
+ 			}
+_
