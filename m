@@ -1,294 +1,220 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id V04qOueqGFscGQAAmS7hNA
-	; Thu, 07 Jun 2018 03:49:25 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id hGC9Bx9TGVt9HAAAmS7hNA
+	; Thu, 07 Jun 2018 15:46:38 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id C00C9607F7; Thu,  7 Jun 2018 03:49:25 +0000 (UTC)
-Authentication-Results: smtp.codeaurora.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oOSvoHd8"
+	id C14766089E; Thu,  7 Jun 2018 15:46:38 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=2.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id F31B760290;
-	Thu,  7 Jun 2018 03:49:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F31B760290
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 22228607E7;
+	Thu,  7 Jun 2018 15:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22228607E7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932546AbeFGDtW (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 23:49:22 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41547 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932118AbeFGDtU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 23:49:20 -0400
-Received: by mail-pg0-f68.google.com with SMTP id l65-v6so4031372pgl.8;
-        Wed, 06 Jun 2018 20:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rfaI/Xv3SN/BsS1QOT9Yd1Ltcxj27uk5U8iflrKC1RE=;
-        b=oOSvoHd8ifdx6mF7YI0fTiaJBZNrayr15AA/c4eQfylzzXh+3kuFBgFXTpZ2UcBNw3
-         UGTfD1oZVPvYZK/NloQ4xEkoT9u4dm3tS3Agz/tomplHtyvAoocvNdDEYn80tVPFPumv
-         1CZYLkwM4yxPWI+KItgi+grBpVjU0QCUcBGC6yb8uNSZjVP42HLfA+5A1V0BMEL/lYEb
-         ytzro8eiBpsQwZX39WnW+yFpez5u21jchqZvmKurBSfgo2OSSp+7pC7gX7qHnJezsDhu
-         xnlji7vJX3GToImncxIXvrlVVSo0QFdQWWkc96Ou/9nbY5FO8Tv7dW7IojbqO3O6y1XB
-         mxSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rfaI/Xv3SN/BsS1QOT9Yd1Ltcxj27uk5U8iflrKC1RE=;
-        b=F1D2WW5KbSAYMJw7zlxUbcaZ3qTM5w6Mu4c8nutp5du9w1z4K43axANEaQQz9Iz5I2
-         1kTYUn7L3EeKlbb1uyzJR5jYhfiCDmRLfNZQejqDb0gXUP7eQi40gLYy3nAgvA26K+Yk
-         7Zy92NKgm9FI2ad2HA2ya3o9QLYJPbFbodH6IMj66hh3BaIUlq5ff9aJNBI1rAQVJ1q1
-         2ftqds6nCFui57Dy2FOWdV3IHN1ZC6cztN5ACOeG/z4LSPhhFmiUu8jEPNiJB1nENEqo
-         WraprybkgdO5u8cIYob61ax3Cw8dp2J0T+fOIG9zQq58lbUikkHvsOu3rXmw40jk2qy0
-         /E8Q==
-X-Gm-Message-State: APt69E3dSGuWkAstuzztn7oqfW55duPT6z6tGTYvSJOyGkZ+eVx4GTX9
-        H5XucfywoFSAgkRKOQ4oQIAKIA==
-X-Google-Smtp-Source: ADUXVKJJ9vmedE/XE+zjCxl6eEb+r+8Kir9jyizKaRwzt4ICwdtMOYJpUY8kQMCZmG5QeuGqES0cJw==
-X-Received: by 2002:a62:1747:: with SMTP id 68-v6mr211117pfx.69.1528343360020;
-        Wed, 06 Jun 2018 20:49:20 -0700 (PDT)
-Received: from localhost.localdomain ([103.62.68.119])
-        by smtp.googlemail.com with ESMTPSA id o72-v6sm23860229pfk.76.2018.06.06.20.49.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Jun 2018 20:49:19 -0700 (PDT)
-From: Varsha Rao <rvarsha016@gmail.com>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <der.herr@hofr.at>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Varsha Rao <rvarsha016@gmail.com>
-Subject: [PATCH v2 2/2] message: fusion: Replace NULL comparison
-Date: Thu,  7 Jun 2018 09:19:02 +0530
-Message-Id: <32f62942e8803ea1c9f1389c3784bfcf8962584d.1528342739.git.rvarsha016@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1528342739.git.rvarsha016@gmail.com>
-References: <cover.1528342739.git.rvarsha016@gmail.com>
+        id S935232AbeFGPqf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 11:46:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36280 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934229AbeFGOkc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:40:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2018 07:40:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,486,1520924400";
+   d="scan'208";a="47542286"
+Received: from 2b52.sc.intel.com ([143.183.136.51])
+  by orsmga008.jf.intel.com with ESMTP; 07 Jun 2018 07:40:31 -0700
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
+To: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH 1/9] x86/cet: Control protection exception handler
+Date: Thu,  7 Jun 2018 07:36:57 -0700
+Message-Id: <20180607143705.3531-2-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180607143705.3531-1-yu-cheng.yu@intel.com>
+References: <20180607143705.3531-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace x == NULL with !x, to fix checkpatch issue. This patch also
-fixes line over 80 characters warning.
+A control protection exception is triggered when a control flow transfer
+attempt violated shadow stack or indirect branch tracking constraints.
+For example, the return address for a RET instruction differs from the
+safe copy on the shadow stack; or a JMP instruction arrives at a non-
+ENDBR instruction.
 
-Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
+The control protection exception handler works in a similar way as the
+general protection fault handler.
+
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
-Following coccinelle script is used to fix the warnings.
+ arch/x86/entry/entry_32.S    |  5 ++++
+ arch/x86/entry/entry_64.S    |  2 +-
+ arch/x86/include/asm/traps.h |  3 +++
+ arch/x86/kernel/idt.c        |  1 +
+ arch/x86/kernel/traps.c      | 61 ++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 71 insertions(+), 1 deletion(-)
 
-@disable is_null@
-expression e;
-@@
-- e == NULL
-+!e
-
-Changes in v2:
-- Removed coccinelle script from commit message.
-- Fixed line over 80 characters warning.
-
- drivers/message/fusion/mptbase.c | 46 ++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/message/fusion/mptbase.c b/drivers/message/fusion/mptbase.c
-index 5b98b7fca0f2..8af294619d92 100644
---- a/drivers/message/fusion/mptbase.c
-+++ b/drivers/message/fusion/mptbase.c
-@@ -488,7 +488,7 @@ mpt_turbo_reply(MPT_ADAPTER *ioc, u32 pa)
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index bef8e2b202a8..14b63ef0d7d8 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -1070,6 +1070,11 @@ ENTRY(general_protection)
+ 	jmp	common_exception
+ END(general_protection)
  
- 	/*  Check for (valid) IO callback!  */
- 	if (!cb_idx || cb_idx >= MPT_MAX_PROTOCOL_DRIVERS ||
--		MptCallbacks[cb_idx] == NULL) {
-+		!MptCallbacks[cb_idx]) {
- 		printk(MYIOC_s_WARN_FMT "%s: Invalid cb_idx (%d)!\n",
- 				__func__, ioc->name, cb_idx);
- 		goto out;
-@@ -552,7 +552,7 @@ mpt_reply(MPT_ADAPTER *ioc, u32 pa)
++ENTRY(control_protection)
++	pushl	$do_control_protection
++	jmp	common_exception
++END(control_protection)
++
+ #ifdef CONFIG_KVM_GUEST
+ ENTRY(async_page_fault)
+ 	ASM_CLAC
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 3166b9674429..5230f705d229 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -999,7 +999,7 @@ idtentry spurious_interrupt_bug		do_spurious_interrupt_bug	has_error_code=0
+ idtentry coprocessor_error		do_coprocessor_error		has_error_code=0
+ idtentry alignment_check		do_alignment_check		has_error_code=1
+ idtentry simd_coprocessor_error		do_simd_coprocessor_error	has_error_code=0
+-
++idtentry control_protection		do_control_protection		has_error_code=1
  
- 	/*  Check for (valid) IO callback!  */
- 	if (!cb_idx || cb_idx >= MPT_MAX_PROTOCOL_DRIVERS ||
--		MptCallbacks[cb_idx] == NULL) {
-+		!MptCallbacks[cb_idx]) {
- 		printk(MYIOC_s_WARN_FMT "%s: Invalid cb_idx (%d)!\n",
- 				__func__, ioc->name, cb_idx);
- 		freeme = 0;
-@@ -707,7 +707,7 @@ mpt_register(MPT_CALLBACK cbfunc, MPT_DRIVER_CLASS dclass, char *func_name)
- 	 *  (slot/handle 0 is reserved!)
- 	 */
- 	for (cb_idx = MPT_MAX_PROTOCOL_DRIVERS-1; cb_idx; cb_idx--) {
--		if (MptCallbacks[cb_idx] == NULL) {
-+		if (!MptCallbacks[cb_idx]) {
- 			MptCallbacks[cb_idx] = cbfunc;
- 			MptDriverClass[cb_idx] = dclass;
- 			MptEvHandlers[cb_idx] = NULL;
-@@ -928,7 +928,7 @@ mpt_get_msg_frame(u8 cb_idx, MPT_ADAPTER *ioc)
- 	spin_unlock_irqrestore(&ioc->FreeQlock, flags);
- 
- #ifdef MFCNT
--	if (mf == NULL)
-+	if (!mf)
- 		printk(MYIOC_s_WARN_FMT "IOC Active. No free Msg Frames! "
- 		    "Count 0x%x Max 0x%x\n", ioc->name, ioc->mfcnt,
- 		    ioc->req_depth);
-@@ -1723,7 +1723,7 @@ mpt_mapresources(MPT_ADAPTER *ioc)
- 	/* Get logical ptr for PciMem0 space */
- 	/*mem = ioremap(mem_phys, msize);*/
- 	mem = ioremap(mem_phys, msize);
--	if (mem == NULL) {
-+	if (!mem) {
- 		printk(MYIOC_s_ERR_FMT ": ERROR - Unable to map adapter"
- 			" memory!\n", ioc->name);
- 		r = -EINVAL;
-@@ -1780,7 +1780,7 @@ mpt_attach(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	/*
+ 	 * Reload gs selector with exception handling
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 3de69330e6c5..5196050ff3d5 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -26,6 +26,7 @@ asmlinkage void invalid_TSS(void);
+ asmlinkage void segment_not_present(void);
+ asmlinkage void stack_segment(void);
+ asmlinkage void general_protection(void);
++asmlinkage void control_protection(void);
+ asmlinkage void page_fault(void);
+ asmlinkage void async_page_fault(void);
+ asmlinkage void spurious_interrupt_bug(void);
+@@ -77,6 +78,7 @@ dotraplinkage void do_stack_segment(struct pt_regs *, long);
+ dotraplinkage void do_double_fault(struct pt_regs *, long);
  #endif
+ dotraplinkage void do_general_protection(struct pt_regs *, long);
++dotraplinkage void do_control_protection(struct pt_regs *, long);
+ dotraplinkage void do_page_fault(struct pt_regs *, unsigned long);
+ dotraplinkage void do_spurious_interrupt_bug(struct pt_regs *, long);
+ dotraplinkage void do_coprocessor_error(struct pt_regs *, long);
+@@ -142,6 +144,7 @@ enum {
+ 	X86_TRAP_AC,		/* 17, Alignment Check */
+ 	X86_TRAP_MC,		/* 18, Machine Check */
+ 	X86_TRAP_XF,		/* 19, SIMD Floating-Point Exception */
++	X86_TRAP_CP = 21,	/* 21 Control Protection Fault */
+ 	X86_TRAP_IRET = 32,	/* 32, IRET Exception */
+ };
  
- 	ioc = kzalloc(sizeof(MPT_ADAPTER), GFP_ATOMIC);
--	if (ioc == NULL) {
-+	if (!ioc) {
- 		printk(KERN_ERR MYNAM ": ERROR - Insufficient memory to add adapter!\n");
- 		return -ENOMEM;
- 	}
-@@ -2821,7 +2821,7 @@ mpt_adapter_dispose(MPT_ADAPTER *ioc)
+diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
+index 2c3a1b4294eb..d00493709cec 100644
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -85,6 +85,7 @@ static const __initconst struct idt_data def_idts[] = {
+ 	INTG(X86_TRAP_MF,		coprocessor_error),
+ 	INTG(X86_TRAP_AC,		alignment_check),
+ 	INTG(X86_TRAP_XF,		simd_coprocessor_error),
++	INTG(X86_TRAP_CP,		control_protection),
+ 
+ #ifdef CONFIG_X86_32
+ 	TSKG(X86_TRAP_DF,		GDT_ENTRY_DOUBLEFAULT_TSS),
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 03f3d7695dac..4e8769a19aaf 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -577,6 +577,67 @@ do_general_protection(struct pt_regs *regs, long error_code)
+ }
+ NOKPROBE_SYMBOL(do_general_protection);
+ 
++static const char *control_protection_err[] =
++{
++	"near-ret",
++	"far-ret/iret",
++	"endbranch",
++	"rstorssp",
++	"setssbsy",
++	"unknown",
++};
++
++/*
++ * When a control protection exception occurs, send a signal
++ * to the responsible application.  Currently, control
++ * protection is only enabled for the user mode.  This
++ * exception should not come from the kernel mode.
++ */
++dotraplinkage void
++do_control_protection(struct pt_regs *regs, long error_code)
++{
++	struct task_struct *tsk;
++
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
++	cond_local_irq_enable(regs);
++
++	tsk = current;
++	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
++	    !cpu_feature_enabled(X86_FEATURE_IBT)) {
++		goto exit;
++	}
++
++	if (!user_mode(regs)) {
++		tsk->thread.error_code = error_code;
++		tsk->thread.trap_nr = X86_TRAP_CP;
++		if (notify_die(DIE_TRAP, "control protection fault", regs,
++			       error_code, X86_TRAP_CP, SIGSEGV) != NOTIFY_STOP)
++			die("control protection fault", regs, error_code);
++		return;
++	}
++
++	tsk->thread.error_code = error_code;
++	tsk->thread.trap_nr = X86_TRAP_CP;
++
++	if (show_unhandled_signals && unhandled_signal(tsk, SIGSEGV) &&
++	    printk_ratelimit()) {
++		unsigned int max_idx, err_idx;
++
++		max_idx = ARRAY_SIZE(control_protection_err) - 1;
++		err_idx = min((unsigned int)error_code - 1, max_idx);
++		pr_info("%s[%d] control protection ip:%lx sp:%lx error:%lx(%s)",
++			tsk->comm, task_pid_nr(tsk),
++			regs->ip, regs->sp, error_code,
++			control_protection_err[err_idx]);
++		print_vma_addr(" in ", regs->ip);
++		pr_cont("\n");
++	}
++
++exit:
++	force_sig_info(SIGSEGV, SEND_SIG_PRIV, tsk);
++}
++NOKPROBE_SYMBOL(do_control_protection);
++
+ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
  {
- 	int sz_first, sz_last;
- 
--	if (ioc == NULL)
-+	if (!ioc)
- 		return;
- 
- 	sz_first = ioc->alloc_total;
-@@ -4328,17 +4328,17 @@ initChainBuffers(MPT_ADAPTER *ioc)
- 	/* ReqToChain size must equal the req_depth
- 	 * index = req_idx
- 	 */
--	if (ioc->ReqToChain == NULL) {
-+	if (!ioc->ReqToChain) {
- 		sz = ioc->req_depth * sizeof(int);
- 		mem = kmalloc(sz, GFP_ATOMIC);
--		if (mem == NULL)
-+		if (!mem)
- 			return -1;
- 
- 		ioc->ReqToChain = (int *) mem;
- 		dinitprintk(ioc, printk(MYIOC_s_DEBUG_FMT "ReqToChain alloc  @ %p, sz=%d bytes\n",
- 			 	ioc->name, mem, sz));
- 		mem = kmalloc(sz, GFP_ATOMIC);
--		if (mem == NULL)
-+		if (!mem)
- 			return -1;
- 
- 		ioc->RequestNB = (int *) mem;
-@@ -4403,9 +4403,9 @@ initChainBuffers(MPT_ADAPTER *ioc)
- 	ioc->num_chain = num_chain;
- 
- 	sz = num_chain * sizeof(int);
--	if (ioc->ChainToChain == NULL) {
-+	if (!ioc->ChainToChain) {
- 		mem = kmalloc(sz, GFP_ATOMIC);
--		if (mem == NULL)
-+		if (!mem)
- 			return -1;
- 
- 		ioc->ChainToChain = (int *) mem;
-@@ -4443,7 +4443,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
- 
- 	/*  Prime reply FIFO...  */
- 
--	if (ioc->reply_frames == NULL) {
-+	if (!ioc->reply_frames) {
- 		if ( (num_chain = initChainBuffers(ioc)) < 0)
- 			return -1;
- 		/*
-@@ -4495,7 +4495,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
- 
- 		total_size += sz;
- 		mem = pci_alloc_consistent(ioc->pcidev, total_size, &alloc_dma);
--		if (mem == NULL) {
-+		if (!mem) {
- 			printk(MYIOC_s_ERR_FMT "Unable to allocate Reply, Request, Chain Buffers!\n",
- 				ioc->name);
- 			goto out_fail;
-@@ -4573,7 +4573,7 @@ PrimeIocFifos(MPT_ADAPTER *ioc)
- 		sz = (ioc->req_depth * MPT_SENSE_BUFFER_ALLOC);
- 		ioc->sense_buf_pool =
- 			pci_alloc_consistent(ioc->pcidev, sz, &ioc->sense_buf_pool_dma);
--		if (ioc->sense_buf_pool == NULL) {
-+		if (!ioc->sense_buf_pool) {
- 			printk(MYIOC_s_ERR_FMT "Unable to allocate Sense Buffers!\n",
- 				ioc->name);
- 			goto out_fail;
-@@ -5092,7 +5092,7 @@ mptbase_sas_persist_operation(MPT_ADAPTER *ioc, u8 persist_opcode)
- 
- 	/* Get a MF for this command.
- 	 */
--	if ((mf = mpt_get_msg_frame(mpt_base_index, ioc)) == NULL) {
-+	if (!(mf = mpt_get_msg_frame(mpt_base_index, ioc))) {
- 		printk(KERN_DEBUG "%s: no msg frames!\n", __func__);
- 		ret = -1;
- 		goto out;
-@@ -5372,7 +5372,7 @@ mpt_GetScsiPortSettings(MPT_ADAPTER *ioc, int portnum)
- 		u8	*mem;
- 		sz = MPT_MAX_SCSI_DEVICES * sizeof(int);
- 		mem = kmalloc(sz, GFP_ATOMIC);
--		if (mem == NULL)
-+		if (!mem)
- 			return -EFAULT;
- 
- 		ioc->spi_data.nvram = (int *) mem;
-@@ -5692,8 +5692,8 @@ mpt_inactive_raid_volumes(MPT_ADAPTER *ioc, u8 channel, u8 id)
- 		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
- 			continue;
- 
--		if ((component_info = kmalloc(sizeof (*component_info),
--		 GFP_KERNEL)) == NULL)
-+		component_info = kmalloc(sizeof(*component_info), GFP_KERNEL);
-+		if (!component_info)
- 			continue;
- 
- 		component_info->volumeID = id;
-@@ -6106,7 +6106,7 @@ mpt_read_ioc_pg_4(MPT_ADAPTER *ioc)
- 	if (header.PageLength == 0)
- 		return;
- 
--	if ( (pIoc4 = ioc->spi_data.pIocPg4) == NULL ) {
-+	if (!(pIoc4 = ioc->spi_data.pIocPg4)) {
- 		iocpage4sz = (header.PageLength + 4) * 4; /* Allow 4 additional SEP's */
- 		pIoc4 = pci_alloc_consistent(ioc->pcidev, iocpage4sz, &ioc4_dma);
- 		if (!pIoc4)
-@@ -6302,7 +6302,7 @@ SendEventAck(MPT_ADAPTER *ioc, EventNotificationReply_t *evnp)
- {
- 	EventAck_t	*pAck;
- 
--	if ((pAck = (EventAck_t *) mpt_get_msg_frame(mpt_base_index, ioc)) == NULL) {
-+	if (!(pAck = (EventAck_t *)mpt_get_msg_frame(mpt_base_index, ioc))) {
- 		dfailprintk(ioc, printk(MYIOC_s_WARN_FMT "%s, no msg frames!!\n",
- 		    ioc->name, __func__));
- 		return -1;
-@@ -6393,7 +6393,7 @@ mpt_config(MPT_ADAPTER *ioc, CONFIGPARMS *pCfg)
- 
- 	/* Get and Populate a free Frame
- 	 */
--	if ((mf = mpt_get_msg_frame(mpt_base_index, ioc)) == NULL) {
-+	if (!(mf = mpt_get_msg_frame(mpt_base_index, ioc))) {
- 		dcprintk(ioc, printk(MYIOC_s_WARN_FMT
- 		"mpt_config: no msg frames!\n", ioc->name));
- 		ret = -EAGAIN;
-@@ -6605,7 +6605,7 @@ static int
- procmpt_create(void)
- {
- 	mpt_proc_root_dir = proc_mkdir(MPT_PROCFS_MPTBASEDIR, NULL);
--	if (mpt_proc_root_dir == NULL)
-+	if (!mpt_proc_root_dir)
- 		return -ENOTDIR;
- 
- 	proc_create_single("summary", S_IRUGO, mpt_proc_root_dir,
+ #ifdef CONFIG_DYNAMIC_FTRACE
 -- 
-2.17.0
+2.15.1
