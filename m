@@ -1,131 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id yCfYNmeGGlugeAAAmS7hNA
-	; Fri, 08 Jun 2018 13:36:39 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id Xo8NLNTkGFudKAAAmS7hNA
+	; Thu, 07 Jun 2018 07:55:00 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CC059607E4; Fri,  8 Jun 2018 13:36:39 +0000 (UTC)
+	id 9FF09608B8; Thu,  7 Jun 2018 07:55:00 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 43E5F602FC;
-	Fri,  8 Jun 2018 13:36:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43E5F602FC
+	by smtp.codeaurora.org (Postfix) with ESMTP id 2DF8660452;
+	Thu,  7 Jun 2018 07:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DF8660452
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeFHNgh (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Fri, 8 Jun 2018 09:36:37 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43804 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751019AbeFHNgf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 8 Jun 2018 09:36:35 -0400
-Received: by mail-wr0-f196.google.com with SMTP id d2-v6so13418003wrm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Jun 2018 06:36:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mKz3xHX82bUPd+a8FBDIKg/f6pAqWfUMpc3YQuMxUqc=;
-        b=T23EuApVKIUlQ1mER1LdoCmhBUCc8Y4qIxGC8VFobfhyHJ2CZ2q/Bhp0pkelXuA3CT
-         0VfNFiVmGB50NGk20a0XBHT8V7YPu+ZgnmHcqf6fAyIOlz97wh7F3T++38ph1GlTnxe5
-         5Grr1HF+fViDfRwQv7SsuYdZ96E+uFtvScrMbp7mSOCdEYwF6ckzIvJK95UH7/uUOjuP
-         Xgx2oyhBWuiI5Kcpt4D9x1P1xiLJSao585m6ELWYdCE4PJ6ArlG+l5EwtfwuMeXCF36B
-         9o8DdxNrkF8FcwwJwi90/pQv5Xn3NnY44UgNmzlXdILcYAo9dFMiKt8TqgpOn205mwSb
-         XyPw==
-X-Gm-Message-State: APt69E0Jn1TwC1qqvWUvgM3WMbmEpr7Dq8BmS6EiPtTdEDlORzRutpg7
-        1ZmLd8OrMqzNst+LeAO/oTGyHg==
-X-Google-Smtp-Source: ADUXVKLtwtU+w1c6soNRfdp+KM+RdvCTUI7/aGByEifOBB1dS9e8a0Vvg8n/3qeYVKq0GglEl8ZGuQ==
-X-Received: by 2002:adf:ba01:: with SMTP id o1-v6mr5379097wrg.249.1528464994729;
-        Fri, 08 Jun 2018 06:36:34 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id k17-v6sm2464530wmc.23.2018.06.08.06.36.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 08 Jun 2018 06:36:32 -0700 (PDT)
-Date: Fri, 8 Jun 2018 15:36:30 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>
-Subject: Re: [PATCH v6 06/11] cpufreq/schedutil: use dl utilization tracking
-Message-ID: <20180608133630.GS16089@localhost.localdomain>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-7-git-send-email-vincent.guittot@linaro.org>
- <20180608123959.GE16089@localhost.localdomain>
- <CAKfTPtCTMFN2Hed9Ku=VLH2Uwm4sC1kBBa5yRbb20r0o=-R7jw@mail.gmail.com>
- <20180608125448.GR16089@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180608125448.GR16089@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753402AbeFGHyz (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 03:54:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47004 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752881AbeFGHyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 03:54:53 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F35B7401EF1C;
+        Thu,  7 Jun 2018 07:54:52 +0000 (UTC)
+Received: from plouf.banquise.eu.com (ovpn-116-40.ams2.redhat.com [10.36.116.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 65BC12026DEF;
+        Thu,  7 Jun 2018 07:54:51 +0000 (UTC)
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To: Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mario.Limonciello@dell.com,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 00/13] Hid multitouch rewrite, support os system multi-axis devices, take 2
+Date: Thu,  7 Jun 2018 09:54:35 +0200
+Message-Id: <20180607075448.5706-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 07:54:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 07 Jun 2018 07:54:53 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/18 14:54, Juri Lelli wrote:
-> On 08/06/18 14:48, Vincent Guittot wrote:
-> > On 8 June 2018 at 14:39, Juri Lelli <juri.lelli@redhat.com> wrote:
-> > > Hi Vincent,
-> > >
-> > > On 08/06/18 14:09, Vincent Guittot wrote:
-> > >> Now that we have both the dl class bandwidth requirement and the dl class
-> > >> utilization, we can detect when CPU is fully used so we should run at max.
-> > >> Otherwise, we keep using the dl bandwidth requirement to define the
-> > >> utilization of the CPU
-> > >>
-> > >> Cc: Ingo Molnar <mingo@redhat.com>
-> > >> Cc: Peter Zijlstra <peterz@infradead.org>
-> > >> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > >> ---
-> > >
-> > > [...]
-> > >
-> > >> @@ -190,20 +192,24 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
-> > >>       if (rq->rt.rt_nr_running)
-> > >>               return sg_cpu->max;
-> > >>
-> > >> -     util = sg_cpu->util_dl;
-> > >> -     util += sg_cpu->util_cfs;
-> > >> +     util = sg_cpu->util_cfs;
-> > >>       util += sg_cpu->util_rt;
-> > >>
-> > >> +     if ((util + sg_cpu->util_dl) >= sg_cpu->max)
-> > >> +             return sg_cpu->max;
-> > >> +
-> > >
-> > > Mmm, won't we run at max (or reach max) with a, say, 100ms/500ms DL task
-> > > running alone?
-> > 
-> > not for a 100ms running task. You have to run more than 320ms to reach max value
-> > 
-> > 100ms/500ms will vary between 0 and 907
-> 
-> OK, right, my point I guess is still that such a task will run fine at
-> ~250 and it might be save more energy by doing so?
+This is a new version of my previous series with few improvements.
+I also merged the patches Dmitry sent out last year regarding the
+MT_TOOL_PALM. Dmitry, I kept your SoB lines, feel free to yell if
+there is something wrong.
 
-As discussed on IRC, we still endup selecting 1/5 of max freq because
-util_dl is below max.
+Compared to the previous series some highlights:
+- no more changes in input-core (behavior changes I mean)
+- I split out the creation of MT_TOOL_DIAL
+- I also fixed the location of MT_TOOL_* declaration in the uapi
+- the Totem now has a hint that it will be reporting MT_TOOL_DIAL
+  (setting the min/max to MT_TOOL_DIAL tells userspace that this is the
+  only possible value)
+- MT_TOOL_PALM changes from Dmitry are integrated.
 
-So, turning point is at ~320ms/[something_bigger], which looks a pretty
-big runtime, but I'm not sure if having that is OK. Also, it becomes
-smaller with CFS/RT background "perturbations". Mmm.
+Regarding the last item, we had a discussion whether or not quirking
+the devices. After some brainstorming Peter and I came to a possible
+explanation on why Dmitry was the only one detecting those issues.
 
-BTW, adding Luca and Claudio. :)
+I never had a report of a Win8 touchscreen that does palm rejection.
+And if you think of it, when you use a touchscreen, you carefully
+place your hand so it doesn't rest on the surface. Well, things are
+different with dual sensors like Wacom devices. You can expect the
+user to rest his/her palm on the surface while holding the pen (or
+your writing gets all wobbly which kills the purpose).
+
+So if Wacom or Pen+touch devices are the only ones having palm rejection,
+in the libinput/Xorg world, the userspace tablet driver ends up doing palm
+rejection for us if it's not already filtered out by the kernel.
+
+I am not sure about how ChromeOS or Android handle such situations, but
+there is a chance this is what the ChromeOS team was experiencing.
+Given that assumption, I think we are safer to just keep the workaround
+for all devices, knowing that it will only be triggered for a few devices.
+
+Cheers,
+Benjamin
+
+Benjamin Tissoires (13):
+  input: move MT_TOOL_* to input-event-codes.h
+  input: add MT_TOOL_DIAL
+  HID: multitouch: make sure the static list of class is not changed
+  HID: multitouch: Store per collection multitouch data
+  HID: multitouch: store a per application quirks value
+  HID: multitouch: ditch mt_report_id
+  HID: multitouch: remove one copy of values
+  HID: input: enable Totem on the Dell Canvas 27
+  HID: core: do not upper bound the collection stack
+  HID: microsoft: support the Surface Dial
+  HID: multitouch: report MT_TOOL_PALM for non-confident touches
+  HID: multitouch: touchscreens also use confidence reports
+  HID: multitouch: handle palm for touchscreens
+
+ Documentation/input/multi-touch-protocol.rst |  12 +-
+ drivers/hid/hid-core.c                       |  17 +-
+ drivers/hid/hid-input.c                      |   3 +
+ drivers/hid/hid-microsoft.c                  |  49 +-
+ drivers/hid/hid-multitouch.c                 | 996 ++++++++++++++++-----------
+ include/linux/hid.h                          |  15 +-
+ include/uapi/linux/input-event-codes.h       |   9 +
+ include/uapi/linux/input.h                   |   8 -
+ 8 files changed, 691 insertions(+), 418 deletions(-)
+
+-- 
+2.14.3
