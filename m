@@ -1,195 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id bI+KNlqZHVsMEAAAmS7hNA
-	; Sun, 10 Jun 2018 21:34:18 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id d2+2HYf1GFt+PgAAmS7hNA
+	; Thu, 07 Jun 2018 09:06:37 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id CCF1160795; Sun, 10 Jun 2018 21:34:18 +0000 (UTC)
+	id 9D363607E7; Thu,  7 Jun 2018 09:06:37 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=2.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	MAILING_LIST_MULTI autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 306A3604D4;
-	Sun, 10 Jun 2018 21:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 306A3604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 228C76063F;
+	Thu,  7 Jun 2018 09:06:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 228C76063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932223AbeFJVeP (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 21 others); Sun, 10 Jun 2018 17:34:15 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:16964 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753726AbeFJVeM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 10 Jun 2018 17:34:12 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Sun, 10 Jun 2018 14:33:45 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 49CFE406F4;
-        Sun, 10 Jun 2018 14:34:06 -0700 (PDT)
-From: Nadav Amit <namit@vmware.com>
-To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: Nadav Amit <namit@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v3 8/9] x86: cpufeature: use macros instead of inline assembly
-Date: Sun, 10 Jun 2018 07:19:10 -0700
-Message-ID: <20180610141911.52948-9-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180610141911.52948-1-namit@vmware.com>
-References: <20180610141911.52948-1-namit@vmware.com>
+        id S932756AbeFGJGf (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 05:06:35 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48670 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753175AbeFGJGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 05:06:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D75C515AB;
+        Thu,  7 Jun 2018 02:06:32 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BBBED3F59D;
+        Thu,  7 Jun 2018 02:06:30 -0700 (PDT)
+Subject: Re: [PATCH v5 07/10] sched/irq: add irq utilization tracking
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+References: <1527253951-22709-1-git-send-email-vincent.guittot@linaro.org>
+ <1527253951-22709-8-git-send-email-vincent.guittot@linaro.org>
+ <72473e6f-8ade-8e26-3282-276fcae4c4c7@arm.com>
+ <CAKfTPtC8c9sP7TjefZPN2SFuNVGS7Q12WBj3BBYEbJFzxVN-2A@mail.gmail.com>
+ <fba5a810-3c3b-dc8b-15fb-8078a591ec2b@arm.com>
+ <CAKfTPtAMf1FUyY-HtziVzZ8JecnKTrQ1LaF60hg6bd=Nv9pCQQ@mail.gmail.com>
+ <4368a36c-3df4-1454-1837-473e569b9080@arm.com>
+ <CAKfTPtCc0pgxnBU4YN5mSxDqfq9k7=qEWE2nDp+MipPNsTwzWw@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <5ff5d418-ed84-9747-3868-597223ceb7e2@arm.com>
+Date: Thu, 7 Jun 2018 11:06:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+In-Reply-To: <CAKfTPtCc0pgxnBU4YN5mSxDqfq9k7=qEWE2nDp+MipPNsTwzWw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use assembly macros for static_cpu_has() and call them from inline
-assembly.  This not only makes the code more readable, but also improves
-compilation decision, specifically inline decisions which GCC base on
-the number of new lines in inline assembly.
+On 06/07/2018 10:44 AM, Vincent Guittot wrote:
+> On 7 June 2018 at 10:29, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>> On 06/06/2018 06:06 PM, Vincent Guittot wrote:
+>>>
+>>> Hi Dietmar,
+>>>
+>>> Sorry for the late answer
+>>>
+>>> On 31 May 2018 at 18:54, Dietmar Eggemann <dietmar.eggemann@arm.com>
+>>> wrote:
+>>>>
+>>>> On 05/30/2018 08:45 PM, Vincent Guittot wrote:
+>>>>>
+>>>>> Hi Dietmar,
+>>>>>
+>>>>> On 30 May 2018 at 17:55, Dietmar Eggemann <dietmar.eggemann@arm.com>
+>>>>> wrote:
+>>>>>>
+>>>>>> On 05/25/2018 03:12 PM, Vincent Guittot wrote:
 
-The patch slightly increases the kernel size:
+[...]
 
-   text	   data	    bss	    dec	    hex	filename
-18162879 10226256 2957312 31346447 1de4f0f ./vmlinux before
-18163528 10226300 2957312 31347140 1de51c4 ./vmlinux after (+693)
+>> Can't buy this argument though because this is true with the current
+>> implementation as well since the 'decay load sum' - 'accrue load sum'
+>> sequence is not atomic.
+> 
+> it's not a problem that the _sum variable are updated in different
+> step because there are internal variable
+> Only util_avg is used "outside" and the latter is updated after both
+> idle and running steps have been applied
 
-And enables the inlining of function such as free_ldt_pgtables().
+You're right here!
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
+>> What about calling update_irq_load_avg(rq, 0) in update_rq_clock_task() if
+>> (irq_delta + steal) eq. 0 and sched_feat(NONTASK_CAPACITY) eq. true in this
+>> #ifdef CONFIG_XXX_TIME_ACCOUNTING block?
+> 
+> update_irq_load_avg(rq, 0) is called in update_blocked_averages to
+> decay smoothly like other blocked signals and replace the need to call
+> update_irq_load_avg(rq, 0) for every call to update_rq_clock_task()
+> which can be significant
 
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/cpufeature.h | 82 ++++++++++++++++++-------------
- arch/x86/kernel/macros.S          |  1 +
- 2 files changed, 48 insertions(+), 35 deletions(-)
+OK.
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index aced6c9290d6..7d442722ef24 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -2,10 +2,10 @@
- #ifndef _ASM_X86_CPUFEATURE_H
- #define _ASM_X86_CPUFEATURE_H
- 
--#include <asm/processor.h>
--
--#if defined(__KERNEL__) && !defined(__ASSEMBLY__)
-+#ifdef __KERNEL__
-+#ifndef __ASSEMBLY__
- 
-+#include <asm/processor.h>
- #include <asm/asm.h>
- #include <linux/bitops.h>
- 
-@@ -161,37 +161,10 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
-  */
- static __always_inline __pure bool _static_cpu_has(u16 bit)
- {
--	asm_volatile_goto("1: jmp 6f\n"
--		 "2:\n"
--		 ".skip -(((5f-4f) - (2b-1b)) > 0) * "
--			 "((5f-4f) - (2b-1b)),0x90\n"
--		 "3:\n"
--		 ".section .altinstructions,\"a\"\n"
--		 " .long 1b - .\n"		/* src offset */
--		 " .long 4f - .\n"		/* repl offset */
--		 " .word %P[always]\n"		/* always replace */
--		 " .byte 3b - 1b\n"		/* src len */
--		 " .byte 5f - 4f\n"		/* repl len */
--		 " .byte 3b - 2b\n"		/* pad len */
--		 ".previous\n"
--		 ".section .altinstr_replacement,\"ax\"\n"
--		 "4: jmp %l[t_no]\n"
--		 "5:\n"
--		 ".previous\n"
--		 ".section .altinstructions,\"a\"\n"
--		 " .long 1b - .\n"		/* src offset */
--		 " .long 0\n"			/* no replacement */
--		 " .word %P[feature]\n"		/* feature bit */
--		 " .byte 3b - 1b\n"		/* src len */
--		 " .byte 0\n"			/* repl len */
--		 " .byte 0\n"			/* pad len */
--		 ".previous\n"
--		 ".section .altinstr_aux,\"ax\"\n"
--		 "6:\n"
--		 " testb %[bitnum],%[cap_byte]\n"
--		 " jnz %l[t_yes]\n"
--		 " jmp %l[t_no]\n"
--		 ".previous\n"
-+	asm_volatile_goto("STATIC_CPU_HAS bitnum=%[bitnum] "
-+			  "cap_byte=\"%[cap_byte]\" "
-+			  "feature=%P[feature] t_yes=%l[t_yes] "
-+			  "t_no=%l[t_no] always=%P[always]"
- 		 : : [feature]  "i" (bit),
- 		     [always]   "i" (X86_FEATURE_ALWAYS),
- 		     [bitnum]   "i" (1 << (bit & 7)),
-@@ -226,5 +199,44 @@ static __always_inline __pure bool _static_cpu_has(u16 bit)
- #define CPU_FEATURE_TYPEVAL		boot_cpu_data.x86_vendor, boot_cpu_data.x86, \
- 					boot_cpu_data.x86_model
- 
--#endif /* defined(__KERNEL__) && !defined(__ASSEMBLY__) */
-+#else /* __ASSEMBLY__ */
-+
-+.macro STATIC_CPU_HAS bitnum:req cap_byte:req feature:req t_yes:req t_no:req always:req
-+1:
-+	jmp 6f
-+2:
-+	.skip -(((5f-4f) - (2b-1b)) > 0) * ((5f-4f) - (2b-1b)),0x90
-+3:
-+	.section .altinstructions,"a"
-+	.long 1b - .		/* src offset */
-+	.long 4f - .		/* repl offset */
-+	.word \always		/* always replace */
-+	.byte 3b - 1b		/* src len */
-+	.byte 5f - 4f		/* repl len */
-+	.byte 3b - 2b		/* pad len */
-+	.previous
-+	.section .altinstr_replacement,"ax"
-+4:
-+	jmp \t_no
-+5:
-+	.previous
-+	.section .altinstructions,"a"
-+	.long 1b - .		/* src offset */
-+	.long 0			/* no replacement */
-+	.word \feature		/* feature bit */
-+	.byte 3b - 1b		/* src len */
-+	.byte 0			/* repl len */
-+	.byte 0			/* pad len */
-+	.previous
-+	.section .altinstr_aux,"ax"
-+6:
-+	testb \bitnum,\cap_byte
-+	jnz \t_yes
-+	jmp \t_no
-+	.previous
-+.endm
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* __KERNEL__ */
- #endif /* _ASM_X86_CPUFEATURE_H */
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 7baa40d5bf16..bf8b9c93e255 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -12,3 +12,4 @@
- #include <asm/bug.h>
- #include <asm/paravirt.h>
- #include <asm/asm.h>
-+#include <asm/cpufeature.h>
--- 
-2.17.0
+>> Maintaining a irq/steal time signal makes only sense if at least one of the
+>> CONFIG_XXX_TIME_ACCOUNTING is set and NONTASK_CAPACITY is true. The call to
+>> update_irq_load_avg() in update_blocked_averages() isn't guarded my them.
+> 
+> good point
+
+[...]
