@@ -1,99 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: from smtp.codeaurora.org
-	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id YsqpIeprGFvyeAAAmS7hNA
-	; Wed, 06 Jun 2018 23:19:06 +0000
+	by pdx-caf-mail.web.codeaurora.org (Dovecot) with LMTP id LzFMOqFDGVt9CgAAmS7hNA
+	; Thu, 07 Jun 2018 14:39:30 +0000
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-	id 7422E608BA; Wed,  6 Jun 2018 23:19:06 +0000 (UTC)
+	id DBBEF607E7; Thu,  7 Jun 2018 14:39:29 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	pdx-caf-mail.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=2.0 tests=BAYES_00,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by smtp.codeaurora.org (Postfix) with ESMTP id 08DAD607E4;
-	Wed,  6 Jun 2018 23:19:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 08DAD607E4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by smtp.codeaurora.org (Postfix) with ESMTP id 5C363602FC;
+	Thu,  7 Jun 2018 14:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C363602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752886AbeFFXTE (ORCPT <rfc822;monsieuricon@codeaurora.org>
-        + 25 others); Wed, 6 Jun 2018 19:19:04 -0400
-Received: from mga01.intel.com ([192.55.52.88]:27388 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752195AbeFFXTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Jun 2018 19:19:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2018 16:19:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,485,1520924400";
-   d="scan'208";a="57156872"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga003.jf.intel.com with ESMTP; 06 Jun 2018 16:19:02 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 2D051300B48; Wed,  6 Jun 2018 16:19:02 -0700 (PDT)
-Date: Wed, 6 Jun 2018 16:19:02 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: [PATCH 01/10] perf tools: Uniquify the event name if there's no
- other matched event
-Message-ID: <20180606231902.GE7220@tassilo.jf.intel.com>
-References: <20180606221513.11302-1-jolsa@kernel.org>
- <20180606221513.11302-2-jolsa@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S934302AbeFGOj1 (ORCPT <rfc822;monsieuricon@codeaurora.org>
+        + 25 others); Thu, 7 Jun 2018 10:39:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:40497 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933906AbeFGOjY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 7 Jun 2018 10:39:24 -0400
+Received: from [148.252.241.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvbX-0005a0-C9; Thu, 07 Jun 2018 15:09:31 +0100
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fQvb9-00037L-Ls; Thu, 07 Jun 2018 15:09:07 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20180606221513.11302-2-jolsa@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From: Ben Hutchings <ben@decadent.org.uk>
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC: akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
+        "Erik Veijola" <erik.veijola@gmail.com>
+Date: Thu, 07 Jun 2018 15:05:21 +0100
+Message-ID: <lsq.1528380321.67048247@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 281/410] ALSA: usb-audio: Add a quirck for B&W PX
+ headphones
+In-Reply-To: <lsq.1528380320.647747352@decadent.org.uk>
+X-SA-Exim-Connect-IP: 148.252.241.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 12:15:04AM +0200, Jiri Olsa wrote:
-> Currently by default we try to match the user specified PMU
-> name to all PMU units available and use them to aggregate
-> all matched PMUs event counts into one 'pattern' event.
-> 
-> While this is useful for uncore events, it screws up names
-> for other events, where this is not desirable, like:
-> 
-> Before:
->   # perf stat -e cp/cpu-cycles/ kill
+3.16.57-rc1 review patch.  If anyone has any objections, please let me know.
 
-I assume you mean cpU/cpu-cycles/
-> 
->    Performance counter stats for 'kill':
-> 
->            1,573,757      cp/cpu-cycles/
-> 
-> Keeping the pattern matching logic, but making the name unique
-> in case there's no other match found. That fixes the example
-> above and hopefully does not screw up anything else.
-> 
-> After:
->   # perf stat -e cp/cpu-cycles/ kill
-> 
->    Performance counter stats for 'kill':
-> 
->            1,573,757      cpu/cpu-cycles/
+------------------
 
+From: Erik Veijola <erik.veijola@gmail.com>
 
-The output is 100% identical?
+commit 240a8af929c7c57dcde28682725b29cf8474e8e5 upstream.
 
--Andi
+The capture interface doesn't work and the playback interface only
+supports 48 kHz sampling rate even though it advertises more rates.
+
+Signed-off-by: Erik Veijola <erik.veijola@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ sound/usb/quirks-table.h | 47 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -3266,4 +3266,51 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
+ 	}
+ },
+ 
++{
++	/*
++	 * Bower's & Wilkins PX headphones only support the 48 kHz sample rate
++	 * even though it advertises more. The capture interface doesn't work
++	 * even on windows.
++	 */
++	USB_DEVICE(0x19b5, 0x0021),
++	.driver_info = (unsigned long) &(const struct snd_usb_audio_quirk) {
++		.ifnum = QUIRK_ANY_INTERFACE,
++		.type = QUIRK_COMPOSITE,
++		.data = (const struct snd_usb_audio_quirk[]) {
++			{
++				.ifnum = 0,
++				.type = QUIRK_AUDIO_STANDARD_MIXER,
++			},
++			/* Capture */
++			{
++				.ifnum = 1,
++				.type = QUIRK_IGNORE_INTERFACE,
++			},
++			/* Playback */
++			{
++				.ifnum = 2,
++				.type = QUIRK_AUDIO_FIXED_ENDPOINT,
++				.data = &(const struct audioformat) {
++					.formats = SNDRV_PCM_FMTBIT_S16_LE,
++					.channels = 2,
++					.iface = 2,
++					.altsetting = 1,
++					.altset_idx = 1,
++					.attributes = UAC_EP_CS_ATTR_FILL_MAX |
++						UAC_EP_CS_ATTR_SAMPLE_RATE,
++					.endpoint = 0x03,
++					.ep_attr = USB_ENDPOINT_XFER_ISOC,
++					.rates = SNDRV_PCM_RATE_48000,
++					.rate_min = 48000,
++					.rate_max = 48000,
++					.nr_rates = 1,
++					.rate_table = (unsigned int[]) {
++						48000
++					}
++				}
++			},
++		}
++	}
++},
++
+ #undef USB_DEVICE_VENDOR_SPEC
